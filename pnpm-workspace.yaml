@@ -1,4 +1,13 @@
 packages:
-  - "apps/*"
-  - "packages/*"
-  - "infra/database"
+  - apps/*
+  - packages/*
+  - infra/database
+
+onlyBuiltDependencies:
+  - '@parcel/watcher'
+  - '@prisma/engines'
+  - core-js
+  - esbuild
+  - prisma
+  - protobufjs
+  - unrs-resolver
