@@ -1,0 +1,882 @@
+{
+  "metadata": {
+    "actualHead": "5a7a71570a5f8abf8ad949e0b5cca16ac94fcb72",
+    "branch": "task/mig-001-migration",
+    "deterministicOutput": true,
+    "expectedHead": "7cace5434ab8fb7187783fb2ecc88d94c862601b",
+    "inputStateFingerprint": "98c6476dcde48220abb00ea8e07336c4c75911287a021b3651370dc075d51192",
+    "legacySourceRoot": "legacy/source-tree/two-legacy",
+    "legacyTreeSha256": "9b6dffaec4bc6f03ac1ab1e14217a422c563a10b6b9856909c7aa5067b9a79c2",
+    "outputRoots": ["legacy/exports", "legacy/review", "legacy/reports"],
+    "scannedFileCount": 113,
+    "taskId": "MIG-001"
+  },
+  "outputLeakScan": {
+    "files": [],
+    "rules": ["cnPhone", "email", "idCard", "knownLiteral"],
+    "scannedRoots": ["legacy/exports", "legacy/review", "legacy/reports"],
+    "storesRawPii": false,
+    "totalMatches": 0
+  },
+  "sourceRiskSummary": {
+    "files": [
+      {
+        "matchDigests": [
+          {
+            "digest": "5e09eed2e657ee5d",
+            "type": "knownLiteral"
+          }
+        ],
+        "matchTypes": ["knownLiteral"],
+        "primaryDisposition": "REWRITE_FROM_INTENT",
+        "recordId": "mig001_b9565913e8f8",
+        "relativePath": "admin-dashboard.html",
+        "sourceRoot": "legacy/source-tree/two-legacy",
+        "totalMatches": 3
+      },
+      {
+        "matchDigests": [
+          {
+            "digest": "b41dfd37fa7c63e2",
+            "type": "email"
+          }
+        ],
+        "matchTypes": ["email"],
+        "primaryDisposition": "REWRITE_FROM_INTENT",
+        "recordId": "mig001_ea65f0c19829",
+        "relativePath": "admin-student-management.html",
+        "sourceRoot": "legacy/source-tree/two-legacy",
+        "totalMatches": 1
+      },
+      {
+        "matchDigests": [
+          {
+            "digest": "3a069ae3aada7844",
+            "type": "email"
+          },
+          {
+            "digest": "3093ab418a28a7e2",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "4f0c0c1fbe019c9a",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "04a0b3516e0143ae",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "4c443dc7c21b3102",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "6f80ce583a13dc96",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "7b04beaa0c1925a3",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "6d8b084f09a86af2",
+            "type": "knownLiteral"
+          }
+        ],
+        "matchTypes": ["email", "knownLiteral"],
+        "primaryDisposition": "REWRITE_FROM_INTENT",
+        "recordId": "mig001_07ff6a7cbd44",
+        "relativePath": "course-center.html",
+        "sourceRoot": "legacy/source-tree/two-legacy",
+        "totalMatches": 27
+      },
+      {
+        "matchDigests": [
+          {
+            "digest": "7b04beaa0c1925a3",
+            "type": "knownLiteral"
+          }
+        ],
+        "matchTypes": ["knownLiteral"],
+        "primaryDisposition": "DISCARD",
+        "recordId": "mig001_cf368ba33f3f",
+        "relativePath": "db/analytics.json",
+        "sourceRoot": "legacy/source-tree/two-legacy",
+        "totalMatches": 1
+      },
+      {
+        "matchDigests": [],
+        "matchTypes": [],
+        "primaryDisposition": "PRIVACY_BLOCKED",
+        "recordId": "mig001_000f15eec484",
+        "relativePath": "db/applications.json",
+        "sourceRoot": "legacy/source-tree/two-legacy",
+        "totalMatches": 0
+      },
+      {
+        "matchDigests": [],
+        "matchTypes": [],
+        "primaryDisposition": "PRIVACY_BLOCKED",
+        "recordId": "mig001_9f7eac9cecb9",
+        "relativePath": "db/assessments.json",
+        "sourceRoot": "legacy/source-tree/two-legacy",
+        "totalMatches": 0
+      },
+      {
+        "matchDigests": [
+          {
+            "digest": "3093ab418a28a7e2",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "4f0c0c1fbe019c9a",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "04a0b3516e0143ae",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "4c443dc7c21b3102",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "7b04beaa0c1925a3",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "853b6311fb8342c0",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "6f80ce583a13dc96",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "6d8b084f09a86af2",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "7b713264ed77db89",
+            "type": "knownLiteral"
+          }
+        ],
+        "matchTypes": ["knownLiteral"],
+        "primaryDisposition": "REUSE_AFTER_REVIEW",
+        "recordId": "mig001_4bcaeb9d12e6",
+        "relativePath": "db/lang/bo.json",
+        "sourceRoot": "legacy/source-tree/two-legacy",
+        "totalMatches": 9
+      },
+      {
+        "matchDigests": [
+          {
+            "digest": "3093ab418a28a7e2",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "4f0c0c1fbe019c9a",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "04a0b3516e0143ae",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "4c443dc7c21b3102",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "7b04beaa0c1925a3",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "853b6311fb8342c0",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "6f80ce583a13dc96",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "6d8b084f09a86af2",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "7b713264ed77db89",
+            "type": "knownLiteral"
+          }
+        ],
+        "matchTypes": ["knownLiteral"],
+        "primaryDisposition": "REUSE_AFTER_REVIEW",
+        "recordId": "mig001_fcc9dfae2237",
+        "relativePath": "db/lang/zh.json",
+        "sourceRoot": "legacy/source-tree/two-legacy",
+        "totalMatches": 18
+      },
+      {
+        "matchDigests": [],
+        "matchTypes": [],
+        "primaryDisposition": "PRIVACY_BLOCKED",
+        "recordId": "mig001_a932e679ba94",
+        "relativePath": "db/learning-records.json",
+        "sourceRoot": "legacy/source-tree/two-legacy",
+        "totalMatches": 0
+      },
+      {
+        "matchDigests": [],
+        "matchTypes": [],
+        "primaryDisposition": "PRIVACY_BLOCKED",
+        "recordId": "mig001_4392c1eb542a",
+        "relativePath": "db/progress.json",
+        "sourceRoot": "legacy/source-tree/two-legacy",
+        "totalMatches": 0
+      },
+      {
+        "matchDigests": [
+          {
+            "digest": "bb63166deebe61d2",
+            "type": "cnPhone"
+          },
+          {
+            "digest": "b0da6e942b8a0642",
+            "type": "cnPhone"
+          },
+          {
+            "digest": "161145566cebed46",
+            "type": "cnPhone"
+          },
+          {
+            "digest": "c6379a61450e948c",
+            "type": "cnPhone"
+          },
+          {
+            "digest": "dfc5e76325fc8587",
+            "type": "email"
+          },
+          {
+            "digest": "ceba00277efd4f1b",
+            "type": "email"
+          },
+          {
+            "digest": "347a2613510f5994",
+            "type": "email"
+          },
+          {
+            "digest": "7674d24758e6cdd2",
+            "type": "email"
+          },
+          {
+            "digest": "7b04beaa0c1925a3",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "1d539855bdf0c7f1",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "bb63166deebe61d2",
+            "type": "sensitiveFieldValue"
+          },
+          {
+            "digest": "dfc5e76325fc8587",
+            "type": "sensitiveFieldValue"
+          },
+          {
+            "digest": "185eb288a8e8f040",
+            "type": "sensitiveFieldValue"
+          },
+          {
+            "digest": "b0da6e942b8a0642",
+            "type": "sensitiveFieldValue"
+          },
+          {
+            "digest": "ceba00277efd4f1b",
+            "type": "sensitiveFieldValue"
+          },
+          {
+            "digest": "fd146f1fc88166b7",
+            "type": "sensitiveFieldValue"
+          },
+          {
+            "digest": "7b04beaa0c1925a3",
+            "type": "sensitiveFieldValue"
+          },
+          {
+            "digest": "161145566cebed46",
+            "type": "sensitiveFieldValue"
+          },
+          {
+            "digest": "347a2613510f5994",
+            "type": "sensitiveFieldValue"
+          },
+          {
+            "digest": "7a96110aa2b2019b",
+            "type": "sensitiveFieldValue"
+          },
+          {
+            "digest": "c6379a61450e948c",
+            "type": "sensitiveFieldValue"
+          },
+          {
+            "digest": "7674d24758e6cdd2",
+            "type": "sensitiveFieldValue"
+          },
+          {
+            "digest": "e63bc2341ab1747f",
+            "type": "sensitiveFieldValue"
+          }
+        ],
+        "matchTypes": [
+          "cnPhone",
+          "email",
+          "knownLiteral",
+          "sensitiveFieldValue"
+        ],
+        "primaryDisposition": "PRIVACY_BLOCKED",
+        "recordId": "mig001_c21291dde31e",
+        "relativePath": "db/users.json",
+        "sourceRoot": "legacy/source-tree/two-legacy",
+        "totalMatches": 24
+      },
+      {
+        "matchDigests": [
+          {
+            "digest": "7b04beaa0c1925a3",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "1d539855bdf0c7f1",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "3093ab418a28a7e2",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "3093ab418a28a7e2",
+            "type": "sensitiveFieldValue"
+          },
+          {
+            "digest": "a4a3e306cd153428",
+            "type": "sensitiveFieldValue"
+          }
+        ],
+        "matchTypes": ["knownLiteral", "sensitiveFieldValue"],
+        "primaryDisposition": "REWRITE_FROM_INTENT",
+        "recordId": "mig001_ad5db063d04e",
+        "relativePath": "docs/03-核心功能模块.md",
+        "sourceRoot": "legacy/source-tree/two-legacy",
+        "totalMatches": 5
+      },
+      {
+        "matchDigests": [
+          {
+            "digest": "7b04beaa0c1925a3",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "1d539855bdf0c7f1",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "3093ab418a28a7e2",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "3093ab418a28a7e2",
+            "type": "sensitiveFieldValue"
+          },
+          {
+            "digest": "a4a3e306cd153428",
+            "type": "sensitiveFieldValue"
+          }
+        ],
+        "matchTypes": ["knownLiteral", "sensitiveFieldValue"],
+        "primaryDisposition": "REWRITE_FROM_INTENT",
+        "recordId": "mig001_3f808c9b9162",
+        "relativePath": "docs/04-数据库设计.md",
+        "sourceRoot": "legacy/source-tree/two-legacy",
+        "totalMatches": 6
+      },
+      {
+        "matchDigests": [
+          {
+            "digest": "a6942f9771d67f34",
+            "type": "cnPhone"
+          },
+          {
+            "digest": "7b04beaa0c1925a3",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "1d539855bdf0c7f1",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "3093ab418a28a7e2",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "3093ab418a28a7e2",
+            "type": "sensitiveFieldValue"
+          },
+          {
+            "digest": "a6942f9771d67f34",
+            "type": "sensitiveFieldValue"
+          }
+        ],
+        "matchTypes": ["cnPhone", "knownLiteral", "sensitiveFieldValue"],
+        "primaryDisposition": "REWRITE_FROM_INTENT",
+        "recordId": "mig001_22f12d9f0e5d",
+        "relativePath": "docs/05-API接口设计.md",
+        "sourceRoot": "legacy/source-tree/two-legacy",
+        "totalMatches": 8
+      },
+      {
+        "matchDigests": [
+          {
+            "digest": "d78ce03a140540c5",
+            "type": "email"
+          }
+        ],
+        "matchTypes": ["email"],
+        "primaryDisposition": "REWRITE_FROM_INTENT",
+        "recordId": "mig001_72f03cb7ecbc",
+        "relativePath": "docs/06-页面结构.md",
+        "sourceRoot": "legacy/source-tree/two-legacy",
+        "totalMatches": 1
+      },
+      {
+        "matchDigests": [
+          {
+            "digest": "7b04beaa0c1925a3",
+            "type": "knownLiteral"
+          }
+        ],
+        "matchTypes": ["knownLiteral"],
+        "primaryDisposition": "REWRITE_FROM_INTENT",
+        "recordId": "mig001_c6a31594b0a0",
+        "relativePath": "docs/08-技术债务.md",
+        "sourceRoot": "legacy/source-tree/two-legacy",
+        "totalMatches": 1
+      },
+      {
+        "matchDigests": [
+          {
+            "digest": "40a783d34eeb888e",
+            "type": "email"
+          },
+          {
+            "digest": "3093ab418a28a7e2",
+            "type": "knownLiteral"
+          }
+        ],
+        "matchTypes": ["email", "knownLiteral"],
+        "primaryDisposition": "REWRITE_FROM_INTENT",
+        "recordId": "mig001_1b608bb06a6d",
+        "relativePath": "docs/DEVELOPMENT_FLOW.md",
+        "sourceRoot": "legacy/source-tree/two-legacy",
+        "totalMatches": 2
+      },
+      {
+        "matchDigests": [
+          {
+            "digest": "7b04beaa0c1925a3",
+            "type": "knownLiteral"
+          }
+        ],
+        "matchTypes": ["knownLiteral"],
+        "primaryDisposition": "REWRITE_FROM_INTENT",
+        "recordId": "mig001_9f7cbce127b9",
+        "relativePath": "docs/README.md",
+        "sourceRoot": "legacy/source-tree/two-legacy",
+        "totalMatches": 1
+      },
+      {
+        "matchDigests": [
+          {
+            "digest": "b0da6e942b8a0642",
+            "type": "cnPhone"
+          },
+          {
+            "digest": "bb63166deebe61d2",
+            "type": "cnPhone"
+          },
+          {
+            "digest": "161145566cebed46",
+            "type": "cnPhone"
+          },
+          {
+            "digest": "c6379a61450e948c",
+            "type": "cnPhone"
+          },
+          {
+            "digest": "3093ab418a28a7e2",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "4f0c0c1fbe019c9a",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "04a0b3516e0143ae",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "4c443dc7c21b3102",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "7b04beaa0c1925a3",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "853b6311fb8342c0",
+            "type": "knownLiteral"
+          }
+        ],
+        "matchTypes": ["cnPhone", "knownLiteral"],
+        "primaryDisposition": "REWRITE_FROM_INTENT",
+        "recordId": "mig001_f6013a00b362",
+        "relativePath": "index.html",
+        "sourceRoot": "legacy/source-tree/two-legacy",
+        "totalMatches": 11
+      },
+      {
+        "matchDigests": [
+          {
+            "digest": "3093ab418a28a7e2",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "4f0c0c1fbe019c9a",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "04a0b3516e0143ae",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "7b04beaa0c1925a3",
+            "type": "knownLiteral"
+          }
+        ],
+        "matchTypes": ["knownLiteral"],
+        "primaryDisposition": "REWRITE_FROM_INTENT",
+        "recordId": "mig001_fd37308ebe3c",
+        "relativePath": "learning-tasks.html",
+        "sourceRoot": "legacy/source-tree/two-legacy",
+        "totalMatches": 10
+      },
+      {
+        "matchDigests": [
+          {
+            "digest": "3a069ae3aada7844",
+            "type": "email"
+          }
+        ],
+        "matchTypes": ["email"],
+        "primaryDisposition": "DISCARD",
+        "recordId": "mig001_f139e7aadde4",
+        "relativePath": "premium-purchase.html",
+        "sourceRoot": "legacy/source-tree/two-legacy",
+        "totalMatches": 1
+      },
+      {
+        "matchDigests": [
+          {
+            "digest": "3a069ae3aada7844",
+            "type": "email"
+          }
+        ],
+        "matchTypes": ["email"],
+        "primaryDisposition": "DISCARD",
+        "recordId": "mig001_3f6078b4ad2f",
+        "relativePath": "pricing.html",
+        "sourceRoot": "legacy/source-tree/two-legacy",
+        "totalMatches": 1
+      },
+      {
+        "matchDigests": [
+          {
+            "digest": "3a069ae3aada7844",
+            "type": "email"
+          }
+        ],
+        "matchTypes": ["email"],
+        "primaryDisposition": "DISCARD",
+        "recordId": "mig001_0b5077838209",
+        "relativePath": "professional-purchase.html",
+        "sourceRoot": "legacy/source-tree/two-legacy",
+        "totalMatches": 1
+      },
+      {
+        "matchDigests": [
+          {
+            "digest": "4c443dc7c21b3102",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "7b04beaa0c1925a3",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "6f80ce583a13dc96",
+            "type": "knownLiteral"
+          }
+        ],
+        "matchTypes": ["knownLiteral"],
+        "primaryDisposition": "REWRITE_FROM_INTENT",
+        "recordId": "mig001_768731b45604",
+        "relativePath": "public/js/translate.js",
+        "sourceRoot": "legacy/source-tree/two-legacy",
+        "totalMatches": 3
+      },
+      {
+        "matchDigests": [
+          {
+            "digest": "7b04beaa0c1925a3",
+            "type": "knownLiteral"
+          }
+        ],
+        "matchTypes": ["knownLiteral"],
+        "primaryDisposition": "REWRITE_FROM_INTENT",
+        "recordId": "mig001_dc60ea9ee1ff",
+        "relativePath": "server.js",
+        "sourceRoot": "legacy/source-tree/two-legacy",
+        "totalMatches": 1
+      },
+      {
+        "matchDigests": [
+          {
+            "digest": "3093ab418a28a7e2",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "4f0c0c1fbe019c9a",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "04a0b3516e0143ae",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "5e09eed2e657ee5d",
+            "type": "knownLiteral"
+          }
+        ],
+        "matchTypes": ["knownLiteral"],
+        "primaryDisposition": "REWRITE_FROM_INTENT",
+        "recordId": "mig001_bac465da5bad",
+        "relativePath": "student-dashboard.html",
+        "sourceRoot": "legacy/source-tree/two-legacy",
+        "totalMatches": 4
+      },
+      {
+        "matchDigests": [
+          {
+            "digest": "5e09eed2e657ee5d",
+            "type": "knownLiteral"
+          }
+        ],
+        "matchTypes": ["knownLiteral"],
+        "primaryDisposition": "REWRITE_FROM_INTENT",
+        "recordId": "mig001_50945f57b93b",
+        "relativePath": "student-management.html",
+        "sourceRoot": "legacy/source-tree/two-legacy",
+        "totalMatches": 2
+      },
+      {
+        "matchDigests": [
+          {
+            "digest": "4f0c0c1fbe019c9a",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "5e09eed2e657ee5d",
+            "type": "knownLiteral"
+          }
+        ],
+        "matchTypes": ["knownLiteral"],
+        "primaryDisposition": "REWRITE_FROM_INTENT",
+        "recordId": "mig001_b3a1c2928494",
+        "relativePath": "student-profile.html",
+        "sourceRoot": "legacy/source-tree/two-legacy",
+        "totalMatches": 7
+      },
+      {
+        "matchDigests": [
+          {
+            "digest": "5e09eed2e657ee5d",
+            "type": "knownLiteral"
+          }
+        ],
+        "matchTypes": ["knownLiteral"],
+        "primaryDisposition": "REWRITE_FROM_INTENT",
+        "recordId": "mig001_50a4a939d1c7",
+        "relativePath": "teacher-dashboard.html",
+        "sourceRoot": "legacy/source-tree/two-legacy",
+        "totalMatches": 1
+      },
+      {
+        "matchDigests": [
+          {
+            "digest": "3093ab418a28a7e2",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "4f0c0c1fbe019c9a",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "04a0b3516e0143ae",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "4c443dc7c21b3102",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "7b04beaa0c1925a3",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "853b6311fb8342c0",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "6f80ce583a13dc96",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "6d8b084f09a86af2",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "7b713264ed77db89",
+            "type": "knownLiteral"
+          }
+        ],
+        "matchTypes": ["knownLiteral"],
+        "primaryDisposition": "REWRITE_FROM_INTENT",
+        "recordId": "mig001_f3a73cd25eb7",
+        "relativePath": "tools/translation/chinese-texts.txt",
+        "sourceRoot": "legacy/source-tree/two-legacy",
+        "totalMatches": 9
+      },
+      {
+        "matchDigests": [
+          {
+            "digest": "ba6c167e885ea4be",
+            "type": "cnPhone"
+          },
+          {
+            "digest": "7b04beaa0c1925a3",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "1d539855bdf0c7f1",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "855943c45af467ac",
+            "type": "sensitiveFieldValue"
+          },
+          {
+            "digest": "ba6c167e885ea4be",
+            "type": "sensitiveFieldValue"
+          }
+        ],
+        "matchTypes": ["cnPhone", "knownLiteral", "sensitiveFieldValue"],
+        "primaryDisposition": "REWRITE_FROM_INTENT",
+        "recordId": "mig001_95a6bedc4804",
+        "relativePath": "tools/translation/instruction.m",
+        "sourceRoot": "legacy/source-tree/two-legacy",
+        "totalMatches": 10
+      },
+      {
+        "matchDigests": [
+          {
+            "digest": "3093ab418a28a7e2",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "4f0c0c1fbe019c9a",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "04a0b3516e0143ae",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "4c443dc7c21b3102",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "7b04beaa0c1925a3",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "853b6311fb8342c0",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "6f80ce583a13dc96",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "6d8b084f09a86af2",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "7b713264ed77db89",
+            "type": "knownLiteral"
+          }
+        ],
+        "matchTypes": ["knownLiteral"],
+        "primaryDisposition": "REWRITE_FROM_INTENT",
+        "recordId": "mig001_3b93ab4da715",
+        "relativePath": "tools/translation/translate-to-tibetan.js",
+        "sourceRoot": "legacy/source-tree/two-legacy",
+        "totalMatches": 9
+      },
+      {
+        "matchDigests": [
+          {
+            "digest": "3a069ae3aada7844",
+            "type": "email"
+          },
+          {
+            "digest": "3093ab418a28a7e2",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "7b713264ed77db89",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "4f0c0c1fbe019c9a",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "04a0b3516e0143ae",
+            "type": "knownLiteral"
+          },
+          {
+            "digest": "6d8b084f09a86af2",
+            "type": "knownLiteral"
+          }
+        ],
+        "matchTypes": ["email", "knownLiteral"],
+        "primaryDisposition": "REWRITE_FROM_INTENT",
+        "recordId": "mig001_bd2353e75943",
+        "relativePath": "video-player.html",
+        "sourceRoot": "legacy/source-tree/two-legacy",
+        "totalMatches": 6
+      }
+    ],
+    "totalFiles": 33
+  },
+  "sourceScanRules": ["cnPhone", "email", "idCard", "knownLiteral"]
+}
