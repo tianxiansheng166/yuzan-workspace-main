@@ -8,10 +8,7 @@
   "owner": "",
   "branch": "task/mig-002-migration",
   "worktree": "../worktrees/mig-002",
-  "depends_on": [
-    "MIG-001",
-    "CUR-001"
-  ],
+  "depends_on": ["MIG-001", "CUR-001"],
   "allowed_paths": [
     "tools/migration/curriculum/**",
     "legacy/exports/**",

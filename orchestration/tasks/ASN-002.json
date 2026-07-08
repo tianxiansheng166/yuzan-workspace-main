@@ -8,11 +8,7 @@
   "owner": "",
   "branch": "task/asn-002-assignment-web",
   "worktree": "../worktrees/asn-002",
-  "depends_on": [
-    "GOV-002",
-    "GOV-004",
-    "CLS-001"
-  ],
+  "depends_on": ["GOV-002", "GOV-004", "CLS-001"],
   "allowed_paths": [
     "apps/web/app/features/assignment-builder/**",
     "apps/web/app/pages/teacher/assignments/**",

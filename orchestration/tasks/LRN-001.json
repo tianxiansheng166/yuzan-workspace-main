@@ -8,9 +8,7 @@
   "owner": "",
   "branch": "task/lrn-001-learning-api",
   "worktree": "../worktrees/lrn-001",
-  "depends_on": [
-    "ASN-001"
-  ],
+  "depends_on": ["ASN-001"],
   "allowed_paths": [
     "apps/api/src/modules/learning/**",
     "apps/api/test/learning/**"

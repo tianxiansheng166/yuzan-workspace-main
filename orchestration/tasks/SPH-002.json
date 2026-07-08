@@ -8,11 +8,7 @@
   "owner": "",
   "branch": "task/sph-002-speech-worker",
   "worktree": "../worktrees/sph-002",
-  "depends_on": [
-    "GOV-002",
-    "GOV-003",
-    "SUB-001"
-  ],
+  "depends_on": ["GOV-002", "GOV-003", "SUB-001"],
   "allowed_paths": [
     "apps/worker/src/speech/**",
     "apps/api/src/modules/speech/**",

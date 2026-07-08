@@ -1,11 +1,11 @@
 <script setup lang="ts">
-const route = useRoute()
+const route = useRoute();
 const items = [
-  { to: '/', label: '项目' },
-  { to: '/student/today', label: '学生今日' },
-  { to: '/teacher', label: '教师工作台' },
-  { to: '/studio', label: '内容工作室' },
-]
+  { to: "/", label: "项目" },
+  { to: "/student/today", label: "学生今日" },
+  { to: "/teacher", label: "教师工作台" },
+  { to: "/studio", label: "内容工作室" },
+];
 </script>
 
 <template>
@@ -23,7 +23,10 @@ const items = [
       <nav aria-label="主导航">
         <ul class="nav-list">
           <li v-for="item in items" :key="item.to">
-            <NuxtLink :to="item.to" :aria-current="route.path === item.to ? 'page' : undefined">
+            <NuxtLink
+              :to="item.to"
+              :aria-current="route.path === item.to ? 'page' : undefined"
+            >
               {{ item.label }}
             </NuxtLink>
           </li>
@@ -59,7 +62,7 @@ const items = [
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: .65rem;
+  gap: 0.65rem;
   font-family: var(--yx-font-display);
   font-weight: 700;
   text-decoration: none;
@@ -68,15 +71,51 @@ const items = [
   width: 2.15rem;
   color: var(--yx-color-wine);
 }
-.brand__mark svg { fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
-.nav-list { display: flex; gap: var(--yx-space-6); list-style: none; padding: 0; margin: 0; }
-.nav-list a { text-decoration: none; color: var(--yx-color-ink-soft); }
-.nav-list a[aria-current="page"] { color: var(--yx-color-wine); }
-.network-state { display: flex; align-items: center; gap: .5rem; font-size: var(--yx-text-sm); color: var(--yx-color-ink-soft); }
-.network-state__dot { width: .55rem; aspect-ratio: 1; border-radius: 50%; background: var(--yx-color-sage-strong); }
+.brand__mark svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+}
+.nav-list {
+  display: flex;
+  gap: var(--yx-space-6);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.nav-list a {
+  text-decoration: none;
+  color: var(--yx-color-ink-soft);
+}
+.nav-list a[aria-current="page"] {
+  color: var(--yx-color-wine);
+}
+.network-state {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--yx-text-sm);
+  color: var(--yx-color-ink-soft);
+}
+.network-state__dot {
+  width: 0.55rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--yx-color-sage-strong);
+}
 @media (max-width: 52rem) {
-  .site-header__inner { grid-template-columns: 1fr auto; }
-  nav { grid-column: 1 / -1; overflow-x: auto; padding-bottom: .75rem; }
-  .network-state { grid-column: 2; grid-row: 1; }
+  .site-header__inner {
+    grid-template-columns: 1fr auto;
+  }
+  nav {
+    grid-column: 1 / -1;
+    overflow-x: auto;
+    padding-bottom: 0.75rem;
+  }
+  .network-state {
+    grid-column: 2;
+    grid-row: 1;
+  }
 }
 </style>

@@ -8,11 +8,7 @@
   "owner": "",
   "branch": "task/sub-002-submission-web",
   "worktree": "../worktrees/sub-002",
-  "depends_on": [
-    "GOV-002",
-    "GOV-004",
-    "CLS-001"
-  ],
+  "depends_on": ["GOV-002", "GOV-004", "CLS-001"],
   "allowed_paths": [
     "apps/web/app/features/submission-review/**",
     "apps/web/app/pages/teacher/review/**",

@@ -16,7 +16,8 @@
   --yx-color-surface: #fffdf8;
   --yx-color-line: color-mix(in srgb, var(--yx-color-ink) 16%, transparent);
 
-  --yx-font-sans: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+  --yx-font-sans:
+    "Noto Sans SC", "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
   --yx-font-display: "Source Han Serif SC", "Noto Serif SC", Georgia, serif;
 
   --yx-text-xs: 0.75rem;
@@ -43,7 +44,7 @@
 
   --yx-duration-fast: 120ms;
   --yx-duration-base: 220ms;
-  --yx-ease-standard: cubic-bezier(.2,.8,.2,1);
+  --yx-ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
 
   --yx-content-wide: 90rem;
   --yx-content-reading: 44rem;

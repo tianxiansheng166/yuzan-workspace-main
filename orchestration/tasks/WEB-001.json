@@ -8,9 +8,7 @@
   "owner": "",
   "branch": "task/web-001-web-shell",
   "worktree": "../worktrees/web-001",
-  "depends_on": [
-    "GOV-004"
-  ],
+  "depends_on": ["GOV-004"],
   "allowed_paths": [
     "apps/web/app/layouts/**",
     "apps/web/app/components/navigation/**",

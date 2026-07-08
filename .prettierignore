@@ -1,8 +1,5 @@
 node_modules/
 .pnpm-store/
-.env
-.env.*
-!.env.example
 .nuxt/
 .output/
 dist/
@@ -12,10 +9,5 @@ coverage/
 playwright-report/
 test-results/
 *.log
-.DS_Store
-.idea/
-.vscode/
-infra/database/prisma/dev.db
-uploads/
-.local/
 infra/database/generated/
+source-materials/

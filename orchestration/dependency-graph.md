@@ -1,6 +1,7 @@
 # 并发任务依赖图
 
 ## Wave 0
+
 - **GOV-001 初始化 monorepo 与开发环境** — `READY` — 依赖：无
 - **GOV-002 冻结 OpenAPI v1 基线** — `READY` — 依赖：无
 - **GOV-003 冻结 Prisma MVP 数据模型** — `READY` — 依赖：无
@@ -9,6 +10,7 @@
 - **GOV-006 安全与租户授权基线** — `BLOCKED` — 依赖：GOV-001, GOV-002, GOV-003
 
 ## Wave 1
+
 - **IDN-001 身份登录与会话 API** — `BLOCKED` — 依赖：GOV-001, GOV-002, GOV-003, GOV-006
 - **IDN-002 登录与会话 Web** — `BLOCKED` — 依赖：GOV-002, GOV-004
 - **ORG-001 学校、成员、班级 API** — `BLOCKED` — 依赖：GOV-002, GOV-003, GOV-006
@@ -19,6 +21,7 @@
 - **MIG-001 旧资产分类与脱敏导出** — `READY` — 依赖：无
 
 ## Wave 2
+
 - **ASN-001 任务编排 API** — `BLOCKED` — 依赖：ORG-001, CUR-001
 - **ASN-002 任务编排 Web** — `BLOCKED` — 依赖：GOV-002, GOV-004, CLS-001
 - **LRN-001 今日任务与学习 API** — `BLOCKED` — 依赖：ASN-001
@@ -31,6 +34,7 @@
 - **DES-002 自定义核心图标系统** — `BLOCKED` — 依赖：GOV-004
 
 ## Wave 3
+
 - **OFF-002 客户端 Outbox 与同步状态机** — `BLOCKED` — 依赖：OFF-001, LRN-002, SUB-001
 - **OFF-003 服务端同步 API 与冲突处理** — `BLOCKED` — 依赖：GOV-003, SUB-001
 - **SPH-001 录音采集与本地质检 Web** — `BLOCKED` — 依赖：GOV-004, LRN-002, OFF-001
@@ -42,6 +46,7 @@
 - **MIG-003 媒体资产迁移与版权台账** — `BLOCKED` — 依赖：MIG-001, CUR-001
 
 ## Wave 4
+
 - **SEC-001 安全威胁建模与渗透回归** — `BLOCKED` — 依赖：IDN-001, ASN-001, SUB-001, OFF-003, SPH-002
 - **OPS-001 部署、健康、日志与指标** — `BLOCKED` — 依赖：GOV-001, GOV-005
 - **OPS-002 备份恢复与数据保留演练** — `BLOCKED` — 依赖：OPS-001, RPT-001

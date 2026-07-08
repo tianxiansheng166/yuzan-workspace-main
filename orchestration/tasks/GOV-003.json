@@ -9,10 +9,7 @@
   "branch": "task/gov-003-database",
   "worktree": "../worktrees/gov-003",
   "depends_on": [],
-  "allowed_paths": [
-    "infra/database/prisma/**",
-    "docs/02-domain/**"
-  ],
+  "allowed_paths": ["infra/database/prisma/**", "docs/02-domain/**"],
   "objective": "把学校、成员、班级、课程版本、任务、提交、反馈、同步、语音和审计建为可迁移关系模型。",
   "acceptance_criteria": [
     "prisma format/validate 通过",

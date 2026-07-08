@@ -8,10 +8,7 @@
   "owner": "",
   "branch": "task/ops-002-operations",
   "worktree": "../worktrees/ops-002",
-  "depends_on": [
-    "OPS-001",
-    "RPT-001"
-  ],
+  "depends_on": ["OPS-001", "RPT-001"],
   "allowed_paths": [
     "infra/backup/**",
     "tools/retention/**",

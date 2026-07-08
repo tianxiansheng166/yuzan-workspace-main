@@ -8,11 +8,7 @@
   "owner": "",
   "branch": "task/gov-006-security",
   "worktree": "../worktrees/gov-006",
-  "depends_on": [
-    "GOV-001",
-    "GOV-002",
-    "GOV-003"
-  ],
+  "depends_on": ["GOV-001", "GOV-002", "GOV-003"],
   "allowed_paths": [
     "apps/api/src/common/**",
     "apps/api/src/modules/auth/**",

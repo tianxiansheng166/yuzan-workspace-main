@@ -8,10 +8,7 @@
   "owner": "",
   "branch": "task/ops-001-operations",
   "worktree": "../worktrees/ops-001",
-  "depends_on": [
-    "GOV-001",
-    "GOV-005"
-  ],
+  "depends_on": ["GOV-001", "GOV-005"],
   "allowed_paths": [
     "infra/**",
     "apps/api/src/health/**",

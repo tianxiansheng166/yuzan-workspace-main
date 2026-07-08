@@ -8,14 +8,8 @@
   "owner": "",
   "branch": "task/gov-005-devops",
   "worktree": "../worktrees/gov-005",
-  "depends_on": [
-    "GOV-001"
-  ],
-  "allowed_paths": [
-    ".github/**",
-    "scripts/**",
-    "package.json"
-  ],
+  "depends_on": ["GOV-001"],
+  "allowed_paths": [".github/**", "scripts/**", "package.json"],
   "objective": "让 PR 自动执行格式、类型、单元、契约、构建、secret 和依赖检查。",
   "acceptance_criteria": [
     "CI 在 pull_request 触发",

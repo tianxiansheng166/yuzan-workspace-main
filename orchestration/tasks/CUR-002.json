@@ -8,10 +8,7 @@
   "owner": "",
   "branch": "task/cur-002-curriculum-web",
   "worktree": "../worktrees/cur-002",
-  "depends_on": [
-    "GOV-002",
-    "GOV-004"
-  ],
+  "depends_on": ["GOV-002", "GOV-004"],
   "allowed_paths": [
     "apps/web/app/features/curriculum-studio/**",
     "apps/web/app/pages/studio/**",

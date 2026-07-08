@@ -8,11 +8,7 @@
   "owner": "",
   "branch": "task/cur-001-curriculum-api",
   "worktree": "../worktrees/cur-001",
-  "depends_on": [
-    "GOV-002",
-    "GOV-003",
-    "GOV-006"
-  ],
+  "depends_on": ["GOV-002", "GOV-003", "GOV-006"],
   "allowed_paths": [
     "apps/api/src/modules/curriculum/**",
     "apps/api/src/modules/resources/**",

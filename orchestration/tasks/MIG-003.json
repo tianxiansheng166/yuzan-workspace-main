@@ -8,10 +8,7 @@
   "owner": "",
   "branch": "task/mig-003-migration",
   "worktree": "../worktrees/mig-003",
-  "depends_on": [
-    "MIG-001",
-    "CUR-001"
-  ],
+  "depends_on": ["MIG-001", "CUR-001"],
   "allowed_paths": [
     "tools/migration/media/**",
     "legacy/review/media/**",

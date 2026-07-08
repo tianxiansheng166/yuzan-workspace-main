@@ -8,10 +8,7 @@
   "owner": "",
   "branch": "task/idn-002-identity-web",
   "worktree": "../worktrees/idn-002",
-  "depends_on": [
-    "GOV-002",
-    "GOV-004"
-  ],
+  "depends_on": ["GOV-002", "GOV-004"],
   "allowed_paths": [
     "apps/web/app/features/auth/**",
     "apps/web/app/pages/login.vue",

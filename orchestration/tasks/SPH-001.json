@@ -8,11 +8,7 @@
   "owner": "",
   "branch": "task/sph-001-speech-web",
   "worktree": "../worktrees/sph-001",
-  "depends_on": [
-    "GOV-004",
-    "LRN-002",
-    "OFF-001"
-  ],
+  "depends_on": ["GOV-004", "LRN-002", "OFF-001"],
   "allowed_paths": [
     "apps/web/app/features/speech/**",
     "apps/web/tests/speech/**"

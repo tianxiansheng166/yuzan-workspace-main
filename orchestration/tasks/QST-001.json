@@ -8,10 +8,7 @@
   "owner": "",
   "branch": "task/qst-001-assessment",
   "worktree": "../worktrees/qst-001",
-  "depends_on": [
-    "CUR-001",
-    "LRN-001"
-  ],
+  "depends_on": ["CUR-001", "LRN-001"],
   "allowed_paths": [
     "apps/api/src/modules/assessment/**",
     "apps/web/app/features/exercises/**",

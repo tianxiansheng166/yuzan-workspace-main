@@ -8,9 +8,7 @@
   "owner": "",
   "branch": "task/des-002-icons",
   "worktree": "../worktrees/des-002",
-  "depends_on": [
-    "GOV-004"
-  ],
+  "depends_on": ["GOV-004"],
   "allowed_paths": [
     "packages/ui/src/icons/**",
     "design-lab/generated/icons/**",

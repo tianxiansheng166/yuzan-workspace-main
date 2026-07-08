@@ -8,10 +8,7 @@
   "owner": "",
   "branch": "task/rpt-001-reporting-api",
   "worktree": "../worktrees/rpt-001",
-  "depends_on": [
-    "SUB-001",
-    "OFF-003"
-  ],
+  "depends_on": ["SUB-001", "OFF-003"],
   "allowed_paths": [
     "apps/api/src/modules/reporting/**",
     "apps/worker/src/reporting/**",

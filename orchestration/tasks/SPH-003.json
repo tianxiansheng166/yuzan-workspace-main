@@ -8,9 +8,7 @@
   "owner": "",
   "branch": "task/sph-003-speech-evaluation",
   "worktree": "../worktrees/sph-003",
-  "depends_on": [
-    "SPH-002"
-  ],
+  "depends_on": ["SPH-002"],
   "allowed_paths": [
     "experiments/speech/**",
     "docs/03-architecture/05-语音评测技术方案.md",

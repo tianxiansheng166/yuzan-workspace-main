@@ -2,7 +2,9 @@
 
 *,
 *::before,
-*::after { box-sizing: border-box; }
+*::after {
+  box-sizing: border-box;
+}
 
 html {
   font-family: var(--yx-font-sans);
@@ -11,27 +13,50 @@ html {
   text-rendering: optimizeLegibility;
 }
 
-body { margin: 0; min-height: 100vh; }
-button, input, textarea, select { font: inherit; }
-img, svg, video { max-width: 100%; display: block; }
-a { color: inherit; }
-:focus-visible { outline: 3px solid var(--yx-color-focus); outline-offset: 3px; }
-::selection { background: var(--yx-color-sage); }
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+img,
+svg,
+video {
+  max-width: 100%;
+  display: block;
+}
+a {
+  color: inherit;
+}
+:focus-visible {
+  outline: 3px solid var(--yx-color-focus);
+  outline-offset: 3px;
+}
+::selection {
+  background: var(--yx-color-sage);
+}
 
 .yx-shell {
   width: min(100% - (2 * var(--yx-gutter)), var(--yx-content-wide));
   margin-inline: auto;
 }
-.yx-reading { max-width: var(--yx-content-reading); }
+.yx-reading {
+  max-width: var(--yx-content-reading);
+}
 .yx-kicker {
   font-size: var(--yx-text-xs);
-  letter-spacing: .14em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--yx-color-wine);
 }
 .yx-visually-hidden {
   position: absolute;
-  width: 1px; height: 1px;
+  width: 1px;
+  height: 1px;
   overflow: hidden;
   clip: rect(0 0 0 0);
   white-space: nowrap;

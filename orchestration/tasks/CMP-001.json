@@ -8,17 +8,8 @@
   "owner": "",
   "branch": "task/cmp-001-competition",
   "worktree": "../worktrees/cmp-001",
-  "depends_on": [
-    "QA-001",
-    "QA-002",
-    "SPH-003",
-    "RPT-001"
-  ],
-  "allowed_paths": [
-    "evidence/**",
-    "docs/07-competition/**",
-    "demo/**"
-  ],
+  "depends_on": ["QA-001", "QA-002", "SPH-003", "RPT-001"],
+  "allowed_paths": ["evidence/**", "docs/07-competition/**", "demo/**"],
   "objective": "将真实实现、测试、试点和技术局限整理成可复核材料和三分钟演示。",
   "acceptance_criteria": [
     "已实现/规划清楚区分",

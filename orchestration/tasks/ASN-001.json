@@ -8,10 +8,7 @@
   "owner": "",
   "branch": "task/asn-001-assignment-api",
   "worktree": "../worktrees/asn-001",
-  "depends_on": [
-    "ORG-001",
-    "CUR-001"
-  ],
+  "depends_on": ["ORG-001", "CUR-001"],
   "allowed_paths": [
     "apps/api/src/modules/assignments/**",
     "apps/api/test/assignments/**"

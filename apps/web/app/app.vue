@@ -9,12 +9,14 @@
 <style>
 .skip-link {
   position: fixed;
-  inset: .75rem auto auto .75rem;
+  inset: 0.75rem auto auto 0.75rem;
   z-index: 1000;
   transform: translateY(-200%);
   background: var(--yx-color-ink);
   color: white;
-  padding: .75rem 1rem;
+  padding: 0.75rem 1rem;
 }
-.skip-link:focus { transform: translateY(0); }
+.skip-link:focus {
+  transform: translateY(0);
+}
 </style>

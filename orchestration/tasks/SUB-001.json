@@ -8,10 +8,7 @@
   "owner": "",
   "branch": "task/sub-001-submission-api",
   "worktree": "../worktrees/sub-001",
-  "depends_on": [
-    "LRN-001",
-    "QST-001"
-  ],
+  "depends_on": ["LRN-001", "QST-001"],
   "allowed_paths": [
     "apps/api/src/modules/submissions/**",
     "apps/api/src/modules/feedback/**",

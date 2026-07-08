@@ -8,10 +8,7 @@
   "owner": "",
   "branch": "task/rpt-002-reporting-web",
   "worktree": "../worktrees/rpt-002",
-  "depends_on": [
-    "GOV-002",
-    "GOV-004"
-  ],
+  "depends_on": ["GOV-002", "GOV-004"],
   "allowed_paths": [
     "apps/web/app/features/reports/**",
     "apps/web/app/pages/reports/**",

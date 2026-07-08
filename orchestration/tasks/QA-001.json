@@ -18,10 +18,7 @@
     "LRN-002",
     "SUB-002"
   ],
-  "allowed_paths": [
-    "tests/e2e/core-loop/**",
-    "playwright.config.ts"
-  ],
+  "allowed_paths": ["tests/e2e/core-loop/**", "playwright.config.ts"],
   "objective": "自动验证发布课程→布置→学习→提交→反馈→查看反馈。",
   "acceptance_criteria": [
     "真实 PostgreSQL",

@@ -1,8 +1,8 @@
 export interface ProgressSnapshot {
-  position: number
-  completed: boolean
-  revision: number
-  updatedAt: string
+  position: number;
+  completed: boolean;
+  revision: number;
+  updatedAt: string;
 }
 
 /**
@@ -21,5 +21,5 @@ export function mergeProgress(
       Date.parse(incoming.updatedAt) > Date.parse(server.updatedAt)
         ? incoming.updatedAt
         : server.updatedAt,
-  }
+  };
 }

@@ -1,1 +1,1 @@
-export type * from './generated.js'
+export type * from "./generated.js";

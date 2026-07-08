@@ -8,11 +8,7 @@
   "owner": "",
   "branch": "task/org-001-organization-api",
   "worktree": "../worktrees/org-001",
-  "depends_on": [
-    "GOV-002",
-    "GOV-003",
-    "GOV-006"
-  ],
+  "depends_on": ["GOV-002", "GOV-003", "GOV-006"],
   "allowed_paths": [
     "apps/api/src/modules/organizations/**",
     "apps/api/src/modules/classes/**",

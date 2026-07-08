@@ -8,9 +8,7 @@
   "owner": "",
   "branch": "task/des-001-visual-assets",
   "worktree": "../worktrees/des-001",
-  "depends_on": [
-    "GOV-004"
-  ],
+  "depends_on": ["GOV-004"],
   "allowed_paths": [
     "design-lab/generated/**",
     "design-lab/reviews/**",

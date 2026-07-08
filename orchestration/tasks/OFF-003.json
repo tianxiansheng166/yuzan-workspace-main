@@ -8,10 +8,7 @@
   "owner": "",
   "branch": "task/off-003-sync-api",
   "worktree": "../worktrees/off-003",
-  "depends_on": [
-    "GOV-003",
-    "SUB-001"
-  ],
+  "depends_on": ["GOV-003", "SUB-001"],
   "allowed_paths": [
     "apps/api/src/modules/sync/**",
     "apps/api/test/sync/**",

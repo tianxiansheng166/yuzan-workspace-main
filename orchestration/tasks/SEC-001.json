@@ -8,13 +8,7 @@
   "owner": "",
   "branch": "task/sec-001-security",
   "worktree": "../worktrees/sec-001",
-  "depends_on": [
-    "IDN-001",
-    "ASN-001",
-    "SUB-001",
-    "OFF-003",
-    "SPH-002"
-  ],
+  "depends_on": ["IDN-001", "ASN-001", "SUB-001", "OFF-003", "SPH-002"],
   "allowed_paths": [
     "tests/security/**",
     "docs/05-quality/**",

@@ -8,14 +8,8 @@
   "owner": "",
   "branch": "task/qa-002-qa",
   "worktree": "../worktrees/qa-002",
-  "depends_on": [
-    "OFF-002",
-    "OFF-003"
-  ],
-  "allowed_paths": [
-    "tests/e2e/offline/**",
-    "tests/performance/sync/**"
-  ],
+  "depends_on": ["OFF-002", "OFF-003"],
+  "allowed_paths": ["tests/e2e/offline/**", "tests/performance/sync/**"],
   "objective": "验证飞行模式、重启、重复、冲突、存储不足和网络抖动。",
   "acceptance_criteria": [
     "断网完成并恢复",

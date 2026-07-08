@@ -4,8 +4,8 @@ packages:
   - infra/database
 
 onlyBuiltDependencies:
-  - '@parcel/watcher'
-  - '@prisma/engines'
+  - "@parcel/watcher"
+  - "@prisma/engines"
   - core-js
   - esbuild
   - prisma
