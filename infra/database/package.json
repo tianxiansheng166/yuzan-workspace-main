@@ -12,7 +12,8 @@
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "prisma validate",
-    "test": "prisma validate"
+    "test": "prisma validate && node --test prisma/migration.contract.test.mjs",
+    "test:integration": "node --test prisma/behavior.test.mjs"
   },
   "dependencies": {
     "@prisma/client": "^7.8.0"
