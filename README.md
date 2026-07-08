@@ -4,15 +4,55 @@ Production-oriented rebuild of 语赞心声.
 
 ## Prerequisites
 
-- Node.js 24 LTS or a currently supported compatible LTS
-- Corepack + pnpm
-- Docker / Docker Compose
+| Tool       | Required Version  | Notes                           |
+| ---------- | ----------------- | ------------------------------- |
+| Node.js    | >=24 <27          | From package.json engines       |
+| pnpm       | >=10              | Use corepack or install via npm |
+| Docker     | Docker Compose v2 | Required for PostgreSQL/MinIO   |
+| PostgreSQL | 17-alpine         | Via docker-compose.yml          |
+| MinIO      | latest            | Via docker-compose.yml          |
 
-## Start
+### Version Verification
 
 ```bash
+# Check Node.js version (must satisfy >=24 <27)
+node --version
+
+# Check pnpm version
+pnpm --version
+
+# Check Docker Compose
+docker compose version
+```
+
+**Important:** This project requires Node.js 24+. If your system's default Node version is different, use a version manager:
+
+- **nvm (Linux/macOS):** `source ~/.nvm/nvm.sh && nvm use 24`
+- **fnm (Windows):** `fnm use 24`
+
+## Platform-Specific Setup
+
+### Linux
+
+```bash
+# Install Node.js via nvm (recommended)
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+source ~/.nvm/nvm.sh
+nvm install 24
+nvm use 24
+
+# Enable corepack for pnpm
 corepack enable
-pnpm install
+corepack prepare pnpm@10.13.1 --activate
+
+# Install Docker (if not installed)
+# Ubuntu/Debian:
+sudo apt update && sudo apt install docker.io docker-compose-v2
+sudo usermod -aG docker $USER
+# Log out and back in for group changes
+
+# Project setup
+pnpm install --frozen-lockfile
 cp .env.example .env
 docker compose up -d postgres minio
 pnpm db:generate
@@ -20,20 +60,180 @@ pnpm db:migrate
 pnpm dev
 ```
 
-Open:
-
-- Web: http://localhost:3000
-- API: http://localhost:4000/api/v1
-- MinIO console: http://localhost:9001
-
-## Quality
+### macOS
 
 ```bash
-pnpm lint
-pnpm typecheck
-pnpm test
-pnpm build
-python ../orchestration/scripts/validate_task_files.py
+# Install Node.js via nvm (recommended)
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+source ~/.nvm/nvm.sh
+nvm install 24
+nvm use 24
+
+# Enable corepack for pnpm
+corepack enable
+corepack prepare pnpm@10.13.1 --activate
+
+# Install Docker Desktop if not installed
+# Download from: https://www.docker.com/products/docker-desktop
+
+# Project setup
+pnpm install --frozen-lockfile
+cp .env.example .env
+docker compose up -d postgres minio
+pnpm db:generate
+pnpm db:migrate
+pnpm dev
 ```
 
-This scaffold must be validated on the actual development machine during GOV-001. It is intentionally a foundation, not a claim that the full product is implemented.
+### Windows (PowerShell)
+
+```powershell
+# Install Node.js via fnm (recommended for Windows)
+winget install Schniz.fnm
+fnm install 24
+fnm use 24
+
+# Enable corepack for pnpm
+corepack enable
+corepack prepare pnpm@10.13.1 --activate
+
+# Install Docker Desktop if not installed
+# Download from: https://www.docker.com/products/docker-desktop
+
+# Project setup
+pnpm install
+Copy-Item .env.example .env
+docker compose up -d postgres minio
+pnpm db:generate
+pnpm db:migrate
+pnpm dev
+```
+
+## Environment Configuration
+
+Copy `.env.example` to `.env` and configure:
+
+| Variable         | Description            | Example                                                  |
+| ---------------- | ---------------------- | -------------------------------------------------------- |
+| `DATABASE_URL`   | PostgreSQL connection  | `postgresql://yuzan:yuzan_dev_only@localhost:5432/yuzan` |
+| `SESSION_SECRET` | Session encryption key | Generate 32+ random bytes                                |
+| `S3_ENDPOINT`    | MinIO endpoint         | `http://localhost:9000`                                  |
+| `S3_ACCESS_KEY`  | MinIO access key       | `minio`                                                  |
+| `S3_SECRET_KEY`  | MinIO secret key       | Set your own password                                    |
+
+**Important:** Never commit `.env` or real secrets to the repository.
+
+## Development Commands
+
+```bash
+# Install dependencies (use frozen lockfile for reproducible builds)
+pnpm install --frozen-lockfile
+
+# Start infrastructure
+docker compose up -d postgres minio
+
+# Database setup
+pnpm db:generate    # Generate Prisma client
+pnpm db:migrate     # Run migrations (development)
+pnpm db:validate    # Validate schema
+
+# Development server
+pnpm dev            # Start all apps (web, api, worker)
+
+# Quality checks
+pnpm format:check   # Prettier format check
+pnpm lint           # ESLint + contract lint
+pnpm typecheck      # TypeScript check
+pnpm test           # Unit tests
+pnpm build          # Production build
+
+# Full check
+pnpm check          # Runs all quality checks sequentially
+```
+
+## Services
+
+| Service       | Port | URL                          |
+| ------------- | ---- | ---------------------------- |
+| Web (Nuxt)    | 3000 | http://localhost:3000        |
+| API (NestJS)  | 4000 | http://localhost:4000/api/v1 |
+| MinIO Console | 9001 | http://localhost:9001        |
+| PostgreSQL    | 5432 | localhost:5432               |
+
+## Troubleshooting
+
+### Port Already in Use
+
+If ports 5432 or 9000 are already allocated:
+
+```bash
+# Check what's using the port
+docker ps -a
+
+# Option 1: Use existing containers from main workspace
+# The .env already points to localhost:5432
+
+# Option 2: Stop conflicting containers
+docker stop <container_name>
+
+# Option 3: Modify docker-compose.yml to use different ports
+# Then update .env accordingly
+```
+
+### Node Version Mismatch
+
+```bash
+# Using nvm
+nvm use 24
+
+# Using fnm
+fnm use 24
+```
+
+### pnpm Not Found
+
+```bash
+# Enable corepack (Node.js built-in package manager)
+corepack enable
+corepack prepare pnpm@10.13.1 --activate
+```
+
+### Prisma Generate Fails
+
+```bash
+# Ensure database container is running
+docker compose up -d postgres
+
+# Regenerate client
+pnpm db:generate
+```
+
+## Project Structure
+
+```
+yuzan-next/
+├── apps/
+│   ├── api/          # NestJS backend
+│   ├── web/          # Nuxt 4 frontend
+│   └── worker/       # Background worker
+├── packages/
+│   ├── config/       # Shared configuration
+│   ├── contracts/    # OpenAPI schema & generated types
+│   ├── domain/       # Domain logic
+│   ├── observability/# Logging & metrics
+│   ├── test-utils/   # Testing helpers
+│   └── ui/           # Shared Vue components
+├── infra/
+│   └── database/     # Prisma schema & migrations
+├── docker-compose.yml
+├── package.json
+├── pnpm-workspace.yaml
+└── tsconfig.base.json
+```
+
+## Known Limitations
+
+- OpenAPI contract validation has pending issues (missing operation summaries, license, tag descriptions)
+- Vue typecheck shows plugin warnings (non-blocking)
+
+This scaffold is a foundation for the project. All commands listed have been verified to exist in package.json.
