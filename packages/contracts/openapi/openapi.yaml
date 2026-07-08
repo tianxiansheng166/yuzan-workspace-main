@@ -3,21 +3,34 @@ info:
   title: 语赞心声 API
   version: 0.1.0
   description: Contract baseline for the first real teaching loop.
+  license:
+    name: Proprietary
 servers:
-  - url: http://localhost:4000/api/v1
+  - url: /api/v1
+    description: Current deployment origin
 tags:
   - name: Health
+    description: 服务健康检查与依赖就绪状态
   - name: Auth
+    description: 身份认证、会话刷新与当前身份信息
   - name: Curriculum
+    description: 课程版本、草稿与教研发布流程
   - name: Classes
+    description: 学校班级与学期管理
   - name: Assignments
+    description: 任务布置、开放与状态转换
   - name: Learning
+    description: 学生今日任务与活动进度
   - name: Submissions
+    description: 学生任务提交与尝试
   - name: Feedback
+    description: 教师反馈、复核与退回
   - name: Sync
+    description: 离线同步操作推送与增量拉取
 paths:
   /health/live:
     get:
+      summary: 存活探针
       tags: [Health]
       operationId: getLiveness
       security: []
@@ -28,8 +41,19 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthResponse"
+              example:
+                data:
+                  status: ok
+                  timestamp: "2026-07-09T09:00:00Z"
+                meta:
+                  requestId: "00000000-0000-0000-0000-000000000001"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
   /health/ready:
     get:
+      summary: 就绪探针
       tags: [Health]
       operationId: getReadiness
       security: []
@@ -40,10 +64,13 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
         "503":
           $ref: "#/components/responses/ServiceUnavailable"
   /auth/login:
     post:
+      summary: 用户登录
       tags: [Auth]
       operationId: login
       security: []
@@ -53,6 +80,9 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/LoginRequest"
+            example:
+              identifier: "teacher@example.edu"
+              password: "secure-placeholder"
       responses:
         "200":
           description: Authenticated
@@ -60,12 +90,15 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AuthSessionResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
         "401":
           $ref: "#/components/responses/Unauthorized"
         "429":
           $ref: "#/components/responses/TooManyRequests"
   /auth/refresh:
     post:
+      summary: 刷新会话
       tags: [Auth]
       operationId: refreshSession
       security: []
@@ -76,19 +109,25 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AuthSessionResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
         "401":
           $ref: "#/components/responses/Unauthorized"
   /auth/logout:
     post:
+      summary: 退出登录
       tags: [Auth]
       operationId: logout
       responses:
         "204":
           description: Session revoked
+        "400":
+          $ref: "#/components/responses/BadRequest"
         "401":
           $ref: "#/components/responses/Unauthorized"
   /me:
     get:
+      summary: 获取当前用户
       tags: [Auth]
       operationId: getCurrentUser
       responses:
@@ -100,11 +139,13 @@ paths:
                 $ref: "#/components/schemas/CurrentUserResponse"
         "401":
           $ref: "#/components/responses/Unauthorized"
-  /course-versions:
+  /schools/{schoolId}/course-versions:
     get:
+      summary: 列出课程版本
       tags: [Curriculum]
       operationId: listCourseVersions
       parameters:
+        - $ref: "#/components/parameters/SchoolId"
         - $ref: "#/components/parameters/Limit"
         - $ref: "#/components/parameters/Cursor"
         - in: query
@@ -118,17 +159,31 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CourseVersionListResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
         "401":
           $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
     post:
+      summary: 创建课程草稿
       tags: [Curriculum]
       operationId: createCourseDraft
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: "#/components/schemas/CreateCourseDraftRequest"
+            example:
+              title: "一年级语音入门"
+              description: "语音意识基础课程"
+              gradeBand: "一年级"
+              locale: "zh-CN"
       responses:
         "201":
           description: Draft created
@@ -136,13 +191,21 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CourseVersionResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
-  /course-versions/{courseVersionId}:publish:
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /schools/{schoolId}/course-versions/{courseVersionId}:publish:
     post:
+      summary: 发布课程版本
       tags: [Curriculum]
       operationId: publishCourseVersion
       parameters:
+        - $ref: "#/components/parameters/SchoolId"
         - $ref: "#/components/parameters/CourseVersionId"
       responses:
         "200":
@@ -151,12 +214,25 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CourseVersionResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
         "409":
           $ref: "#/components/responses/Conflict"
-  /classes:
+  /schools/{schoolId}/classes:
     get:
+      summary: 列出班级
       tags: [Classes]
       operationId: listClasses
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Cursor"
       responses:
         "200":
           description: Classes in active school scope
@@ -164,16 +240,34 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ClassListResponse"
-  /assignments:
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /schools/{schoolId}/assignments:
     post:
+      summary: 布置任务
       tags: [Assignments]
       operationId: createAssignment
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: "#/components/schemas/CreateAssignmentRequest"
+            example:
+              classId: "11111111-1111-1111-1111-111111111111"
+              courseVersionId: "22222222-2222-2222-2222-222222222222"
+              title: "第一周语音练习"
+              startsAt: "2026-07-10T00:00:00Z"
+              dueAt: "2026-07-17T23:59:59Z"
+              offlineRequired: true
       responses:
         "201":
           description: Assignment created
@@ -181,15 +275,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AssignmentResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
         "409":
           $ref: "#/components/responses/Conflict"
-  /assignments/{assignmentId}:open:
+  /schools/{schoolId}/assignments/{assignmentId}:open:
     post:
+      summary: 开放任务
       tags: [Assignments]
       operationId: openAssignment
       parameters:
+        - $ref: "#/components/parameters/SchoolId"
         - $ref: "#/components/parameters/AssignmentId"
       responses:
         "200":
@@ -198,12 +300,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AssignmentResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
         "409":
           $ref: "#/components/responses/Conflict"
-  /students/me/today:
+  /schools/{schoolId}/students/me/today:
     get:
+      summary: 获取学生今日任务
       tags: [Learning]
       operationId: getMyTodayTasks
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
       responses:
         "200":
           description: Student today tasks
@@ -211,13 +324,21 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/TodayTasksResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
-  /activities/{activityId}/progress:
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /schools/{schoolId}/activities/{activityId}/progress:
     put:
+      summary: 保存活动进度
       tags: [Learning]
       operationId: saveActivityProgress
       parameters:
+        - $ref: "#/components/parameters/SchoolId"
         - $ref: "#/components/parameters/ActivityId"
         - $ref: "#/components/parameters/IfMatch"
       requestBody:
@@ -226,6 +347,10 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/SaveProgressRequest"
+            example:
+              position: 12
+              completed: false
+              clientUpdatedAt: "2026-07-09T08:30:00Z"
       responses:
         "200":
           description: Progress saved
@@ -233,13 +358,25 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ProgressResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
         "409":
           $ref: "#/components/responses/Conflict"
-  /assignments/{assignmentId}/submissions:
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /schools/{schoolId}/assignments/{assignmentId}/submissions:
     post:
+      summary: 提交任务答案
       tags: [Submissions]
       operationId: submitAssignment
       parameters:
+        - $ref: "#/components/parameters/SchoolId"
         - $ref: "#/components/parameters/AssignmentId"
         - $ref: "#/components/parameters/IdempotencyKey"
       requestBody:
@@ -248,6 +385,14 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/SubmitAssignmentRequest"
+            example:
+              attemptNo: 1
+              deviceId: "33333333-3333-3333-3333-333333333333"
+              answers:
+                - activityId: "44444444-4444-4444-4444-444444444444"
+                  kind: "TEXT"
+                  value: "示范回答"
+                  audioAssetId: null
       responses:
         "201":
           description: Submission accepted
@@ -255,13 +400,25 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SubmissionResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
         "409":
           $ref: "#/components/responses/Conflict"
-  /submissions/{submissionId}/feedback:
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /schools/{schoolId}/submissions/{submissionId}/feedback:
     post:
+      summary: 发布教师反馈
       tags: [Feedback]
       operationId: releaseFeedback
       parameters:
+        - $ref: "#/components/parameters/SchoolId"
         - $ref: "#/components/parameters/SubmissionId"
         - $ref: "#/components/parameters/IfMatch"
       requestBody:
@@ -270,6 +427,10 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/ReleaseFeedbackRequest"
+            example:
+              decision: "ACCEPT"
+              comment: "发音清晰，继续加油"
+              score: 85
       responses:
         "200":
           description: Feedback released
@@ -277,20 +438,44 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/FeedbackResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
         "409":
           $ref: "#/components/responses/Conflict"
-  /sync/push:
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /schools/{schoolId}/sync/push:
     post:
+      summary: 推送离线同步操作
       tags: [Sync]
       operationId: pushSyncOperations
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/IdempotencyKey"
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: "#/components/schemas/SyncPushRequest"
+            example:
+              deviceId: "55555555-5555-5555-5555-555555555555"
+              operations:
+                - operationId: "66666666-6666-6666-6666-666666666666"
+                  entityType: "progress"
+                  entityId: "77777777-7777-7777-7777-777777777777"
+                  action: "upsert"
+                  baseRevision: 3
+                  payload:
+                    position: 12
+                    completed: false
+                  createdAt: "2026-07-09T08:30:00Z"
       responses:
         "200":
           description: Per-operation receipts
@@ -298,11 +483,25 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SyncPushResponse"
-  /sync/pull:
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /schools/{schoolId}/sync/pull:
     get:
+      summary: 拉取增量变更
       tags: [Sync]
       operationId: pullSyncChanges
       parameters:
+        - $ref: "#/components/parameters/SchoolId"
         - in: query
           name: cursor
           schema:
@@ -314,6 +513,16 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SyncPullResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
 components:
   securitySchemes:
     bearerAuth:
@@ -321,9 +530,19 @@ components:
       scheme: bearer
       bearerFormat: JWT
   parameters:
+    SchoolId:
+      in: path
+      name: schoolId
+      required: true
+      description: 学校（租户）标识
+      schema:
+        type: string
+        format: uuid
+        example: "00000000-0000-0000-0000-000000000000"
     Limit:
       in: query
       name: limit
+      description: 分页返回数量上限
       schema:
         type: integer
         minimum: 1
@@ -332,12 +551,14 @@ components:
     Cursor:
       in: query
       name: cursor
+      description: 游标， opaque 字符串
       schema:
         type: string
     CourseVersionId:
       in: path
       name: courseVersionId
       required: true
+      description: 课程版本 ID
       schema:
         type: string
         format: uuid
@@ -345,6 +566,7 @@ components:
       in: path
       name: assignmentId
       required: true
+      description: 任务 ID
       schema:
         type: string
         format: uuid
@@ -352,6 +574,7 @@ components:
       in: path
       name: activityId
       required: true
+      description: 学习活动 ID
       schema:
         type: string
         format: uuid
@@ -359,6 +582,7 @@ components:
       in: path
       name: submissionId
       required: true
+      description: 提交 ID
       schema:
         type: string
         format: uuid
@@ -366,6 +590,7 @@ components:
       in: header
       name: Idempotency-Key
       required: true
+      description: 幂等键，与认证主体、路由和请求摘要绑定；重复请求返回首次业务结果，具体保留期限由服务端策略决定
       schema:
         type: string
         minLength: 16
@@ -374,9 +599,22 @@ components:
       in: header
       name: If-Match
       required: true
+      description: 客户端持有的资源 revision，冲突时返回 409
       schema:
         type: string
   responses:
+    BadRequest:
+      description: 请求参数无效或格式错误
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            error:
+              code: INVALID_REQUEST
+              message: 请求参数无效
+              details: {}
+              requestId: "00000000-0000-0000-0000-000000000002"
     Unauthorized:
       description: Authentication required or invalid
       content:
@@ -385,6 +623,12 @@ components:
             $ref: "#/components/schemas/ErrorResponse"
     Forbidden:
       description: Authenticated but outside allowed resource scope
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    NotFound:
+      description: Resource does not exist or is not visible in the current school scope
       content:
         application/json:
           schema:
@@ -407,85 +651,149 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/ErrorResponse"
+    InternalServerError:
+      description: 服务端内部错误
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
   schemas:
     EnvelopeMeta:
       type: object
       required: [requestId]
       properties:
-        requestId: { type: string }
-        nextCursor: { type: [string, "null"] }
-        hasMore: { type: boolean }
+        requestId:
+          type: string
+          format: uuid
+        nextCursor:
+          type: [string, "null"]
+        hasMore:
+          type: boolean
+      example:
+        requestId: "00000000-0000-0000-0000-000000000001"
+        nextCursor: null
+        hasMore: false
     ErrorBody:
       type: object
       required: [code, message, requestId]
       properties:
-        code: { type: string }
-        message: { type: string }
-        details: { type: object, additionalProperties: true }
-        requestId: { type: string }
+        code:
+          type: string
+          pattern: "^[A-Z][A-Z0-9_]*$"
+          minLength: 1
+        message:
+          type: string
+        details:
+          type: object
+          additionalProperties:
+            oneOf:
+              - type: string
+              - type: number
+              - type: boolean
+              - type: "null"
+              - type: array
+                items:
+                  type: string
+        requestId:
+          type: string
+          format: uuid
     ErrorResponse:
       type: object
       required: [error]
       properties:
-        error: { $ref: "#/components/schemas/ErrorBody" }
+        error:
+          $ref: "#/components/schemas/ErrorBody"
+      example:
+        error:
+          code: ASSIGNMENT_NOT_OPEN
+          message: 当前任务尚未开放
+          details:
+            assignmentId: "11111111-1111-1111-1111-111111111111"
+          requestId: "00000000-0000-0000-0000-000000000003"
     Health:
       type: object
       required: [status, timestamp]
       properties:
-        status: { type: string, enum: [ok, degraded] }
-        timestamp: { type: string, format: date-time }
+        status:
+          type: string
+          enum: [ok, degraded]
+        timestamp:
+          type: string
+          format: date-time
     HealthResponse:
       type: object
       required: [data, meta]
       properties:
-        data: { $ref: "#/components/schemas/Health" }
-        meta: { $ref: "#/components/schemas/EnvelopeMeta" }
+        data:
+          $ref: "#/components/schemas/Health"
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
     LoginRequest:
       type: object
       required: [identifier, password]
       properties:
-        identifier: { type: string, minLength: 1, maxLength: 254 }
-        password: { type: string, minLength: 8, maxLength: 128 }
+        identifier:
+          type: string
+          minLength: 1
+          maxLength: 254
+        password:
+          type: string
+          minLength: 8
+          maxLength: 128
     Membership:
       type: object
       required: [schoolId, schoolName, role]
       properties:
-        schoolId: { type: string, format: uuid }
-        schoolName: { type: string }
+        schoolId:
+          type: string
+          format: uuid
+        schoolName:
+          type: string
         role:
-          {
-            type: string,
-            enum: [STUDENT, TEACHER, RESEARCHER, SCHOOL_ADMIN, PLATFORM_ADMIN],
-          }
+          type: string
+          enum: [STUDENT, TEACHER, RESEARCHER, SCHOOL_ADMIN, PLATFORM_ADMIN]
     CurrentUser:
       type: object
       required: [id, displayName, memberships]
       properties:
-        id: { type: string, format: uuid }
-        displayName: { type: string }
-        preferredLocale: { type: string, default: zh-CN }
+        id:
+          type: string
+          format: uuid
+        displayName:
+          type: string
+        preferredLocale:
+          type: string
+          default: zh-CN
         memberships:
           type: array
-          items: { $ref: "#/components/schemas/Membership" }
+          items:
+            $ref: "#/components/schemas/Membership"
     AuthSession:
       type: object
       required: [accessToken, expiresIn, user]
       properties:
-        accessToken: { type: string }
-        expiresIn: { type: integer }
-        user: { $ref: "#/components/schemas/CurrentUser" }
+        accessToken:
+          type: string
+        expiresIn:
+          type: integer
+        user:
+          $ref: "#/components/schemas/CurrentUser"
     AuthSessionResponse:
       type: object
       required: [data, meta]
       properties:
-        data: { $ref: "#/components/schemas/AuthSession" }
-        meta: { $ref: "#/components/schemas/EnvelopeMeta" }
+        data:
+          $ref: "#/components/schemas/AuthSession"
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
     CurrentUserResponse:
       type: object
       required: [data, meta]
       properties:
-        data: { $ref: "#/components/schemas/CurrentUser" }
-        meta: { $ref: "#/components/schemas/EnvelopeMeta" }
+        data:
+          $ref: "#/components/schemas/CurrentUser"
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
     CourseVersionStatus:
       type: string
       enum: [DRAFT, IN_REVIEW, CHANGES_REQUESTED, APPROVED, PUBLISHED, RETIRED]
@@ -493,51 +801,82 @@ components:
       type: object
       required: [id, courseId, version, title, status, updatedAt]
       properties:
-        id: { type: string, format: uuid }
-        courseId: { type: string, format: uuid }
-        version: { type: integer, minimum: 1 }
-        title: { type: string }
-        status: { $ref: "#/components/schemas/CourseVersionStatus" }
-        gradeBand: { type: [string, "null"] }
-        updatedAt: { type: string, format: date-time }
+        id:
+          type: string
+          format: uuid
+        courseId:
+          type: string
+          format: uuid
+        version:
+          type: integer
+          minimum: 1
+        title:
+          type: string
+        status:
+          $ref: "#/components/schemas/CourseVersionStatus"
+        gradeBand:
+          type: [string, "null"]
+        updatedAt:
+          type: string
+          format: date-time
     CourseVersionListResponse:
       type: object
       required: [data, meta]
       properties:
         data:
           type: array
-          items: { $ref: "#/components/schemas/CourseVersionSummary" }
-        meta: { $ref: "#/components/schemas/EnvelopeMeta" }
+          items:
+            $ref: "#/components/schemas/CourseVersionSummary"
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
     CreateCourseDraftRequest:
       type: object
       required: [title]
       properties:
-        title: { type: string, minLength: 1, maxLength: 160 }
-        description: { type: string, maxLength: 2000 }
-        gradeBand: { type: string }
-        locale: { type: string, default: zh-CN }
+        title:
+          type: string
+          minLength: 1
+          maxLength: 160
+        description:
+          type: string
+          maxLength: 2000
+        gradeBand:
+          type: string
+        locale:
+          type: string
+          default: zh-CN
     CourseVersionResponse:
       type: object
       required: [data, meta]
       properties:
-        data: { $ref: "#/components/schemas/CourseVersionSummary" }
-        meta: { $ref: "#/components/schemas/EnvelopeMeta" }
+        data:
+          $ref: "#/components/schemas/CourseVersionSummary"
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
     ClassSummary:
       type: object
       required: [id, name, grade, studentCount]
       properties:
-        id: { type: string, format: uuid }
-        name: { type: string }
-        grade: { type: string }
-        studentCount: { type: integer, minimum: 0 }
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        grade:
+          type: string
+        studentCount:
+          type: integer
+          minimum: 0
     ClassListResponse:
       type: object
       required: [data, meta]
       properties:
         data:
           type: array
-          items: { $ref: "#/components/schemas/ClassSummary" }
-        meta: { $ref: "#/components/schemas/EnvelopeMeta" }
+          items:
+            $ref: "#/components/schemas/ClassSummary"
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
     AssignmentStatus:
       type: string
       enum: [DRAFT, SCHEDULED, OPEN, CLOSED, CANCELLED, ARCHIVED]
@@ -545,32 +884,62 @@ components:
       type: object
       required: [classId, courseVersionId, title, startsAt, dueAt]
       properties:
-        classId: { type: string, format: uuid }
-        courseVersionId: { type: string, format: uuid }
-        title: { type: string, minLength: 1, maxLength: 160 }
-        startsAt: { type: string, format: date-time }
-        dueAt: { type: string, format: date-time }
-        offlineRequired: { type: boolean, default: false }
+        classId:
+          type: string
+          format: uuid
+        courseVersionId:
+          type: string
+          format: uuid
+        title:
+          type: string
+          minLength: 1
+          maxLength: 160
+        startsAt:
+          type: string
+          format: date-time
+        dueAt:
+          type: string
+          format: date-time
+        offlineRequired:
+          type: boolean
+          default: false
     Assignment:
       type: object
       required:
         [id, classId, courseVersionId, title, status, startsAt, dueAt, revision]
       properties:
-        id: { type: string, format: uuid }
-        classId: { type: string, format: uuid }
-        courseVersionId: { type: string, format: uuid }
-        title: { type: string }
-        status: { $ref: "#/components/schemas/AssignmentStatus" }
-        startsAt: { type: string, format: date-time }
-        dueAt: { type: string, format: date-time }
-        revision: { type: integer, minimum: 1 }
-        offlineRequired: { type: boolean }
+        id:
+          type: string
+          format: uuid
+        classId:
+          type: string
+          format: uuid
+        courseVersionId:
+          type: string
+          format: uuid
+        title:
+          type: string
+        status:
+          $ref: "#/components/schemas/AssignmentStatus"
+        startsAt:
+          type: string
+          format: date-time
+        dueAt:
+          type: string
+          format: date-time
+        revision:
+          type: integer
+          minimum: 1
+        offlineRequired:
+          type: boolean
     AssignmentResponse:
       type: object
       required: [data, meta]
       properties:
-        data: { $ref: "#/components/schemas/Assignment" }
-        meta: { $ref: "#/components/schemas/EnvelopeMeta" }
+        data:
+          $ref: "#/components/schemas/Assignment"
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
     TodayTask:
       allOf:
         - $ref: "#/components/schemas/Assignment"
@@ -578,170 +947,254 @@ components:
           required: [progressStatus, downloadStatus]
           properties:
             progressStatus:
-              {
-                type: string,
-                enum:
-                  [NOT_STARTED, IN_PROGRESS, PENDING_SYNC, SUBMITTED, REVIEWED],
-              }
+              type: string
+              enum:
+                [NOT_STARTED, IN_PROGRESS, PENDING_SYNC, SUBMITTED, REVIEWED]
             downloadStatus:
-              {
-                type: string,
-                enum:
-                  [NOT_REQUIRED, NOT_DOWNLOADED, DOWNLOADING, READY, FAILED],
-              }
+              type: string
+              enum: [NOT_REQUIRED, NOT_DOWNLOADED, DOWNLOADING, READY, FAILED]
     TodayTasksResponse:
       type: object
       required: [data, meta]
       properties:
         data:
           type: array
-          items: { $ref: "#/components/schemas/TodayTask" }
-        meta: { $ref: "#/components/schemas/EnvelopeMeta" }
+          items:
+            $ref: "#/components/schemas/TodayTask"
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
     SaveProgressRequest:
       type: object
       required: [position, completed]
       properties:
-        position: { type: number, minimum: 0 }
-        completed: { type: boolean }
-        clientUpdatedAt: { type: string, format: date-time }
+        position:
+          type: number
+          minimum: 0
+        completed:
+          type: boolean
+        clientUpdatedAt:
+          type: string
+          format: date-time
     Progress:
       type: object
       required: [activityId, position, completed, revision, updatedAt]
       properties:
-        activityId: { type: string, format: uuid }
-        position: { type: number }
-        completed: { type: boolean }
-        revision: { type: integer }
-        updatedAt: { type: string, format: date-time }
+        activityId:
+          type: string
+          format: uuid
+        position:
+          type: number
+        completed:
+          type: boolean
+        revision:
+          type: integer
+        updatedAt:
+          type: string
+          format: date-time
     ProgressResponse:
       type: object
       required: [data, meta]
       properties:
-        data: { $ref: "#/components/schemas/Progress" }
-        meta: { $ref: "#/components/schemas/EnvelopeMeta" }
+        data:
+          $ref: "#/components/schemas/Progress"
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
     AnswerInput:
       type: object
       required: [activityId, kind]
       properties:
-        activityId: { type: string, format: uuid }
-        kind: { type: string, enum: [CHOICE, TEXT, SPEECH] }
-        value: {}
-        audioAssetId: { type: [string, "null"], format: uuid }
+        activityId:
+          type: string
+          format: uuid
+        kind:
+          type: string
+          enum: [CHOICE, TEXT, SPEECH]
+        value:
+          type: [string, number, boolean, array, object, "null"]
+          description: 答案内容占位类型，具体按 CHOICE/TEXT/SPEECH 的结构化形态待领域模型确认
+        audioAssetId:
+          type: [string, "null"]
+          format: uuid
     SubmitAssignmentRequest:
       type: object
       required: [attemptNo, answers]
       properties:
-        attemptNo: { type: integer, minimum: 1 }
-        deviceId: { type: [string, "null"], format: uuid }
+        attemptNo:
+          type: integer
+          minimum: 1
+        deviceId:
+          type: [string, "null"]
+          format: uuid
         answers:
           type: array
-          items: { $ref: "#/components/schemas/AnswerInput" }
+          items:
+            $ref: "#/components/schemas/AnswerInput"
     Submission:
       type: object
       required: [id, assignmentId, status, attemptNo, revision, submittedAt]
       properties:
-        id: { type: string, format: uuid }
-        assignmentId: { type: string, format: uuid }
+        id:
+          type: string
+          format: uuid
+        assignmentId:
+          type: string
+          format: uuid
         status:
-          {
-            type: string,
-            enum:
-              [
-                SUBMITTED,
-                PROCESSING,
-                NEEDS_REVIEW,
-                REVIEWED,
-                RETURNED,
-                ACCEPTED,
-              ],
-          }
-        attemptNo: { type: integer }
-        revision: { type: integer }
-        submittedAt: { type: string, format: date-time }
+          type: string
+          enum:
+            [SUBMITTED, PROCESSING, NEEDS_REVIEW, REVIEWED, RETURNED, ACCEPTED]
+        attemptNo:
+          type: integer
+        revision:
+          type: integer
+        submittedAt:
+          type: string
+          format: date-time
     SubmissionResponse:
       type: object
       required: [data, meta]
       properties:
-        data: { $ref: "#/components/schemas/Submission" }
-        meta: { $ref: "#/components/schemas/EnvelopeMeta" }
+        data:
+          $ref: "#/components/schemas/Submission"
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
     ReleaseFeedbackRequest:
       type: object
       required: [decision, comment]
       properties:
-        decision: { type: string, enum: [ACCEPT, RETURN] }
-        comment: { type: string, minLength: 1, maxLength: 4000 }
-        score: { type: [number, "null"], minimum: 0, maximum: 100 }
+        decision:
+          type: string
+          enum: [ACCEPT, RETURN]
+        comment:
+          type: string
+          minLength: 1
+          maxLength: 4000
+        score:
+          type: [number, "null"]
+          minimum: 0
+          maximum: 100
     Feedback:
       type: object
       required: [id, submissionId, decision, comment, releasedAt, revision]
       properties:
-        id: { type: string, format: uuid }
-        submissionId: { type: string, format: uuid }
-        decision: { type: string, enum: [ACCEPT, RETURN] }
-        comment: { type: string }
-        score: { type: [number, "null"] }
-        releasedAt: { type: string, format: date-time }
-        revision: { type: integer }
+        id:
+          type: string
+          format: uuid
+        submissionId:
+          type: string
+          format: uuid
+        decision:
+          type: string
+          enum: [ACCEPT, RETURN]
+        comment:
+          type: string
+        score:
+          type: [number, "null"]
+        releasedAt:
+          type: string
+          format: date-time
+        revision:
+          type: integer
     FeedbackResponse:
       type: object
       required: [data, meta]
       properties:
-        data: { $ref: "#/components/schemas/Feedback" }
-        meta: { $ref: "#/components/schemas/EnvelopeMeta" }
+        data:
+          $ref: "#/components/schemas/Feedback"
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
     SyncOperation:
       type: object
       required: [operationId, entityType, entityId, action, payload, createdAt]
       properties:
-        operationId: { type: string, format: uuid }
-        entityType: { type: string }
-        entityId: { type: string }
-        action: { type: string }
-        baseRevision: { type: [integer, "null"] }
-        payload: { type: object, additionalProperties: true }
-        createdAt: { type: string, format: date-time }
+        operationId:
+          type: string
+          format: uuid
+        entityType:
+          type: string
+        entityId:
+          type: string
+        action:
+          type: string
+        baseRevision:
+          type: [integer, "null"]
+        payload:
+          $ref: "#/components/schemas/SyncPayload"
+        createdAt:
+          type: string
+          format: date-time
     SyncPushRequest:
       type: object
       required: [deviceId, operations]
       properties:
-        deviceId: { type: string, format: uuid }
+        deviceId:
+          type: string
+          format: uuid
         operations:
           type: array
           maxItems: 100
-          items: { $ref: "#/components/schemas/SyncOperation" }
+          items:
+            $ref: "#/components/schemas/SyncOperation"
     SyncReceipt:
       type: object
       required: [operationId, status]
       properties:
-        operationId: { type: string, format: uuid }
+        operationId:
+          type: string
+          format: uuid
         status:
-          { type: string, enum: [ACKNOWLEDGED, CONFLICT, PERMANENT_FAILURE] }
-        serverRevision: { type: [integer, "null"] }
-        errorCode: { type: [string, "null"] }
+          type: string
+          enum: [ACKNOWLEDGED, CONFLICT, PERMANENT_FAILURE]
+        serverRevision:
+          type: [integer, "null"]
+        errorCode:
+          type: [string, "null"]
     SyncPushResponse:
       type: object
       required: [data, meta]
       properties:
         data:
           type: array
-          items: { $ref: "#/components/schemas/SyncReceipt" }
-        meta: { $ref: "#/components/schemas/EnvelopeMeta" }
+          items:
+            $ref: "#/components/schemas/SyncReceipt"
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
     SyncChange:
       type: object
       required: [changeId, entityType, entityId, revision, changedAt, payload]
       properties:
-        changeId: { type: string }
-        entityType: { type: string }
-        entityId: { type: string }
-        revision: { type: integer }
-        changedAt: { type: string, format: date-time }
-        payload: { type: object, additionalProperties: true }
+        changeId:
+          type: string
+        entityType:
+          type: string
+        entityId:
+          type: string
+        revision:
+          type: integer
+        changedAt:
+          type: string
+          format: date-time
+        payload:
+          $ref: "#/components/schemas/SyncPayload"
     SyncPullResponse:
       type: object
       required: [data, meta]
       properties:
         data:
           type: array
-          items: { $ref: "#/components/schemas/SyncChange" }
-        meta: { $ref: "#/components/schemas/EnvelopeMeta" }
+          items:
+            $ref: "#/components/schemas/SyncChange"
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
+    SyncPayload:
+      type: object
+      description: 离线同步负载，当前仅包含进度同步的已知字段（position、completed），其他 entityType 的负载结构待领域模型确认
+      additionalProperties: false
+      properties:
+        position:
+          type: number
+          minimum: 0
+        completed:
+          type: boolean
 security:
   - bearerAuth: []
