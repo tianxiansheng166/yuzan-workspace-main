@@ -1,11 +1,10 @@
 body {
-  background:
-    radial-gradient(
-      circle at 82% 14%,
-      color-mix(in srgb, var(--yx-color-sage) 42%, transparent),
-      transparent 28rem
-    ),
-    var(--yx-color-paper);
+  background: var(--yx-bg-canvas);
+  color: var(--yx-text-primary);
+}
+
+main {
+  isolation: isolate;
 }
 
 a {
@@ -14,16 +13,25 @@ a {
 
 .page-enter-active,
 .page-leave-active {
-  transition: opacity var(--yx-duration-base) var(--yx-ease-standard);
+  transition:
+    opacity var(--yx-motion-duration-base) var(--yx-motion-ease-standard),
+    transform var(--yx-motion-duration-base) var(--yx-motion-ease-standard);
 }
+
 .page-enter-from,
 .page-leave-to {
   opacity: 0;
+  transform: translateY(0.25rem);
 }
 
 @media (prefers-reduced-motion: reduce) {
   .page-enter-active,
   .page-leave-active {
     transition: none;
+  }
+
+  .page-enter-from,
+  .page-leave-to {
+    transform: none;
   }
 }

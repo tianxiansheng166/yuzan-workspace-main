@@ -8,56 +8,107 @@
 
 html {
   font-family: var(--yx-font-sans);
-  color: var(--yx-color-ink);
-  background: var(--yx-color-paper);
+  font-size: 16px;
+  line-height: var(--yx-line-height-body);
+  color: var(--yx-text-primary);
+  background: var(--yx-bg-canvas);
   text-rendering: optimizeLegibility;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
+  background: inherit;
 }
+
 button,
 input,
 textarea,
 select {
   font: inherit;
+  color: inherit;
 }
+
 img,
 svg,
 video {
   max-width: 100%;
   display: block;
 }
+
 a {
-  color: inherit;
+  color: var(--yx-action-link);
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.18em;
 }
-:focus-visible {
-  outline: 3px solid var(--yx-color-focus);
+
+a:hover {
+  color: var(--yx-action-link-hover);
+}
+
+:where(a[href], button, input, textarea, select, summary, [tabindex]):focus {
+  outline: none;
+}
+
+:where(
+  a[href],
+  button,
+  input,
+  textarea,
+  select,
+  summary,
+  [tabindex]:not([tabindex="-1"])
+):focus-visible {
+  outline: 3px solid var(--yx-focus-ring);
   outline-offset: 3px;
+  box-shadow: var(--yx-focus-shadow);
 }
+
 ::selection {
-  background: var(--yx-color-sage);
+  background: var(--yx-selection-bg);
 }
 
 .yx-shell {
   width: min(100% - (2 * var(--yx-gutter)), var(--yx-content-wide));
   margin-inline: auto;
 }
+
 .yx-reading {
   max-width: var(--yx-content-reading);
 }
+
 .yx-kicker {
-  font-size: var(--yx-text-xs);
+  font-size: var(--yx-font-size-100);
+  font-weight: var(--yx-font-weight-semibold);
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--yx-color-wine);
+  color: var(--yx-text-accent);
 }
+
 .yx-visually-hidden {
   position: absolute;
   width: 1px;
   height: 1px;
+  margin: -1px;
+  padding: 0;
   overflow: hidden;
   clip: rect(0 0 0 0);
   white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:focus-within {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 1ms !important;
+  }
 }

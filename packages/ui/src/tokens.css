@@ -1,58 +1,253 @@
 :root {
   color-scheme: light;
 
-  --yx-color-paper: #f7f2e8;
-  --yx-color-paper-strong: #eee5d5;
-  --yx-color-ink: #231f1b;
-  --yx-color-ink-soft: #625a52;
-  --yx-color-wine: #7b2434;
-  --yx-color-wine-strong: #5f1726;
-  --yx-color-sage: #cfdcc7;
-  --yx-color-sage-strong: #78936e;
-  --yx-color-gold: #b8792c;
-  --yx-color-danger: #a73232;
-  --yx-color-success: #286b4d;
-  --yx-color-focus: #1d5fbf;
-  --yx-color-surface: #fffdf8;
-  --yx-color-line: color-mix(in srgb, var(--yx-color-ink) 16%, transparent);
+  /* Primitive color tokens */
+  --yx-primitive-color-white: #fffdf9;
+  --yx-primitive-color-sand-50: #f7f2e8;
+  --yx-primitive-color-sand-100: #efe4d2;
+  --yx-primitive-color-sand-200: #ddcfb4;
+  --yx-primitive-color-ink-900: #201b18;
+  --yx-primitive-color-ink-700: #4d463f;
+  --yx-primitive-color-ink-500: #756a61;
+  --yx-primitive-color-wine-700: #7b2434;
+  --yx-primitive-color-wine-800: #5f1726;
+  --yx-primitive-color-sage-500: #78936e;
+  --yx-primitive-color-sage-200: #d5e0ce;
+  --yx-primitive-color-gold-500: #b8792c;
+  --yx-primitive-color-gold-100: #f2e1c3;
+  --yx-primitive-color-green-700: #2b6b50;
+  --yx-primitive-color-green-100: #dcefe4;
+  --yx-primitive-color-amber-700: #7d5318;
+  --yx-primitive-color-amber-100: #f5e8d1;
+  --yx-primitive-color-red-700: #9e352f;
+  --yx-primitive-color-red-100: #f6e0dd;
+  --yx-primitive-color-blue-700: #1f5fb4;
+  --yx-primitive-color-blue-100: #dbe7f7;
 
+  /* Primitive typography tokens */
   --yx-font-sans:
     "Noto Sans SC", "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
   --yx-font-display: "Source Han Serif SC", "Noto Serif SC", Georgia, serif;
+  --yx-font-size-100: 0.75rem;
+  --yx-font-size-200: 0.875rem;
+  --yx-font-size-300: 1rem;
+  --yx-font-size-400: 1.125rem;
+  --yx-font-size-500: 1.25rem;
+  --yx-font-size-600: 1.5rem;
+  --yx-font-size-700: 2rem;
+  --yx-font-size-display: clamp(2.6rem, 7vw, 7rem);
+  --yx-font-weight-regular: 400;
+  --yx-font-weight-medium: 500;
+  --yx-font-weight-semibold: 600;
+  --yx-font-weight-bold: 700;
+  --yx-line-height-tight: 1.2;
+  --yx-line-height-body: 1.6;
+  --yx-line-height-relaxed: 1.75;
 
-  --yx-text-xs: 0.75rem;
-  --yx-text-sm: 0.875rem;
-  --yx-text-base: 1rem;
-  --yx-text-lg: 1.25rem;
-  --yx-text-xl: clamp(1.5rem, 2.5vw, 2.25rem);
-  --yx-text-display: clamp(2.75rem, 8vw, 7.5rem);
+  /* Primitive spacing tokens */
+  --yx-space-100: 0.25rem;
+  --yx-space-200: 0.5rem;
+  --yx-space-300: 0.75rem;
+  --yx-space-400: 1rem;
+  --yx-space-500: 1.25rem;
+  --yx-space-600: 1.5rem;
+  --yx-space-800: 2rem;
+  --yx-space-1200: 3rem;
+  --yx-space-1600: 4rem;
+  --yx-space-2400: 6rem;
 
-  --yx-space-1: 0.25rem;
-  --yx-space-2: 0.5rem;
-  --yx-space-3: 0.75rem;
-  --yx-space-4: 1rem;
-  --yx-space-6: 1.5rem;
-  --yx-space-8: 2rem;
-  --yx-space-12: 3rem;
-  --yx-space-16: 4rem;
-  --yx-space-24: 6rem;
-
-  --yx-radius-sm: 0.45rem;
-  --yx-radius-md: 0.85rem;
+  /* Primitive radius and shadow tokens */
+  --yx-radius-none: 0;
+  --yx-radius-sm: 0.5rem;
+  --yx-radius-md: 0.875rem;
   --yx-radius-lg: 1.4rem;
+  --yx-radius-xl: 1.85rem;
   --yx-radius-pill: 999px;
+  --yx-shadow-100: 0 0.125rem 0.45rem
+    color-mix(in srgb, var(--yx-primitive-color-ink-900) 10%, transparent);
+  --yx-shadow-200: 0 0.5rem 1.5rem
+    color-mix(in srgb, var(--yx-primitive-color-ink-900) 13%, transparent);
+  --yx-shadow-300: 0 1rem 2.4rem
+    color-mix(in srgb, var(--yx-primitive-color-ink-900) 18%, transparent);
 
-  --yx-duration-fast: 120ms;
-  --yx-duration-base: 220ms;
-  --yx-ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+  /* Primitive motion and layering tokens */
+  --yx-motion-duration-fast: 120ms;
+  --yx-motion-duration-base: 220ms;
+  --yx-motion-duration-slow: 320ms;
+  --yx-motion-ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --yx-motion-ease-emphasis: cubic-bezier(0.16, 1, 0.3, 1);
+  --yx-z-base: 0;
+  --yx-z-sticky: 10;
+  --yx-z-overlay: 20;
+  --yx-z-toast: 30;
 
+  /* Primitive responsive layout tokens */
+  --yx-breakpoint-mobile: 24.375rem;
+  --yx-breakpoint-tablet: 64rem;
+  --yx-breakpoint-desktop: 90rem;
   --yx-content-wide: 90rem;
   --yx-content-reading: 44rem;
   --yx-gutter: clamp(1rem, 4vw, 4rem);
+
+  /* Semantic background tokens */
+  --yx-bg-canvas: var(--yx-primitive-color-sand-50);
+  --yx-bg-canvas-strong: var(--yx-primitive-color-sand-100);
+  --yx-bg-muted: color-mix(
+    in srgb,
+    var(--yx-primitive-color-sage-200) 36%,
+    var(--yx-primitive-color-white)
+  );
+  --yx-bg-elevated: var(--yx-primitive-color-white);
+  --yx-bg-contrast: var(--yx-primitive-color-ink-900);
+  --yx-bg-brand: var(--yx-primitive-color-wine-700);
+
+  /* Semantic surface tokens */
+  --yx-surface-default: var(--yx-bg-elevated);
+  --yx-surface-subtle: color-mix(
+    in srgb,
+    var(--yx-primitive-color-sage-200) 20%,
+    var(--yx-primitive-color-white)
+  );
+  --yx-surface-raised: color-mix(
+    in srgb,
+    var(--yx-primitive-color-white) 88%,
+    var(--yx-bg-canvas)
+  );
+  --yx-surface-contrast: color-mix(
+    in srgb,
+    var(--yx-primitive-color-white) 8%,
+    var(--yx-bg-contrast)
+  );
+  --yx-surface-brand: color-mix(
+    in srgb,
+    var(--yx-primitive-color-white) 6%,
+    var(--yx-bg-brand)
+  );
+
+  /* Semantic text tokens */
+  --yx-text-primary: var(--yx-primitive-color-ink-900);
+  --yx-text-secondary: var(--yx-primitive-color-ink-700);
+  --yx-text-muted: var(--yx-primitive-color-ink-500);
+  --yx-text-contrast: var(--yx-primitive-color-sand-50);
+  --yx-text-on-brand: var(--yx-primitive-color-white);
+  --yx-text-accent: var(--yx-primitive-color-wine-700);
+
+  /* Semantic border tokens */
+  --yx-border-subtle: color-mix(
+    in srgb,
+    var(--yx-primitive-color-ink-900) 10%,
+    transparent
+  );
+  --yx-border-default: color-mix(
+    in srgb,
+    var(--yx-primitive-color-ink-900) 18%,
+    transparent
+  );
+  --yx-border-strong: color-mix(
+    in srgb,
+    var(--yx-primitive-color-ink-900) 34%,
+    transparent
+  );
+  --yx-border-contrast: color-mix(
+    in srgb,
+    var(--yx-primitive-color-white) 22%,
+    transparent
+  );
+
+  /* Semantic action tokens */
+  --yx-action-primary-bg: var(--yx-primitive-color-wine-700);
+  --yx-action-primary-bg-hover: var(--yx-primitive-color-wine-800);
+  --yx-action-primary-fg: var(--yx-primitive-color-white);
+  --yx-action-secondary-bg: transparent;
+  --yx-action-secondary-bg-hover: var(--yx-bg-canvas-strong);
+  --yx-action-secondary-fg: var(--yx-text-primary);
+  --yx-action-secondary-border: var(--yx-border-default);
+  --yx-action-link: var(--yx-text-accent);
+  --yx-action-link-hover: var(--yx-primitive-color-wine-800);
+
+  /* Semantic focus tokens */
+  --yx-focus-ring: var(--yx-primitive-color-blue-700);
+  --yx-focus-ring-offset: var(--yx-bg-elevated);
+  --yx-focus-shadow: 0 0 0 0.2rem
+    color-mix(in srgb, var(--yx-primitive-color-blue-100) 85%, transparent);
+
+  /* Semantic state tokens */
+  --yx-success-bg: var(--yx-primitive-color-green-100);
+  --yx-success-fg: var(--yx-primitive-color-green-700);
+  --yx-success-border: color-mix(
+    in srgb,
+    var(--yx-primitive-color-green-700) 30%,
+    transparent
+  );
+  --yx-warning-bg: var(--yx-primitive-color-amber-100);
+  --yx-warning-fg: var(--yx-primitive-color-amber-700);
+  --yx-warning-border: color-mix(
+    in srgb,
+    var(--yx-primitive-color-amber-700) 28%,
+    transparent
+  );
+  --yx-danger-bg: var(--yx-primitive-color-red-100);
+  --yx-danger-fg: var(--yx-primitive-color-red-700);
+  --yx-danger-border: color-mix(
+    in srgb,
+    var(--yx-primitive-color-red-700) 30%,
+    transparent
+  );
+  --yx-information-bg: var(--yx-primitive-color-blue-100);
+  --yx-information-fg: var(--yx-primitive-color-blue-700);
+  --yx-information-border: color-mix(
+    in srgb,
+    var(--yx-primitive-color-blue-700) 26%,
+    transparent
+  );
+
+  /* Semantic selection token */
+  --yx-selection-bg: color-mix(
+    in srgb,
+    var(--yx-primitive-color-sage-200) 75%,
+    var(--yx-primitive-color-white)
+  );
+
+  /* Compatibility aliases for existing pages. New primitives should use semantic tokens above. */
+  --yx-color-paper: var(--yx-bg-canvas);
+  --yx-color-paper-strong: var(--yx-bg-canvas-strong);
+  --yx-color-ink: var(--yx-text-primary);
+  --yx-color-ink-soft: var(--yx-text-muted);
+  --yx-color-wine: var(--yx-text-accent);
+  --yx-color-wine-strong: var(--yx-primitive-color-wine-800);
+  --yx-color-sage: var(--yx-primitive-color-sage-200);
+  --yx-color-sage-strong: var(--yx-primitive-color-sage-500);
+  --yx-color-gold: var(--yx-primitive-color-gold-500);
+  --yx-color-danger: var(--yx-danger-fg);
+  --yx-color-success: var(--yx-success-fg);
+  --yx-color-focus: var(--yx-focus-ring);
+  --yx-color-surface: var(--yx-surface-default);
+  --yx-color-line: var(--yx-border-default);
+  --yx-text-xs: var(--yx-font-size-100);
+  --yx-text-sm: var(--yx-font-size-200);
+  --yx-text-base: var(--yx-font-size-300);
+  --yx-text-lg: var(--yx-font-size-500);
+  --yx-text-xl: clamp(1.5rem, 2.5vw, 2.25rem);
+  --yx-text-display: var(--yx-font-size-display);
+  --yx-space-1: var(--yx-space-100);
+  --yx-space-2: var(--yx-space-200);
+  --yx-space-3: var(--yx-space-300);
+  --yx-space-4: var(--yx-space-400);
+  --yx-space-6: var(--yx-space-600);
+  --yx-space-8: var(--yx-space-800);
+  --yx-space-12: var(--yx-space-1200);
+  --yx-space-16: var(--yx-space-1600);
+  --yx-space-24: var(--yx-space-2400);
+  --yx-duration-fast: var(--yx-motion-duration-fast);
+  --yx-duration-base: var(--yx-motion-duration-base);
+  --yx-ease-standard: var(--yx-motion-ease-standard);
 }
 
 @media (prefers-reduced-motion: reduce) {
   :root {
+    --yx-motion-duration-fast: 1ms;
+    --yx-motion-duration-base: 1ms;
+    --yx-motion-duration-slow: 1ms;
     --yx-duration-fast: 1ms;
     --yx-duration-base: 1ms;
   }

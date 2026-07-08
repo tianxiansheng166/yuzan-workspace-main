@@ -1,0 +1,668 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GOV-004 Design System Preview</title>
+    <link rel="stylesheet" href="../../packages/ui/src/base.css" />
+    <style>
+      body {
+        padding: var(--yx-space-800);
+      }
+
+      .preview-shell {
+        display: grid;
+        gap: var(--yx-space-1200);
+      }
+
+      .preview-header {
+        max-width: 52rem;
+      }
+
+      .preview-header h1,
+      .preview-header p {
+        margin: 0;
+      }
+
+      .preview-header h1 {
+        margin-top: var(--yx-space-300);
+        font: var(--yx-font-weight-semibold) var(--yx-font-size-700) /
+          var(--yx-line-height-tight) var(--yx-font-display);
+      }
+
+      .preview-header p {
+        margin-top: var(--yx-space-300);
+        color: var(--yx-text-secondary);
+      }
+
+      .preview-section {
+        display: grid;
+        gap: var(--yx-space-400);
+      }
+
+      .preview-section h2 {
+        margin: 0;
+        font: var(--yx-font-weight-semibold) var(--yx-font-size-500) /
+          var(--yx-line-height-tight) var(--yx-font-sans);
+      }
+
+      .preview-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+        gap: var(--yx-space-400);
+      }
+
+      .preview-card {
+        display: grid;
+        gap: var(--yx-space-300);
+        padding: var(--yx-space-500);
+        border: 1px solid var(--yx-border-default);
+        border-radius: var(--yx-radius-lg);
+        background: var(--yx-surface-default);
+        box-shadow: var(--yx-shadow-100);
+      }
+
+      .preview-card--contrast {
+        border-color: var(--yx-border-contrast);
+        background: var(--yx-bg-contrast);
+        color: var(--yx-text-contrast);
+        box-shadow: none;
+      }
+
+      .preview-label {
+        font-size: var(--yx-font-size-200);
+        font-weight: var(--yx-font-weight-semibold);
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      .preview-meta {
+        margin: 0;
+        font-size: var(--yx-font-size-200);
+        color: var(--yx-text-muted);
+      }
+
+      .preview-card--contrast .preview-meta {
+        color: color-mix(
+          in srgb,
+          var(--yx-primitive-color-white) 74%,
+          transparent
+        );
+      }
+
+      .yx-button {
+        --yx-button-bg: var(--yx-action-primary-bg);
+        --yx-button-bg-hover: var(--yx-action-primary-bg-hover);
+        --yx-button-border: transparent;
+        --yx-button-color: var(--yx-action-primary-fg);
+        --yx-button-shadow: var(--yx-shadow-100);
+        min-height: 2.75rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--yx-space-200);
+        border: 1px solid var(--yx-button-border);
+        border-radius: var(--yx-radius-pill);
+        padding: 0.7rem 1.15rem;
+        background: var(--yx-button-bg);
+        color: var(--yx-button-color);
+        box-shadow: var(--yx-button-shadow);
+        cursor: pointer;
+      }
+
+      .yx-button__content {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--yx-space-200);
+      }
+
+      .yx-button__label {
+        font-weight: var(--yx-font-weight-semibold);
+      }
+
+      .yx-button__meta {
+        font-size: var(--yx-font-size-200);
+        line-height: 1;
+      }
+
+      .yx-button--secondary {
+        --yx-button-bg: var(--yx-action-secondary-bg);
+        --yx-button-bg-hover: var(--yx-action-secondary-bg-hover);
+        --yx-button-border: var(--yx-action-secondary-border);
+        --yx-button-color: var(--yx-action-secondary-fg);
+        --yx-button-shadow: none;
+      }
+
+      .yx-button--quiet {
+        --yx-button-bg: transparent;
+        --yx-button-bg-hover: color-mix(
+          in srgb,
+          var(--yx-action-link) 10%,
+          transparent
+        );
+        --yx-button-border: transparent;
+        --yx-button-color: var(--yx-action-link);
+        --yx-button-shadow: none;
+      }
+
+      .yx-button--surface-contrast.yx-button--secondary {
+        --yx-button-bg-hover: color-mix(
+          in srgb,
+          var(--yx-primitive-color-white) 12%,
+          transparent
+        );
+        --yx-button-border: var(--yx-border-contrast);
+        --yx-button-color: var(--yx-text-contrast);
+      }
+
+      .yx-button--surface-contrast.yx-button--quiet {
+        --yx-button-bg-hover: color-mix(
+          in srgb,
+          var(--yx-primitive-color-white) 10%,
+          transparent
+        );
+        --yx-button-color: var(--yx-text-contrast);
+      }
+
+      .is-hover {
+        background: var(--yx-button-bg-hover);
+      }
+
+      .is-active {
+        transform: translateY(1px);
+        box-shadow: none;
+      }
+
+      .is-disabled {
+        opacity: 0.56;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+
+      .is-focus-visible {
+        outline: 3px solid var(--yx-focus-ring);
+        outline-offset: 3px;
+        box-shadow: var(--yx-focus-shadow);
+      }
+
+      .yx-link {
+        --yx-link-color: var(--yx-action-link);
+        --yx-link-color-hover: var(--yx-action-link-hover);
+        color: var(--yx-link-color);
+        text-decoration-line: underline;
+        text-decoration-thickness: 0.08em;
+        text-underline-offset: 0.18em;
+      }
+
+      .yx-link--muted {
+        --yx-link-color: var(--yx-text-secondary);
+        --yx-link-color-hover: var(--yx-text-primary);
+      }
+
+      .yx-link--accent {
+        --yx-link-color: var(--yx-text-accent);
+        --yx-link-color-hover: var(--yx-primitive-color-wine-800);
+      }
+
+      .yx-link--surface-contrast {
+        --yx-link-color: var(--yx-text-contrast);
+        --yx-link-color-hover: var(--yx-primitive-color-white);
+      }
+
+      .yx-link--surface-contrast.yx-link--accent {
+        --yx-link-color: color-mix(
+          in srgb,
+          var(--yx-primitive-color-gold-100) 78%,
+          var(--yx-primitive-color-white)
+        );
+        --yx-link-color-hover: var(--yx-primitive-color-white);
+      }
+
+      .yx-input {
+        --yx-input-bg: var(--yx-surface-default);
+        --yx-input-border: var(--yx-border-default);
+        --yx-input-border-hover: var(--yx-border-strong);
+        --yx-input-border-error: var(--yx-danger-fg);
+        --yx-input-color: var(--yx-text-primary);
+        --yx-input-muted: var(--yx-text-muted);
+        display: grid;
+        gap: var(--yx-space-200);
+        color: var(--yx-input-color);
+      }
+
+      .yx-input__label {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--yx-space-200);
+        font-weight: var(--yx-font-weight-semibold);
+        line-height: var(--yx-line-height-tight);
+      }
+
+      .yx-input__required {
+        color: var(--yx-text-accent);
+        font-size: var(--yx-font-size-200);
+        font-weight: var(--yx-font-weight-medium);
+      }
+
+      .yx-input__description,
+      .yx-input__error {
+        margin: 0;
+        font-size: var(--yx-font-size-200);
+        line-height: 1.5;
+      }
+
+      .yx-input__description {
+        color: var(--yx-input-muted);
+      }
+
+      .yx-input__control {
+        min-height: 2.75rem;
+        width: 100%;
+        border: 1px solid var(--yx-input-border);
+        border-radius: var(--yx-radius-md);
+        padding: 0.75rem 0.9rem;
+        background: var(--yx-input-bg);
+        color: inherit;
+      }
+
+      .yx-input__control::placeholder {
+        color: var(--yx-input-muted);
+      }
+
+      .yx-input__control.is-hover {
+        border-color: var(--yx-input-border-hover);
+      }
+
+      .yx-input__control.is-readonly {
+        background: var(--yx-bg-muted);
+      }
+
+      .yx-input__control.is-disabled {
+        opacity: 0.64;
+      }
+
+      .yx-input.has-error .yx-input__control {
+        border-color: var(--yx-input-border-error);
+      }
+
+      .yx-input__error {
+        color: var(--yx-danger-fg);
+      }
+
+      .yx-input--surface-contrast {
+        --yx-input-bg: color-mix(
+          in srgb,
+          var(--yx-primitive-color-white) 6%,
+          transparent
+        );
+        --yx-input-border: var(--yx-border-contrast);
+        --yx-input-border-hover: color-mix(
+          in srgb,
+          var(--yx-primitive-color-white) 44%,
+          transparent
+        );
+        --yx-input-color: var(--yx-text-contrast);
+        --yx-input-muted: color-mix(
+          in srgb,
+          var(--yx-primitive-color-white) 74%,
+          transparent
+        );
+      }
+
+      .yx-input--surface-contrast .yx-input__control.is-readonly {
+        background: color-mix(
+          in srgb,
+          var(--yx-primitive-color-white) 12%,
+          transparent
+        );
+      }
+
+      .yx-status {
+        --yx-status-bg: var(--yx-bg-canvas-strong);
+        --yx-status-border: var(--yx-border-default);
+        --yx-status-color: var(--yx-text-secondary);
+        display: inline-flex;
+        align-items: center;
+        min-height: 1.9rem;
+        padding-inline: 0.7rem;
+        border: 1px solid var(--yx-status-border);
+        border-radius: var(--yx-radius-pill);
+        background: var(--yx-status-bg);
+        color: var(--yx-status-color);
+        font-size: var(--yx-font-size-200);
+        font-weight: var(--yx-font-weight-medium);
+        line-height: 1.3;
+      }
+
+      .yx-status[data-tone="success"] {
+        --yx-status-bg: var(--yx-success-bg);
+        --yx-status-border: var(--yx-success-border);
+        --yx-status-color: var(--yx-success-fg);
+      }
+
+      .yx-status[data-tone="warning"] {
+        --yx-status-bg: var(--yx-warning-bg);
+        --yx-status-border: var(--yx-warning-border);
+        --yx-status-color: var(--yx-warning-fg);
+      }
+
+      .yx-status[data-tone="danger"] {
+        --yx-status-bg: var(--yx-danger-bg);
+        --yx-status-border: var(--yx-danger-border);
+        --yx-status-color: var(--yx-danger-fg);
+      }
+
+      .yx-status[data-tone="information"] {
+        --yx-status-bg: var(--yx-information-bg);
+        --yx-status-border: var(--yx-information-border);
+        --yx-status-color: var(--yx-information-fg);
+      }
+
+      .yx-status[data-surface="contrast"][data-tone="neutral"] {
+        --yx-status-bg: color-mix(
+          in srgb,
+          var(--yx-primitive-color-white) 10%,
+          transparent
+        );
+        --yx-status-border: var(--yx-border-contrast);
+        --yx-status-color: var(--yx-text-contrast);
+      }
+
+      .preview-inline {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--yx-space-300);
+      }
+
+      .preview-input-stack {
+        display: grid;
+        gap: var(--yx-space-300);
+      }
+
+      @media (max-width: 40rem) {
+        body {
+          padding: var(--yx-space-400);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="preview-shell">
+      <header class="preview-header">
+        <p class="yx-kicker">GOV-004 Acceptance Preview</p>
+        <h1>基础 Token 与原语状态矩阵</h1>
+        <p>
+          本地预览只用于设计与无障碍验收，不接入生产路由。矩阵覆盖默认、悬停、焦点、按压、禁用、加载、错误与深色背景
+          variant。
+        </p>
+        <p>
+          当前预览复用了 <code>tokens.css</code> 与
+          <code>base.css</code
+          >，但组件区块仍使用静态等价标记与同步样式，不是直接挂载真实 Vue
+          SFC，因此可能与最终组件实现产生小幅漂移。
+        </p>
+      </header>
+
+      <section class="preview-section">
+        <h2>YxButton</h2>
+        <div class="preview-grid">
+          <article class="preview-card">
+            <div class="preview-label">Default / Hover / Active</div>
+            <div class="preview-inline">
+              <button class="yx-button yx-button--primary" type="button">
+                <span class="yx-button__content"
+                  ><span class="yx-button__label">开始学习</span></span
+                >
+              </button>
+              <button
+                class="yx-button yx-button--primary is-hover"
+                type="button"
+              >
+                <span class="yx-button__content"
+                  ><span class="yx-button__label">悬停</span></span
+                >
+              </button>
+              <button
+                class="yx-button yx-button--primary is-active"
+                type="button"
+              >
+                <span class="yx-button__content"
+                  ><span class="yx-button__label">按压</span></span
+                >
+              </button>
+            </div>
+            <p class="preview-meta">
+              主按钮体现路径节点，使用品牌酒红，不依赖阴影堆叠。
+            </p>
+          </article>
+
+          <article class="preview-card">
+            <div class="preview-label">Focus / Disabled / Loading</div>
+            <div class="preview-inline">
+              <button
+                class="yx-button yx-button--secondary is-focus-visible"
+                type="button"
+              >
+                <span class="yx-button__content"
+                  ><span class="yx-button__label">键盘焦点</span></span
+                >
+              </button>
+              <button
+                class="yx-button yx-button--secondary is-disabled"
+                type="button"
+                disabled
+              >
+                <span class="yx-button__content"
+                  ><span class="yx-button__label">不可用</span></span
+                >
+              </button>
+              <button
+                class="yx-button yx-button--primary is-disabled"
+                type="button"
+                aria-busy="true"
+                disabled
+              >
+                <span class="yx-button__content">
+                  <span class="yx-button__label">同步作业</span>
+                  <span class="yx-button__meta">加载中</span>
+                </span>
+              </button>
+            </div>
+            <p class="preview-meta">
+              loading 使用明确文案，避免只用动画表示状态。
+            </p>
+          </article>
+
+          <article class="preview-card preview-card--contrast">
+            <div class="preview-label">Contrast Surface</div>
+            <div class="preview-inline">
+              <button
+                class="yx-button yx-button--secondary yx-button--surface-contrast"
+                type="button"
+              >
+                <span class="yx-button__content"
+                  ><span class="yx-button__label">深色背景</span></span
+                >
+              </button>
+              <button
+                class="yx-button yx-button--quiet yx-button--surface-contrast is-focus-visible"
+                type="button"
+              >
+                <span class="yx-button__content"
+                  ><span class="yx-button__label">对比焦点</span></span
+                >
+              </button>
+            </div>
+            <p class="preview-meta">
+              只提供 contrast variant，不扩展整站 dark mode。
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="preview-section">
+        <h2>YxLink 与 YxStatus</h2>
+        <div class="preview-grid">
+          <article class="preview-card">
+            <div class="preview-label">Links</div>
+            <div class="preview-inline">
+              <a class="yx-link" href="#">阅读任务说明</a>
+              <a class="yx-link yx-link--muted" href="#">查看帮助</a>
+              <a class="yx-link yx-link--accent is-focus-visible" href="#"
+                >键盘路径</a
+              >
+            </div>
+            <p class="preview-meta">下划线常驻，焦点不只靠颜色。</p>
+          </article>
+
+          <article class="preview-card">
+            <div class="preview-label">Status Tones</div>
+            <div class="preview-inline">
+              <span class="yx-status" data-tone="neutral">待同步</span>
+              <span class="yx-status" data-tone="success">已完成</span>
+              <span class="yx-status" data-tone="warning">待复核</span>
+              <span class="yx-status" data-tone="danger">提交失败</span>
+              <span class="yx-status" data-tone="information">语音提示</span>
+            </div>
+            <p class="preview-meta">状态只表达语义，不演化为复杂徽章系统。</p>
+          </article>
+
+          <article class="preview-card preview-card--contrast">
+            <div class="preview-label">Contrast Status / Link</div>
+            <div class="preview-inline">
+              <span
+                class="yx-status"
+                data-tone="neutral"
+                data-surface="contrast"
+                >深色背景</span
+              >
+              <a class="yx-link yx-link--surface-contrast" href="#">对比链接</a>
+              <a
+                class="yx-link yx-link--surface-contrast yx-link--accent"
+                href="#"
+                >品牌强调</a
+              >
+            </div>
+            <p class="preview-meta">
+              contrast variant 用在深色条带、品牌块与浮层。
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="preview-section">
+        <h2>YxInput</h2>
+        <div class="preview-grid">
+          <article class="preview-card">
+            <div class="preview-label">Default / Hover / Focus</div>
+            <div class="preview-input-stack">
+              <div class="yx-input">
+                <label class="yx-input__label" for="input-default">
+                  <span>练习标题</span>
+                  <span class="yx-input__required">必填</span>
+                </label>
+                <p class="yx-input__description" id="input-default-description">
+                  供教师或学生快速识别当前任务。
+                </p>
+                <input
+                  id="input-default"
+                  class="yx-input__control"
+                  aria-describedby="input-default-description"
+                  placeholder="请输入标题"
+                  value="朗读第五课"
+                />
+              </div>
+              <div class="yx-input">
+                <label class="yx-input__label" for="input-hover">
+                  <span>悬停状态</span>
+                </label>
+                <input
+                  id="input-hover"
+                  class="yx-input__control is-hover"
+                  value="边界增强"
+                />
+              </div>
+              <div class="yx-input">
+                <label class="yx-input__label" for="input-focus">
+                  <span>键盘焦点</span>
+                </label>
+                <input
+                  id="input-focus"
+                  class="yx-input__control is-focus-visible"
+                  value="可见焦点"
+                />
+              </div>
+            </div>
+          </article>
+
+          <article class="preview-card">
+            <div class="preview-label">Error / Disabled / Readonly</div>
+            <div class="preview-input-stack">
+              <div class="yx-input has-error">
+                <label class="yx-input__label" for="input-error">
+                  <span>输入错误</span>
+                </label>
+                <input
+                  id="input-error"
+                  class="yx-input__control"
+                  aria-invalid="true"
+                  aria-describedby="input-error-message"
+                  value="x"
+                />
+                <p class="yx-input__error" id="input-error-message">
+                  标题至少需要两个字符。
+                </p>
+              </div>
+              <div class="yx-input">
+                <label class="yx-input__label" for="input-disabled">
+                  <span>不可用</span>
+                </label>
+                <input
+                  id="input-disabled"
+                  class="yx-input__control is-disabled"
+                  value="当前不可编辑"
+                  disabled
+                />
+              </div>
+              <div class="yx-input">
+                <label class="yx-input__label" for="input-readonly">
+                  <span>只读</span>
+                </label>
+                <input
+                  id="input-readonly"
+                  class="yx-input__control is-readonly"
+                  value="系统自动生成"
+                  readonly
+                />
+              </div>
+            </div>
+          </article>
+
+          <article class="preview-card preview-card--contrast">
+            <div class="preview-label">Contrast Surface</div>
+            <div class="preview-input-stack">
+              <div class="yx-input yx-input--surface-contrast">
+                <label class="yx-input__label" for="input-contrast">
+                  <span>深色背景输入</span>
+                </label>
+                <p
+                  class="yx-input__description"
+                  id="input-contrast-description"
+                >
+                  用于品牌条带或深色浮层。
+                </p>
+                <input
+                  id="input-contrast"
+                  class="yx-input__control is-focus-visible"
+                  aria-describedby="input-contrast-description"
+                  value="保持可读与可见焦点"
+                />
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
