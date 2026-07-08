@@ -1,0 +1,37 @@
+{
+  "id": "MIG-003",
+  "wave": 3,
+  "title": "媒体资产迁移与版权台账",
+  "area": "migration",
+  "recommended_role": "Asset Migration AI",
+  "status": "BLOCKED",
+  "owner": "",
+  "branch": "task/mig-003-migration",
+  "worktree": "../worktrees/mig-003",
+  "depends_on": [
+    "MIG-001",
+    "CUR-001"
+  ],
+  "allowed_paths": [
+    "tools/migration/media/**",
+    "legacy/review/media/**",
+    "legacy/reports/**",
+    "design-lab/asset-register.csv"
+  ],
+  "objective": "核验本地/外链媒体、生成校验和和版权状态，迁入对象存储清单。",
+  "acceptance_criteria": [
+    "外链不直接迁移",
+    "unknown 默认不发布",
+    "重复检测",
+    "响应式/转码计划",
+    "测试夹具与正式资产分离"
+  ],
+  "required_reading": [
+    "README-FIRST.md",
+    "orchestration/AI-COLLABORATION-PROTOCOL.md",
+    "docs/05-quality/01-完成定义DoD.md"
+  ],
+  "reviewer": "Content + Legal",
+  "contract_change_policy": "Do not modify shared OpenAPI/Prisma/tokens/root config unless explicitly listed. Submit a Contract Change Request.",
+  "handoff_template": "orchestration/handoffs/HANDOFF-TEMPLATE.md"
+}

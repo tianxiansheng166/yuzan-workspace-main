@@ -1,0 +1,39 @@
+{
+  "id": "IDN-001",
+  "wave": 1,
+  "title": "身份登录与会话 API",
+  "area": "identity-api",
+  "recommended_role": "API AI",
+  "status": "BLOCKED",
+  "owner": "",
+  "branch": "task/idn-001-identity-api",
+  "worktree": "../worktrees/idn-001",
+  "depends_on": [
+    "GOV-001",
+    "GOV-002",
+    "GOV-003",
+    "GOV-006"
+  ],
+  "allowed_paths": [
+    "apps/api/src/modules/auth/**",
+    "apps/api/src/modules/identity/**",
+    "apps/api/test/auth/**"
+  ],
+  "objective": "实现登录、刷新、登出、当前身份和活动学校切换。",
+  "acceptance_criteria": [
+    "密码安全哈希",
+    "刷新会话可撤销",
+    "错误码契约一致",
+    "登录限流",
+    "多学校 membership 测试",
+    "审计登录事件"
+  ],
+  "required_reading": [
+    "README-FIRST.md",
+    "orchestration/AI-COLLABORATION-PROTOCOL.md",
+    "docs/05-quality/01-完成定义DoD.md"
+  ],
+  "reviewer": "Security",
+  "contract_change_policy": "Do not modify shared OpenAPI/Prisma/tokens/root config unless explicitly listed. Submit a Contract Change Request.",
+  "handoff_template": "orchestration/handoffs/HANDOFF-TEMPLATE.md"
+}

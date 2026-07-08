@@ -1,0 +1,34 @@
+{
+  "id": "MIG-001",
+  "wave": 1,
+  "title": "旧资产分类与脱敏导出",
+  "area": "migration",
+  "recommended_role": "Migration AI",
+  "status": "READY",
+  "owner": "",
+  "branch": "task/mig-001-migration",
+  "worktree": "../worktrees/mig-001",
+  "depends_on": [],
+  "allowed_paths": [
+    "legacy/exports/**",
+    "legacy/review/**",
+    "legacy/reports/**",
+    "tools/migration/**"
+  ],
+  "objective": "在不运行旧服务的前提下导出课程、翻译和媒体清单，拒绝旧个人数据。",
+  "acceptance_criteria": [
+    "校验输入 SHA",
+    "课程/翻译/media 独立导出",
+    "secret/PII 报告",
+    "accepted/rejected/warning",
+    "脚本幂等和 dry-run"
+  ],
+  "required_reading": [
+    "README-FIRST.md",
+    "orchestration/AI-COLLABORATION-PROTOCOL.md",
+    "docs/05-quality/01-完成定义DoD.md"
+  ],
+  "reviewer": "Privacy + Content",
+  "contract_change_policy": "Do not modify shared OpenAPI/Prisma/tokens/root config unless explicitly listed. Submit a Contract Change Request.",
+  "handoff_template": "orchestration/handoffs/HANDOFF-TEMPLATE.md"
+}

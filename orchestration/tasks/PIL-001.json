@@ -1,0 +1,38 @@
+{
+  "id": "PIL-001",
+  "wave": 4,
+  "title": "试点运行与四周复盘",
+  "area": "pilot",
+  "recommended_role": "Pilot Ops",
+  "status": "BLOCKED",
+  "owner": "",
+  "branch": "task/pil-001-pilot",
+  "worktree": "../worktrees/pil-001",
+  "depends_on": [
+    "QA-001",
+    "SEC-001",
+    "OPS-002"
+  ],
+  "allowed_paths": [
+    "pilot/**",
+    "reports/pilot/**",
+    "docs/08-pilot/**"
+  ],
+  "objective": "在授权环境运行最小试点，收集完成、同步、教师时间和问题数据。",
+  "acceptance_criteria": [
+    "授权与培训",
+    "事件响应",
+    "四周记录",
+    "问题闭环",
+    "不以注册数代替使用",
+    "结论含失败和局限"
+  ],
+  "required_reading": [
+    "README-FIRST.md",
+    "orchestration/AI-COLLABORATION-PROTOCOL.md",
+    "docs/05-quality/01-完成定义DoD.md"
+  ],
+  "reviewer": "Human Product Lead",
+  "contract_change_policy": "Do not modify shared OpenAPI/Prisma/tokens/root config unless explicitly listed. Submit a Contract Change Request.",
+  "handoff_template": "orchestration/handoffs/HANDOFF-TEMPLATE.md"
+}

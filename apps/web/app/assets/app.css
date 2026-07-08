@@ -1,0 +1,17 @@
+body {
+  background:
+    radial-gradient(circle at 82% 14%, color-mix(in srgb, var(--yx-color-sage) 42%, transparent), transparent 28rem),
+    var(--yx-color-paper);
+}
+
+a { text-underline-offset: .18em; }
+
+.page-enter-active,
+.page-leave-active { transition: opacity var(--yx-duration-base) var(--yx-ease-standard); }
+.page-enter-from,
+.page-leave-to { opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .page-enter-active,
+  .page-leave-active { transition: none; }
+}

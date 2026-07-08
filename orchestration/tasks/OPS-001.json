@@ -1,0 +1,38 @@
+{
+  "id": "OPS-001",
+  "wave": 4,
+  "title": "部署、健康、日志与指标",
+  "area": "operations",
+  "recommended_role": "DevOps AI",
+  "status": "BLOCKED",
+  "owner": "",
+  "branch": "task/ops-001-operations",
+  "worktree": "../worktrees/ops-001",
+  "depends_on": [
+    "GOV-001",
+    "GOV-005"
+  ],
+  "allowed_paths": [
+    "infra/**",
+    "apps/api/src/health/**",
+    "packages/observability/**",
+    "docs/03-architecture/07-可观测性与运维.md"
+  ],
+  "objective": "建立 dev/staging 部署、健康检查、结构日志和关键指标。",
+  "acceptance_criteria": [
+    "干净机部署",
+    "readiness/liveness",
+    "日志脱敏",
+    "同步/worker 指标",
+    "无 AI 供应商硬依赖 readiness",
+    "回滚文档"
+  ],
+  "required_reading": [
+    "README-FIRST.md",
+    "orchestration/AI-COLLABORATION-PROTOCOL.md",
+    "docs/05-quality/01-完成定义DoD.md"
+  ],
+  "reviewer": "Operations + Security",
+  "contract_change_policy": "Do not modify shared OpenAPI/Prisma/tokens/root config unless explicitly listed. Submit a Contract Change Request.",
+  "handoff_template": "orchestration/handoffs/HANDOFF-TEMPLATE.md"
+}

@@ -1,0 +1,26 @@
+{
+  "name": "@yuzan/ui",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./tokens.css": "./src/tokens.css",
+    "./base.css": "./src/base.css",
+    "./components/*": "./src/components/*.vue",
+    "./icons/*": "./src/icons/*.vue"
+  },
+  "scripts": {
+    "build": "vue-tsc --noEmit",
+    "typecheck": "vue-tsc --noEmit",
+    "lint": "vue-tsc --noEmit",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "vue": "^3.5.17"
+  },
+  "devDependencies": {
+    "@vue/tsconfig": "^0.7.0",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4",
+    "vue-tsc": "^2.2.10"
+  }
+}

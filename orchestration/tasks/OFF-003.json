@@ -1,0 +1,37 @@
+{
+  "id": "OFF-003",
+  "wave": 3,
+  "title": "服务端同步 API 与冲突处理",
+  "area": "sync-api",
+  "recommended_role": "API AI",
+  "status": "BLOCKED",
+  "owner": "",
+  "branch": "task/off-003-sync-api",
+  "worktree": "../worktrees/off-003",
+  "depends_on": [
+    "GOV-003",
+    "SUB-001"
+  ],
+  "allowed_paths": [
+    "apps/api/src/modules/sync/**",
+    "apps/api/test/sync/**",
+    "packages/domain/src/sync/**"
+  ],
+  "objective": "实现 push/pull/ack、幂等回执、revision 和冲突记录。",
+  "acceptance_criteria": [
+    "重复十次只处理一次",
+    "事务 outbox",
+    "跨租户拒绝",
+    "冲突可重现",
+    "指标/日志",
+    "集成测试"
+  ],
+  "required_reading": [
+    "README-FIRST.md",
+    "orchestration/AI-COLLABORATION-PROTOCOL.md",
+    "docs/05-quality/01-完成定义DoD.md"
+  ],
+  "reviewer": "Domain + Security",
+  "contract_change_policy": "Do not modify shared OpenAPI/Prisma/tokens/root config unless explicitly listed. Submit a Contract Change Request.",
+  "handoff_template": "orchestration/handoffs/HANDOFF-TEMPLATE.md"
+}

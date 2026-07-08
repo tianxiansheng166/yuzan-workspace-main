@@ -1,0 +1,36 @@
+{
+  "id": "GOV-001",
+  "wave": 0,
+  "title": "初始化 monorepo 与开发环境",
+  "area": "governance",
+  "recommended_role": "Integration AI",
+  "status": "READY",
+  "owner": "",
+  "branch": "task/gov-001-governance",
+  "worktree": "../worktrees/gov-001",
+  "depends_on": [],
+  "allowed_paths": [
+    "package.json",
+    "pnpm-workspace.yaml",
+    "tsconfig.base.json",
+    ".env.example",
+    "docker-compose.yml",
+    "README.md"
+  ],
+  "objective": "在真实开发机验证 pnpm workspace、Node LTS、Docker/PostgreSQL、三个 app 和公共 package 的基础命令。",
+  "acceptance_criteria": [
+    "pnpm install 成功",
+    "docker compose 启动 PostgreSQL/MinIO",
+    "全仓 lint/typecheck/build 基线可运行",
+    "README 记录 Windows/macOS/Linux 步骤",
+    "不提交 .env 或密钥"
+  ],
+  "required_reading": [
+    "README-FIRST.md",
+    "orchestration/AI-COLLABORATION-PROTOCOL.md",
+    "docs/05-quality/01-完成定义DoD.md"
+  ],
+  "reviewer": "Integration Lead",
+  "contract_change_policy": "Do not modify shared OpenAPI/Prisma/tokens/root config unless explicitly listed. Submit a Contract Change Request.",
+  "handoff_template": "orchestration/handoffs/HANDOFF-TEMPLATE.md"
+}

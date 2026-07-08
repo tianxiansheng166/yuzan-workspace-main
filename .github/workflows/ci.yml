@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: yuzan
+          POSTGRES_PASSWORD: ci_only
+          POSTGRES_DB: yuzan
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U yuzan -d yuzan"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 20
+    env:
+      DATABASE_URL: postgresql://yuzan:ci_only@localhost:5432/yuzan?schema=public
+      WEB_ORIGIN: http://localhost:3000
+      SESSION_SECRET: ci-session-secret-must-be-longer-than-32-characters
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: corepack enable
+      - run: pnpm install --no-frozen-lockfile
+      - run: pnpm contract:validate
+      - run: pnpm db:validate
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm build
+      - run: python scripts/check_legacy_runtime_references.py

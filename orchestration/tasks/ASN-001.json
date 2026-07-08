@@ -1,0 +1,35 @@
+{
+  "id": "ASN-001",
+  "wave": 2,
+  "title": "任务编排 API",
+  "area": "assignment-api",
+  "recommended_role": "API AI",
+  "status": "BLOCKED",
+  "owner": "",
+  "branch": "task/asn-001-assignment-api",
+  "worktree": "../worktrees/asn-001",
+  "depends_on": [
+    "ORG-001",
+    "CUR-001"
+  ],
+  "allowed_paths": [
+    "apps/api/src/modules/assignments/**",
+    "apps/api/test/assignments/**"
+  ],
+  "objective": "教师从发布版本创建、发布、修订和关闭班级任务。",
+  "acceptance_criteria": [
+    "固定 courseVersion",
+    "任课范围授权",
+    "revision 历史",
+    "截止/开放状态测试",
+    "发布事件与审计"
+  ],
+  "required_reading": [
+    "README-FIRST.md",
+    "orchestration/AI-COLLABORATION-PROTOCOL.md",
+    "docs/05-quality/01-完成定义DoD.md"
+  ],
+  "reviewer": "Domain + Security",
+  "contract_change_policy": "Do not modify shared OpenAPI/Prisma/tokens/root config unless explicitly listed. Submit a Contract Change Request.",
+  "handoff_template": "orchestration/handoffs/HANDOFF-TEMPLATE.md"
+}

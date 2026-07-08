@@ -1,0 +1,30 @@
+{
+  "name": "yuzan-next",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@10.13.1",
+  "engines": {
+    "node": ">=24 <27",
+    "pnpm": ">=10"
+  },
+  "scripts": {
+    "dev": "pnpm --parallel --filter @yuzan/web --filter @yuzan/api --filter @yuzan/worker dev",
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "db:generate": "pnpm --filter @yuzan/database generate",
+    "db:migrate": "pnpm --filter @yuzan/database migrate:dev",
+    "db:validate": "pnpm --filter @yuzan/database validate",
+    "contract:validate": "pnpm --filter @yuzan/contracts validate",
+    "contract:types": "pnpm --filter @yuzan/contracts generate",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.3"
+  }
+}

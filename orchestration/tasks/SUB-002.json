@@ -1,0 +1,37 @@
+{
+  "id": "SUB-002",
+  "wave": 2,
+  "title": "教师复核工作台 Web",
+  "area": "submission-web",
+  "recommended_role": "Codex Web AI",
+  "status": "BLOCKED",
+  "owner": "",
+  "branch": "task/sub-002-submission-web",
+  "worktree": "../worktrees/sub-002",
+  "depends_on": [
+    "GOV-002",
+    "GOV-004",
+    "CLS-001"
+  ],
+  "allowed_paths": [
+    "apps/web/app/features/submission-review/**",
+    "apps/web/app/pages/teacher/review/**",
+    "apps/web/tests/review/**"
+  ],
+  "objective": "用风险队列和证据并列设计教师复核，而非一排统计卡。",
+  "acceptance_criteria": [
+    "未完成/低置信度/同步异常队列",
+    "原始证据+自动建议+教师结果",
+    "批注/退回/接受",
+    "权限和空状态",
+    "移动端可完成核心复核"
+  ],
+  "required_reading": [
+    "README-FIRST.md",
+    "orchestration/AI-COLLABORATION-PROTOCOL.md",
+    "docs/05-quality/01-完成定义DoD.md"
+  ],
+  "reviewer": "Teacher UX + Design",
+  "contract_change_policy": "Do not modify shared OpenAPI/Prisma/tokens/root config unless explicitly listed. Submit a Contract Change Request.",
+  "handoff_template": "orchestration/handoffs/HANDOFF-TEMPLATE.md"
+}

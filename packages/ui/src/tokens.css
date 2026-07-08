@@ -1,0 +1,58 @@
+:root {
+  color-scheme: light;
+
+  --yx-color-paper: #f7f2e8;
+  --yx-color-paper-strong: #eee5d5;
+  --yx-color-ink: #231f1b;
+  --yx-color-ink-soft: #625a52;
+  --yx-color-wine: #7b2434;
+  --yx-color-wine-strong: #5f1726;
+  --yx-color-sage: #cfdcc7;
+  --yx-color-sage-strong: #78936e;
+  --yx-color-gold: #b8792c;
+  --yx-color-danger: #a73232;
+  --yx-color-success: #286b4d;
+  --yx-color-focus: #1d5fbf;
+  --yx-color-surface: #fffdf8;
+  --yx-color-line: color-mix(in srgb, var(--yx-color-ink) 16%, transparent);
+
+  --yx-font-sans: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+  --yx-font-display: "Source Han Serif SC", "Noto Serif SC", Georgia, serif;
+
+  --yx-text-xs: 0.75rem;
+  --yx-text-sm: 0.875rem;
+  --yx-text-base: 1rem;
+  --yx-text-lg: 1.25rem;
+  --yx-text-xl: clamp(1.5rem, 2.5vw, 2.25rem);
+  --yx-text-display: clamp(2.75rem, 8vw, 7.5rem);
+
+  --yx-space-1: 0.25rem;
+  --yx-space-2: 0.5rem;
+  --yx-space-3: 0.75rem;
+  --yx-space-4: 1rem;
+  --yx-space-6: 1.5rem;
+  --yx-space-8: 2rem;
+  --yx-space-12: 3rem;
+  --yx-space-16: 4rem;
+  --yx-space-24: 6rem;
+
+  --yx-radius-sm: 0.45rem;
+  --yx-radius-md: 0.85rem;
+  --yx-radius-lg: 1.4rem;
+  --yx-radius-pill: 999px;
+
+  --yx-duration-fast: 120ms;
+  --yx-duration-base: 220ms;
+  --yx-ease-standard: cubic-bezier(.2,.8,.2,1);
+
+  --yx-content-wide: 90rem;
+  --yx-content-reading: 44rem;
+  --yx-gutter: clamp(1rem, 4vw, 4rem);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --yx-duration-fast: 1ms;
+    --yx-duration-base: 1ms;
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "id": "DES-002",
+  "wave": 2,
+  "title": "自定义核心图标系统",
+  "area": "icons",
+  "recommended_role": "Codex Multimodal AI",
+  "status": "BLOCKED",
+  "owner": "",
+  "branch": "task/des-002-icons",
+  "worktree": "../worktrees/des-002",
+  "depends_on": [
+    "GOV-004"
+  ],
+  "allowed_paths": [
+    "packages/ui/src/icons/**",
+    "design-lab/generated/icons/**",
+    "design-lab/reviews/**"
+  ],
+  "objective": "探索并人工重绘 12–20 个核心符号，统一图标语言。",
+  "acceptance_criteria": [
+    "24 viewBox/光学一致",
+    "SVG 无位图和多余 metadata",
+    "有 accessible title/aria 策略",
+    "不使用 emoji",
+    "概念生成与最终重绘可追溯"
+  ],
+  "required_reading": [
+    "README-FIRST.md",
+    "orchestration/AI-COLLABORATION-PROTOCOL.md",
+    "docs/05-quality/01-完成定义DoD.md"
+  ],
+  "reviewer": "Design + Accessibility",
+  "contract_change_policy": "Do not modify shared OpenAPI/Prisma/tokens/root config unless explicitly listed. Submit a Contract Change Request.",
+  "handoff_template": "orchestration/handoffs/HANDOFF-TEMPLATE.md"
+}

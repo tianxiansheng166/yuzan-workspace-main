@@ -1,0 +1,35 @@
+{
+  "id": "GOV-005",
+  "wave": 0,
+  "title": "建立 CI 与仓库保护基线",
+  "area": "devops",
+  "recommended_role": "CI AI",
+  "status": "BLOCKED",
+  "owner": "",
+  "branch": "task/gov-005-devops",
+  "worktree": "../worktrees/gov-005",
+  "depends_on": [
+    "GOV-001"
+  ],
+  "allowed_paths": [
+    ".github/**",
+    "scripts/**",
+    "package.json"
+  ],
+  "objective": "让 PR 自动执行格式、类型、单元、契约、构建、secret 和依赖检查。",
+  "acceptance_criteria": [
+    "CI 在 pull_request 触发",
+    "缓存 pnpm",
+    "失败可定位",
+    "不把生产 secret 写入 workflow",
+    "PR 模板要求任务和证据"
+  ],
+  "required_reading": [
+    "README-FIRST.md",
+    "orchestration/AI-COLLABORATION-PROTOCOL.md",
+    "docs/05-quality/01-完成定义DoD.md"
+  ],
+  "reviewer": "Integration Lead",
+  "contract_change_policy": "Do not modify shared OpenAPI/Prisma/tokens/root config unless explicitly listed. Submit a Contract Change Request.",
+  "handoff_template": "orchestration/handoffs/HANDOFF-TEMPLATE.md"
+}

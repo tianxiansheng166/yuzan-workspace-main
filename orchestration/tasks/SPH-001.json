@@ -1,0 +1,36 @@
+{
+  "id": "SPH-001",
+  "wave": 3,
+  "title": "录音采集与本地质检 Web",
+  "area": "speech-web",
+  "recommended_role": "Codex Web + Speech AI",
+  "status": "BLOCKED",
+  "owner": "",
+  "branch": "task/sph-001-speech-web",
+  "worktree": "../worktrees/sph-001",
+  "depends_on": [
+    "GOV-004",
+    "LRN-002",
+    "OFF-001"
+  ],
+  "allowed_paths": [
+    "apps/web/app/features/speech/**",
+    "apps/web/tests/speech/**"
+  ],
+  "objective": "实现权限、录音、波形/音量、静音/截断/噪声提示和离线保存。",
+  "acceptance_criteria": [
+    "拒绝权限/无麦克风/中断状态",
+    "不娱乐化评分",
+    "音频体积和时长限制",
+    "键盘/触控",
+    "本地质检可测试"
+  ],
+  "required_reading": [
+    "README-FIRST.md",
+    "orchestration/AI-COLLABORATION-PROTOCOL.md",
+    "docs/05-quality/01-完成定义DoD.md"
+  ],
+  "reviewer": "Design + Privacy",
+  "contract_change_policy": "Do not modify shared OpenAPI/Prisma/tokens/root config unless explicitly listed. Submit a Contract Change Request.",
+  "handoff_template": "orchestration/handoffs/HANDOFF-TEMPLATE.md"
+}

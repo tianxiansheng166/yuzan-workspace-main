@@ -1,0 +1,38 @@
+{
+  "id": "MIG-002",
+  "wave": 3,
+  "title": "课程与双语内容转换",
+  "area": "migration",
+  "recommended_role": "Migration AI",
+  "status": "BLOCKED",
+  "owner": "",
+  "branch": "task/mig-002-migration",
+  "worktree": "../worktrees/mig-002",
+  "depends_on": [
+    "MIG-001",
+    "CUR-001"
+  ],
+  "allowed_paths": [
+    "tools/migration/curriculum/**",
+    "legacy/exports/**",
+    "legacy/review/**",
+    "legacy/reports/**"
+  ],
+  "objective": "把审核通过的旧课程和词条转换为新 schema 草稿。",
+  "acceptance_criteria": [
+    "映射文件版本化",
+    "不自动发布",
+    "翻译来源/审校字段",
+    "重复/缺失报告",
+    "可重复导入",
+    "前后数量对账"
+  ],
+  "required_reading": [
+    "README-FIRST.md",
+    "orchestration/AI-COLLABORATION-PROTOCOL.md",
+    "docs/05-quality/01-完成定义DoD.md"
+  ],
+  "reviewer": "Content + Domain",
+  "contract_change_policy": "Do not modify shared OpenAPI/Prisma/tokens/root config unless explicitly listed. Submit a Contract Change Request.",
+  "handoff_template": "orchestration/handoffs/HANDOFF-TEMPLATE.md"
+}

@@ -1,0 +1,38 @@
+{
+  "id": "OFF-002",
+  "wave": 3,
+  "title": "客户端 Outbox 与同步状态机",
+  "area": "offline-web",
+  "recommended_role": "Offline AI",
+  "status": "BLOCKED",
+  "owner": "",
+  "branch": "task/off-002-offline-web",
+  "worktree": "../worktrees/off-002",
+  "depends_on": [
+    "OFF-001",
+    "LRN-002",
+    "SUB-001"
+  ],
+  "allowed_paths": [
+    "apps/web/app/features/offline/**",
+    "apps/web/tests/offline/**",
+    "packages/domain/src/sync/**"
+  ],
+  "objective": "实现离线操作队列、重试、回执、账号隔离和冲突展示。",
+  "acceptance_criteria": [
+    "operationId 幂等",
+    "浏览器重启恢复",
+    "指数退避",
+    "永久失败可见",
+    "共享设备安全",
+    "离线 E2E"
+  ],
+  "required_reading": [
+    "README-FIRST.md",
+    "orchestration/AI-COLLABORATION-PROTOCOL.md",
+    "docs/05-quality/01-完成定义DoD.md"
+  ],
+  "reviewer": "Offline + Security",
+  "contract_change_policy": "Do not modify shared OpenAPI/Prisma/tokens/root config unless explicitly listed. Submit a Contract Change Request.",
+  "handoff_template": "orchestration/handoffs/HANDOFF-TEMPLATE.md"
+}

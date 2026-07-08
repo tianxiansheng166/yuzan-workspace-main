@@ -1,0 +1,7 @@
+# Replace placeholders with actual GitHub users/teams before enabling branch protection.
+/packages/contracts/ @contract-owner
+/infra/database/prisma/ @schema-owner
+/packages/ui/src/tokens.css @design-owner
+/.github/ @integration-owner
+/apps/api/src/modules/auth/ @security-owner
+/apps/api/src/common/ @security-owner

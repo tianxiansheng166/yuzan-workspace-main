@@ -1,0 +1,38 @@
+{
+  "id": "CMP-001",
+  "wave": 4,
+  "title": "比赛证据包与演示环境",
+  "area": "competition",
+  "recommended_role": "Docs/Competition AI",
+  "status": "BLOCKED",
+  "owner": "",
+  "branch": "task/cmp-001-competition",
+  "worktree": "../worktrees/cmp-001",
+  "depends_on": [
+    "QA-001",
+    "QA-002",
+    "SPH-003",
+    "RPT-001"
+  ],
+  "allowed_paths": [
+    "evidence/**",
+    "docs/07-competition/**",
+    "demo/**"
+  ],
+  "objective": "将真实实现、测试、试点和技术局限整理成可复核材料和三分钟演示。",
+  "acceptance_criteria": [
+    "已实现/规划清楚区分",
+    "所有数字可追溯",
+    "演示有备用",
+    "无真实敏感数据",
+    "四个存续问题有产品证据"
+  ],
+  "required_reading": [
+    "README-FIRST.md",
+    "orchestration/AI-COLLABORATION-PROTOCOL.md",
+    "docs/05-quality/01-完成定义DoD.md"
+  ],
+  "reviewer": "Product + Expert",
+  "contract_change_policy": "Do not modify shared OpenAPI/Prisma/tokens/root config unless explicitly listed. Submit a Contract Change Request.",
+  "handoff_template": "orchestration/handoffs/HANDOFF-TEMPLATE.md"
+}

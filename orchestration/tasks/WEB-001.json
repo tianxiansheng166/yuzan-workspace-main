@@ -1,0 +1,36 @@
+{
+  "id": "WEB-001",
+  "wave": 1,
+  "title": "统一应用壳与角色导航",
+  "area": "web-shell",
+  "recommended_role": "Codex Web AI",
+  "status": "BLOCKED",
+  "owner": "",
+  "branch": "task/web-001-web-shell",
+  "worktree": "../worktrees/web-001",
+  "depends_on": [
+    "GOV-004"
+  ],
+  "allowed_paths": [
+    "apps/web/app/layouts/**",
+    "apps/web/app/components/navigation/**",
+    "apps/web/app/app.vue",
+    "apps/web/app/assets/**"
+  ],
+  "objective": "建立学生、教师、教研、管理员共用但按任务差异化的导航和页面框架。",
+  "acceptance_criteria": [
+    "路由/角色可扩展",
+    "导航不是四套复制",
+    "焦点与跳转主内容",
+    "离线/同步全局状态槽",
+    "无巨型卡片容器"
+  ],
+  "required_reading": [
+    "README-FIRST.md",
+    "orchestration/AI-COLLABORATION-PROTOCOL.md",
+    "docs/05-quality/01-完成定义DoD.md"
+  ],
+  "reviewer": "Design + Accessibility",
+  "contract_change_policy": "Do not modify shared OpenAPI/Prisma/tokens/root config unless explicitly listed. Submit a Contract Change Request.",
+  "handoff_template": "orchestration/handoffs/HANDOFF-TEMPLATE.md"
+}

@@ -1,0 +1,18 @@
+{
+  "name": "@yuzan/contracts",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "validate": "redocly lint openapi/openapi.yaml",
+    "generate": "openapi-typescript openapi/openapi.yaml -o src/generated.ts",
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "redocly lint openapi/openapi.yaml",
+    "test": "redocly lint openapi/openapi.yaml"
+  },
+  "devDependencies": {
+    "@redocly/cli": "^1.34.2",
+    "openapi-typescript": "^7.8.0",
+    "typescript": "^5.8.3"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "id": "QA-001",
+  "wave": 4,
+  "title": "核心教学闭环 E2E",
+  "area": "qa",
+  "recommended_role": "QA AI",
+  "status": "BLOCKED",
+  "owner": "",
+  "branch": "task/qa-001-qa",
+  "worktree": "../worktrees/qa-001",
+  "depends_on": [
+    "CUR-001",
+    "ASN-001",
+    "LRN-001",
+    "SUB-001",
+    "CUR-002",
+    "ASN-002",
+    "LRN-002",
+    "SUB-002"
+  ],
+  "allowed_paths": [
+    "tests/e2e/core-loop/**",
+    "playwright.config.ts"
+  ],
+  "objective": "自动验证发布课程→布置→学习→提交→反馈→查看反馈。",
+  "acceptance_criteria": [
+    "真实 PostgreSQL",
+    "无共享状态污染",
+    "失败留 trace/screenshot",
+    "权限负向",
+    "可在 CI 运行",
+    "不依赖静态假数据"
+  ],
+  "required_reading": [
+    "README-FIRST.md",
+    "orchestration/AI-COLLABORATION-PROTOCOL.md",
+    "docs/05-quality/01-完成定义DoD.md"
+  ],
+  "reviewer": "QA + Product",
+  "contract_change_policy": "Do not modify shared OpenAPI/Prisma/tokens/root config unless explicitly listed. Submit a Contract Change Request.",
+  "handoff_template": "orchestration/handoffs/HANDOFF-TEMPLATE.md"
+}

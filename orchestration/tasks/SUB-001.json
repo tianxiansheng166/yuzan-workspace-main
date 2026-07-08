@@ -1,0 +1,36 @@
+{
+  "id": "SUB-001",
+  "wave": 2,
+  "title": "提交与教师反馈 API",
+  "area": "submission-api",
+  "recommended_role": "API AI",
+  "status": "BLOCKED",
+  "owner": "",
+  "branch": "task/sub-001-submission-api",
+  "worktree": "../worktrees/sub-001",
+  "depends_on": [
+    "LRN-001",
+    "QST-001"
+  ],
+  "allowed_paths": [
+    "apps/api/src/modules/submissions/**",
+    "apps/api/src/modules/feedback/**",
+    "apps/api/test/submissions/**"
+  ],
+  "objective": "实现 draft/submit/review/return/accept，保留 attempt 和审计。",
+  "acceptance_criteria": [
+    "Idempotency-Key",
+    "服务端主体身份",
+    "提交后不静默覆盖",
+    "教师仅任教范围",
+    "自动结果与最终结果分离"
+  ],
+  "required_reading": [
+    "README-FIRST.md",
+    "orchestration/AI-COLLABORATION-PROTOCOL.md",
+    "docs/05-quality/01-完成定义DoD.md"
+  ],
+  "reviewer": "Security + Domain",
+  "contract_change_policy": "Do not modify shared OpenAPI/Prisma/tokens/root config unless explicitly listed. Submit a Contract Change Request.",
+  "handoff_template": "orchestration/handoffs/HANDOFF-TEMPLATE.md"
+}

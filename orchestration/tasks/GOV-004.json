@@ -1,0 +1,34 @@
+{
+  "id": "GOV-004",
+  "wave": 0,
+  "title": "建立设计 token 与基础原语",
+  "area": "design-system",
+  "recommended_role": "Codex Design AI",
+  "status": "READY",
+  "owner": "",
+  "branch": "task/gov-004-design-system",
+  "worktree": "../worktrees/gov-004",
+  "depends_on": [],
+  "allowed_paths": [
+    "packages/ui/**",
+    "apps/web/app/assets/**",
+    "docs/04-design/**",
+    "design-lab/**"
+  ],
+  "objective": "建立自定义颜色、排版、空间、焦点、动作和基础组件，不引入通用后台皮肤。",
+  "acceptance_criteria": [
+    "token 无任意业务 hex",
+    "Button/Link/Input/Status 基础状态",
+    "键盘焦点和 reduced motion",
+    "Story/展示页覆盖明暗背景",
+    "无 emoji 和卡片套卡片"
+  ],
+  "required_reading": [
+    "README-FIRST.md",
+    "orchestration/AI-COLLABORATION-PROTOCOL.md",
+    "docs/05-quality/01-完成定义DoD.md"
+  ],
+  "reviewer": "Design + Accessibility",
+  "contract_change_policy": "Do not modify shared OpenAPI/Prisma/tokens/root config unless explicitly listed. Submit a Contract Change Request.",
+  "handoff_template": "orchestration/handoffs/HANDOFF-TEMPLATE.md"
+}
