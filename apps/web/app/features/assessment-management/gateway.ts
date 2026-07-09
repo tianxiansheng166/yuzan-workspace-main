@@ -73,11 +73,41 @@ function materialById(collection: MaterialOption[], id: string) {
 }
 
 function taskById(taskId: string) {
+  if (taskId === "demo") {
+    return demoStore.tasks[0] ?? createDemoTask();
+  }
+
   const task = demoStore.tasks.find((item) => item.id === taskId);
   if (!task) {
     throw new Error(`Assessment task ${taskId} not found in demo gateway.`);
   }
   return task;
+}
+
+function createDemoTask(): AssessmentTask {
+  const now = new Date().toISOString();
+  const id = "assessment-demo-fixed";
+  return {
+    id,
+    title: "Demo 测评任务（直链复核）",
+    readingMaterialId: "reading-snowline",
+    writingTaskId: "writing-letter",
+    opensAt: now,
+    closesAt: now,
+    targetIds: ["class-grade6-b2"],
+    targetSummary: "六年级二班 · 3 名学生（demo）",
+    anonymous: false,
+    status: "live",
+    demoLink: buildDemoLink(id),
+    progress: {
+      completedLabel: "demo",
+      incompleteLabel: "unavailable",
+      note: "真实完成/未完成人数待 Assessment API 接入后提供。",
+    },
+    reportStudentIds: ["student-lobsang", "student-tsering", "student-dechen"],
+    createdBy: "演示教师",
+    createdAt: now,
+  };
 }
 
 function createDemoTaskId() {
@@ -140,6 +170,10 @@ export function parsePreviewState(value: unknown): PreviewState {
 
 export function resetAssessmentManagementDemoState() {
   demoStore = createStore();
+}
+
+function resolveDemoStudentId(studentId: string) {
+  return studentId === "demo" ? "student-lobsang" : studentId;
 }
 
 export const assessmentManagementGateway: AssessmentManagementGateway = {
@@ -210,7 +244,8 @@ export const assessmentManagementGateway: AssessmentManagementGateway = {
       return null;
     }
 
-    const report = demoStore.reports[studentId];
+    const resolvedStudentId = resolveDemoStudentId(studentId);
+    const report = demoStore.reports[resolvedStudentId];
     if (!report) {
       throw new Error(`Student report ${studentId} not found in demo gateway.`);
     }
@@ -218,7 +253,7 @@ export const assessmentManagementGateway: AssessmentManagementGateway = {
     return {
       report: clone(report),
       relatedTasks: demoStore.tasks
-        .filter((task) => task.reportStudentIds.includes(studentId))
+        .filter((task) => task.reportStudentIds.includes(resolvedStudentId))
         .map((task) => ({
           id: task.id,
           title: task.title,

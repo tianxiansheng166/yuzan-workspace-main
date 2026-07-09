@@ -16,6 +16,59 @@ import type {
   AssessmentSubmissionInput,
 } from "./assessment-types";
 
+const demoReportId = "demo";
+
+function createStaticDemoReport(): AssessmentReport {
+  const now = new Date().toISOString();
+
+  return {
+    reportId: demoReportId,
+    title: assessmentTitle,
+    createdAt: now,
+    updatedAt: now,
+    mode: "demo",
+    status: "complete",
+    isDemo: true,
+    summary:
+      "这是 demo 报告直链，用于全球评审复核。页面中的分数、点评和建议均为演示数据，不代表真实 AI 评测结果。",
+    disclaimer:
+      "演示数据仅用于产品走查与页面验证，请勿将其中分数用于正式教学判断。",
+    reading: {
+      startedAt: now,
+      completedAt: now,
+      durationMs: 42000,
+      mimeType: "audio/webm",
+      promptTitle: "朗读材料：雪线下的清晨",
+    },
+    written: {
+      totalQuestions: 6,
+      answeredQuestions: 5,
+    },
+    dimensions: [
+      {
+        key: "reading",
+        label: "朗读表达",
+        status: "complete",
+        score: 84,
+        summary: "演示数据：语速较稳定，停顿控制基本自然。",
+      },
+      {
+        key: "written",
+        label: "书面表达",
+        status: "complete",
+        score: 79,
+        summary: "演示数据：信息提取比较完整，表达能覆盖题目重点。",
+      },
+    ],
+    highlights: [
+      "本报告由 /assessment/report/demo 直链生成，仅用于演示。",
+      "真实流程默认只显示 pending / unavailable，不会伪造 AI 分数。",
+      "历史记录不会被覆盖，真实提交会生成独立 reportId。",
+    ],
+    overallScore: 81,
+  };
+}
+
 export interface AssessmentGateway {
   mode: AssessmentMode;
   submitAssessment(input: AssessmentSubmissionInput): Promise<AssessmentReport>;
@@ -169,6 +222,10 @@ export async function getAssessmentReport(
   reportId: string,
   storage = getBrowserLocalStorage(),
 ) {
+  if (reportId === demoReportId) {
+    return createStaticDemoReport();
+  }
+
   const report = findStoredReport(reportId, storage);
 
   if (!report) {
