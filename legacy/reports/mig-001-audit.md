@@ -11,7 +11,7 @@
 
 - branch: `task/mig-001-migration`
 - expected HEAD: `7cace5434ab8fb7187783fb2ecc88d94c862601b`
-- actual HEAD: `56a8b765b8f17db6b7185097ca5b7d41eb8f73b1`
+- actual HEAD: `32982b9fdb722ccfc34e2ce558ca431ce8320ef0`
 - legacy source root: `legacy/source-tree/two-legacy`
 - legacy tree sha256: `9b6dffaec4bc6f03ac1ab1e14217a422c563a10b6b9856909c7aa5067b9a79c2`
 

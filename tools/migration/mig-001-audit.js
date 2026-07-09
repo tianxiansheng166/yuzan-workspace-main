@@ -1530,13 +1530,14 @@ function writeOutputs(worktreeRoot, files) {
   let changedCount = 0;
   for (const file of files) {
     const absolutePath = toWorktreePath(worktreeRoot, file.path);
-    assertOutputBoundary(worktreeRoot, absolutePath);
+    const boundary = assertOutputBoundary(worktreeRoot, absolutePath);
     const previous = fs.existsSync(absolutePath)
       ? fs.readFileSync(absolutePath, "utf8")
       : null;
     if (previous === file.content) {
       continue;
     }
+    ensureSafeOutputParentDirectory(boundary);
     fs.writeFileSync(absolutePath, file.content, "utf8");
     changedCount += 1;
   }
@@ -2087,28 +2088,88 @@ function assertOutputBoundary(worktreeRoot, absolutePath) {
 
   const worktreeRealRoot = realpathStrict(worktreeRoot);
   const outputRootPath = path.join(worktreeRoot, allowedRoot);
-  fs.mkdirSync(outputRootPath, { recursive: true });
-  const outputRootReal = realpathStrict(outputRootPath);
-  assertWithin(
-    outputRootReal,
+  const parentDir = path.dirname(absolutePath);
+
+  assertNoSymlinkBeforeCreate(
+    worktreeRoot,
+    worktreeRoot,
+    outputRootPath,
     worktreeRealRoot,
     `Output root symlink escaped worktree: ${allowedRoot}`,
   );
-
-  const parentDir = path.dirname(absolutePath);
-  fs.mkdirSync(parentDir, { recursive: true });
-  const parentReal = realpathStrict(parentDir);
-  assertWithin(
-    parentReal,
-    outputRootReal,
+  assertNoSymlinkBeforeCreate(
+    worktreeRoot,
+    outputRootPath,
+    parentDir,
+    worktreeRealRoot,
     `Output parent symlink escaped allowed root: ${relative}`,
   );
 
-  if (
-    fs.existsSync(absolutePath) &&
-    fs.lstatSync(absolutePath).isSymbolicLink()
-  ) {
+  if (pathLstatOrNull(absolutePath)?.isSymbolicLink()) {
     throw new Error(`Output file path is a symlink: ${relative}`);
+  }
+
+  return {
+    absolutePath,
+    allowedRoot,
+    outputRootPath,
+    parentDir,
+    relative,
+    worktreeRealRoot,
+  };
+}
+
+function ensureSafeOutputParentDirectory(boundary) {
+  fs.mkdirSync(boundary.parentDir, { recursive: true });
+  const parentReal = realpathStrict(boundary.parentDir);
+  assertWithin(
+    parentReal,
+    boundary.worktreeRealRoot,
+    `Created output parent escaped worktree: ${boundary.relative}`,
+  );
+}
+
+function assertNoSymlinkBeforeCreate(
+  worktreeRoot,
+  lexicalBasePath,
+  targetPath,
+  allowedRealRoot,
+  escapeMessage,
+) {
+  assertWithin(
+    targetPath,
+    lexicalBasePath,
+    `Output path escaped lexical base: ${toPosix(path.relative(worktreeRoot, targetPath))}`,
+  );
+
+  let currentPath = lexicalBasePath;
+  const relativeSegments = path
+    .relative(lexicalBasePath, targetPath)
+    .split(path.sep)
+    .filter(Boolean);
+
+  for (const segment of relativeSegments) {
+    currentPath = path.join(currentPath, segment);
+    const currentStat = pathLstatOrNull(currentPath);
+    if (!currentStat) {
+      break;
+    }
+    if (currentStat.isSymbolicLink()) {
+      throw new Error(escapeMessage);
+    }
+    const currentReal = realpathStrict(currentPath);
+    assertWithin(currentReal, allowedRealRoot, escapeMessage);
+  }
+}
+
+function pathLstatOrNull(targetPath) {
+  try {
+    return fs.lstatSync(targetPath);
+  } catch (error) {
+    if (error && error.code === "ENOENT") {
+      return null;
+    }
+    throw error;
   }
 }
 

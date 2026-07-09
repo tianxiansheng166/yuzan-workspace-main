@@ -235,11 +235,11 @@
     "unitModel": "本课程资源包严格遵循“八大生活主题单元”结构，专为西藏农牧区小学低年段（1-2年级）定制。每个单元精炼为18节核心课，共144课时，深度融入藏族文化元素，旨在解决学生国通语学习中的基础薄弱、语境缺失、兴趣不足等核心难题，为教师提供“即拿即用、高效提质”的完整教学解决方案。"
   },
   "metadata": {
-    "actualHead": "56a8b765b8f17db6b7185097ca5b7d41eb8f73b1",
+    "actualHead": "32982b9fdb722ccfc34e2ce558ca431ce8320ef0",
     "branch": "task/mig-001-migration",
     "deterministicOutput": true,
     "expectedHead": "7cace5434ab8fb7187783fb2ecc88d94c862601b",
-    "inputStateFingerprint": "1c66fe11dac90669157283b4791810829bf9475247e7052323642589b74d67a6",
+    "inputStateFingerprint": "aa4a95968d18e049aeb0c65dbf6d2507e9d5b320b918fd3de2c5861291d8f698",
     "legacySourceRoot": "legacy/source-tree/two-legacy",
     "legacyTreeSha256": "9b6dffaec4bc6f03ac1ab1e14217a422c563a10b6b9856909c7aa5067b9a79c2",
     "outputRoots": ["legacy/exports", "legacy/review", "legacy/reports"],
