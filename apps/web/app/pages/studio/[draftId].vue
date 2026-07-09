@@ -1,29 +1,31 @@
 <script setup lang="ts">
-import CurriculumStudioDashboardView from "../../features/curriculum-studio/CurriculumStudioDashboardView.vue";
+import CurriculumStudioDraftDetailView from "../../features/curriculum-studio/CurriculumStudioDraftDetailView.vue";
 import CurriculumStudioScenarioField from "../../features/curriculum-studio/CurriculumStudioScenarioField.vue";
 import type { StudioScenario } from "../../features/curriculum-studio/model";
-import { useCurriculumStudioDashboard } from "../../features/curriculum-studio/useCurriculumStudioDashboard";
+import { useCurriculumStudioDraft } from "../../features/curriculum-studio/useCurriculumStudioDraft";
 
+const route = useRoute();
+const draftId = computed(() => String(route.params.draftId ?? ""));
 const scenario = ref<StudioScenario>("demo");
-const { pending, result } = useCurriculumStudioDashboard(scenario);
+
+const { pending, result } = useCurriculumStudioDraft(draftId, scenario);
 </script>
 
 <template>
   <section class="studio-page yx-shell">
     <header class="studio-page__header">
       <div>
-        <p class="yx-kicker">CURRICULUM STUDIO</p>
-        <h1>教研内容工作台围绕课程版本、内容关系和发布前检查组织。</h1>
+        <p class="yx-kicker">CURRICULUM STUDIO · DRAFT DETAIL</p>
+        <h1>课程草稿详情与发布边界</h1>
         <p>
-          当前是 CUR-002 Web
-          框架：目录、草稿详情、关联视图和版权检查都已建边界； CUR-001
-          接入前不伪造真实发布、评分或正式服务成功。
+          当前页面用于 CUR-002 Web
+          框架与状态演示，不伪造真实发布成功或真实评分结果。
         </p>
       </div>
       <CurriculumStudioScenarioField v-model="scenario" />
     </header>
 
-    <CurriculumStudioDashboardView :pending="pending" :result="result" />
+    <CurriculumStudioDraftDetailView :pending="pending" :result="result" />
   </section>
 </template>
 
@@ -31,7 +33,7 @@ const { pending, result } = useCurriculumStudioDashboard(scenario);
 .studio-page {
   padding-block: clamp(3rem, 7vw, 7rem);
   display: grid;
-  gap: clamp(2rem, 5vw, 3rem);
+  gap: 2rem;
 }
 
 .studio-page__header {
@@ -44,15 +46,15 @@ const { pending, result } = useCurriculumStudioDashboard(scenario);
 }
 
 h1 {
-  max-width: 15ch;
+  max-width: 16ch;
   margin: 0.8rem 0;
-  font: 600 clamp(2.2rem, 6vw, 5rem)/1 var(--yx-font-display);
+  font: 600 clamp(2rem, 5vw, 4.8rem)/1 var(--yx-font-display);
 }
 
 .studio-page__header p:last-child {
-  max-width: 50rem;
+  max-width: 52rem;
   color: var(--yx-color-ink-soft);
-  line-height: 1.8;
+  line-height: 1.7;
 }
 
 @media (max-width: 48rem) {
