@@ -1,0 +1,100 @@
+version: "1.0.0"
+updatedAt: "2026-07-09"
+mainHead: "79971885933911630f651a84f90c7655759f7898"
+tasks:
+  - id: GOV-001
+    status: MERGED
+    ownerMachine: VM-UBUNTU
+    ownerAgent: Trae
+    branch: task/gov-001-governance
+    commit: "fa0d7e0"
+    baseCommit: "7cace54"
+    allowedPaths:
+      - package.json
+      - pnpm-workspace.yaml
+      - tsconfig.base.json
+      - .env.example
+      - docker-compose.yml
+      - README.md
+    dependencies: []
+    verification:
+      - pnpm install
+      - docker compose up -d postgres minio
+      - lint/typecheck/test/build baseline
+    reportPath: project-ops/runtime-reports/ENVIRONMENT-HANDOFF.md
+
+  - id: GOV-002
+    status: REBASED_NOT_MERGED
+    ownerMachine: VM-UBUNTU
+    ownerAgent: Trae
+    branch: task/gov-002-contract
+    commit: "2496f59e00f735372af403498d8b831d1169c3c1"
+    baseCommit: "7997188"
+    allowedPaths:
+      - packages/contracts/openapi/openapi.yaml
+      - packages/contracts/src/generated.ts
+      - docs/03-architecture/02-API与契约规范.md
+    dependencies:
+      - GOV-001
+    verification:
+      - pnpm contract:validate 通过
+      - packages/contracts lint/test 通过
+    reportPath: project-ops/runtime-reports/GOV-002-GOV-003-CROSS-REVIEW.md
+
+  - id: GOV-003
+    status: MERGED
+    ownerMachine: VM-UBUNTU
+    ownerAgent: Codex
+    branch: task/gov-003-database
+    commit: "7997188"
+    baseCommit: "7cace54"
+    allowedPaths:
+      - infra/database/**/**
+      - docs/02-domain/**
+    dependencies:
+      - GOV-001
+    verification:
+      - pnpm db:generate
+      - pnpm db:validate
+      - migration deploy 成功
+      - 25+ 数据库测试通过
+    reportPath: project-ops/runtime-reports/GOV-002-GOV-003-CROSS-REVIEW.md
+
+  - id: GOV-004
+    status: MERGED
+    ownerMachine: VM-UBUNTU
+    ownerAgent: Codex
+    branch: task/gov-004-design-system
+    commit: "2f02b87"
+    baseCommit: "7cace54"
+    allowedPaths:
+      - packages/design/**
+      - apps/design-lab/**
+      - docs/04-design/**
+    dependencies:
+      - GOV-001
+    verification:
+      - pnpm --filter @yuzan/design test
+      - pnpm typecheck
+      - pnpm build
+    reportPath: project-ops/runtime-reports/WAVE0-DISPATCH-READINESS.md
+
+  - id: MIG-001
+    status: NOT_MERGED
+    ownerMachine: VM-UBUNTU
+    ownerAgent: Codex
+    branch: task/mig-001-migration
+    commit: "56a8b76"
+    baseCommit: "7cace54"
+    allowedPaths:
+      - legacy/exports/**
+      - legacy/reports/**
+      - legacy/review/**
+      - docs/06-migration/**
+    dependencies:
+      - GOV-001
+    verification:
+      - 旧资产清单完成
+      - 脱敏导出完成
+      - 复用判定文档化
+    reportPath: ""

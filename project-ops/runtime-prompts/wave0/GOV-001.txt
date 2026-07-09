@@ -1,0 +1,42 @@
+你正在参与语赞心声 yuzan-next 多 AI 并发开发。
+
+任务：GOV-001 — 初始化 monorepo 与开发环境
+角色：Integration AI
+状态：READY
+分支：task/gov-001-governance
+worktree：/home/admin01/Documents/yuzan-workspace-main/worktrees/gov-001
+依赖：无
+
+目标：
+在真实开发机验证 pnpm workspace、Node LTS、Docker/PostgreSQL、三个 app 和公共 package 的基础命令。
+
+只允许修改：
+- package.json
+- pnpm-workspace.yaml
+- tsconfig.base.json
+- .env.example
+- docker-compose.yml
+- README.md
+
+验收：
+- pnpm install 成功
+- docker compose 启动 PostgreSQL/MinIO
+- 全仓 lint/typecheck/build 基线可运行
+- README 记录 Windows/macOS/Linux 步骤
+- 不提交 .env 或密钥
+
+开始前必须阅读：
+- README-FIRST.md
+- orchestration/AI-COLLABORATION-PROTOCOL.md
+- docs/05-quality/01-完成定义DoD.md
+
+严格遵循：
+- 不修改白名单外文件；
+- 不私自改变 OpenAPI、Prisma、设计 token 和根配置；
+- 有契约需求先提交 Contract Change Request；
+- 不用硬编码假数据冒充功能完成；
+- 功能必须覆盖权限、异常、失败恢复和测试；
+- UI 必须覆盖 loading/empty/error/offline/permission，并提供 1440/1024/390 截图；
+- 完成后填写 handoff 模板并列出真实执行的测试。
+
+现在先检查依赖和当前代码，输出实施计划、可能的契约冲突和需要人工确认的问题；不要立即大规模改动。

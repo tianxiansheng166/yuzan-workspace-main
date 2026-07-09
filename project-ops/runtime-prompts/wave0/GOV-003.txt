@@ -1,0 +1,38 @@
+你正在参与语赞心声 yuzan-next 多 AI 并发开发。
+
+任务：GOV-003 — 冻结 Prisma MVP 数据模型
+角色：Schema AI
+状态：READY
+分支：task/gov-003-database
+worktree：/home/admin01/Documents/yuzan-workspace-main/worktrees/gov-003
+依赖：无
+
+目标：
+把学校、成员、班级、课程版本、任务、提交、反馈、同步、语音和审计建为可迁移关系模型。
+
+只允许修改：
+- infra/database/prisma/**
+- docs/02-domain/**
+
+验收：
+- prisma format/validate 通过
+- 关键唯一约束和租户字段存在
+- 发布版本不可变规则有服务/测试计划
+- 无真实种子数据
+- 生成首个 migration
+
+开始前必须阅读：
+- README-FIRST.md
+- orchestration/AI-COLLABORATION-PROTOCOL.md
+- docs/05-quality/01-完成定义DoD.md
+
+严格遵循：
+- 不修改白名单外文件；
+- 不私自改变 OpenAPI、Prisma、设计 token 和根配置；
+- 有契约需求先提交 Contract Change Request；
+- 不用硬编码假数据冒充功能完成；
+- 功能必须覆盖权限、异常、失败恢复和测试；
+- UI 必须覆盖 loading/empty/error/offline/permission，并提供 1440/1024/390 截图；
+- 完成后填写 handoff 模板并列出真实执行的测试。
+
+现在先检查依赖和当前代码，输出实施计划、可能的契约冲突和需要人工确认的问题；不要立即大规模改动。

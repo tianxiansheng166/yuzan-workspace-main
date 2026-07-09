@@ -1,0 +1,43 @@
+Wave 0 已准备完成。
+
+派发顺序：
+- Codex-1：GOV-004
+- Codex-2：MIG-001
+- Trae-1：GOV-001
+- Trae-2：GOV-002
+- Trae-3：GOV-003
+
+提示词目录：/home/admin01/Documents/yuzan-workspace-main/runtime-prompts/wave0
+worktree 根目录：/home/admin01/Documents/yuzan-workspace-main/worktrees
+
+创建的 worktrees：
+- gov-001 (分支: task/gov-001-governance)
+- gov-002 (分支: task/gov-002-contract)
+- gov-003 (分支: task/gov-003-database)
+- gov-004 (分支: task/gov-004-design-system)
+- mig-001 (分支: task/mig-001-migration)
+
+生成的任务提示词文件：
+- GOV-001.txt - 初始化 monorepo 与开发环境
+- GOV-002.txt - 冻结 OpenAPI v1 基线
+- GOV-003.txt - 冻结 Prisma MVP 数据模型
+- GOV-004.txt - 建立设计 token 与基础原语
+- MIG-001.txt - 旧资产分类与脱敏导出
+
+请不要派发任何 BLOCKED 任务。
+每个 AI 完成后，只收集 handoff、commit hash 和测试输出，不要自行合并。
+
+环境状态说明：
+✅ Node.js 已升级到 v24.18.0
+✅ pnpm 10.13.1 可用
+✅ Git 仓库已初始化
+✅ 依赖已安装（1229个包）
+✅ worktrees 已创建
+✅ 任务提示词已生成
+
+⚠️ 待处理事项：
+- Docker Registry 连接问题（需手动配置镜像源）
+- OpenAPI 契约验证有18个错误（需在 GOV-002 任务中修复）
+- Prisma 命令需要 DATABASE_URL（需确保 PostgreSQL 服务运行）
+
+生成时间：2026-07-09

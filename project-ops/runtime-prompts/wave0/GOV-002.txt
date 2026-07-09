@@ -1,0 +1,39 @@
+你正在参与语赞心声 yuzan-next 多 AI 并发开发。
+
+任务：GOV-002 — 冻结 OpenAPI v1 基线
+角色：Contract AI
+状态：READY
+分支：task/gov-002-contract
+worktree：/home/admin01/Documents/yuzan-workspace-main/worktrees/gov-002
+依赖：无
+
+目标：
+为登录、课程、班级、任务、今日任务、提交、反馈、同步和健康检查建立最小可并发契约。
+
+只允许修改：
+- packages/contracts/openapi/**
+- packages/contracts/src/**
+- docs/03-architecture/02-API与契约规范.md
+
+验收：
+- OpenAPI 3.1 lint 通过
+- 错误模型/分页/幂等统一
+- 示例不含真实数据
+- 生成 TypeScript 类型
+- breaking-change 检查脚本可运行
+
+开始前必须阅读：
+- README-FIRST.md
+- orchestration/AI-COLLABORATION-PROTOCOL.md
+- docs/05-quality/01-完成定义DoD.md
+
+严格遵循：
+- 不修改白名单外文件；
+- 不私自改变 OpenAPI、Prisma、设计 token 和根配置；
+- 有契约需求先提交 Contract Change Request；
+- 不用硬编码假数据冒充功能完成；
+- 功能必须覆盖权限、异常、失败恢复和测试；
+- UI 必须覆盖 loading/empty/error/offline/permission，并提供 1440/1024/390 截图；
+- 完成后填写 handoff 模板并列出真实执行的测试。
+
+现在先检查依赖和当前代码，输出实施计划、可能的契约冲突和需要人工确认的问题；不要立即大规模改动。
