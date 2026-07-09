@@ -55,7 +55,13 @@ const states: PageState[] = ["preview", "loading", "empty", "offline"];
           <span />
           <span />
         </div>
-        <button type="button" disabled>等待真实 API 接入</button>
+        <div class="action-group">
+          <NuxtLink class="primary-link" to="/assessment">首测</NuxtLink>
+          <NuxtLink class="primary-link" to="/assessment">复测</NuxtLink>
+          <NuxtLink class="primary-link" to="/student/today"
+            >推荐课程（待接入）</NuxtLink
+          >
+        </div>
       </article>
       <aside class="journey__aside">
         <h3>系统状态</h3>
@@ -175,14 +181,21 @@ select {
   border-color: var(--yx-color-wine);
   transform: scale(1.25);
 }
-button {
+.action-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+}
+.primary-link {
+  display: inline-flex;
+  align-items: center;
   min-height: 3rem;
-  padding-inline: 1.2rem;
-  border: 0;
+  padding: 0.75rem 1.25rem;
   border-radius: var(--yx-radius-pill);
   background: var(--yx-color-wine);
   color: white;
-  opacity: 0.6;
+  text-decoration: none;
 }
 .journey__aside {
   border-left: 1px solid var(--yx-color-line);

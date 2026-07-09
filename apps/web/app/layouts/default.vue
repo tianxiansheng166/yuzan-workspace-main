@@ -2,9 +2,12 @@
 const route = useRoute();
 const items = [
   { to: "/", label: "项目" },
+  { to: "/assessment", label: "AI 测评" },
   { to: "/student/today", label: "学生今日" },
   { to: "/teacher", label: "教师工作台" },
-  { to: "/studio", label: "内容工作室" },
+  { to: "/teacher-tools", label: "教师工具" },
+  { to: "/training", label: "培训" },
+  { to: "/products", label: "产品方案" },
 ];
 </script>
 

@@ -15,9 +15,10 @@ useSeoMeta({
           课程、任务、学习、反馈和同步成为一条真实可运行的链，而不是一组演示页面。
         </p>
         <div class="hero__actions">
-          <NuxtLink class="primary-link" to="/student/today"
-            >查看学生今日页</NuxtLink
-          >
+          <NuxtLink class="primary-link" to="/assessment">AI 测评</NuxtLink>
+          <NuxtLink class="primary-link" to="/teacher-tools">教师工具</NuxtLink>
+          <NuxtLink class="primary-link" to="/products">产品方案</NuxtLink>
+          <NuxtLink to="/student/today">查看学生今日页</NuxtLink>
           <a href="#architecture">阅读重建原则</a>
         </div>
       </div>
