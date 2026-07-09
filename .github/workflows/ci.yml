@@ -5,13 +5,19 @@ on:
   push:
     branches: [main]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
 jobs:
   quality:
+    name: Quality checks
     runs-on: ubuntu-latest
     timeout-minutes: 25
+
     services:
       postgres:
         image: postgres:17-alpine
@@ -26,22 +32,64 @@ jobs:
           --health-interval 5s
           --health-timeout 3s
           --health-retries 20
+
     env:
+      NODE_ENV: test
       DATABASE_URL: postgresql://yuzan:ci_only@localhost:5432/yuzan?schema=public
       WEB_ORIGIN: http://localhost:3000
+      # CI-only placeholder. Must be replaced by repository secrets when enabling production workflows.
       SESSION_SECRET: ci-session-secret-must-be-longer-than-32-characters
+      S3_ENDPOINT: http://localhost:9000
+      S3_REGION: us-east-1
+      S3_BUCKET: yuzan-ci
+      S3_ACCESS_KEY: minio
+      S3_SECRET_KEY: ci-only-secret-not-for-production
+      S3_FORCE_PATH_STYLE: "true"
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: pnpm
-      - run: corepack enable
-      - run: pnpm install --no-frozen-lockfile
-      - run: pnpm contract:validate
-      - run: pnpm db:validate
-      - run: pnpm lint
-      - run: pnpm typecheck
-      - run: pnpm test
-      - run: pnpm build
-      - run: python scripts/check_legacy_runtime_references.py
+
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma client
+        run: pnpm db:generate
+
+      - name: Generate contract types
+        run: pnpm contract:types
+
+      - name: Check formatting
+        run: pnpm format:check
+
+      - name: Validate database schema
+        run: pnpm db:validate
+
+      - name: Validate OpenAPI contract
+        run: pnpm contract:validate
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Type check
+        run: pnpm typecheck
+
+      - name: Test
+        run: pnpm test
+        env:
+          DATABASE_URL: postgresql://yuzan:ci_only@localhost:5432/yuzan?schema=public
+
+      - name: Build
+        run: pnpm build
+
+      - name: Check legacy runtime references
+        run: python scripts/check_legacy_runtime_references.py
