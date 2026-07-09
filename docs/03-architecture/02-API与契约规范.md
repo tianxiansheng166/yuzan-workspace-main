@@ -125,6 +125,67 @@ v1 冻结后，路径变更必须通过版本号或迁移期进行，不得无�
 - 学校时区只用于展示和截止规则计算；
 - 金额如未来加入，以最小货币单位整数表示。
 
+## Assignment 目标
+
+v1 契约移除 `classId`，采用 `targets` 数组表达任务投放目标，支持以下类型：
+
+```yaml
+targets:
+  - targetType: CLASS
+    classId: "00000000-0000-0000-0000-000000000000"
+  - targetType: STUDENT
+    enrollmentId: "11111111-1111-1111-1111-111111111111"
+```
+
+**设计依据**：
+
+- 数据库 `AssignmentTarget` 表支持多类型目标，API 需与之对齐；
+- `DRAFT` 状态任务允许无目标，`OPEN` 前必须至少存在一个有效目标；
+- 未来可扩展支持 `GROUP` 等更多目标类型。
+
+## Submission 状态流转
+
+| 状态 | 含义 | submittedAt |
+|------|------|-------------|
+| IN_PROGRESS | 本地编辑中 | 可空 |
+| PENDING_SYNC | 等待同步 | 可空 |
+| SUBMITTED | 已提交，等待处理 | 必填 |
+| PROCESSING | 处理中 | 必填 |
+| NEEDS_REVIEW | 需要人工复核 | 必填 |
+| REVIEWED | 已复核 | 必填 |
+| RETURNED | 已退回 | 必填 |
+| ACCEPTED | 已接受 | 必填 |
+
+- API 不接收 `enrollmentId`；服务端由当前认证用户、`schoolId`、`assignmentId` 推导对应的 `Enrollment`；
+- `attemptNo` 由服务端分配，受数据库唯一约束保护；
+- `Idempotency-Key` 为必填请求头。
+
+## 离线同步机制
+
+同步请求包含两级标识：
+
+- `clientOperationId`：请求级幂等标识，映射到数据库 `SyncJob.clientOperationId`；
+- `operations[].operationId`：操作项标识，映射到 `SyncOperation.operationId`。
+
+一个 `sync/push` 请求创建或复用一条 `SyncJob`，每个 `operations[]` 项创建或复用一条 `SyncOperation`。
+
+**entityType 枚举**（MVP 范围）：
+
+- `progress`：学习活动进度
+- `submission`：任务提交
+- `feedback`：教师反馈
+
+**action 枚举**：
+
+- `upsert`：创建或更新
+- `delete`：删除（MVP 暂不支持，保留枚举值以兼容未来）
+
+`GET /sync/pull` 返回的 `cursor` 为不透明字符串；客户端不得解析其内部结构。
+
+## 软删除与 404
+
+租户级可软删除资源（如 School、Course、Assignment、Submission、Feedback 等）在普通 API 中被删除后，对无权限或不可见的调用方统一返回 `404 Not Found`，不暴露资源是否曾经存在。
+
 ## 兼容性
 
 - 可选字段新增通常向后兼容；
@@ -135,5 +196,4 @@ v1 冻结后，路径变更必须通过版本号或迁移期进行，不得无�
 ## 待确认事项
 
 - 正式法律授权名称和 URL 尚待产品所有者确认；发布生产文档前必须补充真实信息；在补充真实 URL 前，Redocly 会对 `info.license` 产生一条警告，该警告已被记录且不得用虚构 URL 消除。
-- `AnswerInput.value` 的具体结构（按 CHOICE/TEXT/SPEECH 的 oneOf 形态）尚待领域模型确认，当前契约保留原始占位字段并在文档中标记。
 - `SyncPayload`（`SyncOperation.payload` 与 `SyncChange.payload`）当前仅包含进度同步的已知字段（`position`、`completed`），其他 `entityType` 的负载结构待领域模型确认。

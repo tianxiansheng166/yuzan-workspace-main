@@ -262,12 +262,14 @@ paths:
             schema:
               $ref: "#/components/schemas/CreateAssignmentRequest"
             example:
-              classId: "11111111-1111-1111-1111-111111111111"
               courseVersionId: "22222222-2222-2222-2222-222222222222"
               title: "第一周语音练习"
               startsAt: "2026-07-10T00:00:00Z"
               dueAt: "2026-07-17T23:59:59Z"
               offlineRequired: true
+              targets:
+                - targetType: CLASS
+                  classId: "11111111-1111-1111-1111-111111111111"
       responses:
         "201":
           description: Assignment created
@@ -386,13 +388,11 @@ paths:
             schema:
               $ref: "#/components/schemas/SubmitAssignmentRequest"
             example:
-              attemptNo: 1
               deviceId: "33333333-3333-3333-3333-333333333333"
-              answers:
+              attempts:
                 - activityId: "44444444-4444-4444-4444-444444444444"
                   kind: "TEXT"
-                  value: "示范回答"
-                  audioAssetId: null
+                  text: "示范回答"
       responses:
         "201":
           description: Submission accepted
@@ -466,10 +466,11 @@ paths:
               $ref: "#/components/schemas/SyncPushRequest"
             example:
               deviceId: "55555555-5555-5555-5555-555555555555"
+              clientOperationId: "66666666-6666-6666-6666-666666666666"
               operations:
-                - operationId: "66666666-6666-6666-6666-666666666666"
+                - operationId: "77777777-7777-7777-7777-777777777777"
                   entityType: "progress"
-                  entityId: "77777777-7777-7777-7777-777777777777"
+                  entityId: "88888888-8888-8888-8888-888888888888"
                   action: "upsert"
                   baseRevision: 3
                   payload:
@@ -504,6 +505,7 @@ paths:
         - $ref: "#/components/parameters/SchoolId"
         - in: query
           name: cursor
+          description: 不透明游标，客户端不得解析其内部结构
           schema:
             type: string
       responses:
@@ -599,7 +601,7 @@ components:
       in: header
       name: If-Match
       required: true
-      description: 客户端持有的资源 revision，冲突时返回 409
+      description: 客户端持有的资源 revision（整数字符串形式），与服务端当前 revision 不一致时返回 409
       schema:
         type: string
   responses:
@@ -628,7 +630,7 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponse"
     NotFound:
-      description: Resource does not exist or is not visible in the current school scope
+      description: Resource does not exist, has been soft-deleted, or is not visible in the current school scope
       content:
         application/json:
           schema:
@@ -880,13 +882,23 @@ components:
     AssignmentStatus:
       type: string
       enum: [DRAFT, SCHEDULED, OPEN, CLOSED, CANCELLED, ARCHIVED]
-    CreateAssignmentRequest:
+    AssignmentTarget:
       type: object
-      required: [classId, courseVersionId, title, startsAt, dueAt]
+      required: [targetType]
       properties:
+        targetType:
+          type: string
+          enum: [CLASS, STUDENT]
         classId:
           type: string
           format: uuid
+        enrollmentId:
+          type: string
+          format: uuid
+    CreateAssignmentRequest:
+      type: object
+      required: [courseVersionId, title, startsAt, dueAt]
+      properties:
         courseVersionId:
           type: string
           format: uuid
@@ -903,15 +915,16 @@ components:
         offlineRequired:
           type: boolean
           default: false
+        targets:
+          type: array
+          items:
+            $ref: "#/components/schemas/AssignmentTarget"
     Assignment:
       type: object
       required:
-        [id, classId, courseVersionId, title, status, startsAt, dueAt, revision]
+        [id, courseVersionId, title, status, startsAt, dueAt, revision]
       properties:
         id:
-          type: string
-          format: uuid
-        classId:
           type: string
           format: uuid
         courseVersionId:
@@ -932,6 +945,10 @@ components:
           minimum: 1
         offlineRequired:
           type: boolean
+        targets:
+          type: array
+          items:
+            $ref: "#/components/schemas/AssignmentTarget"
     AssignmentResponse:
       type: object
       required: [data, meta]
@@ -999,9 +1016,15 @@ components:
           $ref: "#/components/schemas/Progress"
         meta:
           $ref: "#/components/schemas/EnvelopeMeta"
-    AnswerInput:
+    ActivityAttemptInput:
       type: object
       required: [activityId, kind]
+      discriminator:
+        propertyName: kind
+        mapping:
+          CHOICE: "#/components/schemas/ChoiceAttemptInput"
+          TEXT: "#/components/schemas/TextAttemptInput"
+          SPEECH: "#/components/schemas/SpeechAttemptInput"
       properties:
         activityId:
           type: string
@@ -1009,26 +1032,45 @@ components:
         kind:
           type: string
           enum: [CHOICE, TEXT, SPEECH]
-        value:
-          type: [string, number, boolean, array, object, "null"]
-          description: 答案内容占位类型，具体按 CHOICE/TEXT/SPEECH 的结构化形态待领域模型确认
-        audioAssetId:
-          type: [string, "null"]
-          format: uuid
+    ChoiceAttemptInput:
+      allOf:
+        - $ref: "#/components/schemas/ActivityAttemptInput"
+        - type: object
+          required: [selectedOptionIds]
+          properties:
+            selectedOptionIds:
+              type: array
+              items:
+                type: string
+                format: uuid
+    TextAttemptInput:
+      allOf:
+        - $ref: "#/components/schemas/ActivityAttemptInput"
+        - type: object
+          required: [text]
+          properties:
+            text:
+              type: string
+    SpeechAttemptInput:
+      allOf:
+        - $ref: "#/components/schemas/ActivityAttemptInput"
+        - type: object
+          required: [audioAssetId]
+          properties:
+            audioAssetId:
+              type: string
+              format: uuid
     SubmitAssignmentRequest:
       type: object
-      required: [attemptNo, answers]
+      required: [attempts]
       properties:
-        attemptNo:
-          type: integer
-          minimum: 1
         deviceId:
           type: [string, "null"]
           format: uuid
-        answers:
+        attempts:
           type: array
           items:
-            $ref: "#/components/schemas/AnswerInput"
+            $ref: "#/components/schemas/ActivityAttemptInput"
     Submission:
       type: object
       required: [id, assignmentId, status, attemptNo, revision, submittedAt]
@@ -1042,13 +1084,13 @@ components:
         status:
           type: string
           enum:
-            [SUBMITTED, PROCESSING, NEEDS_REVIEW, REVIEWED, RETURNED, ACCEPTED]
+            [IN_PROGRESS, PENDING_SYNC, SUBMITTED, PROCESSING, NEEDS_REVIEW, REVIEWED, RETURNED, ACCEPTED]
         attemptNo:
           type: integer
         revision:
           type: integer
         submittedAt:
-          type: string
+          type: [string, "null"]
           format: date-time
     SubmissionResponse:
       type: object
@@ -1112,10 +1154,12 @@ components:
           format: uuid
         entityType:
           type: string
+          enum: [progress, submission, feedback]
         entityId:
           type: string
         action:
           type: string
+          enum: [upsert, delete]
         baseRevision:
           type: [integer, "null"]
         payload:
@@ -1125,9 +1169,12 @@ components:
           format: date-time
     SyncPushRequest:
       type: object
-      required: [deviceId, operations]
+      required: [deviceId, clientOperationId, operations]
       properties:
         deviceId:
+          type: string
+          format: uuid
+        clientOperationId:
           type: string
           format: uuid
         operations:
@@ -1167,6 +1214,7 @@ components:
           type: string
         entityType:
           type: string
+          enum: [progress, submission, feedback]
         entityId:
           type: string
         revision:
@@ -1174,6 +1222,9 @@ components:
         changedAt:
           type: string
           format: date-time
+        action:
+          type: string
+          enum: [upsert, delete]
         payload:
           $ref: "#/components/schemas/SyncPayload"
     SyncPullResponse:
