@@ -3,6 +3,7 @@
     {
       "domain": "cdn.jsdelivr.net",
       "id": "mig001_50ef514bbc2c",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "script",
       "pathHint": "dist/chart.umd.min.js",
@@ -11,11 +12,12 @@
       "sourceRecordId": "mig001_b9565913e8f8",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "cdn.jsdelivr.net",
       "id": "mig001_a548f17cdd91",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "font",
       "pathHint": "css/font-awesome.min.css",
@@ -24,11 +26,12 @@
       "sourceRecordId": "mig001_b9565913e8f8",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "cdn.tailwindcss.com",
       "id": "mig001_1740ca0ced71",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "external-resource",
       "pathHint": "/",
@@ -37,11 +40,12 @@
       "sourceRecordId": "mig001_b9565913e8f8",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "fonts.googleapis.com",
       "id": "mig001_366f14e35e40",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "external-resource",
       "pathHint": "/",
@@ -50,11 +54,12 @@
       "sourceRecordId": "mig001_b9565913e8f8",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "fonts.googleapis.com",
       "id": "mig001_dc6c4f97a3a3",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "external-resource",
       "pathHint": "css2",
@@ -63,11 +68,12 @@
       "sourceRecordId": "mig001_b9565913e8f8",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "fonts.gstatic.com",
       "id": "mig001_1ef78f7e0434",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "external-resource",
       "pathHint": "/",
@@ -76,11 +82,12 @@
       "sourceRecordId": "mig001_b9565913e8f8",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "cdn.jsdelivr.net",
       "id": "mig001_0c18a294f074",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "font",
       "pathHint": "css/font-awesome.min.css",
@@ -89,11 +96,12 @@
       "sourceRecordId": "mig001_ea65f0c19829",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "cdn.tailwindcss.com",
       "id": "mig001_e5574ebbefe3",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "external-resource",
       "pathHint": "/",
@@ -102,11 +110,12 @@
       "sourceRecordId": "mig001_ea65f0c19829",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "cdn.jsdelivr.net",
       "id": "mig001_08a419b82bc0",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "font",
       "pathHint": "css/font-awesome.min.css",
@@ -115,11 +124,12 @@
       "sourceRecordId": "mig001_07ff6a7cbd44",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "cdn.tailwindcss.com",
       "id": "mig001_a2a7fbe46e1c",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "external-resource",
       "pathHint": "/",
@@ -128,11 +138,12 @@
       "sourceRecordId": "mig001_07ff6a7cbd44",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "p11-doubao-search-sign.byteimg.com",
       "id": "mig001_f6588af05dbd",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "image",
       "pathHint": "mosaic-legacy/1bc8000114341d73d9e7~tplv-be4g95zd3a-image.jpeg",
@@ -141,11 +152,12 @@
       "sourceRecordId": "mig001_07ff6a7cbd44",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "signed-external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "p11-doubao-search-sign.byteimg.com",
       "id": "mig001_74413198c473",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "image",
       "pathHint": "tos-cn-i-qvj2lq49k0/cc55c3c6d4ee45e0b75fd41acf6005a4~tplv-be4g95zd3a-image.jpeg",
@@ -154,11 +166,12 @@
       "sourceRecordId": "mig001_07ff6a7cbd44",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "signed-external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "p26-doubao-search-sign.byteimg.com",
       "id": "mig001_7a2ed1b93920",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "image",
       "pathHint": "labis/8d0be08c2606f269b897515a0ee5de3f~tplv-be4g95zd3a-image.jpeg",
@@ -167,11 +180,12 @@
       "sourceRecordId": "mig001_07ff6a7cbd44",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "signed-external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "p26-doubao-search-sign.byteimg.com",
       "id": "mig001_25ce2820da39",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "image",
       "pathHint": "labis/eeab2b975f58e1066c15c8a810c59005~tplv-be4g95zd3a-image.jpeg",
@@ -180,11 +194,12 @@
       "sourceRecordId": "mig001_07ff6a7cbd44",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "signed-external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "p26-doubao-search-sign.byteimg.com",
       "id": "mig001_fcc6685297d5",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "image",
       "pathHint": "labis/f845b83c091e012109c44c7dde8cfcb5~tplv-be4g95zd3a-image.jpeg",
@@ -193,11 +208,12 @@
       "sourceRecordId": "mig001_07ff6a7cbd44",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "signed-external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "p26-doubao-search-sign.byteimg.com",
       "id": "mig001_91ea3084a18c",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "image",
       "pathHint": "tos-cn-i-be4g95zd3a/1487031528883093510~tplv-be4g95zd3a-image.jpeg",
@@ -206,11 +222,12 @@
       "sourceRecordId": "mig001_07ff6a7cbd44",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "signed-external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "p3-doubao-search-sign.byteimg.com",
       "id": "mig001_f9f6eaa4b27f",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "image",
       "pathHint": "tos-cn-i-be4g95zd3a/1630797037955317761~tplv-be4g95zd3a-image.jpeg",
@@ -219,11 +236,12 @@
       "sourceRecordId": "mig001_07ff6a7cbd44",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "signed-external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "cdn.jsdelivr.net",
       "id": "mig001_193d599269f6",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "script",
       "pathHint": "dist/chart.umd.min.js",
@@ -232,11 +250,12 @@
       "sourceRecordId": "mig001_146d0956a4ad",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "cdn.jsdelivr.net",
       "id": "mig001_7f24674ddcaa",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "font",
       "pathHint": "css/font-awesome.min.css",
@@ -245,11 +264,12 @@
       "sourceRecordId": "mig001_146d0956a4ad",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "cdn.tailwindcss.com",
       "id": "mig001_2ca3ff5d567c",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "external-resource",
       "pathHint": "/",
@@ -258,11 +278,12 @@
       "sourceRecordId": "mig001_146d0956a4ad",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "fonts.googleapis.com",
       "id": "mig001_cf4f4bf09067",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "external-resource",
       "pathHint": "/",
@@ -271,11 +292,12 @@
       "sourceRecordId": "mig001_146d0956a4ad",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "fonts.googleapis.com",
       "id": "mig001_82d309bf5bb4",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "external-resource",
       "pathHint": "css2",
@@ -284,11 +306,12 @@
       "sourceRecordId": "mig001_146d0956a4ad",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "fonts.gstatic.com",
       "id": "mig001_4e63def82d2b",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "external-resource",
       "pathHint": "/",
@@ -297,11 +320,12 @@
       "sourceRecordId": "mig001_146d0956a4ad",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "p3-flow-imagex-sign.byteimg.com",
       "id": "mig001_5ba2c9e59a82",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "external-resource",
       "pathHint": "super_tool/b01db19ad5f34c35a5cba3cefa9614ca~tplv-a9rns2rl98-image.image",
@@ -310,11 +334,12 @@
       "sourceRecordId": "mig001_146d0956a4ad",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "signed-external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "cdn.jsdelivr.net",
       "id": "mig001_e326d5439072",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "script",
       "pathHint": "dist/chart.umd.min.js",
@@ -323,11 +348,12 @@
       "sourceRecordId": "mig001_f6013a00b362",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "cdn.jsdelivr.net",
       "id": "mig001_1889ecbed13e",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "font",
       "pathHint": "css/font-awesome.min.css",
@@ -336,11 +362,12 @@
       "sourceRecordId": "mig001_f6013a00b362",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "cdn.tailwindcss.com",
       "id": "mig001_8d8a8a35c686",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "external-resource",
       "pathHint": "/",
@@ -349,11 +376,12 @@
       "sourceRecordId": "mig001_f6013a00b362",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "p11-doubao-search-sign.byteimg.com",
       "id": "mig001_e8565af93ccf",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "image",
       "pathHint": "mosaic-legacy/1bc8000114341d73d9e7~tplv-be4g95zd3a-image.jpeg",
@@ -362,11 +390,12 @@
       "sourceRecordId": "mig001_f6013a00b362",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "signed-external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "p11-doubao-search-sign.byteimg.com",
       "id": "mig001_810b2de69186",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "image",
       "pathHint": "pgc-image/d21881a4e9a7407bae1e3d5bcf10b486~tplv-be4g95zd3a-image.jpeg",
@@ -375,11 +404,12 @@
       "sourceRecordId": "mig001_f6013a00b362",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "signed-external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "p11-doubao-search-sign.byteimg.com",
       "id": "mig001_9ed0790943a7",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "image",
       "pathHint": "tos-cn-i-qvj2lq49k0/cc55c3c6d4ee45e0b75fd41acf6005a4~tplv-be4g95zd3a-image.jpeg",
@@ -388,11 +418,12 @@
       "sourceRecordId": "mig001_f6013a00b362",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "signed-external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "p26-doubao-search-sign.byteimg.com",
       "id": "mig001_3a219f13a967",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "image",
       "pathHint": "labis/8d0be08c2606f269b897515a0ee5de3f~tplv-be4g95zd3a-image.jpeg",
@@ -401,11 +432,12 @@
       "sourceRecordId": "mig001_f6013a00b362",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "signed-external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "p26-doubao-search-sign.byteimg.com",
       "id": "mig001_0ebe0c114e9e",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "image",
       "pathHint": "labis/eeab2b975f58e1066c15c8a810c59005~tplv-be4g95zd3a-image.jpeg",
@@ -414,11 +446,12 @@
       "sourceRecordId": "mig001_f6013a00b362",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "signed-external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "p26-doubao-search-sign.byteimg.com",
       "id": "mig001_f9df826d2e50",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "image",
       "pathHint": "pgc-image/1527590555615ba2bac849a~tplv-be4g95zd3a-image.jpeg",
@@ -427,11 +460,12 @@
       "sourceRecordId": "mig001_f6013a00b362",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "signed-external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "p26-doubao-search-sign.byteimg.com",
       "id": "mig001_fd2630faab2d",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "image",
       "pathHint": "tos-cn-i-be4g95zd3a/1487031528883093510~tplv-be4g95zd3a-image.jpeg",
@@ -440,11 +474,12 @@
       "sourceRecordId": "mig001_f6013a00b362",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "signed-external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "p26-doubao-search-sign.byteimg.com",
       "id": "mig001_c4c5fb3595e6",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "image",
       "pathHint": "tos-cn-i-be4g95zd3a/1487032671437979657~tplv-be4g95zd3a-image.jpeg",
@@ -453,11 +488,12 @@
       "sourceRecordId": "mig001_f6013a00b362",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "signed-external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "p3-doubao-search-sign.byteimg.com",
       "id": "mig001_a8d2c5739a41",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "image",
       "pathHint": "tos-cn-i-be4g95zd3a/1630797037955317761~tplv-be4g95zd3a-image.jpeg",
@@ -466,11 +502,12 @@
       "sourceRecordId": "mig001_f6013a00b362",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "signed-external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "p3-flow-imagex-sign.byteimg.com",
       "id": "mig001_5ef3c90ca9ab",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "external-resource",
       "pathHint": "code_assistant/b70eee2d91834c95a7a378b47c0cc152~tplv-a9rns2rl98-image.image",
@@ -479,11 +516,12 @@
       "sourceRecordId": "mig001_f6013a00b362",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "signed-external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "cdn.jsdelivr.net",
       "id": "mig001_d60046d47ed4",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "font",
       "pathHint": "css/font-awesome.min.css",
@@ -492,11 +530,12 @@
       "sourceRecordId": "mig001_fd37308ebe3c",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "cdn.tailwindcss.com",
       "id": "mig001_0dfa2c65c17a",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "external-resource",
       "pathHint": "/",
@@ -505,11 +544,12 @@
       "sourceRecordId": "mig001_fd37308ebe3c",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "fonts.googleapis.com",
       "id": "mig001_5ba79e1cd9c8",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "external-resource",
       "pathHint": "/",
@@ -518,11 +558,12 @@
       "sourceRecordId": "mig001_fd37308ebe3c",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "fonts.googleapis.com",
       "id": "mig001_e6be4543a4ba",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "external-resource",
       "pathHint": "css2",
@@ -531,11 +572,12 @@
       "sourceRecordId": "mig001_fd37308ebe3c",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "fonts.gstatic.com",
       "id": "mig001_a746945af651",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "external-resource",
       "pathHint": "/",
@@ -544,11 +586,12 @@
       "sourceRecordId": "mig001_fd37308ebe3c",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "p3-flow-imagex-sign.byteimg.com",
       "id": "mig001_a30eb6ce97e3",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "external-resource",
       "pathHint": "code_assistant/b70eee2d91834c95a7a378b47c0cc152~tplv-a9rns2rl98-image.image",
@@ -557,11 +600,12 @@
       "sourceRecordId": "mig001_fd37308ebe3c",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "signed-external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "platform.deepseek.com",
       "id": "mig001_89991480c17f",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "external-resource",
       "pathHint": "%60",
@@ -570,11 +614,12 @@
       "sourceRecordId": "mig001_6edc82242bd1",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "cdn.jsdelivr.net",
       "id": "mig001_6ae57ac9bc28",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "font",
       "pathHint": "css/font-awesome.min.css",
@@ -583,11 +628,12 @@
       "sourceRecordId": "mig001_f139e7aadde4",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "cdn.tailwindcss.com",
       "id": "mig001_5516527fb7ec",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "external-resource",
       "pathHint": "/",
@@ -596,11 +642,12 @@
       "sourceRecordId": "mig001_f139e7aadde4",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "p11-doubao-search-sign.byteimg.com",
       "id": "mig001_751c6246d455",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "image",
       "pathHint": "pgc-image/d21881a4e9a7407bae1e3d5bcf10b486~tplv-be4g95zd3a-image.jpeg",
@@ -609,11 +656,12 @@
       "sourceRecordId": "mig001_f139e7aadde4",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "signed-external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "p26-doubao-search-sign.byteimg.com",
       "id": "mig001_d82671727c80",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "image",
       "pathHint": "labis/8d0be08c2606f269b897515a0ee5de3f~tplv-be4g95zd3a-image.jpeg",
@@ -622,11 +670,12 @@
       "sourceRecordId": "mig001_f139e7aadde4",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "signed-external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "p26-doubao-search-sign.byteimg.com",
       "id": "mig001_60ee3aa2999a",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "image",
       "pathHint": "pgc-image/1527590555615ba2bac849a~tplv-be4g95zd3a-image.jpeg",
@@ -635,11 +684,12 @@
       "sourceRecordId": "mig001_f139e7aadde4",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "signed-external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "cdn.jsdelivr.net",
       "id": "mig001_08ccb7bceb42",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "font",
       "pathHint": "css/font-awesome.min.css",
@@ -648,11 +698,12 @@
       "sourceRecordId": "mig001_3f6078b4ad2f",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "cdn.tailwindcss.com",
       "id": "mig001_292eef47bf18",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "external-resource",
       "pathHint": "/",
@@ -661,11 +712,12 @@
       "sourceRecordId": "mig001_3f6078b4ad2f",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "p26-doubao-search-sign.byteimg.com",
       "id": "mig001_8a1ab7c192a4",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "image",
       "pathHint": "labis/8d0be08c2606f269b897515a0ee5de3f~tplv-be4g95zd3a-image.jpeg",
@@ -674,11 +726,12 @@
       "sourceRecordId": "mig001_3f6078b4ad2f",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "signed-external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "cdn.jsdelivr.net",
       "id": "mig001_f4706ce8b3c7",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "font",
       "pathHint": "css/font-awesome.min.css",
@@ -687,11 +740,12 @@
       "sourceRecordId": "mig001_0b5077838209",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "cdn.tailwindcss.com",
       "id": "mig001_109cf706d383",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "external-resource",
       "pathHint": "/",
@@ -700,11 +754,12 @@
       "sourceRecordId": "mig001_0b5077838209",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "cdn.jsdelivr.net",
       "id": "mig001_452ee6ee367a",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "script",
       "pathHint": "dist/chart.umd.min.js",
@@ -713,11 +768,12 @@
       "sourceRecordId": "mig001_bac465da5bad",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "cdn.jsdelivr.net",
       "id": "mig001_4a087a9eac52",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "font",
       "pathHint": "css/font-awesome.min.css",
@@ -726,11 +782,12 @@
       "sourceRecordId": "mig001_bac465da5bad",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "cdn.tailwindcss.com",
       "id": "mig001_12a35f99b49e",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "external-resource",
       "pathHint": "/",
@@ -739,11 +796,12 @@
       "sourceRecordId": "mig001_bac465da5bad",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "fonts.googleapis.com",
       "id": "mig001_4096ebe9cc3b",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "external-resource",
       "pathHint": "/",
@@ -752,11 +810,12 @@
       "sourceRecordId": "mig001_bac465da5bad",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "fonts.googleapis.com",
       "id": "mig001_6f7e2e099d51",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "external-resource",
       "pathHint": "css2",
@@ -765,11 +824,12 @@
       "sourceRecordId": "mig001_bac465da5bad",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "fonts.gstatic.com",
       "id": "mig001_8434be1c5780",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "external-resource",
       "pathHint": "/",
@@ -778,11 +838,12 @@
       "sourceRecordId": "mig001_bac465da5bad",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "p11-doubao-search-sign.byteimg.com",
       "id": "mig001_bc4e8e63fe23",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "image",
       "pathHint": "pgc-image/d21881a4e9a7407bae1e3d5bcf10b486~tplv-be4g95zd3a-image.jpeg",
@@ -791,11 +852,12 @@
       "sourceRecordId": "mig001_bac465da5bad",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "signed-external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "p26-doubao-search-sign.byteimg.com",
       "id": "mig001_9cacee2dc338",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "image",
       "pathHint": "labis/8d0be08c2606f269b897515a0ee5de3f~tplv-be4g95zd3a-image.jpeg",
@@ -804,11 +866,12 @@
       "sourceRecordId": "mig001_bac465da5bad",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "signed-external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "cdn.jsdelivr.net",
       "id": "mig001_32d850451396",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "script",
       "pathHint": "dist/chart.umd.min.js",
@@ -817,11 +880,12 @@
       "sourceRecordId": "mig001_50945f57b93b",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "cdn.jsdelivr.net",
       "id": "mig001_a6727300a531",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "font",
       "pathHint": "css/font-awesome.min.css",
@@ -830,11 +894,12 @@
       "sourceRecordId": "mig001_50945f57b93b",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "cdn.tailwindcss.com",
       "id": "mig001_3a7dd8370238",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "external-resource",
       "pathHint": "/",
@@ -843,11 +908,12 @@
       "sourceRecordId": "mig001_50945f57b93b",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "fonts.googleapis.com",
       "id": "mig001_f4301610727b",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "external-resource",
       "pathHint": "/",
@@ -856,11 +922,12 @@
       "sourceRecordId": "mig001_50945f57b93b",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "fonts.googleapis.com",
       "id": "mig001_d5dedf3bc268",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "external-resource",
       "pathHint": "css2",
@@ -869,11 +936,12 @@
       "sourceRecordId": "mig001_50945f57b93b",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "fonts.gstatic.com",
       "id": "mig001_e05008303668",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "external-resource",
       "pathHint": "/",
@@ -882,11 +950,12 @@
       "sourceRecordId": "mig001_50945f57b93b",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "cdn.jsdelivr.net",
       "id": "mig001_0854b8104a61",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "script",
       "pathHint": "dist/chart.umd.min.js",
@@ -895,11 +964,12 @@
       "sourceRecordId": "mig001_b3a1c2928494",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "cdn.jsdelivr.net",
       "id": "mig001_5eaf61918759",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "font",
       "pathHint": "css/font-awesome.min.css",
@@ -908,11 +978,12 @@
       "sourceRecordId": "mig001_b3a1c2928494",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "cdn.tailwindcss.com",
       "id": "mig001_7afae9e1e38d",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "external-resource",
       "pathHint": "/",
@@ -921,11 +992,12 @@
       "sourceRecordId": "mig001_b3a1c2928494",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "fonts.googleapis.com",
       "id": "mig001_5d0e823a3afe",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "external-resource",
       "pathHint": "/",
@@ -934,11 +1006,12 @@
       "sourceRecordId": "mig001_b3a1c2928494",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "fonts.googleapis.com",
       "id": "mig001_f3e06d166370",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "external-resource",
       "pathHint": "css2",
@@ -947,11 +1020,12 @@
       "sourceRecordId": "mig001_b3a1c2928494",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "fonts.gstatic.com",
       "id": "mig001_40e93fd9eaa5",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "external-resource",
       "pathHint": "/",
@@ -960,11 +1034,12 @@
       "sourceRecordId": "mig001_b3a1c2928494",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "p11-doubao-search-sign.byteimg.com",
       "id": "mig001_f1f30001d680",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "image",
       "pathHint": "pgc-image/d21881a4e9a7407bae1e3d5bcf10b486~tplv-be4g95zd3a-image.jpeg",
@@ -973,11 +1048,12 @@
       "sourceRecordId": "mig001_b3a1c2928494",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "signed-external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "p26-doubao-search-sign.byteimg.com",
       "id": "mig001_972c6c88ea10",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "image",
       "pathHint": "labis/8d0be08c2606f269b897515a0ee5de3f~tplv-be4g95zd3a-image.jpeg",
@@ -986,11 +1062,12 @@
       "sourceRecordId": "mig001_b3a1c2928494",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "signed-external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "p26-doubao-search-sign.byteimg.com",
       "id": "mig001_ec6ae36b8e3a",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "image",
       "pathHint": "tos-cn-i-be4g95zd3a/1487031528883093510~tplv-be4g95zd3a-image.jpeg",
@@ -999,11 +1076,12 @@
       "sourceRecordId": "mig001_b3a1c2928494",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "signed-external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "cdn.jsdelivr.net",
       "id": "mig001_1aea801d135f",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "script",
       "pathHint": "dist/chart.umd.min.js",
@@ -1012,11 +1090,12 @@
       "sourceRecordId": "mig001_50a4a939d1c7",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "cdn.jsdelivr.net",
       "id": "mig001_9b7df2cab57b",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "font",
       "pathHint": "css/font-awesome.min.css",
@@ -1025,11 +1104,12 @@
       "sourceRecordId": "mig001_50a4a939d1c7",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "cdn.tailwindcss.com",
       "id": "mig001_325550d59178",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "external-resource",
       "pathHint": "/",
@@ -1038,11 +1118,12 @@
       "sourceRecordId": "mig001_50a4a939d1c7",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "fonts.googleapis.com",
       "id": "mig001_9e42b3ca042a",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "external-resource",
       "pathHint": "/",
@@ -1051,11 +1132,12 @@
       "sourceRecordId": "mig001_50a4a939d1c7",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "fonts.googleapis.com",
       "id": "mig001_358e27f04015",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "external-resource",
       "pathHint": "css2",
@@ -1064,11 +1146,12 @@
       "sourceRecordId": "mig001_50a4a939d1c7",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "fonts.gstatic.com",
       "id": "mig001_abb0a5f2506d",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "external-resource",
       "pathHint": "/",
@@ -1077,11 +1160,12 @@
       "sourceRecordId": "mig001_50a4a939d1c7",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "cdn.jsdelivr.net",
       "id": "mig001_333f2c905313",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "font",
       "pathHint": "css/font-awesome.min.css",
@@ -1090,11 +1174,12 @@
       "sourceRecordId": "mig001_bd2353e75943",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "cdn.tailwindcss.com",
       "id": "mig001_d5ff9437dc08",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "external-resource",
       "pathHint": "/",
@@ -1103,11 +1188,12 @@
       "sourceRecordId": "mig001_bd2353e75943",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "p11-doubao-search-sign.byteimg.com",
       "id": "mig001_3ccbddbee853",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "image",
       "pathHint": "mosaic-legacy/1bc8000114341d73d9e7~tplv-be4g95zd3a-image.jpeg",
@@ -1116,11 +1202,12 @@
       "sourceRecordId": "mig001_bd2353e75943",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "signed-external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "p11-doubao-search-sign.byteimg.com",
       "id": "mig001_876f5b6e1df4",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "image",
       "pathHint": "pgc-image/d21881a4e9a7407bae1e3d5bcf10b486~tplv-be4g95zd3a-image.jpeg",
@@ -1129,11 +1216,12 @@
       "sourceRecordId": "mig001_bd2353e75943",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "signed-external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "p26-doubao-search-sign.byteimg.com",
       "id": "mig001_c733cd00969a",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "image",
       "pathHint": "pgc-image/1527590555615ba2bac849a~tplv-be4g95zd3a-image.jpeg",
@@ -1142,11 +1230,12 @@
       "sourceRecordId": "mig001_bd2353e75943",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "signed-external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "cdn.jsdelivr.net",
       "id": "mig001_236dffbc27a3",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "script",
       "pathHint": "dist/chart.umd.min.js",
@@ -1155,11 +1244,12 @@
       "sourceRecordId": "mig001_ab881ef528f2",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "cdn.jsdelivr.net",
       "id": "mig001_f8bf2fc12f65",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "font",
       "pathHint": "css/font-awesome.min.css",
@@ -1168,11 +1258,12 @@
       "sourceRecordId": "mig001_ab881ef528f2",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "cdn.tailwindcss.com",
       "id": "mig001_8adcc7bb2fc6",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "external-resource",
       "pathHint": "/",
@@ -1181,11 +1272,12 @@
       "sourceRecordId": "mig001_ab881ef528f2",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "fonts.googleapis.com",
       "id": "mig001_f46beefdb08f",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "external-resource",
       "pathHint": "/",
@@ -1194,11 +1286,12 @@
       "sourceRecordId": "mig001_ab881ef528f2",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "fonts.googleapis.com",
       "id": "mig001_6b27da4769f1",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "external-resource",
       "pathHint": "css2",
@@ -1207,11 +1300,12 @@
       "sourceRecordId": "mig001_ab881ef528f2",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "domain": "fonts.gstatic.com",
       "id": "mig001_d7346da81574",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "external-resource",
       "pathHint": "/",
@@ -1220,13 +1314,14 @@
       "sourceRecordId": "mig001_ab881ef528f2",
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "external-cdn",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     }
   ],
   "localAssets": [
     {
       "fileType": "PNG image",
       "id": "mig001_e89ed53b17c6",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "course-cover",
       "relativePath": "assets/images/三年级-夏洛的网-课程封面.png",
@@ -1235,11 +1330,12 @@
       "sizeBytes": 1340622,
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "legacy-local-asset",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "fileType": "PNG image",
       "id": "mig001_57828ec28dc0",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "player-cover",
       "relativePath": "assets/images/视频播放封面.png",
@@ -1248,11 +1344,12 @@
       "sizeBytes": 105287,
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "legacy-local-asset",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "fileType": "PNG image",
       "id": "mig001_6830fbc5fdc7",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "course-cover",
       "relativePath": "assets/images/五年级-我为仓央嘉措诗配画-课程封面.png",
@@ -1261,11 +1358,12 @@
       "sizeBytes": 994590,
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "legacy-local-asset",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "fileType": "PNG image",
       "id": "mig001_818abd8269ff",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "logo",
       "relativePath": "assets/images/logo.png",
@@ -1274,11 +1372,12 @@
       "sizeBytes": 58514,
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "legacy-local-asset",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "fileType": "PNG image",
       "id": "mig001_c74a286ef88c",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "hero-image",
       "relativePath": "assets/images/yx-plateau-soundscape-hero-v2.png",
@@ -1287,11 +1386,12 @@
       "sizeBytes": 2561255,
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "legacy-local-asset",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "fileType": "PNG image",
       "id": "mig001_f2dd7662a2d5",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "hero-image",
       "relativePath": "assets/images/yx-plateau-soundscape-hero.png",
@@ -1300,11 +1400,12 @@
       "sizeBytes": 2931065,
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "legacy-local-asset",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "fileType": "MP4 video",
       "id": "mig001_7f9944bbc22d",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "video",
       "relativePath": "assets/media/video.mp4",
@@ -1313,11 +1414,12 @@
       "sizeBytes": 666564,
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "legacy-local-media",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "fileType": "WebVTT subtitle",
       "id": "mig001_a25e0e44fa98",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "subtitle",
       "relativePath": "public/subtitles/sample_bo.vtt",
@@ -1326,11 +1428,12 @@
       "sizeBytes": 1091,
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "legacy-local-media",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     },
     {
       "fileType": "WebVTT subtitle",
       "id": "mig001_19c335987746",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
       "manualReviewRequired": true,
       "mediaCategory": "subtitle",
       "relativePath": "public/subtitles/sample_zh.vtt",
@@ -1339,15 +1442,15 @@
       "sizeBytes": 314,
       "sourceRoot": "legacy/source-tree/two-legacy",
       "sourceStatus": "legacy-local-media",
-      "suggestedDisposition": "COPYRIGHT_BLOCKED"
+      "suggestedDisposition": "REVIEW"
     }
   ],
   "metadata": {
-    "actualHead": "5a7a71570a5f8abf8ad949e0b5cca16ac94fcb72",
+    "actualHead": "56a8b765b8f17db6b7185097ca5b7d41eb8f73b1",
     "branch": "task/mig-001-migration",
     "deterministicOutput": true,
     "expectedHead": "7cace5434ab8fb7187783fb2ecc88d94c862601b",
-    "inputStateFingerprint": "98c6476dcde48220abb00ea8e07336c4c75911287a021b3651370dc075d51192",
+    "inputStateFingerprint": "1c66fe11dac90669157283b4791810829bf9475247e7052323642589b74d67a6",
     "legacySourceRoot": "legacy/source-tree/two-legacy",
     "legacyTreeSha256": "9b6dffaec4bc6f03ac1ab1e14217a422c563a10b6b9856909c7aa5067b9a79c2",
     "outputRoots": ["legacy/exports", "legacy/review", "legacy/reports"],

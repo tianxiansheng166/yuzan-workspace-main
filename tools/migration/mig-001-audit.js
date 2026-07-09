@@ -14,7 +14,9 @@ const OUTPUT_ROOT_LABELS = [
   "legacy/reports",
 ];
 
-const PRIMARY_DISPOSITIONS = [
+const PRIMARY_DISPOSITIONS = ["REUSE", "REWRITE", "DISCARD", "REVIEW"];
+
+const LEGACY_CATEGORIES = [
   "REUSE_AS_IS",
   "REUSE_AFTER_REVIEW",
   "REWRITE_FROM_INTENT",
@@ -26,6 +28,7 @@ const PRIMARY_DISPOSITIONS = [
 ];
 
 const RISK_TAGS = [
+  "binaryAsset",
   "containsPii",
   "copyrightUnverified",
   "externalDependency",
@@ -344,6 +347,7 @@ function buildSourceRecord(legacyRoot, file) {
     fileType: describeFileType(file.relativePath),
     isText,
     primaryDisposition: classification.primaryDisposition,
+    legacyCategory: classification.legacyCategory,
     riskTags: classification.riskTags,
     contentPurpose: classification.contentPurpose,
     runtimeDependencies,
@@ -376,7 +380,12 @@ function classifySourceFile(
   }
 
   if (/\.(png|jpg|jpeg|webp|mp4|vtt)$/i.test(relativePath)) {
+    addRisk("binaryAsset");
     addRisk("copyrightUnverified");
+  }
+
+  if (/\.(docx|pdf|zip)$/i.test(relativePath)) {
+    addRisk("binaryAsset");
   }
 
   if (
@@ -422,12 +431,14 @@ function classifySourceFile(
     nonReusableReason: "Not suitable for direct migration.",
     contentPurpose: "Legacy implementation detail or historical artifact",
     primaryDisposition: "DISCARD",
+    legacyCategory: "DISCARD",
   };
 
   if (PRIVACY_JSON_PATHS.has(relativePath)) {
     return {
       ...reviews,
-      primaryDisposition: "PRIVACY_BLOCKED",
+      primaryDisposition: "REVIEW",
+      legacyCategory: "PRIVACY_BLOCKED",
       manualReviewRequired: true,
       contentPurpose: "Legacy personal or learner data source",
       suggestedDestination: "Do not migrate",
@@ -442,7 +453,8 @@ function classifySourceFile(
   if (relativePath === "docs/resources/“语赞心声”分级课程体系总览.docx") {
     return {
       ...reviews,
-      primaryDisposition: "REUSE_AFTER_REVIEW",
+      primaryDisposition: "REUSE",
+      legacyCategory: "REUSE_AFTER_REVIEW",
       manualReviewRequired: true,
       contentPurpose:
         "Curriculum master document for course hierarchy and teaching intent",
@@ -465,7 +477,8 @@ function classifySourceFile(
     }
     return {
       ...reviews,
-      primaryDisposition: "REUSE_AFTER_REVIEW",
+      primaryDisposition: "REUSE",
+      legacyCategory: "REUSE_AFTER_REVIEW",
       manualReviewRequired: true,
       contentPurpose:
         relativePath === "db/courses.json"
@@ -491,7 +504,8 @@ function classifySourceFile(
     addRisk("copyrightUnverified", "sourceUnknown");
     return {
       ...reviews,
-      primaryDisposition: "COPYRIGHT_BLOCKED",
+      primaryDisposition: "REVIEW",
+      legacyCategory: "COPYRIGHT_BLOCKED",
       manualReviewRequired: true,
       contentPurpose: "Brand logo candidate",
       suggestedDestination: "Brand asset registry",
@@ -513,7 +527,8 @@ function classifySourceFile(
     }
     return {
       ...reviews,
-      primaryDisposition: "COPYRIGHT_BLOCKED",
+      primaryDisposition: "REVIEW",
+      legacyCategory: "COPYRIGHT_BLOCKED",
       manualReviewRequired: true,
       contentPurpose: "Legacy media or visual asset metadata source",
       suggestedDestination: "Media rights review queue",
@@ -528,7 +543,8 @@ function classifySourceFile(
     addRisk("sourceUnknown", "copyrightUnverified");
     return {
       ...reviews,
-      primaryDisposition: "UNKNOWN_REQUIRES_REVIEW",
+      primaryDisposition: "REVIEW",
+      legacyCategory: "UNKNOWN_REQUIRES_REVIEW",
       manualReviewRequired: true,
       contentPurpose:
         "Uploaded or test-generated asset with unclear provenance",
@@ -556,7 +572,8 @@ function classifySourceFile(
     }
     return {
       ...reviews,
-      primaryDisposition: "REWRITE_FROM_INTENT",
+      primaryDisposition: "REWRITE",
+      legacyCategory: "REWRITE_FROM_INTENT",
       manualReviewRequired: true,
       contentPurpose: classifyIntentPurpose(relativePath),
       suggestedDestination: "Product and migration backlog",
@@ -579,7 +596,8 @@ function classifySourceFile(
     addRisk("sourceUnknown");
     return {
       ...reviews,
-      primaryDisposition: "VISUAL_REFERENCE_ONLY",
+      primaryDisposition: "REVIEW",
+      legacyCategory: "VISUAL_REFERENCE_ONLY",
       manualReviewRequired: true,
       contentPurpose: "Visual audit evidence or screenshot reference",
       suggestedDestination: "UX reference board",
@@ -595,6 +613,7 @@ function classifySourceFile(
     return {
       ...reviews,
       primaryDisposition: "DISCARD",
+      legacyCategory: "DISCARD",
       manualReviewRequired: false,
       contentPurpose: "Tooling residue or AI workspace trace",
       suggestedDestination: "Do not migrate",
@@ -621,6 +640,7 @@ function classifySourceFile(
     return {
       ...reviews,
       primaryDisposition: "DISCARD",
+      legacyCategory: "DISCARD",
       manualReviewRequired: false,
       contentPurpose: classifyDiscardPurpose(relativePath),
       suggestedDestination: "Do not migrate",
@@ -633,7 +653,8 @@ function classifySourceFile(
 
   return {
     ...reviews,
-    primaryDisposition: "UNKNOWN_REQUIRES_REVIEW",
+    primaryDisposition: "REVIEW",
+    legacyCategory: "UNKNOWN_REQUIRES_REVIEW",
     manualReviewRequired: true,
     contentPurpose: "Legacy artifact needing manual decision",
     suggestedDestination: "Migration triage queue",
@@ -709,6 +730,10 @@ function buildOutputs(context) {
     context.sourceRecords,
     (record) => record.primaryDisposition,
   );
+  const legacyCategoryCounts = countBy(
+    context.sourceRecords,
+    (record) => record.legacyCategory,
+  );
   const primaryDispositionTotal = Object.values(
     primaryDispositionCounts,
   ).reduce((sum, value) => sum + value, 0);
@@ -742,6 +767,7 @@ function buildOutputs(context) {
     primaryDispositionPolicy: "exactly-one-per-file",
     riskTagPolicy: "overlapping-tags-allowed",
     primaryDispositionCounts,
+    legacyCategoryCounts,
     primaryDispositionTotal,
     riskCounts,
     privacyRiskCount,
@@ -759,12 +785,15 @@ function buildOutputs(context) {
       treeHashUnchangedWithinRun: true,
       symlinkCount: context.legacySnapshot.symlinkCount,
       symlinkPaths: context.legacySnapshot.symlinkPaths,
+      symlinkEscapeDetected: false,
       outsideRootReadDetected: false,
     },
     outputBoundary: {
       allowedRoots: OUTPUT_ROOT_LABELS,
       legacyRootLabel: LEGACY_ROOT_LABEL,
       outsideRootWriteDetected: false,
+      writeBoundaryRealpathVerified: true,
+      outputSymlinkEscapeDetected: false,
       dryRunWrites: 0,
     },
     repeatability: {
@@ -835,6 +864,7 @@ function buildOutputs(context) {
     fileType: record.fileType,
     sizeBytes: record.sizeBytes,
     primaryDisposition: record.primaryDisposition,
+    legacyCategory: record.legacyCategory,
     riskTags: record.riskTags,
     contentPurpose: record.contentPurpose,
     runtimeDependencies: record.runtimeDependencies,
@@ -854,6 +884,7 @@ function buildOutputs(context) {
       fileType: record.fileType,
       sizeBytes: String(record.sizeBytes),
       primaryDisposition: record.primaryDisposition,
+      legacyCategory: record.legacyCategory,
       riskTags: record.riskTags.join("|"),
       contentPurpose: record.contentPurpose,
       runtimeDependencies: record.runtimeDependencies.join("|"),
@@ -870,6 +901,7 @@ function buildOutputs(context) {
   const classificationJson = {
     metadata,
     primaryDispositionCounts,
+    legacyCategoryCounts,
     riskCounts,
     records: classificationRecords,
   };
@@ -954,7 +986,8 @@ function analyzeCurriculumDoc(legacyRoot, sourceRecords) {
       ? course.materials.length
       : 0,
     mediaReferenceType: course.videoUrl ? "legacy-demo-reference" : "none",
-    primaryDisposition: "REUSE_AFTER_REVIEW",
+    primaryDisposition: "REUSE",
+    legacyCategory: "REUSE_AFTER_REVIEW",
     requiresVersionConfirmation: true,
   }));
 
@@ -1113,6 +1146,7 @@ function buildMediaSummary(sourceRecords) {
         : "legacy-local-media",
       manualReviewRequired: true,
       suggestedDisposition: record.primaryDisposition,
+      legacyCategory: record.legacyCategory,
     }));
 
   const externalAssets = [];
@@ -1138,7 +1172,8 @@ function buildMediaSummary(sourceRecords) {
           ? "signed-external-cdn"
           : "external-cdn",
         manualReviewRequired: true,
-        suggestedDisposition: "COPYRIGHT_BLOCKED",
+        suggestedDisposition: "REVIEW",
+        legacyCategory: "COPYRIGHT_BLOCKED",
       });
     }
   }
@@ -1164,7 +1199,7 @@ function buildSourcePiiSummary(legacyRoot, sourceRecords) {
     const matches = scanTextWithRules(text, SOURCE_PII_RULES);
     if (
       matches.totalMatches === 0 &&
-      record.primaryDisposition !== "PRIVACY_BLOCKED"
+      record.legacyCategory !== "PRIVACY_BLOCKED"
     ) {
       continue;
     }
@@ -1173,6 +1208,7 @@ function buildSourcePiiSummary(legacyRoot, sourceRecords) {
       sourceRoot: LEGACY_ROOT_LABEL,
       relativePath: record.relativePath,
       primaryDisposition: record.primaryDisposition,
+      legacyCategory: record.legacyCategory,
       totalMatches: matches.totalMatches,
       matchTypes: matches.matchTypes,
       matchDigests: matches.matchDigests,
@@ -1201,6 +1237,9 @@ function renderAuditMarkdown(summary, context, classificationRecords) {
   const primaryLines = PRIMARY_DISPOSITIONS.map(
     (key) => `- \`${key}\`: ${summary.primaryDispositionCounts[key] || 0}`,
   ).join("\n");
+  const legacyCategoryLines = LEGACY_CATEGORIES.map(
+    (key) => `- \`${key}\`: ${summary.legacyCategoryCounts[key] || 0}`,
+  ).join("\n");
   const riskLines = RISK_TAGS.map(
     (key) => `- \`${key}\`: ${summary.riskCounts[key] || 0}`,
   ).join("\n");
@@ -1208,7 +1247,7 @@ function renderAuditMarkdown(summary, context, classificationRecords) {
     .slice(0, 12)
     .map(
       (item) =>
-        `- [${item.id}] \`${item.relativePath}\` -> ${item.primaryDisposition}`,
+        `- [${item.id}] \`${item.relativePath}\` -> ${item.primaryDisposition} (${item.legacyCategory})`,
     )
     .join("\n");
   const pageFlowLines = context.pageFlowSummary
@@ -1246,6 +1285,10 @@ function renderAuditMarkdown(summary, context, classificationRecords) {
     primaryLines,
     `- total: ${summary.primaryDispositionTotal}`,
     "",
+    "## Legacy Category Detail",
+    "",
+    legacyCategoryLines,
+    "",
     "## Risk Tags",
     "",
     `- policy: ${summary.riskTagPolicy}`,
@@ -1260,8 +1303,11 @@ function renderAuditMarkdown(summary, context, classificationRecords) {
     `- legacy tree sha256 after: \`${summary.legacyReadOnly.treeSha256After}\``,
     `- tree hash unchanged within run: ${summary.legacyReadOnly.treeHashUnchangedWithinRun ? "yes" : "no"}`,
     `- symlink count: ${summary.legacyReadOnly.symlinkCount}`,
+    `- legacy symlink escape detected: ${summary.legacyReadOnly.symlinkEscapeDetected ? "yes" : "no"}`,
     `- outside-root read detected: ${summary.legacyReadOnly.outsideRootReadDetected ? "yes" : "no"}`,
     `- outside-root write detected: ${summary.outputBoundary.outsideRootWriteDetected ? "yes" : "no"}`,
+    `- output realpath boundary verified: ${summary.outputBoundary.writeBoundaryRealpathVerified ? "yes" : "no"}`,
+    `- output symlink escape detected: ${summary.outputBoundary.outputSymlinkEscapeDetected ? "yes" : "no"}`,
     `- dry-run writes: ${summary.outputBoundary.dryRunWrites}`,
     "",
     "## Repeatability",
@@ -1320,13 +1366,14 @@ function renderManualReviewMarkdown(summary, classificationRecords, context) {
   const copyrightEntries = classificationRecords
     .filter(
       (record) =>
-        record.primaryDisposition === "COPYRIGHT_BLOCKED" ||
-        record.primaryDisposition === "UNKNOWN_REQUIRES_REVIEW",
+        record.legacyCategory === "COPYRIGHT_BLOCKED" ||
+        record.legacyCategory === "UNKNOWN_REQUIRES_REVIEW" ||
+        record.legacyCategory === "VISUAL_REFERENCE_ONLY",
     )
     .slice(0, 12)
     .map(
       (record) =>
-        `- [${record.id}] \`${record.relativePath}\` -> ${record.primaryDisposition}`,
+        `- [${record.id}] \`${record.relativePath}\` -> ${record.primaryDisposition} (${record.legacyCategory})`,
     );
 
   return [
@@ -1338,7 +1385,7 @@ function renderManualReviewMarkdown(summary, classificationRecords, context) {
       .slice(0, 16)
       .map(
         (item) =>
-          `- [${item.id}] \`${item.relativePath}\` -> ${item.primaryDisposition}`,
+          `- [${item.id}] \`${item.relativePath}\` -> ${item.primaryDisposition} (${item.legacyCategory})`,
       ),
     "",
     "## PII-sensitive Sources",
@@ -1372,11 +1419,11 @@ function renderHandoffMarkdown(summary) {
     "",
     "## User outcome",
     "",
-    "Legacy assets were re-audited with a strict single primaryDisposition model, stronger PII and rights filtering, deterministic outputs, and explicit read-only / write-boundary checks.",
+    "Legacy assets were re-audited with a strict four-class primaryDisposition model, stronger PII and rights filtering, deterministic outputs, and explicit read-only / write-boundary checks.",
     "",
     "## Implemented",
     "",
-    "- Reworked the audit script to assign exactly one primaryDisposition per scanned file and separate overlapping risk tags.",
+    "- Reworked the audit script to assign exactly one four-class primaryDisposition per scanned file and separate overlapping risk tags from legacy category detail.",
     "- Rebuilt course, translation, media, classification, PII, summary, audit, and handoff outputs without absolute machine paths or raw PII.",
     "- Added deterministic write-if-changed behavior so repeated generation produces no new workspace diff.",
     "",
@@ -1484,7 +1531,6 @@ function writeOutputs(worktreeRoot, files) {
   for (const file of files) {
     const absolutePath = toWorktreePath(worktreeRoot, file.path);
     assertOutputBoundary(worktreeRoot, absolutePath);
-    fs.mkdirSync(path.dirname(absolutePath), { recursive: true });
     const previous = fs.existsSync(absolutePath)
       ? fs.readFileSync(absolutePath, "utf8")
       : null;
@@ -1847,6 +1893,7 @@ function buildManualReviewEntries(records) {
       id: record.id,
       relativePath: record.relativePath,
       primaryDisposition: record.primaryDisposition,
+      legacyCategory: record.legacyCategory,
     }))
     .sort((a, b) => a.relativePath.localeCompare(b.relativePath, "zh-Hans-CN"));
 }
@@ -1975,6 +2022,7 @@ function toCsv(rows) {
     "fileType",
     "sizeBytes",
     "primaryDisposition",
+    "legacyCategory",
     "riskTags",
     "contentPurpose",
     "runtimeDependencies",
@@ -2030,11 +2078,37 @@ function assertWithin(targetPath, rootPath, message) {
 
 function assertOutputBoundary(worktreeRoot, absolutePath) {
   const relative = toPosix(path.relative(worktreeRoot, absolutePath));
-  const allowed = OUTPUT_ROOT_LABELS.some(
+  const allowedRoot = OUTPUT_ROOT_LABELS.find(
     (root) => relative === root || relative.startsWith(`${root}/`),
   );
-  if (!allowed) {
+  if (!allowedRoot) {
     throw new Error(`Output path escaped allowed roots: ${relative}`);
+  }
+
+  const worktreeRealRoot = realpathStrict(worktreeRoot);
+  const outputRootPath = path.join(worktreeRoot, allowedRoot);
+  fs.mkdirSync(outputRootPath, { recursive: true });
+  const outputRootReal = realpathStrict(outputRootPath);
+  assertWithin(
+    outputRootReal,
+    worktreeRealRoot,
+    `Output root symlink escaped worktree: ${allowedRoot}`,
+  );
+
+  const parentDir = path.dirname(absolutePath);
+  fs.mkdirSync(parentDir, { recursive: true });
+  const parentReal = realpathStrict(parentDir);
+  assertWithin(
+    parentReal,
+    outputRootReal,
+    `Output parent symlink escaped allowed root: ${relative}`,
+  );
+
+  if (
+    fs.existsSync(absolutePath) &&
+    fs.lstatSync(absolutePath).isSymbolicLink()
+  ) {
+    throw new Error(`Output file path is a symlink: ${relative}`);
   }
 }
 

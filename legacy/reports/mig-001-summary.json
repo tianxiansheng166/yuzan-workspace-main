@@ -8,17 +8,27 @@
     ],
     "containsAbsoluteMachinePath": false
   },
-  "actualHead": "5a7a71570a5f8abf8ad949e0b5cca16ac94fcb72",
+  "actualHead": "56a8b765b8f17db6b7185097ca5b7d41eb8f73b1",
   "branch": "task/mig-001-migration",
   "copyrightPendingCount": 29,
   "curriculumSourceCount": 10,
   "deterministicOutput": true,
   "expectedHead": "7cace5434ab8fb7187783fb2ecc88d94c862601b",
-  "inputStateFingerprint": "98c6476dcde48220abb00ea8e07336c4c75911287a021b3651370dc075d51192",
+  "inputStateFingerprint": "1c66fe11dac90669157283b4791810829bf9475247e7052323642589b74d67a6",
+  "legacyCategoryCounts": {
+    "COPYRIGHT_BLOCKED": 9,
+    "DISCARD": 32,
+    "PRIVACY_BLOCKED": 5,
+    "REUSE_AFTER_REVIEW": 6,
+    "REWRITE_FROM_INTENT": 42,
+    "UNKNOWN_REQUIRES_REVIEW": 2,
+    "VISUAL_REFERENCE_ONLY": 17
+  },
   "legacyReadOnly": {
     "fileCount": 113,
     "outsideRootReadDetected": false,
     "symlinkCount": 0,
+    "symlinkEscapeDetected": false,
     "symlinkPaths": [],
     "treeHashUnchangedWithinRun": true,
     "treeSha256After": "9b6dffaec4bc6f03ac1ab1e14217a422c563a10b6b9856909c7aa5067b9a79c2",
@@ -115,7 +125,9 @@
     "allowedRoots": ["legacy/exports", "legacy/review", "legacy/reports"],
     "dryRunWrites": 0,
     "legacyRootLabel": "legacy/source-tree/two-legacy",
-    "outsideRootWriteDetected": false
+    "outputSymlinkEscapeDetected": false,
+    "outsideRootWriteDetected": false,
+    "writeBoundaryRealpathVerified": true
   },
   "outputLeakScan": {
     "fileCount": 0,
@@ -124,13 +136,10 @@
   },
   "outputRoots": ["legacy/exports", "legacy/review", "legacy/reports"],
   "primaryDispositionCounts": {
-    "COPYRIGHT_BLOCKED": 9,
     "DISCARD": 32,
-    "PRIVACY_BLOCKED": 5,
-    "REUSE_AFTER_REVIEW": 6,
-    "REWRITE_FROM_INTENT": 42,
-    "UNKNOWN_REQUIRES_REVIEW": 2,
-    "VISUAL_REFERENCE_ONLY": 17
+    "REUSE": 6,
+    "REVIEW": 33,
+    "REWRITE": 42
   },
   "primaryDispositionPolicy": "exactly-one-per-file",
   "primaryDispositionTotal": 113,
@@ -140,6 +149,7 @@
     "status": "stable"
   },
   "riskCounts": {
+    "binaryAsset": 31,
     "containsPii": 33,
     "copyrightUnverified": 29,
     "externalDependency": 34,

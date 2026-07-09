@@ -11,7 +11,7 @@
 
 - branch: `task/mig-001-migration`
 - expected HEAD: `7cace5434ab8fb7187783fb2ecc88d94c862601b`
-- actual HEAD: `5a7a71570a5f8abf8ad949e0b5cca16ac94fcb72`
+- actual HEAD: `56a8b765b8f17db6b7185097ca5b7d41eb8f73b1`
 - legacy source root: `legacy/source-tree/two-legacy`
 - legacy tree sha256: `9b6dffaec4bc6f03ac1ab1e14217a422c563a10b6b9856909c7aa5067b9a79c2`
 
@@ -19,6 +19,14 @@
 
 - scanned file count: 113
 - policy: exactly-one-per-file
+- `REUSE`: 6
+- `REWRITE`: 42
+- `DISCARD`: 32
+- `REVIEW`: 33
+- total: 113
+
+## Legacy Category Detail
+
 - `REUSE_AS_IS`: 0
 - `REUSE_AFTER_REVIEW`: 6
 - `REWRITE_FROM_INTENT`: 42
@@ -27,11 +35,11 @@
 - `PRIVACY_BLOCKED`: 5
 - `COPYRIGHT_BLOCKED`: 9
 - `UNKNOWN_REQUIRES_REVIEW`: 2
-- total: 113
 
 ## Risk Tags
 
 - policy: overlapping-tags-allowed
+- `binaryAsset`: 31
 - `containsPii`: 33
 - `copyrightUnverified`: 29
 - `externalDependency`: 34
@@ -49,8 +57,11 @@
 - legacy tree sha256 after: `9b6dffaec4bc6f03ac1ab1e14217a422c563a10b6b9856909c7aa5067b9a79c2`
 - tree hash unchanged within run: yes
 - symlink count: 0
+- legacy symlink escape detected: no
 - outside-root read detected: no
 - outside-root write detected: no
+- output realpath boundary verified: yes
+- output symlink escape detected: no
 - dry-run writes: 0
 
 ## Repeatability
@@ -101,18 +112,18 @@
 
 ## Manual Review Traceability
 
-- [mig001_14bdcc3d622c] `.audit-course-desktop.png` -> VISUAL_REFERENCE_ONLY
-- [mig001_8e40dfd5d267] `.audit-course-mobile.png` -> VISUAL_REFERENCE_ONLY
-- [mig001_54d293743318] `.audit-home-desktop.png` -> VISUAL_REFERENCE_ONLY
-- [mig001_791d0a1e550a] `.audit-home-mobile.png` -> VISUAL_REFERENCE_ONLY
-- [mig001_b90986791171] `.codex/ui_audit_chrome/admin-dashboard.png` -> VISUAL_REFERENCE_ONLY
-- [mig001_5a8e42feb5f0] `.codex/ui_audit_chrome/admin-student-management.png` -> VISUAL_REFERENCE_ONLY
-- [mig001_dfcd6096f3f5] `.codex/ui_audit_chrome/course-center.png` -> VISUAL_REFERENCE_ONLY
-- [mig001_eddc7312fec8] `.codex/ui_audit_chrome/index.png` -> VISUAL_REFERENCE_ONLY
-- [mig001_25e438a87aca] `.codex/ui_audit_chrome/learning-tasks.png` -> VISUAL_REFERENCE_ONLY
-- [mig001_e944cfb8b67c] `.codex/ui_audit_chrome/platform-internal.png` -> VISUAL_REFERENCE_ONLY
-- [mig001_192c3b4219a9] `.codex/ui_audit_chrome/premium-purchase.png` -> VISUAL_REFERENCE_ONLY
-- [mig001_6c526c098d69] `.codex/ui_audit_chrome/pricing.png` -> VISUAL_REFERENCE_ONLY
+- [mig001_14bdcc3d622c] `.audit-course-desktop.png` -> REVIEW (VISUAL_REFERENCE_ONLY)
+- [mig001_8e40dfd5d267] `.audit-course-mobile.png` -> REVIEW (VISUAL_REFERENCE_ONLY)
+- [mig001_54d293743318] `.audit-home-desktop.png` -> REVIEW (VISUAL_REFERENCE_ONLY)
+- [mig001_791d0a1e550a] `.audit-home-mobile.png` -> REVIEW (VISUAL_REFERENCE_ONLY)
+- [mig001_b90986791171] `.codex/ui_audit_chrome/admin-dashboard.png` -> REVIEW (VISUAL_REFERENCE_ONLY)
+- [mig001_5a8e42feb5f0] `.codex/ui_audit_chrome/admin-student-management.png` -> REVIEW (VISUAL_REFERENCE_ONLY)
+- [mig001_dfcd6096f3f5] `.codex/ui_audit_chrome/course-center.png` -> REVIEW (VISUAL_REFERENCE_ONLY)
+- [mig001_eddc7312fec8] `.codex/ui_audit_chrome/index.png` -> REVIEW (VISUAL_REFERENCE_ONLY)
+- [mig001_25e438a87aca] `.codex/ui_audit_chrome/learning-tasks.png` -> REVIEW (VISUAL_REFERENCE_ONLY)
+- [mig001_e944cfb8b67c] `.codex/ui_audit_chrome/platform-internal.png` -> REVIEW (VISUAL_REFERENCE_ONLY)
+- [mig001_192c3b4219a9] `.codex/ui_audit_chrome/premium-purchase.png` -> REVIEW (VISUAL_REFERENCE_ONLY)
+- [mig001_6c526c098d69] `.codex/ui_audit_chrome/pricing.png` -> REVIEW (VISUAL_REFERENCE_ONLY)
 
 ## Absolute Path Scan
 

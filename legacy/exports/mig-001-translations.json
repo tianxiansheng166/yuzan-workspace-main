@@ -180,11 +180,11 @@
     }
   ],
   "metadata": {
-    "actualHead": "5a7a71570a5f8abf8ad949e0b5cca16ac94fcb72",
+    "actualHead": "56a8b765b8f17db6b7185097ca5b7d41eb8f73b1",
     "branch": "task/mig-001-migration",
     "deterministicOutput": true,
     "expectedHead": "7cace5434ab8fb7187783fb2ecc88d94c862601b",
-    "inputStateFingerprint": "98c6476dcde48220abb00ea8e07336c4c75911287a021b3651370dc075d51192",
+    "inputStateFingerprint": "1c66fe11dac90669157283b4791810829bf9475247e7052323642589b74d67a6",
     "legacySourceRoot": "legacy/source-tree/two-legacy",
     "legacyTreeSha256": "9b6dffaec4bc6f03ac1ab1e14217a422c563a10b6b9856909c7aa5067b9a79c2",
     "outputRoots": ["legacy/exports", "legacy/review", "legacy/reports"],

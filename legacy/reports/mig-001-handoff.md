@@ -9,11 +9,11 @@
 
 ## User outcome
 
-Legacy assets were re-audited with a strict single primaryDisposition model, stronger PII and rights filtering, deterministic outputs, and explicit read-only / write-boundary checks.
+Legacy assets were re-audited with a strict four-class primaryDisposition model, stronger PII and rights filtering, deterministic outputs, and explicit read-only / write-boundary checks.
 
 ## Implemented
 
-- Reworked the audit script to assign exactly one primaryDisposition per scanned file and separate overlapping risk tags.
+- Reworked the audit script to assign exactly one four-class primaryDisposition per scanned file and separate overlapping risk tags from legacy category detail.
 - Rebuilt course, translation, media, classification, PII, summary, audit, and handoff outputs without absolute machine paths or raw PII.
 - Added deterministic write-if-changed behavior so repeated generation produces no new workspace diff.
 
