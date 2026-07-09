@@ -11,6 +11,7 @@ export default defineConfig({
     alias: {
       "@nestjs/common": path.resolve(apiNodeModules, "@nestjs/common"),
       "@nestjs/core": path.resolve(apiNodeModules, "@nestjs/core"),
+      "@nestjs/testing": path.resolve(apiNodeModules, "@nestjs/testing"),
     },
   },
   test: {

@@ -39,11 +39,28 @@ describe("AuthenticationGuard", () => {
     );
   });
 
+  it("rejects RESEARCHER as an unknown role", async () => {
+    const context = createMockExecutionContext({
+      headers: {
+        "x-stub-user-id": "researcher-1",
+        "x-stub-school-id": "school-a",
+        "x-stub-roles": "RESEARCHER",
+      },
+    });
+    await expect(guard.canActivate(context)).rejects.toBeInstanceOf(
+      SecurityException,
+    );
+    await expect(guard.canActivate(context)).rejects.toHaveProperty(
+      "code",
+      "UNKNOWN_ROLE",
+    );
+  });
+
   it("rejects requests with missing tenant", async () => {
     const context = createMockExecutionContext({
       headers: {
         "x-stub-user-id": "user-1",
-        "x-stub-roles": "STUDENT",
+        "x-stub-roles": MembershipRole.STUDENT,
       },
     });
     await expect(guard.canActivate(context)).rejects.toBeInstanceOf(

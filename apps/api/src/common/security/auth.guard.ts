@@ -35,6 +35,7 @@ function getRequestId(context: ExecutionContext): string {
 @Injectable()
 export class AuthenticationGuard implements CanActivate {
   constructor(
+    @Inject(Reflector)
     private readonly reflector: Reflector,
     @Inject(AUTH_CONTEXT_SOURCE)
     private readonly source: AuthContextSource,

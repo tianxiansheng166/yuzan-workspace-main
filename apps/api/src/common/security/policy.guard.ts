@@ -40,6 +40,7 @@ function getRequestId(context: ExecutionContext): string {
 @Injectable()
 export class PolicyGuard implements CanActivate {
   constructor(
+    @Inject(Reflector)
     private readonly reflector: Reflector,
     @Optional()
     @Inject(RESOURCE_POLICY_KEY)

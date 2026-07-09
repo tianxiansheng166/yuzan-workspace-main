@@ -1,14 +1,16 @@
 /**
- * Local copy of Prisma MembershipRole enum.
+ * Active membership roles used by the API authorization runtime.
  *
- * We intentionally avoid importing @prisma/client in the API runtime so that
- * GOV-006 stays decoupled from the database layer. IDN-001/ORG-001/CUR-001
- * should only consume these domain types.
+ * These mirror the Prisma MembershipRole enum with the exception of
+ * RESEARCHER, which exists in the database schema as a reserved future value
+ * but is not an executable role in the current authorization baseline.
+ *
+ * IDN-001/ORG-001/CUR-001 should consume these domain types and never cast
+ * arbitrary strings to roles.
  */
 export enum MembershipRole {
   STUDENT = "STUDENT",
   TEACHER = "TEACHER",
-  RESEARCHER = "RESEARCHER",
   SCHOOL_ADMIN = "SCHOOL_ADMIN",
   PLATFORM_ADMIN = "PLATFORM_ADMIN",
 }
@@ -31,9 +33,8 @@ export function isMembershipRole(value: unknown): value is MembershipRole {
 const ROLE_RANK: Record<MembershipRole, number> = {
   [MembershipRole.STUDENT]: 1,
   [MembershipRole.TEACHER]: 2,
-  [MembershipRole.RESEARCHER]: 3,
-  [MembershipRole.SCHOOL_ADMIN]: 4,
-  [MembershipRole.PLATFORM_ADMIN]: 5,
+  [MembershipRole.SCHOOL_ADMIN]: 3,
+  [MembershipRole.PLATFORM_ADMIN]: 4,
 };
 
 export function roleRank(role: MembershipRole): number {

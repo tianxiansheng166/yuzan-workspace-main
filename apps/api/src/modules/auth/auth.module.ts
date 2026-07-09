@@ -6,7 +6,12 @@ import {
   PolicyGuard,
   TenantAuthorizationGuard,
 } from "../../common/security/index.js";
-import { StubAuthContextSource } from "./stub-auth-context.source.js";
+import { DenyAllAuthContextSource } from "./deny-all-auth-context.source.js";
+
+const authContextSourceProvider = {
+  provide: AUTH_CONTEXT_SOURCE,
+  useClass: DenyAllAuthContextSource,
+} as const;
 
 /**
  * Security and tenant authorization baseline module.
@@ -17,31 +22,32 @@ import { StubAuthContextSource } from "./stub-auth-context.source.js";
  *
  * GOV-006 intentionally does not import AuthModule into AppModule, so the
  * baseline is wired but not globally active until a future task connects it.
+ *
+ * The default AuthContextSource is DenyAllAuthContextSource, which always
+ * returns null. This guarantees fail-closed behavior even if the module is
+ * imported accidentally before a real identity service is ready.
  */
 @Module({
   providers: [
+    authContextSourceProvider,
+    AuthenticationGuard,
+    TenantAuthorizationGuard,
+    PolicyGuard,
     {
-      provide: AUTH_CONTEXT_SOURCE,
-      useClass: StubAuthContextSource,
+      provide: APP_GUARD,
+      useExisting: AuthenticationGuard,
     },
     {
       provide: APP_GUARD,
-      useClass: AuthenticationGuard,
+      useExisting: TenantAuthorizationGuard,
     },
     {
       provide: APP_GUARD,
-      useClass: TenantAuthorizationGuard,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: PolicyGuard,
+      useExisting: PolicyGuard,
     },
   ],
   exports: [
-    {
-      provide: AUTH_CONTEXT_SOURCE,
-      useClass: StubAuthContextSource,
-    },
+    authContextSourceProvider,
     AuthenticationGuard,
     TenantAuthorizationGuard,
     PolicyGuard,

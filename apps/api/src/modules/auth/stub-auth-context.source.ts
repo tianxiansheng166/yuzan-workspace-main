@@ -13,11 +13,12 @@ import {
 } from "../../common/security/index.js";
 
 /**
- * Demo/test authentication context source.
+ * Test-only authentication context source.
  *
  * This adapter is intentionally minimal and insecure. It reads synthetic
  * identity headers so that GOV-006 security tests can run without a real
- * login service. IDN-001 will replace this with session/token resolution.
+ * login service. It must only be used when tests explicitly override
+ * AUTH_CONTEXT_SOURCE; AuthModule uses DenyAllAuthContextSource by default.
  *
  * Production code must never trust client-provided roles.
  */
