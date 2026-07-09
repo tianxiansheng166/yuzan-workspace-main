@@ -1,6 +1,7 @@
 ## Task
 
 - ID:
+- Branch:
 - User outcome:
 - Owner:
 - Reviewer:
@@ -10,6 +11,7 @@
 - Allowed paths:
 - Contract/schema change request:
 - Shared files changed:
+- Stacked provisional PR: yes / no
 
 ## Evidence
 
@@ -28,6 +30,14 @@ Commands and results:
 ```text
 
 ```
+
+## Sensitive changes
+
+- [ ] This PR modifies `packages/contracts/**`
+- [ ] This PR modifies `infra/database/**`
+- [ ] This PR modifies `pnpm-lock.yaml`
+- [ ] This PR involves security or privacy changes
+- [ ] This PR contains real student data or secrets
 
 ## Security / privacy
 

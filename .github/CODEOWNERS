@@ -1,7 +1,25 @@
-# Replace placeholders with actual GitHub users/teams before enabling branch protection.
-/packages/contracts/ @contract-owner
-/infra/database/prisma/ @schema-owner
-/packages/ui/src/tokens.css @design-owner
+# CODEOWNERS baseline
+#
+# Replace all placeholder owners (e.g. @contract-owner) with real GitHub users
+# or teams before this file takes effect. The repository administrator must
+# enable branch protection in the GitHub UI; this file alone does not enforce
+# protection rules.
+#
+# Rules are applied from bottom to top: the last matching pattern wins.
+
+# CI and repository automation.
 /.github/ @integration-owner
+
+# Shared contract schema changes.
+/packages/contracts/ @contract-owner
+
+# Database schema and generated artifacts.
+/infra/database/prisma/ @schema-owner
+/infra/database/generated/ @schema-owner
+
+# Design tokens are shared visual facts.
+/packages/ui/src/tokens.css @design-owner
+
+# Security-sensitive API surface.
 /apps/api/src/modules/auth/ @security-owner
 /apps/api/src/common/ @security-owner
