@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
+import { roleNavigationGroups } from "../../app/features/role-navigation/role-navigation.config";
+
 const readPage = (relativePath: string) =>
   readFileSync(
     resolve(import.meta.dirname, "../../app", relativePath),
@@ -9,15 +11,31 @@ const readPage = (relativePath: string) =>
   );
 
 describe("integration entry points", () => {
-  it("default layout links to all MVP top-level routes", () => {
+  it("default layout delegates top-level navigation to the shared app shell", () => {
     const layout = readPage("layouts/default.vue");
 
-    expect(layout).toContain('to: "/assessment"');
-    expect(layout).toContain('to: "/student/today"');
-    expect(layout).toContain('to: "/teacher"');
-    expect(layout).toContain('to: "/teacher-tools"');
-    expect(layout).toContain('to: "/training"');
-    expect(layout).toContain('to: "/products"');
+    expect(layout).toContain("<AppShell>");
+  });
+
+  it("role navigation config links to all current top-level routes required by the shell", () => {
+    const links = roleNavigationGroups.flatMap((group) =>
+      group.items.map((item) => item.to),
+    );
+
+    expect(links).toEqual(
+      expect.arrayContaining([
+        "/assessment",
+        "/assessment/history",
+        "/student/today",
+        "/teacher",
+        "/teacher/assessments",
+        "/teacher/students/demo/assessment-reports",
+        "/teacher-tools",
+        "/training",
+        "/products",
+        "/tools/tibetan-translation",
+      ]),
+    );
   });
 
   it("home page links to AI assessment, teacher tools and product plans", () => {
