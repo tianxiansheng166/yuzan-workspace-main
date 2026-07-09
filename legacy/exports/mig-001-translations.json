@@ -180,16 +180,16 @@
     }
   ],
   "metadata": {
-    "actualHead": "32982b9fdb722ccfc34e2ce558ca431ce8320ef0",
-    "branch": "task/mig-001-migration",
-    "deterministicOutput": true,
-    "expectedHead": "7cace5434ab8fb7187783fb2ecc88d94c862601b",
-    "inputStateFingerprint": "aa4a95968d18e049aeb0c65dbf6d2507e9d5b320b918fd3de2c5861291d8f698",
+    "classificationVersion": "four-class-plus-legacy-detail-v1",
+    "deterministicByInput": true,
+    "inputStateFingerprint": "8a6c3dba9527a78a1f7eb8a2db9471443f65aafc9673751b64b84e0e21db82ad",
     "legacySourceRoot": "legacy/source-tree/two-legacy",
-    "legacyTreeSha256": "9b6dffaec4bc6f03ac1ab1e14217a422c563a10b6b9856909c7aa5067b9a79c2",
     "outputRoots": ["legacy/exports", "legacy/review", "legacy/reports"],
     "scannedFileCount": 113,
-    "taskId": "MIG-001"
+    "schemaVersion": "2026-07-09",
+    "sourceTreeFingerprint": "9b6dffaec4bc6f03ac1ab1e14217a422c563a10b6b9856909c7aa5067b9a79c2",
+    "taskId": "MIG-001",
+    "toolVersion": "mig-001-audit-v4"
   },
   "outputPolicy": {
     "removedPersonalLiterals": true,

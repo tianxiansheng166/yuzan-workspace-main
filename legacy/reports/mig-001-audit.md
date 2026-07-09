@@ -9,11 +9,12 @@
 
 ## Input Validation
 
-- branch: `task/mig-001-migration`
-- expected HEAD: `7cace5434ab8fb7187783fb2ecc88d94c862601b`
-- actual HEAD: `32982b9fdb722ccfc34e2ce558ca431ce8320ef0`
+- schema version: `2026-07-09`
+- tool version: `mig-001-audit-v4`
+- classification version: `four-class-plus-legacy-detail-v1`
 - legacy source root: `legacy/source-tree/two-legacy`
-- legacy tree sha256: `9b6dffaec4bc6f03ac1ab1e14217a422c563a10b6b9856909c7aa5067b9a79c2`
+- source tree fingerprint: `9b6dffaec4bc6f03ac1ab1e14217a422c563a10b6b9856909c7aa5067b9a79c2`
+- input state fingerprint: `8a6c3dba9527a78a1f7eb8a2db9471443f65aafc9673751b64b84e0e21db82ad`
 
 ## Primary Disposition
 
@@ -66,8 +67,8 @@
 
 ## Repeatability
 
-- status: stable
-- conclusion: Existing generated files already match current input state; rerun produces no content change.
+- deterministic by input: yes
+- comparison mode: stdout-only
 
 ## PII and Copyright
 

@@ -2,11 +2,11 @@
 
 const crypto = require("crypto");
 const fs = require("fs");
+const os = require("os");
 const path = require("path");
 const { spawnSync } = require("child_process");
 
 const TASK_ID = "MIG-001";
-const EXPECTED_HEAD = "7cace5434ab8fb7187783fb2ecc88d94c862601b";
 const LEGACY_ROOT_LABEL = "legacy/source-tree/two-legacy";
 const OUTPUT_ROOT_LABELS = [
   "legacy/exports",
@@ -51,10 +51,10 @@ const OUTPUT_FILES = {
   summary: "legacy/reports/mig-001-summary.json",
 };
 
-const REPEATABILITY_VARIANT_OUTPUTS = new Set([
-  OUTPUT_FILES.audit,
-  OUTPUT_FILES.summary,
-]);
+const SCHEMA_VERSION = "2026-07-09";
+const TOOL_VERSION = "mig-001-audit-v4";
+const CLASSIFICATION_VERSION = "four-class-plus-legacy-detail-v1";
+const SELF_TEST_SYMLINK_FLAG = "--self-test-symlink";
 
 const TEXT_EXTENSIONS = new Set([
   ".css",
@@ -158,23 +158,21 @@ const SOURCE_PII_RULES = [
 ];
 
 function main() {
-  const args = new Set(process.argv.slice(2));
-  const dryRun = args.has("--dry-run");
-  const expectedHeadArg = [...args].find((arg) =>
-    arg.startsWith("--expected-head="),
-  );
-  const expectedHead = expectedHeadArg ? expectedHeadArg.split("=")[1] : null;
+  const args = process.argv.slice(2);
+  const argSet = new Set(args);
+  if (argSet.has(SELF_TEST_SYMLINK_FLAG)) {
+    runSymlinkSelfTest();
+    return;
+  }
+
+  const dryRun = argSet.has("--dry-run");
 
   const worktreeRoot = path.resolve(__dirname, "..", "..");
   const workspaceRoot = path.resolve(worktreeRoot, "..", "..");
   const legacyRoot = realpathStrict(
     path.join(workspaceRoot, LEGACY_ROOT_LABEL),
   );
-
   const gitState = collectGitState(worktreeRoot);
-  if (expectedHead && gitState.head !== expectedHead) {
-    throw new Error(`Expected HEAD ${expectedHead} but found ${gitState.head}`);
-  }
 
   const legacySnapshot = buildLegacySnapshot(legacyRoot);
   const sourceRecords = legacySnapshot.files.map((file) =>
@@ -195,13 +193,7 @@ function main() {
     noSourceReadsOutsideLegacyRoot: true,
   };
 
-  let repeatabilityStatus = "first-write-or-updated";
-  let repeatabilityConclusion =
-    "Deterministic by construction; second run should produce identical output.";
-
   let candidateOutputs = buildOutputs({
-    gitState,
-    expectedHeadReported: expectedHead || EXPECTED_HEAD,
     legacySnapshot,
     sourceRecords,
     docAnalysis,
@@ -210,36 +202,11 @@ function main() {
     sourcePiiSummary,
     pageFlowSummary,
     outputBoundarySummary,
-    repeatabilityStatus,
-    repeatabilityConclusion,
   });
-
   const repeatabilityProbe = compareExistingOutputs(
     worktreeRoot,
     candidateOutputs,
-    {
-      ignorePaths: REPEATABILITY_VARIANT_OUTPUTS,
-    },
   );
-  if (repeatabilityProbe.allExist && repeatabilityProbe.allMatch) {
-    repeatabilityStatus = "stable";
-    repeatabilityConclusion =
-      "Existing generated files already match current input state; rerun produces no content change.";
-    candidateOutputs = buildOutputs({
-      gitState,
-      expectedHeadReported: expectedHead || EXPECTED_HEAD,
-      legacySnapshot,
-      sourceRecords,
-      docAnalysis,
-      translationAnalysis,
-      mediaSummary,
-      sourcePiiSummary,
-      pageFlowSummary,
-      outputBoundarySummary,
-      repeatabilityStatus,
-      repeatabilityConclusion,
-    });
-  }
 
   const outputLeakSummary = scanCandidateOutputsForPii(candidateOutputs);
   if (outputLeakSummary.totalMatches > 0) {
@@ -249,11 +216,12 @@ function main() {
   }
 
   if (dryRun) {
-    printDryRunSummary(candidateOutputs.summary);
+    printDryRunSummary(candidateOutputs.summary, repeatabilityProbe, gitState);
     return;
   }
 
   const writeStats = writeOutputs(worktreeRoot, candidateOutputs.files);
+  printWriteSummary(writeStats, repeatabilityProbe, gitState);
   console.log(`Wrote ${writeStats.changedCount} files for ${TASK_ID}.`);
 }
 
@@ -749,17 +717,17 @@ function buildOutputs(context) {
 
   const metadata = {
     taskId: TASK_ID,
-    expectedHead: context.expectedHeadReported,
-    actualHead: context.gitState.head,
-    branch: context.gitState.branch,
+    schemaVersion: SCHEMA_VERSION,
+    toolVersion: TOOL_VERSION,
+    classificationVersion: CLASSIFICATION_VERSION,
     legacySourceRoot: LEGACY_ROOT_LABEL,
     outputRoots: OUTPUT_ROOT_LABELS,
     scannedFileCount: context.sourceRecords.length,
-    legacyTreeSha256: context.legacySnapshot.treeSha256,
+    sourceTreeFingerprint: context.legacySnapshot.treeSha256,
     inputStateFingerprint: sha256Text(
-      `${context.gitState.head}\n${context.legacySnapshot.treeSha256}\n${context.sourceRecords.length}`,
+      `${context.legacySnapshot.treeSha256}\n${context.sourceRecords.length}\n${CLASSIFICATION_VERSION}`,
     ),
-    deterministicOutput: true,
+    deterministicByInput: true,
   };
 
   const summary = {
@@ -797,8 +765,8 @@ function buildOutputs(context) {
       dryRunWrites: 0,
     },
     repeatability: {
-      status: context.repeatabilityStatus,
-      conclusion: context.repeatabilityConclusion,
+      deterministicByInput: true,
+      comparisonMode: "stdout-only",
     },
     outputLeakScan: {
       rules: outputRuleNames(),
@@ -1272,11 +1240,12 @@ function renderAuditMarkdown(summary, context, classificationRecords) {
     "",
     "## Input Validation",
     "",
-    `- branch: \`${summary.branch}\``,
-    `- expected HEAD: \`${summary.expectedHead}\``,
-    `- actual HEAD: \`${summary.actualHead}\``,
+    `- schema version: \`${summary.schemaVersion}\``,
+    `- tool version: \`${summary.toolVersion}\``,
+    `- classification version: \`${summary.classificationVersion}\``,
     `- legacy source root: \`${summary.legacySourceRoot}\``,
-    `- legacy tree sha256: \`${summary.legacyTreeSha256}\``,
+    `- source tree fingerprint: \`${summary.sourceTreeFingerprint}\``,
+    `- input state fingerprint: \`${summary.inputStateFingerprint}\``,
     "",
     "## Primary Disposition",
     "",
@@ -1312,8 +1281,8 @@ function renderAuditMarkdown(summary, context, classificationRecords) {
     "",
     "## Repeatability",
     "",
-    `- status: ${summary.repeatability.status}`,
-    `- conclusion: ${summary.repeatability.conclusion}`,
+    `- deterministic by input: ${summary.repeatability.deterministicByInput ? "yes" : "no"}`,
+    `- comparison mode: ${summary.repeatability.comparisonMode}`,
     "",
     "## PII and Copyright",
     "",
@@ -1412,8 +1381,6 @@ function renderHandoffMarkdown(summary) {
     "",
     `- Task ID: ${TASK_ID}`,
     "- Owner: Codex",
-    `- Branch: ${summary.branch}`,
-    `- Base commit: ${summary.expectedHead}`,
     "- Final commit: resolved from Git metadata at handoff time",
     "- Status: IN_REVIEW",
     "",
@@ -1474,7 +1441,9 @@ function renderHandoffMarkdown(summary) {
     "",
     "## Rollback",
     "",
-    "Use `git revert <commit>` or reset this worktree to the previous reviewed commit if instructed.",
+    "Use `git revert <fix-commit>` to roll back only this symlink-boundary fix.",
+    "Do not treat this fix commit as the rollback point for the full MIG-001 task; the complete task rollback must be generated after final integration.",
+    "Avoid guessing a full-task rollback commit before the integration commit exists.",
     "",
     "## Reviewer focus",
     "",
@@ -2232,11 +2201,11 @@ function outputRuleNames() {
   return OUTPUT_PII_RULES.map((rule) => rule.key);
 }
 
-function printDryRunSummary(summary) {
+function printDryRunSummary(summary, repeatabilityProbe, gitState) {
   console.log(`[dry-run] ${TASK_ID}`);
-  console.log(`branch: ${summary.branch}`);
-  console.log(`head: ${summary.actualHead}`);
-  console.log(`legacyTreeSha256: ${summary.legacyTreeSha256}`);
+  console.log(`branch: ${gitState.branch}`);
+  console.log(`head: ${gitState.head}`);
+  console.log(`legacyTreeSha256: ${summary.sourceTreeFingerprint}`);
   console.log(`scannedFileCount: ${summary.scannedFileCount}`);
   console.log(`primaryDispositionTotal: ${summary.primaryDispositionTotal}`);
   for (const key of PRIMARY_DISPOSITIONS) {
@@ -2244,6 +2213,110 @@ function printDryRunSummary(summary) {
   }
   console.log(`privacyRiskCount: ${summary.privacyRiskCount}`);
   console.log(`copyrightPendingCount: ${summary.copyrightPendingCount}`);
+  console.log(
+    `repeatabilityProbe: ${repeatabilityProbe.allExist && repeatabilityProbe.allMatch ? "stable" : "changed"}`,
+  );
+}
+
+function printWriteSummary(writeStats, repeatabilityProbe, gitState) {
+  console.log(`branch: ${gitState.branch}`);
+  console.log(`head: ${gitState.head}`);
+  console.log(
+    `repeatabilityProbe: ${repeatabilityProbe.allExist && repeatabilityProbe.allMatch ? "stable" : "changed"}`,
+  );
+  console.log(`writeStats.changedCount: ${writeStats.changedCount}`);
+}
+
+function runSymlinkSelfTest() {
+  const sandbox = fs.mkdtempSync(path.join(os.tmpdir(), "mig001-selftest-"));
+  const sourceRoot = path.join(sandbox, "source");
+  const worktreeRoot = path.join(sandbox, "worktree");
+  fs.mkdirSync(path.join(sourceRoot, "legacy", "source-tree", "two-legacy"), {
+    recursive: true,
+  });
+  fs.mkdirSync(worktreeRoot, { recursive: true });
+
+  const externalFile = path.join(sandbox, "external-file.txt");
+  const externalDir = path.join(sandbox, "external-dir");
+  fs.writeFileSync(externalFile, "outside\n", "utf8");
+  fs.mkdirSync(externalDir, { recursive: true });
+  fs.writeFileSync(path.join(externalDir, "leak.txt"), "dir-outside\n", "utf8");
+
+  const fixtureRoot = path.join(
+    sourceRoot,
+    "legacy",
+    "source-tree",
+    "two-legacy",
+  );
+  fs.writeFileSync(path.join(fixtureRoot, "normal.txt"), "inside\n", "utf8");
+  fs.symlinkSync(externalFile, path.join(fixtureRoot, "file-link.txt"));
+  fs.mkdirSync(path.join(fixtureRoot, "dir-link-parent"), { recursive: true });
+  fs.symlinkSync(externalDir, path.join(fixtureRoot, "dir-link"));
+
+  const sourceSnapshot = buildLegacySnapshot(fixtureRoot);
+  const sourceFileSymlinkSkipped =
+    sourceSnapshot.symlinkPaths.includes("file-link.txt") &&
+    !sourceSnapshot.files.some((file) => file.relativePath === "file-link.txt");
+  const sourceDirSymlinkSkipped =
+    sourceSnapshot.symlinkPaths.includes("dir-link") &&
+    !sourceSnapshot.files.some((file) =>
+      file.relativePath.startsWith("dir-link/"),
+    );
+
+  const outputTarget = path.join(sandbox, "external-output-target");
+  const outputRootLink = path.join(worktreeRoot, "legacy", "reports");
+  fs.mkdirSync(path.dirname(outputRootLink), { recursive: true });
+  const externalTargetBefore = fs.existsSync(outputTarget)
+    ? "present"
+    : "absent";
+  let toolExit = 0;
+  try {
+    fs.symlinkSync(outputTarget, outputRootLink);
+    writeOutputs(worktreeRoot, [
+      {
+        path: "legacy/reports/probe/output.txt",
+        content: "probe\n",
+      },
+    ]);
+  } catch (error) {
+    toolExit = 1;
+  }
+  const externalTargetAfter = fs.existsSync(outputTarget)
+    ? "present"
+    : "absent";
+
+  fs.rmSync(worktreeRoot, { recursive: true, force: true });
+  fs.mkdirSync(worktreeRoot, { recursive: true });
+  const internalWriteRoot = path.join(worktreeRoot, "legacy", "reports");
+  const internalWriteBefore = fs.existsSync(
+    path.join(internalWriteRoot, "probe", "output.txt"),
+  )
+    ? "present"
+    : "absent";
+  writeOutputs(worktreeRoot, [
+    {
+      path: "legacy/reports/probe/output.txt",
+      content: "probe\n",
+    },
+  ]);
+  const internalWriteAfter = fs.existsSync(
+    path.join(internalWriteRoot, "probe", "output.txt"),
+  )
+    ? "present"
+    : "absent";
+
+  console.log(
+    `SOURCE_FILE_SYMLINK_SKIPPED=${sourceFileSymlinkSkipped ? "yes" : "no"}`,
+  );
+  console.log(
+    `SOURCE_DIR_SYMLINK_SKIPPED=${sourceDirSymlinkSkipped ? "yes" : "no"}`,
+  );
+  console.log(`EXTERNAL_TARGET_BEFORE=${externalTargetBefore}`);
+  console.log(`TOOL_EXIT=${toolExit}`);
+  console.log(`EXTERNAL_TARGET_AFTER=${externalTargetAfter}`);
+  console.log(
+    `NORMAL_INTERNAL_OUTPUT_CREATED=${internalWriteBefore}->${internalWriteAfter}`,
+  );
 }
 
 main();

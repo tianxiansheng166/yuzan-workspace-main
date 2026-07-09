@@ -2,8 +2,6 @@
 
 - Task ID: MIG-001
 - Owner: Codex
-- Branch: task/mig-001-migration
-- Base commit: 7cace5434ab8fb7187783fb2ecc88d94c862601b
 - Final commit: resolved from Git metadata at handoff time
 - Status: IN_REVIEW
 
@@ -64,7 +62,9 @@ No database migration. Writes are restricted to legacy/exports, legacy/review, a
 
 ## Rollback
 
-Use `git revert <commit>` or reset this worktree to the previous reviewed commit if instructed.
+Use `git revert <fix-commit>` to roll back only this symlink-boundary fix.
+Do not treat this fix commit as the rollback point for the full MIG-001 task; the complete task rollback must be generated after final integration.
+Avoid guessing a full-task rollback commit before the integration commit exists.
 
 ## Reviewer focus
 
