@@ -14,6 +14,7 @@ import {
 import { StubAuthContextSource } from "../../src/modules/auth/stub-auth-context.source.js";
 import { OrganizationsController } from "../../src/modules/organizations/organizations.controller.js";
 import { OrganizationsModule } from "../../src/modules/organizations/organizations.module.js";
+import { PrismaService } from "../../src/modules/organizations/infra/prisma/prisma.service.js";
 import { MEMBERSHIP_REPOSITORY } from "../../src/modules/organizations/ports/membership-repository.port.js";
 import { SCHOOL_REPOSITORY } from "../../src/modules/organizations/ports/school-repository.port.js";
 import { FakeMembershipRepository } from "./fakes/fake-membership.repository.js";
@@ -38,6 +39,8 @@ describe("OrganizationsController", () => {
       .useValue(schoolRepo)
       .overrideProvider(MEMBERSHIP_REPOSITORY)
       .useValue(membershipRepo)
+      .overrideProvider(PrismaService)
+      .useValue({} as unknown as PrismaService)
       .overrideProvider(AUTH_CONTEXT_SOURCE)
       .useValue(new StubAuthContextSource())
       .compile();

@@ -5,6 +5,7 @@ import {
   MembershipStatus,
 } from "../../src/common/security/index.js";
 import { OrganizationsModule } from "../../src/modules/organizations/organizations.module.js";
+import { PrismaService } from "../../src/modules/organizations/infra/prisma/prisma.service.js";
 import { MEMBERSHIP_REPOSITORY } from "../../src/modules/organizations/ports/membership-repository.port.js";
 import { SCHOOL_REPOSITORY } from "../../src/modules/organizations/ports/school-repository.port.js";
 import { FakeMembershipRepository } from "./fakes/fake-membership.repository.js";
@@ -30,6 +31,8 @@ describe("OrganizationsService", () => {
       .useValue(schoolRepo)
       .overrideProvider(MEMBERSHIP_REPOSITORY)
       .useValue(membershipRepo)
+      .overrideProvider(PrismaService)
+      .useValue({} as unknown as PrismaService)
       .compile();
 
     service = moduleRef.get(OrganizationsService);
@@ -95,7 +98,10 @@ describe("OrganizationsService", () => {
     it("propagates unavailable school repository", async () => {
       const moduleRef = await Test.createTestingModule({
         imports: [OrganizationsModule],
-      }).compile();
+      })
+        .overrideProvider(PrismaService)
+        .useValue({} as unknown as PrismaService)
+        .compile();
       const svc = moduleRef.get(OrganizationsService);
 
       await expect(

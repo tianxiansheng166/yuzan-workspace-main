@@ -12,6 +12,7 @@ import { StubAuthContextSource } from "../../src/modules/auth/stub-auth-context.
 import { ClassesController } from "../../src/modules/classes/classes.controller.js";
 import { ClassesModule } from "../../src/modules/classes/classes.module.js";
 import { ClassesService } from "../../src/modules/classes/classes.service.js";
+import { PrismaService } from "../../src/modules/organizations/infra/prisma/prisma.service.js";
 import { CLASS_REPOSITORY } from "../../src/modules/classes/ports/class-repository.port.js";
 import { FakeClassRepository } from "./fakes/fake-class.repository.js";
 import { classEntity, studentEnrollment } from "./fixtures/classes.js";
@@ -59,6 +60,8 @@ describe("ClassesController", () => {
     })
       .overrideProvider(CLASS_REPOSITORY)
       .useValue(classRepo)
+      .overrideProvider(PrismaService)
+      .useValue({} as unknown as PrismaService)
       .overrideProvider(AUTH_CONTEXT_SOURCE)
       .useValue(new StubAuthContextSource())
       .compile();
@@ -320,6 +323,8 @@ describe("ClassesController", () => {
       })
         .overrideProvider(CLASS_REPOSITORY)
         .useValue(classRepo)
+        .overrideProvider(PrismaService)
+        .useValue({} as unknown as PrismaService)
         .overrideProvider(AUTH_CONTEXT_SOURCE)
         .useValue(new StubAuthContextSource())
         .compile();
@@ -460,6 +465,8 @@ describe("ClassesController", () => {
       })
         .overrideProvider(CLASS_REPOSITORY)
         .useValue(classRepo)
+        .overrideProvider(PrismaService)
+        .useValue({} as unknown as PrismaService)
         .overrideProvider(AUTH_CONTEXT_SOURCE)
         .useValue(new StubAuthContextSource())
         .compile();
@@ -506,6 +513,8 @@ describe("ClassesController", () => {
       })
         .overrideProvider(CLASS_REPOSITORY)
         .useValue(classRepo)
+        .overrideProvider(PrismaService)
+        .useValue({} as unknown as PrismaService)
         .overrideProvider(AUTH_CONTEXT_SOURCE)
         .useValue(new StubAuthContextSource())
         .compile();
@@ -569,6 +578,8 @@ describe("ClassesController", () => {
       })
         .overrideProvider(CLASS_REPOSITORY)
         .useValue(classRepo)
+        .overrideProvider(PrismaService)
+        .useValue({} as unknown as PrismaService)
         .overrideProvider(AUTH_CONTEXT_SOURCE)
         .useValue(new StubAuthContextSource())
         .compile();
@@ -592,6 +603,8 @@ describe("ClassesController", () => {
       const moduleRef = await Test.createTestingModule({
         imports: [ClassesModule],
       })
+        .overrideProvider(PrismaService)
+        .useValue({} as unknown as PrismaService)
         .overrideProvider(AUTH_CONTEXT_SOURCE)
         .useValue(new StubAuthContextSource())
         .compile();

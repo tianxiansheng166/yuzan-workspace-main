@@ -1,16 +1,18 @@
 import { Module } from "@nestjs/common";
+import { OrganizationsModule } from "../organizations/organizations.module.js";
 import { ClassesController } from "./classes.controller.js";
 import { ClassesService } from "./classes.service.js";
+import { PrismaClassRepository } from "./infra/prisma-class.repository.js";
 import { CLASS_REPOSITORY } from "./ports/class-repository.port.js";
-import { UnavailableClassRepository } from "./ports/unavailable-class.repository.js";
 
 @Module({
+  imports: [OrganizationsModule],
   controllers: [ClassesController],
   providers: [
     ClassesService,
     {
       provide: CLASS_REPOSITORY,
-      useClass: UnavailableClassRepository,
+      useClass: PrismaClassRepository,
     },
   ],
   exports: [ClassesService],
