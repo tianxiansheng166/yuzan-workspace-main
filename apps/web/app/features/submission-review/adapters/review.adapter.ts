@@ -1,191 +1,244 @@
 import type {
-  ConfidenceBand,
-  EvidenceKind,
-  QueueLane,
-  ReviewStatus,
-  ReviewSubmissionDetail,
-  ReviewSubmissionSummary,
-  SyncHealth,
-  TeacherChecklistItem,
-} from "~/features/submission-review/types";
+  RecommendationState,
+  SubmissionDetail,
+  SubmissionReviewStatus,
+  SubmissionSummary,
+  TeacherReviewState,
+} from "../types";
 
 type StatusTone = "neutral" | "success" | "warning" | "danger" | "information";
 
-export interface ReviewRowViewModel {
+export interface SubmissionSummaryViewModel {
   id: string;
-  studentName: string;
   className: string;
+  studentDisplayName: string;
   assignmentTitle: string;
-  laneLabel: string;
-  laneTone: StatusTone;
-  evidenceLabel: string;
-  statusLabel: string;
-  statusTone: StatusTone;
-  confidenceLabel: string;
-  confidenceTone: StatusTone;
-  syncLabel: string;
-  syncTone: StatusTone;
+  submissionTypeLabel: string;
   submittedAt: string;
-  issueSummary: string;
-  meta: string;
-  isDemo: boolean;
+  reviewStatusLabel: string;
+  reviewStatusTone: StatusTone;
+  attentionLabel: string;
+  overdueLabel: string;
+  aiAssistLabel: string;
+  aiAssistTone: StatusTone;
+  markerLabel: string;
+  markerTone: StatusTone;
 }
 
-export interface ReviewLaneViewModel {
-  lane: QueueLane;
-  title: string;
-  description: string;
-  items: ReviewRowViewModel[];
+export interface SubmissionDetailViewModel extends SubmissionSummaryViewModel {
+  schoolScopedLabel: string;
+  taskDescription: string;
+  readingTextTitle: string;
+  recordingLabel: string;
+  aiProcessingLabel: string;
+  reportLabel: string;
+  recommendationSummary: string;
+  teacherReviewLabel: string;
+  previousSubmissionLabel: string;
 }
 
-export interface ChecklistViewModel extends TeacherChecklistItem {
-  tone: StatusTone;
+export interface ReviewFilterOptions {
+  classOptions: string[];
+  taskOptions: SubmissionSummary["submissionType"][];
+  statusOptions: ReviewStatusFilter[];
 }
 
-export interface ReviewDetailViewModel extends ReviewRowViewModel {
-  prompt: string;
-  studentResponse: string;
-  transcript: string;
-  autoSuggestion: string;
-  autoRationale: string;
-  recommendedOutcomeLabel: string;
-  decisionLabel: string;
-  modelVersion: string;
-  confidenceScore: string;
-  teacherDraftNote: string;
-  checklist: ChecklistViewModel[];
-  artifacts: ReviewSubmissionDetail["artifacts"];
-  history: ReviewSubmissionDetail["history"];
+export type ReviewStatusFilter =
+  "all" | SubmissionReviewStatus | "attention" | "overdue" | "reviewed";
+
+export interface ReviewFilterState {
+  className: string;
+  taskType: "all" | SubmissionSummary["submissionType"];
+  status: ReviewStatusFilter;
+  timeOrder: "newest" | "oldest";
 }
 
-const laneMap: Record<
-  QueueLane,
-  { label: string; title: string; description: string; tone: StatusTone }
-> = {
-  incomplete: {
-    label: "未完成 / 需确认",
-    title: "未完成或证据缺口",
-    description: "先分辨学生漏做、离线未同步，还是原始答案尚未到齐。",
-    tone: "warning",
-  },
-  "low-confidence": {
-    label: "低置信度",
-    title: "低置信度自动结果",
-    description: "教师应结合原始证据确认自动建议，而不是直接照单全收。",
-    tone: "information",
-  },
-  "sync-exception": {
-    label: "同步异常",
-    title: "同步异常与服务不可用",
-    description: "证据链不完整时先排障，避免给学生错误结论。",
-    tone: "danger",
-  },
-};
-
-const evidenceKindMap: Record<EvidenceKind, string> = {
-  audio: "朗读录音",
-  writing: "书面练习",
-  reading: "跟读结果",
-};
+const submissionTypeMap = {
+  "initial-assessment": "首次测评",
+  retest: "复测",
+  "reading-practice": "朗读练习",
+  "written-practice": "书面练习",
+  "integrated-task": "综合任务",
+} as const;
 
 const reviewStatusMap: Record<
-  ReviewStatus,
+  SubmissionReviewStatus,
   { label: string; tone: StatusTone }
 > = {
   "needs-review": { label: "待复核", tone: "warning" },
-  reviewed: { label: "已复核", tone: "information" },
-  returned: { label: "已退回", tone: "danger" },
-  accepted: { label: "已接受", tone: "success" },
+  priority: { label: "优先处理", tone: "danger" },
+  returned: { label: "已退回修改", tone: "warning" },
+  resubmitted: { label: "学生已重交", tone: "information" },
+  completed: { label: "已完成", tone: "success" },
   unavailable: { label: "不可用", tone: "neutral" },
 };
 
-const confidenceMap: Record<
-  ConfidenceBand,
-  { label: string; tone: StatusTone }
-> = {
-  low: { label: "低置信度", tone: "danger" },
-  medium: { label: "中等置信度", tone: "warning" },
-  high: { label: "高置信度", tone: "success" },
-  unavailable: { label: "不可用", tone: "neutral" },
+const aiAssistMap = {
+  demo: { label: "AI 辅助 demo", tone: "information" as const },
+  pending: { label: "AI 辅助 pending", tone: "warning" as const },
+  unavailable: { label: "AI 辅助 unavailable", tone: "neutral" as const },
 };
 
-const syncMap: Record<SyncHealth, { label: string; tone: StatusTone }> = {
-  synced: { label: "已同步", tone: "success" },
-  pending: { label: "同步中", tone: "warning" },
-  failed: { label: "同步失败", tone: "danger" },
-  unavailable: { label: "不可用", tone: "neutral" },
+const markerMap = {
+  demo: { label: "DEMO", tone: "information" as const },
+  pending: { label: "PENDING", tone: "warning" as const },
+  unavailable: { label: "UNAVAILABLE", tone: "neutral" as const },
 };
 
-function adaptReviewRow(item: ReviewSubmissionSummary): ReviewRowViewModel {
-  const lane = laneMap[item.lane];
-  const status = reviewStatusMap[item.reviewStatus];
-  const confidence = confidenceMap[item.confidenceBand];
-  const sync = syncMap[item.syncHealth];
+const reportLabelMap = {
+  pending: "报告 pending",
+  ready: "报告 ready",
+  unavailable: "报告 unavailable",
+} as const;
 
+const recommendationMap: Record<RecommendationState, string> = {
+  demo: "前端 demo 推荐",
+  accepted: "教师已接受推荐",
+  adjusted: "教师已调整推荐",
+  pending: "推荐待确认",
+};
+
+const teacherReviewMap: Record<TeacherReviewState, string> = {
+  pending: "教师复核 pending",
+  "in-review": "教师复核进行中",
+  reviewed: "教师已复核",
+  returned: "教师已退回",
+  unavailable: "教师复核 unavailable",
+};
+
+export function buildReviewFilterOptions(
+  submissions: SubmissionSummary[],
+): ReviewFilterOptions {
   return {
-    id: item.id,
-    studentName: item.studentName,
-    className: item.className,
-    assignmentTitle: item.assignmentTitle,
-    laneLabel: lane.label,
-    laneTone: lane.tone,
-    evidenceLabel: evidenceKindMap[item.evidenceKind],
-    statusLabel: status.label,
-    statusTone: status.tone,
-    confidenceLabel: confidence.label,
-    confidenceTone: confidence.tone,
-    syncLabel: sync.label,
-    syncTone: sync.tone,
-    submittedAt: item.submittedAt,
-    issueSummary: item.issueSummary,
-    meta: `${item.className} · ${item.assignmentTitle} · ${item.submittedAt}`,
-    isDemo: item.isDemo,
+    classOptions: Array.from(
+      new Set(submissions.map((item) => item.className)),
+    ),
+    taskOptions: Array.from(
+      new Set(submissions.map((item) => item.submissionType)),
+    ),
+    statusOptions: [
+      "all",
+      "attention",
+      "overdue",
+      "reviewed",
+      "needs-review",
+      "priority",
+      "returned",
+      "resubmitted",
+      "completed",
+      "unavailable",
+    ],
   };
 }
 
-export function adaptReviewLanes(
-  queue: ReviewSubmissionSummary[],
-): ReviewLaneViewModel[] {
-  return (Object.keys(laneMap) as QueueLane[]).map((lane) => ({
-    lane,
-    title: laneMap[lane].title,
-    description: laneMap[lane].description,
-    items: queue.filter((item) => item.lane === lane).map(adaptReviewRow),
-  }));
+export function filterSubmissionSummaries(
+  submissions: SubmissionSummary[],
+  filters: ReviewFilterState,
+): SubmissionSummary[] {
+  return submissions.filter((item) => {
+    if (filters.className !== "all" && item.className !== filters.className) {
+      return false;
+    }
+
+    if (
+      filters.taskType !== "all" &&
+      item.submissionType !== filters.taskType
+    ) {
+      return false;
+    }
+
+    if (filters.status === "attention" && !item.needsAttention) {
+      return false;
+    }
+
+    if (filters.status === "overdue" && !item.isOverdue) {
+      return false;
+    }
+
+    if (filters.status === "reviewed" && item.reviewStatus !== "completed") {
+      return false;
+    }
+
+    if (
+      filters.status !== "all" &&
+      filters.status !== "attention" &&
+      filters.status !== "overdue" &&
+      filters.status !== "reviewed" &&
+      item.reviewStatus !== filters.status
+    ) {
+      return false;
+    }
+
+    return true;
+  });
 }
 
-export function adaptReviewDetail(
-  submission: ReviewSubmissionDetail,
-): ReviewDetailViewModel {
-  const row = adaptReviewRow(submission);
+const statusPriority: Record<SubmissionReviewStatus, number> = {
+  priority: 0,
+  resubmitted: 1,
+  "needs-review": 2,
+  returned: 3,
+  unavailable: 4,
+  completed: 5,
+};
+
+export function sortSubmissionSummaries(
+  submissions: SubmissionSummary[],
+  direction: "newest" | "oldest" = "newest",
+): SubmissionSummary[] {
+  return [...submissions].sort((left, right) => {
+    const laneDifference =
+      statusPriority[left.reviewStatus] - statusPriority[right.reviewStatus];
+    if (laneDifference !== 0) return laneDifference;
+
+    return direction === "newest"
+      ? right.submittedAt.localeCompare(left.submittedAt)
+      : left.submittedAt.localeCompare(right.submittedAt);
+  });
+}
+
+export function adaptSubmissionSummary(
+  item: SubmissionSummary,
+): SubmissionSummaryViewModel {
+  return {
+    id: item.id,
+    className: item.className,
+    studentDisplayName: item.studentDisplayName,
+    assignmentTitle: item.assignmentTitle,
+    submissionTypeLabel: submissionTypeMap[item.submissionType],
+    submittedAt: item.submittedAt,
+    reviewStatusLabel: reviewStatusMap[item.reviewStatus].label,
+    reviewStatusTone: reviewStatusMap[item.reviewStatus].tone,
+    attentionLabel: item.needsAttention ? "需要关注" : "常规处理",
+    overdueLabel: item.isOverdue ? "逾期" : "未逾期",
+    aiAssistLabel: aiAssistMap[item.aiAssistState].label,
+    aiAssistTone: aiAssistMap[item.aiAssistState].tone,
+    markerLabel: markerMap[item.marker].label,
+    markerTone: markerMap[item.marker].tone,
+  };
+}
+
+export function adaptSubmissionDetail(
+  item: SubmissionDetail,
+): SubmissionDetailViewModel {
+  const base = adaptSubmissionSummary(item);
 
   return {
-    ...row,
-    prompt: submission.prompt,
-    studentResponse: submission.studentResponse,
-    transcript: submission.transcript,
-    autoSuggestion: submission.autoSuggestion,
-    autoRationale: submission.autoRationale,
-    recommendedOutcomeLabel:
-      submission.recommendedOutcome === "accept"
-        ? "建议接受"
-        : submission.recommendedOutcome === "return"
-          ? "建议退回补充"
-          : "建议线下辅导 / 排障",
-    decisionLabel: submission.teacherDecision,
-    modelVersion: submission.modelVersion,
-    confidenceScore: submission.confidenceScore,
-    teacherDraftNote: submission.teacherDraftNote,
-    checklist: submission.checklist.map((item) => ({
-      ...item,
-      tone:
-        item.status === "done"
-          ? "success"
-          : item.status === "attention"
-            ? "warning"
-            : "neutral",
-    })),
-    artifacts: submission.artifacts,
-    history: submission.history,
+    ...base,
+    schoolScopedLabel: item.schoolScopedLabel,
+    taskDescription: item.taskDescription,
+    readingTextTitle: item.readingTextTitle,
+    recordingLabel: item.audioMetadata.recordingSubmitted
+      ? `录音已提交 · ${item.audioMetadata.durationLabel}`
+      : "录音 unavailable",
+    aiProcessingLabel: aiAssistMap[item.audioMetadata.aiProcessingStatus].label,
+    reportLabel: reportLabelMap[item.reportState],
+    recommendationSummary: item.recommendationEntries
+      .map((entry) => `${entry.title} · ${recommendationMap[entry.state]}`)
+      .join(" / "),
+    teacherReviewLabel: teacherReviewMap[item.teacherReviewState],
+    previousSubmissionLabel: item.attempt.previousSubmissionId
+      ? `${item.attempt.roundLabel} · previous ${item.attempt.previousSubmissionId}`
+      : `${item.attempt.roundLabel} · 无 previous submission`,
   };
 }

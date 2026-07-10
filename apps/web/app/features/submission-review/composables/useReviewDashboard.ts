@@ -1,84 +1,81 @@
 import { computed, ref } from "vue";
 import {
-  adaptReviewLanes,
-  type ReviewLaneViewModel,
-} from "~/features/submission-review/adapters/review.adapter";
-import {
-  fetchReviewDashboard,
-  type ReviewDemoMode,
-} from "~/features/submission-review/gateway/review.gateway";
+  adaptSubmissionSummary,
+  buildReviewFilterOptions,
+  filterSubmissionSummaries,
+  sortSubmissionSummaries,
+  type ReviewFilterState,
+} from "../adapters/review.adapter";
+import { submissionReviewGateway } from "../gateway/review.gateway";
 import type {
-  QueueLane,
-  ReviewRole,
-  ReviewState,
-} from "~/features/submission-review/types";
+  ReviewPageState,
+  ReviewScenario,
+  SubmissionSummary,
+} from "../types";
 
-export function useReviewDashboard(mode: ReviewDemoMode = "default") {
-  const state = ref<ReviewState>("loading");
-  const role = ref<ReviewRole>("unknown");
+export function useReviewDashboard(scenario: ReviewScenario = "default") {
+  const state = ref<ReviewPageState>("loading");
   const generatedAt = ref("");
-  const lanes = ref<ReviewLaneViewModel[]>([]);
+  const permission = ref<"teacher" | "demo-teacher" | "student" | "unknown">(
+    "unknown",
+  );
+  const submissions = ref<SubmissionSummary[]>([]);
   const errorMessage = ref("");
+  const filters = ref<ReviewFilterState>({
+    className: "all",
+    taskType: "all",
+    status: "all",
+    timeOrder: "newest",
+  });
 
-  const totalCount = computed(() =>
-    lanes.value.reduce((count, lane) => count + lane.items.length, 0),
+  const filterOptions = computed(() =>
+    buildReviewFilterOptions(submissions.value),
+  );
+  const filteredRows = computed(() =>
+    sortSubmissionSummaries(
+      filterSubmissionSummaries(submissions.value, filters.value),
+      filters.value.timeOrder,
+    ).map(adaptSubmissionSummary),
   );
 
-  const activeRiskSummary = computed(() =>
-    lanes.value
-      .filter((lane) => lane.items.length > 0)
-      .map((lane) => `${lane.title} ${lane.items.length} 项`)
-      .join(" · "),
-  );
-
-  const laneCounts = computed<Record<QueueLane, number>>(() => ({
-    incomplete:
-      lanes.value.find((lane) => lane.lane === "incomplete")?.items.length ?? 0,
-    "low-confidence":
-      lanes.value.find((lane) => lane.lane === "low-confidence")?.items
-        .length ?? 0,
-    "sync-exception":
-      lanes.value.find((lane) => lane.lane === "sync-exception")?.items
-        .length ?? 0,
-  }));
-
-  const load = async () => {
+  async function load() {
     state.value = "loading";
     errorMessage.value = "";
+
     try {
-      const result = await fetchReviewDashboard(mode);
-      role.value = result.role;
+      const result = await submissionReviewGateway.getDashboard(scenario);
+      permission.value = result.permission;
       generatedAt.value = result.generatedAt;
 
-      if (result.role !== "teacher") {
+      if (result.permission === "student" || result.permission === "unknown") {
         state.value = "permission";
-        lanes.value = [];
+        submissions.value = [];
         return;
       }
 
-      if (result.queue === null) {
+      if (result.submissions === null) {
         state.value = "unavailable";
-        lanes.value = [];
+        submissions.value = [];
         return;
       }
 
-      lanes.value = adaptReviewLanes(result.queue);
-      state.value = result.queue.length === 0 ? "empty" : "ready";
+      submissions.value = result.submissions;
+      state.value = result.submissions.length === 0 ? "empty" : "ready";
     } catch (error) {
       state.value = "error";
       errorMessage.value =
-        error instanceof Error ? error.message : "加载复核队列失败";
+        error instanceof Error ? error.message : "加载教师复核列表失败";
     }
-  };
+  }
 
   return {
     state,
-    role,
     generatedAt,
-    lanes,
-    totalCount,
-    laneCounts,
-    activeRiskSummary,
+    permission,
+    submissions,
+    filters,
+    filterOptions,
+    filteredRows,
     errorMessage,
     load,
   };

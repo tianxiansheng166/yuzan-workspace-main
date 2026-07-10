@@ -1,18 +1,26 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const pagesDir = join(__dirname, "../../app/pages/teacher/review");
+const reviewPagesDir = join(__dirname, "../../app/pages/teacher/review");
+const reviewComponentsDir = join(
+  __dirname,
+  "../../app/features/submission-review/components",
+);
 
-function readPage(relativePath: string) {
-  return readFileSync(join(pagesDir, relativePath), "utf8");
+function readReviewPage(relativePath: string) {
+  return readFileSync(join(reviewPagesDir, relativePath), "utf8");
+}
+
+function readReviewComponent(relativePath: string) {
+  return readFileSync(join(reviewComponentsDir, relativePath), "utf8");
 }
 
 describe("submission review pages static guardrails", () => {
-  it("dashboard includes loading, empty, error, permission and unavailable states", () => {
-    const source = readPage("index.vue");
+  it("list page includes loading, empty, error, permission and unavailable states", () => {
+    const source = readReviewPage("index.vue");
     expect(source).toContain("state === 'loading'");
     expect(source).toContain("state === 'empty'");
     expect(source).toContain("state === 'error'");
@@ -20,36 +28,64 @@ describe("submission review pages static guardrails", () => {
     expect(source).toContain("state === 'unavailable'");
   });
 
-  it("dashboard keeps risk-lane framing instead of statistics cards", () => {
-    const source = readPage("index.vue");
-    expect(source).toContain("未完成");
-    expect(source).toContain("低置信度");
-    expect(source).toContain("同步异常");
-    expect(source).toContain("按风险而不是按统计卡组织复核队列");
+  it("list page includes class, task and status filters", () => {
+    const source = [
+      readReviewPage("index.vue"),
+      readReviewComponent("ReviewFilterBar.vue"),
+    ].join("\n");
+    expect(source).toContain("按班级筛选");
+    expect(source).toContain("按任务类型筛选");
+    expect(source).toContain("按提交时间排序");
+    expect(source).toContain("按状态筛选");
   });
 
-  it("detail page shows original evidence, auto suggestion and teacher actions together", () => {
-    const source = readPage("[reviewId]/index.vue");
-    expect(source).toContain("原始证据");
-    expect(source).toContain("自动结果");
-    expect(source).toContain("教师结论");
-    expect(source).toContain("接受");
-    expect(source).toContain("退回补充");
-    expect(source).toContain("线下辅导 / 排障");
+  it("detail page includes student info, task description and recording metadata", () => {
+    const source = readReviewPage("[submissionId]/index.vue");
+    expect(source).toContain("学生与班级基础信息");
+    expect(source).toContain("任务说明");
+    expect(source).toContain("朗读提交元数据");
   });
 
-  it("detail page includes local demo disclaimer and editable teacher note", () => {
-    const source = readPage("[reviewId]/index.vue");
-    expect(source).toContain("demo / pending");
-    expect(source).toContain("教师批注");
-    expect(source).toContain("SUB-001");
+  it("detail page includes writing content, learning evidence and retest linkage", () => {
+    const source = readReviewPage("[submissionId]/index.vue");
+    expect(source).toContain("书面练习内容");
+    expect(source).toContain("学习过程证据");
+    expect(source).toContain("首测 / 复测关联");
   });
 
-  it("pages include readable mobile breakpoints", () => {
-    const listSource = readPage("index.vue");
-    const detailSource = readPage("[reviewId]/index.vue");
+  it("feedback page includes teacher comment, redo and retest fields", () => {
+    const source = [
+      readReviewPage("[submissionId]/feedback.vue"),
+      readReviewComponent("ReviewFeedbackForm.vue"),
+    ].join("\n");
+    expect(source).toContain("做得好的地方");
+    expect(source).toContain("当前最重要的问题");
+    expect(source).toContain("一个明确的下一步动作");
+    expect(source).toContain("退回修改原因");
+    expect(source).toContain("复测目标");
+    expect(source).toContain("是否需要重做");
+    expect(source).toContain("是否建议复测");
+    expect(source).toContain("保存草稿");
+    expect(source).toContain("提交反馈");
+  });
 
-    expect(listSource).toContain("max-width: 24.375rem");
-    expect(detailSource).toContain("max-width: 24.375rem");
+  it("pages do not directly access browser-only APIs", () => {
+    const files = [
+      readReviewPage("index.vue"),
+      readReviewPage("[submissionId]/index.vue"),
+      readReviewPage("[submissionId]/feedback.vue"),
+    ].join("\n");
+    expect(files).not.toContain("window.");
+    expect(files).not.toContain("localStorage");
+    expect(files).not.toContain("navigator.");
+  });
+
+  it("pages keep 390px guardrails", () => {
+    const files = [
+      readReviewPage("index.vue"),
+      readReviewPage("[submissionId]/index.vue"),
+      readReviewPage("[submissionId]/feedback.vue"),
+    ].join("\n");
+    expect(files).toContain("max-width: 24.375rem");
   });
 });
