@@ -5,6 +5,10 @@ import ReviewQueueTable from "~/features/submission-review/components/ReviewQueu
 import { useReviewDashboard } from "~/features/submission-review/composables/useReviewDashboard";
 import type { ReviewScenario } from "~/features/submission-review/types";
 
+useSeoMeta({
+  title: "提交复核｜语赞心声",
+});
+
 const route = useRoute();
 const scenario = computed(
   () => (route.query.scenario as ReviewScenario | undefined) ?? "default",
