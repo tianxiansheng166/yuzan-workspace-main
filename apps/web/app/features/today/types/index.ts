@@ -1,15 +1,18 @@
-export type LearningProgressState =
-  | "not-started"
-  | "ready"
-  | "in-progress"
-  | "paused"
-  | "local-only"
-  | "pending-sync"
-  | "submitted"
-  | "needs-revision"
-  | "retest-recommended"
-  | "completed"
-  | "unavailable";
+export const learningProgressStates = [
+  "not-started",
+  "ready",
+  "in-progress",
+  "paused",
+  "local-only",
+  "pending-sync",
+  "submitted",
+  "needs-revision",
+  "retest-recommended",
+  "completed",
+  "unavailable",
+] as const;
+
+export type LearningProgressState = (typeof learningProgressStates)[number];
 
 export type ActivityType =
   | "reading"

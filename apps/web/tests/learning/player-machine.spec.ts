@@ -4,6 +4,7 @@ import {
   transitionPlayer,
 } from "../../app/features/learning-player/state/player-machine";
 import type { PlayerSnapshot } from "../../app/features/learning-player/types";
+import { learningProgressStates } from "../../app/features/today/types";
 
 const ready = (): PlayerSnapshot => ({
   stepIndex: 0,
@@ -13,6 +14,21 @@ const ready = (): PlayerSnapshot => ({
 });
 
 describe("learning player state machine", () => {
+  it("retains all eleven progress states", () => {
+    expect(learningProgressStates).toEqual([
+      "not-started",
+      "ready",
+      "in-progress",
+      "paused",
+      "local-only",
+      "pending-sync",
+      "submitted",
+      "needs-revision",
+      "retest-recommended",
+      "completed",
+      "unavailable",
+    ]);
+  });
   it("moves through steps", () =>
     expect(transitionPlayer(ready(), "NEXT").stepIndex).toBe(1));
   it("pauses and resumes", () =>
