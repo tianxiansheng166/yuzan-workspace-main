@@ -103,16 +103,16 @@ export class ClassesService {
       throw new ClassForbiddenException();
     }
 
-    const classItem = await this.classRepo.findById(schoolId, classId);
+    const classItem = await this.classRepo.findVisibleClassById({
+      schoolId,
+      classId,
+      actor: {
+        userId: auth.principal.userId,
+        roles: auth.principal.roles,
+      },
+    });
     if (!classItem) {
       throw new ClassNotFoundException();
-    }
-
-    const isManager =
-      auth.principal.roles.includes(MembershipRole.SCHOOL_ADMIN) ||
-      classItem.teacherUserIds.includes(auth.principal.userId);
-    if (!isManager) {
-      throw new ClassForbiddenException();
     }
 
     const members = await this.classRepo.listMembers(schoolId, classId);

@@ -1,3 +1,4 @@
+import type { MembershipRole } from "../../../common/security/index.js";
 import type {
   Class,
   ClassEnrollment,
@@ -20,8 +21,20 @@ export interface PaginatedResult<T> {
   readonly hasMore: boolean;
 }
 
+export interface ClassActor {
+  readonly userId: string;
+  readonly roles: readonly MembershipRole[];
+}
+
+export interface FindVisibleClassOptions {
+  readonly schoolId: string;
+  readonly classId: string;
+  readonly actor: ClassActor;
+}
+
 export interface ClassRepositoryPort {
   findById(schoolId: string, classId: string): Promise<Class | null>;
+  findVisibleClassById(options: FindVisibleClassOptions): Promise<Class | null>;
   list(
     schoolId: string,
     options: ListClassesOptions,
