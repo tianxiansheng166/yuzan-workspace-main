@@ -1,0 +1,71 @@
+{
+  "evacuation_date": "20260711",
+  "repository": "git@github.com:tianxiansheng166/yuzan-workspace-main.git",
+  "main_commit": "9708cf36d45d17f1bf42db5ce34134c2cd551de6",
+  "base_commit": "ae28b92981a4390eb2a146c66674ca06ebdb4c32",
+  "worktree_count": 41,
+  "clean_worktrees": 41,
+  "dirty_worktrees": 0,
+  "detached_worktrees": 20,
+  "stashes": 0,
+  "local_only_commits": 1,
+  "evacuation_branches": [
+    {
+      "branch": "evacuation/vm2/mig-003-local-20260711",
+      "commit": "358d568fed932d822a24abb1edb2dc0650104dc9",
+      "purpose": "preserve local-only merge commit from diverged task/mig-003-migration"
+    },
+    {
+      "branch": "evacuation/vm2-handoff-20260711",
+      "commit": "577a7442b1f7d46b4b656a6db9143c6afbc519d8",
+      "purpose": "VM2 handoff report branch (this branch)"
+    }
+  ],
+  "integration_branches": [
+    {
+      "branch": "integration/core-framework-20260710",
+      "local_commit": "577a7442b1f7d46b4b656a6db9143c6afbc519d8",
+      "remote_commit": "577a7442b1f7d46b4b656a6db9143c6afbc519d8",
+      "synced": true
+    },
+    {
+      "branch": "integration/frontend-redesign-20260710",
+      "local_commit": "c906acf05a78dd54f48068021b14d1577aeeea26",
+      "remote_commit": "c906acf05a78dd54f48068021b14d1577aeeea26",
+      "synced": true
+    },
+    {
+      "branch": "integration/vm2-competition-mvp-v2",
+      "local_commit": "bf2aa65ec0eb4b90f8aaa8629d8eedc069067dde",
+      "remote_commit": "bf2aa65ec0eb4b90f8aaa8629d8eedc069067dde",
+      "synced": true
+    },
+    {
+      "branch": "integration/vm2-original-wave100",
+      "local_commit": "5825955cc7031414aa0ae72a3a4f01a0755dfbaf",
+      "remote_commit": "5825955cc7031414aa0ae72a3a4f01a0755dfbaf",
+      "synced": true
+    }
+  ],
+  "task_branches": [
+    {"branch": "task/acc-db-runtime-001", "commit": "bb64e5107ac2084f6d9b37e09b826b2d3e3714b1", "synced": true},
+    {"branch": "task/gov-002-contract", "commit": "3559004981e5224fe322fcac265bd79848c030d8", "synced": true},
+    {"branch": "task/idn-001-identity-api", "commit": "4719a9c965d881e86b8687b90b1f44939353479a", "synced": true},
+    {"branch": "task/mig-002-migration", "commit": "e21fce705bb4abf923c39e4ac99d00bdbaaa0a57", "synced": true},
+    {"branch": "task/mig-003-migration", "local_commit": "358d568fed932d822a24abb1edb2dc0650104dc9", "remote_commit": "5afdfe0678dbe26049ecbd4def12d0b56a181aa2", "synced": false, "diverged": "ahead=1 behind=3", "preserved_via": "evacuation/vm2/mig-003-local-20260711"},
+    {"branch": "task/mvp-101-assessment-student-vm2-codex1", "commit": "2adc9d714d791c381aa1409317560779ff2eb4d0", "synced": true},
+    {"branch": "task/mvp-102-assessment-teacher-vm2-codex2", "commit": "d1da26d9d513efe8c0569de5fe8a8ce24c4eae58", "synced": true},
+    {"branch": "task/mvp-103-teacher-tools-vm2-trae1", "commit": "3d7a30b2bfb7cfe4eb28e45b31bc578c072fd081", "synced": true},
+    {"branch": "task/mvp-104-translation-volunteer-vm2-trae2", "commit": "64b4b8eb99feed983af2f91b5536f1ec6ac40ec2", "synced": true},
+    {"branch": "task/mvp-105-training-products-vm2-trae3", "commit": "87363cf4fa29bb33f6e4f7da02df588e96176daa", "synced": true},
+    {"branch": "task/ops-001-operations", "commit": "13f3331744a3718784f08fab9720701a4c080782", "synced": true},
+    {"branch": "task/w2-101-web-001-app-shell-role-nav-vm2-codex1", "commit": "e1d53ba86a474e7a8b09b97ef83d6744cd6444c5", "synced": true},
+    {"branch": "task/w2-102-des-001-home-student-brand-vm2-codex2", "commit": "07321847cbb7edf3d7a735d54def3c0707808d82", "synced": true},
+    {"branch": "task/w2-103-gov-005-ci-protection-baseline-vm2-trae1", "commit": "7bc2488b6fca05319f1f025913d108edf896e085", "synced": true},
+    {"branch": "task/w2-104-des-002-core-icon-system-vm2-trae2", "commit": "964eeff67cf6a7acd217ab9f3c0fcabce4046b89", "synced": true},
+    {"branch": "task/w2-105-idn-002-login-session-web-vm2-trae3", "commit": "aa5535753a089599d70bf13bd437baf0f1775c10", "synced": true}
+  ],
+  "detached_review_snapshots": "20 detached worktrees, all commits confirmed on remote branches. No evacuation needed.",
+  "unapproved_branches_merged_to_integration": 0,
+  "redaction_note": "No credentials, passwords, or connection strings recorded."
+}
