@@ -1,0 +1,32 @@
+{
+  "assetCount": 108,
+  "counts": {
+    "audio": 0,
+    "document": 6,
+    "font": 0,
+    "image": 25,
+    "unknown": 76,
+    "video": 1
+  },
+  "dispositions": {
+    "DUPLICATE": 1,
+    "EXCLUDE": 0,
+    "MIGRATE": 9,
+    "MISSING": 0,
+    "REVIEW": 98
+  },
+  "duplicateGroups": 107,
+  "generatedAt": "[REDACTED]",
+  "mimeConflicts": 0,
+  "missingAlt": 4,
+  "missingCaption": 1,
+  "missingTranscript": 1,
+  "rights": {
+    "APPROVED": 9,
+    "REJECTED": 0,
+    "RESTRICTED": 17,
+    "UNKNOWN": 82
+  },
+  "taskId": "MIG-003",
+  "toolVersion": "mig-003-media-inventory-v1"
+}

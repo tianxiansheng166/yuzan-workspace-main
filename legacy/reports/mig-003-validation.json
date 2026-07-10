@@ -1,0 +1,14 @@
+{
+  "absolutePaths": 0,
+  "assetCount": 108,
+  "binaryCommitted": 0,
+  "credentialHits": 0,
+  "dryRun": false,
+  "generatedAt": "[REDACTED]",
+  "networkDownloads": 0,
+  "piiRawValues": 0,
+  "sensitiveChecks": [],
+  "sourceRootLabel": "controlled-sources/mig-003/two-legacy",
+  "taskId": "MIG-003",
+  "toolVersion": "mig-003-media-inventory-v1"
+}
