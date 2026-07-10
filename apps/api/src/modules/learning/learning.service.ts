@@ -1,10 +1,16 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { randomUUID } from "node:crypto";
 import type { AuthContext } from "../../common/security/auth.types.js";
+import {
+  hasRole,
+  MembershipRole,
+  MembershipStatus,
+} from "../../common/security/index.js";
 import { ASSIGNMENT_REPOSITORY } from "../assignments/ports/assignment-repository.port.js";
 import type { AssignmentRepositoryPort } from "../assignments/ports/assignment-repository.port.js";
 import { CLASS_REPOSITORY } from "../classes/ports/class-repository.port.js";
 import type { ClassRepositoryPort } from "../classes/ports/class-repository.port.js";
+import { CLOCK, type Clock } from "../assignments/ports/clock.port.js";
 import { COURSE_VERSION_REPOSITORY } from "../curriculum/ports/course-version-repository.port.js";
 import type { CourseVersionRepositoryPort } from "../curriculum/ports/course-version-repository.port.js";
 import { LearningPolicy } from "./learning.policy.js";
@@ -44,18 +50,14 @@ export class LearningService {
     private readonly courseRepo: CourseVersionRepositoryPort,
     @Inject(LEARNING_REPOSITORY)
     private readonly learningRepo: LearningRepositoryPort,
+    @Inject(CLOCK)
+    private readonly clock: Clock,
   ) {}
 
   async listToday(auth: AuthContext, schoolId: string) {
     if (!this.policy.canAccessLearning(auth, schoolId)) {
       throw new LearningForbiddenException();
     }
-
-    const enrollments = await this.classRepo.listEnrollmentsByUser(
-      schoolId,
-      auth.principal.userId,
-    );
-    const enrolledClassIds = new Set(enrollments.map((e) => e.classId));
 
     const result = await this.assignmentRepo.list(schoolId, {
       status: "PUBLISHED",
@@ -64,7 +66,12 @@ export class LearningService {
 
     const items: TodayLearningItem[] = [];
     for (const summary of result.items) {
-      if (!enrolledClassIds.has(summary.classId)) {
+      const isActiveStudent = await this.isActiveStudentOfClass(
+        auth,
+        schoolId,
+        summary.classId,
+      );
+      if (!isActiveStudent) {
         continue;
       }
 
@@ -429,21 +436,39 @@ export class LearningService {
       throw new LearningNotFoundException();
     }
 
-    const enrollments = await this.classRepo.listEnrollmentsByUser(
+    const isActiveStudent = await this.isActiveStudentOfClass(
+      auth,
       schoolId,
-      auth.principal.userId,
+      assignment.classId,
     );
-    const enrollment = enrollments.find(
-      (e) => e.classId === assignment.classId,
-    );
-    if (!enrollment) {
-      throw new LearningForbiddenException();
+    if (!isActiveStudent) {
+      throw new LearningNotFoundException();
     }
 
     return {
       assignment,
-      enrollmentId: `${enrollment.classId}:${auth.principal.userId}`,
+      enrollmentId: `${assignment.classId}:${auth.principal.userId}`,
     };
+  }
+
+  private async isActiveStudentOfClass(
+    auth: AuthContext,
+    schoolId: string,
+    classId: string,
+  ): Promise<boolean> {
+    if (!hasRole(auth, MembershipRole.STUDENT)) {
+      return false;
+    }
+
+    if (auth.principal.membershipStatus !== MembershipStatus.ACTIVE) {
+      return false;
+    }
+
+    return this.classRepo.hasActiveStudentEnrollment(
+      schoolId,
+      classId,
+      auth.principal.userId,
+    );
   }
 
   private async requireCourseVersionActivity(
@@ -476,7 +501,7 @@ export class LearningService {
     canSubmit: boolean;
     reason?: string;
   } {
-    const now = new Date();
+    const now = this.clock.now();
 
     if (
       assignment.publishAt &&

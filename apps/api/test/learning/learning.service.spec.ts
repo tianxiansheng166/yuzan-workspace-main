@@ -1,10 +1,16 @@
 import { beforeEach, describe, expect, it } from "vitest";
+import { HttpException } from "@nestjs/common";
 import {
   createAuthContext,
   MembershipRole,
   MembershipStatus,
 } from "../../src/common/security/index.js";
 import { LearningService } from "../../src/modules/learning/learning.service.js";
+import {
+  LearningForbiddenException,
+  LearningNotFoundException,
+  LearningPreconditionFailedException,
+} from "../../src/modules/learning/domain/learning.errors.js";
 import { FakeAssignmentRepository } from "../assignments/fakes/fake-assignment.repository.js";
 import { assignment } from "../assignments/fixtures/assignments.js";
 import { toAssignmentSummary } from "../../src/modules/assignments/domain/assignment.types.js";
@@ -19,6 +25,37 @@ import {
 } from "../curriculum/fixtures/course-versions.js";
 import { FakeLearningRepository } from "./fakes/fake-learning.repository.js";
 import { learningProgress, learningSession } from "./fixtures/learning.js";
+import { FixedClock } from "../assignments/fakes/fake-clock.js";
+
+const NOW = new Date("2026-07-10T12:00:00Z");
+
+interface CapturedError {
+  status: number;
+  body: unknown;
+}
+
+async function captureError(promise: Promise<unknown>): Promise<CapturedError> {
+  try {
+    await promise;
+    throw new Error("expected exception");
+  } catch (error) {
+    if (error instanceof HttpException) {
+      return { status: error.getStatus(), body: error.getResponse() };
+    }
+    throw error;
+  }
+}
+
+async function expectLearningNotFound(
+  promise: Promise<unknown>,
+): Promise<void> {
+  const captured = await captureError(promise);
+  expect(captured.status).toBe(404);
+  expect(captured.body).toEqual({
+    code: "LEARNING_NOT_FOUND",
+    message: "学习资源不存在",
+  });
+}
 
 function auth(
   userId: string,
@@ -64,12 +101,14 @@ function makeService(
   classRepo: FakeClassRepository,
   courseRepo: FakeCourseVersionRepository,
   learningRepo: FakeLearningRepository,
+  clock: FixedClock = new FixedClock(NOW),
 ) {
   return new LearningService(
     assignmentRepo,
     classRepo,
     courseRepo,
     learningRepo,
+    clock,
   );
 }
 
@@ -1003,6 +1042,261 @@ describe("LearningService", () => {
     });
   });
 
+  describe("security semantics", () => {
+    it.each([
+      MembershipStatus.INVITED,
+      MembershipStatus.SUSPENDED,
+      MembershipStatus.LEFT,
+    ])("rejects %s membership from learning", async (status) => {
+      await expect(
+        service.listToday(
+          auth("student-1", "school-a", [MembershipRole.STUDENT], status),
+          "school-a",
+        ),
+      ).rejects.toBeInstanceOf(LearningForbiddenException);
+    });
+
+    it("returns 404 for assignment in unjoined class", async () => {
+      classRepo.add(
+        classEntity({
+          id: "class-a",
+          schoolId: "school-a",
+          name: "一班",
+          grade: "G3",
+          teacherUserIds: ["teacher-1"],
+        }),
+      );
+      courseRepo.add(
+        courseVersion({
+          id: "cv-1",
+          schoolId: "school-a",
+          status: "PUBLISHED",
+          title: "已发布课程",
+        }),
+      );
+      assignmentRepo.add(
+        publishedAssignment({
+          id: "asn-1",
+          schoolId: "school-a",
+          classId: "class-a",
+          courseVersionId: "cv-1",
+          title: "他人班级任务",
+        }),
+      );
+
+      await expectLearningNotFound(
+        service.getActivityDetail(
+          auth("student-1", "school-a", [MembershipRole.STUDENT]),
+          "school-a",
+          "asn-1",
+          "act-1",
+        ),
+      );
+    });
+
+    it("returns identical 404 for unauthorized existing and nonexistent assignment", async () => {
+      classRepo.add(
+        classEntity({
+          id: "class-a",
+          schoolId: "school-a",
+          name: "一班",
+          grade: "G3",
+          teacherUserIds: ["teacher-1"],
+        }),
+      );
+      courseRepo.add(
+        courseVersion({
+          id: "cv-1",
+          schoolId: "school-a",
+          status: "PUBLISHED",
+          title: "已发布课程",
+        }),
+      );
+      assignmentRepo.add(
+        publishedAssignment({
+          id: "asn-1",
+          schoolId: "school-a",
+          classId: "class-a",
+          courseVersionId: "cv-1",
+          title: "未加入班级任务",
+        }),
+      );
+
+      const existing = await captureError(
+        service.getActivityDetail(
+          auth("student-1", "school-a", [MembershipRole.STUDENT]),
+          "school-a",
+          "asn-1",
+          "act-1",
+        ),
+      );
+      const missing = await captureError(
+        service.getActivityDetail(
+          auth("student-1", "school-a", [MembershipRole.STUDENT]),
+          "school-a",
+          "asn-missing",
+          "act-1",
+        ),
+      );
+
+      expect(existing.status).toBe(missing.status);
+      expect(existing.body).toEqual(missing.body);
+    });
+
+    it("rejects starting session before publishAt using injected clock", async () => {
+      classRepo.add(
+        classEntity({
+          id: "class-a",
+          schoolId: "school-a",
+          name: "一班",
+          grade: "G3",
+          teacherUserIds: ["teacher-1"],
+        }),
+      );
+      classRepo.enroll("class-a", {
+        classId: "class-a",
+        schoolId: "school-a",
+        userId: "student-1",
+        roleInClass: MembershipRole.STUDENT,
+      });
+      courseRepo.add(
+        courseVersion({
+          id: "cv-1",
+          schoolId: "school-a",
+          status: "PUBLISHED",
+          title: "已发布课程",
+          units: [
+            unit({
+              lessons: [
+                lesson({
+                  activities: [
+                    activity({ id: "act-1", type: "TEXT", title: "阅读" }),
+                  ],
+                }),
+              ],
+            }),
+          ],
+        }),
+      );
+      assignmentRepo.add(
+        publishedAssignment({
+          id: "asn-1",
+          schoolId: "school-a",
+          classId: "class-a",
+          courseVersionId: "cv-1",
+          title: "未来任务",
+          publishAt: new Date("2026-07-10T13:00:00Z"),
+        }),
+      );
+
+      await expect(
+        service.startSession(
+          auth("student-1", "school-a", [MembershipRole.STUDENT]),
+          "school-a",
+          "asn-1",
+          "act-1",
+        ),
+      ).rejects.toBeInstanceOf(LearningPreconditionFailedException);
+    });
+
+    it("does not bypass assignment visibility via existing session", async () => {
+      classRepo.add(
+        classEntity({
+          id: "class-a",
+          schoolId: "school-a",
+          name: "一班",
+          grade: "G3",
+          teacherUserIds: ["teacher-1"],
+        }),
+      );
+      courseRepo.add(
+        courseVersion({
+          id: "cv-1",
+          schoolId: "school-a",
+          status: "PUBLISHED",
+          title: "已发布课程",
+        }),
+      );
+      assignmentRepo.add(
+        publishedAssignment({
+          id: "asn-1",
+          schoolId: "school-a",
+          classId: "class-a",
+          courseVersionId: "cv-1",
+          title: "任务",
+        }),
+      );
+      learningRepo.addSession(
+        learningSession({
+          id: "session-1",
+          schoolId: "school-a",
+          assignmentId: "asn-1",
+          activityId: "act-1",
+          studentUserId: "student-1",
+          enrollmentId: "class-a:student-1",
+        }),
+      );
+
+      await expectLearningNotFound(
+        service.getActivityDetail(
+          auth("student-1", "school-a", [MembershipRole.STUDENT]),
+          "school-a",
+          "asn-1",
+          "act-1",
+        ),
+      );
+    });
+
+    it("does not bypass assignment visibility via existing progress", async () => {
+      classRepo.add(
+        classEntity({
+          id: "class-a",
+          schoolId: "school-a",
+          name: "一班",
+          grade: "G3",
+          teacherUserIds: ["teacher-1"],
+        }),
+      );
+      courseRepo.add(
+        courseVersion({
+          id: "cv-1",
+          schoolId: "school-a",
+          status: "PUBLISHED",
+          title: "已发布课程",
+        }),
+      );
+      assignmentRepo.add(
+        publishedAssignment({
+          id: "asn-1",
+          schoolId: "school-a",
+          classId: "class-a",
+          courseVersionId: "cv-1",
+          title: "任务",
+        }),
+      );
+      learningRepo.addProgress(
+        learningProgress({
+          id: "progress-1",
+          schoolId: "school-a",
+          assignmentId: "asn-1",
+          activityId: "act-1",
+          studentUserId: "student-1",
+          enrollmentId: "class-a:student-1",
+          sessionId: "session-1",
+        }),
+      );
+
+      await expect(
+        service.getProgress(
+          auth("student-1", "school-a", [MembershipRole.STUDENT]),
+          "school-a",
+          "asn-1",
+          "act-1",
+        ),
+      ).rejects.toBeInstanceOf(LearningNotFoundException);
+    });
+  });
+
   describe("repository unavailable", () => {
     it("fails closed when learning repository is unavailable", async () => {
       const published = assignment({
@@ -1051,6 +1345,7 @@ describe("LearningService", () => {
             throw new Error("unavailable");
           },
         } as never,
+        new FixedClock(NOW),
       );
 
       classRepo.add(

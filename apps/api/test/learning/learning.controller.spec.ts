@@ -14,6 +14,7 @@ import {
 import { StubAuthContextSource } from "../../src/modules/auth/stub-auth-context.source.js";
 import { ASSIGNMENT_REPOSITORY } from "../../src/modules/assignments/ports/assignment-repository.port.js";
 import { CLASS_REPOSITORY } from "../../src/modules/classes/ports/class-repository.port.js";
+import { CLOCK } from "../../src/modules/assignments/ports/clock.port.js";
 import { COURSE_VERSION_REPOSITORY } from "../../src/modules/curriculum/ports/course-version-repository.port.js";
 import { LearningController } from "../../src/modules/learning/learning.controller.js";
 import { LearningModule } from "../../src/modules/learning/learning.module.js";
@@ -22,6 +23,9 @@ import { FakeAssignmentRepository } from "../assignments/fakes/fake-assignment.r
 import { FakeClassRepository } from "../organizations/fakes/fake-class.repository.js";
 import { FakeCourseVersionRepository } from "../curriculum/fakes/fake-course-version.repository.js";
 import { FakeLearningRepository } from "./fakes/fake-learning.repository.js";
+import { FixedClock } from "../assignments/fakes/fake-clock.js";
+
+const NOW = new Date("2026-07-10T12:00:00Z");
 
 describe("LearningController", () => {
   let controller: LearningController;
@@ -39,6 +43,8 @@ describe("LearningController", () => {
       .useValue(new FakeCourseVersionRepository())
       .overrideProvider(LEARNING_REPOSITORY)
       .useValue(new FakeLearningRepository())
+      .overrideProvider(CLOCK)
+      .useValue(new FixedClock(NOW))
       .overrideProvider(AUTH_CONTEXT_SOURCE)
       .useValue(new StubAuthContextSource())
       .compile();

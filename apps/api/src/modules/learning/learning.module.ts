@@ -3,6 +3,7 @@ import { ASSIGNMENT_REPOSITORY } from "../assignments/ports/assignment-repositor
 import { UnavailableAssignmentRepository } from "../assignments/ports/unavailable-assignment.repository.js";
 import { CLASS_REPOSITORY } from "../classes/ports/class-repository.port.js";
 import { UnavailableClassRepository } from "../classes/ports/unavailable-class.repository.js";
+import { CLOCK, SystemClock } from "../assignments/ports/clock.port.js";
 import { COURSE_VERSION_REPOSITORY } from "../curriculum/ports/course-version-repository.port.js";
 import { UnavailableCourseVersionRepository } from "../curriculum/ports/unavailable-course-version.repository.js";
 import { LearningController } from "./learning.controller.js";
@@ -29,6 +30,10 @@ import { UnavailableLearningRepository } from "./ports/unavailable-learning.repo
     {
       provide: COURSE_VERSION_REPOSITORY,
       useClass: UnavailableCourseVersionRepository,
+    },
+    {
+      provide: CLOCK,
+      useClass: SystemClock,
     },
   ],
   exports: [LearningService],
