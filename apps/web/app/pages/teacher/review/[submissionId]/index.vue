@@ -3,6 +3,10 @@ import { YxButton, YxStatus } from "@yuzan/ui";
 import { useReviewDetail } from "~/features/submission-review/composables/useReviewDetail";
 import type { ReviewScenario } from "~/features/submission-review/types";
 
+useSeoMeta({
+  title: "提交详情｜语赞心声",
+});
+
 const route = useRoute();
 const submissionId = route.params.submissionId as string;
 const scenario = computed(

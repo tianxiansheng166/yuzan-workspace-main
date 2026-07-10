@@ -6,6 +6,10 @@ import { useTeacherFeedback } from "~/features/submission-review/composables/use
 import { defaultTeacherFeedbackDraft } from "~/features/submission-review/gateway/review.gateway";
 import type { ReviewScenario } from "~/features/submission-review/types";
 
+useSeoMeta({
+  title: "教师反馈｜语赞心声",
+});
+
 const route = useRoute();
 const submissionId = route.params.submissionId as string;
 const scenario = computed(
