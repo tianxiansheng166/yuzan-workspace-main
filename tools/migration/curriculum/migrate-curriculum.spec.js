@@ -12,15 +12,17 @@ const {
   readdir,
   rename,
   lstat,
+  unlink,
 } = require("node:fs/promises");
 const { tmpdir } = require("node:os");
-const { join, resolve } = require("node:path");
+const { dirname, join, resolve } = require("node:path");
 const { createHash } = require("node:crypto");
 
 const { stableId, stableNodeId } = require("./stable-id.js");
 const {
   guardPath,
   guardWriteTarget,
+  ensureSafeDir,
   safeReadTextFile,
   safeReadJsonFile,
 } = require("./path-guard.js");
@@ -44,7 +46,8 @@ const {
   isValidDisposition,
 } = require("./disposition.js");
 const { runMigration } = require("./migrate-curriculum.js");
-const { toCsv } = require("./output-writer.js");
+const { loadMig001Inputs } = require("./load-mig-001.js");
+const { toCsv, writeTextFile } = require("./output-writer.js");
 
 describe("stable-id", () => {
   it("returns the same id for the same input", () => {
@@ -133,6 +136,75 @@ describe("path-guard", () => {
       guardWriteTarget(join(linkDir, "file.json"), fixtureRoot),
       /SYMLINK_DIR/,
     );
+  });
+
+  it("rejects traversal before creating any external directory", async () => {
+    const external = join(fixtureRoot, "..", "mig002-never-create", "out.json");
+    await rm(dirname(external), { recursive: true, force: true });
+    await assert.rejects(
+      ensureSafeDir(external, fixtureRoot),
+      (error) => error.code === "OUTPUT_PATH_ESCAPE",
+    );
+    await assert.rejects(lstat(dirname(external)), { code: "ENOENT" });
+  });
+
+  it("rejects normalized and backslash traversal before mkdir", async () => {
+    for (const candidate of [
+      join(fixtureRoot, "nested", "..", "..", "outside", "x.json"),
+      `${fixtureRoot}/nested//../../outside/x.json`,
+      `${fixtureRoot}/nested/../../../outside/x.json`,
+      `${fixtureRoot}\\..\\outside\\x.json`,
+    ]) {
+      await assert.rejects(
+        ensureSafeDir(candidate, fixtureRoot),
+        (error) => error.code === "OUTPUT_PATH_ESCAPE",
+      );
+    }
+  });
+
+  it("rejects dangling output root and file symlinks without raw ENOENT", async () => {
+    const danglingRoot = join(fixtureRoot, "dangling-root");
+    const danglingFile = join(fixtureRoot, "inside", "dangling-output.json");
+    await symlink(join(fixtureRoot, "missing-root"), danglingRoot);
+    await symlink(join(fixtureRoot, "missing-file"), danglingFile);
+
+    await assert.rejects(
+      guardWriteTarget(join(danglingRoot, "out.json"), danglingRoot),
+      (error) => error.code === "SYMLINK_DIR" && error.code !== "ENOENT",
+    );
+    await assert.rejects(
+      guardWriteTarget(danglingFile, fixtureRoot),
+      (error) => error.code === "SYMLINK_FILE" && error.code !== "ENOENT",
+    );
+  });
+
+  it("rejects output directory replacement before temp creation", async () => {
+    const safeDir = join(fixtureRoot, "race-dir");
+    const backupDir = join(fixtureRoot, "race-dir-backup");
+    const externalDir = join(fixtureRoot, "outside");
+    const output = join(safeDir, "out.txt");
+    await mkdir(safeDir);
+    try {
+      await assert.rejects(
+        writeTextFile(output, "safe", fixtureRoot, {
+          beforeTempOpen: async () => {
+            await rename(safeDir, backupDir);
+            await symlink(externalDir, safeDir);
+          },
+        }),
+        (error) => error.code === "SYMLINK_DIR",
+      );
+      await assert.rejects(lstat(join(externalDir, "out.txt")), {
+        code: "ENOENT",
+      });
+      assert.deepStrictEqual(
+        (await readdir(externalDir)).filter((name) => name.includes(".tmp")),
+        [],
+      );
+    } finally {
+      await rm(safeDir, { force: true });
+      await rename(backupDir, safeDir).catch(() => {});
+    }
   });
 });
 
@@ -311,6 +383,125 @@ describe("safe input reading", () => {
     } finally {
       fsPromises.open = originalOpen;
     }
+  });
+
+  it("rejects a real symlink replacement before open without reading it", async () => {
+    const file = join(fixtureRoot, "exports", "pre-open-race.json");
+    const external = join(outsideRoot, "pre-open-external.json");
+    const sentinel = `${EXTERNAL_SENTINEL}_PRE_OPEN`;
+    await writeFile(file, '{"safe":true}');
+    await writeFile(external, sentinel);
+
+    await assert.rejects(
+      safeReadTextFile(file, fixtureRoot, {
+        beforeOpen: async () => {
+          await unlink(file);
+          await symlink(external, file);
+        },
+      }),
+      (error) => error.code === "SOURCE_PATH_CHANGED_DURING_READ",
+    );
+    assert.strictEqual(await readFile(external, "utf8"), sentinel);
+  });
+
+  it("rejects ordinary inode replacement before reading bytes", async () => {
+    const file = join(fixtureRoot, "exports", "inode-race.json");
+    const replacement = join(fixtureRoot, "exports", "inode-replacement.json");
+    await writeFile(file, '{"first":true}');
+    await writeFile(replacement, '{"second":true}');
+    await assert.rejects(
+      safeReadTextFile(file, fixtureRoot, {
+        beforeOpen: async () => {
+          await rename(replacement, file);
+        },
+      }),
+      (error) => error.code === "SOURCE_PATH_CHANGED_DURING_READ",
+    );
+  });
+
+  it("rejects final file replacement with a directory", async () => {
+    const file = join(fixtureRoot, "exports", "directory-race.json");
+    await writeFile(file, '{"first":true}');
+    await assert.rejects(
+      safeReadTextFile(file, fixtureRoot, {
+        beforeOpen: async () => {
+          await unlink(file);
+          await mkdir(file);
+        },
+      }),
+      (error) => error.code === "SOURCE_PATH_CHANGED_DURING_READ",
+    );
+  });
+
+  it("rejects an input root symlink with a stable error", async () => {
+    const rootLink = join(fixtureRoot, "root-link");
+    await symlink(join(fixtureRoot, "exports"), rootLink);
+    await assert.rejects(
+      safeReadTextFile(join(rootLink, "regular.json"), rootLink),
+      (error) => error.code === "SOURCE_ROOT_SYMLINK_REJECTED",
+    );
+  });
+});
+
+describe("MIG-001 loader safe-open integration", () => {
+  let projectRoot;
+  let outsideRoot;
+
+  before(async () => {
+    projectRoot = await mkdtemp(join(tmpdir(), "mig002-loader-race-"));
+    outsideRoot = await mkdtemp(join(tmpdir(), "mig002-loader-out-"));
+    await mkdir(join(projectRoot, "legacy", "exports"), { recursive: true });
+    await mkdir(join(projectRoot, "legacy", "review"), { recursive: true });
+    await writeFile(
+      join(projectRoot, "legacy", "exports", "mig-001-courses.json"),
+      '{"curriculumRecords":[]}',
+    );
+    await writeFile(
+      join(projectRoot, "legacy", "exports", "mig-001-translations.json"),
+      "{}",
+    );
+    await writeFile(
+      join(projectRoot, "legacy", "exports", "mig-001-media.json"),
+      "{}",
+    );
+    await writeFile(
+      join(projectRoot, "legacy", "review", "mig-001-classification.json"),
+      "{}",
+    );
+  });
+
+  after(async () => {
+    await rm(projectRoot, { recursive: true, force: true });
+    await rm(outsideRoot, { recursive: true, force: true });
+  });
+
+  it("rejects a real pre-open external symlink swap in the loader", async () => {
+    const source = join(
+      projectRoot,
+      "legacy",
+      "exports",
+      "mig-001-courses.json",
+    );
+    const external = join(outsideRoot, "external.json");
+    const sentinel = "MIG002_LOADER_EXTERNAL_SENTINEL";
+    await writeFile(external, sentinel);
+
+    await assert.rejects(
+      loadMig001Inputs(projectRoot, {
+        coursesReadOptions: {
+          beforeOpen: async () => {
+            await unlink(source);
+            await symlink(external, source);
+          },
+        },
+      }),
+      (error) => error.code === "SOURCE_PATH_CHANGED_DURING_READ",
+    );
+    assert.strictEqual(await readFile(external, "utf8"), sentinel);
+    assert.deepStrictEqual(
+      await readdir(join(projectRoot, "legacy", "review")),
+      ["mig-001-classification.json"],
+    );
   });
 });
 

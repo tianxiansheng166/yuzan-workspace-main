@@ -17,12 +17,13 @@ const { safeReadJsonFile } = require("./path-guard.js");
  * @param {string} baseDir
  * @returns {Promise<Mig001Inputs>}
  */
-async function loadMig001Inputs(baseDir) {
+async function loadMig001Inputs(baseDir, options = {}) {
   const root = resolve(baseDir);
 
   const courses = await safeReadJsonFile(
     resolve(root, "legacy/exports/mig-001-courses.json"),
     root,
+    options.coursesReadOptions,
   );
   const translations = await safeReadJsonFile(
     resolve(root, "legacy/exports/mig-001-translations.json"),

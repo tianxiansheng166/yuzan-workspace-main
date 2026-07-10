@@ -2,8 +2,9 @@
  * Safe output writer for migration artifacts.
  */
 
-const { writeFile, rename, unlink } = require("node:fs/promises");
-const { resolve } = require("node:path");
+const fsPromises = require("node:fs/promises");
+const fsConstants = require("node:fs").constants;
+const { dirname, resolve } = require("node:path");
 const { createHash } = require("node:crypto");
 const { guardWriteTarget } = require("./path-guard.js");
 
@@ -20,23 +21,13 @@ function deterministicTempName(filePath) {
   return `.mig002-${hash.slice(0, 16)}.tmp`;
 }
 
-async function writeJsonFile(filePath, data, allowedRoot) {
-  await guardWriteTarget(filePath, allowedRoot);
-
-  const resolved = resolve(filePath);
-  const tempPath = resolve(allowedRoot, deterministicTempName(filePath));
-
-  try {
-    await writeFile(tempPath, JSON.stringify(data, null, 2) + "\n", "utf8");
-    await rename(tempPath, resolved);
-  } finally {
-    // Best-effort cleanup of temp file on failure; ignore errors.
-    try {
-      await unlink(tempPath);
-    } catch {
-      // ignore
-    }
-  }
+async function writeJsonFile(filePath, data, allowedRoot, options) {
+  await writeAtomic(
+    filePath,
+    JSON.stringify(data, null, 2) + "\n",
+    allowedRoot,
+    options,
+  );
 }
 
 /**
@@ -46,20 +37,77 @@ async function writeJsonFile(filePath, data, allowedRoot) {
  * @param {string} content
  * @param {string} allowedRoot
  */
-async function writeTextFile(filePath, content, allowedRoot) {
-  await guardWriteTarget(filePath, allowedRoot);
+async function writeTextFile(filePath, content, allowedRoot, options) {
+  await writeAtomic(filePath, content, allowedRoot, options);
+}
 
-  const resolved = resolve(filePath);
-  const tempPath = resolve(allowedRoot, deterministicTempName(filePath));
-
+async function writeAtomic(filePath, content, allowedRoot, options = {}) {
+  const resolved = await guardWriteTarget(filePath, allowedRoot);
+  const tempPath = resolve(dirname(resolved), deterministicTempName(filePath));
+  let handle;
+  let tempCreated = false;
   try {
-    await writeFile(tempPath, content, "utf8");
-    await rename(tempPath, resolved);
+    await guardWriteTarget(tempPath, allowedRoot);
+    if (typeof options.beforeTempOpen === "function") {
+      await options.beforeTempOpen();
+    }
+    // Revalidate immediately before creating the temp file. O_EXCL and
+    // O_NOFOLLOW ensure an attacker-controlled temp entry is never followed.
+    await guardWriteTarget(tempPath, allowedRoot);
+    if (
+      typeof fsConstants.O_NOFOLLOW !== "number" ||
+      fsConstants.O_NOFOLLOW === 0
+    ) {
+      const error = new Error("OUTPUT_SAFE_OPEN_UNSUPPORTED");
+      error.code = "OUTPUT_SAFE_OPEN_UNSUPPORTED";
+      throw error;
+    }
+    handle = await fsPromises
+      .open(
+        tempPath,
+        fsConstants.O_WRONLY |
+          fsConstants.O_CREAT |
+          fsConstants.O_EXCL |
+          fsConstants.O_NOFOLLOW,
+        0o600,
+      )
+      .catch(() => {
+        const error = new Error("OUTPUT_TEMP_CREATE_FAILED");
+        error.code = "OUTPUT_TEMP_CREATE_FAILED";
+        throw error;
+      });
+    tempCreated = true;
+    await handle.writeFile(content, "utf8").catch(() => {
+      const error = new Error("OUTPUT_TEMP_WRITE_FAILED");
+      error.code = "OUTPUT_TEMP_WRITE_FAILED";
+      throw error;
+    });
+    await handle.sync().catch(() => {
+      const error = new Error("OUTPUT_TEMP_WRITE_FAILED");
+      error.code = "OUTPUT_TEMP_WRITE_FAILED";
+      throw error;
+    });
+    await handle.close();
+    handle = undefined;
+
+    if (typeof options.beforeRename === "function") {
+      await options.beforeRename();
+    }
+    await guardWriteTarget(resolved, allowedRoot);
+    await guardWriteTarget(tempPath, allowedRoot);
+    await fsPromises.rename(tempPath, resolved).catch(() => {
+      const error = new Error("OUTPUT_PUBLISH_FAILED");
+      error.code = "OUTPUT_PUBLISH_FAILED";
+      throw error;
+    });
   } finally {
-    try {
-      await unlink(tempPath);
-    } catch {
-      // ignore
+    if (handle) await handle.close().catch(() => {});
+    if (tempCreated) {
+      try {
+        await fsPromises.unlink(tempPath);
+      } catch {
+        // ignore
+      }
     }
   }
 }

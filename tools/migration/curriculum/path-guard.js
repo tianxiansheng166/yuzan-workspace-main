@@ -1,192 +1,238 @@
 /**
- * Path and symlink boundary guards.
- *
- * Prevents directory traversal, symlink escapes and accidental writes outside
- * the designated output roots. All boundary checks use realpath resolution
- * rather than simple string prefix matching.
+ * Fail-closed path guards for migration inputs and outputs.
  */
 
 const fsPromises = require("node:fs/promises");
-const { dirname, resolve, relative, sep } = require("node:path");
+const fsConstants = require("node:fs").constants;
+const { dirname, isAbsolute, relative, resolve, sep } = require("node:path");
+
+class PathSecurityError extends Error {
+  constructor(code) {
+    super(code);
+    this.name = "PathSecurityError";
+    this.code = code;
+  }
+}
+
+function securityError(code) {
+  return new PathSecurityError(code);
+}
+
+function lexicalPath(targetPath, allowedRoot, options = {}) {
+  if (typeof targetPath !== "string" || typeof allowedRoot !== "string") {
+    throw securityError(options.code || "OUTPUT_PATH_ESCAPE");
+  }
+  if (process.platform !== "win32" && targetPath.includes("\\")) {
+    throw securityError(options.code || "OUTPUT_PATH_ESCAPE");
+  }
+  const root = resolve(allowedRoot);
+  const target = resolve(targetPath);
+  const rel = relative(root, target);
+  const outside = rel === ".." || rel.startsWith(`..${sep}`) || isAbsolute(rel);
+  if (outside || (!options.allowRoot && rel === "")) {
+    throw securityError(options.code || "OUTPUT_PATH_ESCAPE");
+  }
+  return { root, target, rel };
+}
+
+async function lstatOrNull(path) {
+  try {
+    return await fsPromises.lstat(path);
+  } catch (error) {
+    if (error && error.code === "ENOENT") return null;
+    throw securityError("PATH_INSPECTION_FAILED");
+  }
+}
+
+async function assertDirectory(path, symlinkCode, missingCode) {
+  const stats = await lstatOrNull(path);
+  if (!stats) throw securityError(missingCode);
+  if (stats.isSymbolicLink()) throw securityError(symlinkCode);
+  if (!stats.isDirectory()) throw securityError("OUTPUT_PATH_NOT_DIRECTORY");
+  return stats;
+}
 
 /**
- * Resolve a path and verify it does not escape the allowed root.
- *
- * @param {string} targetPath
- * @param {string} allowedRoot - must be a real directory
- * @returns {Promise<string>} the realpath of targetPath
+ * Validate an existing path beneath an existing, non-symlink root.
  */
 async function guardPath(targetPath, allowedRoot) {
-  const realRoot = await fsPromises.realpath(allowedRoot);
-  const realTarget = await fsPromises.realpath(targetPath);
+  const { root, target, rel } = lexicalPath(targetPath, allowedRoot, {
+    allowRoot: true,
+    code: "PATH_ESCAPE",
+  });
+  await assertDirectory(root, "SYMLINK_DIR", "OUTPUT_ROOT_NOT_FOUND");
+  if (rel === "") return root;
 
-  if (realTarget !== realRoot && !realTarget.startsWith(`${realRoot}/`)) {
-    throw new Error(
-      `PATH_ESCAPE: ${targetPath} resolves outside ${allowedRoot}`,
-    );
+  let current = root;
+  for (const part of rel.split(sep).filter(Boolean)) {
+    current = resolve(current, part);
+    const stats = await lstatOrNull(current);
+    if (!stats) throw securityError("OUTPUT_PATH_NOT_FOUND");
+    if (stats.isSymbolicLink()) throw securityError("SYMLINK_DIR");
+    if (!stats.isDirectory()) throw securityError("OUTPUT_PATH_NOT_DIRECTORY");
   }
-
-  return realTarget;
+  return target;
 }
 
 /**
- * Ensure parent directories exist, validating each newly created component.
- *
- * @param {string} filePath
- * @param {string} allowedRoot
+ * Validate the complete lexical boundary before creating directories, then
+ * create missing components one at a time and verify each resulting inode.
  */
 async function ensureSafeDir(filePath, allowedRoot) {
-  const realRoot = await fsPromises.realpath(allowedRoot);
-  const parent = dirname(filePath);
+  const { root, target } = lexicalPath(filePath, allowedRoot);
+  const parent = dirname(target);
+  const parentRel = relative(root, parent);
+  await assertDirectory(root, "SYMLINK_DIR", "OUTPUT_ROOT_NOT_FOUND");
 
-  if (parent === realRoot || parent.startsWith(`${realRoot}/`)) {
-    await fsPromises.mkdir(parent, { recursive: true });
-    return;
-  }
-
-  // When parent is deeper than root, validate it after creation by realpath.
-  await fsPromises.mkdir(parent, { recursive: true });
-  const realParent = await fsPromises.realpath(parent);
-  if (realParent !== realRoot && !realParent.startsWith(`${realRoot}/`)) {
-    throw new Error(
-      `OUTPUT_DIR_ESCAPE: ${filePath} parent resolves outside ${allowedRoot}`,
+  let current = root;
+  for (const part of parentRel.split(sep).filter(Boolean)) {
+    current = resolve(current, part);
+    const stats = await lstatOrNull(current);
+    if (stats) {
+      if (stats.isSymbolicLink()) throw securityError("SYMLINK_DIR");
+      if (!stats.isDirectory())
+        throw securityError("OUTPUT_PATH_NOT_DIRECTORY");
+      continue;
+    }
+    try {
+      await fsPromises.mkdir(current);
+    } catch (error) {
+      if (!(error && error.code === "EEXIST")) {
+        throw securityError("OUTPUT_DIRECTORY_CREATE_FAILED");
+      }
+    }
+    await assertDirectory(
+      current,
+      "SYMLINK_DIR",
+      "OUTPUT_DIRECTORY_CREATE_FAILED",
     );
   }
+
+  // Re-walk after creation so a replaced ancestor is rejected before writing.
+  await assertOutputAncestors(target, root);
 }
 
-/**
- * Verify a file write target is safe: no symlink trickery on the file or its
- * parent directory, and the resolved path stays inside the allowed root.
- *
- * @param {string} filePath
- * @param {string} allowedRoot
- */
+async function assertOutputAncestors(filePath, allowedRoot) {
+  const { root, target } = lexicalPath(filePath, allowedRoot);
+  await assertDirectory(root, "SYMLINK_DIR", "OUTPUT_ROOT_NOT_FOUND");
+  const parentRel = relative(root, dirname(target));
+  let current = root;
+  for (const part of parentRel.split(sep).filter(Boolean)) {
+    current = resolve(current, part);
+    await assertDirectory(current, "SYMLINK_DIR", "OUTPUT_PATH_NOT_FOUND");
+  }
+}
+
 async function guardWriteTarget(filePath, allowedRoot) {
-  const realRoot = await fsPromises.realpath(allowedRoot);
-
-  try {
-    const stats = await fsPromises.lstat(filePath);
-    if (stats.isSymbolicLink()) {
-      throw new Error(`SYMLINK_FILE: ${filePath} is a symlink`);
-    }
-  } catch (err) {
-    if (!(err instanceof Error && "code" in err && err.code === "ENOENT")) {
-      throw err;
-    }
+  const { target } = lexicalPath(filePath, allowedRoot);
+  await ensureSafeDir(target, allowedRoot);
+  await assertOutputAncestors(target, allowedRoot);
+  const finalStats = await lstatOrNull(target);
+  if (finalStats && finalStats.isSymbolicLink()) {
+    throw securityError("SYMLINK_FILE");
   }
-
-  const parent = dirname(filePath);
-  try {
-    const parentStats = await fsPromises.lstat(parent);
-    if (parentStats.isSymbolicLink()) {
-      throw new Error(`SYMLINK_DIR: ${parent} is a symlink`);
-    }
-  } catch (err) {
-    if (!(err instanceof Error && "code" in err && err.code === "ENOENT")) {
-      throw err;
-    }
+  if (finalStats && !finalStats.isFile()) {
+    throw securityError("OUTPUT_PATH_NOT_REGULAR_FILE");
   }
+  return target;
+}
 
-  await ensureSafeDir(filePath, allowedRoot);
-
-  const realFile = await fsPromises.realpath(filePath).catch((err) => {
-    if (err.code === "ENOENT") {
-      return null;
-    }
-    throw err;
-  });
-
-  if (realFile) {
-    const realParent = dirname(realFile);
-    if (realParent !== realRoot && !realParent.startsWith(`${realRoot}/`)) {
-      throw new Error(`REALPATH_ESCAPE: ${filePath} resolves outside root`);
-    }
-  }
+function sameIdentity(left, right) {
+  return (
+    left.dev === right.dev &&
+    left.ino === right.ino &&
+    left.mode === right.mode &&
+    left.isFile() &&
+    right.isFile()
+  );
 }
 
 /**
- * Verify every path component between allowedRoot and filePath is not a
- * symbolic link, then read the regular file while guarding against TOCTOU.
- *
- * Throws sanitized errors that never include symlink targets or absolute
- * external paths. realpath is used only to confirm the root boundary, never
- * to resolve the file before reading.
- *
- * @param {string} filePath
- * @param {string} allowedRoot
- * @returns {Promise<string>} file contents as UTF-8 text
+ * Safely open, verify and read a regular input file. The optional hook exists
+ * only to make real filesystem race tests deterministic.
  */
-async function safeReadTextFile(filePath, allowedRoot) {
-  const realRoot = await fsPromises.realpath(allowedRoot);
-  const resolved = resolve(filePath);
-  const rel = relative(realRoot, resolved);
-
-  if (rel === "" || rel.startsWith("..")) {
-    throw new Error(`PATH_ESCAPE: input resolves outside allowed root`);
-  }
+async function safeReadTextFile(filePath, allowedRoot, options = {}) {
+  const { root, target, rel } = lexicalPath(filePath, allowedRoot, {
+    code: "PATH_ESCAPE",
+  });
+  await assertDirectory(
+    root,
+    "SOURCE_ROOT_SYMLINK_REJECTED",
+    "SOURCE_ROOT_NOT_FOUND",
+  );
 
   const parts = rel.split(sep).filter(Boolean);
-  let current = realRoot;
-
-  for (const part of parts) {
+  let current = root;
+  for (const part of parts.slice(0, -1)) {
     current = resolve(current, part);
-    let stats;
-    try {
-      stats = await fsPromises.lstat(current);
-    } catch (err) {
-      if (err instanceof Error && "code" in err && err.code === "ENOENT") {
-        throw new Error(`INPUT_NOT_FOUND: ${relative(realRoot, current)}`);
-      }
-      throw err;
-    }
-
+    const stats = await lstatOrNull(current);
+    if (!stats) throw securityError("INPUT_NOT_FOUND");
     if (stats.isSymbolicLink()) {
-      throw new Error(
-        `SOURCE_PATH_ANCESTOR_SYMLINK_REJECTED: ${relative(realRoot, current)}`,
-      );
+      throw securityError("SOURCE_PATH_ANCESTOR_SYMLINK_REJECTED");
     }
+    if (!stats.isDirectory())
+      throw securityError("INPUT_ANCESTOR_NOT_DIRECTORY");
   }
 
-  const beforeStats = await fsPromises.lstat(resolved);
-  if (!beforeStats.isFile()) {
-    throw new Error(`INPUT_NOT_REGULAR_FILE: ${rel}`);
+  const beforeStats = await lstatOrNull(target);
+  if (!beforeStats) throw securityError("INPUT_NOT_FOUND");
+  if (beforeStats.isSymbolicLink()) {
+    throw securityError("SOURCE_PATH_ANCESTOR_SYMLINK_REJECTED");
   }
+  if (!beforeStats.isFile()) throw securityError("INPUT_NOT_REGULAR_FILE");
 
-  const handle = await fsPromises.open(resolved, "r");
-  let content;
-  try {
-    content = await handle.readFile("utf8");
-  } finally {
-    await handle.close();
-  }
-
-  // Verify the path still resolves to the same regular file after closing the
-  // descriptor. This detects replacement between lstat-before and read.
-  const afterStats = await fsPromises.lstat(resolved);
+  if (typeof options.beforeOpen === "function") await options.beforeOpen();
   if (
-    afterStats.dev !== beforeStats.dev ||
-    afterStats.ino !== beforeStats.ino ||
-    !afterStats.isFile()
+    typeof fsConstants.O_NOFOLLOW !== "number" ||
+    fsConstants.O_NOFOLLOW === 0
   ) {
-    throw new Error(`SOURCE_PATH_CHANGED_DURING_READ: ${rel}`);
+    throw securityError("SOURCE_SAFE_OPEN_UNSUPPORTED");
   }
 
-  return content;
+  let handle;
+  try {
+    handle = await fsPromises.open(
+      target,
+      fsConstants.O_RDONLY |
+        fsConstants.O_NOFOLLOW |
+        (fsConstants.O_NONBLOCK || 0),
+    );
+  } catch (error) {
+    if (error && ["ELOOP", "ENOENT", "EISDIR", "ENXIO"].includes(error.code)) {
+      throw securityError("SOURCE_PATH_CHANGED_DURING_READ");
+    }
+    throw securityError("SOURCE_SAFE_OPEN_FAILED");
+  }
+
+  try {
+    const openedStats = await handle.stat().catch(() => {
+      throw securityError("SOURCE_DESCRIPTOR_STAT_FAILED");
+    });
+    if (!sameIdentity(beforeStats, openedStats)) {
+      throw securityError("SOURCE_PATH_CHANGED_DURING_READ");
+    }
+    const content = await handle.readFile("utf8").catch(() => {
+      throw securityError("SOURCE_READ_FAILED");
+    });
+
+    const afterStats = await lstatOrNull(target);
+    if (!afterStats || !sameIdentity(openedStats, afterStats)) {
+      throw securityError("SOURCE_PATH_CHANGED_DURING_READ");
+    }
+    return content;
+  } finally {
+    await handle.close().catch(() => {});
+  }
 }
 
-/**
- * Safely read and parse a JSON input file without following symlinks.
- *
- * @param {string} filePath
- * @param {string} allowedRoot
- * @returns {Promise<unknown>}
- */
-async function safeReadJsonFile(filePath, allowedRoot) {
-  const text = await safeReadTextFile(filePath, allowedRoot);
+async function safeReadJsonFile(filePath, allowedRoot, options) {
+  const text = await safeReadTextFile(filePath, allowedRoot, options);
   return JSON.parse(text);
 }
 
 module.exports = {
+  PathSecurityError,
+  lexicalPath,
   guardPath,
   ensureSafeDir,
   guardWriteTarget,

@@ -213,7 +213,7 @@ async function runMigration(projectRoot, options = {}) {
   };
 
   if (!dryRun) {
-    await writeJsonFile(outputPlan.exportJsonPath, exportJson, root);
+    await writeJsonFile(outputPlan.exportJsonPath, exportJson, exportRoot);
     await writeTextFile(
       outputPlan.exportCsvPath,
       toCsv(
@@ -240,9 +240,9 @@ async function runMigration(projectRoot, options = {}) {
           "publishEligibility",
         ],
       ),
-      root,
+      exportRoot,
     );
-    await writeJsonFile(outputPlan.reviewJsonPath, reviewJson, root);
+    await writeJsonFile(outputPlan.reviewJsonPath, reviewJson, reviewRoot);
     await writeTextFile(
       outputPlan.reviewCsvPath,
       toCsv(reviewJson.items, [
@@ -253,12 +253,16 @@ async function runMigration(projectRoot, options = {}) {
         "path",
         "reasonCode",
       ]),
-      root,
+      reviewRoot,
     );
-    await writeJsonFile(outputPlan.rejectedJsonPath, rejectedJson, root);
-    await writeJsonFile(outputPlan.validationJsonPath, validationJson, root);
-    await writeJsonFile(outputPlan.summaryJsonPath, summaryJson, root);
-    await writeTextFile(outputPlan.handoffMdPath, handoffMd, root);
+    await writeJsonFile(outputPlan.rejectedJsonPath, rejectedJson, reportRoot);
+    await writeJsonFile(
+      outputPlan.validationJsonPath,
+      validationJson,
+      reportRoot,
+    );
+    await writeJsonFile(outputPlan.summaryJsonPath, summaryJson, reportRoot);
+    await writeTextFile(outputPlan.handoffMdPath, handoffMd, reportRoot);
   }
 
   return {
