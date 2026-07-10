@@ -163,6 +163,7 @@ export class CurriculumService {
 
     const saved = await this.courseRepo.save(updated, {
       generateVersion: false,
+      expectedUpdatedAt: version.updatedAt,
     });
     return toSummary(saved);
   }
@@ -197,6 +198,7 @@ export class CurriculumService {
 
     const saved = await this.courseRepo.save(updated, {
       generateVersion: false,
+      expectedUpdatedAt: version.updatedAt,
     });
     return toSummary(saved);
   }

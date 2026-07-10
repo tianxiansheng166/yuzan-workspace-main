@@ -20,6 +20,7 @@ export interface ListCourseVersionsOptions {
 
 export interface SaveCourseVersionOptions {
   readonly generateVersion: boolean;
+  readonly expectedUpdatedAt?: Date;
 }
 
 export interface CourseVersionRepositoryPort {

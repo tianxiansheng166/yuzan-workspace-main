@@ -378,11 +378,13 @@ model LearningActivity {
   lessonId       String             @db.Uuid
   type           ActivityType
   title          String
-  instruction    String?
+  instruction    Json?
   sortOrder      Int
   required       Boolean            @default(true)
   completionRule Json?
   content        Json?
+  teacherNotes   Json?
+  studentNotes   Json?
   lesson         Lesson             @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   resources      ActivityResource[]
   questions      Question[]
@@ -419,6 +421,7 @@ model ActivityResource {
   activityId String           @db.Uuid
   resourceId String           @db.Uuid
   purpose    String
+  meta       Json?
   activity   LearningActivity @relation(fields: [activityId], references: [id], onDelete: Cascade)
   resource   Resource         @relation(fields: [resourceId], references: [id], onDelete: Restrict)
 

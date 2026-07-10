@@ -40,28 +40,28 @@ export interface ResourceRef {
   readonly id: string;
   readonly kind: ResourceKind;
   readonly objectKey: string;
-  readonly uri?: string;
+  readonly uri?: string | undefined;
   readonly mediaType: string;
   readonly byteSize: number;
-  readonly altText?: string;
-  readonly language?: string;
-  readonly source?: string;
+  readonly altText?: string | undefined;
+  readonly language?: string | undefined;
+  readonly source?: string | undefined;
   readonly rightsStatus: RightsStatus;
-  readonly rightsNote?: string;
+  readonly rightsNote?: string | undefined;
 }
 
 export interface Activity {
   readonly id: string;
   readonly type: ActivityType;
   readonly title: string;
-  readonly instruction?: BilingualContent;
+  readonly instruction?: BilingualContent | undefined;
   readonly sortOrder: number;
   readonly required: boolean;
   readonly completionRule?: unknown;
   readonly content?: unknown;
   readonly resources: readonly ResourceRef[];
-  readonly teacherNotes?: BilingualContent;
-  readonly studentNotes?: BilingualContent;
+  readonly teacherNotes?: BilingualContent | undefined;
+  readonly studentNotes?: BilingualContent | undefined;
 }
 
 export interface Lesson {
@@ -86,16 +86,16 @@ export interface CourseVersion {
   readonly version: number;
   readonly status: CourseVersionStatus;
   readonly title: string;
-  readonly description?: string;
-  readonly gradeBand?: string;
+  readonly description?: string | undefined;
+  readonly gradeBand?: string | undefined;
   readonly locale: string;
-  readonly dialect?: string;
+  readonly dialect?: string | undefined;
   readonly objectives: readonly BilingualContent[];
   readonly units: readonly Unit[];
-  readonly submittedAt?: Date;
-  readonly approvedAt?: Date;
-  readonly publishedAt?: Date;
-  readonly retiredAt?: Date;
+  readonly submittedAt?: Date | undefined;
+  readonly approvedAt?: Date | undefined;
+  readonly publishedAt?: Date | undefined;
+  readonly retiredAt?: Date | undefined;
   readonly createdAt: Date;
   readonly updatedAt: Date;
 }
