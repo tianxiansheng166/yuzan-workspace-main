@@ -1,28 +1,28 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
+import { markRootHealthRoutesPublic } from "./bootstrap/public-health.js";
+import { applyRootRouteCompatibility } from "./bootstrap/route-compatibility.js";
+import { validateEnvironment } from "./config/environment.js";
+import { AuthModule } from "./modules/auth/auth.module.js";
+import { CurriculumModule } from "./modules/curriculum/curriculum.module.js";
 import { HealthModule } from "./modules/health/health.module";
+import { IdentityModule } from "./modules/identity/identity.module.js";
+
+markRootHealthRoutesPublic();
+applyRootRouteCompatibility();
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      validate: (env: Record<string, unknown>) => {
-        const required = ["WEB_ORIGIN", "DATABASE_URL", "SESSION_SECRET"];
-        const missing = required.filter(
-          (key) => typeof env[key] !== "string" || !env[key],
-        );
-        if (missing.length > 0) {
-          throw new Error(
-            `Missing required environment variables: ${missing.join(", ")}`,
-          );
-        }
-        if (String(env.SESSION_SECRET).length < 32) {
-          throw new Error("SESSION_SECRET must be at least 32 characters");
-        }
-        return env;
-      },
+      validate: validateEnvironment,
     }),
     HealthModule,
+    IdentityModule,
+    CurriculumModule,
+    // Keep security last so its APP_GUARD providers execute in the documented
+    // authentication -> tenant -> policy order after feature composition.
+    AuthModule,
   ],
 })
 export class AppModule {}
