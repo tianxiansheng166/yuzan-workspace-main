@@ -145,16 +145,16 @@ targets:
 
 ## Submission 状态流转
 
-| 状态 | 含义 | submittedAt |
-|------|------|-------------|
-| IN_PROGRESS | 本地编辑中 | 可空 |
-| PENDING_SYNC | 等待同步 | 可空 |
-| SUBMITTED | 已提交，等待处理 | 必填 |
-| PROCESSING | 处理中 | 必填 |
-| NEEDS_REVIEW | 需要人工复核 | 必填 |
-| REVIEWED | 已复核 | 必填 |
-| RETURNED | 已退回 | 必填 |
-| ACCEPTED | 已接受 | 必填 |
+| 状态         | 含义             | submittedAt |
+| ------------ | ---------------- | ----------- |
+| IN_PROGRESS  | 本地编辑中       | 可空        |
+| PENDING_SYNC | 等待同步         | 可空        |
+| SUBMITTED    | 已提交，等待处理 | 必填        |
+| PROCESSING   | 处理中           | 必填        |
+| NEEDS_REVIEW | 需要人工复核     | 必填        |
+| REVIEWED     | 已复核           | 必填        |
+| RETURNED     | 已退回           | 必填        |
+| ACCEPTED     | 已接受           | 必填        |
 
 - API 不接收 `enrollmentId`；服务端由当前认证用户、`schoolId`、`assignmentId` 推导对应的 `Enrollment`；
 - `attemptNo` 由服务端分配，受数据库唯一约束保护；
