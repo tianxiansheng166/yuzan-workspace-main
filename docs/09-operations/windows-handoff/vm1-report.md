@@ -138,7 +138,7 @@
 |--------|-------|
 | Branch | evacuation/vm1-handoff-20260711 |
 | Base | origin/integration/core-framework-20260710 (577a7442) |
-| Commit | (to be filled after commit) |
+| Commit | 9ab8052750ad6d05ed7fc2bf62da487476baeb64 |
 
 ## 9. Security Verification
 

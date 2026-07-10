@@ -342,7 +342,8 @@
     },
     {
       "name": "evacuation/vm1-handoff-20260711",
-      "local_head": "(pending commit)",
+      "local_head": "9ab8052750ad6d05ed7fc2bf62da487476baeb64",
+      "remote_head": "9ab8052750ad6d05ed7fc2bf62da487476baeb64",
       "base": "origin/integration/core-framework-20260710 (577a7442)",
       "worktree": "/home/admin01/Documents/yuzan-workspace-main/worktrees/evac-vm1-handoff-20260711",
       "action": "created with handoff report",
