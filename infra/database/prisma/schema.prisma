@@ -185,37 +185,55 @@ model Campus {
 }
 
 model User {
-  id                 String       @id @default(uuid()) @db.Uuid
-  loginIdentifier    String       @unique
+  id                 String        @id @default(uuid()) @db.Uuid
+  loginIdentifier    String        @unique
   displayName        String
   passwordHash       String
-  preferredLocale    String       @default("zh-CN")
-  status             UserStatus   @default(ACTIVE)
-  createdAt          DateTime     @default(now())
-  updatedAt          DateTime     @updatedAt
+  preferredLocale    String        @default("zh-CN")
+  status             UserStatus    @default(ACTIVE)
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
   memberships        Membership[]
-  sessions           Session[]
+  sessionPairs       SessionPair[]
   enrollments        Enrollment[]
-  authoredCourses    Course[]     @relation("CourseAuthor")
+  authoredCourses    Course[]      @relation("CourseAuthor")
   createdAssignments Assignment[]
-  feedback           Feedback[]   @relation("FeedbackAuthor")
-  auditLogs          AuditLog[]   @relation("AuditActor")
+  feedback           Feedback[]    @relation("FeedbackAuthor")
+  auditLogs          AuditLog[]    @relation("AuditActor")
 
   @@index([status])
 }
 
-model Session {
-  id             String    @id @default(uuid()) @db.Uuid
-  userId         String    @db.Uuid
-  refreshHash    String    @unique
-  activeSchoolId String?   @db.Uuid
-  expiresAt      DateTime
-  revokedAt      DateTime?
-  createdAt      DateTime  @default(now())
-  lastUsedAt     DateTime  @default(now())
-  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+model SessionPair {
+  id                String        @id @default(uuid()) @db.Uuid
+  userId            String        @db.Uuid
+  familyId          String        @db.Uuid
+  predecessorPairId String?       @db.Uuid
+  activeSchoolId    String?       @db.Uuid
+  refreshExpiresAt  DateTime
+  revokedAt         DateTime?
+  lastUsedAt        DateTime      @default(now())
+  createdAt         DateTime      @default(now())
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  predecessor       SessionPair?  @relation("SessionPairRotation", fields: [predecessorPairId], references: [id])
+  successors        SessionPair[] @relation("SessionPairRotation")
+  sessions          Session[]
 
-  @@index([userId, expiresAt])
+  @@unique([familyId, predecessorPairId])
+  @@index([userId, refreshExpiresAt])
+  @@index([familyId])
+}
+
+model Session {
+  id        String      @id @default(uuid()) @db.Uuid
+  pairId    String      @db.Uuid
+  type      String      @db.VarChar(10)
+  tokenHash String      @unique
+  expiresAt DateTime
+  createdAt DateTime    @default(now())
+  pair      SessionPair @relation(fields: [pairId], references: [id], onDelete: Cascade)
+
+  @@unique([pairId, type])
 }
 
 model Membership {

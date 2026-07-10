@@ -9,9 +9,8 @@ import {
 } from "./ports/index.js";
 import { IdentityController } from "./identity.controller.js";
 import { IdentityService } from "./identity.service.js";
-import { UnavailableIdentityRepository } from "./adapters/unavailable-identity.repository.js";
-import { UnavailableSessionRepository } from "./adapters/unavailable-session.repository.js";
-import { DenyPasswordVerifier } from "./adapters/deny-password-verifier.js";
+import { PrismaIdentityRepository } from "./adapters/prisma-identity.repository.js";
+import { ScryptPasswordVerifier } from "./adapters/scrypt-password-verifier.js";
 import { SystemClock } from "./adapters/system-clock.js";
 import { CryptoSessionTokenService } from "./adapters/crypto-session-token.service.js";
 
@@ -19,21 +18,22 @@ import { CryptoSessionTokenService } from "./adapters/crypto-session-token.servi
   controllers: [IdentityController],
   providers: [
     IdentityService,
+    PrismaIdentityRepository,
     {
       provide: USER_IDENTITY_REPOSITORY,
-      useClass: UnavailableIdentityRepository,
+      useExisting: PrismaIdentityRepository,
     },
     {
       provide: MEMBERSHIP_REPOSITORY,
-      useClass: UnavailableIdentityRepository,
+      useExisting: PrismaIdentityRepository,
     },
     {
       provide: SESSION_REPOSITORY,
-      useClass: UnavailableSessionRepository,
+      useExisting: PrismaIdentityRepository,
     },
     {
       provide: PASSWORD_VERIFIER,
-      useClass: DenyPasswordVerifier,
+      useClass: ScryptPasswordVerifier,
     },
     {
       provide: SESSION_TOKEN_SERVICE,
