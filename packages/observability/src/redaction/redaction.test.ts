@@ -83,6 +83,86 @@ describe("redaction", () => {
     expect(result.self).toBe("[CIRCULAR]");
   });
 
+  it("redacts private key variants through nested objects and arrays", () => {
+    const input = {
+      privateKey: "pk-top",
+      nested: { private_key: "pk-nested" },
+      items: [{ "private-key": "pk-array" }, { PRIVATE_KEY: "pk-upper" }],
+    };
+    const output = JSON.stringify(redact(input));
+    for (const secret of ["pk-top", "pk-nested", "pk-array", "pk-upper"]) {
+      expect(output).not.toContain(secret);
+    }
+  });
+
+  it("redacts database URL key variants and DSNs", () => {
+    const output = JSON.stringify(
+      redact({
+        databaseUrl: "db-url-secret",
+        connectionString: "connection-secret",
+        DSN: "dsn-secret",
+        nested: { database_dsn: "nested-dsn-secret" },
+      }),
+    );
+    for (const secret of [
+      "db-url-secret",
+      "connection-secret",
+      "dsn-secret",
+      "nested-dsn-secret",
+    ]) {
+      expect(output).not.toContain(secret);
+    }
+  });
+
+  it.each([
+    "postgresql://user:db-secret@db.internal:5432/app",
+    "mysql://user:db-secret@db.internal/app",
+    "mongodb://user:db-secret@db.internal/app",
+    "redis://user:db-secret@db.internal/0",
+    "amqp://user:db-secret@mq.internal/vhost",
+  ])("redacts connection URL userinfo for %s", (url) => {
+    const output = String(redactValue(`connection failed: ${url}`));
+    expect(output).not.toContain("db-secret");
+    expect(output).toMatch(/@(?:db|mq)\.internal/);
+  });
+
+  it("redacts encoded connection URL credentials", () => {
+    const output = String(
+      redactValue(
+        "postgresql://encoded%40user:encoded%2Fpassword@db.internal/app",
+      ),
+    );
+    expect(output).not.toContain("encoded%40user");
+    expect(output).not.toContain("encoded%2Fpassword");
+  });
+
+  it("keeps ordinary URLs usable and redacts expanded query secrets", () => {
+    expect(redactValue("https://example.com/public?q=ok")).toBe(
+      "https://example.com/public?q=ok",
+    );
+    const output = String(
+      redactValue("https://example.com/?password=db-secret&token=token-secret"),
+    );
+    expect(output).not.toContain("db-secret");
+    expect(output).not.toContain("token-secret");
+  });
+
+  it("redacts secrets in Error messages and causes", () => {
+    const error = new Error(
+      "failed postgresql://user:db-secret@db.internal/app",
+      { cause: { privateKey: "pk-cause" } },
+    );
+    const output = JSON.stringify(redactValue(error));
+    expect(output).not.toContain("db-secret");
+    expect(output).not.toContain("pk-cause");
+  });
+
+  it("handles circular Error causes", () => {
+    const error = new Error("failed");
+    Object.defineProperty(error, "cause", { value: error, enumerable: true });
+    expect(redactValue(error)).toMatchObject({ cause: "[CIRCULAR]" });
+  });
+
   it("produces body summary without exposing student content", () => {
     const body = {
       studentAnswer: "完整书面回答",

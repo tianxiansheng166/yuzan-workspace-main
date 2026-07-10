@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { createRegistry } from "./metrics.js";
+import {
+  Counter,
+  Gauge,
+  Histogram,
+  MetricNameValidationError,
+  createRegistry,
+} from "./metrics.js";
 
 describe("metrics", () => {
   it("counter increases monotonically", () => {
@@ -157,5 +163,65 @@ describe("metrics", () => {
     registry.inc("m", { route: "/ok" });
     const snapshot = JSON.stringify(registry.getSnapshot());
     expect(snapshot).not.toContain("secret");
+  });
+
+  it.each([
+    "http_requests_total",
+    "api_request_duration_ms",
+    "_yuzan_internal_metric",
+    "A_valid_metric",
+  ])("accepts valid metric name %s", (name) => {
+    const registry = createRegistry();
+    expect(() =>
+      registry.register({ name, help: "valid", type: "counter" }),
+    ).not.toThrow();
+  });
+
+  it.each([
+    "",
+    "1metric",
+    "metric-name",
+    "metric name",
+    "metric/name",
+    "metric?token=x",
+    "http://example.invalid/value",
+    "metric\ninjected",
+    "metric\r\nheader",
+    "__reserved_metric",
+    "m".repeat(129),
+  ])("rejects invalid metric name without polluting registry", (name) => {
+    const registry = createRegistry();
+    try {
+      registry.register({ name, help: "invalid", type: "counter" });
+      throw new Error("expected validation failure");
+    } catch (error) {
+      expect(error).toBeInstanceOf(MetricNameValidationError);
+      expect((error as MetricNameValidationError).code).toBe(
+        "INVALID_METRIC_NAME",
+      );
+    }
+    expect(Object.keys(registry.getSnapshot())).not.toContain(name);
+    expect(() =>
+      registry.register({
+        name: "valid_after_failure",
+        help: "ok",
+        type: "counter",
+      }),
+    ).not.toThrow();
+  });
+
+  it("validates names consistently for all metric constructors", () => {
+    const registry = createRegistry();
+    const invalid = { name: "invalid-name", help: "invalid" } as const;
+    expect(
+      () => new Counter(registry, { ...invalid, type: "counter" }),
+    ).toThrow(MetricNameValidationError);
+    expect(() => new Gauge(registry, { ...invalid, type: "gauge" })).toThrow(
+      MetricNameValidationError,
+    );
+    expect(
+      () => new Histogram(registry, { ...invalid, type: "histogram" }),
+    ).toThrow(MetricNameValidationError);
+    expect(Object.keys(registry.getSnapshot())).toHaveLength(0);
   });
 });

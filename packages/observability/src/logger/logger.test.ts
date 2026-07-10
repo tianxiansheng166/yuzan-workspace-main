@@ -105,4 +105,55 @@ describe("logger", () => {
     );
     expect((msg.body as Record<string, unknown>).password).toBe("[REDACTED]");
   });
+
+  it("redacts private keys and connection credentials in final logger output", () => {
+    const { stream, messages } = captureStream();
+    const logger = createLogger({ service: "api", destination: stream });
+
+    const privateKeySentinel = "OPS001_PRIVATE_KEY_SENTINEL";
+    const databasePasswordSentinel = "OPS001_DATABASE_PASSWORD_SENTINEL";
+    logger.info({
+      event: "security",
+      privateKey: privateKeySentinel,
+      detail: `postgresql://user:${databasePasswordSentinel}@db.internal/app`,
+      nested: [{ private_key: "pk-array-secret" }],
+      error: new Error("mysql://user:db-error-secret@db.internal/app", {
+        cause: { privateKey: "pk-cause-secret" },
+      }),
+    });
+
+    const output = JSON.stringify(messages());
+    for (const secret of [
+      privateKeySentinel,
+      databasePasswordSentinel,
+      "pk-array-secret",
+      "db-error-secret",
+      "pk-cause-secret",
+    ]) {
+      expect(output).not.toContain(secret);
+    }
+  });
+
+  it("never logs a rejected correlation id", () => {
+    const { stream, messages } = captureStream();
+    const logger = createLogger({ service: "api", destination: stream });
+    const correlationSentinel = "OPS001_CORRELATION_CRLF_SENTINEL";
+    const oversizedSentinel = "OPS001_CORRELATION_OVERSIZED_SENTINEL";
+    const malicious = `${correlationSentinel}\r\nInjected: true`;
+
+    runWithContext({ correlationId: malicious } as never, () => {
+      logger.info({ event: "correlation" });
+    });
+    runWithContext(
+      { correlationId: `${oversizedSentinel}${"a".repeat(129)}` },
+      () => logger.info({ event: "oversized-correlation" }),
+    );
+
+    const output = JSON.stringify(messages());
+    expect(output).not.toContain(correlationSentinel);
+    expect(output).not.toContain(oversizedSentinel);
+    for (const message of messages()) {
+      expect(message.correlationId).toMatch(/^[A-Za-z0-9._-]{1,128}$/);
+    }
+  });
 });

@@ -21,6 +21,9 @@ export {
   Counter,
   Gauge,
   Histogram,
+  MetricNameValidationError,
+  METRIC_NAME_PATTERN,
+  MAX_METRIC_NAME_LENGTH,
   type Labels,
   type MetricDefinition,
   type HistogramSample,
@@ -30,6 +33,7 @@ export {
   getContext,
   runWithContext,
   setContextDefaults,
+  CORRELATION_ID_PATTERN,
   type ObservabilityContext,
 } from "./context/context.js";
 

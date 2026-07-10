@@ -47,4 +47,73 @@ describe("context", () => {
     const ctx = getContext();
     expect(ctx.service).toBe("default-service");
   });
+
+  it.each(["abc", "request-123", "trace_123", "trace.123", "a".repeat(128)])(
+    "preserves valid correlation id %s",
+    (correlationId) => {
+      runWithContext({ correlationId }, () => {
+        expect(getContext().correlationId).toBe(correlationId);
+      });
+    },
+  );
+
+  it.each([
+    "",
+    "a".repeat(129),
+    "has space",
+    "has\ttab",
+    "has\nnewline",
+    "has\r\nheaders",
+    "has\0nul",
+    "has/slash",
+    "has\\backslash",
+    "has:colon",
+    "has,comma",
+    "control\u0085",
+    "bidi\u202evalue",
+    "emoji😀",
+  ])("replaces invalid correlation id safely", (correlationId) => {
+    runWithContext({ correlationId }, () => {
+      const actual = getContext().correlationId;
+      expect(actual).toMatch(/^[A-Za-z0-9._-]{1,128}$/);
+      expect(actual).not.toBe(correlationId);
+    });
+  });
+
+  it("rejects a non-string correlation id at runtime", () => {
+    runWithContext({ correlationId: 123 } as never, () => {
+      expect(getContext().correlationId).toMatch(/^[A-Za-z0-9._-]{1,128}$/);
+    });
+  });
+
+  it("uses a validated request id as invalid correlation fallback", () => {
+    runWithContext(
+      { requestId: "safe-request", correlationId: "bad value" },
+      () => {
+        expect(getContext().correlationId).toBe("safe-request");
+      },
+    );
+  });
+
+  it("restores an outer correlation id after a nested context", () => {
+    runWithContext({ correlationId: "outer-correlation" }, () => {
+      runWithContext({ correlationId: "inner-correlation" }, () => {
+        expect(getContext().correlationId).toBe("inner-correlation");
+      });
+      expect(getContext().correlationId).toBe("outer-correlation");
+    });
+  });
+
+  it("isolates concurrent contexts and clears them when complete", async () => {
+    const observed = await Promise.all(
+      ["correlation-a", "correlation-b"].map((correlationId) =>
+        runWithContext({ correlationId }, async () => {
+          await new Promise((resolve) => setTimeout(resolve, 1));
+          return getContext().correlationId;
+        }),
+      ),
+    );
+    expect(observed).toEqual(["correlation-a", "correlation-b"]);
+    expect(getContext().correlationId).toBeUndefined();
+  });
 });

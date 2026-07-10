@@ -18,20 +18,41 @@ const SENSITIVE_KEYS = new Set([
   "answertext",
   "prompt",
   "transcript",
+  "privatekey",
+  "databaseurl",
+  "connectionstring",
+  "dsn",
+  "databasedsn",
 ]);
 
-const URL_SENSITIVE_PARAMS = [
+const URL_SENSITIVE_PARAMS = new Set([
   "token",
   "access_token",
+  "refresh_token",
+  "api_key",
+  "apikey",
   "code",
   "password",
+  "passwd",
+  "pwd",
   "secret",
-];
+  "client_secret",
+  "private_key",
+  "database_url",
+  "connection_string",
+]);
+
+const CONNECTION_URL_PATTERN =
+  /\b(?:postgres(?:ql)?|mysql|mariadb|mongodb(?:\+srv)?|rediss?|amqps?|cockroachdb):\/\/[^\s"'<>]+/gi;
 
 const CENSOR = "[REDACTED]";
 
 function isSensitiveKey(key: string): boolean {
-  return SENSITIVE_KEYS.has(key.toLowerCase());
+  return SENSITIVE_KEYS.has(normalizeKey(key));
+}
+
+function normalizeKey(key: string): string {
+  return key.toLowerCase().replace(/[_.-]/g, "");
 }
 
 export interface RedactionOptions {
@@ -58,7 +79,7 @@ export function redactValue(
   }
 
   if (typeof value === "string") {
-    return redactQueryString(value, state.options.censor);
+    return redactString(value, state.options.censor);
   }
 
   if (typeof value === "number" || typeof value === "boolean") {
@@ -129,16 +150,18 @@ function redactError(
     message: state.options.censor,
   };
 
-  if (error.cause instanceof Error) {
-    result.cause = redactError(error.cause, {
-      ...state,
-      depth: state.depth + 1,
-    });
-  } else if (error.cause !== undefined) {
+  if (error.cause !== undefined) {
     result.cause = redactValue(error.cause, {
       ...state,
       depth: state.depth + 1,
     });
+  }
+
+  for (const [key, value] of Object.entries(error)) {
+    if (key === "cause") continue;
+    result[key] = isSensitiveKey(key)
+      ? state.options.censor
+      : redactValue(value, { ...state, depth: state.depth + 1 });
   }
 
   return result;
@@ -160,7 +183,7 @@ export function redactQueryString(url: string, censor = CENSOR): string {
     let changed = false;
     for (const entry of params) {
       const [key] = entry;
-      if (URL_SENSITIVE_PARAMS.includes(key)) {
+      if (URL_SENSITIVE_PARAMS.has(key.toLowerCase())) {
         entry[1] = censor;
         changed = true;
       }
@@ -185,6 +208,28 @@ function redactInlineQuery(input: string, censor: string): string {
     input = input.replace(pattern, `$1${censor}`);
   }
   return input;
+}
+
+function redactString(input: string, censor: string): string {
+  const withConnectionsRedacted = input.replace(
+    CONNECTION_URL_PATTERN,
+    (connectionUrl) => redactConnectionUrl(connectionUrl, censor),
+  );
+  return redactQueryString(withConnectionsRedacted, censor);
+}
+
+function redactConnectionUrl(input: string, censor: string): string {
+  try {
+    const parsed = new URL(input);
+    if (!parsed.username && !parsed.password) {
+      return redactQueryString(input, censor);
+    }
+    if (parsed.username) parsed.username = censor;
+    if (parsed.password) parsed.password = censor;
+    return redactQueryString(parsed.toString(), censor);
+  } catch {
+    return censor;
+  }
 }
 
 export function redactBodySummary(

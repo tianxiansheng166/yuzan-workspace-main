@@ -8,6 +8,8 @@ const RESERVED_LABELS = new Set([
 ]);
 
 const LABEL_NAME_PATTERN = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
+export const METRIC_NAME_PATTERN = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
+export const MAX_METRIC_NAME_LENGTH = 128;
 const MAX_LABEL_VALUE_LENGTH = 256;
 const MAX_LABEL_COUNT = 16;
 
@@ -28,6 +30,15 @@ export interface HistogramSample {
   buckets: Record<string, number>;
 }
 
+export class MetricNameValidationError extends Error {
+  readonly code = "INVALID_METRIC_NAME";
+
+  constructor() {
+    super("Invalid metric name");
+    this.name = "MetricNameValidationError";
+  }
+}
+
 interface MetricRecord {
   definition: MetricDefinition;
   values: Map<string, number | HistogramSample>;
@@ -37,6 +48,7 @@ export class Registry {
   private readonly metrics = new Map<string, MetricRecord>();
 
   register(definition: MetricDefinition): void {
+    validateMetricName(definition.name);
     const existing = this.metrics.get(definition.name);
     if (existing) {
       if (!definitionsMatch(existing.definition, definition)) {
@@ -165,6 +177,18 @@ export class Registry {
       };
     }
     return output;
+  }
+}
+
+function validateMetricName(name: string): void {
+  if (
+    typeof name !== "string" ||
+    name.length === 0 ||
+    name.length > MAX_METRIC_NAME_LENGTH ||
+    name.startsWith("__") ||
+    !METRIC_NAME_PATTERN.test(name)
+  ) {
+    throw new MetricNameValidationError();
   }
 }
 
