@@ -4,6 +4,10 @@ import CurriculumStudioScenarioField from "../../features/curriculum-studio/Curr
 import type { StudioScenario } from "../../features/curriculum-studio/model";
 import { useCurriculumStudioDraft } from "../../features/curriculum-studio/useCurriculumStudioDraft";
 
+useSeoMeta({
+  title: "课程版本｜语赞心声",
+});
+
 const route = useRoute();
 const draftId = computed(() => String(route.params.draftId ?? ""));
 const scenario = ref<StudioScenario>("demo");
