@@ -29,6 +29,8 @@ async function bootstrap(): Promise<void> {
   app.useGlobalInterceptors(new RequestIdInterceptor());
   app.useGlobalFilters(new HttpExceptionFilter());
 
+  app.enableShutdownHooks();
+
   await app.listen(port, "0.0.0.0");
 }
 

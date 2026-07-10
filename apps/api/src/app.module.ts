@@ -1,5 +1,6 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
+import { DatabaseModule } from "./shared/database";
 import { HealthModule } from "./modules/health/health.module";
 
 @Module({
@@ -22,6 +23,7 @@ import { HealthModule } from "./modules/health/health.module";
         return env;
       },
     }),
+    DatabaseModule,
     HealthModule,
   ],
 })
