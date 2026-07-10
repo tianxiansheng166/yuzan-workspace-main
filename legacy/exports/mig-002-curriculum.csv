@@ -1,0 +1,11 @@
+stableId,sourceKey,courseId,title,status,locale,unitCount,lessonCount,activityCount,resourceCount,publishEligibility
+mig002_d8ee37d979c48a80,middle-7-epic-001,middle-7-epic-001,格萨尔王传·英雄诞生,DRAFT,zh-CN,1,1,1,1,REVIEW_REQUIRED
+mig002_e4e1745bd43f2379,middle-7-geography-001,middle-7-geography-001,神山圣湖的传说,DRAFT,zh-CN,1,1,1,1,REVIEW_REQUIRED
+mig002_fca982388b1afd7b,middle-8-english-001,middle-8-english-001,英语与藏族文化,DRAFT,zh-CN,1,1,1,1,REVIEW_REQUIRED
+mig002_ffbaeb09df1c7342,primary-1-language-001,primary-1-language-001,基础语言启蒙,DRAFT,zh-CN,1,1,1,1,REVIEW_REQUIRED
+mig002_591bb0a8ba36db32,primary-2-food-001,primary-2-food-001,舌尖上的家乡,DRAFT,zh-CN,1,1,1,1,REVIEW_REQUIRED
+mig002_f668dee7bf308505,primary-3-charlotte-001,primary-3-charlotte-001,夏洛的网,DRAFT,zh-CN,1,1,1,1,REVIEW_REQUIRED
+mig002_83945370fc1e0ba1,primary-3-festival-001,primary-3-festival-001,雪顿节的欢歌,DRAFT,zh-CN,1,1,1,1,REVIEW_REQUIRED
+mig002_da8f6ed8bf192884,primary-4-math-001,primary-4-math-001,生活中的数学,DRAFT,zh-CN,1,1,1,1,REVIEW_REQUIRED
+mig002_24b6806251a98e26,primary-5-poetry-001,primary-5-poetry-001,我为仓央嘉措诗配画,DRAFT,zh-CN,1,1,1,1,REVIEW_REQUIRED
+mig002_e372908e448e29c1,primary-6-ecology-001,primary-6-ecology-001,青藏高原生态屏障,DRAFT,zh-CN,1,1,1,1,REVIEW_REQUIRED

@@ -1,0 +1,68 @@
+{
+  "metadata": {
+    "taskId": "MIG-002",
+    "schemaVersion": "2026-07-10"
+  },
+  "results": [
+    {
+      "id": "mig002_d8ee37d979c48a80",
+      "courseId": "middle-7-epic-001",
+      "title": "格萨尔王传·英雄诞生",
+      "publishEligibility": "REVIEW_REQUIRED"
+    },
+    {
+      "id": "mig002_e4e1745bd43f2379",
+      "courseId": "middle-7-geography-001",
+      "title": "神山圣湖的传说",
+      "publishEligibility": "REVIEW_REQUIRED"
+    },
+    {
+      "id": "mig002_fca982388b1afd7b",
+      "courseId": "middle-8-english-001",
+      "title": "英语与藏族文化",
+      "publishEligibility": "REVIEW_REQUIRED"
+    },
+    {
+      "id": "mig002_ffbaeb09df1c7342",
+      "courseId": "primary-1-language-001",
+      "title": "基础语言启蒙",
+      "publishEligibility": "REVIEW_REQUIRED"
+    },
+    {
+      "id": "mig002_591bb0a8ba36db32",
+      "courseId": "primary-2-food-001",
+      "title": "舌尖上的家乡",
+      "publishEligibility": "REVIEW_REQUIRED"
+    },
+    {
+      "id": "mig002_f668dee7bf308505",
+      "courseId": "primary-3-charlotte-001",
+      "title": "夏洛的网",
+      "publishEligibility": "REVIEW_REQUIRED"
+    },
+    {
+      "id": "mig002_83945370fc1e0ba1",
+      "courseId": "primary-3-festival-001",
+      "title": "雪顿节的欢歌",
+      "publishEligibility": "REVIEW_REQUIRED"
+    },
+    {
+      "id": "mig002_da8f6ed8bf192884",
+      "courseId": "primary-4-math-001",
+      "title": "生活中的数学",
+      "publishEligibility": "REVIEW_REQUIRED"
+    },
+    {
+      "id": "mig002_24b6806251a98e26",
+      "courseId": "primary-5-poetry-001",
+      "title": "我为仓央嘉措诗配画",
+      "publishEligibility": "REVIEW_REQUIRED"
+    },
+    {
+      "id": "mig002_e372908e448e29c1",
+      "courseId": "primary-6-ecology-001",
+      "title": "青藏高原生态屏障",
+      "publishEligibility": "REVIEW_REQUIRED"
+    }
+  ]
+}

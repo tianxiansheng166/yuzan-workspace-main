@@ -1,0 +1,169 @@
+{
+  "metadata": {
+    "taskId": "MIG-002",
+    "schemaVersion": "2026-07-10",
+    "reviewItemCount": 10
+  },
+  "items": [
+    {
+      "stableId": "mig002_d8ee37d979c48a80",
+      "sourceKey": "mig001_10ba807183b4",
+      "courseId": "middle-7-epic-001",
+      "title": "格萨尔王传·英雄诞生",
+      "disposition": "REVIEW",
+      "publishEligibility": "REVIEW_REQUIRED",
+      "path": "course:middle-7-epic-001",
+      "reasonCode": "REQUIRES_VERSION_CONFIRMATION; NO_UNIT_STRUCTURE; EXTERNAL_RESOURCE_REFERENCE; UNKNOWN_RESOURCE_RIGHTS",
+      "reasons": [
+        "REQUIRES_VERSION_CONFIRMATION",
+        "NO_UNIT_STRUCTURE",
+        "EXTERNAL_RESOURCE_REFERENCE",
+        "UNKNOWN_RESOURCE_RIGHTS"
+      ]
+    },
+    {
+      "stableId": "mig002_e4e1745bd43f2379",
+      "sourceKey": "mig001_41e9d5f9d4a4",
+      "courseId": "middle-7-geography-001",
+      "title": "神山圣湖的传说",
+      "disposition": "REVIEW",
+      "publishEligibility": "REVIEW_REQUIRED",
+      "path": "course:middle-7-geography-001",
+      "reasonCode": "REQUIRES_VERSION_CONFIRMATION; NO_UNIT_STRUCTURE; EXTERNAL_RESOURCE_REFERENCE; UNKNOWN_RESOURCE_RIGHTS",
+      "reasons": [
+        "REQUIRES_VERSION_CONFIRMATION",
+        "NO_UNIT_STRUCTURE",
+        "EXTERNAL_RESOURCE_REFERENCE",
+        "UNKNOWN_RESOURCE_RIGHTS"
+      ]
+    },
+    {
+      "stableId": "mig002_fca982388b1afd7b",
+      "sourceKey": "mig001_767555f4c824",
+      "courseId": "middle-8-english-001",
+      "title": "英语与藏族文化",
+      "disposition": "REVIEW",
+      "publishEligibility": "REVIEW_REQUIRED",
+      "path": "course:middle-8-english-001",
+      "reasonCode": "REQUIRES_VERSION_CONFIRMATION; NO_UNIT_STRUCTURE; EXTERNAL_RESOURCE_REFERENCE; UNKNOWN_RESOURCE_RIGHTS",
+      "reasons": [
+        "REQUIRES_VERSION_CONFIRMATION",
+        "NO_UNIT_STRUCTURE",
+        "EXTERNAL_RESOURCE_REFERENCE",
+        "UNKNOWN_RESOURCE_RIGHTS"
+      ]
+    },
+    {
+      "stableId": "mig002_ffbaeb09df1c7342",
+      "sourceKey": "mig001_68e2eea56065",
+      "courseId": "primary-1-language-001",
+      "title": "基础语言启蒙",
+      "disposition": "REVIEW",
+      "publishEligibility": "REVIEW_REQUIRED",
+      "path": "course:primary-1-language-001",
+      "reasonCode": "REQUIRES_VERSION_CONFIRMATION; NO_UNIT_STRUCTURE; EXTERNAL_RESOURCE_REFERENCE; UNKNOWN_RESOURCE_RIGHTS",
+      "reasons": [
+        "REQUIRES_VERSION_CONFIRMATION",
+        "NO_UNIT_STRUCTURE",
+        "EXTERNAL_RESOURCE_REFERENCE",
+        "UNKNOWN_RESOURCE_RIGHTS"
+      ]
+    },
+    {
+      "stableId": "mig002_591bb0a8ba36db32",
+      "sourceKey": "mig001_440818f738a6",
+      "courseId": "primary-2-food-001",
+      "title": "舌尖上的家乡",
+      "disposition": "REVIEW",
+      "publishEligibility": "REVIEW_REQUIRED",
+      "path": "course:primary-2-food-001",
+      "reasonCode": "REQUIRES_VERSION_CONFIRMATION; NO_UNIT_STRUCTURE; EXTERNAL_RESOURCE_REFERENCE; UNKNOWN_RESOURCE_RIGHTS",
+      "reasons": [
+        "REQUIRES_VERSION_CONFIRMATION",
+        "NO_UNIT_STRUCTURE",
+        "EXTERNAL_RESOURCE_REFERENCE",
+        "UNKNOWN_RESOURCE_RIGHTS"
+      ]
+    },
+    {
+      "stableId": "mig002_f668dee7bf308505",
+      "sourceKey": "mig001_79fc8250eef4",
+      "courseId": "primary-3-charlotte-001",
+      "title": "夏洛的网",
+      "disposition": "REVIEW",
+      "publishEligibility": "REVIEW_REQUIRED",
+      "path": "course:primary-3-charlotte-001",
+      "reasonCode": "REQUIRES_VERSION_CONFIRMATION; NO_UNIT_STRUCTURE; UNKNOWN_RESOURCE_RIGHTS; IMAGE_MISSING_ALT",
+      "reasons": [
+        "REQUIRES_VERSION_CONFIRMATION",
+        "NO_UNIT_STRUCTURE",
+        "UNKNOWN_RESOURCE_RIGHTS",
+        "IMAGE_MISSING_ALT"
+      ]
+    },
+    {
+      "stableId": "mig002_83945370fc1e0ba1",
+      "sourceKey": "mig001_5055ccd43bf4",
+      "courseId": "primary-3-festival-001",
+      "title": "雪顿节的欢歌",
+      "disposition": "REVIEW",
+      "publishEligibility": "REVIEW_REQUIRED",
+      "path": "course:primary-3-festival-001",
+      "reasonCode": "REQUIRES_VERSION_CONFIRMATION; NO_UNIT_STRUCTURE; EXTERNAL_RESOURCE_REFERENCE; UNKNOWN_RESOURCE_RIGHTS",
+      "reasons": [
+        "REQUIRES_VERSION_CONFIRMATION",
+        "NO_UNIT_STRUCTURE",
+        "EXTERNAL_RESOURCE_REFERENCE",
+        "UNKNOWN_RESOURCE_RIGHTS"
+      ]
+    },
+    {
+      "stableId": "mig002_da8f6ed8bf192884",
+      "sourceKey": "mig001_74076be7f638",
+      "courseId": "primary-4-math-001",
+      "title": "生活中的数学",
+      "disposition": "REVIEW",
+      "publishEligibility": "REVIEW_REQUIRED",
+      "path": "course:primary-4-math-001",
+      "reasonCode": "REQUIRES_VERSION_CONFIRMATION; NO_UNIT_STRUCTURE; EXTERNAL_RESOURCE_REFERENCE; UNKNOWN_RESOURCE_RIGHTS",
+      "reasons": [
+        "REQUIRES_VERSION_CONFIRMATION",
+        "NO_UNIT_STRUCTURE",
+        "EXTERNAL_RESOURCE_REFERENCE",
+        "UNKNOWN_RESOURCE_RIGHTS"
+      ]
+    },
+    {
+      "stableId": "mig002_24b6806251a98e26",
+      "sourceKey": "mig001_6194eb45b121",
+      "courseId": "primary-5-poetry-001",
+      "title": "我为仓央嘉措诗配画",
+      "disposition": "REVIEW",
+      "publishEligibility": "REVIEW_REQUIRED",
+      "path": "course:primary-5-poetry-001",
+      "reasonCode": "REQUIRES_VERSION_CONFIRMATION; NO_UNIT_STRUCTURE; UNKNOWN_RESOURCE_RIGHTS; IMAGE_MISSING_ALT",
+      "reasons": [
+        "REQUIRES_VERSION_CONFIRMATION",
+        "NO_UNIT_STRUCTURE",
+        "UNKNOWN_RESOURCE_RIGHTS",
+        "IMAGE_MISSING_ALT"
+      ]
+    },
+    {
+      "stableId": "mig002_e372908e448e29c1",
+      "sourceKey": "mig001_f3d9ab560658",
+      "courseId": "primary-6-ecology-001",
+      "title": "青藏高原生态屏障",
+      "disposition": "REVIEW",
+      "publishEligibility": "REVIEW_REQUIRED",
+      "path": "course:primary-6-ecology-001",
+      "reasonCode": "REQUIRES_VERSION_CONFIRMATION; NO_UNIT_STRUCTURE; EXTERNAL_RESOURCE_REFERENCE; UNKNOWN_RESOURCE_RIGHTS",
+      "reasons": [
+        "REQUIRES_VERSION_CONFIRMATION",
+        "NO_UNIT_STRUCTURE",
+        "EXTERNAL_RESOURCE_REFERENCE",
+        "UNKNOWN_RESOURCE_RIGHTS"
+      ]
+    }
+  ]
+}

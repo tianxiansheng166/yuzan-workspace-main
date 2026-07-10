@@ -1,0 +1,830 @@
+{
+  "metadata": {
+    "taskId": "MIG-002",
+    "schemaVersion": "2026-07-10",
+    "deterministicByInput": true,
+    "sourceFingerprint": "9b6dffaec4bc6f03ac1ab1e14217a422c563a10b6b9856909c7aa5067b9a79c2",
+    "recordCount": 10
+  },
+  "converted": [],
+  "reviewRequired": [
+    {
+      "id": "mig002_d8ee37d979c48a80",
+      "schoolId": "platform-migration",
+      "courseId": "middle-7-epic-001",
+      "authorUserId": "system-migration",
+      "version": 1,
+      "status": "DRAFT",
+      "title": "格萨尔王传·英雄诞生",
+      "description": "层级：专业版；学段：初中学段；主题：整本书阅读",
+      "gradeBand": "grade-7",
+      "locale": "zh-CN",
+      "objectives": [
+        {
+          "originalText": "理解并讨论整本书阅读相关主题",
+          "locale": "zh-CN",
+          "translationSource": "NONE",
+          "reviewStatus": "PENDING"
+        },
+        {
+          "originalText": "认识文化元素：格萨尔王传、英雄史诗、玛尼堆",
+          "locale": "zh-CN",
+          "translationSource": "NONE",
+          "reviewStatus": "PENDING"
+        }
+      ],
+      "units": [
+        {
+          "id": "mig002_3533457694793a04",
+          "title": "默认单元",
+          "sortOrder": 0,
+          "lessons": [
+            {
+              "id": "mig002_6088387c07841ebe",
+              "title": "默认课次",
+              "sortOrder": 0,
+              "activities": [
+                {
+                  "id": "mig002_519cdd74cd35e7c8",
+                  "type": "TEXT",
+                  "title": "课程内容待补充",
+                  "instruction": {
+                    "originalText": "请补充本课程内容",
+                    "locale": "zh-CN",
+                    "translationSource": "NONE",
+                    "reviewStatus": "PENDING"
+                  },
+                  "sortOrder": 0,
+                  "required": false,
+                  "resources": [
+                    {
+                      "id": "mig001_50ef514bbc2c",
+                      "kind": "OTHER",
+                      "objectKey": "mig002/OTHER/cdn.jsdelivr.net/dist/chart.umd.min.js",
+                      "mediaType": "application/octet-stream",
+                      "byteSize": 0,
+                      "rightsStatus": "UNKNOWN",
+                      "uri": "https://cdn.jsdelivr.net/dist/chart.umd.min.js",
+                      "source": "external-cdn",
+                      "rightsNote": "legacyCategory=COPYRIGHT_BLOCKED; suggestedDisposition=REVIEW"
+                    }
+                  ],
+                  "teacherNotes": {
+                    "originalText": "教师说明待补充",
+                    "locale": "zh-CN",
+                    "translationSource": "NONE",
+                    "reviewStatus": "PENDING"
+                  },
+                  "studentNotes": {
+                    "originalText": "学生说明待补充",
+                    "locale": "zh-CN",
+                    "translationSource": "NONE",
+                    "reviewStatus": "PENDING"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "mig002_e4e1745bd43f2379",
+      "schoolId": "platform-migration",
+      "courseId": "middle-7-geography-001",
+      "authorUserId": "system-migration",
+      "version": 1,
+      "status": "DRAFT",
+      "title": "神山圣湖的传说",
+      "description": "层级：普惠版；学段：初中学段；主题：地理与文学",
+      "gradeBand": "grade-7",
+      "locale": "zh-CN",
+      "objectives": [
+        {
+          "originalText": "理解并讨论地理与文学相关主题",
+          "locale": "zh-CN",
+          "translationSource": "NONE",
+          "reviewStatus": "PENDING"
+        },
+        {
+          "originalText": "认识文化元素：神山圣湖、冈仁波齐、玛旁雍错",
+          "locale": "zh-CN",
+          "translationSource": "NONE",
+          "reviewStatus": "PENDING"
+        }
+      ],
+      "units": [
+        {
+          "id": "mig002_b38ee242aed8c3d4",
+          "title": "默认单元",
+          "sortOrder": 0,
+          "lessons": [
+            {
+              "id": "mig002_32a94db497a20be8",
+              "title": "默认课次",
+              "sortOrder": 0,
+              "activities": [
+                {
+                  "id": "mig002_cf7666efc083d26c",
+                  "type": "TEXT",
+                  "title": "课程内容待补充",
+                  "instruction": {
+                    "originalText": "请补充本课程内容",
+                    "locale": "zh-CN",
+                    "translationSource": "NONE",
+                    "reviewStatus": "PENDING"
+                  },
+                  "sortOrder": 0,
+                  "required": false,
+                  "resources": [
+                    {
+                      "id": "mig001_50ef514bbc2c",
+                      "kind": "OTHER",
+                      "objectKey": "mig002/OTHER/cdn.jsdelivr.net/dist/chart.umd.min.js",
+                      "mediaType": "application/octet-stream",
+                      "byteSize": 0,
+                      "rightsStatus": "UNKNOWN",
+                      "uri": "https://cdn.jsdelivr.net/dist/chart.umd.min.js",
+                      "source": "external-cdn",
+                      "rightsNote": "legacyCategory=COPYRIGHT_BLOCKED; suggestedDisposition=REVIEW"
+                    }
+                  ],
+                  "teacherNotes": {
+                    "originalText": "教师说明待补充",
+                    "locale": "zh-CN",
+                    "translationSource": "NONE",
+                    "reviewStatus": "PENDING"
+                  },
+                  "studentNotes": {
+                    "originalText": "学生说明待补充",
+                    "locale": "zh-CN",
+                    "translationSource": "NONE",
+                    "reviewStatus": "PENDING"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "mig002_fca982388b1afd7b",
+      "schoolId": "platform-migration",
+      "courseId": "middle-8-english-001",
+      "authorUserId": "system-migration",
+      "version": 1,
+      "status": "DRAFT",
+      "title": "英语与藏族文化",
+      "description": "层级：专业版；学段：初中学段；主题：英语课程",
+      "gradeBand": "grade-8",
+      "locale": "zh-CN",
+      "objectives": [
+        {
+          "originalText": "理解并讨论英语课程相关主题",
+          "locale": "zh-CN",
+          "translationSource": "NONE",
+          "reviewStatus": "PENDING"
+        },
+        {
+          "originalText": "认识文化元素：英语学习、文化交流、国际视野",
+          "locale": "zh-CN",
+          "translationSource": "NONE",
+          "reviewStatus": "PENDING"
+        }
+      ],
+      "units": [
+        {
+          "id": "mig002_63075067c6a3e5f2",
+          "title": "默认单元",
+          "sortOrder": 0,
+          "lessons": [
+            {
+              "id": "mig002_072cc04fefbda808",
+              "title": "默认课次",
+              "sortOrder": 0,
+              "activities": [
+                {
+                  "id": "mig002_108e1ba3a74d09ed",
+                  "type": "TEXT",
+                  "title": "课程内容待补充",
+                  "instruction": {
+                    "originalText": "请补充本课程内容",
+                    "locale": "zh-CN",
+                    "translationSource": "NONE",
+                    "reviewStatus": "PENDING"
+                  },
+                  "sortOrder": 0,
+                  "required": false,
+                  "resources": [
+                    {
+                      "id": "mig001_50ef514bbc2c",
+                      "kind": "OTHER",
+                      "objectKey": "mig002/OTHER/cdn.jsdelivr.net/dist/chart.umd.min.js",
+                      "mediaType": "application/octet-stream",
+                      "byteSize": 0,
+                      "rightsStatus": "UNKNOWN",
+                      "uri": "https://cdn.jsdelivr.net/dist/chart.umd.min.js",
+                      "source": "external-cdn",
+                      "rightsNote": "legacyCategory=COPYRIGHT_BLOCKED; suggestedDisposition=REVIEW"
+                    }
+                  ],
+                  "teacherNotes": {
+                    "originalText": "教师说明待补充",
+                    "locale": "zh-CN",
+                    "translationSource": "NONE",
+                    "reviewStatus": "PENDING"
+                  },
+                  "studentNotes": {
+                    "originalText": "学生说明待补充",
+                    "locale": "zh-CN",
+                    "translationSource": "NONE",
+                    "reviewStatus": "PENDING"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "mig002_ffbaeb09df1c7342",
+      "schoolId": "platform-migration",
+      "courseId": "primary-1-language-001",
+      "authorUserId": "system-migration",
+      "version": 1,
+      "status": "DRAFT",
+      "title": "基础语言启蒙",
+      "description": "层级：普惠版；学段：小学低学段；主题：语言积累",
+      "gradeBand": "grade-1",
+      "locale": "zh-CN",
+      "objectives": [
+        {
+          "originalText": "理解并讨论语言积累相关主题",
+          "locale": "zh-CN",
+          "translationSource": "NONE",
+          "reviewStatus": "PENDING"
+        },
+        {
+          "originalText": "认识文化元素：日常用语、儿歌、游戏",
+          "locale": "zh-CN",
+          "translationSource": "NONE",
+          "reviewStatus": "PENDING"
+        }
+      ],
+      "units": [
+        {
+          "id": "mig002_c59b33c0d3eb2fdb",
+          "title": "默认单元",
+          "sortOrder": 0,
+          "lessons": [
+            {
+              "id": "mig002_8af9079180b0011e",
+              "title": "默认课次",
+              "sortOrder": 0,
+              "activities": [
+                {
+                  "id": "mig002_9ee985b46217a910",
+                  "type": "TEXT",
+                  "title": "课程内容待补充",
+                  "instruction": {
+                    "originalText": "请补充本课程内容",
+                    "locale": "zh-CN",
+                    "translationSource": "NONE",
+                    "reviewStatus": "PENDING"
+                  },
+                  "sortOrder": 0,
+                  "required": false,
+                  "resources": [
+                    {
+                      "id": "mig001_50ef514bbc2c",
+                      "kind": "OTHER",
+                      "objectKey": "mig002/OTHER/cdn.jsdelivr.net/dist/chart.umd.min.js",
+                      "mediaType": "application/octet-stream",
+                      "byteSize": 0,
+                      "rightsStatus": "UNKNOWN",
+                      "uri": "https://cdn.jsdelivr.net/dist/chart.umd.min.js",
+                      "source": "external-cdn",
+                      "rightsNote": "legacyCategory=COPYRIGHT_BLOCKED; suggestedDisposition=REVIEW"
+                    }
+                  ],
+                  "teacherNotes": {
+                    "originalText": "教师说明待补充",
+                    "locale": "zh-CN",
+                    "translationSource": "NONE",
+                    "reviewStatus": "PENDING"
+                  },
+                  "studentNotes": {
+                    "originalText": "学生说明待补充",
+                    "locale": "zh-CN",
+                    "translationSource": "NONE",
+                    "reviewStatus": "PENDING"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "mig002_591bb0a8ba36db32",
+      "schoolId": "platform-migration",
+      "courseId": "primary-2-food-001",
+      "authorUserId": "system-migration",
+      "version": 1,
+      "status": "DRAFT",
+      "title": "舌尖上的家乡",
+      "description": "层级：普惠版；学段：小学低学段；主题：饮食文化",
+      "gradeBand": "grade-2",
+      "locale": "zh-CN",
+      "objectives": [
+        {
+          "originalText": "理解并讨论饮食文化相关主题",
+          "locale": "zh-CN",
+          "translationSource": "NONE",
+          "reviewStatus": "PENDING"
+        },
+        {
+          "originalText": "认识文化元素：青稞、酥油茶、糌粑",
+          "locale": "zh-CN",
+          "translationSource": "NONE",
+          "reviewStatus": "PENDING"
+        }
+      ],
+      "units": [
+        {
+          "id": "mig002_9da1144672725c36",
+          "title": "默认单元",
+          "sortOrder": 0,
+          "lessons": [
+            {
+              "id": "mig002_a77568972025264a",
+              "title": "默认课次",
+              "sortOrder": 0,
+              "activities": [
+                {
+                  "id": "mig002_4208924d49dd4f59",
+                  "type": "TEXT",
+                  "title": "课程内容待补充",
+                  "instruction": {
+                    "originalText": "请补充本课程内容",
+                    "locale": "zh-CN",
+                    "translationSource": "NONE",
+                    "reviewStatus": "PENDING"
+                  },
+                  "sortOrder": 0,
+                  "required": false,
+                  "resources": [
+                    {
+                      "id": "mig001_50ef514bbc2c",
+                      "kind": "OTHER",
+                      "objectKey": "mig002/OTHER/cdn.jsdelivr.net/dist/chart.umd.min.js",
+                      "mediaType": "application/octet-stream",
+                      "byteSize": 0,
+                      "rightsStatus": "UNKNOWN",
+                      "uri": "https://cdn.jsdelivr.net/dist/chart.umd.min.js",
+                      "source": "external-cdn",
+                      "rightsNote": "legacyCategory=COPYRIGHT_BLOCKED; suggestedDisposition=REVIEW"
+                    }
+                  ],
+                  "teacherNotes": {
+                    "originalText": "教师说明待补充",
+                    "locale": "zh-CN",
+                    "translationSource": "NONE",
+                    "reviewStatus": "PENDING"
+                  },
+                  "studentNotes": {
+                    "originalText": "学生说明待补充",
+                    "locale": "zh-CN",
+                    "translationSource": "NONE",
+                    "reviewStatus": "PENDING"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "mig002_f668dee7bf308505",
+      "schoolId": "platform-migration",
+      "courseId": "primary-3-charlotte-001",
+      "authorUserId": "system-migration",
+      "version": 1,
+      "status": "DRAFT",
+      "title": "夏洛的网",
+      "description": "层级：普惠版；学段：小学中学段；主题：文学阅读",
+      "gradeBand": "grade-3",
+      "locale": "zh-CN",
+      "objectives": [
+        {
+          "originalText": "理解并讨论文学阅读相关主题",
+          "locale": "zh-CN",
+          "translationSource": "NONE",
+          "reviewStatus": "PENDING"
+        },
+        {
+          "originalText": "认识文化元素：文学作品、友情、生命教育",
+          "locale": "zh-CN",
+          "translationSource": "NONE",
+          "reviewStatus": "PENDING"
+        }
+      ],
+      "units": [
+        {
+          "id": "mig002_366f2f061d630569",
+          "title": "默认单元",
+          "sortOrder": 0,
+          "lessons": [
+            {
+              "id": "mig002_30eafc9f0d2b664d",
+              "title": "默认课次",
+              "sortOrder": 0,
+              "activities": [
+                {
+                  "id": "mig002_d434f85830b4ad7d",
+                  "type": "TEXT",
+                  "title": "课程内容待补充",
+                  "instruction": {
+                    "originalText": "请补充本课程内容",
+                    "locale": "zh-CN",
+                    "translationSource": "NONE",
+                    "reviewStatus": "PENDING"
+                  },
+                  "sortOrder": 0,
+                  "required": false,
+                  "resources": [
+                    {
+                      "id": "mig001_e89ed53b17c6",
+                      "kind": "IMAGE",
+                      "objectKey": "mig002/IMAGE/assets/images/三年级-夏洛的网-课程封面.png",
+                      "mediaType": "application/octet-stream",
+                      "byteSize": 1340622,
+                      "rightsStatus": "UNKNOWN",
+                      "source": "legacy-local-asset",
+                      "rightsNote": "legacyCategory=COPYRIGHT_BLOCKED; suggestedDisposition=REVIEW"
+                    }
+                  ],
+                  "teacherNotes": {
+                    "originalText": "教师说明待补充",
+                    "locale": "zh-CN",
+                    "translationSource": "NONE",
+                    "reviewStatus": "PENDING"
+                  },
+                  "studentNotes": {
+                    "originalText": "学生说明待补充",
+                    "locale": "zh-CN",
+                    "translationSource": "NONE",
+                    "reviewStatus": "PENDING"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "mig002_83945370fc1e0ba1",
+      "schoolId": "platform-migration",
+      "courseId": "primary-3-festival-001",
+      "authorUserId": "system-migration",
+      "version": 1,
+      "status": "DRAFT",
+      "title": "雪顿节的欢歌",
+      "description": "层级：普惠版；学段：小学中学段；主题：传统节日",
+      "gradeBand": "grade-3",
+      "locale": "zh-CN",
+      "objectives": [
+        {
+          "originalText": "理解并讨论传统节日相关主题",
+          "locale": "zh-CN",
+          "translationSource": "NONE",
+          "reviewStatus": "PENDING"
+        },
+        {
+          "originalText": "认识文化元素：雪顿节、藏戏、酸奶",
+          "locale": "zh-CN",
+          "translationSource": "NONE",
+          "reviewStatus": "PENDING"
+        }
+      ],
+      "units": [
+        {
+          "id": "mig002_e47f33ea0e289736",
+          "title": "默认单元",
+          "sortOrder": 0,
+          "lessons": [
+            {
+              "id": "mig002_0b1feff228de7461",
+              "title": "默认课次",
+              "sortOrder": 0,
+              "activities": [
+                {
+                  "id": "mig002_755e42495d4e1624",
+                  "type": "TEXT",
+                  "title": "课程内容待补充",
+                  "instruction": {
+                    "originalText": "请补充本课程内容",
+                    "locale": "zh-CN",
+                    "translationSource": "NONE",
+                    "reviewStatus": "PENDING"
+                  },
+                  "sortOrder": 0,
+                  "required": false,
+                  "resources": [
+                    {
+                      "id": "mig001_50ef514bbc2c",
+                      "kind": "OTHER",
+                      "objectKey": "mig002/OTHER/cdn.jsdelivr.net/dist/chart.umd.min.js",
+                      "mediaType": "application/octet-stream",
+                      "byteSize": 0,
+                      "rightsStatus": "UNKNOWN",
+                      "uri": "https://cdn.jsdelivr.net/dist/chart.umd.min.js",
+                      "source": "external-cdn",
+                      "rightsNote": "legacyCategory=COPYRIGHT_BLOCKED; suggestedDisposition=REVIEW"
+                    }
+                  ],
+                  "teacherNotes": {
+                    "originalText": "教师说明待补充",
+                    "locale": "zh-CN",
+                    "translationSource": "NONE",
+                    "reviewStatus": "PENDING"
+                  },
+                  "studentNotes": {
+                    "originalText": "学生说明待补充",
+                    "locale": "zh-CN",
+                    "translationSource": "NONE",
+                    "reviewStatus": "PENDING"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "mig002_da8f6ed8bf192884",
+      "schoolId": "platform-migration",
+      "courseId": "primary-4-math-001",
+      "authorUserId": "system-migration",
+      "version": 1,
+      "status": "DRAFT",
+      "title": "生活中的数学",
+      "description": "层级：普惠版；学段：小学中学段；主题：数学应用",
+      "gradeBand": "grade-4",
+      "locale": "zh-CN",
+      "objectives": [
+        {
+          "originalText": "理解并讨论数学应用相关主题",
+          "locale": "zh-CN",
+          "translationSource": "NONE",
+          "reviewStatus": "PENDING"
+        },
+        {
+          "originalText": "认识文化元素：生活数学、藏族建筑、几何图形",
+          "locale": "zh-CN",
+          "translationSource": "NONE",
+          "reviewStatus": "PENDING"
+        }
+      ],
+      "units": [
+        {
+          "id": "mig002_f333e86234cd8830",
+          "title": "默认单元",
+          "sortOrder": 0,
+          "lessons": [
+            {
+              "id": "mig002_7aa378e6dbda4c17",
+              "title": "默认课次",
+              "sortOrder": 0,
+              "activities": [
+                {
+                  "id": "mig002_2e1c264c38b0d9b0",
+                  "type": "TEXT",
+                  "title": "课程内容待补充",
+                  "instruction": {
+                    "originalText": "请补充本课程内容",
+                    "locale": "zh-CN",
+                    "translationSource": "NONE",
+                    "reviewStatus": "PENDING"
+                  },
+                  "sortOrder": 0,
+                  "required": false,
+                  "resources": [
+                    {
+                      "id": "mig001_50ef514bbc2c",
+                      "kind": "OTHER",
+                      "objectKey": "mig002/OTHER/cdn.jsdelivr.net/dist/chart.umd.min.js",
+                      "mediaType": "application/octet-stream",
+                      "byteSize": 0,
+                      "rightsStatus": "UNKNOWN",
+                      "uri": "https://cdn.jsdelivr.net/dist/chart.umd.min.js",
+                      "source": "external-cdn",
+                      "rightsNote": "legacyCategory=COPYRIGHT_BLOCKED; suggestedDisposition=REVIEW"
+                    }
+                  ],
+                  "teacherNotes": {
+                    "originalText": "教师说明待补充",
+                    "locale": "zh-CN",
+                    "translationSource": "NONE",
+                    "reviewStatus": "PENDING"
+                  },
+                  "studentNotes": {
+                    "originalText": "学生说明待补充",
+                    "locale": "zh-CN",
+                    "translationSource": "NONE",
+                    "reviewStatus": "PENDING"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "mig002_24b6806251a98e26",
+      "schoolId": "platform-migration",
+      "courseId": "primary-5-poetry-001",
+      "authorUserId": "system-migration",
+      "version": 1,
+      "status": "DRAFT",
+      "title": "我为仓央嘉措诗配画",
+      "description": "层级：旗舰版；学段：小学高学段；主题：文学创作",
+      "gradeBand": "grade-5",
+      "locale": "zh-CN",
+      "objectives": [
+        {
+          "originalText": "理解并讨论文学创作相关主题",
+          "locale": "zh-CN",
+          "translationSource": "NONE",
+          "reviewStatus": "PENDING"
+        },
+        {
+          "originalText": "认识文化元素：仓央嘉措、诗歌、艺术创作",
+          "locale": "zh-CN",
+          "translationSource": "NONE",
+          "reviewStatus": "PENDING"
+        }
+      ],
+      "units": [
+        {
+          "id": "mig002_261f8bfc836a3102",
+          "title": "默认单元",
+          "sortOrder": 0,
+          "lessons": [
+            {
+              "id": "mig002_73d55c85d9adaf92",
+              "title": "默认课次",
+              "sortOrder": 0,
+              "activities": [
+                {
+                  "id": "mig002_b66a47ce100a67bc",
+                  "type": "TEXT",
+                  "title": "课程内容待补充",
+                  "instruction": {
+                    "originalText": "请补充本课程内容",
+                    "locale": "zh-CN",
+                    "translationSource": "NONE",
+                    "reviewStatus": "PENDING"
+                  },
+                  "sortOrder": 0,
+                  "required": false,
+                  "resources": [
+                    {
+                      "id": "mig001_6830fbc5fdc7",
+                      "kind": "IMAGE",
+                      "objectKey": "mig002/IMAGE/assets/images/五年级-我为仓央嘉措诗配画-课程封面.png",
+                      "mediaType": "application/octet-stream",
+                      "byteSize": 994590,
+                      "rightsStatus": "UNKNOWN",
+                      "source": "legacy-local-asset",
+                      "rightsNote": "legacyCategory=COPYRIGHT_BLOCKED; suggestedDisposition=REVIEW"
+                    }
+                  ],
+                  "teacherNotes": {
+                    "originalText": "教师说明待补充",
+                    "locale": "zh-CN",
+                    "translationSource": "NONE",
+                    "reviewStatus": "PENDING"
+                  },
+                  "studentNotes": {
+                    "originalText": "学生说明待补充",
+                    "locale": "zh-CN",
+                    "translationSource": "NONE",
+                    "reviewStatus": "PENDING"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "mig002_e372908e448e29c1",
+      "schoolId": "platform-migration",
+      "courseId": "primary-6-ecology-001",
+      "authorUserId": "system-migration",
+      "version": 1,
+      "status": "DRAFT",
+      "title": "青藏高原生态屏障",
+      "description": "层级：旗舰版；学段：小学高学段；主题：生态教育",
+      "gradeBand": "grade-6",
+      "locale": "zh-CN",
+      "objectives": [
+        {
+          "originalText": "理解并讨论生态教育相关主题",
+          "locale": "zh-CN",
+          "translationSource": "NONE",
+          "reviewStatus": "PENDING"
+        },
+        {
+          "originalText": "认识文化元素：藏羚羊、可可西里、环保",
+          "locale": "zh-CN",
+          "translationSource": "NONE",
+          "reviewStatus": "PENDING"
+        }
+      ],
+      "units": [
+        {
+          "id": "mig002_9185fa111dbbd777",
+          "title": "默认单元",
+          "sortOrder": 0,
+          "lessons": [
+            {
+              "id": "mig002_31c290aec8c80f57",
+              "title": "默认课次",
+              "sortOrder": 0,
+              "activities": [
+                {
+                  "id": "mig002_82704205b4780f92",
+                  "type": "TEXT",
+                  "title": "课程内容待补充",
+                  "instruction": {
+                    "originalText": "请补充本课程内容",
+                    "locale": "zh-CN",
+                    "translationSource": "NONE",
+                    "reviewStatus": "PENDING"
+                  },
+                  "sortOrder": 0,
+                  "required": false,
+                  "resources": [
+                    {
+                      "id": "mig001_50ef514bbc2c",
+                      "kind": "OTHER",
+                      "objectKey": "mig002/OTHER/cdn.jsdelivr.net/dist/chart.umd.min.js",
+                      "mediaType": "application/octet-stream",
+                      "byteSize": 0,
+                      "rightsStatus": "UNKNOWN",
+                      "uri": "https://cdn.jsdelivr.net/dist/chart.umd.min.js",
+                      "source": "external-cdn",
+                      "rightsNote": "legacyCategory=COPYRIGHT_BLOCKED; suggestedDisposition=REVIEW"
+                    }
+                  ],
+                  "teacherNotes": {
+                    "originalText": "教师说明待补充",
+                    "locale": "zh-CN",
+                    "translationSource": "NONE",
+                    "reviewStatus": "PENDING"
+                  },
+                  "studentNotes": {
+                    "originalText": "学生说明待补充",
+                    "locale": "zh-CN",
+                    "translationSource": "NONE",
+                    "reviewStatus": "PENDING"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    }
+  ]
+}

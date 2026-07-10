@@ -1,0 +1,31 @@
+{
+  "metadata": {
+    "taskId": "MIG-002",
+    "schemaVersion": "2026-07-10",
+    "deterministicByInput": true
+  },
+  "stats": {
+    "totalRecordCount": 10,
+    "courseCount": 10,
+    "versionCount": 10,
+    "unitCount": 10,
+    "lessonCount": 10,
+    "activityCount": 10,
+    "bilingualFieldCount": 60,
+    "resourceRefCount": 10,
+    "missingRightsCount": 10,
+    "missingAltCount": 2,
+    "unmappedStatusCount": 0,
+    "unmappedLocaleCount": 0
+  },
+  "dispositionCounts": {
+    "CONVERTED": 0,
+    "REVIEW": 10,
+    "REJECTED": 0,
+    "SKIPPED": 0
+  },
+  "piiScan": {
+    "findingCount": 0,
+    "findings": []
+  }
+}
