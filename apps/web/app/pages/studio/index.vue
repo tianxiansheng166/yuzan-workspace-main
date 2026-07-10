@@ -4,6 +4,10 @@ import CurriculumStudioScenarioField from "../../features/curriculum-studio/Curr
 import type { StudioScenario } from "../../features/curriculum-studio/model";
 import { useCurriculumStudioDashboard } from "../../features/curriculum-studio/useCurriculumStudioDashboard";
 
+useSeoMeta({
+  title: "课程工作台｜语赞心声",
+});
+
 const scenario = ref<StudioScenario>("demo");
 const { pending, result } = useCurriculumStudioDashboard(scenario);
 </script>
