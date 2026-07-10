@@ -7,6 +7,15 @@ const activityId = String(route.params.activityId ?? "");
 const player = useLearningPlayer(activityId);
 await player.load();
 
+useHead({ title: "学习活动｜语赞心声" });
+
+const pageHeading = computed(() => {
+  if (player.viewState.value === "loading") return "正在打开学习活动……";
+  if (player.viewState.value === "unknown") return "没有找到这个学习活动。";
+  if (player.viewState.value === "unavailable") return "这个活动暂不可用。";
+  return player.activity.value?.title ?? "学习活动";
+});
+
 function requestExit() {
   if (
     player.needsExitConfirmation.value &&
@@ -19,12 +28,15 @@ function requestExit() {
 </script>
 
 <template>
-  <main class="player yx-shell">
+  <section class="player yx-shell" aria-labelledby="player-page-title">
     <header class="player__header">
       <button type="button" class="back" @click="requestExit">
         返回今日页
       </button>
-      <p class="yx-kicker">学习播放器 · DEMO</p>
+      <div>
+        <p class="yx-kicker">学习播放器 · DEMO</p>
+        <h1 id="player-page-title">{{ pageHeading }}</h1>
+      </div>
     </header>
 
     <section
@@ -32,19 +44,19 @@ function requestExit() {
       class="state"
       aria-live="polite"
     >
-      <h1>正在打开学习活动……</h1>
+      <h2>正在准备活动内容，请稍候。</h2>
     </section>
     <section
       v-else-if="player.viewState.value === 'unknown'"
       class="state"
       role="alert"
     >
-      <h1>没有找到这个学习活动。</h1>
+      <h2>活动入口不可用</h2>
       <p>返回今日页选择一个现有任务，不会产生任何提交记录。</p>
       <NuxtLink to="/student/today">返回今日页</NuxtLink>
     </section>
     <section v-else-if="player.viewState.value === 'unavailable'" class="state">
-      <h1>这个活动暂不可用。</h1>
+      <h2>服务暂不可用</h2>
       <p>请稍后再试，或先完成其他任务。</p>
     </section>
 
@@ -52,7 +64,7 @@ function requestExit() {
       <div class="player__title">
         <div>
           <p class="yx-kicker">{{ player.activity.value.type }}</p>
-          <h1>{{ player.activity.value.title }}</h1>
+          <p class="player__activity-name">{{ player.activity.value.title }}</p>
         </div>
         <span class="status">{{ player.snapshot.value.status }}</span>
       </div>
@@ -192,7 +204,7 @@ function requestExit() {
         </button>
       </nav>
     </template>
-  </main>
+  </section>
 </template>
 
 <style scoped>
@@ -238,6 +250,10 @@ h1 {
   margin: 0.5rem 0;
   font-size: clamp(2rem, 6vw, 4.7rem);
   line-height: 1;
+}
+.player__activity-name {
+  margin: 0.5rem 0;
+  font: 700 clamp(1.4rem, 4vw, 2.4rem) / 1.1 var(--yx-font-display);
 }
 h2 {
   font-size: clamp(1.5rem, 3vw, 2.4rem);

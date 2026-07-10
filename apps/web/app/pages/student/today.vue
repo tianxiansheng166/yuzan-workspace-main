@@ -9,14 +9,16 @@ const route = useRoute();
 const scenario = (route.query.scenario as TodayScenario | undefined) ?? "demo";
 const { state, activities, primary, continuing, retests, completed, load } =
   useToday(scenario);
+
+useHead({ title: "今日学习｜语赞心声" });
 await load();
 </script>
 
 <template>
-  <main class="today yx-shell">
+  <section class="today yx-shell" aria-labelledby="today-page-title">
     <header class="today__intro">
       <p class="yx-kicker">今天的学习 · DEMO</p>
-      <h1>沿着今天的路径，先走最重要的一步。</h1>
+      <h1 id="today-page-title">沿着今天的路径，先走最重要的一步。</h1>
       <p>
         每个任务都会说明为什么做、需要多久、怎样算完成，以及卡住时怎么继续。
       </p>
@@ -121,7 +123,7 @@ await load();
         <p>完成状态来自 demo 数据；正式服务接入前不代表服务器记录。</p>
       </section>
     </template>
-  </main>
+  </section>
 </template>
 
 <style scoped>
