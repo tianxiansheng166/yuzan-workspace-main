@@ -1,0 +1,36 @@
+{
+  "version": "2.1.0",
+  "defaultProtectedGlobs": [
+    "apps/web/app/lib/api/**",
+    "apps/web/app/middleware/**",
+    "apps/web/app/plugins/**",
+    "apps/web/server/**",
+    "apps/web/app/**/ports/**",
+    "apps/web/app/**/adapters/**",
+    "apps/web/app/**/state/**",
+    "apps/web/app/**/runtime/**",
+    "packages/contracts/**",
+    "apps/api/**",
+    "infra/database/**",
+    "package.json",
+    "pnpm-lock.yaml",
+    "apps/web/package.json",
+    "apps/web/nuxt.config.ts"
+  ],
+  "sharedOwnerGlobs": [
+    "packages/ui/src/tokens.css",
+    "packages/ui/src/base.css",
+    "packages/ui/src/index.ts",
+    "apps/web/app/components/app-shell/**",
+    "apps/web/app/layouts/**"
+  ],
+  "allowedOnlyWithExplicitGrant": true,
+  "neverResolveConflictBy": [
+    "deleting business tests",
+    "restoring demo data",
+    "removing API calls",
+    "removing middleware",
+    "hardcoding success",
+    "modifying OpenAPI payloads"
+  ]
+}

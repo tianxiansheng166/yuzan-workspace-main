@@ -1,0 +1,39 @@
+{
+  "product": "语赞心声",
+  "mission": "面向西藏农牧区国家通用语言文字学习与教师支持的援藏教育公益平台",
+  "visualTheme": "红脉青稞·高原声场",
+  "hardRules": {
+    "cardWallDefault": false,
+    "nestedCards": false,
+    "glassmorphism": false,
+    "warmYellowCanvas": false,
+    "purpleBlueGradient": false,
+    "emojiIcons": false,
+    "fakeImpactData": false,
+    "externalVisualAssets": false,
+    "developerCopyVisible": false
+  },
+  "requiredMotifs": [
+    "公益红脉",
+    "青稞成长路径",
+    "高原地形线",
+    "语言声波"
+  ],
+  "pageArchetypes": {
+    "public": "editorial_storytelling",
+    "teacher": "workspace_dense",
+    "student": "guided_learning",
+    "assessment": "single_task_focus",
+    "reports": "growth_narrative"
+  },
+  "reviewMode": "batch_after_wave",
+  "strictIndependentReviewOnlyFor": [
+    "authentication",
+    "authorization",
+    "multi_tenancy",
+    "database_transactions",
+    "file_boundaries",
+    "privacy",
+    "root_security_wiring"
+  ]
+}
