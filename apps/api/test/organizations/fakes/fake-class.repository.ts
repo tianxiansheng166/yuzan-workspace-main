@@ -1,3 +1,4 @@
+import { MembershipRole } from "../../../src/common/security/index.js";
 import type {
   Class,
   ClassEnrollment,
@@ -6,6 +7,7 @@ import type {
 } from "../../../src/modules/classes/domain/class.types.js";
 import type {
   ClassRepositoryPort,
+  FindVisibleClassOptions,
   ListClassesOptions,
   PaginatedResult,
 } from "../../../src/modules/classes/ports/class-repository.port.js";
@@ -31,6 +33,29 @@ export class FakeClassRepository implements ClassRepositoryPort {
       return null;
     }
     return classItem;
+  }
+
+  async findVisibleClassById(
+    options: FindVisibleClassOptions,
+  ): Promise<Class | null> {
+    const { schoolId, classId, actor } = options;
+    const classItem = this.classes.get(classId);
+    if (!classItem || classItem.schoolId !== schoolId) {
+      return null;
+    }
+
+    if (actor.roles.includes(MembershipRole.SCHOOL_ADMIN)) {
+      return classItem;
+    }
+
+    if (
+      actor.roles.includes(MembershipRole.TEACHER) &&
+      classItem.teacherUserIds.includes(actor.userId)
+    ) {
+      return classItem;
+    }
+
+    return null;
   }
 
   async list(
