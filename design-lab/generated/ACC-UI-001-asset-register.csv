@@ -1,0 +1,2 @@
+asset_id,task_id,purpose,creator,source,rights_review,accessibility,output_path,status
+ACC-UI-001-TERRAIN-001,ACC-UI-001,Homepage learning-path terrain and speech-wave background,VM1-Codex-4 custom code drawing,Original geometry with no external references,Self-authored and cleared,Decorative background plus title and description in source,apps/web/public/art/acc-ui-001-learning-terrain.svg,ready

@@ -11,6 +11,17 @@ a {
   text-underline-offset: 0.18em;
 }
 
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 3px solid #d39a2f;
+  outline-offset: 3px;
+}
+
+@media (forced-colors: active) {
+  :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+    outline: 3px solid CanvasText;
+  }
+}
+
 .page-enter-active,
 .page-leave-active {
   transition:
