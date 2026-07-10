@@ -1,14 +1,15 @@
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
+import { createIndexedDbOfflineStoragePort } from "~/features/offline/storage/indexeddb-offline-storage";
 import { createBrowserRecorderAdapter } from "../adapters/browser-recorder.adapter";
 import { createBrowserSpeechCapability } from "../capabilities/browser-speech-capability";
-import { createMemoryRecordingStore } from "../storage/offline-recording-store";
+import { createOfflineRecordingStore } from "../storage/offline-recording-store";
 import { createRecordingController } from "./create-recording-controller";
 
 export function useSpeechRecorder() {
   const controller = createRecordingController({
     capability: createBrowserSpeechCapability(),
     recorder: createBrowserRecorderAdapter(),
-    store: createMemoryRecordingStore(),
+    store: createOfflineRecordingStore(createIndexedDbOfflineStoragePort()),
   });
   const revision = ref(0);
   const refresh = () => revision.value++;
