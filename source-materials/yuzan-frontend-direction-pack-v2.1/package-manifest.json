@@ -12,6 +12,12 @@
   "streamContracts": "machine/stream-contracts.json",
   "visualReferenceCount": 10,
   "imagePromptCount": 20,
+  "manualImageGeneration": {
+    "entry": "manual-image-generation/README.md",
+    "index": "manual-image-generation/index.json",
+    "folderCount": 32,
+    "sourcePromptsPreserved": true
+  },
   "streamCount": 4,
   "reviewMode": "self-review-per-stream-then-single-batch-review",
   "sourceScreenshotsIncluded": true,
