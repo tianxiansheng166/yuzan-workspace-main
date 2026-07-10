@@ -1,0 +1,67 @@
+{
+  "task": "QA-003",
+  "qaBase": "3663ad6d8ef2e87654aa498cadf7bc653ee8c1ff",
+  "environment": "VM1, Node 24.18.0, browser unavailable",
+  "findings": [
+    {
+      "id": "QA-003-001",
+      "severity": "medium",
+      "route": "/student/today; /student/learning/[activityId]",
+      "viewport": "all",
+      "category": "accessibility-landmark",
+      "reproduction": "Open either route and inspect the landmark tree. AppShell supplies main#main, while each page renders another main element inside it.",
+      "expected": "One non-nested main landmark per document.",
+      "actual": "The student pages create nested main landmarks.",
+      "evidence": "apps/web/app/components/app-shell/AppShell.vue and the two student page templates",
+      "likelyOwnerTask": "LRN-002",
+      "blocking": false,
+      "confidence": "high",
+      "environment": "static source inspection"
+    },
+    {
+      "id": "QA-003-002",
+      "severity": "medium",
+      "route": "/student/today; /studio; /teacher/assignments; /teacher/review",
+      "viewport": "all",
+      "category": "accessibility-page-title",
+      "reproduction": "Navigate to each route and inspect its page component or generated head metadata.",
+      "expected": "Every major route sets a concise, unique document title.",
+      "actual": "These route components do not call useSeoMeta/useHead, so they retain the application default title.",
+      "evidence": "route source search for useSeoMeta/useHead",
+      "likelyOwnerTask": "LRN-002, CUR-002, ASN-002, SUB-002",
+      "blocking": false,
+      "confidence": "high",
+      "environment": "static source inspection"
+    },
+    {
+      "id": "QA-003-003",
+      "severity": "medium",
+      "route": "all AppShell routes",
+      "viewport": "all",
+      "category": "visual-system-consistency",
+      "reproduction": "Inspect the sticky application header against content while scrolling.",
+      "expected": "Opaque or minimally translucent navigation consistent with the no-glassmorphism direction.",
+      "actual": "The shared header uses a transparent gradient plus backdrop-filter: blur(18px).",
+      "evidence": "apps/web/app/components/app-shell/AppShell.vue",
+      "likelyOwnerTask": "WEB-001",
+      "blocking": false,
+      "confidence": "high",
+      "environment": "static CSS inspection; visual impact needs browser confirmation"
+    },
+    {
+      "id": "QA-003-004",
+      "severity": "observation",
+      "route": "/student/assessment",
+      "viewport": "all",
+      "category": "route-mapping",
+      "reproduction": "Compare requested QA route with Nuxt page tree.",
+      "expected": "Use the actual assessment route.",
+      "actual": "No /student/assessment page exists; the implemented route is /assessment.",
+      "evidence": "apps/web/app/pages/assessment/index.vue",
+      "likelyOwnerTask": "QA-003 documentation",
+      "blocking": false,
+      "confidence": "high",
+      "environment": "route-tree inspection"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+route,source,viewports,static_load,heading,demo_or_unavailable,browser_visual,notes
+/,apps/web/app/pages/index.vue,"390x844;768x1024;1440x900",PASS,PASS,PASS,MANUAL_CONFIRMATION_REQUIRED,Home route
+/login,apps/web/app/pages/login.vue,"390x844;768x1024;1440x900",PASS,PASS,PASS,MANUAL_CONFIRMATION_REQUIRED,Unavailable auth boundary
+/student/today,apps/web/app/pages/student/today.vue,"390x844;768x1024;1440x900",PASS,PASS,PASS,MANUAL_CONFIRMATION_REQUIRED,Nested main finding
+/assessment,apps/web/app/pages/assessment/index.vue,"390x844;768x1024;1440x900",PASS,PASS,PASS,MANUAL_CONFIRMATION_REQUIRED,Actual route replacing requested /student/assessment
+/studio,apps/web/app/pages/studio/index.vue,"390x844;768x1024;1440x900",PASS,PASS,PASS,MANUAL_CONFIRMATION_REQUIRED,Unique title missing
+/teacher/assignments,apps/web/app/pages/teacher/assignments/index.vue,"390x844;768x1024;1440x900",PASS,PASS,PASS,MANUAL_CONFIRMATION_REQUIRED,Unique title missing
+/teacher/review,apps/web/app/pages/teacher/review/index.vue,"390x844;768x1024;1440x900",PASS,PASS,PASS,MANUAL_CONFIRMATION_REQUIRED,Unique title missing
+/reports,apps/web/app/pages/reports/index.vue,"390x844;768x1024;1440x900",PASS,PASS,PASS,MANUAL_CONFIRMATION_REQUIRED,Demo report gateway
+/design/icons,apps/web/app/pages/design/icons.vue,"390x844;768x1024;1440x900",PASS,PASS,PASS,MANUAL_CONFIRMATION_REQUIRED,Icon semantics require browser tree
