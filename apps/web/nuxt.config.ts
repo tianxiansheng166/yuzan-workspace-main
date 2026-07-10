@@ -2,6 +2,7 @@ export default defineNuxtConfig({
   compatibilityDate: "2026-07-01",
   devtools: { enabled: true },
   css: ["@yuzan/ui/base.css", "~/assets/app.css"],
+  plugins: ["~/features/offline/runtime/offline.client"],
   runtimeConfig: {
     public: {
       apiBase:
@@ -18,6 +19,16 @@ export default defineNuxtConfig({
           content: "面向弱网与离线环境的国家通用语言文字教与学平台",
         },
         { name: "theme-color", content: "#f7f2e8" },
+        { name: "apple-mobile-web-app-capable", content: "yes" },
+      ],
+      link: [
+        { rel: "manifest", href: "/manifest.webmanifest" },
+        { rel: "icon", href: "/icons/pwa-icon.svg", type: "image/svg+xml" },
+        {
+          rel: "apple-touch-icon",
+          href: "/icons/pwa-icon.svg",
+          type: "image/svg+xml",
+        },
       ],
     },
   },
