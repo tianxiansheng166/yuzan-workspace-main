@@ -92,3 +92,16 @@ export interface LoginPageState {
   message?: string;
   submitting: boolean;
 }
+
+export interface SchoolOption {
+  schoolId: string;
+  schoolName: string;
+  role: UserRole;
+}
+
+export interface WebSession {
+  userId: string;
+  displayName: string;
+  memberships: SchoolOption[];
+  activeSchoolId?: string;
+}

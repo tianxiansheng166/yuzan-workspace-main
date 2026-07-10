@@ -75,10 +75,7 @@ const helperCopy = computed(() => {
     <div class="login-panel__copy">
       <p class="yx-kicker">IDENTITY WEB</p>
       <h1 id="login-title">统一登录与会话状态</h1>
-      <p>
-        登录页先建立明确边界：状态可见、回跳安全、会话可清理，等待真实 SSO
-        与身份服务接入。
-      </p>
+      <p>使用学校账号登录。会话由安全 Cookie 维护，浏览器不会保存访问令牌。</p>
       <div class="login-panel__meta">
         <YxStatus :tone="statusTone">{{ statusLabel }}</YxStatus>
         <YxStatus tone="neutral">模式：{{ serviceMode }}</YxStatus>
@@ -97,8 +94,8 @@ const helperCopy = computed(() => {
         autofocus
         :description="
           status === 'unavailable'
-            ? '当前环境只展示占位边界，可先验证交互和错误处理。'
-            : '请输入由统一身份系统分配的账号。'
+            ? '服务当前不可用，恢复后可使用真实账号登录。'
+            : '请输入由学校分配的账号。'
         "
         @update:model-value="emit('update:identifier', $event)"
       />
