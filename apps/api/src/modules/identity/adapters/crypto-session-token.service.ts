@@ -1,6 +1,5 @@
 import { randomBytes, createHash } from "node:crypto";
 import type { SessionTokenService } from "../ports/session-token.service.js";
-import type { TokenPair } from "../identity.types.js";
 
 const TOKEN_BYTES = 48;
 
@@ -16,13 +15,13 @@ function generateToken(): string {
  * random values; the hash is used for lookup, not for password protection.
  */
 export class CryptoSessionTokenService implements SessionTokenService {
-  async generatePair(): Promise<TokenPair> {
-    const now = Date.now();
+  async generatePair(): Promise<{
+    accessToken: string;
+    refreshToken: string;
+  }> {
     const accessToken = generateToken();
     const refreshToken = generateToken();
-    // Refresh token drives the session lifetime.
-    const expiresAt = new Date(now + 7 * 24 * 60 * 60 * 1000);
-    return { accessToken, refreshToken, expiresAt };
+    return { accessToken, refreshToken };
   }
 
   async hash(token: string): Promise<string> {

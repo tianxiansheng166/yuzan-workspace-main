@@ -74,7 +74,7 @@ describe("SessionAuthContextSource", () => {
     expect(result).toBeNull();
   });
 
-  it("ignores client-provided roles and reads roles from server membership", async () => {
+  it("ignores client role, school and timestamp declarations", async () => {
     const f = createIdentityServiceFixture();
     const user = activeTeacher();
     f.users.add(user);
@@ -87,6 +87,8 @@ describe("SessionAuthContextSource", () => {
       headers: {
         authorization: `Bearer ${session.tokens.accessToken}`,
         "x-role": "PLATFORM_ADMIN",
+        "x-school-id": "school-forged",
+        "x-client-timestamp": "2099-01-01T00:00:00.000Z",
       },
     });
 
@@ -94,5 +96,6 @@ describe("SessionAuthContextSource", () => {
 
     expect(result).not.toBeNull();
     expect(result!.principal.roles).toEqual([MembershipRole.TEACHER]);
+    expect(result!.tenant.schoolId).toBe("school-a");
   });
 });

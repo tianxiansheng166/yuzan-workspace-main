@@ -10,4 +10,8 @@ export class DenyPasswordVerifier implements PasswordVerifier {
   async verify(_password: string, _hash: string): Promise<boolean> {
     return false;
   }
+
+  async verifyDummy(_password: string): Promise<boolean> {
+    return false;
+  }
 }

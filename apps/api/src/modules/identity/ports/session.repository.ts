@@ -14,7 +14,8 @@ export interface SessionRepository {
       activeSchoolId: string | null;
       accessTokenHash: string;
       refreshTokenHash: string;
-      expiresAt: Date;
+      accessExpiresAt: Date;
+      refreshExpiresAt: Date;
     }>,
   ): Promise<UserSession>;
 
@@ -23,10 +24,19 @@ export interface SessionRepository {
 
   revoke(sessionId: string): Promise<void>;
 
-  rotateRefreshToken(
-    sessionId: string,
-    newRefreshHash: string,
-    newExpiresAt: Date,
+  compareAndRotateRefreshSession(
+    params: Readonly<{
+      sessionId: string;
+      expectedRefreshTokenHash: string;
+      now: Date;
+      successor: {
+        activeSchoolId: string | null;
+        accessTokenHash: string;
+        refreshTokenHash: string;
+        accessExpiresAt: Date;
+        refreshExpiresAt: Date;
+      };
+    }>,
   ): Promise<UserSession | null>;
 }
 

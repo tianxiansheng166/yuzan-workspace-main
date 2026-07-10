@@ -25,7 +25,7 @@ export class UnavailableSessionRepository implements SessionRepository {
     throw new IdentityException("AUTH_SERVICE_UNAVAILABLE");
   }
 
-  async rotateRefreshToken(): Promise<UserSession | null> {
+  async compareAndRotateRefreshSession(): Promise<UserSession | null> {
     throw new IdentityException("AUTH_SERVICE_UNAVAILABLE");
   }
 }

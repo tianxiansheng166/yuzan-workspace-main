@@ -8,7 +8,6 @@ import type {
   UserIdentityRepository,
 } from "../../../src/modules/identity/ports/index.js";
 import type {
-  TokenPair,
   UserIdentity,
   UserMembership,
   UserSession,
@@ -58,30 +57,36 @@ export class FakeMembershipRepository implements MembershipRepository {
 
 export class FakePasswordVerifier implements PasswordVerifier {
   private passwords = new Map<string, string>();
+  readonly calls: Array<{ kind: "real" | "dummy"; password: string }> = [];
 
   register(userId: string, password: string): void {
     this.passwords.set(userId, password);
   }
 
   async verify(password: string, hash: string): Promise<boolean> {
+    this.calls.push({ kind: "real", password });
     // In tests, the "hash" is the userId placeholder recorded by fixtures.
     const expected = this.passwords.get(hash);
     return expected === password;
+  }
+
+  async verifyDummy(password: string): Promise<boolean> {
+    this.calls.push({ kind: "dummy", password });
+    return false;
   }
 }
 
 export class FakeSessionTokenService implements SessionTokenService {
   private counter = 0;
 
-  async generatePair(): Promise<TokenPair> {
+  async generatePair(): Promise<{
+    accessToken: string;
+    refreshToken: string;
+  }> {
     this.counter += 1;
     const accessToken = `access-token-${this.counter}-${randomBytes(8).toString("hex")}`;
     const refreshToken = `refresh-token-${this.counter}-${randomBytes(8).toString("hex")}`;
-    return {
-      accessToken,
-      refreshToken,
-      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-    };
+    return { accessToken, refreshToken };
   }
 
   async hash(token: string): Promise<string> {
@@ -90,7 +95,11 @@ export class FakeSessionTokenService implements SessionTokenService {
 }
 
 export class FakeSessionRepository implements SessionRepository {
-  private sessions = new Map<string, UserSession>();
+  private sessionsById = new Map<string, UserSession>();
+  private accessIndex = new Map<string, string>();
+  private refreshIndex = new Map<string, string>();
+  private nextId = 1;
+  private failNextRotation = false;
 
   async create(
     params: Readonly<{
@@ -98,63 +107,98 @@ export class FakeSessionRepository implements SessionRepository {
       activeSchoolId: string | null;
       accessTokenHash: string;
       refreshTokenHash: string;
-      expiresAt: Date;
+      accessExpiresAt: Date;
+      refreshExpiresAt: Date;
     }>,
   ): Promise<UserSession> {
     const session: UserSession = {
-      id: `session-${this.sessions.size + 1}`,
+      id: `session-${this.nextId++}`,
       ...params,
       revokedAt: null,
       createdAt: new Date(),
       lastUsedAt: new Date(),
     };
-    this.sessions.set(session.id, session);
-    this.sessions.set(session.accessTokenHash, session);
-    this.sessions.set(session.refreshTokenHash, session);
+    this.store(session);
     return session;
   }
 
   async findByAccessTokenHash(
     accessTokenHash: string,
   ): Promise<UserSession | null> {
-    return this.sessions.get(accessTokenHash) ?? null;
+    const id = this.accessIndex.get(accessTokenHash);
+    return id ? (this.sessionsById.get(id) ?? null) : null;
   }
 
   async findByRefreshTokenHash(
     refreshTokenHash: string,
   ): Promise<UserSession | null> {
-    return this.sessions.get(refreshTokenHash) ?? null;
+    const id = this.refreshIndex.get(refreshTokenHash);
+    return id ? (this.sessionsById.get(id) ?? null) : null;
   }
 
   async revoke(sessionId: string): Promise<void> {
-    const session = this.sessions.get(sessionId);
+    const session = this.sessionsById.get(sessionId);
     if (session) {
       session.revokedAt = new Date();
     }
   }
 
-  async rotateRefreshToken(
-    sessionId: string,
-    newRefreshHash: string,
-    newExpiresAt: Date,
+  async compareAndRotateRefreshSession(
+    params: Readonly<{
+      sessionId: string;
+      expectedRefreshTokenHash: string;
+      now: Date;
+      successor: {
+        activeSchoolId: string | null;
+        accessTokenHash: string;
+        refreshTokenHash: string;
+        accessExpiresAt: Date;
+        refreshExpiresAt: Date;
+      };
+    }>,
   ): Promise<UserSession | null> {
-    const session = this.sessions.get(sessionId);
-    if (!session || session.revokedAt) {
+    const session = this.sessionsById.get(params.sessionId);
+    if (
+      this.failNextRotation ||
+      !session ||
+      session.revokedAt ||
+      session.refreshTokenHash !== params.expectedRefreshTokenHash ||
+      session.refreshExpiresAt <= params.now
+    ) {
+      this.failNextRotation = false;
       return null;
     }
-    // Revoke the old session to prevent reuse of the old refresh token.
-    session.revokedAt = new Date();
-    const rotated: UserSession = {
-      ...session,
-      id: `session-${this.sessions.size + 1}`,
-      refreshTokenHash: newRefreshHash,
-      expiresAt: newExpiresAt,
+    session.revokedAt = params.now;
+    const successor: UserSession = {
+      id: `session-${this.nextId++}`,
+      userId: session.userId,
+      ...params.successor,
       revokedAt: null,
+      createdAt: params.now,
+      lastUsedAt: params.now,
     };
-    this.sessions.set(rotated.id, rotated);
-    this.sessions.set(rotated.accessTokenHash, rotated);
-    this.sessions.set(rotated.refreshTokenHash, rotated);
-    return rotated;
+    this.store(successor);
+    return successor;
+  }
+
+  sessionCount(): number {
+    return this.sessionsById.size;
+  }
+
+  activeSessionCount(): number {
+    return [...this.sessionsById.values()].filter(
+      (session) => !session.revokedAt,
+    ).length;
+  }
+
+  failNextCompareAndRotate(): void {
+    this.failNextRotation = true;
+  }
+
+  private store(session: UserSession): void {
+    this.sessionsById.set(session.id, session);
+    this.accessIndex.set(session.accessTokenHash, session.id);
+    this.refreshIndex.set(session.refreshTokenHash, session.id);
   }
 }
 

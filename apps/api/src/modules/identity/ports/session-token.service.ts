@@ -1,5 +1,3 @@
-import type { TokenPair } from "../identity.types.js";
-
 /**
  * Port for generating opaque session tokens.
  *
@@ -7,7 +5,10 @@ import type { TokenPair } from "../identity.types.js";
  * must never expose the token hash derivation algorithm.
  */
 export interface SessionTokenService {
-  generatePair(): Promise<TokenPair>;
+  generatePair(): Promise<{
+    readonly accessToken: string;
+    readonly refreshToken: string;
+  }>;
   hash(token: string): Promise<string>;
 }
 

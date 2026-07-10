@@ -7,6 +7,8 @@
  */
 export interface PasswordVerifier {
   verify(password: string, hash: string): Promise<boolean>;
+  /** Perform equivalent password-hash work without using a real user's hash. */
+  verifyDummy(password: string): Promise<boolean>;
 }
 
 export const PASSWORD_VERIFIER = Symbol("PASSWORD_VERIFIER");

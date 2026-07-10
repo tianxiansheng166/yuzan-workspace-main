@@ -54,7 +54,7 @@ export class IdentityService {
     const user = await this.users.findByIdentifier(identifier);
     const passwordValid = user
       ? await this.passwordVerifier.verify(password, user.passwordHash)
-      : false;
+      : await this.passwordVerifier.verifyDummy(password);
 
     // Uniform failure response to prevent account enumeration.
     if (!user || !passwordValid || user.status !== "ACTIVE") {
@@ -97,7 +97,8 @@ export class IdentityService {
       throw new IdentityException("AUTH_SESSION_REVOKED");
     }
 
-    if (session.expiresAt <= this.clock.now()) {
+    const now = this.clock.now();
+    if (session.refreshExpiresAt <= now) {
       throw new IdentityException("AUTH_SESSION_EXPIRED");
     }
 
@@ -119,40 +120,34 @@ export class IdentityService {
 
     this.rejectUnsupportedRoles(activeMemberships);
 
-    const targetMembership = session.activeSchoolId
-      ? activeMemberships.find((m) => m.schoolId === session.activeSchoolId)
-      : activeMemberships[0];
-
-    if (!targetMembership) {
+    const activeSchoolId = this.resolveSessionSchoolId(
+      session.activeSchoolId,
+      activeMemberships,
+    );
+    if (session.activeSchoolId && !activeSchoolId) {
       throw new IdentityException("AUTH_TENANT_NOT_ALLOWED");
     }
 
-    const activeSchoolId = targetMembership.schoolId;
-
-    const newTokens = await this.tokens.generatePair();
+    const newTokens = await this.generateTokens(now);
     const newAccessHash = await this.tokens.hash(newTokens.accessToken);
     const newRefreshHash = await this.tokens.hash(newTokens.refreshToken);
-    const newExpiresAt = this.expiresAt();
 
-    const rotated = await this.sessions.rotateRefreshToken(
-      session.id,
-      newRefreshHash,
-      newExpiresAt,
-    );
+    const rotated = await this.sessions.compareAndRotateRefreshSession({
+      sessionId: session.id,
+      expectedRefreshTokenHash: refreshHash,
+      now,
+      successor: {
+        activeSchoolId,
+        accessTokenHash: newAccessHash,
+        refreshTokenHash: newRefreshHash,
+        accessExpiresAt: newTokens.accessExpiresAt,
+        refreshExpiresAt: newTokens.refreshExpiresAt,
+      },
+    });
 
     if (!rotated) {
       throw new IdentityException("AUTH_SESSION_REVOKED");
     }
-
-    // Store the access token hash so the session-aware AuthContextSource can
-    // resolve requests without exposing the raw token.
-    await this.sessions.create({
-      userId: user.id,
-      activeSchoolId,
-      accessTokenHash: newAccessHash,
-      refreshTokenHash: newRefreshHash,
-      expiresAt: newExpiresAt,
-    });
 
     return {
       user,
@@ -251,7 +246,7 @@ export class IdentityService {
     if (
       !session ||
       session.revokedAt ||
-      session.expiresAt <= this.clock.now()
+      session.accessExpiresAt <= this.clock.now()
     ) {
       return null;
     }
@@ -272,9 +267,16 @@ export class IdentityService {
       return null;
     }
 
-    const targetMembership = session.activeSchoolId
-      ? activeMemberships.find((m) => m.schoolId === session.activeSchoolId)
-      : activeMemberships[0];
+    const activeSchoolId = this.resolveSessionSchoolId(
+      session.activeSchoolId,
+      activeMemberships,
+    );
+    if (!activeSchoolId) {
+      return null;
+    }
+    const targetMembership = activeMemberships.find(
+      (membership) => membership.schoolId === activeSchoolId,
+    );
 
     if (!targetMembership || !isMembershipRole(targetMembership.role)) {
       return null;
@@ -311,24 +313,30 @@ export class IdentityService {
     userId: string,
     activeSchoolId: string | null,
   ): Promise<TokenPair> {
-    const tokens = await this.tokens.generatePair();
+    const tokens = await this.generateTokens(this.clock.now());
     const accessHash = await this.tokens.hash(tokens.accessToken);
     const refreshHash = await this.tokens.hash(tokens.refreshToken);
-    const expiresAt = this.expiresAt();
 
     await this.sessions.create({
       userId,
       activeSchoolId,
       accessTokenHash: accessHash,
       refreshTokenHash: refreshHash,
-      expiresAt,
+      accessExpiresAt: tokens.accessExpiresAt,
+      refreshExpiresAt: tokens.refreshExpiresAt,
     });
 
     return tokens;
   }
 
-  private expiresAt(): Date {
-    return new Date(this.clock.now().getTime() + REFRESH_TOKEN_TTL_MS);
+  private async generateTokens(now: Date): Promise<TokenPair> {
+    const generated = await this.tokens.generatePair();
+    return {
+      accessToken: generated.accessToken,
+      refreshToken: generated.refreshToken,
+      accessExpiresAt: new Date(now.getTime() + ACCESS_TOKEN_TTL_MS),
+      refreshExpiresAt: new Date(now.getTime() + REFRESH_TOKEN_TTL_MS),
+    };
   }
 
   private resolveActiveSchoolId(
@@ -340,6 +348,22 @@ export class IdentityService {
     // If the user has only one active membership, default to it.
     // Multiple memberships require an explicit selection step.
     return memberships.length === 1 ? memberships[0]!.schoolId : null;
+  }
+
+  private resolveSessionSchoolId(
+    activeSchoolId: string | null,
+    activeMemberships: readonly UserMembership[],
+  ): string | null {
+    if (activeSchoolId) {
+      return activeMemberships.some(
+        (membership) => membership.schoolId === activeSchoolId,
+      )
+        ? activeSchoolId
+        : null;
+    }
+    return activeMemberships.length === 1
+      ? activeMemberships[0]!.schoolId
+      : null;
   }
 
   private rejectUnsupportedRoles(memberships: readonly UserMembership[]): void {

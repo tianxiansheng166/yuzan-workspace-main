@@ -47,7 +47,8 @@ export interface UserSession {
   readonly activeSchoolId: string | null;
   readonly accessTokenHash: string;
   readonly refreshTokenHash: string;
-  readonly expiresAt: Date;
+  readonly accessExpiresAt: Date;
+  readonly refreshExpiresAt: Date;
   readonly revokedAt: Date | null;
   readonly createdAt: Date;
   readonly lastUsedAt: Date;
@@ -59,7 +60,8 @@ export interface UserSession {
 export interface TokenPair {
   readonly accessToken: string;
   readonly refreshToken: string;
-  readonly expiresAt: Date;
+  readonly accessExpiresAt: Date;
+  readonly refreshExpiresAt: Date;
 }
 
 /**

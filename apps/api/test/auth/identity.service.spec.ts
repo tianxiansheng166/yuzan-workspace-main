@@ -21,6 +21,32 @@ import {
 } from "./fixtures/users.js";
 
 describe("IdentityService", () => {
+  it("performs real password verification for an existing user", async () => {
+    const f = createIdentityServiceFixture();
+    const user = activeTeacher();
+    f.users.add(user);
+    f.passwords.register(user.passwordHash, "correct-password");
+    f.memberships.add(teacherMembership(user.id));
+
+    await f.service.login(user.loginIdentifier, "correct-password");
+
+    expect(f.passwords.calls).toEqual([
+      { kind: "real", password: "correct-password" },
+    ]);
+  });
+
+  it("performs dummy password verification for a missing user", async () => {
+    const f = createIdentityServiceFixture();
+
+    await expect(
+      f.service.login("missing@example.edu", "unknown-password"),
+    ).rejects.toHaveProperty("code", "AUTH_INVALID_CREDENTIALS");
+
+    expect(f.passwords.calls).toEqual([
+      { kind: "dummy", password: "unknown-password" },
+    ]);
+  });
+
   it("allows login with correct credentials", async () => {
     const f = createIdentityServiceFixture();
     const user = activeTeacher();
@@ -185,6 +211,20 @@ describe("IdentityService", () => {
     expect(session.activeSchoolId).toBe("school-a");
   });
 
+  it("selects exactly one active school while ignoring inactive memberships", async () => {
+    const f = createIdentityServiceFixture();
+    const user = activeTeacher();
+    f.users.add(user);
+    f.passwords.register(user.passwordHash, "password");
+    f.memberships.add(invitedMembership(user.id));
+    f.memberships.add(teacherMembership(user.id, "school-b"));
+
+    const session = await f.service.login(user.loginIdentifier, "password");
+
+    expect(session.activeSchoolId).toBe("school-b");
+    expect(session.memberships).toHaveLength(1);
+  });
+
   it("leaves activeSchoolId null when multiple schools exist", async () => {
     const f = createIdentityServiceFixture();
     const user = activeTeacher();
@@ -195,6 +235,59 @@ describe("IdentityService", () => {
 
     const session = await f.service.login(user.loginIdentifier, "password");
     expect(session.activeSchoolId).toBeNull();
+  });
+
+  it("does not create a session with zero active memberships", async () => {
+    const f = createIdentityServiceFixture();
+    const user = activeTeacher();
+    f.users.add(user);
+    f.passwords.register(user.passwordHash, "password");
+
+    await expect(
+      f.service.login(user.loginIdentifier, "password"),
+    ).rejects.toHaveProperty("code", "AUTH_MEMBERSHIP_INACTIVE");
+    expect(f.sessions.sessionCount()).toBe(0);
+  });
+
+  it("does not resolve a tenant for multiple active memberships", async () => {
+    const f = createIdentityServiceFixture();
+    const user = activeTeacher();
+    f.users.add(user);
+    f.passwords.register(user.passwordHash, "password");
+    f.memberships.add(teacherMembership(user.id, "school-a"));
+    f.memberships.add(teacherMembership(user.id, "school-b"));
+
+    const session = await f.service.login(user.loginIdentifier, "password");
+
+    await expect(
+      f.service.resolveSession("req-multi", session.tokens.accessToken),
+    ).resolves.toBeNull();
+    const refreshed = await f.service.refresh(session.tokens.refreshToken);
+    expect(refreshed.activeSchoolId).toBeNull();
+    await expect(
+      f.service.resolveSession("req-refreshed", refreshed.tokens.accessToken),
+    ).resolves.toBeNull();
+  });
+
+  it("keeps multi-school resolution independent of membership order", async () => {
+    for (const schools of [
+      ["school-a", "school-b"],
+      ["school-b", "school-a"],
+    ]) {
+      const f = createIdentityServiceFixture();
+      const user = activeTeacher();
+      f.users.add(user);
+      f.passwords.register(user.passwordHash, "password");
+      f.memberships.add(
+        ...schools.map((school) => teacherMembership(user.id, school)),
+      );
+
+      const session = await f.service.login(user.loginIdentifier, "password");
+      expect(session.activeSchoolId).toBeNull();
+      await expect(
+        f.service.resolveSession("req-order", session.tokens.accessToken),
+      ).resolves.toBeNull();
+    }
   });
 
   it("builds AuthContext from server-side membership", async () => {
@@ -231,6 +324,60 @@ describe("IdentityService", () => {
     ).rejects.toHaveProperty("code", "AUTH_SESSION_EXPIRED");
   });
 
+  it("keeps access valid before its TTL and expires it at the boundary", async () => {
+    const start = new Date("2026-07-10T00:00:00.000Z");
+    const f = createIdentityServiceFixture(start);
+    const user = activeTeacher();
+    f.users.add(user);
+    f.passwords.register(user.passwordHash, "password");
+    f.memberships.add(teacherMembership(user.id));
+    const session = await f.service.login(user.loginIdentifier, "password");
+
+    expect(session.tokens.accessExpiresAt).toEqual(
+      new Date(start.getTime() + 15 * 60 * 1000),
+    );
+    expect(session.tokens.refreshExpiresAt).toEqual(
+      new Date(start.getTime() + 7 * 24 * 60 * 60 * 1000),
+    );
+
+    f.clock.advance(15 * 60 * 1000 - 1);
+    await expect(
+      f.service.resolveSession("req-before", session.tokens.accessToken),
+    ).resolves.not.toBeNull();
+    f.clock.advance(1);
+    await expect(
+      f.service.resolveSession("req-boundary", session.tokens.accessToken),
+    ).resolves.toBeNull();
+  });
+
+  it("refreshes after access expiry while refresh remains valid", async () => {
+    const f = createIdentityServiceFixture(new Date("2026-07-10T00:00:00Z"));
+    const user = activeTeacher();
+    f.users.add(user);
+    f.passwords.register(user.passwordHash, "password");
+    f.memberships.add(teacherMembership(user.id));
+    const session = await f.service.login(user.loginIdentifier, "password");
+
+    f.clock.advance(15 * 60 * 1000);
+    await expect(
+      f.service.refresh(session.tokens.refreshToken),
+    ).resolves.toHaveProperty("activeSchoolId", "school-a");
+  });
+
+  it("rejects refresh at the refresh TTL boundary", async () => {
+    const f = createIdentityServiceFixture(new Date("2026-07-10T00:00:00Z"));
+    const user = activeTeacher();
+    f.users.add(user);
+    f.passwords.register(user.passwordHash, "password");
+    f.memberships.add(teacherMembership(user.id));
+    const session = await f.service.login(user.loginIdentifier, "password");
+
+    f.clock.advance(7 * 24 * 60 * 60 * 1000);
+    await expect(
+      f.service.refresh(session.tokens.refreshToken),
+    ).rejects.toHaveProperty("code", "AUTH_SESSION_EXPIRED");
+  });
+
   it("rejects revoked sessions", async () => {
     const f = createIdentityServiceFixture();
     const user = activeTeacher();
@@ -261,6 +408,81 @@ describe("IdentityService", () => {
     await expect(
       f.service.refresh(first.tokens.refreshToken),
     ).rejects.toHaveProperty("code", "AUTH_SESSION_REVOKED");
+    expect(f.sessions.sessionCount()).toBe(2);
+    expect(f.sessions.activeSessionCount()).toBe(1);
+  });
+
+  it("allows only one concurrent refresh successor", async () => {
+    const f = createIdentityServiceFixture();
+    const user = activeTeacher();
+    f.users.add(user);
+    f.passwords.register(user.passwordHash, "password");
+    f.memberships.add(teacherMembership(user.id));
+    const first = await f.service.login(user.loginIdentifier, "password");
+
+    const results = await Promise.allSettled([
+      f.service.refresh(first.tokens.refreshToken),
+      f.service.refresh(first.tokens.refreshToken),
+    ]);
+
+    expect(
+      results.filter((result) => result.status === "fulfilled"),
+    ).toHaveLength(1);
+    expect(
+      results.filter((result) => result.status === "rejected"),
+    ).toHaveLength(1);
+    expect(f.sessions.sessionCount()).toBe(2);
+    expect(f.sessions.activeSessionCount()).toBe(1);
+    await expect(
+      f.service.refresh(first.tokens.refreshToken),
+    ).rejects.toHaveProperty("code", "AUTH_SESSION_REVOKED");
+  });
+
+  it("leaves no successor when atomic rotation fails", async () => {
+    const f = createIdentityServiceFixture();
+    const user = activeTeacher();
+    f.users.add(user);
+    f.passwords.register(user.passwordHash, "password");
+    f.memberships.add(teacherMembership(user.id));
+    const first = await f.service.login(user.loginIdentifier, "password");
+    f.sessions.failNextCompareAndRotate();
+
+    await expect(
+      f.service.refresh(first.tokens.refreshToken),
+    ).rejects.toHaveProperty("code", "AUTH_SESSION_REVOKED");
+    expect(f.sessions.sessionCount()).toBe(1);
+    expect(f.sessions.activeSessionCount()).toBe(1);
+    await expect(
+      f.service.refresh(first.tokens.refreshToken),
+    ).resolves.toHaveProperty("activeSchoolId", "school-a");
+  });
+
+  it("rejects an atomic rotation hash mismatch without a successor", async () => {
+    const f = createIdentityServiceFixture();
+    const user = activeTeacher();
+    f.users.add(user);
+    f.passwords.register(user.passwordHash, "password");
+    f.memberships.add(teacherMembership(user.id));
+    const first = await f.service.login(user.loginIdentifier, "password");
+    const stored = await f.sessions.findByRefreshTokenHash(
+      await f.tokens.hash(first.tokens.refreshToken),
+    );
+
+    const result = await f.sessions.compareAndRotateRefreshSession({
+      sessionId: stored!.id,
+      expectedRefreshTokenHash: "mismatch",
+      now: f.clock.now(),
+      successor: {
+        activeSchoolId: "school-a",
+        accessTokenHash: "new-access",
+        refreshTokenHash: "new-refresh",
+        accessExpiresAt: new Date(f.clock.now().getTime() + 1_000),
+        refreshExpiresAt: new Date(f.clock.now().getTime() + 2_000),
+      },
+    });
+
+    expect(result).toBeNull();
+    expect(f.sessions.sessionCount()).toBe(1);
   });
 
   it("logs out and revokes the session", async () => {

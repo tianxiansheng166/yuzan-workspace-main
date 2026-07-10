@@ -3,6 +3,8 @@ import {
   Controller,
   Get,
   Headers,
+  HttpCode,
+  HttpStatus,
   Post,
   Res,
   UnauthorizedException,
@@ -48,6 +50,7 @@ export class IdentityController {
 
   @Public()
   @Post("/auth/login")
+  @HttpCode(HttpStatus.OK)
   async login(
     @Body() dto: LoginDto,
     @Res({ passthrough: true }) response: Response,
@@ -64,7 +67,7 @@ export class IdentityController {
       data: {
         accessToken: session.tokens.accessToken,
         expiresIn: Math.floor(
-          (session.tokens.expiresAt.getTime() - Date.now()) / 1000,
+          (session.tokens.accessExpiresAt.getTime() - Date.now()) / 1000,
         ),
         user: this.identityService.toCurrentUser(
           session.user,
@@ -77,6 +80,7 @@ export class IdentityController {
 
   @Public()
   @Post("/auth/refresh")
+  @HttpCode(HttpStatus.OK)
   async refresh(
     @Body() _dto: RefreshSessionDto,
     @Headers("authorization") authorization: string | undefined,
@@ -100,7 +104,7 @@ export class IdentityController {
       data: {
         accessToken: session.tokens.accessToken,
         expiresIn: Math.floor(
-          (session.tokens.expiresAt.getTime() - Date.now()) / 1000,
+          (session.tokens.accessExpiresAt.getTime() - Date.now()) / 1000,
         ),
         user: this.identityService.toCurrentUser(
           session.user,
@@ -112,6 +116,7 @@ export class IdentityController {
   }
 
   @Post("/auth/logout")
+  @HttpCode(HttpStatus.NO_CONTENT)
   async logout(
     @Body() _dto: LogoutDto,
     @Headers("authorization") authorization: string | undefined,
@@ -129,10 +134,11 @@ export class IdentityController {
     response.clearCookie(ACCESS_TOKEN_COOKIE);
     response.clearCookie(REFRESH_TOKEN_COOKIE);
 
-    return null;
+    return;
   }
 
   @Get("/me")
+  @HttpCode(HttpStatus.OK)
   async me(@CurrentPrincipal() principal: Principal) {
     const { user, memberships } = await this.identityService.getCurrentUser(
       principal.userId,
