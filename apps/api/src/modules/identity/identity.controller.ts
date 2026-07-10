@@ -42,12 +42,12 @@ function buildSessionCookies(tokens: {
   };
 }
 
-@Controller("/auth")
+@Controller("/")
 export class IdentityController {
   constructor(private readonly identityService: IdentityService) {}
 
   @Public()
-  @Post("/login")
+  @Post("/auth/login")
   async login(
     @Body() dto: LoginDto,
     @Res({ passthrough: true }) response: Response,
@@ -76,7 +76,7 @@ export class IdentityController {
   }
 
   @Public()
-  @Post("/refresh")
+  @Post("/auth/refresh")
   async refresh(
     @Body() _dto: RefreshSessionDto,
     @Headers("authorization") authorization: string | undefined,
@@ -111,7 +111,7 @@ export class IdentityController {
     };
   }
 
-  @Post("/logout")
+  @Post("/auth/logout")
   async logout(
     @Body() _dto: LogoutDto,
     @Headers("authorization") authorization: string | undefined,
