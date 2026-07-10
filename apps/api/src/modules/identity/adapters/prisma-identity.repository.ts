@@ -22,8 +22,10 @@ type PrismaLike = {
     findFirst(args: unknown): Promise<Row | null>;
   };
   session: {
+    findUnique(args: unknown): Promise<Row | null>;
+  };
+  sessionPair: {
     create(args: unknown): Promise<Row>;
-    createMany(args: unknown): Promise<unknown>;
     findUnique(args: unknown): Promise<Row | null>;
     updateMany(args: unknown): Promise<{ count: number }>;
   };
@@ -34,8 +36,8 @@ type PrismaLike = {
   $disconnect(): Promise<void>;
 };
 
-const ACCESS_PREFIX = "access:";
-const REFRESH_PREFIX = "refresh:";
+const ACCESS_TYPE = "ACCESS";
+const REFRESH_TYPE = "REFRESH";
 
 function clientModulePath(): string {
   for (const root of [process.cwd(), resolve(process.cwd(), "../..")]) {
@@ -48,26 +50,6 @@ function clientModulePath(): string {
     }
   }
   throw new Error("Generated Prisma client is unavailable");
-}
-
-function pairedId(id: string): string {
-  const last = Number.parseInt(id.at(-1)!, 16) ^ 1;
-  return `${id.slice(0, -1)}${last.toString(16)}`;
-}
-
-function logicalSession(row: Row, access: Row, refresh: Row): UserSession {
-  return {
-    id: String(refresh.id),
-    userId: String(row.userId),
-    activeSchoolId: (row.activeSchoolId as string | null) ?? null,
-    accessTokenHash: String(access.refreshHash).slice(ACCESS_PREFIX.length),
-    refreshTokenHash: String(refresh.refreshHash).slice(REFRESH_PREFIX.length),
-    accessExpiresAt: access.expiresAt as Date,
-    refreshExpiresAt: refresh.expiresAt as Date,
-    revokedAt: (refresh.revokedAt as Date | null) ?? null,
-    createdAt: refresh.createdAt as Date,
-    lastUsedAt: refresh.lastUsedAt as Date,
-  };
 }
 
 @Injectable()
@@ -88,8 +70,6 @@ export class PrismaIdentityRepository
         PrismaClient: new (options: unknown) => PrismaLike;
       };
       // Prisma 7's query-compiler client requires a PostgreSQL driver adapter.
-      // Keep this dynamic so a missing approved dependency fails closed rather
-      // than preventing API compilation.
       // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { PrismaPg } = require("@prisma/adapter-pg") as {
         PrismaPg: new (options: { connectionString: string }) => unknown;
@@ -99,7 +79,7 @@ export class PrismaIdentityRepository
       this.prisma = new PrismaClient({
         adapter: new PrismaPg({ connectionString }),
       });
-    } catch {
+    } catch (error) {
       throw new IdentityException("AUTH_SERVICE_UNAVAILABLE");
     }
   }
@@ -175,79 +155,62 @@ export class PrismaIdentityRepository
   ): Promise<UserSession> {
     return this.closed(() =>
       this.prisma.$transaction(async (tx) => {
-        const refreshId = randomUUID();
-        const accessId = pairedId(refreshId);
-        await tx.session.createMany({
-          data: [
-            {
-              id: accessId,
-              userId: params.userId,
-              activeSchoolId: params.activeSchoolId,
-              refreshHash: ACCESS_PREFIX + params.accessTokenHash,
-              expiresAt: params.accessExpiresAt,
+        const pairId = randomUUID();
+        const pair = await tx.sessionPair.create({
+          data: {
+            id: pairId,
+            userId: params.userId,
+            familyId: pairId,
+            activeSchoolId: params.activeSchoolId,
+            refreshExpiresAt: params.refreshExpiresAt,
+            sessions: {
+              create: [
+                {
+                  type: ACCESS_TYPE,
+                  tokenHash: params.accessTokenHash,
+                  expiresAt: params.accessExpiresAt,
+                },
+                {
+                  type: REFRESH_TYPE,
+                  tokenHash: params.refreshTokenHash,
+                  expiresAt: params.refreshExpiresAt,
+                },
+              ],
             },
-            {
-              id: refreshId,
-              userId: params.userId,
-              activeSchoolId: params.activeSchoolId,
-              refreshHash: REFRESH_PREFIX + params.refreshTokenHash,
-              expiresAt: params.refreshExpiresAt,
-            },
-          ],
+          },
+          include: { sessions: true },
         });
-        return logicalSession(
-          { userId: params.userId, activeSchoolId: params.activeSchoolId },
-          {
-            id: accessId,
-            refreshHash: ACCESS_PREFIX + params.accessTokenHash,
-            expiresAt: params.accessExpiresAt,
-          },
-          {
-            id: refreshId,
-            refreshHash: REFRESH_PREFIX + params.refreshTokenHash,
-            expiresAt: params.refreshExpiresAt,
-            revokedAt: null,
-            createdAt: new Date(),
-            lastUsedAt: new Date(),
-          },
-        );
+        return this.mapPairWithSessions(pair);
       }),
     );
   }
 
   async findByAccessTokenHash(hash: string): Promise<UserSession | null> {
-    return this.findPair(ACCESS_PREFIX + hash, true);
-  }
-  async findByRefreshTokenHash(hash: string): Promise<UserSession | null> {
-    return this.findPair(REFRESH_PREFIX + hash, false);
+    return this.findPairSession(hash, ACCESS_TYPE);
   }
 
-  private async findPair(
-    storedHash: string,
-    foundAccess: boolean,
+  async findByRefreshTokenHash(hash: string): Promise<UserSession | null> {
+    return this.findPairSession(hash, REFRESH_TYPE);
+  }
+
+  private async findPairSession(
+    tokenHash: string,
+    expectedType: string,
   ): Promise<UserSession | null> {
     return this.closed(async () => {
-      const found = await this.prisma.session.findUnique({
-        where: { refreshHash: storedHash },
+      const row = await this.prisma.session.findUnique({
+        where: { tokenHash },
+        include: { pair: { include: { sessions: true } } },
       });
-      if (!found) return null;
-      const pair = await this.prisma.session.findUnique({
-        where: { id: pairedId(String(found.id)) },
-      });
-      if (!pair) return null;
-      return foundAccess
-        ? logicalSession(found, found, pair)
-        : logicalSession(found, pair, found);
+      if (!row || String(row.type) !== expectedType) return null;
+      return this.mapPairWithSessions(row.pair as Row);
     });
   }
 
   async revoke(sessionId: string): Promise<void> {
     await this.closed(async () => {
-      await this.prisma.session.updateMany({
-        where: {
-          id: { in: [sessionId, pairedId(sessionId)] },
-          revokedAt: null,
-        },
+      await this.prisma.sessionPair.updateMany({
+        where: { id: sessionId, revokedAt: null },
         data: { revokedAt: new Date() },
       });
     });
@@ -257,71 +220,81 @@ export class PrismaIdentityRepository
     params: Parameters<SessionRepository["compareAndRotateRefreshSession"]>[0],
   ): Promise<UserSession | null> {
     return this.closed(() =>
-      this.prisma.$transaction(
-        async (tx) => {
-          const claimed = await tx.session.updateMany({
-            where: {
-              id: params.sessionId,
-              refreshHash: REFRESH_PREFIX + params.expectedRefreshTokenHash,
-              revokedAt: null,
-              expiresAt: { gt: params.now },
-            },
-            data: { revokedAt: params.now, lastUsedAt: params.now },
-          });
-          if (claimed.count !== 1) return null;
-          await tx.session.updateMany({
-            where: { id: pairedId(params.sessionId), revokedAt: null },
-            data: { revokedAt: params.now },
-          });
-          const refreshId = randomUUID();
-          const accessId = pairedId(refreshId);
-          await tx.session.createMany({
-            data: [
-              {
-                id: accessId,
-                userId: (await tx.session.findUnique({
-                  where: { id: params.sessionId },
-                }))!.userId,
-                activeSchoolId: params.successor.activeSchoolId,
-                refreshHash: ACCESS_PREFIX + params.successor.accessTokenHash,
-                expiresAt: params.successor.accessExpiresAt,
+      this.prisma.$transaction(async (tx) => {
+        // Atomic claim: only one concurrent request can update this refresh pair.
+        const claimed = await tx.sessionPair.updateMany({
+          where: {
+            id: params.sessionId,
+            revokedAt: null,
+            refreshExpiresAt: { gt: params.now },
+            sessions: {
+              some: {
+                type: REFRESH_TYPE,
+                tokenHash: params.expectedRefreshTokenHash,
               },
-              {
-                id: refreshId,
-                userId: (await tx.session.findUnique({
-                  where: { id: params.sessionId },
-                }))!.userId,
-                activeSchoolId: params.successor.activeSchoolId,
-                refreshHash: REFRESH_PREFIX + params.successor.refreshTokenHash,
-                expiresAt: params.successor.refreshExpiresAt,
-              },
-            ],
-          });
-          return logicalSession(
-            {
-              userId: (await tx.session.findUnique({
-                where: { id: refreshId },
-              }))!.userId,
-              activeSchoolId: params.successor.activeSchoolId,
             },
-            {
-              id: accessId,
-              refreshHash: ACCESS_PREFIX + params.successor.accessTokenHash,
-              expiresAt: params.successor.accessExpiresAt,
+          },
+          data: { revokedAt: params.now, lastUsedAt: params.now },
+        });
+        if (claimed.count !== 1) return null;
+
+        const predecessor = await tx.sessionPair.findUnique({
+          where: { id: params.sessionId },
+        });
+        if (!predecessor) return null;
+
+        const successorPairId = randomUUID();
+        const successor = await tx.sessionPair.create({
+          data: {
+            id: successorPairId,
+            userId: String(predecessor.userId),
+            familyId: String(predecessor.familyId),
+            predecessorPairId: params.sessionId,
+            activeSchoolId: params.successor.activeSchoolId,
+            refreshExpiresAt: params.successor.refreshExpiresAt,
+            lastUsedAt: params.now,
+            sessions: {
+              create: [
+                {
+                  type: ACCESS_TYPE,
+                  tokenHash: params.successor.accessTokenHash,
+                  expiresAt: params.successor.accessExpiresAt,
+                },
+                {
+                  type: REFRESH_TYPE,
+                  tokenHash: params.successor.refreshTokenHash,
+                  expiresAt: params.successor.refreshExpiresAt,
+                },
+              ],
             },
-            {
-              id: refreshId,
-              refreshHash: REFRESH_PREFIX + params.successor.refreshTokenHash,
-              expiresAt: params.successor.refreshExpiresAt,
-              revokedAt: null,
-              createdAt: params.now,
-              lastUsedAt: params.now,
-            },
-          );
-        },
-        { isolationLevel: "Serializable" },
-      ),
+          },
+          include: { sessions: true },
+        });
+        return this.mapPairWithSessions(successor);
+      }),
     );
+  }
+
+  private mapPairWithSessions(row: Row): UserSession {
+    const pair = row as Row;
+    const sessions = (pair.sessions as Row[]) ?? [];
+    const access = sessions.find((s) => String(s.type) === ACCESS_TYPE);
+    const refresh = sessions.find((s) => String(s.type) === REFRESH_TYPE);
+    if (!access || !refresh) {
+      throw new IdentityException("AUTH_SERVICE_UNAVAILABLE");
+    }
+    return {
+      id: String(pair.id),
+      userId: String(pair.userId),
+      activeSchoolId: (pair.activeSchoolId as string | null) ?? null,
+      accessTokenHash: String(access.tokenHash),
+      refreshTokenHash: String(refresh.tokenHash),
+      accessExpiresAt: access.expiresAt as Date,
+      refreshExpiresAt: pair.refreshExpiresAt as Date,
+      revokedAt: (pair.revokedAt as Date | null) ?? null,
+      createdAt: pair.createdAt as Date,
+      lastUsedAt: pair.lastUsedAt as Date,
+    };
   }
 
   private mapUser(row: Row | null): UserIdentity | null {
@@ -330,9 +303,9 @@ export class PrismaIdentityRepository
       id: String(row.id),
       loginIdentifier: String(row.loginIdentifier),
       displayName: String(row.displayName),
-      passwordHash: String(row.passwordHash),
       preferredLocale: String(row.preferredLocale),
       status: String(row.status) as UserIdentity["status"],
+      passwordHash: String(row.passwordHash),
     };
   }
 
