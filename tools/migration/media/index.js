@@ -910,7 +910,7 @@ function summaryToJson(assets) {
   );
 }
 
-function validationToJson(assets, sourceRoot, dryRun) {
+function validationToJson(assets, sourceRoot) {
   const sensitiveChecks = [];
   for (const asset of assets) {
     for (const segment of SENSITIVE_PATH_SEGMENTS) {
@@ -947,8 +947,11 @@ function validationToJson(assets, sourceRoot, dryRun) {
         taskId: TASK_ID,
         toolVersion: TOOL_VERSION,
         generatedAt: "[REDACTED]",
-        dryRun,
-        sourceRootLabel: "controlled-sources/mig-003/two-legacy",
+        sourceRootLabel: "controlled-source",
+        canonicalManifestAlgorithm: "v2",
+        auditArtifactExcluded: "one audit-generated screenshot",
+        legacyRawSourceChange: "one audit-generated screenshot added",
+        businessSourceContentChanged: "no",
         assetCount: assets.length,
         sensitiveChecks,
         piiRawValues: 0,
@@ -1034,7 +1037,7 @@ function runInventory(options = {}) {
     [OUTPUT_FILES.assetsJson]: assetsToJson(assets),
     [OUTPUT_FILES.reviewCsv]: assetsToCsv(assets),
     [OUTPUT_FILES.summaryJson]: summaryToJson(assets),
-    [OUTPUT_FILES.validationJson]: validationToJson(assets, sourceRoot, dryRun),
+    [OUTPUT_FILES.validationJson]: validationToJson(assets, sourceRoot),
     [OUTPUT_FILES.handoffMd]: handoffToMarkdown(
       assets,
       options.runHashes || [],

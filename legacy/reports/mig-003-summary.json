@@ -1,10 +1,10 @@
 {
-  "assetCount": 108,
+  "assetCount": 107,
   "counts": {
     "audio": 0,
     "document": 6,
     "font": 0,
-    "image": 25,
+    "image": 24,
     "unknown": 76,
     "video": 1
   },
@@ -13,18 +13,18 @@
     "EXCLUDE": 0,
     "MIGRATE": 9,
     "MISSING": 0,
-    "REVIEW": 98
+    "REVIEW": 97
   },
-  "duplicateGroups": 107,
+  "duplicateGroups": 106,
   "generatedAt": "[REDACTED]",
   "mimeConflicts": 0,
-  "missingAlt": 4,
+  "missingAlt": 3,
   "missingCaption": 1,
   "missingTranscript": 1,
   "rights": {
     "APPROVED": 9,
     "REJECTED": 0,
-    "RESTRICTED": 17,
+    "RESTRICTED": 16,
     "UNKNOWN": 82
   },
   "taskId": "MIG-003",

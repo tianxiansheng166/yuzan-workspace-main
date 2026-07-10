@@ -1,14 +1,17 @@
 {
   "absolutePaths": 0,
-  "assetCount": 108,
+  "assetCount": 107,
+  "auditArtifactExcluded": "one audit-generated screenshot",
   "binaryCommitted": 0,
+  "businessSourceContentChanged": "no",
+  "canonicalManifestAlgorithm": "v2",
   "credentialHits": 0,
-  "dryRun": false,
   "generatedAt": "[REDACTED]",
+  "legacyRawSourceChange": "one audit-generated screenshot added",
   "networkDownloads": 0,
   "piiRawValues": 0,
   "sensitiveChecks": [],
-  "sourceRootLabel": "controlled-sources/mig-003/two-legacy",
+  "sourceRootLabel": "controlled-source",
   "taskId": "MIG-003",
   "toolVersion": "mig-003-media-inventory-v1"
 }

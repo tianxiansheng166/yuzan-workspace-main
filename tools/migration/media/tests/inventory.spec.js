@@ -1,4 +1,4 @@
-const { describe, it, before, after } = require("node:test");
+const { describe, it, before, after, afterEach } = require("node:test");
 const assert = require("node:assert");
 const fs = require("fs");
 const path = require("path");
@@ -463,3 +463,89 @@ describe("dispositions are valid", () => {
     fs.rmSync(sourceRoot, { recursive: true, force: true });
   });
 });
+
+describe("audit artifact reconciliation", () => {
+  let sourceRoot;
+
+  afterEach(() => {
+    if (sourceRoot) {
+      findDirsSync(sourceRoot).forEach((d) => fs.chmodSync(d, 0o755));
+      fs.rmSync(sourceRoot, { recursive: true, force: true });
+      sourceRoot = null;
+    }
+  });
+
+  it("does not broadly exclude .audit- prefixed files", () => {
+    sourceRoot = tmpDir();
+    writeFile(sourceRoot, ".audit-course-desktop.png", PNG_BYTES);
+    writeFile(sourceRoot, ".audit-business-screenshot.png", PNG_BYTES);
+    writeFile(sourceRoot, "assets/images/logo.png", PNG_BYTES);
+
+    const raw = scanSource(sourceRoot);
+    const assets = buildAssets(raw);
+
+    assert.strictEqual(assets.length, 3);
+    assert.ok(assets.some((a) => a.sourceKey === ".audit-course-desktop.png"));
+    assert.ok(
+      assets.some((a) => a.sourceKey === ".audit-business-screenshot.png"),
+    );
+  });
+
+  it("classifies audit screenshot with RESTRICTED/REVIEW disposition", () => {
+    const r = determineRights("internal-audit-screenshot", "image", "high");
+    assert.strictEqual(r.rightsStatus, "RESTRICTED");
+    assert.strictEqual(r.recommendedDisposition, "REVIEW");
+    assert.strictEqual(r.reviewReasonCode, "restricted-screenshot");
+  });
+
+  it("scans read-only source directories", () => {
+    sourceRoot = tmpDir();
+    writeFile(sourceRoot, "assets/images/logo.png", PNG_BYTES);
+    findDirsSync(sourceRoot).forEach((d) => fs.chmodSync(d, 0o555));
+    findFilesSync(sourceRoot).forEach((f) => fs.chmodSync(f, 0o444));
+
+    const raw = scanSource(sourceRoot);
+    const assets = buildAssets(raw);
+    assert.strictEqual(assets.length, 1);
+    assert.strictEqual(assets[0].sourceKey, "assets/images/logo.png");
+  });
+
+  it("does not leak excluded filenames into outputs", () => {
+    sourceRoot = tmpDir();
+    writeFile(sourceRoot, "assets/images/logo.png", PNG_BYTES);
+    const outDir = tmpDir();
+    const result = runInventory({
+      sourceRoot,
+      outputRoot: outDir,
+      dryRun: true,
+    });
+    const allOutputs = Object.values(result.outputs).join("\n");
+    assert.ok(!allOutputs.includes(".audit-course-desktop.png"));
+    assert.ok(!allOutputs.includes("audit-course-desktop"));
+  });
+});
+
+function findDirsSync(root) {
+  const dirs = [];
+  function walk(current) {
+    dirs.push(current);
+    for (const entry of fs.readdirSync(current, { withFileTypes: true })) {
+      if (entry.isDirectory()) walk(path.join(current, entry.name));
+    }
+  }
+  walk(root);
+  return dirs;
+}
+
+function findFilesSync(root) {
+  const files = [];
+  function walk(current) {
+    for (const entry of fs.readdirSync(current, { withFileTypes: true })) {
+      const p = path.join(current, entry.name);
+      if (entry.isDirectory()) walk(p);
+      else if (entry.isFile()) files.push(p);
+    }
+  }
+  walk(root);
+  return files;
+}
