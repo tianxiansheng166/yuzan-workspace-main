@@ -2,6 +2,10 @@
 import { YxButton, YxStatus } from "@yuzan/ui";
 import { useAssignments } from "~/features/assignment-builder/composables/useAssignments";
 
+useSeoMeta({
+  title: "教学任务｜语赞心声",
+});
+
 const { state, assignments, errorMessage, canCreate, load } = useAssignments();
 await load();
 </script>

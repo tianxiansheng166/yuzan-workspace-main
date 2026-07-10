@@ -2,6 +2,10 @@
 import { YxButton, YxStatus } from "@yuzan/ui";
 import { useAssignmentDetail } from "~/features/assignment-builder/composables/useAssignmentDetail";
 
+useSeoMeta({
+  title: "任务详情｜语赞心声",
+});
+
 const route = useRoute();
 const assignmentId = route.params.assignmentId as string;
 const { state, detail, students, errorMessage, canManage, load } =
