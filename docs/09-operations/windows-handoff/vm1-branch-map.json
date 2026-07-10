@@ -1,0 +1,398 @@
+{
+  "generated": "2026-07-11",
+  "task": "UBUNTU_VM1_FULL_EVACUATION_001",
+  "repository": "git@github.com:tianxiansheng166/yuzan-workspace-main.git",
+  "branches": [
+    {
+      "name": "main",
+      "local_head": "9708cf36d45d17f1bf42db5ce34134c2cd551de6",
+      "remote_head": "9708cf36d45d17f1bf42db5ce34134c2cd551de6",
+      "upstream": "origin/main",
+      "status": "synced",
+      "worktree": "/home/admin01/Documents/yuzan-workspace-main/yuzan-next",
+      "action": "none (already synced, has untracked design pack)"
+    },
+    {
+      "name": "chore/repository-bootstrap-20260709",
+      "local_head": "9708cf36d45d17f1bf42db5ce34134c2cd551de6",
+      "remote_head": "9708cf36d45d17f1bf42db5ce34134c2cd551de6",
+      "upstream": "origin/chore/repository-bootstrap-20260709",
+      "status": "synced",
+      "worktree": null,
+      "action": "none"
+    },
+    {
+      "name": "task/acc-idn-001-prisma",
+      "local_head": "0667e7e0d9034ad4200c7259cd8194f66a105101",
+      "remote_head": "0667e7e0d9034ad4200c7259cd8194f66a105101",
+      "upstream": "origin/task/acc-idn-001-prisma",
+      "upstream_set_during_evacuation": true,
+      "status": "synced",
+      "worktree": "/home/admin01/Documents/yuzan-workspace-main/worktrees/acc-idn-001-prisma",
+      "action": "upstream tracking set"
+    },
+    {
+      "name": "task/acc-root-001-api-wiring",
+      "local_head": "01d2440228c8cc8de31d957dcf52749fe8e9af27",
+      "remote_head": "01d2440228c8cc8de31d957dcf52749fe8e9af27",
+      "upstream": "origin/task/acc-root-001-api-wiring",
+      "upstream_set_during_evacuation": true,
+      "status": "synced",
+      "worktree": "/home/admin01/Documents/yuzan-workspace-main/worktrees/acc-root-001",
+      "action": "upstream tracking set"
+    },
+    {
+      "name": "task/acc-ui-001-app-shell",
+      "local_head": "5736fd4b4fb4f2a84e0ebf9b5c4f4e15450b3ac8",
+      "remote_head": "5736fd4b4fb4f2a84e0ebf9b5c4f4e15450b3ac8",
+      "upstream": "origin/task/acc-ui-001-app-shell",
+      "upstream_set_during_evacuation": true,
+      "status": "synced",
+      "worktree": "/home/admin01/Documents/yuzan-workspace-main/worktrees/acc-ui-001-app-shell",
+      "action": "upstream tracking set"
+    },
+    {
+      "name": "task/acc-web-001-auth-api",
+      "local_head": "0355b1b63f040d05a01e79d67fc57a66dd17a742",
+      "remote_head": "0355b1b63f040d05a01e79d67fc57a66dd17a742",
+      "upstream": "origin/task/acc-web-001-auth-api",
+      "upstream_set_during_evacuation": true,
+      "status": "synced",
+      "worktree": "/home/admin01/Documents/yuzan-workspace-main/worktrees/acc-web-001-auth-api",
+      "action": "upstream tracking set"
+    },
+    {
+      "name": "task/api-202-assessment-service-skeleton",
+      "local_head": "9708cf36d45d17f1bf42db5ce34134c2cd551de6",
+      "remote_head": "9708cf36d45d17f1bf42db5ce34134c2cd551de6",
+      "upstream": "origin/main",
+      "status": "synced (HEAD = main, no unique commits)",
+      "worktree": "/home/admin01/Documents/yuzan-workspace-main/worktrees/api-202",
+      "action": "none"
+    },
+    {
+      "name": "task/asn-001-assignment-api",
+      "local_head": "2d5c0506984a2182fbbc707b1963160b9e2360a3",
+      "remote_head": "2d5c0506984a2182fbbc707b1963160b9e2360a3",
+      "upstream": "origin/task/asn-001-assignment-api",
+      "status": "synced",
+      "worktree": "/home/admin01/Documents/yuzan-workspace-main/worktrees/asn-001",
+      "action": "none"
+    },
+    {
+      "name": "task/asn-002-assignment-web",
+      "local_head": "4db36b728324993e3812dbbf6a8ede8fde1fe45a",
+      "remote_head": "4db36b728324993e3812dbbf6a8ede8fde1fe45a",
+      "upstream": "origin/task/asn-002-assignment-web",
+      "status": "synced",
+      "worktree": "/home/admin01/Documents/yuzan-workspace-main/worktrees/asn-002",
+      "action": "none"
+    },
+    {
+      "name": "task/cls-001-class-web",
+      "local_head": "bae6c7de163a493bcb7936a904b2b6028680203b",
+      "remote_head": "bae6c7de163a493bcb7936a904b2b6028680203b",
+      "upstream": "origin/task/cls-001-class-web",
+      "status": "synced",
+      "worktree": "/home/admin01/Documents/yuzan-workspace-main/worktrees/cls-001",
+      "action": "none"
+    },
+    {
+      "name": "task/cur-001-curriculum-api",
+      "local_head": "d1da84ef5f63c6615b545d01065c48e22dc2e822",
+      "remote_head": "d1da84ef5f63c6615b545d01065c48e22dc2e822",
+      "upstream": "origin/task/cur-001-curriculum-api",
+      "status": "synced",
+      "worktree": "/home/admin01/Documents/yuzan-workspace-main/worktrees/cur-001-api",
+      "action": "none"
+    },
+    {
+      "name": "task/cur-002-curriculum-web",
+      "local_head": "9204427822d49ed6368d8215e24eb393ee0c2aa5",
+      "remote_head": "9204427822d49ed6368d8215e24eb393ee0c2aa5",
+      "upstream": "origin/task/cur-002-curriculum-web",
+      "status": "synced",
+      "worktree": "/home/admin01/Documents/yuzan-workspace-main/worktrees/cur-002",
+      "action": "none"
+    },
+    {
+      "name": "task/des-002-icons",
+      "local_head": "5a49b9f2ac74c567f488bcea26e6c710ee173133",
+      "remote_head": "5a49b9f2ac74c567f488bcea26e6c710ee173133",
+      "upstream": "origin/task/des-002-icons",
+      "status": "synced",
+      "worktree": "/home/admin01/Documents/yuzan-workspace-main/worktrees/des-002",
+      "action": "none"
+    },
+    {
+      "name": "task/frontend-directive-v2-1",
+      "local_head": "e9359c4964c34c7fbcfc3954c5306aad44ca367f",
+      "remote_head": "e9359c4964c34c7fbcfc3954c5306aad44ca367f",
+      "upstream": "origin/task/frontend-directive-v2-1",
+      "upstream_set_during_evacuation": true,
+      "status": "synced",
+      "worktree": "/home/admin01/Documents/yuzan-workspace-main/worktrees/frontend-directive-v2-1",
+      "action": "upstream tracking set"
+    },
+    {
+      "name": "task/frontend-generated-assets-intake-001",
+      "local_head": "f86961d2cb4e2db7cb243d175eb2b8e54ad17a74",
+      "remote_head": "f86961d2cb4e2db7cb243d175eb2b8e54ad17a74",
+      "upstream": "origin/task/frontend-generated-assets-intake-001",
+      "status": "synced (created during evacuation)",
+      "worktree": "/home/admin01/Documents/yuzan-workspace-main/worktrees/frontend-generated-assets-intake-001",
+      "action": "created and pushed"
+    },
+    {
+      "name": "task/frontend-manual-image-workspace-001",
+      "local_head": "48bb043a731cd630653c8f8bce7d2904a8358317",
+      "remote_head": "48bb043a731cd630653c8f8bce7d2904a8358317",
+      "upstream": "origin/task/frontend-manual-image-workspace-001",
+      "upstream_set_during_evacuation": true,
+      "status": "synced",
+      "worktree": "/home/admin01/Documents/yuzan-workspace-main/worktrees/frontend-manual-image-workspace-001",
+      "action": "upstream tracking set (has untracked zip, saved to evacuation branch)"
+    },
+    {
+      "name": "task/gov-001-governance",
+      "local_head": "fa0d7e0e1c59227d4e58f54326e4f9feae7872aa",
+      "remote_head": "fa0d7e0e1c59227d4e58f54326e4f9feae7872aa",
+      "upstream": "origin/task/gov-001-governance",
+      "status": "synced",
+      "worktree": "/home/admin01/Documents/yuzan-workspace-main/worktrees/gov-001",
+      "action": "none"
+    },
+    {
+      "name": "task/gov-002-contract",
+      "local_head": "69b024bc2cfe726d2e68cce2468bc66af8339964",
+      "remote_head": "3559004981e5224fe322fcac265bd79848c030d8",
+      "upstream": "origin/task/gov-002-contract",
+      "status": "behind 1 (local HEAD is ancestor of remote, already safe)",
+      "worktree": "/home/admin01/Documents/yuzan-workspace-main/worktrees/gov-002",
+      "action": "none (local HEAD already on remote)"
+    },
+    {
+      "name": "task/gov-003-database",
+      "local_head": "79971885933911630f651a84f90c7655759f7898",
+      "remote_head": "79971885933911630f651a84f90c7655759f7898",
+      "upstream": "origin/task/gov-003-database",
+      "status": "synced",
+      "worktree": "/home/admin01/Documents/yuzan-workspace-main/worktrees/gov-003",
+      "action": "none"
+    },
+    {
+      "name": "task/gov-004-design-system",
+      "local_head": "2f02b873c2d2b75f6f9d418c56be16b7bd466a8f",
+      "remote_head": "2f02b873c2d2b75f6f9d418c56be16b7bd466a8f",
+      "upstream": "origin/task/gov-004-design-system",
+      "status": "synced",
+      "worktree": "/home/admin01/Documents/yuzan-workspace-main/worktrees/gov-004",
+      "action": "none"
+    },
+    {
+      "name": "task/gov-005-devops",
+      "local_head": "5dbce2bf8b3f4ace459a461dd07f5398d98e8d29",
+      "remote_head": "5dbce2bf8b3f4ace459a461dd07f5398d98e8d29",
+      "upstream": "origin/task/gov-005-devops",
+      "status": "synced",
+      "worktree": "/home/admin01/Documents/yuzan-workspace-main/worktrees/gov-005",
+      "action": "none"
+    },
+    {
+      "name": "task/gov-006-security",
+      "local_head": "a969974286001e85195dcab5dc70d2dabb768bf0",
+      "remote_head": "a969974286001e85195dcab5dc70d2dabb768bf0",
+      "upstream": "origin/task/gov-006-security",
+      "status": "synced",
+      "worktree": "/home/admin01/Documents/yuzan-workspace-main/worktrees/gov-006",
+      "action": "none"
+    },
+    {
+      "name": "task/idn-001-identity-api",
+      "local_head": "4112e1f16f70c057a390d1c1cc57b91cdac7ad5f",
+      "remote_head": "4719a9c965d881e86b8687b90b1f44939353479a",
+      "upstream": "origin/task/idn-001-identity-api",
+      "status": "behind 1 (local HEAD is ancestor of remote, already safe)",
+      "worktree": "/home/admin01/Documents/yuzan-workspace-main/worktrees/idn-001",
+      "action": "none (local HEAD already on remote)"
+    },
+    {
+      "name": "task/idn-002-identity-web",
+      "local_head": "1c393cf413c20edaf1d6cb7dbce6830db6538571",
+      "remote_head": "1c393cf413c20edaf1d6cb7dbce6830db6538571",
+      "upstream": "origin/task/idn-002-identity-web",
+      "status": "synced",
+      "worktree": "/home/admin01/Documents/yuzan-workspace-main/worktrees/idn-002",
+      "action": "none"
+    },
+    {
+      "name": "task/lrn-001-learning-api",
+      "local_head": "755748aba400e81b6a7fba68f2909fb57117a50a",
+      "remote_head": "755748aba400e81b6a7fba68f2909fb57117a50a",
+      "upstream": "origin/task/lrn-001-learning-api",
+      "upstream_set_during_evacuation": true,
+      "status": "synced",
+      "worktree": "/home/admin01/Documents/yuzan-workspace-main/worktrees/lrn-001",
+      "action": "upstream tracking set"
+    },
+    {
+      "name": "task/lrn-002-learning-web",
+      "local_head": "ad1ef610b6599b660946b4335a349b1fdd833bb5",
+      "remote_head": "ad1ef610b6599b660946b4335a349b1fdd833bb5",
+      "upstream": "origin/task/lrn-002-learning-web",
+      "status": "synced",
+      "worktree": "/home/admin01/Documents/yuzan-workspace-main/worktrees/lrn-002",
+      "action": "none"
+    },
+    {
+      "name": "task/mig-001-migration",
+      "local_head": "adf54e3e814c94e95e77373ef12645015a516143",
+      "remote_head": "adf54e3e814c94e95e77373ef12645015a516143",
+      "upstream": "origin/task/mig-001-migration",
+      "status": "synced",
+      "worktree": "/home/admin01/Documents/yuzan-workspace-main/worktrees/mig-001",
+      "action": "none"
+    },
+    {
+      "name": "task/mig-003-migration",
+      "local_head": "5afdfe0678dbe26049ecbd4def12d0b56a181aa2",
+      "remote_head": "5afdfe0678dbe26049ecbd4def12d0b56a181aa2",
+      "upstream": "origin/task/mig-003-migration",
+      "status": "synced",
+      "worktree": "/home/admin01/Documents/yuzan-workspace-main/worktrees/mig-003",
+      "action": "none"
+    },
+    {
+      "name": "task/off-001-offline-web",
+      "local_head": "ea6af9ca9803d8f34ed368cb72529af518b1cddf",
+      "remote_head": "ea6af9ca9803d8f34ed368cb72529af518b1cddf",
+      "upstream": "origin/task/off-001-offline-web",
+      "status": "synced",
+      "worktree": "/home/admin01/Documents/yuzan-workspace-main/worktrees/off-001",
+      "action": "none"
+    },
+    {
+      "name": "task/org-001-organization-api",
+      "local_head": "e7eff73a12ba09eedbbeef46eaf28bb60055c4fe",
+      "remote_head": "e7eff73a12ba09eedbbeef46eaf28bb60055c4fe",
+      "upstream": "origin/task/org-001-organization-api",
+      "status": "synced",
+      "worktree": "/home/admin01/Documents/yuzan-workspace-main/worktrees/org-001",
+      "action": "none"
+    },
+    {
+      "name": "task/qa-003-qa",
+      "local_head": "59b5fb754113e73db4187a757663706e0b0d016d",
+      "remote_head": "59b5fb754113e73db4187a757663706e0b0d016d",
+      "upstream": "origin/task/qa-003-qa",
+      "status": "synced",
+      "worktree": "/home/admin01/Documents/yuzan-workspace-main/worktrees/qa-003",
+      "action": "none"
+    },
+    {
+      "name": "task/rpt-002-reporting-web",
+      "local_head": "ae3cb2939fb8f5c12ec8db2f98689f442707adea",
+      "remote_head": "ae3cb2939fb8f5c12ec8db2f98689f442707adea",
+      "upstream": "origin/task/rpt-002-reporting-web",
+      "status": "synced",
+      "worktree": "/home/admin01/Documents/yuzan-workspace-main/worktrees/rpt-002",
+      "action": "none"
+    },
+    {
+      "name": "task/sph-001-speech-web",
+      "local_head": "149fc3d6e74837baeb157b7d7ce308afc5fb1fb1",
+      "remote_head": "149fc3d6e74837baeb157b7d7ce308afc5fb1fb1",
+      "upstream": "origin/task/sph-001-speech-web",
+      "status": "synced",
+      "worktree": "/home/admin01/Documents/yuzan-workspace-main/worktrees/sph-001",
+      "action": "none"
+    },
+    {
+      "name": "task/sub-002-submission-web",
+      "local_head": "6d214bcc1eb96631856eaea5eb585edbbe5f85c9",
+      "remote_head": "6d214bcc1eb96631856eaea5eb585edbbe5f85c9",
+      "upstream": "origin/task/sub-002-submission-web",
+      "status": "synced",
+      "worktree": "/home/admin01/Documents/yuzan-workspace-main/worktrees/sub-002",
+      "action": "none"
+    },
+    {
+      "name": "evacuation/vm1/design-pack-local-diff-20260711",
+      "local_head": "017b36ada0ca3d8e56c477aaaed2b1240476a0c3",
+      "remote_head": "017b36ada0ca3d8e56c477aaaed2b1240476a0c3",
+      "upstream": "origin/evacuation/vm1/design-pack-local-diff-20260711",
+      "status": "synced (created during evacuation)",
+      "base": "main (9708cf3)",
+      "worktree": "/home/admin01/Documents/yuzan-workspace-main/worktrees/evac-design-pack-diff-20260711",
+      "action": "created and pushed",
+      "integration_eligible": false,
+      "requires_review": true
+    },
+    {
+      "name": "evacuation/vm1/manual-image-workspace-zip-20260711",
+      "local_head": "e2f6be47f0e45cecda5dcb541f8f213c348b8438",
+      "remote_head": "e2f6be47f0e45cecda5dcb541f8f213c348b8438",
+      "upstream": "origin/evacuation/vm1/manual-image-workspace-zip-20260711",
+      "status": "synced (created during evacuation)",
+      "base": "task/frontend-manual-image-workspace-001 (48bb043)",
+      "worktree": "/home/admin01/Documents/yuzan-workspace-main/worktrees/evac-manual-image-zip-20260711",
+      "action": "created and pushed",
+      "integration_eligible": false,
+      "requires_review": true
+    },
+    {
+      "name": "evacuation/vm1-handoff-20260711",
+      "local_head": "(pending commit)",
+      "base": "origin/integration/core-framework-20260710 (577a7442)",
+      "worktree": "/home/admin01/Documents/yuzan-workspace-main/worktrees/evac-vm1-handoff-20260711",
+      "action": "created with handoff report",
+      "integration_eligible": false,
+      "requires_review": true
+    }
+  ],
+  "detached_worktrees": [
+    {
+      "path": "/home/admin01/Documents/yuzan-workspace-main/worktrees/preview-577a744",
+      "head": "577a7442b1f7d46b4b656a6db9143c6afbc519d8",
+      "in_remote": true,
+      "state": "clean",
+      "action": "none (HEAD already in origin/integration/core-framework-20260710)"
+    },
+    {
+      "path": "/home/admin01/Documents/yuzan-workspace-main/worktrees/review-acc-root-001-01d2440",
+      "head": "01d2440228c8cc8de31d957dcf52749fe8e9af27",
+      "in_remote": true,
+      "state": "clean",
+      "action": "none (HEAD = task/acc-root-001-api-wiring)"
+    },
+    {
+      "path": "/home/admin01/Documents/yuzan-workspace-main/worktrees/review-mig-001-32982b9",
+      "head": "32982b9fdb722ccfc34e2ce558ca431ce8320ef0",
+      "in_remote": true,
+      "state": "clean",
+      "action": "none (HEAD in origin)"
+    },
+    {
+      "path": "/home/admin01/Documents/yuzan-workspace-main/worktrees/review-mig-001-adf54e3-dynamic",
+      "head": "adf54e3e814c94e95e77373ef12645015a516143",
+      "in_remote": true,
+      "state": "clean",
+      "action": "none (HEAD = task/mig-001-migration)"
+    },
+    {
+      "path": "/home/admin01/Documents/yuzan-workspace-main/worktrees/review-sph-001-privacy-20260710",
+      "head": "149fc3d6e74837baeb157b7d7ce308afc5fb1fb1",
+      "in_remote": true,
+      "state": "clean",
+      "action": "none (HEAD = task/sph-001-speech-web)"
+    },
+    {
+      "path": "/home/admin01/Documents/yuzan-workspace-main/worktrees/verify-integration-577a744-vm1",
+      "head": "577a7442b1f7d46b4b656a6db9143c6afbc519d8",
+      "in_remote": true,
+      "state": "clean",
+      "action": "none (HEAD = origin/integration/core-framework-20260710)"
+    }
+  ],
+  "stash_count": 0
+}
