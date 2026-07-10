@@ -8,6 +8,10 @@ import type {
   ContentKind,
 } from "~/features/assignment-builder/types";
 
+useSeoMeta({
+  title: "创建教学任务｜语赞心声",
+});
+
 // Demo role source until auth integration.
 const role: "teacher" | "unknown" = "teacher";
 const {
