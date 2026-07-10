@@ -1,0 +1,32 @@
+{
+  "name": "yuzan-frontend-direction-pack",
+  "version": "2.1.0",
+  "created": "2026-07-10",
+  "language": "zh-CN",
+  "purpose": "AI-readable visual-first front-end design, image prompt, implementation and four-stream delivery package",
+  "entry": "README-USE-IN-PROJECT.md",
+  "commonEntry": "00-READ-FIRST.md",
+  "masterPrompt": "prompts/MASTER_EXECUTION_PROMPT.md",
+  "designContract": "machine/design-contract.json",
+  "assetMap": "machine/asset-map.json",
+  "streamContracts": "machine/stream-contracts.json",
+  "visualReferenceCount": 10,
+  "imagePromptCount": 20,
+  "streamCount": 4,
+  "reviewMode": "self-review-per-stream-then-single-batch-review",
+  "sourceScreenshotsIncluded": true,
+  "generatedReferenceSourcesIncluded": true,
+  "installPath": "source-materials/frontend-design/yuzan-frontend-direction-pack-v2.1",
+  "primaryRepository": "tianxiansheng166/yuzan-workspace-main",
+  "legacyRepositoryRole": "reference-only",
+  "interfaceProtectionIncluded": true,
+  "twoMachineRunbookIncluded": true,
+  "streams": [
+    "A",
+    "AUTH",
+    "B",
+    "C",
+    "D",
+    "E"
+  ]
+}

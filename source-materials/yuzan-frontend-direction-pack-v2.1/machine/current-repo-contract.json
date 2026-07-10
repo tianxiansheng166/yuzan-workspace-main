@@ -1,0 +1,19 @@
+{
+  "version": "2.1.0",
+  "primaryRepository": "tianxiansheng166/yuzan-workspace-main",
+  "legacyReferenceRepository": "tianxiansheng166/yuzan-workspace",
+  "installPath": "source-materials/frontend-design/yuzan-frontend-direction-pack-v2.1",
+  "runtimeImportAllowed": false,
+  "packageWorkspaceMember": false,
+  "legacyRuntimeUseAllowed": false,
+  "referenceImagesAreProductionAssets": false,
+  "requiresCentralAssetRegister": true,
+  "currentArchitecture": {
+    "web": "Nuxt 4 + Vue 3",
+    "api": "NestJS",
+    "contracts": "packages/contracts",
+    "ui": "packages/ui",
+    "database": "infra/database"
+  },
+  "baseSelection": "resolve origin/integration/core-framework-20260710 at dispatch time and record exact commit"
+}
