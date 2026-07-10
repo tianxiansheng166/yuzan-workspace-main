@@ -1,7 +1,11 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { randomUUID } from "node:crypto";
 import type { AuthContext } from "../../common/security/auth.types.js";
-import { hasRole, MembershipRole } from "../../common/security/index.js";
+import {
+  hasRole,
+  MembershipRole,
+  MembershipStatus,
+} from "../../common/security/index.js";
 import type { ClassRepositoryPort } from "../classes/ports/class-repository.port.js";
 import { CLASS_REPOSITORY } from "../classes/ports/class-repository.port.js";
 import type { CourseVersionRepositoryPort } from "../curriculum/ports/course-version-repository.port.js";
@@ -26,6 +30,7 @@ import type {
   ListAssignmentsOptions,
 } from "./ports/assignment-repository.port.js";
 import { ASSIGNMENT_REPOSITORY } from "./ports/assignment-repository.port.js";
+import { CLOCK, type Clock } from "./ports/clock.port.js";
 
 @Injectable()
 export class AssignmentsService {
@@ -38,6 +43,8 @@ export class AssignmentsService {
     private readonly classRepo: ClassRepositoryPort,
     @Inject(COURSE_VERSION_REPOSITORY)
     private readonly courseRepo: CourseVersionRepositoryPort,
+    @Inject(CLOCK)
+    private readonly clock: Clock,
   ) {}
 
   async createAssignment(
@@ -54,14 +61,14 @@ export class AssignmentsService {
       throw new AssignmentValidationException("班级不存在或不属于本校");
     }
 
-    if (!this.canManageClass(auth, classItem)) {
+    if (!this.isManagerOfClass(auth, classItem)) {
       throw new AssignmentForbiddenException("无权为该班级创建任务");
     }
 
     await this.requirePublishedCourseVersion(schoolId, dto.courseVersionId);
     this.validateSchedule(dto.publishAt, dto.dueAt);
 
-    const now = new Date();
+    const now = this.clock.now();
     const assignment: Assignment = {
       id: randomUUID(),
       schoolId,
@@ -103,8 +110,31 @@ export class AssignmentsService {
       throw new AssignmentNotFoundException();
     }
 
-    if (!this.policy.canRead(auth, assignment)) {
-      throw new AssignmentForbiddenException();
+    const isManager = await this.isManagerOfClassById(
+      auth,
+      schoolId,
+      assignment.classId,
+    );
+    const isActiveStudent =
+      hasRole(auth, MembershipRole.STUDENT) &&
+      auth.principal.membershipStatus === MembershipStatus.ACTIVE
+        ? await this.classRepo.hasActiveStudentEnrollment(
+            schoolId,
+            assignment.classId,
+            auth.principal.userId,
+          )
+        : false;
+
+    if (
+      !this.policy.canRead(
+        auth,
+        assignment,
+        this.clock,
+        isActiveStudent,
+        isManager,
+      )
+    ) {
+      throw new AssignmentNotFoundException();
     }
 
     return toAssignmentResponse(assignment);
@@ -120,13 +150,19 @@ export class AssignmentsService {
       throw new AssignmentForbiddenException();
     }
 
-    const classItem = await this.classRepo.findById(schoolId, classId);
-    if (!classItem) {
-      throw new AssignmentNotFoundException();
-    }
+    const isManager = await this.isManagerOfClassById(auth, schoolId, classId);
+    const isActiveStudent =
+      hasRole(auth, MembershipRole.STUDENT) &&
+      auth.principal.membershipStatus === MembershipStatus.ACTIVE
+        ? await this.classRepo.hasActiveStudentEnrollment(
+            schoolId,
+            classId,
+            auth.principal.userId,
+          )
+        : false;
 
-    if (!this.canAccessClass(auth, classItem)) {
-      throw new AssignmentForbiddenException();
+    if (!isManager && !isActiveStudent) {
+      throw new AssignmentNotFoundException();
     }
 
     const effectiveStatus: ListAssignmentsOptions["status"] = hasRole(
@@ -144,8 +180,19 @@ export class AssignmentsService {
     };
 
     const result = await this.assignmentRepo.list(schoolId, options);
+    const items = result.items.filter((summary) => {
+      if (hasRole(auth, MembershipRole.STUDENT)) {
+        return this.policy.isStudentVisible(
+          summary,
+          this.clock,
+          isActiveStudent,
+        );
+      }
+      return true;
+    });
+
     return {
-      items: result.items.map(toAssignmentSummaryResponse),
+      items: items.map(toAssignmentSummaryResponse),
       nextCursor: result.nextCursor,
       hasMore: result.hasMore,
     };
@@ -157,17 +204,11 @@ export class AssignmentsService {
     assignmentId: string,
     dto: UpdateAssignmentDto,
   ) {
-    const assignment = await this.assignmentRepo.findById(
+    const assignment = await this.requireManageableAssignment(
+      auth,
       schoolId,
       assignmentId,
     );
-    if (!assignment) {
-      throw new AssignmentNotFoundException();
-    }
-
-    if (!this.policy.canManage(auth, assignment)) {
-      throw new AssignmentForbiddenException();
-    }
 
     if (assignment.status !== "DRAFT") {
       throw new AssignmentConflictException("只有草稿状态可以编辑");
@@ -177,6 +218,7 @@ export class AssignmentsService {
     const dueAt = dto.dueAt ?? assignment.dueAt;
     this.validateSchedule(publishAt, dueAt);
 
+    const now = this.clock.now();
     const updated: Assignment = {
       ...assignment,
       ...(dto.title ? { title: dto.title } : {}),
@@ -201,7 +243,7 @@ export class AssignmentsService {
             },
           }
         : {}),
-      updatedAt: new Date(),
+      updatedAt: now,
     };
 
     const saved = await this.assignmentRepo.save(updated, {
@@ -215,17 +257,11 @@ export class AssignmentsService {
     schoolId: string,
     assignmentId: string,
   ) {
-    const assignment = await this.assignmentRepo.findById(
+    const assignment = await this.requireManageableAssignment(
+      auth,
       schoolId,
       assignmentId,
     );
-    if (!assignment) {
-      throw new AssignmentNotFoundException();
-    }
-
-    if (!this.policy.canManage(auth, assignment)) {
-      throw new AssignmentForbiddenException();
-    }
 
     if (assignment.status === "PUBLISHED") {
       return toAssignmentResponse(assignment);
@@ -244,8 +280,8 @@ export class AssignmentsService {
     const published: Assignment = {
       ...assignment,
       status: "PUBLISHED",
-      publishedAt: new Date(),
-      updatedAt: new Date(),
+      publishedAt: this.clock.now(),
+      updatedAt: this.clock.now(),
     };
 
     const saved = await this.assignmentRepo.save(published, {
@@ -259,17 +295,11 @@ export class AssignmentsService {
     schoolId: string,
     assignmentId: string,
   ) {
-    const assignment = await this.assignmentRepo.findById(
+    const assignment = await this.requireManageableAssignment(
+      auth,
       schoolId,
       assignmentId,
     );
-    if (!assignment) {
-      throw new AssignmentNotFoundException();
-    }
-
-    if (!this.policy.canManage(auth, assignment)) {
-      throw new AssignmentForbiddenException();
-    }
 
     if (assignment.status !== "PUBLISHED") {
       throw new AssignmentConflictException("只能关闭已发布任务");
@@ -278,8 +308,8 @@ export class AssignmentsService {
     const closed: Assignment = {
       ...assignment,
       status: "CLOSED",
-      closedAt: new Date(),
-      updatedAt: new Date(),
+      closedAt: this.clock.now(),
+      updatedAt: this.clock.now(),
     };
 
     const saved = await this.assignmentRepo.save(closed, { generateId: false });
@@ -291,17 +321,11 @@ export class AssignmentsService {
     schoolId: string,
     assignmentId: string,
   ) {
-    const assignment = await this.assignmentRepo.findById(
+    const assignment = await this.requireManageableAssignment(
+      auth,
       schoolId,
       assignmentId,
     );
-    if (!assignment) {
-      throw new AssignmentNotFoundException();
-    }
-
-    if (!this.policy.canManage(auth, assignment)) {
-      throw new AssignmentForbiddenException();
-    }
 
     if (assignment.status === "ARCHIVED") {
       return toAssignmentResponse(assignment);
@@ -314,7 +338,7 @@ export class AssignmentsService {
     const archived: Assignment = {
       ...assignment,
       status: "ARCHIVED",
-      updatedAt: new Date(),
+      updatedAt: this.clock.now(),
     };
 
     const saved = await this.assignmentRepo.save(archived, {
@@ -323,7 +347,48 @@ export class AssignmentsService {
     return toAssignmentResponse(saved);
   }
 
-  private canManageClass(
+  private async requireManageableAssignment(
+    auth: AuthContext,
+    schoolId: string,
+    assignmentId: string,
+  ): Promise<Assignment> {
+    const assignment = await this.assignmentRepo.findById(
+      schoolId,
+      assignmentId,
+    );
+    if (!assignment) {
+      throw new AssignmentNotFoundException();
+    }
+
+    const isManager = await this.isManagerOfClassById(
+      auth,
+      schoolId,
+      assignment.classId,
+    );
+    if (!this.policy.canManage(auth, assignment, isManager)) {
+      throw new AssignmentNotFoundException();
+    }
+
+    return assignment;
+  }
+
+  private async isManagerOfClassById(
+    auth: AuthContext,
+    schoolId: string,
+    classId: string,
+  ): Promise<boolean> {
+    const visibleClass = await this.classRepo.findVisibleClassById({
+      schoolId,
+      classId,
+      actor: {
+        userId: auth.principal.userId,
+        roles: auth.principal.roles,
+      },
+    });
+    return visibleClass !== null;
+  }
+
+  private isManagerOfClass(
     auth: AuthContext,
     classItem: {
       readonly schoolId: string;
@@ -339,24 +404,6 @@ export class AssignmentsService {
         auth.tenant.schoolId === classItem.schoolId &&
         classItem.teacherUserIds.includes(auth.principal.userId)
       );
-    }
-
-    return false;
-  }
-
-  private canAccessClass(
-    auth: AuthContext,
-    classItem: {
-      readonly schoolId: string;
-      readonly teacherUserIds: readonly string[];
-    },
-  ): boolean {
-    if (this.canManageClass(auth, classItem)) {
-      return true;
-    }
-
-    if (hasRole(auth, MembershipRole.STUDENT)) {
-      return auth.tenant.schoolId === classItem.schoolId;
     }
 
     return false;

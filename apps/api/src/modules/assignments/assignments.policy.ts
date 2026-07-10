@@ -5,7 +5,11 @@ import {
   MembershipRole,
 } from "../../common/security/index.js";
 import { Permission } from "../../common/security/permission.js";
-import type { Assignment } from "./domain/assignment.types.js";
+import type {
+  Assignment,
+  AssignmentStatus,
+} from "./domain/assignment.types.js";
+import type { Clock } from "./ports/clock.port.js";
 
 export class AssignmentsPolicy {
   canCreate(auth: AuthContext, schoolId: string): boolean {
@@ -15,7 +19,11 @@ export class AssignmentsPolicy {
     );
   }
 
-  canManage(auth: AuthContext, assignment: Assignment): boolean {
+  canManage(
+    auth: AuthContext,
+    assignment: Assignment,
+    isManagerOfClass: boolean,
+  ): boolean {
     if (!hasPermission(auth, Permission.ASSIGNMENT_MANAGE)) {
       return false;
     }
@@ -24,33 +32,61 @@ export class AssignmentsPolicy {
       return false;
     }
 
-    if (hasRole(auth, MembershipRole.SCHOOL_ADMIN)) {
+    return isManagerOfClass;
+  }
+
+  canRead(
+    auth: AuthContext,
+    assignment: Assignment,
+    clock: Clock,
+    isActiveMemberOfClass: boolean,
+    isManagerOfClass: boolean,
+  ): boolean {
+    if (auth.tenant.schoolId !== assignment.schoolId) {
+      return false;
+    }
+
+    if (isManagerOfClass) {
       return true;
     }
 
-    if (hasRole(auth, MembershipRole.TEACHER)) {
-      return assignment.createdByUserId === auth.principal.userId;
+    if (hasRole(auth, MembershipRole.STUDENT)) {
+      if (!isActiveMemberOfClass) {
+        return false;
+      }
+      if (assignment.status !== "PUBLISHED") {
+        return false;
+      }
+      if (
+        assignment.publishAt &&
+        assignment.publishAt.getTime() > clock.now().getTime()
+      ) {
+        return false;
+      }
+      return true;
     }
 
     return false;
   }
 
-  canRead(auth: AuthContext, assignment: Assignment): boolean {
-    if (auth.tenant.schoolId !== assignment.schoolId) {
+  isStudentVisible(
+    assignment: { status: AssignmentStatus; publishAt?: Date | null },
+    clock: Clock,
+    isActiveMemberOfClass: boolean,
+  ): boolean {
+    if (!isActiveMemberOfClass) {
       return false;
     }
-
-    if (this.canManage(auth, assignment)) {
-      return true;
+    if (assignment.status !== "PUBLISHED") {
+      return false;
     }
-
-    if (hasRole(auth, MembershipRole.STUDENT)) {
-      return (
-        assignment.status === "PUBLISHED" || assignment.status === "CLOSED"
-      );
+    if (
+      assignment.publishAt &&
+      assignment.publishAt.getTime() > clock.now().getTime()
+    ) {
+      return false;
     }
-
-    return false;
+    return true;
   }
 
   canListInClass(auth: AuthContext, schoolId: string): boolean {

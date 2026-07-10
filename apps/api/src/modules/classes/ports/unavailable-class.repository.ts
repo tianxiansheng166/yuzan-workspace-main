@@ -8,6 +8,7 @@ import type {
 import { ClassUnavailableException } from "../domain/class.errors.js";
 import type {
   ClassRepositoryPort,
+  FindVisibleClassOptions,
   ListClassesOptions,
   PaginatedResult,
 } from "./class-repository.port.js";
@@ -15,6 +16,20 @@ import type {
 @Injectable()
 export class UnavailableClassRepository implements ClassRepositoryPort {
   async findById(_schoolId: string, _classId: string): Promise<Class | null> {
+    throw new ClassUnavailableException();
+  }
+
+  async findVisibleClassById(
+    _options: FindVisibleClassOptions,
+  ): Promise<Class | null> {
+    throw new ClassUnavailableException();
+  }
+
+  async hasActiveStudentEnrollment(
+    _schoolId: string,
+    _classId: string,
+    _userId: string,
+  ): Promise<boolean> {
     throw new ClassUnavailableException();
   }
 
