@@ -921,8 +921,7 @@ components:
             $ref: "#/components/schemas/AssignmentTarget"
     Assignment:
       type: object
-      required:
-        [id, courseVersionId, title, status, startsAt, dueAt, revision]
+      required: [id, courseVersionId, title, status, startsAt, dueAt, revision]
       properties:
         id:
           type: string
@@ -1084,7 +1083,16 @@ components:
         status:
           type: string
           enum:
-            [IN_PROGRESS, PENDING_SYNC, SUBMITTED, PROCESSING, NEEDS_REVIEW, REVIEWED, RETURNED, ACCEPTED]
+            [
+              IN_PROGRESS,
+              PENDING_SYNC,
+              SUBMITTED,
+              PROCESSING,
+              NEEDS_REVIEW,
+              REVIEWED,
+              RETURNED,
+              ACCEPTED,
+            ]
         attemptNo:
           type: integer
         revision:
