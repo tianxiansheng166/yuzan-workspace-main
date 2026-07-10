@@ -1,0 +1,12 @@
+# Example Prometheus recording and alerting rules.
+# Deploy through your Prometheus operator or server configuration.
+groups:
+  - name: yuzan-api
+    interval: 30s
+    rules:
+      - record: yuzan:api:http_request_rate5m
+        expr: sum(rate(http_requests_total[5m])) by (service, route)
+      - record: yuzan:api:http_error_rate5m
+        expr: sum(rate(http_errors_total[5m])) by (service, route)
+      - record: yuzan:api:dependency_unhealthy
+        expr: sum(dependency_status{status!="healthy"}) by (name)

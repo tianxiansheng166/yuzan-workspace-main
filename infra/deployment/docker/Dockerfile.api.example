@@ -1,0 +1,30 @@
+# syntax=docker/dockerfile:1
+# Example production Dockerfile for the API service.
+# This file is an example; adjust image tags and build context as needed.
+
+FROM node:24-alpine AS builder
+WORKDIR /app
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
+COPY apps/api/package.json ./apps/api/
+COPY packages ./packages
+COPY infra/database ./infra/database
+RUN corepack enable && corepack prepare pnpm@10.13.1 --activate
+RUN pnpm install --frozen-lockfile
+COPY apps/api ./apps/api
+RUN pnpm --filter @yuzan/api build
+
+FROM node:24-alpine AS runtime
+ENV NODE_ENV=production
+ENV API_PORT=4000
+RUN addgroup -S yuzan && adduser -S yuzan -G yuzan
+WORKDIR /app
+COPY --from=builder --chown=yuzan:yuzan /app/apps/api/dist ./dist
+COPY --from=builder --chown=yuzan:yuzan /app/apps/api/package.json ./
+COPY --from=builder --chown=yuzan:yuzan /app/node_modules ./node_modules
+USER yuzan
+EXPOSE 4000
+# Read-only root with explicit temp directory.
+VOLUME ["/tmp"]
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD node -e "require('http').get('http://127.0.0.1:4000/api/v1/health/live', (r) => r.statusCode === 200 ? process.exit(0) : process.exit(1))"
+CMD ["node", "dist/main.js"]

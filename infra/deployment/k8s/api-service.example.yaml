@@ -1,0 +1,15 @@
+# Example Kubernetes service for the API.
+apiVersion: v1
+kind: Service
+metadata:
+  name: yuzan-api
+  labels:
+    app: yuzan-api
+spec:
+  selector:
+    app: yuzan-api
+  ports:
+    - port: 80
+      targetPort: 4000
+      name: http
+  type: ClusterIP

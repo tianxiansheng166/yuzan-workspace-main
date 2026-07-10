@@ -1,0 +1,21 @@
+# Example Alertmanager configuration.
+# Replace receiver integrations and routing labels for your environment.
+route:
+  receiver: default
+  group_by: [alertname, severity]
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 4h
+  routes:
+    - match:
+        severity: P1
+      receiver: p1-oncall
+      continue: true
+    - match:
+        severity: P2
+      receiver: p2-team
+
+receivers:
+  - name: default
+  - name: p1-oncall
+  - name: p2-team
