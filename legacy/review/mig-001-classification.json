@@ -1,0 +1,4449 @@
+{
+  "legacyCategoryCounts": {
+    "COPYRIGHT_BLOCKED": 9,
+    "DISCARD": 32,
+    "PRIVACY_BLOCKED": 5,
+    "REUSE_AFTER_REVIEW": 6,
+    "REWRITE_FROM_INTENT": 42,
+    "UNKNOWN_REQUIRES_REVIEW": 2,
+    "VISUAL_REFERENCE_ONLY": 17
+  },
+  "metadata": {
+    "classificationVersion": "four-class-plus-legacy-detail-v1",
+    "deterministicByInput": true,
+    "inputStateFingerprint": "8a6c3dba9527a78a1f7eb8a2db9471443f65aafc9673751b64b84e0e21db82ad",
+    "legacySourceRoot": "legacy/source-tree/two-legacy",
+    "outputRoots": ["legacy/exports", "legacy/review", "legacy/reports"],
+    "scannedFileCount": 113,
+    "schemaVersion": "2026-07-09",
+    "sourceTreeFingerprint": "9b6dffaec4bc6f03ac1ab1e14217a422c563a10b6b9856909c7aa5067b9a79c2",
+    "taskId": "MIG-001",
+    "toolVersion": "mig-001-audit-v4"
+  },
+  "primaryDispositionCounts": {
+    "DISCARD": 32,
+    "REUSE": 6,
+    "REVIEW": 33,
+    "REWRITE": 42
+  },
+  "records": [
+    {
+      "contentPurpose": "Visual audit evidence or screenshot reference",
+      "externalReferences": [],
+      "fileType": "PNG image",
+      "id": "mig001_14bdcc3d622c",
+      "legacyCategory": "VISUAL_REFERENCE_ONLY",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Audit screenshots are process evidence, not reusable product assets.",
+      "primaryDisposition": "REVIEW",
+      "relativePath": ".audit-course-desktop.png",
+      "riskTags": ["binaryAsset", "copyrightUnverified", "sourceUnknown"],
+      "runtimeDependencies": [],
+      "sha256": "d5ef8a7f1f3310c530dea716aad14e4fa937a151429069996a3d279262981652",
+      "sizeBytes": 105395,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "UX reference board",
+      "suggestedHandling": "Use only as visual reference; do not migrate as product asset."
+    },
+    {
+      "contentPurpose": "Visual audit evidence or screenshot reference",
+      "externalReferences": [],
+      "fileType": "PNG image",
+      "id": "mig001_8e40dfd5d267",
+      "legacyCategory": "VISUAL_REFERENCE_ONLY",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Audit screenshots are process evidence, not reusable product assets.",
+      "primaryDisposition": "REVIEW",
+      "relativePath": ".audit-course-mobile.png",
+      "riskTags": ["binaryAsset", "copyrightUnverified", "sourceUnknown"],
+      "runtimeDependencies": [],
+      "sha256": "9c9341f81066ff92beff862f8031d64dfc819cd28932ac1a0a3885129a89b8e7",
+      "sizeBytes": 34811,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "UX reference board",
+      "suggestedHandling": "Use only as visual reference; do not migrate as product asset."
+    },
+    {
+      "contentPurpose": "Visual audit evidence or screenshot reference",
+      "externalReferences": [],
+      "fileType": "PNG image",
+      "id": "mig001_54d293743318",
+      "legacyCategory": "VISUAL_REFERENCE_ONLY",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Audit screenshots are process evidence, not reusable product assets.",
+      "primaryDisposition": "REVIEW",
+      "relativePath": ".audit-home-desktop.png",
+      "riskTags": ["binaryAsset", "copyrightUnverified", "sourceUnknown"],
+      "runtimeDependencies": [],
+      "sha256": "cf1ef6f996a71a435159c7db5af8b947ce9188c8d0af0f7fd8af70f3f543413f",
+      "sizeBytes": 1365690,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "UX reference board",
+      "suggestedHandling": "Use only as visual reference; do not migrate as product asset."
+    },
+    {
+      "contentPurpose": "Visual audit evidence or screenshot reference",
+      "externalReferences": [],
+      "fileType": "PNG image",
+      "id": "mig001_791d0a1e550a",
+      "legacyCategory": "VISUAL_REFERENCE_ONLY",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Audit screenshots are process evidence, not reusable product assets.",
+      "primaryDisposition": "REVIEW",
+      "relativePath": ".audit-home-mobile.png",
+      "riskTags": ["binaryAsset", "copyrightUnverified", "sourceUnknown"],
+      "runtimeDependencies": [],
+      "sha256": "bb10a3b669055236905608b30033ff31c38eda3fb420b6e90801a7c2aad8ef06",
+      "sizeBytes": 120338,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "UX reference board",
+      "suggestedHandling": "Use only as visual reference; do not migrate as product asset."
+    },
+    {
+      "contentPurpose": "Tooling residue or AI workspace trace",
+      "externalReferences": [
+        {
+          "domain": "localhost",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "http://localhost:3001/platform-internal.html",
+          "pathHint": "platform-internal.html"
+        }
+      ],
+      "fileType": "PowerShell",
+      "id": "mig001_3ae8c000d791",
+      "legacyCategory": "DISCARD",
+      "manualReviewRequired": false,
+      "nonReusableReason": "Not part of the product asset set.",
+      "primaryDisposition": "DISCARD",
+      "relativePath": ".codex/check_resource_page.ps1",
+      "riskTags": ["externalDependency"],
+      "runtimeDependencies": [],
+      "sha256": "9ed753c6761668891562c494317be2f730c23240f0f9b66957b7102648f5003f",
+      "sizeBytes": 378,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Do not migrate",
+      "suggestedHandling": "Keep only as historical audit evidence if ever needed."
+    },
+    {
+      "contentPurpose": "Tooling residue or AI workspace trace",
+      "externalReferences": [
+        {
+          "domain": "localhost",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "http://localhost:3001/$p",
+          "pathHint": "$p"
+        }
+      ],
+      "fileType": "PowerShell",
+      "id": "mig001_b07e22fe0493",
+      "legacyCategory": "DISCARD",
+      "manualReviewRequired": false,
+      "nonReusableReason": "Not part of the product asset set.",
+      "primaryDisposition": "DISCARD",
+      "relativePath": ".codex/chrome_capture_selected.ps1",
+      "riskTags": ["externalDependency"],
+      "runtimeDependencies": [],
+      "sha256": "08d0da3bb5369225184321c7540c7c2e9a78aa4326a0c38504abe5c27df41265",
+      "sizeBytes": 581,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Do not migrate",
+      "suggestedHandling": "Keep only as historical audit evidence if ever needed."
+    },
+    {
+      "contentPurpose": "Tooling residue or AI workspace trace",
+      "externalReferences": [
+        {
+          "domain": "localhost",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "http://localhost:3001/$p",
+          "pathHint": "$p"
+        }
+      ],
+      "fileType": "PowerShell",
+      "id": "mig001_f8d0a5b88825",
+      "legacyCategory": "DISCARD",
+      "manualReviewRequired": false,
+      "nonReusableReason": "Not part of the product asset set.",
+      "primaryDisposition": "DISCARD",
+      "relativePath": ".codex/chrome_capture.ps1",
+      "riskTags": ["externalDependency"],
+      "runtimeDependencies": [],
+      "sha256": "e0eeb2f17f1bb6aa63e74fdc1c81eff3ee94088b8517902dbe5f3e5753b9af97",
+      "sizeBytes": 822,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Do not migrate",
+      "suggestedHandling": "Keep only as historical audit evidence if ever needed."
+    },
+    {
+      "contentPurpose": "Tooling residue or AI workspace trace",
+      "externalReferences": [],
+      "fileType": "File",
+      "id": "mig001_d4c5d69dfbc8",
+      "legacyCategory": "DISCARD",
+      "manualReviewRequired": false,
+      "nonReusableReason": "Not part of the product asset set.",
+      "primaryDisposition": "DISCARD",
+      "relativePath": ".codex/ui_audit_capture.py",
+      "riskTags": [],
+      "runtimeDependencies": [],
+      "sha256": "f502b34e0b618a7f1b87be324d97c5b3ac6d71f8e1d52fba43f8c2a6452f14a1",
+      "sizeBytes": 2250,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Do not migrate",
+      "suggestedHandling": "Keep only as historical audit evidence if ever needed."
+    },
+    {
+      "contentPurpose": "Visual audit evidence or screenshot reference",
+      "externalReferences": [],
+      "fileType": "PNG image",
+      "id": "mig001_b90986791171",
+      "legacyCategory": "VISUAL_REFERENCE_ONLY",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Audit screenshots are process evidence, not reusable product assets.",
+      "primaryDisposition": "REVIEW",
+      "relativePath": ".codex/ui_audit_chrome/admin-dashboard.png",
+      "riskTags": ["binaryAsset", "copyrightUnverified", "sourceUnknown"],
+      "runtimeDependencies": [],
+      "sha256": "e23ecc93a0d6e57c835d3b27f5d49bcfb210245c748cfebe4711c927560cd278",
+      "sizeBytes": 1459040,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "UX reference board",
+      "suggestedHandling": "Use only as visual reference; do not migrate as product asset."
+    },
+    {
+      "contentPurpose": "Visual audit evidence or screenshot reference",
+      "externalReferences": [],
+      "fileType": "PNG image",
+      "id": "mig001_5a8e42feb5f0",
+      "legacyCategory": "VISUAL_REFERENCE_ONLY",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Audit screenshots are process evidence, not reusable product assets.",
+      "primaryDisposition": "REVIEW",
+      "relativePath": ".codex/ui_audit_chrome/admin-student-management.png",
+      "riskTags": ["binaryAsset", "copyrightUnverified", "sourceUnknown"],
+      "runtimeDependencies": [],
+      "sha256": "5abb5f6bb39d7340faf8638b64058fe9d25f90cfe6b040807bead156dde6d68f",
+      "sizeBytes": 1304247,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "UX reference board",
+      "suggestedHandling": "Use only as visual reference; do not migrate as product asset."
+    },
+    {
+      "contentPurpose": "Visual audit evidence or screenshot reference",
+      "externalReferences": [],
+      "fileType": "PNG image",
+      "id": "mig001_dfcd6096f3f5",
+      "legacyCategory": "VISUAL_REFERENCE_ONLY",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Audit screenshots are process evidence, not reusable product assets.",
+      "primaryDisposition": "REVIEW",
+      "relativePath": ".codex/ui_audit_chrome/course-center.png",
+      "riskTags": ["binaryAsset", "copyrightUnverified", "sourceUnknown"],
+      "runtimeDependencies": [],
+      "sha256": "0ba24faa7e78aacfe2f83611fb617e59c498e9eddfc888aebce48f6d37e1b55b",
+      "sizeBytes": 1756430,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "UX reference board",
+      "suggestedHandling": "Use only as visual reference; do not migrate as product asset."
+    },
+    {
+      "contentPurpose": "Visual audit evidence or screenshot reference",
+      "externalReferences": [],
+      "fileType": "PNG image",
+      "id": "mig001_eddc7312fec8",
+      "legacyCategory": "VISUAL_REFERENCE_ONLY",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Audit screenshots are process evidence, not reusable product assets.",
+      "primaryDisposition": "REVIEW",
+      "relativePath": ".codex/ui_audit_chrome/index.png",
+      "riskTags": ["binaryAsset", "copyrightUnverified", "sourceUnknown"],
+      "runtimeDependencies": [],
+      "sha256": "ad4d1572cc664a35935cbe478977244ae6154c8e9686c600929e087aaee9a427",
+      "sizeBytes": 1767911,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "UX reference board",
+      "suggestedHandling": "Use only as visual reference; do not migrate as product asset."
+    },
+    {
+      "contentPurpose": "Visual audit evidence or screenshot reference",
+      "externalReferences": [],
+      "fileType": "PNG image",
+      "id": "mig001_25e438a87aca",
+      "legacyCategory": "VISUAL_REFERENCE_ONLY",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Audit screenshots are process evidence, not reusable product assets.",
+      "primaryDisposition": "REVIEW",
+      "relativePath": ".codex/ui_audit_chrome/learning-tasks.png",
+      "riskTags": ["binaryAsset", "copyrightUnverified", "sourceUnknown"],
+      "runtimeDependencies": [],
+      "sha256": "1f47cb68da09202b1d34f36191b7635d3db03b74251817c965738fa289e8769a",
+      "sizeBytes": 1484243,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "UX reference board",
+      "suggestedHandling": "Use only as visual reference; do not migrate as product asset."
+    },
+    {
+      "contentPurpose": "Visual audit evidence or screenshot reference",
+      "externalReferences": [],
+      "fileType": "PNG image",
+      "id": "mig001_e944cfb8b67c",
+      "legacyCategory": "VISUAL_REFERENCE_ONLY",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Audit screenshots are process evidence, not reusable product assets.",
+      "primaryDisposition": "REVIEW",
+      "relativePath": ".codex/ui_audit_chrome/platform-internal.png",
+      "riskTags": ["binaryAsset", "copyrightUnverified", "sourceUnknown"],
+      "runtimeDependencies": [],
+      "sha256": "1e323e0100c690065acb923dc6b8a244c58614e163a8dcb34c22825eff019246",
+      "sizeBytes": 1601648,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "UX reference board",
+      "suggestedHandling": "Use only as visual reference; do not migrate as product asset."
+    },
+    {
+      "contentPurpose": "Visual audit evidence or screenshot reference",
+      "externalReferences": [],
+      "fileType": "PNG image",
+      "id": "mig001_192c3b4219a9",
+      "legacyCategory": "VISUAL_REFERENCE_ONLY",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Audit screenshots are process evidence, not reusable product assets.",
+      "primaryDisposition": "REVIEW",
+      "relativePath": ".codex/ui_audit_chrome/premium-purchase.png",
+      "riskTags": [
+        "binaryAsset",
+        "copyrightUnverified",
+        "fakeData",
+        "obsoleteDemo",
+        "sourceUnknown"
+      ],
+      "runtimeDependencies": [],
+      "sha256": "750405d85aca94b60253460a10789f789b74fd0e0ff9610e8408cc82c65fa0b3",
+      "sizeBytes": 1671735,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "UX reference board",
+      "suggestedHandling": "Use only as visual reference; do not migrate as product asset."
+    },
+    {
+      "contentPurpose": "Visual audit evidence or screenshot reference",
+      "externalReferences": [],
+      "fileType": "PNG image",
+      "id": "mig001_6c526c098d69",
+      "legacyCategory": "VISUAL_REFERENCE_ONLY",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Audit screenshots are process evidence, not reusable product assets.",
+      "primaryDisposition": "REVIEW",
+      "relativePath": ".codex/ui_audit_chrome/pricing.png",
+      "riskTags": [
+        "binaryAsset",
+        "copyrightUnverified",
+        "fakeData",
+        "obsoleteDemo",
+        "sourceUnknown"
+      ],
+      "runtimeDependencies": [],
+      "sha256": "352bae035a10424893a69f0815e4f056b709b59814b84dd474708c242ea7f82c",
+      "sizeBytes": 1554138,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "UX reference board",
+      "suggestedHandling": "Use only as visual reference; do not migrate as product asset."
+    },
+    {
+      "contentPurpose": "Visual audit evidence or screenshot reference",
+      "externalReferences": [],
+      "fileType": "PNG image",
+      "id": "mig001_73170dc9183b",
+      "legacyCategory": "VISUAL_REFERENCE_ONLY",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Audit screenshots are process evidence, not reusable product assets.",
+      "primaryDisposition": "REVIEW",
+      "relativePath": ".codex/ui_audit_chrome/professional-purchase.png",
+      "riskTags": [
+        "binaryAsset",
+        "copyrightUnverified",
+        "fakeData",
+        "obsoleteDemo",
+        "sourceUnknown"
+      ],
+      "runtimeDependencies": [],
+      "sha256": "2747ca67044fd57ea5845b30545abe78d5b2e2fa72fef51b651c76626edbbff6",
+      "sizeBytes": 1513835,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "UX reference board",
+      "suggestedHandling": "Use only as visual reference; do not migrate as product asset."
+    },
+    {
+      "contentPurpose": "Visual audit evidence or screenshot reference",
+      "externalReferences": [],
+      "fileType": "PNG image",
+      "id": "mig001_6f6e378653cc",
+      "legacyCategory": "VISUAL_REFERENCE_ONLY",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Audit screenshots are process evidence, not reusable product assets.",
+      "primaryDisposition": "REVIEW",
+      "relativePath": ".codex/ui_audit_chrome/student-dashboard.png",
+      "riskTags": ["binaryAsset", "copyrightUnverified", "sourceUnknown"],
+      "runtimeDependencies": [],
+      "sha256": "9f307decabebd80725843a1e15a8e908cf293f4ec4e2695bc06b02f4fab43233",
+      "sizeBytes": 1651562,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "UX reference board",
+      "suggestedHandling": "Use only as visual reference; do not migrate as product asset."
+    },
+    {
+      "contentPurpose": "Visual audit evidence or screenshot reference",
+      "externalReferences": [],
+      "fileType": "PNG image",
+      "id": "mig001_7324171639ae",
+      "legacyCategory": "VISUAL_REFERENCE_ONLY",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Audit screenshots are process evidence, not reusable product assets.",
+      "primaryDisposition": "REVIEW",
+      "relativePath": ".codex/ui_audit_chrome/student-profile.png",
+      "riskTags": ["binaryAsset", "copyrightUnverified", "sourceUnknown"],
+      "runtimeDependencies": [],
+      "sha256": "c26690b8c86a47981a80d5c873483380bb7852ad37d205e31fb102e359c287b4",
+      "sizeBytes": 1503195,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "UX reference board",
+      "suggestedHandling": "Use only as visual reference; do not migrate as product asset."
+    },
+    {
+      "contentPurpose": "Visual audit evidence or screenshot reference",
+      "externalReferences": [],
+      "fileType": "PNG image",
+      "id": "mig001_1370a4c32fff",
+      "legacyCategory": "VISUAL_REFERENCE_ONLY",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Audit screenshots are process evidence, not reusable product assets.",
+      "primaryDisposition": "REVIEW",
+      "relativePath": ".codex/ui_audit_chrome/teacher-dashboard.png",
+      "riskTags": ["binaryAsset", "copyrightUnverified", "sourceUnknown"],
+      "runtimeDependencies": [],
+      "sha256": "885086466191283a4759bcd1e3d37c73a7575f1c054c8f65022d3271a89c5cf7",
+      "sizeBytes": 1506053,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "UX reference board",
+      "suggestedHandling": "Use only as visual reference; do not migrate as product asset."
+    },
+    {
+      "contentPurpose": "Visual audit evidence or screenshot reference",
+      "externalReferences": [],
+      "fileType": "PNG image",
+      "id": "mig001_6b17eae1088e",
+      "legacyCategory": "VISUAL_REFERENCE_ONLY",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Audit screenshots are process evidence, not reusable product assets.",
+      "primaryDisposition": "REVIEW",
+      "relativePath": ".codex/ui_audit_chrome/video-player.png",
+      "riskTags": ["binaryAsset", "copyrightUnverified", "sourceUnknown"],
+      "runtimeDependencies": [],
+      "sha256": "ff533bf7cc50585ae43c9be1e3bf30f2476f345cffd5e40b91129f2bd44b1a14",
+      "sizeBytes": 1411888,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "UX reference board",
+      "suggestedHandling": "Use only as visual reference; do not migrate as product asset."
+    },
+    {
+      "contentPurpose": "Tooling residue or AI workspace trace",
+      "externalReferences": [],
+      "fileType": "Markdown",
+      "id": "mig001_28b671285575",
+      "legacyCategory": "DISCARD",
+      "manualReviewRequired": false,
+      "nonReusableReason": "Not part of the product asset set.",
+      "primaryDisposition": "DISCARD",
+      "relativePath": ".trae/documents/修复网页翻译功能，保持原有结构和逻辑.md",
+      "riskTags": [],
+      "runtimeDependencies": [],
+      "sha256": "b6a17d0ad9c008c0299eadf8a9cf382000a462966b866057aa872617b0115424",
+      "sizeBytes": 1260,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Do not migrate",
+      "suggestedHandling": "Keep only as historical audit evidence if ever needed."
+    },
+    {
+      "contentPurpose": "Page flow, IA, copy, and role journey intent",
+      "externalReferences": [
+        {
+          "domain": "cdn.jsdelivr.net",
+          "isExternal": true,
+          "mediaCategory": "script",
+          "normalized": "https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js",
+          "pathHint": "dist/chart.umd.min.js"
+        },
+        {
+          "domain": "cdn.jsdelivr.net",
+          "isExternal": true,
+          "mediaCategory": "font",
+          "normalized": "https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css",
+          "pathHint": "css/font-awesome.min.css"
+        },
+        {
+          "domain": "cdn.tailwindcss.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://cdn.tailwindcss.com/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "fonts.googleapis.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://fonts.googleapis.com/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "fonts.googleapis.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://fonts.googleapis.com/css2",
+          "pathHint": "css2"
+        },
+        {
+          "domain": "fonts.gstatic.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://fonts.gstatic.com/",
+          "pathHint": "/"
+        }
+      ],
+      "fileType": "HTML page",
+      "id": "mig001_b9565913e8f8",
+      "legacyCategory": "REWRITE_FROM_INTENT",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Useful for intent only; implementation is runtime-coupled and not migration-safe.",
+      "primaryDisposition": "REWRITE",
+      "relativePath": "admin-dashboard.html",
+      "riskTags": [
+        "containsPii",
+        "externalDependency",
+        "fakeData",
+        "obsoleteDemo",
+        "runtimeCoupled"
+      ],
+      "runtimeDependencies": [
+        "/public/css/yx-design-upgrade.css",
+        "https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js",
+        "https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css",
+        "https://cdn.tailwindcss.com/",
+        "https://fonts.googleapis.com/",
+        "https://fonts.googleapis.com/css2",
+        "https://fonts.gstatic.com/",
+        "public/js/site-polish.js"
+      ],
+      "sha256": "7862e9acdca46d41b79db067759815dba1c00077c72224963eb60ab5adbe7e7d",
+      "sizeBytes": 39850,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Product and migration backlog",
+      "suggestedHandling": "Extract requirements, flows, and structure; rewrite implementation for the new system."
+    },
+    {
+      "contentPurpose": "Page flow, IA, copy, and role journey intent",
+      "externalReferences": [
+        {
+          "domain": "cdn.jsdelivr.net",
+          "isExternal": true,
+          "mediaCategory": "font",
+          "normalized": "https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css",
+          "pathHint": "css/font-awesome.min.css"
+        },
+        {
+          "domain": "cdn.tailwindcss.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://cdn.tailwindcss.com/",
+          "pathHint": "/"
+        }
+      ],
+      "fileType": "HTML page",
+      "id": "mig001_ea65f0c19829",
+      "legacyCategory": "REWRITE_FROM_INTENT",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Useful for intent only; implementation is runtime-coupled and not migration-safe.",
+      "primaryDisposition": "REWRITE",
+      "relativePath": "admin-student-management.html",
+      "riskTags": [
+        "containsPii",
+        "externalDependency",
+        "fakeData",
+        "runtimeCoupled"
+      ],
+      "runtimeDependencies": [
+        "https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css",
+        "https://cdn.tailwindcss.com/",
+        "public/js/site-polish.js"
+      ],
+      "sha256": "b0c3893947fe931edd62fc95571c6256dc83cff96c429e52fcc7d54a7c570c53",
+      "sizeBytes": 26651,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Product and migration backlog",
+      "suggestedHandling": "Extract requirements, flows, and structure; rewrite implementation for the new system."
+    },
+    {
+      "contentPurpose": "Legacy media or visual asset metadata source",
+      "externalReferences": [],
+      "fileType": "PNG image",
+      "id": "mig001_e89ed53b17c6",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Rights and source status are not confirmed.",
+      "primaryDisposition": "REVIEW",
+      "relativePath": "assets/images/三年级-夏洛的网-课程封面.png",
+      "riskTags": ["binaryAsset", "copyrightUnverified"],
+      "runtimeDependencies": [],
+      "sha256": "3a51c96c4577233594d1c84749c9a4a993be6d2d4d302e0f55a76ab83e175503",
+      "sizeBytes": 1340622,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Media rights review queue",
+      "suggestedHandling": "Export metadata only; do not copy binary assets into the new system."
+    },
+    {
+      "contentPurpose": "Legacy media or visual asset metadata source",
+      "externalReferences": [],
+      "fileType": "PNG image",
+      "id": "mig001_57828ec28dc0",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Rights and source status are not confirmed.",
+      "primaryDisposition": "REVIEW",
+      "relativePath": "assets/images/视频播放封面.png",
+      "riskTags": ["binaryAsset", "copyrightUnverified"],
+      "runtimeDependencies": [],
+      "sha256": "96f63dea0ffc74203d28dc97d7c285135c87fcf0383e78c273e876cc98c8545a",
+      "sizeBytes": 105287,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Media rights review queue",
+      "suggestedHandling": "Export metadata only; do not copy binary assets into the new system."
+    },
+    {
+      "contentPurpose": "Legacy media or visual asset metadata source",
+      "externalReferences": [],
+      "fileType": "PNG image",
+      "id": "mig001_6830fbc5fdc7",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Rights and source status are not confirmed.",
+      "primaryDisposition": "REVIEW",
+      "relativePath": "assets/images/五年级-我为仓央嘉措诗配画-课程封面.png",
+      "riskTags": ["binaryAsset", "copyrightUnverified"],
+      "runtimeDependencies": [],
+      "sha256": "01be58a13e3d769de6cd0e7c87abfdaf5781e60f765b6027f3d96d9852898a40",
+      "sizeBytes": 994590,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Media rights review queue",
+      "suggestedHandling": "Export metadata only; do not copy binary assets into the new system."
+    },
+    {
+      "contentPurpose": "Brand logo candidate",
+      "externalReferences": [],
+      "fileType": "PNG image",
+      "id": "mig001_818abd8269ff",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
+      "manualReviewRequired": true,
+      "nonReusableReason": "No provenance or source master file available.",
+      "primaryDisposition": "REVIEW",
+      "relativePath": "assets/images/logo.png",
+      "riskTags": ["binaryAsset", "copyrightUnverified", "sourceUnknown"],
+      "runtimeDependencies": [],
+      "sha256": "b3647c374ef73a46031d9a70321c077e775bf92dbf89ee3fa0106ae930e705a9",
+      "sizeBytes": 58514,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Brand asset registry",
+      "suggestedHandling": "Do not reuse until ownership and current brand status are confirmed."
+    },
+    {
+      "contentPurpose": "Legacy media or visual asset metadata source",
+      "externalReferences": [],
+      "fileType": "PNG image",
+      "id": "mig001_c74a286ef88c",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Rights and source status are not confirmed.",
+      "primaryDisposition": "REVIEW",
+      "relativePath": "assets/images/yx-plateau-soundscape-hero-v2.png",
+      "riskTags": ["binaryAsset", "copyrightUnverified", "sourceUnknown"],
+      "runtimeDependencies": [],
+      "sha256": "d1bff40e8f41f8a779101250ecb61c580cb9de02349dbf041ef577e66308d9d3",
+      "sizeBytes": 2561255,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Media rights review queue",
+      "suggestedHandling": "Export metadata only; do not copy binary assets into the new system."
+    },
+    {
+      "contentPurpose": "Legacy media or visual asset metadata source",
+      "externalReferences": [],
+      "fileType": "PNG image",
+      "id": "mig001_f2dd7662a2d5",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Rights and source status are not confirmed.",
+      "primaryDisposition": "REVIEW",
+      "relativePath": "assets/images/yx-plateau-soundscape-hero.png",
+      "riskTags": ["binaryAsset", "copyrightUnverified", "sourceUnknown"],
+      "runtimeDependencies": [],
+      "sha256": "89d8f7a95351d46f1ff0e1056b7360f345852624caa3c30754526ae1b2c76195",
+      "sizeBytes": 2931065,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Media rights review queue",
+      "suggestedHandling": "Export metadata only; do not copy binary assets into the new system."
+    },
+    {
+      "contentPurpose": "Legacy media or visual asset metadata source",
+      "externalReferences": [],
+      "fileType": "MP4 video",
+      "id": "mig001_7f9944bbc22d",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Rights and source status are not confirmed.",
+      "primaryDisposition": "REVIEW",
+      "relativePath": "assets/media/video.mp4",
+      "riskTags": ["binaryAsset", "copyrightUnverified"],
+      "runtimeDependencies": [],
+      "sha256": "c3a5ae27cdaf996af1635a7c151969e875a2bfa012816113e2dd0ca800fcfd72",
+      "sizeBytes": 666564,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Media rights review queue",
+      "suggestedHandling": "Export metadata only; do not copy binary assets into the new system."
+    },
+    {
+      "contentPurpose": "Page flow, IA, copy, and role journey intent",
+      "externalReferences": [
+        {
+          "domain": "cdn.jsdelivr.net",
+          "isExternal": true,
+          "mediaCategory": "font",
+          "normalized": "https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css",
+          "pathHint": "css/font-awesome.min.css"
+        },
+        {
+          "domain": "cdn.tailwindcss.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://cdn.tailwindcss.com/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "p11-doubao-search-sign.byteimg.com",
+          "isExternal": true,
+          "mediaCategory": "image",
+          "normalized": "https://p11-doubao-search-sign.byteimg.com/mosaic-legacy/1bc8000114341d73d9e7~tplv-be4g95zd3a-image.jpeg",
+          "pathHint": "mosaic-legacy/1bc8000114341d73d9e7~tplv-be4g95zd3a-image.jpeg"
+        },
+        {
+          "domain": "p11-doubao-search-sign.byteimg.com",
+          "isExternal": true,
+          "mediaCategory": "image",
+          "normalized": "https://p11-doubao-search-sign.byteimg.com/tos-cn-i-qvj2lq49k0/cc55c3c6d4ee45e0b75fd41acf6005a4~tplv-be4g95zd3a-image.jpeg",
+          "pathHint": "tos-cn-i-qvj2lq49k0/cc55c3c6d4ee45e0b75fd41acf6005a4~tplv-be4g95zd3a-image.jpeg"
+        },
+        {
+          "domain": "p26-doubao-search-sign.byteimg.com",
+          "isExternal": true,
+          "mediaCategory": "image",
+          "normalized": "https://p26-doubao-search-sign.byteimg.com/labis/8d0be08c2606f269b897515a0ee5de3f~tplv-be4g95zd3a-image.jpeg",
+          "pathHint": "labis/8d0be08c2606f269b897515a0ee5de3f~tplv-be4g95zd3a-image.jpeg"
+        },
+        {
+          "domain": "p26-doubao-search-sign.byteimg.com",
+          "isExternal": true,
+          "mediaCategory": "image",
+          "normalized": "https://p26-doubao-search-sign.byteimg.com/labis/eeab2b975f58e1066c15c8a810c59005~tplv-be4g95zd3a-image.jpeg",
+          "pathHint": "labis/eeab2b975f58e1066c15c8a810c59005~tplv-be4g95zd3a-image.jpeg"
+        },
+        {
+          "domain": "p26-doubao-search-sign.byteimg.com",
+          "isExternal": true,
+          "mediaCategory": "image",
+          "normalized": "https://p26-doubao-search-sign.byteimg.com/labis/f845b83c091e012109c44c7dde8cfcb5~tplv-be4g95zd3a-image.jpeg",
+          "pathHint": "labis/f845b83c091e012109c44c7dde8cfcb5~tplv-be4g95zd3a-image.jpeg"
+        },
+        {
+          "domain": "p26-doubao-search-sign.byteimg.com",
+          "isExternal": true,
+          "mediaCategory": "image",
+          "normalized": "https://p26-doubao-search-sign.byteimg.com/tos-cn-i-be4g95zd3a/1487031528883093510~tplv-be4g95zd3a-image.jpeg",
+          "pathHint": "tos-cn-i-be4g95zd3a/1487031528883093510~tplv-be4g95zd3a-image.jpeg"
+        },
+        {
+          "domain": "p3-doubao-search-sign.byteimg.com",
+          "isExternal": true,
+          "mediaCategory": "image",
+          "normalized": "https://p3-doubao-search-sign.byteimg.com/tos-cn-i-be4g95zd3a/1630797037955317761~tplv-be4g95zd3a-image.jpeg",
+          "pathHint": "tos-cn-i-be4g95zd3a/1630797037955317761~tplv-be4g95zd3a-image.jpeg"
+        }
+      ],
+      "fileType": "HTML page",
+      "id": "mig001_07ff6a7cbd44",
+      "legacyCategory": "REWRITE_FROM_INTENT",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Useful for intent only; implementation is runtime-coupled and not migration-safe.",
+      "primaryDisposition": "REWRITE",
+      "relativePath": "course-center.html",
+      "riskTags": [
+        "containsPii",
+        "externalDependency",
+        "fakeData",
+        "runtimeCoupled"
+      ],
+      "runtimeDependencies": [
+        "/public/css/yx-design-upgrade.css",
+        "/public/js/translate.js",
+        "https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css",
+        "https://cdn.tailwindcss.com/",
+        "public/js/site-polish.js"
+      ],
+      "sha256": "120011c17e3cd4cc260def160c24ad07105eda378bfcb2a2e9f7c74679f61765",
+      "sizeBytes": 76795,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Product and migration backlog",
+      "suggestedHandling": "Extract requirements, flows, and structure; rewrite implementation for the new system."
+    },
+    {
+      "contentPurpose": "Demo page or fake-data artifact outside approved migration scope",
+      "externalReferences": [
+        {
+          "domain": "cdn.jsdelivr.net",
+          "isExternal": true,
+          "mediaCategory": "script",
+          "normalized": "https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js",
+          "pathHint": "dist/chart.umd.min.js"
+        },
+        {
+          "domain": "cdn.jsdelivr.net",
+          "isExternal": true,
+          "mediaCategory": "font",
+          "normalized": "https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css",
+          "pathHint": "css/font-awesome.min.css"
+        },
+        {
+          "domain": "cdn.tailwindcss.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://cdn.tailwindcss.com/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "fonts.googleapis.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://fonts.googleapis.com/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "fonts.googleapis.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://fonts.googleapis.com/css2",
+          "pathHint": "css2"
+        },
+        {
+          "domain": "fonts.gstatic.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://fonts.gstatic.com/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "p3-flow-imagex-sign.byteimg.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/b01db19ad5f34c35a5cba3cefa9614ca~tplv-a9rns2rl98-image.image",
+          "pathHint": "super_tool/b01db19ad5f34c35a5cba3cefa9614ca~tplv-a9rns2rl98-image.image"
+        }
+      ],
+      "fileType": "HTML page",
+      "id": "mig001_146d0956a4ad",
+      "legacyCategory": "DISCARD",
+      "manualReviewRequired": false,
+      "nonReusableReason": "Deprecated demo, out-of-scope flow, or disallowed legacy implementation.",
+      "primaryDisposition": "DISCARD",
+      "relativePath": "dashboard.html",
+      "riskTags": [
+        "externalDependency",
+        "fakeData",
+        "obsoleteDemo",
+        "runtimeCoupled"
+      ],
+      "runtimeDependencies": [
+        "https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js",
+        "https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css",
+        "https://cdn.tailwindcss.com/",
+        "https://fonts.googleapis.com/",
+        "https://fonts.googleapis.com/css2",
+        "https://fonts.gstatic.com/",
+        "public/js/site-polish.js"
+      ],
+      "sha256": "ea0e8b50aec2c16da2686da0e9e353c047c030f9612fb6597dca96398904a051",
+      "sizeBytes": 46990,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Do not migrate",
+      "suggestedHandling": "Keep for audit only; block direct migration."
+    },
+    {
+      "contentPurpose": "Demo page or fake-data artifact outside approved migration scope",
+      "externalReferences": [],
+      "fileType": "JSON",
+      "id": "mig001_cf368ba33f3f",
+      "legacyCategory": "DISCARD",
+      "manualReviewRequired": false,
+      "nonReusableReason": "Deprecated demo, out-of-scope flow, or disallowed legacy implementation.",
+      "primaryDisposition": "DISCARD",
+      "relativePath": "db/analytics.json",
+      "riskTags": ["containsPii", "fakeData", "runtimeCoupled"],
+      "runtimeDependencies": [],
+      "sha256": "eb6e835d0e874f1568ea3f73b962a4305e72bd9c8269052d06261852549fc034",
+      "sizeBytes": 2138,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Do not migrate",
+      "suggestedHandling": "Keep for audit only; block direct migration."
+    },
+    {
+      "contentPurpose": "Legacy personal or learner data source",
+      "externalReferences": [],
+      "fileType": "JSON",
+      "id": "mig001_000f15eec484",
+      "legacyCategory": "PRIVACY_BLOCKED",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Contains or models personal data and must not be migrated.",
+      "primaryDisposition": "REVIEW",
+      "relativePath": "db/applications.json",
+      "riskTags": ["containsPii", "runtimeCoupled"],
+      "runtimeDependencies": [],
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "sizeBytes": 2,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Do not migrate",
+      "suggestedHandling": "Keep only structure-level evidence and regenerate fictional test data if needed."
+    },
+    {
+      "contentPurpose": "Legacy personal or learner data source",
+      "externalReferences": [],
+      "fileType": "JSON",
+      "id": "mig001_9f7eac9cecb9",
+      "legacyCategory": "PRIVACY_BLOCKED",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Contains or models personal data and must not be migrated.",
+      "primaryDisposition": "REVIEW",
+      "relativePath": "db/assessments.json",
+      "riskTags": ["containsPii", "runtimeCoupled"],
+      "runtimeDependencies": [],
+      "sha256": "3e108fc48cd214df880e91bee4d098846d9482a693b9ffb4db99aacd9cb72a8e",
+      "sizeBytes": 2405,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Do not migrate",
+      "suggestedHandling": "Keep only structure-level evidence and regenerate fictional test data if needed."
+    },
+    {
+      "contentPurpose": "Course seed structure and packaging intent",
+      "externalReferences": [],
+      "fileType": "JSON",
+      "id": "mig001_e68c70c0070c",
+      "legacyCategory": "REUSE_AFTER_REVIEW",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Requires semantic review and restructuring before migration.",
+      "primaryDisposition": "REUSE",
+      "relativePath": "db/courses.json",
+      "riskTags": ["runtimeCoupled"],
+      "runtimeDependencies": [],
+      "sha256": "69115067bb6acf28fe8434ce9f8a2e1a30fc825d7dc96617d9dbdc46e8cff54b",
+      "sizeBytes": 6990,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Structured migration staging",
+      "suggestedHandling": "Reuse after editorial review; convert to new domain structure rather than direct runtime source."
+    },
+    {
+      "contentPurpose": "Bilingual glossary and course translation structure",
+      "externalReferences": [],
+      "fileType": "JSON",
+      "id": "mig001_4bcaeb9d12e6",
+      "legacyCategory": "REUSE_AFTER_REVIEW",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Requires semantic review and restructuring before migration.",
+      "primaryDisposition": "REUSE",
+      "relativePath": "db/lang/bo.json",
+      "riskTags": ["containsPii", "runtimeCoupled"],
+      "runtimeDependencies": [],
+      "sha256": "fdc1939c0ce00b3a19c1b39cf37944fcd79159c1c6b0a397e1f685e010027306",
+      "sizeBytes": 35894,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Structured migration staging",
+      "suggestedHandling": "Reuse after editorial review; convert to new domain structure rather than direct runtime source."
+    },
+    {
+      "contentPurpose": "Bilingual glossary and course translation structure",
+      "externalReferences": [],
+      "fileType": "JSON",
+      "id": "mig001_e51fa5f80964",
+      "legacyCategory": "REUSE_AFTER_REVIEW",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Requires semantic review and restructuring before migration.",
+      "primaryDisposition": "REUSE",
+      "relativePath": "db/lang/courses_bo.json",
+      "riskTags": ["runtimeCoupled"],
+      "runtimeDependencies": [],
+      "sha256": "6fb9ecabb1445d2897ed27f0066332a290e7b50d0d02bcc866f09e0916d8579e",
+      "sizeBytes": 1499,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Structured migration staging",
+      "suggestedHandling": "Export safe bilingual entries only; remove risky literals and review course coverage."
+    },
+    {
+      "contentPurpose": "Bilingual glossary and course translation structure",
+      "externalReferences": [],
+      "fileType": "JSON",
+      "id": "mig001_fcc9dfae2237",
+      "legacyCategory": "REUSE_AFTER_REVIEW",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Requires semantic review and restructuring before migration.",
+      "primaryDisposition": "REUSE",
+      "relativePath": "db/lang/zh.json",
+      "riskTags": ["containsPii", "runtimeCoupled"],
+      "runtimeDependencies": [],
+      "sha256": "59a5feb18743a7e6b30d024353f58dd9b18a0462ff0f253a5a4fd980ac31828e",
+      "sizeBytes": 18882,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Structured migration staging",
+      "suggestedHandling": "Reuse after editorial review; convert to new domain structure rather than direct runtime source."
+    },
+    {
+      "contentPurpose": "Legacy personal or learner data source",
+      "externalReferences": [],
+      "fileType": "JSON",
+      "id": "mig001_a932e679ba94",
+      "legacyCategory": "PRIVACY_BLOCKED",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Contains or models personal data and must not be migrated.",
+      "primaryDisposition": "REVIEW",
+      "relativePath": "db/learning-records.json",
+      "riskTags": ["containsPii", "runtimeCoupled"],
+      "runtimeDependencies": [],
+      "sha256": "4d9d3c139d314587d81c6e8396a8d328edea82a48a73a5237c8e6b46bbfd85a9",
+      "sizeBytes": 3900,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Do not migrate",
+      "suggestedHandling": "Keep only structure-level evidence and regenerate fictional test data if needed."
+    },
+    {
+      "contentPurpose": "Asset index structure for curriculum-related materials",
+      "externalReferences": [],
+      "fileType": "JSON",
+      "id": "mig001_2b8bc057d9c1",
+      "legacyCategory": "REUSE_AFTER_REVIEW",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Requires semantic review and restructuring before migration.",
+      "primaryDisposition": "REUSE",
+      "relativePath": "db/materials.json",
+      "riskTags": ["copyrightUnverified", "runtimeCoupled", "sourceUnknown"],
+      "runtimeDependencies": [],
+      "sha256": "ec4347cdbd9f35589d10a3f810e1b61717c58f9fd17501f909396b09611c2e3a",
+      "sizeBytes": 4194,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Reviewed asset registry",
+      "suggestedHandling": "Reuse after editorial review; convert to new domain structure rather than direct runtime source."
+    },
+    {
+      "contentPurpose": "Legacy personal or learner data source",
+      "externalReferences": [],
+      "fileType": "JSON",
+      "id": "mig001_4392c1eb542a",
+      "legacyCategory": "PRIVACY_BLOCKED",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Contains or models personal data and must not be migrated.",
+      "primaryDisposition": "REVIEW",
+      "relativePath": "db/progress.json",
+      "riskTags": ["containsPii", "runtimeCoupled"],
+      "runtimeDependencies": [],
+      "sha256": "de0d4231a2218f51c57ffc1315a7e3cce9b81084f7da34ef893dd6ef2c13c99d",
+      "sizeBytes": 2637,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Do not migrate",
+      "suggestedHandling": "Keep only structure-level evidence and regenerate fictional test data if needed."
+    },
+    {
+      "contentPurpose": "Legacy personal or learner data source",
+      "externalReferences": [],
+      "fileType": "JSON",
+      "id": "mig001_c21291dde31e",
+      "legacyCategory": "PRIVACY_BLOCKED",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Contains or models personal data and must not be migrated.",
+      "primaryDisposition": "REVIEW",
+      "relativePath": "db/users.json",
+      "riskTags": ["containsPii", "runtimeCoupled"],
+      "runtimeDependencies": [],
+      "sha256": "e1f17213b1fc728934c39e4b08f79a80316bdcfdf4092668e3a1513d1c73f69a",
+      "sizeBytes": 2578,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Do not migrate",
+      "suggestedHandling": "Keep only structure-level evidence and regenerate fictional test data if needed."
+    },
+    {
+      "contentPurpose": "Legacy product, data, page, AI, and offline planning intent",
+      "externalReferences": [],
+      "fileType": "Markdown",
+      "id": "mig001_dbd07e970039",
+      "legacyCategory": "REWRITE_FROM_INTENT",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Useful for intent only; implementation is runtime-coupled and not migration-safe.",
+      "primaryDisposition": "REWRITE",
+      "relativePath": "docs/01-项目概述.md",
+      "riskTags": [],
+      "runtimeDependencies": [],
+      "sha256": "b96b624db8ec36236fc82b790528568244e8df4dd97596a1194ca7c2c6b48a78",
+      "sizeBytes": 1866,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Product and migration backlog",
+      "suggestedHandling": "Extract requirements, flows, and structure; rewrite implementation for the new system."
+    },
+    {
+      "contentPurpose": "Legacy product, data, page, AI, and offline planning intent",
+      "externalReferences": [],
+      "fileType": "Markdown",
+      "id": "mig001_871d61617f49",
+      "legacyCategory": "REWRITE_FROM_INTENT",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Useful for intent only; implementation is runtime-coupled and not migration-safe.",
+      "primaryDisposition": "REWRITE",
+      "relativePath": "docs/02-技术架构.md",
+      "riskTags": [],
+      "runtimeDependencies": [],
+      "sha256": "1a8284803321872fbcd5a00ed08f6b137567494ab96b1b8396b88fbf5ad917d7",
+      "sizeBytes": 9542,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Product and migration backlog",
+      "suggestedHandling": "Extract requirements, flows, and structure; rewrite implementation for the new system."
+    },
+    {
+      "contentPurpose": "Legacy product, data, page, AI, and offline planning intent",
+      "externalReferences": [],
+      "fileType": "Markdown",
+      "id": "mig001_ad5db063d04e",
+      "legacyCategory": "REWRITE_FROM_INTENT",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Useful for intent only; implementation is runtime-coupled and not migration-safe.",
+      "primaryDisposition": "REWRITE",
+      "relativePath": "docs/03-核心功能模块.md",
+      "riskTags": ["containsPii"],
+      "runtimeDependencies": [],
+      "sha256": "ceaf625f8c085105cd8dd40e89cd9e5e5203a9d4b5267426a65b1e3d32725437",
+      "sizeBytes": 5999,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Product and migration backlog",
+      "suggestedHandling": "Extract requirements, flows, and structure; rewrite implementation for the new system."
+    },
+    {
+      "contentPurpose": "Legacy product, data, page, AI, and offline planning intent",
+      "externalReferences": [],
+      "fileType": "Markdown",
+      "id": "mig001_3f808c9b9162",
+      "legacyCategory": "REWRITE_FROM_INTENT",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Useful for intent only; implementation is runtime-coupled and not migration-safe.",
+      "primaryDisposition": "REWRITE",
+      "relativePath": "docs/04-数据库设计.md",
+      "riskTags": ["containsPii"],
+      "runtimeDependencies": [],
+      "sha256": "1fdb0c35f9e601e86709742333a3eb480498b2cf31d3cbdfbc3a5a924ee39043",
+      "sizeBytes": 7042,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Product and migration backlog",
+      "suggestedHandling": "Extract requirements, flows, and structure; rewrite implementation for the new system."
+    },
+    {
+      "contentPurpose": "Legacy product, data, page, AI, and offline planning intent",
+      "externalReferences": [],
+      "fileType": "Markdown",
+      "id": "mig001_22f12d9f0e5d",
+      "legacyCategory": "REWRITE_FROM_INTENT",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Useful for intent only; implementation is runtime-coupled and not migration-safe.",
+      "primaryDisposition": "REWRITE",
+      "relativePath": "docs/05-API接口设计.md",
+      "riskTags": ["containsPii"],
+      "runtimeDependencies": [],
+      "sha256": "dd4c81fac87be90d8688365dfe7d780b6afcc5c7dce31c0b567c9e8e3b2a68ba",
+      "sizeBytes": 7516,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Product and migration backlog",
+      "suggestedHandling": "Extract requirements, flows, and structure; rewrite implementation for the new system."
+    },
+    {
+      "contentPurpose": "Legacy product, data, page, AI, and offline planning intent",
+      "externalReferences": [],
+      "fileType": "Markdown",
+      "id": "mig001_72f03cb7ecbc",
+      "legacyCategory": "REWRITE_FROM_INTENT",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Useful for intent only; implementation is runtime-coupled and not migration-safe.",
+      "primaryDisposition": "REWRITE",
+      "relativePath": "docs/06-页面结构.md",
+      "riskTags": ["containsPii"],
+      "runtimeDependencies": [],
+      "sha256": "f047a0b858067325f26c7ce5ef691a779fbbd179ff476b78d76069cce7d121ee",
+      "sizeBytes": 5325,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Product and migration backlog",
+      "suggestedHandling": "Extract requirements, flows, and structure; rewrite implementation for the new system."
+    },
+    {
+      "contentPurpose": "Legacy product, data, page, AI, and offline planning intent",
+      "externalReferences": [],
+      "fileType": "Markdown",
+      "id": "mig001_3e2ff746d806",
+      "legacyCategory": "REWRITE_FROM_INTENT",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Useful for intent only; implementation is runtime-coupled and not migration-safe.",
+      "primaryDisposition": "REWRITE",
+      "relativePath": "docs/07-待开发功能.md",
+      "riskTags": [],
+      "runtimeDependencies": [],
+      "sha256": "eb5bdec33645abb9066ea5a79225472abf2160c3b80a3e0f0bc2188b99099deb",
+      "sizeBytes": 7010,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Product and migration backlog",
+      "suggestedHandling": "Extract requirements, flows, and structure; rewrite implementation for the new system."
+    },
+    {
+      "contentPurpose": "Legacy product, data, page, AI, and offline planning intent",
+      "externalReferences": [],
+      "fileType": "Markdown",
+      "id": "mig001_c6a31594b0a0",
+      "legacyCategory": "REWRITE_FROM_INTENT",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Useful for intent only; implementation is runtime-coupled and not migration-safe.",
+      "primaryDisposition": "REWRITE",
+      "relativePath": "docs/08-技术债务.md",
+      "riskTags": ["containsPii"],
+      "runtimeDependencies": [],
+      "sha256": "e66ba8938d156d99ff42875f6f387917608fca2b88e97ee81bb9404da7dc08af",
+      "sizeBytes": 7077,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Product and migration backlog",
+      "suggestedHandling": "Extract requirements, flows, and structure; rewrite implementation for the new system."
+    },
+    {
+      "contentPurpose": "Legacy product, data, page, AI, and offline planning intent",
+      "externalReferences": [
+        {
+          "domain": "127.0.0.1",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "http://127.0.0.1:3001/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "localhost",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "http://localhost:3001/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "deb.nodesource.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://deb.nodesource.com/setup_18.x",
+          "pathHint": "setup_18.x"
+        }
+      ],
+      "fileType": "Markdown",
+      "id": "mig001_1e705ab229d9",
+      "legacyCategory": "REWRITE_FROM_INTENT",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Useful for intent only; implementation is runtime-coupled and not migration-safe.",
+      "primaryDisposition": "REWRITE",
+      "relativePath": "docs/09-部署方案.md",
+      "riskTags": ["externalDependency"],
+      "runtimeDependencies": [],
+      "sha256": "24514c7f76fa71b000d00a930a7c14bbfcd15425b50d57c369b2842dc0e711c4",
+      "sizeBytes": 11034,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Product and migration backlog",
+      "suggestedHandling": "Extract requirements, flows, and structure; rewrite implementation for the new system."
+    },
+    {
+      "contentPurpose": "Legacy product, data, page, AI, and offline planning intent",
+      "externalReferences": [],
+      "fileType": "Markdown",
+      "id": "mig001_53dd14e6da0f",
+      "legacyCategory": "REWRITE_FROM_INTENT",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Useful for intent only; implementation is runtime-coupled and not migration-safe.",
+      "primaryDisposition": "REWRITE",
+      "relativePath": "docs/10-后续规划.md",
+      "riskTags": [],
+      "runtimeDependencies": [],
+      "sha256": "603860c1372b0fa463401cb1a44bb3090957f9210dd0776f26418426dce57e23",
+      "sizeBytes": 6510,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Product and migration backlog",
+      "suggestedHandling": "Extract requirements, flows, and structure; rewrite implementation for the new system."
+    },
+    {
+      "contentPurpose": "Legacy product, data, page, AI, and offline planning intent",
+      "externalReferences": [],
+      "fileType": "DOCX document",
+      "id": "mig001_3741767d9d6d",
+      "legacyCategory": "REWRITE_FROM_INTENT",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Useful for intent only; implementation is runtime-coupled and not migration-safe.",
+      "primaryDisposition": "REWRITE",
+      "relativePath": "docs/archive/本地运行方式.docx",
+      "riskTags": ["binaryAsset"],
+      "runtimeDependencies": [],
+      "sha256": "e2cc4f21a1428f2ea5f2e78d68c4e9ed4348bb71c04996d7e5155f8b6020762a",
+      "sizeBytes": 14798,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Product and migration backlog",
+      "suggestedHandling": "Extract requirements, flows, and structure; rewrite implementation for the new system."
+    },
+    {
+      "contentPurpose": "Legacy product, data, page, AI, and offline planning intent",
+      "externalReferences": [],
+      "fileType": "PDF document",
+      "id": "mig001_7a24371996f6",
+      "legacyCategory": "REWRITE_FROM_INTENT",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Useful for intent only; implementation is runtime-coupled and not migration-safe.",
+      "primaryDisposition": "REWRITE",
+      "relativePath": "docs/archive/AI接手项目的完整文档模板.pdf",
+      "riskTags": ["binaryAsset"],
+      "runtimeDependencies": [],
+      "sha256": "91c816b5ff2975dd93feec0e8f4423135c809b30aa8113c6b032ca97a7c65e88",
+      "sizeBytes": 600808,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Product and migration backlog",
+      "suggestedHandling": "Extract requirements, flows, and structure; rewrite implementation for the new system."
+    },
+    {
+      "contentPurpose": "Legacy product, data, page, AI, and offline planning intent",
+      "externalReferences": [
+        {
+          "domain": "...",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://.../certificate.pdf",
+          "pathHint": "certificate.pdf"
+        },
+        {
+          "domain": "...",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://.../contract.pdf",
+          "pathHint": "contract.pdf"
+        },
+        {
+          "domain": "api.yuzanxinsheng.cn",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://api.yuzanxinsheng.cn/pay/callback",
+          "pathHint": "pay/callback"
+        },
+        {
+          "domain": "share.axure.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://share.axure.com/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "www.figma.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://www.figma.com/file/",
+          "pathHint": "file"
+        }
+      ],
+      "fileType": "Markdown",
+      "id": "mig001_1b608bb06a6d",
+      "legacyCategory": "REWRITE_FROM_INTENT",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Useful for intent only; implementation is runtime-coupled and not migration-safe.",
+      "primaryDisposition": "REWRITE",
+      "relativePath": "docs/DEVELOPMENT_FLOW.md",
+      "riskTags": ["containsPii", "externalDependency"],
+      "runtimeDependencies": [],
+      "sha256": "c68f481e906bfbbd85ebc076a9b9000bc1a2b195e80c5dc1d7038d1b264d9c31",
+      "sizeBytes": 54293,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Product and migration backlog",
+      "suggestedHandling": "Extract requirements, flows, and structure; rewrite implementation for the new system."
+    },
+    {
+      "contentPurpose": "Legacy product, data, page, AI, and offline planning intent",
+      "externalReferences": [],
+      "fileType": "Markdown",
+      "id": "mig001_b781dab0ba75",
+      "legacyCategory": "REWRITE_FROM_INTENT",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Useful for intent only; implementation is runtime-coupled and not migration-safe.",
+      "primaryDisposition": "REWRITE",
+      "relativePath": "docs/internal/learnings/ERRORS.md",
+      "riskTags": [],
+      "runtimeDependencies": [],
+      "sha256": "16b5c2f6608861ea53b59e40be8950ee41306e1b85e1a6a667ceec8f6e460f4a",
+      "sizeBytes": 801,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Product and migration backlog",
+      "suggestedHandling": "Extract requirements, flows, and structure; rewrite implementation for the new system."
+    },
+    {
+      "contentPurpose": "Legacy product, data, page, AI, and offline planning intent",
+      "externalReferences": [],
+      "fileType": "Markdown",
+      "id": "mig001_b2d9810594b8",
+      "legacyCategory": "REWRITE_FROM_INTENT",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Useful for intent only; implementation is runtime-coupled and not migration-safe.",
+      "primaryDisposition": "REWRITE",
+      "relativePath": "docs/internal/program_study/AI开发必读/AI常见前端不足及改进.md",
+      "riskTags": [],
+      "runtimeDependencies": [],
+      "sha256": "891665c0dad96be135f91ae5a2b91c560c3285d4ba0bf4f7411f632ad02ad4fd",
+      "sizeBytes": 35977,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Product and migration backlog",
+      "suggestedHandling": "Extract requirements, flows, and structure; rewrite implementation for the new system."
+    },
+    {
+      "contentPurpose": "Legacy product, data, page, AI, and offline planning intent",
+      "externalReferences": [],
+      "fileType": "Markdown",
+      "id": "mig001_a0db40917a79",
+      "legacyCategory": "REWRITE_FROM_INTENT",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Useful for intent only; implementation is runtime-coupled and not migration-safe.",
+      "primaryDisposition": "REWRITE",
+      "relativePath": "docs/internal/program_study/V3-前端设计/01-设计经验总结.md",
+      "riskTags": [],
+      "runtimeDependencies": [],
+      "sha256": "6f5dea7fbaa0404926159cd09b590f094e6e3f879a8769b59730a7da0f806d94",
+      "sizeBytes": 9119,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Product and migration backlog",
+      "suggestedHandling": "Extract requirements, flows, and structure; rewrite implementation for the new system."
+    },
+    {
+      "contentPurpose": "Legacy product, data, page, AI, and offline planning intent",
+      "externalReferences": [],
+      "fileType": "Markdown",
+      "id": "mig001_fe6c9830ca3f",
+      "legacyCategory": "REWRITE_FROM_INTENT",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Useful for intent only; implementation is runtime-coupled and not migration-safe.",
+      "primaryDisposition": "REWRITE",
+      "relativePath": "docs/internal/program_study/V3-前端设计/02-设计系统规范.md",
+      "riskTags": [],
+      "runtimeDependencies": [],
+      "sha256": "5c450c907fb287c3030a3d84e60537c46b4a67a3292fcaaee7175c4be0908a81",
+      "sizeBytes": 13359,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Product and migration backlog",
+      "suggestedHandling": "Extract requirements, flows, and structure; rewrite implementation for the new system."
+    },
+    {
+      "contentPurpose": "Legacy product, data, page, AI, and offline planning intent",
+      "externalReferences": [],
+      "fileType": "Markdown",
+      "id": "mig001_dbe0d175b0ec",
+      "legacyCategory": "REWRITE_FROM_INTENT",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Useful for intent only; implementation is runtime-coupled and not migration-safe.",
+      "primaryDisposition": "REWRITE",
+      "relativePath": "docs/internal/program_study/V3-前端设计/03-组件使用指南.md",
+      "riskTags": [],
+      "runtimeDependencies": [],
+      "sha256": "6cdbf9885bf2c2fd76d9a4b4ea1ed660a5fad34d573f8bd734c4a8c5771ac886",
+      "sizeBytes": 26307,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Product and migration backlog",
+      "suggestedHandling": "Extract requirements, flows, and structure; rewrite implementation for the new system."
+    },
+    {
+      "contentPurpose": "Legacy product, data, page, AI, and offline planning intent",
+      "externalReferences": [],
+      "fileType": "Markdown",
+      "id": "mig001_c3cfd8b644bb",
+      "legacyCategory": "REWRITE_FROM_INTENT",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Useful for intent only; implementation is runtime-coupled and not migration-safe.",
+      "primaryDisposition": "REWRITE",
+      "relativePath": "docs/internal/program_study/V3-前端设计/04-常见问题与改进方案.md",
+      "riskTags": [],
+      "runtimeDependencies": [],
+      "sha256": "c94d3de6843366d3bf41f6636feb2e5134e7e6b8930fda0d0ef8c1898d9b329c",
+      "sizeBytes": 17815,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Product and migration backlog",
+      "suggestedHandling": "Extract requirements, flows, and structure; rewrite implementation for the new system."
+    },
+    {
+      "contentPurpose": "Legacy product, data, page, AI, and offline planning intent",
+      "externalReferences": [],
+      "fileType": "Markdown",
+      "id": "mig001_978cac089746",
+      "legacyCategory": "REWRITE_FROM_INTENT",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Useful for intent only; implementation is runtime-coupled and not migration-safe.",
+      "primaryDisposition": "REWRITE",
+      "relativePath": "docs/internal/program_study/V3-前端设计/05-内容增强与微交互经验.md",
+      "riskTags": [],
+      "runtimeDependencies": [],
+      "sha256": "0fb3942a07d0df5b638851b7b176bf99fd821f3305c6d6b0733bb2565b142cb7",
+      "sizeBytes": 35389,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Product and migration backlog",
+      "suggestedHandling": "Extract requirements, flows, and structure; rewrite implementation for the new system."
+    },
+    {
+      "contentPurpose": "Legacy product, data, page, AI, and offline planning intent",
+      "externalReferences": [
+        {
+          "domain": "localhost",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "http://localhost:3001/",
+          "pathHint": "/"
+        }
+      ],
+      "fileType": "Markdown",
+      "id": "mig001_9f7cbce127b9",
+      "legacyCategory": "REWRITE_FROM_INTENT",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Useful for intent only; implementation is runtime-coupled and not migration-safe.",
+      "primaryDisposition": "REWRITE",
+      "relativePath": "docs/README.md",
+      "riskTags": ["containsPii", "externalDependency"],
+      "runtimeDependencies": [],
+      "sha256": "1d122d49b076ebade74aa0612ea4117b4d091f06d7936fae83b72da43f173d49",
+      "sizeBytes": 3208,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Product and migration backlog",
+      "suggestedHandling": "Extract requirements, flows, and structure; rewrite implementation for the new system."
+    },
+    {
+      "contentPurpose": "Curriculum master document for course hierarchy and teaching intent",
+      "externalReferences": [],
+      "fileType": "DOCX document",
+      "id": "mig001_46688c97aac5",
+      "legacyCategory": "REUSE_AFTER_REVIEW",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Needs structural conversion and version confirmation before reuse.",
+      "primaryDisposition": "REUSE",
+      "relativePath": "docs/resources/“语赞心声”分级课程体系总览.docx",
+      "riskTags": ["binaryAsset"],
+      "runtimeDependencies": [],
+      "sha256": "ef6f77a62b6fbbcad32892f0d44b9c4972f50cb6667974bdc67d1c6aa8d2273e",
+      "sizeBytes": 257664,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Curriculum staging import",
+      "suggestedHandling": "Extract structure only; content owner must confirm version and reuse scope."
+    },
+    {
+      "contentPurpose": "Page flow, IA, copy, and role journey intent",
+      "externalReferences": [
+        {
+          "domain": "cdn.jsdelivr.net",
+          "isExternal": true,
+          "mediaCategory": "script",
+          "normalized": "https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js",
+          "pathHint": "dist/chart.umd.min.js"
+        },
+        {
+          "domain": "cdn.jsdelivr.net",
+          "isExternal": true,
+          "mediaCategory": "font",
+          "normalized": "https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css",
+          "pathHint": "css/font-awesome.min.css"
+        },
+        {
+          "domain": "cdn.tailwindcss.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://cdn.tailwindcss.com/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "p11-doubao-search-sign.byteimg.com",
+          "isExternal": true,
+          "mediaCategory": "image",
+          "normalized": "https://p11-doubao-search-sign.byteimg.com/mosaic-legacy/1bc8000114341d73d9e7~tplv-be4g95zd3a-image.jpeg",
+          "pathHint": "mosaic-legacy/1bc8000114341d73d9e7~tplv-be4g95zd3a-image.jpeg"
+        },
+        {
+          "domain": "p11-doubao-search-sign.byteimg.com",
+          "isExternal": true,
+          "mediaCategory": "image",
+          "normalized": "https://p11-doubao-search-sign.byteimg.com/pgc-image/d21881a4e9a7407bae1e3d5bcf10b486~tplv-be4g95zd3a-image.jpeg",
+          "pathHint": "pgc-image/d21881a4e9a7407bae1e3d5bcf10b486~tplv-be4g95zd3a-image.jpeg"
+        },
+        {
+          "domain": "p11-doubao-search-sign.byteimg.com",
+          "isExternal": true,
+          "mediaCategory": "image",
+          "normalized": "https://p11-doubao-search-sign.byteimg.com/tos-cn-i-qvj2lq49k0/cc55c3c6d4ee45e0b75fd41acf6005a4~tplv-be4g95zd3a-image.jpeg",
+          "pathHint": "tos-cn-i-qvj2lq49k0/cc55c3c6d4ee45e0b75fd41acf6005a4~tplv-be4g95zd3a-image.jpeg"
+        },
+        {
+          "domain": "p26-doubao-search-sign.byteimg.com",
+          "isExternal": true,
+          "mediaCategory": "image",
+          "normalized": "https://p26-doubao-search-sign.byteimg.com/labis/8d0be08c2606f269b897515a0ee5de3f~tplv-be4g95zd3a-image.jpeg",
+          "pathHint": "labis/8d0be08c2606f269b897515a0ee5de3f~tplv-be4g95zd3a-image.jpeg"
+        },
+        {
+          "domain": "p26-doubao-search-sign.byteimg.com",
+          "isExternal": true,
+          "mediaCategory": "image",
+          "normalized": "https://p26-doubao-search-sign.byteimg.com/labis/eeab2b975f58e1066c15c8a810c59005~tplv-be4g95zd3a-image.jpeg",
+          "pathHint": "labis/eeab2b975f58e1066c15c8a810c59005~tplv-be4g95zd3a-image.jpeg"
+        },
+        {
+          "domain": "p26-doubao-search-sign.byteimg.com",
+          "isExternal": true,
+          "mediaCategory": "image",
+          "normalized": "https://p26-doubao-search-sign.byteimg.com/pgc-image/1527590555615ba2bac849a~tplv-be4g95zd3a-image.jpeg",
+          "pathHint": "pgc-image/1527590555615ba2bac849a~tplv-be4g95zd3a-image.jpeg"
+        },
+        {
+          "domain": "p26-doubao-search-sign.byteimg.com",
+          "isExternal": true,
+          "mediaCategory": "image",
+          "normalized": "https://p26-doubao-search-sign.byteimg.com/tos-cn-i-be4g95zd3a/1487031528883093510~tplv-be4g95zd3a-image.jpeg",
+          "pathHint": "tos-cn-i-be4g95zd3a/1487031528883093510~tplv-be4g95zd3a-image.jpeg"
+        },
+        {
+          "domain": "p26-doubao-search-sign.byteimg.com",
+          "isExternal": true,
+          "mediaCategory": "image",
+          "normalized": "https://p26-doubao-search-sign.byteimg.com/tos-cn-i-be4g95zd3a/1487032671437979657~tplv-be4g95zd3a-image.jpeg",
+          "pathHint": "tos-cn-i-be4g95zd3a/1487032671437979657~tplv-be4g95zd3a-image.jpeg"
+        },
+        {
+          "domain": "p3-doubao-search-sign.byteimg.com",
+          "isExternal": true,
+          "mediaCategory": "image",
+          "normalized": "https://p3-doubao-search-sign.byteimg.com/tos-cn-i-be4g95zd3a/1630797037955317761~tplv-be4g95zd3a-image.jpeg",
+          "pathHint": "tos-cn-i-be4g95zd3a/1630797037955317761~tplv-be4g95zd3a-image.jpeg"
+        },
+        {
+          "domain": "p3-flow-imagex-sign.byteimg.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/code_assistant/b70eee2d91834c95a7a378b47c0cc152~tplv-a9rns2rl98-image.image",
+          "pathHint": "code_assistant/b70eee2d91834c95a7a378b47c0cc152~tplv-a9rns2rl98-image.image"
+        }
+      ],
+      "fileType": "HTML page",
+      "id": "mig001_f6013a00b362",
+      "legacyCategory": "REWRITE_FROM_INTENT",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Useful for intent only; implementation is runtime-coupled and not migration-safe.",
+      "primaryDisposition": "REWRITE",
+      "relativePath": "index.html",
+      "riskTags": [
+        "containsPii",
+        "externalDependency",
+        "fakeData",
+        "runtimeCoupled"
+      ],
+      "runtimeDependencies": [
+        "/public/css/yx-design-upgrade.css",
+        "/public/js/translate.js",
+        "https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js",
+        "https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css",
+        "https://cdn.tailwindcss.com/",
+        "public/js/site-polish.js"
+      ],
+      "sha256": "7cda2d03e05ec0c70e3635294b65ec40873cb18f8e70f13b7e9a518b7130ac67",
+      "sizeBytes": 105673,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Product and migration backlog",
+      "suggestedHandling": "Extract requirements, flows, and structure; rewrite implementation for the new system."
+    },
+    {
+      "contentPurpose": "Page flow, IA, copy, and role journey intent",
+      "externalReferences": [
+        {
+          "domain": "cdn.jsdelivr.net",
+          "isExternal": true,
+          "mediaCategory": "font",
+          "normalized": "https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css",
+          "pathHint": "css/font-awesome.min.css"
+        },
+        {
+          "domain": "cdn.tailwindcss.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://cdn.tailwindcss.com/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "fonts.googleapis.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://fonts.googleapis.com/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "fonts.googleapis.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://fonts.googleapis.com/css2",
+          "pathHint": "css2"
+        },
+        {
+          "domain": "fonts.gstatic.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://fonts.gstatic.com/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "p3-flow-imagex-sign.byteimg.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/code_assistant/b70eee2d91834c95a7a378b47c0cc152~tplv-a9rns2rl98-image.image",
+          "pathHint": "code_assistant/b70eee2d91834c95a7a378b47c0cc152~tplv-a9rns2rl98-image.image"
+        }
+      ],
+      "fileType": "HTML page",
+      "id": "mig001_fd37308ebe3c",
+      "legacyCategory": "REWRITE_FROM_INTENT",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Useful for intent only; implementation is runtime-coupled and not migration-safe.",
+      "primaryDisposition": "REWRITE",
+      "relativePath": "learning-tasks.html",
+      "riskTags": [
+        "containsPii",
+        "externalDependency",
+        "fakeData",
+        "runtimeCoupled"
+      ],
+      "runtimeDependencies": [
+        "https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css",
+        "https://cdn.tailwindcss.com/",
+        "https://fonts.googleapis.com/",
+        "https://fonts.googleapis.com/css2",
+        "https://fonts.gstatic.com/",
+        "public/js/site-polish.js"
+      ],
+      "sha256": "f53b7195095569b4a88f3c9bfc564f993c4e23693f7fa4f9c5d587188c5dc9e9",
+      "sizeBytes": 31196,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Product and migration backlog",
+      "suggestedHandling": "Extract requirements, flows, and structure; rewrite implementation for the new system."
+    },
+    {
+      "contentPurpose": "Demo microservice scaffold",
+      "externalReferences": [
+        {
+          "domain": "localhost",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "http://localhost:9000/minio/health/live",
+          "pathHint": "health/live"
+        }
+      ],
+      "fileType": "YAML",
+      "id": "mig001_b9b436e54814",
+      "legacyCategory": "DISCARD",
+      "manualReviewRequired": false,
+      "nonReusableReason": "Deprecated demo, out-of-scope flow, or disallowed legacy implementation.",
+      "primaryDisposition": "DISCARD",
+      "relativePath": "microservices/docker-compose.yml",
+      "riskTags": ["externalDependency", "obsoleteDemo"],
+      "runtimeDependencies": [],
+      "sha256": "a88e2401c59b521f04ef832373e45c46fa8a66ddd7d8c54622a3f98c70503156",
+      "sizeBytes": 4618,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Do not migrate",
+      "suggestedHandling": "Keep for audit only; block direct migration."
+    },
+    {
+      "contentPurpose": "Demo microservice scaffold",
+      "externalReferences": [],
+      "fileType": "File",
+      "id": "mig001_dc00320a76c5",
+      "legacyCategory": "DISCARD",
+      "manualReviewRequired": false,
+      "nonReusableReason": "Deprecated demo, out-of-scope flow, or disallowed legacy implementation.",
+      "primaryDisposition": "DISCARD",
+      "relativePath": "microservices/gateway/Dockerfile",
+      "riskTags": ["obsoleteDemo"],
+      "runtimeDependencies": [],
+      "sha256": "ab09c9edfae776be672efd6fcd9b13a3f5aa2d56bd29956cc0f05fd9fad6ac8a",
+      "sizeBytes": 161,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Do not migrate",
+      "suggestedHandling": "Keep for audit only; block direct migration."
+    },
+    {
+      "contentPurpose": "Demo microservice scaffold",
+      "externalReferences": [],
+      "fileType": "JSON",
+      "id": "mig001_71a595738a9f",
+      "legacyCategory": "DISCARD",
+      "manualReviewRequired": false,
+      "nonReusableReason": "Deprecated demo, out-of-scope flow, or disallowed legacy implementation.",
+      "primaryDisposition": "DISCARD",
+      "relativePath": "microservices/gateway/package.json",
+      "riskTags": ["obsoleteDemo"],
+      "runtimeDependencies": [
+        "axios",
+        "cors",
+        "express",
+        "express-rate-limit",
+        "nodemon"
+      ],
+      "sha256": "05c991d23018ab059f7c18e12361da04d7693ff5192606dc64154d95a4df8efa",
+      "sizeBytes": 317,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Do not migrate",
+      "suggestedHandling": "Keep for audit only; block direct migration."
+    },
+    {
+      "contentPurpose": "Demo microservice scaffold",
+      "externalReferences": [
+        {
+          "domain": "analytics-service",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "http://analytics-service:3006/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "course-service",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "http://course-service:3002/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "learning-service",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "http://learning-service:3003/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "notification-service",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "http://notification-service:3005/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "payment-service",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "http://payment-service:3004/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "user-service",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "http://user-service:3001/",
+          "pathHint": "/"
+        }
+      ],
+      "fileType": "JavaScript",
+      "id": "mig001_f3217c0df6bd",
+      "legacyCategory": "DISCARD",
+      "manualReviewRequired": false,
+      "nonReusableReason": "Deprecated demo, out-of-scope flow, or disallowed legacy implementation.",
+      "primaryDisposition": "DISCARD",
+      "relativePath": "microservices/gateway/server.js",
+      "riskTags": ["externalDependency", "obsoleteDemo", "runtimeCoupled"],
+      "runtimeDependencies": ["axios", "cors", "express", "express-rate-limit"],
+      "sha256": "bc404f91105088812f517862368c5d17123eeee666bf32915594a8fed5099991",
+      "sizeBytes": 1734,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Do not migrate",
+      "suggestedHandling": "Keep for audit only; block direct migration."
+    },
+    {
+      "contentPurpose": "Demo microservice scaffold",
+      "externalReferences": [],
+      "fileType": "YAML",
+      "id": "mig001_9563ed339531",
+      "legacyCategory": "DISCARD",
+      "manualReviewRequired": false,
+      "nonReusableReason": "Deprecated demo, out-of-scope flow, or disallowed legacy implementation.",
+      "primaryDisposition": "DISCARD",
+      "relativePath": "microservices/monitoring/prometheus/prometheus.yml",
+      "riskTags": ["obsoleteDemo"],
+      "runtimeDependencies": [],
+      "sha256": "1b881ef4d42e0b669af0e7a3afd69bf1e833658ed26c54589b4185deb86b2e8c",
+      "sizeBytes": 1642,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Do not migrate",
+      "suggestedHandling": "Keep for audit only; block direct migration."
+    },
+    {
+      "contentPurpose": "Demo microservice scaffold",
+      "externalReferences": [],
+      "fileType": "SQL",
+      "id": "mig001_1e4b915e6557",
+      "legacyCategory": "DISCARD",
+      "manualReviewRequired": false,
+      "nonReusableReason": "Deprecated demo, out-of-scope flow, or disallowed legacy implementation.",
+      "primaryDisposition": "DISCARD",
+      "relativePath": "microservices/postgres/init.sql",
+      "riskTags": ["obsoleteDemo"],
+      "runtimeDependencies": [],
+      "sha256": "a923f382725911335cba80432812ba43591950f80c20283b4feee7b13c176723",
+      "sizeBytes": 4336,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Do not migrate",
+      "suggestedHandling": "Keep for audit only; block direct migration."
+    },
+    {
+      "contentPurpose": "Demo microservice scaffold",
+      "externalReferences": [
+        {
+          "domain": "localhost",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "http://localhost:3000/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "localhost",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "http://localhost:9001/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "localhost",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "http://localhost:9090/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "localhost",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "http://localhost/",
+          "pathHint": "/"
+        }
+      ],
+      "fileType": "Markdown",
+      "id": "mig001_8664b5df41f2",
+      "legacyCategory": "DISCARD",
+      "manualReviewRequired": false,
+      "nonReusableReason": "Deprecated demo, out-of-scope flow, or disallowed legacy implementation.",
+      "primaryDisposition": "DISCARD",
+      "relativePath": "microservices/README_NEW.md",
+      "riskTags": ["externalDependency", "obsoleteDemo"],
+      "runtimeDependencies": [],
+      "sha256": "d0b010e57d1b0b049ddc8237716382e1dc6d49f57b93587be99fe338f1c12db1",
+      "sizeBytes": 5545,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Do not migrate",
+      "suggestedHandling": "Keep for audit only; block direct migration."
+    },
+    {
+      "contentPurpose": "Demo microservice scaffold",
+      "externalReferences": [
+        {
+          "domain": "analytics-service",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "http://analytics-service:3006/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "course-service",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "http://course-service:3002/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "learning-service",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "http://learning-service:3003/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "localhost",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "http://localhost:3000/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "localhost",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "http://localhost:9000/minio/health/live",
+          "pathHint": "health/live"
+        },
+        {
+          "domain": "localhost",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "http://localhost/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "notification-service",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "http://notification-service:3005/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "payment-service",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "http://payment-service:3004/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "user-service",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "http://user-service:3001/",
+          "pathHint": "/"
+        }
+      ],
+      "fileType": "Markdown",
+      "id": "mig001_32bcb70835b6",
+      "legacyCategory": "DISCARD",
+      "manualReviewRequired": false,
+      "nonReusableReason": "Deprecated demo, out-of-scope flow, or disallowed legacy implementation.",
+      "primaryDisposition": "DISCARD",
+      "relativePath": "microservices/README.md",
+      "riskTags": ["externalDependency", "obsoleteDemo"],
+      "runtimeDependencies": [],
+      "sha256": "663f50389dbcf8acbd13dff70f0d01377d027233c2985c9c59edfdc410b70cea",
+      "sizeBytes": 23604,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Do not migrate",
+      "suggestedHandling": "Keep for audit only; block direct migration."
+    },
+    {
+      "contentPurpose": "Demo microservice scaffold",
+      "externalReferences": [
+        {
+          "domain": "localhost",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "http://localhost:3000/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "localhost",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "http://localhost/",
+          "pathHint": "/"
+        }
+      ],
+      "fileType": "Shell script",
+      "id": "mig001_bb37a591fd97",
+      "legacyCategory": "DISCARD",
+      "manualReviewRequired": false,
+      "nonReusableReason": "Deprecated demo, out-of-scope flow, or disallowed legacy implementation.",
+      "primaryDisposition": "DISCARD",
+      "relativePath": "microservices/scripts/deploy.sh",
+      "riskTags": ["externalDependency", "obsoleteDemo"],
+      "runtimeDependencies": [],
+      "sha256": "879fe9511799c310b87e5e13bdcda28c64f3c30e84504e3bf1641a131f7d05c1",
+      "sizeBytes": 485,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Do not migrate",
+      "suggestedHandling": "Keep for audit only; block direct migration."
+    },
+    {
+      "contentPurpose": "Demo microservice scaffold",
+      "externalReferences": [],
+      "fileType": "Shell script",
+      "id": "mig001_0711c9aea1f7",
+      "legacyCategory": "DISCARD",
+      "manualReviewRequired": false,
+      "nonReusableReason": "Deprecated demo, out-of-scope flow, or disallowed legacy implementation.",
+      "primaryDisposition": "DISCARD",
+      "relativePath": "microservices/scripts/migrate.sh",
+      "riskTags": ["obsoleteDemo"],
+      "runtimeDependencies": [],
+      "sha256": "5ebae47dd5a129293a2b3b5056fe21d0e212058d5eb6a84bf57053fb53ee39f3",
+      "sizeBytes": 415,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Do not migrate",
+      "suggestedHandling": "Keep for audit only; block direct migration."
+    },
+    {
+      "contentPurpose": "Demo microservice scaffold",
+      "externalReferences": [],
+      "fileType": "File",
+      "id": "mig001_19cdaa8a1a9f",
+      "legacyCategory": "DISCARD",
+      "manualReviewRequired": false,
+      "nonReusableReason": "Deprecated demo, out-of-scope flow, or disallowed legacy implementation.",
+      "primaryDisposition": "DISCARD",
+      "relativePath": "microservices/services/course-service/Dockerfile",
+      "riskTags": ["obsoleteDemo"],
+      "runtimeDependencies": [],
+      "sha256": "83185ca95f3674922115f71cabf5cd36e6a2270429819d4bdfd8be1a32ab1ba8",
+      "sizeBytes": 163,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Do not migrate",
+      "suggestedHandling": "Keep for audit only; block direct migration."
+    },
+    {
+      "contentPurpose": "Demo microservice scaffold",
+      "externalReferences": [],
+      "fileType": "JSON",
+      "id": "mig001_e3a443b0838c",
+      "legacyCategory": "DISCARD",
+      "manualReviewRequired": false,
+      "nonReusableReason": "Deprecated demo, out-of-scope flow, or disallowed legacy implementation.",
+      "primaryDisposition": "DISCARD",
+      "relativePath": "microservices/services/course-service/package.json",
+      "riskTags": ["obsoleteDemo"],
+      "runtimeDependencies": ["cors", "express", "nodemon", "pg", "redis"],
+      "sha256": "484a53ec3ef30163b39791c2f6b8b023d58fa8df38ce347f6e2e4e763aac7bf7",
+      "sizeBytes": 351,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Do not migrate",
+      "suggestedHandling": "Keep for audit only; block direct migration."
+    },
+    {
+      "contentPurpose": "Demo microservice scaffold",
+      "externalReferences": [],
+      "fileType": "JavaScript",
+      "id": "mig001_35a271e2dcf6",
+      "legacyCategory": "DISCARD",
+      "manualReviewRequired": false,
+      "nonReusableReason": "Deprecated demo, out-of-scope flow, or disallowed legacy implementation.",
+      "primaryDisposition": "DISCARD",
+      "relativePath": "microservices/services/course-service/server.js",
+      "riskTags": ["obsoleteDemo", "runtimeCoupled"],
+      "runtimeDependencies": ["cors", "express", "pg", "redis"],
+      "sha256": "7cbcca966a0bdfea2b9ffa5cc81b2ad93138c6f87b556d2e3d05ccacef7fb5f0",
+      "sizeBytes": 2609,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Do not migrate",
+      "suggestedHandling": "Keep for audit only; block direct migration."
+    },
+    {
+      "contentPurpose": "Demo microservice scaffold",
+      "externalReferences": [],
+      "fileType": "File",
+      "id": "mig001_d85a4ab57767",
+      "legacyCategory": "DISCARD",
+      "manualReviewRequired": false,
+      "nonReusableReason": "Deprecated demo, out-of-scope flow, or disallowed legacy implementation.",
+      "primaryDisposition": "DISCARD",
+      "relativePath": "microservices/services/user-service/Dockerfile",
+      "riskTags": ["obsoleteDemo"],
+      "runtimeDependencies": [],
+      "sha256": "eb87307a05be8b42ef82b090517a3e3924112800eb2a87fdd9e957b1726ab8aa",
+      "sizeBytes": 163,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Do not migrate",
+      "suggestedHandling": "Keep for audit only; block direct migration."
+    },
+    {
+      "contentPurpose": "Demo microservice scaffold",
+      "externalReferences": [],
+      "fileType": "JSON",
+      "id": "mig001_4c2980df2d48",
+      "legacyCategory": "DISCARD",
+      "manualReviewRequired": false,
+      "nonReusableReason": "Deprecated demo, out-of-scope flow, or disallowed legacy implementation.",
+      "primaryDisposition": "DISCARD",
+      "relativePath": "microservices/services/user-service/package.json",
+      "riskTags": ["obsoleteDemo"],
+      "runtimeDependencies": [
+        "bcrypt",
+        "cors",
+        "express",
+        "jsonwebtoken",
+        "nodemon",
+        "pg"
+      ],
+      "sha256": "e4c22b896d3ae34536aca4d3f454afd09aa89906a712fbbd61b473224374db0b",
+      "sizeBytes": 380,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Do not migrate",
+      "suggestedHandling": "Keep for audit only; block direct migration."
+    },
+    {
+      "contentPurpose": "Demo microservice scaffold",
+      "externalReferences": [],
+      "fileType": "JavaScript",
+      "id": "mig001_01d4794784dc",
+      "legacyCategory": "DISCARD",
+      "manualReviewRequired": false,
+      "nonReusableReason": "Deprecated demo, out-of-scope flow, or disallowed legacy implementation.",
+      "primaryDisposition": "DISCARD",
+      "relativePath": "microservices/services/user-service/server.js",
+      "riskTags": ["obsoleteDemo", "runtimeCoupled"],
+      "runtimeDependencies": [
+        "bcrypt",
+        "cors",
+        "express",
+        "jsonwebtoken",
+        "pg"
+      ],
+      "sha256": "5361fc1a2466e4e94bd52be1d62ecb9159650bb4d24bfe844654fe5c00d3a7e6",
+      "sizeBytes": 2298,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Do not migrate",
+      "suggestedHandling": "Keep for audit only; block direct migration."
+    },
+    {
+      "contentPurpose": "Legacy environment or tooling manifest",
+      "externalReferences": [
+        {
+          "domain": "opencode.ai",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://opencode.ai/config.json",
+          "pathHint": "config.json"
+        }
+      ],
+      "fileType": "JSON",
+      "id": "mig001_a62be7a35924",
+      "legacyCategory": "DISCARD",
+      "manualReviewRequired": false,
+      "nonReusableReason": "Deprecated demo, out-of-scope flow, or disallowed legacy implementation.",
+      "primaryDisposition": "DISCARD",
+      "relativePath": "opencode.json",
+      "riskTags": ["externalDependency"],
+      "runtimeDependencies": [],
+      "sha256": "d8cc2f3a13fd826c883c2923ae68eebfd37b49ea6ad949fb8dab019e45ae7c4f",
+      "sizeBytes": 90,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Do not migrate",
+      "suggestedHandling": "Keep for audit only; block direct migration."
+    },
+    {
+      "contentPurpose": "Legacy environment or tooling manifest",
+      "externalReferences": [
+        {
+          "domain": "dotenvx.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://dotenvx.com/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "feross.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://feross.org/support",
+          "pathHint": "support"
+        },
+        {
+          "domain": "github.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://github.com/fb55/entities",
+          "pathHint": "fb55/entities"
+        },
+        {
+          "domain": "github.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://github.com/inikulin/parse5",
+          "pathHint": "inikulin/parse5"
+        },
+        {
+          "domain": "github.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://github.com/sponsors/csstools",
+          "pathHint": "sponsors/csstools"
+        },
+        {
+          "domain": "github.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://github.com/sponsors/express-rate-limit",
+          "pathHint": "sponsors/express-rate-limit"
+        },
+        {
+          "domain": "github.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://github.com/sponsors/feross",
+          "pathHint": "sponsors/feross"
+        },
+        {
+          "domain": "github.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://github.com/sponsors/ljharb",
+          "pathHint": "sponsors/ljharb"
+        },
+        {
+          "domain": "github.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://github.com/sponsors/sindresorhus",
+          "pathHint": "sponsors/sindresorhus"
+        },
+        {
+          "domain": "opencollective.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://opencollective.com/csstools",
+          "pathHint": "csstools"
+        },
+        {
+          "domain": "opencollective.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://opencollective.com/express",
+          "pathHint": "express"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/@acemir/cssom/-/cssom-0.9.31.tgz",
+          "pathHint": "-/cssom-0.9.31.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/@asamuzakjp/css-color/-/css-color-4.1.1.tgz",
+          "pathHint": "-/css-color-4.1.1.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/@asamuzakjp/dom-selector/-/dom-selector-6.7.6.tgz",
+          "pathHint": "-/dom-selector-6.7.6.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/@asamuzakjp/nwsapi/-/nwsapi-2.3.9.tgz",
+          "pathHint": "-/nwsapi-2.3.9.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/@csstools/color-helpers/-/color-helpers-5.1.0.tgz",
+          "pathHint": "-/color-helpers-5.1.0.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/@csstools/css-calc/-/css-calc-2.1.4.tgz",
+          "pathHint": "-/css-calc-2.1.4.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/@csstools/css-color-parser/-/css-color-parser-3.1.0.tgz",
+          "pathHint": "-/css-color-parser-3.1.0.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/@csstools/css-parser-algorithms/-/css-parser-algorithms-3.0.5.tgz",
+          "pathHint": "-/css-parser-algorithms-3.0.5.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/@csstools/css-syntax-patches-for-csstree/-/css-syntax-patches-for-csstree-1.0.25.tgz",
+          "pathHint": "-/css-syntax-patches-for-csstree-1.0.25.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/@csstools/css-tokenizer/-/css-tokenizer-3.0.4.tgz",
+          "pathHint": "-/css-tokenizer-3.0.4.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/@exodus/bytes/-/bytes-1.8.0.tgz",
+          "pathHint": "-/bytes-1.8.0.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/accepts/-/accepts-1.3.8.tgz",
+          "pathHint": "-/accepts-1.3.8.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/agent-base/-/agent-base-7.1.4.tgz",
+          "pathHint": "-/agent-base-7.1.4.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/array-flatten/-/array-flatten-1.1.1.tgz",
+          "pathHint": "-/array-flatten-1.1.1.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/bcryptjs/-/bcryptjs-3.0.3.tgz",
+          "pathHint": "-/bcryptjs-3.0.3.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/bidi-js/-/bidi-js-1.0.3.tgz",
+          "pathHint": "-/bidi-js-1.0.3.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/body-parser/-/body-parser-1.20.4.tgz",
+          "pathHint": "-/body-parser-1.20.4.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/buffer-equal-constant-time/-/buffer-equal-constant-time-1.0.1.tgz",
+          "pathHint": "-/buffer-equal-constant-time-1.0.1.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/bytes/-/bytes-3.1.2.tgz",
+          "pathHint": "-/bytes-3.1.2.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/call-bind-apply-helpers/-/call-bind-apply-helpers-1.0.2.tgz",
+          "pathHint": "-/call-bind-apply-helpers-1.0.2.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/call-bound/-/call-bound-1.0.4.tgz",
+          "pathHint": "-/call-bound-1.0.4.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/content-disposition/-/content-disposition-0.5.4.tgz",
+          "pathHint": "-/content-disposition-0.5.4.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/content-type/-/content-type-1.0.5.tgz",
+          "pathHint": "-/content-type-1.0.5.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/cookie-signature/-/cookie-signature-1.0.7.tgz",
+          "pathHint": "-/cookie-signature-1.0.7.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/cookie/-/cookie-0.7.2.tgz",
+          "pathHint": "-/cookie-0.7.2.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/cors/-/cors-2.8.5.tgz",
+          "pathHint": "-/cors-2.8.5.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/css-tree/-/css-tree-3.1.0.tgz",
+          "pathHint": "-/css-tree-3.1.0.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/cssstyle/-/cssstyle-5.3.7.tgz",
+          "pathHint": "-/cssstyle-5.3.7.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/data-urls/-/data-urls-6.0.0.tgz",
+          "pathHint": "-/data-urls-6.0.0.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/debug/-/debug-2.6.9.tgz",
+          "pathHint": "-/debug-2.6.9.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/debug/-/debug-4.4.3.tgz",
+          "pathHint": "-/debug-4.4.3.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/decimal.js/-/decimal.js-10.6.0.tgz",
+          "pathHint": "-/decimal.js-10.6.0.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/depd/-/depd-2.0.0.tgz",
+          "pathHint": "-/depd-2.0.0.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/destroy/-/destroy-1.2.0.tgz",
+          "pathHint": "-/destroy-1.2.0.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/dotenv/-/dotenv-17.4.2.tgz",
+          "pathHint": "-/dotenv-17.4.2.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/dunder-proto/-/dunder-proto-1.0.1.tgz",
+          "pathHint": "-/dunder-proto-1.0.1.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/ecdsa-sig-formatter/-/ecdsa-sig-formatter-1.0.11.tgz",
+          "pathHint": "-/ecdsa-sig-formatter-1.0.11.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/ee-first/-/ee-first-1.1.1.tgz",
+          "pathHint": "-/ee-first-1.1.1.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/encodeurl/-/encodeurl-2.0.0.tgz",
+          "pathHint": "-/encodeurl-2.0.0.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/entities/-/entities-6.0.1.tgz",
+          "pathHint": "-/entities-6.0.1.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/es-define-property/-/es-define-property-1.0.1.tgz",
+          "pathHint": "-/es-define-property-1.0.1.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/es-errors/-/es-errors-1.3.0.tgz",
+          "pathHint": "-/es-errors-1.3.0.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/es-object-atoms/-/es-object-atoms-1.1.1.tgz",
+          "pathHint": "-/es-object-atoms-1.1.1.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/escape-html/-/escape-html-1.0.3.tgz",
+          "pathHint": "-/escape-html-1.0.3.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/etag/-/etag-1.8.1.tgz",
+          "pathHint": "-/etag-1.8.1.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/express-rate-limit/-/express-rate-limit-8.5.2.tgz",
+          "pathHint": "-/express-rate-limit-8.5.2.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/express/-/express-4.22.1.tgz",
+          "pathHint": "-/express-4.22.1.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/finalhandler/-/finalhandler-1.3.2.tgz",
+          "pathHint": "-/finalhandler-1.3.2.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/forwarded/-/forwarded-0.2.0.tgz",
+          "pathHint": "-/forwarded-0.2.0.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/fresh/-/fresh-0.5.2.tgz",
+          "pathHint": "-/fresh-0.5.2.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/function-bind/-/function-bind-1.1.2.tgz",
+          "pathHint": "-/function-bind-1.1.2.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/get-intrinsic/-/get-intrinsic-1.3.0.tgz",
+          "pathHint": "-/get-intrinsic-1.3.0.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/get-proto/-/get-proto-1.0.1.tgz",
+          "pathHint": "-/get-proto-1.0.1.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/gopd/-/gopd-1.2.0.tgz",
+          "pathHint": "-/gopd-1.2.0.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/has-symbols/-/has-symbols-1.1.0.tgz",
+          "pathHint": "-/has-symbols-1.1.0.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/hasown/-/hasown-2.0.2.tgz",
+          "pathHint": "-/hasown-2.0.2.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/html-encoding-sniffer/-/html-encoding-sniffer-6.0.0.tgz",
+          "pathHint": "-/html-encoding-sniffer-6.0.0.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/http-errors/-/http-errors-2.0.1.tgz",
+          "pathHint": "-/http-errors-2.0.1.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/http-proxy-agent/-/http-proxy-agent-7.0.2.tgz",
+          "pathHint": "-/http-proxy-agent-7.0.2.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/https-proxy-agent/-/https-proxy-agent-7.0.6.tgz",
+          "pathHint": "-/https-proxy-agent-7.0.6.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/iconv-lite/-/iconv-lite-0.4.24.tgz",
+          "pathHint": "-/iconv-lite-0.4.24.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/inherits/-/inherits-2.0.4.tgz",
+          "pathHint": "-/inherits-2.0.4.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/ip-address/-/ip-address-10.2.0.tgz",
+          "pathHint": "-/ip-address-10.2.0.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/ipaddr.js/-/ipaddr.js-1.9.1.tgz",
+          "pathHint": "-/ipaddr.js-1.9.1.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/is-potential-custom-element-name/-/is-potential-custom-element-name-1.0.1.tgz",
+          "pathHint": "-/is-potential-custom-element-name-1.0.1.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/jsdom/-/jsdom-27.4.0.tgz",
+          "pathHint": "-/jsdom-27.4.0.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/jsonwebtoken/-/jsonwebtoken-9.0.3.tgz",
+          "pathHint": "-/jsonwebtoken-9.0.3.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/jwa/-/jwa-2.0.1.tgz",
+          "pathHint": "-/jwa-2.0.1.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/jws/-/jws-4.0.1.tgz",
+          "pathHint": "-/jws-4.0.1.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/lodash.includes/-/lodash.includes-4.3.0.tgz",
+          "pathHint": "-/lodash.includes-4.3.0.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/lodash.isboolean/-/lodash.isboolean-3.0.3.tgz",
+          "pathHint": "-/lodash.isboolean-3.0.3.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/lodash.isinteger/-/lodash.isinteger-4.0.4.tgz",
+          "pathHint": "-/lodash.isinteger-4.0.4.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/lodash.isnumber/-/lodash.isnumber-3.0.3.tgz",
+          "pathHint": "-/lodash.isnumber-3.0.3.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/lodash.isplainobject/-/lodash.isplainobject-4.0.6.tgz",
+          "pathHint": "-/lodash.isplainobject-4.0.6.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/lodash.isstring/-/lodash.isstring-4.0.1.tgz",
+          "pathHint": "-/lodash.isstring-4.0.1.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/lodash.once/-/lodash.once-4.1.1.tgz",
+          "pathHint": "-/lodash.once-4.1.1.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/lru-cache/-/lru-cache-11.2.4.tgz",
+          "pathHint": "-/lru-cache-11.2.4.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/math-intrinsics/-/math-intrinsics-1.1.0.tgz",
+          "pathHint": "-/math-intrinsics-1.1.0.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/mdn-data/-/mdn-data-2.12.2.tgz",
+          "pathHint": "-/mdn-data-2.12.2.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/media-typer/-/media-typer-0.3.0.tgz",
+          "pathHint": "-/media-typer-0.3.0.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/merge-descriptors/-/merge-descriptors-1.0.3.tgz",
+          "pathHint": "-/merge-descriptors-1.0.3.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/methods/-/methods-1.1.2.tgz",
+          "pathHint": "-/methods-1.1.2.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/mime-db/-/mime-db-1.52.0.tgz",
+          "pathHint": "-/mime-db-1.52.0.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/mime-types/-/mime-types-2.1.35.tgz",
+          "pathHint": "-/mime-types-2.1.35.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/mime/-/mime-1.6.0.tgz",
+          "pathHint": "-/mime-1.6.0.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/ms/-/ms-2.0.0.tgz",
+          "pathHint": "-/ms-2.0.0.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/ms/-/ms-2.1.3.tgz",
+          "pathHint": "-/ms-2.1.3.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/negotiator/-/negotiator-0.6.3.tgz",
+          "pathHint": "-/negotiator-0.6.3.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/object-assign/-/object-assign-4.1.1.tgz",
+          "pathHint": "-/object-assign-4.1.1.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/object-inspect/-/object-inspect-1.13.4.tgz",
+          "pathHint": "-/object-inspect-1.13.4.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/on-finished/-/on-finished-2.4.1.tgz",
+          "pathHint": "-/on-finished-2.4.1.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/parse5/-/parse5-8.0.0.tgz",
+          "pathHint": "-/parse5-8.0.0.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/parseurl/-/parseurl-1.3.3.tgz",
+          "pathHint": "-/parseurl-1.3.3.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/path-to-regexp/-/path-to-regexp-0.1.12.tgz",
+          "pathHint": "-/path-to-regexp-0.1.12.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/proxy-addr/-/proxy-addr-2.0.7.tgz",
+          "pathHint": "-/proxy-addr-2.0.7.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/punycode/-/punycode-2.3.1.tgz",
+          "pathHint": "-/punycode-2.3.1.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/qs/-/qs-6.14.1.tgz",
+          "pathHint": "-/qs-6.14.1.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/range-parser/-/range-parser-1.2.1.tgz",
+          "pathHint": "-/range-parser-1.2.1.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/raw-body/-/raw-body-2.5.3.tgz",
+          "pathHint": "-/raw-body-2.5.3.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/require-from-string/-/require-from-string-2.0.2.tgz",
+          "pathHint": "-/require-from-string-2.0.2.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/safe-buffer/-/safe-buffer-5.2.1.tgz",
+          "pathHint": "-/safe-buffer-5.2.1.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/safer-buffer/-/safer-buffer-2.1.2.tgz",
+          "pathHint": "-/safer-buffer-2.1.2.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/saxes/-/saxes-6.0.0.tgz",
+          "pathHint": "-/saxes-6.0.0.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/semver/-/semver-7.8.5.tgz",
+          "pathHint": "-/semver-7.8.5.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/send/-/send-0.19.2.tgz",
+          "pathHint": "-/send-0.19.2.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/serve-static/-/serve-static-1.16.3.tgz",
+          "pathHint": "-/serve-static-1.16.3.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/setprototypeof/-/setprototypeof-1.2.0.tgz",
+          "pathHint": "-/setprototypeof-1.2.0.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/side-channel-list/-/side-channel-list-1.0.0.tgz",
+          "pathHint": "-/side-channel-list-1.0.0.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/side-channel-map/-/side-channel-map-1.0.1.tgz",
+          "pathHint": "-/side-channel-map-1.0.1.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/side-channel-weakmap/-/side-channel-weakmap-1.0.2.tgz",
+          "pathHint": "-/side-channel-weakmap-1.0.2.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/side-channel/-/side-channel-1.1.0.tgz",
+          "pathHint": "-/side-channel-1.1.0.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/source-map-js/-/source-map-js-1.2.1.tgz",
+          "pathHint": "-/source-map-js-1.2.1.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/statuses/-/statuses-2.0.2.tgz",
+          "pathHint": "-/statuses-2.0.2.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/symbol-tree/-/symbol-tree-3.2.4.tgz",
+          "pathHint": "-/symbol-tree-3.2.4.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/tldts-core/-/tldts-core-7.0.19.tgz",
+          "pathHint": "-/tldts-core-7.0.19.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/tldts/-/tldts-7.0.19.tgz",
+          "pathHint": "-/tldts-7.0.19.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/toidentifier/-/toidentifier-1.0.1.tgz",
+          "pathHint": "-/toidentifier-1.0.1.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/tough-cookie/-/tough-cookie-6.0.0.tgz",
+          "pathHint": "-/tough-cookie-6.0.0.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/tr46/-/tr46-6.0.0.tgz",
+          "pathHint": "-/tr46-6.0.0.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/type-is/-/type-is-1.6.18.tgz",
+          "pathHint": "-/type-is-1.6.18.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/unpipe/-/unpipe-1.0.0.tgz",
+          "pathHint": "-/unpipe-1.0.0.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/utils-merge/-/utils-merge-1.0.1.tgz",
+          "pathHint": "-/utils-merge-1.0.1.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/vary/-/vary-1.1.2.tgz",
+          "pathHint": "-/vary-1.1.2.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/w3c-xmlserializer/-/w3c-xmlserializer-5.0.0.tgz",
+          "pathHint": "-/w3c-xmlserializer-5.0.0.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/webidl-conversions/-/webidl-conversions-8.0.1.tgz",
+          "pathHint": "-/webidl-conversions-8.0.1.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/whatwg-mimetype/-/whatwg-mimetype-4.0.0.tgz",
+          "pathHint": "-/whatwg-mimetype-4.0.0.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/whatwg-url/-/whatwg-url-15.1.0.tgz",
+          "pathHint": "-/whatwg-url-15.1.0.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/ws/-/ws-8.19.0.tgz",
+          "pathHint": "-/ws-8.19.0.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/xml-name-validator/-/xml-name-validator-5.0.0.tgz",
+          "pathHint": "-/xml-name-validator-5.0.0.tgz"
+        },
+        {
+          "domain": "registry.npmjs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmjs.org/xmlchars/-/xmlchars-2.2.0.tgz",
+          "pathHint": "-/xmlchars-2.2.0.tgz"
+        },
+        {
+          "domain": "registry.npmmirror.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmmirror.com/append-field/-/append-field-1.0.0.tgz",
+          "pathHint": "-/append-field-1.0.0.tgz"
+        },
+        {
+          "domain": "registry.npmmirror.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmmirror.com/buffer-from/-/buffer-from-1.1.2.tgz",
+          "pathHint": "-/buffer-from-1.1.2.tgz"
+        },
+        {
+          "domain": "registry.npmmirror.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmmirror.com/busboy/-/busboy-1.6.0.tgz",
+          "pathHint": "-/busboy-1.6.0.tgz"
+        },
+        {
+          "domain": "registry.npmmirror.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmmirror.com/concat-stream/-/concat-stream-2.0.0.tgz",
+          "pathHint": "-/concat-stream-2.0.0.tgz"
+        },
+        {
+          "domain": "registry.npmmirror.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmmirror.com/multer/-/multer-2.2.0.tgz",
+          "pathHint": "-/multer-2.2.0.tgz"
+        },
+        {
+          "domain": "registry.npmmirror.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmmirror.com/readable-stream/-/readable-stream-3.6.2.tgz",
+          "pathHint": "-/readable-stream-3.6.2.tgz"
+        },
+        {
+          "domain": "registry.npmmirror.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmmirror.com/streamsearch/-/streamsearch-1.1.0.tgz",
+          "pathHint": "-/streamsearch-1.1.0.tgz"
+        },
+        {
+          "domain": "registry.npmmirror.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmmirror.com/string_decoder/-/string_decoder-1.3.0.tgz",
+          "pathHint": "-/string_decoder-1.3.0.tgz"
+        },
+        {
+          "domain": "registry.npmmirror.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmmirror.com/typedarray/-/typedarray-0.0.6.tgz",
+          "pathHint": "-/typedarray-0.0.6.tgz"
+        },
+        {
+          "domain": "registry.npmmirror.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://registry.npmmirror.com/util-deprecate/-/util-deprecate-1.0.2.tgz",
+          "pathHint": "-/util-deprecate-1.0.2.tgz"
+        },
+        {
+          "domain": "www.patreon.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://www.patreon.com/feross",
+          "pathHint": "feross"
+        }
+      ],
+      "fileType": "JSON",
+      "id": "mig001_fa288d1472d2",
+      "legacyCategory": "DISCARD",
+      "manualReviewRequired": false,
+      "nonReusableReason": "Deprecated demo, out-of-scope flow, or disallowed legacy implementation.",
+      "primaryDisposition": "DISCARD",
+      "relativePath": "package-lock.json",
+      "riskTags": ["externalDependency"],
+      "runtimeDependencies": [],
+      "sha256": "11ecc4ed5ba6b58d0c9fae0845a98123781edf0944b293c70ec3a91d0f1ba49c",
+      "sizeBytes": 62063,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Do not migrate",
+      "suggestedHandling": "Keep for audit only; block direct migration."
+    },
+    {
+      "contentPurpose": "Legacy environment or tooling manifest",
+      "externalReferences": [],
+      "fileType": "JSON",
+      "id": "mig001_7030d0b2f71b",
+      "legacyCategory": "DISCARD",
+      "manualReviewRequired": false,
+      "nonReusableReason": "Deprecated demo, out-of-scope flow, or disallowed legacy implementation.",
+      "primaryDisposition": "DISCARD",
+      "relativePath": "package.json",
+      "riskTags": [],
+      "runtimeDependencies": [
+        "bcryptjs",
+        "cors",
+        "dotenv",
+        "express",
+        "express-rate-limit",
+        "jsdom",
+        "jsonwebtoken",
+        "multer"
+      ],
+      "sha256": "8688ad3517d2f7e7702cb6ae5708f016f460cc050b48d48cea5d1fc4e550cfc4",
+      "sizeBytes": 602,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Do not migrate",
+      "suggestedHandling": "Keep for audit only; block direct migration."
+    },
+    {
+      "contentPurpose": "High-level legacy scope and roadmap intent",
+      "externalReferences": [],
+      "fileType": "Markdown",
+      "id": "mig001_7e2cbac3173a",
+      "legacyCategory": "REWRITE_FROM_INTENT",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Useful for intent only; implementation is runtime-coupled and not migration-safe.",
+      "primaryDisposition": "REWRITE",
+      "relativePath": "plan/upgrade-roadmap.md",
+      "riskTags": [],
+      "runtimeDependencies": [],
+      "sha256": "8f51f942e89e558d4de305582a621c57f0b4c8dcd52f9c6505b5db0f1e46d15c",
+      "sizeBytes": 2534,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Product and migration backlog",
+      "suggestedHandling": "Extract requirements, flows, and structure; rewrite implementation for the new system."
+    },
+    {
+      "contentPurpose": "Page flow, IA, copy, and role journey intent",
+      "externalReferences": [
+        {
+          "domain": "platform.deepseek.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://platform.deepseek.com/%60",
+          "pathHint": "%60"
+        }
+      ],
+      "fileType": "HTML page",
+      "id": "mig001_6edc82242bd1",
+      "legacyCategory": "REWRITE_FROM_INTENT",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Useful for intent only; implementation is runtime-coupled and not migration-safe.",
+      "primaryDisposition": "REWRITE",
+      "relativePath": "platform-internal.html",
+      "riskTags": ["externalDependency", "fakeData", "runtimeCoupled"],
+      "runtimeDependencies": [
+        "/public/css/yx-design-upgrade.css",
+        "public/js/site-polish.js"
+      ],
+      "sha256": "c66c48bcc2e3ba7525151729e4058b00713f906ef8dab4b3af40397777dd51be",
+      "sizeBytes": 34118,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Product and migration backlog",
+      "suggestedHandling": "Extract requirements, flows, and structure; rewrite implementation for the new system."
+    },
+    {
+      "contentPurpose": "Demo page or fake-data artifact outside approved migration scope",
+      "externalReferences": [
+        {
+          "domain": "cdn.jsdelivr.net",
+          "isExternal": true,
+          "mediaCategory": "font",
+          "normalized": "https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css",
+          "pathHint": "css/font-awesome.min.css"
+        },
+        {
+          "domain": "cdn.tailwindcss.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://cdn.tailwindcss.com/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "p11-doubao-search-sign.byteimg.com",
+          "isExternal": true,
+          "mediaCategory": "image",
+          "normalized": "https://p11-doubao-search-sign.byteimg.com/pgc-image/d21881a4e9a7407bae1e3d5bcf10b486~tplv-be4g95zd3a-image.jpeg",
+          "pathHint": "pgc-image/d21881a4e9a7407bae1e3d5bcf10b486~tplv-be4g95zd3a-image.jpeg"
+        },
+        {
+          "domain": "p26-doubao-search-sign.byteimg.com",
+          "isExternal": true,
+          "mediaCategory": "image",
+          "normalized": "https://p26-doubao-search-sign.byteimg.com/labis/8d0be08c2606f269b897515a0ee5de3f~tplv-be4g95zd3a-image.jpeg",
+          "pathHint": "labis/8d0be08c2606f269b897515a0ee5de3f~tplv-be4g95zd3a-image.jpeg"
+        },
+        {
+          "domain": "p26-doubao-search-sign.byteimg.com",
+          "isExternal": true,
+          "mediaCategory": "image",
+          "normalized": "https://p26-doubao-search-sign.byteimg.com/pgc-image/1527590555615ba2bac849a~tplv-be4g95zd3a-image.jpeg",
+          "pathHint": "pgc-image/1527590555615ba2bac849a~tplv-be4g95zd3a-image.jpeg"
+        }
+      ],
+      "fileType": "HTML page",
+      "id": "mig001_f139e7aadde4",
+      "legacyCategory": "DISCARD",
+      "manualReviewRequired": false,
+      "nonReusableReason": "Deprecated demo, out-of-scope flow, or disallowed legacy implementation.",
+      "primaryDisposition": "DISCARD",
+      "relativePath": "premium-purchase.html",
+      "riskTags": [
+        "containsPii",
+        "externalDependency",
+        "fakeData",
+        "obsoleteDemo",
+        "runtimeCoupled"
+      ],
+      "runtimeDependencies": [
+        "https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css",
+        "https://cdn.tailwindcss.com/",
+        "public/js/site-polish.js"
+      ],
+      "sha256": "eaf12935744f1727708f33d77ceeb6a28f7bc8b64442226c0fe1f84e3cbebf84",
+      "sizeBytes": 25492,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Do not migrate",
+      "suggestedHandling": "Keep for audit only; block direct migration."
+    },
+    {
+      "contentPurpose": "Demo page or fake-data artifact outside approved migration scope",
+      "externalReferences": [
+        {
+          "domain": "cdn.jsdelivr.net",
+          "isExternal": true,
+          "mediaCategory": "font",
+          "normalized": "https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css",
+          "pathHint": "css/font-awesome.min.css"
+        },
+        {
+          "domain": "cdn.tailwindcss.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://cdn.tailwindcss.com/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "p26-doubao-search-sign.byteimg.com",
+          "isExternal": true,
+          "mediaCategory": "image",
+          "normalized": "https://p26-doubao-search-sign.byteimg.com/labis/8d0be08c2606f269b897515a0ee5de3f~tplv-be4g95zd3a-image.jpeg",
+          "pathHint": "labis/8d0be08c2606f269b897515a0ee5de3f~tplv-be4g95zd3a-image.jpeg"
+        }
+      ],
+      "fileType": "HTML page",
+      "id": "mig001_3f6078b4ad2f",
+      "legacyCategory": "DISCARD",
+      "manualReviewRequired": false,
+      "nonReusableReason": "Deprecated demo, out-of-scope flow, or disallowed legacy implementation.",
+      "primaryDisposition": "DISCARD",
+      "relativePath": "pricing.html",
+      "riskTags": [
+        "containsPii",
+        "externalDependency",
+        "fakeData",
+        "obsoleteDemo",
+        "runtimeCoupled"
+      ],
+      "runtimeDependencies": [
+        "https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css",
+        "https://cdn.tailwindcss.com/",
+        "public/js/site-polish.js"
+      ],
+      "sha256": "1261876c9d73a0937c2186edb2816c2e0d86bca4d2278bdbc80fd9376e57ae3f",
+      "sizeBytes": 32630,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Do not migrate",
+      "suggestedHandling": "Keep for audit only; block direct migration."
+    },
+    {
+      "contentPurpose": "Demo page or fake-data artifact outside approved migration scope",
+      "externalReferences": [
+        {
+          "domain": "cdn.jsdelivr.net",
+          "isExternal": true,
+          "mediaCategory": "font",
+          "normalized": "https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css",
+          "pathHint": "css/font-awesome.min.css"
+        },
+        {
+          "domain": "cdn.tailwindcss.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://cdn.tailwindcss.com/",
+          "pathHint": "/"
+        }
+      ],
+      "fileType": "HTML page",
+      "id": "mig001_0b5077838209",
+      "legacyCategory": "DISCARD",
+      "manualReviewRequired": false,
+      "nonReusableReason": "Deprecated demo, out-of-scope flow, or disallowed legacy implementation.",
+      "primaryDisposition": "DISCARD",
+      "relativePath": "professional-purchase.html",
+      "riskTags": [
+        "containsPii",
+        "externalDependency",
+        "fakeData",
+        "obsoleteDemo",
+        "runtimeCoupled"
+      ],
+      "runtimeDependencies": [
+        "https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css",
+        "https://cdn.tailwindcss.com/",
+        "public/js/site-polish.js"
+      ],
+      "sha256": "52a051915065f3da48469d0a3d1d2fbe2623fa5013dfb9796a508bba2368c464",
+      "sizeBytes": 31736,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Do not migrate",
+      "suggestedHandling": "Keep for audit only; block direct migration."
+    },
+    {
+      "contentPurpose": "Explicitly blocked legacy runtime patch asset",
+      "externalReferences": [
+        {
+          "domain": "www.w3.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "http://www.w3.org/2000/svg",
+          "pathHint": "2000/svg"
+        }
+      ],
+      "fileType": "File",
+      "id": "mig001_3cf1fdcace44",
+      "legacyCategory": "DISCARD",
+      "manualReviewRequired": false,
+      "nonReusableReason": "Deprecated demo, out-of-scope flow, or disallowed legacy implementation.",
+      "primaryDisposition": "DISCARD",
+      "relativePath": "public/css/yx-design-upgrade.css",
+      "riskTags": ["externalDependency", "obsoleteDemo", "runtimeCoupled"],
+      "runtimeDependencies": [],
+      "sha256": "f078d676966f61936672fd594e614907454809520d2bf4e855ab3db85ecc1fd9",
+      "sizeBytes": 24547,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Do not migrate",
+      "suggestedHandling": "Keep for audit only; block direct migration."
+    },
+    {
+      "contentPurpose": "Course-card rendering and access-control intent",
+      "externalReferences": [],
+      "fileType": "JavaScript",
+      "id": "mig001_22857f14617c",
+      "legacyCategory": "REWRITE_FROM_INTENT",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Useful for intent only; implementation is runtime-coupled and not migration-safe.",
+      "primaryDisposition": "REWRITE",
+      "relativePath": "public/js/course.js",
+      "riskTags": ["runtimeCoupled"],
+      "runtimeDependencies": [],
+      "sha256": "c6fe140289f4d7b0c2eb010dba19ab52c281f995bd069d013f6f17385d3e255a",
+      "sizeBytes": 5034,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Product and migration backlog",
+      "suggestedHandling": "Extract requirements, flows, and structure; rewrite implementation for the new system."
+    },
+    {
+      "contentPurpose": "Explicitly blocked legacy runtime patch asset",
+      "externalReferences": [],
+      "fileType": "JavaScript",
+      "id": "mig001_1712623123c3",
+      "legacyCategory": "DISCARD",
+      "manualReviewRequired": false,
+      "nonReusableReason": "Deprecated demo, out-of-scope flow, or disallowed legacy implementation.",
+      "primaryDisposition": "DISCARD",
+      "relativePath": "public/js/site-polish.js",
+      "riskTags": ["obsoleteDemo", "runtimeCoupled"],
+      "runtimeDependencies": [],
+      "sha256": "250aac4c674413bfea41f195e7432c6d9185e8b856b4e04fecdc49e34c26319f",
+      "sizeBytes": 10222,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Do not migrate",
+      "suggestedHandling": "Keep for audit only; block direct migration."
+    },
+    {
+      "contentPurpose": "Bilingual runtime behavior and fallback logic intent",
+      "externalReferences": [],
+      "fileType": "JavaScript",
+      "id": "mig001_768731b45604",
+      "legacyCategory": "REWRITE_FROM_INTENT",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Useful for intent only; implementation is runtime-coupled and not migration-safe.",
+      "primaryDisposition": "REWRITE",
+      "relativePath": "public/js/translate.js",
+      "riskTags": ["containsPii", "runtimeCoupled"],
+      "runtimeDependencies": [],
+      "sha256": "f26ca49908695f5e77449793b9eee3c27dd3d89c35ec9018689c3227869c6013",
+      "sizeBytes": 16865,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Product and migration backlog",
+      "suggestedHandling": "Extract requirements, flows, and structure; rewrite implementation for the new system."
+    },
+    {
+      "contentPurpose": "Legacy media or visual asset metadata source",
+      "externalReferences": [],
+      "fileType": "WebVTT subtitle",
+      "id": "mig001_a25e0e44fa98",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Rights and source status are not confirmed.",
+      "primaryDisposition": "REVIEW",
+      "relativePath": "public/subtitles/sample_bo.vtt",
+      "riskTags": ["binaryAsset", "copyrightUnverified"],
+      "runtimeDependencies": [],
+      "sha256": "fad1a90510a5a471f61b273637d04eba2c65056909af81ce76bd760563b37290",
+      "sizeBytes": 1091,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Media rights review queue",
+      "suggestedHandling": "Export metadata only; do not copy binary assets into the new system."
+    },
+    {
+      "contentPurpose": "Legacy media or visual asset metadata source",
+      "externalReferences": [],
+      "fileType": "WebVTT subtitle",
+      "id": "mig001_19c335987746",
+      "legacyCategory": "COPYRIGHT_BLOCKED",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Rights and source status are not confirmed.",
+      "primaryDisposition": "REVIEW",
+      "relativePath": "public/subtitles/sample_zh.vtt",
+      "riskTags": ["binaryAsset", "copyrightUnverified"],
+      "runtimeDependencies": [],
+      "sha256": "6c7a33fefc90d51834d54d20d21b18279e963ec7b4647656881e74a10305222b",
+      "sizeBytes": 314,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Media rights review queue",
+      "suggestedHandling": "Export metadata only; do not copy binary assets into the new system."
+    },
+    {
+      "contentPurpose": "High-level legacy scope and roadmap intent",
+      "externalReferences": [
+        {
+          "domain": "localhost",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "http://localhost:3001/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "localhost",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "http://localhost:3001/course-center.html",
+          "pathHint": "course-center.html"
+        },
+        {
+          "domain": "localhost",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "http://localhost:3001/platform-internal.html",
+          "pathHint": "platform-internal.html"
+        },
+        {
+          "domain": "localhost",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "http://localhost:3001/teacher-dashboard.html",
+          "pathHint": "teacher-dashboard.html"
+        }
+      ],
+      "fileType": "Markdown",
+      "id": "mig001_8ec9a00bfd09",
+      "legacyCategory": "REWRITE_FROM_INTENT",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Useful for intent only; implementation is runtime-coupled and not migration-safe.",
+      "primaryDisposition": "REWRITE",
+      "relativePath": "README.md",
+      "riskTags": ["externalDependency"],
+      "runtimeDependencies": [],
+      "sha256": "7e3b9fcf6d6eff29e029980587f8c9a45cc538f471bc93a562515f081ddf8db5",
+      "sizeBytes": 1146,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Product and migration backlog",
+      "suggestedHandling": "Extract requirements, flows, and structure; rewrite implementation for the new system."
+    },
+    {
+      "contentPurpose": "Legacy monolith API intent for auth, courses, materials, AI ideas, progress, and assessment flows",
+      "externalReferences": [
+        {
+          "domain": "api.deepseek.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://api.deepseek.com/v1",
+          "pathHint": "v1"
+        },
+        {
+          "domain": "platform.deepseek.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://platform.deepseek.com/",
+          "pathHint": "/"
+        }
+      ],
+      "fileType": "JavaScript",
+      "id": "mig001_dc60ea9ee1ff",
+      "legacyCategory": "REWRITE_FROM_INTENT",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Useful for intent only; implementation is runtime-coupled and not migration-safe.",
+      "primaryDisposition": "REWRITE",
+      "relativePath": "server.js",
+      "riskTags": [
+        "containsPii",
+        "externalDependency",
+        "fakeData",
+        "runtimeCoupled"
+      ],
+      "runtimeDependencies": [
+        "bcryptjs",
+        "cors",
+        "dotenv",
+        "express",
+        "express-rate-limit",
+        "fs",
+        "http",
+        "https",
+        "jsonwebtoken",
+        "multer",
+        "path"
+      ],
+      "sha256": "d3df711b55b3108c035be0daa7d407ea300532b5b5b75d855f0c6eed97bca603",
+      "sizeBytes": 43577,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Product and migration backlog",
+      "suggestedHandling": "Extract requirements, flows, and structure; rewrite implementation for the new system."
+    },
+    {
+      "contentPurpose": "Page flow, IA, copy, and role journey intent",
+      "externalReferences": [
+        {
+          "domain": "cdn.jsdelivr.net",
+          "isExternal": true,
+          "mediaCategory": "script",
+          "normalized": "https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js",
+          "pathHint": "dist/chart.umd.min.js"
+        },
+        {
+          "domain": "cdn.jsdelivr.net",
+          "isExternal": true,
+          "mediaCategory": "font",
+          "normalized": "https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css",
+          "pathHint": "css/font-awesome.min.css"
+        },
+        {
+          "domain": "cdn.tailwindcss.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://cdn.tailwindcss.com/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "fonts.googleapis.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://fonts.googleapis.com/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "fonts.googleapis.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://fonts.googleapis.com/css2",
+          "pathHint": "css2"
+        },
+        {
+          "domain": "fonts.gstatic.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://fonts.gstatic.com/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "p11-doubao-search-sign.byteimg.com",
+          "isExternal": true,
+          "mediaCategory": "image",
+          "normalized": "https://p11-doubao-search-sign.byteimg.com/pgc-image/d21881a4e9a7407bae1e3d5bcf10b486~tplv-be4g95zd3a-image.jpeg",
+          "pathHint": "pgc-image/d21881a4e9a7407bae1e3d5bcf10b486~tplv-be4g95zd3a-image.jpeg"
+        },
+        {
+          "domain": "p26-doubao-search-sign.byteimg.com",
+          "isExternal": true,
+          "mediaCategory": "image",
+          "normalized": "https://p26-doubao-search-sign.byteimg.com/labis/8d0be08c2606f269b897515a0ee5de3f~tplv-be4g95zd3a-image.jpeg",
+          "pathHint": "labis/8d0be08c2606f269b897515a0ee5de3f~tplv-be4g95zd3a-image.jpeg"
+        }
+      ],
+      "fileType": "HTML page",
+      "id": "mig001_bac465da5bad",
+      "legacyCategory": "REWRITE_FROM_INTENT",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Useful for intent only; implementation is runtime-coupled and not migration-safe.",
+      "primaryDisposition": "REWRITE",
+      "relativePath": "student-dashboard.html",
+      "riskTags": [
+        "containsPii",
+        "externalDependency",
+        "fakeData",
+        "obsoleteDemo",
+        "runtimeCoupled"
+      ],
+      "runtimeDependencies": [
+        "/public/css/yx-design-upgrade.css",
+        "https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js",
+        "https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css",
+        "https://cdn.tailwindcss.com/",
+        "https://fonts.googleapis.com/",
+        "https://fonts.googleapis.com/css2",
+        "https://fonts.gstatic.com/",
+        "public/js/site-polish.js"
+      ],
+      "sha256": "84617fbbd5ec2a3b71ef2aeac6aea5721b1de9c3acb3377445ca1f03d6b18adf",
+      "sizeBytes": 36219,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Product and migration backlog",
+      "suggestedHandling": "Extract requirements, flows, and structure; rewrite implementation for the new system."
+    },
+    {
+      "contentPurpose": "Page flow, IA, copy, and role journey intent",
+      "externalReferences": [
+        {
+          "domain": "cdn.jsdelivr.net",
+          "isExternal": true,
+          "mediaCategory": "script",
+          "normalized": "https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js",
+          "pathHint": "dist/chart.umd.min.js"
+        },
+        {
+          "domain": "cdn.jsdelivr.net",
+          "isExternal": true,
+          "mediaCategory": "font",
+          "normalized": "https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css",
+          "pathHint": "css/font-awesome.min.css"
+        },
+        {
+          "domain": "cdn.tailwindcss.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://cdn.tailwindcss.com/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "fonts.googleapis.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://fonts.googleapis.com/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "fonts.googleapis.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://fonts.googleapis.com/css2",
+          "pathHint": "css2"
+        },
+        {
+          "domain": "fonts.gstatic.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://fonts.gstatic.com/",
+          "pathHint": "/"
+        }
+      ],
+      "fileType": "HTML page",
+      "id": "mig001_50945f57b93b",
+      "legacyCategory": "REWRITE_FROM_INTENT",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Useful for intent only; implementation is runtime-coupled and not migration-safe.",
+      "primaryDisposition": "REWRITE",
+      "relativePath": "student-management.html",
+      "riskTags": [
+        "containsPii",
+        "externalDependency",
+        "fakeData",
+        "runtimeCoupled"
+      ],
+      "runtimeDependencies": [
+        "https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js",
+        "https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css",
+        "https://cdn.tailwindcss.com/",
+        "https://fonts.googleapis.com/",
+        "https://fonts.googleapis.com/css2",
+        "https://fonts.gstatic.com/",
+        "public/js/site-polish.js"
+      ],
+      "sha256": "64ab7196398015d679fb5ff5d7c645582ae89656db1db397f6b3e6a5c98181fe",
+      "sizeBytes": 39869,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Product and migration backlog",
+      "suggestedHandling": "Extract requirements, flows, and structure; rewrite implementation for the new system."
+    },
+    {
+      "contentPurpose": "Page flow, IA, copy, and role journey intent",
+      "externalReferences": [
+        {
+          "domain": "cdn.jsdelivr.net",
+          "isExternal": true,
+          "mediaCategory": "script",
+          "normalized": "https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js",
+          "pathHint": "dist/chart.umd.min.js"
+        },
+        {
+          "domain": "cdn.jsdelivr.net",
+          "isExternal": true,
+          "mediaCategory": "font",
+          "normalized": "https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css",
+          "pathHint": "css/font-awesome.min.css"
+        },
+        {
+          "domain": "cdn.tailwindcss.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://cdn.tailwindcss.com/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "fonts.googleapis.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://fonts.googleapis.com/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "fonts.googleapis.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://fonts.googleapis.com/css2",
+          "pathHint": "css2"
+        },
+        {
+          "domain": "fonts.gstatic.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://fonts.gstatic.com/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "p11-doubao-search-sign.byteimg.com",
+          "isExternal": true,
+          "mediaCategory": "image",
+          "normalized": "https://p11-doubao-search-sign.byteimg.com/pgc-image/d21881a4e9a7407bae1e3d5bcf10b486~tplv-be4g95zd3a-image.jpeg",
+          "pathHint": "pgc-image/d21881a4e9a7407bae1e3d5bcf10b486~tplv-be4g95zd3a-image.jpeg"
+        },
+        {
+          "domain": "p26-doubao-search-sign.byteimg.com",
+          "isExternal": true,
+          "mediaCategory": "image",
+          "normalized": "https://p26-doubao-search-sign.byteimg.com/labis/8d0be08c2606f269b897515a0ee5de3f~tplv-be4g95zd3a-image.jpeg",
+          "pathHint": "labis/8d0be08c2606f269b897515a0ee5de3f~tplv-be4g95zd3a-image.jpeg"
+        },
+        {
+          "domain": "p26-doubao-search-sign.byteimg.com",
+          "isExternal": true,
+          "mediaCategory": "image",
+          "normalized": "https://p26-doubao-search-sign.byteimg.com/tos-cn-i-be4g95zd3a/1487031528883093510~tplv-be4g95zd3a-image.jpeg",
+          "pathHint": "tos-cn-i-be4g95zd3a/1487031528883093510~tplv-be4g95zd3a-image.jpeg"
+        }
+      ],
+      "fileType": "HTML page",
+      "id": "mig001_b3a1c2928494",
+      "legacyCategory": "REWRITE_FROM_INTENT",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Useful for intent only; implementation is runtime-coupled and not migration-safe.",
+      "primaryDisposition": "REWRITE",
+      "relativePath": "student-profile.html",
+      "riskTags": [
+        "containsPii",
+        "externalDependency",
+        "fakeData",
+        "runtimeCoupled"
+      ],
+      "runtimeDependencies": [
+        "https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js",
+        "https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css",
+        "https://cdn.tailwindcss.com/",
+        "https://fonts.googleapis.com/",
+        "https://fonts.googleapis.com/css2",
+        "https://fonts.gstatic.com/",
+        "public/js/site-polish.js"
+      ],
+      "sha256": "007d595083afd32610e3ac282988abfab421aaeba4b21dd97f82f7509d2cac7b",
+      "sizeBytes": 51167,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Product and migration backlog",
+      "suggestedHandling": "Extract requirements, flows, and structure; rewrite implementation for the new system."
+    },
+    {
+      "contentPurpose": "Page flow, IA, copy, and role journey intent",
+      "externalReferences": [
+        {
+          "domain": "cdn.jsdelivr.net",
+          "isExternal": true,
+          "mediaCategory": "script",
+          "normalized": "https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js",
+          "pathHint": "dist/chart.umd.min.js"
+        },
+        {
+          "domain": "cdn.jsdelivr.net",
+          "isExternal": true,
+          "mediaCategory": "font",
+          "normalized": "https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css",
+          "pathHint": "css/font-awesome.min.css"
+        },
+        {
+          "domain": "cdn.tailwindcss.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://cdn.tailwindcss.com/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "fonts.googleapis.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://fonts.googleapis.com/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "fonts.googleapis.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://fonts.googleapis.com/css2",
+          "pathHint": "css2"
+        },
+        {
+          "domain": "fonts.gstatic.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://fonts.gstatic.com/",
+          "pathHint": "/"
+        }
+      ],
+      "fileType": "HTML page",
+      "id": "mig001_50a4a939d1c7",
+      "legacyCategory": "REWRITE_FROM_INTENT",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Useful for intent only; implementation is runtime-coupled and not migration-safe.",
+      "primaryDisposition": "REWRITE",
+      "relativePath": "teacher-dashboard.html",
+      "riskTags": [
+        "containsPii",
+        "externalDependency",
+        "fakeData",
+        "obsoleteDemo",
+        "runtimeCoupled"
+      ],
+      "runtimeDependencies": [
+        "/public/css/yx-design-upgrade.css",
+        "https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js",
+        "https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css",
+        "https://cdn.tailwindcss.com/",
+        "https://fonts.googleapis.com/",
+        "https://fonts.googleapis.com/css2",
+        "https://fonts.gstatic.com/",
+        "public/js/site-polish.js"
+      ],
+      "sha256": "edc4cf80014eeeafb141144c435f8cbfbab5f9448d1444072743cf4c0965a356",
+      "sizeBytes": 46952,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Product and migration backlog",
+      "suggestedHandling": "Extract requirements, flows, and structure; rewrite implementation for the new system."
+    },
+    {
+      "contentPurpose": "Legacy translation workflow and extraction intent",
+      "externalReferences": [
+        {
+          "domain": "ipapi.co",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://ipapi.co/json/",
+          "pathHint": "json"
+        }
+      ],
+      "fileType": "File",
+      "id": "mig001_0ea6b2f3f071",
+      "legacyCategory": "REWRITE_FROM_INTENT",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Useful for intent only; implementation is runtime-coupled and not migration-safe.",
+      "primaryDisposition": "REWRITE",
+      "relativePath": "tools/translation/网页国语翻译西藏语.m",
+      "riskTags": ["externalDependency"],
+      "runtimeDependencies": [],
+      "sha256": "2fd374d54d5fe8e68d0c8da73bbd4061d21643de8da9b6d3325f1c7356a29526",
+      "sizeBytes": 31172,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Product and migration backlog",
+      "suggestedHandling": "Extract requirements, flows, and structure; rewrite implementation for the new system."
+    },
+    {
+      "contentPurpose": "Legacy translation workflow and extraction intent",
+      "externalReferences": [],
+      "fileType": "File",
+      "id": "mig001_f3a73cd25eb7",
+      "legacyCategory": "REWRITE_FROM_INTENT",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Useful for intent only; implementation is runtime-coupled and not migration-safe.",
+      "primaryDisposition": "REWRITE",
+      "relativePath": "tools/translation/chinese-texts.txt",
+      "riskTags": ["containsPii"],
+      "runtimeDependencies": [],
+      "sha256": "466e84debc0eb224ba1e9d8f62eeb50fe09d3ee9701fb301ef080e5abbb48afe",
+      "sizeBytes": 6838,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Product and migration backlog",
+      "suggestedHandling": "Extract requirements, flows, and structure; rewrite implementation for the new system."
+    },
+    {
+      "contentPurpose": "Legacy translation workflow and extraction intent",
+      "externalReferences": [],
+      "fileType": "JavaScript",
+      "id": "mig001_7536844c54d7",
+      "legacyCategory": "REWRITE_FROM_INTENT",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Useful for intent only; implementation is runtime-coupled and not migration-safe.",
+      "primaryDisposition": "REWRITE",
+      "relativePath": "tools/translation/extract-chinese.js",
+      "riskTags": ["runtimeCoupled"],
+      "runtimeDependencies": ["fs", "jsdom", "path"],
+      "sha256": "101107a79e6fc0e666ee034880a9c7c48f9a06ecce802f7c14aca7c2b740de3b",
+      "sizeBytes": 2149,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Product and migration backlog",
+      "suggestedHandling": "Extract requirements, flows, and structure; rewrite implementation for the new system."
+    },
+    {
+      "contentPurpose": "Legacy translation workflow and extraction intent",
+      "externalReferences": [
+        {
+          "domain": "localhost",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "http://localhost:3000/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "localhost",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "http://localhost:3000/api",
+          "pathHint": "api"
+        },
+        {
+          "domain": "localhost",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "http://localhost:3000/api/courses",
+          "pathHint": "api/courses"
+        },
+        {
+          "domain": "localhost",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "http://localhost:3000/api/courses%60%E8%BF%94%E5%9B%9E5%E9%97%A8%E8%AF%BE%E7%A8%8B%E6%95%B0%E6%8D%AE",
+          "pathHint": "api/courses%60%E8%BF%94%E5%9B%9E5%E9%97%A8%E8%AF%BE%E7%A8%8B%E6%95%B0%E6%8D%AE"
+        },
+        {
+          "domain": "localhost",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "http://localhost:3000/api/health%60%E8%BF%94%E5%9B%9EJSON%E6%88%90%E5%8A%9F%E6%B6%88%E6%81%AF",
+          "pathHint": "api/health%60%E8%BF%94%E5%9B%9EJSON%E6%88%90%E5%8A%9F%E6%B6%88%E6%81%AF"
+        },
+        {
+          "domain": "cdn.tailwindcss.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://cdn.tailwindcss.com/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "fonts.googleapis.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://fonts.googleapis.com/css2",
+          "pathHint": "css2"
+        },
+        {
+          "domain": "nodejs.org",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://nodejs.org/dist/v18.20.0/node-v18.20.0-x64.msi",
+          "pathHint": "v18.20.0/node-v18.20.0-x64.msi"
+        },
+        {
+          "domain": "unpkg.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://unpkg.com/heroicons@2.0.18/24/outline/index.js",
+          "pathHint": "outline/index.js"
+        },
+        {
+          "domain": "www.w3schools.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://www.w3schools.com/html/mov_bbb.mp4",
+          "pathHint": "html/mov_bbb.mp4"
+        }
+      ],
+      "fileType": "File",
+      "id": "mig001_95a6bedc4804",
+      "legacyCategory": "REWRITE_FROM_INTENT",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Useful for intent only; implementation is runtime-coupled and not migration-safe.",
+      "primaryDisposition": "REWRITE",
+      "relativePath": "tools/translation/instruction.m",
+      "riskTags": ["containsPii", "externalDependency"],
+      "runtimeDependencies": [],
+      "sha256": "b66add35a9fb0d0543e7264358a71f194af7b00971c7213d55a504093b543caa",
+      "sizeBytes": 127737,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Product and migration backlog",
+      "suggestedHandling": "Extract requirements, flows, and structure; rewrite implementation for the new system."
+    },
+    {
+      "contentPurpose": "Legacy translation workflow and extraction intent",
+      "externalReferences": [],
+      "fileType": "JavaScript",
+      "id": "mig001_3b93ab4da715",
+      "legacyCategory": "REWRITE_FROM_INTENT",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Useful for intent only; implementation is runtime-coupled and not migration-safe.",
+      "primaryDisposition": "REWRITE",
+      "relativePath": "tools/translation/translate-to-tibetan.js",
+      "riskTags": ["containsPii", "runtimeCoupled"],
+      "runtimeDependencies": ["fs"],
+      "sha256": "53e408e82086c93646675f76d501e5ba17a890280f10a53c8fc49b2c453f7f20",
+      "sizeBytes": 31818,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Product and migration backlog",
+      "suggestedHandling": "Extract requirements, flows, and structure; rewrite implementation for the new system."
+    },
+    {
+      "contentPurpose": "Uploaded or test-generated asset with unclear provenance",
+      "externalReferences": [],
+      "fileType": "PNG image",
+      "id": "mig001_9867584a7abb",
+      "legacyCategory": "UNKNOWN_REQUIRES_REVIEW",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Upload/test artifacts have unclear source and authorization status.",
+      "primaryDisposition": "REVIEW",
+      "relativePath": "uploads/attachments/1783481104967_s63h1s6f.png",
+      "riskTags": ["binaryAsset", "copyrightUnverified", "sourceUnknown"],
+      "runtimeDependencies": [],
+      "sha256": "b3647c374ef73a46031d9a70321c077e775bf92dbf89ee3fa0106ae930e705a9",
+      "sizeBytes": 58514,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Unknown-source asset review queue",
+      "suggestedHandling": "Keep metadata only and block migration until provenance is confirmed."
+    },
+    {
+      "contentPurpose": "Uploaded or test-generated asset with unclear provenance",
+      "externalReferences": [],
+      "fileType": "PNG image",
+      "id": "mig001_dd7a538d168f",
+      "legacyCategory": "UNKNOWN_REQUIRES_REVIEW",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Upload/test artifacts have unclear source and authorization status.",
+      "primaryDisposition": "REVIEW",
+      "relativePath": "uploads/covers/1783493149128_rbfb3b7o.png",
+      "riskTags": ["binaryAsset", "copyrightUnverified", "sourceUnknown"],
+      "runtimeDependencies": [],
+      "sha256": "01e9f8ea9268bb3b0ad8407ec505e86c617067ef3698797964ef96d1c188b067",
+      "sizeBytes": 519029,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Unknown-source asset review queue",
+      "suggestedHandling": "Keep metadata only and block migration until provenance is confirmed."
+    },
+    {
+      "contentPurpose": "Page flow, IA, copy, and role journey intent",
+      "externalReferences": [
+        {
+          "domain": "cdn.jsdelivr.net",
+          "isExternal": true,
+          "mediaCategory": "font",
+          "normalized": "https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css",
+          "pathHint": "css/font-awesome.min.css"
+        },
+        {
+          "domain": "cdn.tailwindcss.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://cdn.tailwindcss.com/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "p11-doubao-search-sign.byteimg.com",
+          "isExternal": true,
+          "mediaCategory": "image",
+          "normalized": "https://p11-doubao-search-sign.byteimg.com/mosaic-legacy/1bc8000114341d73d9e7~tplv-be4g95zd3a-image.jpeg",
+          "pathHint": "mosaic-legacy/1bc8000114341d73d9e7~tplv-be4g95zd3a-image.jpeg"
+        },
+        {
+          "domain": "p11-doubao-search-sign.byteimg.com",
+          "isExternal": true,
+          "mediaCategory": "image",
+          "normalized": "https://p11-doubao-search-sign.byteimg.com/pgc-image/d21881a4e9a7407bae1e3d5bcf10b486~tplv-be4g95zd3a-image.jpeg",
+          "pathHint": "pgc-image/d21881a4e9a7407bae1e3d5bcf10b486~tplv-be4g95zd3a-image.jpeg"
+        },
+        {
+          "domain": "p26-doubao-search-sign.byteimg.com",
+          "isExternal": true,
+          "mediaCategory": "image",
+          "normalized": "https://p26-doubao-search-sign.byteimg.com/pgc-image/1527590555615ba2bac849a~tplv-be4g95zd3a-image.jpeg",
+          "pathHint": "pgc-image/1527590555615ba2bac849a~tplv-be4g95zd3a-image.jpeg"
+        }
+      ],
+      "fileType": "HTML page",
+      "id": "mig001_bd2353e75943",
+      "legacyCategory": "REWRITE_FROM_INTENT",
+      "manualReviewRequired": true,
+      "nonReusableReason": "Useful for intent only; implementation is runtime-coupled and not migration-safe.",
+      "primaryDisposition": "REWRITE",
+      "relativePath": "video-player.html",
+      "riskTags": [
+        "containsPii",
+        "externalDependency",
+        "fakeData",
+        "runtimeCoupled"
+      ],
+      "runtimeDependencies": [
+        "/public/js/translate.js",
+        "https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css",
+        "https://cdn.tailwindcss.com/",
+        "public/js/site-polish.js"
+      ],
+      "sha256": "bc3a45b7969bc26cfd23bb62cb1ec504bacca8b81dab6e2c2d820511d19113c2",
+      "sizeBytes": 60933,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Product and migration backlog",
+      "suggestedHandling": "Extract requirements, flows, and structure; rewrite implementation for the new system."
+    },
+    {
+      "contentPurpose": "Demo page or fake-data artifact outside approved migration scope",
+      "externalReferences": [
+        {
+          "domain": "cdn.jsdelivr.net",
+          "isExternal": true,
+          "mediaCategory": "script",
+          "normalized": "https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js",
+          "pathHint": "dist/chart.umd.min.js"
+        },
+        {
+          "domain": "cdn.jsdelivr.net",
+          "isExternal": true,
+          "mediaCategory": "font",
+          "normalized": "https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css",
+          "pathHint": "css/font-awesome.min.css"
+        },
+        {
+          "domain": "cdn.tailwindcss.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://cdn.tailwindcss.com/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "fonts.googleapis.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://fonts.googleapis.com/",
+          "pathHint": "/"
+        },
+        {
+          "domain": "fonts.googleapis.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://fonts.googleapis.com/css2",
+          "pathHint": "css2"
+        },
+        {
+          "domain": "fonts.gstatic.com",
+          "isExternal": true,
+          "mediaCategory": "external-resource",
+          "normalized": "https://fonts.gstatic.com/",
+          "pathHint": "/"
+        }
+      ],
+      "fileType": "HTML page",
+      "id": "mig001_ab881ef528f2",
+      "legacyCategory": "DISCARD",
+      "manualReviewRequired": false,
+      "nonReusableReason": "Deprecated demo, out-of-scope flow, or disallowed legacy implementation.",
+      "primaryDisposition": "DISCARD",
+      "relativePath": "volunteer-dashboard.html",
+      "riskTags": [
+        "externalDependency",
+        "fakeData",
+        "obsoleteDemo",
+        "runtimeCoupled"
+      ],
+      "runtimeDependencies": [
+        "https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js",
+        "https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css",
+        "https://cdn.tailwindcss.com/",
+        "https://fonts.googleapis.com/",
+        "https://fonts.googleapis.com/css2",
+        "https://fonts.gstatic.com/",
+        "public/js/site-polish.js"
+      ],
+      "sha256": "f44aac99d8b660fbded09e2ef9053dc48c597011879384bc3a5e7c426fd7206a",
+      "sizeBytes": 38498,
+      "sourceRoot": "legacy/source-tree/two-legacy",
+      "suggestedDestination": "Do not migrate",
+      "suggestedHandling": "Keep for audit only; block direct migration."
+    }
+  ],
+  "riskCounts": {
+    "binaryAsset": 31,
+    "containsPii": 33,
+    "copyrightUnverified": 29,
+    "externalDependency": 34,
+    "fakeData": 21,
+    "obsoleteDemo": 29,
+    "runtimeCoupled": 37,
+    "sourceUnknown": 23
+  }
+}

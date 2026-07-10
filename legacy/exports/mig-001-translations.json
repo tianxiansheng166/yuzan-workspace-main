@@ -1,0 +1,5782 @@
+{
+  "catalogs": [
+    {
+      "flatEntryCount": 417,
+      "freeformKeyCount": 359,
+      "locale": "zh",
+      "namespaceKeys": [
+        "app",
+        "apply",
+        "community",
+        "courses",
+        "errors",
+        "nav",
+        "player"
+      ],
+      "sourcePath": "db/lang/zh.json"
+    },
+    {
+      "flatEntryCount": 417,
+      "freeformKeyCount": 359,
+      "locale": "bo",
+      "namespaceKeys": [
+        "app",
+        "apply",
+        "community",
+        "courses",
+        "errors",
+        "nav",
+        "player"
+      ],
+      "sourcePath": "db/lang/bo.json"
+    },
+    {
+      "courseTranslationCount": 3,
+      "locale": "bo",
+      "orphanCourseIds": ["high-1-history-001"],
+      "sourcePath": "db/lang/courses_bo.json"
+    }
+  ],
+  "courseTranslationCoverage": [
+    {
+      "courseId": "middle-7-epic-001",
+      "hasBoTranslation": true,
+      "sourcePath": "db/lang/courses_bo.json"
+    },
+    {
+      "courseId": "middle-7-geography-001",
+      "hasBoTranslation": false,
+      "sourcePath": "db/lang/courses_bo.json"
+    },
+    {
+      "courseId": "middle-8-english-001",
+      "hasBoTranslation": false,
+      "sourcePath": "db/lang/courses_bo.json"
+    },
+    {
+      "courseId": "primary-1-language-001",
+      "hasBoTranslation": false,
+      "sourcePath": "db/lang/courses_bo.json"
+    },
+    {
+      "courseId": "primary-2-food-001",
+      "hasBoTranslation": true,
+      "sourcePath": "db/lang/courses_bo.json"
+    },
+    {
+      "courseId": "primary-3-charlotte-001",
+      "hasBoTranslation": false,
+      "sourcePath": "db/lang/courses_bo.json"
+    },
+    {
+      "courseId": "primary-3-festival-001",
+      "hasBoTranslation": false,
+      "sourcePath": "db/lang/courses_bo.json"
+    },
+    {
+      "courseId": "primary-4-math-001",
+      "hasBoTranslation": false,
+      "sourcePath": "db/lang/courses_bo.json"
+    },
+    {
+      "courseId": "primary-5-poetry-001",
+      "hasBoTranslation": false,
+      "sourcePath": "db/lang/courses_bo.json"
+    },
+    {
+      "courseId": "primary-6-ecology-001",
+      "hasBoTranslation": false,
+      "sourcePath": "db/lang/courses_bo.json"
+    }
+  ],
+  "excludedRiskSummary": [
+    {
+      "count": 3,
+      "keyDigests": ["4b4503df0a84", "88b766acb94c", "37aac5b4e639"],
+      "locale": "bo",
+      "reasons": ["contact-or-address-like"],
+      "sourcePath": "db/lang/bo.json"
+    },
+    {
+      "count": 6,
+      "keyDigests": [
+        "3093ab418a28",
+        "4f0c0c1fbe01",
+        "04a0b3516e01",
+        "4c443dc7c21b",
+        "7b04beaa0c19",
+        "6f80ce583a13"
+      ],
+      "locale": "bo",
+      "reasons": ["known-personal-literal"],
+      "sourcePath": "db/lang/bo.json"
+    },
+    {
+      "count": 3,
+      "keyDigests": ["853b6311fb83", "6d8b084f09a8", "7b713264ed77"],
+      "locale": "bo",
+      "reasons": ["known-personal-literal", "location-like"],
+      "sourcePath": "db/lang/bo.json"
+    },
+    {
+      "count": 8,
+      "keyDigests": [
+        "949a62a4cda8",
+        "b4b21e460995",
+        "f25df435c318",
+        "bffcd089a46b",
+        "a88da8ab6d28",
+        "2931f8c2ac67",
+        "628af3e4937d",
+        "e8effe875f49"
+      ],
+      "locale": "bo",
+      "reasons": ["location-like"],
+      "sourcePath": "db/lang/bo.json"
+    },
+    {
+      "count": 3,
+      "keyDigests": ["4b4503df0a84", "88b766acb94c", "37aac5b4e639"],
+      "locale": "zh",
+      "reasons": ["contact-or-address-like"],
+      "sourcePath": "db/lang/zh.json"
+    },
+    {
+      "count": 6,
+      "keyDigests": [
+        "3093ab418a28",
+        "4f0c0c1fbe01",
+        "04a0b3516e01",
+        "4c443dc7c21b",
+        "7b04beaa0c19",
+        "6f80ce583a13"
+      ],
+      "locale": "zh",
+      "reasons": ["known-personal-literal"],
+      "sourcePath": "db/lang/zh.json"
+    },
+    {
+      "count": 3,
+      "keyDigests": ["853b6311fb83", "6d8b084f09a8", "7b713264ed77"],
+      "locale": "zh",
+      "reasons": ["known-personal-literal", "location-like"],
+      "sourcePath": "db/lang/zh.json"
+    },
+    {
+      "count": 8,
+      "keyDigests": [
+        "949a62a4cda8",
+        "b4b21e460995",
+        "f25df435c318",
+        "bffcd089a46b",
+        "a88da8ab6d28",
+        "2931f8c2ac67",
+        "628af3e4937d",
+        "e8effe875f49"
+      ],
+      "locale": "zh",
+      "reasons": ["location-like"],
+      "sourcePath": "db/lang/zh.json"
+    }
+  ],
+  "metadata": {
+    "classificationVersion": "four-class-plus-legacy-detail-v1",
+    "deterministicByInput": true,
+    "inputStateFingerprint": "8a6c3dba9527a78a1f7eb8a2db9471443f65aafc9673751b64b84e0e21db82ad",
+    "legacySourceRoot": "legacy/source-tree/two-legacy",
+    "outputRoots": ["legacy/exports", "legacy/review", "legacy/reports"],
+    "scannedFileCount": 113,
+    "schemaVersion": "2026-07-09",
+    "sourceTreeFingerprint": "9b6dffaec4bc6f03ac1ab1e14217a422c563a10b6b9856909c7aa5067b9a79c2",
+    "taskId": "MIG-001",
+    "toolVersion": "mig-001-audit-v4"
+  },
+  "outputPolicy": {
+    "removedPersonalLiterals": true,
+    "strippedRiskyValues": true
+  },
+  "safeEntries": [
+    {
+      "id": "mig001_f21aa46f90d0",
+      "key": "app.name",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ངག་དབྱངས་སེམས་གསུངས།"
+    },
+    {
+      "id": "mig001_190ab0788e6b",
+      "key": "app.slogan",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སྐྱེས་ཁོངས་སུ་རྒྱུན་འཁྱོངས་དང་རྒྱལ་ཁབ་ཀྱི་འཕེལ་རྒྱས་ལ་ཤ་ཚད་སྤྲོད།"
+    },
+    {
+      "id": "mig001_775b4ec91858",
+      "key": "app.subtitle",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་ཁྲིད་བརྡ་ཐབ་ཤེས་བྱའི་སྒྲིག་རྩིས།"
+    },
+    {
+      "id": "mig001_a87427e3e4a5",
+      "key": "apply.agreement",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཆ་འཇོག་འཕྲད་ན་རེད་པའི་ཆ་འཇོག་པ།"
+    },
+    {
+      "id": "mig001_dc77d7f7c3a3",
+      "key": "apply.applyForm",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཕན་བདེད་པར་དཔར་གསོག་འཐོབ་པར་སྙན་ཞུ་འབུད་པ།"
+    },
+    {
+      "id": "mig001_334c14ee083b",
+      "key": "apply.applyReason",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སྙན་ཞུའི་རྒྱུ་མཚན།"
+    },
+    {
+      "id": "mig001_2305907e0a0d",
+      "key": "apply.benefitedSchools",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཕན་པ་ཐོབ་པའི་སློབ་ཁང་།"
+    },
+    {
+      "id": "mig001_61f2d203485a",
+      "key": "apply.benefitedStudents",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ནང་གསེས་སེར་སློབ་ཕྲུག"
+    },
+    {
+      "id": "mig001_980e41995ccc",
+      "key": "apply.county",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "གྲོང་ཡུལ་གྱི་མིང་།"
+    },
+    {
+      "id": "mig001_7a56c2b4463f",
+      "key": "apply.networkType",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དྲ་རྒྱའི་རྣམ་པ།"
+    },
+    {
+      "id": "mig001_5b1b4324f054",
+      "key": "apply.publicFund",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དགེ་འདུན་གྱི་མ་དངུལ།"
+    },
+    {
+      "id": "mig001_7adfdee59068",
+      "key": "apply.schoolName",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་ཆེན་གྱི་མིང་ཐོ་ཧ་ཅང་གྲངས་ཀྱིས་ཟད།"
+    },
+    {
+      "id": "mig001_422cc263f8f2",
+      "key": "apply.studentCount",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་ཕྲུག་གི་རིགས་སུ།"
+    },
+    {
+      "id": "mig001_8bdf64d86eb0",
+      "key": "apply.submit",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སྙན་ཞུ་འབུད་པ།"
+    },
+    {
+      "id": "mig001_8cfe39dc60c0",
+      "key": "apply.successMessage",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སྙན་ཞུ་འབུད་པར་རྒྱུནདྲན་ཐུབ་སོང་། ང་ཚོས་ལག་ལེན་འབྲིང་གྲངས་ནང་བཞིན་ཞིབ་བཤེར་བྱེད་སྲིད།"
+    },
+    {
+      "id": "mig001_3f0b2563aab8",
+      "key": "apply.title",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དགེ་འདུན་ཕན་བདེད་དཔལ་ཕྱོགས།"
+    },
+    {
+      "id": "mig001_b56c7fb15a1c",
+      "key": "community.createWork",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཁྱོད་ཀྱི་ཤེས་དཔལ་ལས་ཁ་ཤེར་འདོན།"
+    },
+    {
+      "id": "mig001_b86b9d120858",
+      "key": "community.culturalTheme",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཤེས་དཔལ་ཀྱི་བརྗོད་གཞི།"
+    },
+    {
+      "id": "mig001_a5ad84a5b00b",
+      "key": "community.dailyLimit",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཕན་བདེད་པར་དཔར་གཙོ་བོར་སྤྱད་པའི་མི། ཉིན་རེར་ལས་ཁ་སྤེལ་བ་གསུམ་ལས་མི་འདང་།"
+    },
+    {
+      "id": "mig001_cae8a118825f",
+      "key": "community.noWorks",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ད་ལྟ་ལས་ཀ་མེད་པས། ཤེས་དཔལ་ལས་ཀ་དང་པོ་སྤེལ་ཏེ་རོལ་རྩེད་བྱོས།"
+    },
+    {
+      "id": "mig001_f9059f65cd53",
+      "key": "community.publish",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ལས་ཀ་སྤེལ་བ།"
+    },
+    {
+      "id": "mig001_a058d43d932c",
+      "key": "community.title",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཐོབ་ཐང་ཆེ་བའི་ལས་ཀ展示"
+    },
+    {
+      "id": "mig001_1bd20ebd666d",
+      "key": "community.workContent",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ལས་ཀའི་ནང་དོན།"
+    },
+    {
+      "id": "mig001_784c394b8161",
+      "key": "community.workTitle",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ལས་ཀའི་མིང་ཐོ།"
+    },
+    {
+      "id": "mig001_329650571980",
+      "key": "courses.culturalTheme",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཤེས་དཔལ་ཀྱི་བརྗོད་གཞི།"
+    },
+    {
+      "id": "mig001_c2cc6c2e41d3",
+      "key": "courses.currentVersion",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "མིག་སྔའི་པར་དཔར།"
+    },
+    {
+      "id": "mig001_cd8cef511633",
+      "key": "courses.gesar",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "གེ་སར་རྒྱལ་པོའི་སྨྱུ་གུ།"
+    },
+    {
+      "id": "mig001_3e249383072a",
+      "key": "courses.gradeFilter",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ལོ་ཚོད་སྲིད་འདེད།"
+    },
+    {
+      "id": "mig001_a44a2fbc2491",
+      "key": "courses.mountain",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "གནས་རི་དང་མཚོ་གཙིགས།"
+    },
+    {
+      "id": "mig001_4589bf41e05a",
+      "key": "courses.noCourses",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "འཚམ་པའི་སློབ་ཁྲིད་མེད།"
+    },
+    {
+      "id": "mig001_81b7936af0f2",
+      "key": "courses.noPermission",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དཔར་རྒྱ་ཇེ་མཐོར་གཏང་དགོས།"
+    },
+    {
+      "id": "mig001_4ca27b844333",
+      "key": "courses.offlineReady",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དྲ་རྒྱ་མེད་པར་སྤྱད་ཆོག"
+    },
+    {
+      "id": "mig001_3815813c2abd",
+      "key": "courses.qinqke",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ནས་གསུམ་གྱི་རིག་གཞུང་།"
+    },
+    {
+      "id": "mig001_751c16f7999b",
+      "key": "courses.title",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "འདེད་སློབ་ཁྲིད་གཙོ་སྒྲིག"
+    },
+    {
+      "id": "mig001_9f6f89548de0",
+      "key": "errors.loginFailed",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "用户名或密码错误"
+    },
+    {
+      "id": "mig001_9db556a8a973",
+      "key": "errors.networkError",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "网络错误，请检查连接"
+    },
+    {
+      "id": "mig001_3ef69eb905d6",
+      "key": "errors.permissionDenied",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "当前版本无法访问"
+    },
+    {
+      "id": "mig001_1322be1f3b13",
+      "key": "errors.storageFull",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "存储空间不足"
+    },
+    {
+      "courseId": "high-1-history-001",
+      "description": "བོད་ཀྱི་ཤེས་དཔལ་དང་རྒྱལ་ཁབ་ཀྱི་དབུ་མ་ཡིག་གཞུང་གཙོ་བོར་འབྲེལ་བ་བྱས་པའི་རིག་གཞུང་ལ་མང་ཙམ་ཤེས་རྟོགས་བྱེད་པ་དང་། དབུ་མ་ཡིག་གཞུང་གཙོ་བོར་རྒྱུར་བྱེད་ཐབས་སྟོབས་སྒོ་བས་བྱེད།",
+      "id": "mig001_53d66b5a36e7",
+      "locale": "bo",
+      "sourcePath": "db/lang/courses_bo.json",
+      "title": "བོད་ཀྱི་ཤེས་དཔལ་དང་རྒྱལ་ཁབ་ཀྱི་དབུ་མ་ཡིག"
+    },
+    {
+      "courseId": "middle-7-epic-001",
+      "description": "གེ་སར་རྒྱལ་པོའི་སྒྲུང་ལ་རེ་རེ་བཀོད་པ་དང་། མི་སྣའི་ངོ་སྤྲོད་སློབ་ཁྲིད་བྱེད།",
+      "id": "mig001_ada0dc3204b7",
+      "locale": "bo",
+      "sourcePath": "db/lang/courses_bo.json",
+      "title": "གེ་སར་རྒྱལ་པོའི་སྐད་ཆ། དཔའ་བོ་ཆེས།"
+    },
+    {
+      "id": "mig001_5dfca39e1f6a",
+      "key": "nav.apply",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དགེ་འདུན་གཏང་རོགས།"
+    },
+    {
+      "id": "mig001_e5355ece3440",
+      "key": "nav.charity",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དགེ་འདུན་དངུལ་ཁང་།"
+    },
+    {
+      "id": "mig001_721e783c4649",
+      "key": "nav.community",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཤེས་དཔལ་ལྷན་ཚོགས།"
+    },
+    {
+      "id": "mig001_d2a6bfdfb9e1",
+      "key": "nav.courses",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཁག་སློབ་ཁྲིད་གཙོ་སྒྲིག"
+    },
+    {
+      "id": "mig001_ee2a7866f9c9",
+      "key": "nav.home",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "རྒྱུན་ལ་སྤྱོད་ཚུལ།"
+    },
+    {
+      "id": "mig001_abfe144b3467",
+      "key": "nav.learning",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་སྦྱོང་གཙོ་སྒྲིག"
+    },
+    {
+      "id": "mig001_9bdff370aa70",
+      "key": "nav.login",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཐོ་བཀོད་ནང་དོན་བཀོད་ནང་།"
+    },
+    {
+      "id": "mig001_7f6df4335a6d",
+      "key": "nav.logout",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཕྱིར་འབུད།"
+    },
+    {
+      "id": "mig001_195dd25de6a5",
+      "key": "nav.tools",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་སྦྱོང་ལྡན་ཚིང་བྱ་གཞག"
+    },
+    {
+      "id": "mig001_d48fe6af41c7",
+      "key": "player.back",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཕྱིར་ལོག་པའི་ཁག་སློབ་ཁྲིད་གཙོ་སྒྲིག"
+    },
+    {
+      "id": "mig001_a8ab3ed07c99",
+      "key": "player.download",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དྲ་རྒྱ་མེད་པར་ཉར་གསོག"
+    },
+    {
+      "id": "mig001_375cfc3c6456",
+      "key": "player.downloaded",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཉར་གསོག་འདུག"
+    },
+    {
+      "id": "mig001_092053044e99",
+      "key": "player.networkWarning",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དྲ་རྒྱ་གྲ་སྒྲིག་ཞན་པས། གློག་བརྙན་རྣམ་པ་བརྗེས་སོང་།"
+    },
+    {
+      "id": "mig001_8ab1428d0648",
+      "key": "player.notePlaceholder",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་སྦྱོང་གི་དགོངས་པ་བཀོད་འདོད་ཡོད་ན།"
+    },
+    {
+      "id": "mig001_7b93ea619808",
+      "key": "player.offlineNotice",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "མིག་སྔར་དྲ་རྒྱ་མེད་པའི་རྣམ་པ་ཡིན།"
+    },
+    {
+      "id": "mig001_d592cf10810a",
+      "key": "player.pause",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "བཤེཊ་དགོས།"
+    },
+    {
+      "id": "mig001_2dde82893fd4",
+      "key": "player.play",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "གཏོང་བ།"
+    },
+    {
+      "id": "mig001_2ce911851acd",
+      "key": "player.saveNote",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཟུར་བཀོད་ཉར་གསོག"
+    },
+    {
+      "courseId": "primary-2-food-001",
+      "description": "ཇ་སྲུབས་ཐག་པ་བཟོ་བའི་ལམ་ཐབས་སྤྱོད་པ་དང་། ནས་གསུམ་གྱི་འཚལ་བའི་ལྟོ་རྟགས་སྐོར་རགས་ཙམ་ཤེས་རྟོགས་བྱེད།",
+      "id": "mig001_2192a893a015",
+      "locale": "bo",
+      "sourcePath": "db/lang/courses_bo.json",
+      "title": "ངའི་ཕ་ཡུལ་གྱི་ཟས་རིགས།"
+    },
+    {
+      "id": "mig001_df88b1dc77d4",
+      "key": "上一页",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སྔོན་ཚིག"
+    },
+    {
+      "id": "mig001_e6bd1a2519b7",
+      "key": "上一题",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སྔོན་ཚིག"
+    },
+    {
+      "id": "mig001_f18416e5b7ee",
+      "key": "上传学校资质证明和脱贫县",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དང་བཅས་བྱེད་"
+    },
+    {
+      "id": "mig001_a50c19f11ed6",
+      "key": "下一页",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "གསར་ཚིག"
+    },
+    {
+      "id": "mig001_5daefee1eb70",
+      "key": "下一题",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "གསར་ཚིག"
+    },
+    {
+      "id": "mig001_c03a72e979aa",
+      "key": "下列哪个是正确的自我介绍方式",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ངའི་ངག་དབྱངས"
+    },
+    {
+      "id": "mig001_2280542c9e28",
+      "key": "下载中",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཉར་གསོག"
+    },
+    {
+      "id": "mig001_8f8eecc973f4",
+      "key": "下载队列",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཉར་གསོག"
+    },
+    {
+      "id": "mig001_1bbefbb79820",
+      "key": "专业版和旗舰版三级课程包",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "རྒྱུན་ཤེས་རྟོགས་ལྟ་བུ་དང་བཅས་སློབ་ཁྲིད་བཟོ་བའི་སྒོ"
+    },
+    {
+      "id": "mig001_c74e27cae91b",
+      "key": "专家",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "མཐོང"
+    },
+    {
+      "id": "mig001_1907d1ca3bd9",
+      "key": "个人中心",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ངག་དབྱངས་སེམས་གསུངས"
+    },
+    {
+      "id": "mig001_40d678d65fa5",
+      "key": "了解平台",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སྒྲིག་རྩིས་ལ་དོན་ལྟ་བུ་ལ་གནོང་བ་བྱེད་"
+    },
+    {
+      "id": "mig001_b4ed538aeaca",
+      "key": "互动练习",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་གསོབ"
+    },
+    {
+      "id": "mig001_c476bdc31ce7",
+      "key": "人参与",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "མི་དང་བཅས"
+    },
+    {
+      "id": "mig001_16a857d4b392",
+      "key": "传承红色文化",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དམངས་རྒྱལ་གྱི་གནད་དབང་ལ་སློབ་གསོ་བ"
+    },
+    {
+      "id": "mig001_166dbb3146c9",
+      "key": "作品展示墙",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ལས་ཀ་སྤེལ་བ"
+    },
+    {
+      "id": "mig001_588645621d45",
+      "key": "你好",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "བཀྲུས"
+    },
+    {
+      "id": "mig001_f9814692b01d",
+      "key": "使用指南",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དང་བཅས་བྱེད་"
+    },
+    {
+      "id": "mig001_7bb189eefa6a",
+      "key": "例如",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དེ་འདྲ"
+    },
+    {
+      "id": "mig001_ce012d45c2ce",
+      "key": "促进教学相长",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་ཁྲིད་བརྡ་ཐབ་ཤེས་བྱའི་སྒྲིག་རྩིས་ལ་འགོ་རྟོགས་བྱེད་"
+    },
+    {
+      "id": "mig001_8430f4cc33c0",
+      "key": "促进教育公平",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་ཁྲིད་ཀྱི་སྦེར་བ་"
+    },
+    {
+      "id": "mig001_e2eb3fcc8d82",
+      "key": "促进藏汉文化交流与融合",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "བོད་རྒྱལ་ཁབ་ཀྱི་ཤེས་དཔལ་"
+    },
+    {
+      "id": "mig001_0391aa3c2759",
+      "key": "保存笔记",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་གསོ་བ་བྱེད་ཐབས"
+    },
+    {
+      "id": "mig001_0d98f3f9560a",
+      "key": "保障教育公平",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་ཁྲིད་ཀྱི་སྦེར་བ་ལ་འགོ་རྟོགས་བྱེད་"
+    },
+    {
+      "id": "mig001_4e0e6966f6d8",
+      "key": "偏远地区学校可申请公益基金支持",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དགེ་འདུན་གྱི་མ་དངུལ"
+    },
+    {
+      "id": "mig001_e1d9075c3fab",
+      "key": "偏远学校设备捐赠",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དགེ་འདུན་གྱི་མ་དངུལ"
+    },
+    {
+      "id": "mig001_8eadbef43c52",
+      "key": "免责声明",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ངག་དབྱངས་སེམས་གསུངས"
+    },
+    {
+      "id": "mig001_6ad7d804453b",
+      "key": "入门",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "འགྲུལ"
+    },
+    {
+      "id": "mig001_edb57b307de5",
+      "key": "全部",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཁག་སློབ་ཁྲིད"
+    },
+    {
+      "id": "mig001_bbbce51d83ff",
+      "key": "全部课程",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཁག་སློབ་ཁྲིད་གཙོ་སྒྲིག"
+    },
+    {
+      "id": "mig001_7d7287dbd8b9",
+      "key": "公益反哺模式",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དགེ་འདུན་གྱི་སྒྲུང་བཟོ་བ་གཙོ"
+    },
+    {
+      "id": "mig001_460a8aa19442",
+      "key": "公益基金",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དགེ་འདུན་གྱི་མ་དངུལ"
+    },
+    {
+      "id": "mig001_2aa47530e085",
+      "key": "关于我们",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ང་ཚོའི་གནད་དབང་ལས་ཡོད་པ"
+    },
+    {
+      "id": "mig001_8c85142aafcd",
+      "key": "兴趣爱好",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "འདུན"
+    },
+    {
+      "id": "mig001_8dd8f5a5b0aa",
+      "key": "最多学习",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་གསོབ"
+    },
+    {
+      "id": "mig001_947d1ab3b834",
+      "key": "最新上线",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "གསར་ཚིག"
+    },
+    {
+      "id": "mig001_2cea8c41d87d",
+      "key": "写作技巧训练",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "གྲུའུ་མི་རིགས"
+    },
+    {
+      "id": "mig001_ae3481297c33",
+      "key": "分享学习感悟",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་གསོ་བ་བྱེད་ཐབས"
+    },
+    {
+      "id": "mig001_1e0e133fa576",
+      "key": "分享文化故事",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཤེས་དཔལ་ལྟོ་རྟགས་སྐོར་རགས་ཙམ"
+    },
+    {
+      "id": "mig001_9e9879e5c855",
+      "key": "分享课程",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་ཁྲིད"
+    },
+    {
+      "id": "mig001_8789317bfccf",
+      "key": "分级课程体系",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཁག་སློབ་ཁྲིད་གཙོ་སྒྲིག"
+    },
+    {
+      "id": "mig001_8b88007d83b5",
+      "key": "分钟",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སྐབས་ཆ་"
+    },
+    {
+      "id": "mig001_68683e3c214d",
+      "key": "初中",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "འབྲིང་སློབ་ཁྲིད"
+    },
+    {
+      "id": "mig001_343f5c6e7e64",
+      "key": "初中课程",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "འབྲིང་སློབ་ཁྲིད"
+    },
+    {
+      "id": "mig001_b9d7c904eff7",
+      "key": "初级",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "འགྲུལ"
+    },
+    {
+      "id": "mig001_b4814d823b2f",
+      "key": "剩余课时",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་གསོབ"
+    },
+    {
+      "id": "mig001_e4d2ae7fc3ec",
+      "key": "华南师范大学",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་ཁྲིད་"
+    },
+    {
+      "id": "mig001_c91febc63b2f",
+      "key": "单独使用时读",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སྐད་ངག"
+    },
+    {
+      "id": "mig001_e87a7fd462db",
+      "key": "参与红色故事互译接力",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དམངས་རྒྱལ་གྱི་གནད་དབང་ལ་སློབ་གསོ་བ"
+    },
+    {
+      "id": "mig001_9f623ff8d2fa",
+      "key": "参与经典诗词朗诵",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "གཞས་སྐད་ལྷན་ཚོགས"
+    },
+    {
+      "id": "mig001_046925a03f79",
+      "key": "参与词汇挑战",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དང་བཅས་བྱེད་"
+    },
+    {
+      "id": "mig001_e88bdd92cdb0",
+      "key": "反哺普惠版资源研发与偏远学校帮扶",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཕན་བདེད་པར་སློབ་ཁྲིད་བཟོ་བའི་སྒོ་ལ་བཟོ་བ"
+    },
+    {
+      "id": "mig001_b5673fd4bf1b",
+      "key": "反哺资金流向透明化公示",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དགེ་འདུན་གྱི་མ་དངུལ"
+    },
+    {
+      "id": "mig001_dcf2e26223ea",
+      "key": "发放离线学习包和设备",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དང་བཅས་བྱེད་"
+    },
+    {
+      "id": "mig001_fa237bdec4c4",
+      "key": "发音时注意声调",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སྐད་ངག"
+    },
+    {
+      "id": "mig001_ad4d0bec5444",
+      "key": "受益学校分布",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དགེ་འདུན་གྱི་མ་དངུལ"
+    },
+    {
+      "id": "mig001_c4c970a703df",
+      "key": "受益学校数",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དང་བཅས་བྱེད་"
+    },
+    {
+      "id": "mig001_bdfb51c24d66",
+      "key": "口语练习",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་གསོབ"
+    },
+    {
+      "id": "mig001_abe37347ee3f",
+      "key": "口语表达训练",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སྐད་ངག་ལ་འཚེབ་ཆ་བྱེད་"
+    },
+    {
+      "id": "mig001_c9dcc5708788",
+      "key": "合作伙伴",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སྒྲིག་རྩིས་ཀྱི་དགོངས་ལྟོ"
+    },
+    {
+      "id": "mig001_c8f88bddd0b6",
+      "key": "同时融入藏族文化特色",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "བོད་ཀྱི་ཤེས་དཔལ"
+    },
+    {
+      "id": "mig001_b1d9c97adeea",
+      "key": "听示范",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ངག་དབྱངས"
+    },
+    {
+      "id": "mig001_192021d2184d",
+      "key": "国家通用语言基础",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "རྒྱལ་ཁབ་ཀྱི་དབུ་མ་ཡིག"
+    },
+    {
+      "id": "mig001_fe2e64fc5dce",
+      "key": "在一二三声前读",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སྐད་ངག"
+    },
+    {
+      "id": "mig001_589673ee3df1",
+      "key": "在不同情况下有不同的发音",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སྐད་ངག"
+    },
+    {
+      "id": "mig001_950d34b8896a",
+      "key": "在第四声前读",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སྐད་ངག"
+    },
+    {
+      "id": "mig001_8cc5f86ac606",
+      "key": "在线学习体验",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ནང་དོན་ལ་སློབ་གསོ་བ"
+    },
+    {
+      "id": "mig001_d8f8455e8eb8",
+      "key": "在线学习工具",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ནང་དོན་ལ་སློབ་གསོ་བའི་ལག་ལེན"
+    },
+    {
+      "id": "mig001_c5c8e934cafe",
+      "key": "培养爱国主义情怀",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "རྒྱལ་ཁབ་ཀྱི་སྙིང་གི་དབང་ལ་འགོ་རྟོགས་བྱེད་"
+    },
+    {
+      "id": "mig001_c8f8be665760",
+      "key": "培养语言感知能力",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ངག་དབྱངས་སེམས་གསུངས་ལ་འགོ་རྟོགས་བྱེད་"
+    },
+    {
+      "id": "mig001_1282be27f241",
+      "key": "培训教师掌握现代教育技术",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "གྲོང་གི་སློབ་བྱ་ལ་སློབ་ཁྲིད་བརྡ་ཐབ་"
+    },
+    {
+      "id": "mig001_fd3167f0c2a0",
+      "key": "基本问候语与自我介绍",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ངག་དབྱངས"
+    },
+    {
+      "id": "mig001_8b81409fb40f",
+      "key": "基础",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "འགྲུལ"
+    },
+    {
+      "id": "mig001_c83481817483",
+      "key": "基础入门",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "འགྲུལ"
+    },
+    {
+      "id": "mig001_ddb90d52a2a6",
+      "key": "填写在线申请表",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དང་བཅས་བྱེད་"
+    },
+    {
+      "id": "mig001_c95d36d6faad",
+      "key": "填空题",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་གསོབ"
+    },
+    {
+      "id": "mig001_7a1a9dc52e12",
+      "key": "增强学习兴趣",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་གསོ་བ་ཀྱི་འདོད་སྣང་ལ་འགོ་རྟོགས་བྱེད་"
+    },
+    {
+      "id": "mig001_2c714e456216",
+      "key": "多角色协同",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཚོགས་ཚད་གཙོ་སྒྲིག"
+    },
+    {
+      "id": "mig001_72c772332af7",
+      "key": "如青稞",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ནས་གསུམ་ལྟོ་རྟགས་སྐོར་རགས་ཙམ"
+    },
+    {
+      "id": "mig001_c9d4642b6adc",
+      "key": "姓名",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "མིང་"
+    },
+    {
+      "id": "mig001_faf0a618d219",
+      "key": "存储空间",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཉར་གསོག"
+    },
+    {
+      "id": "mig001_639ea7327021",
+      "key": "学习中心",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་གསོབ་གཙོ"
+    },
+    {
+      "id": "mig001_f8a258a2bf32",
+      "key": "学习任务群",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་ཁྲིད"
+    },
+    {
+      "id": "mig001_31d9ddf0de73",
+      "key": "学习日常生活中的基本用语",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཉིན་རེར་གཙོ་བོར་བཟོ་བ"
+    },
+    {
+      "id": "mig001_661928c61af3",
+      "key": "学习笔记",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་གསོ་བ་བྱེད་ཐབས"
+    },
+    {
+      "id": "mig001_6b41820dda91",
+      "key": "学习统计",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་གསོབ"
+    },
+    {
+      "id": "mig001_2891c43b7e21",
+      "key": "学习进度",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་གསོ་བ་བྱེད་ཐབས"
+    },
+    {
+      "id": "mig001_a24f63fb81b0",
+      "key": "学情分析系统",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་གསོ་བ་བྱེད་ཐབས་ལ་འཚེབ་ཆ་བྱེད་"
+    },
+    {
+      "id": "mig001_f262f6090162",
+      "key": "学校申请与审核流程",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དགེ་འདུན་གྱི་མ་དངུལ"
+    },
+    {
+      "id": "mig001_bc45349e9f95",
+      "key": "学校管理员",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་ཁང་གི་བྱ་འགུག་བྱེད་མཁན"
+    },
+    {
+      "id": "mig001_19e9f4b3187e",
+      "key": "学生",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་ཕྲུག"
+    },
+    {
+      "id": "mig001_4a19b7a769a1",
+      "key": "学生提升率",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དང་བཅས་བྱེད་"
+    },
+    {
+      "id": "mig001_ab53b7db77ac",
+      "key": "定期公示资金使用情况",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དགེ་འདུན་གྱི་མ་དངུལ"
+    },
+    {
+      "id": "mig001_1daf4e001aaa",
+      "key": "实时评分反馈",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "རིགས་སུ་འཚེབ་ཆ་"
+    },
+    {
+      "id": "mig001_2498876dd47c",
+      "key": "实用阅读",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "རྒྱུན་ཤེས་རྟོགས་ལྟོ་བུ་དང་སློབ་ཁྲིད"
+    },
+    {
+      "id": "mig001_e69be726bc27",
+      "key": "审批通过",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དང་བཅས་བྱེད་"
+    },
+    {
+      "id": "mig001_c3d0e0f48487",
+      "key": "审核通过后",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དང་བཅས་བྱེད་"
+    },
+    {
+      "id": "mig001_07f17c8e00f5",
+      "key": "密码",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཆོག་ཡིག"
+    },
+    {
+      "id": "mig001_11bc2b43f47d",
+      "key": "将国家通用语言学习与其他学科知识融合",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "རྒྱལ་ཁབ་ཀྱི་དབུ་མ་ཡིག"
+    },
+    {
+      "id": "mig001_acc97a58eec5",
+      "key": "小学",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "འབྲིང་སློབ་ཁྲིད"
+    },
+    {
+      "id": "mig001_eb27b71a90f8",
+      "key": "小学课程",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "འབྲིང་སློབ་ཁྲིད"
+    },
+    {
+      "id": "mig001_80249e287293",
+      "key": "小时",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སྐབས"
+    },
+    {
+      "id": "mig001_7ba41cd9d4c9",
+      "key": "展示你的语言表达能力",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ངག་དབྱངས་སེམས་གསུངས་ལ་འགོ་རྟོགས་བྱེད་"
+    },
+    {
+      "id": "mig001_11a354e8c9b4",
+      "key": "工程师",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་ཁྲིད་ཀྱི་བྱ་འགུག་བྱེད་མཁན"
+    },
+    {
+      "id": "mig001_dd9be079c98c",
+      "key": "已下载课程",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཉར་གསོག"
+    },
+    {
+      "id": "mig001_507fc6928436",
+      "key": "已学习",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་གསོ་བ་བྱེད་"
+    },
+    {
+      "id": "mig001_d3a8fc98676c",
+      "key": "已学课时",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་གསོབ"
+    },
+    {
+      "id": "mig001_15c7a29c7088",
+      "key": "已学课程",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་ཁྲིད"
+    },
+    {
+      "id": "mig001_c4371d6c880e",
+      "key": "已完成",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་གསོབ"
+    },
+    {
+      "id": "mig001_f224b6cfcc09",
+      "key": "已有账号",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཐོ་བཀོད་ནང་བྱས་རྗེས་ཡོད་"
+    },
+    {
+      "id": "mig001_b12027f4b964",
+      "key": "帮助",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཉར་གསོག"
+    },
+    {
+      "id": "mig001_bfcafe769e4f",
+      "key": "帮助中心",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དང་བཅས་བྱེད་"
+    },
+    {
+      "id": "mig001_2032d5b315ed",
+      "key": "帮助学生掌握基本的国家通用语言表达能力",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་ཕྲུག་ལ་སློབ་གསོ་བ་བྱེད་"
+    },
+    {
+      "id": "mig001_16f0a06bd07a",
+      "key": "帮助学生提升国家通用语言表达能力",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་ཕྲུག་ལ་སློབ་ཁྲིད་བརྡ་ཐབ་ཤེས་བྱའི་སྒྲིག་རྩིས་ལ་འགོ་རྟོགས་བྱེད་"
+    },
+    {
+      "id": "mig001_b4acd841ede6",
+      "key": "帮助教师和学校管理员实时掌握学生学习情况",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "གྲོང་གི་སློབ་བྱ་དང་བཅས་ལ་སློབ་གསོ་བ་བྱེད་ཐབས་ལ་འཚེབ་ཆ་བྱེད་"
+    },
+    {
+      "id": "mig001_fba855dd3968",
+      "key": "常见问题",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དང་བཅས་བྱེད་"
+    },
+    {
+      "id": "mig001_2882cfd30d44",
+      "key": "平台使命",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སྒྲིག་རྩིས་ཀྱི་དགོངས་ལྟོ"
+    },
+    {
+      "id": "mig001_60b7fb9dcd23",
+      "key": "平台承诺将旗舰版收入的",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སྒྲིག་རྩིས་ཀྱི་དགེ་འདུན"
+    },
+    {
+      "id": "mig001_f1f70f66a1b9",
+      "key": "平台特色",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སྒྲིག་རྩིས་ཀྱི་དགོངས་ལྟོ"
+    },
+    {
+      "id": "mig001_c63c1e75688d",
+      "key": "并录制你的发音",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སྐད་ངག"
+    },
+    {
+      "id": "mig001_9e48547c45f4",
+      "key": "开始学习",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་གསོ་བ་བྱེད་"
+    },
+    {
+      "id": "mig001_dd03a936928b",
+      "key": "开始录音",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སྐད་ངག"
+    },
+    {
+      "id": "mig001_a17a9c6c693f",
+      "key": "张教授",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "བྲག་སློབ་བྱ"
+    },
+    {
+      "id": "mig001_2485a7709a67",
+      "key": "当前",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "མིག་སྔར"
+    },
+    {
+      "id": "mig001_1fd9f8adefb1",
+      "key": "影响力数据",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དང་བཅས་བྱེད་"
+    },
+    {
+      "id": "mig001_2930f9260eb5",
+      "key": "很高兴认识你",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ང་ལ་དགའ་བསུ་"
+    },
+    {
+      "id": "mig001_4d7a2d11b1a7",
+      "key": "志愿者",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དགེ་འདུན་ལས་དོན་བྱེད་མཁན"
+    },
+    {
+      "id": "mig001_24e4f50611f1",
+      "key": "志愿者等多角色协同",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དགེ་འདུན་ལས་དོན་བྱེད་མཁན་དང་བཅས"
+    },
+    {
+      "id": "mig001_b728ce7eea28",
+      "key": "忘记密码",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཆོག་ཡིག་བྱས་རྗེས་མ་ལུས་ཀྱི་ནང་"
+    },
+    {
+      "id": "mig001_e6689b4795d5",
+      "key": "快速链接",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དང་བཅས་བྱེད་"
+    },
+    {
+      "id": "mig001_5bffd6dd0b01",
+      "key": "思辨阅读",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "རྒྱུན་ཤེས་རྟོགས་ལྟོ་བུ་དང་སློབ་ཁྲིད"
+    },
+    {
+      "id": "mig001_c18727a01b58",
+      "key": "您的浏览器不支持",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "གློག"
+    },
+    {
+      "id": "mig001_dc861fd0b303",
+      "key": "意见反馈",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དང་བཅས་བྱེད་"
+    },
+    {
+      "id": "mig001_ddcc30ce99b4",
+      "key": "我们优先考虑脱贫县和边境县学校",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དགེ་འདུན་གྱི་མ་དངུལ"
+    },
+    {
+      "id": "mig001_03ed358c20cf",
+      "key": "我们坚持透明公开的原则",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ང་ཚོས་དགེ་འདུན་"
+    },
+    {
+      "id": "mig001_a281eb569f38",
+      "key": "我叫扎西",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ངའི་མིང་བཀཀག་ཤིས"
+    },
+    {
+      "id": "mig001_20a161dcca8f",
+      "key": "我喜欢唱歌",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ང་ལ་གཞས་སྐད་དང་བཅས"
+    },
+    {
+      "id": "mig001_4a4f9177c6e5",
+      "key": "我已阅读并同意",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ང་ལས་དང་བཅས་ལྟ་བུ་ལ་གནོང་བ་དང་བཅས་སྒོ་བས་བྱེད་"
+    },
+    {
+      "id": "mig001_c7bfa965bab9",
+      "key": "我扎西",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ང་བཀཀག་ཤིས"
+    },
+    {
+      "id": "mig001_15708a3914f5",
+      "key": "我的课程",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ངའི་སློབ་ཁྲིད"
+    },
+    {
+      "id": "mig001_ebce61ed4e4b",
+      "key": "手机号码",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཁ་པའི་ཨང་གྲངས"
+    },
+    {
+      "id": "mig001_e5e1b382dad2",
+      "key": "扎西同学",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "བཀཀག་ཤིས་སློབ་ཕྲུག"
+    },
+    {
+      "id": "mig001_4aa67d55934d",
+      "key": "扎西是我",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "བཀཀག་ཤིས་ང་ཡིན"
+    },
+    {
+      "id": "mig001_15fbed305c9c",
+      "key": "技术总监",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་ཁྲིད་ཀྱི་བྱ་འགུག་བྱེད་མཁན"
+    },
+    {
+      "id": "mig001_91070ac98a42",
+      "key": "技术支持",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དང་བཅས་བྱེད་"
+    },
+    {
+      "id": "mig001_30edfd1707fe",
+      "key": "投入资金",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དང་བཅས་བྱེད་"
+    },
+    {
+      "id": "mig001_99889539de17",
+      "key": "报错",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཉར་གསོག"
+    },
+    {
+      "id": "mig001_49befda71853",
+      "key": "指导学生进行整本书阅读",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་ཕྲུག་ལ་སློབ་གསོ་བ་བྱེད་"
+    },
+    {
+      "id": "mig001_f90a2ea79d22",
+      "key": "排序方式",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་ཁྲིད"
+    },
+    {
+      "id": "mig001_da667805d064",
+      "key": "探索丰富的国家通用语言文字学习资源",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "རྒྱལ་ཁབ་ཀྱི་དབུ་མ་ཡིག"
+    },
+    {
+      "id": "mig001_cc5ba9cbbb77",
+      "key": "探讨藏族文化与国家通用语言的融合",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "བོད་ཀྱི་ཤེས་དཔལ་དང་རྒྱལ་ཁབ་ཀྱི་དབུ་མ་ཡིག"
+    },
+    {
+      "id": "mig001_5716c38da994",
+      "key": "接受社会监督",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དགེ་འདུན་གྱི་མ་དངུལ"
+    },
+    {
+      "id": "mig001_fbf456167f2e",
+      "key": "推荐课程",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་ཁྲིད"
+    },
+    {
+      "id": "mig001_c5c0b7f50573",
+      "key": "提交申请",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དང་བཅས་བྱེད་"
+    },
+    {
+      "id": "mig001_48512096c0f0",
+      "key": "提交留言",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དང་བཅས་བྱེད་"
+    },
+    {
+      "id": "mig001_32deafdc16f1",
+      "key": "提交答案",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དང་བཅས་བྱེད་"
+    },
+    {
+      "id": "mig001_b039e26947a5",
+      "key": "提供使用培训",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དང་བཅས་བྱེད་"
+    },
+    {
+      "id": "mig001_8ea7b4d3cd63",
+      "key": "提供全面的学情分析工具",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་གསོ་བ་བྱེད་ཐབས་ལ་འཚེབ་ཆ་བྱེད་"
+    },
+    {
+      "id": "mig001_5c4aa0f36dfc",
+      "key": "提供分级课程资源",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཁག་སློབ་ཁྲིད་གཙོ་སྒྲིག་བཟོ་བའི་སྒོ"
+    },
+    {
+      "id": "mig001_4cf89d5c8d92",
+      "key": "提供实时口语练习反馈",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སྐད་ངག་ལ་འཚེབ་ཆ་བྱེད་"
+    },
+    {
+      "id": "mig001_77aff68b92b9",
+      "key": "提供普惠版",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཕན་བདེད་པར་སློབ་ཁྲིད་བཟོ་བའི་སྒོ"
+    },
+    {
+      "id": "mig001_2baaee709761",
+      "key": "提升信息化教学能力",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་ཁྲིད་བརྡ་ཐབ་"
+    },
+    {
+      "id": "mig001_da9b650328c6",
+      "key": "提升口语表达能力和文化理解",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སྐད་ངག་ལ་འཚེབ་ཆ་བྱེད་"
+    },
+    {
+      "id": "mig001_8edde363d380",
+      "key": "提升国家通用语言教学能力",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "རྒྱལ་ཁབ་ཀྱི་དབུ་མ་ཡིག"
+    },
+    {
+      "id": "mig001_c84f456b63a8",
+      "key": "提升国家通用语言理解能力",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "རྒྱལ་ཁབ་ཀྱི་དབུ་མ་ཡིག"
+    },
+    {
+      "id": "mig001_712c1bc22905",
+      "key": "提升教学效果",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་ཁྲིད་བརྡ་ཐབ་ཤེས་བྱའི་སྒྲིག་རྩིས་ལ་འགོ་རྟོགས་བྱེད་"
+    },
+    {
+      "id": "mig001_040307f4ffb6",
+      "key": "提升教学质量",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་ཁྲིད་ཀྱི་སྦེར་བ་"
+    },
+    {
+      "id": "mig001_ec6259b676d9",
+      "key": "提升文化理解与语言应用能力",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཤེས་དཔལ་ལྟོ་རྟགས་སྐོར་རགས་ཙམ་བཟོ་བ"
+    },
+    {
+      "id": "mig001_76bcb4d7297e",
+      "key": "提升综合应用能力",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "རྒྱུན་ཤེས་རྟོགས་ལྟོ་བུ་དང་སློབ་ཁྲིད"
+    },
+    {
+      "id": "mig001_c6451c87277f",
+      "key": "提升表达水平",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་ཕྲུག"
+    },
+    {
+      "id": "mig001_3fb085ddd970",
+      "key": "提升阅读理解能力和文学素养",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "རྒྱུན་ཤེས་རྟོགས་ལྟོ་བུ་དང་སློབ་ཁྲིད"
+    },
+    {
+      "id": "mig001_37441fd34403",
+      "key": "搜索",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "འཚོལ་བ"
+    },
+    {
+      "id": "mig001_a0b8d44bcbbe",
+      "key": "支持学生",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་ཕྲུག་ལ་བཟོ་བ"
+    },
+    {
+      "id": "mig001_b17b2fef992e",
+      "key": "支持离线下载",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དྲ་རྒྱ་མེད་པར་ཉར་གསོག་བྱེད་"
+    },
+    {
+      "id": "mig001_87c262a2566f",
+      "key": "支持课程资源完整离线包下载",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཁག་སློབ་ཁྲིད་གཙོ་སྒྲིག་ལ་དྲ་རྒྱ་མེད་པར་ཉར་གསོག་བྱེད་"
+    },
+    {
+      "id": "mig001_158a4a747c6c",
+      "key": "收藏",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "འདུན"
+    },
+    {
+      "id": "mig001_d1a3c11a5a12",
+      "key": "教学工具",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་ཁྲིད་ལྟོ་རྟགས"
+    },
+    {
+      "id": "mig001_26d8114a875e",
+      "key": "教学总监",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་ཁྲིད་ཀྱི་བྱ་འགུག་བྱེད་མཁན"
+    },
+    {
+      "id": "mig001_50177f3f58c5",
+      "key": "教学技能",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་ཁྲིད་བརྡ་ཐབ་"
+    },
+    {
+      "id": "mig001_e9367b547c92",
+      "key": "教师",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "གྲོང་གི་སློབ་བྱ"
+    },
+    {
+      "id": "mig001_ca2d4d939f83",
+      "key": "教师培训",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "གྲོང་གི་སློབ་བྱ་ལ་སློབ་ཁྲིད་བརྡ་ཐབ་ཤེས་བྱའི་སྒྲིག་རྩིས"
+    },
+    {
+      "id": "mig001_1d472ab88b12",
+      "key": "教师教学技能提升",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "གྲོང་གི་སློབ་བྱ་ལ་སློབ་ཁྲིད་བརྡ་ཐབ་"
+    },
+    {
+      "id": "mig001_ab39121b5332",
+      "key": "教师满意度",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དང་བཅས་བྱེད་"
+    },
+    {
+      "id": "mig001_651b359cd412",
+      "key": "教育技术",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་ཁྲིད་བརྡ་ཐབ་"
+    },
+    {
+      "id": "mig001_f4db50658abe",
+      "key": "教育技术应用",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་ཁྲིད་བརྡ་ཐབ་"
+    },
+    {
+      "id": "mig001_b575f05d6175",
+      "key": "数字",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཨང་གྲངས"
+    },
+    {
+      "id": "mig001_bc22f9daeae0",
+      "key": "数字与时间表达",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཨང་གྲངས་དང་བཅས"
+    },
+    {
+      "id": "mig001_e162609d69d2",
+      "key": "数字表达等实用内容",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཨང་གྲངས"
+    },
+    {
+      "id": "mig001_4cc26f182a3a",
+      "key": "整本书阅读",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "རྒྱུན་ཤེས་རྟོགས་ལྟོ་བུ་དང་སློབ་ཁྲིད"
+    },
+    {
+      "id": "mig001_eb12e273b9b2",
+      "key": "整本书阅读指导",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "རྒྱུན་ཤེས་རྟོགས་ལྟོ་བུ་དང་སློབ་ཁྲིད"
+    },
+    {
+      "id": "mig001_2fcdbab89eb9",
+      "key": "文化元素",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཤེས་དཔལ"
+    },
+    {
+      "id": "mig001_d13e35e755fc",
+      "key": "文化实践社区",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཤེས་དཔལ་ལྷན་ཚོགས"
+    },
+    {
+      "id": "mig001_427205e5c2f8",
+      "key": "文化实践社区与成长守护服务",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཤེས་དཔལ་ལྷན་ཚོགས་དང་བཅས་སྒོ"
+    },
+    {
+      "id": "mig001_ca31295bde44",
+      "key": "文化社区",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཤེས་དཔལ་ལྷན་ཚོགས"
+    },
+    {
+      "id": "mig001_664b8f71a4fa",
+      "key": "文化融合教学",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཤེས་དཔལ་ལྟ་བུ་དང་སློབ་ཁྲིད་གཙོ་སྒྲིག"
+    },
+    {
+      "id": "mig001_072b9beb5591",
+      "key": "文学阅读",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "རྒྱུན་ཤེས་རྟོགས་ལྟོ་བུ་དང་སློབ་ཁྲིད"
+    },
+    {
+      "id": "mig001_8e3a9dea7260",
+      "key": "新课",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "གསར་སློབ་ཁྲིད"
+    },
+    {
+      "id": "mig001_4fdce48a6732",
+      "key": "旗舰版收入的",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "བཅས་སློབ་ཁྲིད་བཟོ་བའི་སྒོ"
+    },
+    {
+      "id": "mig001_6316518be18e",
+      "key": "日常用语练习",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཉིན་རེར་གཙོ་བོར་"
+    },
+    {
+      "id": "mig001_c6139c0cc1e9",
+      "key": "是最基本的问候语",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ངག་དབྱངས"
+    },
+    {
+      "id": "mig001_2547531eb19e",
+      "key": "是我",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ང་ཡིན"
+    },
+    {
+      "id": "mig001_a3d63803ec42",
+      "key": "普惠版资源研发",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཕན་བདེད་པར་"
+    },
+    {
+      "id": "mig001_69823f9ac452",
+      "key": "智慧教育平台",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་ཁྲིད་བརྡ་ཐབ་ཤེས་བྱའི་སྒྲིག་རྩིས"
+    },
+    {
+      "id": "mig001_de363003d574",
+      "key": "智慧教育平台致力于为西藏农牧区学生提供优质的国家通用语言文字教育资源",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སྒྲིག་རྩིས་ཀྱི་དགོངས་ལྟོ"
+    },
+    {
+      "id": "mig001_3c0a5383000b",
+      "key": "朗诵社区",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "གཞས་སྐད་ལྷན་ཚོགས"
+    },
+    {
+      "id": "mig001_94ce7ab659ea",
+      "key": "未学习",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་གསོ་བ་བྱེད་རྗེས་མ་ཡོད་"
+    },
+    {
+      "id": "mig001_fccd59e71732",
+      "key": "本周学习时长",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་གསོབ"
+    },
+    {
+      "id": "mig001_2d1bd61afbeb",
+      "key": "本节课将学习日常生活中的基本用语",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དེ་འདྲའི་ཁག་སློབ་ཁྲིད་ནང་ནས་"
+    },
+    {
+      "id": "mig001_7ec51c0eb84e",
+      "key": "李教授",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ལི་སློབ་བྱ"
+    },
+    {
+      "id": "mig001_c1319ac9dcb2",
+      "key": "来自哪里",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "གྲོང"
+    },
+    {
+      "id": "mig001_181273318ba9",
+      "key": "构建完整的教育生态系统",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་ཁྲིད་བརྡ་ཐབ་ཤེས་བྱའི་སྒྲིག་རྩིས་ལ་བཟོ་བ"
+    },
+    {
+      "id": "mig001_35e571b789ad",
+      "key": "查看更多作品",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ལས་ཀ་སྤེལ་བ"
+    },
+    {
+      "id": "mig001_f4e4583ac0e9",
+      "key": "核心团队",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སྒྲིག་རྩིས་ཀྱི་དགོངས་ལྟོ"
+    },
+    {
+      "id": "mig001_fa78d4cd62b5",
+      "key": "格萨尔王传",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "གེ་སར་རྒྱལ་པོའི་སྨྱུ་གུ"
+    },
+    {
+      "id": "mig001_5ed04b7c194a",
+      "key": "格萨尔王传等",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "གེ་སར་རྒྱལ་པོའི་སྨྱུ་གུ་དང་བཅས"
+    },
+    {
+      "id": "mig001_841a720e0be1",
+      "key": "次学习",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་གསོ་བ"
+    },
+    {
+      "id": "mig001_9ba61288e74e",
+      "key": "汉语",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "རྒྱལ་ཁབ་ཀྱི་དབུ་མ་ཡིག"
+    },
+    {
+      "id": "mig001_939171541d82",
+      "key": "注册",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སྒྲུང་བཟོ་བ"
+    },
+    {
+      "id": "mig001_bad713a7563e",
+      "key": "深度融入藏族文化元素",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "བོད་ཀྱི་ཤེས་དཔལ་ལྟོ་རྟགས་སྐོར་རགས་ཙམ་བཟོ་བ"
+    },
+    {
+      "id": "mig001_b020d6255144",
+      "key": "添加下载",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཉར་གསོག"
+    },
+    {
+      "id": "mig001_1f835ec19217",
+      "key": "添加时间点",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཚེས་དངུལ"
+    },
+    {
+      "id": "mig001_961eddddb867",
+      "key": "添加笔记",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་གསོབ"
+    },
+    {
+      "id": "mig001_3d08e0107669",
+      "key": "清空",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཉར་གསོག"
+    },
+    {
+      "id": "mig001_9ae80b5ebeaf",
+      "key": "满足不同地区和学校的需求",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དེ་བཞིན་དགོངས་ལྟོ་ལ་འདུག"
+    },
+    {
+      "id": "mig001_f65806109f8c",
+      "key": "热门",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "གསར་སློབ་ཁྲིད"
+    },
+    {
+      "id": "mig001_a9ec7bfc6ee7",
+      "key": "版权所有",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ངག་དབྱངས་སེམས་གསུངས"
+    },
+    {
+      "id": "mig001_78c00c7b65c8",
+      "key": "王教授",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཝང་སློབ་བྱ"
+    },
+    {
+      "id": "mig001_def3222324de",
+      "key": "用于反哺普惠版资源研发与偏远学校帮扶",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དགེ་འདུན་གྱི་མ་དངུལ"
+    },
+    {
+      "id": "mig001_137471fa57ae",
+      "key": "用户协议",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "གྲོང་གི་མི་ཐོ་བཀོད་ནང་བྱེད་མཁན་ཀྱི་དཔེ་ཚོང་"
+    },
+    {
+      "id": "mig001_daf356e33261",
+      "key": "用户登录",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "གྲོང་གི་མི་ཐོ་བཀོད་ནང་"
+    },
+    {
+      "id": "mig001_f28619cc5ca0",
+      "key": "申请公益支持",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དང་བཅས་བྱེད་"
+    },
+    {
+      "id": "mig001_ee72cd9f9ba1",
+      "key": "申请流程",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དགེ་འདུན་གྱི་མ་དངུལ"
+    },
+    {
+      "id": "mig001_12b81bec572e",
+      "key": "电话",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཁ་པའི་ཨང་གྲངས"
+    },
+    {
+      "id": "mig001_739ded596df0",
+      "key": "留言内容",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དང་བཅས་བྱེད་"
+    },
+    {
+      "id": "mig001_75083074c0a1",
+      "key": "留言咨询",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དང་བཅས་བྱེད་"
+    },
+    {
+      "id": "mig001_8b49af6d50aa",
+      "key": "登录",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཐོ་བཀོད་ནང་དོན་བཀོད་ནང་"
+    },
+    {
+      "id": "mig001_207fe0147c15",
+      "key": "目标",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དགོངས"
+    },
+    {
+      "id": "mig001_030ea262d37a",
+      "key": "直接注入公益基金",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དགེ་འདུན་གྱི་མ་དངུལ་ལ་བཟོ་བ"
+    },
+    {
+      "id": "mig001_529a4fc9a82d",
+      "key": "确保公益不缺位同时实现自我造血",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དགེ་འདུན་གྱི་སྒྲུང་བཟོ་བ་ལ་འགོ་རྟོགས་བྱེད་"
+    },
+    {
+      "id": "mig001_bb6f0c44c605",
+      "key": "确保资源分配到最需要的地方",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དགེ་འདུན་གྱི་མ་དངུལ"
+    },
+    {
+      "id": "mig001_ec52e2886c39",
+      "key": "确保随时随地可学习",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "རིགས་སུ་སློབ་གསོ་བ་བྱེད་"
+    },
+    {
+      "id": "mig001_8d2646dda12f",
+      "key": "确认学校资格",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དང་བཅས་བྱེད་"
+    },
+    {
+      "id": "mig001_a3242fb86f5e",
+      "key": "视频播放",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "གློག"
+    },
+    {
+      "id": "mig001_97fe6dbd556b",
+      "key": "离线下载",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དྲ་རྒྱ་མེད་པར་ཉར་གསོག"
+    },
+    {
+      "id": "mig001_b50813aeb6cb",
+      "key": "离线下载管理",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དྲ་རྒྱ་མེད་པར་ཉར་གསོག"
+    },
+    {
+      "id": "mig001_c3aee61fa482",
+      "key": "离线优先设计",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དྲ་རྒྱ་མེད་པར་སློབ་གསོ་བ་གཙོ"
+    },
+    {
+      "id": "mig001_7926433a9cdd",
+      "key": "离线学习",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དྲ་རྒྱ་མེད་པར་སློབ་གསོག"
+    },
+    {
+      "id": "mig001_78c31b3a80ff",
+      "key": "离线学习包",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དྲ་རྒྱ་མེད་པར་སློབ་གསོ་བའི་སྒོ"
+    },
+    {
+      "id": "mig001_3977b9dc8f85",
+      "key": "科大讯飞",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་ཁྲིད་"
+    },
+    {
+      "id": "mig001_50e23f1b692d",
+      "key": "立即参与",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དང་བཅས་བྱེད་"
+    },
+    {
+      "id": "mig001_d5b16c3e2876",
+      "key": "立即注册",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཐོ་བཀོད་ནང་བཟོ་བ་བྱེད་"
+    },
+    {
+      "id": "mig001_5da81e226870",
+      "key": "立即登录",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཐོ་བཀོད་ནང་བྱས་རྗེས་"
+    },
+    {
+      "id": "mig001_fb9cef9f7405",
+      "key": "第一课",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཁག་སློབ་ཁྲིད"
+    },
+    {
+      "id": "mig001_382f937801fe",
+      "key": "第二声要上扬",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སྐད་ངག"
+    },
+    {
+      "id": "mig001_266ab20873fc",
+      "key": "精准施策",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "རྒྱུན་ཤེས་རྟོགས་ལྟོ་བུ་དང་སློབ་ཁྲིད་གཙོ་སྒྲིག"
+    },
+    {
+      "id": "mig001_2f3ca210f036",
+      "key": "红色故事演讲",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དམངས་རྒྱལ་གྱི་གནད་དབང་ལ་སློབ་གསོ་བ"
+    },
+    {
+      "id": "mig001_5443bf7b264f",
+      "key": "红色故事研习",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དམངས་རྒྱལ་གྱི་གནད་དབང་ལ་སློབ་གསོ་བ"
+    },
+    {
+      "id": "mig001_d6a8414cea0e",
+      "key": "红色故事研习社区",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དམངས་རྒྱལ་གྱི་གནད་དབང་ལ་སློབ་གསོ་བ"
+    },
+    {
+      "id": "mig001_61cd0a3e3277",
+      "key": "结合藏族文化元素",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "བོད་ཀྱི་ཤེས་དཔལ་ལྟོ་རྟགས་སྐོར་རགས་ཙམ་བཟོ་བ"
+    },
+    {
+      "id": "mig001_1291fdcf17e5",
+      "key": "老师",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་བྱ"
+    },
+    {
+      "id": "mig001_235b6dc409ef",
+      "key": "联系我们",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ང་ཚོ་ལ་སྐུལ་འདེད་བྱེད་"
+    },
+    {
+      "id": "mig001_662c5e47d627",
+      "key": "联系方式",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ང་ཚོ་ལ་སྐུལ་འདེད་བྱེད་"
+    },
+    {
+      "id": "mig001_1e00b7bf3ffa",
+      "key": "腾讯公益",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་ཁྲིད"
+    },
+    {
+      "id": "mig001_1c47b8a619dc",
+      "key": "自我介绍",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ངའི་ངག་དབྱངས"
+    },
+    {
+      "id": "mig001_2c5ecba70a39",
+      "key": "自我介绍的基本结构",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ངའི་ངག་དབྱངས"
+    },
+    {
+      "id": "mig001_b607821e5cf1",
+      "key": "自我介绍练习",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ངའི་ངག་དབྱངས"
+    },
+    {
+      "id": "mig001_488cd7f63b9c",
+      "key": "获取免费的普惠版资源和设备捐赠",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དགེ་འདུན་གྱི་མ་དངུལ"
+    },
+    {
+      "id": "mig001_6ac8350e5897",
+      "key": "获取验证码",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཡིག་ཚང་ཚོགས་བྱེད་"
+    },
+    {
+      "id": "mig001_070b6dbd35f2",
+      "key": "获得",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཐོབ་"
+    },
+    {
+      "id": "mig001_d68c91724450",
+      "key": "获得徽章",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "འདུན"
+    },
+    {
+      "id": "mig001_1ab4186b532f",
+      "key": "藏历新年",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "བོད་ལོ་གསར་ལོ"
+    },
+    {
+      "id": "mig001_077ca75bfcac",
+      "key": "藏族文化",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "བོད་ཀྱི་ཤེས་དཔལ"
+    },
+    {
+      "id": "mig001_8bdd5dcf513e",
+      "key": "藏族文化与国家通用语言",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "བོད་ཀྱི་ཤེས་དཔལ་དང་རྒྱལ་ཁབ་ཀྱི་དབུ་མ་ཡིག"
+    },
+    {
+      "id": "mig001_a6834caeee67",
+      "key": "藏汉文化交流专区",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "བོད་རྒྱལ་ཁབ་ཀྱི་ཤེས་དཔལ་"
+    },
+    {
+      "id": "mig001_3a1ef8b9ed52",
+      "key": "西藏大学",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "བོད་རྒྱལ་ཁབ་ཀྱི་སློབ་ཁྲིད"
+    },
+    {
+      "id": "mig001_3c3a8a9d13b0",
+      "key": "西藏自治区教育厅",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "བོད་རྒྱལ་ཁབ་ཀྱི་སློབ་ཁྲིད"
+    },
+    {
+      "id": "mig001_7b3980942f35",
+      "key": "角色选择",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཚོགས་ཚད་སྒྲིག"
+    },
+    {
+      "id": "mig001_abdc8b33251b",
+      "key": "解决西藏农牧区网络条件限制问题",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "བོད་རྒྱལ་ཁབ་ཀྱི་སྤྱི་བོད་སྐད་ལ་རྒྱུན་ཤེས་ཀྱི་སྒོ"
+    },
+    {
+      "id": "mig001_0fcc7e07e03b",
+      "key": "让学习过程充满文化魅力",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་གསོ་བ་བྱེད་ཐབས་ལ་ཤེས་དཔལ་ལྟོ་རྟགས་སྐོར་རགས་ཙམ་བཟོ་བ"
+    },
+    {
+      "id": "mig001_f78f20142892",
+      "key": "让学习过程更加生动有趣",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་གསོབ"
+    },
+    {
+      "id": "mig001_90f953f4ad3f",
+      "key": "训练学生的写作能力",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་ཕྲུག"
+    },
+    {
+      "id": "mig001_b3edc2c02ae9",
+      "key": "记住我",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ང་ལ་ཡི་གེ་བྱེད་"
+    },
+    {
+      "id": "mig001_182f7b7da535",
+      "key": "设置",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སྒྲིག"
+    },
+    {
+      "id": "mig001_71a19258894a",
+      "key": "设置密码",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཆོག་ཡིག་སྒྲིག"
+    },
+    {
+      "id": "mig001_549394fb4255",
+      "key": "评分最高",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "འཚེབ་ཆ"
+    },
+    {
+      "id": "mig001_a61e8e414b4a",
+      "key": "诗歌朗诵",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "གཞས་སྐད་ལྷན་ཚོགས"
+    },
+    {
+      "id": "mig001_2d5003fdd641",
+      "key": "语言积累",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ངག་དབྱངས་སེམས་གསུངས"
+    },
+    {
+      "id": "mig001_39fd3062a4f4",
+      "key": "语赞心声",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "语赞心声"
+    },
+    {
+      "id": "mig001_66bbb62b6321",
+      "key": "语赞心声智慧教育平台",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ངག་དབྱངས་སེམས་གསུངས"
+    },
+    {
+      "id": "mig001_ae843cb541a1",
+      "key": "语音评测",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སྐད་ངག་ལ་འཚེབ་ཆ་བྱེད་"
+    },
+    {
+      "id": "mig001_a8e1e609c024",
+      "key": "语音评测技术",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སྐད་ངག་ལ་འཚེབ་ཆ་བྱེད་ཐབས"
+    },
+    {
+      "id": "mig001_3b1ed34e1025",
+      "key": "请根据拼音填写正确的汉字",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ངག་དབྱངས"
+    },
+    {
+      "id": "mig001_d7c0ea166758",
+      "key": "请跟读下面的句子",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ངག་དབྱངས"
+    },
+    {
+      "id": "mig001_c6c56d333640",
+      "key": "课堂小结与作业",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཁག་སློབ་ཁྲིད་ལ་རེ་རེ་བཀོད་པ"
+    },
+    {
+      "id": "mig001_8de02f1c1d99",
+      "key": "课堂情景剧",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཁག་སློབ་ཁྲིད་ལ་རེ་རེ་བཀོད་པ"
+    },
+    {
+      "id": "mig001_8046196fc002",
+      "key": "课时",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཁག་སློབ་ཁྲིད"
+    },
+    {
+      "id": "mig001_9f3fb9360eca",
+      "key": "课程中心",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཁག་སློབ་ཁྲིད་གཙོ་སྒྲིག"
+    },
+    {
+      "id": "mig001_344648ffe6a2",
+      "key": "课程介绍与基本问候语",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཁག་སློབ་ཁྲིད་ལ་རེ་རེ་བཀོད་པ"
+    },
+    {
+      "id": "mig001_eda3fb5f119e",
+      "key": "课程内容包括基本问候语",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཁག་སློབ་ཁྲིད"
+    },
+    {
+      "id": "mig001_eb9056d9313b",
+      "key": "课程分类",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཁག་སློབ་ཁྲིད"
+    },
+    {
+      "id": "mig001_39867829016a",
+      "key": "课程完成度",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཁག་སློབ་ཁྲིད་ལ་རེ་རེ་བཀོད་པ"
+    },
+    {
+      "id": "mig001_3cf3b2c459b0",
+      "key": "课程目录",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཁག་སློབ་ཁྲིད་གཙོ་སྒྲིག"
+    },
+    {
+      "id": "mig001_3f875f19c2d7",
+      "key": "课程笔记",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་གསོབ"
+    },
+    {
+      "id": "mig001_1b6c48056f16",
+      "key": "课程简介",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཁག་སློབ་ཁྲིད"
+    },
+    {
+      "id": "mig001_cccf290eeef4",
+      "key": "课程难度",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཁག་སློབ་ཁྲིད"
+    },
+    {
+      "id": "mig001_2a3b4a6d52b9",
+      "key": "资格审核",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དང་བཅས་བྱེད་"
+    },
+    {
+      "id": "mig001_13e26c5c5fd9",
+      "key": "资源发放",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དང་བཅས་བྱེད་"
+    },
+    {
+      "id": "mig001_6ad8d444cb76",
+      "key": "资金使用情况",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དགེ་འདུན་གྱི་མ་དངུལ"
+    },
+    {
+      "id": "mig001_105b275367c3",
+      "key": "跨学科学习",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "རྒྱུན་ཤེས་རྟོགས་ལྟོ་བུ་དང་སློབ་ཁྲིད"
+    },
+    {
+      "id": "mig001_f00379da8e0a",
+      "key": "边境县证明",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དང་བཅས་བྱེད་"
+    },
+    {
+      "id": "mig001_691f70eb8eba",
+      "key": "运营团队审核申请材料",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དང་བཅས་བྱེད་"
+    },
+    {
+      "id": "mig001_a2c372d5398d",
+      "key": "运营总监",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་ཁྲིད་ཀྱི་བྱ་འགུག་བྱེད་མཁན"
+    },
+    {
+      "id": "mig001_b5d71dc4b263",
+      "key": "运营成本",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དགེ་འདུན་གྱི་མ་དངུལ"
+    },
+    {
+      "id": "mig001_4ffc033a5538",
+      "key": "还没有账号",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཐོ་བཀོད་ནང་བྱས་རྗེས་མ་ཡོད་"
+    },
+    {
+      "id": "mig001_f7dc9b843294",
+      "key": "进阶",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "མཐོང"
+    },
+    {
+      "id": "mig001_b45d5f147cb0",
+      "key": "连续学习天数",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་གསོབ"
+    },
+    {
+      "id": "mig001_a97f1bc11549",
+      "key": "退出登录",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཕྱིར་འབུད"
+    },
+    {
+      "id": "mig001_6db86329aa29",
+      "key": "选择题",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་གསོབ"
+    },
+    {
+      "id": "mig001_c6de3e816f76",
+      "key": "通知学校并安排资源发放",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དང་བཅས་བྱེད་"
+    },
+    {
+      "id": "mig001_b3abe30f8962",
+      "key": "通过情景对话和互动练习",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དེ་འདྲའི་ཁག་སློབ་ཁྲིད་ནང་ནས་"
+    },
+    {
+      "id": "mig001_a96c58b1f19b",
+      "key": "通过技术创新和文化融合",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སྒྲིག་རྩིས་ཀྱི་དགོངས་ལྟོ"
+    },
+    {
+      "id": "mig001_75bd35cbbf49",
+      "key": "通过格萨尔王传故事讲解",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "གེ་སར་རྒྱལ་པོའི་སྨྱུ་གུ་ལ་རེ་རེ་བཀོད་པ"
+    },
+    {
+      "id": "mig001_49a666caa8ef",
+      "key": "通过红色故事学习",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དམངས་རྒྱལ་གྱི་གནད་དབང་ལ་སློབ་གསོ་བ"
+    },
+    {
+      "id": "mig001_552e522ec58d",
+      "key": "邮箱",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "གློག་མའི་ཨང་"
+    },
+    {
+      "id": "mig001_b2404956d8eb",
+      "key": "酥油茶",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཇ་སྲུབས"
+    },
+    {
+      "id": "mig001_d86832bb527f",
+      "key": "酥油茶文化",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཇ་སྲུབས"
+    },
+    {
+      "id": "mig001_178407ff04fd",
+      "key": "采用离线优先的设计原则",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "དྲ་རྒྱ་མེད་པར་སློབ་གསོ་བ་གཙོ"
+    },
+    {
+      "id": "mig001_5eeb8a7dbcf7",
+      "key": "针对西藏农牧区教师的教学技能培训",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "བོད་རྒྱལ་ཁབ་ཀྱི་སྤྱི་བོད་སྐད་ལ་སློབ་ཁྲིད་བརྡ་ཐབ་"
+    },
+    {
+      "id": "mig001_3e8092dd62db",
+      "key": "铸牢中华民族共同体意识",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཀྲུའུ་མི་རིགས་ཀྱི་སྡུག་བསྔལ"
+    },
+    {
+      "id": "mig001_824a75fb3601",
+      "key": "锅庄舞",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ལོ་སྐབས"
+    },
+    {
+      "id": "mig001_fdbe07e8faed",
+      "key": "锅庄舞表演",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ལོ་སྐབས་བཟོ་བ"
+    },
+    {
+      "id": "mig001_616544a93025",
+      "key": "隐私政策",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཡིད་བཞིན་དང་བཅས་ལ་རྒྱུན་ཤེས་ཀྱི་སྒོས"
+    },
+    {
+      "id": "mig001_35aa20795d10",
+      "key": "集成先进的",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "རྒྱུན་ཤེས་རྟོགས་ལྟོ་བུ་དང་སློབ་ཁྲིད་གཙོ་སྒྲིག"
+    },
+    {
+      "id": "mig001_021d259288ec",
+      "key": "青稞文化",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ནས་གསུམ"
+    },
+    {
+      "id": "mig001_ce68a29c18bb",
+      "key": "面向西藏农牧区的国家通用语言文字学习平台",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "བོད་རྒྱལ་ཁབ་ཀྱི་སྤྱི་བོད་སྐད་ལས་སློབ་ཁྲིད་བརྡ་ཐབ་ཤེས་བྱའི་སྒྲིག་རྩིས"
+    },
+    {
+      "id": "mig001_0a39ebb08a43",
+      "key": "首席专家",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སྒྲིག་རྩིས་ཀྱི་དགོངས་ལྟོ"
+    },
+    {
+      "id": "mig001_6358bdbfa6cc",
+      "key": "首页",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སྤྱི་འོས"
+    },
+    {
+      "id": "mig001_7fcc2f5c14e0",
+      "key": "验证码",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "ཡིག་ཚང་ཚོགས"
+    },
+    {
+      "id": "mig001_9ecc48a29749",
+      "key": "高中",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་རྫོགས་ཁྲིད"
+    },
+    {
+      "id": "mig001_f988e0ce0699",
+      "key": "高中课程",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "སློབ་རྫོགས་ཁྲིད"
+    },
+    {
+      "id": "mig001_16e3fb8a810d",
+      "key": "高级",
+      "locale": "bo",
+      "sourcePath": "db/lang/bo.json",
+      "value": "མཐོང"
+    },
+    {
+      "id": "mig001_b2ea156c3aac",
+      "key": "app.name",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "语赞心声"
+    },
+    {
+      "id": "mig001_28187dfe17ff",
+      "key": "app.slogan",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "在地化扎根，国家化成长"
+    },
+    {
+      "id": "mig001_7cbded11ebd7",
+      "key": "app.subtitle",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "智慧教育平台"
+    },
+    {
+      "id": "mig001_452dbbf75843",
+      "key": "apply.agreement",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "承诺信息真实有效"
+    },
+    {
+      "id": "mig001_0cf839f3fee6",
+      "key": "apply.applyForm",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "申请普惠版资源"
+    },
+    {
+      "id": "mig001_4838fadec650",
+      "key": "apply.applyReason",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "申请理由"
+    },
+    {
+      "id": "mig001_02b3f4b74357",
+      "key": "apply.benefitedSchools",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "受益学校"
+    },
+    {
+      "id": "mig001_79ff2e39e962",
+      "key": "apply.benefitedStudents",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "覆盖学生"
+    },
+    {
+      "id": "mig001_49948c66f316",
+      "key": "apply.county",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "所在县"
+    },
+    {
+      "id": "mig001_f28401667c9f",
+      "key": "apply.networkType",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "网络情况"
+    },
+    {
+      "id": "mig001_15d21a8f332b",
+      "key": "apply.publicFund",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "公益基金"
+    },
+    {
+      "id": "mig001_f473c97c42ba",
+      "key": "apply.schoolName",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "学校全称"
+    },
+    {
+      "id": "mig001_57dc72c19fa3",
+      "key": "apply.studentCount",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "学生人数"
+    },
+    {
+      "id": "mig001_27f72fe07b76",
+      "key": "apply.submit",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "提交申请"
+    },
+    {
+      "id": "mig001_ce6feeb49320",
+      "key": "apply.successMessage",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "申请提交成功！我们将在7个工作日内审核"
+    },
+    {
+      "id": "mig001_452b444e2e0f",
+      "key": "apply.title",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "公益普惠计划"
+    },
+    {
+      "id": "mig001_e6e4a246a597",
+      "key": "community.createWork",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "分享你的文化作品"
+    },
+    {
+      "id": "mig001_78ad9c480ed2",
+      "key": "community.culturalTheme",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "文化主题"
+    },
+    {
+      "id": "mig001_86f012db1101",
+      "key": "community.dailyLimit",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "普惠版用户每天最多发布3个作品"
+    },
+    {
+      "id": "mig001_c78fb6e33dec",
+      "key": "community.noWorks",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "暂无作品，快来发布第一个文化作品吧！"
+    },
+    {
+      "id": "mig001_56b4c341ec05",
+      "key": "community.publish",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "发布作品"
+    },
+    {
+      "id": "mig001_3d72382b8b05",
+      "key": "community.title",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "优秀作品展示"
+    },
+    {
+      "id": "mig001_a9f2aa1242ee",
+      "key": "community.workContent",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "作品内容"
+    },
+    {
+      "id": "mig001_b47f5f05823c",
+      "key": "community.workTitle",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "作品标题"
+    },
+    {
+      "id": "mig001_491310c3e6a5",
+      "key": "courses.culturalTheme",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "文化主题"
+    },
+    {
+      "id": "mig001_464233c87b63",
+      "key": "courses.currentVersion",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "当前版本"
+    },
+    {
+      "id": "mig001_1becc9c5534b",
+      "key": "courses.gesar",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "格萨尔王传"
+    },
+    {
+      "id": "mig001_fc5562c497d9",
+      "key": "courses.gradeFilter",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "年级筛选"
+    },
+    {
+      "id": "mig001_5b278641a56f",
+      "key": "courses.mountain",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "神山圣湖"
+    },
+    {
+      "id": "mig001_7b4180c914e7",
+      "key": "courses.noCourses",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "暂无符合条件的课程"
+    },
+    {
+      "id": "mig001_39be00770539",
+      "key": "courses.noPermission",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "需要升级版本"
+    },
+    {
+      "id": "mig001_55706300a8aa",
+      "key": "courses.offlineReady",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "离线可用"
+    },
+    {
+      "id": "mig001_69687c7e303c",
+      "key": "courses.qinqke",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "青稞文化"
+    },
+    {
+      "id": "mig001_84c9dcb33297",
+      "key": "courses.title",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "精选课程"
+    },
+    {
+      "id": "mig001_47955a4d154e",
+      "key": "errors.loginFailed",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "用户名或密码错误"
+    },
+    {
+      "id": "mig001_db3f4435d353",
+      "key": "errors.networkError",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "网络错误，请检查连接"
+    },
+    {
+      "id": "mig001_e7616a8a1250",
+      "key": "errors.permissionDenied",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "当前版本无法访问"
+    },
+    {
+      "id": "mig001_76da8e88fb01",
+      "key": "errors.storageFull",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "存储空间不足"
+    },
+    {
+      "id": "mig001_050ce1514dea",
+      "key": "nav.apply",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "公益申请"
+    },
+    {
+      "id": "mig001_cdb99d63f88d",
+      "key": "nav.charity",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "公益基金"
+    },
+    {
+      "id": "mig001_e256f757dcc5",
+      "key": "nav.community",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "文化社区"
+    },
+    {
+      "id": "mig001_40d58d3e2955",
+      "key": "nav.courses",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "课程中心"
+    },
+    {
+      "id": "mig001_0517a9a204b2",
+      "key": "nav.home",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "首页"
+    },
+    {
+      "id": "mig001_92d7f0215f72",
+      "key": "nav.learning",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "学习中心"
+    },
+    {
+      "id": "mig001_bef7091ca149",
+      "key": "nav.login",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "登录"
+    },
+    {
+      "id": "mig001_9a6438140acf",
+      "key": "nav.logout",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "退出"
+    },
+    {
+      "id": "mig001_626766e5781c",
+      "key": "nav.tools",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "教学工具"
+    },
+    {
+      "id": "mig001_bf46f7a369a1",
+      "key": "player.back",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "返回课程中心"
+    },
+    {
+      "id": "mig001_1bbdd32c4440",
+      "key": "player.download",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "下载离线"
+    },
+    {
+      "id": "mig001_8ddecd867618",
+      "key": "player.downloaded",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "已下载"
+    },
+    {
+      "id": "mig001_b4383fbe1702",
+      "key": "player.networkWarning",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "网络不佳，已切换到音频模式"
+    },
+    {
+      "id": "mig001_767469281efa",
+      "key": "player.notePlaceholder",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "记录学习心得..."
+    },
+    {
+      "id": "mig001_58eb206ec8c9",
+      "key": "player.offlineNotice",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "当前为离线模式"
+    },
+    {
+      "id": "mig001_21773e678fd7",
+      "key": "player.pause",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "暂停"
+    },
+    {
+      "id": "mig001_a6fb66ab7622",
+      "key": "player.play",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "播放"
+    },
+    {
+      "id": "mig001_712c7f671d74",
+      "key": "player.saveNote",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "保存笔记"
+    },
+    {
+      "id": "mig001_1750369470a9",
+      "key": "上一页",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "上一页"
+    },
+    {
+      "id": "mig001_4214eb1c932a",
+      "key": "上一题",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "上一题"
+    },
+    {
+      "id": "mig001_fffbcc043798",
+      "key": "上传学校资质证明和脱贫县",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "上传学校资质证明和脱贫县"
+    },
+    {
+      "id": "mig001_b08b43192b24",
+      "key": "下一页",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "下一页"
+    },
+    {
+      "id": "mig001_4dbc23235ef8",
+      "key": "下一题",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "下一题"
+    },
+    {
+      "id": "mig001_e573718e75d5",
+      "key": "下列哪个是正确的自我介绍方式",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "下列哪个是正确的自我介绍方式"
+    },
+    {
+      "id": "mig001_3bd81228f5ec",
+      "key": "下载中",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "下载中"
+    },
+    {
+      "id": "mig001_41a1e46b7543",
+      "key": "下载队列",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "下载队列"
+    },
+    {
+      "id": "mig001_b34c19d6b501",
+      "key": "专业版和旗舰版三级课程包",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "专业版和旗舰版三级课程包"
+    },
+    {
+      "id": "mig001_c839643c71e4",
+      "key": "专家",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "专家"
+    },
+    {
+      "id": "mig001_2ab64a6d9d95",
+      "key": "个人中心",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "个人中心"
+    },
+    {
+      "id": "mig001_de9dd0553ed2",
+      "key": "了解平台",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "了解平台"
+    },
+    {
+      "id": "mig001_70cb2a2b4b7e",
+      "key": "互动练习",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "互动练习"
+    },
+    {
+      "id": "mig001_85908b6a27a7",
+      "key": "人参与",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "人参与"
+    },
+    {
+      "id": "mig001_25698b964acb",
+      "key": "传承红色文化",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "传承红色文化"
+    },
+    {
+      "id": "mig001_597054ec99a8",
+      "key": "作品展示墙",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "作品展示墙"
+    },
+    {
+      "id": "mig001_d2c797ec0a41",
+      "key": "你好",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "你好"
+    },
+    {
+      "id": "mig001_679b16a7430c",
+      "key": "使用指南",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "使用指南"
+    },
+    {
+      "id": "mig001_6bd914e95ba5",
+      "key": "例如",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "例如"
+    },
+    {
+      "id": "mig001_ba9d129b99dd",
+      "key": "促进教学相长",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "促进教学相长"
+    },
+    {
+      "id": "mig001_928741aa723b",
+      "key": "促进教育公平",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "促进教育公平"
+    },
+    {
+      "id": "mig001_a0ab0856fd11",
+      "key": "促进藏汉文化交流与融合",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "促进藏汉文化交流与融合"
+    },
+    {
+      "id": "mig001_57602ddb1a02",
+      "key": "保存笔记",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "保存笔记"
+    },
+    {
+      "id": "mig001_8c7f3690284c",
+      "key": "保障教育公平",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "保障教育公平"
+    },
+    {
+      "id": "mig001_0c121166099e",
+      "key": "偏远地区学校可申请公益基金支持",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "偏远地区学校可申请公益基金支持"
+    },
+    {
+      "id": "mig001_fb373e8238fd",
+      "key": "偏远学校设备捐赠",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "偏远学校设备捐赠"
+    },
+    {
+      "id": "mig001_c91c3e2940e7",
+      "key": "免责声明",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "免责声明"
+    },
+    {
+      "id": "mig001_66dfe7db9dab",
+      "key": "入门",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "入门"
+    },
+    {
+      "id": "mig001_68c49c3153ed",
+      "key": "全部",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "全部"
+    },
+    {
+      "id": "mig001_f8e19ced3cec",
+      "key": "全部课程",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "全部课程"
+    },
+    {
+      "id": "mig001_702754e6f19b",
+      "key": "公益反哺模式",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "公益反哺模式"
+    },
+    {
+      "id": "mig001_7633ecb2b45b",
+      "key": "公益基金",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "公益基金"
+    },
+    {
+      "id": "mig001_9edd75044ceb",
+      "key": "关于我们",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "关于我们"
+    },
+    {
+      "id": "mig001_1da0bb786a52",
+      "key": "兴趣爱好",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "兴趣爱好"
+    },
+    {
+      "id": "mig001_cbed383c1478",
+      "key": "最多学习",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "最多学习"
+    },
+    {
+      "id": "mig001_32a67fdd6add",
+      "key": "最新上线",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "最新上线"
+    },
+    {
+      "id": "mig001_811fd94c09a2",
+      "key": "写作技巧训练",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "写作技巧训练"
+    },
+    {
+      "id": "mig001_2580747cb9a4",
+      "key": "分享学习感悟",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "分享学习感悟"
+    },
+    {
+      "id": "mig001_05591098b152",
+      "key": "分享文化故事",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "分享文化故事"
+    },
+    {
+      "id": "mig001_05ae0a4b2727",
+      "key": "分享课程",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "分享课程"
+    },
+    {
+      "id": "mig001_df76e7918751",
+      "key": "分级课程体系",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "分级课程体系"
+    },
+    {
+      "id": "mig001_b7af8cefc8ba",
+      "key": "分钟",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "分钟"
+    },
+    {
+      "id": "mig001_07aadba645ce",
+      "key": "初中",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "初中"
+    },
+    {
+      "id": "mig001_cb01970a1479",
+      "key": "初中课程",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "初中课程"
+    },
+    {
+      "id": "mig001_6f2cb863f69c",
+      "key": "初级",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "初级"
+    },
+    {
+      "id": "mig001_f56471915cbd",
+      "key": "剩余课时",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "剩余课时"
+    },
+    {
+      "id": "mig001_5613d0c0569b",
+      "key": "华南师范大学",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "华南师范大学"
+    },
+    {
+      "id": "mig001_1a3cb13fdcea",
+      "key": "单独使用时读",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "单独使用时读"
+    },
+    {
+      "id": "mig001_140e6cf16022",
+      "key": "参与红色故事互译接力",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "参与红色故事互译接力"
+    },
+    {
+      "id": "mig001_d59a70354757",
+      "key": "参与经典诗词朗诵",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "参与经典诗词朗诵"
+    },
+    {
+      "id": "mig001_a62ff7a5e8bc",
+      "key": "参与词汇挑战",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "参与词汇挑战"
+    },
+    {
+      "id": "mig001_f5374c892e2c",
+      "key": "反哺普惠版资源研发与偏远学校帮扶",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "反哺普惠版资源研发与偏远学校帮扶"
+    },
+    {
+      "id": "mig001_2b901dc5472f",
+      "key": "反哺资金流向透明化公示",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "反哺资金流向透明化公示"
+    },
+    {
+      "id": "mig001_83d5b371bc0d",
+      "key": "发放离线学习包和设备",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "发放离线学习包和设备"
+    },
+    {
+      "id": "mig001_046eedea446c",
+      "key": "发音时注意声调",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "发音时注意声调"
+    },
+    {
+      "id": "mig001_54f78dabf368",
+      "key": "受益学校分布",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "受益学校分布"
+    },
+    {
+      "id": "mig001_bbdaa5ca13ca",
+      "key": "受益学校数",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "受益学校数"
+    },
+    {
+      "id": "mig001_a7c14124ab25",
+      "key": "口语练习",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "口语练习"
+    },
+    {
+      "id": "mig001_56ddad0999e1",
+      "key": "口语表达训练",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "口语表达训练"
+    },
+    {
+      "id": "mig001_123a1af072c6",
+      "key": "合作伙伴",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "合作伙伴"
+    },
+    {
+      "id": "mig001_0029dfbdb243",
+      "key": "同时融入藏族文化特色",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "同时融入藏族文化特色"
+    },
+    {
+      "id": "mig001_e4522570b2ba",
+      "key": "听示范",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "听示范"
+    },
+    {
+      "id": "mig001_13df63a6a786",
+      "key": "国家通用语言基础",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "国家通用语言基础"
+    },
+    {
+      "id": "mig001_840465c1b865",
+      "key": "在一二三声前读",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "在一二三声前读"
+    },
+    {
+      "id": "mig001_aedab9b67b0c",
+      "key": "在不同情况下有不同的发音",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "在不同情况下有不同的发音"
+    },
+    {
+      "id": "mig001_d0b10d378a27",
+      "key": "在第四声前读",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "在第四声前读"
+    },
+    {
+      "id": "mig001_17456ca1e1d6",
+      "key": "在线学习体验",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "在线学习体验"
+    },
+    {
+      "id": "mig001_249209af04cd",
+      "key": "在线学习工具",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "在线学习工具"
+    },
+    {
+      "id": "mig001_ffbd3b617ffd",
+      "key": "培养爱国主义情怀",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "培养爱国主义情怀"
+    },
+    {
+      "id": "mig001_ffed73d7d604",
+      "key": "培养语言感知能力",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "培养语言感知能力"
+    },
+    {
+      "id": "mig001_3eba70ac1fe0",
+      "key": "培训教师掌握现代教育技术",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "培训教师掌握现代教育技术"
+    },
+    {
+      "id": "mig001_76b5f033fcfa",
+      "key": "基本问候语与自我介绍",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "基本问候语与自我介绍"
+    },
+    {
+      "id": "mig001_0a084b696efa",
+      "key": "基础",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "基础"
+    },
+    {
+      "id": "mig001_7bd387f3d044",
+      "key": "基础入门",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "基础入门"
+    },
+    {
+      "id": "mig001_9c1f23dda38c",
+      "key": "填写在线申请表",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "填写在线申请表"
+    },
+    {
+      "id": "mig001_53f022d24d6a",
+      "key": "填空题",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "填空题"
+    },
+    {
+      "id": "mig001_d2e482f3d246",
+      "key": "增强学习兴趣",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "增强学习兴趣"
+    },
+    {
+      "id": "mig001_675e796268a7",
+      "key": "多角色协同",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "多角色协同"
+    },
+    {
+      "id": "mig001_6b412395e70c",
+      "key": "如青稞",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "如青稞"
+    },
+    {
+      "id": "mig001_dabcd499f057",
+      "key": "姓名",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "姓名"
+    },
+    {
+      "id": "mig001_0d1a5e0edde1",
+      "key": "存储空间",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "存储空间"
+    },
+    {
+      "id": "mig001_921bc9e0bf1c",
+      "key": "学习中心",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "学习中心"
+    },
+    {
+      "id": "mig001_1d492b136343",
+      "key": "学习任务群",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "学习任务群"
+    },
+    {
+      "id": "mig001_f72b40a268a7",
+      "key": "学习日常生活中的基本用语",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "学习日常生活中的基本用语"
+    },
+    {
+      "id": "mig001_e5c51eed9948",
+      "key": "学习笔记",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "学习笔记"
+    },
+    {
+      "id": "mig001_1eb85535e0f2",
+      "key": "学习统计",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "学习统计"
+    },
+    {
+      "id": "mig001_f66f9eca6b02",
+      "key": "学习进度",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "学习进度"
+    },
+    {
+      "id": "mig001_281c04ea7fb4",
+      "key": "学情分析系统",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "学情分析系统"
+    },
+    {
+      "id": "mig001_86fbd11fe387",
+      "key": "学校申请与审核流程",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "学校申请与审核流程"
+    },
+    {
+      "id": "mig001_221e22cf5997",
+      "key": "学校管理员",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "学校管理员"
+    },
+    {
+      "id": "mig001_04d2b8eb195c",
+      "key": "学生",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "学生"
+    },
+    {
+      "id": "mig001_16e2533990cc",
+      "key": "学生提升率",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "学生提升率"
+    },
+    {
+      "id": "mig001_95fa5eb6be73",
+      "key": "定期公示资金使用情况",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "定期公示资金使用情况"
+    },
+    {
+      "id": "mig001_eada28f62b87",
+      "key": "实时评分反馈",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "实时评分反馈"
+    },
+    {
+      "id": "mig001_695df91139ed",
+      "key": "实用阅读",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "实用阅读"
+    },
+    {
+      "id": "mig001_347610a2a9d9",
+      "key": "审批通过",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "审批通过"
+    },
+    {
+      "id": "mig001_4083c0929075",
+      "key": "审核通过后",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "审核通过后"
+    },
+    {
+      "id": "mig001_4bf168ace22a",
+      "key": "密码",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "密码"
+    },
+    {
+      "id": "mig001_0226af3ae089",
+      "key": "将国家通用语言学习与其他学科知识融合",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "将国家通用语言学习与其他学科知识融合"
+    },
+    {
+      "id": "mig001_5f1206149af9",
+      "key": "小学",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "小学"
+    },
+    {
+      "id": "mig001_2b08a11fd376",
+      "key": "小学课程",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "小学课程"
+    },
+    {
+      "id": "mig001_6dde6a85a396",
+      "key": "小时",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "小时"
+    },
+    {
+      "id": "mig001_5259049ff9bf",
+      "key": "展示你的语言表达能力",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "展示你的语言表达能力"
+    },
+    {
+      "id": "mig001_f40d39af36b7",
+      "key": "工程师",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "工程师"
+    },
+    {
+      "id": "mig001_f064cd70328a",
+      "key": "已下载课程",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "已下载课程"
+    },
+    {
+      "id": "mig001_2661ce15602f",
+      "key": "已学习",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "已学习"
+    },
+    {
+      "id": "mig001_19836755cb7a",
+      "key": "已学课时",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "已学课时"
+    },
+    {
+      "id": "mig001_c12452253054",
+      "key": "已学课程",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "已学课程"
+    },
+    {
+      "id": "mig001_4556d14aa981",
+      "key": "已完成",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "已完成"
+    },
+    {
+      "id": "mig001_fd92532c1c62",
+      "key": "已有账号",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "已有账号"
+    },
+    {
+      "id": "mig001_cf2ea82c2e4c",
+      "key": "帮助",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "帮助"
+    },
+    {
+      "id": "mig001_7632f520d9c5",
+      "key": "帮助中心",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "帮助中心"
+    },
+    {
+      "id": "mig001_f37a6a4313ce",
+      "key": "帮助学生掌握基本的国家通用语言表达能力",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "帮助学生掌握基本的国家通用语言表达能力"
+    },
+    {
+      "id": "mig001_c2d96d017133",
+      "key": "帮助学生提升国家通用语言表达能力",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "帮助学生提升国家通用语言表达能力"
+    },
+    {
+      "id": "mig001_9c2f91fca0a4",
+      "key": "帮助教师和学校管理员实时掌握学生学习情况",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "帮助教师和学校管理员实时掌握学生学习情况"
+    },
+    {
+      "id": "mig001_e375a0c380ed",
+      "key": "常见问题",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "常见问题"
+    },
+    {
+      "id": "mig001_efa7323967a2",
+      "key": "平台使命",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "平台使命"
+    },
+    {
+      "id": "mig001_dfd9c2d4c4a4",
+      "key": "平台承诺将旗舰版收入的",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "平台承诺将旗舰版收入的"
+    },
+    {
+      "id": "mig001_87f3609052d0",
+      "key": "平台特色",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "平台特色"
+    },
+    {
+      "id": "mig001_7e000d604e4d",
+      "key": "并录制你的发音",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "并录制你的发音"
+    },
+    {
+      "id": "mig001_fb22c6cbaa8c",
+      "key": "开始学习",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "开始学习"
+    },
+    {
+      "id": "mig001_494aa47ee60c",
+      "key": "开始录音",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "开始录音"
+    },
+    {
+      "id": "mig001_6bc54d1f1eb7",
+      "key": "张教授",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "张教授"
+    },
+    {
+      "id": "mig001_bc75d38c47e3",
+      "key": "当前",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "当前"
+    },
+    {
+      "id": "mig001_24e63e7605ad",
+      "key": "影响力数据",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "影响力数据"
+    },
+    {
+      "id": "mig001_78b82899ba76",
+      "key": "很高兴认识你",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "很高兴认识你"
+    },
+    {
+      "id": "mig001_5d2389ce3652",
+      "key": "志愿者",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "志愿者"
+    },
+    {
+      "id": "mig001_b3f71634d4d7",
+      "key": "志愿者等多角色协同",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "志愿者等多角色协同"
+    },
+    {
+      "id": "mig001_0dcfbce931b7",
+      "key": "忘记密码",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "忘记密码"
+    },
+    {
+      "id": "mig001_eaf00eeff6ad",
+      "key": "快速链接",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "快速链接"
+    },
+    {
+      "id": "mig001_ec9a34c75804",
+      "key": "思辨阅读",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "思辨阅读"
+    },
+    {
+      "id": "mig001_8b6cbaddcb4a",
+      "key": "您的浏览器不支持",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "您的浏览器不支持"
+    },
+    {
+      "id": "mig001_022a3c479dd3",
+      "key": "意见反馈",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "意见反馈"
+    },
+    {
+      "id": "mig001_55f7106eb97d",
+      "key": "我们优先考虑脱贫县和边境县学校",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "我们优先考虑脱贫县和边境县学校"
+    },
+    {
+      "id": "mig001_3793d518fed4",
+      "key": "我们坚持透明公开的原则",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "我们坚持透明公开的原则"
+    },
+    {
+      "id": "mig001_a12a7b1540d3",
+      "key": "我叫扎西",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "我叫扎西"
+    },
+    {
+      "id": "mig001_fabf7e7c5fbe",
+      "key": "我喜欢唱歌",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "我喜欢唱歌"
+    },
+    {
+      "id": "mig001_937a945f4870",
+      "key": "我已阅读并同意",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "我已阅读并同意"
+    },
+    {
+      "id": "mig001_6e4ae3659d5a",
+      "key": "我扎西",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "我扎西"
+    },
+    {
+      "id": "mig001_259fe7c523b4",
+      "key": "我的课程",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "我的课程"
+    },
+    {
+      "id": "mig001_f8158776f041",
+      "key": "手机号码",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "手机号码"
+    },
+    {
+      "id": "mig001_6ba099923f5d",
+      "key": "扎西同学",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "扎西同学"
+    },
+    {
+      "id": "mig001_9a9925cbd753",
+      "key": "扎西是我",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "扎西是我"
+    },
+    {
+      "id": "mig001_a592230fa344",
+      "key": "技术总监",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "技术总监"
+    },
+    {
+      "id": "mig001_eef629201675",
+      "key": "技术支持",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "技术支持"
+    },
+    {
+      "id": "mig001_b7d246924ae0",
+      "key": "投入资金",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "投入资金"
+    },
+    {
+      "id": "mig001_d98cb6ce3601",
+      "key": "报错",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "报错"
+    },
+    {
+      "id": "mig001_25fe2866842f",
+      "key": "指导学生进行整本书阅读",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "指导学生进行整本书阅读"
+    },
+    {
+      "id": "mig001_e72de6fea3c9",
+      "key": "排序方式",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "排序方式"
+    },
+    {
+      "id": "mig001_b0d06488b8f5",
+      "key": "探索丰富的国家通用语言文字学习资源",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "探索丰富的国家通用语言文字学习资源"
+    },
+    {
+      "id": "mig001_08166ac269f7",
+      "key": "探讨藏族文化与国家通用语言的融合",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "探讨藏族文化与国家通用语言的融合"
+    },
+    {
+      "id": "mig001_e40b88b2413a",
+      "key": "接受社会监督",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "接受社会监督"
+    },
+    {
+      "id": "mig001_485a3edf4c67",
+      "key": "推荐课程",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "推荐课程"
+    },
+    {
+      "id": "mig001_1b617aaa4c2e",
+      "key": "提交申请",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "提交申请"
+    },
+    {
+      "id": "mig001_db4d0304dc8c",
+      "key": "提交留言",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "提交留言"
+    },
+    {
+      "id": "mig001_6aa6f656b191",
+      "key": "提交答案",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "提交答案"
+    },
+    {
+      "id": "mig001_2c5410aa21b8",
+      "key": "提供使用培训",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "提供使用培训"
+    },
+    {
+      "id": "mig001_39497057835b",
+      "key": "提供全面的学情分析工具",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "提供全面的学情分析工具"
+    },
+    {
+      "id": "mig001_44bc31a2775c",
+      "key": "提供分级课程资源",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "提供分级课程资源"
+    },
+    {
+      "id": "mig001_61b577b02e65",
+      "key": "提供实时口语练习反馈",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "提供实时口语练习反馈"
+    },
+    {
+      "id": "mig001_a7eff93c2955",
+      "key": "提供普惠版",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "提供普惠版"
+    },
+    {
+      "id": "mig001_6a80439ba6eb",
+      "key": "提升信息化教学能力",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "提升信息化教学能力"
+    },
+    {
+      "id": "mig001_e41c83769bb1",
+      "key": "提升口语表达能力和文化理解",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "提升口语表达能力和文化理解"
+    },
+    {
+      "id": "mig001_e62864517b99",
+      "key": "提升国家通用语言教学能力",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "提升国家通用语言教学能力"
+    },
+    {
+      "id": "mig001_eafc917e6a5d",
+      "key": "提升国家通用语言理解能力",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "提升国家通用语言理解能力"
+    },
+    {
+      "id": "mig001_5c235796aec0",
+      "key": "提升教学效果",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "提升教学效果"
+    },
+    {
+      "id": "mig001_68baa3d387d6",
+      "key": "提升教学质量",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "提升教学质量"
+    },
+    {
+      "id": "mig001_09704ad2a3bc",
+      "key": "提升文化理解与语言应用能力",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "提升文化理解与语言应用能力"
+    },
+    {
+      "id": "mig001_99ce4283c9e5",
+      "key": "提升综合应用能力",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "提升综合应用能力"
+    },
+    {
+      "id": "mig001_e9f258f1ce93",
+      "key": "提升表达水平",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "提升表达水平"
+    },
+    {
+      "id": "mig001_d03930878d06",
+      "key": "提升阅读理解能力和文学素养",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "提升阅读理解能力和文学素养"
+    },
+    {
+      "id": "mig001_9cb410d0084c",
+      "key": "搜索",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "搜索"
+    },
+    {
+      "id": "mig001_2e33597c1216",
+      "key": "支持学生",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "支持学生"
+    },
+    {
+      "id": "mig001_8e951b94a86e",
+      "key": "支持离线下载",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "支持离线下载"
+    },
+    {
+      "id": "mig001_1dff3e7cc290",
+      "key": "支持课程资源完整离线包下载",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "支持课程资源完整离线包下载"
+    },
+    {
+      "id": "mig001_11c293c3d654",
+      "key": "收藏",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "收藏"
+    },
+    {
+      "id": "mig001_4fd37273b23b",
+      "key": "教学工具",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "教学工具"
+    },
+    {
+      "id": "mig001_25cf081300e7",
+      "key": "教学总监",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "教学总监"
+    },
+    {
+      "id": "mig001_35743179b01f",
+      "key": "教学技能",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "教学技能"
+    },
+    {
+      "id": "mig001_9dae82d338af",
+      "key": "教师",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "教师"
+    },
+    {
+      "id": "mig001_4de91026a6bc",
+      "key": "教师培训",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "教师培训"
+    },
+    {
+      "id": "mig001_4c5d7795f547",
+      "key": "教师教学技能提升",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "教师教学技能提升"
+    },
+    {
+      "id": "mig001_2cd28c8e65d4",
+      "key": "教师满意度",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "教师满意度"
+    },
+    {
+      "id": "mig001_41d6358c965e",
+      "key": "教育技术",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "教育技术"
+    },
+    {
+      "id": "mig001_3a6ec9e2ad56",
+      "key": "教育技术应用",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "教育技术应用"
+    },
+    {
+      "id": "mig001_f65d9386f3a4",
+      "key": "数字",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "数字"
+    },
+    {
+      "id": "mig001_49167f358834",
+      "key": "数字与时间表达",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "数字与时间表达"
+    },
+    {
+      "id": "mig001_e561271001b9",
+      "key": "数字表达等实用内容",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "数字表达等实用内容"
+    },
+    {
+      "id": "mig001_f534be98abb7",
+      "key": "整本书阅读",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "整本书阅读"
+    },
+    {
+      "id": "mig001_8b80daa09472",
+      "key": "整本书阅读指导",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "整本书阅读指导"
+    },
+    {
+      "id": "mig001_c5af4f78f51a",
+      "key": "文化元素",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "文化元素"
+    },
+    {
+      "id": "mig001_f27db2445fc0",
+      "key": "文化实践社区",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "文化实践社区"
+    },
+    {
+      "id": "mig001_75b4352d3795",
+      "key": "文化实践社区与成长守护服务",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "文化实践社区与成长守护服务"
+    },
+    {
+      "id": "mig001_dafbecbe6ee3",
+      "key": "文化社区",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "文化社区"
+    },
+    {
+      "id": "mig001_5359d26be7c4",
+      "key": "文化融合教学",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "文化融合教学"
+    },
+    {
+      "id": "mig001_66cb886cad9b",
+      "key": "文学阅读",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "文学阅读"
+    },
+    {
+      "id": "mig001_331e8ba20a97",
+      "key": "新课",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "新课"
+    },
+    {
+      "id": "mig001_c3d5ac6d768d",
+      "key": "旗舰版收入的",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "旗舰版收入的"
+    },
+    {
+      "id": "mig001_e1bc8d4e719f",
+      "key": "日常用语练习",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "日常用语练习"
+    },
+    {
+      "id": "mig001_e03aaa345361",
+      "key": "是最基本的问候语",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "是最基本的问候语"
+    },
+    {
+      "id": "mig001_9996552ca861",
+      "key": "是我",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "是我"
+    },
+    {
+      "id": "mig001_b1d9e648405f",
+      "key": "普惠版资源研发",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "普惠版资源研发"
+    },
+    {
+      "id": "mig001_161a7777ebb1",
+      "key": "智慧教育平台",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "智慧教育平台"
+    },
+    {
+      "id": "mig001_7498514e622e",
+      "key": "智慧教育平台致力于为西藏农牧区学生提供优质的国家通用语言文字教育资源",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "智慧教育平台致力于为西藏农牧区学生提供优质的国家通用语言文字教育资源"
+    },
+    {
+      "id": "mig001_0acc647fcbf5",
+      "key": "朗诵社区",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "朗诵社区"
+    },
+    {
+      "id": "mig001_a6e35bd1ebd1",
+      "key": "未学习",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "未学习"
+    },
+    {
+      "id": "mig001_3e091066bece",
+      "key": "本周学习时长",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "本周学习时长"
+    },
+    {
+      "id": "mig001_d5d3571ac873",
+      "key": "本节课将学习日常生活中的基本用语",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "本节课将学习日常生活中的基本用语"
+    },
+    {
+      "id": "mig001_0ee4775a3147",
+      "key": "李教授",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "李教授"
+    },
+    {
+      "id": "mig001_24ec2d94804a",
+      "key": "来自哪里",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "来自哪里"
+    },
+    {
+      "id": "mig001_a35bf392e808",
+      "key": "构建完整的教育生态系统",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "构建完整的教育生态系统"
+    },
+    {
+      "id": "mig001_baadc2e9de66",
+      "key": "查看更多作品",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "查看更多作品"
+    },
+    {
+      "id": "mig001_f417af300041",
+      "key": "核心团队",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "核心团队"
+    },
+    {
+      "id": "mig001_7bcf60753b79",
+      "key": "格萨尔王传",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "格萨尔王传"
+    },
+    {
+      "id": "mig001_15dd871104c4",
+      "key": "格萨尔王传等",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "格萨尔王传等"
+    },
+    {
+      "id": "mig001_13b5e1927851",
+      "key": "次学习",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "次学习"
+    },
+    {
+      "id": "mig001_01fbf275ffe0",
+      "key": "汉语",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "汉语"
+    },
+    {
+      "id": "mig001_e0af99331487",
+      "key": "注册",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "注册"
+    },
+    {
+      "id": "mig001_a7862a9c9f07",
+      "key": "深度融入藏族文化元素",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "深度融入藏族文化元素"
+    },
+    {
+      "id": "mig001_4496d0df22df",
+      "key": "添加下载",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "添加下载"
+    },
+    {
+      "id": "mig001_1b877be5a940",
+      "key": "添加时间点",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "添加时间点"
+    },
+    {
+      "id": "mig001_fe4381483fa4",
+      "key": "添加笔记",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "添加笔记"
+    },
+    {
+      "id": "mig001_27ca388adae5",
+      "key": "清空",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "清空"
+    },
+    {
+      "id": "mig001_3ed15b443552",
+      "key": "满足不同地区和学校的需求",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "满足不同地区和学校的需求"
+    },
+    {
+      "id": "mig001_513f05dbac39",
+      "key": "热门",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "热门"
+    },
+    {
+      "id": "mig001_e07f46992dd5",
+      "key": "版权所有",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "版权所有"
+    },
+    {
+      "id": "mig001_5a050cef438b",
+      "key": "王教授",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "王教授"
+    },
+    {
+      "id": "mig001_69d1fb801c7a",
+      "key": "用于反哺普惠版资源研发与偏远学校帮扶",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "用于反哺普惠版资源研发与偏远学校帮扶"
+    },
+    {
+      "id": "mig001_c3a7caeb168f",
+      "key": "用户协议",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "用户协议"
+    },
+    {
+      "id": "mig001_20ca52ecd982",
+      "key": "用户登录",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "用户登录"
+    },
+    {
+      "id": "mig001_32b16a6db1c0",
+      "key": "申请公益支持",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "申请公益支持"
+    },
+    {
+      "id": "mig001_56ad5b06775b",
+      "key": "申请流程",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "申请流程"
+    },
+    {
+      "id": "mig001_de22031fc2f8",
+      "key": "电话",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "电话"
+    },
+    {
+      "id": "mig001_620058a68e8f",
+      "key": "留言内容",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "留言内容"
+    },
+    {
+      "id": "mig001_253b621abf6e",
+      "key": "留言咨询",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "留言咨询"
+    },
+    {
+      "id": "mig001_7b775bea9e81",
+      "key": "登录",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "登录"
+    },
+    {
+      "id": "mig001_6d1237c281b1",
+      "key": "目标",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "目标"
+    },
+    {
+      "id": "mig001_baa1aa2f3556",
+      "key": "直接注入公益基金",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "直接注入公益基金"
+    },
+    {
+      "id": "mig001_257931e4bc7c",
+      "key": "确保公益不缺位同时实现自我造血",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "确保公益不缺位同时实现自我造血"
+    },
+    {
+      "id": "mig001_590ea0aab353",
+      "key": "确保资源分配到最需要的地方",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "确保资源分配到最需要的地方"
+    },
+    {
+      "id": "mig001_f0adf526bb4e",
+      "key": "确保随时随地可学习",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "确保随时随地可学习"
+    },
+    {
+      "id": "mig001_e7ec750071fe",
+      "key": "确认学校资格",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "确认学校资格"
+    },
+    {
+      "id": "mig001_699134adbf19",
+      "key": "视频播放",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "视频播放"
+    },
+    {
+      "id": "mig001_cafa992a5eac",
+      "key": "离线下载",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "离线下载"
+    },
+    {
+      "id": "mig001_5dd2622d47a7",
+      "key": "离线下载管理",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "离线下载管理"
+    },
+    {
+      "id": "mig001_8b02f998e8de",
+      "key": "离线优先设计",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "离线优先设计"
+    },
+    {
+      "id": "mig001_778f41570701",
+      "key": "离线学习",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "离线学习"
+    },
+    {
+      "id": "mig001_928756884052",
+      "key": "离线学习包",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "离线学习包"
+    },
+    {
+      "id": "mig001_23e6c3225e00",
+      "key": "科大讯飞",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "科大讯飞"
+    },
+    {
+      "id": "mig001_4dc56383ffd7",
+      "key": "立即参与",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "立即参与"
+    },
+    {
+      "id": "mig001_9387229826eb",
+      "key": "立即注册",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "立即注册"
+    },
+    {
+      "id": "mig001_9d6c97f6b349",
+      "key": "立即登录",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "立即登录"
+    },
+    {
+      "id": "mig001_7d1ac22b04ec",
+      "key": "第一课",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "第一课"
+    },
+    {
+      "id": "mig001_593004e81a2e",
+      "key": "第二声要上扬",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "第二声要上扬"
+    },
+    {
+      "id": "mig001_330560352f33",
+      "key": "精准施策",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "精准施策"
+    },
+    {
+      "id": "mig001_15fe2753df44",
+      "key": "红色故事演讲",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "红色故事演讲"
+    },
+    {
+      "id": "mig001_a493313b94be",
+      "key": "红色故事研习",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "红色故事研习"
+    },
+    {
+      "id": "mig001_55918a6d234d",
+      "key": "红色故事研习社区",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "红色故事研习社区"
+    },
+    {
+      "id": "mig001_02ab0d90f1a9",
+      "key": "结合藏族文化元素",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "结合藏族文化元素"
+    },
+    {
+      "id": "mig001_fa2adc1827cf",
+      "key": "老师",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "老师"
+    },
+    {
+      "id": "mig001_9784e96ccd4a",
+      "key": "联系我们",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "联系我们"
+    },
+    {
+      "id": "mig001_8e0e369193b4",
+      "key": "联系方式",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "联系方式"
+    },
+    {
+      "id": "mig001_dce08a425bb5",
+      "key": "腾讯公益",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "腾讯公益"
+    },
+    {
+      "id": "mig001_8d4c61fd1ef3",
+      "key": "自我介绍",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "自我介绍"
+    },
+    {
+      "id": "mig001_f71504cd3742",
+      "key": "自我介绍的基本结构",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "自我介绍的基本结构"
+    },
+    {
+      "id": "mig001_97c16d68f54e",
+      "key": "自我介绍练习",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "自我介绍练习"
+    },
+    {
+      "id": "mig001_87f5c37ea25f",
+      "key": "获取免费的普惠版资源和设备捐赠",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "获取免费的普惠版资源和设备捐赠"
+    },
+    {
+      "id": "mig001_d1fbf8108821",
+      "key": "获取验证码",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "获取验证码"
+    },
+    {
+      "id": "mig001_fee6b8ada5f1",
+      "key": "获得",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "获得"
+    },
+    {
+      "id": "mig001_0b69db32d2b1",
+      "key": "获得徽章",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "获得徽章"
+    },
+    {
+      "id": "mig001_99b40ed55bf4",
+      "key": "藏历新年",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "藏历新年"
+    },
+    {
+      "id": "mig001_1f5591e4b95a",
+      "key": "藏族文化",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "藏族文化"
+    },
+    {
+      "id": "mig001_7554b36af037",
+      "key": "藏族文化与国家通用语言",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "藏族文化与国家通用语言"
+    },
+    {
+      "id": "mig001_cfae58b40a7c",
+      "key": "藏汉文化交流专区",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "藏汉文化交流专区"
+    },
+    {
+      "id": "mig001_8cb2990e9e12",
+      "key": "西藏大学",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "西藏大学"
+    },
+    {
+      "id": "mig001_e1d1fc6c54bd",
+      "key": "西藏自治区教育厅",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "西藏自治区教育厅"
+    },
+    {
+      "id": "mig001_50edefd7ac43",
+      "key": "角色选择",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "角色选择"
+    },
+    {
+      "id": "mig001_a7a44f37cafd",
+      "key": "解决西藏农牧区网络条件限制问题",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "解决西藏农牧区网络条件限制问题"
+    },
+    {
+      "id": "mig001_16c99b9443dd",
+      "key": "让学习过程充满文化魅力",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "让学习过程充满文化魅力"
+    },
+    {
+      "id": "mig001_b3ff103d99fb",
+      "key": "让学习过程更加生动有趣",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "让学习过程更加生动有趣"
+    },
+    {
+      "id": "mig001_74b43a9bc983",
+      "key": "训练学生的写作能力",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "训练学生的写作能力"
+    },
+    {
+      "id": "mig001_9116c817f8a5",
+      "key": "记住我",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "记住我"
+    },
+    {
+      "id": "mig001_1499edca2064",
+      "key": "设置",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "设置"
+    },
+    {
+      "id": "mig001_ce12674c073f",
+      "key": "设置密码",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "设置密码"
+    },
+    {
+      "id": "mig001_c73bbb80920b",
+      "key": "评分最高",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "评分最高"
+    },
+    {
+      "id": "mig001_d78b6e4de84f",
+      "key": "诗歌朗诵",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "诗歌朗诵"
+    },
+    {
+      "id": "mig001_c5aef470e3fe",
+      "key": "语言积累",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "语言积累"
+    },
+    {
+      "id": "mig001_2118c87b4092",
+      "key": "语赞心声",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "语赞心声"
+    },
+    {
+      "id": "mig001_a785f6ad36a8",
+      "key": "语赞心声智慧教育平台",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "语赞心声智慧教育平台"
+    },
+    {
+      "id": "mig001_63447b0f95e2",
+      "key": "语音评测",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "语音评测"
+    },
+    {
+      "id": "mig001_a6986b3b1bf0",
+      "key": "语音评测技术",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "语音评测技术"
+    },
+    {
+      "id": "mig001_3f28caeb8b34",
+      "key": "请根据拼音填写正确的汉字",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "请根据拼音填写正确的汉字"
+    },
+    {
+      "id": "mig001_9c703e659bf9",
+      "key": "请跟读下面的句子",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "请跟读下面的句子"
+    },
+    {
+      "id": "mig001_0661d53d5fa2",
+      "key": "课堂小结与作业",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "课堂小结与作业"
+    },
+    {
+      "id": "mig001_88716ccd3f8c",
+      "key": "课堂情景剧",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "课堂情景剧"
+    },
+    {
+      "id": "mig001_2b16e0c3f795",
+      "key": "课时",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "课时"
+    },
+    {
+      "id": "mig001_0e924d3f7782",
+      "key": "课程中心",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "课程中心"
+    },
+    {
+      "id": "mig001_f6f5dcb0b9f8",
+      "key": "课程介绍与基本问候语",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "课程介绍与基本问候语"
+    },
+    {
+      "id": "mig001_2cddb2c512e3",
+      "key": "课程内容包括基本问候语",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "课程内容包括基本问候语"
+    },
+    {
+      "id": "mig001_8117603237ca",
+      "key": "课程分类",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "课程分类"
+    },
+    {
+      "id": "mig001_fed2e881f94d",
+      "key": "课程完成度",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "课程完成度"
+    },
+    {
+      "id": "mig001_767164eda695",
+      "key": "课程目录",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "课程目录"
+    },
+    {
+      "id": "mig001_8577acdaef90",
+      "key": "课程笔记",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "课程笔记"
+    },
+    {
+      "id": "mig001_34b69dd99751",
+      "key": "课程简介",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "课程简介"
+    },
+    {
+      "id": "mig001_5dfad42b6a53",
+      "key": "课程难度",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "课程难度"
+    },
+    {
+      "id": "mig001_2fb5ac8a6c68",
+      "key": "资格审核",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "资格审核"
+    },
+    {
+      "id": "mig001_d855b97d5572",
+      "key": "资源发放",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "资源发放"
+    },
+    {
+      "id": "mig001_41c70b0b3b56",
+      "key": "资金使用情况",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "资金使用情况"
+    },
+    {
+      "id": "mig001_265f81b153d3",
+      "key": "跨学科学习",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "跨学科学习"
+    },
+    {
+      "id": "mig001_cefad7380543",
+      "key": "边境县证明",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "边境县证明"
+    },
+    {
+      "id": "mig001_ee9ba2e6b291",
+      "key": "运营团队审核申请材料",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "运营团队审核申请材料"
+    },
+    {
+      "id": "mig001_4e7ef05d3e1a",
+      "key": "运营总监",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "运营总监"
+    },
+    {
+      "id": "mig001_4aab842fa8ad",
+      "key": "运营成本",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "运营成本"
+    },
+    {
+      "id": "mig001_570cc97c9c6b",
+      "key": "还没有账号",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "还没有账号"
+    },
+    {
+      "id": "mig001_beead665918e",
+      "key": "进阶",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "进阶"
+    },
+    {
+      "id": "mig001_2fe299fe5ed8",
+      "key": "连续学习天数",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "连续学习天数"
+    },
+    {
+      "id": "mig001_b11eae7b9ab5",
+      "key": "退出登录",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "退出登录"
+    },
+    {
+      "id": "mig001_dc681fed8687",
+      "key": "选择题",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "选择题"
+    },
+    {
+      "id": "mig001_f3772a549d9d",
+      "key": "通知学校并安排资源发放",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "通知学校并安排资源发放"
+    },
+    {
+      "id": "mig001_5baa1a1d79b5",
+      "key": "通过情景对话和互动练习",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "通过情景对话和互动练习"
+    },
+    {
+      "id": "mig001_c6ecc79344c9",
+      "key": "通过技术创新和文化融合",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "通过技术创新和文化融合"
+    },
+    {
+      "id": "mig001_97675c574bc9",
+      "key": "通过格萨尔王传故事讲解",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "通过格萨尔王传故事讲解"
+    },
+    {
+      "id": "mig001_eb31b47ebe46",
+      "key": "通过红色故事学习",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "通过红色故事学习"
+    },
+    {
+      "id": "mig001_ec976bbb16f0",
+      "key": "邮箱",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "邮箱"
+    },
+    {
+      "id": "mig001_388d7d692e90",
+      "key": "酥油茶",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "酥油茶"
+    },
+    {
+      "id": "mig001_638b4fe2afd5",
+      "key": "酥油茶文化",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "酥油茶文化"
+    },
+    {
+      "id": "mig001_ae16288a767f",
+      "key": "采用离线优先的设计原则",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "采用离线优先的设计原则"
+    },
+    {
+      "id": "mig001_3d0498e29818",
+      "key": "针对西藏农牧区教师的教学技能培训",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "针对西藏农牧区教师的教学技能培训"
+    },
+    {
+      "id": "mig001_0626fa97d2d9",
+      "key": "铸牢中华民族共同体意识",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "铸牢中华民族共同体意识"
+    },
+    {
+      "id": "mig001_ec375b7c100c",
+      "key": "锅庄舞",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "锅庄舞"
+    },
+    {
+      "id": "mig001_5993c2b1a125",
+      "key": "锅庄舞表演",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "锅庄舞表演"
+    },
+    {
+      "id": "mig001_aaea3c7e325d",
+      "key": "隐私政策",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "隐私政策"
+    },
+    {
+      "id": "mig001_5a611e4f6826",
+      "key": "集成先进的",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "集成先进的"
+    },
+    {
+      "id": "mig001_9a437398ac97",
+      "key": "青稞文化",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "青稞文化"
+    },
+    {
+      "id": "mig001_3b416c4eb64f",
+      "key": "面向西藏农牧区的国家通用语言文字学习平台",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "面向西藏农牧区的国家通用语言文字学习平台"
+    },
+    {
+      "id": "mig001_a3f7f0bb6372",
+      "key": "首席专家",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "首席专家"
+    },
+    {
+      "id": "mig001_7ebfe971be7c",
+      "key": "首页",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "首页"
+    },
+    {
+      "id": "mig001_022702a81352",
+      "key": "验证码",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "验证码"
+    },
+    {
+      "id": "mig001_725d9c9ce6ad",
+      "key": "高中",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "高中"
+    },
+    {
+      "id": "mig001_5446c797ec73",
+      "key": "高中课程",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "高中课程"
+    },
+    {
+      "id": "mig001_a1231bb737f2",
+      "key": "高级",
+      "locale": "zh",
+      "sourcePath": "db/lang/zh.json",
+      "value": "高级"
+    }
+  ]
+}
