@@ -7,6 +7,7 @@ import type {
 } from "../../classes/domain/class.types.js";
 import type {
   ClassRepositoryPort,
+  FindVisibleClassOptions,
   ListClassesOptions,
   PaginatedResult,
 } from "../../classes/ports/class-repository.port.js";
@@ -15,6 +16,20 @@ import { AssignmentUnavailableException } from "../domain/assignment.errors.js";
 @Injectable()
 export class UnavailableClassRepository implements ClassRepositoryPort {
   findById(_schoolId: string, _classId: string): Promise<Class | null> {
+    throw new AssignmentUnavailableException();
+  }
+
+  findVisibleClassById(
+    _options: FindVisibleClassOptions,
+  ): Promise<Class | null> {
+    throw new AssignmentUnavailableException();
+  }
+
+  hasActiveStudentEnrollment(
+    _schoolId: string,
+    _classId: string,
+    _userId: string,
+  ): Promise<boolean> {
     throw new AssignmentUnavailableException();
   }
 

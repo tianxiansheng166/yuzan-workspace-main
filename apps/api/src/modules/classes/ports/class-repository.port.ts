@@ -35,6 +35,11 @@ export interface FindVisibleClassOptions {
 export interface ClassRepositoryPort {
   findById(schoolId: string, classId: string): Promise<Class | null>;
   findVisibleClassById(options: FindVisibleClassOptions): Promise<Class | null>;
+  hasActiveStudentEnrollment(
+    schoolId: string,
+    classId: string,
+    userId: string,
+  ): Promise<boolean>;
   list(
     schoolId: string,
     options: ListClassesOptions,

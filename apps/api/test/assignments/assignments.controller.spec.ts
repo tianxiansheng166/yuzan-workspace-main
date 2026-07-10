@@ -15,14 +15,21 @@ import { StubAuthContextSource } from "../../src/modules/auth/stub-auth-context.
 import { AssignmentsController } from "../../src/modules/assignments/assignments.controller.js";
 import { AssignmentsModule } from "../../src/modules/assignments/assignments.module.js";
 import { ASSIGNMENT_REPOSITORY } from "../../src/modules/assignments/ports/assignment-repository.port.js";
+import { CLOCK } from "../../src/modules/assignments/ports/clock.port.js";
 import { CLASS_REPOSITORY } from "../../src/modules/classes/ports/class-repository.port.js";
 import { COURSE_VERSION_REPOSITORY } from "../../src/modules/curriculum/ports/course-version-repository.port.js";
 import { FakeAssignmentRepository } from "./fakes/fake-assignment.repository.js";
 import { FakeClassRepository } from "../organizations/fakes/fake-class.repository.js";
 import { FakeCourseVersionRepository } from "../curriculum/fakes/fake-course-version.repository.js";
-import { classEntity } from "../organizations/fixtures/classes.js";
+import { FixedClock } from "./fakes/fake-clock.js";
+import {
+  classEntity,
+  studentEnrollment,
+} from "../organizations/fixtures/classes.js";
 import { courseVersion } from "../curriculum/fixtures/course-versions.js";
 import { assignment } from "./fixtures/assignments.js";
+
+const NOW = new Date("2026-07-10T12:00:00Z");
 
 describe("AssignmentsController", () => {
   let controller: AssignmentsController;
@@ -45,6 +52,8 @@ describe("AssignmentsController", () => {
       .useValue(classRepo)
       .overrideProvider(COURSE_VERSION_REPOSITORY)
       .useValue(courseRepo)
+      .overrideProvider(CLOCK)
+      .useValue(new FixedClock(NOW))
       .overrideProvider(AUTH_CONTEXT_SOURCE)
       .useValue(new StubAuthContextSource())
       .compile();
@@ -100,7 +109,20 @@ describe("AssignmentsController", () => {
   });
 
   describe("getAssignment", () => {
-    it("returns published assignment for student", async () => {
+    it("returns published assignment for enrolled student", async () => {
+      classRepo.add(
+        classEntity({
+          id: "class-a",
+          schoolId: "school-a",
+          name: "一班",
+          grade: "G3",
+          teacherUserIds: ["teacher-1"],
+        }),
+      );
+      classRepo.enroll(
+        "class-a",
+        studentEnrollment("class-a", "school-a", "student-1"),
+      );
       assignmentRepo.add(
         assignment({
           id: "asn-1",
@@ -110,7 +132,7 @@ describe("AssignmentsController", () => {
           title: "练习",
           createdByUserId: "teacher-1",
           status: "PUBLISHED",
-          publishedAt: new Date(),
+          publishedAt: new Date("2026-07-10T10:00:00Z"),
         }),
       );
 

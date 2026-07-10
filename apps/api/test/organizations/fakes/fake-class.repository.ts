@@ -58,6 +58,24 @@ export class FakeClassRepository implements ClassRepositoryPort {
     return null;
   }
 
+  async hasActiveStudentEnrollment(
+    schoolId: string,
+    classId: string,
+    userId: string,
+  ): Promise<boolean> {
+    const classItem = this.classes.get(classId);
+    if (!classItem || classItem.schoolId !== schoolId) {
+      return false;
+    }
+
+    const enrolls = this.enrollments.get(classId) ?? [];
+    return enrolls.some(
+      (e) =>
+        e.userId === userId &&
+        e.roleInClass === MembershipRole.STUDENT,
+    );
+  }
+
   async list(
     schoolId: string,
     options: ListClassesOptions,

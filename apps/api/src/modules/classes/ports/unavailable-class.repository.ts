@@ -25,6 +25,14 @@ export class UnavailableClassRepository implements ClassRepositoryPort {
     throw new ClassUnavailableException();
   }
 
+  async hasActiveStudentEnrollment(
+    _schoolId: string,
+    _classId: string,
+    _userId: string,
+  ): Promise<boolean> {
+    throw new ClassUnavailableException();
+  }
+
   async list(
     _schoolId: string,
     _options: ListClassesOptions,

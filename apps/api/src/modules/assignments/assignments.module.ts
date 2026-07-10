@@ -7,6 +7,7 @@ import { ASSIGNMENT_REPOSITORY } from "./ports/assignment-repository.port.js";
 import { UnavailableAssignmentRepository } from "./ports/unavailable-assignment.repository.js";
 import { UnavailableClassRepository } from "./ports/unavailable-class.repository.js";
 import { UnavailableCourseVersionRepository } from "./ports/unavailable-course-version.repository.js";
+import { CLOCK, SystemClock } from "./ports/clock.port.js";
 
 @Module({
   controllers: [AssignmentsController],
@@ -23,6 +24,10 @@ import { UnavailableCourseVersionRepository } from "./ports/unavailable-course-v
     {
       provide: COURSE_VERSION_REPOSITORY,
       useClass: UnavailableCourseVersionRepository,
+    },
+    {
+      provide: CLOCK,
+      useClass: SystemClock,
     },
   ],
   exports: [AssignmentsService],
