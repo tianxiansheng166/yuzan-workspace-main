@@ -2,8 +2,8 @@
  * Load and lightly validate MIG-001 outputs.
  */
 
-const { readFile } = require("node:fs/promises");
 const { resolve } = require("node:path");
+const { safeReadJsonFile } = require("./path-guard.js");
 
 /**
  * @typedef {object} Mig001Inputs
@@ -20,29 +20,24 @@ const { resolve } = require("node:path");
 async function loadMig001Inputs(baseDir) {
   const root = resolve(baseDir);
 
-  const courses = await loadJson(
+  const courses = await safeReadJsonFile(
     resolve(root, "legacy/exports/mig-001-courses.json"),
+    root,
   );
-  const translations = await loadJson(
+  const translations = await safeReadJsonFile(
     resolve(root, "legacy/exports/mig-001-translations.json"),
+    root,
   );
-  const media = await loadJson(
+  const media = await safeReadJsonFile(
     resolve(root, "legacy/exports/mig-001-media.json"),
+    root,
   );
-  const classification = await loadJson(
+  const classification = await safeReadJsonFile(
     resolve(root, "legacy/review/mig-001-classification.json"),
+    root,
   );
 
   return { courses, translations, media, classification };
 }
 
-/**
- * @param {string} filePath
- * @returns {Promise<object>}
- */
-async function loadJson(filePath) {
-  const text = await readFile(filePath, "utf8");
-  return JSON.parse(text);
-}
-
-module.exports = { loadMig001Inputs, loadJson };
+module.exports = { loadMig001Inputs };

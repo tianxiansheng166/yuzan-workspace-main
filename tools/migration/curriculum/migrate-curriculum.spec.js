@@ -10,13 +10,20 @@ const {
   rm,
   readFile,
   readdir,
+  rename,
+  lstat,
 } = require("node:fs/promises");
 const { tmpdir } = require("node:os");
 const { join, resolve } = require("node:path");
 const { createHash } = require("node:crypto");
 
 const { stableId, stableNodeId } = require("./stable-id.js");
-const { guardPath, guardWriteTarget } = require("./path-guard.js");
+const {
+  guardPath,
+  guardWriteTarget,
+  safeReadTextFile,
+  safeReadJsonFile,
+} = require("./path-guard.js");
 const { scanForPii } = require("./pii-scanner.js");
 const {
   createBilingualContent,
@@ -128,6 +135,188 @@ describe("path-guard", () => {
     );
   });
 });
+
+describe("safe input reading", () => {
+  let fixtureRoot;
+  let outsideRoot;
+  const EXTERNAL_SENTINEL = "MIG002_EXTERNAL_SYMLINK_SENTINEL_7C9A";
+  const EXTERNAL_PII = "13800138000";
+
+  before(async () => {
+    fixtureRoot = await mkdtemp(join(tmpdir(), "mig002-safe-input-"));
+    outsideRoot = await mkdtemp(join(tmpdir(), "mig002-safe-input-out-"));
+    await mkdir(join(fixtureRoot, "exports"), { recursive: true });
+    await mkdir(join(fixtureRoot, "review"), { recursive: true });
+    await mkdir(join(fixtureRoot, "nested", "deep"), { recursive: true });
+  });
+
+  after(async () => {
+    await rm(fixtureRoot, { recursive: true, force: true });
+    await rm(outsideRoot, { recursive: true, force: true });
+  });
+
+  it("reads a regular file", async () => {
+    const file = join(fixtureRoot, "exports", "regular.json");
+    await writeFile(file, '{"ok":true}');
+    const text = await safeReadTextFile(file, fixtureRoot);
+    assert.strictEqual(text, '{"ok":true}');
+  });
+
+  it("reads a regular JSON file", async () => {
+    const file = join(fixtureRoot, "exports", "regular2.json");
+    await writeFile(file, '{"ok":true}');
+    const data = await safeReadJsonFile(file, fixtureRoot);
+    assert.deepStrictEqual(data, { ok: true });
+  });
+
+  it("rejects internal file symlink", async () => {
+    const target = join(fixtureRoot, "exports", "real.json");
+    const link = join(fixtureRoot, "exports", "link.json");
+    await writeFile(target, '{"x":1}');
+    await symlink(target, link);
+    await assert.rejects(
+      safeReadTextFile(link, fixtureRoot),
+      /SOURCE_PATH_ANCESTOR_SYMLINK_REJECTED/,
+    );
+  });
+
+  it("rejects external file symlink", async () => {
+    const target = join(outsideRoot, "external.json");
+    const link = join(fixtureRoot, "exports", "external-link.json");
+    await writeFile(
+      target,
+      JSON.stringify({ sentinel: EXTERNAL_SENTINEL, pii: EXTERNAL_PII }),
+    );
+    await symlink(target, link);
+    await assert.rejects(
+      safeReadTextFile(link, fixtureRoot),
+      /SOURCE_PATH_ANCESTOR_SYMLINK_REJECTED/,
+    );
+  });
+
+  it("rejects dangling file symlink", async () => {
+    const link = join(fixtureRoot, "exports", "dangling.json");
+    await symlink(join(outsideRoot, "missing.json"), link);
+    await assert.rejects(
+      safeReadTextFile(link, fixtureRoot),
+      /SOURCE_PATH_ANCESTOR_SYMLINK_REJECTED/,
+    );
+  });
+
+  it("rejects source directory symlink", async () => {
+    const realDir = join(fixtureRoot, "exports");
+    const linkDir = join(fixtureRoot, "link-exports");
+    await symlink(realDir, linkDir);
+    await assert.rejects(
+      safeReadTextFile(join(linkDir, "x.json"), fixtureRoot),
+      /SOURCE_PATH_ANCESTOR_SYMLINK_REJECTED/,
+    );
+  });
+
+  it("rejects ancestor directory symlink", async () => {
+    const realDir = join(fixtureRoot, "nested");
+    const linkDir = join(fixtureRoot, "link-nested");
+    await symlink(realDir, linkDir);
+    const file = join(linkDir, "deep", "x.json");
+    await writeFile(join(realDir, "deep", "x.json"), '{"x":1}');
+    await assert.rejects(
+      safeReadTextFile(file, fixtureRoot),
+      /SOURCE_PATH_ANCESTOR_SYMLINK_REJECTED/,
+    );
+  });
+
+  it("rejects symlink to valid JSON", async () => {
+    const target = join(fixtureRoot, "exports", "valid.json");
+    const link = join(fixtureRoot, "exports", "valid-link.json");
+    await writeFile(target, '{"x":1}');
+    await symlink(target, link);
+    await assert.rejects(
+      safeReadJsonFile(link, fixtureRoot),
+      /SOURCE_PATH_ANCESTOR_SYMLINK_REJECTED/,
+    );
+  });
+
+  it("rejects symlink to valid CSV", async () => {
+    const target = join(fixtureRoot, "exports", "valid.csv");
+    const link = join(fixtureRoot, "exports", "valid-link.csv");
+    await writeFile(target, "a,b\n1,2\n");
+    await symlink(target, link);
+    await assert.rejects(
+      safeReadTextFile(link, fixtureRoot),
+      /SOURCE_PATH_ANCESTOR_SYMLINK_REJECTED/,
+    );
+  });
+
+  it("error message does not expose external absolute target path", async () => {
+    const target = join(outsideRoot, "secret.json");
+    const link = join(fixtureRoot, "exports", "secret-link.json");
+    await writeFile(target, '{"x":1}');
+    await symlink(target, link);
+    let caught;
+    try {
+      await safeReadTextFile(link, fixtureRoot);
+    } catch (err) {
+      caught = String(err);
+    }
+    assert.ok(caught);
+    assert.doesNotMatch(caught, new RegExp(escapeRegExp(outsideRoot)));
+    assert.doesNotMatch(caught, /\/tmp\/mig002-safe-input-out-/);
+  });
+
+  it("error message does not expose external sentinel", async () => {
+    const target = join(outsideRoot, "sentinel.json");
+    const link = join(fixtureRoot, "exports", "sentinel-link.json");
+    await writeFile(target, JSON.stringify({ sentinel: EXTERNAL_SENTINEL }));
+    await symlink(target, link);
+    let caught;
+    try {
+      await safeReadTextFile(link, fixtureRoot);
+    } catch (err) {
+      caught = String(err);
+    }
+    assert.ok(caught);
+    assert.doesNotMatch(caught, new RegExp(EXTERNAL_SENTINEL));
+  });
+
+  it("rejects file path outside root", async () => {
+    const file = join(outsideRoot, "outside.json");
+    await writeFile(file, '{"x":1}');
+    await assert.rejects(safeReadTextFile(file, fixtureRoot), /PATH_ESCAPE/);
+  });
+
+  it("rejects path changed during read", async () => {
+    const file = join(fixtureRoot, "exports", "race.json");
+    await writeFile(file, '{"x":1}');
+    const fsPromises = require("node:fs/promises");
+    const originalOpen = fsPromises.open;
+    let callCount = 0;
+    const stubbedOpen = async (path, flags, ...rest) => {
+      const handle = await originalOpen(path, flags, ...rest);
+      if (String(path).endsWith("race.json") && callCount === 0) {
+        callCount += 1;
+        // Replace the path with a new inode while the original descriptor is
+        // still open. The read itself is safe (old descriptor), but the
+        // after-read lstat must detect the swap and reject.
+        await fsPromises.unlink(file);
+        await fsPromises.writeFile(file, '{"x":2}');
+      }
+      return handle;
+    };
+    fsPromises.open = stubbedOpen;
+    try {
+      await assert.rejects(
+        safeReadTextFile(file, fixtureRoot),
+        /SOURCE_PATH_CHANGED_DURING_READ/,
+      );
+    } finally {
+      fsPromises.open = originalOpen;
+    }
+  });
+});
+
+function escapeRegExp(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
 
 describe("pii-scanner", () => {
   it("detects email", () => {
@@ -812,6 +1001,172 @@ describe("migrate-curriculum integration", () => {
       "utf8",
     );
     assert.strictEqual(before, after);
+  });
+});
+
+describe("migrate-curriculum symlink integration", () => {
+  let projectRoot;
+  let outsideRoot;
+  const EXTERNAL_SENTINEL = "MIG002_EXTERNAL_SYMLINK_SENTINEL_7C9A";
+
+  before(async () => {
+    projectRoot = await mkdtemp(join(tmpdir(), "mig002-symlink-int-"));
+    outsideRoot = await mkdtemp(join(tmpdir(), "mig002-symlink-int-out-"));
+    await mkdir(join(projectRoot, "legacy", "exports"), { recursive: true });
+    await mkdir(join(projectRoot, "legacy", "review"), { recursive: true });
+    await mkdir(join(projectRoot, "legacy", "reports"), { recursive: true });
+
+    const courses = {
+      metadata: { sourceTreeFingerprint: "abc123" },
+      curriculumRecords: [
+        {
+          id: "mig001_c1",
+          courseId: "primary-1-language-001",
+          title: "基础语言启蒙",
+          grade: 1,
+          primaryDisposition: "REUSE",
+          curriculumStructureHints: {
+            outlineHeadings: ["单元一：你好，新学校！（18课时）"],
+          },
+        },
+      ],
+    };
+
+    await writeFile(
+      join(outsideRoot, "mig-001-courses.json"),
+      JSON.stringify({
+        metadata: {},
+        curriculumRecords: [
+          {
+            id: "mig001_evil",
+            courseId: "evil-course",
+            title: EXTERNAL_SENTINEL,
+            grade: 1,
+            primaryDisposition: "REUSE",
+          },
+        ],
+      }),
+    );
+
+    await writeFile(
+      join(projectRoot, "legacy", "exports", "mig-001-courses.json"),
+      JSON.stringify(courses),
+    );
+    await writeFile(
+      join(projectRoot, "legacy", "exports", "mig-001-translations.json"),
+      JSON.stringify({ courseTranslationCoverage: [] }),
+    );
+    await writeFile(
+      join(projectRoot, "legacy", "exports", "mig-001-media.json"),
+      JSON.stringify({ localAssets: [], externalAssets: [] }),
+    );
+    await writeFile(
+      join(projectRoot, "legacy", "review", "mig-001-classification.json"),
+      JSON.stringify({ items: [] }),
+    );
+  });
+
+  after(async () => {
+    await rm(projectRoot, { recursive: true, force: true });
+    await rm(outsideRoot, { recursive: true, force: true });
+  });
+
+  it("dry-run rejects symlinked input and writes no output", async () => {
+    const link = join(projectRoot, "legacy", "exports", "mig-001-courses.json");
+    const backup = join(
+      projectRoot,
+      "legacy",
+      "exports",
+      "mig-001-courses-real.json",
+    );
+    await rename(link, backup);
+    await symlink(join(outsideRoot, "mig-001-courses.json"), link);
+
+    try {
+      await assert.rejects(
+        runMigration(projectRoot, { dryRun: true }),
+        /SOURCE_PATH_ANCESTOR_SYMLINK_REJECTED/,
+      );
+      const files = await readdir(join(projectRoot, "legacy", "exports"));
+      assert.ok(!files.some((f) => f.startsWith("mig-002")));
+    } finally {
+      await rm(link, { force: true });
+      await rename(backup, link);
+    }
+  });
+
+  it("formal run rejects symlinked input and leaves no half files", async () => {
+    const link = join(projectRoot, "legacy", "exports", "mig-001-courses.json");
+    const backup = join(
+      projectRoot,
+      "legacy",
+      "exports",
+      "mig-001-courses-real.json",
+    );
+    await rename(link, backup);
+    await symlink(join(outsideRoot, "mig-001-courses.json"), link);
+
+    try {
+      await assert.rejects(
+        runMigration(projectRoot, { dryRun: false }),
+        /SOURCE_PATH_ANCESTOR_SYMLINK_REJECTED/,
+      );
+      const allOutputs = [];
+      for (const dir of ["exports", "review", "reports"]) {
+        const files = await readdir(join(projectRoot, "legacy", dir));
+        allOutputs.push(...files.filter((f) => f.startsWith("mig-002")));
+      }
+      assert.strictEqual(allOutputs.length, 0);
+    } finally {
+      await rm(link, { force: true });
+      await rename(backup, link);
+    }
+  });
+
+  it("external sentinel never appears in any output", async () => {
+    const link = join(projectRoot, "legacy", "exports", "mig-001-courses.json");
+    const backup = join(
+      projectRoot,
+      "legacy",
+      "exports",
+      "mig-001-courses-real.json",
+    );
+    await rename(link, backup);
+    await symlink(join(outsideRoot, "mig-001-courses.json"), link);
+
+    try {
+      try {
+        await runMigration(projectRoot, { dryRun: false });
+      } catch {
+        // expected
+      }
+      for (const dir of ["exports", "review", "reports"]) {
+        const files = (await readdir(join(projectRoot, "legacy", dir))).filter(
+          (f) => f.startsWith("mig-002"),
+        );
+        for (const file of files) {
+          const stats = await lstat(join(projectRoot, "legacy", dir, file));
+          assert.ok(
+            !stats.isSymbolicLink(),
+            `output symlink detected: ${file}`,
+          );
+          const content = await readFile(
+            join(projectRoot, "legacy", dir, file),
+            "utf8",
+          );
+          assert.doesNotMatch(content, new RegExp(EXTERNAL_SENTINEL));
+        }
+      }
+    } finally {
+      await rm(link, { force: true });
+      await rename(backup, link);
+    }
+  });
+
+  it("regular run after symlink rejection produces normal output", async () => {
+    const result = await runMigration(projectRoot, { dryRun: false });
+    assert.strictEqual(result.stats.totalRecordCount, 1);
+    assert.strictEqual(result.dispositionCounts.CONVERTED, 1);
   });
 });
 
