@@ -1,0 +1,161 @@
+{
+  "$schema": "./task-locks.schema.json",
+  "baseline": {
+    "sourceBranch": "task/windows-product-function-convergence-001",
+    "sourceExactCommit": "22e3e1443bf82cf3d5b9b14c3de606126ece5e39",
+    "sourceCommitMessage": "fix(baseline): stabilize Windows backend vertical slice for B31-001 review",
+    "integrationBranch": "integration/windows-backend-v31-base-20260711",
+    "integrationExactCommit": "22e3e1443bf82cf3d5b9b14c3de606126ece5e39",
+    "reviewStatus": "PASSED",
+    "reviewedAt": "2026-07-11"
+  },
+  "tasks": [
+    {
+      "taskId": "b31-105",
+      "traeRole": "Trae-1",
+      "name": "平台、Contracts、共享基础、报表/离线、集成总控",
+      "branch": "task/b31-105-platform-contracts-reporting",
+      "worktree": "D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\b31-105",
+      "owner": "Trae-1",
+      "allowedPaths": [
+        "infra/database/prisma/schema.prisma",
+        "infra/database/prisma/migrations/**",
+        "packages/contracts/openapi/**",
+        "packages/contracts/src/generated*",
+        "apps/api/src/app.module*",
+        "apps/api/src/main*",
+        "apps/api/src/shared/database/**",
+        "apps/api/src/shared/**",
+        "apps/api/src/common/**",
+        "apps/api/src/modules/operations/**",
+        "apps/api/src/modules/offline/**",
+        "apps/api/src/modules/reporting/**",
+        "apps/api/test/**",
+        "docs/09-operations/backend-v31-wave/**",
+        "docs/09-operations/backend-v31-change-requests/**",
+        "package.json",
+        "pnpm-lock.yaml"
+      ],
+      "sharedFileOwner": true,
+      "integrationController": true,
+      "status": "IN_PROGRESS",
+      "dependsOn": ["b31-001"]
+    },
+    {
+      "taskId": "b31-101",
+      "traeRole": "Trae-2",
+      "name": "教学闭环（教师—任务—学生学习—提交—反馈）",
+      "branch": "task/b31-101-teaching-loop",
+      "worktree": "D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\b31-101",
+      "owner": "Trae-2",
+      "allowedPaths": [
+        "apps/api/src/modules/classes/**",
+        "apps/api/src/modules/assignments/**",
+        "apps/api/src/modules/learning/**",
+        "apps/api/src/modules/submissions/**",
+        "apps/api/src/modules/feedback/**",
+        "apps/api/test/modules/classes/**",
+        "apps/api/test/modules/assignments/**",
+        "apps/api/test/modules/learning/**",
+        "apps/api/test/modules/submissions/**",
+        "apps/api/test/modules/feedback/**"
+      ],
+      "sharedFileOwner": false,
+      "integrationController": false,
+      "status": "READY",
+      "dependsOn": ["b31-001"]
+    },
+    {
+      "taskId": "b31-102",
+      "traeRole": "Trae-3",
+      "name": "测评闭环（AI 智能测评、报告、推荐、复测）",
+      "branch": "task/b31-102-assessment-loop",
+      "worktree": "D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\b31-102",
+      "owner": "Trae-3",
+      "allowedPaths": [
+        "apps/api/src/modules/assessment/**",
+        "apps/api/src/modules/recommendations/**",
+        "apps/api/src/modules/speech/**",
+        "apps/api/src/modules/reports/assessment/**",
+        "apps/api/test/modules/assessment/**",
+        "apps/api/test/modules/recommendations/**",
+        "apps/api/test/modules/speech/**",
+        "apps/api/test/modules/reports/assessment/**"
+      ],
+      "sharedFileOwner": false,
+      "integrationController": false,
+      "status": "READY",
+      "dependsOn": ["b31-001"]
+    },
+    {
+      "taskId": "b31-103",
+      "traeRole": "Trae-4",
+      "name": "管理端与产品治理（学校、用户、课程、测评内容、推荐规则、套餐、隐私审计）",
+      "branch": "task/b31-103-admin-products",
+      "worktree": "D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\b31-103",
+      "owner": "Trae-4",
+      "allowedPaths": [
+        "apps/api/src/modules/admin/**",
+        "apps/api/src/modules/curriculum-governance/**",
+        "apps/api/src/modules/product-plans/**",
+        "apps/api/src/modules/privacy/**",
+        "apps/api/src/modules/audit/**",
+        "apps/api/test/modules/admin/**",
+        "apps/api/test/modules/curriculum-governance/**",
+        "apps/api/test/modules/product-plans/**",
+        "apps/api/test/modules/privacy/**",
+        "apps/api/test/modules/audit/**"
+      ],
+      "sharedFileOwner": false,
+      "integrationController": false,
+      "status": "READY",
+      "dependsOn": ["b31-001"]
+    },
+    {
+      "taskId": "b31-104",
+      "traeRole": "Trae-5",
+      "name": "志愿者、工具、社区与合作（培训、服务、帮扶、MindMate、MindGraph、藏汉翻译、社区、合作申请）",
+      "branch": "task/b31-104-volunteer-tools-community",
+      "worktree": "D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\b31-104",
+      "owner": "Trae-5",
+      "allowedPaths": [
+        "apps/api/src/modules/volunteers/**",
+        "apps/api/src/modules/training/**",
+        "apps/api/src/modules/support-pairings/**",
+        "apps/api/src/modules/tools/**",
+        "apps/api/src/modules/translations/**",
+        "apps/api/src/modules/community/**",
+        "apps/api/src/modules/cooperation/**",
+        "apps/api/test/modules/volunteers/**",
+        "apps/api/test/modules/training/**",
+        "apps/api/test/modules/support-pairings/**",
+        "apps/api/test/modules/tools/**",
+        "apps/api/test/modules/translations/**",
+        "apps/api/test/modules/community/**",
+        "apps/api/test/modules/cooperation/**"
+      ],
+      "sharedFileOwner": false,
+      "integrationController": false,
+      "status": "READY",
+      "dependsOn": ["b31-001"]
+    }
+  ],
+  "locks": {
+    "schemaOwner": "Trae-1",
+    "contractsOwner": "Trae-1",
+    "migrationOwner": "Trae-1",
+    "integrationController": "Trae-1",
+    "sharedFiles": [
+      "infra/database/prisma/schema.prisma",
+      "infra/database/prisma/migrations/**",
+      "packages/contracts/openapi/**",
+      "packages/contracts/src/generated*",
+      "apps/api/src/app.module*",
+      "apps/api/src/main*",
+      "apps/api/src/shared/database/**",
+      "apps/api/src/common/**",
+      "package.json",
+      "pnpm-lock.yaml"
+    ]
+  }
+}

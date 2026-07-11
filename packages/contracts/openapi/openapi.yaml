@@ -27,6 +27,12 @@ tags:
     description: 教师反馈、复核与退回
   - name: Sync
     description: 离线同步操作推送与增量拉取
+  - name: Reporting
+    description: 学生成长档案、班级与学校级报表
+  - name: Offline
+    description: 离线内容包管理与同步批次
+  - name: Operations
+    description: 运维健康检查与系统状态
 paths:
   /health/live:
     get:
@@ -600,7 +606,279 @@ paths:
           $ref: "#/components/responses/NotFound"
         "500":
           $ref: "#/components/responses/InternalServerError"
-components:
+  /schools/{schoolId}/reports:
+    get:
+      summary: 列出报表
+      tags: [Reporting]
+      operationId: listReports
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Cursor"
+        - in: query
+          name: type
+          schema:
+            $ref: "#/components/schemas/ReportType"
+        - in: query
+          name: status
+          schema:
+            $ref: "#/components/schemas/ReportStatus"
+      responses:
+        "200":
+          description: Reports list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportListResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    post:
+      summary: 请求生成报表
+      tags: [Reporting]
+      operationId: createReport
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateReportRequest"
+      responses:
+        "201":
+          description: Report generation requested
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+  /schools/{schoolId}/reports/{reportId}:
+    get:
+      summary: 获取报表详情
+      tags: [Reporting]
+      operationId: getReport
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/ReportId"
+      responses:
+        "200":
+          description: Report detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportDetailResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /schools/{schoolId}/student-growth/{enrollmentId}:
+    get:
+      summary: 获取学生成长档案
+      tags: [Reporting]
+      operationId: getStudentGrowthProfile
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/EnrollmentId"
+      responses:
+        "200":
+          description: Student growth profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StudentGrowthProfileResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /schools/{schoolId}/offline-packages:
+    get:
+      summary: 列出离线内容包
+      tags: [Offline]
+      operationId: listOfflinePackages
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Cursor"
+        - in: query
+          name: courseVersionId
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Offline content packages
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OfflinePackageListResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    post:
+      summary: 请求构建离线内容包
+      tags: [Offline]
+      operationId: createOfflinePackage
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateOfflinePackageRequest"
+      responses:
+        "201":
+          description: Offline package build requested
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OfflinePackageResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+  /schools/{schoolId}/offline-packages/{packageId}:
+    get:
+      summary: 获取离线内容包详情
+      tags: [Offline]
+      operationId: getOfflinePackage
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/PackageId"
+      responses:
+        "200":
+          description: Offline package detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OfflinePackageDetailResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /schools/{schoolId}/offline-packages/{packageId}:download:
+    post:
+      summary: 授权下载离线内容包
+      tags: [Offline]
+      operationId: authorizeOfflineDownload
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/PackageId"
+        - $ref: "#/components/parameters/IdempotencyKey"
+      responses:
+        "200":
+          description: Download authorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OfflineDownloadAuthorizationResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+  /schools/{schoolId}/sync-batches:
+    post:
+      summary: 提交同步批次
+      tags: [Offline]
+      operationId: createSyncBatch
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSyncBatchRequest"
+      responses:
+        "201":
+          description: Sync batch created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SyncBatchResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+  /schools/{schoolId}/sync-batches/{batchId}:
+    get:
+      summary: 获取同步批次状态
+      tags: [Offline]
+      operationId: getSyncBatch
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/BatchId"
+      responses:
+        "200":
+          description: Sync batch status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SyncBatchResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /operations/status:
+    get:
+      summary: 系统运维状态
+      tags: [Operations]
+      operationId: getOperationsStatus
+      security: []
+      responses:
+        "200":
+          description: System operational status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OperationsStatusResponse"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
   securitySchemes:
     bearerAuth:
       type: http
@@ -679,6 +957,38 @@ components:
       description: 客户端持有的资源 revision（整数字符串形式），与服务端当前 revision 不一致时返回 409
       schema:
         type: string
+    ReportId:
+      in: path
+      name: reportId
+      required: true
+      description: 报表 ID
+      schema:
+        type: string
+        format: uuid
+    EnrollmentId:
+      in: path
+      name: enrollmentId
+      required: true
+      description: 注册 ID
+      schema:
+        type: string
+        format: uuid
+    PackageId:
+      in: path
+      name: packageId
+      required: true
+      description: 离线内容包 ID
+      schema:
+        type: string
+        format: uuid
+    BatchId:
+      in: path
+      name: batchId
+      required: true
+      description: 同步批次 ID
+      schema:
+        type: string
+        format: uuid
   responses:
     BadRequest:
       description: 请求参数无效或格式错误
@@ -1408,5 +1718,309 @@ components:
           minimum: 0
         completed:
           type: boolean
+    ReportType:
+      type: string
+      enum: [STUDENT_GROWTH, CLASS_SUMMARY, SCHOOL_OVERVIEW]
+    ReportStatus:
+      type: string
+      enum: [PENDING, GENERATING, READY, FAILED]
+    ReportSummary:
+      type: object
+      required: [id, type, status, periodStart, periodEnd, dataCompleteness, revision]
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          $ref: "#/components/schemas/ReportType"
+        status:
+          $ref: "#/components/schemas/ReportStatus"
+        periodStart:
+          type: string
+          format: date-time
+        periodEnd:
+          type: string
+          format: date-time
+        dataCompleteness:
+          type: number
+          minimum: 0
+          maximum: 1
+        revision:
+          type: integer
+          minimum: 1
+    ReportListResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/ReportSummary"
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
+    CreateReportRequest:
+      type: object
+      required: [type, periodStart, periodEnd]
+      properties:
+        type:
+          $ref: "#/components/schemas/ReportType"
+        periodStart:
+          type: string
+          format: date-time
+        periodEnd:
+          type: string
+          format: date-time
+        filters:
+          type: object
+          additionalProperties: true
+        enrollmentId:
+          type: [string, "null"]
+          format: uuid
+        classId:
+          type: [string, "null"]
+          format: uuid
+    ReportDetail:
+      allOf:
+        - $ref: "#/components/schemas/ReportSummary"
+        - type: object
+          required: [generatedAt, providerDisclosure, schoolId, createdAt]
+          properties:
+            generatedAt:
+              type: [string, "null"]
+              format: date-time
+            providerDisclosure:
+              type: string
+            filters:
+              type: object
+              additionalProperties: true
+            schoolId:
+              type: string
+              format: uuid
+            data:
+              type: object
+              additionalProperties: true
+            createdAt:
+              type: string
+              format: date-time
+    ReportResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          $ref: "#/components/schemas/ReportSummary"
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
+    ReportDetailResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          $ref: "#/components/schemas/ReportDetail"
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
+    StudentGrowthProfile:
+      type: object
+      required: [enrollmentId, periodStart, periodEnd, generatedAt, dataCompleteness, providerDisclosure]
+      properties:
+        enrollmentId:
+          type: string
+          format: uuid
+        periodStart:
+          type: string
+          format: date-time
+        periodEnd:
+          type: string
+          format: date-time
+        generatedAt:
+          type: string
+          format: date-time
+        dataCompleteness:
+          type: number
+          minimum: 0
+          maximum: 1
+        providerDisclosure:
+          type: string
+        data:
+          type: object
+          additionalProperties: true
+    StudentGrowthProfileResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          $ref: "#/components/schemas/StudentGrowthProfile"
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
+    OfflinePackageSummary:
+      type: object
+      required: [id, courseVersionId, version, checksum, byteSize, revision]
+      properties:
+        id:
+          type: string
+          format: uuid
+        courseVersionId:
+          type: string
+          format: uuid
+        version:
+          type: integer
+          minimum: 1
+        checksum:
+          type: string
+        byteSize:
+          type: integer
+          minimum: 0
+        revision:
+          type: integer
+          minimum: 1
+    OfflinePackageListResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/OfflinePackageSummary"
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
+    CreateOfflinePackageRequest:
+      type: object
+      required: [courseVersionId]
+      properties:
+        courseVersionId:
+          type: string
+          format: uuid
+        downloadRequired:
+          type: boolean
+          default: false
+    OfflinePackageDetail:
+      allOf:
+        - $ref: "#/components/schemas/OfflinePackageSummary"
+        - type: object
+          required: [schoolId, manifest, createdAt]
+          properties:
+            schoolId:
+              type: string
+              format: uuid
+            manifest:
+              type: object
+              additionalProperties: true
+            downloadRequired:
+              type: boolean
+            expiresAt:
+              type: [string, "null"]
+              format: date-time
+            createdAt:
+              type: string
+              format: date-time
+    OfflinePackageResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          $ref: "#/components/schemas/OfflinePackageSummary"
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
+    OfflinePackageDetailResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          $ref: "#/components/schemas/OfflinePackageDetail"
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
+    OfflineDownloadAuthorizationResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: object
+          required: [packageId, authorized, authorizedAt]
+          properties:
+            packageId:
+              type: string
+              format: uuid
+            authorized:
+              type: boolean
+            authorizedAt:
+              type: string
+              format: date-time
+            downloadUrl:
+              type: [string, "null"]
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
+    SyncBatchStatus:
+      type: string
+      enum: [ACCEPTED, DUPLICATE, CONFLICT, REJECTED, PERMISSION_CHANGED]
+    CreateSyncBatchRequest:
+      type: object
+      required: [deviceId, clientBatchId, operations]
+      properties:
+        deviceId:
+          type: string
+          format: uuid
+        clientBatchId:
+          type: string
+          minLength: 16
+          maxLength: 128
+        operations:
+          type: array
+          maxItems: 100
+          items:
+            $ref: "#/components/schemas/SyncOperation"
+    SyncBatchSummary:
+      type: object
+      required: [id, status, operationCount, acceptedCount, duplicateCount, conflictCount, rejectedCount, permissionChanged]
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          $ref: "#/components/schemas/SyncBatchStatus"
+        operationCount:
+          type: integer
+        acceptedCount:
+          type: integer
+        duplicateCount:
+          type: integer
+        conflictCount:
+          type: integer
+        rejectedCount:
+          type: integer
+        permissionChanged:
+          type: integer
+    SyncBatchResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          $ref: "#/components/schemas/SyncBatchSummary"
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
+    OperationsStatus:
+      type: object
+      required: [status, timestamp, version]
+      properties:
+        status:
+          type: string
+          enum: [ok, degraded, down]
+        timestamp:
+          type: string
+          format: date-time
+        version:
+          type: string
+        database:
+          type: string
+          enum: [connected, disconnected]
+        activeSchools:
+          type: integer
+          minimum: 0
+    OperationsStatusResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          $ref: "#/components/schemas/OperationsStatus"
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
 security:
   - bearerAuth: []
