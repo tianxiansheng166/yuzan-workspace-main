@@ -1,0 +1,181 @@
+{
+  "baseUrl": "http://localhost:3000",
+  "timestamp": "2026-07-11T09:52:26.759Z",
+  "total": 15,
+  "hydrationRoutes": 0,
+  "errorRoutes": 1,
+  "overflowRoutes": 0,
+  "results": [
+    {
+      "route": "/",
+      "httpStatus": 200,
+      "hydrationMessages": [],
+      "overflow": {
+        "horizontal": false,
+        "clientWidth": 1440,
+        "scrollWidth": 1440
+      },
+      "fatalErrors": []
+    },
+    {
+      "route": "/login",
+      "httpStatus": 200,
+      "hydrationMessages": [],
+      "overflow": {
+        "horizontal": false,
+        "clientWidth": 1440,
+        "scrollWidth": 1440
+      },
+      "fatalErrors": []
+    },
+    {
+      "route": "/select-school",
+      "httpStatus": 404,
+      "hydrationMessages": [],
+      "overflow": {
+        "horizontal": false,
+        "clientWidth": 1440,
+        "scrollWidth": 1440
+      },
+      "fatalErrors": [
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 (Page not found: /select-school)",
+          "isHydration": false
+        }
+      ]
+    },
+    {
+      "route": "/student/today",
+      "httpStatus": 200,
+      "hydrationMessages": [],
+      "overflow": {
+        "horizontal": false,
+        "clientWidth": 1440,
+        "scrollWidth": 1440
+      },
+      "fatalErrors": []
+    },
+    {
+      "route": "/student/learning/spring-2",
+      "httpStatus": 200,
+      "hydrationMessages": [],
+      "overflow": {
+        "horizontal": false,
+        "clientWidth": 1440,
+        "scrollWidth": 1440
+      },
+      "fatalErrors": []
+    },
+    {
+      "route": "/assessment",
+      "httpStatus": 200,
+      "hydrationMessages": [],
+      "overflow": {
+        "horizontal": false,
+        "clientWidth": 1440,
+        "scrollWidth": 1440
+      },
+      "fatalErrors": []
+    },
+    {
+      "route": "/assessment/reading",
+      "httpStatus": 200,
+      "hydrationMessages": [],
+      "overflow": {
+        "horizontal": false,
+        "clientWidth": 1440,
+        "scrollWidth": 1440
+      },
+      "fatalErrors": []
+    },
+    {
+      "route": "/assessment/written",
+      "httpStatus": 200,
+      "hydrationMessages": [],
+      "overflow": {
+        "horizontal": false,
+        "clientWidth": 1440,
+        "scrollWidth": 1440
+      },
+      "fatalErrors": []
+    },
+    {
+      "route": "/assessment/report/missing",
+      "httpStatus": 200,
+      "hydrationMessages": [],
+      "overflow": {
+        "horizontal": false,
+        "clientWidth": 1440,
+        "scrollWidth": 1440
+      },
+      "fatalErrors": []
+    },
+    {
+      "route": "/assessment/report/demo-report",
+      "httpStatus": 200,
+      "hydrationMessages": [],
+      "overflow": {
+        "horizontal": false,
+        "clientWidth": 1440,
+        "scrollWidth": 1440
+      },
+      "fatalErrors": []
+    },
+    {
+      "route": "/assessment/history",
+      "httpStatus": 200,
+      "hydrationMessages": [],
+      "overflow": {
+        "horizontal": false,
+        "clientWidth": 1440,
+        "scrollWidth": 1440
+      },
+      "fatalErrors": []
+    },
+    {
+      "route": "/teacher/assignments",
+      "httpStatus": 200,
+      "hydrationMessages": [],
+      "overflow": {
+        "horizontal": false,
+        "clientWidth": 1440,
+        "scrollWidth": 1440
+      },
+      "fatalErrors": []
+    },
+    {
+      "route": "/teacher/review/1?scenario=default",
+      "httpStatus": 200,
+      "hydrationMessages": [],
+      "overflow": {
+        "horizontal": false,
+        "clientWidth": 1440,
+        "scrollWidth": 1440
+      },
+      "fatalErrors": []
+    },
+    {
+      "route": "/teacher/review/1/feedback",
+      "httpStatus": 200,
+      "hydrationMessages": [],
+      "overflow": {
+        "horizontal": false,
+        "clientWidth": 1440,
+        "scrollWidth": 1440
+      },
+      "fatalErrors": []
+    },
+    {
+      "route": "/studio",
+      "httpStatus": 200,
+      "hydrationMessages": [],
+      "overflow": {
+        "horizontal": false,
+        "clientWidth": 1440,
+        "scrollWidth": 1440
+      },
+      "fatalErrors": []
+    }
+  ]
+}

@@ -1,0 +1,247 @@
+{
+  "baseUrl": "http://localhost:3000",
+  "outDir": "D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-qa-001\\design-lab\\frontend-pixel-v4-adoption\\qa\\round-1",
+  "timestamp": "2026-07-11T09:50:27.205Z",
+  "results": [
+    {
+      "routeId": "login",
+      "size": "390x844",
+      "url": "http://localhost:3000/login",
+      "httpStatus": 200,
+      "fileName": "login-390x844.png",
+      "filePath": "D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-qa-001\\design-lab\\frontend-pixel-v4-adoption\\qa\\round-1\\login-390x844.png"
+    },
+    {
+      "routeId": "login",
+      "size": "768x1024",
+      "url": "http://localhost:3000/login",
+      "httpStatus": 200,
+      "fileName": "login-768x1024.png",
+      "filePath": "D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-qa-001\\design-lab\\frontend-pixel-v4-adoption\\qa\\round-1\\login-768x1024.png"
+    },
+    {
+      "routeId": "login",
+      "size": "1440x900",
+      "url": "http://localhost:3000/login",
+      "httpStatus": 200,
+      "fileName": "login-1440x900.png",
+      "filePath": "D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-qa-001\\design-lab\\frontend-pixel-v4-adoption\\qa\\round-1\\login-1440x900.png"
+    },
+    {
+      "routeId": "student-today",
+      "size": "390x844",
+      "url": "http://localhost:3000/student/today",
+      "httpStatus": 200,
+      "fileName": "student-today-390x844.png",
+      "filePath": "D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-qa-001\\design-lab\\frontend-pixel-v4-adoption\\qa\\round-1\\student-today-390x844.png"
+    },
+    {
+      "routeId": "student-today",
+      "size": "768x1024",
+      "url": "http://localhost:3000/student/today",
+      "httpStatus": 200,
+      "fileName": "student-today-768x1024.png",
+      "filePath": "D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-qa-001\\design-lab\\frontend-pixel-v4-adoption\\qa\\round-1\\student-today-768x1024.png"
+    },
+    {
+      "routeId": "student-today",
+      "size": "1440x900",
+      "url": "http://localhost:3000/student/today",
+      "httpStatus": 200,
+      "fileName": "student-today-1440x900.png",
+      "filePath": "D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-qa-001\\design-lab\\frontend-pixel-v4-adoption\\qa\\round-1\\student-today-1440x900.png"
+    },
+    {
+      "routeId": "assessment-entry",
+      "size": "390x844",
+      "url": "http://localhost:3000/assessment",
+      "httpStatus": 200,
+      "fileName": "assessment-entry-390x844.png",
+      "filePath": "D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-qa-001\\design-lab\\frontend-pixel-v4-adoption\\qa\\round-1\\assessment-entry-390x844.png"
+    },
+    {
+      "routeId": "assessment-entry",
+      "size": "768x1024",
+      "url": "http://localhost:3000/assessment",
+      "httpStatus": 200,
+      "fileName": "assessment-entry-768x1024.png",
+      "filePath": "D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-qa-001\\design-lab\\frontend-pixel-v4-adoption\\qa\\round-1\\assessment-entry-768x1024.png"
+    },
+    {
+      "routeId": "assessment-entry",
+      "size": "1440x900",
+      "url": "http://localhost:3000/assessment",
+      "httpStatus": 200,
+      "fileName": "assessment-entry-1440x900.png",
+      "filePath": "D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-qa-001\\design-lab\\frontend-pixel-v4-adoption\\qa\\round-1\\assessment-entry-1440x900.png"
+    },
+    {
+      "routeId": "assessment-reading",
+      "size": "390x844",
+      "url": "http://localhost:3000/assessment/reading",
+      "httpStatus": 200,
+      "fileName": "assessment-reading-390x844.png",
+      "filePath": "D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-qa-001\\design-lab\\frontend-pixel-v4-adoption\\qa\\round-1\\assessment-reading-390x844.png"
+    },
+    {
+      "routeId": "assessment-reading",
+      "size": "768x1024",
+      "url": "http://localhost:3000/assessment/reading",
+      "httpStatus": 200,
+      "fileName": "assessment-reading-768x1024.png",
+      "filePath": "D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-qa-001\\design-lab\\frontend-pixel-v4-adoption\\qa\\round-1\\assessment-reading-768x1024.png"
+    },
+    {
+      "routeId": "assessment-reading",
+      "size": "1440x900",
+      "url": "http://localhost:3000/assessment/reading",
+      "httpStatus": 200,
+      "fileName": "assessment-reading-1440x900.png",
+      "filePath": "D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-qa-001\\design-lab\\frontend-pixel-v4-adoption\\qa\\round-1\\assessment-reading-1440x900.png"
+    },
+    {
+      "routeId": "assessment-written",
+      "size": "390x844",
+      "url": "http://localhost:3000/assessment/written",
+      "httpStatus": 200,
+      "fileName": "assessment-written-390x844.png",
+      "filePath": "D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-qa-001\\design-lab\\frontend-pixel-v4-adoption\\qa\\round-1\\assessment-written-390x844.png"
+    },
+    {
+      "routeId": "assessment-written",
+      "size": "768x1024",
+      "url": "http://localhost:3000/assessment/written",
+      "httpStatus": 200,
+      "fileName": "assessment-written-768x1024.png",
+      "filePath": "D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-qa-001\\design-lab\\frontend-pixel-v4-adoption\\qa\\round-1\\assessment-written-768x1024.png"
+    },
+    {
+      "routeId": "assessment-written",
+      "size": "1440x900",
+      "url": "http://localhost:3000/assessment/written",
+      "httpStatus": 200,
+      "fileName": "assessment-written-1440x900.png",
+      "filePath": "D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-qa-001\\design-lab\\frontend-pixel-v4-adoption\\qa\\round-1\\assessment-written-1440x900.png"
+    },
+    {
+      "routeId": "assessment-report",
+      "size": "390x844",
+      "url": "http://localhost:3000/assessment/report/demo-report",
+      "httpStatus": 200,
+      "fileName": "assessment-report-390x844.png",
+      "filePath": "D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-qa-001\\design-lab\\frontend-pixel-v4-adoption\\qa\\round-1\\assessment-report-390x844.png"
+    },
+    {
+      "routeId": "assessment-report",
+      "size": "768x1024",
+      "url": "http://localhost:3000/assessment/report/demo-report",
+      "httpStatus": 200,
+      "fileName": "assessment-report-768x1024.png",
+      "filePath": "D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-qa-001\\design-lab\\frontend-pixel-v4-adoption\\qa\\round-1\\assessment-report-768x1024.png"
+    },
+    {
+      "routeId": "assessment-report",
+      "size": "1440x900",
+      "url": "http://localhost:3000/assessment/report/demo-report",
+      "httpStatus": 200,
+      "fileName": "assessment-report-1440x900.png",
+      "filePath": "D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-qa-001\\design-lab\\frontend-pixel-v4-adoption\\qa\\round-1\\assessment-report-1440x900.png"
+    },
+    {
+      "routeId": "assessment-history",
+      "size": "390x844",
+      "url": "http://localhost:3000/assessment/history",
+      "httpStatus": 200,
+      "fileName": "assessment-history-390x844.png",
+      "filePath": "D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-qa-001\\design-lab\\frontend-pixel-v4-adoption\\qa\\round-1\\assessment-history-390x844.png"
+    },
+    {
+      "routeId": "assessment-history",
+      "size": "768x1024",
+      "url": "http://localhost:3000/assessment/history",
+      "httpStatus": 200,
+      "fileName": "assessment-history-768x1024.png",
+      "filePath": "D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-qa-001\\design-lab\\frontend-pixel-v4-adoption\\qa\\round-1\\assessment-history-768x1024.png"
+    },
+    {
+      "routeId": "assessment-history",
+      "size": "1440x900",
+      "url": "http://localhost:3000/assessment/history",
+      "httpStatus": 200,
+      "fileName": "assessment-history-1440x900.png",
+      "filePath": "D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-qa-001\\design-lab\\frontend-pixel-v4-adoption\\qa\\round-1\\assessment-history-1440x900.png"
+    },
+    {
+      "routeId": "teacher-review",
+      "size": "390x844",
+      "url": "http://localhost:3000/teacher/review/1?scenario=default",
+      "httpStatus": 200,
+      "fileName": "teacher-review-390x844.png",
+      "filePath": "D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-qa-001\\design-lab\\frontend-pixel-v4-adoption\\qa\\round-1\\teacher-review-390x844.png"
+    },
+    {
+      "routeId": "teacher-review",
+      "size": "768x1024",
+      "url": "http://localhost:3000/teacher/review/1?scenario=default",
+      "httpStatus": 200,
+      "fileName": "teacher-review-768x1024.png",
+      "filePath": "D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-qa-001\\design-lab\\frontend-pixel-v4-adoption\\qa\\round-1\\teacher-review-768x1024.png"
+    },
+    {
+      "routeId": "teacher-review",
+      "size": "1440x900",
+      "url": "http://localhost:3000/teacher/review/1?scenario=default",
+      "httpStatus": 200,
+      "fileName": "teacher-review-1440x900.png",
+      "filePath": "D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-qa-001\\design-lab\\frontend-pixel-v4-adoption\\qa\\round-1\\teacher-review-1440x900.png"
+    },
+    {
+      "routeId": "teacher-assignments",
+      "size": "390x844",
+      "url": "http://localhost:3000/teacher/assignments",
+      "httpStatus": 200,
+      "fileName": "teacher-assignments-390x844.png",
+      "filePath": "D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-qa-001\\design-lab\\frontend-pixel-v4-adoption\\qa\\round-1\\teacher-assignments-390x844.png"
+    },
+    {
+      "routeId": "teacher-assignments",
+      "size": "768x1024",
+      "url": "http://localhost:3000/teacher/assignments",
+      "httpStatus": 200,
+      "fileName": "teacher-assignments-768x1024.png",
+      "filePath": "D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-qa-001\\design-lab\\frontend-pixel-v4-adoption\\qa\\round-1\\teacher-assignments-768x1024.png"
+    },
+    {
+      "routeId": "teacher-assignments",
+      "size": "1440x900",
+      "url": "http://localhost:3000/teacher/assignments",
+      "httpStatus": 200,
+      "fileName": "teacher-assignments-1440x900.png",
+      "filePath": "D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-qa-001\\design-lab\\frontend-pixel-v4-adoption\\qa\\round-1\\teacher-assignments-1440x900.png"
+    },
+    {
+      "routeId": "studio",
+      "size": "390x844",
+      "url": "http://localhost:3000/studio",
+      "httpStatus": 200,
+      "fileName": "studio-390x844.png",
+      "filePath": "D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-qa-001\\design-lab\\frontend-pixel-v4-adoption\\qa\\round-1\\studio-390x844.png"
+    },
+    {
+      "routeId": "studio",
+      "size": "768x1024",
+      "url": "http://localhost:3000/studio",
+      "httpStatus": 200,
+      "fileName": "studio-768x1024.png",
+      "filePath": "D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-qa-001\\design-lab\\frontend-pixel-v4-adoption\\qa\\round-1\\studio-768x1024.png"
+    },
+    {
+      "routeId": "studio",
+      "size": "1440x900",
+      "url": "http://localhost:3000/studio",
+      "httpStatus": 200,
+      "fileName": "studio-1440x900.png",
+      "filePath": "D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-qa-001\\design-lab\\frontend-pixel-v4-adoption\\qa\\round-1\\studio-1440x900.png"
+    }
+  ]
+}

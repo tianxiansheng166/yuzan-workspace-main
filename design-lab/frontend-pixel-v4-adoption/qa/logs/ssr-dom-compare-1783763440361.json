@@ -1,0 +1,44 @@
+[
+  {
+    "path": "/login",
+    "selector": ".app-shell__navigation--desktop",
+    "httpStatus": 200,
+    "serverSnippet": "<div class=\"yx-shell app-shell__navigation app-shell__navigation--desktop\" data-v-2371682a=\"\"><!----></div>",
+    "clientSnippet": "<div class=\"yx-shell app-shell__navigation app-shell__navigation--desktop\" data-v-2371682a=\"\"><rolenavigation data-v-2371682a=\"\" current-path=\"/login\"></rolenavigation></div>",
+    "match": false,
+    "messages": [
+      {
+        "type": "error",
+        "text": "Hydration completed but contains mismatches."
+      }
+    ]
+  },
+  {
+    "path": "/assessment/report/missing",
+    "selector": ".app-shell__navigation--desktop",
+    "httpStatus": 200,
+    "serverSnippet": "<div class=\"yx-shell app-shell__navigation app-shell__navigation--desktop\" data-v-2371682a=\"\"><!----></div>",
+    "clientSnippet": "<div class=\"yx-shell app-shell__navigation app-shell__navigation--desktop\" data-v-2371682a=\"\"><rolenavigation data-v-2371682a=\"\" current-path=\"/assessment/report/missing\"></rolenavigation></div>",
+    "match": false,
+    "messages": [
+      {
+        "type": "error",
+        "text": "Hydration completed but contains mismatches."
+      }
+    ]
+  },
+  {
+    "path": "/teacher/review/1?scenario=default",
+    "selector": ".app-shell__navigation--desktop",
+    "httpStatus": 200,
+    "serverSnippet": "<div class=\"yx-shell app-shell__navigation app-shell__navigation--desktop\" data-v-2371682a=\"\"><!----></div>",
+    "clientSnippet": "<div class=\"yx-shell app-shell__navigation app-shell__navigation--desktop\" data-v-2371682a=\"\"><rolenavigation data-v-2371682a=\"\" current-path=\"/teacher/review/1\"></rolenavigation></div>",
+    "match": false,
+    "messages": [
+      {
+        "type": "error",
+        "text": "Hydration completed but contains mismatches."
+      }
+    ]
+  }
+]

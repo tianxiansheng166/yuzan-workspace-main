@@ -1,0 +1,386 @@
+{
+  "baseUrl": "http://localhost:3000",
+  "timestamp": "2026-07-11T09:39:16.415Z",
+  "totalCases": 6,
+  "hydrationCases": 0,
+  "results": [
+    {
+      "path": "/login",
+      "viewport": "390x844",
+      "httpStatus": 200,
+      "messages": [
+        {
+          "type": "debug",
+          "text": "[vite] connecting...",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@vite/client",
+            "line": 732,
+            "column": 8,
+            "lineNumber": 732,
+            "columnNumber": 8
+          },
+          "isHydration": false
+        },
+        {
+          "type": "debug",
+          "text": "[vite] connected.",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@vite/client",
+            "line": 826,
+            "column": 11,
+            "lineNumber": 826,
+            "columnNumber": 11
+          },
+          "isHydration": false
+        },
+        {
+          "type": "log",
+          "text": "%cssr:success%c Vite server hmr 13 files \n      background: #2ecc71;\n      border-radius: 0.5em;\n      color: white;\n      font-weight: bold;\n      padding: 2px 0.5em;\n      in 1.173ms \n  at vite_node_entry_default (/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-qa-001/node_modules/.pnpm/@nuxt+vite-builder@4.4.8_95c79252bc5132f94085658b0c8d88b4/node_modules/@nuxt/vite-builder/dist/vite-node-entry.mjs)\n  at process.processTicksAndRejections (node:internal/process/task_queues)\n  at async Object.renderToString (/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-qa-001/node_modules/.pnpm/vue-bundle-renderer@2.3.1/node_modules/vue-bundle-renderer/dist/runtime.mjs)\n",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-qa-001/node_modules/.pnpm/consola@3.4.2/node_modules/consola/dist/browser.mjs?v=de49464a",
+            "line": 47,
+            "column": 6,
+            "lineNumber": 47,
+            "columnNumber": 6
+          },
+          "isHydration": false
+        },
+        {
+          "type": "info",
+          "text": "<Suspense> is an experimental feature and its API will likely change.",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-qa-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=de49464a",
+            "line": 7310,
+            "column": 42,
+            "lineNumber": 7310,
+            "columnNumber": 42
+          },
+          "isHydration": false
+        },
+        {
+          "type": "log",
+          "text": "✨ %cNuxt DevTools %c Press Shift + Alt + D to open DevTools color: black; border-radius: 3px 0 0 3px; padding: 2px 2px 1px 10px; background: #00DC82 border-radius: 0 3px 3px 0; padding: 2px 10px 1px 2px; background: #00DC8220 ",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-qa-001/node_modules/.pnpm/@nuxt+devtools@3.2.4_vite@7_393c54f5af6057ed4244f3256613706a/node_modules/@nuxt/devtools/dist/runtime/plugins/devtools.client.js?v=de49464a",
+            "line": 51,
+            "column": 12,
+            "lineNumber": 51,
+            "columnNumber": 12
+          },
+          "isHydration": false
+        }
+      ],
+      "hydrationMessages": [],
+      "overflow": {
+        "horizontal": false,
+        "clientWidth": 390,
+        "scrollWidth": 390
+      }
+    },
+    {
+      "path": "/login",
+      "viewport": "1440x900",
+      "httpStatus": 200,
+      "messages": [
+        {
+          "type": "debug",
+          "text": "[vite] connecting...",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@vite/client",
+            "line": 732,
+            "column": 8,
+            "lineNumber": 732,
+            "columnNumber": 8
+          },
+          "isHydration": false
+        },
+        {
+          "type": "debug",
+          "text": "[vite] connected.",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@vite/client",
+            "line": 826,
+            "column": 11,
+            "lineNumber": 826,
+            "columnNumber": 11
+          },
+          "isHydration": false
+        },
+        {
+          "type": "info",
+          "text": "<Suspense> is an experimental feature and its API will likely change.",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-qa-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=de49464a",
+            "line": 7310,
+            "column": 42,
+            "lineNumber": 7310,
+            "columnNumber": 42
+          },
+          "isHydration": false
+        },
+        {
+          "type": "log",
+          "text": "✨ %cNuxt DevTools %c Press Shift + Alt + D to open DevTools color: black; border-radius: 3px 0 0 3px; padding: 2px 2px 1px 10px; background: #00DC82 border-radius: 0 3px 3px 0; padding: 2px 10px 1px 2px; background: #00DC8220 ",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-qa-001/node_modules/.pnpm/@nuxt+devtools@3.2.4_vite@7_393c54f5af6057ed4244f3256613706a/node_modules/@nuxt/devtools/dist/runtime/plugins/devtools.client.js?v=de49464a",
+            "line": 51,
+            "column": 12,
+            "lineNumber": 51,
+            "columnNumber": 12
+          },
+          "isHydration": false
+        }
+      ],
+      "hydrationMessages": [],
+      "overflow": {
+        "horizontal": false,
+        "clientWidth": 1440,
+        "scrollWidth": 1440
+      }
+    },
+    {
+      "path": "/assessment/report/missing",
+      "viewport": "768x1024",
+      "httpStatus": 200,
+      "messages": [
+        {
+          "type": "debug",
+          "text": "[vite] connecting...",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@vite/client",
+            "line": 732,
+            "column": 8,
+            "lineNumber": 732,
+            "columnNumber": 8
+          },
+          "isHydration": false
+        },
+        {
+          "type": "debug",
+          "text": "[vite] connected.",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@vite/client",
+            "line": 826,
+            "column": 11,
+            "lineNumber": 826,
+            "columnNumber": 11
+          },
+          "isHydration": false
+        },
+        {
+          "type": "info",
+          "text": "<Suspense> is an experimental feature and its API will likely change.",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-qa-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=de49464a",
+            "line": 7310,
+            "column": 42,
+            "lineNumber": 7310,
+            "columnNumber": 42
+          },
+          "isHydration": false
+        },
+        {
+          "type": "log",
+          "text": "✨ %cNuxt DevTools %c Press Shift + Alt + D to open DevTools color: black; border-radius: 3px 0 0 3px; padding: 2px 2px 1px 10px; background: #00DC82 border-radius: 0 3px 3px 0; padding: 2px 10px 1px 2px; background: #00DC8220 ",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-qa-001/node_modules/.pnpm/@nuxt+devtools@3.2.4_vite@7_393c54f5af6057ed4244f3256613706a/node_modules/@nuxt/devtools/dist/runtime/plugins/devtools.client.js?v=de49464a",
+            "line": 51,
+            "column": 12,
+            "lineNumber": 51,
+            "columnNumber": 12
+          },
+          "isHydration": false
+        }
+      ],
+      "hydrationMessages": [],
+      "overflow": {
+        "horizontal": false,
+        "clientWidth": 768,
+        "scrollWidth": 768
+      }
+    },
+    {
+      "path": "/assessment/report/missing",
+      "viewport": "1440x900",
+      "httpStatus": 200,
+      "messages": [
+        {
+          "type": "debug",
+          "text": "[vite] connecting...",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@vite/client",
+            "line": 732,
+            "column": 8,
+            "lineNumber": 732,
+            "columnNumber": 8
+          },
+          "isHydration": false
+        },
+        {
+          "type": "debug",
+          "text": "[vite] connected.",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@vite/client",
+            "line": 826,
+            "column": 11,
+            "lineNumber": 826,
+            "columnNumber": 11
+          },
+          "isHydration": false
+        },
+        {
+          "type": "info",
+          "text": "<Suspense> is an experimental feature and its API will likely change.",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-qa-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=de49464a",
+            "line": 7310,
+            "column": 42,
+            "lineNumber": 7310,
+            "columnNumber": 42
+          },
+          "isHydration": false
+        },
+        {
+          "type": "log",
+          "text": "✨ %cNuxt DevTools %c Press Shift + Alt + D to open DevTools color: black; border-radius: 3px 0 0 3px; padding: 2px 2px 1px 10px; background: #00DC82 border-radius: 0 3px 3px 0; padding: 2px 10px 1px 2px; background: #00DC8220 ",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-qa-001/node_modules/.pnpm/@nuxt+devtools@3.2.4_vite@7_393c54f5af6057ed4244f3256613706a/node_modules/@nuxt/devtools/dist/runtime/plugins/devtools.client.js?v=de49464a",
+            "line": 51,
+            "column": 12,
+            "lineNumber": 51,
+            "columnNumber": 12
+          },
+          "isHydration": false
+        }
+      ],
+      "hydrationMessages": [],
+      "overflow": {
+        "horizontal": false,
+        "clientWidth": 1440,
+        "scrollWidth": 1440
+      }
+    },
+    {
+      "path": "/teacher/review/1?scenario=default",
+      "viewport": "768x1024",
+      "httpStatus": 200,
+      "messages": [
+        {
+          "type": "debug",
+          "text": "[vite] connecting...",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@vite/client",
+            "line": 732,
+            "column": 8,
+            "lineNumber": 732,
+            "columnNumber": 8
+          },
+          "isHydration": false
+        },
+        {
+          "type": "debug",
+          "text": "[vite] connected.",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@vite/client",
+            "line": 826,
+            "column": 11,
+            "lineNumber": 826,
+            "columnNumber": 11
+          },
+          "isHydration": false
+        },
+        {
+          "type": "info",
+          "text": "<Suspense> is an experimental feature and its API will likely change.",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-qa-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=de49464a",
+            "line": 7310,
+            "column": 42,
+            "lineNumber": 7310,
+            "columnNumber": 42
+          },
+          "isHydration": false
+        },
+        {
+          "type": "log",
+          "text": "✨ %cNuxt DevTools %c Press Shift + Alt + D to open DevTools color: black; border-radius: 3px 0 0 3px; padding: 2px 2px 1px 10px; background: #00DC82 border-radius: 0 3px 3px 0; padding: 2px 10px 1px 2px; background: #00DC8220 ",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-qa-001/node_modules/.pnpm/@nuxt+devtools@3.2.4_vite@7_393c54f5af6057ed4244f3256613706a/node_modules/@nuxt/devtools/dist/runtime/plugins/devtools.client.js?v=de49464a",
+            "line": 51,
+            "column": 12,
+            "lineNumber": 51,
+            "columnNumber": 12
+          },
+          "isHydration": false
+        }
+      ],
+      "hydrationMessages": [],
+      "overflow": {
+        "horizontal": false,
+        "clientWidth": 768,
+        "scrollWidth": 768
+      }
+    },
+    {
+      "path": "/teacher/review/1?scenario=default",
+      "viewport": "1440x900",
+      "httpStatus": 200,
+      "messages": [
+        {
+          "type": "debug",
+          "text": "[vite] connecting...",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@vite/client",
+            "line": 732,
+            "column": 8,
+            "lineNumber": 732,
+            "columnNumber": 8
+          },
+          "isHydration": false
+        },
+        {
+          "type": "debug",
+          "text": "[vite] connected.",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@vite/client",
+            "line": 826,
+            "column": 11,
+            "lineNumber": 826,
+            "columnNumber": 11
+          },
+          "isHydration": false
+        },
+        {
+          "type": "info",
+          "text": "<Suspense> is an experimental feature and its API will likely change.",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-qa-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=de49464a",
+            "line": 7310,
+            "column": 42,
+            "lineNumber": 7310,
+            "columnNumber": 42
+          },
+          "isHydration": false
+        },
+        {
+          "type": "log",
+          "text": "✨ %cNuxt DevTools %c Press Shift + Alt + D to open DevTools color: black; border-radius: 3px 0 0 3px; padding: 2px 2px 1px 10px; background: #00DC82 border-radius: 0 3px 3px 0; padding: 2px 10px 1px 2px; background: #00DC8220 ",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-qa-001/node_modules/.pnpm/@nuxt+devtools@3.2.4_vite@7_393c54f5af6057ed4244f3256613706a/node_modules/@nuxt/devtools/dist/runtime/plugins/devtools.client.js?v=de49464a",
+            "line": 51,
+            "column": 12,
+            "lineNumber": 51,
+            "columnNumber": 12
+          },
+          "isHydration": false
+        }
+      ],
+      "hydrationMessages": [],
+      "overflow": {
+        "horizontal": false,
+        "clientWidth": 1440,
+        "scrollWidth": 1440
+      }
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+[
+  {
+    "path": "/login",
+    "selector": ".app-shell__navigation--desktop",
+    "httpStatus": 200,
+    "serverSnippet": "<div class=\"yx-shell app-shell__navigation app-shell__navigation--desktop\" data-v-e10e9215=\"\"><!----></div>",
+    "clientSnippet": "<div class=\"yx-shell app-shell__navigation app-shell__navigation--desktop\" data-v-e10e9215=\"\"><rolenavigation data-v-e10e9215=\"\" current-path=\"/login\"></rolenavigation></div>",
+    "match": false,
+    "messages": [
+      {
+        "type": "warning",
+        "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: RoleNavigation \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>"
+      },
+      {
+        "type": "error",
+        "text": "Hydration completed but contains mismatches."
+      },
+      {
+        "type": "warning",
+        "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: RoleNavigation \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>"
+      },
+      {
+        "type": "warning",
+        "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: YxStatus \n  at <LoginPanel status=\"loading\" service-mode=\"demo\" identifier=\"\"  ... > \n  at <Login onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > \n  at <RouteProvider key=\"/login\" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /login, hash: , query: Object, name: login, path: /login}  ... > \n  at <RouterView name=undefined route=undefined > \n  at <NuxtPage > \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>"
+      },
+      {
+        "type": "warning",
+        "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: YxStatus \n  at <LoginPanel status=\"loading\" service-mode=\"demo\" identifier=\"\"  ... > \n  at <Login onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > \n  at <RouteProvider key=\"/login\" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /login, hash: , query: Object, name: login, path: /login}  ... > \n  at <RouterView name=undefined route=undefined > \n  at <NuxtPage > \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>"
+      },
+      {
+        "type": "warning",
+        "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: YxInput \n  at <LoginPanel status=\"loading\" service-mode=\"demo\" identifier=\"\"  ... > \n  at <Login onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > \n  at <RouteProvider key=\"/login\" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /login, hash: , query: Object, name: login, path: /login}  ... > \n  at <RouterView name=undefined route=undefined > \n  at <NuxtPage > \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>"
+      },
+      {
+        "type": "warning",
+        "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: YxInput \n  at <LoginPanel status=\"loading\" service-mode=\"demo\" identifier=\"\"  ... > \n  at <Login onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > \n  at <RouteProvider key=\"/login\" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /login, hash: , query: Object, name: login, path: /login}  ... > \n  at <RouterView name=undefined route=undefined > \n  at <NuxtPage > \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>"
+      },
+      {
+        "type": "warning",
+        "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: YxButton \n  at <LoginPanel status=\"loading\" service-mode=\"demo\" identifier=\"\"  ... > \n  at <Login onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > \n  at <RouteProvider key=\"/login\" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /login, hash: , query: Object, name: login, path: /login}  ... > \n  at <RouterView name=undefined route=undefined > \n  at <NuxtPage > \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>"
+      }
+    ]
+  },
+  {
+    "path": "/assessment/report/missing",
+    "selector": ".app-shell__navigation--desktop",
+    "httpStatus": 200,
+    "serverSnippet": "<div class=\"yx-shell app-shell__navigation app-shell__navigation--desktop\" data-v-e10e9215=\"\"><!----></div>",
+    "clientSnippet": "<div class=\"yx-shell app-shell__navigation app-shell__navigation--desktop\" data-v-e10e9215=\"\"><rolenavigation data-v-e10e9215=\"\" current-path=\"/assessment/report/missing\"></rolenavigation></div>",
+    "match": false,
+    "messages": [
+      {
+        "type": "warning",
+        "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: RoleNavigation \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>"
+      },
+      {
+        "type": "error",
+        "text": "Hydration completed but contains mismatches."
+      },
+      {
+        "type": "warning",
+        "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: RoleNavigation \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>"
+      }
+    ]
+  },
+  {
+    "path": "/teacher/review/1?scenario=default",
+    "selector": ".app-shell__navigation--desktop",
+    "httpStatus": 200,
+    "serverSnippet": "<div class=\"yx-shell app-shell__navigation app-shell__navigation--desktop\" data-v-e10e9215=\"\"><!----></div>",
+    "clientSnippet": "<div class=\"yx-shell app-shell__navigation app-shell__navigation--desktop\" data-v-e10e9215=\"\"><rolenavigation data-v-e10e9215=\"\" current-path=\"/teacher/review/1\"></rolenavigation></div>",
+    "match": false,
+    "messages": [
+      {
+        "type": "warning",
+        "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: RoleNavigation \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>"
+      },
+      {
+        "type": "error",
+        "text": "Hydration completed but contains mismatches."
+      },
+      {
+        "type": "warning",
+        "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: RoleNavigation \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>"
+      }
+    ]
+  }
+]

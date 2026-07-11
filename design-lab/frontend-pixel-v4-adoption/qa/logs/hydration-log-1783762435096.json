@@ -1,0 +1,1736 @@
+{
+  "baseUrl": "http://localhost:3000",
+  "timestamp": "2026-07-11T09:33:55.095Z",
+  "totalCases": 6,
+  "hydrationCases": 6,
+  "results": [
+    {
+      "path": "/login",
+      "viewport": "390x844",
+      "httpStatus": 200,
+      "messages": [
+        {
+          "type": "debug",
+          "text": "[vite] connecting...",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@vite/client",
+            "line": 732,
+            "column": 8,
+            "lineNumber": 732,
+            "columnNumber": 8
+          },
+          "isHydration": false
+        },
+        {
+          "type": "debug",
+          "text": "[vite] connected.",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@vite/client",
+            "line": 826,
+            "column": 11,
+            "lineNumber": 826,
+            "columnNumber": 11
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "%cssr:warn%c [Vue warn]: Failed to resolve component: RoleNavigation\nIf this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. \n      background: #f39c12;\n      border-radius: 0.5em;\n      color: white;\n      font-weight: bold;\n      padding: 2px 0.5em;\n      at <AppShell>\nat <Default>\nat <AsyncComponentWrapper>\nat <LayoutLoader>\nat <NuxtLayoutProvider>\nat <NuxtLayout>\nat <App>\nat <NuxtRoot> \n  at nuxtApp.vueApp.config.warnHandler (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\nuxt@4.4.8_@babel+plugin-sy_fad5f0d2cbc0c4f37f62fe8146fe3c9a\\node_modules\\nuxt\\dist\\app\\plugins\\warn.dev.server.js)\n  at callWithErrorHandling (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n  at warn$1 (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/consola@3.4.2/node_modules/consola/dist/browser.mjs?v=98c0ca87",
+            "line": 47,
+            "column": 6,
+            "lineNumber": 47,
+            "columnNumber": 6
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "%cssr:warn%c [Vue warn]: Component <Anonymous> is missing template or render function. \n      background: #f39c12;\n      border-radius: 0.5em;\n      color: white;\n      font-weight: bold;\n      padding: 2px 0.5em;\n      at <Anonymous>\nat <AppShell>\nat <Default>\nat <AsyncComponentWrapper>\nat <LayoutLoader>\nat <NuxtLayoutProvider>\nat <NuxtLayout>\nat <App>\nat <NuxtRoot> \n  at nuxtApp.vueApp.config.warnHandler (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\nuxt@4.4.8_@babel+plugin-sy_fad5f0d2cbc0c4f37f62fe8146fe3c9a\\node_modules\\nuxt\\dist\\app\\plugins\\warn.dev.server.js)\n  at callWithErrorHandling (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n  at Object.warn$1 [as warn] (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/consola@3.4.2/node_modules/consola/dist/browser.mjs?v=98c0ca87",
+            "line": 47,
+            "column": 6,
+            "lineNumber": 47,
+            "columnNumber": 6
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "%cssr:warn%c [Vue warn]: Component <Anonymous> is missing template or render function. \n      background: #f39c12;\n      border-radius: 0.5em;\n      color: white;\n      font-weight: bold;\n      padding: 2px 0.5em;\n      at <Anonymous>\nat <AppShell>\nat <Default>\nat <AsyncComponentWrapper>\nat <LayoutLoader>\nat <NuxtLayoutProvider>\nat <NuxtLayout>\nat <App>\nat <NuxtRoot> \n  at nuxtApp.vueApp.config.warnHandler (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\nuxt@4.4.8_@babel+plugin-sy_fad5f0d2cbc0c4f37f62fe8146fe3c9a\\node_modules\\nuxt\\dist\\app\\plugins\\warn.dev.server.js)\n  at callWithErrorHandling (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n  at Object.warn$1 [as warn] (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/consola@3.4.2/node_modules/consola/dist/browser.mjs?v=98c0ca87",
+            "line": 47,
+            "column": 6,
+            "lineNumber": 47,
+            "columnNumber": 6
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "%cssr:warn%c [Vue warn]: Failed to resolve component: YxStatus\nIf this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. \n      background: #f39c12;\n      border-radius: 0.5em;\n      color: white;\n      font-weight: bold;\n      padding: 2px 0.5em;\n      at <LoginPanel>\nat <Login>\nat <RouteProvider>\nat <RouterView>\nat <NuxtPage>\nat <AppShell>\nat <Default>\nat <AsyncComponentWrapper>\nat <LayoutLoader>\nat <NuxtLayoutProvider>\nat <NuxtLayout>\nat <App>\nat <NuxtRoot> \n  at nuxtApp.vueApp.config.warnHandler (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\nuxt@4.4.8_@babel+plugin-sy_fad5f0d2cbc0c4f37f62fe8146fe3c9a\\node_modules\\nuxt\\dist\\app\\plugins\\warn.dev.server.js)\n  at callWithErrorHandling (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n  at warn$1 (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/consola@3.4.2/node_modules/consola/dist/browser.mjs?v=98c0ca87",
+            "line": 47,
+            "column": 6,
+            "lineNumber": 47,
+            "columnNumber": 6
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "%cssr:warn%c [Vue warn]: Failed to resolve component: YxInput\nIf this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. \n      background: #f39c12;\n      border-radius: 0.5em;\n      color: white;\n      font-weight: bold;\n      padding: 2px 0.5em;\n      at <LoginPanel>\nat <Login>\nat <RouteProvider>\nat <RouterView>\nat <NuxtPage>\nat <AppShell>\nat <Default>\nat <AsyncComponentWrapper>\nat <LayoutLoader>\nat <NuxtLayoutProvider>\nat <NuxtLayout>\nat <App>\nat <NuxtRoot> \n  at nuxtApp.vueApp.config.warnHandler (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\nuxt@4.4.8_@babel+plugin-sy_fad5f0d2cbc0c4f37f62fe8146fe3c9a\\node_modules\\nuxt\\dist\\app\\plugins\\warn.dev.server.js)\n  at callWithErrorHandling (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n  at warn$1 (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/consola@3.4.2/node_modules/consola/dist/browser.mjs?v=98c0ca87",
+            "line": 47,
+            "column": 6,
+            "lineNumber": 47,
+            "columnNumber": 6
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "%cssr:warn%c [Vue warn]: Failed to resolve component: YxButton\nIf this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. \n      background: #f39c12;\n      border-radius: 0.5em;\n      color: white;\n      font-weight: bold;\n      padding: 2px 0.5em;\n      at <LoginPanel>\nat <Login>\nat <RouteProvider>\nat <RouterView>\nat <NuxtPage>\nat <AppShell>\nat <Default>\nat <AsyncComponentWrapper>\nat <LayoutLoader>\nat <NuxtLayoutProvider>\nat <NuxtLayout>\nat <App>\nat <NuxtRoot> \n  at nuxtApp.vueApp.config.warnHandler (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\nuxt@4.4.8_@babel+plugin-sy_fad5f0d2cbc0c4f37f62fe8146fe3c9a\\node_modules\\nuxt\\dist\\app\\plugins\\warn.dev.server.js)\n  at callWithErrorHandling (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n  at warn$1 (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/consola@3.4.2/node_modules/consola/dist/browser.mjs?v=98c0ca87",
+            "line": 47,
+            "column": 6,
+            "lineNumber": 47,
+            "columnNumber": 6
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "%cssr:warn%c [Vue warn]: Non-function value encountered for default slot. Prefer function slots for better performance. \n      background: #f39c12;\n      border-radius: 0.5em;\n      color: white;\n      font-weight: bold;\n      padding: 2px 0.5em;\n      at <Anonymous>\nat <LoginPanel>\nat <Login>\nat <RouteProvider>\nat <RouterView>\nat <NuxtPage>\nat <AppShell>\nat <Default>\nat <AsyncComponentWrapper>\nat <LayoutLoader>\nat <NuxtLayoutProvider>\nat <NuxtLayout>\nat <App>\nat <NuxtRoot> \n  at nuxtApp.vueApp.config.warnHandler (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\nuxt@4.4.8_@babel+plugin-sy_fad5f0d2cbc0c4f37f62fe8146fe3c9a\\node_modules\\nuxt\\dist\\app\\plugins\\warn.dev.server.js)\n  at callWithErrorHandling (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n  at warn$1 (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/consola@3.4.2/node_modules/consola/dist/browser.mjs?v=98c0ca87",
+            "line": 47,
+            "column": 6,
+            "lineNumber": 47,
+            "columnNumber": 6
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "%cssr:warn%c [Vue warn]: Component <Anonymous> is missing template or render function. \n      background: #f39c12;\n      border-radius: 0.5em;\n      color: white;\n      font-weight: bold;\n      padding: 2px 0.5em;\n      at <Anonymous>\nat <LoginPanel>\nat <Login>\nat <RouteProvider>\nat <RouterView>\nat <NuxtPage>\nat <AppShell>\nat <Default>\nat <AsyncComponentWrapper>\nat <LayoutLoader>\nat <NuxtLayoutProvider>\nat <NuxtLayout>\nat <App>\nat <NuxtRoot> \n  at nuxtApp.vueApp.config.warnHandler (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\nuxt@4.4.8_@babel+plugin-sy_fad5f0d2cbc0c4f37f62fe8146fe3c9a\\node_modules\\nuxt\\dist\\app\\plugins\\warn.dev.server.js)\n  at callWithErrorHandling (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n  at Object.warn$1 [as warn] (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/consola@3.4.2/node_modules/consola/dist/browser.mjs?v=98c0ca87",
+            "line": 47,
+            "column": 6,
+            "lineNumber": 47,
+            "columnNumber": 6
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "%cssr:warn%c [Vue warn]: Non-function value encountered for default slot. Prefer function slots for better performance. \n      background: #f39c12;\n      border-radius: 0.5em;\n      color: white;\n      font-weight: bold;\n      padding: 2px 0.5em;\n      at <Anonymous>\nat <LoginPanel>\nat <Login>\nat <RouteProvider>\nat <RouterView>\nat <NuxtPage>\nat <AppShell>\nat <Default>\nat <AsyncComponentWrapper>\nat <LayoutLoader>\nat <NuxtLayoutProvider>\nat <NuxtLayout>\nat <App>\nat <NuxtRoot> \n  at nuxtApp.vueApp.config.warnHandler (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\nuxt@4.4.8_@babel+plugin-sy_fad5f0d2cbc0c4f37f62fe8146fe3c9a\\node_modules\\nuxt\\dist\\app\\plugins\\warn.dev.server.js)\n  at callWithErrorHandling (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n  at warn$1 (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/consola@3.4.2/node_modules/consola/dist/browser.mjs?v=98c0ca87",
+            "line": 47,
+            "column": 6,
+            "lineNumber": 47,
+            "columnNumber": 6
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "%cssr:warn%c [Vue warn]: Component <Anonymous> is missing template or render function. \n      background: #f39c12;\n      border-radius: 0.5em;\n      color: white;\n      font-weight: bold;\n      padding: 2px 0.5em;\n      at <Anonymous>\nat <LoginPanel>\nat <Login>\nat <RouteProvider>\nat <RouterView>\nat <NuxtPage>\nat <AppShell>\nat <Default>\nat <AsyncComponentWrapper>\nat <LayoutLoader>\nat <NuxtLayoutProvider>\nat <NuxtLayout>\nat <App>\nat <NuxtRoot> \n  at nuxtApp.vueApp.config.warnHandler (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\nuxt@4.4.8_@babel+plugin-sy_fad5f0d2cbc0c4f37f62fe8146fe3c9a\\node_modules\\nuxt\\dist\\app\\plugins\\warn.dev.server.js)\n  at callWithErrorHandling (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n  at Object.warn$1 [as warn] (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/consola@3.4.2/node_modules/consola/dist/browser.mjs?v=98c0ca87",
+            "line": 47,
+            "column": 6,
+            "lineNumber": 47,
+            "columnNumber": 6
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "%cssr:warn%c [Vue warn]: Component <Anonymous> is missing template or render function. \n      background: #f39c12;\n      border-radius: 0.5em;\n      color: white;\n      font-weight: bold;\n      padding: 2px 0.5em;\n      at <Anonymous>\nat <LoginPanel>\nat <Login>\nat <RouteProvider>\nat <RouterView>\nat <NuxtPage>\nat <AppShell>\nat <Default>\nat <AsyncComponentWrapper>\nat <LayoutLoader>\nat <NuxtLayoutProvider>\nat <NuxtLayout>\nat <App>\nat <NuxtRoot> \n  at nuxtApp.vueApp.config.warnHandler (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\nuxt@4.4.8_@babel+plugin-sy_fad5f0d2cbc0c4f37f62fe8146fe3c9a\\node_modules\\nuxt\\dist\\app\\plugins\\warn.dev.server.js)\n  at callWithErrorHandling (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n  at Object.warn$1 [as warn] (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/consola@3.4.2/node_modules/consola/dist/browser.mjs?v=98c0ca87",
+            "line": 47,
+            "column": 6,
+            "lineNumber": 47,
+            "columnNumber": 6
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "%cssr:warn%c [Vue warn]: Component <Anonymous> is missing template or render function. \n      background: #f39c12;\n      border-radius: 0.5em;\n      color: white;\n      font-weight: bold;\n      padding: 2px 0.5em;\n      at <Anonymous>\nat <LoginPanel>\nat <Login>\nat <RouteProvider>\nat <RouterView>\nat <NuxtPage>\nat <AppShell>\nat <Default>\nat <AsyncComponentWrapper>\nat <LayoutLoader>\nat <NuxtLayoutProvider>\nat <NuxtLayout>\nat <App>\nat <NuxtRoot> \n  at nuxtApp.vueApp.config.warnHandler (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\nuxt@4.4.8_@babel+plugin-sy_fad5f0d2cbc0c4f37f62fe8146fe3c9a\\node_modules\\nuxt\\dist\\app\\plugins\\warn.dev.server.js)\n  at callWithErrorHandling (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n  at Object.warn$1 [as warn] (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/consola@3.4.2/node_modules/consola/dist/browser.mjs?v=98c0ca87",
+            "line": 47,
+            "column": 6,
+            "lineNumber": 47,
+            "columnNumber": 6
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "%cssr:warn%c [Vue warn]: Non-function value encountered for default slot. Prefer function slots for better performance. \n      background: #f39c12;\n      border-radius: 0.5em;\n      color: white;\n      font-weight: bold;\n      padding: 2px 0.5em;\n      at <Anonymous>\nat <LoginPanel>\nat <Login>\nat <RouteProvider>\nat <RouterView>\nat <NuxtPage>\nat <AppShell>\nat <Default>\nat <AsyncComponentWrapper>\nat <LayoutLoader>\nat <NuxtLayoutProvider>\nat <NuxtLayout>\nat <App>\nat <NuxtRoot> \n  at nuxtApp.vueApp.config.warnHandler (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\nuxt@4.4.8_@babel+plugin-sy_fad5f0d2cbc0c4f37f62fe8146fe3c9a\\node_modules\\nuxt\\dist\\app\\plugins\\warn.dev.server.js)\n  at callWithErrorHandling (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n  at warn$1 (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/consola@3.4.2/node_modules/consola/dist/browser.mjs?v=98c0ca87",
+            "line": 47,
+            "column": 6,
+            "lineNumber": 47,
+            "columnNumber": 6
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "%cssr:warn%c [Vue warn]: Component <Anonymous> is missing template or render function. \n      background: #f39c12;\n      border-radius: 0.5em;\n      color: white;\n      font-weight: bold;\n      padding: 2px 0.5em;\n      at <Anonymous>\nat <LoginPanel>\nat <Login>\nat <RouteProvider>\nat <RouterView>\nat <NuxtPage>\nat <AppShell>\nat <Default>\nat <AsyncComponentWrapper>\nat <LayoutLoader>\nat <NuxtLayoutProvider>\nat <NuxtLayout>\nat <App>\nat <NuxtRoot> \n  at nuxtApp.vueApp.config.warnHandler (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\nuxt@4.4.8_@babel+plugin-sy_fad5f0d2cbc0c4f37f62fe8146fe3c9a\\node_modules\\nuxt\\dist\\app\\plugins\\warn.dev.server.js)\n  at callWithErrorHandling (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n  at Object.warn$1 [as warn] (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/consola@3.4.2/node_modules/consola/dist/browser.mjs?v=98c0ca87",
+            "line": 47,
+            "column": 6,
+            "lineNumber": 47,
+            "columnNumber": 6
+          },
+          "isHydration": false
+        },
+        {
+          "type": "info",
+          "text": "<Suspense> is an experimental feature and its API will likely change.",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 7310,
+            "column": 42,
+            "lineNumber": 7310,
+            "columnNumber": 42
+          },
+          "isHydration": false
+        },
+        {
+          "type": "log",
+          "text": "✨ %cNuxt DevTools %c Press Shift + Alt + D to open DevTools color: black; border-radius: 3px 0 0 3px; padding: 2px 2px 1px 10px; background: #00DC82 border-radius: 0 3px 3px 0; padding: 2px 10px 1px 2px; background: #00DC8220 ",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@nuxt+devtools@3.2.4_vite@7_393c54f5af6057ed4244f3256613706a/node_modules/@nuxt/devtools/dist/runtime/plugins/devtools.client.js?v=98c0ca87",
+            "line": 51,
+            "column": 12,
+            "lineNumber": 51,
+            "columnNumber": 12
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Failed to resolve component: RoleNavigation\nIf this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: RoleNavigation \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        },
+        {
+          "type": "error",
+          "text": "Hydration completed but contains mismatches.",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 1890,
+            "column": 10,
+            "lineNumber": 1890,
+            "columnNumber": 10
+          },
+          "isHydration": true
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: RoleNavigation \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Failed to resolve component: YxStatus\nIf this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. \n  at <LoginPanel status=\"loading\" service-mode=\"demo\" identifier=\"\"  ... > \n  at <Login onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > \n  at <RouteProvider key=\"/login\" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /login, hash: , query: Object, name: login, path: /login}  ... > \n  at <RouterView name=undefined route=undefined > \n  at <NuxtPage > \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Failed to resolve component: YxInput\nIf this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. \n  at <LoginPanel status=\"loading\" service-mode=\"demo\" identifier=\"\"  ... > \n  at <Login onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > \n  at <RouteProvider key=\"/login\" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /login, hash: , query: Object, name: login, path: /login}  ... > \n  at <RouterView name=undefined route=undefined > \n  at <NuxtPage > \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Failed to resolve component: YxButton\nIf this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. \n  at <LoginPanel status=\"loading\" service-mode=\"demo\" identifier=\"\"  ... > \n  at <Login onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > \n  at <RouteProvider key=\"/login\" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /login, hash: , query: Object, name: login, path: /login}  ... > \n  at <RouterView name=undefined route=undefined > \n  at <NuxtPage > \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: YxStatus \n  at <LoginPanel status=\"loading\" service-mode=\"demo\" identifier=\"\"  ... > \n  at <Login onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > \n  at <RouteProvider key=\"/login\" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /login, hash: , query: Object, name: login, path: /login}  ... > \n  at <RouterView name=undefined route=undefined > \n  at <NuxtPage > \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: YxStatus \n  at <LoginPanel status=\"loading\" service-mode=\"demo\" identifier=\"\"  ... > \n  at <Login onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > \n  at <RouteProvider key=\"/login\" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /login, hash: , query: Object, name: login, path: /login}  ... > \n  at <RouterView name=undefined route=undefined > \n  at <NuxtPage > \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: YxInput \n  at <LoginPanel status=\"loading\" service-mode=\"demo\" identifier=\"\"  ... > \n  at <Login onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > \n  at <RouteProvider key=\"/login\" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /login, hash: , query: Object, name: login, path: /login}  ... > \n  at <RouterView name=undefined route=undefined > \n  at <NuxtPage > \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: YxInput \n  at <LoginPanel status=\"loading\" service-mode=\"demo\" identifier=\"\"  ... > \n  at <Login onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > \n  at <RouteProvider key=\"/login\" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /login, hash: , query: Object, name: login, path: /login}  ... > \n  at <RouterView name=undefined route=undefined > \n  at <NuxtPage > \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: YxButton \n  at <LoginPanel status=\"loading\" service-mode=\"demo\" identifier=\"\"  ... > \n  at <Login onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > \n  at <RouteProvider key=\"/login\" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /login, hash: , query: Object, name: login, path: /login}  ... > \n  at <RouterView name=undefined route=undefined > \n  at <NuxtPage > \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Failed to resolve component: YxStatus\nIf this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. \n  at <LoginPanel status=\"unavailable\" service-mode=\"demo\" identifier=\"\"  ... > \n  at <Login onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) > > \n  at <RouteProvider key=\"/login\" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /login, hash: , query: Object, name: login, path: /login}  ... > \n  at <RouterView name=undefined route=undefined > \n  at <NuxtPage > \n  at <AppShell > \n  at <Default ref=Ref< Proxy(Object) > > \n  at <AsyncComponentWrapper ref=Ref< Proxy(Object) > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Failed to resolve component: YxInput\nIf this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. \n  at <LoginPanel status=\"unavailable\" service-mode=\"demo\" identifier=\"\"  ... > \n  at <Login onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) > > \n  at <RouteProvider key=\"/login\" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /login, hash: , query: Object, name: login, path: /login}  ... > \n  at <RouterView name=undefined route=undefined > \n  at <NuxtPage > \n  at <AppShell > \n  at <Default ref=Ref< Proxy(Object) > > \n  at <AsyncComponentWrapper ref=Ref< Proxy(Object) > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Failed to resolve component: YxButton\nIf this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. \n  at <LoginPanel status=\"unavailable\" service-mode=\"demo\" identifier=\"\"  ... > \n  at <Login onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) > > \n  at <RouteProvider key=\"/login\" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /login, hash: , query: Object, name: login, path: /login}  ... > \n  at <RouterView name=undefined route=undefined > \n  at <NuxtPage > \n  at <AppShell > \n  at <Default ref=Ref< Proxy(Object) > > \n  at <AsyncComponentWrapper ref=Ref< Proxy(Object) > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": false
+        }
+      ],
+      "hydrationMessages": [
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: RoleNavigation \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        },
+        {
+          "type": "error",
+          "text": "Hydration completed but contains mismatches.",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 1890,
+            "column": 10,
+            "lineNumber": 1890,
+            "columnNumber": 10
+          },
+          "isHydration": true
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: RoleNavigation \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: YxStatus \n  at <LoginPanel status=\"loading\" service-mode=\"demo\" identifier=\"\"  ... > \n  at <Login onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > \n  at <RouteProvider key=\"/login\" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /login, hash: , query: Object, name: login, path: /login}  ... > \n  at <RouterView name=undefined route=undefined > \n  at <NuxtPage > \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: YxStatus \n  at <LoginPanel status=\"loading\" service-mode=\"demo\" identifier=\"\"  ... > \n  at <Login onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > \n  at <RouteProvider key=\"/login\" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /login, hash: , query: Object, name: login, path: /login}  ... > \n  at <RouterView name=undefined route=undefined > \n  at <NuxtPage > \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: YxInput \n  at <LoginPanel status=\"loading\" service-mode=\"demo\" identifier=\"\"  ... > \n  at <Login onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > \n  at <RouteProvider key=\"/login\" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /login, hash: , query: Object, name: login, path: /login}  ... > \n  at <RouterView name=undefined route=undefined > \n  at <NuxtPage > \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: YxInput \n  at <LoginPanel status=\"loading\" service-mode=\"demo\" identifier=\"\"  ... > \n  at <Login onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > \n  at <RouteProvider key=\"/login\" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /login, hash: , query: Object, name: login, path: /login}  ... > \n  at <RouterView name=undefined route=undefined > \n  at <NuxtPage > \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: YxButton \n  at <LoginPanel status=\"loading\" service-mode=\"demo\" identifier=\"\"  ... > \n  at <Login onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > \n  at <RouteProvider key=\"/login\" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /login, hash: , query: Object, name: login, path: /login}  ... > \n  at <RouterView name=undefined route=undefined > \n  at <NuxtPage > \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        }
+      ],
+      "overflow": {
+        "horizontal": false,
+        "clientWidth": 390,
+        "scrollWidth": 390
+      }
+    },
+    {
+      "path": "/login",
+      "viewport": "1440x900",
+      "httpStatus": 200,
+      "messages": [
+        {
+          "type": "debug",
+          "text": "[vite] connecting...",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@vite/client",
+            "line": 732,
+            "column": 8,
+            "lineNumber": 732,
+            "columnNumber": 8
+          },
+          "isHydration": false
+        },
+        {
+          "type": "debug",
+          "text": "[vite] connected.",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@vite/client",
+            "line": 826,
+            "column": 11,
+            "lineNumber": 826,
+            "columnNumber": 11
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "%cssr:warn%c [Vue warn]: Failed to resolve component: RoleNavigation\nIf this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. \n      background: #f39c12;\n      border-radius: 0.5em;\n      color: white;\n      font-weight: bold;\n      padding: 2px 0.5em;\n      at <AppShell>\nat <Default>\nat <AsyncComponentWrapper>\nat <LayoutLoader>\nat <NuxtLayoutProvider>\nat <NuxtLayout>\nat <App>\nat <NuxtRoot> \n  at nuxtApp.vueApp.config.warnHandler (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\nuxt@4.4.8_@babel+plugin-sy_fad5f0d2cbc0c4f37f62fe8146fe3c9a\\node_modules\\nuxt\\dist\\app\\plugins\\warn.dev.server.js)\n  at callWithErrorHandling (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n  at warn$1 (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/consola@3.4.2/node_modules/consola/dist/browser.mjs?v=98c0ca87",
+            "line": 47,
+            "column": 6,
+            "lineNumber": 47,
+            "columnNumber": 6
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "%cssr:warn%c [Vue warn]: Component <Anonymous> is missing template or render function. \n      background: #f39c12;\n      border-radius: 0.5em;\n      color: white;\n      font-weight: bold;\n      padding: 2px 0.5em;\n      at <Anonymous>\nat <AppShell>\nat <Default>\nat <AsyncComponentWrapper>\nat <LayoutLoader>\nat <NuxtLayoutProvider>\nat <NuxtLayout>\nat <App>\nat <NuxtRoot> \n  at nuxtApp.vueApp.config.warnHandler (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\nuxt@4.4.8_@babel+plugin-sy_fad5f0d2cbc0c4f37f62fe8146fe3c9a\\node_modules\\nuxt\\dist\\app\\plugins\\warn.dev.server.js)\n  at callWithErrorHandling (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n  at Object.warn$1 [as warn] (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/consola@3.4.2/node_modules/consola/dist/browser.mjs?v=98c0ca87",
+            "line": 47,
+            "column": 6,
+            "lineNumber": 47,
+            "columnNumber": 6
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "%cssr:warn%c [Vue warn]: Component <Anonymous> is missing template or render function. \n      background: #f39c12;\n      border-radius: 0.5em;\n      color: white;\n      font-weight: bold;\n      padding: 2px 0.5em;\n      at <Anonymous>\nat <AppShell>\nat <Default>\nat <AsyncComponentWrapper>\nat <LayoutLoader>\nat <NuxtLayoutProvider>\nat <NuxtLayout>\nat <App>\nat <NuxtRoot> \n  at nuxtApp.vueApp.config.warnHandler (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\nuxt@4.4.8_@babel+plugin-sy_fad5f0d2cbc0c4f37f62fe8146fe3c9a\\node_modules\\nuxt\\dist\\app\\plugins\\warn.dev.server.js)\n  at callWithErrorHandling (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n  at warn$1 (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/consola@3.4.2/node_modules/consola/dist/browser.mjs?v=98c0ca87",
+            "line": 47,
+            "column": 6,
+            "lineNumber": 47,
+            "columnNumber": 6
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "%cssr:warn%c [Vue warn]: Failed to resolve component: YxStatus\nIf this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. \n      background: #f39c12;\n      border-radius: 0.5em;\n      color: white;\n      font-weight: bold;\n      padding: 2px 0.5em;\n      at <LoginPanel>\nat <Login>\nat <RouteProvider>\nat <RouterView>\nat <NuxtPage>\nat <AppShell>\nat <Default>\nat <AsyncComponentWrapper>\nat <LayoutLoader>\nat <NuxtLayoutProvider>\nat <NuxtLayout>\nat <App>\nat <NuxtRoot> \n  at nuxtApp.vueApp.config.warnHandler (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\nuxt@4.4.8_@babel+plugin-sy_fad5f0d2cbc0c4f37f62fe8146fe3c9a\\node_modules\\nuxt\\dist\\app\\plugins\\warn.dev.server.js)\n  at callWithErrorHandling (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n  at warn$1 (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/consola@3.4.2/node_modules/consola/dist/browser.mjs?v=98c0ca87",
+            "line": 47,
+            "column": 6,
+            "lineNumber": 47,
+            "columnNumber": 6
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "%cssr:warn%c [Vue warn]: Failed to resolve component: YxInput\nIf this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. \n      background: #f39c12;\n      border-radius: 0.5em;\n      color: white;\n      font-weight: bold;\n      padding: 2px 0.5em;\n      at <LoginPanel>\nat <Login>\nat <RouteProvider>\nat <RouterView>\nat <NuxtPage>\nat <AppShell>\nat <Default>\nat <AsyncComponentWrapper>\nat <LayoutLoader>\nat <NuxtLayoutProvider>\nat <NuxtLayout>\nat <App>\nat <NuxtRoot> \n  at nuxtApp.vueApp.config.warnHandler (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\nuxt@4.4.8_@babel+plugin-sy_fad5f0d2cbc0c4f37f62fe8146fe3c9a\\node_modules\\nuxt\\dist\\app\\plugins\\warn.dev.server.js)\n  at callWithErrorHandling (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n  at warn$1 (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/consola@3.4.2/node_modules/consola/dist/browser.mjs?v=98c0ca87",
+            "line": 47,
+            "column": 6,
+            "lineNumber": 47,
+            "columnNumber": 6
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "%cssr:warn%c [Vue warn]: Failed to resolve component: YxButton\nIf this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. \n      background: #f39c12;\n      border-radius: 0.5em;\n      color: white;\n      font-weight: bold;\n      padding: 2px 0.5em;\n      at <LoginPanel>\nat <Login>\nat <RouteProvider>\nat <RouterView>\nat <NuxtPage>\nat <AppShell>\nat <Default>\nat <AsyncComponentWrapper>\nat <LayoutLoader>\nat <NuxtLayoutProvider>\nat <NuxtLayout>\nat <App>\nat <NuxtRoot> \n  at nuxtApp.vueApp.config.warnHandler (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\nuxt@4.4.8_@babel+plugin-sy_fad5f0d2cbc0c4f37f62fe8146fe3c9a\\node_modules\\nuxt\\dist\\app\\plugins\\warn.dev.server.js)\n  at callWithErrorHandling (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n  at warn$1 (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/consola@3.4.2/node_modules/consola/dist/browser.mjs?v=98c0ca87",
+            "line": 47,
+            "column": 6,
+            "lineNumber": 47,
+            "columnNumber": 6
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "%cssr:warn%c [Vue warn]: Non-function value encountered for default slot. Prefer function slots for better performance. \n      background: #f39c12;\n      border-radius: 0.5em;\n      color: white;\n      font-weight: bold;\n      padding: 2px 0.5em;\n      at <Anonymous>\nat <LoginPanel>\nat <Login>\nat <RouteProvider>\nat <RouterView>\nat <NuxtPage>\nat <AppShell>\nat <Default>\nat <AsyncComponentWrapper>\nat <LayoutLoader>\nat <NuxtLayoutProvider>\nat <NuxtLayout>\nat <App>\nat <NuxtRoot> \n  at nuxtApp.vueApp.config.warnHandler (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\nuxt@4.4.8_@babel+plugin-sy_fad5f0d2cbc0c4f37f62fe8146fe3c9a\\node_modules\\nuxt\\dist\\app\\plugins\\warn.dev.server.js)\n  at callWithErrorHandling (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n  at warn$1 (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/consola@3.4.2/node_modules/consola/dist/browser.mjs?v=98c0ca87",
+            "line": 47,
+            "column": 6,
+            "lineNumber": 47,
+            "columnNumber": 6
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "%cssr:warn%c [Vue warn]: Component <Anonymous> is missing template or render function. \n      background: #f39c12;\n      border-radius: 0.5em;\n      color: white;\n      font-weight: bold;\n      padding: 2px 0.5em;\n      at <Anonymous>\nat <LoginPanel>\nat <Login>\nat <RouteProvider>\nat <RouterView>\nat <NuxtPage>\nat <AppShell>\nat <Default>\nat <AsyncComponentWrapper>\nat <LayoutLoader>\nat <NuxtLayoutProvider>\nat <NuxtLayout>\nat <App>\nat <NuxtRoot> \n  at nuxtApp.vueApp.config.warnHandler (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\nuxt@4.4.8_@babel+plugin-sy_fad5f0d2cbc0c4f37f62fe8146fe3c9a\\node_modules\\nuxt\\dist\\app\\plugins\\warn.dev.server.js)\n  at callWithErrorHandling (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n  at Object.warn$1 [as warn] (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/consola@3.4.2/node_modules/consola/dist/browser.mjs?v=98c0ca87",
+            "line": 47,
+            "column": 6,
+            "lineNumber": 47,
+            "columnNumber": 6
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "%cssr:warn%c [Vue warn]: Non-function value encountered for default slot. Prefer function slots for better performance. \n      background: #f39c12;\n      border-radius: 0.5em;\n      color: white;\n      font-weight: bold;\n      padding: 2px 0.5em;\n      at <Anonymous>\nat <LoginPanel>\nat <Login>\nat <RouteProvider>\nat <RouterView>\nat <NuxtPage>\nat <AppShell>\nat <Default>\nat <AsyncComponentWrapper>\nat <LayoutLoader>\nat <NuxtLayoutProvider>\nat <NuxtLayout>\nat <App>\nat <NuxtRoot> \n  at nuxtApp.vueApp.config.warnHandler (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\nuxt@4.4.8_@babel+plugin-sy_fad5f0d2cbc0c4f37f62fe8146fe3c9a\\node_modules\\nuxt\\dist\\app\\plugins\\warn.dev.server.js)\n  at callWithErrorHandling (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n  at warn$1 (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/consola@3.4.2/node_modules/consola/dist/browser.mjs?v=98c0ca87",
+            "line": 47,
+            "column": 6,
+            "lineNumber": 47,
+            "columnNumber": 6
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "%cssr:warn%c [Vue warn]: Component <Anonymous> is missing template or render function. \n      background: #f39c12;\n      border-radius: 0.5em;\n      color: white;\n      font-weight: bold;\n      padding: 2px 0.5em;\n      at <Anonymous>\nat <LoginPanel>\nat <Login>\nat <RouteProvider>\nat <RouterView>\nat <NuxtPage>\nat <AppShell>\nat <Default>\nat <AsyncComponentWrapper>\nat <LayoutLoader>\nat <NuxtLayoutProvider>\nat <NuxtLayout>\nat <App>\nat <NuxtRoot> \n  at nuxtApp.vueApp.config.warnHandler (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\nuxt@4.4.8_@babel+plugin-sy_fad5f0d2cbc0c4f37f62fe8146fe3c9a\\node_modules\\nuxt\\dist\\app\\plugins\\warn.dev.server.js)\n  at callWithErrorHandling (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n  at Object.warn$1 [as warn] (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/consola@3.4.2/node_modules/consola/dist/browser.mjs?v=98c0ca87",
+            "line": 47,
+            "column": 6,
+            "lineNumber": 47,
+            "columnNumber": 6
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "%cssr:warn%c [Vue warn]: Component <Anonymous> is missing template or render function. \n      background: #f39c12;\n      border-radius: 0.5em;\n      color: white;\n      font-weight: bold;\n      padding: 2px 0.5em;\n      at <Anonymous>\nat <LoginPanel>\nat <Login>\nat <RouteProvider>\nat <RouterView>\nat <NuxtPage>\nat <AppShell>\nat <Default>\nat <AsyncComponentWrapper>\nat <LayoutLoader>\nat <NuxtLayoutProvider>\nat <NuxtLayout>\nat <App>\nat <NuxtRoot> \n  at nuxtApp.vueApp.config.warnHandler (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\nuxt@4.4.8_@babel+plugin-sy_fad5f0d2cbc0c4f37f62fe8146fe3c9a\\node_modules\\nuxt\\dist\\app\\plugins\\warn.dev.server.js)\n  at callWithErrorHandling (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n  at Object.warn$1 [as warn] (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/consola@3.4.2/node_modules/consola/dist/browser.mjs?v=98c0ca87",
+            "line": 47,
+            "column": 6,
+            "lineNumber": 47,
+            "columnNumber": 6
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "%cssr:warn%c [Vue warn]: Component <Anonymous> is missing template or render function. \n      background: #f39c12;\n      border-radius: 0.5em;\n      color: white;\n      font-weight: bold;\n      padding: 2px 0.5em;\n      at <Anonymous>\nat <LoginPanel>\nat <Login>\nat <RouteProvider>\nat <RouterView>\nat <NuxtPage>\nat <AppShell>\nat <Default>\nat <AsyncComponentWrapper>\nat <LayoutLoader>\nat <NuxtLayoutProvider>\nat <NuxtLayout>\nat <App>\nat <NuxtRoot> \n  at nuxtApp.vueApp.config.warnHandler (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\nuxt@4.4.8_@babel+plugin-sy_fad5f0d2cbc0c4f37f62fe8146fe3c9a\\node_modules\\nuxt\\dist\\app\\plugins\\warn.dev.server.js)\n  at callWithErrorHandling (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n  at Object.warn$1 [as warn] (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/consola@3.4.2/node_modules/consola/dist/browser.mjs?v=98c0ca87",
+            "line": 47,
+            "column": 6,
+            "lineNumber": 47,
+            "columnNumber": 6
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "%cssr:warn%c [Vue warn]: Non-function value encountered for default slot. Prefer function slots for better performance. \n      background: #f39c12;\n      border-radius: 0.5em;\n      color: white;\n      font-weight: bold;\n      padding: 2px 0.5em;\n      at <Anonymous>\nat <LoginPanel>\nat <Login>\nat <RouteProvider>\nat <RouterView>\nat <NuxtPage>\nat <AppShell>\nat <Default>\nat <AsyncComponentWrapper>\nat <LayoutLoader>\nat <NuxtLayoutProvider>\nat <NuxtLayout>\nat <App>\nat <NuxtRoot> \n  at nuxtApp.vueApp.config.warnHandler (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\nuxt@4.4.8_@babel+plugin-sy_fad5f0d2cbc0c4f37f62fe8146fe3c9a\\node_modules\\nuxt\\dist\\app\\plugins\\warn.dev.server.js)\n  at callWithErrorHandling (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n  at warn$1 (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/consola@3.4.2/node_modules/consola/dist/browser.mjs?v=98c0ca87",
+            "line": 47,
+            "column": 6,
+            "lineNumber": 47,
+            "columnNumber": 6
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "%cssr:warn%c [Vue warn]: Component <Anonymous> is missing template or render function. \n      background: #f39c12;\n      border-radius: 0.5em;\n      color: white;\n      font-weight: bold;\n      padding: 2px 0.5em;\n      at <Anonymous>\nat <LoginPanel>\nat <Login>\nat <RouteProvider>\nat <RouterView>\nat <NuxtPage>\nat <AppShell>\nat <Default>\nat <AsyncComponentWrapper>\nat <LayoutLoader>\nat <NuxtLayoutProvider>\nat <NuxtLayout>\nat <App>\nat <NuxtRoot> \n  at nuxtApp.vueApp.config.warnHandler (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\nuxt@4.4.8_@babel+plugin-sy_fad5f0d2cbc0c4f37f62fe8146fe3c9a\\node_modules\\nuxt\\dist\\app\\plugins\\warn.dev.server.js)\n  at callWithErrorHandling (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n  at Object.warn$1 [as warn] (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/consola@3.4.2/node_modules/consola/dist/browser.mjs?v=98c0ca87",
+            "line": 47,
+            "column": 6,
+            "lineNumber": 47,
+            "columnNumber": 6
+          },
+          "isHydration": false
+        },
+        {
+          "type": "info",
+          "text": "<Suspense> is an experimental feature and its API will likely change.",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 7310,
+            "column": 42,
+            "lineNumber": 7310,
+            "columnNumber": 42
+          },
+          "isHydration": false
+        },
+        {
+          "type": "log",
+          "text": "✨ %cNuxt DevTools %c Press Shift + Alt + D to open DevTools color: black; border-radius: 3px 0 0 3px; padding: 2px 2px 1px 10px; background: #00DC82 border-radius: 0 3px 3px 0; padding: 2px 10px 1px 2px; background: #00DC8220 ",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@nuxt+devtools@3.2.4_vite@7_393c54f5af6057ed4244f3256613706a/node_modules/@nuxt/devtools/dist/runtime/plugins/devtools.client.js?v=98c0ca87",
+            "line": 51,
+            "column": 12,
+            "lineNumber": 51,
+            "columnNumber": 12
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Failed to resolve component: RoleNavigation\nIf this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: RoleNavigation \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        },
+        {
+          "type": "error",
+          "text": "Hydration completed but contains mismatches.",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 1890,
+            "column": 10,
+            "lineNumber": 1890,
+            "columnNumber": 10
+          },
+          "isHydration": true
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: RoleNavigation \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Failed to resolve component: YxStatus\nIf this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. \n  at <LoginPanel status=\"loading\" service-mode=\"demo\" identifier=\"\"  ... > \n  at <Login onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > \n  at <RouteProvider key=\"/login\" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /login, hash: , query: Object, name: login, path: /login}  ... > \n  at <RouterView name=undefined route=undefined > \n  at <NuxtPage > \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Failed to resolve component: YxInput\nIf this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. \n  at <LoginPanel status=\"loading\" service-mode=\"demo\" identifier=\"\"  ... > \n  at <Login onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > \n  at <RouteProvider key=\"/login\" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /login, hash: , query: Object, name: login, path: /login}  ... > \n  at <RouterView name=undefined route=undefined > \n  at <NuxtPage > \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Failed to resolve component: YxButton\nIf this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. \n  at <LoginPanel status=\"loading\" service-mode=\"demo\" identifier=\"\"  ... > \n  at <Login onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > \n  at <RouteProvider key=\"/login\" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /login, hash: , query: Object, name: login, path: /login}  ... > \n  at <RouterView name=undefined route=undefined > \n  at <NuxtPage > \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: YxStatus \n  at <LoginPanel status=\"loading\" service-mode=\"demo\" identifier=\"\"  ... > \n  at <Login onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > \n  at <RouteProvider key=\"/login\" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /login, hash: , query: Object, name: login, path: /login}  ... > \n  at <RouterView name=undefined route=undefined > \n  at <NuxtPage > \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: YxStatus \n  at <LoginPanel status=\"loading\" service-mode=\"demo\" identifier=\"\"  ... > \n  at <Login onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > \n  at <RouteProvider key=\"/login\" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /login, hash: , query: Object, name: login, path: /login}  ... > \n  at <RouterView name=undefined route=undefined > \n  at <NuxtPage > \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: YxInput \n  at <LoginPanel status=\"loading\" service-mode=\"demo\" identifier=\"\"  ... > \n  at <Login onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > \n  at <RouteProvider key=\"/login\" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /login, hash: , query: Object, name: login, path: /login}  ... > \n  at <RouterView name=undefined route=undefined > \n  at <NuxtPage > \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: YxInput \n  at <LoginPanel status=\"loading\" service-mode=\"demo\" identifier=\"\"  ... > \n  at <Login onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > \n  at <RouteProvider key=\"/login\" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /login, hash: , query: Object, name: login, path: /login}  ... > \n  at <RouterView name=undefined route=undefined > \n  at <NuxtPage > \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: YxButton \n  at <LoginPanel status=\"loading\" service-mode=\"demo\" identifier=\"\"  ... > \n  at <Login onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > \n  at <RouteProvider key=\"/login\" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /login, hash: , query: Object, name: login, path: /login}  ... > \n  at <RouterView name=undefined route=undefined > \n  at <NuxtPage > \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Failed to resolve component: YxStatus\nIf this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. \n  at <LoginPanel status=\"unavailable\" service-mode=\"demo\" identifier=\"\"  ... > \n  at <Login onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) > > \n  at <RouteProvider key=\"/login\" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /login, hash: , query: Object, name: login, path: /login}  ... > \n  at <RouterView name=undefined route=undefined > \n  at <NuxtPage > \n  at <AppShell > \n  at <Default ref=Ref< Proxy(Object) > > \n  at <AsyncComponentWrapper ref=Ref< Proxy(Object) > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Failed to resolve component: YxInput\nIf this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. \n  at <LoginPanel status=\"unavailable\" service-mode=\"demo\" identifier=\"\"  ... > \n  at <Login onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) > > \n  at <RouteProvider key=\"/login\" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /login, hash: , query: Object, name: login, path: /login}  ... > \n  at <RouterView name=undefined route=undefined > \n  at <NuxtPage > \n  at <AppShell > \n  at <Default ref=Ref< Proxy(Object) > > \n  at <AsyncComponentWrapper ref=Ref< Proxy(Object) > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Failed to resolve component: YxButton\nIf this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. \n  at <LoginPanel status=\"unavailable\" service-mode=\"demo\" identifier=\"\"  ... > \n  at <Login onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) > > \n  at <RouteProvider key=\"/login\" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /login, hash: , query: Object, name: login, path: /login}  ... > \n  at <RouterView name=undefined route=undefined > \n  at <NuxtPage > \n  at <AppShell > \n  at <Default ref=Ref< Proxy(Object) > > \n  at <AsyncComponentWrapper ref=Ref< Proxy(Object) > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": false
+        }
+      ],
+      "hydrationMessages": [
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: RoleNavigation \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        },
+        {
+          "type": "error",
+          "text": "Hydration completed but contains mismatches.",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 1890,
+            "column": 10,
+            "lineNumber": 1890,
+            "columnNumber": 10
+          },
+          "isHydration": true
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: RoleNavigation \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: YxStatus \n  at <LoginPanel status=\"loading\" service-mode=\"demo\" identifier=\"\"  ... > \n  at <Login onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > \n  at <RouteProvider key=\"/login\" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /login, hash: , query: Object, name: login, path: /login}  ... > \n  at <RouterView name=undefined route=undefined > \n  at <NuxtPage > \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: YxStatus \n  at <LoginPanel status=\"loading\" service-mode=\"demo\" identifier=\"\"  ... > \n  at <Login onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > \n  at <RouteProvider key=\"/login\" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /login, hash: , query: Object, name: login, path: /login}  ... > \n  at <RouterView name=undefined route=undefined > \n  at <NuxtPage > \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: YxInput \n  at <LoginPanel status=\"loading\" service-mode=\"demo\" identifier=\"\"  ... > \n  at <Login onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > \n  at <RouteProvider key=\"/login\" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /login, hash: , query: Object, name: login, path: /login}  ... > \n  at <RouterView name=undefined route=undefined > \n  at <NuxtPage > \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: YxInput \n  at <LoginPanel status=\"loading\" service-mode=\"demo\" identifier=\"\"  ... > \n  at <Login onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > \n  at <RouteProvider key=\"/login\" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /login, hash: , query: Object, name: login, path: /login}  ... > \n  at <RouterView name=undefined route=undefined > \n  at <NuxtPage > \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: YxButton \n  at <LoginPanel status=\"loading\" service-mode=\"demo\" identifier=\"\"  ... > \n  at <Login onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > \n  at <RouteProvider key=\"/login\" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /login, hash: , query: Object, name: login, path: /login}  ... > \n  at <RouterView name=undefined route=undefined > \n  at <NuxtPage > \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        }
+      ],
+      "overflow": {
+        "horizontal": false,
+        "clientWidth": 1440,
+        "scrollWidth": 1440
+      }
+    },
+    {
+      "path": "/assessment/report/missing",
+      "viewport": "768x1024",
+      "httpStatus": 200,
+      "messages": [
+        {
+          "type": "debug",
+          "text": "[vite] connecting...",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@vite/client",
+            "line": 732,
+            "column": 8,
+            "lineNumber": 732,
+            "columnNumber": 8
+          },
+          "isHydration": false
+        },
+        {
+          "type": "debug",
+          "text": "[vite] connected.",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@vite/client",
+            "line": 826,
+            "column": 11,
+            "lineNumber": 826,
+            "columnNumber": 11
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "%cssr:warn%c [Vue warn]: Failed to resolve component: RoleNavigation\nIf this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. \n      background: #f39c12;\n      border-radius: 0.5em;\n      color: white;\n      font-weight: bold;\n      padding: 2px 0.5em;\n      at <AppShell>\nat <Default>\nat <AsyncComponentWrapper>\nat <LayoutLoader>\nat <NuxtLayoutProvider>\nat <NuxtLayout>\nat <App>\nat <NuxtRoot> \n  at nuxtApp.vueApp.config.warnHandler (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\nuxt@4.4.8_@babel+plugin-sy_fad5f0d2cbc0c4f37f62fe8146fe3c9a\\node_modules\\nuxt\\dist\\app\\plugins\\warn.dev.server.js)\n  at callWithErrorHandling (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n  at warn$1 (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/consola@3.4.2/node_modules/consola/dist/browser.mjs?v=98c0ca87",
+            "line": 47,
+            "column": 6,
+            "lineNumber": 47,
+            "columnNumber": 6
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "%cssr:warn%c [Vue warn]: Component <Anonymous> is missing template or render function. \n      background: #f39c12;\n      border-radius: 0.5em;\n      color: white;\n      font-weight: bold;\n      padding: 2px 0.5em;\n      at <Anonymous>\nat <AppShell>\nat <Default>\nat <AsyncComponentWrapper>\nat <LayoutLoader>\nat <NuxtLayoutProvider>\nat <NuxtLayout>\nat <App>\nat <NuxtRoot> \n  at nuxtApp.vueApp.config.warnHandler (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\nuxt@4.4.8_@babel+plugin-sy_fad5f0d2cbc0c4f37f62fe8146fe3c9a\\node_modules\\nuxt\\dist\\app\\plugins\\warn.dev.server.js)\n  at callWithErrorHandling (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n  at Object.warn$1 [as warn] (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/consola@3.4.2/node_modules/consola/dist/browser.mjs?v=98c0ca87",
+            "line": 47,
+            "column": 6,
+            "lineNumber": 47,
+            "columnNumber": 6
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "%cssr:warn%c [Vue warn]: Component <Anonymous> is missing template or render function. \n      background: #f39c12;\n      border-radius: 0.5em;\n      color: white;\n      font-weight: bold;\n      padding: 2px 0.5em;\n      at <Anonymous>\nat <AppShell>\nat <Default>\nat <AsyncComponentWrapper>\nat <LayoutLoader>\nat <NuxtLayoutProvider>\nat <NuxtLayout>\nat <App>\nat <NuxtRoot> \n  at nuxtApp.vueApp.config.warnHandler (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\nuxt@4.4.8_@babel+plugin-sy_fad5f0d2cbc0c4f37f62fe8146fe3c9a\\node_modules\\nuxt\\dist\\app\\plugins\\warn.dev.server.js)\n  at callWithErrorHandling (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n  at Object.warn$1 [as warn] (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/consola@3.4.2/node_modules/consola/dist/browser.mjs?v=98c0ca87",
+            "line": 47,
+            "column": 6,
+            "lineNumber": 47,
+            "columnNumber": 6
+          },
+          "isHydration": false
+        },
+        {
+          "type": "info",
+          "text": "<Suspense> is an experimental feature and its API will likely change.",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 7310,
+            "column": 42,
+            "lineNumber": 7310,
+            "columnNumber": 42
+          },
+          "isHydration": false
+        },
+        {
+          "type": "log",
+          "text": "✨ %cNuxt DevTools %c Press Shift + Alt + D to open DevTools color: black; border-radius: 3px 0 0 3px; padding: 2px 2px 1px 10px; background: #00DC82 border-radius: 0 3px 3px 0; padding: 2px 10px 1px 2px; background: #00DC8220 ",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@nuxt+devtools@3.2.4_vite@7_393c54f5af6057ed4244f3256613706a/node_modules/@nuxt/devtools/dist/runtime/plugins/devtools.client.js?v=98c0ca87",
+            "line": 51,
+            "column": 12,
+            "lineNumber": 51,
+            "columnNumber": 12
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Failed to resolve component: RoleNavigation\nIf this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: RoleNavigation \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        },
+        {
+          "type": "error",
+          "text": "Hydration completed but contains mismatches.",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 1890,
+            "column": 10,
+            "lineNumber": 1890,
+            "columnNumber": 10
+          },
+          "isHydration": true
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: RoleNavigation \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        }
+      ],
+      "hydrationMessages": [
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: RoleNavigation \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        },
+        {
+          "type": "error",
+          "text": "Hydration completed but contains mismatches.",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 1890,
+            "column": 10,
+            "lineNumber": 1890,
+            "columnNumber": 10
+          },
+          "isHydration": true
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: RoleNavigation \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        }
+      ],
+      "overflow": {
+        "horizontal": false,
+        "clientWidth": 768,
+        "scrollWidth": 768
+      }
+    },
+    {
+      "path": "/assessment/report/missing",
+      "viewport": "1440x900",
+      "httpStatus": 200,
+      "messages": [
+        {
+          "type": "debug",
+          "text": "[vite] connecting...",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@vite/client",
+            "line": 732,
+            "column": 8,
+            "lineNumber": 732,
+            "columnNumber": 8
+          },
+          "isHydration": false
+        },
+        {
+          "type": "debug",
+          "text": "[vite] connected.",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@vite/client",
+            "line": 826,
+            "column": 11,
+            "lineNumber": 826,
+            "columnNumber": 11
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "%cssr:warn%c [Vue warn]: Failed to resolve component: RoleNavigation\nIf this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. \n      background: #f39c12;\n      border-radius: 0.5em;\n      color: white;\n      font-weight: bold;\n      padding: 2px 0.5em;\n      at <AppShell>\nat <Default>\nat <AsyncComponentWrapper>\nat <LayoutLoader>\nat <NuxtLayoutProvider>\nat <NuxtLayout>\nat <App>\nat <NuxtRoot> \n  at nuxtApp.vueApp.config.warnHandler (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\nuxt@4.4.8_@babel+plugin-sy_fad5f0d2cbc0c4f37f62fe8146fe3c9a\\node_modules\\nuxt\\dist\\app\\plugins\\warn.dev.server.js)\n  at callWithErrorHandling (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n  at warn$1 (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/consola@3.4.2/node_modules/consola/dist/browser.mjs?v=98c0ca87",
+            "line": 47,
+            "column": 6,
+            "lineNumber": 47,
+            "columnNumber": 6
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "%cssr:warn%c [Vue warn]: Component <Anonymous> is missing template or render function. \n      background: #f39c12;\n      border-radius: 0.5em;\n      color: white;\n      font-weight: bold;\n      padding: 2px 0.5em;\n      at <Anonymous>\nat <AppShell>\nat <Default>\nat <AsyncComponentWrapper>\nat <LayoutLoader>\nat <NuxtLayoutProvider>\nat <NuxtLayout>\nat <App>\nat <NuxtRoot> \n  at nuxtApp.vueApp.config.warnHandler (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\nuxt@4.4.8_@babel+plugin-sy_fad5f0d2cbc0c4f37f62fe8146fe3c9a\\node_modules\\nuxt\\dist\\app\\plugins\\warn.dev.server.js)\n  at callWithErrorHandling (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n  at Object.warn$1 [as warn] (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/consola@3.4.2/node_modules/consola/dist/browser.mjs?v=98c0ca87",
+            "line": 47,
+            "column": 6,
+            "lineNumber": 47,
+            "columnNumber": 6
+          },
+          "isHydration": false
+        },
+        {
+          "type": "info",
+          "text": "<Suspense> is an experimental feature and its API will likely change.",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 7310,
+            "column": 42,
+            "lineNumber": 7310,
+            "columnNumber": 42
+          },
+          "isHydration": false
+        },
+        {
+          "type": "log",
+          "text": "✨ %cNuxt DevTools %c Press Shift + Alt + D to open DevTools color: black; border-radius: 3px 0 0 3px; padding: 2px 2px 1px 10px; background: #00DC82 border-radius: 0 3px 3px 0; padding: 2px 10px 1px 2px; background: #00DC8220 ",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@nuxt+devtools@3.2.4_vite@7_393c54f5af6057ed4244f3256613706a/node_modules/@nuxt/devtools/dist/runtime/plugins/devtools.client.js?v=98c0ca87",
+            "line": 51,
+            "column": 12,
+            "lineNumber": 51,
+            "columnNumber": 12
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Failed to resolve component: RoleNavigation\nIf this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: RoleNavigation \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        },
+        {
+          "type": "error",
+          "text": "Hydration completed but contains mismatches.",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 1890,
+            "column": 10,
+            "lineNumber": 1890,
+            "columnNumber": 10
+          },
+          "isHydration": true
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: RoleNavigation \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        }
+      ],
+      "hydrationMessages": [
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: RoleNavigation \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        },
+        {
+          "type": "error",
+          "text": "Hydration completed but contains mismatches.",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 1890,
+            "column": 10,
+            "lineNumber": 1890,
+            "columnNumber": 10
+          },
+          "isHydration": true
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: RoleNavigation \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        }
+      ],
+      "overflow": {
+        "horizontal": false,
+        "clientWidth": 1440,
+        "scrollWidth": 1440
+      }
+    },
+    {
+      "path": "/teacher/review/1?scenario=default",
+      "viewport": "768x1024",
+      "httpStatus": 200,
+      "messages": [
+        {
+          "type": "debug",
+          "text": "[vite] connecting...",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@vite/client",
+            "line": 732,
+            "column": 8,
+            "lineNumber": 732,
+            "columnNumber": 8
+          },
+          "isHydration": false
+        },
+        {
+          "type": "debug",
+          "text": "[vite] connected.",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@vite/client",
+            "line": 826,
+            "column": 11,
+            "lineNumber": 826,
+            "columnNumber": 11
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "%cssr:warn%c [Vue warn]: Failed to resolve component: RoleNavigation\nIf this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. \n      background: #f39c12;\n      border-radius: 0.5em;\n      color: white;\n      font-weight: bold;\n      padding: 2px 0.5em;\n      at <AppShell>\nat <Default>\nat <AsyncComponentWrapper>\nat <LayoutLoader>\nat <NuxtLayoutProvider>\nat <NuxtLayout>\nat <App>\nat <NuxtRoot> \n  at nuxtApp.vueApp.config.warnHandler (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\nuxt@4.4.8_@babel+plugin-sy_fad5f0d2cbc0c4f37f62fe8146fe3c9a\\node_modules\\nuxt\\dist\\app\\plugins\\warn.dev.server.js)\n  at callWithErrorHandling (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n  at warn$1 (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/consola@3.4.2/node_modules/consola/dist/browser.mjs?v=98c0ca87",
+            "line": 47,
+            "column": 6,
+            "lineNumber": 47,
+            "columnNumber": 6
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "%cssr:warn%c [Vue warn]: Component <Anonymous> is missing template or render function. \n      background: #f39c12;\n      border-radius: 0.5em;\n      color: white;\n      font-weight: bold;\n      padding: 2px 0.5em;\n      at <Anonymous>\nat <AppShell>\nat <Default>\nat <AsyncComponentWrapper>\nat <LayoutLoader>\nat <NuxtLayoutProvider>\nat <NuxtLayout>\nat <App>\nat <NuxtRoot> \n  at nuxtApp.vueApp.config.warnHandler (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\nuxt@4.4.8_@babel+plugin-sy_fad5f0d2cbc0c4f37f62fe8146fe3c9a\\node_modules\\nuxt\\dist\\app\\plugins\\warn.dev.server.js)\n  at callWithErrorHandling (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n  at Object.warn$1 [as warn] (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/consola@3.4.2/node_modules/consola/dist/browser.mjs?v=98c0ca87",
+            "line": 47,
+            "column": 6,
+            "lineNumber": 47,
+            "columnNumber": 6
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "%cssr:warn%c [Vue warn]: Component <Anonymous> is missing template or render function. \n      background: #f39c12;\n      border-radius: 0.5em;\n      color: white;\n      font-weight: bold;\n      padding: 2px 0.5em;\n      at <Anonymous>\nat <AppShell>\nat <Default>\nat <AsyncComponentWrapper>\nat <LayoutLoader>\nat <NuxtLayoutProvider>\nat <NuxtLayout>\nat <App>\nat <NuxtRoot> \n  at nuxtApp.vueApp.config.warnHandler (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\nuxt@4.4.8_@babel+plugin-sy_fad5f0d2cbc0c4f37f62fe8146fe3c9a\\node_modules\\nuxt\\dist\\app\\plugins\\warn.dev.server.js)\n  at callWithErrorHandling (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n  at Object.warn$1 [as warn] (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/consola@3.4.2/node_modules/consola/dist/browser.mjs?v=98c0ca87",
+            "line": 47,
+            "column": 6,
+            "lineNumber": 47,
+            "columnNumber": 6
+          },
+          "isHydration": false
+        },
+        {
+          "type": "info",
+          "text": "<Suspense> is an experimental feature and its API will likely change.",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 7310,
+            "column": 42,
+            "lineNumber": 7310,
+            "columnNumber": 42
+          },
+          "isHydration": false
+        },
+        {
+          "type": "log",
+          "text": "✨ %cNuxt DevTools %c Press Shift + Alt + D to open DevTools color: black; border-radius: 3px 0 0 3px; padding: 2px 2px 1px 10px; background: #00DC82 border-radius: 0 3px 3px 0; padding: 2px 10px 1px 2px; background: #00DC8220 ",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@nuxt+devtools@3.2.4_vite@7_393c54f5af6057ed4244f3256613706a/node_modules/@nuxt/devtools/dist/runtime/plugins/devtools.client.js?v=98c0ca87",
+            "line": 51,
+            "column": 12,
+            "lineNumber": 51,
+            "columnNumber": 12
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Failed to resolve component: RoleNavigation\nIf this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: RoleNavigation \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        },
+        {
+          "type": "error",
+          "text": "Hydration completed but contains mismatches.",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 1890,
+            "column": 10,
+            "lineNumber": 1890,
+            "columnNumber": 10
+          },
+          "isHydration": true
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: RoleNavigation \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        }
+      ],
+      "hydrationMessages": [
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: RoleNavigation \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        },
+        {
+          "type": "error",
+          "text": "Hydration completed but contains mismatches.",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 1890,
+            "column": 10,
+            "lineNumber": 1890,
+            "columnNumber": 10
+          },
+          "isHydration": true
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: RoleNavigation \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        }
+      ],
+      "overflow": {
+        "horizontal": false,
+        "clientWidth": 768,
+        "scrollWidth": 768
+      }
+    },
+    {
+      "path": "/teacher/review/1?scenario=default",
+      "viewport": "1440x900",
+      "httpStatus": 200,
+      "messages": [
+        {
+          "type": "debug",
+          "text": "[vite] connecting...",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@vite/client",
+            "line": 732,
+            "column": 8,
+            "lineNumber": 732,
+            "columnNumber": 8
+          },
+          "isHydration": false
+        },
+        {
+          "type": "debug",
+          "text": "[vite] connected.",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@vite/client",
+            "line": 826,
+            "column": 11,
+            "lineNumber": 826,
+            "columnNumber": 11
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "%cssr:warn%c [Vue warn]: Failed to resolve component: RoleNavigation\nIf this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. \n      background: #f39c12;\n      border-radius: 0.5em;\n      color: white;\n      font-weight: bold;\n      padding: 2px 0.5em;\n      at <AppShell>\nat <Default>\nat <AsyncComponentWrapper>\nat <LayoutLoader>\nat <NuxtLayoutProvider>\nat <NuxtLayout>\nat <App>\nat <NuxtRoot> \n  at nuxtApp.vueApp.config.warnHandler (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\nuxt@4.4.8_@babel+plugin-sy_fad5f0d2cbc0c4f37f62fe8146fe3c9a\\node_modules\\nuxt\\dist\\app\\plugins\\warn.dev.server.js)\n  at callWithErrorHandling (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n  at warn$1 (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/consola@3.4.2/node_modules/consola/dist/browser.mjs?v=98c0ca87",
+            "line": 47,
+            "column": 6,
+            "lineNumber": 47,
+            "columnNumber": 6
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "%cssr:warn%c [Vue warn]: Component <Anonymous> is missing template or render function. \n      background: #f39c12;\n      border-radius: 0.5em;\n      color: white;\n      font-weight: bold;\n      padding: 2px 0.5em;\n      at <Anonymous>\nat <AppShell>\nat <Default>\nat <AsyncComponentWrapper>\nat <LayoutLoader>\nat <NuxtLayoutProvider>\nat <NuxtLayout>\nat <App>\nat <NuxtRoot> \n  at nuxtApp.vueApp.config.warnHandler (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\nuxt@4.4.8_@babel+plugin-sy_fad5f0d2cbc0c4f37f62fe8146fe3c9a\\node_modules\\nuxt\\dist\\app\\plugins\\warn.dev.server.js)\n  at callWithErrorHandling (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n  at Object.warn$1 [as warn] (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/consola@3.4.2/node_modules/consola/dist/browser.mjs?v=98c0ca87",
+            "line": 47,
+            "column": 6,
+            "lineNumber": 47,
+            "columnNumber": 6
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "%cssr:warn%c [Vue warn]: Component <Anonymous> is missing template or render function. \n      background: #f39c12;\n      border-radius: 0.5em;\n      color: white;\n      font-weight: bold;\n      padding: 2px 0.5em;\n      at <Anonymous>\nat <AppShell>\nat <Default>\nat <AsyncComponentWrapper>\nat <LayoutLoader>\nat <NuxtLayoutProvider>\nat <NuxtLayout>\nat <App>\nat <NuxtRoot> \n  at nuxtApp.vueApp.config.warnHandler (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\nuxt@4.4.8_@babel+plugin-sy_fad5f0d2cbc0c4f37f62fe8146fe3c9a\\node_modules\\nuxt\\dist\\app\\plugins\\warn.dev.server.js)\n  at callWithErrorHandling (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n  at Object.warn$1 [as warn] (D:\\program\\test_program\\yuzanxinsheng\\three\\worktrees\\frontend-pixel-v4-runtime-adoption-001\\node_modules\\.pnpm\\@vue+runtime-core@3.5.39\\node_modules\\@vue\\runtime-core\\dist\\runtime-core.cjs.js)\n",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/consola@3.4.2/node_modules/consola/dist/browser.mjs?v=98c0ca87",
+            "line": 47,
+            "column": 6,
+            "lineNumber": 47,
+            "columnNumber": 6
+          },
+          "isHydration": false
+        },
+        {
+          "type": "info",
+          "text": "<Suspense> is an experimental feature and its API will likely change.",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 7310,
+            "column": 42,
+            "lineNumber": 7310,
+            "columnNumber": 42
+          },
+          "isHydration": false
+        },
+        {
+          "type": "log",
+          "text": "✨ %cNuxt DevTools %c Press Shift + Alt + D to open DevTools color: black; border-radius: 3px 0 0 3px; padding: 2px 2px 1px 10px; background: #00DC82 border-radius: 0 3px 3px 0; padding: 2px 10px 1px 2px; background: #00DC8220 ",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@nuxt+devtools@3.2.4_vite@7_393c54f5af6057ed4244f3256613706a/node_modules/@nuxt/devtools/dist/runtime/plugins/devtools.client.js?v=98c0ca87",
+            "line": 51,
+            "column": 12,
+            "lineNumber": 51,
+            "columnNumber": 12
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Failed to resolve component: RoleNavigation\nIf this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": false
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: RoleNavigation \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        },
+        {
+          "type": "error",
+          "text": "Hydration completed but contains mismatches.",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 1890,
+            "column": 10,
+            "lineNumber": 1890,
+            "columnNumber": 10
+          },
+          "isHydration": true
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: RoleNavigation \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        }
+      ],
+      "hydrationMessages": [
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: RoleNavigation \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        },
+        {
+          "type": "error",
+          "text": "Hydration completed but contains mismatches.",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 1890,
+            "column": 10,
+            "lineNumber": 1890,
+            "columnNumber": 10
+          },
+          "isHydration": true
+        },
+        {
+          "type": "warning",
+          "text": "[Vue warn]: Hydration node mismatch:\n- rendered on server: JSHandle@node  \n- expected on client: RoleNavigation \n  at <AppShell > \n  at <Default ref=Ref< undefined > > \n  at <AsyncComponentWrapper ref=Ref< undefined > > \n  at <LayoutLoader key=\"default\" layoutProps= {ref: RefImpl} name=\"default\" > \n  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key=\"default\" name=\"default\"  ... > \n  at <NuxtLayout > \n  at <App key=4 > \n  at <NuxtRoot>",
+          "location": {
+            "url": "http://localhost:3000/_nuxt/@fs/D:/program/test_program/yuzanxinsheng/three/worktrees/frontend-pixel-v4-runtime-adoption-001/node_modules/.pnpm/@vue+runtime-core@3.5.39/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=98c0ca87",
+            "line": 49,
+            "column": 12,
+            "lineNumber": 49,
+            "columnNumber": 12
+          },
+          "isHydration": true
+        }
+      ],
+      "overflow": {
+        "horizontal": false,
+        "clientWidth": 1440,
+        "scrollWidth": 1440
+      }
+    }
+  ]
+}

@@ -4,6 +4,7 @@ import { computed, ref, watch } from "vue";
 import { YxButton, YxStatus } from "@yuzan/ui";
 
 import { getAppShellContext } from "~/features/app-shell/app-shell-content";
+import RoleNavigation from "./RoleNavigation.vue";
 
 const route = useRoute();
 const navigationOpen = ref(false);
