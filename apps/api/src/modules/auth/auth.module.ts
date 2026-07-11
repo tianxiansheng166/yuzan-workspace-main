@@ -6,11 +6,12 @@ import {
   PolicyGuard,
   TenantAuthorizationGuard,
 } from "../../common/security/index.js";
-import { DenyAllAuthContextSource } from "./deny-all-auth-context.source.js";
+import { IdentityModule } from "../identity/identity.module.js";
+import { SessionAuthContextSource } from "./session-auth-context.source.js";
 
 const authContextSourceProvider = {
   provide: AUTH_CONTEXT_SOURCE,
-  useClass: DenyAllAuthContextSource,
+  useClass: SessionAuthContextSource,
 } as const;
 
 /**
@@ -20,14 +21,11 @@ const authContextSourceProvider = {
  * via APP_GUARD become global and enforce deny-by-default for every route
  * except those explicitly marked with @Public().
  *
- * GOV-006 intentionally does not import AuthModule into AppModule, so the
- * baseline is wired but not globally active until a future task connects it.
- *
- * The default AuthContextSource is DenyAllAuthContextSource, which always
- * returns null. This guarantees fail-closed behavior even if the module is
- * imported accidentally before a real identity service is ready.
+ * The source resolves opaque access tokens through the persistent identity
+ * service. Missing, expired, revoked, or unauthorized sessions fail closed.
  */
 @Module({
+  imports: [IdentityModule],
   providers: [
     authContextSourceProvider,
     AuthenticationGuard,
