@@ -231,6 +231,25 @@ export class IdentityService {
     };
   }
 
+  async selectActiveSchoolWithAccessToken(
+    accessToken: string,
+    schoolId: string,
+  ): Promise<IdentitySession> {
+    const accessHash = await this.tokens.hash(accessToken);
+    const current = await this.sessions.findByAccessTokenHash(accessHash);
+    if (
+      !current ||
+      current.revokedAt ||
+      current.accessExpiresAt <= this.clock.now()
+    ) {
+      throw new IdentityException("AUTH_SESSION_EXPIRED");
+    }
+
+    const selected = await this.selectActiveSchool(current.userId, schoolId);
+    await this.sessions.revoke(current.id);
+    return selected;
+  }
+
   /**
    * Resolve an authenticated session into the GOV-006 AuthContext.
    *

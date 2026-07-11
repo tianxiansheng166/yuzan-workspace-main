@@ -398,9 +398,13 @@ export interface components {
             /** @default zh-CN */
             preferredLocale: string;
             memberships: components["schemas"]["Membership"][];
+            /** Format: uuid */
+            activeSchoolId?: string;
         };
         AuthSession: {
             accessToken: string;
+            /** Format: uuid */
+            activeSchoolId: string | null;
             expiresIn: number;
             user: components["schemas"]["CurrentUser"];
         };

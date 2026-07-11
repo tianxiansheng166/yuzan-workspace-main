@@ -10,7 +10,12 @@ import {
   UnauthorizedException,
 } from "@nestjs/common";
 import { Response } from "express";
-import { Public, CurrentPrincipal } from "../../common/security/index.js";
+import {
+  Public,
+  CurrentPrincipal,
+  CurrentTenant,
+  type TenantContext,
+} from "../../common/security/index.js";
 import { IdentityService } from "./identity.service.js";
 import { LoginDto } from "./dto/login.dto.js";
 import { RefreshSessionDto } from "./dto/refresh-session.dto.js";
@@ -67,6 +72,7 @@ export class IdentityController {
     return {
       data: {
         accessToken: session.tokens.accessToken,
+        activeSchoolId: session.activeSchoolId,
         expiresIn: Math.floor(
           (session.tokens.accessExpiresAt.getTime() - Date.now()) / 1000,
         ),
@@ -104,6 +110,7 @@ export class IdentityController {
     return {
       data: {
         accessToken: session.tokens.accessToken,
+        activeSchoolId: session.activeSchoolId,
         expiresIn: Math.floor(
           (session.tokens.accessExpiresAt.getTime() - Date.now()) / 1000,
         ),
@@ -140,22 +147,28 @@ export class IdentityController {
 
   @Get("/me")
   @HttpCode(HttpStatus.OK)
-  async me(@CurrentPrincipal() principal: Principal) {
+  async me(
+    @CurrentPrincipal() principal: Principal,
+    @CurrentTenant() tenant: TenantContext,
+  ) {
     const { user, memberships } = await this.identityService.getCurrentUser(
       principal.userId,
     );
 
     return {
-      data: this.identityService.toCurrentUser(user, memberships),
+      data: {
+        ...this.identityService.toCurrentUser(user, memberships),
+        activeSchoolId: tenant.schoolId,
+      },
       meta: { requestId: "identity-me" },
     };
   }
 
   @Post("/auth/select-school")
+  @Public()
   @HttpCode(HttpStatus.OK)
   async selectSchool(
     @Body() dto: SelectSchoolDto,
-    @CurrentPrincipal() principal: Principal,
     @Headers("authorization") authorization: string | undefined,
     @Headers("cookie") cookieHeader: string | undefined,
     @Res({ passthrough: true }) response: Response,
@@ -167,11 +180,10 @@ export class IdentityController {
       throw new UnauthorizedException();
     }
 
-    const session = await this.identityService.selectActiveSchool(
-      principal.userId,
+    const session = await this.identityService.selectActiveSchoolWithAccessToken(
+      currentAccessToken,
       dto.schoolId,
     );
-    await this.identityService.logout(currentAccessToken);
 
     const cookies = buildSessionCookies(session.tokens);
     response.cookie(...cookies.access);
@@ -179,6 +191,7 @@ export class IdentityController {
     return {
       data: {
         accessToken: session.tokens.accessToken,
+        activeSchoolId: session.activeSchoolId,
         expiresIn: Math.floor(
           (session.tokens.accessExpiresAt.getTime() - Date.now()) / 1000,
         ),

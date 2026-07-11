@@ -845,12 +845,18 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Membership"
+        activeSchoolId:
+          type: string
+          format: uuid
     AuthSession:
       type: object
-      required: [accessToken, expiresIn, user]
+      required: [accessToken, activeSchoolId, expiresIn, user]
       properties:
         accessToken:
           type: string
+        activeSchoolId:
+          type: [string, "null"]
+          format: uuid
         expiresIn:
           type: integer
         user:
