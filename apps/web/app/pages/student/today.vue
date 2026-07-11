@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import TodayPath from "~/features/today/components/TodayPath.vue";
+import V3TerrainArtwork from "~/components/yuzan-v3/V3TerrainArtwork.vue";
 import { stateLabel } from "~/features/today/adapters/today.adapter";
 import { useToday } from "~/features/today/composables/useToday";
 import type { TodayScenario } from "~/features/today/types";
@@ -23,6 +24,13 @@ await load();
         每个任务都会说明为什么做、需要多久、怎样算完成，以及卡住时怎么继续。
       </p>
     </header>
+
+    <V3TerrainArtwork
+      src="/art/yuzan-v3/today-desktop-path.jpg"
+      alt="沿山谷延伸的学习路径"
+      position="bottom"
+      tone="sage"
+    />
 
     <section v-if="state === 'loading'" class="state" aria-live="polite">
       <h2>正在准备今天的学习……</h2>

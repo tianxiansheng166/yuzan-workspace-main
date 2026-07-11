@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import V3TerrainArtwork from "~/components/yuzan-v3/V3TerrainArtwork.vue";
 import AssessmentPageShell from "./AssessmentPageShell.vue";
 import { assessmentTitle, assessmentValuePoints } from "./assessment-content";
 
@@ -22,6 +23,12 @@ useHead({
     </template>
 
     <div class="landing-layout">
+      <V3TerrainArtwork
+        src="/art/yuzan-v3/assessment-entry-hero.jpg"
+        alt="山脊与声波交织的测评路径"
+        position="bottom"
+        tone="sage"
+      />
       <section class="landing-hero">
         <p class="landing-hero__eyebrow">五页闭环</p>
         <h2>先录音，再作答，最后查看报告与历史变化。</h2>
