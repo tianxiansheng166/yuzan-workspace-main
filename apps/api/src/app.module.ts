@@ -9,6 +9,10 @@ import { CurriculumModule } from "./modules/curriculum/curriculum.module.js";
 import { HealthModule } from "./modules/health/health.module";
 import { IdentityModule } from "./modules/identity/identity.module.js";
 import { OrganizationsModule } from "./modules/organizations/organizations.module.js";
+import { AssignmentsModule } from "./modules/assignments/assignments.module.js";
+import { SubmissionsModule } from "./modules/submissions/submissions.module.js";
+import { FeedbackModule } from "./modules/feedback/feedback.module.js";
+import { LearningModule } from "./modules/learning/learning.module.js";
 import { DatabaseModule } from "./shared/database/index.js";
 
 markRootHealthRoutesPublic();
@@ -26,6 +30,10 @@ applyRootRouteCompatibility();
     OrganizationsModule,
     ClassesModule,
     CurriculumModule,
+    AssignmentsModule,
+    SubmissionsModule,
+    FeedbackModule,
+    LearningModule,
     // Keep security last so its APP_GUARD providers execute in the documented
     // authentication -> tenant -> policy order after feature composition.
     AuthModule,

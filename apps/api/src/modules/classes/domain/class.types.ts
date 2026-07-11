@@ -6,6 +6,8 @@ import type {
 export interface Class {
   readonly id: string;
   readonly schoolId: string;
+  readonly termId: string;
+  readonly campusId?: string;
   readonly name: string;
   readonly grade: string;
   readonly teacherUserIds: readonly string[];
@@ -29,8 +31,23 @@ export interface ClassMember {
 }
 
 export interface ClassEnrollment {
+  readonly id: string;
   readonly classId: string;
   readonly schoolId: string;
   readonly userId: string;
   readonly roleInClass: MembershipRole.TEACHER | MembershipRole.STUDENT;
+  readonly status: MembershipStatus;
+}
+
+export interface CreateClassInput {
+  readonly schoolId: string;
+  readonly termId: string;
+  readonly campusId?: string;
+  readonly name: string;
+  readonly grade: string;
+}
+
+export interface UpdateClassInput {
+  readonly name?: string;
+  readonly grade?: string;
 }
