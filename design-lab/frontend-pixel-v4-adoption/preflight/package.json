@@ -1,0 +1,11 @@
+{
+  "name": "@yuzan/frontend-pixel-v4-preflight",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "capture": "node scripts/capture-baseline.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.61.1"
+  }
+}
