@@ -64,12 +64,13 @@ describe("AppModule root composition", () => {
     for (const approved of [
       "HealthModule",
       "IdentityModule",
+      "OrganizationsModule",
+      "ClassesModule",
       "CurriculumModule",
       "AuthModule",
     ]) {
       expect(names.filter((name) => name === approved)).toHaveLength(1);
     }
-    expect(names).not.toContain("OrganizationsModule");
     expect(names).not.toContain("AssignmentsModule");
     expect(names).not.toContain("LearningModule");
     expect(new Set(names).size).toBe(names.length);

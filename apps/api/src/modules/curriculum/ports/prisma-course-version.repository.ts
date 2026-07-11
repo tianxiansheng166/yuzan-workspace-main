@@ -114,6 +114,15 @@ export class PrismaCourseVersionRepository
           },
           select: { id: true },
         });
+        const existingCourse = await tx.course.findFirst({
+          where: {
+            id: version.courseId,
+            schoolId: version.schoolId,
+            authorUserId: version.authorUserId,
+            deletedAt: null,
+          },
+          select: { id: true },
+        });
 
         if (existing) {
           if (!options?.expectedUpdatedAt) {
@@ -170,15 +179,17 @@ export class PrismaCourseVersionRepository
             data: { title: version.title },
           });
         } else {
-          await tx.course.create({
-            data: {
-              id: version.courseId,
-              schoolId: version.schoolId,
-              authorUserId: version.authorUserId,
-              stableKey: version.courseId,
-              title: version.title,
-            },
-          });
+          if (!existingCourse) {
+            await tx.course.create({
+              data: {
+                id: version.courseId,
+                schoolId: version.schoolId,
+                authorUserId: version.authorUserId,
+                stableKey: version.courseId,
+                title: version.title,
+              },
+            });
+          }
           await tx.courseVersion.create({
             data: {
               id: version.id,

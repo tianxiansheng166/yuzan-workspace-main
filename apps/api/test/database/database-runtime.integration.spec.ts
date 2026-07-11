@@ -83,6 +83,7 @@ async function cleanup() {
     "Campus",
     "Membership",
     "Session",
+    "SessionPair",
     "AuditLog",
     "User",
     "School",
@@ -104,7 +105,10 @@ describe("Shared database runtime — PostgreSQL integration tests", () => {
 
   // 2. Invalid config fails fast (when a query is attempted)
   it("rejects invalid connection string on query", async () => {
-    const badPool = new Pool({ connectionString: "not-a-url" });
+    const badPool = new Pool({
+      connectionString: "not-a-url",
+      connectionTimeoutMillis: 250,
+    });
     try {
       await badPool.query("SELECT 1");
       expect.unreachable("Should have thrown");

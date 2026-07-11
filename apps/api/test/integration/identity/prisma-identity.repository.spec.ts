@@ -1,4 +1,3 @@
-import { execSync } from "node:child_process";
 import { resolve } from "node:path";
 import {
   afterAll,
@@ -10,14 +9,11 @@ import {
   it,
 } from "vitest";
 import { PrismaIdentityRepository } from "../../../src/modules/identity/adapters/prisma-identity.repository.js";
+import { PrismaService } from "../../../src/shared/database/prisma.service.js";
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const { Client } = require("pg");
-
-const ADMIN_DATABASE_URL =
-  "postgresql://yuzan:yuzan_dev_only@localhost:5432/postgres";
-const TEST_DATABASE_URL =
-  "postgresql://yuzan:yuzan_dev_only@localhost:5432/yuzan_identity_test?schema=public";
+const configuredUrl = process.env.DATABASE_URL;
+if (!configuredUrl) throw new Error("DATABASE_URL is required");
+const TEST_DATABASE_URL = configuredUrl;
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const { PrismaClient } = require(
@@ -28,35 +24,6 @@ const { PrismaClient } = require(
 );
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const { PrismaPg } = require("@prisma/adapter-pg");
-
-async function withAdminClient<T>(
-  operation: (client: unknown) => Promise<T>,
-): Promise<T> {
-  const client = new Client({ connectionString: ADMIN_DATABASE_URL });
-  await client.connect();
-  try {
-    return await operation(client);
-  } finally {
-    await client.end();
-  }
-}
-
-async function resetTestDatabase(): Promise<void> {
-  await withAdminClient(
-    async (client: { query: (sql: string) => Promise<unknown> }) => {
-      await client.query(
-        `DROP DATABASE IF EXISTS "yuzan_identity_test" WITH (FORCE);`,
-      );
-      await client.query(`CREATE DATABASE "yuzan_identity_test";`);
-    },
-  );
-
-  execSync("pnpm --filter @yuzan/database migrate:deploy", {
-    env: { ...process.env, DATABASE_URL: TEST_DATABASE_URL },
-    cwd: resolve(process.cwd(), "../.."),
-    stdio: "pipe",
-  });
-}
 
 async function clearTables(prisma: {
   [key: string]: { deleteMany: (args?: unknown) => Promise<unknown> };
@@ -75,6 +42,7 @@ async function clearTables(prisma: {
 describe("PrismaIdentityRepository PostgreSQL integration", () => {
   let prisma: ReturnType<typeof createPrisma>;
   let repository: PrismaIdentityRepository;
+  let runtime: PrismaService;
 
   function createPrisma() {
     return new PrismaClient({
@@ -84,10 +52,11 @@ describe("PrismaIdentityRepository PostgreSQL integration", () => {
   }
 
   beforeAll(async () => {
-    await resetTestDatabase();
-    process.env.DATABASE_URL = TEST_DATABASE_URL;
     prisma = createPrisma();
-    repository = new PrismaIdentityRepository();
+    await clearTables(prisma);
+    runtime = new PrismaService(TEST_DATABASE_URL);
+    await runtime.onModuleInit();
+    repository = new PrismaIdentityRepository(runtime);
   });
 
   afterEach(async () => {
@@ -95,15 +64,8 @@ describe("PrismaIdentityRepository PostgreSQL integration", () => {
   });
 
   afterAll(async () => {
-    await repository.onModuleDestroy();
+    await runtime.onModuleDestroy();
     await prisma.$disconnect();
-    await withAdminClient(
-      async (client: { query: (sql: string) => Promise<unknown> }) => {
-        await client.query(
-          `DROP DATABASE IF EXISTS "yuzan_identity_test" WITH (FORCE);`,
-        );
-      },
-    );
   });
 
   describe("A. repository construction and connection", () => {
@@ -112,25 +74,19 @@ describe("PrismaIdentityRepository PostgreSQL integration", () => {
       expect(result).toBeNull();
     });
 
-    it("remains fail-closed when DATABASE_URL is missing", () => {
-      const original = process.env.DATABASE_URL;
-      delete process.env.DATABASE_URL;
-      expect(() => new PrismaIdentityRepository()).toThrow(
-        expect.objectContaining({ code: "AUTH_SERVICE_UNAVAILABLE" }),
-      );
-      process.env.DATABASE_URL = original;
+    it("uses only the injected shared database runtime", () => {
+      expect(() => new PrismaIdentityRepository(runtime)).not.toThrow();
     });
 
     it("remains fail-closed with an invalid host and does not leak the connection URL", async () => {
-      const original = process.env.DATABASE_URL;
-      process.env.DATABASE_URL =
-        "postgresql://yuzan:yuzan_dev_only@127.0.0.1:65432/yuzan_identity_test?schema=public";
-      const repo = new PrismaIdentityRepository();
+      const invalidRuntime = new PrismaService(
+        "postgresql://user:password@127.0.0.1:65432/identity_secret",
+      );
+      const repo = new PrismaIdentityRepository(invalidRuntime);
       await expect(repo.findByIdentifier("x")).rejects.toThrow(
         expect.objectContaining({ code: "AUTH_SERVICE_UNAVAILABLE" }),
       );
-      await repo.onModuleDestroy();
-      process.env.DATABASE_URL = original;
+      await invalidRuntime.onModuleDestroy();
     });
   });
 

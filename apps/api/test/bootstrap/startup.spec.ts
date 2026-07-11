@@ -11,7 +11,6 @@ describe("API root startup", () => {
     Object.assign(process.env, {
       API_PORT: "0",
       COOKIE_SECURE: "false",
-      DATABASE_URL: "postgresql://unused:unused@127.0.0.1:5432/unused",
       NODE_ENV: "test",
       SESSION_SECRET: "test-only-session-secret-at-least-32-characters",
       WEB_ORIGIN: "http://127.0.0.1:3000",
