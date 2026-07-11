@@ -23,6 +23,7 @@ import { ToolsModule } from "./modules/tools/tools.module.js";
 import { TrainingModule } from "./modules/training/training.module.js";
 import { TranslationsModule } from "./modules/translations/translations.module.js";
 import { VolunteersModule } from "./modules/volunteers/volunteers.module.js";
+import { MvpGapsModule } from "./modules/mvp-gaps/mvp-gaps.module.js";
 import { DatabaseModule } from "./shared/database/index.js";
 
 markRootHealthRoutesPublic();
@@ -54,8 +55,9 @@ applyRootRouteCompatibility();
     ReportingModule,
     OfflineModule,
     OperationsModule,
-    // P2 stub modules are registered below once created so routes exist but
-    // return PERSISTENCE_PENDING / UNAVAILABLE / PROVIDER_NOT_CONFIGURED.
+    // P2 stub modules expose routes but return PERSISTENCE_PENDING /
+    // UNAVAILABLE / PROVIDER_NOT_CONFIGURED so they cannot block MVP.
+    MvpGapsModule,
     // Keep security last so its APP_GUARD providers execute in the documented
     // authentication -> tenant -> policy order after feature composition.
     AuthModule,
