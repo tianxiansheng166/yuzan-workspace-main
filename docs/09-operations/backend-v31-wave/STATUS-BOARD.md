@@ -13,13 +13,13 @@
 
 ## 任务状态
 
-| 任务 ID | 角色 | 分支 | 状态 | 本地 HEAD | 远程 HEAD | 备注 |
-|---------|------|------|------|-----------|-----------|------|
-| b31-105 | Trae-1 | `task/b31-105-platform-contracts-reporting` | REVIEW | `28b751b` | `28b751b` | Schema/contract/reporting/offline/operations implementation complete |
-| b31-101 | Trae-2 | `task/b31-101-teaching-loop` | READY | `22e3e14` | `22e3e14` | 等待启动 |
-| b31-102 | Trae-3 | `task/b31-102-assessment-loop` | READY | `22e3e14` | `22e3e14` | 等待启动 |
-| b31-103 | Trae-4 | `task/b31-103-admin-products` | READY | `22e3e14` | `22e3e14` | 等待启动 |
-| b31-104 | Trae-5 | `task/b31-104-volunteer-tools-community` | READY | `22e3e14` | `22e3e14` | 等待启动 |
+| 任务 ID | 角色 | 分支 | 状态 | 本地 HEAD | 远程 HEAD | 阶段 A Preflight | 阶段 B Codex 攻坚 | 阶段 C Trae 收尾 | 备注 |
+|---------|------|------|------|-----------|-----------|------------------|-------------------|------------------|------|
+| b31-105 | Trae-1 | `task/b31-105-platform-contracts-reporting` | REVIEW | `da5dc0f` | `da5dc0f` | DONE | DONE | IN_PROGRESS | reporting/offline/operations 已实现；待全量测试与集成 |
+| b31-101 | Trae-2 | `task/b31-101-teaching-loop` | READY | `22e3e14` | `22e3e14` | PENDING | PENDING | PENDING | 等待启动 |
+| b31-102 | Trae-3 | `task/b31-102-assessment-loop` | READY | `22e3e14` | `22e3e14` | PENDING | PENDING | PENDING | 等待启动 |
+| b31-103 | Trae-4 | `task/b31-103-admin-products` | READY | `22e3e14` | `22e3e14` | PENDING | PENDING | PENDING | 等待启动 |
+| b31-104 | Trae-5 | `task/b31-104-volunteer-tools-community` | READY | `22e3e14` | `22e3e14` | PENDING | PENDING | PENDING | 等待启动 |
 
 ## Schema Request 队列
 
@@ -41,10 +41,13 @@
 
 ## 下一步行动
 
-1. Trae-1 完成总控文档创建并 push；
-2. Trae-2 ~ Trae-5 各自在 worktree 中阅读对应 prompt 并开始开发；
-3. 各任务按 [DEPENDENCY-GRAPH.md](./DEPENDENCY-GRAPH.md) 提交 schema/contract request；
-4. Trae-1 分批处理共享变更，更新本看板。
+1. 所有角色阅读 [MODEL-ALLOCATION-POLICY-V2.md](./MODEL-ALLOCATION-POLICY-V2.md)；
+2. Trae-1 完成 MODEL-ALLOCATION-POLICY-V2 文档 push；
+3. Trae-2 ~ Trae-5 各自在 worktree 中完成阶段 A Preflight，返回 `CODEX_TASK_ENVIRONMENT_READY`；
+4. Trae-1 按 [MODEL-ALLOCATION-POLICY-V2.md](./MODEL-ALLOCATION-POLICY-V2.md) 向 Codex 派发高价值攻坚任务；
+5. Codex 完成后，Trae 进入阶段 C 收尾；
+6. 各任务按 [DEPENDENCY-GRAPH.md](./DEPENDENCY-GRAPH.md) 提交 schema/contract request；
+7. Trae-1 分批处理共享变更，更新本看板。
 
 ## 更新规则
 

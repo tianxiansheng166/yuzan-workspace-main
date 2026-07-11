@@ -1,6 +1,7 @@
 # Backend V3.1 Five-Trae Dispatch
 
-> 总控文档入口。用于协调五个 Trae 角色在 Windows 物理机上的真实并发后端开发。
+> 总控文档入口。用于协调 Backend V3.1 在 Windows 物理机上的真实并发后端开发。  
+> 执行 `MODEL_ALLOCATION_POLICY_V2`：Trae 负责预检/收尾/集成，Codex 负责高价值技术攻坚。
 
 ## 目标
 
@@ -33,6 +34,7 @@
 - [API-FREEZE.md](./API-FREEZE.md)：API 冻结规则与版本控制
 - [STATUS-BOARD.md](./STATUS-BOARD.md)：各任务实时状态看板
 - [INTEGRATION-ORDER.md](./INTEGRATION-ORDER.md)：代码集成顺序与验收 gates
+- [MODEL-ALLOCATION-POLICY-V2.md](./MODEL-ALLOCATION-POLICY-V2.md)：Trae/Codex 分工规则与 Codex 前置门禁
 - [prompts/](./prompts/)：五个 Trae 角色的详细工作提示
 
 ## 关键约束
@@ -46,8 +48,10 @@
 
 ## 使用流程
 
-1. 各角色先阅读本 README 和对应 `prompts/TRAE-N.md`。
-2. 在各自 worktree 中开发，遵守 `allowed_paths`。
-3. 需要共享文件变更时，按 [SHARED-FILE-OWNERSHIP.md](./SHARED-FILE-OWNERSHIP.md) 提交 request。
-4. Trae-1 审核 request，统一在 `b31-105` 分支应用共享变更。
-5. 各任务完成后按 [INTEGRATION-ORDER.md](./INTEGRATION-ORDER.md) 提交合并。
+1. 各角色先阅读本 README、[MODEL-ALLOCATION-POLICY-V2.md](./MODEL-ALLOCATION-POLICY-V2.md) 和对应 `prompts/TRAE-N.md`。
+2. **阶段 A**：Trae 在各自 worktree 完成预检，返回 `CODEX_TASK_ENVIRONMENT_READY`。
+3. **阶段 B**：Trae-1 或任务负责人按 [MODEL-ALLOCATION-POLICY-V2.md](./MODEL-ALLOCATION-POLICY-V2.md) 向 Codex 派发高价值实现任务。
+4. **阶段 C**：Codex 完成后，Trae 完成常规 repository/controller、测试补齐、文档、push。
+5. 需要共享文件变更时，按 [SHARED-FILE-OWNERSHIP.md](./SHARED-FILE-OWNERSHIP.md) 提交 request。
+6. Trae-1 审核 request，统一在 `b31-105` 分支应用共享变更。
+7. 各任务完成后按 [INTEGRATION-ORDER.md](./INTEGRATION-ORDER.md) 提交合并。
