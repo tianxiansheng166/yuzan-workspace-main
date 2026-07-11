@@ -2,6 +2,8 @@
 import { computed, onMounted } from "vue";
 import { YxButton, YxStatus } from "@yuzan/ui";
 import { createBrowserSessionGateway } from "~/features/auth/adapters/browser-session-gateway";
+import { createLeaveCoordinator } from "~/features/dirty-state/leave-coordinator";
+import { getDirtyStateRegistry } from "~/features/dirty-state/composables/useDirtyStateRegistry";
 import { createBrowserSchoolSelectionGateway } from "~/features/school-selection/browser-gateway";
 import { createSchoolSelectionState } from "~/features/school-selection/state";
 import type { SchoolMembership } from "~/features/school-selection/types";
@@ -10,8 +12,17 @@ useSeoMeta({ title: "选择学校｜语赞心声" });
 const router = useRouter();
 const config = useRuntimeConfig();
 const gateway = createBrowserSchoolSelectionGateway(config.public.apiBase);
+const coordinator = createLeaveCoordinator({ router });
+const registry = getDirtyStateRegistry();
+
 const selection = createSchoolSelectionState(gateway, async (to) => {
-  await router.replace(to);
+  const canLeave = await coordinator.requestSchoolSwitch();
+  if (!canLeave) return;
+
+  await coordinator.bypassNavigation(async () => {
+    registry.clearScope("SCHOOL");
+    await router.replace(to);
+  });
 });
 const busy = computed(
   () =>
@@ -42,9 +53,14 @@ function roleLabel(role: string) {
   );
 }
 async function logout() {
-  gateway.clearActiveSchool();
-  await createBrowserSessionGateway().clear();
-  await router.replace("/login");
+  const canLeave = await coordinator.requestLogout();
+  if (!canLeave) return;
+
+  await coordinator.bypassNavigation(async () => {
+    gateway.clearActiveSchool();
+    await createBrowserSessionGateway().clear();
+    await router.replace("/login");
+  });
 }
 onMounted(selection.load);
 </script>

@@ -5,6 +5,7 @@ import { YxButton, YxStatus } from "@yuzan/ui";
 
 import { getAppShellContext } from "~/features/app-shell/app-shell-content";
 import { createBrowserSessionGateway } from "~/features/auth/adapters/browser-session-gateway";
+import { createLeaveCoordinator } from "~/features/dirty-state/leave-coordinator";
 import { createActiveSchoolStore } from "~/features/school-selection/active-school";
 import type { ActiveSchoolContext } from "~/features/school-selection/types";
 import RoleNavigation from "./RoleNavigation.vue";
@@ -26,9 +27,15 @@ function closeNavigation() {
 }
 
 async function logout() {
-  createActiveSchoolStore().clear();
-  await createBrowserSessionGateway().clear();
-  await router.push("/login");
+  const coordinator = createLeaveCoordinator({ router });
+  const canLeave = await coordinator.requestLogout();
+  if (!canLeave) return;
+
+  await coordinator.bypassNavigation(async () => {
+    createActiveSchoolStore().clear();
+    await createBrowserSessionGateway().clear();
+    await router.push("/login");
+  });
 }
 
 onMounted(() => {
