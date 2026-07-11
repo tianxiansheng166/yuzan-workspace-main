@@ -4,7 +4,12 @@
   <NuxtLayout>
     <NuxtPage />
   </NuxtLayout>
+  <DirtyStateLeaveDialog />
 </template>
+
+<script setup lang="ts">
+import DirtyStateLeaveDialog from "~/features/dirty-state/components/DirtyStateLeaveDialog.vue";
+</script>
 
 <style>
 .skip-link {
