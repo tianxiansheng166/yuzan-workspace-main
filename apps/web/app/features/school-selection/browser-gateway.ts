@@ -3,6 +3,7 @@ import type { SchoolSelectionGateway } from "./gateway";
 import { isMembershipRole } from "./role-route";
 import type {
   CurrentSchoolUser,
+  AuthSessionResponse,
   MembershipLoadResult,
   SchoolMembership,
 } from "./types";
@@ -18,7 +19,7 @@ export function createBrowserSchoolSelectionGateway(
 
   async function loadMemberships(): Promise<MembershipLoadResult> {
     try {
-      const response = await $fetch<CurrentUserEnvelope>(`${apiBase}/auth/me`, {
+      const response = await $fetch<CurrentUserEnvelope>(`${apiBase}/me`, {
         credentials: "include",
       });
       if (!response.data || !Array.isArray(response.data.memberships)) {
@@ -49,6 +50,7 @@ export function createBrowserSchoolSelectionGateway(
   return {
     loadMemberships,
     async selectSchool(schoolId) {
+      const previous = activeSchool.read();
       const loaded = await loadMemberships();
       if (loaded.status !== "ready") return loaded;
       const membership = loaded.user.memberships.find(
@@ -79,6 +81,25 @@ export function createBrowserSchoolSelectionGateway(
           status: "unknown-role",
           message: "该成员身份角色无法识别，未授予任何页面权限。",
         };
+      }
+      try {
+        const selected = await $fetch<AuthSessionResponse>(`${apiBase}/auth/select-school`, {
+          method: "POST",
+          credentials: "include",
+          body: { schoolId },
+        });
+        if (selected.data.user.activeSchoolId !== schoolId) {
+          return { status: "failed", message: "服务端未确认所选学校，原学校上下文保持不变。" };
+        }
+        const verified = await $fetch<CurrentUserEnvelope>(`${apiBase}/me`, { credentials: "include" });
+        if (!verified.data || verified.data.activeSchoolId !== schoolId) {
+          return { status: "failed", message: "学校上下文复核失败，原学校上下文保持不变。" };
+        }
+      } catch (error: unknown) {
+        const status = (error as { status?: number; statusCode?: number }).status ?? (error as { statusCode?: number }).statusCode;
+        if (status === 401) return { status: "session-expired", message: "登录状态已过期，请重新登录。" };
+        if (status === 403) return { status: "failed", message: "服务端拒绝切换到该学校，原学校上下文保持不变。" };
+        return { status: "network-error", message: previous ? "学校切换未完成，仍保留原学校上下文。" : "学校切换未完成，请检查网络后重试。" };
       }
       const context = {
         schoolId: membership.schoolId,

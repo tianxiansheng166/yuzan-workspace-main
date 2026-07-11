@@ -20,7 +20,17 @@ export interface SchoolMembership {
 export interface CurrentSchoolUser {
   id: string;
   displayName: string;
+  activeSchoolId?: string | null;
   memberships: SchoolMembership[];
+}
+
+export interface AuthSessionResponse {
+  data: {
+    accessToken: string;
+    expiresIn: number;
+    user: CurrentSchoolUser;
+  };
+  meta: { requestId: string; timestamp?: string };
 }
 
 export interface ActiveSchoolContext {

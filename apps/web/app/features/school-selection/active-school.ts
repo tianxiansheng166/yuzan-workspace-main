@@ -1,4 +1,4 @@
-import { createSafeStorage } from "~/features/auth/utils/storage";
+import { createSafeStorage } from "../auth/utils/storage";
 import type { ActiveSchoolContext } from "./types";
 
 export const ACTIVE_SCHOOL_KEY = "yuzan.school.active";
