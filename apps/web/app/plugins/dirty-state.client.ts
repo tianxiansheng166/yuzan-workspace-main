@@ -10,6 +10,18 @@ export default defineNuxtPlugin(() => {
   const coordinator = createLeaveCoordinator({ router });
   const registry = getDirtyStateRegistry();
 
+  const isLocalhost =
+    typeof window !== "undefined" &&
+    (window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1");
+
+  if (import.meta.dev || isLocalhost) {
+    (window as unknown as Record<string, unknown>).__yuzanDirtyState = {
+      registry,
+      coordinator,
+    };
+  }
+
   window.addEventListener("beforeunload", (event) => {
     if (!coordinator.requestBeforeUnload()) return;
     event.preventDefault();

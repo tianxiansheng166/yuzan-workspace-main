@@ -323,4 +323,52 @@ describe("DirtyStateRegistry", () => {
 
     expect(changes).toBeGreaterThanOrEqual(3);
   });
+
+  it("prevents duplicate save calls while already saving", async () => {
+    const registry = createRegistry();
+    let saveCount = 0;
+    registry.register(
+      createEntryInput({
+        id: "a",
+        status: "DIRTY",
+        save: async () => {
+          saveCount++;
+          await new Promise((resolve) => setTimeout(resolve, 20));
+          return { status: "success" as const };
+        },
+      }),
+    );
+
+    const first = registry.saveOne("a");
+    const duplicate = registry.saveOne("a");
+    const [firstResult, duplicateResult] = await Promise.all([first, duplicate]);
+
+    expect(saveCount).toBe(1);
+    expect(firstResult.status).toBe("success");
+    expect(duplicateResult.status).toBe("failed");
+    expect(duplicateResult.message).toBe("保存已在进行中");
+    expect(registry.get("a")?.status).toBe("CLEAN");
+  });
+
+  it("prevents duplicate discard calls while already discarding", async () => {
+    const registry = createRegistry();
+    let discardCount = 0;
+    registry.register(
+      createEntryInput({
+        id: "a",
+        status: "DIRTY",
+        discard: async () => {
+          discardCount++;
+          await new Promise((resolve) => setTimeout(resolve, 20));
+        },
+      }),
+    );
+
+    const first = registry.discardOne("a");
+    const duplicate = registry.discardOne("a");
+    await Promise.all([first, duplicate]);
+
+    expect(discardCount).toBe(1);
+    expect(registry.has("a")).toBe(false);
+  });
 });
