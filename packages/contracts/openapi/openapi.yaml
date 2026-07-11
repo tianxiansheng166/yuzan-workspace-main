@@ -125,6 +125,30 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "401":
           $ref: "#/components/responses/Unauthorized"
+  /auth/select-school:
+    post:
+      summary: Select an authorized school and rotate the active session
+      tags: [Auth]
+      operationId: selectSchool
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SelectSchoolRequest"
+      responses:
+        "200":
+          description: Active school selected
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthSessionResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
   /me:
     get:
       summary: 获取当前用户
@@ -214,6 +238,57 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CourseVersionResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+  /schools/{schoolId}/course-versions/{courseVersionId}:
+    get:
+      summary: Read a school-scoped course version
+      tags: [Curriculum]
+      operationId: getCourseVersion
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/CourseVersionId"
+      responses:
+        "200":
+          description: Course version detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CourseVersionDetailResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    patch:
+      summary: Atomically update an editable course draft
+      tags: [Curriculum]
+      operationId: updateCourseDraft
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/CourseVersionId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCourseDraftRequest"
+      responses:
+        "200":
+          description: Updated course draft
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CourseVersionDetailResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -796,6 +871,14 @@ components:
           $ref: "#/components/schemas/CurrentUser"
         meta:
           $ref: "#/components/schemas/EnvelopeMeta"
+    SelectSchoolRequest:
+      type: object
+      required: [schoolId]
+      additionalProperties: false
+      properties:
+        schoolId:
+          type: string
+          format: uuid
     CourseVersionStatus:
       type: string
       enum: [DRAFT, IN_REVIEW, CHANGES_REQUESTED, APPROVED, PUBLISHED, RETIRED]
@@ -847,6 +930,70 @@ components:
         locale:
           type: string
           default: zh-CN
+    UpdateCourseDraftRequest:
+      type: object
+      required: [expectedUpdatedAt]
+      additionalProperties: false
+      properties:
+        expectedUpdatedAt:
+          type: string
+          format: date-time
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+        description:
+          type: string
+          maxLength: 2000
+        gradeBand:
+          type: string
+          maxLength: 100
+        locale:
+          type: string
+          maxLength: 20
+        objectives:
+          type: array
+          items:
+            type: object
+        units:
+          type: array
+          items:
+            type: object
+    CourseVersionDetail:
+      allOf:
+        - $ref: "#/components/schemas/CourseVersionSummary"
+        - type: object
+          required: [schoolId, authorUserId, locale, objectives, units, createdAt]
+          properties:
+            schoolId:
+              type: string
+              format: uuid
+            authorUserId:
+              type: string
+              format: uuid
+            description:
+              type: string
+            locale:
+              type: string
+            objectives:
+              type: array
+              items:
+                type: object
+            units:
+              type: array
+              items:
+                type: object
+            createdAt:
+              type: string
+              format: date-time
+    CourseVersionDetailResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          $ref: "#/components/schemas/CourseVersionDetail"
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
     CourseVersionResponse:
       type: object
       required: [data, meta]

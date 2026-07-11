@@ -4,7 +4,7 @@ import { UnavailableResourceLookupAdapter } from "../resources/ports/unavailable
 import { CurriculumController } from "./curriculum.controller.js";
 import { CurriculumService } from "./curriculum.service.js";
 import { COURSE_VERSION_REPOSITORY } from "./ports/course-version-repository.port.js";
-import { UnavailableCourseVersionRepository } from "./ports/unavailable-course-version.repository.js";
+import { PrismaCourseVersionRepository } from "./ports/prisma-course-version.repository.js";
 
 @Module({
   controllers: [CurriculumController],
@@ -12,7 +12,7 @@ import { UnavailableCourseVersionRepository } from "./ports/unavailable-course-v
     CurriculumService,
     {
       provide: COURSE_VERSION_REPOSITORY,
-      useClass: UnavailableCourseVersionRepository,
+      useClass: PrismaCourseVersionRepository,
     },
     {
       provide: RESOURCE_LOOKUP_PORT,

@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Inject,
+  Patch,
   Param,
   ParseUUIDPipe,
   Post,
@@ -21,6 +22,7 @@ import { CurriculumService } from "./curriculum.service.js";
 import { CreateCourseDraftDto } from "./dto/create-course-draft.dto.js";
 import { ListCourseVersionsQueryDto } from "./dto/list-course-versions-query.dto.js";
 import type { CourseVersionSummaryResponse } from "./dto/course-version-summary.response.js";
+import { UpdateCourseDraftDto } from "./dto/update-course-draft.dto.js";
 
 @Controller("schools/:schoolId/course-versions")
 export class CurriculumController {
@@ -59,6 +61,42 @@ export class CurriculumController {
     return this.service.createCourseDraft(
       createAuthContext("request-id", principal, tenant),
       schoolId,
+      dto,
+    );
+  }
+
+  @Get(":courseVersionId")
+  @RequireRoles(
+    MembershipRole.STUDENT,
+    MembershipRole.TEACHER,
+    MembershipRole.SCHOOL_ADMIN,
+  )
+  async getCourseDraft(
+    @Param("schoolId", ParseUUIDPipe) schoolId: string,
+    @Param("courseVersionId", ParseUUIDPipe) courseVersionId: string,
+    @CurrentTenant() tenant: TenantContext,
+    @CurrentPrincipal() principal: Principal,
+  ) {
+    return this.service.findById(
+      createAuthContext("request-id", principal, tenant),
+      schoolId,
+      courseVersionId,
+    );
+  }
+
+  @Patch(":courseVersionId")
+  @RequireRoles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
+  async updateCourseDraft(
+    @Param("schoolId", ParseUUIDPipe) schoolId: string,
+    @Param("courseVersionId", ParseUUIDPipe) courseVersionId: string,
+    @Body() dto: UpdateCourseDraftDto,
+    @CurrentTenant() tenant: TenantContext,
+    @CurrentPrincipal() principal: Principal,
+  ) {
+    return this.service.updateDraft(
+      createAuthContext("request-id", principal, tenant),
+      schoolId,
+      courseVersionId,
       dto,
     );
   }

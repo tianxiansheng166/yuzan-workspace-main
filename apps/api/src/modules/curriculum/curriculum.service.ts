@@ -25,6 +25,7 @@ import { COURSE_VERSION_REPOSITORY } from "./ports/course-version-repository.por
 import { executePublish } from "./publishing/publishing.workflow.js";
 import type { CreateCourseDraftDto } from "./dto/create-course-draft.dto.js";
 import type { ListCourseVersionsQueryDto } from "./dto/list-course-versions-query.dto.js";
+import type { UpdateCourseDraftDto } from "./dto/update-course-draft.dto.js";
 
 @Injectable()
 export class CurriculumService {
@@ -131,8 +132,8 @@ export class CurriculumService {
     auth: AuthContext,
     schoolId: string,
     courseVersionId: string,
-    update: Partial<CourseVersion>,
-  ): Promise<CourseVersionSummary> {
+    update: UpdateCourseDraftDto,
+  ): Promise<CourseVersion> {
     const version = await this.courseRepo.findById(schoolId, courseVersionId);
 
     if (!version) {
@@ -149,9 +150,10 @@ export class CurriculumService {
       );
     }
 
+    const { expectedUpdatedAt, ...changes } = update;
     const updated: CourseVersion = {
       ...version,
-      ...update,
+      ...changes,
       id: version.id,
       schoolId: version.schoolId,
       courseId: version.courseId,
@@ -163,8 +165,9 @@ export class CurriculumService {
 
     const saved = await this.courseRepo.save(updated, {
       generateVersion: false,
+      expectedUpdatedAt: new Date(expectedUpdatedAt),
     });
-    return toSummary(saved);
+    return saved;
   }
 
   async submitForReview(
@@ -197,6 +200,7 @@ export class CurriculumService {
 
     const saved = await this.courseRepo.save(updated, {
       generateVersion: false,
+      expectedUpdatedAt: version.updatedAt,
     });
     return toSummary(saved);
   }
@@ -223,6 +227,7 @@ export class CurriculumService {
     }
 
     const nextVersionNumber = await this.courseRepo.nextVersion(
+      schoolId,
       version.courseId,
     );
     const now = new Date();

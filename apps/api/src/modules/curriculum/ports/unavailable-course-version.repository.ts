@@ -17,7 +17,7 @@ export class UnavailableCourseVersionRepository implements CourseVersionReposito
     throw new CurriculumRepositoryUnavailableException();
   }
 
-  async nextVersion(_courseId: string): Promise<number> {
+  async nextVersion(_schoolId: string, _courseId: string): Promise<number> {
     this.fail();
   }
 

@@ -15,6 +15,7 @@ import { IdentityService } from "./identity.service.js";
 import { LoginDto } from "./dto/login.dto.js";
 import { RefreshSessionDto } from "./dto/refresh-session.dto.js";
 import { LogoutDto } from "./dto/logout.dto.js";
+import { SelectSchoolDto } from "./dto/select-school.dto.js";
 import type { Principal } from "../../common/security/index.js";
 
 const REFRESH_TOKEN_COOKIE = "refresh_token";
@@ -147,6 +148,46 @@ export class IdentityController {
     return {
       data: this.identityService.toCurrentUser(user, memberships),
       meta: { requestId: "identity-me" },
+    };
+  }
+
+  @Post("/auth/select-school")
+  @HttpCode(HttpStatus.OK)
+  async selectSchool(
+    @Body() dto: SelectSchoolDto,
+    @CurrentPrincipal() principal: Principal,
+    @Headers("authorization") authorization: string | undefined,
+    @Headers("cookie") cookieHeader: string | undefined,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const currentAccessToken =
+      extractBearerToken(authorization) ??
+      extractCookieValue(cookieHeader, ACCESS_TOKEN_COOKIE);
+    if (!currentAccessToken) {
+      throw new UnauthorizedException();
+    }
+
+    const session = await this.identityService.selectActiveSchool(
+      principal.userId,
+      dto.schoolId,
+    );
+    await this.identityService.logout(currentAccessToken);
+
+    const cookies = buildSessionCookies(session.tokens);
+    response.cookie(...cookies.access);
+    response.cookie(...cookies.refresh);
+    return {
+      data: {
+        accessToken: session.tokens.accessToken,
+        expiresIn: Math.floor(
+          (session.tokens.accessExpiresAt.getTime() - Date.now()) / 1000,
+        ),
+        user: this.identityService.toCurrentUser(
+          session.user,
+          session.memberships,
+        ),
+      },
+      meta: { requestId: "identity-select-school" },
     };
   }
 }

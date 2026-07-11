@@ -24,7 +24,7 @@ export class FakeCourseVersionRepository implements CourseVersionRepositoryPort 
     }
   }
 
-  async nextVersion(courseId: string): Promise<number> {
+  async nextVersion(_schoolId: string, courseId: string): Promise<number> {
     const current = this.versionCounters.get(courseId) ?? 0;
     const next = current + 1;
     this.versionCounters.set(courseId, next);
@@ -37,7 +37,7 @@ export class FakeCourseVersionRepository implements CourseVersionRepositoryPort 
   ): Promise<CourseVersion> {
     const generateVersion = options?.generateVersion ?? false;
     const versionNumber = generateVersion
-      ? await this.nextVersion(version.courseId)
+      ? await this.nextVersion(version.schoolId, version.courseId)
       : version.version;
 
     const saved: CourseVersion = {

@@ -20,10 +20,11 @@ export interface ListCourseVersionsOptions {
 
 export interface SaveCourseVersionOptions {
   readonly generateVersion: boolean;
+  readonly expectedUpdatedAt?: Date;
 }
 
 export interface CourseVersionRepositoryPort {
-  nextVersion(courseId: string): Promise<number>;
+  nextVersion(schoolId: string, courseId: string): Promise<number>;
   save(
     version: CourseVersion,
     options?: SaveCourseVersionOptions,
