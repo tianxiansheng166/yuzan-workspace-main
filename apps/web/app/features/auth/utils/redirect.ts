@@ -1,5 +1,4 @@
 import type { UserRole } from "../models";
-import { defaultRouteForRole } from "./roles";
 
 export function firstQueryValue(
   value: string | null | (string | null)[] | undefined,
@@ -42,8 +41,8 @@ export function sanitizeInternalRedirect(
 }
 
 export function resolvePostLoginRedirect(
-  role: UserRole,
+  _role: UserRole,
   redirectTo: string | undefined,
 ): string {
-  return sanitizeInternalRedirect(redirectTo) ?? defaultRouteForRole(role);
+  return sanitizeInternalRedirect(redirectTo) ?? "/select-school";
 }

@@ -18,11 +18,13 @@ describe("app shell layout contract", () => {
     expect(layout).toContain("<slot />");
   });
 
-  it("provides a named mobile navigation toggle and role disclaimer", () => {
+  it("provides mobile navigation and authenticated account actions", () => {
     const shell = readAppFile("components/app-shell/AppShell.vue");
 
     expect(shell).toContain("展开角色导航");
     expect(shell).toContain("收起角色导航");
-    expect(shell).toContain("不代表真实登录状态或真实权限");
+    expect(shell).toContain("切换学校");
+    expect(shell).toContain("退出登录");
+    expect(shell).toContain("activeSchool.schoolName");
   });
 });

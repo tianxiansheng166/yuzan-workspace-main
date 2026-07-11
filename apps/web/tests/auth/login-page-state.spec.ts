@@ -42,6 +42,26 @@ describe("sanitizeInternalRedirect", () => {
   });
 });
 
+describe("post-login school routing", () => {
+  it("sends a successful login without an original route through school selection", async () => {
+    const navigate = vi.fn();
+    const loginState = createLoginPageState({
+      authGateway: createAuthGateway({
+        status: "authenticated",
+        role: "student",
+        serviceMode: "live",
+      }),
+      sessionGateway: createSessionGateway({
+        status: "unauthenticated",
+        serviceMode: "live",
+      }),
+      navigate,
+    });
+    await loginState.submit();
+    expect(navigate).toHaveBeenCalledWith("/select-school");
+  });
+});
+
 describe("createLoginPageState.initialize", () => {
   it("supports unauthenticated state", async () => {
     const sessionGateway = createSessionGateway({

@@ -1,14 +1,19 @@
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 
 import { YxButton, YxStatus } from "@yuzan/ui";
 
 import { getAppShellContext } from "~/features/app-shell/app-shell-content";
+import { createBrowserSessionGateway } from "~/features/auth/adapters/browser-session-gateway";
+import { createActiveSchoolStore } from "~/features/school-selection/active-school";
+import type { ActiveSchoolContext } from "~/features/school-selection/types";
 import RoleNavigation from "./RoleNavigation.vue";
 
 const route = useRoute();
 const navigationOpen = ref(false);
 const navigationPanelId = "app-shell-role-navigation";
+const router = useRouter();
+const activeSchool = ref<ActiveSchoolContext | null>(null);
 
 const shellContext = computed(() => getAppShellContext(route.path));
 const currentRoleText = computed(
@@ -20,10 +25,21 @@ function closeNavigation() {
   navigationOpen.value = false;
 }
 
+async function logout() {
+  createActiveSchoolStore().clear();
+  await createBrowserSessionGateway().clear();
+  await router.push("/login");
+}
+
+onMounted(() => {
+  activeSchool.value = createActiveSchoolStore().read();
+});
+
 watch(
   () => route.path,
   () => {
     closeNavigation();
+    activeSchool.value = createActiveSchoolStore().read();
   },
 );
 </script>
@@ -51,8 +67,20 @@ watch(
         </div>
 
         <div class="app-shell__meta">
-          <YxStatus tone="information">开发预览</YxStatus>
-          <p>当前仅展示统一导航分组，不代表真实登录状态或真实权限。</p>
+          <YxStatus :tone="activeSchool ? 'success' : 'warning'">{{
+            activeSchool ? "学校已选择" : "尚未选择学校"
+          }}</YxStatus>
+          <p v-if="activeSchool">
+            <strong>{{ activeSchool.schoolName }}</strong> ·
+            {{ activeSchool.role }}
+          </p>
+          <p v-else>进入学校范围前会重新验证成员身份。</p>
+          <div class="app-shell__account-actions">
+            <NuxtLink to="/select-school">{{
+              activeSchool ? "切换学校" : "选择学校"
+            }}</NuxtLink>
+            <button type="button" @click="logout">退出登录</button>
+          </div>
         </div>
 
         <YxButton
@@ -156,6 +184,24 @@ watch(
   display: grid;
   gap: var(--yx-space-200);
   justify-items: start;
+}
+.app-shell__account-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+.app-shell__account-actions a,
+.app-shell__account-actions button {
+  color: var(--yx-action-link);
+  font: inherit;
+  font-weight: 700;
+}
+.app-shell__account-actions button {
+  border: 0;
+  padding: 0;
+  background: none;
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .app-shell__toggle {
