@@ -8,7 +8,7 @@
     "start": "node dist/main.js",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint src test",
-    "test": "vitest run --passWithNoTests"
+    "test": "vitest run --passWithNoTests --pool=forks --poolOptions.forks.singleFork"
   },
   "dependencies": {
     "@nestjs/common": "^11.1.27",

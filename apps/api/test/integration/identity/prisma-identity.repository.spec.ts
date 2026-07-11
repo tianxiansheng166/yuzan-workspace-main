@@ -35,6 +35,8 @@ async function clearTables(prisma: {
   await prisma.class.deleteMany();
   await prisma.term.deleteMany();
   await prisma.campus.deleteMany();
+  await prisma.courseVersion.deleteMany();
+  await prisma.course.deleteMany();
   await prisma.school.deleteMany();
   await prisma.user.deleteMany();
 }

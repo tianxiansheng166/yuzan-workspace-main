@@ -150,10 +150,18 @@ export class CurriculumService {
       );
     }
 
-    const { expectedUpdatedAt, ...changes } = update;
     const updated: CourseVersion = {
       ...version,
-      ...changes,
+      ...(update.title !== undefined ? { title: update.title } : {}),
+      ...(update.description !== undefined
+        ? { description: update.description }
+        : {}),
+      ...(update.gradeBand !== undefined ? { gradeBand: update.gradeBand } : {}),
+      ...(update.locale !== undefined ? { locale: update.locale } : {}),
+      ...(update.objectives !== undefined
+        ? { objectives: update.objectives }
+        : {}),
+      ...(update.units !== undefined ? { units: update.units } : {}),
       id: version.id,
       schoolId: version.schoolId,
       courseId: version.courseId,
@@ -165,7 +173,7 @@ export class CurriculumService {
 
     const saved = await this.courseRepo.save(updated, {
       generateVersion: false,
-      expectedUpdatedAt: new Date(expectedUpdatedAt),
+      expectedUpdatedAt: new Date(update.expectedUpdatedAt),
     });
     return saved;
   }

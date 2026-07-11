@@ -165,10 +165,14 @@ export class PrismaCourseVersionRepository
             );
           }
           await tx.unit.deleteMany({ where: { courseVersionId: version.id } });
-          await tx.courseVersion.update({
-            where: { id: version.id },
-            data: { units: { create: this.buildUnitsCreateInput(version.units) } },
-          });
+          if (version.units.length > 0) {
+            await tx.courseVersion.update({
+              where: { id: version.id },
+              data: {
+                units: { create: this.buildUnitsCreateInput(version.units) },
+              },
+            });
+          }
           await tx.course.updateMany({
             where: {
               id: version.courseId,

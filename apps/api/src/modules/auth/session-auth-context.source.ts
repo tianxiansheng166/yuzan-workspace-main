@@ -1,4 +1,4 @@
-import type { ExecutionContext } from "@nestjs/common";
+import { Injectable, type ExecutionContext } from "@nestjs/common";
 import type { Request } from "express";
 import type {
   AuthContext,
@@ -13,6 +13,7 @@ import { IdentityService } from "../identity/identity.service.js";
  * Authorization: Bearer header or an HttpOnly cookie. Roles and permissions
  * are built from server-side membership data, never from client headers.
  */
+@Injectable()
 export class SessionAuthContextSource implements AuthContextSource {
   constructor(private readonly identityService: IdentityService) {}
 

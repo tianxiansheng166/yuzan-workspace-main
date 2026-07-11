@@ -3,7 +3,12 @@ import { PrismaService } from "./prisma.service";
 
 @Global()
 @Module({
-  providers: [PrismaService],
+  providers: [
+    {
+      provide: PrismaService,
+      useFactory: () => new PrismaService(),
+    },
+  ],
   exports: [PrismaService],
 })
 export class DatabaseModule {}

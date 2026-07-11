@@ -75,7 +75,6 @@ async function cleanup() {
     "Unit",
     "CourseReview",
     "CourseVersion",
-    "Course",
     "Enrollment",
     "Class",
     "Term",
@@ -85,6 +84,7 @@ async function cleanup() {
     "Session",
     "SessionPair",
     "AuditLog",
+    "Course",
     "User",
     "School",
   ];
