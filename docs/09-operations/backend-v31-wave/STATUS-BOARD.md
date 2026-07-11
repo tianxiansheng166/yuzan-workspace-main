@@ -15,7 +15,7 @@
 
 | 任务 ID | 角色 | 分支 | 状态 | 本地 HEAD | 远程 HEAD | 备注 |
 |---------|------|------|------|-----------|-----------|------|
-| b31-105 | Trae-1 | `task/b31-105-platform-contracts-reporting` | IN_PROGRESS | `4bcea5f` | `4bcea5f` | Schema/contract/reporting/offline/operations implementation |
+| b31-105 | Trae-1 | `task/b31-105-platform-contracts-reporting` | REVIEW | `28b751b` | `28b751b` | Schema/contract/reporting/offline/operations implementation complete |
 | b31-101 | Trae-2 | `task/b31-101-teaching-loop` | READY | `22e3e14` | `22e3e14` | 等待启动 |
 | b31-102 | Trae-3 | `task/b31-102-assessment-loop` | READY | `22e3e14` | `22e3e14` | 等待启动 |
 | b31-103 | Trae-4 | `task/b31-103-admin-products` | READY | `22e3e14` | `22e3e14` | 等待启动 |
