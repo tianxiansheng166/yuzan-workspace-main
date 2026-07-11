@@ -20,3 +20,15 @@ export class ClassUnavailableException extends HttpException {
     );
   }
 }
+
+export class ClassConflictException extends HttpException {
+  constructor(message = "班级数据冲突，请刷新后重试") {
+    super({ code: "CLASS_CONFLICT", message }, HttpStatus.CONFLICT);
+  }
+}
+
+export class EnrollmentConflictException extends HttpException {
+  constructor(message = "该成员已在此班级中") {
+    super({ code: "ENROLLMENT_CONFLICT", message }, HttpStatus.CONFLICT);
+  }
+}

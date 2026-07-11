@@ -26,6 +26,46 @@ export class ClassesPolicy {
     ]);
   }
 
+  canCreateClass(auth: AuthContext, schoolId: string): boolean {
+    if (!this.isMemberOfSchool(auth, schoolId)) {
+      return false;
+    }
+    return hasAnyRole(auth, [
+      MembershipRole.SCHOOL_ADMIN,
+      MembershipRole.PLATFORM_ADMIN,
+    ]);
+  }
+
+  canUpdateClass(auth: AuthContext, schoolId: string): boolean {
+    if (!this.isMemberOfSchool(auth, schoolId)) {
+      return false;
+    }
+    return hasAnyRole(auth, [
+      MembershipRole.SCHOOL_ADMIN,
+      MembershipRole.PLATFORM_ADMIN,
+    ]);
+  }
+
+  canDeleteClass(auth: AuthContext, schoolId: string): boolean {
+    if (!this.isMemberOfSchool(auth, schoolId)) {
+      return false;
+    }
+    return hasAnyRole(auth, [
+      MembershipRole.SCHOOL_ADMIN,
+      MembershipRole.PLATFORM_ADMIN,
+    ]);
+  }
+
+  canManageEnrollment(auth: AuthContext, schoolId: string): boolean {
+    if (!this.isMemberOfSchool(auth, schoolId)) {
+      return false;
+    }
+    return hasAnyRole(auth, [
+      MembershipRole.SCHOOL_ADMIN,
+      MembershipRole.PLATFORM_ADMIN,
+    ]);
+  }
+
   canAccessClassAsTeacher(
     auth: AuthContext,
     schoolId: string,

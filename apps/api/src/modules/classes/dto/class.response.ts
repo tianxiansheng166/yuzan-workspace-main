@@ -25,6 +25,8 @@ export function toClassSummaryResponse(
 export interface ClassResponse {
   readonly id: string;
   readonly schoolId: string;
+  readonly termId: string;
+  readonly campusId?: string;
   readonly name: string;
   readonly grade: string;
   readonly teacherUserIds: readonly string[];
@@ -37,6 +39,8 @@ export function toClassResponse(classItem: Class): ClassResponse {
   return {
     id: classItem.id,
     schoolId: classItem.schoolId,
+    termId: classItem.termId,
+    ...(classItem.campusId ? { campusId: classItem.campusId } : {}),
     name: classItem.name,
     grade: classItem.grade,
     teacherUserIds: classItem.teacherUserIds,

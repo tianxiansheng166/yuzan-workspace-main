@@ -67,12 +67,14 @@ describe("AppModule root composition", () => {
       "OrganizationsModule",
       "ClassesModule",
       "CurriculumModule",
+      "AssignmentsModule",
+      "SubmissionsModule",
+      "FeedbackModule",
+      "LearningModule",
       "AuthModule",
     ]) {
       expect(names.filter((name) => name === approved)).toHaveLength(1);
     }
-    expect(names).not.toContain("AssignmentsModule");
-    expect(names).not.toContain("LearningModule");
     expect(new Set(names).size).toBe(names.length);
   });
 
