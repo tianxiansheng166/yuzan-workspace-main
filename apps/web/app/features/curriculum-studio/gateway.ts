@@ -5,9 +5,16 @@ import {
 import type {
   CurriculumDraftDetail,
   CurriculumStudioDashboardData,
+  CurriculumVersionSummary,
   GatewayResult,
   StudioScenario,
 } from "./model";
+
+export type SaveDraftResult =
+  | { status: "success"; data: CurriculumDraftDetail }
+  | { status: "conflict"; message: string }
+  | { status: "failed"; message: string }
+  | { status: "unauthorized"; message: string };
 
 export interface CurriculumStudioGateway {
   getDashboard(
@@ -17,6 +24,11 @@ export interface CurriculumStudioGateway {
     draftId: string,
     scenario: Exclude<StudioScenario, "loading">,
   ): Promise<GatewayResult<CurriculumDraftDetail>>;
+  saveDraftDetail?(
+    draftId: string,
+    detail: CurriculumDraftDetail,
+    baseline: CurriculumVersionSummary,
+  ): Promise<SaveDraftResult>;
 }
 
 export function createDemoCurriculumStudioGateway(): CurriculumStudioGateway {
@@ -88,6 +100,33 @@ export function createDemoCurriculumStudioGateway(): CurriculumStudioGateway {
         data: detail,
         note: "草稿详情由 demo gateway 提供，等待 CUR-001 接入真实课程 API。",
       };
+    },
+    async saveDraftDetail(draftId, detail, baseline) {
+      const current = curriculumStudioDrafts[draftId];
+      if (!current) {
+        return {
+          status: "failed",
+          message: "草稿不存在，无法保存。",
+        };
+      }
+
+      if (current.version.updatedAt !== baseline.updatedAt) {
+        return {
+          status: "conflict",
+          message: "服务端草稿已被其他会话修改。",
+        };
+      }
+
+      const nextVersion: CurriculumVersionSummary = {
+        ...current.version,
+        updatedAt: new Date().toISOString(),
+      };
+      const nextDetail: CurriculumDraftDetail = {
+        ...detail,
+        version: nextVersion,
+      };
+      curriculumStudioDrafts[draftId] = nextDetail;
+      return { status: "success", data: nextDetail };
     },
   };
 }
