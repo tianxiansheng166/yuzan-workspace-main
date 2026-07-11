@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { YxButton, YxStatus } from "@yuzan/ui";
+import EvidenceAudioPlayer from "~/features/submission-review/components/EvidenceAudioPlayer.vue";
 import { useReviewDetail } from "~/features/submission-review/composables/useReviewDetail";
 import type { ReviewScenario } from "~/features/submission-review/types";
 
@@ -97,6 +98,7 @@ await load();
         <article class="detail-panel">
           <h2>朗读提交元数据</h2>
           <p>{{ detail.recordingLabel }}</p>
+          <EvidenceAudioPlayer :provider-unavailable="true" />
           <p>录音状态：{{ rawDetail.audioMetadata.fileStatus }}</p>
           <p>AI 处理状态：{{ detail.aiProcessingLabel }}</p>
           <p>采集入口：{{ rawDetail.audioMetadata.captureDevice }}</p>
