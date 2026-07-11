@@ -70,6 +70,28 @@ pnpm --filter @yuzan/api test
 - 更新 `STATUS-BOARD.md` 和 `API-FREEZE.md`
 - 通知各任务 rebase
 
+## b31-105 已生成的迁移
+
+### 20260711062055_b31_105_add_reporting_offline_operations
+
+新增枚举：
+- `ReportType`: STUDENT_GROWTH, CLASS_SUMMARY, SCHOOL_OVERVIEW
+- `ReportStatus`: PENDING, GENERATING, READY, FAILED
+- `SyncBatchStatus`: ACCEPTED, DUPLICATE, CONFLICT, REJECTED, PERMISSION_CHANGED
+- `SyncCursorEntityType` 新增值: REPORT
+
+新增表：
+- `Report`: 报表（学生成长/班级摘要/学校概览），包含 generatedAt、period、filters、dataCompleteness、providerDisclosure
+- `OfflineContentPackage`: 离线内容包，含 manifest、version、checksum、byteSize、expiresAt
+- `SyncBatch`: 同步批次，含 accepted/duplicate/conflict/rejected/permissionChanged 五种状态计数
+
+索引：
+- Report: (schoolId, type, status), (schoolId, periodStart, periodEnd), (enrollmentId), (classId)
+- OfflineContentPackage: (schoolId, courseVersionId, version), (schoolId, expiresAt)
+- SyncBatch: (schoolId, deviceId, status), (schoolId, createdAt), clientBatchId unique
+
+已验证：migration deploy 成功于 PostgreSQL 127.0.0.1:55432/yuzan_dev
+
 ## 回滚策略
 
 - 开发阶段：使用 `prisma migrate resolve --rolled-back <migration-name>` 或重建测试数据库；

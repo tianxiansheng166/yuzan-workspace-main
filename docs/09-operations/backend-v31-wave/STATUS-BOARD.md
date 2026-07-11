@@ -15,7 +15,7 @@
 
 | 任务 ID | 角色 | 分支 | 状态 | 本地 HEAD | 远程 HEAD | 备注 |
 |---------|------|------|------|-----------|-----------|------|
-| b31-105 | Trae-1 | `task/b31-105-platform-contracts-reporting` | IN_PROGRESS | `22e3e14` | `22e3e14` | 正在创建总控文档 |
+| b31-105 | Trae-1 | `task/b31-105-platform-contracts-reporting` | IN_PROGRESS | `4bcea5f` | `4bcea5f` | Schema/contract/reporting/offline/operations implementation |
 | b31-101 | Trae-2 | `task/b31-101-teaching-loop` | READY | `22e3e14` | `22e3e14` | 等待启动 |
 | b31-102 | Trae-3 | `task/b31-102-assessment-loop` | READY | `22e3e14` | `22e3e14` | 等待启动 |
 | b31-103 | Trae-4 | `task/b31-103-admin-products` | READY | `22e3e14` | `22e3e14` | 等待启动 |
@@ -25,13 +25,13 @@
 
 | 任务 | 请求文件 | 状态 | 影响范围 | 处理人 |
 |------|----------|------|----------|--------|
-| 暂无 | - | - | - | - |
+| b31-105 | 内部实现 | APPLIED | ReportType/ReportStatus/SyncBatchStatus 枚举 + Report/OfflineContentPackage/SyncBatch 表 | Trae-1 |
 
 ## Contract Request 队列
 
 | 任务 | 请求文件 | 状态 | 影响范围 | 处理人 |
 |------|----------|------|----------|--------|
-| 暂无 | - | - | - | - |
+| b31-105 | 内部实现 | APPLIED | Reporting/Offline/Operations 共 11 个新 endpoint | Trae-1 |
 
 ## 阻塞问题
 

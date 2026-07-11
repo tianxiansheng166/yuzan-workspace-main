@@ -81,3 +81,18 @@
 ## 当前变更记录
 
 - 2026-07-11：初始化 API-FREEZE，基线 endpoint 冻结。
+- 2026-07-11：新增 Reporting endpoints:
+  - `GET /api/v1/schools/{schoolId}/reports` — 列出报表
+  - `POST /api/v1/schools/{schoolId}/reports` — 请求生成报表
+  - `GET /api/v1/schools/{schoolId}/reports/{reportId}` — 获取报表详情
+  - `GET /api/v1/schools/{schoolId}/student-growth/{enrollmentId}` — 获取学生成长档案
+- 2026-07-11：新增 Offline endpoints:
+  - `GET /api/v1/schools/{schoolId}/offline-packages` — 列出离线内容包
+  - `POST /api/v1/schools/{schoolId}/offline-packages` — 请求构建离线内容包
+  - `GET /api/v1/schools/{schoolId}/offline-packages/{packageId}` — 获取离线内容包详情
+  - `POST /api/v1/schools/{schoolId}/offline-packages/{packageId}:download` — 授权下载
+  - `POST /api/v1/schools/{schoolId}/sync-batches` — 提交同步批次
+  - `GET /api/v1/schools/{schoolId}/sync-batches/{batchId}` — 获取同步批次状态
+- 2026-07-11：新增 Operations endpoints:
+  - `GET /api/v1/operations/status` — 系统运维状态（Public，无需认证）
+- 责任人：Trae-1

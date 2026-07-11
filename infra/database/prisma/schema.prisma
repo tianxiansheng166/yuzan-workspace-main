@@ -132,6 +132,28 @@ enum SyncCursorEntityType {
   PROGRESS
   CONTENT_PACKAGE
   FEEDBACK
+  REPORT
+}
+
+enum ReportType {
+  STUDENT_GROWTH
+  CLASS_SUMMARY
+  SCHOOL_OVERVIEW
+}
+
+enum ReportStatus {
+  PENDING
+  GENERATING
+  READY
+  FAILED
+}
+
+enum SyncBatchStatus {
+  ACCEPTED
+  DUPLICATE
+  CONFLICT
+  REJECTED
+  PERMISSION_CHANGED
 }
 
 model School {
@@ -161,6 +183,9 @@ model School {
   assignmentTargets AssignmentTarget[]
   activityProgress  ActivityProgress[]
   activityAttempts  ActivityAttempt[]
+  reports           Report[]
+  offlinePackages   OfflineContentPackage[]
+  syncBatches       SyncBatch[]
 
   @@index([isActive])
   @@index([deletedAt])
@@ -351,6 +376,7 @@ model CourseVersion {
   assignments     Assignment[]
   reviews         CourseReview[]
   contentPackages ContentPackage[]
+  offlinePackages OfflineContentPackage[]
 
   @@unique([schoolId, id])
   @@unique([courseId, version])
@@ -751,4 +777,75 @@ model AuditLog {
   @@index([schoolId, createdAt])
   @@index([actorUserId, createdAt])
   @@index([resourceType, resourceId])
+}
+
+model Report {
+  id                 String       @id @default(uuid()) @db.Uuid
+  schoolId           String       @db.Uuid
+  type               ReportType
+  status             ReportStatus @default(PENDING)
+  periodStart        DateTime
+  periodEnd          DateTime
+  filters            Json?
+  dataCompleteness   Float        @default(0)
+  providerDisclosure String       @default("")
+  generatedAt        DateTime?
+  generatedByUserId  String?      @db.Uuid
+  enrollmentId       String?      @db.Uuid
+  classId            String?      @db.Uuid
+  data               Json?
+  revision           Int          @default(1)
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+  school             School       @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  @@unique([schoolId, id])
+  @@index([schoolId, type, status])
+  @@index([schoolId, periodStart, periodEnd])
+  @@index([enrollmentId])
+  @@index([classId])
+}
+
+model OfflineContentPackage {
+  id               String               @id @default(uuid()) @db.Uuid
+  schoolId         String               @db.Uuid
+  courseVersionId  String               @db.Uuid
+  version          Int                  @default(1)
+  checksum         String
+  manifest         Json
+  byteSize         BigInt               @default(0)
+  downloadRequired Boolean              @default(false)
+  expiresAt        DateTime?
+  revision         Int                  @default(1)
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+  school           School               @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  courseVersion    CourseVersion        @relation(fields: [schoolId, courseVersionId], references: [schoolId, id], onDelete: Restrict)
+
+  @@unique([schoolId, id])
+  @@index([schoolId, courseVersionId, version])
+  @@index([schoolId, expiresAt])
+}
+
+model SyncBatch {
+  id                String          @id @default(uuid()) @db.Uuid
+  schoolId          String          @db.Uuid
+  deviceId          String          @db.Uuid
+  clientBatchId     String          @unique
+  status            SyncBatchStatus @default(ACCEPTED)
+  operationCount    Int             @default(0)
+  acceptedCount     Int             @default(0)
+  duplicateCount    Int             @default(0)
+  conflictCount     Int             @default(0)
+  rejectedCount     Int             @default(0)
+  permissionChanged Int             @default(0)
+  summary           Json?
+  errorCode         String?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  school            School          @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  @@unique([schoolId, id])
+  @@index([schoolId, deviceId, status])
+  @@index([schoolId, createdAt])
 }
