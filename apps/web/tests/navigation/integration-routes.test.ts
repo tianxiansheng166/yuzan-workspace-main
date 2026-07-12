@@ -55,12 +55,11 @@ describe("integration entry points", () => {
     expect(today).toContain("推荐课程");
   });
 
-  it("teacher home links to assessment tasks, reports, MindMate, MindGraph and translation", () => {
+  it("teacher home links to studio, assignments and review", () => {
     const teacher = readPage("pages/teacher/index.vue");
 
-    expect(teacher).toContain('to: "/teacher/assessments"');
-    expect(teacher).toContain('to: "/teacher-tools/mindmate"');
-    expect(teacher).toContain('to: "/teacher-tools/mindgraph"');
-    expect(teacher).toContain('to: "/tools/tibetan-translation"');
+    expect(teacher).toContain('to="/studio"');
+    expect(teacher).toContain('to="/teacher/assignments"');
+    expect(teacher).toContain('to="/teacher/review"');
   });
 });
