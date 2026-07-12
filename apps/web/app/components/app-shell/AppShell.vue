@@ -102,12 +102,6 @@ watch(
       </div>
 
       <div
-        class="yx-shell app-shell__navigation app-shell__navigation--desktop"
-      >
-        <RoleNavigation :current-path="route.path" />
-      </div>
-
-      <div
         v-show="navigationOpen"
         :id="navigationPanelId"
         class="yx-shell app-shell__navigation app-shell__navigation--mobile"
@@ -117,6 +111,9 @@ watch(
     </header>
 
     <main id="main" class="app-shell__main">
+      <div class="yx-shell app-shell__navigation app-shell__navigation--desktop">
+        <RoleNavigation :current-path="route.path" />
+      </div>
       <slot />
     </main>
   </div>

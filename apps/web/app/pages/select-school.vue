@@ -15,15 +15,16 @@ const gateway = createBrowserSchoolSelectionGateway(config.public.apiBase);
 const coordinator = createLeaveCoordinator({ router });
 const registry = getDirtyStateRegistry();
 
-const selection = createSchoolSelectionState(gateway, async (to) => {
-  const canLeave = await coordinator.requestSchoolSwitch();
-  if (!canLeave) return;
-
-  await coordinator.bypassNavigation(async () => {
-    registry.clearScope("SCHOOL");
-    await router.replace(to);
-  });
-});
+const selection = createSchoolSelectionState(
+  gateway,
+  async (to) => {
+    await coordinator.bypassNavigation(async () => {
+      registry.clearScope("SCHOOL");
+      await router.replace(to);
+    });
+  },
+  () => coordinator.requestSchoolSwitch(),
+);
 const busy = computed(
   () =>
     selection.state.status === "SELECTING" ||

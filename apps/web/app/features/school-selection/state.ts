@@ -10,6 +10,7 @@ import type {
 export function createSchoolSelectionState(
   gateway: SchoolSelectionGateway,
   navigate: (to: string) => void | Promise<void>,
+  canLeave?: () => boolean | Promise<boolean>,
 ) {
   const state = reactive<{
     status: SchoolSelectionState;
@@ -55,6 +56,7 @@ export function createSchoolSelectionState(
 
   async function select(membership: SchoolMembership) {
     if (state.status === "SELECTING") return;
+    if (canLeave && !(await canLeave())) return;
     state.status = "SELECTING";
     state.selectedId = membership.schoolId;
     state.message = "正在重新确认学校访问权限。";
