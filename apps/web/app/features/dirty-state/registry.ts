@@ -145,6 +145,9 @@ export class DirtyStateRegistry {
         message: "该条目不支持自动保存",
       };
     }
+    if (entry.status === "SAVING") {
+      return { status: "failed", message: "保存已在进行中" };
+    }
     entry.status = "SAVING";
     this.emitChange();
 
@@ -186,6 +189,7 @@ export class DirtyStateRegistry {
     const entry = this.entries.get(id);
     if (!entry) return;
     if (!entry.canDiscard) return;
+    if (entry.status === "DISCARDING") return;
 
     entry.status = "DISCARDING";
     this.emitChange();

@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import { computed, nextTick, ref, watch } from "vue";
+import { computed, nextTick, onMounted, ref, watch } from "vue";
 
 import { YxButton, YxStatus } from "@yuzan/ui";
+
+import { createBrowserSessionGateway } from "~/features/auth/adapters/browser-session-gateway";
+import type { SessionSnapshot } from "~/features/auth/models";
 
 import { useDirtyStateRegistry } from "../composables/useDirtyStateRegistry";
 import { createLeaveCoordinator } from "../leave-coordinator";
@@ -17,8 +20,66 @@ const coordinator = createLeaveCoordinator({ router });
 const dialogRef = ref<HTMLDialogElement | null>(null);
 const saving = ref(false);
 const saveResults = ref<Record<string, DirtyStateEntrySaveResult> | null>(null);
+const previouslyFocused = ref<HTMLElement | null>(null);
+const sessionSnapshot = ref<SessionSnapshot | null>(null);
 const open = computed(() => leaveRequest.value !== null);
 const entries = computed(() => leaveRequest.value?.blockingEntries ?? []);
+const isDemo = computed(() => sessionSnapshot.value?.serviceMode === "demo");
+const hasSessionExpired = computed(() =>
+  entries.value.some((entry) => entry.status === "WAITING_SYNC"),
+);
+
+onMounted(async () => {
+  sessionSnapshot.value = await createBrowserSessionGateway().restore();
+});
+
+function getFocusableElements(container: HTMLElement): HTMLElement[] {
+  const selector =
+    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+  return Array.from(container.querySelectorAll(selector)).filter(
+    (element): element is HTMLElement => {
+      const htmlElement = element as HTMLElement;
+      return (
+        htmlElement.offsetParent !== null &&
+        !htmlElement.hasAttribute("disabled") &&
+        htmlElement.tabIndex >= 0
+      );
+    },
+  );
+}
+
+function trapFocus(event: KeyboardEvent): void {
+  if (event.key !== "Tab" || !dialogRef.value) return;
+  const focusable = getFocusableElements(dialogRef.value);
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+  if (!first || !last) return;
+  if (event.shiftKey && document.activeElement === first) {
+    event.preventDefault();
+    last.focus();
+  } else if (!event.shiftKey && document.activeElement === last) {
+    event.preventDefault();
+    first.focus();
+  }
+}
+
+async function restoreFocus(): Promise<void> {
+  await nextTick();
+  const target = previouslyFocused.value;
+  previouslyFocused.value = null;
+  if (target && "focus" in target) {
+    target.focus();
+  }
+}
+
+async function relogin(): Promise<void> {
+  await coordinator.bypassNavigation(async () => {
+    registry.clearScope("SCHOOL");
+    await createBrowserSessionGateway().clear();
+    await router.replace("/login");
+  });
+  registry.cancelLeave();
+}
 
 function formatTime(timestamp: number): string {
   return new Date(timestamp).toLocaleString("zh-CN", {
@@ -121,6 +182,7 @@ function onDialogClick(event: MouseEvent): void {
 }
 
 function onKeydown(event: KeyboardEvent): void {
+  trapFocus(event);
   if (event.key === "Escape") {
     event.preventDefault();
     stayEditing();
@@ -132,11 +194,16 @@ watch(
   async (request) => {
     if (request) {
       saveResults.value = null;
+      previouslyFocused.value = document.activeElement as HTMLElement;
       await nextTick();
       dialogRef.value?.showModal();
-      dialogRef.value?.focus();
+      const focusable = dialogRef.value
+        ? getFocusableElements(dialogRef.value)
+        : [];
+      (focusable[0] ?? dialogRef.value)?.focus();
     } else {
       dialogRef.value?.close();
+      await restoreFocus();
     }
   },
   { flush: "post" },
@@ -172,6 +239,33 @@ watch(
           当前有 {{ entries.length }} 项未保存修改。你可以选择保存、放弃或返回继续编辑。
         </p>
       </header>
+
+      <div
+        v-if="isDemo"
+        class="dirty-leave-dialog__demo-notice"
+        role="status"
+        aria-live="polite"
+      >
+        <YxStatus tone="information">演示模式</YxStatus>
+        <p>当前处于演示环境，保存操作仅影响本地演示数据，不会写入生产系统。</p>
+      </div>
+
+      <div
+        v-if="hasSessionExpired"
+        class="dirty-leave-dialog__session-expired"
+        role="alert"
+      >
+        <YxStatus tone="warning">会话已过期</YxStatus>
+        <p>登录状态已失效，无法继续保存。请重新登录后再处理未保存内容。</p>
+        <div class="dirty-leave-dialog__session-actions">
+          <YxButton kind="secondary" :disabled="saving" @click="relogin">
+            重新登录
+          </YxButton>
+          <YxButton kind="quiet" :disabled="saving" @click="stayEditing">
+            返回继续编辑
+          </YxButton>
+        </div>
+      </div>
 
       <div
         v-if="saveResults"
@@ -256,7 +350,9 @@ watch(
       <footer class="dirty-leave-dialog__actions">
         <YxButton
           :loading="saving"
-          :disabled="entries.some((e) => e.status === 'CONFLICT')"
+          :disabled="
+            entries.some((e) => e.status === 'CONFLICT') || hasSessionExpired
+          "
           @click="saveAndContinue"
         >
           保存并继续
@@ -410,6 +506,36 @@ watch(
   gap: 0.75rem;
 }
 
+.dirty-leave-dialog__demo-notice,
+.dirty-leave-dialog__session-expired {
+  display: grid;
+  gap: 0.5rem;
+  padding: 1rem clamp(1.25rem, 3vw, 2rem);
+  border-bottom: 1px solid var(--yx-border-default);
+}
+
+.dirty-leave-dialog__demo-notice {
+  background: var(--yx-information-bg);
+  color: var(--yx-information-fg);
+}
+
+.dirty-leave-dialog__session-expired {
+  background: var(--yx-warning-bg);
+  color: var(--yx-warning-fg);
+}
+
+.dirty-leave-dialog__demo-notice p,
+.dirty-leave-dialog__session-expired p {
+  margin: 0;
+  line-height: 1.6;
+}
+
+.dirty-leave-dialog__session-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
 .dirty-leave-dialog__actions {
   display: flex;
   flex-wrap: wrap;
@@ -420,6 +546,17 @@ watch(
   background: var(--yx-bg-canvas);
 }
 
+@media (max-width: 48rem) {
+  .dirty-leave-dialog {
+    max-width: calc(100vw - 1.5rem);
+    max-height: calc(100svh - 1.5rem);
+  }
+
+  .dirty-leave-dialog__content {
+    max-height: calc(100svh - 1.5rem);
+  }
+}
+
 @media (max-width: 40rem) {
   .dirty-leave-dialog__actions {
     flex-direction: column;
@@ -427,6 +564,22 @@ watch(
 
   .dirty-leave-dialog__actions :deep(button) {
     width: 100%;
+  }
+}
+
+@media (max-width: 24.375rem) {
+  .dirty-leave-dialog__header,
+  .dirty-leave-dialog__demo-notice,
+  .dirty-leave-dialog__session-expired,
+  .dirty-leave-dialog__results,
+  .dirty-leave-dialog__list,
+  .dirty-leave-dialog__actions {
+    padding-inline: 1rem;
+  }
+
+  .dirty-leave-dialog__item-header {
+    flex-direction: column;
+    gap: 0.5rem;
   }
 }
 
