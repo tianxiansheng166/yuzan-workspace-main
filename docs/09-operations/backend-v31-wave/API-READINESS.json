@@ -1,7 +1,7 @@
 {
   "version": "0.1.0",
   "branch": "integration/windows-backend-v31-mvp-20260712",
-  "commit": "32241fd2c74b57fd0b883ff28b56f258dbf4342e",
+  "commit": "HEAD of integration/windows-backend-v31-mvp-20260712",
   "timestamp": "2026-07-12T11:40:00+08:00",
   "summary": {
     "status": "READY",
