@@ -134,6 +134,59 @@ enum SyncCursorEntityType {
   FEEDBACK
 }
 
+enum ProductPlanTier {
+  INCLUSIVE
+  PROFESSIONAL
+  FLAGSHIP
+}
+
+enum RecommendationRuleStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum AssessmentMaterialType {
+  READING
+  WRITTEN_FORM
+  DIMENSION
+}
+
+enum AssessmentMaterialStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum AssessmentLinkStatus {
+  ACTIVE
+  DISABLED
+  EXPIRED
+}
+
+enum DeletionRequestStatus {
+  PENDING
+  APPROVED
+  PROCESSING
+  COMPLETED
+  REJECTED
+}
+
+enum ProviderType {
+  SPEECH
+  LLM
+  TRANSLATION
+  EMBEDDING
+  OTHER
+}
+
+enum ProviderHealthStatus {
+  UNKNOWN
+  HEALTHY
+  DEGRADED
+  DOWN
+}
+
 model School {
   id                String             @id @default(uuid()) @db.Uuid
   code              String             @unique
@@ -144,6 +197,7 @@ model School {
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
   deletedAt         DateTime?
+  planId            String?            @db.Uuid
   campuses          Campus[]
   memberships       Membership[]
   terms             Term[]
@@ -161,9 +215,11 @@ model School {
   assignmentTargets AssignmentTarget[]
   activityProgress  ActivityProgress[]
   activityAttempts  ActivityAttempt[]
+  plan              ProductPlan?       @relation(fields: [planId], references: [id])
 
   @@index([isActive])
   @@index([deletedAt])
+  @@index([planId])
 }
 
 model Campus {
@@ -751,4 +807,175 @@ model AuditLog {
   @@index([schoolId, createdAt])
   @@index([actorUserId, createdAt])
   @@index([resourceType, resourceId])
+}
+
+model ProductPlan {
+  id              String          @id @default(uuid()) @db.Uuid
+  tier            ProductPlanTier
+  displayName     String
+  description     String?
+  priceMinCents   Int             @default(0)
+  priceMaxCents   Int             @default(0)
+  discountFactor  Int             @default(10000)
+  serviceItems    Json?
+  fundingSource   String?
+  publicVersion   Int             @default(1)
+  contractVersion Int             @default(1)
+  isActive        Boolean         @default(true)
+  effectiveFrom   DateTime?
+  effectiveUntil  DateTime?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  versions        ProductPlanVersion[]
+  schools         School[]
+
+  @@index([tier, isActive])
+  @@index([effectiveFrom, effectiveUntil])
+}
+
+model ProductPlanVersion {
+  id              String      @id @default(uuid()) @db.Uuid
+  planId          String      @db.Uuid
+  version         Int
+  displayName     String
+  priceMinCents   Int         @default(0)
+  priceMaxCents   Int         @default(0)
+  discountFactor  Int         @default(10000)
+  serviceItems    Json?
+  publishedAt     DateTime?
+  createdAt       DateTime    @default(now())
+  plan            ProductPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+
+  @@unique([planId, version])
+  @@index([planId, publishedAt])
+}
+
+model RecommendationRule {
+  id              String                  @id @default(uuid()) @db.Uuid
+  issueCode       String
+  dimensionCode   String
+  severityMin     Int
+  severityMax     Int
+  courseVersionId String                  @db.Uuid
+  priority        Int
+  sessions        Int                     @default(1)
+  reasonTemplate  String?
+  validFrom       DateTime?
+  validUntil      DateTime?
+  version         Int                     @default(1)
+  status          RecommendationRuleStatus @default(DRAFT)
+  createdAt       DateTime                @default(now())
+  updatedAt       DateTime                @updatedAt
+
+  @@index([issueCode, dimensionCode, status])
+  @@index([status, priority])
+  @@index([validFrom, validUntil])
+}
+
+model AssessmentMaterial {
+  id          String                  @id @default(uuid()) @db.Uuid
+  schoolId    String                  @db.Uuid
+  title       String
+  type        AssessmentMaterialType
+  content     Json?
+  version     Int                     @default(1)
+  status      AssessmentMaterialStatus @default(DRAFT)
+  previewedAt DateTime?
+  publishedAt DateTime?
+  archivedAt  DateTime?
+  createdAt   DateTime                @default(now())
+  updatedAt   DateTime                @updatedAt
+
+  @@index([schoolId, type, status])
+  @@index([schoolId, status])
+}
+
+model AssessmentLink {
+  id                String             @id @default(uuid()) @db.Uuid
+  schoolId          String             @db.Uuid
+  assignmentId      String             @db.Uuid
+  tokenHash         String             @unique
+  status            AssessmentLinkStatus @default(ACTIVE)
+  usageCount        Int                @default(0)
+  expiresAt         DateTime?
+  disabledAt        DateTime?
+  regeneratedFromId String?            @db.Uuid
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  @@index([schoolId, assignmentId])
+  @@index([schoolId, status])
+  @@index([tokenHash])
+  @@index([expiresAt])
+}
+
+model RetentionPolicy {
+  id            String   @id @default(uuid()) @db.Uuid
+  resourceType  String
+  retentionDays Int
+  description   String?
+  effectiveFrom DateTime @default(now())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([resourceType])
+  @@index([effectiveFrom])
+}
+
+model ConsentVersion {
+  id            String   @id @default(uuid()) @db.Uuid
+  purpose       String
+  version       Int
+  contentHash   String
+  contentUrl    String?
+  effectiveFrom DateTime @default(now())
+  createdAt     DateTime @default(now())
+
+  @@unique([purpose, version])
+  @@index([purpose, effectiveFrom])
+}
+
+model DataDeletionRequest {
+  id          String               @id @default(uuid()) @db.Uuid
+  userId      String               @db.Uuid
+  schoolId    String?              @db.Uuid
+  status      DeletionRequestStatus @default(PENDING)
+  requestedAt DateTime             @default(now())
+  approvedAt  DateTime?
+  completedAt DateTime?
+  notes       String?
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+
+  @@index([userId, status])
+  @@index([schoolId, status])
+  @@index([status, requestedAt])
+}
+
+model SystemProvider {
+  id            String              @id @default(uuid()) @db.Uuid
+  type          ProviderType
+  enabled       Boolean             @default(false)
+  endpointAlias String?
+  model         String?
+  healthStatus  ProviderHealthStatus @default(UNKNOWN)
+  configured    Boolean             @default(false)
+  lastCheckedAt DateTime?
+  lastError     String?
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+  secrets       SystemProviderSecret[]
+
+  @@index([type, enabled])
+  @@index([healthStatus])
+}
+
+model SystemProviderSecret {
+  id         String         @id @default(uuid()) @db.Uuid
+  providerId String         @db.Uuid
+  secretKey  String
+  createdAt  DateTime       @default(now())
+  provider   SystemProvider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+
+  @@index([providerId])
 }

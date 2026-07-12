@@ -3,6 +3,14 @@ import { Test } from "@nestjs/testing";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import type { INestApplication } from "@nestjs/common";
 
+if (!process.env.DATABASE_URL) {
+  try {
+    process.loadEnvFile(new URL("../../../../.env", import.meta.url));
+  } catch {
+    // In CI the variable is provided directly.
+  }
+}
+
 describe("API root startup", () => {
   let app: INestApplication;
   let origin: string;
