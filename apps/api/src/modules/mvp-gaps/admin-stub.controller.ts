@@ -13,7 +13,7 @@ import {
 } from "../../common/security/index.js";
 import { mvpGapResponse } from "./mvp-gap.response.js";
 
-@Controller("api/v1/admin")
+@Controller("admin")
 export class AdminStubController {
   @Get("schools")
   @RequireRoles(MembershipRole.PLATFORM_ADMIN, MembershipRole.SCHOOL_ADMIN)

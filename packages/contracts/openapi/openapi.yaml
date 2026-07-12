@@ -879,6 +879,7 @@ paths:
                 $ref: "#/components/schemas/OperationsStatusResponse"
         "500":
           $ref: "#/components/responses/InternalServerError"
+components:
   securitySchemes:
     bearerAuth:
       type: http

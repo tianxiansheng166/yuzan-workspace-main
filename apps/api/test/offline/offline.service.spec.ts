@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { Test } from "@nestjs/testing";
 import { OfflineService } from "../../src/modules/offline/offline.service.js";
 import type { OfflineRepositoryPort } from "../../src/modules/offline/ports/offline-repository.port.js";

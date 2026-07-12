@@ -1,7 +1,7 @@
 import { Controller, Get, HttpCode, HttpStatus } from "@nestjs/common";
 import { Public } from "../../common/security/index.js";
 
-@Controller("api/v1/plans")
+@Controller("plans")
 export class PlansStubController {
   @Get()
   @Public()

@@ -20,6 +20,7 @@ import {
 import { ReportingService } from "./reporting.service.js";
 import { CreateReportDto } from "./dto/create-report.dto.js";
 import { ListReportsQueryDto } from "./dto/list-reports-query.dto.js";
+import type { ReportType, ReportStatus } from "./domain/report.types.js";
 
 @Controller("schools/:schoolId/reports")
 export class ReportingController {
@@ -36,10 +37,11 @@ export class ReportingController {
     @CurrentTenant() tenant: TenantContext,
     @CurrentPrincipal() principal: Principal,
   ) {
+    const { limit = 20, cursor, type, status } = query;
     return this.service.listReports(
       createAuthContext("request-id", principal, tenant),
       schoolId,
-      { limit: query.limit, cursor: query.cursor, type: query.type as any, status: query.status as any },
+      { limit, ...(cursor ? { cursor } : {}), ...(type ? { type: type as ReportType } : {}), ...(status ? { status: status as ReportStatus } : {}) },
     );
   }
 
@@ -51,10 +53,18 @@ export class ReportingController {
     @CurrentTenant() tenant: TenantContext,
     @CurrentPrincipal() principal: Principal,
   ) {
+    const { type, periodStart, periodEnd, filters, enrollmentId, classId } = dto;
     return this.service.createReport(
       createAuthContext("request-id", principal, tenant),
       schoolId,
-      { type: dto.type as any, periodStart: new Date(dto.periodStart), periodEnd: new Date(dto.periodEnd), filters: dto.filters, enrollmentId: dto.enrollmentId, classId: dto.classId },
+      {
+        type: type as ReportType,
+        periodStart: new Date(periodStart),
+        periodEnd: new Date(periodEnd),
+        ...(filters ? { filters } : {}),
+        ...(enrollmentId ? { enrollmentId } : {}),
+        ...(classId ? { classId } : {}),
+      },
     );
   }
 

@@ -26,15 +26,6 @@ export class StudentGrowthController {
     @CurrentPrincipal() principal: Principal,
   ) {
     const auth = createAuthContext("request-id", principal, tenant);
-    const profile = await this.service.getStudentGrowthProfile(auth, schoolId, enrollmentId);
-    return {
-      enrollmentId: profile.enrollmentId,
-      periodStart: profile.periodStart.toISOString(),
-      periodEnd: profile.periodEnd.toISOString(),
-      generatedAt: profile.generatedAt.toISOString(),
-      dataCompleteness: profile.dataCompleteness,
-      providerDisclosure: profile.providerDisclosure,
-      data: profile.data,
-    };
+    return this.service.getStudentGrowthProfile(auth, schoolId, enrollmentId);
   }
 }

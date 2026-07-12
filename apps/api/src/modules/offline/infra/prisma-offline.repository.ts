@@ -66,7 +66,7 @@ export class PrismaOfflineRepository implements OfflineRepositoryPort {
 
     return {
       items: items.map((r) => toPackageDomain(r as unknown as Record<string, unknown>)),
-      nextCursor: hasMore ? items[items.length - 1].id : null,
+      nextCursor: hasMore ? items.at(-1)!.id : null,
       hasMore,
     };
   }

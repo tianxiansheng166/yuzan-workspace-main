@@ -17,7 +17,8 @@ export class OfflineController {
     @CurrentTenant() tenant: TenantContext,
     @CurrentPrincipal() principal: Principal,
   ) {
-    return this.service.listPackages(createAuthContext("request-id", principal, tenant), schoolId, { limit: query.limit, cursor: query.cursor, courseVersionId: query.courseVersionId });
+    const { limit = 20, cursor, courseVersionId } = query;
+    return this.service.listPackages(createAuthContext("request-id", principal, tenant), schoolId, { limit, ...(cursor ? { cursor } : {}), ...(courseVersionId ? { courseVersionId } : {}) });
   }
 
   @Post()
@@ -28,7 +29,8 @@ export class OfflineController {
     @CurrentTenant() tenant: TenantContext,
     @CurrentPrincipal() principal: Principal,
   ) {
-    return this.service.createPackage(createAuthContext("request-id", principal, tenant), schoolId, { courseVersionId: dto.courseVersionId, downloadRequired: dto.downloadRequired });
+    const { courseVersionId, downloadRequired = false } = dto;
+    return this.service.createPackage(createAuthContext("request-id", principal, tenant), schoolId, { courseVersionId, downloadRequired });
   }
 
   @Get(":packageId")

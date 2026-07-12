@@ -1,13 +1,14 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../../../shared/database/index.js";
-import type { Report, ReportType, ReportStatus, StudentGrowthProfile } from "../domain/report.types.js";
-import type { CreateReportParams, ListReportsOptions, ListReportsResult, ReportRepositoryPort } from "../ports/report-repository.port.js";
+import type { Prisma } from "@yuzan/database";
+import type { Report, ReportStatus, ReportType } from "../domain/report.types.js";
+import type { CreateReportData, ListReportsOptions, PaginatedResult, ReportRepositoryPort } from "../ports/report-repository.port.js";
 
 @Injectable()
 export class PrismaReportRepository implements ReportRepositoryPort {
   constructor(private readonly prisma: PrismaService) {}
 
-  async list(schoolId: string, options: ListReportsOptions): Promise<ListReportsResult> {
+  async list(schoolId: string, options: ListReportsOptions): Promise<PaginatedResult<Report>> {
     const limit = Math.min(options.limit ?? 20, 100);
     const where: Record<string, unknown> = { schoolId, deletedAt: null };
 
@@ -32,7 +33,7 @@ export class PrismaReportRepository implements ReportRepositoryPort {
 
     return {
       items: trimmed.map((r) => this.toDomain(r)),
-      nextCursor: hasMore && trimmed.length > 0 ? trimmed[trimmed.length - 1].id : null,
+      nextCursor: hasMore && trimmed.length > 0 ? trimmed.at(-1)!.id : null,
       hasMore,
     };
   }
@@ -44,22 +45,27 @@ export class PrismaReportRepository implements ReportRepositoryPort {
     return row ? this.toDomain(row) : null;
   }
 
-  async create(params: CreateReportParams): Promise<Report> {
-    const row = await this.prisma.report.create({
-      data: {
-        schoolId: params.schoolId,
-        type: params.type,
-        status: "PENDING",
-        periodStart: params.periodStart,
-        periodEnd: params.periodEnd,
-        filters: params.filters ?? undefined,
-        enrollmentId: params.enrollmentId,
-        classId: params.classId,
-        generatedByUserId: params.generatedByUserId,
-        dataCompleteness: 0,
-        providerDisclosure: "",
-      },
-    });
+  async create(params: CreateReportData): Promise<Report> {
+    const data: Prisma.ReportCreateInput = {
+      school: { connect: { id: params.schoolId } },
+      type: params.type,
+      status: "PENDING",
+      periodStart: params.periodStart,
+      periodEnd: params.periodEnd,
+      generatedByUserId: params.generatedByUserId,
+      dataCompleteness: 0,
+      providerDisclosure: "",
+    };
+    if (params.filters != null) {
+      data.filters = params.filters as unknown as Prisma.InputJsonValue;
+    }
+    if (params.enrollmentId != null) {
+      data.enrollmentId = params.enrollmentId;
+    }
+    if (params.classId != null) {
+      data.classId = params.classId;
+    }
+    const row = await this.prisma.report.create({ data });
     return this.toDomain(row);
   }
 
@@ -67,18 +73,19 @@ export class PrismaReportRepository implements ReportRepositoryPort {
     schoolId: string,
     reportId: string,
     status: ReportStatus,
-    data?: Record<string, unknown>,
-    dataCompleteness?: number,
+    data?: Partial<Report>,
   ): Promise<Report> {
-    const row = await this.prisma.report.update({
-      where: { id: reportId },
-      data: {
-        status,
-        ...(status === "GENERATING" ? { generatedAt: new Date() } : {}),
-        ...(data !== undefined ? { data } : {}),
-        ...(dataCompleteness !== undefined ? { dataCompleteness } : {}),
-      },
-    });
+    const updateData: Prisma.ReportUpdateInput = { status };
+    if (status === "GENERATING") {
+      updateData.generatedAt = new Date();
+    }
+    if (data?.data !== undefined) {
+      updateData.data = data.data as unknown as Prisma.InputJsonValue;
+    }
+    if (data?.dataCompleteness !== undefined) {
+      updateData.dataCompleteness = data.dataCompleteness;
+    }
+    const row = await this.prisma.report.update({ where: { id: reportId }, data: updateData });
     return this.toDomain(row);
   }
 

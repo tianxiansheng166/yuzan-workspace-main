@@ -65,6 +65,7 @@ export class ReportingService {
     }
     return toStudentGrowthProfileResponse({
       enrollmentId: report.enrollmentId ?? enrollmentId,
+      schoolId,
       periodStart: report.periodStart,
       periodEnd: report.periodEnd,
       generatedAt: report.generatedAt ?? report.createdAt,

@@ -13,7 +13,7 @@ import {
 } from "../../common/security/index.js";
 import { mvpGapResponse } from "./mvp-gap.response.js";
 
-@Controller("api/v1/research")
+@Controller("research")
 export class ResearchStubController {
   @Get("governance/versions")
   @RequireRoles(

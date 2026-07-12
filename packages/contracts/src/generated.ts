@@ -4,1503 +4,2197 @@
  */
 
 export interface paths {
-    "/health/live": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 存活探针 */
-        get: operations["getLiveness"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+  "/health/live": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/health/ready": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 就绪探针 */
-        get: operations["getReadiness"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** 存活探针 */
+    get: operations["getLiveness"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/health/ready": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/auth/login": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** 用户登录 */
-        post: operations["login"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** 就绪探针 */
+    get: operations["getReadiness"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/auth/login": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/auth/refresh": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** 刷新会话 */
-        post: operations["refreshSession"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** 用户登录 */
+    post: operations["login"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/auth/refresh": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/auth/logout": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** 退出登录 */
-        post: operations["logout"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** 刷新会话 */
+    post: operations["refreshSession"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/auth/logout": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/auth/select-school": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Select an authorized school and rotate the active session */
-        post: operations["selectSchool"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** 退出登录 */
+    post: operations["logout"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/auth/select-school": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/me": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 获取当前用户 */
-        get: operations["getCurrentUser"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** Select an authorized school and rotate the active session */
+    post: operations["selectSchool"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/me": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/schools/{schoolId}/course-versions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 列出课程版本 */
-        get: operations["listCourseVersions"];
-        put?: never;
-        /** 创建课程草稿 */
-        post: operations["createCourseDraft"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** 获取当前用户 */
+    get: operations["getCurrentUser"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/course-versions": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/schools/{schoolId}/course-versions/{courseVersionId}:publish": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** 发布课程版本 */
-        post: operations["publishCourseVersion"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** 列出课程版本 */
+    get: operations["listCourseVersions"];
+    put?: never;
+    /** 创建课程草稿 */
+    post: operations["createCourseDraft"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/course-versions/{courseVersionId}:publish": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/schools/{schoolId}/course-versions/{courseVersionId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Read a school-scoped course version */
-        get: operations["getCourseVersion"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Atomically update an editable course draft */
-        patch: operations["updateCourseDraft"];
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** 发布课程版本 */
+    post: operations["publishCourseVersion"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/course-versions/{courseVersionId}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/schools/{schoolId}/classes": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 列出班级 */
-        get: operations["listClasses"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Read a school-scoped course version */
+    get: operations["getCourseVersion"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /** Atomically update an editable course draft */
+    patch: operations["updateCourseDraft"];
+    trace?: never;
+  };
+  "/schools/{schoolId}/classes": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/schools/{schoolId}/assignments": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** 布置任务 */
-        post: operations["createAssignment"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** 列出班级 */
+    get: operations["listClasses"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/assignments": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/schools/{schoolId}/assignments/{assignmentId}:open": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** 开放任务 */
-        post: operations["openAssignment"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** 布置任务 */
+    post: operations["createAssignment"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/assignments/{assignmentId}:open": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/schools/{schoolId}/students/me/today": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 获取学生今日任务 */
-        get: operations["getMyTodayTasks"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** 开放任务 */
+    post: operations["openAssignment"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/students/me/today": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/schools/{schoolId}/activities/{activityId}/progress": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** 保存活动进度 */
-        put: operations["saveActivityProgress"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** 获取学生今日任务 */
+    get: operations["getMyTodayTasks"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/activities/{activityId}/progress": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/schools/{schoolId}/assignments/{assignmentId}/submissions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** 提交任务答案 */
-        post: operations["submitAssignment"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    /** 保存活动进度 */
+    put: operations["saveActivityProgress"];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/assignments/{assignmentId}/submissions": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/schools/{schoolId}/submissions/{submissionId}/feedback": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** 发布教师反馈 */
-        post: operations["releaseFeedback"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** 提交任务答案 */
+    post: operations["submitAssignment"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/submissions/{submissionId}/feedback": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/schools/{schoolId}/sync/push": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** 推送离线同步操作 */
-        post: operations["pushSyncOperations"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** 发布教师反馈 */
+    post: operations["releaseFeedback"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/sync/push": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/schools/{schoolId}/sync/pull": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 拉取增量变更 */
-        get: operations["pullSyncChanges"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** 推送离线同步操作 */
+    post: operations["pushSyncOperations"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/sync/pull": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
+    /** 拉取增量变更 */
+    get: operations["pullSyncChanges"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/reports": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 列出报表 */
+    get: operations["listReports"];
+    put?: never;
+    /** 请求生成报表 */
+    post: operations["createReport"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/reports/{reportId}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 获取报表详情 */
+    get: operations["getReport"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/student-growth/{enrollmentId}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 获取学生成长档案 */
+    get: operations["getStudentGrowthProfile"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/offline-packages": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 列出离线内容包 */
+    get: operations["listOfflinePackages"];
+    put?: never;
+    /** 请求构建离线内容包 */
+    post: operations["createOfflinePackage"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/offline-packages/{packageId}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 获取离线内容包详情 */
+    get: operations["getOfflinePackage"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/offline-packages/{packageId}:download": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** 授权下载离线内容包 */
+    post: operations["authorizeOfflineDownload"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/sync-batches": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** 提交同步批次 */
+    post: operations["createSyncBatch"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/sync-batches/{batchId}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 获取同步批次状态 */
+    get: operations["getSyncBatch"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/operations/status": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 系统运维状态 */
+    get: operations["getOperationsStatus"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-    schemas: {
-        /**
-         * @example {
-         *       "requestId": "00000000-0000-0000-0000-000000000001",
-         *       "nextCursor": null,
-         *       "hasMore": false
-         *     }
-         */
-        EnvelopeMeta: {
-            /** Format: uuid */
-            requestId: string;
-            nextCursor?: string | null;
-            hasMore?: boolean;
-        };
-        ErrorBody: {
-            code: string;
-            message: string;
-            details?: {
-                [key: string]: string | number | boolean | null | string[];
-            };
-            /** Format: uuid */
-            requestId: string;
-        };
+  schemas: {
+    /**
+     * @example {
+     *       "requestId": "00000000-0000-0000-0000-000000000001",
+     *       "nextCursor": null,
+     *       "hasMore": false
+     *     }
+     */
+    EnvelopeMeta: {
+      /** Format: uuid */
+      requestId: string;
+      nextCursor?: string | null;
+      hasMore?: boolean;
+    };
+    ErrorBody: {
+      code: string;
+      message: string;
+      details?: {
+        [key: string]: string | number | boolean | null | string[];
+      };
+      /** Format: uuid */
+      requestId: string;
+    };
+    /**
+     * @example {
+     *       "error": {
+     *         "code": "ASSIGNMENT_NOT_OPEN",
+     *         "message": "当前任务尚未开放",
+     *         "details": {
+     *           "assignmentId": "11111111-1111-1111-1111-111111111111"
+     *         },
+     *         "requestId": "00000000-0000-0000-0000-000000000003"
+     *       }
+     *     }
+     */
+    ErrorResponse: {
+      error: components["schemas"]["ErrorBody"];
+    };
+    Health: {
+      /** @enum {string} */
+      status: "ok" | "degraded";
+      /** Format: date-time */
+      timestamp: string;
+    };
+    HealthResponse: {
+      data: components["schemas"]["Health"];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    LoginRequest: {
+      identifier: string;
+      password: string;
+    };
+    Membership: {
+      /** Format: uuid */
+      schoolId: string;
+      schoolName: string;
+      /** @enum {string} */
+      role:
+        | "STUDENT"
+        | "TEACHER"
+        | "RESEARCHER"
+        | "SCHOOL_ADMIN"
+        | "PLATFORM_ADMIN";
+    };
+    CurrentUser: {
+      /** Format: uuid */
+      id: string;
+      displayName: string;
+      /** @default zh-CN */
+      preferredLocale: string;
+      memberships: components["schemas"]["Membership"][];
+      /** Format: uuid */
+      activeSchoolId?: string;
+    };
+    AuthSession: {
+      accessToken: string;
+      /** Format: uuid */
+      activeSchoolId: string | null;
+      expiresIn: number;
+      user: components["schemas"]["CurrentUser"];
+    };
+    AuthSessionResponse: {
+      data: components["schemas"]["AuthSession"];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    CurrentUserResponse: {
+      data: components["schemas"]["CurrentUser"];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    SelectSchoolRequest: {
+      /** Format: uuid */
+      schoolId: string;
+    };
+    /** @enum {string} */
+    CourseVersionStatus:
+      | "DRAFT"
+      | "IN_REVIEW"
+      | "CHANGES_REQUESTED"
+      | "APPROVED"
+      | "PUBLISHED"
+      | "RETIRED";
+    CourseVersionSummary: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      courseId: string;
+      version: number;
+      title: string;
+      status: components["schemas"]["CourseVersionStatus"];
+      gradeBand?: string | null;
+      /** Format: date-time */
+      updatedAt: string;
+    };
+    CourseVersionListResponse: {
+      data: components["schemas"]["CourseVersionSummary"][];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    CreateCourseDraftRequest: {
+      title: string;
+      description?: string;
+      gradeBand?: string;
+      /** @default zh-CN */
+      locale: string;
+    };
+    UpdateCourseDraftRequest: {
+      /** Format: date-time */
+      expectedUpdatedAt: string;
+      title?: string;
+      description?: string;
+      gradeBand?: string;
+      locale?: string;
+      objectives?: Record<string, never>[];
+      units?: Record<string, never>[];
+    };
+    CourseVersionDetail: components["schemas"]["CourseVersionSummary"] & {
+      /** Format: uuid */
+      schoolId: string;
+      /** Format: uuid */
+      authorUserId: string;
+      description?: string;
+      locale: string;
+      objectives: Record<string, never>[];
+      units: Record<string, never>[];
+      /** Format: date-time */
+      createdAt: string;
+    };
+    CourseVersionDetailResponse: {
+      data: components["schemas"]["CourseVersionDetail"];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    CourseVersionResponse: {
+      data: components["schemas"]["CourseVersionSummary"];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    ClassSummary: {
+      /** Format: uuid */
+      id: string;
+      name: string;
+      grade: string;
+      studentCount: number;
+    };
+    ClassListResponse: {
+      data: components["schemas"]["ClassSummary"][];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    /** @enum {string} */
+    AssignmentStatus:
+      "DRAFT" | "SCHEDULED" | "OPEN" | "CLOSED" | "CANCELLED" | "ARCHIVED";
+    AssignmentTarget: {
+      /** @enum {string} */
+      targetType: "CLASS" | "STUDENT";
+      /** Format: uuid */
+      classId?: string;
+      /** Format: uuid */
+      enrollmentId?: string;
+    };
+    CreateAssignmentRequest: {
+      /** Format: uuid */
+      courseVersionId: string;
+      title: string;
+      /** Format: date-time */
+      startsAt: string;
+      /** Format: date-time */
+      dueAt: string;
+      /** @default false */
+      offlineRequired: boolean;
+      targets?: components["schemas"]["AssignmentTarget"][];
+    };
+    Assignment: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      courseVersionId: string;
+      title: string;
+      status: components["schemas"]["AssignmentStatus"];
+      /** Format: date-time */
+      startsAt: string;
+      /** Format: date-time */
+      dueAt: string;
+      revision: number;
+      offlineRequired?: boolean;
+      targets?: components["schemas"]["AssignmentTarget"][];
+    };
+    AssignmentResponse: {
+      data: components["schemas"]["Assignment"];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    TodayTask: components["schemas"]["Assignment"] & {
+      /** @enum {string} */
+      progressStatus:
+        | "NOT_STARTED"
+        | "IN_PROGRESS"
+        | "PENDING_SYNC"
+        | "SUBMITTED"
+        | "REVIEWED";
+      /** @enum {string} */
+      downloadStatus:
+        "NOT_REQUIRED" | "NOT_DOWNLOADED" | "DOWNLOADING" | "READY" | "FAILED";
+    };
+    TodayTasksResponse: {
+      data: components["schemas"]["TodayTask"][];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    SaveProgressRequest: {
+      position: number;
+      completed: boolean;
+      /** Format: date-time */
+      clientUpdatedAt?: string;
+    };
+    Progress: {
+      /** Format: uuid */
+      activityId: string;
+      position: number;
+      completed: boolean;
+      revision: number;
+      /** Format: date-time */
+      updatedAt: string;
+    };
+    ProgressResponse: {
+      data: components["schemas"]["Progress"];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    ActivityAttemptInput: {
+      /** Format: uuid */
+      activityId: string;
+      /** @enum {string} */
+      kind: "CHOICE" | "TEXT" | "SPEECH";
+    };
+    ChoiceAttemptInput: Omit<
+      components["schemas"]["ActivityAttemptInput"],
+      "kind"
+    > & {
+      selectedOptionIds: string[];
+    } & {
+      /**
+       * @description discriminator enum property added by openapi-typescript
+       * @enum {string}
+       */
+      kind: "CHOICE";
+    };
+    TextAttemptInput: Omit<
+      components["schemas"]["ActivityAttemptInput"],
+      "kind"
+    > & {
+      text: string;
+    } & {
+      /**
+       * @description discriminator enum property added by openapi-typescript
+       * @enum {string}
+       */
+      kind: "TEXT";
+    };
+    SpeechAttemptInput: Omit<
+      components["schemas"]["ActivityAttemptInput"],
+      "kind"
+    > & {
+      /** Format: uuid */
+      audioAssetId: string;
+    } & {
+      /**
+       * @description discriminator enum property added by openapi-typescript
+       * @enum {string}
+       */
+      kind: "SPEECH";
+    };
+    SubmitAssignmentRequest: {
+      /** Format: uuid */
+      deviceId?: string | null;
+      attempts: components["schemas"]["ActivityAttemptInput"][];
+    };
+    Submission: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      assignmentId: string;
+      /** @enum {string} */
+      status:
+        | "IN_PROGRESS"
+        | "PENDING_SYNC"
+        | "SUBMITTED"
+        | "PROCESSING"
+        | "NEEDS_REVIEW"
+        | "REVIEWED"
+        | "RETURNED"
+        | "ACCEPTED";
+      attemptNo: number;
+      revision: number;
+      /** Format: date-time */
+      submittedAt: string | null;
+    };
+    SubmissionResponse: {
+      data: components["schemas"]["Submission"];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    ReleaseFeedbackRequest: {
+      /** @enum {string} */
+      decision: "ACCEPT" | "RETURN";
+      comment: string;
+      score?: number | null;
+    };
+    Feedback: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      submissionId: string;
+      /** @enum {string} */
+      decision: "ACCEPT" | "RETURN";
+      comment: string;
+      score?: number | null;
+      /** Format: date-time */
+      releasedAt: string;
+      revision: number;
+    };
+    FeedbackResponse: {
+      data: components["schemas"]["Feedback"];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    SyncOperation: {
+      /** Format: uuid */
+      operationId: string;
+      /** @enum {string} */
+      entityType: "progress" | "submission" | "feedback";
+      entityId: string;
+      /** @enum {string} */
+      action: "upsert" | "delete";
+      baseRevision?: number | null;
+      payload: components["schemas"]["SyncPayload"];
+      /** Format: date-time */
+      createdAt: string;
+    };
+    SyncPushRequest: {
+      /** Format: uuid */
+      deviceId: string;
+      /** Format: uuid */
+      clientOperationId: string;
+      operations: components["schemas"]["SyncOperation"][];
+    };
+    SyncReceipt: {
+      /** Format: uuid */
+      operationId: string;
+      /** @enum {string} */
+      status: "ACKNOWLEDGED" | "CONFLICT" | "PERMANENT_FAILURE";
+      serverRevision?: number | null;
+      errorCode?: string | null;
+    };
+    SyncPushResponse: {
+      data: components["schemas"]["SyncReceipt"][];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    SyncChange: {
+      changeId: string;
+      /** @enum {string} */
+      entityType: "progress" | "submission" | "feedback";
+      entityId: string;
+      revision: number;
+      /** Format: date-time */
+      changedAt: string;
+      /** @enum {string} */
+      action?: "upsert" | "delete";
+      payload: components["schemas"]["SyncPayload"];
+    };
+    SyncPullResponse: {
+      data: components["schemas"]["SyncChange"][];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    /** @description 离线同步负载，当前仅包含进度同步的已知字段（position、completed），其他 entityType 的负载结构待领域模型确认 */
+    SyncPayload: {
+      position?: number;
+      completed?: boolean;
+    };
+    /** @enum {string} */
+    ReportType: "STUDENT_GROWTH" | "CLASS_SUMMARY" | "SCHOOL_OVERVIEW";
+    /** @enum {string} */
+    ReportStatus: "PENDING" | "GENERATING" | "READY" | "FAILED";
+    ReportSummary: {
+      /** Format: uuid */
+      id: string;
+      type: components["schemas"]["ReportType"];
+      status: components["schemas"]["ReportStatus"];
+      /** Format: date-time */
+      periodStart: string;
+      /** Format: date-time */
+      periodEnd: string;
+      dataCompleteness: number;
+      revision: number;
+    };
+    ReportListResponse: {
+      data: components["schemas"]["ReportSummary"][];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    CreateReportRequest: {
+      type: components["schemas"]["ReportType"];
+      /** Format: date-time */
+      periodStart: string;
+      /** Format: date-time */
+      periodEnd: string;
+      filters?: {
+        [key: string]: unknown;
+      };
+      /** Format: uuid */
+      enrollmentId?: string | null;
+      /** Format: uuid */
+      classId?: string | null;
+    };
+    ReportDetail: components["schemas"]["ReportSummary"] & {
+      /** Format: date-time */
+      generatedAt: string | null;
+      providerDisclosure: string;
+      filters?: {
+        [key: string]: unknown;
+      };
+      /** Format: uuid */
+      schoolId: string;
+      data?: {
+        [key: string]: unknown;
+      };
+      /** Format: date-time */
+      createdAt: string;
+    };
+    ReportResponse: {
+      data: components["schemas"]["ReportSummary"];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    ReportDetailResponse: {
+      data: components["schemas"]["ReportDetail"];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    StudentGrowthProfile: {
+      /** Format: uuid */
+      enrollmentId: string;
+      /** Format: date-time */
+      periodStart: string;
+      /** Format: date-time */
+      periodEnd: string;
+      /** Format: date-time */
+      generatedAt: string;
+      dataCompleteness: number;
+      providerDisclosure: string;
+      data?: {
+        [key: string]: unknown;
+      };
+    };
+    StudentGrowthProfileResponse: {
+      data: components["schemas"]["StudentGrowthProfile"];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    OfflinePackageSummary: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      courseVersionId: string;
+      version: number;
+      checksum: string;
+      byteSize: number;
+      revision: number;
+    };
+    OfflinePackageListResponse: {
+      data: components["schemas"]["OfflinePackageSummary"][];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    CreateOfflinePackageRequest: {
+      /** Format: uuid */
+      courseVersionId: string;
+      /** @default false */
+      downloadRequired: boolean;
+    };
+    OfflinePackageDetail: components["schemas"]["OfflinePackageSummary"] & {
+      /** Format: uuid */
+      schoolId: string;
+      manifest: {
+        [key: string]: unknown;
+      };
+      downloadRequired?: boolean;
+      /** Format: date-time */
+      expiresAt?: string | null;
+      /** Format: date-time */
+      createdAt: string;
+    };
+    OfflinePackageResponse: {
+      data: components["schemas"]["OfflinePackageSummary"];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    OfflinePackageDetailResponse: {
+      data: components["schemas"]["OfflinePackageDetail"];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    OfflineDownloadAuthorizationResponse: {
+      data: {
+        /** Format: uuid */
+        packageId: string;
+        authorized: boolean;
+        /** Format: date-time */
+        authorizedAt: string;
+        downloadUrl?: string | null;
+      };
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    /** @enum {string} */
+    SyncBatchStatus:
+      "ACCEPTED" | "DUPLICATE" | "CONFLICT" | "REJECTED" | "PERMISSION_CHANGED";
+    CreateSyncBatchRequest: {
+      /** Format: uuid */
+      deviceId: string;
+      clientBatchId: string;
+      operations: components["schemas"]["SyncOperation"][];
+    };
+    SyncBatchSummary: {
+      /** Format: uuid */
+      id: string;
+      status: components["schemas"]["SyncBatchStatus"];
+      operationCount: number;
+      acceptedCount: number;
+      duplicateCount: number;
+      conflictCount: number;
+      rejectedCount: number;
+      permissionChanged: number;
+    };
+    SyncBatchResponse: {
+      data: components["schemas"]["SyncBatchSummary"];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    OperationsStatus: {
+      /** @enum {string} */
+      status: "ok" | "degraded" | "down";
+      /** Format: date-time */
+      timestamp: string;
+      version: string;
+      /** @enum {string} */
+      database?: "connected" | "disconnected";
+      activeSchools?: number;
+    };
+    OperationsStatusResponse: {
+      data: components["schemas"]["OperationsStatus"];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+  };
+  responses: {
+    /** @description 请求参数无效或格式错误 */
+    BadRequest: {
+      headers: {
+        [name: string]: unknown;
+      };
+      content: {
         /**
          * @example {
          *       "error": {
-         *         "code": "ASSIGNMENT_NOT_OPEN",
-         *         "message": "当前任务尚未开放",
-         *         "details": {
-         *           "assignmentId": "11111111-1111-1111-1111-111111111111"
-         *         },
-         *         "requestId": "00000000-0000-0000-0000-000000000003"
+         *         "code": "INVALID_REQUEST",
+         *         "message": "请求参数无效",
+         *         "details": {},
+         *         "requestId": "00000000-0000-0000-0000-000000000002"
          *       }
          *     }
          */
-        ErrorResponse: {
-            error: components["schemas"]["ErrorBody"];
-        };
-        Health: {
-            /** @enum {string} */
-            status: "ok" | "degraded";
-            /** Format: date-time */
-            timestamp: string;
-        };
-        HealthResponse: {
-            data: components["schemas"]["Health"];
-            meta: components["schemas"]["EnvelopeMeta"];
-        };
-        LoginRequest: {
-            identifier: string;
-            password: string;
-        };
-        Membership: {
-            /** Format: uuid */
-            schoolId: string;
-            schoolName: string;
-            /** @enum {string} */
-            role: "STUDENT" | "TEACHER" | "RESEARCHER" | "SCHOOL_ADMIN" | "PLATFORM_ADMIN";
-        };
-        CurrentUser: {
-            /** Format: uuid */
-            id: string;
-            displayName: string;
-            /** @default zh-CN */
-            preferredLocale: string;
-            memberships: components["schemas"]["Membership"][];
-            /** Format: uuid */
-            activeSchoolId?: string;
-        };
-        AuthSession: {
-            accessToken: string;
-            /** Format: uuid */
-            activeSchoolId: string | null;
-            expiresIn: number;
-            user: components["schemas"]["CurrentUser"];
-        };
-        AuthSessionResponse: {
-            data: components["schemas"]["AuthSession"];
-            meta: components["schemas"]["EnvelopeMeta"];
-        };
-        CurrentUserResponse: {
-            data: components["schemas"]["CurrentUser"];
-            meta: components["schemas"]["EnvelopeMeta"];
-        };
-        SelectSchoolRequest: {
-            /** Format: uuid */
-            schoolId: string;
-        };
-        /** @enum {string} */
-        CourseVersionStatus: "DRAFT" | "IN_REVIEW" | "CHANGES_REQUESTED" | "APPROVED" | "PUBLISHED" | "RETIRED";
-        CourseVersionSummary: {
-            /** Format: uuid */
-            id: string;
-            /** Format: uuid */
-            courseId: string;
-            version: number;
-            title: string;
-            status: components["schemas"]["CourseVersionStatus"];
-            gradeBand?: string | null;
-            /** Format: date-time */
-            updatedAt: string;
-        };
-        CourseVersionListResponse: {
-            data: components["schemas"]["CourseVersionSummary"][];
-            meta: components["schemas"]["EnvelopeMeta"];
-        };
-        CreateCourseDraftRequest: {
-            title: string;
-            description?: string;
-            gradeBand?: string;
-            /** @default zh-CN */
-            locale: string;
-        };
-        UpdateCourseDraftRequest: {
-            /** Format: date-time */
-            expectedUpdatedAt: string;
-            title?: string;
-            description?: string;
-            gradeBand?: string;
-            locale?: string;
-            objectives?: Record<string, never>[];
-            units?: Record<string, never>[];
-        };
-        CourseVersionDetail: components["schemas"]["CourseVersionSummary"] & {
-            /** Format: uuid */
-            schoolId: string;
-            /** Format: uuid */
-            authorUserId: string;
-            description?: string;
-            locale: string;
-            objectives: Record<string, never>[];
-            units: Record<string, never>[];
-            /** Format: date-time */
-            createdAt: string;
-        };
-        CourseVersionDetailResponse: {
-            data: components["schemas"]["CourseVersionDetail"];
-            meta: components["schemas"]["EnvelopeMeta"];
-        };
-        CourseVersionResponse: {
-            data: components["schemas"]["CourseVersionSummary"];
-            meta: components["schemas"]["EnvelopeMeta"];
-        };
-        ClassSummary: {
-            /** Format: uuid */
-            id: string;
-            name: string;
-            grade: string;
-            studentCount: number;
-        };
-        ClassListResponse: {
-            data: components["schemas"]["ClassSummary"][];
-            meta: components["schemas"]["EnvelopeMeta"];
-        };
-        /** @enum {string} */
-        AssignmentStatus: "DRAFT" | "SCHEDULED" | "OPEN" | "CLOSED" | "CANCELLED" | "ARCHIVED";
-        AssignmentTarget: {
-            /** @enum {string} */
-            targetType: "CLASS" | "STUDENT";
-            /** Format: uuid */
-            classId?: string;
-            /** Format: uuid */
-            enrollmentId?: string;
-        };
-        CreateAssignmentRequest: {
-            /** Format: uuid */
-            courseVersionId: string;
-            title: string;
-            /** Format: date-time */
-            startsAt: string;
-            /** Format: date-time */
-            dueAt: string;
-            /** @default false */
-            offlineRequired: boolean;
-            targets?: components["schemas"]["AssignmentTarget"][];
-        };
-        Assignment: {
-            /** Format: uuid */
-            id: string;
-            /** Format: uuid */
-            courseVersionId: string;
-            title: string;
-            status: components["schemas"]["AssignmentStatus"];
-            /** Format: date-time */
-            startsAt: string;
-            /** Format: date-time */
-            dueAt: string;
-            revision: number;
-            offlineRequired?: boolean;
-            targets?: components["schemas"]["AssignmentTarget"][];
-        };
-        AssignmentResponse: {
-            data: components["schemas"]["Assignment"];
-            meta: components["schemas"]["EnvelopeMeta"];
-        };
-        TodayTask: components["schemas"]["Assignment"] & {
-            /** @enum {string} */
-            progressStatus: "NOT_STARTED" | "IN_PROGRESS" | "PENDING_SYNC" | "SUBMITTED" | "REVIEWED";
-            /** @enum {string} */
-            downloadStatus: "NOT_REQUIRED" | "NOT_DOWNLOADED" | "DOWNLOADING" | "READY" | "FAILED";
-        };
-        TodayTasksResponse: {
-            data: components["schemas"]["TodayTask"][];
-            meta: components["schemas"]["EnvelopeMeta"];
-        };
-        SaveProgressRequest: {
-            position: number;
-            completed: boolean;
-            /** Format: date-time */
-            clientUpdatedAt?: string;
-        };
-        Progress: {
-            /** Format: uuid */
-            activityId: string;
-            position: number;
-            completed: boolean;
-            revision: number;
-            /** Format: date-time */
-            updatedAt: string;
-        };
-        ProgressResponse: {
-            data: components["schemas"]["Progress"];
-            meta: components["schemas"]["EnvelopeMeta"];
-        };
-        ActivityAttemptInput: {
-            /** Format: uuid */
-            activityId: string;
-            /** @enum {string} */
-            kind: "CHOICE" | "TEXT" | "SPEECH";
-        };
-        ChoiceAttemptInput: Omit<components["schemas"]["ActivityAttemptInput"], "kind"> & {
-            selectedOptionIds: string[];
-        } & {
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            kind: "CHOICE";
-        };
-        TextAttemptInput: Omit<components["schemas"]["ActivityAttemptInput"], "kind"> & {
-            text: string;
-        } & {
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            kind: "TEXT";
-        };
-        SpeechAttemptInput: Omit<components["schemas"]["ActivityAttemptInput"], "kind"> & {
-            /** Format: uuid */
-            audioAssetId: string;
-        } & {
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            kind: "SPEECH";
-        };
-        SubmitAssignmentRequest: {
-            /** Format: uuid */
-            deviceId?: string | null;
-            attempts: components["schemas"]["ActivityAttemptInput"][];
-        };
-        Submission: {
-            /** Format: uuid */
-            id: string;
-            /** Format: uuid */
-            assignmentId: string;
-            /** @enum {string} */
-            status: "IN_PROGRESS" | "PENDING_SYNC" | "SUBMITTED" | "PROCESSING" | "NEEDS_REVIEW" | "REVIEWED" | "RETURNED" | "ACCEPTED";
-            attemptNo: number;
-            revision: number;
-            /** Format: date-time */
-            submittedAt: string | null;
-        };
-        SubmissionResponse: {
-            data: components["schemas"]["Submission"];
-            meta: components["schemas"]["EnvelopeMeta"];
-        };
-        ReleaseFeedbackRequest: {
-            /** @enum {string} */
-            decision: "ACCEPT" | "RETURN";
-            comment: string;
-            score?: number | null;
-        };
-        Feedback: {
-            /** Format: uuid */
-            id: string;
-            /** Format: uuid */
-            submissionId: string;
-            /** @enum {string} */
-            decision: "ACCEPT" | "RETURN";
-            comment: string;
-            score?: number | null;
-            /** Format: date-time */
-            releasedAt: string;
-            revision: number;
-        };
-        FeedbackResponse: {
-            data: components["schemas"]["Feedback"];
-            meta: components["schemas"]["EnvelopeMeta"];
-        };
-        SyncOperation: {
-            /** Format: uuid */
-            operationId: string;
-            /** @enum {string} */
-            entityType: "progress" | "submission" | "feedback";
-            entityId: string;
-            /** @enum {string} */
-            action: "upsert" | "delete";
-            baseRevision?: number | null;
-            payload: components["schemas"]["SyncPayload"];
-            /** Format: date-time */
-            createdAt: string;
-        };
-        SyncPushRequest: {
-            /** Format: uuid */
-            deviceId: string;
-            /** Format: uuid */
-            clientOperationId: string;
-            operations: components["schemas"]["SyncOperation"][];
-        };
-        SyncReceipt: {
-            /** Format: uuid */
-            operationId: string;
-            /** @enum {string} */
-            status: "ACKNOWLEDGED" | "CONFLICT" | "PERMANENT_FAILURE";
-            serverRevision?: number | null;
-            errorCode?: string | null;
-        };
-        SyncPushResponse: {
-            data: components["schemas"]["SyncReceipt"][];
-            meta: components["schemas"]["EnvelopeMeta"];
-        };
-        SyncChange: {
-            changeId: string;
-            /** @enum {string} */
-            entityType: "progress" | "submission" | "feedback";
-            entityId: string;
-            revision: number;
-            /** Format: date-time */
-            changedAt: string;
-            /** @enum {string} */
-            action?: "upsert" | "delete";
-            payload: components["schemas"]["SyncPayload"];
-        };
-        SyncPullResponse: {
-            data: components["schemas"]["SyncChange"][];
-            meta: components["schemas"]["EnvelopeMeta"];
-        };
-        /** @description 离线同步负载，当前仅包含进度同步的已知字段（position、completed），其他 entityType 的负载结构待领域模型确认 */
-        SyncPayload: {
-            position?: number;
-            completed?: boolean;
-        };
+        "application/json": components["schemas"]["ErrorResponse"];
+      };
     };
-    responses: {
-        /** @description 请求参数无效或格式错误 */
-        BadRequest: {
-            headers: {
-                [name: string]: unknown;
-            };
-            content: {
-                /**
-                 * @example {
-                 *       "error": {
-                 *         "code": "INVALID_REQUEST",
-                 *         "message": "请求参数无效",
-                 *         "details": {},
-                 *         "requestId": "00000000-0000-0000-0000-000000000002"
-                 *       }
-                 *     }
-                 */
-                "application/json": components["schemas"]["ErrorResponse"];
-            };
-        };
-        /** @description Authentication required or invalid */
-        Unauthorized: {
-            headers: {
-                [name: string]: unknown;
-            };
-            content: {
-                "application/json": components["schemas"]["ErrorResponse"];
-            };
-        };
-        /** @description Authenticated but outside allowed resource scope */
-        Forbidden: {
-            headers: {
-                [name: string]: unknown;
-            };
-            content: {
-                "application/json": components["schemas"]["ErrorResponse"];
-            };
-        };
-        /** @description Resource does not exist, has been soft-deleted, or is not visible in the current school scope */
-        NotFound: {
-            headers: {
-                [name: string]: unknown;
-            };
-            content: {
-                "application/json": components["schemas"]["ErrorResponse"];
-            };
-        };
-        /** @description State or revision conflict */
-        Conflict: {
-            headers: {
-                [name: string]: unknown;
-            };
-            content: {
-                "application/json": components["schemas"]["ErrorResponse"];
-            };
-        };
-        /** @description Required dependency unavailable */
-        ServiceUnavailable: {
-            headers: {
-                [name: string]: unknown;
-            };
-            content: {
-                "application/json": components["schemas"]["ErrorResponse"];
-            };
-        };
-        /** @description Rate limited */
-        TooManyRequests: {
-            headers: {
-                [name: string]: unknown;
-            };
-            content: {
-                "application/json": components["schemas"]["ErrorResponse"];
-            };
-        };
-        /** @description 服务端内部错误 */
-        InternalServerError: {
-            headers: {
-                [name: string]: unknown;
-            };
-            content: {
-                "application/json": components["schemas"]["ErrorResponse"];
-            };
-        };
+    /** @description Authentication required or invalid */
+    Unauthorized: {
+      headers: {
+        [name: string]: unknown;
+      };
+      content: {
+        "application/json": components["schemas"]["ErrorResponse"];
+      };
     };
-    parameters: {
-        /** @description 学校（租户）标识 */
-        SchoolId: string;
-        /** @description 分页返回数量上限 */
-        Limit: number;
-        /** @description 游标， opaque 字符串 */
-        Cursor: string;
-        /** @description 课程版本 ID */
-        CourseVersionId: string;
-        /** @description 任务 ID */
-        AssignmentId: string;
-        /** @description 学习活动 ID */
-        ActivityId: string;
-        /** @description 提交 ID */
-        SubmissionId: string;
-        /** @description 幂等键，与认证主体、路由和请求摘要绑定；重复请求返回首次业务结果，具体保留期限由服务端策略决定 */
-        IdempotencyKey: string;
-        /** @description 客户端持有的资源 revision（整数字符串形式），与服务端当前 revision 不一致时返回 409 */
-        IfMatch: string;
+    /** @description Authenticated but outside allowed resource scope */
+    Forbidden: {
+      headers: {
+        [name: string]: unknown;
+      };
+      content: {
+        "application/json": components["schemas"]["ErrorResponse"];
+      };
     };
-    requestBodies: never;
-    headers: never;
-    pathItems: never;
+    /** @description Resource does not exist, has been soft-deleted, or is not visible in the current school scope */
+    NotFound: {
+      headers: {
+        [name: string]: unknown;
+      };
+      content: {
+        "application/json": components["schemas"]["ErrorResponse"];
+      };
+    };
+    /** @description State or revision conflict */
+    Conflict: {
+      headers: {
+        [name: string]: unknown;
+      };
+      content: {
+        "application/json": components["schemas"]["ErrorResponse"];
+      };
+    };
+    /** @description Required dependency unavailable */
+    ServiceUnavailable: {
+      headers: {
+        [name: string]: unknown;
+      };
+      content: {
+        "application/json": components["schemas"]["ErrorResponse"];
+      };
+    };
+    /** @description Rate limited */
+    TooManyRequests: {
+      headers: {
+        [name: string]: unknown;
+      };
+      content: {
+        "application/json": components["schemas"]["ErrorResponse"];
+      };
+    };
+    /** @description 服务端内部错误 */
+    InternalServerError: {
+      headers: {
+        [name: string]: unknown;
+      };
+      content: {
+        "application/json": components["schemas"]["ErrorResponse"];
+      };
+    };
+  };
+  parameters: {
+    /** @description 学校（租户）标识 */
+    SchoolId: string;
+    /** @description 分页返回数量上限 */
+    Limit: number;
+    /** @description 游标， opaque 字符串 */
+    Cursor: string;
+    /** @description 课程版本 ID */
+    CourseVersionId: string;
+    /** @description 任务 ID */
+    AssignmentId: string;
+    /** @description 学习活动 ID */
+    ActivityId: string;
+    /** @description 提交 ID */
+    SubmissionId: string;
+    /** @description 幂等键，与认证主体、路由和请求摘要绑定；重复请求返回首次业务结果，具体保留期限由服务端策略决定 */
+    IdempotencyKey: string;
+    /** @description 客户端持有的资源 revision（整数字符串形式），与服务端当前 revision 不一致时返回 409 */
+    IfMatch: string;
+    /** @description 报表 ID */
+    ReportId: string;
+    /** @description 注册 ID */
+    EnrollmentId: string;
+    /** @description 离线内容包 ID */
+    PackageId: string;
+    /** @description 同步批次 ID */
+    BatchId: string;
+  };
+  requestBodies: never;
+  headers: never;
+  pathItems: never;
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    getLiveness: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Process is alive */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    /**
-                     * @example {
-                     *       "data": {
-                     *         "status": "ok",
-                     *         "timestamp": "2026-07-09T09:00:00Z"
-                     *       },
-                     *       "meta": {
-                     *         "requestId": "00000000-0000-0000-0000-000000000001"
-                     *       }
-                     *     }
-                     */
-                    "application/json": components["schemas"]["HealthResponse"];
-                };
-            };
-            400: components["responses"]["BadRequest"];
-            500: components["responses"]["InternalServerError"];
-        };
+  getLiveness: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    getReadiness: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Process is alive */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Required dependencies are ready */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HealthResponse"];
-                };
-            };
-            400: components["responses"]["BadRequest"];
-            503: components["responses"]["ServiceUnavailable"];
+        content: {
+          /**
+           * @example {
+           *       "data": {
+           *         "status": "ok",
+           *         "timestamp": "2026-07-09T09:00:00Z"
+           *       },
+           *       "meta": {
+           *         "requestId": "00000000-0000-0000-0000-000000000001"
+           *       }
+           *     }
+           */
+          "application/json": components["schemas"]["HealthResponse"];
         };
+      };
+      400: components["responses"]["BadRequest"];
+      500: components["responses"]["InternalServerError"];
     };
-    login: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                /**
-                 * @example {
-                 *       "identifier": "teacher@example.edu",
-                 *       "password": "secure-placeholder"
-                 *     }
-                 */
-                "application/json": components["schemas"]["LoginRequest"];
-            };
-        };
-        responses: {
-            /** @description Authenticated */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AuthSessionResponse"];
-                };
-            };
-            400: components["responses"]["BadRequest"];
-            401: components["responses"]["Unauthorized"];
-            429: components["responses"]["TooManyRequests"];
-        };
+  };
+  getReadiness: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    refreshSession: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Required dependencies are ready */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Session refreshed */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AuthSessionResponse"];
-                };
-            };
-            400: components["responses"]["BadRequest"];
-            401: components["responses"]["Unauthorized"];
+        content: {
+          "application/json": components["schemas"]["HealthResponse"];
         };
+      };
+      400: components["responses"]["BadRequest"];
+      503: components["responses"]["ServiceUnavailable"];
     };
-    logout: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Session revoked */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            400: components["responses"]["BadRequest"];
-            401: components["responses"]["Unauthorized"];
-        };
+  };
+  login: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    selectSchool: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["SelectSchoolRequest"];
-            };
-        };
-        responses: {
-            /** @description Active school selected */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AuthSessionResponse"];
-                };
-            };
-            400: components["responses"]["BadRequest"];
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-        };
+    requestBody: {
+      content: {
+        /**
+         * @example {
+         *       "identifier": "teacher@example.edu",
+         *       "password": "secure-placeholder"
+         *     }
+         */
+        "application/json": components["schemas"]["LoginRequest"];
+      };
     };
-    getCurrentUser: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    responses: {
+      /** @description Authenticated */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Current identity and memberships */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CurrentUserResponse"];
-                };
-            };
-            401: components["responses"]["Unauthorized"];
+        content: {
+          "application/json": components["schemas"]["AuthSessionResponse"];
         };
+      };
+      400: components["responses"]["BadRequest"];
+      401: components["responses"]["Unauthorized"];
+      429: components["responses"]["TooManyRequests"];
     };
-    listCourseVersions: {
-        parameters: {
-            query?: {
-                /** @description 分页返回数量上限 */
-                limit?: components["parameters"]["Limit"];
-                /** @description 游标， opaque 字符串 */
-                cursor?: components["parameters"]["Cursor"];
-                status?: components["schemas"]["CourseVersionStatus"];
-            };
-            header?: never;
-            path: {
-                /** @description 学校（租户）标识 */
-                schoolId: components["parameters"]["SchoolId"];
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Course versions */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CourseVersionListResponse"];
-                };
-            };
-            400: components["responses"]["BadRequest"];
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-            404: components["responses"]["NotFound"];
-        };
+  };
+  refreshSession: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    createCourseDraft: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description 学校（租户）标识 */
-                schoolId: components["parameters"]["SchoolId"];
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Session refreshed */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                /**
-                 * @example {
-                 *       "title": "一年级语音入门",
-                 *       "description": "语音意识基础课程",
-                 *       "gradeBand": "一年级",
-                 *       "locale": "zh-CN"
-                 *     }
-                 */
-                "application/json": components["schemas"]["CreateCourseDraftRequest"];
-            };
+        content: {
+          "application/json": components["schemas"]["AuthSessionResponse"];
         };
-        responses: {
-            /** @description Draft created */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CourseVersionResponse"];
-                };
-            };
-            400: components["responses"]["BadRequest"];
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-            404: components["responses"]["NotFound"];
-        };
+      };
+      400: components["responses"]["BadRequest"];
+      401: components["responses"]["Unauthorized"];
     };
-    publishCourseVersion: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description 学校（租户）标识 */
-                schoolId: components["parameters"]["SchoolId"];
-                /** @description 课程版本 ID */
-                courseVersionId: components["parameters"]["CourseVersionId"];
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Published immutable version */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CourseVersionResponse"];
-                };
-            };
-            400: components["responses"]["BadRequest"];
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-            404: components["responses"]["NotFound"];
-            409: components["responses"]["Conflict"];
-        };
+  };
+  logout: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    getCourseVersion: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description 学校（租户）标识 */
-                schoolId: components["parameters"]["SchoolId"];
-                /** @description 课程版本 ID */
-                courseVersionId: components["parameters"]["CourseVersionId"];
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Session revoked */
+      204: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Course version detail */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CourseVersionDetailResponse"];
-                };
-            };
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-            404: components["responses"]["NotFound"];
-        };
+        content?: never;
+      };
+      400: components["responses"]["BadRequest"];
+      401: components["responses"]["Unauthorized"];
     };
-    updateCourseDraft: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description 学校（租户）标识 */
-                schoolId: components["parameters"]["SchoolId"];
-                /** @description 课程版本 ID */
-                courseVersionId: components["parameters"]["CourseVersionId"];
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateCourseDraftRequest"];
-            };
-        };
-        responses: {
-            /** @description Updated course draft */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CourseVersionDetailResponse"];
-                };
-            };
-            400: components["responses"]["BadRequest"];
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-            404: components["responses"]["NotFound"];
-            409: components["responses"]["Conflict"];
-        };
+  };
+  selectSchool: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    listClasses: {
-        parameters: {
-            query?: {
-                /** @description 分页返回数量上限 */
-                limit?: components["parameters"]["Limit"];
-                /** @description 游标， opaque 字符串 */
-                cursor?: components["parameters"]["Cursor"];
-            };
-            header?: never;
-            path: {
-                /** @description 学校（租户）标识 */
-                schoolId: components["parameters"]["SchoolId"];
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Classes in active school scope */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ClassListResponse"];
-                };
-            };
-            400: components["responses"]["BadRequest"];
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-            404: components["responses"]["NotFound"];
-        };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["SelectSchoolRequest"];
+      };
     };
-    createAssignment: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description 学校（租户）标识 */
-                schoolId: components["parameters"]["SchoolId"];
-            };
-            cookie?: never;
+    responses: {
+      /** @description Active school selected */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                /**
-                 * @example {
-                 *       "courseVersionId": "22222222-2222-2222-2222-222222222222",
-                 *       "title": "第一周语音练习",
-                 *       "startsAt": "2026-07-10T00:00:00Z",
-                 *       "dueAt": "2026-07-17T23:59:59Z",
-                 *       "offlineRequired": true,
-                 *       "targets": [
-                 *         {
-                 *           "targetType": "CLASS",
-                 *           "classId": "11111111-1111-1111-1111-111111111111"
-                 *         }
-                 *       ]
-                 *     }
-                 */
-                "application/json": components["schemas"]["CreateAssignmentRequest"];
-            };
+        content: {
+          "application/json": components["schemas"]["AuthSessionResponse"];
         };
-        responses: {
-            /** @description Assignment created */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AssignmentResponse"];
-                };
-            };
-            400: components["responses"]["BadRequest"];
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-            404: components["responses"]["NotFound"];
-            409: components["responses"]["Conflict"];
-        };
+      };
+      400: components["responses"]["BadRequest"];
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
     };
-    openAssignment: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description 学校（租户）标识 */
-                schoolId: components["parameters"]["SchoolId"];
-                /** @description 任务 ID */
-                assignmentId: components["parameters"]["AssignmentId"];
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Assignment opened */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AssignmentResponse"];
-                };
-            };
-            400: components["responses"]["BadRequest"];
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-            404: components["responses"]["NotFound"];
-            409: components["responses"]["Conflict"];
-        };
+  };
+  getCurrentUser: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    getMyTodayTasks: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description 学校（租户）标识 */
-                schoolId: components["parameters"]["SchoolId"];
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Current identity and memberships */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Student today tasks */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TodayTasksResponse"];
-                };
-            };
-            400: components["responses"]["BadRequest"];
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-            404: components["responses"]["NotFound"];
+        content: {
+          "application/json": components["schemas"]["CurrentUserResponse"];
         };
+      };
+      401: components["responses"]["Unauthorized"];
     };
-    saveActivityProgress: {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description 客户端持有的资源 revision（整数字符串形式），与服务端当前 revision 不一致时返回 409 */
-                "If-Match": components["parameters"]["IfMatch"];
-            };
-            path: {
-                /** @description 学校（租户）标识 */
-                schoolId: components["parameters"]["SchoolId"];
-                /** @description 学习活动 ID */
-                activityId: components["parameters"]["ActivityId"];
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                /**
-                 * @example {
-                 *       "position": 12,
-                 *       "completed": false,
-                 *       "clientUpdatedAt": "2026-07-09T08:30:00Z"
-                 *     }
-                 */
-                "application/json": components["schemas"]["SaveProgressRequest"];
-            };
-        };
-        responses: {
-            /** @description Progress saved */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ProgressResponse"];
-                };
-            };
-            400: components["responses"]["BadRequest"];
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-            404: components["responses"]["NotFound"];
-            409: components["responses"]["Conflict"];
-            500: components["responses"]["InternalServerError"];
-        };
+  };
+  listCourseVersions: {
+    parameters: {
+      query?: {
+        /** @description 分页返回数量上限 */
+        limit?: components["parameters"]["Limit"];
+        /** @description 游标， opaque 字符串 */
+        cursor?: components["parameters"]["Cursor"];
+        status?: components["schemas"]["CourseVersionStatus"];
+      };
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
     };
-    submitAssignment: {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description 幂等键，与认证主体、路由和请求摘要绑定；重复请求返回首次业务结果，具体保留期限由服务端策略决定 */
-                "Idempotency-Key": components["parameters"]["IdempotencyKey"];
-            };
-            path: {
-                /** @description 学校（租户）标识 */
-                schoolId: components["parameters"]["SchoolId"];
-                /** @description 任务 ID */
-                assignmentId: components["parameters"]["AssignmentId"];
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Course versions */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                /**
-                 * @example {
-                 *       "deviceId": "33333333-3333-3333-3333-333333333333",
-                 *       "attempts": [
-                 *         {
-                 *           "activityId": "44444444-4444-4444-4444-444444444444",
-                 *           "kind": "TEXT",
-                 *           "text": "示范回答"
-                 *         }
-                 *       ]
-                 *     }
-                 */
-                "application/json": components["schemas"]["SubmitAssignmentRequest"];
-            };
+        content: {
+          "application/json": components["schemas"]["CourseVersionListResponse"];
         };
-        responses: {
-            /** @description Submission accepted */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SubmissionResponse"];
-                };
-            };
-            400: components["responses"]["BadRequest"];
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-            404: components["responses"]["NotFound"];
-            409: components["responses"]["Conflict"];
-            500: components["responses"]["InternalServerError"];
-        };
+      };
+      400: components["responses"]["BadRequest"];
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
     };
-    releaseFeedback: {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description 客户端持有的资源 revision（整数字符串形式），与服务端当前 revision 不一致时返回 409 */
-                "If-Match": components["parameters"]["IfMatch"];
-            };
-            path: {
-                /** @description 学校（租户）标识 */
-                schoolId: components["parameters"]["SchoolId"];
-                /** @description 提交 ID */
-                submissionId: components["parameters"]["SubmissionId"];
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                /**
-                 * @example {
-                 *       "decision": "ACCEPT",
-                 *       "comment": "发音清晰，继续加油",
-                 *       "score": 85
-                 *     }
-                 */
-                "application/json": components["schemas"]["ReleaseFeedbackRequest"];
-            };
-        };
-        responses: {
-            /** @description Feedback released */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FeedbackResponse"];
-                };
-            };
-            400: components["responses"]["BadRequest"];
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-            404: components["responses"]["NotFound"];
-            409: components["responses"]["Conflict"];
-            500: components["responses"]["InternalServerError"];
-        };
+  };
+  createCourseDraft: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
     };
-    pushSyncOperations: {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description 幂等键，与认证主体、路由和请求摘要绑定；重复请求返回首次业务结果，具体保留期限由服务端策略决定 */
-                "Idempotency-Key": components["parameters"]["IdempotencyKey"];
-            };
-            path: {
-                /** @description 学校（租户）标识 */
-                schoolId: components["parameters"]["SchoolId"];
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                /**
-                 * @example {
-                 *       "deviceId": "55555555-5555-5555-5555-555555555555",
-                 *       "clientOperationId": "66666666-6666-6666-6666-666666666666",
-                 *       "operations": [
-                 *         {
-                 *           "operationId": "77777777-7777-7777-7777-777777777777",
-                 *           "entityType": "progress",
-                 *           "entityId": "88888888-8888-8888-8888-888888888888",
-                 *           "action": "upsert",
-                 *           "baseRevision": 3,
-                 *           "payload": {
-                 *             "position": 12,
-                 *             "completed": false
-                 *           },
-                 *           "createdAt": "2026-07-09T08:30:00Z"
-                 *         }
-                 *       ]
-                 *     }
-                 */
-                "application/json": components["schemas"]["SyncPushRequest"];
-            };
-        };
-        responses: {
-            /** @description Per-operation receipts */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SyncPushResponse"];
-                };
-            };
-            400: components["responses"]["BadRequest"];
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-            404: components["responses"]["NotFound"];
-            409: components["responses"]["Conflict"];
-            500: components["responses"]["InternalServerError"];
-        };
+    requestBody: {
+      content: {
+        /**
+         * @example {
+         *       "title": "一年级语音入门",
+         *       "description": "语音意识基础课程",
+         *       "gradeBand": "一年级",
+         *       "locale": "zh-CN"
+         *     }
+         */
+        "application/json": components["schemas"]["CreateCourseDraftRequest"];
+      };
     };
-    pullSyncChanges: {
-        parameters: {
-            query?: {
-                /** @description 不透明游标，客户端不得解析其内部结构 */
-                cursor?: string;
-            };
-            header?: never;
-            path: {
-                /** @description 学校（租户）标识 */
-                schoolId: components["parameters"]["SchoolId"];
-            };
-            cookie?: never;
+    responses: {
+      /** @description Draft created */
+      201: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Changes since cursor */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SyncPullResponse"];
-                };
-            };
-            400: components["responses"]["BadRequest"];
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-            404: components["responses"]["NotFound"];
-            500: components["responses"]["InternalServerError"];
+        content: {
+          "application/json": components["schemas"]["CourseVersionResponse"];
         };
+      };
+      400: components["responses"]["BadRequest"];
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
     };
+  };
+  publishCourseVersion: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 课程版本 ID */
+        courseVersionId: components["parameters"]["CourseVersionId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Published immutable version */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CourseVersionResponse"];
+        };
+      };
+      400: components["responses"]["BadRequest"];
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+      409: components["responses"]["Conflict"];
+    };
+  };
+  getCourseVersion: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 课程版本 ID */
+        courseVersionId: components["parameters"]["CourseVersionId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Course version detail */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CourseVersionDetailResponse"];
+        };
+      };
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  updateCourseDraft: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 课程版本 ID */
+        courseVersionId: components["parameters"]["CourseVersionId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["UpdateCourseDraftRequest"];
+      };
+    };
+    responses: {
+      /** @description Updated course draft */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CourseVersionDetailResponse"];
+        };
+      };
+      400: components["responses"]["BadRequest"];
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+      409: components["responses"]["Conflict"];
+    };
+  };
+  listClasses: {
+    parameters: {
+      query?: {
+        /** @description 分页返回数量上限 */
+        limit?: components["parameters"]["Limit"];
+        /** @description 游标， opaque 字符串 */
+        cursor?: components["parameters"]["Cursor"];
+      };
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Classes in active school scope */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ClassListResponse"];
+        };
+      };
+      400: components["responses"]["BadRequest"];
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  createAssignment: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        /**
+         * @example {
+         *       "courseVersionId": "22222222-2222-2222-2222-222222222222",
+         *       "title": "第一周语音练习",
+         *       "startsAt": "2026-07-10T00:00:00Z",
+         *       "dueAt": "2026-07-17T23:59:59Z",
+         *       "offlineRequired": true,
+         *       "targets": [
+         *         {
+         *           "targetType": "CLASS",
+         *           "classId": "11111111-1111-1111-1111-111111111111"
+         *         }
+         *       ]
+         *     }
+         */
+        "application/json": components["schemas"]["CreateAssignmentRequest"];
+      };
+    };
+    responses: {
+      /** @description Assignment created */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AssignmentResponse"];
+        };
+      };
+      400: components["responses"]["BadRequest"];
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+      409: components["responses"]["Conflict"];
+    };
+  };
+  openAssignment: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 任务 ID */
+        assignmentId: components["parameters"]["AssignmentId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Assignment opened */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AssignmentResponse"];
+        };
+      };
+      400: components["responses"]["BadRequest"];
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+      409: components["responses"]["Conflict"];
+    };
+  };
+  getMyTodayTasks: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Student today tasks */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["TodayTasksResponse"];
+        };
+      };
+      400: components["responses"]["BadRequest"];
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  saveActivityProgress: {
+    parameters: {
+      query?: never;
+      header: {
+        /** @description 客户端持有的资源 revision（整数字符串形式），与服务端当前 revision 不一致时返回 409 */
+        "If-Match": components["parameters"]["IfMatch"];
+      };
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 学习活动 ID */
+        activityId: components["parameters"]["ActivityId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        /**
+         * @example {
+         *       "position": 12,
+         *       "completed": false,
+         *       "clientUpdatedAt": "2026-07-09T08:30:00Z"
+         *     }
+         */
+        "application/json": components["schemas"]["SaveProgressRequest"];
+      };
+    };
+    responses: {
+      /** @description Progress saved */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ProgressResponse"];
+        };
+      };
+      400: components["responses"]["BadRequest"];
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+      409: components["responses"]["Conflict"];
+      500: components["responses"]["InternalServerError"];
+    };
+  };
+  submitAssignment: {
+    parameters: {
+      query?: never;
+      header: {
+        /** @description 幂等键，与认证主体、路由和请求摘要绑定；重复请求返回首次业务结果，具体保留期限由服务端策略决定 */
+        "Idempotency-Key": components["parameters"]["IdempotencyKey"];
+      };
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 任务 ID */
+        assignmentId: components["parameters"]["AssignmentId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        /**
+         * @example {
+         *       "deviceId": "33333333-3333-3333-3333-333333333333",
+         *       "attempts": [
+         *         {
+         *           "activityId": "44444444-4444-4444-4444-444444444444",
+         *           "kind": "TEXT",
+         *           "text": "示范回答"
+         *         }
+         *       ]
+         *     }
+         */
+        "application/json": components["schemas"]["SubmitAssignmentRequest"];
+      };
+    };
+    responses: {
+      /** @description Submission accepted */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SubmissionResponse"];
+        };
+      };
+      400: components["responses"]["BadRequest"];
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+      409: components["responses"]["Conflict"];
+      500: components["responses"]["InternalServerError"];
+    };
+  };
+  releaseFeedback: {
+    parameters: {
+      query?: never;
+      header: {
+        /** @description 客户端持有的资源 revision（整数字符串形式），与服务端当前 revision 不一致时返回 409 */
+        "If-Match": components["parameters"]["IfMatch"];
+      };
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 提交 ID */
+        submissionId: components["parameters"]["SubmissionId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        /**
+         * @example {
+         *       "decision": "ACCEPT",
+         *       "comment": "发音清晰，继续加油",
+         *       "score": 85
+         *     }
+         */
+        "application/json": components["schemas"]["ReleaseFeedbackRequest"];
+      };
+    };
+    responses: {
+      /** @description Feedback released */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["FeedbackResponse"];
+        };
+      };
+      400: components["responses"]["BadRequest"];
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+      409: components["responses"]["Conflict"];
+      500: components["responses"]["InternalServerError"];
+    };
+  };
+  pushSyncOperations: {
+    parameters: {
+      query?: never;
+      header: {
+        /** @description 幂等键，与认证主体、路由和请求摘要绑定；重复请求返回首次业务结果，具体保留期限由服务端策略决定 */
+        "Idempotency-Key": components["parameters"]["IdempotencyKey"];
+      };
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        /**
+         * @example {
+         *       "deviceId": "55555555-5555-5555-5555-555555555555",
+         *       "clientOperationId": "66666666-6666-6666-6666-666666666666",
+         *       "operations": [
+         *         {
+         *           "operationId": "77777777-7777-7777-7777-777777777777",
+         *           "entityType": "progress",
+         *           "entityId": "88888888-8888-8888-8888-888888888888",
+         *           "action": "upsert",
+         *           "baseRevision": 3,
+         *           "payload": {
+         *             "position": 12,
+         *             "completed": false
+         *           },
+         *           "createdAt": "2026-07-09T08:30:00Z"
+         *         }
+         *       ]
+         *     }
+         */
+        "application/json": components["schemas"]["SyncPushRequest"];
+      };
+    };
+    responses: {
+      /** @description Per-operation receipts */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SyncPushResponse"];
+        };
+      };
+      400: components["responses"]["BadRequest"];
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+      409: components["responses"]["Conflict"];
+      500: components["responses"]["InternalServerError"];
+    };
+  };
+  pullSyncChanges: {
+    parameters: {
+      query?: {
+        /** @description 不透明游标，客户端不得解析其内部结构 */
+        cursor?: string;
+      };
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Changes since cursor */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SyncPullResponse"];
+        };
+      };
+      400: components["responses"]["BadRequest"];
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+      500: components["responses"]["InternalServerError"];
+    };
+  };
+  listReports: {
+    parameters: {
+      query?: {
+        /** @description 分页返回数量上限 */
+        limit?: components["parameters"]["Limit"];
+        /** @description 游标， opaque 字符串 */
+        cursor?: components["parameters"]["Cursor"];
+        type?: components["schemas"]["ReportType"];
+        status?: components["schemas"]["ReportStatus"];
+      };
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Reports list */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ReportListResponse"];
+        };
+      };
+      400: components["responses"]["BadRequest"];
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  createReport: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CreateReportRequest"];
+      };
+    };
+    responses: {
+      /** @description Report generation requested */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ReportResponse"];
+        };
+      };
+      400: components["responses"]["BadRequest"];
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+      409: components["responses"]["Conflict"];
+    };
+  };
+  getReport: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 报表 ID */
+        reportId: components["parameters"]["ReportId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Report detail */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ReportDetailResponse"];
+        };
+      };
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  getStudentGrowthProfile: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 注册 ID */
+        enrollmentId: components["parameters"]["EnrollmentId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Student growth profile */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["StudentGrowthProfileResponse"];
+        };
+      };
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  listOfflinePackages: {
+    parameters: {
+      query?: {
+        /** @description 分页返回数量上限 */
+        limit?: components["parameters"]["Limit"];
+        /** @description 游标， opaque 字符串 */
+        cursor?: components["parameters"]["Cursor"];
+        courseVersionId?: string;
+      };
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Offline content packages */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["OfflinePackageListResponse"];
+        };
+      };
+      400: components["responses"]["BadRequest"];
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  createOfflinePackage: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CreateOfflinePackageRequest"];
+      };
+    };
+    responses: {
+      /** @description Offline package build requested */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["OfflinePackageResponse"];
+        };
+      };
+      400: components["responses"]["BadRequest"];
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+      409: components["responses"]["Conflict"];
+    };
+  };
+  getOfflinePackage: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 离线内容包 ID */
+        packageId: components["parameters"]["PackageId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Offline package detail */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["OfflinePackageDetailResponse"];
+        };
+      };
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  authorizeOfflineDownload: {
+    parameters: {
+      query?: never;
+      header: {
+        /** @description 幂等键，与认证主体、路由和请求摘要绑定；重复请求返回首次业务结果，具体保留期限由服务端策略决定 */
+        "Idempotency-Key": components["parameters"]["IdempotencyKey"];
+      };
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 离线内容包 ID */
+        packageId: components["parameters"]["PackageId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Download authorized */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["OfflineDownloadAuthorizationResponse"];
+        };
+      };
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+      409: components["responses"]["Conflict"];
+    };
+  };
+  createSyncBatch: {
+    parameters: {
+      query?: never;
+      header: {
+        /** @description 幂等键，与认证主体、路由和请求摘要绑定；重复请求返回首次业务结果，具体保留期限由服务端策略决定 */
+        "Idempotency-Key": components["parameters"]["IdempotencyKey"];
+      };
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CreateSyncBatchRequest"];
+      };
+    };
+    responses: {
+      /** @description Sync batch created */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SyncBatchResponse"];
+        };
+      };
+      400: components["responses"]["BadRequest"];
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+      409: components["responses"]["Conflict"];
+    };
+  };
+  getSyncBatch: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 同步批次 ID */
+        batchId: components["parameters"]["BatchId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Sync batch status */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SyncBatchResponse"];
+        };
+      };
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  getOperationsStatus: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description System operational status */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["OperationsStatusResponse"];
+        };
+      };
+      500: components["responses"]["InternalServerError"];
+    };
+  };
 }
