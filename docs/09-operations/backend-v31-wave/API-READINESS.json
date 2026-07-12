@@ -1,0 +1,245 @@
+{
+  "version": "0.1.0",
+  "branch": "integration/windows-backend-v31-mvp-20260712",
+  "commit": "013cffceab9657e5773f9d6205fc252db5be544b",
+  "timestamp": "2026-07-12T11:40:00+08:00",
+  "summary": {
+    "status": "READY",
+    "p0Ready": true,
+    "p1Ready": true,
+    "p2Stubbed": true,
+    "typecheck": "PASS",
+    "build": "PASS",
+    "apiStartup": "PASS",
+    "cleanDbMigrate": "PASS",
+    "contractValidation": "PASS_WITH_WARNINGS",
+    "authSelectSchool": "PASS",
+    "crossSchoolFailClosed": "PASS",
+    "healthShutdown": "PASS"
+  },
+  "tiers": {
+    "P0": {
+      "status": "READY",
+      "description": "Must-have for MVP teaching loop",
+      "modules": [
+        {
+          "name": "Identity / Auth",
+          "routes": [
+            { "method": "POST", "path": "/auth/login", "status": "READY", "auth": "PUBLIC", "note": "Returns access token + active school" },
+            { "method": "POST", "path": "/auth/refresh", "status": "READY", "auth": "PUBLIC", "note": "Refreshes token pair" },
+            { "method": "POST", "path": "/auth/logout", "status": "READY", "auth": "BEARER", "note": "Revokes session cookies" },
+            { "method": "POST", "path": "/auth/select-school", "status": "READY", "auth": "BEARER", "note": "Switches active tenant; cross-school fail-closed verified" },
+            { "method": "GET", "path": "/me", "status": "READY", "auth": "BEARER", "note": "Current user + memberships" }
+          ]
+        },
+        {
+          "name": "Curriculum (course drafts)",
+          "routes": [
+            { "method": "GET", "path": "/schools/:schoolId/course-versions", "status": "READY", "auth": "BEARER", "note": "List published / owned versions" },
+            { "method": "POST", "path": "/schools/:schoolId/course-versions", "status": "READY", "auth": "BEARER (TEACHER+)", "note": "Create draft" },
+            { "method": "GET", "path": "/schools/:schoolId/course-versions/:versionId", "status": "READY", "auth": "BEARER", "note": "Read version" },
+            { "method": "PATCH", "path": "/schools/:schoolId/course-versions/:versionId", "status": "READY", "auth": "BEARER (TEACHER+)", "note": "Edit draft" },
+            { "method": "POST", "path": "/schools/:schoolId/course-versions/:versionId/publish", "status": "READY", "auth": "BEARER (TEACHER+)", "note": "Publish version" }
+          ]
+        },
+        {
+          "name": "Classes",
+          "routes": [
+            { "method": "GET", "path": "/schools/:schoolId/classes", "status": "READY", "auth": "BEARER", "note": "List classes" },
+            { "method": "POST", "path": "/schools/:schoolId/classes", "status": "READY", "auth": "BEARER (TEACHER+)", "note": "Create class" },
+            { "method": "GET", "path": "/schools/:schoolId/classes/:classId", "status": "READY", "auth": "BEARER", "note": "Read class" },
+            { "method": "PATCH", "path": "/schools/:schoolId/classes/:classId", "status": "READY", "auth": "BEARER (TEACHER+)", "note": "Update class" },
+            { "method": "DELETE", "path": "/schools/:schoolId/classes/:classId", "status": "READY", "auth": "BEARER (TEACHER+)", "note": "Archive class" }
+          ]
+        },
+        {
+          "name": "Assignments",
+          "routes": [
+            { "method": "GET", "path": "/schools/:schoolId/assignments", "status": "READY", "auth": "BEARER", "note": "List assignments" },
+            { "method": "POST", "path": "/schools/:schoolId/assignments", "status": "READY", "auth": "BEARER (TEACHER+)", "note": "Create assignment" },
+            { "method": "GET", "path": "/schools/:schoolId/assignments/:assignmentId", "status": "READY", "auth": "BEARER", "note": "Read assignment" },
+            { "method": "PATCH", "path": "/schools/:schoolId/assignments/:assignmentId", "status": "READY", "auth": "BEARER (TEACHER+)", "note": "Update assignment" },
+            { "method": "POST", "path": "/schools/:schoolId/assignments/:assignmentId/open", "status": "READY", "auth": "BEARER (TEACHER+)", "note": "Open assignment" },
+            { "method": "POST", "path": "/schools/:schoolId/assignments/:assignmentId/close", "status": "READY", "auth": "BEARER (TEACHER+)", "note": "Close assignment" }
+          ]
+        },
+        {
+          "name": "Learning",
+          "routes": [
+            { "method": "GET", "path": "/schools/:schoolId/learning/today", "status": "READY", "auth": "BEARER (STUDENT)", "note": "Student today's tasks" },
+            { "method": "GET", "path": "/schools/:schoolId/learning/activities/:activityId", "status": "READY", "auth": "BEARER", "note": "Activity detail" },
+            { "method": "POST", "path": "/schools/:schoolId/learning/activities/:activityId/progress", "status": "READY", "auth": "BEARER (STUDENT)", "note": "Report progress" }
+          ]
+        },
+        {
+          "name": "Submissions",
+          "routes": [
+            { "method": "GET", "path": "/schools/:schoolId/submissions", "status": "READY", "auth": "BEARER", "note": "List submissions" },
+            { "method": "POST", "path": "/schools/:schoolId/assignments/:assignmentId/submissions", "status": "READY", "auth": "BEARER (STUDENT)", "note": "Submit attempt" },
+            { "method": "GET", "path": "/schools/:schoolId/submissions/:submissionId", "status": "READY", "auth": "BEARER", "note": "Read submission" }
+          ]
+        },
+        {
+          "name": "Feedback",
+          "routes": [
+            { "method": "GET", "path": "/schools/:schoolId/submissions/:submissionId/feedback", "status": "READY", "auth": "BEARER", "note": "List feedback" },
+            { "method": "POST", "path": "/schools/:schoolId/submissions/:submissionId/feedback", "status": "READY", "auth": "BEARER (TEACHER+)", "note": "Give feedback" },
+            { "method": "PATCH", "path": "/schools/:schoolId/feedback/:feedbackId", "status": "READY", "auth": "BEARER (TEACHER+)", "note": "Update feedback" }
+          ]
+        }
+      ]
+    },
+    "P1": {
+      "status": "READY",
+      "description": "Merged into MVP; non-blocking",
+      "modules": [
+        {
+          "name": "Reporting",
+          "routes": [
+            { "method": "GET", "path": "/schools/:schoolId/reports", "status": "READY", "auth": "BEARER (TEACHER+)", "note": "List reports" },
+            { "method": "POST", "path": "/schools/:schoolId/reports", "status": "READY", "auth": "BEARER (TEACHER+)", "note": "Create report" },
+            { "method": "GET", "path": "/schools/:schoolId/reports/:reportId", "status": "READY", "auth": "BEARER (TEACHER+)", "note": "Read report" },
+            { "method": "GET", "path": "/schools/:schoolId/student-growth/:enrollmentId", "status": "READY", "auth": "BEARER (TEACHER+)", "note": "Student growth profile" }
+          ]
+        },
+        {
+          "name": "Offline",
+          "routes": [
+            { "method": "GET", "path": "/schools/:schoolId/offline-packages", "status": "READY", "auth": "BEARER", "note": "List packages" },
+            { "method": "POST", "path": "/schools/:schoolId/offline-packages", "status": "READY", "auth": "BEARER (TEACHER+)", "note": "Create package" },
+            { "method": "GET", "path": "/schools/:schoolId/offline-packages/:packageId", "status": "READY", "auth": "BEARER", "note": "Read package" },
+            { "method": "POST", "path": "/schools/:schoolId/offline-packages/:packageId/download", "status": "READY", "auth": "BEARER", "note": "Authorize download" },
+            { "method": "POST", "path": "/schools/:schoolId/sync-batches", "status": "READY", "auth": "BEARER", "note": "Create sync batch" },
+            { "method": "GET", "path": "/schools/:schoolId/sync-batches/:batchId", "status": "READY", "auth": "BEARER", "note": "Read batch" }
+          ]
+        },
+        {
+          "name": "Operations",
+          "routes": [
+            { "method": "GET", "path": "/operations/status", "status": "READY", "auth": "PUBLIC", "note": "System status + DB health" }
+          ]
+        },
+        {
+          "name": "Volunteers",
+          "routes": [
+            { "method": "GET", "path": "/schools/:schoolId/volunteers", "status": "READY", "auth": "BEARER", "note": "List volunteers" },
+            { "method": "POST", "path": "/schools/:schoolId/volunteers", "status": "READY", "auth": "BEARER (TEACHER+)", "note": "Register volunteer" },
+            { "method": "GET", "path": "/schools/:schoolId/volunteers/:volunteerId", "status": "READY", "auth": "BEARER", "note": "Read volunteer" }
+          ]
+        },
+        {
+          "name": "Training",
+          "routes": [
+            { "method": "GET", "path": "/schools/:schoolId/training", "status": "READY", "auth": "BEARER", "note": "List training" },
+            { "method": "POST", "path": "/schools/:schoolId/training", "status": "READY", "auth": "BEARER (TEACHER+)", "note": "Create training" },
+            { "method": "GET", "path": "/schools/:schoolId/training/:trainingId", "status": "READY", "auth": "BEARER", "note": "Read training" }
+          ]
+        },
+        {
+          "name": "Support Pairings",
+          "routes": [
+            { "method": "GET", "path": "/schools/:schoolId/support-pairings", "status": "READY", "auth": "BEARER", "note": "List pairings" },
+            { "method": "POST", "path": "/schools/:schoolId/support-pairings", "status": "READY", "auth": "BEARER (TEACHER+)", "note": "Create pairing" }
+          ]
+        },
+        {
+          "name": "Tools",
+          "routes": [
+            { "method": "GET", "path": "/schools/:schoolId/tools", "status": "READY", "auth": "BEARER", "note": "List tools" },
+            { "method": "POST", "path": "/schools/:schoolId/tools/mindgraph/jobs", "status": "READY", "auth": "BEARER", "note": "Mindgraph job" },
+            { "method": "GET", "path": "/schools/:schoolId/tools/mindgraph/jobs/:jobId", "status": "READY", "auth": "BEARER", "note": "Read job" },
+            { "method": "POST", "path": "/schools/:schoolId/tools/click-audit", "status": "READY", "auth": "BEARER", "note": "Click audit" }
+          ]
+        },
+        {
+          "name": "Translations",
+          "routes": [
+            { "method": "GET", "path": "/schools/:schoolId/translations/jobs", "status": "READY", "auth": "BEARER", "note": "List translation jobs" },
+            { "method": "POST", "path": "/schools/:schoolId/translations/jobs", "status": "READY", "auth": "BEARER (TEACHER+)", "note": "Create translation job" },
+            { "method": "GET", "path": "/schools/:schoolId/translations/jobs/me", "status": "READY", "auth": "BEARER", "note": "My translation jobs" },
+            { "method": "GET", "path": "/schools/:schoolId/translations/glossary", "status": "READY", "auth": "BEARER", "note": "Glossary" }
+          ]
+        },
+        {
+          "name": "Community",
+          "routes": [
+            { "method": "GET", "path": "/schools/:schoolId/community/posts", "status": "READY", "auth": "BEARER", "note": "List posts" },
+            { "method": "POST", "path": "/schools/:schoolId/community/posts", "status": "READY", "auth": "BEARER", "note": "Create post" },
+            { "method": "GET", "path": "/schools/:schoolId/community/posts/:postId", "status": "READY", "auth": "BEARER", "note": "Read post" },
+            { "method": "POST", "path": "/schools/:schoolId/community/posts/:postId/comments", "status": "READY", "auth": "BEARER", "note": "Comment" }
+          ]
+        },
+        {
+          "name": "Cooperation",
+          "routes": [
+            { "method": "GET", "path": "/schools/:schoolId/cooperation/leads", "status": "READY", "auth": "BEARER", "note": "List leads" },
+            { "method": "POST", "path": "/schools/:schoolId/cooperation/leads", "status": "READY", "auth": "BEARER", "note": "Create lead" },
+            { "method": "GET", "path": "/schools/:schoolId/cooperation/support-applications", "status": "READY", "auth": "BEARER", "note": "List support applications" },
+            { "method": "GET", "path": "/schools/:schoolId/cooperation/volunteer-applications", "status": "READY", "auth": "BEARER", "note": "List volunteer applications" }
+          ]
+        },
+        {
+          "name": "Plans",
+          "routes": [
+            { "method": "GET", "path": "/plans", "status": "READY", "auth": "PUBLIC", "note": "Public plans read (empty list stub)" }
+          ]
+        }
+      ]
+    },
+    "P2": {
+      "status": "STUBBED",
+      "description": "Not mature enough for MVP; endpoints return explicit gap codes without fake success",
+      "modules": [
+        {
+          "name": "Admin write persistence",
+          "routes": [
+            { "method": "GET", "path": "/admin/schools", "status": "STUBBED", "auth": "BEARER (ADMIN)", "gapCode": "PERSISTENCE_PENDING" },
+            { "method": "POST", "path": "/admin/schools", "status": "STUBBED", "auth": "BEARER (PLATFORM_ADMIN)", "gapCode": "PERSISTENCE_PENDING" },
+            { "method": "GET", "path": "/admin/users", "status": "STUBBED", "auth": "BEARER (ADMIN)", "gapCode": "PERSISTENCE_PENDING" },
+            { "method": "POST", "path": "/admin/users/invitations", "status": "STUBBED", "auth": "BEARER (ADMIN)", "gapCode": "PERSISTENCE_PENDING" }
+          ]
+        },
+        {
+          "name": "Audit / provider real persistence",
+          "routes": [
+            { "method": "GET", "path": "/audit/logs", "status": "STUBBED", "auth": "BEARER (ADMIN)", "gapCode": "PERSISTENCE_PENDING" },
+            { "method": "GET", "path": "/audit/providers", "status": "STUBBED", "auth": "BEARER (ADMIN)", "gapCode": "PROVIDER_NOT_CONFIGURED" },
+            { "method": "POST", "path": "/audit/providers", "status": "STUBBED", "auth": "BEARER (PLATFORM_ADMIN)", "gapCode": "PROVIDER_NOT_CONFIGURED" }
+          ]
+        },
+        {
+          "name": "Assessment incomplete persistence",
+          "routes": [
+            { "method": "GET", "path": "/assessments", "status": "STUBBED", "auth": "BEARER", "gapCode": "PERSISTENCE_PENDING" },
+            { "method": "GET", "path": "/assessments/:id", "status": "STUBBED", "auth": "BEARER", "gapCode": "PERSISTENCE_PENDING" },
+            { "method": "POST", "path": "/assessments/:id/responses", "status": "STUBBED", "auth": "BEARER (STUDENT)", "gapCode": "PERSISTENCE_PENDING" },
+            { "method": "GET", "path": "/assessments/:id/results", "status": "STUBBED", "auth": "BEARER", "gapCode": "PERSISTENCE_PENDING" }
+          ]
+        },
+        {
+          "name": "Research governance persistence",
+          "routes": [
+            { "method": "GET", "path": "/research/governance/versions", "status": "STUBBED", "auth": "BEARER (TEACHER/RESEARCHER/ADMIN)", "gapCode": "PERSISTENCE_PENDING" },
+            { "method": "POST", "path": "/research/governance/versions/:id/reviews", "status": "STUBBED", "auth": "BEARER (RESEARCHER/ADMIN)", "gapCode": "PERSISTENCE_PENDING" }
+          ]
+        }
+      ]
+    }
+  },
+  "validation": {
+    "commands": [
+      { "command": "pnpm --filter @yuzan/database migrate deploy && pnpm --filter @yuzan/database generate", "result": "PASS" },
+      { "command": "pnpm --filter @yuzan/api typecheck", "result": "PASS" },
+      { "command": "pnpm --filter @yuzan/api build", "result": "PASS" },
+      { "command": "pnpm --filter @yuzan/contracts lint", "result": "PASS_WITH_WARNINGS" },
+      { "command": "POST /auth/login -> GET /me -> POST /auth/select-school", "result": "PASS" },
+      { "command": "POST /auth/select-school with forbidden school", "result": "FAIL_CLOSED_403" },
+      { "command": "GET /health/live, GET /operations/status", "result": "PASS" }
+    ],
+    "testResults": {
+      "P0": "53 passed / 53 total",
+      "P1": "20 passed / 20 total",
+      "P2": "stub endpoints return explicit gap codes"
+    }
+  }
+}
