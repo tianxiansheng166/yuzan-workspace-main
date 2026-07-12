@@ -5,7 +5,7 @@
   "branch": "task/b31-103-admin-products",
   "commits": {
     "base": "22e3e1443bf82cf3d5b9b14c3de606126ece5e39",
-    "final": "ffbc63348ea2a98f55be7b9c02bac5c8333ca20b",
+    "final": "5ccc71199156be4da98675c0e8991836aa04b19d",
     "remote": "origin/task/b31-103-admin-products"
   },
   "validation": {
