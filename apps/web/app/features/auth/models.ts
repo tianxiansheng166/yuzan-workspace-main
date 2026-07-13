@@ -1,4 +1,10 @@
-export type UserRole = "student" | "teacher" | "admin";
+export type UserRole =
+  | "student"
+  | "teacher"
+  | "volunteer"
+  | "researcher"
+  | "admin"
+  | "unassigned";
 
 export type AuthViewStatus =
   | "loading"
@@ -15,6 +21,7 @@ export interface AuthenticatedSession {
   role: UserRole;
   serviceMode: ServiceMode;
   expiresAt?: string;
+  nextRoute?: string;
 }
 
 export interface UnauthenticatedSession {
@@ -60,6 +67,7 @@ export type AuthResult =
       role: string;
       serviceMode: ServiceMode;
       expiresAt?: string;
+      nextRoute?: string;
     }
   | {
       status: "unauthenticated";

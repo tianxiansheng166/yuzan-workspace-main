@@ -9,6 +9,11 @@ import type {
 
 export type ApiTransport = <T>(path: string, init: RequestInit) => Promise<{ status: number; data?: T }>;
 
+export interface FetchTransportOptions {
+  forwardedCookie?: string;
+  getAccessToken?: () => string | undefined;
+}
+
 export class ApiError extends Error {
   constructor(
     readonly status: number,
@@ -28,12 +33,25 @@ export class ApiUnavailableError extends Error {
   }
 }
 
-export function createFetchTransport(apiBase: string, forwardedCookie?: string): ApiTransport {
+export function createFetchTransport(
+  apiBase: string,
+  options: FetchTransportOptions | string = {},
+): ApiTransport {
+  const normalizedOptions = typeof options === "string"
+    ? { forwardedCookie: options }
+    : options;
+
   return async <T>(path: string, init: RequestInit) => {
     const headers = new Headers(init.headers);
     headers.set("accept", "application/json");
     if (init.body) headers.set("content-type", "application/json");
-    if (forwardedCookie) headers.set("cookie", forwardedCookie);
+    if (normalizedOptions.forwardedCookie) {
+      headers.set("cookie", normalizedOptions.forwardedCookie);
+    }
+    const token = normalizedOptions.getAccessToken?.();
+    if (token && !headers.has("authorization")) {
+      headers.set("authorization", "Bearer " + token);
+    }
     try {
       const response = await fetch(
         `${apiBase.replace(/\/$/, "")}/${path.replace(/^\//, "")}`,
@@ -51,6 +69,12 @@ export function createFetchTransport(apiBase: string, forwardedCookie?: string):
 
 export function createProductApiClient(transport: ApiTransport) {
   let refreshFlight: Promise<AuthSessionResponse> | undefined;
+  let accessToken: string | undefined;
+
+  function rememberSession(session: AuthSessionResponse) {
+    accessToken = session.data.accessToken;
+    return session;
+  }
 
   async function unwrap<T>(response: { status: number; data?: T }): Promise<T> {
     if (response.status >= 200 && response.status < 300 && response.data !== undefined) return response.data;
@@ -59,7 +83,7 @@ export function createProductApiClient(transport: ApiTransport) {
       response.status,
       body?.error?.message ?? `请求失败（${response.status}）`,
       body?.error?.code,
-      body?.error?.requestId,
+      body?.error?.requestId ?? body?.meta?.requestId,
     );
   }
 
@@ -67,7 +91,7 @@ export function createProductApiClient(transport: ApiTransport) {
     if (!refreshFlight) {
       refreshFlight = unwrap<AuthSessionResponse>(
         await transport("/auth/refresh", { method: "POST" }),
-      ).finally(() => { refreshFlight = undefined; });
+      ).then(rememberSession).finally(() => { refreshFlight = undefined; });
     }
     return refreshFlight;
   }
@@ -75,26 +99,40 @@ export function createProductApiClient(transport: ApiTransport) {
   async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
     let response = await transport<T>(path, init);
     if (response.status === 401 && !path.startsWith("/auth/")) {
-      await refresh();
+      try {
+        await refresh();
+      } catch (error) {
+        accessToken = undefined;
+        throw error;
+      }
       response = await transport<T>(path, init);
     }
     return unwrap(response);
   }
 
   return {
-    login: (identifier: string, password: string) => request<AuthSessionResponse>("/auth/login", {
-      method: "POST",
-      body: JSON.stringify({ identifier, password }),
-    }),
+    getAccessToken: () => accessToken,
+    clearSession: () => { accessToken = undefined; },
+    request,
+    login: (identifier: string, password: string) =>
+      request<AuthSessionResponse>("/auth/login", {
+        method: "POST",
+        body: JSON.stringify({ identifier, password }),
+      }).then(rememberSession),
     refresh,
     currentUser: () => request<CurrentUserResponse>("/me"),
-    selectSchool: (schoolId: string) => request<AuthSessionResponse>("/auth/select-school", {
-      method: "POST",
-      body: JSON.stringify({ schoolId }),
-    }),
+    selectSchool: (schoolId: string) =>
+      request<AuthSessionResponse>("/auth/select-school", {
+        method: "POST",
+        body: JSON.stringify({ schoolId }),
+      }).then(rememberSession),
     async logout() {
-      const response = await transport("/auth/logout", { method: "POST" });
-      if (response.status !== 204 && response.status !== 401) await unwrap(response);
+      try {
+        const response = await transport("/auth/logout", { method: "POST" });
+        if (response.status !== 204 && response.status !== 401) await unwrap(response);
+      } finally {
+        accessToken = undefined;
+      }
     },
     listCourseDrafts: (schoolId: string) =>
       request<ApiEnvelope<CourseVersionSummary[]>>(`/schools/${schoolId}/course-versions?status=DRAFT`),

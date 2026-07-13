@@ -1,13 +1,10 @@
-export type MembershipRole =
-  | "STUDENT"
-  | "TEACHER"
-  | "RESEARCHER"
-  | "SCHOOL_ADMIN"
-  | "PLATFORM_ADMIN";
+import type { components } from "../../../../../packages/contracts/src/generated";
 
-export interface Membership {
-  schoolId: string;
-  schoolName: string;
+type ContractMembership = components["schemas"]["Membership"];
+
+export type MembershipRole = ContractMembership["role"] | "VOLUNTEER";
+
+export interface Membership extends Omit<ContractMembership, "role"> {
   role: MembershipRole;
 }
 
@@ -60,5 +57,11 @@ export interface ApiEnvelope<T> {
 }
 
 export interface ApiErrorBody {
-  error?: { code?: string; message?: string; requestId?: string };
+  error?: {
+    code?: string;
+    message?: string;
+    scope?: string;
+    requestId?: string;
+  };
+  meta?: { requestId?: string };
 }

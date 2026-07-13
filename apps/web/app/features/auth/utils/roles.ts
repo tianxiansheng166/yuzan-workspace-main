@@ -1,6 +1,15 @@
 import type { UserRole } from "../models";
 
-const KNOWN_ROLES: readonly UserRole[] = ["student", "teacher", "admin"];
+const ROLE_MAP: Readonly<Record<string, UserRole>> = {
+  student: "student",
+  teacher: "teacher",
+  volunteer: "volunteer",
+  researcher: "researcher",
+  school_admin: "admin",
+  platform_admin: "admin",
+  admin: "admin",
+  unassigned: "unassigned",
+};
 
 export function normalizeRole(role: string | undefined): UserRole | undefined {
   if (!role) {
@@ -9,7 +18,7 @@ export function normalizeRole(role: string | undefined): UserRole | undefined {
 
   const normalizedRole = role.trim().toLowerCase();
 
-  return KNOWN_ROLES.find((item) => item === normalizedRole);
+  return ROLE_MAP[normalizedRole];
 }
 
 export function defaultRouteForRole(role: UserRole): string {
@@ -18,7 +27,13 @@ export function defaultRouteForRole(role: UserRole): string {
       return "/student/today";
     case "teacher":
       return "/teacher";
+    case "volunteer":
+      return "/volunteer";
+    case "researcher":
+      return "/research";
     case "admin":
-      return "/studio";
+      return "/admin";
+    case "unassigned":
+      return "/select-school";
   }
 }

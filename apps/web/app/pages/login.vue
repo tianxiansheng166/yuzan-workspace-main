@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted } from "vue";
-import { createBrowserSessionGateway } from "../features/auth/adapters/browser-session-gateway";
-import { createUnavailableAuthGateway } from "../features/auth/adapters/unavailable-auth-gateway";
+import { createLiveAuthGateway } from "../features/auth/adapters/live-auth-gateway";
+import { createLiveSessionGateway } from "../features/auth/adapters/live-session-gateway";
 import LoginPanel from "../features/auth/components/LoginPanel.vue";
 import { createLoginPageState } from "../features/auth/state/login-page-state";
 import { firstQueryValue } from "../features/auth/utils/redirect";
@@ -16,10 +16,11 @@ useSeoMeta({
 
 const route = useRoute();
 const router = useRouter();
+const api = useProductApi();
 
 const loginState = createLoginPageState({
-  authGateway: createUnavailableAuthGateway(),
-  sessionGateway: createBrowserSessionGateway(),
+  authGateway: createLiveAuthGateway(api),
+  sessionGateway: createLiveSessionGateway(api),
   navigate: async (to) => {
     await router.push(to);
   },

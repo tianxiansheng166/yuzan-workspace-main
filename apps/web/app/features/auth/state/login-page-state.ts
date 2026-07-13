@@ -34,7 +34,7 @@ function applySnapshot(
 export function createLoginPageState(dependencies: LoginPageDependencies) {
   const state = reactive<LoginPageState>({
     status: "loading",
-    serviceMode: "demo",
+    serviceMode: "pending",
     identifier: "",
     password: "",
     redirectTo: sanitizeInternalRedirect(dependencies.redirectTo),
@@ -48,7 +48,7 @@ export function createLoginPageState(dependencies: LoginPageDependencies) {
       await dependencies.sessionGateway.clear();
       applySnapshot(state, {
         status: "expired",
-        serviceMode: "demo",
+        serviceMode: "live",
         message: "当前会话已过期，请重新登录。",
       });
       return;
@@ -59,7 +59,8 @@ export function createLoginPageState(dependencies: LoginPageDependencies) {
 
     if (status === "authenticated" && state.role) {
       await dependencies.navigate(
-        resolvePostLoginRedirect(state.role, state.redirectTo),
+        (snapshot.status === "authenticated" ? snapshot.nextRoute : undefined) ??
+          resolvePostLoginRedirect(state.role, state.redirectTo),
       );
     }
   }
@@ -107,7 +108,7 @@ export function createLoginPageState(dependencies: LoginPageDependencies) {
         });
 
         await dependencies.navigate(
-          resolvePostLoginRedirect(role, state.redirectTo),
+          result.nextRoute ?? resolvePostLoginRedirect(role, state.redirectTo),
         );
         return;
       }
@@ -121,7 +122,7 @@ export function createLoginPageState(dependencies: LoginPageDependencies) {
       await dependencies.sessionGateway.clear();
       state.role = undefined;
       state.status = "error";
-      state.serviceMode = "demo";
+      state.serviceMode = "unavailable";
       state.message = "登录流程发生异常，请稍后重试。";
     } finally {
       state.submitting = false;
