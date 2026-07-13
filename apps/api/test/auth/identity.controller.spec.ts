@@ -29,6 +29,7 @@ describe("IdentityController contract metadata", () => {
     ["refresh", "/auth/refresh", RequestMethod.POST, HttpStatus.OK],
     ["logout", "/auth/logout", RequestMethod.POST, HttpStatus.NO_CONTENT],
     ["me", "/me", RequestMethod.GET, HttpStatus.OK],
+    ["selectSchool", "/auth/select-school", RequestMethod.POST, HttpStatus.OK],
   ] as const)(
     "maps %s to its OpenAPI route and status",
     (method, path, requestMethod, status) => {

@@ -189,10 +189,10 @@ export class IdentityService {
   /**
    * Select an active school for a user that has multiple memberships.
    *
-   * This is an internal service boundary. The OpenAPI contract does not expose
-   * a dedicated school-selection endpoint, so this method is provided for a
-   * future controller or for callers that need to establish an explicit tenant
-   * context after login.
+   * This is the service boundary backing the formal `/auth/select-school`
+   * endpoint declared in the OpenAPI contract. Callers must present a valid
+   * access token; the existing session is revoked and a fresh token pair bound
+   * to the chosen school is returned.
    */
   async selectActiveSchool(
     userId: string,
