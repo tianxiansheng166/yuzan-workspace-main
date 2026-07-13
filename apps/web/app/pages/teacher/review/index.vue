@@ -1,162 +1,26 @@
 <script setup lang="ts">
-import { YxButton, YxStatus } from "@yuzan/ui";
-import ReviewFilterBar from "~/features/submission-review/components/ReviewFilterBar.vue";
-import ReviewQueueTable from "~/features/submission-review/components/ReviewQueueTable.vue";
-import { useReviewDashboard } from "~/features/submission-review/composables/useReviewDashboard";
-import type { ReviewScenario } from "~/features/submission-review/types";
+import { describeLiveFailure, type AssignmentSummary, type Submission } from "~/features/live-core/gateway";
 
-useSeoMeta({
-  title: "提交复核｜语赞心声",
-});
-
-const route = useRoute();
-const scenario = computed(
-  () => (route.query.scenario as ReviewScenario | undefined) ?? "default",
-);
-
-const {
-  state,
-  generatedAt,
-  permission,
-  filters,
-  filterOptions,
-  filteredRows,
-  errorMessage,
-  load,
-} = useReviewDashboard(scenario.value);
-
-function updateFilters(value: (typeof filters)["value"]) {
-  filters.value = value;
-}
-
+useSeoMeta({title:'提交复核｜教师工作台'});const gateway=useLiveCoreGateway();const state=ref<'loading'|'ready'|'empty'|'error'>('loading');const assignments=ref<AssignmentSummary[]>([]);const submissions=ref<Submission[]>([]);const selected=ref('');const failure=ref<ReturnType<typeof describeLiveFailure>|null>(null);const loadingSubmissions=ref(false);const comments=reactive<Record<string,string>>({});const decisions=reactive<Record<string,'ACCEPT'|'RETURN'>>({});const writingId=ref('');const messages=reactive<Record<string,string>>({});
+async function load(){state.value='loading';try{const result=await gateway.listAssignments();assignments.value=result.items;selected.value=result.items[0]?.id??'';if(!selected.value){state.value='empty';return}state.value='ready';await loadSubmissions()}catch(error){failure.value=describeLiveFailure(error);state.value='error'}}
+async function loadSubmissions(){if(!selected.value)return;loadingSubmissions.value=true;try{const result=await gateway.listAssignmentSubmissions(selected.value);submissions.value=result.items}catch(error){failure.value=describeLiveFailure(error);submissions.value=[]}finally{loadingSubmissions.value=false}}
+async function sendFeedback(item:Submission){if(writingId.value||!comments[item.id]?.trim())return;writingId.value=item.id;messages[item.id]='';try{const feedback=await gateway.createFeedback(item.id,{decision:decisions[item.id]??'ACCEPT',comment:comments[item.id]!.trim()});messages[item.id]=`反馈 ${feedback.decision} 已由服务器发布。`;comments[item.id]=''}catch(error){messages[item.id]=describeLiveFailure(error).message}finally{writingId.value=''}}
 await load();
 </script>
 
 <template>
-  <section class="review-list yx-shell">
-    <header class="review-list__header">
-      <div>
-        <p class="yx-kicker">教师复核工作台</p>
-        <h1>围绕风险、证据与教师判断组织待复核列表。</h1>
-        <p class="review-list__lead">
-          列表明确展示班级、学生、任务、提交类型、提交时间、待复核状态、已复核状态、需要关注状态、逾期状态、AI
-          辅助状态与 demo / pending / unavailable 标记。
-        </p>
-      </div>
-      <YxStatus
-        :tone="permission === 'demo-teacher' ? 'information' : 'success'"
-      >
-        {{ permission === "demo-teacher" ? "DEMO TEACHER" : "TEACHER" }}
-      </YxStatus>
-    </header>
-
-    <div v-if="state === 'loading'" class="state-message" aria-live="polite">
-      <p>正在加载待复核列表……</p>
-    </div>
-
-    <div
-      v-else-if="state === 'error'"
-      class="state-message state-message--error"
-      role="alert"
-    >
-      <p class="yx-kicker">加载失败</p>
-      <p>{{ errorMessage || "无法读取待复核列表，请稍后重试。" }}</p>
-      <YxButton kind="secondary" @click="load">重试</YxButton>
-    </div>
-
-    <div v-else-if="state === 'permission'" class="state-message">
-      <p class="yx-kicker">permission denied</p>
-      <p>
-        当前场景为 {{ permission }}。unknown role 和 student role
-        都不能进入教师复核页面，前端提示不等于服务端授权。
-      </p>
-    </div>
-
-    <div v-else-if="state === 'unavailable'" class="state-message">
-      <p class="yx-kicker">服务 unavailable</p>
-      <p>当前只能显示 unavailable 状态，不会伪造真实待复核结果。</p>
-    </div>
-
-    <div v-else-if="state === 'empty'" class="state-message">
-      <p class="yx-kicker">empty</p>
-      <p>当前没有待复核提交。后续学生提交、同步异常或人工干预会进入此列表。</p>
-    </div>
-
+  <section class="review yx-shell" aria-labelledby="review-title">
+    <header><div><p class="yx-kicker">REVIEW QUEUE · LIVE</p><h1 id="review-title">每一条反馈，<br>都要落到真实提交上。</h1></div><NuxtLink to="/teacher">返回工作台</NuxtLink></header>
+    <section v-if="state==='loading'" class="state" aria-live="polite"><h2>正在读取可复核任务……</h2></section>
+    <section v-else-if="state==='error'" class="state" role="alert"><p class="yx-kicker">{{failure?.code||failure?.kind}}</p><h2>{{failure?.message}}</h2><button type="button" @click="load">重试</button></section>
+    <section v-else-if="state==='empty'" class="state"><p class="yx-kicker">REAL EMPTY</p><h2>当前学校没有可查询的作业。</h2><p>没有 demo 提交队列。</p></section>
     <template v-else>
-      <section class="review-list__summary" aria-label="列表摘要">
-        <p>生成时间：{{ generatedAt }}</p>
-        <p>筛选后的提交数：{{ filteredRows.length }}</p>
-        <p>所有结果均为 demo / pending / unavailable，不代表真实服务端状态。</p>
-      </section>
-
-      <ReviewFilterBar
-        :filter-options="filterOptions"
-        :filters="filters"
-        @update:filters="updateFilters"
-      />
-
-      <ReviewQueueTable :rows="filteredRows" />
+      <section class="selector"><label for="assignment">按真实作业读取提交</label><select id="assignment" v-model="selected" @change="loadSubmissions"><option v-for="item in assignments" :key="item.id" :value="item.id">{{item.title}} · {{item.status}}</option></select><span v-if="loadingSubmissions">读取中……</span><span v-else>{{submissions.length}} 条提交</span></section>
+      <section class="queue" aria-live="polite"><div v-if="!loadingSubmissions&&!submissions.length" class="empty"><p class="yx-kicker">NO SUBMISSIONS</p><h2>这项作业还没有服务端提交。</h2></div><article v-for="(item,index) in submissions" :key="item.id"><div class="identity"><b>{{String(index+1).padStart(2,'0')}}</b><div><p>{{item.status}} · attempt {{item.attemptNo}}</p><h2>{{item.id}}</h2><small>enrollment {{item.enrollmentId}} · revision {{item.revision}}</small></div></div><form @submit.prevent="sendFeedback(item)"><label>复核结论<select v-model="decisions[item.id]"><option value="ACCEPT">接受</option><option value="RETURN">退回修改</option></select></label><label>教师反馈<textarea v-model="comments[item.id]" required rows="3" placeholder="写下可执行的真实反馈"></textarea></label><button :disabled="!!writingId" type="submit">{{writingId===item.id?'正在发布…':'发布真实反馈'}}</button><p aria-live="polite">{{messages[item.id]||'只有 NEEDS_REVIEW 状态可由后端接受反馈。'}}</p></form></article></section>
     </template>
   </section>
 </template>
 
 <style scoped>
-.review-list {
-  padding-block: clamp(2.5rem, 6vw, 5rem);
-}
-
-.review-list__header {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 1rem;
-  align-items: end;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid var(--yx-border-default);
-}
-
-.review-list h1 {
-  margin: 0.5rem 0 0.75rem;
-  max-width: 16ch;
-  font: 600 clamp(1.9rem, 4vw, 3rem) / 1.08 var(--yx-font-display);
-}
-
-.review-list__lead,
-.review-list__summary p {
-  margin: 0;
-  line-height: 1.7;
-  color: var(--yx-text-muted);
-}
-
-.review-list__summary {
-  display: grid;
-  gap: 0.35rem;
-  padding: 1rem 0 0.4rem;
-}
-
-.state-message {
-  min-height: 16rem;
-  display: grid;
-  align-content: center;
-  gap: 1rem;
-  max-width: 42rem;
-  text-align: center;
-  margin-inline: auto;
-  color: var(--yx-text-secondary);
-}
-
-.state-message--error {
-  color: var(--yx-danger-fg);
-}
-
-@media (max-width: 48rem) {
-  .review-list__header {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 24.375rem) {
-  .review-list__summary {
-    padding-top: 0.9rem;
-  }
-}
+.review{padding-block:clamp(3rem,7vw,7rem)}.review>header{display:flex;justify-content:space-between;align-items:end;gap:2rem;padding-bottom:2rem;border-bottom:2px solid currentColor}.review h1{max-width:16ch;margin:.5rem 0;font:600 clamp(2.8rem,7vw,6.3rem)/.92 var(--yx-font-display)}.review>header>a{color:var(--yx-color-wine);font-weight:700}.state{min-height:26rem;display:grid;align-content:center;justify-items:start}.state h2,.empty h2{font:600 clamp(2rem,4vw,3.5rem) var(--yx-font-display)}.state button{border:0;background:var(--yx-color-sage-strong);color:#fff;padding:.8rem 1rem}.selector{display:grid;grid-template-columns:1fr minmax(15rem,2fr) auto;gap:1rem;align-items:center;padding:2rem 0;border-bottom:1px solid var(--yx-color-line)}.selector label{font-weight:800}.selector select{border:0;border-bottom:1px solid currentColor;background:transparent;padding:.8rem;font:inherit}.selector span{color:var(--yx-color-ink-soft)}.queue article{display:grid;grid-template-columns:minmax(0,1fr) minmax(20rem,.8fr);gap:clamp(2rem,6vw,6rem);padding:3rem 0;border-bottom:1px solid var(--yx-color-line)}.identity{display:grid;grid-template-columns:4rem 1fr;gap:1rem}.identity>b{font:600 2rem var(--yx-font-display);color:var(--yx-color-gold)}.identity p,.identity h2,.identity small{margin:.3rem 0}.identity p,.identity small{color:var(--yx-color-ink-soft)}.identity h2{overflow-wrap:anywhere;font:600 1.4rem var(--yx-font-display)}article form label{display:grid;gap:.4rem;margin-bottom:1rem;font-weight:700}article select,article textarea{border:0;border-bottom:1px solid currentColor;background:transparent;padding:.7rem 0;font:inherit;color:inherit}article button{border:0;background:var(--yx-color-sage-strong);color:#fff;padding:.8rem 1rem;font-weight:700}article form p{color:var(--yx-color-ink-soft);line-height:1.6}.empty{padding:4rem 0}a:focus-visible,button:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--yx-color-gold);outline-offset:3px}@media(max-width:50rem){.review>header{align-items:start;flex-direction:column}.selector{grid-template-columns:1fr}.queue article{grid-template-columns:1fr}.identity{grid-template-columns:3rem 1fr}}@media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
