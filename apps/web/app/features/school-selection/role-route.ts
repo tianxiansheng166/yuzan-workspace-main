@@ -4,7 +4,6 @@ export function isMembershipRole(role: string): role is MembershipRole {
   return [
     "STUDENT",
     "TEACHER",
-    "VOLUNTEER",
     "RESEARCHER",
     "SCHOOL_ADMIN",
     "PLATFORM_ADMIN",
@@ -17,8 +16,6 @@ export function routeForMembershipRole(role: MembershipRole): string {
       return "/student/today";
     case "TEACHER":
       return "/teacher";
-    case "VOLUNTEER":
-      return "/volunteer";
     case "SCHOOL_ADMIN":
       return "/admin";
     case "PLATFORM_ADMIN":

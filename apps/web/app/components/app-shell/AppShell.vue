@@ -1,224 +1,231 @@
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
-
-import { YxButton, YxStatus } from "@yuzan/ui";
-
-import { getAppShellContext } from "~/features/app-shell/app-shell-content";
-
+import { ref, watch } from "vue";
 const route = useRoute();
 const navigationOpen = ref(false);
-const navigationPanelId = "app-shell-role-navigation";
-
-const shellContext = computed(() => getAppShellContext(route.path));
-const currentRoleText = computed(
-  () =>
-    `当前分组：${shellContext.value.roleLabel} · 当前区域：${shellContext.value.areaLabel}`,
-);
-
-function closeNavigation() {
-  navigationOpen.value = false;
-}
-
 watch(
   () => route.path,
   () => {
-    closeNavigation();
+    navigationOpen.value = false;
   },
 );
+const entries = [
+  {
+    to: "/",
+    label: "公共",
+    note: "首页与套餐",
+    routes: ["/", "/login", "/plans"],
+  },
+  {
+    to: "/student/today",
+    label: "学生",
+    note: "课程与学习",
+    routes: ["/student", "/assessment"],
+  },
+  {
+    to: "/teacher",
+    label: "教师",
+    note: "教学与复核",
+    routes: ["/teacher", "/studio", "/reports"],
+  },
+  {
+    to: "/volunteer",
+    label: "运营服务",
+    note: "管理·志愿·教研",
+    routes: ["/volunteer", "/admin", "/research"],
+  },
+];
+function active(routes: string[]) {
+  return routes.some((path) =>
+    path === "/"
+      ? route.path === path
+      : route.path === path || route.path.startsWith(`${path}/`),
+  );
+}
 </script>
-
 <template>
   <div class="app-shell">
-    <header class="app-shell__header">
-      <div class="yx-shell app-shell__masthead">
-        <NuxtLink to="/" class="app-shell__brand" aria-label="语赞心声首页">
-          <span class="app-shell__brand-mark" aria-hidden="true">
-            <svg viewBox="0 0 44 44">
-              <path d="M5 29c9-14 15 7 24-7 4-6 7-8 10-7" />
-              <path d="M7 35c10-8 17 3 28-8" />
-            </svg>
-          </span>
-          <span>语赞心声</span>
-        </NuxtLink>
-
-        <div class="app-shell__context">
-          <p class="yx-kicker">Unified App Shell</p>
-          <p class="app-shell__context-line">{{ currentRoleText }}</p>
-          <p class="app-shell__context-summary">
-            {{ shellContext.contextSummary }}
-          </p>
-        </div>
-
-        <div class="app-shell__meta">
-          <YxStatus tone="information">开发预览</YxStatus>
-          <p>当前仅展示统一导航分组，不代表真实登录状态或真实权限。</p>
-        </div>
-
-        <YxButton
-          class="app-shell__toggle"
-          kind="secondary"
-          :aria-expanded="navigationOpen ? 'true' : 'false'"
-          :aria-controls="navigationPanelId"
+    <a class="skip" href="#main">跳到主要内容</a>
+    <header class="mast">
+      <div class="yx-shell mast__inner">
+        <NuxtLink to="/" class="brand" aria-label="语赞心声首页"
+          ><svg viewBox="0 0 44 44" aria-hidden="true">
+            <path d="M5 29c9-14 15 7 24-7 4-6 7-8 10-7" />
+            <path d="M7 35c10-8 17 3 28-8" /></svg
+          ><span
+            ><strong>语赞心声</strong><small>援藏教育协作平台</small></span
+          ></NuxtLink
+        ><button
+          class="toggle"
+          type="button"
+          :aria-expanded="navigationOpen"
+          aria-controls="product-navigation"
           @click="navigationOpen = !navigationOpen"
         >
-          {{ navigationOpen ? "收起角色导航" : "展开角色导航" }}
-        </YxButton>
-      </div>
-
-      <div
-        class="yx-shell app-shell__navigation app-shell__navigation--desktop"
-      >
-        <RoleNavigation :current-path="route.path" />
-      </div>
-
-      <div
-        v-show="navigationOpen"
-        :id="navigationPanelId"
-        class="yx-shell app-shell__navigation app-shell__navigation--mobile"
-      >
-        <RoleNavigation :current-path="route.path" compact />
+          {{ navigationOpen ? "收起导航" : "展开导航" }}
+        </button>
+        <nav
+          id="product-navigation"
+          :data-open="navigationOpen"
+          aria-label="四个主要产品入口"
+        >
+          <NuxtLink
+            v-for="entry in entries"
+            :key="entry.to"
+            :to="entry.to"
+            :aria-current="active(entry.routes) ? 'page' : undefined"
+            ><strong>{{ entry.label }}</strong
+            ><small>{{ entry.note }}</small></NuxtLink
+          >
+          <div class="account">
+            <NuxtLink to="/plans">套餐</NuxtLink>
+            <NuxtLink to="/select-school">切换学校</NuxtLink
+            ><NuxtLink to="/login">登录</NuxtLink>
+          </div>
+        </nav>
       </div>
     </header>
-
-    <main id="main" class="app-shell__main">
-      <slot />
-    </main>
+    <main id="main"><slot /></main>
   </div>
 </template>
-
 <style scoped>
 .app-shell {
   min-height: 100vh;
 }
-
-.app-shell__header {
-  position: sticky;
-  top: 0;
-  z-index: var(--yx-z-sticky);
-  border-bottom: 1px solid var(--yx-border-default);
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--yx-surface-raised) 96%, transparent),
-    color-mix(in srgb, var(--yx-bg-canvas) 92%, transparent)
-  );
-  backdrop-filter: blur(18px);
+.skip {
+  position: fixed;
+  z-index: 100;
+  left: 1rem;
+  top: 1rem;
+  transform: translateY(-180%);
+  background: #fff;
+  color: #111;
+  padding: 0.7rem 1rem;
 }
-
-.app-shell__masthead {
+.skip:focus {
+  transform: none;
+}
+.mast {
+  position: relative;
+  z-index: 20;
+  border-bottom: 1px solid var(--yx-color-line);
+  background: var(--yx-color-paper);
+}
+.mast__inner {
+  min-height: 5.5rem;
   display: grid;
-  grid-template-columns: auto minmax(0, 1.4fr) minmax(16rem, 0.9fr) auto;
-  gap: var(--yx-space-500);
-  align-items: start;
-  min-height: 5rem;
-  padding-block: var(--yx-space-500);
-}
-
-.app-shell__brand {
-  display: inline-flex;
+  grid-template-columns: auto 1fr;
+  gap: clamp(2rem, 6vw, 7rem);
   align-items: center;
-  gap: 0.65rem;
-  color: var(--yx-text-primary);
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  color: inherit;
   text-decoration: none;
-  font-family: var(--yx-font-display);
-  font-weight: var(--yx-font-weight-bold);
 }
-
-.app-shell__brand-mark {
-  width: 2.2rem;
-  color: var(--yx-text-accent);
-}
-
-.app-shell__brand-mark svg {
+.brand svg {
+  width: 2.5rem;
   fill: none;
-  stroke: currentColor;
-  stroke-width: 2.4;
+  stroke: var(--yx-color-wine);
+  stroke-width: 2.3;
   stroke-linecap: round;
 }
-
-.app-shell__context-line,
-.app-shell__context-summary,
-.app-shell__meta p {
-  margin: 0;
-}
-
-.app-shell__context-line {
-  font-weight: var(--yx-font-weight-semibold);
-}
-
-.app-shell__context-summary,
-.app-shell__meta p {
-  margin-top: var(--yx-space-200);
-  color: var(--yx-text-secondary);
-}
-
-.app-shell__meta {
+.brand span {
   display: grid;
-  gap: var(--yx-space-200);
-  justify-items: start;
 }
-
-.app-shell__toggle {
+.brand strong {
+  font: 600 1.25rem var(--yx-font-display);
+}
+.brand small {
+  font-size: 0.72rem;
+  color: var(--yx-color-ink-soft);
+}
+nav {
+  display: flex;
+  align-items: stretch;
+  justify-content: end;
+  min-width: 0;
+}
+nav > a {
+  position: relative;
+  display: grid;
+  align-content: center;
+  gap: 0.15rem;
+  min-width: 7rem;
+  padding: 1rem;
+  border-left: 1px solid var(--yx-color-line);
+  color: inherit;
+  text-decoration: none;
+}
+nav > a:after {
+  content: "";
+  position: absolute;
+  inset: auto 1rem 0;
+  height: 3px;
+  background: var(--yx-color-wine);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+nav > a[aria-current="page"]:after {
+  transform: scaleX(1);
+}
+nav > a small {
+  color: var(--yx-color-ink-soft);
+}
+.account {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding-left: 1rem;
+}
+.account a {
+  color: var(--yx-color-wine);
+  font-weight: 700;
+}
+.toggle {
   display: none;
+  border: 1px solid var(--yx-color-line);
+  background: transparent;
+  padding: 0.7rem 1rem;
 }
-
-.app-shell__navigation {
-  padding-bottom: var(--yx-space-500);
+main {
+  min-height: calc(100vh - 5.5rem);
 }
-
-.app-shell__navigation--mobile {
-  display: none;
+a:focus-visible,
+button:focus-visible {
+  outline: 3px solid var(--yx-color-gold);
+  outline-offset: 3px;
 }
-
-.app-shell__main {
-  min-height: calc(100vh - 5rem);
-}
-
-@media (max-width: 80rem) {
-  .app-shell__masthead {
-    grid-template-columns: auto 1fr auto;
-  }
-
-  .app-shell__meta {
-    grid-column: 2 / 4;
-  }
-}
-
 @media (max-width: 64rem) {
-  .app-shell__masthead {
+  .mast__inner {
     grid-template-columns: 1fr auto;
-    align-items: center;
+    padding-block: 1rem;
   }
-
-  .app-shell__brand {
-    grid-column: 1;
-  }
-
-  .app-shell__context,
-  .app-shell__meta {
-    grid-column: 1 / -1;
-  }
-
-  .app-shell__toggle {
+  .toggle {
     display: inline-flex;
   }
-
-  .app-shell__navigation--desktop {
+  nav {
     display: none;
+    grid-column: 1/-1;
+    flex-direction: column;
+    border-top: 1px solid var(--yx-color-line);
   }
-
-  .app-shell__navigation--mobile {
-    display: block;
+  nav[data-open="true"] {
+    display: flex;
+  }
+  nav > a {
+    border-left: 0;
+    border-bottom: 1px solid var(--yx-color-line);
+    padding: 1rem 0;
+  }
+  .account {
+    padding: 1rem 0 0;
   }
 }
-
-@media (max-width: 48rem) {
-  .app-shell__masthead {
-    gap: var(--yx-space-400);
-  }
-
-  .app-shell__toggle :deep(button),
-  .app-shell__toggle {
-    width: 100%;
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
   }
 }
 </style>

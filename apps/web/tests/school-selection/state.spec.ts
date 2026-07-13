@@ -99,7 +99,6 @@ describe("membership role redirects", () => {
   it("maps every supported role and fails closed by type", () => {
     expect(routeForMembershipRole("STUDENT")).toBe("/student/today");
     expect(routeForMembershipRole("TEACHER")).toBe("/teacher");
-    expect(routeForMembershipRole("VOLUNTEER")).toBe("/volunteer");
     expect(routeForMembershipRole("SCHOOL_ADMIN")).toBe("/admin");
     expect(routeForMembershipRole("PLATFORM_ADMIN")).toBe("/admin");
     expect(routeForMembershipRole("RESEARCHER")).toBe("/research");

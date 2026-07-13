@@ -2,7 +2,7 @@ import type { components } from "../../../../../packages/contracts/src/generated
 
 type ContractMembership = components["schemas"]["Membership"];
 
-export type MembershipRole = ContractMembership["role"] | "VOLUNTEER";
+export type MembershipRole = ContractMembership["role"];
 
 export interface Membership extends Omit<ContractMembership, "role"> {
   role: MembershipRole;
@@ -36,7 +36,13 @@ export interface CourseVersionSummary {
   courseId: string;
   version: number;
   title: string;
-  status: "DRAFT" | "IN_REVIEW" | "CHANGES_REQUESTED" | "APPROVED" | "PUBLISHED" | "RETIRED";
+  status:
+    | "DRAFT"
+    | "IN_REVIEW"
+    | "CHANGES_REQUESTED"
+    | "APPROVED"
+    | "PUBLISHED"
+    | "RETIRED";
   gradeBand: string | null;
   updatedAt: string;
 }

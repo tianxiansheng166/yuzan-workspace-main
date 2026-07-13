@@ -1,14 +1,17 @@
 # Route live-binding map
 
-| Route family | Executable backend path | CP state | Notes |
-|---|---|---|---|
-| login/session | `/auth/login`, `/auth/refresh`, `/auth/logout`, `/me` | CP1 live | access token held in memory; one refresh retry |
-| school selection | `/me`, `/auth/select-school` | CP1 live | membership checked before write and re-read after token rotation |
-| curriculum | `/schools/:schoolId/course-versions` | pending CP2 | list/create/update are implemented; publish controller uses `:versionId:publish` |
-| classes | `/schools/:schoolId/classes` | pending CP2 | controller update is POST, not documented PATCH |
-| assignments | `/schools/:schoolId/assignments` | pending CP2 | controller update is POST; open/close are POST |
-| student learning | `/schools/:schoolId/learning/tasks` | pending CP3 | readiness docs currently say `/learning/today` |
-| activity progress | `/schools/:schoolId/learning/activities/:activityId/progress` | pending CP3 | executable write is PUT, not documented POST |
-| submissions/feedback | `/schools/:schoolId/submissions`, assignment submissions, feedback | pending CP3 | write success must be response-confirmed |
-| plans | `/plans` | pending CP5 | real HTTP 200 empty collection is valid |
-| admin/research | `/admin/*`, `/research/*` | pending CP5 | real HTTP 503 gap must remain visible |
+| Route family                 | Executable backend path                                                  | CP state         | Notes                                                                                                                                                      |
+| ---------------------------- | ------------------------------------------------------------------------ | ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| login/session                | `/auth/login`, `/auth/refresh`, `/auth/logout`, `/me`                    | CP1 live         | access token held in memory; one refresh retry                                                                                                             |
+| school selection             | `/me`, `/auth/select-school`                                             | CP1 live         | membership checked before write and re-read after token rotation                                                                                           |
+| curriculum                   | `/schools/:schoolId/course-versions`                                     | CP2/CP3 live     | list/create/update are implemented; publish controller uses `:versionId:publish`                                                                           |
+| classes                      | `/schools/:schoolId/classes`                                             | CP3 live         | controller update is POST, not documented PATCH                                                                                                            |
+| assignments                  | `/schools/:schoolId/assignments`                                         | CP3 live         | controller update is POST; open/close are POST                                                                                                             |
+| student learning             | `/schools/:schoolId/learning/tasks`                                      | CP2/CP3 live     | readiness docs currently say `/learning/today`                                                                                                             |
+| activity progress            | `/schools/:schoolId/learning/activities/:activityId/progress`            | CP3 live         | executable write is PUT, not documented POST                                                                                                               |
+| submissions/feedback         | `/schools/:schoolId/submissions`, assignment submissions, feedback       | CP3 live         | write success is response-confirmed                                                                                                                        |
+| plans                        | `/plans`                                                                 | CP4 live         | real HTTP 200 empty collection is valid; consultation/trial actions remain disabled                                                                        |
+| volunteers/training/pairings | school-scoped executable controller routes                               | CP4 live         | manager and self-scoped reads are selected from the contract membership role; no VM people or counts are used                                              |
+| teacher tools/translations   | school-scoped executable controller routes                               | CP4 live         | provider jobs are real writes; provider errors remain visible; some executable routes are absent from the frozen OpenAPI and remain tracked as route drift |
+| admin/research               | `/admin/*`, `/research/*`                                                | CP4 truthful gap | real HTTP 503 `PERSISTENCE_PENDING` remains visible and writes stay disabled                                                                               |
+| four-entry navigation        | `/`, `/student/**`, `/teacher/**`, `/volunteer` + `/admin` + `/research` | CP5 integrated   | route-family highlighting covers public, student, teacher and operations pages; navigation does not invent a `VOLUNTEER` membership role                   |
