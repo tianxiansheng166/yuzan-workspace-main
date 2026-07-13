@@ -229,7 +229,7 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "404":
           $ref: "#/components/responses/NotFound"
-  /schools/{schoolId}/course-versions/{courseVersionId}:publish:
+  /schools/{schoolId}/course-versions/{courseVersionId}/publish:
     post:
       summary: 发布课程版本
       tags: [Curriculum]

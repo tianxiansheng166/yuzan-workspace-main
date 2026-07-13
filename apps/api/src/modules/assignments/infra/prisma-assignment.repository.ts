@@ -135,18 +135,25 @@ export class PrismaAssignmentRepository
               ? { completionRule: input.completionRule as Prisma.InputJsonValue }
               : {}),
             revision: 1,
-            targets: {
-              create: input.targets.map((t) => ({
-                schoolId: input.schoolId,
-                targetType: t.targetType,
-                classId: t.classId ?? null,
-                enrollmentId: t.enrollmentId ?? null,
-              })),
-            },
           },
+        });
+
+        if (input.targets.length > 0) {
+          await tx.assignmentTarget.createMany({
+            data: input.targets.map((target) => ({
+              schoolId: input.schoolId,
+              assignmentId: created.id,
+              targetType: target.targetType,
+              classId: target.classId ?? null,
+              enrollmentId: target.enrollmentId ?? null,
+            })),
+          });
+        }
+
+        return tx.assignment.findUniqueOrThrow({
+          where: { id: created.id },
           include: { targets: true },
         });
-        return created;
       });
       return toAssignment(row as AssignmentRow);
     } catch (err) {

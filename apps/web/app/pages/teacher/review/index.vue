@@ -5,7 +5,7 @@ useSeoMeta({title:'提交复核｜教师工作台'});const gateway=useLiveCoreGa
 async function load(){state.value='loading';try{const result=await gateway.listAssignments();assignments.value=result.items;selected.value=result.items[0]?.id??'';if(!selected.value){state.value='empty';return}state.value='ready';await loadSubmissions()}catch(error){failure.value=describeLiveFailure(error);state.value='error'}}
 async function loadSubmissions(){if(!selected.value)return;loadingSubmissions.value=true;try{const result=await gateway.listAssignmentSubmissions(selected.value);submissions.value=result.items}catch(error){failure.value=describeLiveFailure(error);submissions.value=[]}finally{loadingSubmissions.value=false}}
 async function sendFeedback(item:Submission){if(writingId.value||!comments[item.id]?.trim())return;writingId.value=item.id;messages[item.id]='';try{const feedback=await gateway.createFeedback(item.id,{decision:decisions[item.id]??'ACCEPT',comment:comments[item.id]!.trim()});messages[item.id]=`反馈 ${feedback.decision} 已由服务器发布。`;comments[item.id]=''}catch(error){messages[item.id]=describeLiveFailure(error).message}finally{writingId.value=''}}
-await load();
+onMounted(load);
 </script>
 
 <template>

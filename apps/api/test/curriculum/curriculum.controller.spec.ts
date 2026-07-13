@@ -1,7 +1,12 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { Reflector } from "@nestjs/core";
 import { Test } from "@nestjs/testing";
-import { ValidationPipe } from "@nestjs/common";
+import { HttpStatus, RequestMethod, ValidationPipe } from "@nestjs/common";
+import {
+  HTTP_CODE_METADATA,
+  METHOD_METADATA,
+  PATH_METADATA,
+} from "@nestjs/common/constants";
 import {
   AUTH_CONTEXT_SOURCE,
   AuthenticationGuard,
@@ -65,6 +70,24 @@ describe("CurriculumController", () => {
     );
     expect(roles).toContain(MembershipRole.TEACHER);
     expect(roles).toContain(MembershipRole.SCHOOL_ADMIN);
+    expect(
+      Reflect.getMetadata(
+        PATH_METADATA,
+        CurriculumController.prototype.publishCourseVersion,
+      ),
+    ).toBe(":courseVersionId/publish");
+    expect(
+      Reflect.getMetadata(
+        METHOD_METADATA,
+        CurriculumController.prototype.publishCourseVersion,
+      ),
+    ).toBe(RequestMethod.POST);
+    expect(
+      Reflect.getMetadata(
+        HTTP_CODE_METADATA,
+        CurriculumController.prototype.publishCourseVersion,
+      ),
+    ).toBe(HttpStatus.OK);
   });
 
   it("allows student role on list endpoint", () => {

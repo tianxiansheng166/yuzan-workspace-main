@@ -2,6 +2,8 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
+  HttpStatus,
   Inject,
   Patch,
   Param,
@@ -101,7 +103,8 @@ export class CurriculumController {
     );
   }
 
-  @Post(":courseVersionId:publish")
+  @Post(":courseVersionId/publish")
+  @HttpCode(HttpStatus.OK)
   @RequireRoles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
   async publishCourseVersion(
     @Param("schoolId", ParseUUIDPipe) schoolId: string,

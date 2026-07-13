@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import { YxButton, YxInput, YxStatus } from "@yuzan/ui";
 import type { AuthViewStatus, ServiceMode } from "../models";
 
 const props = withDefaults(

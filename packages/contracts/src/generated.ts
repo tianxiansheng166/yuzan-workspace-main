@@ -141,7 +141,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/schools/{schoolId}/course-versions/{courseVersionId}:publish": {
+  "/schools/{schoolId}/course-versions/{courseVersionId}/publish": {
     parameters: {
       query?: never;
       header?: never;

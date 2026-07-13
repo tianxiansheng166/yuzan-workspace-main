@@ -102,7 +102,22 @@ export class FeedbackService {
       return [];
     }
 
-    if (!this.policy.canReadOwnFeedback(auth, schoolId, submission.enrollmentId)) {
+    const enrollment = await this.prisma.enrollment.findFirst({
+      where: {
+        id: submission.enrollmentId,
+        schoolId,
+        status: "ACTIVE",
+      },
+      select: { userId: true },
+    });
+
+    if (
+      !this.policy.canReadOwnFeedback(
+        auth,
+        schoolId,
+        enrollment?.userId ?? "",
+      )
+    ) {
       throw new FeedbackForbiddenException();
     }
 

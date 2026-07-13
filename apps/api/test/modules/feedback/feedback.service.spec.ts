@@ -24,6 +24,9 @@ function auth(userId: string, schoolId: string, roles: MembershipRole[]) {
 }
 
 const mockPrismaService = {
+  enrollment: {
+    findFirst: async () => ({ userId: "student-1" }),
+  },
   $transaction: async (fn: (tx: unknown) => Promise<unknown>) => {
     const mockTx = {
       feedback: {
@@ -137,6 +140,25 @@ describe("FeedbackService", () => {
         teacherAuth, schoolId, "sub-4",
       );
       expect(result.length).toBe(1);
+    });
+
+    it("resolves the enrollment owner before authorizing student feedback", async () => {
+      const s = submissionSummary({
+        id: "sub-student",
+        schoolId,
+        enrollmentId: "enrollment-1",
+        status: "ACCEPTED",
+      });
+      submissionLookup.add(s);
+      feedbackRepo.add(feedback({ schoolId, submissionId: s.id }));
+
+      const result = await service.getFeedbackBySubmission(
+        studentAuth,
+        schoolId,
+        s.id,
+      );
+
+      expect(result).toHaveLength(1);
     });
 
     it("returns empty array for non-existent submission", async () => {

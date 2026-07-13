@@ -10,7 +10,7 @@ export class PrismaReportRepository implements ReportRepositoryPort {
 
   async list(schoolId: string, options: ListReportsOptions): Promise<PaginatedResult<Report>> {
     const limit = Math.min(options.limit ?? 20, 100);
-    const where: Record<string, unknown> = { schoolId, deletedAt: null };
+    const where: Prisma.ReportWhereInput = { schoolId };
 
     if (options.type) where.type = options.type;
     if (options.status) where.status = options.status;
