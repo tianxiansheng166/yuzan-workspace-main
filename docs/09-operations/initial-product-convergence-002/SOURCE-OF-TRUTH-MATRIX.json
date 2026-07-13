@@ -112,9 +112,9 @@
                        "interaction_status":  "TRUTHFUL_GAP",
                        "data_source":  "unavailable boundary",
                        "backend_status":  "not integrated",
-                       "test_evidence":  "pending CP6",
+                       "test_evidence":  "b31-102 unit scope: 18 files / 280 tests passed; module typecheck failed",
                        "risk":  "fake assessment result",
-                       "next_action":  "keep pending/unavailable"
+                       "next_action":  "defer persistence and contract integration; keep pending/unavailable"
                    },
                    {
                        "route":  "/assessment/reading",
@@ -126,7 +126,7 @@
                        "interaction_status":  "TRUTHFUL_GAP",
                        "data_source":  "local recorder plus unavailable upload",
                        "backend_status":  "not integrated",
-                       "test_evidence":  "pending CP6",
+                       "test_evidence":  "b31-102 unit scope passed; unavailable speech repository retained",
                        "risk":  "provider unavailable",
                        "next_action":  "classification only"
                    },
@@ -140,7 +140,7 @@
                        "interaction_status":  "TRUTHFUL_GAP",
                        "data_source":  "local draft plus unavailable submit",
                        "backend_status":  "not integrated",
-                       "test_evidence":  "pending CP6",
+                       "test_evidence":  "b31-102 unit scope passed; unavailable assessment repository retained",
                        "risk":  "fake success",
                        "next_action":  "classification only"
                    },
@@ -154,7 +154,7 @@
                        "interaction_status":  "TRUTHFUL_GAP",
                        "data_source":  "pending/unavailable",
                        "backend_status":  "not integrated",
-                       "test_evidence":  "pending CP6",
+                       "test_evidence":  "b31-102 unit scope passed; unavailable report and analysis repositories retained",
                        "risk":  "fake AI score",
                        "next_action":  "classification only"
                    },
@@ -163,12 +163,12 @@
                        "current_nuxt_file":  "apps/web/app/pages/assessment/history.vue",
                        "candidate_source":  "current Nuxt plus recovered b31-102",
                        "selected_source":  "current Nuxt",
-                       "reason":  "recovered module not validated",
+                       "reason":  "recovered module is unit-tested but lacks persistence and API-root wiring",
                        "visual_status":  "KEEP_CURRENT",
                        "interaction_status":  "TRUTHFUL_GAP",
                        "data_source":  "unavailable boundary",
                        "backend_status":  "not integrated",
-                       "test_evidence":  "pending CP6",
+                       "test_evidence":  "b31-102 unit scope passed; integration typecheck failed",
                        "risk":  "fake history",
                        "next_action":  "classification only"
                    },

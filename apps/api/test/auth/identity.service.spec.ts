@@ -170,7 +170,7 @@ describe("IdentityService", () => {
     ).rejects.toHaveProperty("code", "AUTH_ROLE_UNSUPPORTED");
   });
 
-  it("rejects RESEARCHER role", async () => {
+  it("accepts the formal RESEARCHER role without granting teaching permissions", async () => {
     const f = createIdentityServiceFixture();
     const user = activeTeacher();
     f.users.add(user);
@@ -184,9 +184,14 @@ describe("IdentityService", () => {
       status: MembershipStatus.ACTIVE,
     });
 
-    await expect(
-      f.service.login(user.loginIdentifier, "password"),
-    ).rejects.toHaveProperty("code", "AUTH_ROLE_UNSUPPORTED");
+    const session = await f.service.login(user.loginIdentifier, "password");
+    const context = await f.service.resolveSession(
+      "req-researcher",
+      session.tokens.accessToken,
+    );
+
+    expect(session.memberships[0]?.role).toBe(MembershipRole.RESEARCHER);
+    expect(permissionsForPrincipal(context!.principal)).toEqual([]);
   });
 
   it("does not use client-declared role", async () => {
