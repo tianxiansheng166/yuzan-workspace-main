@@ -9,24 +9,31 @@
 ## Route rulings
 
 ### `/admin` — PORT / LIVE_BIND / TRUTHFUL_GAP
+
 VM A supplies terrain composition and explicit persistence state. Nuxt calls `GET /admin/schools`; `PERSISTENCE_PENDING` is rendered as the product state. VM statistics and local actions are rejected.
 
-### `/volunteer` — PORT / LIVE_BIND
-VM A supplies the service-desk hierarchy. Nuxt reads current-school volunteers, training and support pairings. VM names, avatars, counts, courses and task data are rejected.
+### `/volunteer` — PORT / LIVE_BIND / TRUTHFUL_GAP
+
+VM A supplies the service-desk hierarchy. Nuxt calls current-school volunteers, training and support pairings, but the running modules bind unavailable repositories and return 503. The page renders that real gap. VM names, avatars, counts, courses and task data are rejected.
 
 ### `/teacher-tools` — REBUILD_PART / LIVE_BIND
-The current Nuxt route and VM A were compared. VM A's stronger header/status hierarchy is ported; current standalone demo/provider assumptions are replaced by integrations, MindGraph, click-audit, translation and glossary calls.
+
+The current Nuxt route and VM A were compared. VM A's stronger header/status hierarchy is ported; current standalone demo/provider assumptions are replaced by integrations, MindGraph, click-audit, translation and glossary calls. Provider-dependent writes still require a configured provider and were not passed end-to-end in CP7.
 
 ### `/plans` — PORT / LIVE_BIND / REJECT_DEMO
+
 VM B supplies the mountain-led public composition. Nuxt reads `GET /plans`; its real empty list is first-class. VM prices, discounts, consultation success and trial success are rejected.
 
 ### `/research` — PORT / LIVE_BIND / TRUTHFUL_GAP
+
 VM B supplies the research-path composition only. Nuxt calls governance versions and renders `PERSISTENCE_PENDING`. VM topics, teacher names, percentages, reviews, publish actions and local success mutations are rejected.
 
 ### `/teacher` — KEEP / PORT_INTERACTION_ONLY / LIVE_BIND
+
 Current Nuxt plus CP2 live gateway wins. VM common baseline does not replace the current teacher workbench; only its emphasis on a primary teaching path influenced composition. No VM data or asset was adopted here.
 
 ### `/student/courses` — SELECTIVE_CHERRY_PICK / PORT_VISUAL_ONLY / LIVE_BIND
+
 The existing frontend integration page is the code source, adapted to the real course-version API. VM common baseline was compared but its course images, enrollment claims and progress data were rejected.
 
 ## Assets

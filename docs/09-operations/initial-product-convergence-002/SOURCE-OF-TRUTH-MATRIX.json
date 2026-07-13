@@ -84,9 +84,9 @@
                        "interaction_status":  "LIVE_BIND",
                        "data_source":  "GET /schools/:schoolId/learning/tasks",
                        "backend_status":  "READY with documented path drift",
-                       "test_evidence":  "pending",
-                       "risk":  "docs say /learning/today",
-                       "next_action":  "live adapter"
+                       "test_evidence":  "CP7 browser real task-list read",
+                       "risk":  "docs say /learning/today; class targets are not expanded to enrollments",
+                       "next_action":  "contract alignment and class-target expansion"
                    },
                    {
                        "route":  "/student/learning/:activityId",
@@ -97,10 +97,10 @@
                        "visual_status":  "KEEP_CURRENT",
                        "interaction_status":  "LIVE_BIND",
                        "data_source":  "task detail and PUT progress",
-                       "backend_status":  "READY with documented path drift",
-                       "test_evidence":  "pending",
-                       "risk":  "route activity id lacks assignment context",
-                       "next_action":  "truthful adapter boundary"
+                       "backend_status":  "partial with documented path drift",
+                       "test_evidence":  "CP7 browser progress update passed after test-only initial progress seed",
+                       "risk":  "first progress cannot bootstrap because task detail lacks enrollment context",
+                       "next_action":  "define first-progress creation context"
                    },
                    {
                        "route":  "/assessment",
@@ -197,8 +197,8 @@
                        "data_source":  "course versions",
                        "backend_status":  "READY",
                        "test_evidence":  "existing curriculum tests",
-                       "risk":  "publish path drift",
-                       "next_action":  "verify live create"
+                       "risk":  "publish resource lookup unavailable",
+                       "next_action":  "replace unavailable resource lookup adapter"
                    },
                    {
                        "route":  "/teacher/classes",
@@ -223,10 +223,10 @@
                        "visual_status":  "KEEP_CURRENT",
                        "interaction_status":  "LIVE_BIND",
                        "data_source":  "GET/POST/open/close assignments",
-                       "backend_status":  "READY",
-                       "test_evidence":  "pending",
-                       "risk":  "write must await response",
-                       "next_action":  "live list and write"
+                       "backend_status":  "partial",
+                       "test_evidence":  "CP7 real create/list/open; target persistence repaired",
+                       "risk":  "no DRAFT-to-SCHEDULED API; class target expansion missing",
+                       "next_action":  "add scheduling transition and enrollment expansion"
                    },
                    {
                        "route":  "/teacher/review",
@@ -237,10 +237,10 @@
                        "visual_status":  "KEEP_CURRENT",
                        "interaction_status":  "LIVE_BIND",
                        "data_source":  "assignment submissions and feedback",
-                       "backend_status":  "READY",
-                       "test_evidence":  "pending",
-                       "risk":  "fake feedback success",
-                       "next_action":  "live review adapter"
+                       "backend_status":  "partial",
+                       "test_evidence":  "CP7 real submission read and feedback API write; UI form dispatch not observed",
+                       "risk":  "teacher feedback form may not dispatch; review transition is not public",
+                       "next_action":  "repair UI dispatch and expose review transition"
                    },
                    {
                        "route":  "/reports",
@@ -289,14 +289,14 @@
                        "current_nuxt_file":  "apps/web/app/pages/volunteer.vue",
                        "candidate_source":  "VM A",
                        "selected_source":  "VM A visual with live adapter",
-                       "reason":  "primary visual source and APIs ready",
+                       "reason":  "primary visual source; live calls expose unavailable persistence truth",
                        "visual_status":  "PORT_VISUAL_ONLY",
-                       "interaction_status":  "LIVE_BIND",
+                       "interaction_status":  "TRUTHFUL_GAP",
                        "data_source":  "volunteers/training/support-pairings",
-                       "backend_status":  "READY",
-                       "test_evidence":  "entry-live gateway/page tests",
-                       "risk":  "role matrix differs from VM",
-                       "next_action":  "live empty/list smoke"
+                       "backend_status":  "UNAVAILABLE repositories; no Prisma persistence models",
+                       "test_evidence":  "entry-live tests plus CP7 browser real 503 state",
+                       "risk":  "readiness document overstates persistence; role matrix differs from VM",
+                       "next_action":  "implement school-scoped PostgreSQL repositories and migrations"
                    },
                    {
                        "route":  "/research",
