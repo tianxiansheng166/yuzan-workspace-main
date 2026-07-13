@@ -3,8 +3,8 @@
 | Checkpoint | Status | Commit | Validation |
 |---|---|---|---|
 | CP0 recovery | COMPLETE | external snapshot, no repository commit | 122 copies; source/snapshot SHA-256 recheck, 0 errors |
-| CP1 auth/session/select-school | IN_PROGRESS | pending local WIP commit | web typecheck exit 0 with Volar plugin warning; 6 files / 32 tests passed |
-| CP2 core Nuxt | PENDING | — | — |
+| CP1 auth/session/select-school | COMPLETE | `6ad86fb` | web typecheck exit 0 with Volar plugin warning; 6 files / 32 tests passed |
+| CP2 core Nuxt | IN_PROGRESS | pending WIP commit | teacher hub and student courses/today/player selectively integrated; 9 files / 40 current-scope tests passed (includes CP3 adapter tests) |
 | CP3 teacher/student live APIs | PENDING | — | — |
 | CP4 VM A/B adoption | PENDING | — | — |
 | CP5 four entries | PENDING | — | — |

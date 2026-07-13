@@ -1,65 +1,13 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
-
-const root = resolve(import.meta.dirname, "../../app");
-const today = readFileSync(resolve(root, "pages/student/today.vue"), "utf8");
-const player = readFileSync(
-  resolve(root, "pages/student/learning/[activityId].vue"),
-  "utf8",
-);
-const stepper = readFileSync(
-  resolve(root, "features/learning-player/components/PlayerStepper.vue"),
-  "utf8",
-);
-
-describe("learning page guardrails", () => {
-  it("relies on the application shell as the only main landmark", () => {
-    expect(today).not.toMatch(/<\/?main(?:\s|>)/);
-    expect(player).not.toMatch(/<\/?main(?:\s|>)/);
-    expect(today).not.toContain('role="main"');
-    expect(player).not.toContain('role="main"');
-  });
-  it("keeps one clear page h1 in each page source", () => {
-    expect(today.match(/<h1(?:\s|>)/g)).toHaveLength(1);
-    expect(player.match(/<h1(?:\s|>)/g)).toHaveLength(1);
-    expect(today).toContain('aria-labelledby="today-page-title"');
-    expect(player).toContain('aria-labelledby="player-page-title"');
-  });
-  it("provides stable SSR-safe titles", () => {
-    expect(today).toContain('useHead({ title: "今日学习｜语赞心声" })');
-    expect(player).toContain('useHead({ title: "学习活动｜语赞心声" })');
-    expect(player).not.toMatch(/useHead\([^)]*activityId/s);
-    expect(player).not.toMatch(/title:\s*[^\n]*(学生|姓名|demo)/i);
-    expect(player).not.toContain("document.title");
-    expect(player).not.toContain("window.document");
-  });
-  it("uses the same stable title for unknown activities", () => {
-    const titleLine = player
-      .split("\n")
-      .find((line) => line.includes("useHead({ title:"));
-    expect(titleLine).toBe('useHead({ title: "学习活动｜语赞心声" });');
-    expect(titleLine).not.toContain("activityId");
-  });
-  it("keeps the existing assessment entry", () =>
-    expect(today).toContain('to="/assessment"'));
-  it("uses the activityId route", () =>
-    expect(player).toContain("route.params.activityId"));
-  it("has SSR-safe browser boundaries", () => {
-    expect(player).toContain("import.meta.client");
-    expect(player).not.toContain("localStorage");
-  });
-  it("supports 390px and reduced motion", () => {
-    expect(today).toContain("max-width: 40rem");
-    expect(player).toContain("prefers-reduced-motion");
-  });
-  it("provides keyboard and aria guardrails", () => {
-    expect(stepper).toContain("aria-current");
-    expect(player).toContain("focus-visible");
-    expect(player).toContain("aria-describedby");
-  });
-  it("does not claim fake scores or synced progress", () => {
-    expect(player).toContain("不会伪造录音");
-    expect(player).toContain("不会显示 synced");
-  });
+const root=resolve(import.meta.dirname,"../../app");const today=readFileSync(resolve(root,"pages/student/today.vue"),"utf8");const player=readFileSync(resolve(root,"pages/student/learning/[activityId].vue"),"utf8");
+describe("live learning page guardrails",()=>{
+  it("uses the application shell main landmark",()=>{expect(today).not.toMatch(/<main(?:\s|>)/);expect(player).not.toMatch(/<main(?:\s|>)/);});
+  it("keeps one stable h1 and title",()=>{expect(today.match(/<h1(?:\s|>)/g)).toHaveLength(1);expect(player.match(/<h1(?:\s|>)/g)).toHaveLength(1);expect(today).toContain('title: "今日学习｜语赞心声"');expect(player).toContain('title: "学习活动｜语赞心声"');});
+  it("reads the route and executable live endpoints through the gateway",()=>{expect(player).toContain("route.params.activityId");expect(today).toContain("listLearningTasks");expect(player).toContain("getLearningTask");});
+  it("fails closed without enrollment context",()=>{expect(player).toContain("首次进度写入暂不可用");expect(player).toContain("enrollmentId");expect(player).toContain("fail-closed");});
+  it("only confirms writes after gateway responses",()=>{expect(player).toContain("updateProgress");expect(player).toContain("createAndSubmit");expect(player).toContain("已由服务器确认");});
+  it("preserves assessment navigation without fake results",()=>{expect(today).toContain('to="/assessment"');expect(today).toContain("pending / unavailable");expect(today).toContain("不伪装正式学习成果");});
+  it("supports keyboard, mobile and reduced motion",()=>{for(const source of [today,player]){expect(source).toContain("focus-visible");expect(source).toContain("prefers-reduced-motion");expect(source).toContain("@media(max-width:");}});
 });

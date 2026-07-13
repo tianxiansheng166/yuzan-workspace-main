@@ -1,324 +1,112 @@
 <script setup lang="ts">
-import PlayerStepper from "~/features/learning-player/components/PlayerStepper.vue";
-import { useLearningPlayer } from "~/features/learning-player/composables/useLearningPlayer";
+import { describeLiveFailure, type Feedback, type LearningActivity, type Submission } from "~/features/live-core/gateway";
 
 const route = useRoute();
-const activityId = String(route.params.activityId ?? "");
-const player = useLearningPlayer(activityId);
-await player.load();
+const assignmentId = computed(() => String(route.params.activityId));
+useSeoMeta({ title: "学习活动｜语赞心声" });
+const gateway = useLiveCoreGateway();
+const state = ref<"loading" | "ready" | "empty" | "error">("loading");
+const activities = ref<LearningActivity[]>([]);
+const selectedId = ref("");
+const schoolName = ref("");
+const failure = ref<ReturnType<typeof describeLiveFailure> | null>(null);
+const writeState = ref<"idle" | "writing" | "success" | "error">("idle");
+const writeMessage = ref("");
+const submission = ref<Submission | null>(null);
+const feedback = ref<Feedback[]>([]);
+const active = computed(() => activities.value.find((item) => item.activityId === selectedId.value) ?? activities.value[0]);
+const enrollmentId = computed(() => active.value?.progress?.enrollmentId ?? activities.value.find((item) => item.progress?.enrollmentId)?.progress?.enrollmentId);
 
-useHead({ title: "学习活动｜语赞心声" });
-
-const pageHeading = computed(() => {
-  if (player.viewState.value === "loading") return "正在打开学习活动……";
-  if (player.viewState.value === "unknown") return "没有找到这个学习活动。";
-  if (player.viewState.value === "unavailable") return "这个活动暂不可用。";
-  return player.activity.value?.title ?? "学习活动";
-});
-
-function requestExit() {
-  if (
-    player.needsExitConfirmation.value &&
-    import.meta.client &&
-    !window.confirm("还有未同步的学习内容。确定返回今日页吗？")
-  )
-    return;
-  navigateTo("/student/today");
+async function load() {
+  state.value = "loading";
+  try {
+    const result = await gateway.getLearningTask(assignmentId.value);
+    activities.value = result.items;
+    schoolName.value = result.context.schoolName;
+    selectedId.value = result.items[0]?.activityId ?? "";
+    state.value = result.items.length ? "ready" : "empty";
+  } catch (error) {
+    failure.value = describeLiveFailure(error);
+    state.value = "error";
+  }
 }
+
+async function completeActivity() {
+  if (!active.value?.progress || writeState.value === "writing") return;
+  writeState.value = "writing";
+  writeMessage.value = "";
+  try {
+    const saved = await gateway.updateProgress(active.value.activityId, {
+      enrollmentId: active.value.progress.enrollmentId,
+      position: Math.max(active.value.progress.position, 1),
+      completed: true,
+      expectedRevision: active.value.progress.revision,
+    });
+    active.value.progress = saved;
+    writeState.value = "success";
+    writeMessage.value = "完成状态已由服务器确认。";
+  } catch (error) {
+    writeState.value = "error";
+    writeMessage.value = describeLiveFailure(error).message;
+  }
+}
+
+async function submitAssignment() {
+  if (!enrollmentId.value || writeState.value === "writing") return;
+  writeState.value = "writing";
+  writeMessage.value = "";
+  try {
+    const key = globalThis.crypto?.randomUUID?.() ?? `${assignmentId.value}-${Date.now()}`;
+    submission.value = await gateway.createAndSubmit(assignmentId.value, enrollmentId.value, key);
+    writeState.value = "success";
+    writeMessage.value = `第 ${submission.value.attemptNo} 次提交已由服务器接收。`;
+  } catch (error) {
+    writeState.value = "error";
+    writeMessage.value = describeLiveFailure(error).message;
+  }
+}
+
+async function refreshFeedback() {
+  if (!submission.value) return;
+  try {
+    feedback.value = await gateway.getFeedback(submission.value.id);
+    writeMessage.value = feedback.value.length ? "已重新读取教师反馈。" : "服务器尚未发布反馈。";
+  } catch (error) {
+    writeMessage.value = describeLiveFailure(error).message;
+  }
+}
+
+await load();
 </script>
 
 <template>
-  <section class="player yx-shell" aria-labelledby="player-page-title">
-    <header class="player__header">
-      <button type="button" class="back" @click="requestExit">
-        返回今日页
-      </button>
-      <div>
-        <p class="yx-kicker">学习播放器 · DEMO</p>
-        <h1 id="player-page-title">{{ pageHeading }}</h1>
-      </div>
-    </header>
+  <section class="learning yx-shell" aria-labelledby="learning-title">
+    <header class="learning__head"><div><p class="yx-kicker">LIVE LEARNING · {{ schoolName || '学校活动' }}</p><h1 id="learning-title">完成一项，确认一项。</h1></div><NuxtLink to="/student/today">返回今日学习</NuxtLink></header>
 
-    <section
-      v-if="player.viewState.value === 'loading'"
-      class="state"
-      aria-live="polite"
-    >
-      <h2>正在准备活动内容，请稍候。</h2>
-    </section>
-    <section
-      v-else-if="player.viewState.value === 'unknown'"
-      class="state"
-      role="alert"
-    >
-      <h2>活动入口不可用</h2>
-      <p>返回今日页选择一个现有任务，不会产生任何提交记录。</p>
-      <NuxtLink to="/student/today">返回今日页</NuxtLink>
-    </section>
-    <section v-else-if="player.viewState.value === 'unavailable'" class="state">
-      <h2>服务暂不可用</h2>
-      <p>请稍后再试，或先完成其他任务。</p>
-    </section>
+    <section v-if="state === 'loading'" class="state" aria-live="polite"><h2>正在读取任务活动……</h2></section>
+    <section v-else-if="state === 'error'" class="state" role="alert"><p class="yx-kicker">{{ failure?.code || failure?.kind }}</p><h2>{{ failure?.message }}</h2><NuxtLink v-if="failure?.kind === 'unauthenticated'" :to="`/login?redirect=${route.fullPath}`">重新登录</NuxtLink><NuxtLink v-else-if="failure?.kind === 'permission'" to="/select-school">切换学校</NuxtLink><button v-else type="button" @click="load">重试</button></section>
+    <section v-else-if="state === 'empty'" class="state"><p class="yx-kicker">REAL EMPTY</p><h2>这个任务当前没有可学习活动。</h2><p>页面不会补入演示材料或伪造活动。</p></section>
 
-    <template v-else-if="player.activity.value">
-      <div class="player__title">
-        <div>
-          <p class="yx-kicker">{{ player.activity.value.type }}</p>
-          <p class="player__activity-name">{{ player.activity.value.title }}</p>
-        </div>
-        <span class="status">{{ player.snapshot.value.status }}</span>
-      </div>
-      <PlayerStepper :step-index="player.snapshot.value.stepIndex" />
+    <section v-else-if="active" class="learning__body">
+      <nav aria-label="任务活动" class="steps"><p class="yx-kicker">ACTIVITIES</p><button v-for="(item,index) in activities" :key="item.activityId" type="button" :aria-current="item.activityId === active.activityId ? 'step' : undefined" @click="selectedId=item.activityId"><b>{{ String(index+1).padStart(2,'0') }}</b><span>{{ item.title }}</span><small>{{ item.progress?.completed ? '服务器已完成' : item.type }}</small></button></nav>
 
-      <article
-        class="stage"
-        :aria-labelledby="`step-${player.currentStep.value}`"
-      >
-        <section v-if="player.currentStep.value === 'goal'">
-          <p class="yx-kicker">任务目标</p>
-          <h2 :id="`step-${player.currentStep.value}`">
-            {{ player.activity.value.goal }}
-          </h2>
-          <p>完成标准：{{ player.activity.value.completion }}</p>
-        </section>
-        <section v-else-if="player.currentStep.value === 'material'">
-          <p class="yx-kicker">学习材料</p>
-          <h2 :id="`step-${player.currentStep.value}`">先读懂，再开始操作。</h2>
-          <p
-            v-for="paragraph in player.activity.value.material"
-            :key="paragraph"
-            class="reading-text"
-          >
-            {{ paragraph }}
-          </p>
-        </section>
-        <section v-else-if="player.currentStep.value === 'tip'">
-          <p class="yx-kicker">示例与提示</p>
-          <h2 :id="`step-${player.currentStep.value}`">
-            {{ player.activity.value.tip }}
-          </h2>
-        </section>
-        <section v-else-if="player.currentStep.value === 'practice'">
-          <p class="yx-kicker">轮到你</p>
-          <h2 :id="`step-${player.currentStep.value}`">
-            {{ player.activity.value.prompt }}
-          </h2>
-          <div
-            v-if="
-              ['speaking', 'retest', 'initial-assessment'].includes(
-                player.activity.value.type,
-              )
-            "
-            class="unavailable"
-            role="status"
-          >
-            <strong>朗读录音 unavailable</strong>
-            <p>SPH-001 尚未接入。这里不会伪造录音、上传状态或发音分数。</p>
-          </div>
-          <label v-else class="response"
-            ><span>你的回答</span
-            ><textarea
-              v-model="player.response.value"
-              :readonly="player.readOnly.value"
-              rows="6"
-              aria-describedby="response-help"
-            /><small id="response-help"
-              >内容可先保存到本机；保存不等于已同步。</small
-            ></label
-          >
-        </section>
-        <section v-else-if="player.currentStep.value === 'check'">
-          <p class="yx-kicker">检查</p>
-          <h2 :id="`step-${player.currentStep.value}`">
-            读一遍你的答案，确认意思完整。
-          </h2>
-          <p>
-            AI 结果：{{
-              player.activity.value.aiResult
-            }}。当前不提供分数或自动诊断。
-          </p>
-        </section>
-        <section v-else-if="player.currentStep.value === 'save'">
-          <p class="yx-kicker">保存或提交</p>
-          <h2 :id="`step-${player.currentStep.value}`">
-            先安全保存，再决定下一步。
-          </h2>
-          <p>本机保存会标记为 local-only；服务不可用时不会显示 synced。</p>
-          <div class="actions">
-            <button
-              type="button"
-              :disabled="player.snapshot.value.busy || player.readOnly.value"
-              @click="player.saveLocal"
-            >
-              保存到本机</button
-            ><button
-              type="button"
-              :disabled="player.snapshot.value.busy || player.readOnly.value"
-              @click="player.submit"
-            >
-              尝试提交
-            </button>
-          </div>
-        </section>
-        <section v-else>
-          <p class="yx-kicker">下一步</p>
-          <h2 :id="`step-${player.currentStep.value}`">
-            回到今日页，继续沿着学习路径前进。
-          </h2>
-          <NuxtLink to="/student/today">查看今天的下一步</NuxtLink>
-        </section>
+      <article class="activity">
+        <p class="yx-kicker">{{ active.type }} · {{ active.required ? '必做' : '选做' }}</p>
+        <h2>{{ active.title }}</h2>
+        <p class="instruction">{{ active.instruction || '服务端没有返回活动说明。' }}</p>
+        <dl><div><dt>当前位置</dt><dd>{{ active.progress?.position ?? '尚无记录' }}</dd></div><div><dt>同步状态</dt><dd>{{ active.progress?.completed ? '已完成' : active.progress ? '进行中' : '没有进度上下文' }}</dd></div><div><dt>修订号</dt><dd>{{ active.progress?.revision ?? '—' }}</dd></div></dl>
+
+        <div v-if="active.progress" class="actions"><button type="button" :disabled="writeState === 'writing' || active.progress.completed" @click="completeActivity">{{ active.progress.completed ? '服务器已确认完成' : writeState === 'writing' ? '正在写入…' : '完成并真实上报' }}</button><button type="button" :disabled="writeState === 'writing'" @click="submitAssignment">提交本次作业</button></div>
+        <aside v-else class="gap" role="status"><strong>首次进度写入暂不可用</strong><p>当前读取接口没有返回本人的 enrollmentId，后端也没有面向学生的 enrollment context 端点。为避免写到错误学生，页面按 fail-closed 处理。</p></aside>
+
+        <p class="write-message" :data-state="writeState" aria-live="polite">{{ writeMessage || '写操作只在收到后端响应后显示成功。' }}</p>
+
+        <section v-if="submission" class="receipt"><p class="yx-kicker">SUBMISSION RECEIPT</p><h3>{{ submission.status }} · 第 {{ submission.attemptNo }} 次</h3><code>{{ submission.id }}</code><button type="button" @click="refreshFeedback">重新读取反馈</button><ul v-if="feedback.length"><li v-for="item in feedback" :key="item.id"><strong>{{ item.decision }}</strong><p>{{ item.comment }}</p></li></ul></section>
       </article>
-
-      <p
-        v-if="player.message.value"
-        class="message"
-        role="status"
-        aria-live="polite"
-      >
-        {{ player.message.value }}
-      </p>
-      <nav class="controls" aria-label="播放器步骤">
-        <button
-          type="button"
-          :disabled="player.snapshot.value.stepIndex === 0"
-          @click="player.send('BACK')"
-        >
-          上一步</button
-        ><button
-          type="button"
-          :disabled="
-            player.readOnly.value || player.snapshot.value.status === 'paused'
-          "
-          @click="player.send('NEXT')"
-        >
-          下一步</button
-        ><button
-          v-if="player.snapshot.value.status !== 'paused'"
-          type="button"
-          :disabled="player.readOnly.value"
-          @click="player.send('PAUSE')"
-        >
-          暂停</button
-        ><button v-else type="button" @click="player.send('RESUME')">
-          继续
-        </button>
-      </nav>
-    </template>
+    </section>
   </section>
 </template>
 
 <style scoped>
-.player {
-  padding-block: clamp(1.5rem, 5vw, 4rem);
-}
-.player__header,
-.player__title,
-.controls,
-.actions {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-.back,
-button {
-  min-height: 2.75rem;
-  padding: 0.55rem 0.9rem;
-  border: 1px solid var(--yx-color-line);
-  border-radius: var(--yx-radius-md);
-  background: var(--yx-color-surface);
-  color: var(--yx-color-ink);
-  font: inherit;
-  cursor: pointer;
-}
-button:focus-visible,
-a:focus-visible,
-textarea:focus-visible {
-  outline: 3px solid var(--yx-color-gold);
-  outline-offset: 3px;
-}
-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.55;
-}
-h1,
-h2 {
-  font-family: var(--yx-font-display);
-}
-h1 {
-  margin: 0.5rem 0;
-  font-size: clamp(2rem, 6vw, 4.7rem);
-  line-height: 1;
-}
-.player__activity-name {
-  margin: 0.5rem 0;
-  font: 700 clamp(1.4rem, 4vw, 2.4rem) / 1.1 var(--yx-font-display);
-}
-h2 {
-  font-size: clamp(1.5rem, 3vw, 2.4rem);
-}
-.status {
-  padding: 0.45rem 0.7rem;
-  border: 1px solid currentColor;
-  border-radius: var(--yx-radius-pill);
-}
-.stage {
-  min-height: 25rem;
-  display: grid;
-  align-content: center;
-  max-width: 58rem;
-  padding: clamp(1.5rem, 5vw, 4rem) 0;
-}
-.stage p,
-.reading-text {
-  color: var(--yx-color-ink-soft);
-  line-height: 1.85;
-}
-.reading-text {
-  max-width: 38em;
-  font-size: clamp(1.05rem, 2vw, 1.25rem);
-}
-.response {
-  display: grid;
-  gap: 0.5rem;
-}
-textarea {
-  width: 100%;
-  border: 1px solid var(--yx-color-line);
-  border-radius: var(--yx-radius-md);
-  padding: 1rem;
-  font: inherit;
-  line-height: 1.7;
-}
-.unavailable,
-.message {
-  padding: 1rem;
-  border-left: 3px solid var(--yx-color-gold);
-  background: var(--yx-color-paper);
-}
-.controls {
-  padding-top: 1rem;
-  border-top: 1px solid var(--yx-color-line);
-}
-.state {
-  min-height: 60vh;
-  display: grid;
-  align-content: center;
-  max-width: 44rem;
-}
-@media (max-width: 30rem) {
-  .controls button {
-    flex: 1 1 40%;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    scroll-behavior: auto !important;
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
-  }
-}
+.learning{padding-block:clamp(2rem,5vw,5rem)}.learning__head{display:flex;justify-content:space-between;align-items:end;gap:2rem;padding-bottom:1.5rem;border-bottom:2px solid currentColor}.learning__head h1{max-width:15ch;margin:.4rem 0;font:600 clamp(2.6rem,6vw,5.5rem)/.95 var(--yx-font-display)}.learning__head>a{font-weight:700;color:var(--yx-color-wine)}.state{min-height:30rem;display:grid;align-content:center;justify-items:start;max-width:48rem}.state h2{font:600 clamp(2rem,5vw,4rem)/1.05 var(--yx-font-display)}.state button,.state a{border:0;background:var(--yx-color-sage-strong);color:#fff;padding:.8rem 1rem;text-decoration:none}.learning__body{display:grid;grid-template-columns:minmax(15rem,.55fr) minmax(0,1.45fr);gap:clamp(2rem,6vw,7rem);padding-top:4rem}.steps{border-right:1px solid var(--yx-color-line);padding-right:2rem}.steps button{width:100%;display:grid;grid-template-columns:3rem 1fr;text-align:left;gap:.2rem 1rem;padding:1rem 0;border:0;border-bottom:1px solid var(--yx-color-line);background:transparent;color:inherit}.steps button b{grid-row:1/3;color:var(--yx-color-gold);font:600 1.4rem var(--yx-font-display)}.steps button small{color:var(--yx-color-ink-soft)}.steps button[aria-current=step]{border-bottom-color:var(--yx-color-sage-strong)}.steps button[aria-current=step] span{font-weight:800}.activity h2{max-width:16ch;margin:.5rem 0;font:600 clamp(2.5rem,6vw,5.5rem)/.95 var(--yx-font-display)}.instruction{max-width:50rem;font-size:1.1rem;line-height:1.8;color:var(--yx-color-ink-soft);white-space:pre-wrap}.activity dl{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:3rem 0}.activity dl div{border-top:1px solid var(--yx-color-line);padding-top:.7rem}.activity dt{font-weight:700}.activity dd{margin:.3rem 0;color:var(--yx-color-ink-soft)}.actions{display:flex;flex-wrap:wrap;gap:1rem}.actions button,.receipt button{border:0;background:var(--yx-color-sage-strong);color:#fff;padding:.9rem 1.1rem;font-weight:700}.actions button+button{background:var(--yx-color-wine)}button:disabled{opacity:.55}.gap{max-width:48rem;padding:1.2rem 0;border-block:1px solid var(--yx-color-gold)}.gap strong{font:600 1.4rem var(--yx-font-display)}.gap p{line-height:1.7;color:var(--yx-color-ink-soft)}.write-message{min-height:1.5rem;color:var(--yx-color-ink-soft)}.write-message[data-state=success]{color:var(--yx-color-sage-strong);font-weight:700}.write-message[data-state=error]{color:var(--yx-color-wine);font-weight:700}.receipt{margin-top:3rem;padding:2rem 0;border-top:2px solid currentColor}.receipt h3{font:600 1.8rem var(--yx-font-display)}.receipt code{display:block;margin-bottom:1rem;overflow-wrap:anywhere}.receipt ul{list-style:none;padding:0}.receipt li{border-top:1px solid var(--yx-color-line);padding-top:1rem}a:focus-visible,button:focus-visible{outline:3px solid var(--yx-color-gold);outline-offset:3px}@media(max-width:50rem){.learning__body{grid-template-columns:1fr}.steps{border-right:0;border-bottom:1px solid var(--yx-color-line);padding:0 0 2rem}.activity dl{grid-template-columns:1fr}.learning__head{align-items:start;flex-direction:column}.steps button{grid-template-columns:2.5rem 1fr}}@media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>

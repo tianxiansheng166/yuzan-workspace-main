@@ -1,258 +1,66 @@
 <script setup lang="ts">
-import TodayPath from "~/features/today/components/TodayPath.vue";
-import { stateLabel } from "~/features/today/adapters/today.adapter";
-import { useToday } from "~/features/today/composables/useToday";
-import type { TodayScenario } from "~/features/today/types";
-import { studentActionCards } from "~/features/student-brand/student-brand-content";
+import { describeLiveFailure, type LearningTask } from "~/features/live-core/gateway";
 
-const route = useRoute();
-const scenario = (route.query.scenario as TodayScenario | undefined) ?? "demo";
-const { state, activities, primary, continuing, retests, completed, load } =
-  useToday(scenario);
+useSeoMeta({ title: "今日学习｜语赞心声" });
+const gateway = useLiveCoreGateway();
+const state = ref<"loading" | "ready" | "empty" | "error">("loading");
+const tasks = ref<LearningTask[]>([]);
+const schoolName = ref("");
+const failure = ref<ReturnType<typeof describeLiveFailure> | null>(null);
 
-useHead({ title: "今日学习｜语赞心声" });
+function dueLabel(value: string) {
+  return new Intl.DateTimeFormat("zh-CN", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }).format(new Date(value));
+}
+
+async function load() {
+  state.value = "loading";
+  try {
+    const result = await gateway.listLearningTasks();
+    tasks.value = result.items;
+    schoolName.value = result.context.schoolName;
+    state.value = result.items.length ? "ready" : "empty";
+  } catch (error) {
+    failure.value = describeLiveFailure(error);
+    state.value = "error";
+  }
+}
 await load();
 </script>
 
 <template>
-  <section class="today yx-shell" aria-labelledby="today-page-title">
-    <header class="today__intro">
-      <p class="yx-kicker">今天的学习 · DEMO</p>
-      <h1 id="today-page-title">沿着今天的路径，先走最重要的一步。</h1>
-      <p>
-        每个任务都会说明为什么做、需要多久、怎样算完成，以及卡住时怎么继续。
-      </p>
+  <section class="today yx-shell" aria-labelledby="today-title">
+    <header class="intro">
+      <p class="yx-kicker">TODAY · {{ schoolName || '实时学习任务' }}</p>
+      <h1 id="today-title">先看清今天，<br>再走出下一步。</h1>
+      <p>任务来自当前学校的学习服务。页面不会把本地动作提前标记为已同步。</p>
     </header>
 
-    <section v-if="state === 'loading'" class="state" aria-live="polite">
-      <h2>正在准备今天的学习……</h2>
-    </section>
-    <section v-else-if="state === 'permission'" class="state" role="alert">
-      <h2>这个入口暂时不能打开。</h2>
-      <p>请回到自己的学生账号，或请老师帮助确认。</p>
-    </section>
-    <section v-else-if="state === 'unavailable'" class="state" role="status">
-      <h2>今日任务服务暂不可用。</h2>
-      <p>稍后再试。页面不会把本机进度显示成已经同步。</p>
-      <NuxtLink to="/assessment">前往现有测评入口</NuxtLink>
-    </section>
-    <section v-else-if="state === 'empty'" class="state">
-      <h2>今天暂时没有新任务。</h2>
-      <p>你可以回顾已经学过的内容，或稍后再来看看。</p>
-      <NuxtLink to="/assessment">查看测评入口</NuxtLink>
-    </section>
+    <section v-if="state === 'loading'" class="state" aria-live="polite"><p class="yx-kicker">CONNECTING</p><h2>正在读取学校任务……</h2></section>
+    <section v-else-if="state === 'error'" class="state" role="alert"><p class="yx-kicker">{{ failure?.code || failure?.kind }}</p><h2>{{ failure?.message }}</h2><NuxtLink v-if="failure?.kind === 'unauthenticated'" to="/login?redirect=/student/today">重新登录</NuxtLink><NuxtLink v-else-if="failure?.kind === 'permission'" to="/select-school">选择可用学校</NuxtLink><button v-else type="button" @click="load">重试</button></section>
+    <section v-else-if="state === 'empty'" class="state"><p class="yx-kicker">REAL EMPTY</p><h2>今天暂时没有下发给你的任务。</h2><p>这里没有示例任务。你仍可查看已发布课程或稍后刷新。</p><div><NuxtLink to="/student/courses">查看课程</NuxtLink><button type="button" @click="load">重新读取</button></div></section>
 
     <template v-else>
-      <section v-if="primary" class="primary" aria-labelledby="primary-title">
-        <div class="primary__line" aria-hidden="true" />
-        <p class="yx-kicker">下一步 · {{ stateLabel(primary.state) }}</p>
-        <h2 id="primary-title">{{ primary.title }}</h2>
-        <p class="primary__reason">{{ primary.reason }}</p>
-        <dl>
-          <div>
-            <dt>大约多久</dt>
-            <dd>{{ primary.durationMinutes }} 分钟</dd>
-          </div>
-          <div>
-            <dt>怎样算完成</dt>
-            <dd>{{ primary.completion }}</dd>
-          </div>
-          <div>
-            <dt>遇到困难</dt>
-            <dd>{{ primary.help }}</dd>
-          </div>
-        </dl>
-        <p v-if="primary.teacherAdvice" class="teacher-advice">
-          <strong>老师的建议：</strong>{{ primary.teacherAdvice }}
-        </p>
-        <NuxtLink
-          class="primary__action"
-          :to="`/student/learning/${primary.id}`"
-          >开始这一步</NuxtLink
-        >
-      </section>
-
-      <nav class="support-links" aria-label="学生现有入口">
-        <NuxtLink
-          v-for="entry in studentActionCards"
-          :key="entry.id"
-          :to="entry.to"
-        >
-          {{ entry.title }}：{{ entry.availabilityNote }}
-        </NuxtLink>
-        <p>
-          首测、复测与推荐课程保留真实入口；待接入能力会明确说明，不伪装正式学习成果。
-        </p>
-      </nav>
-
-      <section aria-labelledby="path-title">
-        <p class="yx-kicker">学习路径</p>
-        <h2 id="path-title">看清当前位置，也知道接下来往哪里走。</h2>
-        <TodayPath :activities="activities" />
-      </section>
-
-      <section
-        v-if="continuing.length || retests.length"
-        class="notes"
-        aria-label="学习提醒"
-      >
+      <section class="next" aria-labelledby="next-title">
+        <p class="yx-kicker">NEXT · {{ tasks[0]?.status }}</p>
+        <div class="next__number" aria-hidden="true">01</div>
         <div>
-          <h2>待继续</h2>
-          <p>
-            {{
-              continuing.length
-                ? `${continuing.length} 项内容可以接着完成。`
-                : "没有暂停中的任务。"
-            }}
-          </p>
-        </div>
-        <div>
-          <h2>复测提醒</h2>
-          <p>
-            {{
-              retests.length
-                ? `${retests.length} 项由老师建议复测。`
-                : "今天没有复测提醒。"
-            }}
-          </p>
+          <h2 id="next-title">{{ tasks[0]?.title }}</h2>
+          <p>{{ tasks[0]?.courseTitle || '课程标题未返回' }}</p>
+          <dl><div><dt>截止时间</dt><dd>{{ dueLabel(tasks[0]!.dueAt) }}</dd></div><div><dt>服务端状态</dt><dd>{{ tasks[0]?.status }}</dd></div></dl>
+          <NuxtLink :to="`/student/learning/${tasks[0]!.assignmentId}`">打开真实活动</NuxtLink>
         </div>
       </section>
 
-      <section v-if="completed.length" class="completed">
-        <h2>已完成回顾</h2>
-        <p>完成状态来自 demo 数据；正式服务接入前不代表服务器记录。</p>
+      <section class="queue" aria-labelledby="queue-title">
+        <header><p class="yx-kicker">LEARNING QUEUE</p><h2 id="queue-title">其余任务</h2><span>{{ Math.max(tasks.length - 1, 0) }} 项</span></header>
+        <ol v-if="tasks.length > 1"><li v-for="(task,index) in tasks.slice(1)" :key="task.assignmentId"><b>{{ String(index + 2).padStart(2, '0') }}</b><div><strong>{{ task.title }}</strong><small>{{ task.courseTitle || '课程标题未返回' }} · {{ dueLabel(task.dueAt) }}</small></div><span>{{ task.status }}</span><NuxtLink :to="`/student/learning/${task.assignmentId}`">打开</NuxtLink></li></ol>
+        <p v-else>没有更多任务。完成状态只在服务端确认后更新。</p>
       </section>
     </template>
+    <nav class="student-entries" aria-label="学生其他入口"><NuxtLink to="/student/courses">课程</NuxtLink><NuxtLink to="/assessment">测评</NuxtLink><NuxtLink to="/assessment/history">测评历史</NuxtLink><p>尚未接通的测评能力会保留 pending / unavailable，不伪装正式学习成果。</p></nav>
   </section>
 </template>
 
 <style scoped>
-.today {
-  display: grid;
-  gap: clamp(2rem, 6vw, 5rem);
-  padding-block: clamp(2.5rem, 7vw, 6rem);
-}
-.today__intro {
-  max-width: 54rem;
-}
-h1,
-h2 {
-  font-family: var(--yx-font-display);
-}
-h1 {
-  max-width: 13ch;
-  margin: 0.7rem 0 1rem;
-  font-size: clamp(2.35rem, 7vw, 5.8rem);
-  line-height: 0.98;
-}
-h2 {
-  margin: 0.5rem 0;
-  font-size: clamp(1.5rem, 3.5vw, 2.5rem);
-  line-height: 1.12;
-}
-.today p,
-dd {
-  color: var(--yx-color-ink-soft);
-  line-height: 1.75;
-}
-.primary {
-  position: relative;
-  max-width: 62rem;
-  padding: clamp(1.4rem, 4vw, 3rem) clamp(1rem, 4vw, 3rem)
-    clamp(1.5rem, 4vw, 2.5rem) clamp(1.5rem, 5vw, 4rem);
-  border-left: 4px solid var(--yx-color-sage-strong);
-  background: var(--yx-color-paper);
-}
-.primary__line {
-  position: absolute;
-  inset: 1rem 1rem auto auto;
-  width: 28%;
-  height: 3rem;
-  border-top: 1px solid var(--yx-color-line);
-  border-radius: 50%;
-  transform: rotate(-6deg);
-}
-.primary__reason {
-  max-width: 42rem;
-  font-size: 1.1rem;
-}
-.primary dl {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-  margin: 2rem 0;
-}
-.primary dl div {
-  padding-top: 0.8rem;
-  border-top: 1px solid var(--yx-color-line);
-}
-dt {
-  font-weight: 700;
-}
-dd {
-  margin: 0.35rem 0 0;
-}
-.teacher-advice {
-  padding: 0.8rem 1rem;
-  border-left: 2px solid var(--yx-color-gold);
-}
-.primary__action {
-  display: inline-flex;
-  align-items: center;
-  min-height: 3rem;
-  padding: 0 1.15rem;
-  border-radius: var(--yx-radius-md);
-  background: var(--yx-color-sage-strong);
-  color: white;
-  font-weight: 700;
-  text-decoration: none;
-}
-.primary__action:focus-visible,
-a:focus-visible {
-  outline: 3px solid var(--yx-color-gold);
-  outline-offset: 3px;
-}
-.support-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem 1.25rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--yx-color-line);
-}
-.support-links p {
-  flex-basis: 100%;
-  margin: 0;
-}
-.notes {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-  padding-block: 1.25rem;
-  border-block: 1px solid var(--yx-color-line);
-}
-.state {
-  min-height: 20rem;
-  display: grid;
-  align-content: center;
-  justify-items: start;
-  max-width: 42rem;
-}
-@media (max-width: 40rem) {
-  .primary dl,
-  .notes {
-    grid-template-columns: 1fr;
-  }
-  .primary__line {
-    display: none;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    scroll-behavior: auto !important;
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
-  }
-}
+.today{padding-block:clamp(3rem,8vw,7rem)}.intro{display:grid;grid-template-columns:1fr minmax(16rem,.45fr);align-items:end;gap:3rem;padding-bottom:2rem;border-bottom:2px solid var(--yx-color-ink)}.intro h1{margin:.6rem 0 0;font:600 clamp(3rem,8vw,7rem)/.9 var(--yx-font-display)}.intro>p:last-child{grid-column:2;grid-row:1/3;color:var(--yx-color-ink-soft);line-height:1.8}.state{min-height:28rem;display:grid;align-content:center;justify-items:start;max-width:48rem}.state h2,.queue h2{font:600 clamp(2rem,4vw,3.5rem) var(--yx-font-display)}.state div{display:flex;gap:1rem}.state button,.state a{border:0;background:var(--yx-color-sage-strong);color:#fff;padding:.8rem 1rem;text-decoration:none}.next{position:relative;display:grid;grid-template-columns:11rem minmax(0,1fr);gap:3rem;padding:clamp(3rem,7vw,6rem) 0;border-bottom:1px solid var(--yx-color-line)}.next__number{font:600 clamp(6rem,15vw,13rem)/.72 var(--yx-font-display);color:var(--yx-color-sage-strong);opacity:.42}.next h2{max-width:18ch;margin:.5rem 0;font:600 clamp(2.4rem,5vw,5rem)/1 var(--yx-font-display)}.next p{color:var(--yx-color-ink-soft)}.next dl{display:flex;gap:3rem;margin:2rem 0}.next dl div{border-top:1px solid var(--yx-color-line);padding-top:.5rem;min-width:10rem}.next dt{font-weight:700}.next dd{margin:.25rem 0;color:var(--yx-color-ink-soft)}.next a{display:inline-flex;padding:.8rem 1.1rem;background:var(--yx-color-sage-strong);color:#fff;text-decoration:none;font-weight:700}.queue{padding-top:4rem}.student-entries{display:flex;flex-wrap:wrap;gap:1rem;margin-top:4rem;padding-top:1.5rem;border-top:1px solid var(--yx-color-line)}.student-entries p{flex-basis:100%;color:var(--yx-color-ink-soft)}.queue>header{display:grid;grid-template-columns:1fr auto;align-items:end;border-bottom:2px solid currentColor}.queue>header .yx-kicker,.queue h2{grid-column:1}.queue h2{margin:.2rem 0 1rem}.queue>header span{grid-column:2;grid-row:1/3;font:600 2rem var(--yx-font-display)}.queue ol{list-style:none;padding:0;margin:0}.queue li{display:grid;grid-template-columns:4rem 1fr 8rem auto;gap:1rem;align-items:center;padding:1.2rem 0;border-bottom:1px solid var(--yx-color-line)}.queue li b{font:600 1.5rem var(--yx-font-display);color:var(--yx-color-gold)}.queue li div{display:grid}.queue li small,.queue li>span{color:var(--yx-color-ink-soft)}a:focus-visible,button:focus-visible{outline:3px solid var(--yx-color-gold);outline-offset:3px}@media(max-width:48rem){.intro{grid-template-columns:1fr}.intro>p:last-child{grid-column:1;grid-row:auto}.next{grid-template-columns:1fr;gap:1rem}.next__number{font-size:5rem}.queue li{grid-template-columns:3rem 1fr}.queue li>span,.queue li>a{grid-column:2;width:max-content}.next dl{display:grid;gap:1rem}.next dl div{min-width:0}}@media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
