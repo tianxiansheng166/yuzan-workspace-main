@@ -1,90 +1,50 @@
-import { existsSync } from "node:fs";
-import { resolve } from "node:path";
-
 import { describe, expect, it } from "vitest";
-
 import {
-  roleNavigationGroups,
-  roleNavigationStatuses,
-  routeAvailability,
-} from "../../app/features/role-navigation/role-navigation.config";
-import {
-  listGroupLabels,
-  resolveActiveNavigation,
-} from "../../app/features/role-navigation/role-navigation.helpers";
+  defaultRouteForMembershipRole,
+  findProductRoute,
+  navigationRoutesForRole,
+  roleCanAccessRoute,
+} from "../../app/routing/product-route-registry";
 
-describe("role navigation config", () => {
-  it("contains the required student, teacher and platform groups", () => {
-    expect(listGroupLabels()).toEqual([
-      "学生角色入口",
-      "教师角色入口",
-      "平台 / 公共入口",
-    ]);
+describe("product route registry role navigation", () => {
+  it("defines the fixed role entries", () => {
+    expect(defaultRouteForMembershipRole("STUDENT")).toBe("/student/today");
+    expect(defaultRouteForMembershipRole("TEACHER")).toBe("/teacher");
+    expect(defaultRouteForMembershipRole("VOLUNTEER")).toBe("/volunteer");
+    expect(defaultRouteForMembershipRole("SCHOOL_ADMIN")).toBe("/admin");
+    expect(defaultRouteForMembershipRole("PLATFORM_ADMIN")).toBe("/admin");
+    expect(defaultRouteForMembershipRole("RESEARCHER")).toBe("/research");
   });
 
-  it("includes the required navigation items for each role group", () => {
-    const studentLabels =
-      roleNavigationGroups[0]?.items.map((item) => item.label) ?? [];
-    const teacherLabels =
-      roleNavigationGroups[1]?.items.map((item) => item.label) ?? [];
-    const platformLabels =
-      roleNavigationGroups[2]?.items.map((item) => item.label) ?? [];
-
-    expect(studentLabels).toEqual(["学生今日", "AI 测评", "测评历史"]);
-    expect(teacherLabels).toEqual([
-      "教师工作台",
-      "测评任务",
-      "学生报告",
-      "教师工具",
-    ]);
-    expect(platformLabels).toEqual(["培训", "产品方案", "藏语翻译"]);
-  });
-
-  it("defines text explanations for demo, pending, unavailable, 待接入 and 外部链接", () => {
-    const labels = roleNavigationStatuses.map((status) => status.label);
-
-    expect(labels).toEqual(
-      expect.arrayContaining([
-        "demo",
-        "pending",
-        "unavailable",
-        "待接入",
-        "外部链接",
-      ]),
+  it("does not leak navigation across role ports", () => {
+    const studentPaths = navigationRoutesForRole("STUDENT").map(
+      (entry) => entry.path,
     );
-
-    for (const status of roleNavigationStatuses) {
-      expect(status.description.length).toBeGreaterThan(8);
-    }
-  });
-
-  it("only points to routes that are declared as available and backed by page files", () => {
-    const routeMap = new Map(
-      routeAvailability.map((entry) => [entry.route, entry.source]),
+    const volunteerPaths = navigationRoutesForRole("VOLUNTEER").map(
+      (entry) => entry.path,
     );
-
-    for (const group of roleNavigationGroups) {
-      for (const item of group.items) {
-        expect(routeMap.has(item.to)).toBe(true);
-
-        const source = routeMap.get(item.to);
-        expect(source).toBeTruthy();
-        expect(
-          existsSync(resolve(import.meta.dirname, "../../../../", source!)),
-        ).toBe(true);
-      }
-    }
+    expect(studentPaths).toContain("/student/today");
+    expect(studentPaths).not.toContain("/teacher");
+    expect(studentPaths).not.toContain("/volunteer");
+    expect(volunteerPaths).toContain("/training/volunteer");
+    expect(volunteerPaths).not.toContain("/teacher-tools");
+    expect(volunteerPaths).not.toContain("/admin");
   });
 
-  it("resolves active routes for student, teacher and platform pages", () => {
+  it("matches dynamic pages and enforces role access", () => {
+    expect(findProductRoute("/teacher/review/submission-1/feedback")?.id).toBe(
+      "teacher-review-feedback",
+    );
+    expect(roleCanAccessRoute("TEACHER", "/reports/report-1")).toBe(true);
+    expect(roleCanAccessRoute("STUDENT", "/reports/report-1")).toBe(false);
+  });
+
+  it("keeps development routes out of user navigation", () => {
+    expect(findProductRoute("/design/icons")?.developmentOnly).toBe(true);
     expect(
-      resolveActiveNavigation("/assessment/history").currentItem?.label,
-    ).toBe("测评历史");
-    expect(
-      resolveActiveNavigation("/teacher/assessments/new").currentItem?.label,
-    ).toBe("测评任务");
-    expect(
-      resolveActiveNavigation("/training/volunteer").currentItem?.label,
-    ).toBe("培训");
+      navigationRoutesForRole("PLATFORM_ADMIN").some(
+        (entry) => entry.developmentOnly,
+      ),
+    ).toBe(false);
   });
 });

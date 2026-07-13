@@ -125,8 +125,10 @@ function studentInitials(name: string): string {
               </div>
             </dl>
             <div class="student-card__actions">
-              <YxButton kind="quiet" disabled title="查看学生报告尚未接入后端"
-                >报告</YxButton
+              <NuxtLink
+                :to="`/teacher/students/${student.id}/assessment-reports`"
+                class="entry-link"
+                >报告</NuxtLink
               >
               <YxButton kind="quiet" disabled title="移除学生尚未接入后端"
                 >移除</YxButton
@@ -166,13 +168,13 @@ function studentInitials(name: string): string {
             </div>
             <div class="assessment-item__actions">
               <NuxtLink
-                :to="`/teacher/classes/${classId}/assessments/${assessment.id}`"
+                :to="`/teacher/assessments/${assessment.id}`"
                 class="entry-link"
               >
                 进入测评
               </NuxtLink>
               <NuxtLink
-                :to="`/teacher/classes/${classId}/assessments/${assessment.id}/reports`"
+                :to="`/teacher/assessments/${assessment.id}#reports`"
                 class="entry-link"
               >
                 报告

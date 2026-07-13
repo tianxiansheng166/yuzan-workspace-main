@@ -18,6 +18,7 @@ import { volunteer, serviceTask } from "./fixtures/volunteers.js";
 import {
   studentAuth,
   teacherAuth,
+  volunteerAuth,
   schoolAdminAuth,
   platformAdminAuth,
 } from "./fixtures/users.js";
@@ -33,7 +34,7 @@ describe("VolunteersService", () => {
   describe("apply", () => {
     it("creates a volunteer with APPLIED status", async () => {
       const { service } = createService();
-      const auth = studentAuth(schoolId, { userId: "user-1" });
+      const auth = volunteerAuth(schoolId, { userId: "user-1" });
 
       const result = await service.apply(auth, schoolId, {
         userId: "user-1",
@@ -65,7 +66,9 @@ describe("VolunteersService", () => {
       repo.addVolunteer(volunteer({ schoolId, userId: "user-1" }));
       const auth = teacherAuth(schoolId);
 
-      const result = await service.listVolunteers(auth, schoolId, { limit: 20 });
+      const result = await service.listVolunteers(auth, schoolId, {
+        limit: 20,
+      });
 
       expect(result.items).toHaveLength(1);
     });
@@ -109,7 +112,13 @@ describe("VolunteersService", () => {
       repo.addVolunteer(v);
       const auth = schoolAdminAuth(schoolId);
 
-      const result = await service.transitionStatus(auth, schoolId, v.id, VolunteerStatus.SCREENING, v.revision);
+      const result = await service.transitionStatus(
+        auth,
+        schoolId,
+        v.id,
+        VolunteerStatus.SCREENING,
+        v.revision,
+      );
 
       expect(result.status).toBe("SCREENING");
     });
@@ -121,7 +130,13 @@ describe("VolunteersService", () => {
       const auth = schoolAdminAuth(schoolId);
 
       await expect(
-        service.transitionStatus(auth, schoolId, v.id, VolunteerStatus.ACTIVE, v.revision),
+        service.transitionStatus(
+          auth,
+          schoolId,
+          v.id,
+          VolunteerStatus.ACTIVE,
+          v.revision,
+        ),
       ).rejects.toThrow(VolunteerInvalidTransitionException);
     });
 
@@ -143,9 +158,19 @@ describe("VolunteersService", () => {
 
       let current = v;
       for (const nextStatus of transitions) {
-        const result = await service.transitionStatus(auth, schoolId, current.id, nextStatus, current.revision);
+        const result = await service.transitionStatus(
+          auth,
+          schoolId,
+          current.id,
+          nextStatus,
+          current.revision,
+        );
         expect(result.status).toBe(nextStatus);
-        current = { ...current, status: nextStatus, revision: current.revision + 1 };
+        current = {
+          ...current,
+          status: nextStatus,
+          revision: current.revision + 1,
+        };
         repo.addVolunteer(current);
       }
     });
@@ -157,7 +182,13 @@ describe("VolunteersService", () => {
       const auth = studentAuth(schoolId);
 
       await expect(
-        service.transitionStatus(auth, schoolId, v.id, VolunteerStatus.SCREENING, v.revision),
+        service.transitionStatus(
+          auth,
+          schoolId,
+          v.id,
+          VolunteerStatus.SCREENING,
+          v.revision,
+        ),
       ).rejects.toThrow(VolunteerForbiddenException);
     });
 
@@ -168,7 +199,11 @@ describe("VolunteersService", () => {
       const auth = schoolAdminAuth(schoolId);
 
       const result = await service.transitionStatus(
-        auth, schoolId, v.id, VolunteerStatus.SUSPENDED, v.revision,
+        auth,
+        schoolId,
+        v.id,
+        VolunteerStatus.SUSPENDED,
+        v.revision,
         { suspendedReason: "违反规定" },
       );
 
@@ -182,7 +217,13 @@ describe("VolunteersService", () => {
       repo.addVolunteer(v);
       const auth = schoolAdminAuth(schoolId);
 
-      const result = await service.transitionStatus(auth, schoolId, v.id, VolunteerStatus.QUALIFIED, v.revision);
+      const result = await service.transitionStatus(
+        auth,
+        schoolId,
+        v.id,
+        VolunteerStatus.QUALIFIED,
+        v.revision,
+      );
 
       expect(result.status).toBe("QUALIFIED");
       expect(result.qualifiedAt).toBeDefined();
@@ -195,18 +236,24 @@ describe("VolunteersService", () => {
       repo.addServiceTask(serviceTask({ schoolId }));
       const auth = teacherAuth(schoolId);
 
-      const result = await service.listServiceTasks(auth, schoolId, { limit: 20 });
+      const result = await service.listServiceTasks(auth, schoolId, {
+        limit: 20,
+      });
 
       expect(result.items).toHaveLength(1);
     });
 
     it("allows qualified volunteer to see assigned tasks", async () => {
       const { service, repo } = createService();
-      const v = volunteer({ schoolId, userId: "user-1", status: VolunteerStatus.QUALIFIED });
+      const v = volunteer({
+        schoolId,
+        userId: "user-1",
+        status: VolunteerStatus.QUALIFIED,
+      });
       repo.addVolunteer(v);
       const t = serviceTask({ schoolId, assignedVolunteerId: v.id });
       repo.addServiceTask(t);
-      const auth = studentAuth(schoolId, { userId: "user-1" });
+      const auth = volunteerAuth(schoolId, { userId: "user-1" });
 
       const result = await service.listMyServiceTasks(auth, schoolId, 20);
 
@@ -215,9 +262,13 @@ describe("VolunteersService", () => {
 
     it("denies unqualified volunteer from seeing tasks", async () => {
       const { service, repo } = createService();
-      const v = volunteer({ schoolId, userId: "user-1", status: VolunteerStatus.APPLIED });
+      const v = volunteer({
+        schoolId,
+        userId: "user-1",
+        status: VolunteerStatus.APPLIED,
+      });
       repo.addVolunteer(v);
-      const auth = studentAuth(schoolId, { userId: "user-1" });
+      const auth = volunteerAuth(schoolId, { userId: "user-1" });
 
       await expect(
         service.listMyServiceTasks(auth, schoolId, 20),
@@ -232,7 +283,12 @@ describe("VolunteersService", () => {
       repo.addServiceTask(t);
       const auth = teacherAuth(schoolId);
 
-      const result = await service.assignServiceTask(auth, schoolId, t.id, v.id);
+      const result = await service.assignServiceTask(
+        auth,
+        schoolId,
+        t.id,
+        v.id,
+      );
 
       expect(result.assignedVolunteerId).toBe(v.id);
     });
@@ -299,7 +355,9 @@ describe("VolunteersService", () => {
 
   describe("fail-closes when repository is unavailable", () => {
     it("throws unavailable for all operations", async () => {
-      const service = new VolunteersService(new UnavailableVolunteerRepository());
+      const service = new VolunteersService(
+        new UnavailableVolunteerRepository(),
+      );
       const auth = teacherAuth(schoolId);
 
       await expect(

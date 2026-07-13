@@ -20,6 +20,7 @@ import {
 import {
   studentAuth,
   teacherAuth,
+  volunteerAuth,
   schoolAdminAuth,
   platformAdminAuth,
 } from "./fixtures/users.js";
@@ -152,9 +153,9 @@ describe("TrainingService", () => {
       repo.addProgram(p);
       const auth = teacherAuth("other-school");
 
-      await expect(
-        service.getProgram(auth, schoolId, p.id),
-      ).rejects.toThrow(TrainingForbiddenException);
+      await expect(service.getProgram(auth, schoolId, p.id)).rejects.toThrow(
+        TrainingForbiddenException,
+      );
     });
   });
 
@@ -265,18 +266,13 @@ describe("TrainingService", () => {
   // ---------------------------------------------------------------------------
 
   describe("enroll", () => {
-    it("allows STUDENT to enroll in a PUBLISHED program", async () => {
+    it("allows VOLUNTEER to enroll in a PUBLISHED program", async () => {
       const { service, repo } = createService();
       const p = trainingProgram({ schoolId, status: "PUBLISHED" });
       repo.addProgram(p);
-      const auth = studentAuth(schoolId, { userId: "user-1" });
+      const auth = volunteerAuth(schoolId, { userId: "user-1" });
 
-      const result = await service.enroll(
-        auth,
-        schoolId,
-        p.id,
-        "user-1",
-      );
+      const result = await service.enroll(auth, schoolId, p.id, "user-1");
 
       expect(result.status).toBe("ENROLLED");
       expect(result.programId).toBe(p.id);
@@ -289,12 +285,7 @@ describe("TrainingService", () => {
       repo.addProgram(p);
       const auth = teacherAuth(schoolId, { userId: "teacher-1" });
 
-      const result = await service.enroll(
-        auth,
-        schoolId,
-        p.id,
-        "teacher-1",
-      );
+      const result = await service.enroll(auth, schoolId, p.id, "teacher-1");
 
       expect(result.status).toBe("ENROLLED");
     });
@@ -303,7 +294,7 @@ describe("TrainingService", () => {
       const { service, repo } = createService();
       const p = trainingProgram({ schoolId, status: "DRAFT" });
       repo.addProgram(p);
-      const auth = studentAuth(schoolId);
+      const auth = volunteerAuth(schoolId, { userId: "user-1" });
 
       await expect(
         service.enroll(auth, schoolId, p.id, "user-1"),
@@ -314,7 +305,7 @@ describe("TrainingService", () => {
       const { service, repo } = createService();
       const p = trainingProgram({ schoolId, status: "ARCHIVED" });
       repo.addProgram(p);
-      const auth = studentAuth(schoolId);
+      const auth = volunteerAuth(schoolId, { userId: "user-1" });
 
       await expect(
         service.enroll(auth, schoolId, p.id, "user-1"),
@@ -323,7 +314,7 @@ describe("TrainingService", () => {
 
     it("throws not found for missing program", async () => {
       const { service } = createService();
-      const auth = studentAuth(schoolId);
+      const auth = volunteerAuth(schoolId, { userId: "user-1" });
 
       await expect(
         service.enroll(auth, schoolId, "missing-id", "user-1"),
@@ -571,12 +562,7 @@ describe("TrainingService", () => {
       repo.addExam(exam);
       const auth = studentAuth(schoolId, { userId: "user-1" });
 
-      const result = await service.submitAttempt(
-        auth,
-        schoolId,
-        exam.id,
-        85,
-      );
+      const result = await service.submitAttempt(auth, schoolId, exam.id, 85);
 
       expect(result.score).toBe(85);
       expect(result.passed).toBe(true);
@@ -602,12 +588,7 @@ describe("TrainingService", () => {
       repo.addExam(exam);
       const auth = studentAuth(schoolId, { userId: "user-1" });
 
-      const result = await service.submitAttempt(
-        auth,
-        schoolId,
-        exam.id,
-        45,
-      );
+      const result = await service.submitAttempt(auth, schoolId, exam.id, 45);
 
       expect(result.score).toBe(45);
       expect(result.passed).toBe(false);
@@ -633,12 +614,7 @@ describe("TrainingService", () => {
       repo.addExam(exam);
       const auth = schoolAdminAuth(schoolId);
 
-      const result = await service.submitAttempt(
-        auth,
-        schoolId,
-        exam.id,
-        90,
-      );
+      const result = await service.submitAttempt(auth, schoolId, exam.id, 90);
 
       expect(result.passed).toBe(true);
     });
@@ -798,7 +774,11 @@ describe("TrainingService", () => {
         volunteerUserId: "user-1",
       });
       repo.addEnrollment(e);
-      const prog = trainingProgress({ enrollmentId: e.id, moduleId: "mod-1", completed: true });
+      const prog = trainingProgress({
+        enrollmentId: e.id,
+        moduleId: "mod-1",
+        completed: true,
+      });
       repo.addProgress(prog);
       const auth = studentAuth(schoolId, { userId: "user-1" });
 
@@ -820,9 +800,9 @@ describe("TrainingService", () => {
       repo.addEnrollment(e);
       const auth = studentAuth(schoolId, { userId: "other-user" });
 
-      await expect(
-        service.getProgress(auth, schoolId, e.id),
-      ).rejects.toThrow(TrainingForbiddenException);
+      await expect(service.getProgress(auth, schoolId, e.id)).rejects.toThrow(
+        TrainingForbiddenException,
+      );
     });
 
     it("allows SCHOOL_ADMIN to view any enrollment progress", async () => {
@@ -1072,15 +1052,15 @@ describe("TrainingService", () => {
       ).rejects.toThrow(TrainingForbiddenException);
     });
 
-    it("allows PLATFORM_ADMIN to enroll in any school", async () => {
+    it("denies PLATFORM_ADMIN from self-enrolling in any school", async () => {
       const { service, repo } = createService();
       const p = trainingProgram({ schoolId, status: "PUBLISHED" });
       repo.addProgram(p);
       const auth = platformAdminAuth("platform-school");
 
-      const result = await service.enroll(auth, schoolId, p.id, "platform-admin-1");
-
-      expect(result.status).toBe("ENROLLED");
+      await expect(
+        service.enroll(auth, schoolId, p.id, "platform-admin-1"),
+      ).rejects.toThrow(TrainingForbiddenException);
     });
   });
 });

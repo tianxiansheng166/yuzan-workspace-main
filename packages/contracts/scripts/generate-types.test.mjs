@@ -17,6 +17,7 @@ function run(command, args, options = {}) {
   return spawnSync(command, args, {
     cwd: packageRoot,
     encoding: "utf8",
+    shell: process.platform === "win32" && command === pnpm,
     ...options,
   });
 }

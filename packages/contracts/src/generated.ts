@@ -547,6 +547,7 @@ export interface components {
       role:
         | "STUDENT"
         | "TEACHER"
+        | "VOLUNTEER"
         | "RESEARCHER"
         | "SCHOOL_ADMIN"
         | "PLATFORM_ADMIN";
@@ -687,6 +688,10 @@ export interface components {
       /** Format: date-time */
       dueAt: string;
       revision: number;
+      /** Format: uuid */
+      enrollmentId?: string | null;
+      /** Format: uuid */
+      classId?: string | null;
       offlineRequired?: boolean;
       targets?: components["schemas"]["AssignmentTarget"][];
     };

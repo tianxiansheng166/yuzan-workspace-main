@@ -18,7 +18,15 @@ import {
   type TenantContext,
 } from "../../common/security/index.js";
 import { VolunteersService } from "./volunteers.service.js";
-import { ListVolunteersQueryDto, ApplyVolunteerDto, TransitionVolunteerDto, ListServiceTasksQueryDto, AssignServiceTaskDto, CreateIncidentDto, ListIncidentsQueryDto } from "./dto/volunteer.dto.js";
+import {
+  ListVolunteersQueryDto,
+  ApplyVolunteerDto,
+  TransitionVolunteerDto,
+  ListServiceTasksQueryDto,
+  AssignServiceTaskDto,
+  CreateIncidentDto,
+  ListIncidentsQueryDto,
+} from "./dto/volunteer.dto.js";
 
 @Controller("schools/:schoolId/volunteers")
 export class VolunteersController {
@@ -28,7 +36,7 @@ export class VolunteersController {
   ) {}
 
   @Post()
-  @RequireRoles(MembershipRole.STUDENT, MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
+  @RequireRoles(MembershipRole.VOLUNTEER)
   async apply(
     @Param("schoolId", ParseUUIDPipe) schoolId: string,
     @Body() dto: ApplyVolunteerDto,
@@ -58,7 +66,7 @@ export class VolunteersController {
   }
 
   @Get("me")
-  @RequireRoles(MembershipRole.STUDENT, MembershipRole.TEACHER)
+  @RequireRoles(MembershipRole.VOLUNTEER)
   async getMyProfile(
     @Param("schoolId", ParseUUIDPipe) schoolId: string,
     @CurrentTenant() tenant: TenantContext,
@@ -100,12 +108,14 @@ export class VolunteersController {
       volunteerId,
       dto.status,
       1,
-      dto.suspendedReason !== undefined ? { suspendedReason: dto.suspendedReason } : undefined,
+      dto.suspendedReason !== undefined
+        ? { suspendedReason: dto.suspendedReason }
+        : undefined,
     );
   }
 
   @Get(":volunteerId/service-tasks")
-  @RequireRoles(MembershipRole.STUDENT, MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
+  @RequireRoles(MembershipRole.VOLUNTEER)
   async listMyServiceTasks(
     @Param("schoolId", ParseUUIDPipe) schoolId: string,
     @Param("volunteerId", ParseUUIDPipe) _volunteerId: string,

@@ -16,6 +16,7 @@ enum UserStatus {
 enum MembershipRole {
   STUDENT
   TEACHER
+  VOLUNTEER
   RESEARCHER
   SCHOOL_ADMIN
   PLATFORM_ADMIN
@@ -157,35 +158,42 @@ enum SyncBatchStatus {
 }
 
 model School {
-  id                String             @id @default(uuid()) @db.Uuid
-  code              String             @unique
-  name              String
-  timezone          String             @default("Asia/Shanghai")
-  regionCode        String?
-  isActive          Boolean            @default(true)
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
-  deletedAt         DateTime?
-  campuses          Campus[]
-  memberships       Membership[]
-  terms             Term[]
-  classes           Class[]
-  courses           Course[]
-  assignments       Assignment[]
-  devices           Device[]
-  auditLogs         AuditLog[]
-  contentPackages   ContentPackage[]
-  submissions       Submission[]
-  feedback          Feedback[]
-  syncJobs          SyncJob[]
-  syncCursors       SyncCursor[]
-  enrollments       Enrollment[]
-  assignmentTargets AssignmentTarget[]
-  activityProgress  ActivityProgress[]
-  activityAttempts  ActivityAttempt[]
-  reports           Report[]
-  offlinePackages   OfflineContentPackage[]
-  syncBatches       SyncBatch[]
+  id                    String                  @id @default(uuid()) @db.Uuid
+  code                  String                  @unique
+  name                  String
+  timezone              String                  @default("Asia/Shanghai")
+  regionCode            String?
+  isActive              Boolean                 @default(true)
+  createdAt             DateTime                @default(now())
+  updatedAt             DateTime                @updatedAt
+  deletedAt             DateTime?
+  campuses              Campus[]
+  memberships           Membership[]
+  terms                 Term[]
+  classes               Class[]
+  courses               Course[]
+  assignments           Assignment[]
+  devices               Device[]
+  auditLogs             AuditLog[]
+  contentPackages       ContentPackage[]
+  submissions           Submission[]
+  feedback              Feedback[]
+  syncJobs              SyncJob[]
+  syncCursors           SyncCursor[]
+  enrollments           Enrollment[]
+  assignmentTargets     AssignmentTarget[]
+  activityProgress      ActivityProgress[]
+  activityAttempts      ActivityAttempt[]
+  reports               Report[]
+  offlinePackages       OfflineContentPackage[]
+  syncBatches           SyncBatch[]
+  volunteerProfiles     VolunteerProfile[]
+  trainingPrograms      TrainingProgram[]
+  trainingEnrollments   TrainingEnrollment[]
+  trainingExams         TrainingExam[]
+  supportPairings       SupportPairing[]
+  volunteerServiceTasks VolunteerServiceTask[]
+  volunteerIncidents    VolunteerIncident[]
 
   @@index([isActive])
   @@index([deletedAt])
@@ -210,21 +218,23 @@ model Campus {
 }
 
 model User {
-  id                 String        @id @default(uuid()) @db.Uuid
-  loginIdentifier    String        @unique
-  displayName        String
-  passwordHash       String
-  preferredLocale    String        @default("zh-CN")
-  status             UserStatus    @default(ACTIVE)
-  createdAt          DateTime      @default(now())
-  updatedAt          DateTime      @updatedAt
-  memberships        Membership[]
-  sessionPairs       SessionPair[]
-  enrollments        Enrollment[]
-  authoredCourses    Course[]      @relation("CourseAuthor")
-  createdAssignments Assignment[]
-  feedback           Feedback[]    @relation("FeedbackAuthor")
-  auditLogs          AuditLog[]    @relation("AuditActor")
+  id                  String               @id @default(uuid()) @db.Uuid
+  loginIdentifier     String               @unique
+  displayName         String
+  passwordHash        String
+  preferredLocale     String               @default("zh-CN")
+  status              UserStatus           @default(ACTIVE)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  memberships         Membership[]
+  sessionPairs        SessionPair[]
+  enrollments         Enrollment[]
+  authoredCourses     Course[]             @relation("CourseAuthor")
+  createdAssignments  Assignment[]
+  feedback            Feedback[]           @relation("FeedbackAuthor")
+  auditLogs           AuditLog[]           @relation("AuditActor")
+  volunteerProfiles   VolunteerProfile[]
+  trainingEnrollments TrainingEnrollment[]
 
   @@index([status])
 }
@@ -354,24 +364,24 @@ model Course {
 }
 
 model CourseVersion {
-  id              String              @id @default(uuid()) @db.Uuid
-  schoolId        String              @db.Uuid
-  courseId        String              @db.Uuid
+  id              String                  @id @default(uuid()) @db.Uuid
+  schoolId        String                  @db.Uuid
+  courseId        String                  @db.Uuid
   version         Int
-  status          CourseVersionStatus @default(DRAFT)
+  status          CourseVersionStatus     @default(DRAFT)
   title           String
   description     String?
   gradeBand       String?
-  locale          String              @default("zh-CN")
+  locale          String                  @default("zh-CN")
   dialect         String?
   objectives      Json?
   submittedAt     DateTime?
   approvedAt      DateTime?
   publishedAt     DateTime?
   retiredAt       DateTime?
-  createdAt       DateTime            @default(now())
-  updatedAt       DateTime            @updatedAt
-  course          Course              @relation(fields: [schoolId, courseId], references: [schoolId, id])
+  createdAt       DateTime                @default(now())
+  updatedAt       DateTime                @updatedAt
+  course          Course                  @relation(fields: [schoolId, courseId], references: [schoolId, id])
   units           Unit[]
   assignments     Assignment[]
   reviews         CourseReview[]
@@ -807,20 +817,20 @@ model Report {
 }
 
 model OfflineContentPackage {
-  id               String               @id @default(uuid()) @db.Uuid
-  schoolId         String               @db.Uuid
-  courseVersionId  String               @db.Uuid
-  version          Int                  @default(1)
+  id               String        @id @default(uuid()) @db.Uuid
+  schoolId         String        @db.Uuid
+  courseVersionId  String        @db.Uuid
+  version          Int           @default(1)
   checksum         String
   manifest         Json
-  byteSize         BigInt               @default(0)
-  downloadRequired Boolean              @default(false)
+  byteSize         BigInt        @default(0)
+  downloadRequired Boolean       @default(false)
   expiresAt        DateTime?
-  revision         Int                  @default(1)
-  createdAt        DateTime             @default(now())
-  updatedAt        DateTime             @updatedAt
-  school           School               @relation(fields: [schoolId], references: [id], onDelete: Cascade)
-  courseVersion    CourseVersion        @relation(fields: [schoolId, courseVersionId], references: [schoolId, id], onDelete: Restrict)
+  revision         Int           @default(1)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  school           School        @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  courseVersion    CourseVersion @relation(fields: [schoolId, courseVersionId], references: [schoolId, id], onDelete: Restrict)
 
   @@unique([schoolId, id])
   @@index([schoolId, courseVersionId, version])
@@ -848,4 +858,213 @@ model SyncBatch {
   @@unique([schoolId, id])
   @@index([schoolId, deviceId, status])
   @@index([schoolId, createdAt])
+}
+
+model VolunteerProfile {
+  id              String    @id @default(uuid()) @db.Uuid
+  schoolId        String    @db.Uuid
+  userId          String    @db.Uuid
+  status          String
+  displayName     String
+  phone           String
+  email           String?
+  experience      String?
+  qualifications  String[]  @default([])
+  appliedAt       DateTime  @default(now())
+  qualifiedAt     DateTime?
+  suspendedReason String?
+  revision        Int       @default(1)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  school          School    @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([schoolId, id])
+  @@unique([schoolId, userId])
+  @@index([schoolId, status, appliedAt])
+}
+
+model VolunteerServiceTask {
+  id                    String   @id @default(uuid()) @db.Uuid
+  schoolId              String   @db.Uuid
+  title                 String
+  serviceType           String
+  classId               String?  @db.Uuid
+  studentScope          String
+  supervisorTeacherId   String   @db.Uuid
+  requiredQualification String
+  assignedVolunteerId   String?  @db.Uuid
+  status                String
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  school                School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  @@unique([schoolId, id])
+  @@index([schoolId, assignedVolunteerId, status])
+}
+
+model VolunteerIncident {
+  id                 String   @id @default(uuid()) @db.Uuid
+  schoolId           String   @db.Uuid
+  type               String
+  severity           String
+  description        String
+  immediateAction    String?
+  studentRef         String?
+  assignedReviewerId String?  @db.Uuid
+  status             String   @default("OPEN")
+  resolution         String?
+  reportedBy         String   @db.Uuid
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  school             School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  @@unique([schoolId, id])
+  @@index([schoolId, severity, status, createdAt])
+}
+
+model TrainingProgram {
+  id          String               @id @default(uuid()) @db.Uuid
+  schoolId    String               @db.Uuid
+  title       String
+  description String?
+  objectives  String[]             @default([])
+  locale      String               @default("zh-CN")
+  dialect     String?
+  status      String               @default("DRAFT")
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+  school      School               @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  modules     TrainingModule[]
+  enrollments TrainingEnrollment[]
+  exams       TrainingExam[]
+
+  @@unique([schoolId, id])
+  @@index([schoolId, status, createdAt])
+}
+
+model TrainingModule {
+  id              String             @id @default(uuid()) @db.Uuid
+  schoolId        String             @db.Uuid
+  programId       String             @db.Uuid
+  title           String
+  description     String?
+  sortOrder       Int
+  required        Boolean            @default(true)
+  durationMinutes Int?
+  createdAt       DateTime           @default(now())
+  program         TrainingProgram    @relation(fields: [schoolId, programId], references: [schoolId, id], onDelete: Cascade)
+  progress        TrainingProgress[]
+
+  @@unique([schoolId, id])
+  @@unique([schoolId, programId, sortOrder])
+  @@index([schoolId, programId])
+}
+
+model TrainingEnrollment {
+  id              String             @id @default(uuid()) @db.Uuid
+  schoolId        String             @db.Uuid
+  programId       String             @db.Uuid
+  volunteerUserId String             @db.Uuid
+  status          String             @default("ENROLLED")
+  enrolledAt      DateTime           @default(now())
+  completedAt     DateTime?
+  examReady       Boolean            @default(false)
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  school          School             @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  program         TrainingProgram    @relation(fields: [schoolId, programId], references: [schoolId, id], onDelete: Cascade)
+  volunteer       User               @relation(fields: [volunteerUserId], references: [id], onDelete: Cascade)
+  progress        TrainingProgress[]
+  exams           TrainingExam[]
+
+  @@unique([schoolId, id])
+  @@unique([schoolId, programId, volunteerUserId])
+  @@index([schoolId, volunteerUserId, status])
+}
+
+model TrainingProgress {
+  id           String             @id @default(uuid()) @db.Uuid
+  schoolId     String             @db.Uuid
+  enrollmentId String             @db.Uuid
+  moduleId     String             @db.Uuid
+  completed    Boolean            @default(false)
+  completedAt  DateTime?
+  score        Float?
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  enrollment   TrainingEnrollment @relation(fields: [schoolId, enrollmentId], references: [schoolId, id], onDelete: Cascade)
+  module       TrainingModule     @relation(fields: [schoolId, moduleId], references: [schoolId, id], onDelete: Cascade)
+
+  @@unique([schoolId, enrollmentId, moduleId])
+  @@index([schoolId, enrollmentId])
+}
+
+model TrainingExam {
+  id           String                @id @default(uuid()) @db.Uuid
+  schoolId     String                @db.Uuid
+  programId    String                @db.Uuid
+  enrollmentId String                @db.Uuid
+  scheduledAt  DateTime
+  status       String                @default("SCHEDULED")
+  passingScore Float
+  createdAt    DateTime              @default(now())
+  updatedAt    DateTime              @updatedAt
+  school       School                @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  program      TrainingProgram       @relation(fields: [schoolId, programId], references: [schoolId, id], onDelete: Cascade)
+  enrollment   TrainingEnrollment    @relation(fields: [schoolId, enrollmentId], references: [schoolId, id], onDelete: Cascade)
+  attempts     TrainingExamAttempt[]
+
+  @@unique([schoolId, id])
+  @@index([schoolId, enrollmentId, status])
+}
+
+model TrainingExamAttempt {
+  id          String       @id @default(uuid()) @db.Uuid
+  schoolId    String       @db.Uuid
+  examId      String       @db.Uuid
+  score       Float
+  passed      Boolean
+  submittedAt DateTime
+  createdAt   DateTime     @default(now())
+  exam        TrainingExam @relation(fields: [schoolId, examId], references: [schoolId, id], onDelete: Cascade)
+
+  @@unique([schoolId, id])
+  @@index([schoolId, examId, submittedAt])
+}
+
+model SupportPairing {
+  id                  String           @id @default(uuid()) @db.Uuid
+  schoolId            String           @db.Uuid
+  studentUserId       String           @db.Uuid
+  volunteerUserId     String           @db.Uuid
+  supervisorTeacherId String           @db.Uuid
+  consentStatus       String           @default("PENDING")
+  goal                String
+  status              String           @default("PENDING_CONSENT")
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+  school              School           @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  sessions            SupportSession[]
+
+  @@unique([schoolId, id])
+  @@index([schoolId, volunteerUserId, status])
+  @@index([schoolId, studentUserId, status])
+}
+
+model SupportSession {
+  id                  String         @id @default(uuid()) @db.Uuid
+  schoolId            String         @db.Uuid
+  pairingId           String         @db.Uuid
+  scheduledAt         DateTime
+  summary             String?
+  nextStep            String?
+  riskLevel           String         @default("LOW")
+  teacherReviewStatus String         @default("PENDING")
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+  pairing             SupportPairing @relation(fields: [schoolId, pairingId], references: [schoolId, id], onDelete: Cascade)
+
+  @@unique([schoolId, id])
+  @@index([schoolId, pairingId, scheduledAt])
 }

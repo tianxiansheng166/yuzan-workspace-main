@@ -9,14 +9,13 @@ import type { SchoolMembership } from "~/features/school-selection/types";
 useSeoMeta({ title: "选择学校｜语赞心声" });
 const router = useRouter();
 const api = useProductApi();
+const productSession = useProductSession();
 const gateway = createBrowserSchoolSelectionGateway(api);
 
-const selection = createSchoolSelectionState(
-  gateway,
-  async (to) => {
-    await router.replace(to);
-  },
-);
+const selection = createSchoolSelectionState(gateway, async (to) => {
+  await productSession.refresh(true);
+  await router.replace(to);
+});
 const busy = computed(
   () =>
     selection.state.status === "SELECTING" ||
@@ -50,6 +49,7 @@ async function logout() {
     await api.logout();
   } finally {
     gateway.clearActiveSchool();
+    productSession.clear();
     await router.replace("/login");
   }
 }

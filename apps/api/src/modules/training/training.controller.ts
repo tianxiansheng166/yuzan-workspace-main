@@ -40,7 +40,7 @@ export class TrainingController {
 
   @Get()
   @RequireRoles(
-    MembershipRole.STUDENT,
+    MembershipRole.VOLUNTEER,
     MembershipRole.TEACHER,
     MembershipRole.SCHOOL_ADMIN,
   )
@@ -64,9 +64,9 @@ export class TrainingController {
     );
   }
 
-  @Get(":programId")
+  @Get("programs/:programId")
   @RequireRoles(
-    MembershipRole.STUDENT,
+    MembershipRole.VOLUNTEER,
     MembershipRole.TEACHER,
     MembershipRole.SCHOOL_ADMIN,
   )
@@ -119,7 +119,7 @@ export class TrainingController {
 
   @Post(":programId/enroll")
   @RequireRoles(
-    MembershipRole.STUDENT,
+    MembershipRole.VOLUNTEER,
     MembershipRole.TEACHER,
     MembershipRole.SCHOOL_ADMIN,
   )
@@ -140,7 +140,7 @@ export class TrainingController {
 
   @Get("enrollments/me")
   @RequireRoles(
-    MembershipRole.STUDENT,
+    MembershipRole.VOLUNTEER,
     MembershipRole.TEACHER,
     MembershipRole.SCHOOL_ADMIN,
   )
@@ -189,7 +189,7 @@ export class TrainingController {
 
   @Post(":programId/progress")
   @RequireRoles(
-    MembershipRole.STUDENT,
+    MembershipRole.VOLUNTEER,
     MembershipRole.TEACHER,
     MembershipRole.SCHOOL_ADMIN,
   )
@@ -212,7 +212,7 @@ export class TrainingController {
 
   @Get(":programId/progress")
   @RequireRoles(
-    MembershipRole.STUDENT,
+    MembershipRole.VOLUNTEER,
     MembershipRole.TEACHER,
     MembershipRole.SCHOOL_ADMIN,
   )
@@ -250,7 +250,7 @@ export class TrainingController {
 
   @Post("exams/:examId/attempt")
   @RequireRoles(
-    MembershipRole.STUDENT,
+    MembershipRole.VOLUNTEER,
     MembershipRole.TEACHER,
     MembershipRole.SCHOOL_ADMIN,
   )
@@ -271,7 +271,7 @@ export class TrainingController {
 
   @Get("exams/:examId")
   @RequireRoles(
-    MembershipRole.STUDENT,
+    MembershipRole.VOLUNTEER,
     MembershipRole.TEACHER,
     MembershipRole.SCHOOL_ADMIN,
   )

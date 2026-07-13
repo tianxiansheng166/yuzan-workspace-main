@@ -22,8 +22,19 @@ export class TrainingPolicy {
     ]);
   }
 
-  canEnroll(auth: AuthContext, schoolId: string): boolean {
-    return this.isMemberOfSchool(auth, schoolId);
+  canEnroll(
+    auth: AuthContext,
+    schoolId: string,
+    volunteerUserId: string,
+  ): boolean {
+    if (!this.isMemberOfSchool(auth, schoolId)) return false;
+    if (hasRole(auth, MembershipRole.VOLUNTEER)) {
+      return auth.principal.userId === volunteerUserId;
+    }
+    return hasAnyRole(auth, [
+      MembershipRole.TEACHER,
+      MembershipRole.SCHOOL_ADMIN,
+    ]);
   }
 
   canViewOwnEnrollment(

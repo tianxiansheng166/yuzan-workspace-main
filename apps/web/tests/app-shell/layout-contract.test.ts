@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
+import { navigationRoutesForRole } from "../../app/routing/product-route-registry";
 const read = (path: string) =>
   readFileSync(resolve(import.meta.dirname, "../../app", path), "utf8");
 describe("app shell layout", () => {
@@ -11,12 +12,17 @@ describe("app shell layout", () => {
   });
   it("exposes four primary entries and account actions", () => {
     const source = read("components/app-shell/AppShell.vue");
-    for (const route of ["/", "/student/today", "/teacher", "/volunteer"]) {
-      expect(source).toMatch(
-        new RegExp(`to:\\s*["']${route.replace("/", "\\/")}["']`),
-      );
-    }
-    expect(source).toContain('to="/plans"');
+    expect(source).toContain("navigationRoutesForRole");
+    expect(source).toContain('v-for="entry in entries"');
+    expect(
+      navigationRoutesForRole("STUDENT").map((entry) => entry.path),
+    ).toContain("/student/today");
+    expect(
+      navigationRoutesForRole("TEACHER").map((entry) => entry.path),
+    ).toContain("/teacher");
+    expect(
+      navigationRoutesForRole("VOLUNTEER").map((entry) => entry.path),
+    ).toContain("/volunteer");
     expect(source).toContain('to="/select-school"');
     expect(source).toContain('to="/login"');
   });

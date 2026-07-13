@@ -45,7 +45,7 @@ export class TranslationGateway {
 
       if (!response.ok) {
         throw new TranslationError(
-          `翻译服务暂不可用（${response.status}），请稍后重试`,
+          `翻译服务尚未接入或暂不可用（${response.status}），请稍后重试`,
         );
       }
 

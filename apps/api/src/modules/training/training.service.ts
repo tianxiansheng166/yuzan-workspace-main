@@ -91,7 +91,9 @@ export class TrainingService {
       modules: [],
       createdAt: now,
       updatedAt: now,
-      ...(dto.description !== undefined ? { description: dto.description } : {}),
+      ...(dto.description !== undefined
+        ? { description: dto.description }
+        : {}),
       ...(dto.dialect !== undefined ? { dialect: dto.dialect } : {}),
     };
 
@@ -103,7 +105,11 @@ export class TrainingService {
     auth: AuthContext,
     schoolId: string,
     programId: string,
-    dto: { title?: string; description?: string; objectives?: readonly string[] },
+    dto: {
+      title?: string;
+      description?: string;
+      objectives?: readonly string[];
+    },
   ) {
     if (!this.policy.canManagePrograms(auth, schoolId)) {
       throw new TrainingForbiddenException();
@@ -123,7 +129,9 @@ export class TrainingService {
     const updated: TrainingProgram = {
       ...program,
       ...(dto.title !== undefined ? { title: dto.title } : {}),
-      ...(dto.description !== undefined ? { description: dto.description } : {}),
+      ...(dto.description !== undefined
+        ? { description: dto.description }
+        : {}),
       ...(dto.objectives !== undefined ? { objectives: dto.objectives } : {}),
       updatedAt: new Date(),
     };
@@ -140,7 +148,7 @@ export class TrainingService {
     programId: string,
     volunteerUserId: string,
   ) {
-    if (!this.policy.canEnroll(auth, schoolId)) {
+    if (!this.policy.canEnroll(auth, schoolId, volunteerUserId)) {
       throw new TrainingForbiddenException();
     }
 
@@ -258,11 +266,7 @@ export class TrainingService {
     return toTrainingProgressResponse(saved);
   }
 
-  async getProgress(
-    auth: AuthContext,
-    schoolId: string,
-    enrollmentId: string,
-  ) {
+  async getProgress(auth: AuthContext, schoolId: string, enrollmentId: string) {
     const enrollment = await this.repo.findEnrollmentById(
       schoolId,
       enrollmentId,
@@ -307,7 +311,9 @@ export class TrainingService {
     }
 
     if (!enrollment.examReady) {
-      throw new TrainingConflictException("报名尚未完成所有必修模块，无法安排考试");
+      throw new TrainingConflictException(
+        "报名尚未完成所有必修模块，无法安排考试",
+      );
     }
 
     const now = new Date();
@@ -382,11 +388,7 @@ export class TrainingService {
     return toTrainingExamAttemptResponse(attempt);
   }
 
-  async getExamResults(
-    auth: AuthContext,
-    schoolId: string,
-    examId: string,
-  ) {
+  async getExamResults(auth: AuthContext, schoolId: string, examId: string) {
     const exam = await this.repo.findExamById(schoolId, examId);
     if (!exam) {
       throw new TrainingExamNotFoundException();

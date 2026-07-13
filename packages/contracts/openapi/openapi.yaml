@@ -1139,7 +1139,15 @@ components:
           type: string
         role:
           type: string
-          enum: [STUDENT, TEACHER, RESEARCHER, SCHOOL_ADMIN, PLATFORM_ADMIN]
+          enum:
+            [
+              STUDENT,
+              TEACHER,
+              VOLUNTEER,
+              RESEARCHER,
+              SCHOOL_ADMIN,
+              PLATFORM_ADMIN,
+            ]
     CurrentUser:
       type: object
       required: [id, displayName, memberships]
@@ -1280,7 +1288,8 @@ components:
       allOf:
         - $ref: "#/components/schemas/CourseVersionSummary"
         - type: object
-          required: [schoolId, authorUserId, locale, objectives, units, createdAt]
+          required:
+            [schoolId, authorUserId, locale, objectives, units, createdAt]
           properties:
             schoolId:
               type: string
@@ -1406,6 +1415,12 @@ components:
         revision:
           type: integer
           minimum: 1
+        enrollmentId:
+          type: [string, "null"]
+          format: uuid
+        classId:
+          type: [string, "null"]
+          format: uuid
         offlineRequired:
           type: boolean
         targets:
@@ -1727,7 +1742,8 @@ components:
       enum: [PENDING, GENERATING, READY, FAILED]
     ReportSummary:
       type: object
-      required: [id, type, status, periodStart, periodEnd, dataCompleteness, revision]
+      required:
+        [id, type, status, periodStart, periodEnd, dataCompleteness, revision]
       properties:
         id:
           type: string
@@ -1821,7 +1837,15 @@ components:
           $ref: "#/components/schemas/EnvelopeMeta"
     StudentGrowthProfile:
       type: object
-      required: [enrollmentId, periodStart, periodEnd, generatedAt, dataCompleteness, providerDisclosure]
+      required:
+        [
+          enrollmentId,
+          periodStart,
+          periodEnd,
+          generatedAt,
+          dataCompleteness,
+          providerDisclosure,
+        ]
       properties:
         enrollmentId:
           type: string
@@ -1970,7 +1994,17 @@ components:
             $ref: "#/components/schemas/SyncOperation"
     SyncBatchSummary:
       type: object
-      required: [id, status, operationCount, acceptedCount, duplicateCount, conflictCount, rejectedCount, permissionChanged]
+      required:
+        [
+          id,
+          status,
+          operationCount,
+          acceptedCount,
+          duplicateCount,
+          conflictCount,
+          rejectedCount,
+          permissionChanged,
+        ]
       properties:
         id:
           type: string

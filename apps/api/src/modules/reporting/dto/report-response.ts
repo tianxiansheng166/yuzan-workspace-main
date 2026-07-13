@@ -9,6 +9,8 @@ export function toReportSummaryResponse(report: Report) {
     periodEnd: report.periodEnd.toISOString(),
     dataCompleteness: report.dataCompleteness,
     revision: report.revision,
+    enrollmentId: report.enrollmentId,
+    classId: report.classId,
   };
 }
 

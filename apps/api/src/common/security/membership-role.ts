@@ -11,6 +11,7 @@
 export enum MembershipRole {
   STUDENT = "STUDENT",
   TEACHER = "TEACHER",
+  VOLUNTEER = "VOLUNTEER",
   RESEARCHER = "RESEARCHER",
   SCHOOL_ADMIN = "SCHOOL_ADMIN",
   PLATFORM_ADMIN = "PLATFORM_ADMIN",
@@ -34,6 +35,7 @@ export function isMembershipRole(value: unknown): value is MembershipRole {
 const ROLE_RANK: Record<MembershipRole, number> = {
   [MembershipRole.STUDENT]: 1,
   [MembershipRole.TEACHER]: 2,
+  [MembershipRole.VOLUNTEER]: 2,
   [MembershipRole.RESEARCHER]: 2,
   [MembershipRole.SCHOOL_ADMIN]: 3,
   [MembershipRole.PLATFORM_ADMIN]: 4,

@@ -1,6 +1,14 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
+import {
+  navigationRoutesForRole,
+  routePatternMatches,
+} from "../../routing/product-route-registry";
+
 const route = useRoute();
+const router = useRouter();
+const api = useProductApi();
+const session = useProductSession();
 const navigationOpen = ref(false);
 watch(
   () => route.path,
@@ -8,39 +16,28 @@ watch(
     navigationOpen.value = false;
   },
 );
-const entries = [
-  {
-    to: "/",
-    label: "公共",
-    note: "首页与套餐",
-    routes: ["/", "/login", "/plans"],
-  },
-  {
-    to: "/student/today",
-    label: "学生",
-    note: "课程与学习",
-    routes: ["/student", "/assessment"],
-  },
-  {
-    to: "/teacher",
-    label: "教师",
-    note: "教学与复核",
-    routes: ["/teacher", "/studio", "/reports"],
-  },
-  {
-    to: "/volunteer",
-    label: "运营服务",
-    note: "管理·志愿·教研",
-    routes: ["/volunteer", "/admin", "/research"],
-  },
-];
-function active(routes: string[]) {
-  return routes.some((path) =>
-    path === "/"
-      ? route.path === path
-      : route.path === path || route.path.startsWith(`${path}/`),
-  );
+const activeRole = computed(() => session.activeMembership.value?.role);
+const entries = computed(() => navigationRoutesForRole(activeRole.value));
+const accessMessage = computed(() =>
+  route.query.accessReason === "role-mismatch"
+    ? `你当前的${session.activeMembership.value?.role ?? "成员"}身份不能访问 ${String(route.query.deniedRoute ?? "该页面")}，已返回所属产品端。`
+    : null,
+);
+
+function active(path: string) {
+  return routePatternMatches(path, route.path);
 }
+
+async function logout() {
+  try {
+    await api.logout();
+  } finally {
+    session.clear();
+    await router.push("/login");
+  }
+}
+
+onMounted(() => session.refresh());
 </script>
 <template>
   <div class="app-shell">
@@ -66,24 +63,29 @@ function active(routes: string[]) {
         <nav
           id="product-navigation"
           :data-open="navigationOpen"
-          aria-label="四个主要产品入口"
+          aria-label="当前角色产品导航"
         >
           <NuxtLink
             v-for="entry in entries"
-            :key="entry.to"
-            :to="entry.to"
-            :aria-current="active(entry.routes) ? 'page' : undefined"
+            :key="entry.id"
+            :to="entry.path"
+            :aria-current="active(entry.path) ? 'page' : undefined"
             ><strong>{{ entry.label }}</strong
-            ><small>{{ entry.note }}</small></NuxtLink
+            ><small>{{ entry.port }}</small></NuxtLink
           >
           <div class="account">
-            <NuxtLink to="/plans">套餐</NuxtLink>
-            <NuxtLink to="/select-school">切换学校</NuxtLink
-            ><NuxtLink to="/login">登录</NuxtLink>
+            <template v-if="session.state.value.status === 'authenticated'">
+              <NuxtLink to="/select-school">切换学校</NuxtLink>
+              <button type="button" @click="logout">退出登录</button>
+            </template>
+            <NuxtLink v-else to="/login">登录</NuxtLink>
           </div>
         </nav>
       </div>
     </header>
+    <p v-if="accessMessage" class="access-message" role="status">
+      {{ accessMessage }}
+    </p>
     <main id="main"><slot /></main>
   </div>
 </template>
@@ -182,6 +184,27 @@ nav > a small {
 .account a {
   color: var(--yx-color-wine);
   font-weight: 700;
+}
+.account button {
+  border: 0;
+  padding: 0;
+  background: none;
+  color: var(--yx-color-wine);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.access-message {
+  margin: 0;
+  padding: 0.75rem max(1rem, calc((100vw - 78rem) / 2));
+  border-bottom: 1px solid var(--yx-color-gold);
+  background: color-mix(
+    in srgb,
+    var(--yx-color-gold) 15%,
+    var(--yx-color-paper)
+  );
+  color: var(--yx-color-ink);
 }
 .toggle {
   display: none;

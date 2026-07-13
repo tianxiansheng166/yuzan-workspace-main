@@ -1,11 +1,7 @@
 <script setup lang="ts">
-import ProductPlans from "~/features/product-plans/components/ProductPlans.vue";
-
-useSeoMeta({
-  title: "产品方案 | 语赞心声",
-});
+definePageMeta({ layout: false });
+useSeoMeta({ title: "套餐｜语赞心声" });
+await navigateTo("/plans", { redirectCode: 301, replace: true });
 </script>
 
-<template>
-  <ProductPlans />
-</template>
+<template><p>正在前往套餐页……</p></template>

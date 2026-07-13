@@ -23,10 +23,16 @@ import {
   PairingStatus,
   TeacherReviewStatus,
 } from "./domain/support-pairing.types.js";
-import { CreatePairingDto, CreateSessionDto, ListPairingsQueryDto, ReviewSessionDto, UpdateConsentDto, UpdatePairingStatusDto, UpdateSessionDto } from "./dto/support-pairing.dto.js";
-import type {
-  ListPairingsOptions,
-} from "./ports/support-pairing-repository.port.js";
+import {
+  CreatePairingDto,
+  CreateSessionDto,
+  ListPairingsQueryDto,
+  ReviewSessionDto,
+  UpdateConsentDto,
+  UpdatePairingStatusDto,
+  UpdateSessionDto,
+} from "./dto/support-pairing.dto.js";
+import type { ListPairingsOptions } from "./ports/support-pairing-repository.port.js";
 import { SupportPairingsService } from "./support-pairings.service.js";
 
 @Controller("schools/:schoolId/support-pairings")
@@ -81,7 +87,7 @@ export class SupportPairingsController {
   @RequireRoles(
     MembershipRole.TEACHER,
     MembershipRole.SCHOOL_ADMIN,
-    MembershipRole.STUDENT,
+    MembershipRole.VOLUNTEER,
   )
   async listMyPairings(
     @Param("schoolId", ParseUUIDPipe) schoolId: string,
@@ -98,7 +104,7 @@ export class SupportPairingsController {
   @RequireRoles(
     MembershipRole.TEACHER,
     MembershipRole.SCHOOL_ADMIN,
-    MembershipRole.STUDENT,
+    MembershipRole.VOLUNTEER,
   )
   async getPairing(
     @Param("schoolId", ParseUUIDPipe) schoolId: string,
@@ -155,7 +161,7 @@ export class SupportPairingsController {
   @RequireRoles(
     MembershipRole.TEACHER,
     MembershipRole.SCHOOL_ADMIN,
-    MembershipRole.STUDENT,
+    MembershipRole.VOLUNTEER,
   )
   async createSession(
     @Param("schoolId", ParseUUIDPipe) schoolId: string,
@@ -176,7 +182,7 @@ export class SupportPairingsController {
   @RequireRoles(
     MembershipRole.TEACHER,
     MembershipRole.SCHOOL_ADMIN,
-    MembershipRole.STUDENT,
+    MembershipRole.VOLUNTEER,
   )
   async listSessions(
     @Param("schoolId", ParseUUIDPipe) schoolId: string,

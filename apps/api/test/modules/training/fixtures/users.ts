@@ -1,6 +1,9 @@
 import type { AuthContext } from "../../../../src/common/security/auth.types.js";
 import { createAuthContext } from "../../../../src/common/security/auth-context.js";
-import { MembershipRole, MembershipStatus } from "../../../../src/common/security/index.js";
+import {
+  MembershipRole,
+  MembershipStatus,
+} from "../../../../src/common/security/index.js";
 
 export function studentPrincipal(overrides: { userId?: string } = {}) {
   return {
@@ -15,6 +18,15 @@ export function teacherPrincipal(overrides: { userId?: string } = {}) {
   return {
     userId: overrides.userId ?? "teacher-1",
     roles: [MembershipRole.TEACHER] as readonly MembershipRole[],
+    membershipStatus: MembershipStatus.ACTIVE,
+    source: "test",
+  };
+}
+
+export function volunteerPrincipal(overrides: { userId?: string } = {}) {
+  return {
+    userId: overrides.userId ?? "volunteer-1",
+    roles: [MembershipRole.VOLUNTEER] as readonly MembershipRole[],
     membershipStatus: MembershipStatus.ACTIVE,
     source: "test",
   };
@@ -38,18 +50,43 @@ export function platformAdminPrincipal(overrides: { userId?: string } = {}) {
   };
 }
 
-export function studentAuth(schoolId = "school-1", overrides: { userId?: string } = {}) {
+export function studentAuth(
+  schoolId = "school-1",
+  overrides: { userId?: string } = {},
+) {
   return createAuthContext("req-1", studentPrincipal(overrides), { schoolId });
 }
 
-export function teacherAuth(schoolId = "school-1", overrides: { userId?: string } = {}) {
+export function teacherAuth(
+  schoolId = "school-1",
+  overrides: { userId?: string } = {},
+) {
   return createAuthContext("req-1", teacherPrincipal(overrides), { schoolId });
 }
 
-export function schoolAdminAuth(schoolId = "school-1", overrides: { userId?: string } = {}) {
-  return createAuthContext("req-1", schoolAdminPrincipal(overrides), { schoolId });
+export function volunteerAuth(
+  schoolId = "school-1",
+  overrides: { userId?: string } = {},
+) {
+  return createAuthContext("req-1", volunteerPrincipal(overrides), {
+    schoolId,
+  });
 }
 
-export function platformAdminAuth(schoolId = "school-1", overrides: { userId?: string } = {}) {
-  return createAuthContext("req-1", platformAdminPrincipal(overrides), { schoolId });
+export function schoolAdminAuth(
+  schoolId = "school-1",
+  overrides: { userId?: string } = {},
+) {
+  return createAuthContext("req-1", schoolAdminPrincipal(overrides), {
+    schoolId,
+  });
+}
+
+export function platformAdminAuth(
+  schoolId = "school-1",
+  overrides: { userId?: string } = {},
+) {
+  return createAuthContext("req-1", platformAdminPrincipal(overrides), {
+    schoolId,
+  });
 }

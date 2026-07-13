@@ -10,6 +10,7 @@ const generatedPath = "src/generated.ts";
 function runChecked(run, label, command, args) {
   const result = run(command, args, {
     cwd: packageRoot,
+    shell: process.platform === "win32",
     stdio: "inherit",
   });
 

@@ -26,6 +26,7 @@ export const ROLE_PERMISSIONS: RolePermissionSet = {
     Permission.FEEDBACK_PROVIDE,
     Permission.CONTENT_READ,
   ],
+  [MembershipRole.VOLUNTEER]: [Permission.CONTENT_READ],
   [MembershipRole.RESEARCHER]: [],
   [MembershipRole.SCHOOL_ADMIN]: [
     Permission.SCHOOL_MANAGE_MEMBERS,

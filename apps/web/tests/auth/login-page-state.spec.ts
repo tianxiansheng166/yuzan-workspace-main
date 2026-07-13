@@ -1,6 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
 import { createLoginPageState } from "../../app/features/auth/state/login-page-state";
-import { sanitizeInternalRedirect } from "../../app/features/auth/utils/redirect";
+import {
+  resolvePostLoginRedirect,
+  sanitizeInternalRedirect,
+} from "../../app/features/auth/utils/redirect";
 import { createSafeStorage } from "../../app/features/auth/utils/storage";
 import type { AuthGateway } from "../../app/features/auth/ports/auth-gateway";
 import type { SessionGateway } from "../../app/features/auth/ports/session-gateway";
@@ -39,6 +42,29 @@ describe("sanitizeInternalRedirect", () => {
     expect(sanitizeInternalRedirect("http://example.com")).toBeUndefined();
     expect(sanitizeInternalRedirect("//example.com")).toBeUndefined();
     expect(sanitizeInternalRedirect("/javascript:alert(1)")).toBeUndefined();
+  });
+});
+
+describe("resolvePostLoginRedirect", () => {
+  it("keeps an internal route allowed for the active role", () => {
+    expect(resolvePostLoginRedirect("teacher", "/reports?tab=ready")).toBe(
+      "/reports?tab=ready",
+    );
+  });
+
+  it("rejects a safe internal route owned by another role", () => {
+    expect(resolvePostLoginRedirect("student", "/admin")).toBe(
+      "/student/today",
+    );
+    expect(resolvePostLoginRedirect("volunteer", "/teacher-tools")).toBe(
+      "/volunteer",
+    );
+  });
+
+  it("rejects an unregistered internal route", () => {
+    expect(
+      resolvePostLoginRedirect("teacher", "/reports/not-a-real/child"),
+    ).toBe("/teacher");
   });
 });
 

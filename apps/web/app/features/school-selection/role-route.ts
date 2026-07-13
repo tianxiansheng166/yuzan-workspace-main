@@ -1,9 +1,11 @@
 import type { MembershipRole } from "./types";
+import { defaultRouteForMembershipRole } from "../../routing/product-route-registry";
 
 export function isMembershipRole(role: string): role is MembershipRole {
   return [
     "STUDENT",
     "TEACHER",
+    "VOLUNTEER",
     "RESEARCHER",
     "SCHOOL_ADMIN",
     "PLATFORM_ADMIN",
@@ -11,18 +13,5 @@ export function isMembershipRole(role: string): role is MembershipRole {
 }
 
 export function routeForMembershipRole(role: MembershipRole): string {
-  switch (role) {
-    case "STUDENT":
-      return "/student/today";
-    case "TEACHER":
-      return "/teacher";
-    case "SCHOOL_ADMIN":
-      return "/admin";
-    case "PLATFORM_ADMIN":
-      return "/admin";
-    case "RESEARCHER":
-      return "/research";
-  }
-
-  return "/login?reason=unsupported-role";
+  return defaultRouteForMembershipRole(role);
 }

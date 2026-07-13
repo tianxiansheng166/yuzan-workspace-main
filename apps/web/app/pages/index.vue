@@ -44,7 +44,7 @@ useSeoMeta({
           <NuxtLink to="/student/today">查看学生今日</NuxtLink>
           <NuxtLink to="/teacher">教师工作台</NuxtLink>
           <NuxtLink to="/teacher-tools">教师工具</NuxtLink>
-          <NuxtLink to="/products">产品方案</NuxtLink>
+          <NuxtLink to="/plans">产品方案</NuxtLink>
         </nav>
       </div>
 

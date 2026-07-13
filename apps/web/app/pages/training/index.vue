@@ -1,11 +1,7 @@
 <script setup lang="ts">
-import TrainingHub from "~/features/training-hub/components/TrainingHub.vue";
-
-useSeoMeta({
-  title: "培训分类入口 | 语赞心声",
-});
+definePageMeta({ layout: false });
+useSeoMeta({ title: "志愿者培训｜语赞心声" });
+await navigateTo("/training/volunteer", { redirectCode: 301, replace: true });
 </script>
 
-<template>
-  <TrainingHub />
-</template>
+<template><p>正在前往志愿者培训中心……</p></template>

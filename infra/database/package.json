@@ -17,6 +17,7 @@
     "format": "prisma format",
     "migrate:dev": "prisma migrate dev",
     "migrate:deploy": "prisma migrate deploy",
+    "seed": "pnpm build && node --experimental-strip-types prisma/seed.ts",
     "studio": "prisma studio",
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
@@ -25,10 +26,13 @@
     "test:integration": "node --test prisma/behavior.test.mjs"
   },
   "dependencies": {
-    "@prisma/client": "^7.8.0"
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
+    "pg": "^8.22.0"
   },
   "devDependencies": {
     "prisma": "^7.8.0",
+    "@types/pg": "^8.20.0",
     "typescript": "^5.8.3"
   }
 }
