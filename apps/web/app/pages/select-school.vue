@@ -6,6 +6,7 @@ import { createBrowserSchoolSelectionGateway } from "~/features/school-selection
 import { createSchoolSelectionState } from "~/features/school-selection/state";
 import type { SchoolMembership } from "~/features/school-selection/types";
 
+definePageMeta({ layout: "landing" });
 useSeoMeta({ title: "选择学校｜语赞心声" });
 const router = useRouter();
 const api = useProductApi();
@@ -58,6 +59,15 @@ onMounted(selection.load);
 
 <template>
   <section class="school-page" aria-labelledby="school-title">
+    <header class="selection-header" aria-label="选校页导航">
+      <NuxtLink to="/" class="selection-brand" aria-label="返回语赞心声首页">
+        <img src="/art/pixel-v3/login-logo.png" alt="语赞心声" />
+      </NuxtLink>
+      <nav aria-label="公共入口">
+        <NuxtLink to="/plans">产品方案</NuxtLink>
+        <NuxtLink to="/login">重新登录</NuxtLink>
+      </nav>
+    </header>
     <div class="school-page__landscape" aria-hidden="true" />
     <div class="yx-shell school-page__layout">
       <header class="school-page__intro">
@@ -241,6 +251,22 @@ onMounted(selection.load);
   background: #f7f2e8;
   color: var(--yx-text-primary);
 }
+.selection-header {
+  position: relative;
+  z-index: 5;
+  min-height: 5.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 clamp(1.25rem, 5vw, 4rem);
+  border-bottom: 1px solid #e8e1d8;
+  background: rgba(255, 255, 255, 0.96);
+}
+.selection-brand img { display: block; width: 10rem; max-height: 4.5rem; object-fit: contain; }
+.selection-header nav { display: flex; gap: 1.5rem; }
+.selection-header nav a { color: #286640; font-weight: 750; text-decoration: none; }
+.selection-header nav a:last-child { color: #b90003; }
+.selection-header nav a:focus-visible { outline: 3px solid #d99b2f; outline-offset: 4px; }
 .school-page__landscape {
   position: absolute;
   inset: 0 0 auto;
