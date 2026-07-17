@@ -1,254 +1,64 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from "vue";
-import {
-  navigationRoutesForRole,
-  routePatternMatches,
-} from "../../routing/product-route-registry";
+import { navigationRoutesForRole, routePatternMatches } from "../../routing/product-route-registry";
 
 const route = useRoute();
 const router = useRouter();
 const api = useProductApi();
 const session = useProductSession();
 const navigationOpen = ref(false);
-watch(
-  () => route.path,
-  () => {
-    navigationOpen.value = false;
-  },
-);
 const activeRole = computed(() => session.activeMembership.value?.role);
 const entries = computed(() => navigationRoutesForRole(activeRole.value));
-const accessMessage = computed(() =>
-  route.query.accessReason === "role-mismatch"
-    ? `你当前的${session.activeMembership.value?.role ?? "成员"}身份不能访问 ${String(route.query.deniedRoute ?? "该页面")}，已返回所属产品端。`
-    : null,
-);
-
-function active(path: string) {
-  return routePatternMatches(path, route.path);
-}
-
+const accessMessage = computed(() => route.query.accessReason === "role-mismatch"
+  ? `当前身份不能访问 ${String(route.query.deniedRoute ?? "该页面")}，已返回所属产品端。`
+  : null);
+function active(path: string) { return routePatternMatches(path, route.path); }
 async function logout() {
-  try {
-    await api.logout();
-  } finally {
-    session.clear();
-    await router.push("/login");
-  }
+  try { await api.logout(); } finally { session.clear(); await router.push("/login"); }
 }
-
+watch(() => route.path, () => { navigationOpen.value = false; });
 onMounted(() => session.refresh());
 </script>
+
 <template>
-  <div class="app-shell">
+  <div class="new-product-shell">
     <a class="skip" href="#main">跳到主要内容</a>
-    <header class="mast">
-      <div class="yx-shell mast__inner">
-        <NuxtLink to="/" class="brand" aria-label="语赞心声首页"
-          ><svg viewBox="0 0 44 44" aria-hidden="true">
-            <path d="M5 29c9-14 15 7 24-7 4-6 7-8 10-7" />
-            <path d="M7 35c10-8 17 3 28-8" /></svg
-          ><span
-            ><strong>语赞心声</strong><small>援藏教育协作平台</small></span
-          ></NuxtLink
-        ><button
-          class="toggle"
-          type="button"
-          :aria-expanded="navigationOpen"
-          aria-controls="product-navigation"
-          @click="navigationOpen = !navigationOpen"
-        >
+    <header class="product-header">
+      <div class="product-header__inner">
+        <NuxtLink to="/" class="product-brand" aria-label="语赞心声首页">
+          <img src="/art/pixel-v3/login-logo.png" alt="语赞心声" />
+        </NuxtLink>
+        <button class="mobile-toggle" type="button" :aria-expanded="navigationOpen" @click="navigationOpen = !navigationOpen">
           {{ navigationOpen ? "收起导航" : "展开导航" }}
         </button>
-        <nav
-          id="product-navigation"
-          :data-open="navigationOpen"
-          aria-label="当前角色产品导航"
-        >
-          <NuxtLink
-            v-for="entry in entries"
-            :key="entry.id"
-            :to="entry.path"
-            :aria-current="active(entry.path) ? 'page' : undefined"
-            ><strong>{{ entry.label }}</strong
-            ><small>{{ entry.port }}</small></NuxtLink
-          >
-          <div class="account">
-            <template v-if="session.state.value.status === 'authenticated'">
+        <nav class="product-nav" :data-open="navigationOpen" aria-label="产品导航">
+          <NuxtLink v-for="entry in entries" :key="entry.id" :to="entry.path" :aria-current="active(entry.path) ? 'page' : undefined">
+            <span>{{ entry.label }}</span>
+          </NuxtLink>
+          <div class="account-actions">
+            <NuxtLink v-if="session.state.value.status !== 'authenticated'" to="/login">登录</NuxtLink>
+            <template v-else>
               <NuxtLink to="/select-school">切换学校</NuxtLink>
               <button type="button" @click="logout">退出登录</button>
             </template>
-            <NuxtLink v-else to="/login">登录</NuxtLink>
           </div>
         </nav>
       </div>
     </header>
-    <p v-if="accessMessage" class="access-message" role="status">
-      {{ accessMessage }}
-    </p>
+    <p v-if="accessMessage" class="access-message" role="status">{{ accessMessage }}</p>
     <main id="main"><slot /></main>
   </div>
 </template>
+
 <style scoped>
-.app-shell {
-  min-height: 100vh;
-}
-.skip {
-  position: fixed;
-  z-index: 100;
-  left: 1rem;
-  top: 1rem;
-  transform: translateY(-180%);
-  background: #fff;
-  color: #111;
-  padding: 0.7rem 1rem;
-}
-.skip:focus {
-  transform: none;
-}
-.mast {
-  position: relative;
-  z-index: 20;
-  border-bottom: 1px solid var(--yx-color-line);
-  background: var(--yx-color-paper);
-}
-.mast__inner {
-  min-height: 5.5rem;
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: clamp(2rem, 6vw, 7rem);
-  align-items: center;
-}
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-  color: inherit;
-  text-decoration: none;
-}
-.brand svg {
-  width: 2.5rem;
-  fill: none;
-  stroke: var(--yx-color-wine);
-  stroke-width: 2.3;
-  stroke-linecap: round;
-}
-.brand span {
-  display: grid;
-}
-.brand strong {
-  font: 600 1.25rem var(--yx-font-display);
-}
-.brand small {
-  font-size: 0.72rem;
-  color: var(--yx-color-ink-soft);
-}
-nav {
-  display: flex;
-  align-items: stretch;
-  justify-content: end;
-  min-width: 0;
-}
-nav > a {
-  position: relative;
-  display: grid;
-  align-content: center;
-  gap: 0.15rem;
-  min-width: 7rem;
-  padding: 1rem;
-  border-left: 1px solid var(--yx-color-line);
-  color: inherit;
-  text-decoration: none;
-}
-nav > a:after {
-  content: "";
-  position: absolute;
-  inset: auto 1rem 0;
-  height: 3px;
-  background: var(--yx-color-wine);
-  transform: scaleX(0);
-  transform-origin: left;
-}
-nav > a[aria-current="page"]:after {
-  transform: scaleX(1);
-}
-nav > a small {
-  color: var(--yx-color-ink-soft);
-}
-.account {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  padding-left: 1rem;
-}
-.account a {
-  color: var(--yx-color-wine);
-  font-weight: 700;
-}
-.account button {
-  border: 0;
-  padding: 0;
-  background: none;
-  color: var(--yx-color-wine);
-  font: inherit;
-  font-weight: 700;
-  text-decoration: underline;
-  cursor: pointer;
-}
-.access-message {
-  margin: 0;
-  padding: 0.75rem max(1rem, calc((100vw - 78rem) / 2));
-  border-bottom: 1px solid var(--yx-color-gold);
-  background: color-mix(
-    in srgb,
-    var(--yx-color-gold) 15%,
-    var(--yx-color-paper)
-  );
-  color: var(--yx-color-ink);
-}
-.toggle {
-  display: none;
-  border: 1px solid var(--yx-color-line);
-  background: transparent;
-  padding: 0.7rem 1rem;
-}
-main {
-  min-height: calc(100vh - 5.5rem);
-}
-a:focus-visible,
-button:focus-visible {
-  outline: 3px solid var(--yx-color-gold);
-  outline-offset: 3px;
-}
-@media (max-width: 64rem) {
-  .mast__inner {
-    grid-template-columns: 1fr auto;
-    padding-block: 1rem;
-  }
-  .toggle {
-    display: inline-flex;
-  }
-  nav {
-    display: none;
-    grid-column: 1/-1;
-    flex-direction: column;
-    border-top: 1px solid var(--yx-color-line);
-  }
-  nav[data-open="true"] {
-    display: flex;
-  }
-  nav > a {
-    border-left: 0;
-    border-bottom: 1px solid var(--yx-color-line);
-    padding: 1rem 0;
-  }
-  .account {
-    padding: 1rem 0 0;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  * {
-    transition: none !important;
-  }
-}
+.new-product-shell { min-height:100vh; background:#faf7f0; color:#1d292c; }
+.skip { position:fixed; z-index:100; left:1rem; top:1rem; transform:translateY(-180%); padding:.7rem 1rem; background:#1d292c; color:#fff; }.skip:focus { transform:none; }
+.product-header { position:relative; z-index:20; border-bottom:1px solid #e7e5e1; background:rgba(255,255,255,.97); }
+.product-header__inner { max-width:96rem; min-height:5.8rem; margin:auto; padding:0 clamp(1.25rem,4vw,4rem); display:flex; align-items:center; gap:2rem; }
+.product-brand { margin-right:auto; }.product-brand img { width:9.5rem; max-height:4.6rem; object-fit:contain; display:block; }
+.product-nav { display:flex; align-items:stretch; min-width:0; }.product-nav > a { display:flex; align-items:center; padding:0 1.1rem; color:#334238; text-decoration:none; font-weight:750; border-left:1px solid #e7e5e1; }.product-nav > a[aria-current="page"] { color:#b90003; box-shadow:inset 0 -3px #b90003; }.account-actions { display:flex; align-items:center; gap:1rem; padding-left:1.2rem; }.account-actions a,.account-actions button { border:0; padding:0; background:none; color:#b90003; font:inherit; font-weight:750; text-decoration:none; cursor:pointer; }.mobile-toggle { display:none; border:1px solid #286640; background:#fff; padding:.65rem .85rem; color:#286640; font:inherit; }
+.access-message { margin:0; padding:.75rem max(1.25rem,calc((100vw - 88rem)/2)); border-bottom:1px solid #d99b2f; background:#fff9e9; color:#4d4124; }
+.product-nav a:focus-visible,.account-actions button:focus-visible,.account-actions a:focus-visible,.mobile-toggle:focus-visible { outline:3px solid #d99b2f; outline-offset:3px; }
+@media (max-width:64rem) { .product-header__inner { flex-wrap:wrap; padding-block:.8rem; }.mobile-toggle { display:block; }.product-nav { display:none; flex-basis:100%; flex-direction:column; border-top:1px solid #e7e5e1; }.product-nav[data-open="true"] { display:flex; }.product-nav > a { min-height:3rem; padding:0; border:0; border-bottom:1px solid #e7e5e1; }.account-actions { padding:1rem 0 0; } }
+@media (prefers-reduced-motion:reduce) { * { transition:none!important; } }
 </style>
