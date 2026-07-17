@@ -290,3 +290,13 @@
 - Command: search `orchestration`, `PROJECT-CHARTER.md`, and Web sources for a named five-route VM list
 - Result: the task base commit does not contain the top-level charter path present in the integration worktree instructions, so `rg` returned exit 1 after finding only Web-source VM references.
 - Resolution: rely on the already executed visual/browser coverage and report the preserved high-value route families explicitly, without inventing an unavailable canonical five-route list.
+
+## [ERR-20260717-001] canonical-root-runtime-environment
+
+- Logged: 2026-07-17T09:18:00+08:00
+- Priority: high
+- Status: resolved
+- Area: local runtime and browser validation
+- Command: start the canonical root API/Nuxt runtime and execute four-role browser journeys
+- Result: the previous Nuxt listener was an old V4-adoption worktree; the new API initially missed root `.env` because the filtered package runs from `apps/api`; the browser's IPv4 `127.0.0.1` target was refused while Nuxt listened through `localhost`.
+- Resolution: stopped only the identified old process, made `integration/four-port-role-navigation-connectivity-003` the root checkout branch after a verified recovery snapshot, loaded root `.env` into the API launch process, and used `localhost` for browser journeys. API runs on 4000, Nuxt runs on 3000, and all tested routes originate from the canonical root checkout.
