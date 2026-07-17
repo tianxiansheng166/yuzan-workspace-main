@@ -1,322 +1,114 @@
 <script setup lang="ts">
-import BrandHeroVisual from "../features/brand/BrandHeroVisual.vue";
-import {
-  brandEntryLinks,
-  brandPositioning,
-  brandPrinciples,
-  brandProductName,
-  brandValues,
-} from "../features/brand/brand-content";
+definePageMeta({ layout: "landing" });
 
 useSeoMeta({
-  title: `${brandProductName}｜弱网环境里的学习与支持路径`,
+  title: "语赞心声｜沿着高原的学习路径被听见",
+  description: "从能力诊断出发，连接课程、教师支持、练习反馈与持续复测。",
 });
+
+const learningSteps = [
+  ["01", "能力诊断", "找到清楚的学习起点"],
+  ["02", "课程学习", "沿着课程持续练习"],
+  ["03", "练习反馈", "把下一步说清楚"],
+  ["04", "教师支持", "让教学支持回到现场"],
+  ["05", "复测对比", "等待真实结果，再看成长"],
+];
 </script>
 
 <template>
-  <section class="home-hero">
-    <div class="yx-shell home-hero__grid">
-      <div class="home-hero__copy">
-        <p class="yx-kicker">YUZAN NEXT · BRAND SYSTEM</p>
-        <h1>
-          {{ brandProductName }}
-          <span>把 AI 测评、学习成长与教学支持放进同一条清楚的路径里。</span>
-        </h1>
-        <p class="home-hero__lead">
-          {{ brandPositioning }}
-        </p>
-
-        <div class="home-hero__actions" aria-label="首页主入口">
-          <NuxtLink
-            v-for="entry in brandEntryLinks"
-            :key="entry.to"
-            class="cta-link"
-            :class="`cta-link--${entry.tone}`"
-            :to="entry.to"
-          >
-            <strong>{{ entry.label }}</strong>
-            <span>{{ entry.description }}</span>
-          </NuxtLink>
-        </div>
-
-        <nav class="home-hero__support-links" aria-label="更多入口">
-          <NuxtLink to="/assessment">开始 AI 测评</NuxtLink>
-          <NuxtLink to="/student/today">查看学生今日</NuxtLink>
-          <NuxtLink to="/teacher">教师工作台</NuxtLink>
-          <NuxtLink to="/teacher-tools">教师工具</NuxtLink>
-          <NuxtLink to="/plans">产品方案</NuxtLink>
+  <div class="pixel-home">
+    <header class="site-header" aria-label="网站主导航">
+      <div class="header-shell">
+        <NuxtLink class="brand" to="/" aria-label="语赞心声首页">
+          <img src="/art/pixel-v3/brand-logo.png" alt="语赞心声" />
+        </NuxtLink>
+        <nav class="main-nav" aria-label="公共入口">
+          <NuxtLink to="/student/today">学习课程</NuxtLink>
+          <NuxtLink to="/assessment">智能测评</NuxtLink>
+          <NuxtLink to="/teacher">教师资源</NuxtLink>
+          <NuxtLink to="/volunteer">公益与志愿</NuxtLink>
         </nav>
-      </div>
-
-      <BrandHeroVisual />
-    </div>
-  </section>
-
-  <section class="brand-values">
-    <div class="yx-shell">
-      <header class="section-head">
-        <div>
-          <p class="yx-kicker">CORE VALUE</p>
-          <h2>四个价值，不用虚构指标来证明存在。</h2>
+        <div class="header-actions">
+          <NuxtLink class="btn btn-teacher" to="/teacher">教师工作台</NuxtLink>
+          <NuxtLink class="btn btn-start" to="/login">开始学习</NuxtLink>
         </div>
-        <p>
-          首页只说明产品能力和入口，不展示虚构合作学校、用户数、奖项或机构背书。
-        </p>
-      </header>
-
-      <div class="value-grid">
-        <article
-          v-for="value in brandValues"
-          :key="value.id"
-          class="value-card"
-        >
-          <p class="yx-kicker">{{ value.title }}</p>
-          <h3>{{ value.title }}</h3>
-          <p>{{ value.summary }}</p>
-          <span class="value-card__proof">{{ value.proofLabel }}</span>
-        </article>
       </div>
-    </div>
-  </section>
+    </header>
 
-  <section class="brand-principles" aria-labelledby="brand-principles-title">
-    <div class="yx-shell brand-principles__grid">
-      <header>
-        <p class="yx-kicker">BRAND PRINCIPLES</p>
-        <h2 id="brand-principles-title">
-          原创图形要服务信息，而不是盖住信息。
-        </h2>
-      </header>
-      <ol>
-        <li v-for="principle in brandPrinciples" :key="principle.index">
-          <span>{{ principle.index }}</span>
-          <strong>{{ principle.title }}</strong>
-          <p>{{ principle.description }}</p>
-        </li>
-      </ol>
-    </div>
-  </section>
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-scene" aria-hidden="true" />
+      <div class="hero-shade" aria-hidden="true" />
+      <div class="hero-content">
+        <p class="eyebrow">语赞心声 · 学习支持平台</p>
+        <h1 id="hero-title">
+          <span>让每一次发声，</span>
+          <strong>沿着高原的学习路径被听见</strong>
+        </h1>
+        <p>从能力诊断出发，连接课程、教师支持、练习反馈与持续复测。</p>
+        <div class="hero-actions">
+          <NuxtLink class="btn btn-start hero-start" to="/login">开始学习 <span aria-hidden="true">→</span></NuxtLink>
+          <a class="btn btn-path" href="#learning-path">查看学习路径 <span aria-hidden="true">↓</span></a>
+        </div>
+      </div>
+    </section>
+
+    <section id="learning-path" class="roadmap" aria-labelledby="roadmap-title">
+      <div class="roadmap-inner">
+        <div class="roadmap-heading">
+          <p class="eyebrow">从第一步开始，持续成长</p>
+          <h2 id="roadmap-title">学习路径</h2>
+          <p>每一个入口都进入真实身份、学校和学习上下文；尚未接通的能力会如实说明状态。</p>
+        </div>
+        <ol class="steps">
+          <li v-for="([index, title, description], position) in learningSteps" :key="title" :class="{ active: position === 0 }">
+            <span>{{ index }}</span>
+            <h3>{{ title }}</h3>
+            <p>{{ description }}</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="entry-band" aria-labelledby="entry-title">
+      <div>
+        <p class="eyebrow">开始你的路径</p>
+        <h2 id="entry-title">用真实登录进入对应的学习、教学或支持端。</h2>
+      </div>
+      <div class="entry-actions">
+        <NuxtLink to="/login">登录并选择学校</NuxtLink>
+        <NuxtLink to="/plans">查看产品方案</NuxtLink>
+      </div>
+    </section>
+  </div>
 </template>
 
 <style scoped>
-.home-hero {
-  min-height: calc(100svh - 4.25rem);
-  display: grid;
-  align-items: center;
-  overflow: clip;
-}
-
-.home-hero__grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(22rem, 0.95fr);
-  align-items: center;
-  gap: clamp(2rem, 7vw, 8rem);
-  padding-block: clamp(4rem, 10vw, 8rem);
-}
-
-h1 {
-  margin: 1rem 0 1.4rem;
-  font: 600 clamp(2.8rem, 6vw, 5.8rem) / 0.98 var(--yx-font-display);
-  letter-spacing: -0.045em;
-}
-
-h1 span {
-  display: block;
-  margin-top: 1rem;
-  max-width: 10ch;
-  color: var(--yx-color-wine);
-  font-size: clamp(1.35rem, 2vw, 2rem);
-  line-height: 1.15;
-}
-
-.home-hero__lead,
-.section-head p,
-.value-card p,
-.brand-principles p {
-  color: var(--yx-color-ink-soft);
-  line-height: 1.8;
-}
-
-.home-hero__lead {
-  max-width: 44rem;
-  font-size: clamp(1.05rem, 1.5vw, 1.24rem);
-}
-
-.home-hero__actions {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
-.home-hero__support-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.9rem 1.4rem;
-  margin-top: 1.15rem;
-}
-
-.home-hero__support-links a {
-  font-size: var(--yx-text-sm);
-  color: var(--yx-color-ink-soft);
-  text-decoration: none;
-}
-
-.home-hero__support-links a:hover {
-  color: var(--yx-color-wine);
-}
-
-.cta-link {
-  min-height: 8.5rem;
-  display: grid;
-  align-content: space-between;
-  gap: 0.7rem;
-  padding: 1.1rem;
-  border: 1px solid var(--yx-color-line);
-  border-radius: var(--yx-radius-xl);
-  text-decoration: none;
-  box-shadow: var(--yx-shadow-100);
-  transition:
-    transform var(--yx-duration-base) var(--yx-ease-standard),
-    border-color var(--yx-duration-base) var(--yx-ease-standard);
-}
-
-.cta-link strong {
-  font-family: var(--yx-font-display);
-  font-size: clamp(1.2rem, 2vw, 1.45rem);
-}
-
-.cta-link span {
-  font-size: var(--yx-text-sm);
-  line-height: 1.65;
-}
-
-.cta-link:hover {
-  transform: translateY(-0.15rem);
-}
-
-.cta-link--primary {
-  background:
-    linear-gradient(140deg, #fffaf2 0%, #f0e1d4 58%, #e9efe3 100%),
-    var(--yx-surface-raised);
-}
-
-.cta-link--secondary {
-  background: color-mix(in srgb, white 86%, var(--yx-color-sage));
-}
-
-.cta-link--quiet {
-  background: color-mix(in srgb, white 92%, var(--yx-color-paper));
-}
-
-.brand-values,
-.brand-principles {
-  padding-block: var(--yx-space-24);
-}
-
-.section-head,
-.brand-principles__grid {
-  display: grid;
-  grid-template-columns: 0.9fr 1.1fr;
-  gap: clamp(2rem, 7vw, 6rem);
-}
-
-.section-head h2,
-.brand-principles h2,
-.value-card h3 {
-  margin: 0.7rem 0;
-  font-family: var(--yx-font-display);
-}
-
-.section-head h2,
-.brand-principles h2 {
-  font-size: clamp(1.8rem, 3vw, 2.8rem);
-  line-height: 1.08;
-}
-
-.value-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
-.value-card {
-  min-height: 15rem;
-  padding: 1.25rem;
-  border: 1px solid var(--yx-color-line);
-  border-radius: var(--yx-radius-xl);
-  background:
-    linear-gradient(150deg, #fffdf8 0%, #f4ebde 58%, #edf1e8 100%),
-    var(--yx-surface-raised);
-  box-shadow: var(--yx-shadow-100);
-}
-
-.value-card__proof {
-  display: inline-flex;
-  margin-top: 1rem;
-  padding: 0.35rem 0.7rem;
-  border-radius: var(--yx-radius-pill);
-  background: color-mix(in srgb, var(--yx-color-gold) 18%, white);
-  font-size: var(--yx-text-sm);
-  color: var(--yx-color-ink);
-}
-
-.brand-principles {
-  background: var(--yx-color-ink);
-  color: var(--yx-color-paper);
-}
-
-.brand-principles p {
-  color: #f7f2e8b8;
-}
-
-.brand-principles ol {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.brand-principles li {
-  display: grid;
-  grid-template-columns: 3rem 11rem 1fr;
-  gap: 1rem;
-  padding-block: 1.5rem;
-  border-top: 1px solid #ffffff2b;
-}
-
-.brand-principles li span {
-  color: var(--yx-color-gold);
-  font-variant-numeric: tabular-nums;
-}
-
-@media (max-width: 64rem) {
-  .home-hero__actions,
-  .value-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-@media (max-width: 54rem) {
-  .home-hero__grid,
-  .section-head,
-  .brand-principles__grid {
-    grid-template-columns: 1fr;
-  }
-
-  .brand-principles li {
-    grid-template-columns: 2.5rem 1fr;
-  }
-
-  .brand-principles li p {
-    grid-column: 2;
-  }
-}
-
-@media (max-width: 30rem) {
-  .home-hero__actions,
-  .value-grid {
-    grid-template-columns: 1fr;
-  }
-}
+.pixel-home { min-height: 100svh; color: #1d292c; background: #faf7f0; font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif; }
+.site-header { position: relative; z-index: 10; background: rgba(255,255,255,.98); border-bottom: 1px solid #e7e5e1; }
+.header-shell { min-height: 6.2rem; max-width: 88rem; margin: auto; padding: 0 3rem; display: grid; grid-template-columns: 12rem 1fr auto; align-items: center; gap: 2rem; }
+.brand img { width: 9.8rem; display: block; }
+.main-nav { display: flex; justify-content: center; gap: clamp(1rem, 2.5vw, 2.8rem); }
+.main-nav a { color: #39413c; text-decoration: none; font-weight: 650; font-size: .98rem; }
+.main-nav a:hover { color: #b90003; }
+.header-actions,.hero-actions,.entry-actions { display:flex; align-items:center; gap: .85rem; }
+.btn { display: inline-flex; justify-content: center; align-items:center; gap:.55rem; border-radius: .28rem; text-decoration: none; font-weight: 750; transition: transform 160ms ease, box-shadow 160ms ease; }
+.btn:hover { transform: translateY(-2px); }
+.btn:focus-visible,.main-nav a:focus-visible,.entry-actions a:focus-visible { outline: 3px solid #d99b2f; outline-offset: 4px; }
+.btn-teacher { min-height: 3rem; padding: 0 1.1rem; color:#286640; border: 1px solid #286640; background: white; }
+.btn-start { min-height: 3rem; padding: 0 1.25rem; color:white; background: linear-gradient(180deg,#cc1013,#b90003); box-shadow: 0 7px 18px rgba(159,0,0,.14); }
+.hero { position:relative; min-height: 39rem; overflow:hidden; isolation:isolate; }
+.hero-scene { position:absolute; inset:0; z-index:-2; background: url('/art/pixel-v3/hero-scene-clean.jpg') center top/cover no-repeat; }
+.hero-shade { position:absolute; inset:0; z-index:-1; background: linear-gradient(90deg, rgba(250,247,240,.97) 0%, rgba(250,247,240,.81) 38%, rgba(250,247,240,.15) 72%); }
+.hero-content { max-width: 88rem; margin: auto; padding: clamp(6rem,12vw,10rem) 3rem 5rem; }
+.eyebrow { margin:0; color:#a56c17; font-size:.75rem; font-weight:800; letter-spacing:.16em; }
+h1 { max-width: 44rem; margin:1rem 0 1.5rem; font-family: "Noto Serif SC", "Songti SC", serif; font-size: clamp(3.1rem,6vw,6rem); line-height:1.06; letter-spacing:-.055em; }
+h1 span { display:block; color:#1d292c; } h1 strong { display:block; color:#b90003; font-weight:700; }
+.hero-content > p:not(.eyebrow) { max-width: 38rem; color:#4f564f; font-size: clamp(1.02rem,1.4vw,1.28rem); line-height:1.85; }
+.hero-actions { margin-top:2.2rem; }.hero-start,.btn-path { min-height:3.6rem; padding:0 1.55rem; }.btn-path { color:#286640; background:rgba(255,255,255,.74); border:1px solid #4a7660; }
+.roadmap { background:#fff; border-top:1px solid #e7e5e1; }.roadmap-inner { max-width:88rem; margin:auto; padding:clamp(4rem,8vw,7rem) 3rem; display:grid; grid-template-columns:minmax(14rem,.7fr) minmax(0,1.3fr); gap:clamp(3rem,8vw,9rem); }
+.roadmap-heading h2,.entry-band h2 { font-family:"Noto Serif SC", "Songti SC", serif; margin:.6rem 0 1rem; font-size:clamp(2.1rem,3.6vw,3.7rem); line-height:1.18; letter-spacing:-.04em; }.roadmap-heading > p:last-child { color:#626960; line-height:1.8; }
+.steps { list-style:none; margin:0; padding:0; position:relative; }.steps:before { content:""; position:absolute; top:1.25rem; left:1.25rem; right:1.25rem; height:1px; background:#d5d9d2; }.steps li { position:relative; display:grid; grid-template-columns:3rem 1fr; column-gap:1rem; padding:0 0 2.25rem; }.steps li span { grid-row:span 2; z-index:1; width:2.5rem; height:2.5rem; display:grid; place-items:center; border-radius:50%; color:#fff; background:#56755d; border:5px solid #fff; font-size:.72rem; font-weight:800; }.steps li.active span { background:#b90003; }.steps h3 { margin:.18rem 0 .25rem; font-family:"Noto Serif SC", "Songti SC", serif; font-size:1.35rem; }.steps p { margin:0; color:#6a706b; line-height:1.6; }
+.entry-band { max-width:88rem; margin:auto; padding:clamp(3rem,7vw,6rem) 3rem; display:flex; justify-content:space-between; gap:2rem; align-items:end; }.entry-band h2 { max-width:40rem; }.entry-actions { flex-wrap:wrap; }.entry-actions a { border-bottom:2px solid #b90003; padding:.7rem .1rem; color:#1d292c; text-decoration:none; font-weight:750; }
+@media (max-width: 52rem) { .header-shell { min-height:5.1rem; padding:0 1.25rem; grid-template-columns:1fr auto; }.main-nav,.btn-teacher { display:none; }.brand img{width:8.6rem;}.hero { min-height:42rem; }.hero-scene { background-position:63% center; }.hero-shade { background:linear-gradient(180deg,rgba(250,247,240,.98) 0%,rgba(250,247,240,.84) 55%,rgba(250,247,240,.12) 100%); }.hero-content { padding:4.8rem 1.25rem 3rem; }.roadmap-inner { padding:3.8rem 1.25rem; grid-template-columns:1fr; gap:2.8rem; }.entry-band { padding:3.5rem 1.25rem; display:grid; align-items:start; }.header-actions { gap:.4rem; }.btn-start { padding:0 .9rem; }.hero-actions { align-items:stretch; }.hero-actions .btn { flex:1; text-align:center; padding:0 .7rem; } }
+@media (prefers-reduced-motion: reduce) { .btn { transition:none; } }
 </style>
