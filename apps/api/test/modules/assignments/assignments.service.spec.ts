@@ -9,6 +9,10 @@ import { AssignmentsModule } from "../../../src/modules/assignments/assignments.
 import { AssignmentsService } from "../../../src/modules/assignments/assignments.service.js";
 import { ASSIGNMENT_REPOSITORY } from "../../../src/modules/assignments/ports/assignment-repository.port.js";
 import { ASSIGNMENT_LOOKUP } from "../../../src/modules/assignments/ports/assignment-lookup.port.js";
+import {
+  createFakeDatabaseModule,
+  createFakePrismaService,
+} from "../../helpers/fake-prisma.service.js";
 import { FakeAssignmentRepository } from "./fakes/fake-assignment.repository.js";
 import { assignment } from "./fixtures/assignments.js";
 
@@ -29,7 +33,10 @@ describe("AssignmentsService", () => {
     repo = new FakeAssignmentRepository();
 
     const moduleRef = await Test.createTestingModule({
-      imports: [AssignmentsModule],
+      imports: [
+        createFakeDatabaseModule(createFakePrismaService()),
+        AssignmentsModule,
+      ],
     })
       .overrideProvider(ASSIGNMENT_REPOSITORY)
       .useValue(repo)

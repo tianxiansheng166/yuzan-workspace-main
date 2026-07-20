@@ -52,6 +52,7 @@ export class IdentityService {
     private readonly tokens: SessionTokenService,
     @Inject(CLOCK)
     private readonly clock: Clock,
+    @Inject(PrismaService)
     private readonly prisma: PrismaService,
   ) {}
 

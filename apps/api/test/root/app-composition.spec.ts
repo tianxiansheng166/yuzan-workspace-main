@@ -23,13 +23,24 @@ import {
 } from "../../src/modules/curriculum/ports/course-version-repository.port.js";
 import { HealthController } from "../../src/modules/health/health.controller.js";
 
-describe("AppModule root composition", () => {
+/**
+ * Integration test for AppModule root composition.
+ *
+ * Requires a real PostgreSQL database because AppModule initializes
+ * PrismaService (which opens a pg Pool in its constructor).
+ * Skips the entire suite when DATABASE_URL is not set.
+ */
+const hasDb = !!process.env.DATABASE_URL;
+
+describe.skipIf(!hasDb)("AppModule root composition", () => {
   let module: TestingModule;
   let AppModule: typeof import("../../src/app.module.js").AppModule;
 
   beforeAll(async () => {
     Object.assign(process.env, {
-      DATABASE_URL: "postgresql://unused:unused@127.0.0.1:5432/unused",
+      DATABASE_URL:
+        process.env.DATABASE_URL ??
+        "postgresql://unused:unused@127.0.0.1:5432/unused",
       NODE_ENV: "test",
       SESSION_SECRET: "test-only-session-secret-at-least-32-characters",
       WEB_ORIGIN: "http://127.0.0.1:3000",

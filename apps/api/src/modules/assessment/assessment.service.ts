@@ -30,6 +30,7 @@ export class AssessmentService {
     private readonly answerRepo: WrittenAnswerRepositoryPort,
     @Inject(ASSESSMENT_REPORT_REPOSITORY)
     private readonly reportRepo: AssessmentReportRepositoryPort,
+    @Inject(PrismaService)
     private readonly prisma: PrismaService,
   ) {}
 

@@ -39,6 +39,7 @@ export class SubmissionsService {
     private readonly submissionRepo: SubmissionRepositoryPort,
     @Inject(SUBMISSION_LOOKUP)
     private readonly submissionLookup: SubmissionLookupPort,
+    @Inject(PrismaService)
     private readonly prisma: PrismaService,
     @Inject(STORAGE_PORT)
     private readonly storage: StoragePort,

@@ -3,7 +3,17 @@ import { Test } from "@nestjs/testing";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import type { INestApplication } from "@nestjs/common";
 
-describe("API root startup", () => {
+/**
+ * Integration test for API root startup.
+ *
+ * Requires a real PostgreSQL database because AppModule initializes
+ * PrismaService (which opens a pg Pool in its constructor) and
+ * starts an HTTP server. Skips the entire suite when DATABASE_URL
+ * is not set.
+ */
+const hasDb = !!process.env.DATABASE_URL;
+
+describe.skipIf(!hasDb)("API root startup", () => {
   let app: INestApplication;
   let origin: string;
 

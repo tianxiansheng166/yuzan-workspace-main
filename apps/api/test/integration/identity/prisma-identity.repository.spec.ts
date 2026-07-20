@@ -11,9 +11,20 @@ import {
 import { PrismaIdentityRepository } from "../../../src/modules/identity/adapters/prisma-identity.repository.js";
 import { PrismaService } from "../../../src/shared/database/prisma.service.js";
 
-const configuredUrl = process.env.DATABASE_URL;
-if (!configuredUrl) throw new Error("DATABASE_URL is required");
-const TEST_DATABASE_URL = configuredUrl;
+/**
+ * Integration tests for PrismaIdentityRepository.
+ *
+ * Requires a real PostgreSQL database with migrations applied.
+ * Skips the entire suite when DATABASE_URL is not set.
+ * The vitest config has `dotenv: false` so .env is NOT auto-loaded;
+ * DATABASE_URL must be explicitly set in the shell environment (e.g. CI).
+ */
+const hasDb = !!process.env.DATABASE_URL;
+if (!hasDb) {
+  // Early exit when no DB — avoids importing PrismaClient unnecessarily.
+  // Vitest will still collect the describe block but skipIf will prevent execution.
+}
+const TEST_DATABASE_URL = process.env.DATABASE_URL ?? "postgresql://unused:unused@127.0.0.1:5432/unused";
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const { PrismaClient } = require(
@@ -41,7 +52,7 @@ async function clearTables(prisma: {
   await prisma.user.deleteMany();
 }
 
-describe("PrismaIdentityRepository PostgreSQL integration", () => {
+describe.skipIf(!hasDb)("PrismaIdentityRepository PostgreSQL integration", () => {
   let prisma: ReturnType<typeof createPrisma>;
   let repository: PrismaIdentityRepository;
   let runtime: PrismaService;

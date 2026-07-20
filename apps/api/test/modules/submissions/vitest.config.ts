@@ -16,7 +16,7 @@ export default defineConfig({
     },
   },
   test: {
-    include: ["apps/api/test/modules/community/**/*.spec.ts"],
+    include: ["apps/api/test/modules/submissions/**/*.spec.ts"],
     environment: "node",
     globals: true,
   },

@@ -10,6 +10,7 @@ import { LearningService } from "../../../src/modules/learning/learning.service.
 import { LEARNING_REPOSITORY } from "../../../src/modules/learning/ports/learning-repository.port.js";
 import { CLASS_ENROLLMENT_LOOKUP } from "../../../src/modules/classes/ports/class-enrollment-lookup.port.js";
 import { ASSIGNMENT_LOOKUP } from "../../../src/modules/assignments/ports/assignment-lookup.port.js";
+import { createFakeDatabaseModule, createFakePrismaService } from "../../helpers/fake-prisma.service.js";
 import { FakeLearningRepository } from "./fakes/fake-learning.repository.js";
 import { progressRecord } from "./fixtures/learning.js";
 
@@ -30,7 +31,7 @@ describe("LearningService", () => {
     learningRepo = new FakeLearningRepository();
 
     const moduleRef = await Test.createTestingModule({
-      imports: [LearningModule],
+      imports: [createFakeDatabaseModule(createFakePrismaService()), LearningModule],
     })
       .overrideProvider(LEARNING_REPOSITORY)
       .useValue(learningRepo)

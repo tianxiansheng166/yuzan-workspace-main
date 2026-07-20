@@ -73,14 +73,24 @@ function makeActivity(overrides: Partial<Activity> = {}): Activity {
   };
 }
 
-describe("PrismaCourseVersionRepository", () => {
+/**
+ * Integration tests for PrismaCourseVersionRepository.
+ *
+ * Requires a real PostgreSQL database with migrations applied.
+ * Skips the entire suite when DATABASE_URL is not set.
+ * The vitest config has `dotenv: false` so .env is NOT auto-loaded;
+ * DATABASE_URL must be explicitly set in the shell environment (e.g. CI).
+ */
+const hasDb = !!process.env.DATABASE_URL;
+
+describe.skipIf(!hasDb)("PrismaCourseVersionRepository", () => {
   let schoolId: string;
   let authorUserId: string;
   let repo: PrismaCourseVersionRepository;
 
   beforeAll(async () => {
     ({ schoolId, authorUserId } = await createSchoolAndUser());
-    repo = new PrismaCourseVersionRepository(prisma);
+    repo = new PrismaCourseVersionRepository(prisma());
   });
 
   afterEach(async () => {
@@ -172,7 +182,7 @@ describe("PrismaCourseVersionRepository", () => {
     it("persists bilingual content and resource references", async () => {
       const courseId = randomUUID();
       const resourceId = randomUUID();
-      await prisma.resource.create({
+      await prisma().resource.create({
         data: {
           id: resourceId,
           kind: "IMAGE",

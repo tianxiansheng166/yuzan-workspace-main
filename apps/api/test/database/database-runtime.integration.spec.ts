@@ -23,77 +23,83 @@ import {
   sanitizeDriverError,
 } from "../../src/shared/database/database.errors";
 
+const hasDb = !!process.env.DATABASE_URL;
 const TEST_DATABASE_URL =
   process.env.DATABASE_URL ??
   "postgresql://yuzan:yuzan_dev_only@localhost:5432/yuzan_db_runtime_test?schema=public";
 
-// Safety: ensure we're not connecting to production
-const dbName = new URL(TEST_DATABASE_URL).pathname.replace(/^\//, "");
-const safeMarkers = ["test", "runtime_test", "db_runtime_test"];
-const hasSafeMarker = safeMarkers.some((m) => dbName.toLowerCase().includes(m));
-if (!hasSafeMarker) {
-  throw new Error(
-    `Test database name "${dbName}" must include one of: ${safeMarkers.join(", ")}`,
-  );
+// Safety: ensure we're not connecting to production (only evaluated when DB is available)
+if (hasDb) {
+  const dbName = new URL(TEST_DATABASE_URL).pathname.replace(/^\//, "");
+  const safeMarkers = ["test", "runtime_test", "db_runtime_test"];
+  const hasSafeMarker = safeMarkers.some((m) => dbName.toLowerCase().includes(m));
+  if (!hasSafeMarker) {
+    throw new Error(
+      `Test database name "${dbName}" must include one of: ${safeMarkers.join(", ")}`,
+    );
+  }
 }
 
 let pool: Pool;
 let prisma: PrismaClient;
 
-beforeAll(async () => {
-  pool = new Pool({ connectionString: TEST_DATABASE_URL });
-  const adapter = new PrismaPg(pool);
-  prisma = new PrismaClient({ adapter });
-});
+/**
+ * PostgreSQL integration tests — requires a real database.
+ * Skips the entire suite when DATABASE_URL is not set.
+ */
+describe.skipIf(!hasDb)("Shared database runtime — PostgreSQL integration tests", () => {
+  beforeAll(async () => {
+    pool = new Pool({ connectionString: TEST_DATABASE_URL });
+    const adapter = new PrismaPg(pool);
+    prisma = new PrismaClient({ adapter });
+  });
 
-afterAll(async () => {
-  if (prisma) {
-    await prisma.$disconnect();
-  }
-  if (pool) {
-    await pool.end();
-  }
-});
+  afterAll(async () => {
+    if (prisma) {
+      await prisma.$disconnect();
+    }
+    if (pool) {
+      await pool.end();
+    }
+  });
 
-async function cleanup() {
-  const tables = [
-    "SyncOperation",
-    "SyncJob",
-    "ActivityAttempt",
-    "AudioAsset",
-    "Feedback",
-    "Submission",
-    "AssignmentTarget",
-    "Assignment",
-    "ContentPackage",
-    "ActivityProgress",
-    "ActivityResource",
-    "Resource",
-    "Question",
-    "LearningActivity",
-    "Lesson",
-    "Unit",
-    "CourseReview",
-    "CourseVersion",
-    "Enrollment",
-    "Class",
-    "Term",
-    "Device",
-    "Campus",
-    "Membership",
-    "Session",
-    "SessionPair",
-    "AuditLog",
-    "Course",
-    "User",
-    "School",
-  ];
-  for (const table of tables) {
-    await pool.query(`DELETE FROM "${table}" CASCADE`);
+  async function cleanup() {
+    const tables = [
+      "SyncOperation",
+      "SyncJob",
+      "ActivityAttempt",
+      "AudioAsset",
+      "Feedback",
+      "Submission",
+      "AssignmentTarget",
+      "Assignment",
+      "ContentPackage",
+      "ActivityProgress",
+      "ActivityResource",
+      "Resource",
+      "Question",
+      "LearningActivity",
+      "Lesson",
+      "Unit",
+      "CourseReview",
+      "CourseVersion",
+      "Enrollment",
+      "Class",
+      "Term",
+      "Device",
+      "Campus",
+      "Membership",
+      "Session",
+      "SessionPair",
+      "AuditLog",
+      "Course",
+      "User",
+      "School",
+    ];
+    for (const table of tables) {
+      await pool.query(`DELETE FROM "${table}" CASCADE`);
+    }
   }
-}
-
-describe("Shared database runtime — PostgreSQL integration tests", () => {
   beforeEach(cleanup);
 
   // 1. Valid config can connect

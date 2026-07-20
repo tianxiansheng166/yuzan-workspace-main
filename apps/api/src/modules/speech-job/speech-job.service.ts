@@ -24,6 +24,7 @@ export class SpeechJobService {
   constructor(
     @Inject(PrismaService)
     private readonly prisma: PrismaService,
+    @Inject(ConfigService)
     private readonly config: ConfigService,
     @Optional() @Inject(SPEECH_QUEUE)
     private readonly speechQueue: Queue | null,

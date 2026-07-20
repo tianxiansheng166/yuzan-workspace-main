@@ -18,6 +18,7 @@ export class StudentDashboardService {
   private readonly policy = new StudentDashboardPolicy();
 
   constructor(
+    @Inject(PrismaService)
     private readonly prisma: PrismaService,
     @Inject(FEEDBACK_REPOSITORY)
     private readonly feedbackRepo: FeedbackRepositoryPort,

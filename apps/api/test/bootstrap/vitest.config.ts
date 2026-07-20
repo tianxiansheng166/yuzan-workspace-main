@@ -3,7 +3,7 @@ import { fileURLToPath } from "node:url";
 import { defineConfig } from "vitest/config";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const repoRoot = path.resolve(__dirname, "../../../../../");
+const repoRoot = path.resolve(__dirname, "../../../../");
 const apiNodeModules = path.resolve(repoRoot, "apps/api/node_modules");
 
 export default defineConfig({
@@ -16,7 +16,7 @@ export default defineConfig({
     },
   },
   test: {
-    include: ["apps/api/test/modules/community/**/*.spec.ts"],
+    include: ["apps/api/test/bootstrap/**/*.spec.ts"],
     environment: "node",
     globals: true,
   },

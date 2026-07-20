@@ -3,20 +3,32 @@ import { PrismaClient, Prisma } from "@yuzan/database";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 
-if (!process.env.DATABASE_URL) {
-  try {
-    process.loadEnvFile(
-      new URL("../../../../../../.env", import.meta.url),
-    );
-  } catch {
-    // In CI the variable is provided directly.
+/**
+ * DATABASE_URL must be set in the shell environment (e.g. CI) for integration
+ * tests to run. The vitest config has `dotenv: false` so .env is NOT loaded.
+ */
+const hasDb = !!process.env.DATABASE_URL;
+
+let _pool: Pool | undefined;
+let _prisma: PrismaClient | undefined;
+
+/**
+ * Lazy-accessor for the shared PrismaClient.
+ * The Pool and PrismaClient are only created on first call,
+ * so importing this module without DATABASE_URL does not throw.
+ */
+export function prisma(): PrismaClient {
+  if (!_prisma) {
+    if (!_pool) {
+      _pool = new Pool({ connectionString: process.env.DATABASE_URL });
+    }
+    const adapter = new PrismaPg(_pool);
+    _prisma = new PrismaClient({ adapter });
   }
+  return _prisma;
 }
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-const adapter = new PrismaPg(pool);
-
-export const prisma = new PrismaClient({ adapter });
+export { hasDb };
 
 export async function createSchoolAndUser(): Promise<{
   schoolId: string;
@@ -25,7 +37,7 @@ export async function createSchoolAndUser(): Promise<{
   const schoolId = randomUUID();
   const authorUserId = randomUUID();
 
-  await prisma.school.create({
+  await prisma().school.create({
     data: {
       id: schoolId,
       code: `sch-${schoolId.slice(0, 8)}`,
@@ -33,7 +45,7 @@ export async function createSchoolAndUser(): Promise<{
     },
   });
 
-  await prisma.user.create({
+  await prisma().user.create({
     data: {
       id: authorUserId,
       loginIdentifier: `user-${authorUserId.slice(0, 8)}`,
@@ -42,7 +54,7 @@ export async function createSchoolAndUser(): Promise<{
     },
   });
 
-  await prisma.membership.create({
+  await prisma().membership.create({
     data: {
       schoolId,
       userId: authorUserId,
@@ -55,23 +67,27 @@ export async function createSchoolAndUser(): Promise<{
 }
 
 export async function cleanCurriculumTables(): Promise<void> {
-  await prisma.$transaction([
-    prisma.activityResource.deleteMany(),
-    prisma.resource.deleteMany(),
-    prisma.learningActivity.deleteMany(),
-    prisma.lesson.deleteMany(),
-    prisma.unit.deleteMany(),
-    prisma.courseVersion.deleteMany(),
-    prisma.course.deleteMany(),
-    prisma.membership.deleteMany(),
-    prisma.user.deleteMany(),
-    prisma.school.deleteMany(),
+  await prisma().$transaction([
+    prisma().activityResource.deleteMany(),
+    prisma().resource.deleteMany(),
+    prisma().learningActivity.deleteMany(),
+    prisma().lesson.deleteMany(),
+    prisma().unit.deleteMany(),
+    prisma().courseVersion.deleteMany(),
+    prisma().course.deleteMany(),
+    prisma().membership.deleteMany(),
+    prisma().user.deleteMany(),
+    prisma().school.deleteMany(),
   ]);
 }
 
 export async function disconnect(): Promise<void> {
-  await prisma.$disconnect();
-  await pool.end();
+  if (_prisma) {
+    await _prisma.$disconnect();
+  }
+  if (_pool) {
+    await _pool.end();
+  }
 }
 
 export function bilingualContent(

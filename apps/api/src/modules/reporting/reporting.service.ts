@@ -41,6 +41,7 @@ export class ReportingService {
     private readonly reportRepo: ReportRepositoryPort,
     @Inject(LEARNING_PLAN_REPOSITORY)
     private readonly learningPlanRepo: LearningPlanRepositoryPort,
+    @Inject(PrismaService)
     private readonly prisma: PrismaService,
   ) {}
 

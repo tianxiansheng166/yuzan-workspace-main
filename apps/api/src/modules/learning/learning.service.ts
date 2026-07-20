@@ -32,6 +32,7 @@ export class LearningService {
     private readonly enrollmentLookup: ClassEnrollmentLookupPort,
     @Inject(ASSIGNMENT_LOOKUP)
     private readonly assignmentLookup: AssignmentLookupPort,
+    @Inject(PrismaService)
     private readonly prisma: PrismaService,
   ) {}
 

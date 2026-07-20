@@ -19,5 +19,6 @@ export default defineConfig({
     include: ["apps/api/test/integration/curriculum/**/*.spec.ts"],
     environment: "node",
     globals: true,
+    dotenv: false,
   },
 });

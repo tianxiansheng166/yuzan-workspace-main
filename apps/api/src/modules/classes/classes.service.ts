@@ -41,6 +41,7 @@ export class ClassesService {
   constructor(
     @Inject(CLASS_REPOSITORY)
     private readonly classRepo: ClassRepositoryPort,
+    @Inject(PrismaService)
     private readonly prisma: PrismaService,
     @Inject(AssessmentService)
     private readonly assessmentService: AssessmentService,

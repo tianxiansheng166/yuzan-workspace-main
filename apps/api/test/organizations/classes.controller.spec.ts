@@ -13,6 +13,7 @@ import { ClassesController } from "../../src/modules/classes/classes.controller.
 import { ClassesModule } from "../../src/modules/classes/classes.module.js";
 import { ClassesService } from "../../src/modules/classes/classes.service.js";
 import { CLASS_REPOSITORY } from "../../src/modules/classes/ports/class-repository.port.js";
+import { createFakeDatabaseModule, createFakePrismaService } from "../helpers/fake-prisma.service.js";
 import { FakeClassRepository } from "./fakes/fake-class.repository.js";
 import { classEntity, studentEnrollment } from "./fixtures/classes.js";
 import { school } from "./fixtures/schools.js";
@@ -55,7 +56,7 @@ describe("ClassesController", () => {
     schoolRepo = new FakeSchoolRepository();
 
     const moduleRef = await Test.createTestingModule({
-      imports: [ClassesModule],
+      imports: [createFakeDatabaseModule(createFakePrismaService()), ClassesModule],
     })
       .overrideProvider(CLASS_REPOSITORY)
       .useValue(classRepo)
@@ -316,7 +317,7 @@ describe("ClassesController", () => {
     it("rejects student", async () => {
       const reflector = new Reflector();
       const moduleRef = await Test.createTestingModule({
-        imports: [ClassesModule],
+        imports: [createFakeDatabaseModule(createFakePrismaService()), ClassesModule],
       })
         .overrideProvider(CLASS_REPOSITORY)
         .useValue(classRepo)
@@ -456,7 +457,7 @@ describe("ClassesController", () => {
       );
 
       const moduleRef = await Test.createTestingModule({
-        imports: [ClassesModule],
+        imports: [createFakeDatabaseModule(createFakePrismaService()), ClassesModule],
       })
         .overrideProvider(CLASS_REPOSITORY)
         .useValue(classRepo)
@@ -502,7 +503,7 @@ describe("ClassesController", () => {
       );
 
       const moduleRef = await Test.createTestingModule({
-        imports: [ClassesModule],
+        imports: [createFakeDatabaseModule(createFakePrismaService()), ClassesModule],
       })
         .overrideProvider(CLASS_REPOSITORY)
         .useValue(classRepo)
@@ -565,7 +566,7 @@ describe("ClassesController", () => {
       );
 
       const moduleRef = await Test.createTestingModule({
-        imports: [ClassesModule],
+        imports: [createFakeDatabaseModule(createFakePrismaService()), ClassesModule],
       })
         .overrideProvider(CLASS_REPOSITORY)
         .useValue(classRepo)
@@ -590,7 +591,7 @@ describe("ClassesController", () => {
 
     it("fails closed when repository is unavailable", async () => {
       const moduleRef = await Test.createTestingModule({
-        imports: [ClassesModule],
+        imports: [createFakeDatabaseModule(createFakePrismaService({ class: { findFirst: async () => { throw new Error("DB unavailable"); } } })), ClassesModule],
       })
         .overrideProvider(AUTH_CONTEXT_SOURCE)
         .useValue(new StubAuthContextSource())

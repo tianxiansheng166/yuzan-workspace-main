@@ -1,4 +1,4 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { Inject, Injectable, Logger } from "@nestjs/common";
 import { PrismaService } from "../../shared/database/prisma.service.js";
 import type { OperationsStatus, SystemStatus } from "./domain/operations.types.js";
 
@@ -6,7 +6,7 @@ import type { OperationsStatus, SystemStatus } from "./domain/operations.types.j
 export class OperationsService {
   private readonly logger = new Logger(OperationsService.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(@Inject(PrismaService) private readonly prisma: PrismaService) {}
 
   async getStatus(): Promise<OperationsStatus> {
     let database: "connected" | "disconnected" = "connected";

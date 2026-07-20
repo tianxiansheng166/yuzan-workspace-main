@@ -36,6 +36,7 @@ export class RecordingsService {
     private readonly recordingRepo: RecordingRepositoryPort,
     @Inject(STORAGE_PORT)
     private readonly storage: StoragePort,
+    @Inject(PrismaService)
     private readonly prisma: PrismaService,
     @Optional() @Inject(SpeechJobService)
     private readonly speechJobService: SpeechJobService | null,

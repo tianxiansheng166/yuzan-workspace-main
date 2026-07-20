@@ -9,6 +9,9 @@ import { SubmissionsModule } from "../../../src/modules/submissions/submissions.
 import { SubmissionsService } from "../../../src/modules/submissions/submissions.service.js";
 import { SUBMISSION_REPOSITORY } from "../../../src/modules/submissions/ports/submission-repository.port.js";
 import { SUBMISSION_LOOKUP } from "../../../src/modules/submissions/ports/submission-lookup.port.js";
+import { STORAGE_PORT } from "../../../src/shared/storage/storage.port.js";
+import { createFakeDatabaseModule, createFakePrismaService } from "../../helpers/fake-prisma.service.js";
+import { FakeStoragePort } from "../../helpers/fake-storage.port.js";
 import { FakeSubmissionRepository } from "./fakes/fake-submission.repository.js";
 import { FakeSubmissionLookupRepository } from "./fakes/fake-submission-lookup.repository.js";
 import { submission } from "./fixtures/submissions.js";
@@ -32,12 +35,14 @@ describe("SubmissionsService", () => {
     lookup = new FakeSubmissionLookupRepository();
 
     const moduleRef = await Test.createTestingModule({
-      imports: [SubmissionsModule],
+      imports: [createFakeDatabaseModule(createFakePrismaService()), SubmissionsModule],
     })
       .overrideProvider(SUBMISSION_REPOSITORY)
       .useValue(repo)
       .overrideProvider(SUBMISSION_LOOKUP)
       .useValue(lookup)
+      .overrideProvider(STORAGE_PORT)
+      .useValue(new FakeStoragePort())
       .compile();
 
     service = moduleRef.get(SubmissionsService);

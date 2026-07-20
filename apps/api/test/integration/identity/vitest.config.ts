@@ -16,8 +16,15 @@ export default defineConfig({
     },
   },
   test: {
-    include: ["apps/api/test/modules/community/**/*.spec.ts"],
+    include: ["apps/api/test/integration/identity/**/*.spec.ts"],
     environment: "node",
     globals: true,
+    /**
+     * Disable auto-loading of .env so that DATABASE_URL is only set when
+     * explicitly provided in the shell environment (e.g. CI). This ensures
+     * describe.skipIf(!process.env.DATABASE_URL) correctly skips integration
+     * tests when PostgreSQL is not running locally.
+     */
+    dotenv: false,
   },
 });
