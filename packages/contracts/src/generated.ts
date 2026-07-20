@@ -484,6 +484,517 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/schools/{schoolId}/classes/{classId}/assessments": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** 为班级创建测评会话（可为每个学生生成独立 session+items） */
+    post: operations["createClassAssessment"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/recordings": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** 初始化分片录音（返回 recordingId 与上传凭据） */
+    post: operations["initRecording"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/recordings/simple": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** 初始化单文件录音（测评推荐路径） */
+    post: operations["initSimpleRecording"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/recordings/{recordingId}/parts/{partNumber}/upload-url": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** 获取分片预签名上传 URL */
+    post: operations["getRecordingPartUploadUrl"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/recordings/{recordingId}/complete": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** 完成录音（可触发语音评分） */
+    post: operations["completeRecording"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/recordings/{recordingId}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 查询录音状态 */
+    get: operations["getRecordingStatus"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/recordings/{recordingId}/evidence": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 获取录音证据（教师回放与复核） */
+    get: operations["getRecordingEvidence"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/speech-jobs": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** 创建语音评分任务 */
+    post: operations["createSpeechJob"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/speech-jobs/{jobId}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 查询语音评分任务 */
+    get: operations["getSpeechJob"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/speech-jobs/by-item/{assessmentItemId}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 按测评题目列出语音评分任务 */
+    get: operations["listSpeechJobsByItem"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/speech-jobs/{jobId}/result": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /** worker 回写语音评分结果（内部接口，需 X-Internal-API-Key） */
+    put: operations["updateSpeechJobResult"];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/assessments/sessions": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 列出测评会话 */
+    get: operations["listAssessmentSessions"];
+    put?: never;
+    /** 创建单个测评会话 */
+    post: operations["createAssessmentSession"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/assessments/sessions/{sessionId}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 获取测评会话详情 */
+    get: operations["getAssessmentSession"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/assessments/sessions/{sessionId}/start": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** 开始测评会话 */
+    post: operations["startAssessmentSession"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/assessments/sessions/{sessionId}/submit": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** 提交测评会话 */
+    post: operations["submitAssessmentSession"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/assessments/sessions/{sessionId}/items": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 列出测评题目 */
+    get: operations["listAssessmentItems"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/assessments/sessions/{sessionId}/reading/{itemId}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 获取朗读测评题目 */
+    get: operations["getReadingItem"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/assessments/sessions/{sessionId}/reading/{itemId}/recording": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** 关联录音到测评题目 */
+    post: operations["attachAssessmentRecording"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/assessments/sessions/{sessionId}/written": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 获取理解（书面）测评题目 */
+    get: operations["getWrittenItems"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/assessments/sessions/{sessionId}/items/{itemId}/answer": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /** 保存书面作答 */
+    put: operations["saveWrittenAnswer"];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/assessments/sessions/{sessionId}/items/{itemId}/answer/finalize": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** 终结书面作答 */
+    post: operations["finalizeWrittenAnswer"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/assessments/sessions/{sessionId}/items/{itemId}/review": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /** 教师复核测评题目 */
+    put: operations["reviewAssessmentItem"];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/assessments/sessions/{sessionId}/items/{itemId}/recording": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 获取题目关联录音证据（教师复核用） */
+    get: operations["getItemRecordingEvidence"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/assessments/sessions/{sessionId}/report": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 获取测评报告 */
+    get: operations["getAssessmentReport"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/assessments/sessions/{sessionId}/report/generate": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** 生成测评报告 */
+    post: operations["generateAssessmentReport"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/assessments/sessions/{sessionId}/retest": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** 安排复测 */
+    post: operations["scheduleRetest"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/assessments/sessions/{sessionId}/export": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** 导出测评报告 */
+    post: operations["exportAssessmentReport"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/assessments/device-check": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** 记录设备检测（麦克风） */
+    post: operations["logAssessmentDeviceCheck"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/assessments/history": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 查询测评历史 */
+    get: operations["getAssessmentHistory"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/assessments/history/events": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 查询测评历史事件时间线 */
+    get: operations["getAssessmentHistoryEvents"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1047,6 +1558,286 @@ export interface components {
       data: components["schemas"]["OperationsStatus"];
       meta: components["schemas"]["EnvelopeMeta"];
     };
+    /** @description 创建班级测评请求。enrollmentIds 省略取全班 ACTIVE 学生；questionIds 省略从班级最新课程解析默认题目；service 强制非空，不可能创建 0-item 空测评。 */
+    ClassAssessmentRequest: {
+      /** @enum {string} */
+      type: "READING" | "WRITTEN" | "MIXED" | "COMPREHENSIVE";
+      enrollmentIds?: (string | null)[];
+      questionIds?: (string | null)[];
+      title?: string | null;
+    };
+    InitRecordingRequest: {
+      /** Format: uuid */
+      enrollmentId: string;
+      partCount: number;
+      /** Format: uuid */
+      submissionId?: string | null;
+      mimeType?: string | null;
+      idempotencyKey?: string | null;
+    };
+    InitSimpleRecordingRequest: {
+      /** Format: uuid */
+      enrollmentId: string;
+      /** Format: uuid */
+      submissionId?: string | null;
+      mimeType?: string | null;
+      idempotencyKey?: string | null;
+    };
+    /** @description 完成录音。assessmentItemId/targetText 传入时触发语音评分。 */
+    CompleteRecordingRequest: {
+      durationMs?: number | null;
+      objectKey?: string | null;
+      /** Format: uuid */
+      assessmentItemId?: string | null;
+      targetText?: string | null;
+    };
+    Recording: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      enrollmentId: string;
+      /** @enum {string} */
+      status:
+        | "CREATED"
+        | "UPLOADING"
+        | "COMPLETED"
+        | "PROCESSING"
+        | "TRANSCRIBED"
+        | "FAILED";
+      objectKey?: string | null;
+      durationMs?: number | null;
+      mimeType?: string | null;
+      /** Format: date-time */
+      createdAt: string;
+    };
+    RecordingResponse: {
+      data: components["schemas"]["Recording"];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    UploadUrlResponse: {
+      data: {
+        /** Format: uri */
+        uploadUrl: string;
+        /** Format: uuid */
+        recordingId: string;
+        partNumber: number;
+        /** Format: date-time */
+        expiresAt?: string | null;
+      };
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    RecordingEvidenceResponse: {
+      data: {
+        /** Format: uuid */
+        recordingId: string;
+        /** Format: uri */
+        playbackUrl?: string | null;
+        transcript?: string | null;
+        durationMs?: number | null;
+      };
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    CreateSpeechJobRequest: {
+      /** Format: uuid */
+      recordingId: string;
+      /** Format: uuid */
+      assessmentItemId: string;
+      targetText: string;
+      scorerVersion?: string | null;
+      provider?: string | null;
+    };
+    SpeechJob: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      recordingId: string;
+      /** Format: uuid */
+      assessmentItemId?: string | null;
+      /** @enum {string} */
+      status:
+        | "CREATED"
+        | "PROCESSING"
+        | "AUTO_RESULT"
+        | "NEEDS_REVIEW"
+        | "FINALIZED"
+        | "FAILED";
+      result?: Record<string, never> | null;
+      confidence?: number | null;
+      providerModel?: string | null;
+      /** Format: date-time */
+      createdAt: string;
+    };
+    SpeechJobResponse: {
+      data: components["schemas"]["SpeechJob"];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    SpeechJobListResponse: {
+      data: {
+        items: components["schemas"]["SpeechJob"][];
+        nextCursor?: string | null;
+      };
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    /** @description worker 回写评分结果。需 X-Internal-API-Key header。 */
+    SpeechJobResultCallbackRequest: {
+      result: Record<string, never>;
+      confidence?: number | null;
+      processingMs?: number | null;
+      providerModel?: string | null;
+    };
+    CreateAssessmentSessionRequest: {
+      /** Format: uuid */
+      enrollmentId?: string | null;
+      /** Format: uuid */
+      classId?: string | null;
+      /** @enum {string} */
+      type: "READING" | "WRITTEN" | "MIXED";
+      /** Format: uuid */
+      retestOfSessionId?: string | null;
+    };
+    AssessmentSession: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      enrollmentId?: string | null;
+      /** Format: uuid */
+      classId?: string | null;
+      /** @enum {string} */
+      type: "READING" | "WRITTEN" | "MIXED";
+      /** @enum {string} */
+      status:
+        | "CREATED"
+        | "IN_PROGRESS"
+        | "SUBMITTED"
+        | "PROCESSING"
+        | "COMPLETED"
+        | "CANCELLED";
+      score?: number | null;
+      /** Format: uuid */
+      retestOfSessionId?: string | null;
+      /** Format: date-time */
+      createdAt: string;
+    };
+    AssessmentSessionResponse: {
+      data: components["schemas"]["AssessmentSession"];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    AssessmentSessionListResponse: {
+      data: {
+        items: components["schemas"]["AssessmentSession"][];
+        nextCursor?: string | null;
+      };
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    AssessmentItem: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      sessionId: string;
+      /** Format: uuid */
+      questionId?: string;
+      /** @enum {string} */
+      kind: "READING" | "CHOICE" | "FILL" | "SHORT_ANSWER" | "ESSAY";
+      prompt?: string;
+      score?: number | null;
+      /** @enum {string} */
+      status: "PENDING" | "ANSWERED" | "FINALIZED" | "REVIEWED";
+      /** Format: uuid */
+      recordingId?: string | null;
+      answer?: string | null;
+    };
+    AssessmentItemResponse: {
+      data: components["schemas"]["AssessmentItem"];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    AssessmentItemListResponse: {
+      data: {
+        items: components["schemas"]["AssessmentItem"][];
+      };
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    ReadingItemResponse: {
+      data: {
+        /** Format: uuid */
+        itemId: string;
+        targetText: string;
+        prompt?: string;
+        /** Format: uuid */
+        recordingId?: string | null;
+      };
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    AttachRecordingRequest: {
+      /** Format: uuid */
+      recordingId: string;
+    };
+    SaveWrittenAnswerRequest: {
+      content: string;
+      wordCount?: number | null;
+      charCount?: number | null;
+    };
+    /** @description 教师复核。scoredScore/reviewerComment 均可选。 */
+    ReviewItemRequest: {
+      scoredScore?: number | null;
+      reviewerComment?: string | null;
+    };
+    AssessmentReportResponse: {
+      data: {
+        /** Format: uuid */
+        sessionId: string;
+        overallScore?: number | null;
+        items?: Record<string, never>[];
+        /** Format: date-time */
+        generatedAt: string;
+        summary?: string | null;
+      };
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    ExportReportRequest: {
+      purpose?: string | null;
+    };
+    ExportReportResponse: {
+      data: {
+        /** Format: uuid */
+        sessionId: string;
+        /** Format: uri */
+        downloadUrl?: string | null;
+        format?: string | null;
+        /** Format: date-time */
+        expiresAt?: string | null;
+      };
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    DeviceCheckRequest: {
+      checkResult: string;
+      userAgent?: string | null;
+    };
+    DeviceCheckResponse: {
+      data: {
+        recorded: boolean;
+      };
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    AssessmentHistoryResponse: {
+      data: {
+        /** Format: uuid */
+        enrollmentId?: string | null;
+        sessions?: components["schemas"]["AssessmentSession"][];
+      };
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    AssessmentHistoryEventsResponse: {
+      data: {
+        events: {
+          id?: string;
+          type?: string;
+          /** Format: date-time */
+          occurredAt?: string;
+          summary?: string | null;
+        }[];
+      };
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
   };
   responses: {
     /** @description 请求参数无效或格式错误 */
@@ -1131,6 +1922,132 @@ export interface components {
         "application/json": components["schemas"]["ErrorResponse"];
       };
     };
+    /** @description 参数校验失败（稳定码 VALIDATION_FAILED，HTTP 400） */
+    ValidationFailed: {
+      headers: {
+        [name: string]: unknown;
+      };
+      content: {
+        /**
+         * @example {
+         *       "error": {
+         *         "code": "VALIDATION_FAILED",
+         *         "message": "参数校验失败",
+         *         "details": {},
+         *         "requestId": "00000000-0000-0000-0000-000000000010"
+         *       }
+         *     }
+         */
+        "application/json": components["schemas"]["ErrorResponse"];
+      };
+    };
+    /** @description 测评内容为空——无课程/无题目/解析后为空（稳定码 PRACTICE_CONTENT_EMPTY 或 ASSESSMENT_HAS_NO_ITEMS，HTTP 422） */
+    AssessmentContentEmpty: {
+      headers: {
+        [name: string]: unknown;
+      };
+      content: {
+        "application/json": components["schemas"]["ErrorResponse"];
+      };
+    };
+    /** @description 录音音质被拒——时长过短/静音/格式不支持（稳定码 AUDIO_QUALITY_REJECTED，HTTP 422） */
+    AudioQualityRejected: {
+      headers: {
+        [name: string]: unknown;
+      };
+      content: {
+        /**
+         * @example {
+         *       "error": {
+         *         "code": "AUDIO_QUALITY_REJECTED",
+         *         "message": "录音音质不达标，请重新录制",
+         *         "details": {
+         *           "durationMs": 320,
+         *           "minDurationMs": 1000
+         *         },
+         *         "requestId": "00000000-0000-0000-0000-000000000013"
+         *       }
+         *     }
+         */
+        "application/json": components["schemas"]["ErrorResponse"];
+      };
+    };
+    /** @description 服务提供方未配置（稳定码 PROVIDER_NOT_CONFIGURED，HTTP 503） */
+    ProviderNotConfigured: {
+      headers: {
+        [name: string]: unknown;
+      };
+      content: {
+        /**
+         * @example {
+         *       "error": {
+         *         "code": "PROVIDER_NOT_CONFIGURED",
+         *         "message": "服务提供方未配置，该功能暂不可用",
+         *         "details": {},
+         *         "requestId": "00000000-0000-0000-0000-000000000014"
+         *       }
+         *     }
+         */
+        "application/json": components["schemas"]["ErrorResponse"];
+      };
+    };
+    /** @description 服务提供方暂时不可用（稳定码 PROVIDER_UNAVAILABLE，HTTP 503） */
+    ProviderUnavailable: {
+      headers: {
+        [name: string]: unknown;
+      };
+      content: {
+        /**
+         * @example {
+         *       "error": {
+         *         "code": "PROVIDER_UNAVAILABLE",
+         *         "message": "语音评分服务暂时不可用，请稍后重试",
+         *         "details": {},
+         *         "requestId": "00000000-0000-0000-0000-000000000015"
+         *       }
+         *     }
+         */
+        "application/json": components["schemas"]["ErrorResponse"];
+      };
+    };
+    /** @description 测评处理中，请稍后查询（稳定码 PROCESSING_PENDING，HTTP 202） */
+    ProcessingPending: {
+      headers: {
+        [name: string]: unknown;
+      };
+      content: {
+        /**
+         * @example {
+         *       "error": {
+         *         "code": "PROCESSING_PENDING",
+         *         "message": "测评处理中，请稍后查询",
+         *         "details": {},
+         *         "requestId": "00000000-0000-0000-0000-000000000016"
+         *       }
+         *     }
+         */
+        "application/json": components["schemas"]["ErrorResponse"];
+      };
+    };
+    /** @description 幂等键冲突——重复请求与首次业务摘要不一致（稳定码 IDEMPOTENCY_CONFLICT，HTTP 409） */
+    IdempotencyConflict: {
+      headers: {
+        [name: string]: unknown;
+      };
+      content: {
+        /**
+         * @example {
+         *       "error": {
+         *         "code": "IDEMPOTENCY_CONFLICT",
+         *         "message": "幂等键已存在但请求摘要不一致",
+         *         "details": {},
+         *         "requestId": "00000000-0000-0000-0000-000000000017"
+         *       }
+         *     }
+         */
+        "application/json": components["schemas"]["ErrorResponse"];
+      };
+    };
   };
   parameters: {
     /** @description 学校（租户）标识 */
@@ -1159,6 +2076,20 @@ export interface components {
     PackageId: string;
     /** @description 同步批次 ID */
     BatchId: string;
+    /** @description 班级 ID */
+    ClassId: string;
+    /** @description 录音 ID */
+    RecordingId: string;
+    /** @description 测评会话 ID */
+    SessionId: string;
+    /** @description 测评题目 ID */
+    ItemId: string;
+    /** @description 语音评分任务 ID */
+    JobId: string;
+    /** @description 测评题目 ID（speech-job 查询用） */
+    AssessmentItemId: string;
+    /** @description 录音分片序号（从 1 开始） */
+    PartNumber: number;
   };
   requestBodies: never;
   headers: never;
@@ -2199,7 +3130,927 @@ export interface operations {
           "application/json": components["schemas"]["OperationsStatusResponse"];
         };
       };
+      429: components["responses"]["TooManyRequests"];
       500: components["responses"]["InternalServerError"];
+    };
+  };
+  createClassAssessment: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 班级 ID */
+        classId: components["parameters"]["ClassId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ClassAssessmentRequest"];
+      };
+    };
+    responses: {
+      /** @description 测评会话已创建（按学生数返回 session 列表） */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AssessmentSessionListResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+      409: components["responses"]["Conflict"];
+      422: components["responses"]["AssessmentContentEmpty"];
+    };
+  };
+  initRecording: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["InitRecordingRequest"];
+      };
+    };
+    responses: {
+      /** @description 录音已初始化 */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["RecordingResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+      409: components["responses"]["IdempotencyConflict"];
+      422: components["responses"]["ValidationFailed"];
+    };
+  };
+  initSimpleRecording: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["InitSimpleRecordingRequest"];
+      };
+    };
+    responses: {
+      /** @description 录音已初始化 */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["RecordingResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+      409: components["responses"]["IdempotencyConflict"];
+      422: components["responses"]["ValidationFailed"];
+    };
+  };
+  getRecordingPartUploadUrl: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 录音 ID */
+        recordingId: components["parameters"]["RecordingId"];
+        /** @description 录音分片序号（从 1 开始） */
+        partNumber: components["parameters"]["PartNumber"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 预签名上传地址 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["UploadUrlResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  completeRecording: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 录音 ID */
+        recordingId: components["parameters"]["RecordingId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CompleteRecordingRequest"];
+      };
+    };
+    responses: {
+      /** @description 录音已完成 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["RecordingResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+      409: components["responses"]["Conflict"];
+      422: components["responses"]["AudioQualityRejected"];
+      503: components["responses"]["ProviderUnavailable"];
+    };
+  };
+  getRecordingStatus: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 录音 ID */
+        recordingId: components["parameters"]["RecordingId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 录音状态 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["RecordingResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  getRecordingEvidence: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 录音 ID */
+        recordingId: components["parameters"]["RecordingId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 录音证据 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["RecordingEvidenceResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  createSpeechJob: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CreateSpeechJobRequest"];
+      };
+    };
+    responses: {
+      /** @description 语音评分任务已创建 */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SpeechJobResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+      422: components["responses"]["ValidationFailed"];
+      503: components["responses"]["ProviderNotConfigured"];
+    };
+  };
+  getSpeechJob: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 语音评分任务 ID */
+        jobId: components["parameters"]["JobId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 语音评分任务详情 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SpeechJobResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  listSpeechJobsByItem: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 测评题目 ID（speech-job 查询用） */
+        assessmentItemId: components["parameters"]["AssessmentItemId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 语音评分任务列表 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SpeechJobListResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  updateSpeechJobResult: {
+    parameters: {
+      query?: never;
+      header: {
+        /** @description 内部 worker 凭据，须匹配 INTERNAL_WORKER_API_KEY；未配置时 fail closed */
+        "X-Internal-API-Key": string;
+      };
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 语音评分任务 ID */
+        jobId: components["parameters"]["JobId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["SpeechJobResultCallbackRequest"];
+      };
+    };
+    responses: {
+      /** @description 评分结果已回写 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SpeechJobResponse"];
+        };
+      };
+      401: components["responses"]["Unauthorized"];
+      404: components["responses"]["NotFound"];
+      422: components["responses"]["ValidationFailed"];
+    };
+  };
+  listAssessmentSessions: {
+    parameters: {
+      query?: {
+        /** @description 分页返回数量上限 */
+        limit?: components["parameters"]["Limit"];
+        /** @description 游标， opaque 字符串 */
+        cursor?: components["parameters"]["Cursor"];
+        enrollmentId?: string;
+        classId?: string;
+        status?:
+          | "CREATED"
+          | "IN_PROGRESS"
+          | "SUBMITTED"
+          | "PROCESSING"
+          | "COMPLETED"
+          | "CANCELLED";
+      };
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 测评会话列表 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AssessmentSessionListResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+    };
+  };
+  createAssessmentSession: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CreateAssessmentSessionRequest"];
+      };
+    };
+    responses: {
+      /** @description 测评会话已创建 */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AssessmentSessionResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+      422: components["responses"]["ValidationFailed"];
+    };
+  };
+  getAssessmentSession: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 测评会话 ID */
+        sessionId: components["parameters"]["SessionId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 测评会话详情 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AssessmentSessionResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  startAssessmentSession: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 测评会话 ID */
+        sessionId: components["parameters"]["SessionId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 会话已开始 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AssessmentSessionResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+      409: components["responses"]["Conflict"];
+    };
+  };
+  submitAssessmentSession: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 测评会话 ID */
+        sessionId: components["parameters"]["SessionId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 会话已提交 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AssessmentSessionResponse"];
+        };
+      };
+      202: components["responses"]["ProcessingPending"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+      409: components["responses"]["Conflict"];
+    };
+  };
+  listAssessmentItems: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 测评会话 ID */
+        sessionId: components["parameters"]["SessionId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 测评题目列表 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AssessmentItemListResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  getReadingItem: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 测评会话 ID */
+        sessionId: components["parameters"]["SessionId"];
+        /** @description 测评题目 ID */
+        itemId: components["parameters"]["ItemId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 朗读题目详情 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ReadingItemResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  attachAssessmentRecording: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 测评会话 ID */
+        sessionId: components["parameters"]["SessionId"];
+        /** @description 测评题目 ID */
+        itemId: components["parameters"]["ItemId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["AttachRecordingRequest"];
+      };
+    };
+    responses: {
+      /** @description 录音已关联 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AssessmentItemResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+      409: components["responses"]["Conflict"];
+    };
+  };
+  getWrittenItems: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 测评会话 ID */
+        sessionId: components["parameters"]["SessionId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 书面题目列表 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AssessmentItemListResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  saveWrittenAnswer: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 测评会话 ID */
+        sessionId: components["parameters"]["SessionId"];
+        /** @description 测评题目 ID */
+        itemId: components["parameters"]["ItemId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["SaveWrittenAnswerRequest"];
+      };
+    };
+    responses: {
+      /** @description 作答已保存 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AssessmentItemResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+      422: components["responses"]["ValidationFailed"];
+    };
+  };
+  finalizeWrittenAnswer: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 测评会话 ID */
+        sessionId: components["parameters"]["SessionId"];
+        /** @description 测评题目 ID */
+        itemId: components["parameters"]["ItemId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 作答已终结 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AssessmentItemResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+      409: components["responses"]["Conflict"];
+    };
+  };
+  reviewAssessmentItem: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 测评会话 ID */
+        sessionId: components["parameters"]["SessionId"];
+        /** @description 测评题目 ID */
+        itemId: components["parameters"]["ItemId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ReviewItemRequest"];
+      };
+    };
+    responses: {
+      /** @description 复核已保存 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AssessmentItemResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+      422: components["responses"]["ValidationFailed"];
+    };
+  };
+  getItemRecordingEvidence: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 测评会话 ID */
+        sessionId: components["parameters"]["SessionId"];
+        /** @description 测评题目 ID */
+        itemId: components["parameters"]["ItemId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 录音证据 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["RecordingEvidenceResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  getAssessmentReport: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 测评会话 ID */
+        sessionId: components["parameters"]["SessionId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 测评报告 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AssessmentReportResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  generateAssessmentReport: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 测评会话 ID */
+        sessionId: components["parameters"]["SessionId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 报告已生成 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AssessmentReportResponse"];
+        };
+      };
+      202: components["responses"]["ProcessingPending"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+      409: components["responses"]["Conflict"];
+    };
+  };
+  scheduleRetest: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 测评会话 ID */
+        sessionId: components["parameters"]["SessionId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 复测会话已创建 */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AssessmentSessionResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  exportAssessmentReport: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 测评会话 ID */
+        sessionId: components["parameters"]["SessionId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        "application/json": components["schemas"]["ExportReportRequest"];
+      };
+    };
+    responses: {
+      /** @description 导出结果 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ExportReportResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  logAssessmentDeviceCheck: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["DeviceCheckRequest"];
+      };
+    };
+    responses: {
+      /** @description 检测已记录 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["DeviceCheckResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+    };
+  };
+  getAssessmentHistory: {
+    parameters: {
+      query?: {
+        enrollmentId?: string;
+        range?: "8w" | "6m" | "all";
+      };
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 测评历史 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AssessmentHistoryResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+    };
+  };
+  getAssessmentHistoryEvents: {
+    parameters: {
+      query?: {
+        enrollmentId?: string;
+      };
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 历史事件列表 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AssessmentHistoryEventsResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
     };
   };
 }

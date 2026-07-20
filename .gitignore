@@ -22,3 +22,4 @@ infra/database/generated/
 *.bundle
 *.local.json
 runtime-local/
+_tmp/

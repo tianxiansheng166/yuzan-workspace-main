@@ -1,10 +1,11 @@
-import { Inject, Injectable, Logger, NotFoundException, Optional } from "@nestjs/common";
+import { Inject, Injectable, Logger, Optional } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Queue } from "bullmq";
 import type { SpeechJobStatus } from "@yuzan/database";
 import { PrismaService } from "../../shared/database/prisma.service.js";
 import { toSpeechJobResponse } from "./dto/speech-job.response.js";
 import { SPEECH_QUEUE } from "./speech-job.tokens.js";
+import { SpeechJobNotFoundException } from "./domain/speech-job.errors.js";
 
 /**
  * SpeechJobService manages the lifecycle of speech processing jobs.
@@ -64,7 +65,7 @@ export class SpeechJobService {
   async getSpeechJob(id: string) {
     const job = await this.prisma.speechJob.findUnique({ where: { id } });
     if (!job) {
-      throw new NotFoundException(`SpeechJob ${id} not found`);
+      throw new SpeechJobNotFoundException(`SpeechJob ${id} not found`);
     }
     return toSpeechJobResponse(job);
   }

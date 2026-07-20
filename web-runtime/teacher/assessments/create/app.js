@@ -1,4 +1,4 @@
-﻿(() => {
+(() => {
   'use strict';
 
   const steps = [...document.querySelectorAll(".steps li")];
@@ -266,14 +266,30 @@
         await YuzanApi.createClassAssessment(selectedClassId, {
           type: selectedType,
           title,
-          // enrollmentIds 和 questionIds 暂不指定（使用全班默认+课程默认题目）
+          // P0-CONTRACT-CONVERGENCE-001: enrollmentIds/questionIds 省略是契约支持的合法行为。
+          // 省略 enrollmentIds → service 取班级全部 ACTIVE 学生；
+          // 省略 questionIds → service 从班级最新 assignment 的 courseVersion 解析默认题目。
+          // service 端强制非空：无课程/无题目抛 PRACTICE_CONTENT_EMPTY，解析后空抛 ASSESSMENT_HAS_NO_ITEMS，
+          // 因此前端不可能创建出 0-item 空测评。
         });
         showToast('测评已发布');
         setTimeout(() => location.href = '/teacher/assessments', 1000);
       } catch (err) {
         publishBtn.disabled = false;
         publishBtn.textContent = '发布测评';
-        showToast(err.message || '发布失败，请重试');
+        // 按稳定错误码分支，而非依赖 HTTP 状态码或 message 文案。
+        const code = err.code || '';
+        if (code === 'PRACTICE_CONTENT_EMPTY') {
+          showToast('当前班级未关联课程或课程无题目，请先在课程管理中配置题目');
+        } else if (code === 'ASSESSMENT_HAS_NO_ITEMS') {
+          showToast('测评必须包含至少一道题目，无法创建空测评');
+        } else if (code === 'FORBIDDEN_RESOURCE') {
+          showToast('您无权在该班级发布测评');
+        } else if (code === 'VALIDATION_FAILED') {
+          showToast('参数校验失败：' + (err.message || '请检查输入'));
+        } else {
+          showToast(err.message || '发布失败，请重试');
+        }
       } finally {
         isPublishing = false;
       }

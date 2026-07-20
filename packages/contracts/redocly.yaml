@@ -1,0 +1,8 @@
+# Redocly 配置：在推荐规则集基础上调整不适用于本项目的规则
+extends:
+  - recommended
+rules:
+  # 路径 /speech-jobs/by-item/{assessmentItemId} 与 /speech-jobs/{jobId}/result
+  # 中 by-item 固定字符串与 {jobId} 参数位置重叠，但 NestJS 路由器优先匹配固定字符串，
+  # 运行时无歧义；路径设计由后端 Controller 决定，契约层不强制重构。
+  no-ambiguous-paths: off

@@ -5,6 +5,7 @@ info:
   description: Contract baseline for the first real teaching loop.
   license:
     name: Proprietary
+    url: https://example.edu/license
 servers:
   - url: /api/v1
     description: Current deployment origin
@@ -33,6 +34,12 @@ tags:
     description: 离线内容包管理与同步批次
   - name: Operations
     description: 运维健康检查与系统状态
+  - name: Assessments
+    description: 朗读与理解测评会话、作答、报告与复核（黄金闭环）
+  - name: Recordings
+    description: 录音初始化、分片上传、完成与证据查询
+  - name: SpeechJobs
+    description: 语音评分任务创建、查询与 worker 回写
 paths:
   /health/live:
     get:
@@ -877,8 +884,742 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OperationsStatusResponse"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
         "500":
           $ref: "#/components/responses/InternalServerError"
+  # ════════════════════════════════════════════════════════════
+  # P0-CONTRACT-CONVERGENCE-001: 黄金闭环端点（classes/recordings/speech-jobs/assessments）
+  # ════════════════════════════════════════════════════════════
+  # ── Classes: 创建班级测评（黄金闭环入口） ──
+  /schools/{schoolId}/classes/{classId}/assessments:
+    post:
+      summary: 为班级创建测评会话（可为每个学生生成独立 session+items）
+      tags: [Classes, Assessments]
+      operationId: createClassAssessment
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/ClassId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClassAssessmentRequest"
+      responses:
+        "201":
+          description: 测评会话已创建（按学生数返回 session 列表）
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AssessmentSessionListResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/AssessmentContentEmpty"
+        "409":
+          $ref: "#/components/responses/Conflict"
+  # ── Recordings ──
+  /schools/{schoolId}/recordings:
+    post:
+      summary: 初始化分片录音（返回 recordingId 与上传凭据）
+      tags: [Recordings]
+      operationId: initRecording
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InitRecordingRequest"
+      responses:
+        "201":
+          description: 录音已初始化
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecordingResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "409":
+          $ref: "#/components/responses/IdempotencyConflict"
+  /schools/{schoolId}/recordings/simple:
+    post:
+      summary: 初始化单文件录音（测评推荐路径）
+      tags: [Recordings]
+      operationId: initSimpleRecording
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InitSimpleRecordingRequest"
+      responses:
+        "201":
+          description: 录音已初始化
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecordingResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "409":
+          $ref: "#/components/responses/IdempotencyConflict"
+  /schools/{schoolId}/recordings/{recordingId}/parts/{partNumber}/upload-url:
+    post:
+      summary: 获取分片预签名上传 URL
+      tags: [Recordings]
+      operationId: getRecordingPartUploadUrl
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/RecordingId"
+        - $ref: "#/components/parameters/PartNumber"
+      responses:
+        "200":
+          description: 预签名上传地址
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadUrlResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /schools/{schoolId}/recordings/{recordingId}/complete:
+    post:
+      summary: 完成录音（可触发语音评分）
+      tags: [Recordings]
+      operationId: completeRecording
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/RecordingId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CompleteRecordingRequest"
+      responses:
+        "200":
+          description: 录音已完成
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecordingResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/AudioQualityRejected"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "503":
+          $ref: "#/components/responses/ProviderUnavailable"
+  /schools/{schoolId}/recordings/{recordingId}:
+    get:
+      summary: 查询录音状态
+      tags: [Recordings]
+      operationId: getRecordingStatus
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/RecordingId"
+      responses:
+        "200":
+          description: 录音状态
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecordingResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /schools/{schoolId}/recordings/{recordingId}/evidence:
+    get:
+      summary: 获取录音证据（教师回放与复核）
+      tags: [Recordings]
+      operationId: getRecordingEvidence
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/RecordingId"
+      responses:
+        "200":
+          description: 录音证据
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecordingEvidenceResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  # ── Speech Jobs ──
+  /schools/{schoolId}/speech-jobs:
+    post:
+      summary: 创建语音评分任务
+      tags: [SpeechJobs]
+      operationId: createSpeechJob
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSpeechJobRequest"
+      responses:
+        "201":
+          description: 语音评分任务已创建
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SpeechJobResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "503":
+          $ref: "#/components/responses/ProviderNotConfigured"
+  /schools/{schoolId}/speech-jobs/{jobId}:
+    get:
+      summary: 查询语音评分任务
+      tags: [SpeechJobs]
+      operationId: getSpeechJob
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/JobId"
+      responses:
+        "200":
+          description: 语音评分任务详情
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SpeechJobResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /schools/{schoolId}/speech-jobs/by-item/{assessmentItemId}:
+    get:
+      summary: 按测评题目列出语音评分任务
+      tags: [SpeechJobs]
+      operationId: listSpeechJobsByItem
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/AssessmentItemId"
+      responses:
+        "200":
+          description: 语音评分任务列表
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SpeechJobListResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /schools/{schoolId}/speech-jobs/{jobId}/result:
+    put:
+      summary: worker 回写语音评分结果（内部接口，需 X-Internal-API-Key）
+      tags: [SpeechJobs]
+      operationId: updateSpeechJobResult
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/JobId"
+        - in: header
+          name: X-Internal-API-Key
+          required: true
+          description: 内部 worker 凭据，须匹配 INTERNAL_WORKER_API_KEY；未配置时 fail closed
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SpeechJobResultCallbackRequest"
+      responses:
+        "200":
+          description: 评分结果已回写
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SpeechJobResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+  # ── Assessment Sessions ──
+  /schools/{schoolId}/assessments/sessions:
+    post:
+      summary: 创建单个测评会话
+      tags: [Assessments]
+      operationId: createAssessmentSession
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAssessmentSessionRequest"
+      responses:
+        "201":
+          description: 测评会话已创建
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AssessmentSessionResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+    get:
+      summary: 列出测评会话
+      tags: [Assessments]
+      operationId: listAssessmentSessions
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Cursor"
+        - in: query
+          name: enrollmentId
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: classId
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [CREATED, IN_PROGRESS, SUBMITTED, PROCESSING, COMPLETED, CANCELLED]
+      responses:
+        "200":
+          description: 测评会话列表
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AssessmentSessionListResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+  /schools/{schoolId}/assessments/sessions/{sessionId}:
+    get:
+      summary: 获取测评会话详情
+      tags: [Assessments]
+      operationId: getAssessmentSession
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/SessionId"
+      responses:
+        "200":
+          description: 测评会话详情
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AssessmentSessionResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /schools/{schoolId}/assessments/sessions/{sessionId}/start:
+    post:
+      summary: 开始测评会话
+      tags: [Assessments]
+      operationId: startAssessmentSession
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/SessionId"
+      responses:
+        "200":
+          description: 会话已开始
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AssessmentSessionResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+  /schools/{schoolId}/assessments/sessions/{sessionId}/submit:
+    post:
+      summary: 提交测评会话
+      tags: [Assessments]
+      operationId: submitAssessmentSession
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/SessionId"
+      responses:
+        "200":
+          description: 会话已提交
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AssessmentSessionResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "202":
+          $ref: "#/components/responses/ProcessingPending"
+  /schools/{schoolId}/assessments/sessions/{sessionId}/items:
+    get:
+      summary: 列出测评题目
+      tags: [Assessments]
+      operationId: listAssessmentItems
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/SessionId"
+      responses:
+        "200":
+          description: 测评题目列表
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AssessmentItemListResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /schools/{schoolId}/assessments/sessions/{sessionId}/reading/{itemId}:
+    get:
+      summary: 获取朗读测评题目
+      tags: [Assessments]
+      operationId: getReadingItem
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/SessionId"
+        - $ref: "#/components/parameters/ItemId"
+      responses:
+        "200":
+          description: 朗读题目详情
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReadingItemResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /schools/{schoolId}/assessments/sessions/{sessionId}/reading/{itemId}/recording:
+    post:
+      summary: 关联录音到测评题目
+      tags: [Assessments, Recordings]
+      operationId: attachAssessmentRecording
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/SessionId"
+        - $ref: "#/components/parameters/ItemId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AttachRecordingRequest"
+      responses:
+        "200":
+          description: 录音已关联
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AssessmentItemResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+  /schools/{schoolId}/assessments/sessions/{sessionId}/written:
+    get:
+      summary: 获取理解（书面）测评题目
+      tags: [Assessments]
+      operationId: getWrittenItems
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/SessionId"
+      responses:
+        "200":
+          description: 书面题目列表
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AssessmentItemListResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /schools/{schoolId}/assessments/sessions/{sessionId}/items/{itemId}/answer:
+    put:
+      summary: 保存书面作答
+      tags: [Assessments]
+      operationId: saveWrittenAnswer
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/SessionId"
+        - $ref: "#/components/parameters/ItemId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SaveWrittenAnswerRequest"
+      responses:
+        "200":
+          description: 作答已保存
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AssessmentItemResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+  /schools/{schoolId}/assessments/sessions/{sessionId}/items/{itemId}/answer/finalize:
+    post:
+      summary: 终结书面作答
+      tags: [Assessments]
+      operationId: finalizeWrittenAnswer
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/SessionId"
+        - $ref: "#/components/parameters/ItemId"
+      responses:
+        "200":
+          description: 作答已终结
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AssessmentItemResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+  /schools/{schoolId}/assessments/sessions/{sessionId}/items/{itemId}/review:
+    put:
+      summary: 教师复核测评题目
+      tags: [Assessments]
+      operationId: reviewAssessmentItem
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/SessionId"
+        - $ref: "#/components/parameters/ItemId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReviewItemRequest"
+      responses:
+        "200":
+          description: 复核已保存
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AssessmentItemResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+  /schools/{schoolId}/assessments/sessions/{sessionId}/items/{itemId}/recording:
+    get:
+      summary: 获取题目关联录音证据（教师复核用）
+      tags: [Assessments, Recordings]
+      operationId: getItemRecordingEvidence
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/SessionId"
+        - $ref: "#/components/parameters/ItemId"
+      responses:
+        "200":
+          description: 录音证据
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecordingEvidenceResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /schools/{schoolId}/assessments/sessions/{sessionId}/report:
+    get:
+      summary: 获取测评报告
+      tags: [Assessments]
+      operationId: getAssessmentReport
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/SessionId"
+      responses:
+        "200":
+          description: 测评报告
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AssessmentReportResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /schools/{schoolId}/assessments/sessions/{sessionId}/report/generate:
+    post:
+      summary: 生成测评报告
+      tags: [Assessments]
+      operationId: generateAssessmentReport
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/SessionId"
+      responses:
+        "200":
+          description: 报告已生成
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AssessmentReportResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "202":
+          $ref: "#/components/responses/ProcessingPending"
+  /schools/{schoolId}/assessments/sessions/{sessionId}/retest:
+    post:
+      summary: 安排复测
+      tags: [Assessments]
+      operationId: scheduleRetest
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/SessionId"
+      responses:
+        "201":
+          description: 复测会话已创建
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AssessmentSessionResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /schools/{schoolId}/assessments/sessions/{sessionId}/export:
+    post:
+      summary: 导出测评报告
+      tags: [Assessments]
+      operationId: exportAssessmentReport
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/SessionId"
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExportReportRequest"
+      responses:
+        "200":
+          description: 导出结果
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExportReportResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /schools/{schoolId}/assessments/device-check:
+    post:
+      summary: 记录设备检测（麦克风）
+      tags: [Assessments]
+      operationId: logAssessmentDeviceCheck
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeviceCheckRequest"
+      responses:
+        "200":
+          description: 检测已记录
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeviceCheckResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+  /schools/{schoolId}/assessments/history:
+    get:
+      summary: 查询测评历史
+      tags: [Assessments]
+      operationId: getAssessmentHistory
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - in: query
+          name: enrollmentId
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: range
+          schema:
+            type: string
+            enum: [8w, 6m, all]
+      responses:
+        "200":
+          description: 测评历史
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AssessmentHistoryResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+  /schools/{schoolId}/assessments/history/events:
+    get:
+      summary: 查询测评历史事件时间线
+      tags: [Assessments]
+      operationId: getAssessmentHistoryEvents
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - in: query
+          name: enrollmentId
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: 历史事件列表
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AssessmentHistoryEventsResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
 components:
   securitySchemes:
     bearerAuth:
@@ -990,6 +1731,62 @@ components:
       schema:
         type: string
         format: uuid
+    ClassId:
+      in: path
+      name: classId
+      required: true
+      description: 班级 ID
+      schema:
+        type: string
+        format: uuid
+    RecordingId:
+      in: path
+      name: recordingId
+      required: true
+      description: 录音 ID
+      schema:
+        type: string
+        format: uuid
+    SessionId:
+      in: path
+      name: sessionId
+      required: true
+      description: 测评会话 ID
+      schema:
+        type: string
+        format: uuid
+    ItemId:
+      in: path
+      name: itemId
+      required: true
+      description: 测评题目 ID
+      schema:
+        type: string
+        format: uuid
+    JobId:
+      in: path
+      name: jobId
+      required: true
+      description: 语音评分任务 ID
+      schema:
+        type: string
+        format: uuid
+    AssessmentItemId:
+      in: path
+      name: assessmentItemId
+      required: true
+      description: 测评题目 ID（speech-job 查询用）
+      schema:
+        type: string
+        format: uuid
+    PartNumber:
+      in: path
+      name: partNumber
+      required: true
+      description: 录音分片序号（从 1 开始）
+      schema:
+        type: integer
+        minimum: 1
   responses:
     BadRequest:
       description: 请求参数无效或格式错误
@@ -1045,6 +1842,102 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/ErrorResponse"
+    # ── P0-CONTRACT-CONVERGENCE-001: 稳定错误码响应 ──
+    ValidationFailed:
+      description: 参数校验失败（稳定码 VALIDATION_FAILED，HTTP 400）
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            error:
+              code: VALIDATION_FAILED
+              message: 参数校验失败
+              details: {}
+              requestId: "00000000-0000-0000-0000-000000000010"
+    AssessmentContentEmpty:
+      description: 测评内容为空——无课程/无题目/解析后为空（稳定码 PRACTICE_CONTENT_EMPTY 或 ASSESSMENT_HAS_NO_ITEMS，HTTP 422）
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          examples:
+            practiceContentEmpty:
+              value:
+                error:
+                  code: PRACTICE_CONTENT_EMPTY
+                  message: 班级当前没有可用的练习内容，请先配置课程题目
+                  details: {}
+                  requestId: "00000000-0000-0000-0000-000000000011"
+            assessmentHasNoItems:
+              value:
+                error:
+                  code: ASSESSMENT_HAS_NO_ITEMS
+                  message: 测评必须包含至少一道题目，无法创建空测评
+                  details: {}
+                  requestId: "00000000-0000-0000-0000-000000000012"
+    AudioQualityRejected:
+      description: 录音音质被拒——时长过短/静音/格式不支持（稳定码 AUDIO_QUALITY_REJECTED，HTTP 422）
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            error:
+              code: AUDIO_QUALITY_REJECTED
+              message: 录音音质不达标，请重新录制
+              details:
+                durationMs: 320
+                minDurationMs: 1000
+              requestId: "00000000-0000-0000-0000-000000000013"
+    ProviderNotConfigured:
+      description: 服务提供方未配置（稳定码 PROVIDER_NOT_CONFIGURED，HTTP 503）
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            error:
+              code: PROVIDER_NOT_CONFIGURED
+              message: 服务提供方未配置，该功能暂不可用
+              details: {}
+              requestId: "00000000-0000-0000-0000-000000000014"
+    ProviderUnavailable:
+      description: 服务提供方暂时不可用（稳定码 PROVIDER_UNAVAILABLE，HTTP 503）
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            error:
+              code: PROVIDER_UNAVAILABLE
+              message: 语音评分服务暂时不可用，请稍后重试
+              details: {}
+              requestId: "00000000-0000-0000-0000-000000000015"
+    ProcessingPending:
+      description: 测评处理中，请稍后查询（稳定码 PROCESSING_PENDING，HTTP 202）
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            error:
+              code: PROCESSING_PENDING
+              message: 测评处理中，请稍后查询
+              details: {}
+              requestId: "00000000-0000-0000-0000-000000000016"
+    IdempotencyConflict:
+      description: 幂等键冲突——重复请求与首次业务摘要不一致（稳定码 IDEMPOTENCY_CONFLICT，HTTP 409）
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            error:
+              code: IDEMPOTENCY_CONFLICT
+              message: 幂等键已存在但请求摘要不一致
+              details: {}
+              requestId: "00000000-0000-0000-0000-000000000017"
   schemas:
     EnvelopeMeta:
       type: object
@@ -2055,6 +2948,494 @@ components:
       properties:
         data:
           $ref: "#/components/schemas/OperationsStatus"
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
+    # ════════════════════════════════════════════════════════════
+    # P0-CONTRACT-CONVERGENCE-001: 黄金闭环 schemas
+    # ════════════════════════════════════════════════════════════
+    ClassAssessmentRequest:
+      type: object
+      required: [type]
+      description: 创建班级测评请求。enrollmentIds 省略取全班 ACTIVE 学生；questionIds 省略从班级最新课程解析默认题目；service 强制非空，不可能创建 0-item 空测评。
+      properties:
+        type:
+          type: string
+          enum: [READING, WRITTEN, MIXED, COMPREHENSIVE]
+        enrollmentIds:
+          type: array
+          items:
+            type: [string, "null"]
+            format: uuid
+        questionIds:
+          type: array
+          items:
+            type: [string, "null"]
+            format: uuid
+        title:
+          type: [string, "null"]
+    InitRecordingRequest:
+      type: object
+      required: [enrollmentId, partCount]
+      properties:
+        enrollmentId:
+          type: string
+          format: uuid
+        partCount:
+          type: integer
+          minimum: 1
+        submissionId:
+          type: [string, "null"]
+          format: uuid
+        mimeType:
+          type: [string, "null"]
+        idempotencyKey:
+          type: [string, "null"]
+    InitSimpleRecordingRequest:
+      type: object
+      required: [enrollmentId]
+      properties:
+        enrollmentId:
+          type: string
+          format: uuid
+        submissionId:
+          type: [string, "null"]
+          format: uuid
+        mimeType:
+          type: [string, "null"]
+        idempotencyKey:
+          type: [string, "null"]
+    CompleteRecordingRequest:
+      type: object
+      description: 完成录音。assessmentItemId/targetText 传入时触发语音评分。
+      properties:
+        durationMs:
+          type: [integer, "null"]
+        objectKey:
+          type: [string, "null"]
+        assessmentItemId:
+          type: [string, "null"]
+          format: uuid
+        targetText:
+          type: [string, "null"]
+    Recording:
+      type: object
+      required: [id, enrollmentId, status, createdAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        enrollmentId:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [CREATED, UPLOADING, COMPLETED, PROCESSING, TRANSCRIBED, FAILED]
+        objectKey:
+          type: [string, "null"]
+        durationMs:
+          type: [integer, "null"]
+        mimeType:
+          type: [string, "null"]
+        createdAt:
+          type: string
+          format: date-time
+    RecordingResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          $ref: "#/components/schemas/Recording"
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
+    UploadUrlResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: object
+          required: [uploadUrl, recordingId, partNumber]
+          properties:
+            uploadUrl:
+              type: string
+              format: uri
+            recordingId:
+              type: string
+              format: uuid
+            partNumber:
+              type: integer
+            expiresAt:
+              type: [string, "null"]
+              format: date-time
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
+    RecordingEvidenceResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: object
+          required: [recordingId]
+          properties:
+            recordingId:
+              type: string
+              format: uuid
+            playbackUrl:
+              type: [string, "null"]
+              format: uri
+            transcript:
+              type: [string, "null"]
+            durationMs:
+              type: [integer, "null"]
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
+    CreateSpeechJobRequest:
+      type: object
+      required: [recordingId, assessmentItemId, targetText]
+      properties:
+        recordingId:
+          type: string
+          format: uuid
+        assessmentItemId:
+          type: string
+          format: uuid
+        targetText:
+          type: string
+        scorerVersion:
+          type: [string, "null"]
+        provider:
+          type: [string, "null"]
+    SpeechJob:
+      type: object
+      required: [id, recordingId, status, createdAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        recordingId:
+          type: string
+          format: uuid
+        assessmentItemId:
+          type: [string, "null"]
+          format: uuid
+        status:
+          type: string
+          enum: [CREATED, PROCESSING, AUTO_RESULT, NEEDS_REVIEW, FINALIZED, FAILED]
+        result:
+          type: [object, "null"]
+        confidence:
+          type: [number, "null"]
+        providerModel:
+          type: [string, "null"]
+        createdAt:
+          type: string
+          format: date-time
+    SpeechJobResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          $ref: "#/components/schemas/SpeechJob"
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
+    SpeechJobListResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: object
+          required: [items]
+          properties:
+            items:
+              type: array
+              items:
+                $ref: "#/components/schemas/SpeechJob"
+            nextCursor:
+              type: [string, "null"]
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
+    SpeechJobResultCallbackRequest:
+      type: object
+      required: [result]
+      description: worker 回写评分结果。需 X-Internal-API-Key header。
+      properties:
+        result:
+          type: object
+        confidence:
+          type: [number, "null"]
+        processingMs:
+          type: [integer, "null"]
+        providerModel:
+          type: [string, "null"]
+    CreateAssessmentSessionRequest:
+      type: object
+      required: [type]
+      properties:
+        enrollmentId:
+          type: [string, "null"]
+          format: uuid
+        classId:
+          type: [string, "null"]
+          format: uuid
+        type:
+          type: string
+          enum: [READING, WRITTEN, MIXED]
+        retestOfSessionId:
+          type: [string, "null"]
+          format: uuid
+    AssessmentSession:
+      type: object
+      required: [id, type, status, createdAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        enrollmentId:
+          type: [string, "null"]
+          format: uuid
+        classId:
+          type: [string, "null"]
+          format: uuid
+        type:
+          type: string
+          enum: [READING, WRITTEN, MIXED]
+        status:
+          type: string
+          enum: [CREATED, IN_PROGRESS, SUBMITTED, PROCESSING, COMPLETED, CANCELLED]
+        score:
+          type: [number, "null"]
+        retestOfSessionId:
+          type: [string, "null"]
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+    AssessmentSessionResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          $ref: "#/components/schemas/AssessmentSession"
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
+    AssessmentSessionListResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: object
+          required: [items]
+          properties:
+            items:
+              type: array
+              items:
+                $ref: "#/components/schemas/AssessmentSession"
+            nextCursor:
+              type: [string, "null"]
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
+    AssessmentItem:
+      type: object
+      required: [id, sessionId, kind, status]
+      properties:
+        id:
+          type: string
+          format: uuid
+        sessionId:
+          type: string
+          format: uuid
+        questionId:
+          type: string
+          format: uuid
+        kind:
+          type: string
+          enum: [READING, CHOICE, FILL, SHORT_ANSWER, ESSAY]
+        prompt:
+          type: string
+        score:
+          type: [number, "null"]
+        status:
+          type: string
+          enum: [PENDING, ANSWERED, FINALIZED, REVIEWED]
+        recordingId:
+          type: [string, "null"]
+          format: uuid
+        answer:
+          type: [string, "null"]
+    AssessmentItemResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          $ref: "#/components/schemas/AssessmentItem"
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
+    AssessmentItemListResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: object
+          required: [items]
+          properties:
+            items:
+              type: array
+              items:
+                $ref: "#/components/schemas/AssessmentItem"
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
+    ReadingItemResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: object
+          required: [itemId, targetText]
+          properties:
+            itemId:
+              type: string
+              format: uuid
+            targetText:
+              type: string
+            prompt:
+              type: string
+            recordingId:
+              type: [string, "null"]
+              format: uuid
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
+    AttachRecordingRequest:
+      type: object
+      required: [recordingId]
+      properties:
+        recordingId:
+          type: string
+          format: uuid
+    SaveWrittenAnswerRequest:
+      type: object
+      required: [content]
+      properties:
+        content:
+          type: string
+        wordCount:
+          type: [integer, "null"]
+        charCount:
+          type: [integer, "null"]
+    ReviewItemRequest:
+      type: object
+      description: 教师复核。scoredScore/reviewerComment 均可选。
+      properties:
+        scoredScore:
+          type: [number, "null"]
+        reviewerComment:
+          type: [string, "null"]
+    AssessmentReportResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: object
+          required: [sessionId, generatedAt]
+          properties:
+            sessionId:
+              type: string
+              format: uuid
+            overallScore:
+              type: [number, "null"]
+            items:
+              type: array
+              items:
+                type: object
+            generatedAt:
+              type: string
+              format: date-time
+            summary:
+              type: [string, "null"]
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
+    ExportReportRequest:
+      type: object
+      properties:
+        purpose:
+          type: [string, "null"]
+    ExportReportResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: object
+          required: [sessionId]
+          properties:
+            sessionId:
+              type: string
+              format: uuid
+            downloadUrl:
+              type: [string, "null"]
+              format: uri
+            format:
+              type: [string, "null"]
+            expiresAt:
+              type: [string, "null"]
+              format: date-time
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
+    DeviceCheckRequest:
+      type: object
+      required: [checkResult]
+      properties:
+        checkResult:
+          type: string
+        userAgent:
+          type: [string, "null"]
+    DeviceCheckResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: object
+          required: [recorded]
+          properties:
+            recorded:
+              type: boolean
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
+    AssessmentHistoryResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: object
+          properties:
+            enrollmentId:
+              type: [string, "null"]
+              format: uuid
+            sessions:
+              type: array
+              items:
+                $ref: "#/components/schemas/AssessmentSession"
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
+    AssessmentHistoryEventsResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: object
+          required: [events]
+          properties:
+            events:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  type:
+                    type: string
+                  occurredAt:
+                    type: string
+                    format: date-time
+                  summary:
+                    type: [string, "null"]
         meta:
           $ref: "#/components/schemas/EnvelopeMeta"
 security:

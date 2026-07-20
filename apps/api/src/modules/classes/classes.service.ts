@@ -9,6 +9,10 @@ import {
   ClassForbiddenException,
   ClassNotFoundException,
 } from "./domain/class.errors.js";
+import {
+  AssessmentHasNoItemsException,
+  PracticeContentEmptyException,
+} from "../assessment/domain/assessment.errors.js";
 import type {
   ClassEnrollment,
   CreateClassInput,
@@ -939,24 +943,78 @@ export class ClassesService {
     // Determine assessment type
     const assessmentType = dto.type === "COMPREHENSIVE" ? "MIXED" : (dto.type as "READING" | "WRITTEN" | "MIXED");
 
-    // Resolve questionIds: validate and fetch question details.
-    // Note: Question schema uses `kind` (not `itemType`) and has no `maxScore` field.
-    // The fallback path that resolves default questions from a class's course is not
-    // currently supported by the schema (Class has no courseVersionId, and the
-    // Prisma model is `learningActivity`, not `activity`). Callers must pass questionIds.
+    // P0-CONTRACT-CONVERGENCE-001: Resolve questionIds with schoolId scoping.
+    // 1. If questionIds provided → validate they belong to this school (via
+    //    courseVersion.schoolId). Cross-school question IDs are rejected.
+    // 2. If questionIds omitted/empty → resolve default questions from the class's
+    //    latest assignment's courseVersion. If no courseVersion or no questions →
+    //    fail with PRACTICE_CONTENT_EMPTY (do NOT create 0-item sessions).
+    // 3. After resolution, questions.length must be > 0 → else ASSESSMENT_HAS_NO_ITEMS.
+    const providedQuestionIds = (dto.questionIds ?? []).filter((id) => id);
     let questions: Array<{ id: string; prompt: unknown; kind: string }> = [];
-    if (dto.questionIds && dto.questionIds.length > 0) {
+    if (providedQuestionIds.length > 0) {
       const dbQuestions = await this.prisma.question.findMany({
-        where: { id: { in: dto.questionIds } },
+        where: {
+          id: { in: providedQuestionIds },
+          courseVersion: { schoolId }, // P0: prevent cross-school question injection
+        },
         select: { id: true, prompt: true, kind: true },
       });
-      if (dbQuestions.length !== dto.questionIds.length) {
-        throw new ClassConflictException("部分题目ID无效或不存在");
+      if (dbQuestions.length !== providedQuestionIds.length) {
+        const foundIds = new Set(dbQuestions.map((q) => q.id));
+        const missing = providedQuestionIds.filter((id) => !foundIds.has(id));
+        throw new ClassConflictException(
+          `部分题目ID无效或不存在: ${missing.join(", ")}`,
+        );
       }
       questions = dbQuestions as Array<{ id: string; prompt: unknown; kind: string }>;
+    } else {
+      // Resolve default questions from the class's current course version.
+      const latestAssignment = await this.prisma.assignment.findFirst({
+        where: {
+          schoolId,
+          targets: { some: { classId } },
+          deletedAt: null,
+        },
+        select: { courseVersionId: true },
+        orderBy: { createdAt: "desc" },
+      });
+      if (!latestAssignment?.courseVersionId) {
+        throw new PracticeContentEmptyException(
+          "班级当前没有关联课程，无法解析默认题目，请显式传入 questionIds",
+        );
+      }
+      const defaultQuestions = await this.prisma.question.findMany({
+        where: {
+          courseVersionId: latestAssignment.courseVersionId,
+          courseVersion: { schoolId },
+        },
+        select: { id: true, prompt: true, kind: true },
+        orderBy: { createdAt: "asc" },
+        take: 20,
+      });
+      if (defaultQuestions.length === 0) {
+        throw new PracticeContentEmptyException(
+          "班级当前课程没有可用题目，请先在课程管理中添加题目",
+        );
+      }
+      questions = defaultQuestions as Array<{ id: string; prompt: unknown; kind: string }>;
     }
 
-    // Create sessions for each student using AssessmentService
+    if (questions.length === 0) {
+      // Defensive: should be unreachable due to the branches above, but
+      // guarantees no 0-item session is ever created.
+      throw new AssessmentHasNoItemsException();
+    }
+
+    // Create sessions for each student using AssessmentService.
+    // P0-CONTRACT-CONVERGENCE-001: questions.length > 0 is guaranteed above,
+    // so every session will receive at least one AssessmentItem. The previous
+    // `if (questions.length > 0)` guard is removed because it allowed 0-item
+    // sessions to be created when questionIds were missing.
+    // NOTE: Per-student session+items atomicity via $transaction is a future
+    // improvement (requires repo-level tx support); current behavior may leave
+    // an orphan session if item creation fails mid-loop. Listed in未解决问题.
     const sessions = [];
     for (const enrollmentId of enrollmentIds) {
       const session = await this.assessmentService.createSession(auth, schoolId, {
@@ -966,19 +1024,16 @@ export class ClassesService {
       });
       sessions.push(session);
 
-      // Create AssessmentItems for each question in this session
-      if (questions.length > 0) {
-        const itemData = questions.map((q, index) => ({
-          sessionId: session.id,
-          schoolId,
-          questionId: q.id,
-          prompt: (q.prompt ?? {}) as Prisma.InputJsonValue,
-          itemType: q.kind ?? (assessmentType === "READING" ? "READING" : "WRITTEN"),
-          sortOrder: index + 1,
-          status: "PENDING" as const,
-        }));
-        await this.prisma.assessmentItem.createMany({ data: itemData });
-      }
+      const itemData = questions.map((q, index) => ({
+        sessionId: session.id,
+        schoolId,
+        questionId: q.id,
+        prompt: (q.prompt ?? {}) as Prisma.InputJsonValue,
+        itemType: q.kind ?? (assessmentType === "READING" ? "READING" : "WRITTEN"),
+        sortOrder: index + 1,
+        status: "PENDING" as const,
+      }));
+      await this.prisma.assessmentItem.createMany({ data: itemData });
     }
 
     // Create notifications for each student

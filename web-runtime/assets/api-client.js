@@ -559,6 +559,8 @@
       body: JSON.stringify({
         ...(options.durationMs != null ? { durationMs: options.durationMs } : {}),
         ...(options.objectKey != null ? { objectKey: options.objectKey } : {}),
+        ...(options.assessmentItemId != null ? { assessmentItemId: options.assessmentItemId } : {}),
+        ...(options.targetText != null ? { targetText: options.targetText } : {}),
       }),
     });
   }
@@ -640,6 +642,18 @@
   }
 
   /* ── Speech Jobs ── */
+  async function createSpeechJob(payload) {
+    return request(`/schools/${getActiveSchoolId()}/speech-jobs`, {
+      method: 'POST',
+      body: JSON.stringify({
+        recordingId: payload.recordingId,
+        assessmentItemId: payload.assessmentItemId,
+        targetText: payload.targetText,
+        ...(payload.scorerVersion ? { scorerVersion: payload.scorerVersion } : {}),
+        ...(payload.provider ? { provider: payload.provider } : {}),
+      }),
+    });
+  }
   async function getSpeechJob(jobId) {
     return request(`/schools/${getActiveSchoolId()}/speech-jobs/${jobId}`);
   }
@@ -771,6 +785,15 @@
     return request(`/schools/${getActiveSchoolId()}/assessments/sessions/${sessionId}/items/${itemId}/review`, {
       method: 'PUT',
       body: JSON.stringify(payload),
+    });
+  }
+  async function getItemRecordingEvidence(sessionId, itemId) {
+    return request(`/schools/${getActiveSchoolId()}/assessments/sessions/${sessionId}/items/${itemId}/recording`);
+  }
+  async function exportAssessmentReport(sessionId, purpose) {
+    return request(`/schools/${getActiveSchoolId()}/assessments/sessions/${sessionId}/export`, {
+      method: 'POST',
+      body: JSON.stringify(purpose ? { purpose } : {}),
     });
   }
   async function scheduleRetest(sessionId) {
@@ -905,6 +928,7 @@
     uploadBlobToPresignedUrl,
     completeSimpleRecording,
     /* Speech Jobs */
+    createSpeechJob,
     getSpeechJob,
     getSpeechJobByItem,
     /* Device Check */
@@ -937,6 +961,8 @@
     getAssessmentReport,
     /* Assessment Review & Retest */
     reviewAssessmentItem,
+    getItemRecordingEvidence,
+    exportAssessmentReport,
     scheduleRetest,
     getAssessmentHistory,
     getAssessmentHistoryEvents,
