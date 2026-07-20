@@ -80,8 +80,11 @@ p { line-height: 1.7; }
 .summary-list dd { margin: 0; font-weight: 700; text-align: right; }
 details { margin: 14px 0; }
 summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; font-weight: 700; }
-.device-warning { display: none; margin-bottom: 16px; padding: 14px; border: 1px solid var(--sunrise); background: #f6ead8; }
-.device-warning strong, .device-warning span { display: block; }
+.mobile-policy-note { display: none; margin-bottom: 16px; padding: 16px; border: 1px solid var(--sunrise); background: #f6ead8; }
+.mobile-policy-note strong, .mobile-policy-note span, .mobile-policy-note small { display: block; }
+.mobile-policy-note span { margin-top: 6px; }
+.mobile-policy-note small { margin-top: 8px; color: var(--muted); line-height: 1.6; }
+.mobile-policy-blocked { border-color: var(--danger); background: #f7e7e2; }
 .device-loop { padding: 32px; border: 1px solid var(--line); background: var(--white); }
 .check-list { margin: 24px 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 .check-list li { display: grid; grid-template-columns: 34px 1fr auto; gap: 12px; align-items: center; padding: 16px; border: 1px solid var(--line); }
@@ -138,6 +141,7 @@ summary { min-height: 44px; display: flex; align-items: center; cursor: pointer;
 .recording-list small { margin-top: 4px; color: var(--muted); }
 .player-structure { text-align: center; }
 .player-structure .summary-list { margin-top: 20px; text-align: left; }
+.permission-note { color: var(--muted); font-size: 13px; line-height: 1.7; }
 .history-layout { grid-template-columns: 3fr 2fr; }
 .timeline { padding: 0; list-style: none; }
 .timeline li { display: grid; grid-template-columns: 100px 1fr 60px auto; gap: 14px; align-items: center; padding: 18px 0; border-bottom: 1px solid var(--line); }
@@ -192,11 +196,11 @@ summary { min-height: 44px; display: flex; align-items: center; cursor: pointer;
   .hero-path { padding: 24px; }
   .hero-path::after { opacity: .35; }
   .plain-section, .summary-column, .submit-gate, .next-step, .player-structure { padding: 18px; }
-  .device-warning { display: block; }
-  .page-s03 .device-loop .action-row .primary,
-  .page-s04 .executor-shell .record-control,
-  .page-s04 .executor-footer .primary,
-  .page-s05 .submit-gate .primary { display: none; }
+  .mobile-policy-note { display: block; }
+  .page-shell.mobile-blocked .mobile-execution-target { display: none; }
+  .page-s03 .device-loop { padding: 20px; }
+  .page-s03 .device-loop .action-row { display: grid; grid-template-columns: 1fr; }
+  .page-s03 .device-loop .action-row > * { width: 100%; min-height: 48px; }
   .check-list { grid-template-columns: 1fr; }
   .check-list li { grid-template-columns: 34px 1fr auto; }
   .executor-header, .executor-footer { align-items: flex-start; flex-direction: column; }
@@ -204,6 +208,10 @@ summary { min-height: 44px; display: flex; align-items: center; cursor: pointer;
   .section-progress span { min-width: 110px; }
   .task-focus, .task-empty { min-height: 300px; width: calc(100% - 24px); }
   .task-focus blockquote { font-size: 19px; padding: 16px; }
+  .page-s04 .record-control { width: min(100%, 320px); height: 58px; border-radius: 12px; background: var(--paper-warm); }
+  .page-s04 .wave-placeholder { height: 68px; }
+  .page-s04 .executor-footer .button { width: 100%; }
+  .page-s05 .submit-gate .primary { min-height: 50px; }
   .evidence-list li { grid-template-columns: 1fr auto; padding: 12px 0; }
   .evidence-list li a { grid-column: 1 / 3; }
   .processing-path { padding: 22px; }
@@ -218,7 +226,7 @@ summary { min-height: 44px; display: flex; align-items: center; cursor: pointer;
   .timeline li a { grid-column: 2 / 4; min-height: 44px; display: flex; align-items: center; }
   .design-panel dl { grid-template-columns: 1fr; }
   .mobile-nav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 25; display: grid; grid-template-columns: repeat(4, 1fr); min-height: 54px; border-top: 1px solid var(--line); background: var(--white); }
-  .mobile-nav a { display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 12px; }
+  .mobile-nav a { display: flex; align-items: center; justify-content: center; padding: 4px; text-decoration: none; font-size: 11px; text-align: center; }
   .mobile-nav a.active { color: var(--slate); border-top: 3px solid var(--sunrise); font-weight: 800; }
   .demo-watermark { right: 10px; bottom: 66px; }
 }

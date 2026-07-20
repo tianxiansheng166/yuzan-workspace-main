@@ -20,17 +20,37 @@ EXCEPTION_CASES = [
     ("S08", "empty", None, "S08-empty-1440.png"),
     ("S09", "empty", None, "S09-empty-1440.png"),
 ]
+MOBILE_POLICY_CASES = [
+    ("S03", "normal", None, "SELF_PRACTICE", "UNSPECIFIED", "S03-self-practice-executable-390.png"),
+    ("S04", "normal", "READ_ALOUD", "SELF_PRACTICE", "UNSPECIFIED", "S04-self-practice-read-aloud-390.png"),
+    ("S05", "normal", None, "SELF_PRACTICE", "UNSPECIFIED", "S05-self-practice-submit-review-390.png"),
+    ("S04", "normal", "READ_ALOUD", "STAGE_ASSESSMENT", "UNSPECIFIED", "S04-stage-assessment-blocked-390.png"),
+]
 
 
-def route(page_id: str, state: str = "normal", item_type: str | None = None) -> str:
+def route(
+    page_id: str,
+    state: str = "normal",
+    item_type: str | None = None,
+    mode: str = "ASSIGNMENT",
+    mobile_policy: str = "UNSPECIFIED",
+) -> str:
     query = f"state={state}"
     if item_type:
         query += f"&type={item_type}"
+    query += f"&mode={mode}&mobilePolicy={mobile_policy}"
     return f"{BASE_URL}#/{page_id}?{query}"
 
 
-def open_case(page, page_id: str, state: str = "normal", item_type: str | None = None):
-    target = route(page_id, state, item_type)
+def open_case(
+    page,
+    page_id: str,
+    state: str = "normal",
+    item_type: str | None = None,
+    mode: str = "ASSIGNMENT",
+    mobile_policy: str = "UNSPECIFIED",
+):
+    target = route(page_id, state, item_type, mode, mobile_policy)
     for attempt in range(2):
         try:
             page.goto(target, wait_until="networkidle")
@@ -44,9 +64,18 @@ def open_case(page, page_id: str, state: str = "normal", item_type: str | None =
     assert page.locator(".demo-watermark").count() == 1
 
 
-def screenshot(page, page_id: str, state: str, width: int, filename: str, item_type: str | None = None):
+def screenshot(
+    page,
+    page_id: str,
+    state: str,
+    width: int,
+    filename: str,
+    item_type: str | None = None,
+    mode: str = "ASSIGNMENT",
+    mobile_policy: str = "UNSPECIFIED",
+):
     page.set_viewport_size({"width": width, "height": 1000 if width > 390 else 844})
-    open_case(page, page_id, state, item_type)
+    open_case(page, page_id, state, item_type, mode, mobile_policy)
     page.evaluate("document.activeElement && document.activeElement.blur()")
     page.screenshot(path=str(SCREENSHOTS / filename), full_page=True)
 
@@ -68,17 +97,28 @@ def main():
         assert float(skip_top.removesuffix("px")) < 0, f"Skip link should be off-canvas, got top={skip_top}"
         assert "卓玛措" in page.locator("#student-context").inner_text()
         assert "古诗文朗读与理解训练" in page.locator("#app").inner_text()
+        assert page.locator(".primary-nav a").all_inner_texts() == [
+            "今日学习", "课程学习", "练习与测评", "成长档案"
+        ]
+        assert page.locator(".mobile-nav a").all_inner_texts() == [
+            "今日学习", "课程学习", "练习与测评", "成长档案"
+        ]
+        assert page.locator(".primary-nav a.active").inner_text() == "练习与测评"
+        assert page.locator(".mobile-nav a.active").inner_text() == "练习与测评"
+        open_case(page, "S03", mode="SELF_PRACTICE")
+        page.locator(".design-panel summary").click()
+        assert "/student/practices/attempts/:attemptId/prepare" in page.locator(".design-panel").inner_text()
         page.locator("#page-select").select_option("S04")
-        page.wait_for_url("**#/S04?state=normal&type=READ_ALOUD")
+        page.wait_for_url("**#/S04?state=normal&type=READ_ALOUD&mode=SELF_PRACTICE&mobilePolicy=UNSPECIFIED")
         page.locator("#type-select").select_option("FILL_BLANK")
-        page.wait_for_url("**type=FILL_BLANK")
+        page.wait_for_url("**type=FILL_BLANK**")
         assert "当前设计 Fixture 无此题型实例" in page.locator("#app").inner_text()
         page.locator("#type-select").select_option("LISTEN_ANSWER")
-        page.wait_for_url("**type=LISTEN_ANSWER")
+        page.wait_for_url("**type=LISTEN_ANSWER**")
         assert "当前设计 Fixture 无此题型实例" in page.locator("#app").inner_text()
         page.locator("#type-select").select_option("READ_ALOUD")
         page.locator("#state-select").select_option("recording")
-        page.wait_for_url("**state=recording&type=READ_ALOUD")
+        page.wait_for_url("**state=recording&type=READ_ALOUD**")
         assert "录音中" in page.locator("#app").inner_text()
         page.locator(".design-panel summary").click()
         assert "统一执行聚合 PARTIAL" in page.locator(".design-panel").inner_text()
@@ -89,6 +129,7 @@ def main():
             "LISTEN_ANSWER", "SINGLE_CHOICE", "FILL_BLANK", "SHORT_ANSWER",
             "MULTIPLE_CHOICE",
         ):
+            page.set_viewport_size({"width": 1440, "height": 1000})
             open_case(page, "S04", "normal", item_type)
             assert page.locator(".executor-shell").count() == 1
             if item_type in {"LISTEN_ANSWER", "FILL_BLANK"}:
@@ -102,21 +143,55 @@ def main():
         open_case(page, "S06", "provider-unavailable")
         assert "76.7" not in page.locator("#app").inner_text()
 
-        # All pages, normal state, 1440 and 390.
+        # Delivery-aware mobile execution checks.
+        page.set_viewport_size({"width": 390, "height": 844})
+        open_case(page, "S03", mode="SELF_PRACTICE")
+        assert page.locator(".device-loop").is_visible()
+        assert page.locator(".device-loop .action-row .primary").is_visible()
+        assert "手机可执行" in page.locator(".mobile-policy-note").inner_text()
+
+        open_case(page, "S04", item_type="READ_ALOUD", mode="SELF_PRACTICE")
+        assert page.locator(".executor-shell").is_visible()
+        assert page.locator(".record-control").is_visible()
+        record_box = page.locator(".record-control").bounding_box()
+        assert record_box and record_box["width"] > record_box["height"] * 3
+        assert "完整听音、录音、作答和本地保存" in page.locator(".mobile-policy-note").inner_text()
+
+        open_case(page, "S05", mode="SELF_PRACTICE")
+        assert page.locator(".review-layout").is_visible()
+        assert page.locator(".submit-gate .primary").is_visible()
+
+        open_case(page, "S04", item_type="READ_ALOUD", mode="STAGE_ASSESSMENT")
+        assert not page.locator(".executor-shell").is_visible()
+        assert "本次阶段测评需要使用电脑或平板" in page.locator(".mobile-policy-note").inner_text()
+
+        open_case(page, "S04", item_type="READ_ALOUD", mode="COURSE_PRACTICE")
+        assert page.locator(".executor-shell").is_visible()
+        open_case(page, "S04", item_type="READ_ALOUD", mode="ASSIGNMENT", mobile_policy="BLOCK")
+        assert not page.locator(".executor-shell").is_visible()
+        assert "建议使用电脑或平板" in page.locator(".mobile-policy-note").inner_text()
+
+        # Validate all pages at 1440 and 390 without replacing the frozen existing screenshots.
         for page_id in NORMAL_PAGES:
-            screenshot(page, page_id, "normal", 1440, f"{page_id}-normal-1440.png",
-                       "READ_ALOUD" if page_id == "S04" else None)
-            screenshot(page, page_id, "normal", 390, f"{page_id}-normal-390.png",
-                       "READ_ALOUD" if page_id == "S04" else None)
+            page.set_viewport_size({"width": 1440, "height": 1000})
+            open_case(page, page_id, item_type="READ_ALOUD" if page_id == "S04" else None)
+            page.set_viewport_size({"width": 390, "height": 844})
+            open_case(page, page_id, item_type="READ_ALOUD" if page_id == "S04" else None)
 
-        # Required 1024 screenshots.
+        # Validate the required 1024 layouts without replacing the frozen screenshots.
         for page_id in ("S01", "S04", "S07"):
-            screenshot(page, page_id, "normal", 1024, f"{page_id}-normal-1024.png",
-                       "READ_ALOUD" if page_id == "S04" else None)
+            page.set_viewport_size({"width": 1024, "height": 1000})
+            open_case(page, page_id, item_type="READ_ALOUD" if page_id == "S04" else None)
 
-        # Required exceptional states.
+        # Validate existing exceptional states without replacing the frozen screenshots.
         for page_id, state, item_type, filename in EXCEPTION_CASES:
-            screenshot(page, page_id, state, 1440, filename, item_type)
+            assert (SCREENSHOTS / filename).exists()
+            page.set_viewport_size({"width": 1440, "height": 1000})
+            open_case(page, page_id, state, item_type)
+
+        # Required Delivery-aware 390 screenshots.
+        for page_id, state, item_type, mode, mobile_policy, filename in MOBILE_POLICY_CASES:
+            screenshot(page, page_id, state, 390, filename, item_type, mode, mobile_policy)
 
         browser.close()
 
@@ -126,9 +201,9 @@ def main():
         raise AssertionError("Page errors:\n" + "\n".join(page_errors))
 
     files = sorted(path.name for path in SCREENSHOTS.glob("*.png"))
-    expected_count = len(NORMAL_PAGES) * 2 + 3 + len(EXCEPTION_CASES)
+    expected_count = len(NORMAL_PAGES) * 2 + 3 + len(EXCEPTION_CASES) + len(MOBILE_POLICY_CASES)
     assert len(files) == expected_count, (len(files), expected_count, files)
-    print(f"PASS pages={len(NORMAL_PAGES)} normal_screenshots=18 tablet=3 exceptions=7 total={len(files)}")
+    print(f"PASS pages={len(NORMAL_PAGES)} preserved_existing=28 mobile_policy=4 total={len(files)}")
     print("PASS fixture_fetch=true fallback_business_data=false console_errors=0 page_errors=0")
 
 

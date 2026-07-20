@@ -29,18 +29,19 @@
       <label>页面 <select id="page-select"></select></label>
       <label>状态 <select id="state-select"></select></label>
       <label id="type-control">S04题型 <select id="type-select"></select></label>
+      <label>Delivery模式 <select id="mode-select"></select></label>
+      <label id="mobile-policy-control">手机策略 <select id="mobile-policy-select"></select></label>
       <button id="reload-fixture" type="button">重新加载 Fixture</button>
     </div>
     <main id="wireframe-main" tabindex="-1">
       <div id="app" aria-live="polite"></div>
     </main>
     <nav class="mobile-nav" aria-label="移动端一级导航">
-      <a href="#/S01?state=normal">今日</a>
-      <a href="#/S02?state=normal">课程</a>
-      <a class="active" href="#/S01?state=normal">练习</a>
-      <a href="#/S09?state=normal">成长</a>
+      <a href="#/S01?state=normal">今日学习</a>
+      <a href="#/S02?state=normal">课程学习</a>
+      <a class="active" aria-current="page" href="#/S01?state=normal">练习与测评</a>
+      <a href="#/S09?state=normal">成长档案</a>
     </nav>
     <div class="demo-watermark" aria-hidden="true">设计原型 · 示例数据</div>
   </body>
 </html>
-

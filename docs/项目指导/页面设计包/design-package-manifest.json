@@ -1,13 +1,13 @@
 {
-  "taskId": "P0-STUDENT-DESIGN-PACKAGE-001",
-  "version": "1.0.0",
-  "baselineCommit": "5728016fcd0397ea62fa330790d91cb2d97f4297",
+  "taskId": "P0-STUDENT-DESIGN-PACKAGE-001-FINAL-FREEZE",
+  "version": "1.1.0",
+  "baselineCommit": "d2fe7897f85c68a1e17c21cf406fdc560e501dea",
   "fixturePath": "../design-fixtures/古诗文朗读与理解训练-v1.json",
   "runtimeBoundary": "LOW_FIDELITY_DESIGN_ONLY",
   "pages": [
     {"id": "S01", "name": "练习与测评中心", "route": "/student/practices"},
     {"id": "S02", "name": "练习详情", "route": "/student/practices/{practiceDefinitionId}"},
-    {"id": "S03", "name": "准备与设备检查", "route": "/student/practices/{practiceDefinitionId}/start"},
+    {"id": "S03", "name": "准备与设备检查", "route": "/student/practices/attempts/:attemptId/prepare"},
     {"id": "S04", "name": "通用练习执行器", "route": "/student/practices/run/{attemptId}"},
     {"id": "S05", "name": "提交前检查", "route": "/student/practices/run/{attemptId}/review"},
     {"id": "S06", "name": "评分处理中", "route": "/student/practices/run/{attemptId}/processing"},
@@ -27,6 +27,37 @@
     "MULTIPLE_CHOICE"
   ],
   "fixtureMissingExecutorTypes": ["LISTEN_ANSWER", "FILL_BLANK"],
+  "fixtureMissingPolicy": {
+    "status": "NO_FIXTURE_INSTANCE",
+    "visualRule": "EMPTY_STRUCTURE_AND_COMPONENT_RULES_ONLY",
+    "firstBatchSinglePageHighFidelityTarget": false
+  },
+  "primaryNavigation": {
+    "items": ["今日学习", "课程学习", "练习与测评", "成长档案"],
+    "activeForAllPages": "练习与测评",
+    "quickLinksNotPrimaryNavigation": ["首页", "练习", "历史", "我的"]
+  },
+  "s03AttemptFlow": [
+    "S02_CLICK_START",
+    "CREATE_OR_RESUME_ATTEMPT",
+    "BACKEND_RETURNS_ATTEMPT_ID",
+    "ENTER_S03_PREPARE",
+    "ENTER_S04_CURRENT_ITEM"
+  ],
+  "mobileExecutionPolicy": {
+    "SELF_PRACTICE": "ALLOW_WHEN_MICROPHONE_AUDIO_PLAYBACK_AND_LOCAL_STORAGE_SUPPORTED",
+    "COURSE_PRACTICE": "ALLOW_BY_DEFAULT_UNLESS_DELIVERY_POLICY_BLOCKS",
+    "ASSIGNMENT": "FOLLOW_TEACHER_DELIVERY_POLICY",
+    "STAGE_ASSESSMENT": "P0_BLOCK_FORMAL_MOBILE_ANSWERING_ALLOW_INFO_VIEW"
+  },
+  "apiActionStatusCounts": {
+    "basis": "USER_ATOMIC_ACTION",
+    "CURRENT": 9,
+    "PARTIAL": 17,
+    "PROPOSED": 1,
+    "BLOCKED": 4,
+    "notDirectlyComparableToUpstream26Rows": true
+  },
   "states": [
     "loading",
     "normal",
@@ -60,4 +91,3 @@
     "visual-prompts/第二批页面视觉提示词.md"
   ]
 }
-

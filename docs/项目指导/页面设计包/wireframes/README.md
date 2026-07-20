@@ -20,8 +20,12 @@ http://127.0.0.1:4176/docs/项目指导/页面设计包/wireframes/index.html#/S
 
 ## 路由示例
 
-- `#/S03?state=error`
-- `#/S04?type=READ_ALOUD&state=recording`
+- `#/S03?state=normal&mode=SELF_PRACTICE`（S02 创建/恢复 Attempt 并取得 `attemptId` 后，对应正式路由 `/student/practices/attempts/:attemptId/prepare`）
+- `#/S03?state=error&mode=SELF_PRACTICE`
+- `#/S04?type=READ_ALOUD&state=recording&mode=SELF_PRACTICE`
+- `#/S05?state=normal&mode=SELF_PRACTICE`
+- `#/S04?type=READ_ALOUD&state=normal&mode=STAGE_ASSESSMENT`
+- `#/S04?type=READ_ALOUD&state=normal&mode=ASSIGNMENT&mobilePolicy=BLOCK`
 - `#/S04?type=LISTEN_REPEAT&state=saved-local`
 - `#/S04?type=READ_ALOUD&state=upload-failed`
 - `#/S06?state=provider-unavailable`
@@ -33,5 +37,6 @@ http://127.0.0.1:4176/docs/项目指导/页面设计包/wireframes/index.html#/S
 - 不复制 Fixture 业务数据到 JavaScript。
 - Fixture 加载失败显示“设计Fixture加载失败”。
 - 不通过 `setTimeout` 模拟上传、评分或报告完成。
-- `LISTEN_ANSWER`、`FILL_BLANK` 没有 Fixture 实例，只展示诚实空实例说明。
-
+- `LISTEN_ANSWER`、`FILL_BLANK` 保持 `NO_FIXTURE_INSTANCE`，只展示空结构和组件规则，不生成题目、答案、分数或时长。
+- 正式一级导航固定为“今日学习 / 课程学习 / 练习与测评 / 成长档案”，全页族激活“练习与测评”。
+- 390 的 S03/S04/S05 按 Delivery 模式与 `mobilePolicy` 改变；SELF_PRACTICE 可执行，STAGE_ASSESSMENT 固定阻塞正式手机作答。
