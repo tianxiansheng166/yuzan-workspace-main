@@ -1,0 +1,591 @@
+{
+  "$schema": "https://yuzan.example/schemas/design-fixture-v1.json",
+  "fixtureId": "FX-GSW-V1-20260720",
+  "fixtureVersion": "1.0.0",
+  "purpose": "为 P0 黄金闭环所有页面、视觉设计任务包和 Codex 实现任务提供同一份学生、班级、练习、Attempt、录音、SpeechJob、教师复核和报告结果。禁止任何页面随机生成不同数据。",
+  "usageRules": [
+    "所有设计稿、原型页面、Playwright fixture 和文档示例必须直接引用本文件字段，不得另造数据。",
+    "本文件所有人物姓名、学校名称均为虚构测试数据，仅用于设计与开发，不映射任何真实学生。",
+    "真实学生数据不得进入本文件，也不得用于截图、模型训练或本地演示。",
+    "演示模式（?demo=1）必须同时显示醒目水印“设计原型 · 示例数据”。"
+  ],
+
+  "school": {
+    "schoolId": "SCH-XZ-LS-DEMO-001",
+    "name": "拉萨示例中学（仅用于设计原型）",
+    "regionCode": "XZ-LS",
+    "phase": "MIDDLE",
+    "timezone": "Asia/Urumqi"
+  },
+
+  "teacher": {
+    "userId": "USR-TCH-2026-001",
+    "name": "李雪梅",
+    "displayName": "李老师",
+    "role": "TEACHER",
+    "managedClassIds": ["CLS-7A-2026"]
+  },
+
+  "class": {
+    "classId": "CLS-7A-2026",
+    "name": "七年级A班",
+    "gradeBand": "G7",
+    "studentCount": 28,
+    "homeroomTeacherId": "USR-TCH-2026-001"
+  },
+
+  "student": {
+    "userId": "USR-STD-2026-024",
+    "enrollmentId": "ENR-7A-2026-024",
+    "name": "卓玛措",
+    "displayName": "卓玛措",
+    "role": "STUDENT",
+    "classId": "CLS-7A-2026",
+    "gradeBand": "G7",
+    "avatarInitial": "卓",
+    "primaryLanguageBackground": "藏语为母语，国通语为第二语言",
+    "learningGoal": "提升古诗文朗读的停顿与节奏，并改善听后复述的信息点覆盖"
+  },
+
+  "practiceDefinition": {
+    "definitionId": "PD-GSW-001",
+    "title": "古诗文朗读与理解训练",
+    "summary": "通过示范听辨、跟读、看文朗读、听后复述与书面理解五个环节，训练学生在国通语场景下的古诗文朗读、信息提取与表达能力。",
+    "gradeBand": "G7",
+    "difficulty": "INTERMEDIATE",
+    "estimatedDurationMinutes": 22,
+    "abilityTags": [
+      "pronunciation_accuracy",
+      "reading_fluency",
+      "pause_rhythm",
+      "listening_comprehension",
+      "retell_completeness",
+      "written_comprehension"
+    ],
+    "contentSource": {
+      "sourceType": "PUBLIC_DOMAIN_CLASSICAL",
+      "attribution": "李白《静夜思》、孟浩然《春晓》、王之涣《登鹳雀楼》、李白《望庐山瀑布》均为公有领域古典诗文。",
+      "license": "PUBLIC_DOMAIN",
+      "verifiedBy": "USR-TCH-2026-001",
+      "verifiedAt": "2026-07-15T09:30:00+08:00"
+    },
+    "selfPracticeAllowed": true,
+    "creatorId": "USR-TCH-2026-001",
+    "currentPublishedVersionId": "PV-GSW-001-V1"
+  },
+
+  "practiceVersion": {
+    "versionId": "PV-GSW-001-V1",
+    "definitionId": "PD-GSW-001",
+    "version": 1,
+    "status": "PUBLISHED",
+    "contentRevision": "2026-07-15T10:00:00+08:00",
+    "rubricVersionId": "SRB-GSW-V1",
+    "publishedBy": "USR-TCH-2026-001",
+    "publishedAt": "2026-07-15T10:12:00+08:00",
+    "changeNote": "首版发布：包含 2 题示范听辨、2 题听后跟读、2 题看文朗读、1 题听后复述、3 题书面理解题。",
+    "immutable": true,
+    "sections": [
+      {
+        "sectionId": "SEC-GSW-01",
+        "title": "示范听辨",
+        "instruction": "请戴好耳机，仔细聆听示范音频，注意字音、停顿与情感。",
+        "order": 1,
+        "sectionType": "LISTEN_ONLY",
+        "weightInTotalScore": 0,
+        "allowSkip": false,
+        "requireDeviceCheck": true,
+        "showText": false,
+        "defaultPlayCount": 2,
+        "prepareSeconds": 0,
+        "recordSeconds": 0,
+        "reRecordLimit": 0,
+        "itemRefs": [
+          {
+            "itemRefId": "ITM-LI-001",
+            "order": 1,
+            "itemType": "LISTEN_ONLY",
+            "questionId": "Q-LI-001",
+            "title": "示范：《静夜思》",
+            "demoAudioUrl": "/fixtures/audio/jingyesi-demo.mp3",
+            "demoAudioDurationSeconds": 28,
+            "showText": false,
+            "playCount": 2,
+            "targetText": null,
+            "abilityTags": ["listening_comprehension", "pause_rhythm"]
+          },
+          {
+            "itemRefId": "ITM-LI-002",
+            "order": 2,
+            "itemType": "LISTEN_ONLY",
+            "questionId": "Q-LI-002",
+            "title": "示范：《春晓》",
+            "demoAudioUrl": "/fixtures/audio/chunxiao-demo.mp3",
+            "demoAudioDurationSeconds": 22,
+            "showText": false,
+            "playCount": 2,
+            "targetText": null,
+            "abilityTags": ["listening_comprehension"]
+          }
+        ]
+      },
+      {
+        "sectionId": "SEC-GSW-02",
+        "title": "听后跟读",
+        "instruction": "听示范音频后跟读，注意发音准确度与停顿节奏。",
+        "order": 2,
+        "sectionType": "LISTEN_REPEAT",
+        "weightInTotalScore": 25,
+        "allowSkip": false,
+        "requireDeviceCheck": true,
+        "showText": false,
+        "defaultPlayCount": 1,
+        "prepareSeconds": 5,
+        "recordSeconds": 35,
+        "reRecordLimit": 2,
+        "itemRefs": [
+          {
+            "itemRefId": "ITM-LR-001",
+            "order": 1,
+            "itemType": "LISTEN_REPEAT",
+            "questionId": "Q-LR-001",
+            "title": "跟读：《静夜思》",
+            "demoAudioUrl": "/fixtures/audio/jingyesi-demo.mp3",
+            "demoAudioDurationSeconds": 28,
+            "showText": false,
+            "playCount": 1,
+            "prepareSeconds": 5,
+            "recordSeconds": 35,
+            "reRecordLimit": 2,
+            "targetText": "床前明月光，疑是地上霜。举头望明月，低头思故乡。",
+            "abilityTags": ["pronunciation_accuracy", "pause_rhythm"],
+            "rubricDimensionIds": ["DIM-Pronunciation", "DIM-Completeness", "DIM-Fluency", "DIM-Pause"]
+          },
+          {
+            "itemRefId": "ITM-LR-002",
+            "order": 2,
+            "itemType": "LISTEN_REPEAT",
+            "questionId": "Q-LR-002",
+            "title": "跟读：《春晓》",
+            "demoAudioUrl": "/fixtures/audio/chunxiao-demo.mp3",
+            "demoAudioDurationSeconds": 22,
+            "showText": false,
+            "playCount": 1,
+            "prepareSeconds": 5,
+            "recordSeconds": 30,
+            "reRecordLimit": 2,
+            "targetText": "春眠不觉晓，处处闻啼鸟。夜来风雨声，花落知多少。",
+            "abilityTags": ["pronunciation_accuracy", "pause_rhythm"],
+            "rubricDimensionIds": ["DIM-Pronunciation", "DIM-Completeness", "DIM-Fluency", "DIM-Pause"]
+          }
+        ]
+      },
+      {
+        "sectionId": "SEC-GSW-03",
+        "title": "看文朗读",
+        "instruction": "请根据屏幕文本进行朗读，注意完整呈现与流利度。",
+        "order": 3,
+        "sectionType": "READ_ALOUD",
+        "weightInTotalScore": 25,
+        "allowSkip": false,
+        "requireDeviceCheck": true,
+        "showText": true,
+        "defaultPlayCount": 0,
+        "prepareSeconds": 10,
+        "recordSeconds": 40,
+        "reRecordLimit": 2,
+        "itemRefs": [
+          {
+            "itemRefId": "ITM-RA-001",
+            "order": 1,
+            "itemType": "READ_ALOUD",
+            "questionId": "Q-RA-001",
+            "title": "朗读：《登鹳雀楼》",
+            "demoAudioUrl": null,
+            "showText": true,
+            "playCount": 0,
+            "prepareSeconds": 10,
+            "recordSeconds": 40,
+            "reRecordLimit": 2,
+            "targetText": "白日依山尽，黄河入海流。欲穷千里目，更上一层楼。",
+            "abilityTags": ["pronunciation_accuracy", "reading_fluency", "pause_rhythm"],
+            "rubricDimensionIds": ["DIM-Pronunciation", "DIM-Completeness", "DIM-Fluency", "DIM-Pause"]
+          },
+          {
+            "itemRefId": "ITM-RA-002",
+            "order": 2,
+            "itemType": "READ_ALOUD",
+            "questionId": "Q-RA-002",
+            "title": "朗读：《望庐山瀑布》",
+            "demoAudioUrl": null,
+            "showText": true,
+            "playCount": 0,
+            "prepareSeconds": 10,
+            "recordSeconds": 45,
+            "reRecordLimit": 2,
+            "targetText": "日照香炉生紫烟，遥看瀑布挂前川。飞流直下三千尺，疑是银河落九天。",
+            "abilityTags": ["pronunciation_accuracy", "reading_fluency", "pause_rhythm"],
+            "rubricDimensionIds": ["DIM-Pronunciation", "DIM-Completeness", "DIM-Fluency", "DIM-Pause"]
+          }
+        ]
+      },
+      {
+        "sectionId": "SEC-GSW-04",
+        "title": "听后复述",
+        "instruction": "聆听材料后，请用国通语复述材料的主要信息点。",
+        "order": 4,
+        "sectionType": "LISTEN_RETELL",
+        "weightInTotalScore": 25,
+        "allowSkip": false,
+        "requireDeviceCheck": true,
+        "showText": false,
+        "defaultPlayCount": 2,
+        "prepareSeconds": 15,
+        "recordSeconds": 60,
+        "reRecordLimit": 1,
+        "itemRefs": [
+          {
+            "itemRefId": "ITM-RT-001",
+            "order": 1,
+            "itemType": "LISTEN_RETELL",
+            "questionId": "Q-RT-001",
+            "title": "复述：《登鹳雀楼》情境",
+            "demoAudioUrl": "/fixtures/audio/dengguanquelou-context.mp3",
+            "demoAudioDurationSeconds": 35,
+            "showText": false,
+            "playCount": 2,
+            "prepareSeconds": 15,
+            "recordSeconds": 60,
+            "reRecordLimit": 1,
+            "targetText": null,
+            "keyInformationPoints": [
+              "诗人登临鹳雀楼",
+              "看到白日依山、黄河入海的景象",
+              "表达想要看得更远就要站得更高的感悟"
+            ],
+            "abilityTags": ["retell_completeness", "listening_comprehension"],
+            "rubricDimensionIds": ["DIM-InfoCoverage", "DIM-Coherence"]
+          }
+        ]
+      },
+      {
+        "sectionId": "SEC-GSW-05",
+        "title": "书面理解",
+        "instruction": "根据刚才学习的诗文，完成 3 道书面理解题。",
+        "order": 5,
+        "sectionType": "WRITTEN",
+        "weightInTotalScore": 25,
+        "allowSkip": false,
+        "requireDeviceCheck": false,
+        "showText": true,
+        "defaultPlayCount": 0,
+        "prepareSeconds": 0,
+        "recordSeconds": 0,
+        "reRecordLimit": 0,
+        "itemRefs": [
+          {
+            "itemRefId": "ITM-WQ-001",
+            "order": 1,
+            "itemType": "SINGLE_CHOICE",
+            "questionId": "Q-WQ-001",
+            "title": "《静夜思》中“疑是地上霜”一句表达了诗人怎样的感受？",
+            "stem": "下列对“疑是地上霜”的理解，最贴近的一项是：",
+            "options": [
+              {"key": "A", "text": "诗人感到地面寒冷如霜"},
+              {"key": "B", "text": "月光映在地上，让诗人产生如霜的错觉"},
+              {"key": "C", "text": "诗人看到地上结了霜"},
+              {"key": "D", "text": "诗人思念故乡的霜天"}
+            ],
+            "correctKeys": ["B"],
+            "maxScore": 100,
+            "showText": true,
+            "abilityTags": ["written_comprehension"],
+            "rubricDimensionIds": ["DIM-ObjectiveAccuracy"]
+          },
+          {
+            "itemRefId": "ITM-WQ-002",
+            "order": 2,
+            "itemType": "MULTIPLE_CHOICE",
+            "questionId": "Q-WQ-002",
+            "title": "下列对《登鹳雀楼》的理解，正确的有哪些？（多选）",
+            "stem": "请选择所有正确选项：",
+            "options": [
+              {"key": "A", "text": "前两句写登楼所见的壮阔景象"},
+              {"key": "B", "text": "后两句蕴含“站得高才能看得远”的哲理"},
+              {"key": "C", "text": "全诗表达了诗人消极避世的心境"},
+              {"key": "D", "text": "“黄河入海流”是诗人想象的画面"}
+            ],
+            "correctKeys": ["A", "B", "D"],
+            "partialScoring": {"enabled": true, "rule": "correctOptions/totalCorrect × 100, minus wrongOptions × 25"},
+            "maxScore": 100,
+            "showText": true,
+            "abilityTags": ["written_comprehension"],
+            "rubricDimensionIds": ["DIM-ObjectiveAccuracy"]
+          },
+          {
+            "itemRefId": "ITM-WQ-003",
+            "order": 3,
+            "itemType": "SHORT_ANSWER",
+            "questionId": "Q-WQ-003",
+            "title": "请用 50 字以内说明《望庐山瀑布》中“飞流直下三千尺”的写法特点与表达效果。",
+            "stem": "请用 50 字以内作答。",
+            "referenceAnswer": "运用夸张手法，将瀑布写得气势磅礴，凸显其高峻与壮美，强化了诗人对自然奇观的赞叹。",
+            "keyPoints": ["指出夸张手法", "点出气势磅礴/壮美", "说明表达诗人赞叹之情"],
+            "maxScore": 100,
+            "showText": true,
+            "abilityTags": ["written_comprehension", "written_expression"],
+            "rubricDimensionIds": ["DIM-ShortAnswerContent"]
+          }
+        ]
+      }
+    ]
+  },
+
+  "scoringRubric": {
+    "rubricVersionId": "SRB-GSW-V1",
+    "appliesToPracticeVersionId": "PV-GSW-001-V1",
+    "status": "PUBLISHED",
+    "scorerVersion": "scorer-gsw-v1",
+    "totalScore": 100,
+    "passThreshold": 60,
+    "autoReviewThreshold": 70,
+    "humanReviewThreshold": 75,
+    "minAudioQuality": {"sampleRateHz": 16000, "channels": 1, "snrDb": 15, "maxClippingRatio": 0.05},
+    "dimensions": [
+      {"dimensionId": "DIM-Pronunciation", "name": "发音准确度", "appliesTo": "ORAL", "weightInRubric": 0.20, "maxScore": 100},
+      {"dimensionId": "DIM-Completeness", "name": "完整度", "appliesTo": "ORAL", "weightInRubric": 0.10, "maxScore": 100},
+      {"dimensionId": "DIM-Fluency", "name": "流利度", "appliesTo": "ORAL", "weightInRubric": 0.10, "maxScore": 100},
+      {"dimensionId": "DIM-Pause", "name": "停顿与节奏", "appliesTo": "ORAL", "weightInRubric": 0.10, "maxScore": 100},
+      {"dimensionId": "DIM-InfoCoverage", "name": "信息点覆盖", "appliesTo": "RETELL", "weightInRubric": 0.15, "maxScore": 100},
+      {"dimensionId": "DIM-Coherence", "name": "表达连贯度", "appliesTo": "RETELL", "weightInRubric": 0.10, "maxScore": 100},
+      {"dimensionId": "DIM-ObjectiveAccuracy", "name": "客观题正确率", "appliesTo": "WRITTEN_OBJECTIVE", "weightInRubric": 0.15, "maxScore": 100},
+      {"dimensionId": "DIM-ShortAnswerContent", "name": "简答内容", "appliesTo": "WRITTEN_SUBJECTIVE", "weightInRubric": 0.10, "maxScore": 100}
+    ],
+    "reviewTriggers": [
+      {"trigger": "AUTO_SCORE_CONFIDENCE_LT", "threshold": 0.70, "description": "机器评分置信度低于 0.70 进入教师复核"},
+      {"trigger": "AUDIO_QUALITY_BELOW_MIN", "description": "音频质量不满足最低要求"},
+      {"trigger": "MACHINE_TEXT_CONFLICT", "description": "机器评分与文本作答存在明显冲突"},
+      {"trigger": "SUBJECTIVE_ITEM", "description": "主观题（简答、复述）一律进入教师复核"},
+      {"trigger": "STUDENT_APPEAL", "description": "学生申诉触发复核"},
+      {"trigger": "TEACHER_DISCRETION", "description": "教师主动复核（非自动触发，教师在复核工作台自行选择）"}
+    ],
+    "publishedBy": "USR-TCH-2026-001",
+    "publishedAt": "2026-07-15T10:05:00+08:00"
+  },
+
+  "practiceDeliveries": [
+    {
+      "deliveryId": "PDL-GSW-001-20260718",
+      "practiceVersionId": "PV-GSW-001-V1",
+      "mode": "ASSIGNMENT",
+      "targetClassIds": ["CLS-7A-2026"],
+      "targetEnrollmentIds": null,
+      "visibleFrom": "2026-07-18T08:00:00+08:00",
+      "startAt": "2026-07-18T08:00:00+08:00",
+      "dueAt": "2026-07-21T23:59:00+08:00",
+      "reRecordPolicy": {"default": "BY_ITEM", "oralMaxExtra": 0, "writtenAllowEditBeforeSubmit": true},
+      "answerRevealPolicy": "AFTER_SUBMIT",
+      "timerPolicy": {"enforceTotal": false, "autoSubmitAtDue": true},
+      "createdBy": "USR-TCH-2026-001",
+      "createdAt": "2026-07-18T07:50:00+08:00",
+      "linkedAssignmentId": "ASM-GSW-7A-20260718",
+      "linkedCourseVersionId": null
+    },
+    {
+      "deliveryId": "PDL-GSW-001-SELF-20260718",
+      "practiceVersionId": "PV-GSW-001-V1",
+      "mode": "SELF_PRACTICE",
+      "targetClassIds": null,
+      "targetEnrollmentIds": ["ENR-7A-2026-024"],
+      "visibleFrom": "2026-07-18T08:00:00+08:00",
+      "startAt": null,
+      "dueAt": null,
+      "reRecordPolicy": {"default": "BY_ITEM", "oralMaxExtra": 3, "writtenAllowEditBeforeSubmit": true},
+      "answerRevealPolicy": "IMMEDIATE",
+      "timerPolicy": {"enforceTotal": false, "autoSubmitAtDue": false},
+      "createdBy": "USR-TCH-2026-001",
+      "createdAt": "2026-07-18T07:55:00+08:00",
+      "linkedAssignmentId": null,
+      "linkedCourseVersionId": null
+    }
+  ],
+
+  "attempt": {
+    "attemptId": "ATT-20260720-001",
+    "sessionId": "ATT-20260720-001",
+    "enrollmentId": "ENR-7A-2026-024",
+    "studentUserId": "USR-STD-2026-024",
+    "practiceVersionId": "PV-GSW-001-V1",
+    "deliveryId": "PDL-GSW-001-20260718",
+    "mode": "ASSIGNMENT",
+    "status": "COMPLETED",
+    "startedAt": "2026-07-20T19:02:00+08:00",
+    "submittedAt": "2026-07-20T19:31:14+08:00",
+    "processingCompletedAt": "2026-07-20T19:42:48+08:00",
+    "policySnapshot": {
+      "reRecordPolicy": {"default": "BY_ITEM", "oralMaxExtra": 0, "writtenAllowEditBeforeSubmit": true},
+      "answerRevealPolicy": "AFTER_SUBMIT",
+      "timerPolicy": {"enforceTotal": false, "autoSubmitAtDue": true}
+    },
+    "rubricSnapshotId": "SRB-GSW-V1",
+    "contentSnapshotHash": "sha256:1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b",
+    "deviceCheck": {
+      "browser": {"status": "PASS", "detail": "Chrome 126"},
+      "microphone": {"status": "PASS", "detail": "默认麦克风，SNR 22 dB"},
+      "speaker": {"status": "PASS", "detail": "默认扬声器"},
+      "network": {"status": "PASS", "detail": "上行 1.2 Mbps，下行 6.4 Mbps"}
+    },
+    "itemAttempts": [
+      {"itemAttemptId": "IA-LI-001", "itemRefId": "ITM-LI-001", "status": "FINALIZED", "autoResult": null, "listenedPlayCount": 2, "completedAt": "2026-07-20T19:04:10+08:00"},
+      {"itemAttemptId": "IA-LI-002", "itemRefId": "ITM-LI-002", "status": "FINALIZED", "autoResult": null, "listenedPlayCount": 2, "completedAt": "2026-07-20T19:05:38+08:00"},
+      {"itemAttemptId": "IA-LR-001", "itemRefId": "ITM-LR-001", "status": "REVIEWED", "recordingId": "REC-20260720-0001", "speechJobId": "JOB-20260720-0001", "autoResult": {"dimensions": {"DIM-Pronunciation": 78, "DIM-Completeness": 90, "DIM-Fluency": 75, "DIM-Pause": 72}, "confidence": 0.84, "scorerVersion": "scorer-gsw-v1"}, "reviewedResult": {"reviewerId": "USR-TCH-2026-001", "reviewedAt": "2026-07-20T20:12:00+08:00", "dimensions": {"DIM-Pronunciation": 78, "DIM-Completeness": 90, "DIM-Fluency": 75, "DIM-Pause": 72}, "reviewId": "RVW-20260720-0000", "comment": "机器评分置信度较高，发音准确度与停顿节奏符合预期，确认机器评分。", "previousAutoScore": 78.6, "finalScore": 78.6}, "finalScore": 78.6, "completedAt": "2026-07-20T19:09:22+08:00"},
+      {"itemAttemptId": "IA-LR-002", "itemRefId": "ITM-LR-002", "status": "AUTO_RESULT", "recordingId": "REC-20260720-0002", "speechJobId": "JOB-20260720-0002", "autoResult": {"dimensions": {"DIM-Pronunciation": 82, "DIM-Completeness": 95, "DIM-Fluency": 80, "DIM-Pause": 78}, "confidence": 0.88, "scorerVersion": "scorer-gsw-v1"}, "finalScore": 84.4, "completedAt": "2026-07-20T19:13:01+08:00"},
+      {"itemAttemptId": "IA-RA-001", "itemRefId": "ITM-RA-001", "status": "AUTO_RESULT", "recordingId": "REC-20260720-0003", "speechJobId": "JOB-20260720-0003", "autoResult": {"dimensions": {"DIM-Pronunciation": 80, "DIM-Completeness": 100, "DIM-Fluency": 78, "DIM-Pause": 75}, "confidence": 0.86, "scorerVersion": "scorer-gsw-v1"}, "finalScore": 82.0, "completedAt": "2026-07-20T19:17:30+08:00"},
+      {"itemAttemptId": "IA-RA-002", "itemRefId": "ITM-RA-002", "status": "AUTO_RESULT", "recordingId": "REC-20260720-0004", "speechJobId": "JOB-20260720-0004", "autoResult": {"dimensions": {"DIM-Pronunciation": 76, "DIM-Completeness": 100, "DIM-Fluency": 82, "DIM-Pause": 70}, "confidence": 0.83, "scorerVersion": "scorer-gsw-v1"}, "finalScore": 80.4, "completedAt": "2026-07-20T19:21:44+08:00"},
+      {"itemAttemptId": "IA-RT-001", "itemRefId": "ITM-RT-001", "status": "REVIEWED", "recordingId": "REC-20260720-0005", "speechJobId": "JOB-20260720-0005", "autoResult": {"dimensions": {"DIM-InfoCoverage": 55, "DIM-Coherence": 68}, "confidence": 0.62, "scorerVersion": "scorer-gsw-v1", "reviewTrigger": "AUTO_SCORE_CONFIDENCE_LT"}, "reviewedResult": {"reviewerId": "USR-TCH-2026-001", "reviewedAt": "2026-07-20T20:15:00+08:00", "dimensions": {"DIM-InfoCoverage": 65, "DIM-Coherence": 70}, "reviewId": "RVW-20260720-0001", "comment": "复述涵盖了登楼所见，但遗漏了“站得高才能看得远”这一关键感悟，连贯度尚可。", "previousAutoScore": 59.25, "finalScore": 66.75}, "finalScore": 66.75, "completedAt": "2026-07-20T19:25:18+08:00"},
+      {"itemAttemptId": "IA-WQ-001", "itemRefId": "ITM-WQ-001", "status": "AUTO_RESULT", "writtenAnswer": {"selectedKeys": ["B"]}, "autoResult": {"dimensions": {"DIM-ObjectiveAccuracy": 100}, "confidence": 1.0, "scorerVersion": "scorer-gsw-v1"}, "finalScore": 100, "completedAt": "2026-07-20T19:27:10+08:00"},
+      {"itemAttemptId": "IA-WQ-002", "itemRefId": "ITM-WQ-002", "status": "AUTO_RESULT", "writtenAnswer": {"selectedKeys": ["A", "B", "C"]}, "autoResult": {"dimensions": {"DIM-ObjectiveAccuracy": 50}, "confidence": 1.0, "scorerVersion": "scorer-gsw-v1", "detail": "命中 A、B 共 2 项正确，未选 D 漏 1 项，误选 C 错 1 项，按规则 2/3×100 - 1×25 = 41.67，向下取整为 50"}, "finalScore": 50, "completedAt": "2026-07-20T19:28:42+08:00"},
+      {"itemAttemptId": "IA-WQ-003", "itemRefId": "ITM-WQ-003", "status": "REVIEWED", "writtenAnswer": {"text": "诗人用夸张手法把瀑布写得气势磅礴，表现出对自然奇观的赞叹。"}, "autoResult": {"dimensions": {"DIM-ShortAnswerContent": 70}, "confidence": 0.58, "scorerVersion": "scorer-gsw-v1", "reviewTrigger": "SUBJECTIVE_ITEM"}, "reviewedResult": {"reviewerId": "USR-TCH-2026-001", "reviewedAt": "2026-07-20T20:18:00+08:00", "dimensions": {"DIM-ShortAnswerContent": 80}, "reviewId": "RVW-20260720-0002", "comment": "抓住了夸张手法与气势磅礴两个要点，但对“赞叹”的展开稍弱。", "previousAutoScore": 70, "finalScore": 80}, "finalScore": 80, "completedAt": "2026-07-20T19:30:55+08:00"}
+    ]
+  },
+
+  "recordings": [
+    {"recordingId": "REC-20260720-0001", "attemptId": "ATT-20260720-001", "itemAttemptId": "IA-LR-001", "enrollmentId": "ENR-7A-2026-024", "status": "UPLOADED", "durationMs": 31200, "mimeType": "audio/webm;codecs=opus", "sampleRateHz": 16000, "channels": 1, "objectKey": "recordings/2026/07/REC-20260720-0001.webm", "playbackUrl": "/fixtures/audio/recording-LR-001.webm", "uploadedAt": "2026-07-20T19:09:05+08:00", "localOnly": false},
+    {"recordingId": "REC-20260720-0002", "attemptId": "ATT-20260720-001", "itemAttemptId": "IA-LR-002", "enrollmentId": "ENR-7A-2026-024", "status": "UPLOADED", "durationMs": 27400, "mimeType": "audio/webm;codecs=opus", "objectKey": "recordings/2026/07/REC-20260720-0002.webm", "playbackUrl": "/fixtures/audio/recording-LR-002.webm", "uploadedAt": "2026-07-20T19:12:50+08:00", "localOnly": false},
+    {"recordingId": "REC-20260720-0003", "attemptId": "ATT-20260720-001", "itemAttemptId": "IA-RA-001", "enrollmentId": "ENR-7A-2026-024", "status": "UPLOADED", "durationMs": 33800, "mimeType": "audio/webm;codecs=opus", "objectKey": "recordings/2026/07/REC-20260720-0003.webm", "playbackUrl": "/fixtures/audio/recording-RA-001.webm", "uploadedAt": "2026-07-20T19:17:20+08:00", "localOnly": false},
+    {"recordingId": "REC-20260720-0004", "attemptId": "ATT-20260720-001", "itemAttemptId": "IA-RA-002", "enrollmentId": "ENR-7A-2026-024", "status": "UPLOADED", "durationMs": 39200, "mimeType": "audio/webm;codecs=opus", "objectKey": "recordings/2026/07/REC-20260720-0004.webm", "playbackUrl": "/fixtures/audio/recording-RA-002.webm", "uploadedAt": "2026-07-20T19:21:35+08:00", "localOnly": false},
+    {"recordingId": "REC-20260720-0005", "attemptId": "ATT-20260720-001", "itemAttemptId": "IA-RT-001", "enrollmentId": "ENR-7A-2026-024", "status": "UPLOADED", "durationMs": 41500, "mimeType": "audio/webm;codecs=opus", "objectKey": "recordings/2026/07/REC-20260720-0005.webm", "playbackUrl": "/fixtures/audio/recording-RT-001.webm", "uploadedAt": "2026-07-20T19:25:10+08:00", "localOnly": false}
+  ],
+
+  "speechJobs": [
+    {"jobId": "JOB-20260720-0001", "recordingId": "REC-20260720-0001", "itemAttemptId": "IA-LR-001", "status": "FINALIZED", "provider": "mock-provider", "startedAt": "2026-07-20T19:09:08+08:00", "completedAt": "2026-07-20T19:09:18+08:00"},
+    {"jobId": "JOB-20260720-0002", "recordingId": "REC-20260720-0002", "itemAttemptId": "IA-LR-002", "status": "FINALIZED", "provider": "mock-provider", "startedAt": "2026-07-20T19:12:55+08:00", "completedAt": "2026-07-20T19:13:05+08:00"},
+    {"jobId": "JOB-20260720-0003", "recordingId": "REC-20260720-0003", "itemAttemptId": "IA-RA-001", "status": "FINALIZED", "provider": "mock-provider", "startedAt": "2026-07-20T19:17:25+08:00", "completedAt": "2026-07-20T19:17:35+08:00"},
+    {"jobId": "JOB-20260720-0004", "recordingId": "REC-20260720-0004", "itemAttemptId": "IA-RA-002", "status": "FINALIZED", "provider": "mock-provider", "startedAt": "2026-07-20T19:21:40+08:00", "completedAt": "2026-07-20T19:21:50+08:00"},
+    {"jobId": "JOB-20260720-0005", "recordingId": "REC-20260720-0005", "itemAttemptId": "IA-RT-001", "status": "FINALIZED", "provider": "mock-provider", "startedAt": "2026-07-20T19:25:15+08:00", "completedAt": "2026-07-20T19:25:28+08:00"}
+  ],
+
+  "reviews": [
+    {"reviewId": "RVW-20260720-0000", "attemptId": "ATT-20260720-001", "itemAttemptId": "IA-LR-001", "reviewerId": "USR-TCH-2026-001", "reviewerName": "李雪梅", "reviewedAt": "2026-07-20T20:12:00+08:00", "trigger": "TEACHER_DISCRETION", "previousAutoScore": 78.6, "finalScore": 78.6, "decision": "ACCEPT", "comment": "机器评分置信度较高，发音准确度与停顿节奏符合预期，确认机器评分。", "evidenceRecordingId": "REC-20260720-0001"},
+    {"reviewId": "RVW-20260720-0001", "attemptId": "ATT-20260720-001", "itemAttemptId": "IA-RT-001", "reviewerId": "USR-TCH-2026-001", "reviewerName": "李雪梅", "reviewedAt": "2026-07-20T20:15:00+08:00", "trigger": "AUTO_SCORE_CONFIDENCE_LT", "previousAutoScore": 59.25, "finalScore": 66.75, "decision": "ADJUSTED", "comment": "复述涵盖了登楼所见，但遗漏了“站得高才能看得远”这一关键感悟，连贯度尚可。", "evidenceRecordingId": "REC-20260720-0005"},
+    {"reviewId": "RVW-20260720-0002", "attemptId": "ATT-20260720-001", "itemAttemptId": "IA-WQ-003", "reviewerId": "USR-TCH-2026-001", "reviewerName": "李雪梅", "reviewedAt": "2026-07-20T20:18:00+08:00", "trigger": "SUBJECTIVE_ITEM", "previousAutoScore": 70, "finalScore": 80, "decision": "ADJUSTED", "comment": "抓住了夸张手法与气势磅礴两个要点，但对“赞叹”的展开稍弱。", "evidenceRecordingId": null}
+  ],
+
+  "report": {
+    "reportId": "RP-20260720-0001",
+    "attemptId": "ATT-20260720-001",
+    "generatedAt": "2026-07-20T19:42:48+08:00",
+    "regeneratedAt": "2026-07-20T20:22:00+08:00",
+    "rubricVersionId": "SRB-GSW-V1",
+    "scorerVersion": "scorer-gsw-v1",
+    "dataCompleteness": "COMPLETE",
+    "totalScore": 76.7,
+    "passThreshold": 60,
+    "humanReviewThreshold": 75,
+    "passed": true,
+    "needsReview": false,
+    "sectionScores": [
+      {"sectionId": "SEC-GSW-01", "title": "示范听辨", "weightInTotalScore": 0, "normalizedScore": null, "detail": "听辨环节不计入总分，仅记录完成情况"},
+      {"sectionId": "SEC-GSW-02", "title": "听后跟读", "weightInTotalScore": 25, "normalizedScore": 81.5, "contributionToTotal": 20.375, "items": [{"itemRefId": "ITM-LR-001", "finalScore": 78.6}, {"itemRefId": "ITM-LR-002", "finalScore": 84.4}]},
+      {"sectionId": "SEC-GSW-03", "title": "看文朗读", "weightInTotalScore": 25, "normalizedScore": 81.2, "contributionToTotal": 20.3, "items": [{"itemRefId": "ITM-RA-001", "finalScore": 82.0}, {"itemRefId": "ITM-RA-002", "finalScore": 80.4}]},
+      {"sectionId": "SEC-GSW-04", "title": "听后复述", "weightInTotalScore": 25, "normalizedScore": 66.75, "contributionToTotal": 16.688, "items": [{"itemRefId": "ITM-RT-001", "finalScore": 66.75, "reviewed": true}]},
+      {"sectionId": "SEC-GSW-05", "title": "书面理解", "weightInTotalScore": 25, "normalizedScore": 76.67, "contributionToTotal": 19.167, "items": [{"itemRefId": "ITM-WQ-001", "finalScore": 100}, {"itemRefId": "ITM-WQ-002", "finalScore": 50}, {"itemRefId": "ITM-WQ-003", "finalScore": 80, "reviewed": true}]}
+    ],
+    "dimensionScores": [
+      {"dimensionId": "DIM-Pronunciation", "name": "发音准确度", "weightInRubric": 0.20, "score": 79.0, "weighted": 15.80},
+      {"dimensionId": "DIM-Completeness", "name": "完整度", "weightInRubric": 0.10, "score": 96.25, "weighted": 9.625},
+      {"dimensionId": "DIM-Fluency", "name": "流利度", "weightInRubric": 0.10, "score": 78.75, "weighted": 7.875},
+      {"dimensionId": "DIM-Pause", "name": "停顿与节奏", "weightInRubric": 0.10, "score": 73.75, "weighted": 7.375},
+      {"dimensionId": "DIM-InfoCoverage", "name": "信息点覆盖", "weightInRubric": 0.15, "score": 65.0, "weighted": 9.75},
+      {"dimensionId": "DIM-Coherence", "name": "表达连贯度", "weightInRubric": 0.10, "score": 70.0, "weighted": 7.00},
+      {"dimensionId": "DIM-ObjectiveAccuracy", "name": "客观题正确率", "weightInRubric": 0.15, "score": 75.0, "weighted": 11.25},
+      {"dimensionId": "DIM-ShortAnswerContent", "name": "简答内容", "weightInRubric": 0.10, "score": 80.0, "weighted": 8.00}
+    ],
+    "strengths": [
+      {"dimensionId": "DIM-Completeness", "summary": "朗读与跟读完整度优秀（96.25%），无遗漏字句。"},
+      {"dimensionId": "DIM-ObjectiveAccuracy", "summary": "客观题中“疑是地上霜”理解准确，单题满分。"}
+    ],
+    "improvements": [
+      {"dimensionId": "DIM-Pause", "summary": "停顿与节奏偏弱（73.75%），朗读时停顿不够自然，影响整体节奏感。"},
+      {"dimensionId": "DIM-InfoCoverage", "summary": "听后复述信息点覆盖不足（65%），遗漏了“站得高才能看得远”的关键感悟。"}
+    ],
+    "evidence": [
+      {"itemRefId": "ITM-LR-001", "recordingId": "REC-20260720-0001", "label": "跟读《静夜思》"},
+      {"itemRefId": "ITM-LR-002", "recordingId": "REC-20260720-0002", "label": "跟读《春晓》"},
+      {"itemRefId": "ITM-RA-001", "recordingId": "REC-20260720-0003", "label": "朗读《登鹳雀楼》"},
+      {"itemRefId": "ITM-RA-002", "recordingId": "REC-20260720-0004", "label": "朗读《望庐山瀑布》"},
+      {"itemRefId": "ITM-RT-001", "recordingId": "REC-20260720-0005", "label": "复述《登鹳雀楼》情境"}
+    ],
+    "teacherFeedback": {
+      "reviewerName": "李雪梅",
+      "reviewedAt": "2026-07-20T20:20:00+08:00",
+      "summary": "本次完成度高，朗读完整。重点改进停顿节奏，并练习抓取复述材料的关键信息点。",
+      "linkedReviewIds": ["RVW-20260720-0000", "RVW-20260720-0001", "RVW-20260720-0002"]
+    },
+    "consolidationSuggestion": {
+      "suggestionId": "SUG-20260720-001",
+      "title": "停顿与节奏专项训练",
+      "reason": "停顿与节奏维度得分 73.75%，低于本次 humanReviewThreshold（75）。结合跟读与朗读录音证据，建议在 3 个工作日内完成此项巩固练习。",
+      "recommendedPracticeDefinitionId": "PD-PAUSE-RHYTHM-001",
+      "recommendedMode": "SELF_PRACTICE",
+      "estimatedDurationMinutes": 12,
+      "dueSuggestion": "2026-07-23T23:59:00+08:00",
+      "automaticallyAddedToLearningPlan": false,
+      "teacherConfirmed": true,
+      "confirmedBy": "USR-TCH-2026-001",
+      "confirmedAt": "2026-07-20T20:25:00+08:00"
+    },
+    "retestEntry": {"available": true, "retestMode": "SELF_PRACTICE", "linkedPracticeVersionId": "PV-GSW-001-V1", "requiresTeacherApproval": true}
+  },
+
+  "historyEvents": [
+    {"eventId": "EVT-20260720-001", "enrollmentId": "ENR-7A-2026-024", "eventType": "ATTEMPT_COMPLETED", "attemptId": "ATT-20260720-001", "practiceTitle": "古诗文朗读与理解训练", "mode": "ASSIGNMENT", "totalScore": 76.7, "passed": true, "occurredAt": "2026-07-20T19:42:48+08:00"},
+    {"eventId": "EVT-20260713-002", "enrollmentId": "ENR-7A-2026-024", "eventType": "ATTEMPT_COMPLETED", "attemptId": "ATT-20260713-002", "practiceTitle": "国通语声母辨析练习", "mode": "SELF_PRACTICE", "totalScore": 71.4, "passed": true, "occurredAt": "2026-07-13T20:10:00+08:00"},
+    {"eventId": "EVT-20260706-003", "enrollmentId": "ENR-7A-2026-024", "eventType": "ATTEMPT_COMPLETED", "attemptId": "ATT-20260706-003", "practiceTitle": "国通语声母辨析练习", "mode": "SELF_PRACTICE", "totalScore": 64.0, "passed": true, "occurredAt": "2026-07-06T19:55:00+08:00"}
+  ],
+
+  "dimensionTrend": [
+    {"dimensionId": "DIM-Pronunciation", "name": "发音准确度", "points": [{"date": "2026-07-06", "score": 68}, {"date": "2026-07-13", "score": 74}, {"date": "2026-07-20", "score": 79}]},
+    {"dimensionId": "DIM-Pause", "name": "停顿与节奏", "points": [{"date": "2026-07-06", "score": 60}, {"date": "2026-07-13", "score": 68}, {"date": "2026-07-20", "score": 73.75}]},
+    {"dimensionId": "DIM-InfoCoverage", "name": "信息点覆盖", "points": [{"date": "2026-07-06", "score": 55}, {"date": "2026-07-13", "score": 60}, {"date": "2026-07-20", "score": 65}]}
+  ],
+
+  "visualBrandReference": {
+    "primaryPalette": {
+      "skySlate": "#2B4A5E",
+      "highlandSlate": "#3B5A6E",
+      "paperBase": "#F7F2E8",
+      "paperWarm": "#EFE6D3",
+      "accentSunrise": "#D98C5F",
+      "accentSage": "#7A9270",
+      "inkBody": "#2C3340",
+      "inkMuted": "#6B7280"
+    },
+    "typography": {
+      "display": "Source Han Serif SC, Noto Serif SC, serif",
+      "body": "Source Han Sans SC, Noto Sans SC, system-ui, sans-serif",
+      "numeric": "IBM Plex Sans, system-ui, sans-serif"
+    },
+    "imageryTokens": {
+      "ridgeLayer": "/assets/ridge-layer.png",
+      "paperNoise": "/assets/paper-noise.png",
+      "mountainWorld": "/assessment/assets/mountain-world.webp",
+      "routeStrip": "/assessment/assets/route-strip.webp",
+      "brandMark": "/assets/brand-mark.png",
+      "brandLogoHorizontal": "/assessment/assets/logo-horizontal.png"
+    },
+    "voiceAndTone": "克制、温润、清晰；以学生可见进步为语气主轴，不使用惊呼、绝对化承诺或营销腔。"
+  },
+
+  "pageStoryArc": [
+    {"pageId": "P-PC-01", "name": "练习与测评中心", "fixtureRefs": ["student", "practiceDeliveries", "attempt"]},
+    {"pageId": "P-PD-02", "name": "练习详情", "fixtureRefs": ["practiceDefinition", "practiceVersion", "practiceDeliveries[0]"]},
+    {"pageId": "P-PR-03", "name": "准备与设备检查", "fixtureRefs": ["attempt", "practiceVersion", "attempt.deviceCheck"]},
+    {"pageId": "P-EX-04", "name": "通用执行器", "fixtureRefs": ["practiceVersion.sections", "attempt.itemAttempts"]},
+    {"pageId": "P-SB-05", "name": "提交前检查", "fixtureRefs": ["attempt.itemAttempts", "recordings"]},
+    {"pageId": "P-PC-06", "name": "处理中", "fixtureRefs": ["speechJobs", "attempt.itemAttempts"]},
+    {"pageId": "P-RP-07", "name": "正式报告", "fixtureRefs": ["report", "reviews", "attempt"]},
+    {"pageId": "P-RC-08", "name": "我的录音", "fixtureRefs": ["recordings", "attempt.itemAttempts"]},
+    {"pageId": "P-HS-09", "name": "历史记录", "fixtureRefs": ["historyEvents", "dimensionTrend"]}
+  ]
+}
