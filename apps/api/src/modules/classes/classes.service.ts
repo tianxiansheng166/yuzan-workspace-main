@@ -956,7 +956,11 @@ export class ClassesService {
       const dbQuestions = await this.prisma.question.findMany({
         where: {
           id: { in: providedQuestionIds },
-          courseVersion: { schoolId }, // P0: prevent cross-school question injection
+          // P0: prevent cross-school question injection.
+          // Question → activity → lesson → unit → courseVersion → schoolId
+          activity: {
+            lesson: { unit: { courseVersion: { schoolId } } },
+          },
         },
         select: { id: true, prompt: true, kind: true },
       });
@@ -986,11 +990,20 @@ export class ClassesService {
       }
       const defaultQuestions = await this.prisma.question.findMany({
         where: {
-          courseVersionId: latestAssignment.courseVersionId,
-          courseVersion: { schoolId },
+          // Question has no direct courseVersionId; scope through the
+          // activity → lesson → unit → courseVersion relation chain.
+          // This also enforces schoolId via courseVersion.schoolId.
+          activity: {
+            lesson: {
+              unit: {
+                courseVersionId: latestAssignment.courseVersionId,
+                courseVersion: { schoolId },
+              },
+            },
+          },
         },
         select: { id: true, prompt: true, kind: true },
-        orderBy: { createdAt: "asc" },
+        orderBy: { sortOrder: "asc" },
         take: 20,
       });
       if (defaultQuestions.length === 0) {

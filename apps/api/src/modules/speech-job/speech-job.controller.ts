@@ -98,12 +98,18 @@ export class SpeechJobController {
     }
 
     // STUDENT can only view their own jobs (verify via recording ownership).
+    // Recording has no direct userId; ownership is verified through the
+    // enrollment relation (Recording.enrollmentId → Enrollment.userId).
+    // SpeechJob.recordingId is nullable, so null → not found.
     if (principal.roles.includes(MembershipRole.STUDENT)) {
+      if (!job.recordingId) {
+        throw new SpeechJobNotFoundException();
+      }
       const recording = await this.prisma.recording.findFirst({
         where: {
           id: job.recordingId,
           schoolId,
-          userId: principal.userId,
+          enrollment: { userId: principal.userId },
         },
         select: { id: true },
       });
