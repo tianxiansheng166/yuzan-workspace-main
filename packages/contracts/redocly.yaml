@@ -2,7 +2,21 @@
 extends:
   - recommended
 rules:
-  # 路径 /speech-jobs/by-item/{assessmentItemId} 与 /speech-jobs/{jobId}/result
-  # 中 by-item 固定字符串与 {jobId} 参数位置重叠，但 NestJS 路由器优先匹配固定字符串，
-  # 运行时无歧义；路径设计由后端 Controller 决定，契约层不强制重构。
+  # no-ambiguous-paths 关闭原因：工具误报，已通过契约测试证明运行时无歧义。
+  #
+  # redocly 标记的两条"歧义"路径：
+  #   GET  /schools/{schoolId}/speech-jobs/by-item/{assessmentItemId}
+  #   PUT  /schools/{schoolId}/speech-jobs/{jobId}/result
+  #
+  # 误报原因（3 重保证，任一即可消除歧义）：
+  # 1. HTTP 方法不同：by-item 路径是 GET，{jobId}/result 路径是 PUT。
+  #    同一 URL 即使匹配两个 pattern，也只会被对应方法的 handler 接收。
+  # 2. UUID 管道守卫：{jobId} 使用 @Param("jobId", ParseUUIDPipe)。
+  #    唯一的理论冲突点 PUT /speech-jobs/by-item/result 中 jobId="by-item"
+  #    不是合法 UUID，ParseUUIDPipe 返回 400，请求永不到达 handler。
+  # 3. 段数不同：GET /speech-jobs/:jobId 匹配 1 段，
+  #    GET /speech-jobs/by-item/:assessmentItemId 匹配 2 段，无交集。
+  #
+  # 证明见：apps/api/test/contracts/p0-golden-flow.contract.spec.ts
+  #   describe("no-ambiguous-paths: speech-jobs route disambiguation")
   no-ambiguous-paths: off

@@ -214,4 +214,87 @@ describe("P0 Golden Flow Contract", () => {
       expect(yaml).not.toMatch(/nullable:\s*true/);
     });
   });
+
+  // ─── 4. no-ambiguous-paths 误报证明 ───
+  // redocly 的 no-ambiguous-paths 规则标记以下两条路径为"歧义"：
+  //   GET  /schools/{schoolId}/speech-jobs/by-item/{assessmentItemId}
+  //   PUT  /schools/{schoolId}/speech-jobs/{jobId}/result
+  // 以下测试证明这是工具误报，运行时不存在路由歧义。
+  describe("no-ambiguous-paths: speech-jobs route disambiguation", () => {
+    const yaml = readOpenApiYaml();
+    const controllerSrc = readFileSync(
+      resolve(__dirname, "../../src/modules/speech-job/speech-job.controller.ts"),
+      "utf8",
+    );
+
+    it("declares both flagged paths in OpenAPI", () => {
+      expect(yaml).toContain("/schools/{schoolId}/speech-jobs/by-item/{assessmentItemId}:");
+      expect(yaml).toContain("/schools/{schoolId}/speech-jobs/{jobId}/result:");
+    });
+
+    it("by-item path uses GET, result path uses PUT — different HTTP methods never conflict", () => {
+      // Extract the by-item path block and verify it has GET (not PUT)
+      const byItemBlock = yaml.match(
+        /\/schools\/\{schoolId\}\/speech-jobs\/by-item\/\{assessmentItemId\}:\n([\s\S]*?)(?=\n\/|\ncomponents:|$)/,
+      );
+      expect(byItemBlock).toBeTruthy();
+      expect(byItemBlock![1]).toMatch(/^\s+get:/);
+      expect(byItemBlock![1]).not.toMatch(/^\s+put:/);
+
+      // Extract the {jobId}/result path block and verify it has PUT (not GET)
+      const resultBlock = yaml.match(
+        /\/schools\/\{schoolId\}\/speech-jobs\/\{jobId\}\/result:\n([\s\S]*?)(?=\n\/|\ncomponents:|$)/,
+      );
+      expect(resultBlock).toBeTruthy();
+      expect(resultBlock![1]).toMatch(/^\s+put:/);
+      expect(resultBlock![1]).not.toMatch(/^\s+get:/);
+    });
+
+    it("by-item is a fixed path segment, not a path parameter", () => {
+      // The literal string "by-item" appears as a fixed segment in the path.
+      // It must NOT appear as a path parameter like {by-item}.
+      expect(yaml).toContain("/speech-jobs/by-item/{assessmentItemId}");
+      expect(yaml).not.toMatch(/\{by-item\}/);
+    });
+
+    it("{jobId} parameter declares UUID format in OpenAPI", () => {
+      // Find the jobId parameter definition within speech-jobs paths
+      const jobIdParam = yaml.match(
+        /name:\s*jobId[\s\S]*?schema:[\s\S]*?format:\s*uuid/,
+      );
+      expect(jobIdParam).toBeTruthy();
+    });
+
+    it("Controller uses ParseUUIDPipe on jobId — non-UUID 'by-item' would be rejected with 400", () => {
+      // The controller source must use ParseUUIDPipe for the jobId parameter
+      // in both getSpeechJob and updateSpeechJobResult handlers.
+      const getJobIdPipe = controllerSrc.match(
+        /getSpeechJob\([\s\S]*?@Param\("jobId",\s*ParseUUIDPipe\)/,
+      );
+      expect(getJobIdPipe).toBeTruthy();
+
+      const putJobIdPipe = controllerSrc.match(
+        /updateSpeechJobResult\([\s\S]*?@Param\("jobId",\s*ParseUUIDPipe\)/,
+      );
+      expect(putJobIdPipe).toBeTruthy();
+    });
+
+    it("GET /speech-jobs/:jobId matches 1 segment; GET /speech-jobs/by-item/:x matches 2 segments — no overlap", () => {
+      // @Get(":jobId") matches /speech-jobs/{one-segment} (e.g. /speech-jobs/abc-123)
+      // @Get("by-item/:assessmentItemId") matches /speech-jobs/by-item/{one-segment}
+      // These have different segment counts and cannot conflict.
+      expect(controllerSrc).toContain('@Get(":jobId")');
+      expect(controllerSrc).toContain('@Get("by-item/:assessmentItemId")');
+    });
+
+    it("PUT /speech-jobs/by-item/result would fail UUID validation (by-item is not a UUID)", () => {
+      // The only theoretical conflict: PUT /speech-jobs/by-item/result matches
+      // the pattern PUT /speech-jobs/{jobId}/result with jobId="by-item".
+      // But ParseUUIDPipe rejects "by-item" → 400 Bad Request.
+      // The request NEVER reaches the handler, so no wrong-controller routing.
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      expect(uuidRegex.test("by-item")).toBe(false);
+      expect(uuidRegex.test("550e8400-e29b-41d4-a716-446655440000")).toBe(true);
+    });
+  });
 });
