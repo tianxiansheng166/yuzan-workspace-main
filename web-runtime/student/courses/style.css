@@ -1,0 +1,80 @@
+:root {
+  --student-red: #c91518;
+  --student-green: #2f7a50;
+  --student-gold: #df8d15;
+  --student-blue: #3479bf;
+  --student-paper: #f8f4ec;
+  --student-ink: #272c29;
+  --student-muted: #727873;
+  --student-line: #e8e0d6;
+  --student-font: Inter, "Noto Sans SC", "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+}
+
+body { margin: 0; background: var(--student-paper); font-family: var(--student-font); color: var(--student-ink); }
+.viewport { min-height: 100vh; }
+.design.courses { background: var(--student-paper); }
+
+/* ── Desktop Layout ── */
+.desktop-view { display: grid; grid-template-columns: 320px 1fr; gap: 32px; padding: 40px 48px; min-height: 100%; box-sizing: border-box; }
+
+/* ── Left Column ── */
+.left-col { display: flex; flex-direction: column; gap: 20px; }
+.left-col h1 { font-size: 28px; font-weight: 700; margin: 0; }
+.left-col > p { color: var(--student-muted); font-size: 15px; margin: 0; }
+
+.stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.stat-card { background: #fff; border-radius: 14px; padding: 16px 12px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,.04); }
+.stat-card b { display: block; font-size: 24px; color: var(--student-green); margin-bottom: 4px; }
+.stat-card span { font-size: 12px; color: var(--student-muted); }
+
+/* ── Courses Main ── */
+.courses-main { display: flex; flex-direction: column; gap: 20px; }
+
+.filter-bar { display: flex; gap: 8px; }
+.filter-btn { padding: 8px 18px; border-radius: 20px; border: 1px solid var(--student-line); background: #fff; color: var(--student-ink); font-size: 14px; cursor: pointer; transition: .15s; }
+.filter-btn:hover { border-color: var(--student-green); color: var(--student-green); }
+.filter-btn.active { background: var(--student-green); color: #fff; border-color: var(--student-green); }
+
+/* ── Course Grid ── */
+.course-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px; }
+
+.course-card { background: #fff; border-radius: 18px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,.05); cursor: pointer; transition: .2s; }
+.course-card:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(0,0,0,.08); }
+.course-card .cover { height: 120px; background: linear-gradient(135deg, #2f7a50 0%, #df8d15 100%); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 36px; position: relative; }
+.course-card .cover .badge { position: absolute; top: 10px; right: 10px; padding: 3px 10px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+.badge-active { background: rgba(255,255,255,.25); color: #fff; }
+.badge-completed { background: rgba(47,122,80,.9); color: #fff; }
+.badge-not_started { background: rgba(0,0,0,.15); color: rgba(255,255,255,.8); }
+
+.course-card .body { padding: 16px 18px; }
+.course-card .body h3 { font-size: 16px; font-weight: 600; margin: 0 0 8px; line-height: 1.3; }
+.course-card .body .meta { font-size: 13px; color: var(--student-muted); margin-bottom: 12px; }
+.course-card .body .progress-bar { height: 6px; background: var(--student-line); border-radius: 3px; overflow: hidden; }
+.course-card .body .progress-bar i { display: block; height: 100%; background: var(--student-green); border-radius: 3px; transition: width .4s; }
+.course-card .body .progress-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--student-muted); margin-top: 6px; }
+
+/* ── Skeleton Loading ── */
+.course-skeleton { background: #fff; border-radius: 18px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,.04); }
+.skel-cover { height: 120px; background: linear-gradient(90deg, #f0ece3 25%, #e8e0d6 50%, #f0ece3 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+.skel-body { padding: 16px 18px; }
+.skel-title { width: 70%; height: 16px; border-radius: 4px; background: #e8e0d6; margin-bottom: 10px; }
+.skel-line { width: 90%; height: 12px; border-radius: 3px; background: #f0ece3; margin-bottom: 8px; }
+.skel-line.short { width: 50%; }
+
+@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+/* ── Empty State ── */
+.empty-state { text-align: center; padding: 60px 20px; color: var(--student-muted); }
+.empty-state i { font-size: 48px; display: block; margin-bottom: 16px; }
+.empty-state h3 { font-size: 18px; font-weight: 600; color: var(--student-ink); margin: 0 0 8px; }
+.empty-state p { font-size: 14px; margin: 0; }
+
+@media (max-width: 900px) {
+  .desktop-view { grid-template-columns: 1fr; padding: 24px 16px; }
+  .stats-row { grid-template-columns: repeat(3, 1fr); }
+  .course-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 600px) {
+  .course-grid { grid-template-columns: 1fr; }
+}

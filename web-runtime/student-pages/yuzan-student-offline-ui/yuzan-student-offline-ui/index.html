@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light" />
+  <title>语赞心声｜离线下载与同步中心</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <svg class="svg-sprite" aria-hidden="true">
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5v9a1.5 1.5 0 0 1-1.5 1.5H15v-6H9v6H4.5A1.5 1.5 0 0 1 3 19.5z"/><path d="M9.5 10.5h5"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H11a3 3 0 0 1 3 3v15a3 3 0 0 0-3-3H6.5A2.5 2.5 0 0 0 4 19.5z"/><path d="M20 4.5A2.5 2.5 0 0 0 17.5 2H14v18a3 3 0 0 1 3-3h.5a2.5 2.5 0 0 1 2.5 2.5z"/></symbol>
+    <symbol id="i-wave" viewBox="0 0 24 24"><path d="M3 12v2M6 8v8M9 4v16M12 7v10M15 3v18M18 8v8M21 11v2"/></symbol>
+    <symbol id="i-growth" viewBox="0 0 24 24"><path d="M12 21v-8"/><path d="M12 13c0-5 3-8 8-8 0 5-3 8-8 8Z"/><path d="M12 16c-1-4-4-6-8-6 0 5 3 8 8 8"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M4 22a8 8 0 0 1 16 0"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 18v2h16v-2"/></symbol>
+    <symbol id="i-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-feedback" viewBox="0 0 24 24"><path d="M5 4h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-8l-5 4v-4H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/><path d="M8 9h8M8 13h5"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.83 2.83-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.1V21h-4v-.09a1.7 1.7 0 0 0-1.1-1.6 1.7 1.7 0 0 0-1.88.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1.1-.4H3v-4h.09a1.7 1.7 0 0 0 1.6-1.1 1.7 1.7 0 0 0-.34-1.88l-.06-.06 2.83-2.83.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .4-1.1V3h4v.09a1.7 1.7 0 0 0 1.1 1.6 1.7 1.7 0 0 0 1.88-.34l.06-.06 2.83 2.83-.06.06A1.7 1.7 0 0 0 19.4 9c.15.37.37.7.66.98.3.28.68.43 1.09.43H21v4h-.09A1.7 1.7 0 0 0 19.4 15Z"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M7 7l1 14h8l1-14M10 11v6M14 11v6"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 21V9"/><path d="m7 14 5-5 5 5"/><path d="M4 6V4h16v2"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 8v8M14.5 8v8"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m10 8 6 4-6 4z"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="i-more" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></symbol>
+    <symbol id="i-wifi" viewBox="0 0 24 24"><path d="M3 9a14 14 0 0 1 18 0M6.5 12.5a9 9 0 0 1 11 0M10 16a4 4 0 0 1 4 0"/><circle cx="12" cy="20" r="1"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3 2.5 20h19z"/><path d="M12 9v4M12 17h.01"/></symbol>
+  </svg>
+
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="语赞心声首页">
+        <img src="assets/logo-mark.png" alt="" />
+        <span class="brand-copy"><strong>语赞心声</strong><small>用声音连接心与心</small></span>
+      </a>
+      <nav class="topnav" aria-label="主导航">
+        <button class="topnav-item"><svg><use href="#i-home"/></svg><span>今日</span></button>
+        <button class="topnav-item"><svg><use href="#i-book"/></svg><span>课程</span></button>
+        <button class="topnav-item"><svg><use href="#i-wave"/></svg><span>测评</span></button>
+        <button class="topnav-item"><svg><use href="#i-growth"/></svg><span>成长</span></button>
+        <button class="topnav-item"><svg><use href="#i-user"/></svg><span>我的</span></button>
+      </nav>
+      <div class="topbar-actions">
+        <button class="offline-tab active"><svg><use href="#i-download"/></svg><span>离线管理</span></button>
+        <div class="availability"><span></span>离线可用</div>
+        <button class="profile-menu" id="profileMenu">
+          <span class="avatar hero-avatar"></span>
+          <span class="profile-copy"><strong>扎西罗布</strong><small>六年级</small></span>
+          <svg><use href="#i-down"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <aside class="left-sidebar">
+      <section class="student-card">
+        <span class="avatar student-avatar"></span>
+        <div><h2>扎西罗布</h2><p>六年级学生</p><small>拉萨市城关区第一小学</small></div>
+      </section>
+      <nav class="side-nav" aria-label="离线中心导航">
+        <button><svg><use href="#i-book"/></svg><span>课程中心</span></button>
+        <button><svg><use href="#i-home"/></svg><span>我的学习</span></button>
+        <button class="active"><svg><use href="#i-download"/></svg><span>离线</span></button>
+        <button><svg><use href="#i-history"/></svg><span>学习记录</span></button>
+        <button><svg><use href="#i-download"/></svg><span>我的下载</span></button>
+        <button><svg><use href="#i-feedback"/></svg><span>教师反馈</span></button>
+        <button><svg><use href="#i-settings"/></svg><span>设置</span></button>
+      </nav>
+      <section class="storage-card">
+        <h3>存储空间</h3>
+        <div class="storage-body">
+          <div class="storage-ring" aria-label="已用 3.2 GB，可用 2.4 GB"></div>
+          <dl><div><dt>已用</dt><dd>3.2 GB</dd></div><div><dt>可用</dt><dd>2.4 GB</dd></div><div><dt>共</dt><dd>5.6 GB</dd></div></dl>
+        </div>
+        <button id="cleanStorage">清理空间</button>
+      </section>
+    </aside>
+
+    <main class="workspace">
+      <section class="workspace-hero">
+        <div class="hero-copy"><h1>离线下载与同步中心</h1><p>管理你的离线内容，随时随地学习，同步你的学习进度</p></div>
+        <div class="hero-art" aria-hidden="true"></div>
+      </section>
+
+      <section class="network-strip">
+        <div>当前网络状态：<span class="status-dot green"></span><strong>在线</strong></div>
+        <i></i>
+        <div>上次同步：<span>刚刚</span></div>
+        <i></i>
+        <div>自动同步：<span id="autoSyncText">已开启</span></div>
+        <button class="switch on" id="autoSync" role="switch" aria-checked="true"><span></span></button>
+      </section>
+
+      <div class="content-grid">
+        <section class="panel course-panel">
+          <div class="panel-heading"><h2>可下载课程</h2></div>
+          <div class="filters">
+            <button>全部类型 <svg><use href="#i-down"/></svg></button>
+            <button>年级：六年级 <svg><use href="#i-down"/></svg></button>
+          </div>
+          <div class="course-list" id="courseList"></div>
+          <div class="panel-footer"><span>已下载课程&nbsp;&nbsp;12 个</span><button>查看 <svg><use href="#i-chevron"/></svg></button></div>
+        </section>
+
+        <div class="center-column">
+          <section class="panel queue-panel">
+            <div class="panel-heading"><h2>下载队列 <span id="queueCount">(2)</span></h2><button class="text-danger" id="pauseAll">全部暂停</button></div>
+            <div class="queue-list" id="queueList"></div>
+          </section>
+
+          <section class="panel local-panel">
+            <div class="panel-heading"><h2>本地内容 <span>(14)</span></h2></div>
+            <div class="tabs" role="tablist">
+              <button class="active" data-filter="all">全部 <span>14</span></button>
+              <button data-filter="local">本地 <span>3</span></button>
+              <button data-filter="pending">待同步 <span>4</span></button>
+              <button data-filter="synced">已同步 <span>7</span></button>
+            </div>
+            <div class="local-list" id="localList"></div>
+            <div class="panel-footer"><button>查看全部本地内容 <svg><use href="#i-chevron"/></svg></button><span>清空已选内容（0）</span></div>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <aside class="right-sidebar">
+      <section class="side-card sync-card">
+        <h2>同步进度</h2>
+        <div class="sync-overview">
+          <div class="progress-ring"><span>65<small>%</small></span></div>
+          <div><strong id="syncStatus">正在同步…</strong><p>正在同步 4 个项目</p><p>预计剩余 2 分钟</p></div>
+        </div>
+        <button class="outline-btn" id="pauseSync">全部暂停</button>
+      </section>
+
+      <section class="side-card conflict-card">
+        <h2>冲突处理 <span>(1)</span></h2>
+        <div class="conflict-item">
+          <img src="assets/valley.jpg" alt="课程封面" />
+          <div><strong>把句子说出画面感</strong><small>朗读技巧</small><p><b>本地更新：</b>今天 10:20</p><p><b>云端更新：</b>今天 09:10</p></div>
+        </div>
+        <div class="choice-row"><button id="keepLocal">保留本地</button><button class="primary" id="useCloud">使用云端</button></div>
+        <button class="text-link">查看全部冲突 <svg><use href="#i-chevron"/></svg></button>
+      </section>
+
+      <section class="side-card network-card">
+        <h2>网络状态</h2>
+        <dl><div><dt>当前网络：</dt><dd><span class="status-dot green"></span>在线</dd></div><div><dt>网络类型：</dt><dd>Wi‑Fi</dd></div><div><dt>连接质量：</dt><dd class="good">良好 <span class="bars"><i></i><i></i><i></i><i></i></span></dd></div></dl>
+        <div class="wifi-only"><span>切换为仅下载 Wi‑Fi 下内容</span><button class="switch on" id="wifiOnly" role="switch" aria-checked="true"><span></span></button></div>
+      </section>
+
+      <section class="side-card settings-card">
+        <h2>下载设置</h2>
+        <label><span>同时下载任务数</span><select><option>2 个</option><option>1 个</option><option>3 个</option></select></label>
+        <label><span>下载质量</span><select><option>高清（推荐）</option><option>标准</option><option>省流</option></select></label>
+        <button class="text-link">更多设置 <svg><use href="#i-chevron"/></svg></button>
+      </section>
+    </aside>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="modal-backdrop" id="modalBackdrop" hidden>
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <h2 id="modalTitle">清理本地空间</h2>
+      <p>将删除已完成同步且最近未使用的课程缓存，不会删除云端学习记录。</p>
+      <div class="modal-actions"><button id="cancelModal">取消</button><button class="primary" id="confirmModal">确认清理</button></div>
+    </section>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

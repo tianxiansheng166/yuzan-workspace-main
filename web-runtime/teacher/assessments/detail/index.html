@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>测评详情｜语赞心声</title>
+  <link rel="stylesheet" href="styles.css" />
+<link rel="stylesheet" href="/shared/teacher-shell.css" />
+  
+<body>
+<svg class="svg-sprite" aria-hidden="true">
+  <symbol id="i-course" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="15" rx="2"/><path d="M7 5V3h10v2M8 10h8M8 14h5"/></symbol>
+  <symbol id="i-task" viewBox="0 0 24 24"><path d="M8 4h8l1 2h3v15H4V6h3l1-2Z"/><path d="m8 12 2 2 5-5M8 18h8"/></symbol>
+  <symbol id="i-test" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></symbol>
+  <symbol id="i-review" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="m7 15 3-3 3 3 4-5 2 3M8 8h4"/></symbol>
+  <symbol id="i-report" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 17h8M9 13V9M12 13V6M15 13v-2"/></symbol>
+  <symbol id="i-growth" viewBox="0 0 24 24"><path d="M4 20V9m5 11V4m6 16V11m5 9V6"/><path d="m4 11 5-4 6 6 5-5"/></symbol>
+  <symbol id="i-resource" viewBox="0 0 24 24"><path d="M3 7h6l2 2h10v11H3Z"/><path d="m7 16 3-3 3 2 3-4 3 3"/></symbol>
+  <symbol id="i-setting" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.83 2.83-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.1V21h-4v-.1A1.7 1.7 0 0 0 8.6 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1.1-.4H3v-4h.1A1.7 1.7 0 0 0 4.6 8.6a1.7 1.7 0 0 0-.34-1.88l-.06-.06 2.83-2.83.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .4-1.1V3h4v.1A1.7 1.7 0 0 0 15.4 4.6a1.7 1.7 0 0 0 1.88-.34l.06-.06 2.83 2.83-.06.06A1.7 1.7 0 0 0 19.4 9c.14.37.35.7.6 1 .3.28.7.42 1.1.4h.1v4h-.1a1.7 1.7 0 0 0-1.7.6Z"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.7 2.7 0 0 1 5.2 1c0 2-2.7 2.2-2.7 4M12 18h.01"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><path d="M9 5v14M15 5v14"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v6l4 2"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V4H4v12h4"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6Z"/><path d="M15 3v5h5M9 12h6M9 16h6"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3 2.5 20h19Z"/><path d="M12 9v5M12 17h.01"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-5 4-7 8-7s7 2 8 7"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+  <symbol id="i-hourglass" viewBox="0 0 24 24"><path d="M7 3h10M7 21h10M8 3c0 5 2 6 4 9-2 3-4 4-4 9M16 3c0 5-2 6-4 9 2 3 4 4 4 9"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M3 5c4-2 7-1 9 1v14c-2-2-5-3-9-1ZM21 5c-4-2-7-1-9 1v14c2-2 5-3 9-1Z"/></symbol>
+  <symbol id="i-pencil" viewBox="0 0 24 24"><path d="m4 17 10-10 3 3L7 20l-4 1ZM15 6l2-2 3 3-2 2"/></symbol>
+  <symbol id="i-analysis" viewBox="0 0 24 24"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="7" r="2"/><circle cx="8" cy="18" r="2"/><circle cx="18" cy="17" r="2"/><path d="m8 7 8-1M7 8l1 8M10 17l6 0M17 9v6M9 8l7 7"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+</svg>
+
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <img src="assets/brand-mark.png" alt="语赞心声标志" />
+      <div><strong>语赞心声</strong><span>援藏教育公益平台</span></div>
+    </div>
+    <nav class="side-nav" aria-label="教师端导航">
+      <button data-nav="course" data-route="/teacher/courses/"><svg><use href="#i-course"/></svg><span>课程</span></button>
+      <button data-nav="task" data-route="/teacher/assignments"><svg><use href="#i-task"/></svg><span>任务</span></button>
+      <button class="active" data-nav="assessment" data-route="/teacher/assessments/detail/"><svg><use href="#i-test"/></svg><span>测评</span><svg class="arrow"><use href="#i-chevron"/></svg></button>
+      <div class="sub-nav active">学习与练习</div>
+      <button data-nav="review" data-route="/teacher/reviews/submission-1/"><svg><use href="#i-review"/></svg><span>复核</span></button>
+      <button data-nav="report" data-route="/teacher/assessments/detail/"><svg><use href="#i-report"/></svg><span>报告</span></button>
+      <button data-nav="growth" data-unsupported title="学情与成长功能暂未开通"><svg><use href="#i-growth"/></svg><span>学情与成长</span></button>
+      <button data-nav="resource" data-unsupported title="资源中心功能暂未开通"><svg><use href="#i-resource"/></svg><span>资源中心</span></button>
+      <button data-nav="setting" data-unsupported title="设置中心功能暂未开通"><svg><use href="#i-setting"/></svg><span>设置中心</span></button>
+    </nav>
+    <button class="support"><svg><use href="#i-setting"/></svg><span>公益与支持</span></button>
+    <div class="sidebar-art" aria-hidden="true"></div>
+  </aside>
+
+  <section class="workspace">
+    <header class="topbar">
+      <div class="breadcrumb"><span>测评</span><b>/</b><strong>测评详情</strong></div>
+      <div class="top-actions">
+        <button class="icon-button bell" aria-label="通知"><svg><use href="#i-bell"/></svg><i>12</i></button>
+        <button class="help"><svg><use href="#i-help"/></svg><span>帮助</span></button>
+        <button class="profile">
+          <img src="assets/avatar-female-1.svg" alt="教师头像" />
+          <span><strong>扎西卓玛</strong><small>普通话教师</small></span>
+          <svg><use href="#i-chevron"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="page-heading">
+        <div class="title-wrap">
+          <h1>高原上的春天 · 阅读与表达测评</h1>
+          <span class="grade-tag">五年级 <i>i</i></span>
+          <span class="status-tag">进行中</span>
+        </div>
+        <div class="heading-actions">
+          <button id="pauseBtn" disabled title="当前版本暂不支持暂停测评"><svg><use href="#i-pause"/></svg>暂停测评</button>
+          <button data-modal="extend" disabled title="当前版本暂不支持延长时间"><svg><use href="#i-clock"/></svg>延长时间</button>
+          <button id="copyBtn" disabled title="测评副本功能暂未开通"><svg><use href="#i-copy"/></svg>复制测评</button>
+          <button class="primary" data-modal="report"><svg><use href="#i-doc"/></svg>生成测评报告</button>
+        </div>
+      </section>
+
+      <section class="summary-strip">
+        <span><b>任务编号</b> EVT-20250426-001</span><i></i>
+        <span><b>班级</b> 五年级二班（48 人）</span><i></i>
+        <span><b>时间</b> 2025-04-26 08:30 至 10:00</span><i></i>
+        <span><b>测评时长</b> 90 分钟</span><i></i>
+        <span><b>链接与二维码</b> <em class="published">● 已发布</em></span>
+        <button id="copyLink">复制链接</button><button id="downloadQr" disabled title="二维码下载功能暂未开通">下载二维码</button>
+      </section>
+
+      <div class="dashboard-grid">
+        <div class="primary-column">
+          <section class="panel progress-panel">
+            <header class="panel-header"><h2>参与进度 <small>（实时）</small><i class="info">i</i></h2></header>
+            <div class="stage-track">
+              <button class="stage muted" data-stage="未开始"><i class="stage-icon"><svg><use href="#i-hourglass"/></svg></i><strong>未开始</strong><b>5 <small>人</small></b><span>10.4%</span></button>
+              <button class="stage red active" data-stage="朗读中"><i class="stage-icon"><svg><use href="#i-book"/></svg></i><strong>朗读中</strong><b>18 <small>人</small></b><span>37.5%</span></button>
+              <button class="stage orange" data-stage="写作中"><i class="stage-icon"><svg><use href="#i-pencil"/></svg></i><strong>写作中</strong><b>15 <small>人</small></b><span>31.3%</span></button>
+              <button class="stage blue" data-stage="分析中"><i class="stage-icon"><svg><use href="#i-analysis"/></svg></i><strong>分析中</strong><b>6 <small>人</small></b><span>12.5%</span></button>
+              <button class="stage green" data-stage="报告完成"><i class="stage-icon"><svg><use href="#i-check"/></svg></i><strong>报告完成</strong><b>4 <small>人</small></b><span>8.3%</span></button>
+              <div class="track-line"></div>
+            </div>
+            <svg class="flow-wave" viewBox="0 0 1050 58" preserveAspectRatio="none" aria-hidden="true">
+              <defs><linearGradient id="waveGrad" x1="0" x2="1"><stop stop-color="#b5bbc0"/><stop offset=".3" stop-color="#d92b2f"/><stop offset=".48" stop-color="#f18b2b"/><stop offset=".72" stop-color="#4587b8"/><stop offset="1" stop-color="#5b9b78"/></linearGradient></defs>
+              <path class="terrain" d="M0 35 C70 0 115 55 175 22 S280 8 350 34 S445 52 515 20 S630 3 700 37 S810 56 870 28 S980 17 1050 34"/>
+              <path class="wave-main" d="M0 22 C55 8 90 52 150 48 S230 12 285 47 S390 53 455 22 S555 6 620 47 S730 55 790 29 S910 13 1050 34"/>
+            </svg>
+          </section>
+
+          <section class="panel table-panel">
+            <div class="table-tools">
+              <div class="segmented"><button class="active" data-view="student">按学生</button><button data-view="stage">按环节</button></div>
+              <label class="search-box"><input id="studentSearch" placeholder="搜索学生姓名或学号"/><svg><use href="#i-search"/></svg></label>
+              <select id="statusFilter"><option value="all">全部状态</option><option>进行中</option><option>已完成</option><option>未开始</option></select>
+            </div>
+            <div class="table-scroll">
+              <table>
+                <thead><tr><th>学生姓名</th><th>学号</th><th>开始时间</th><th>当前环节</th><th>用时</th><th>进度</th><th>状态⌄</th><th>操作</th></tr></thead>
+                <tbody id="studentRows">
+                  <tr data-status="进行中" data-stage="写作中"><td><img src="assets/avatar-female-1.svg"/>索朗多吉</td><td>20250012</td><td>08:31</td><td>写作中</td><td>34 分钟</td><td><div class="mini-progress orange"><i style="width:56%"></i></div><span>56%</span></td><td><em class="state orange-text">进行中</em></td><td><button class="row-action" data-action="progress">查看进度</button></td></tr>
+                  <tr data-status="进行中" data-stage="朗读中"><td><img src="assets/avatar-female-2.svg"/>次仁央宗</td><td>20250013</td><td>08:29</td><td>朗读中</td><td>12 分钟</td><td><div class="mini-progress red"><i style="width:22%"></i></div><span>22%</span></td><td><em class="state red-text">进行中</em></td><td><button class="row-action" data-action="progress">查看进度</button></td></tr>
+                  <tr data-status="进行中" data-stage="分析中"><td><img src="assets/avatar-female-3.svg"/>旦增曲珍</td><td>20250014</td><td>08:35</td><td>分析中</td><td>18 分钟</td><td><div class="mini-progress blue"><i style="width:63%"></i></div><span>63%</span></td><td><em class="state blue-text">进行中</em></td><td><button class="row-action" data-action="progress">查看进度</button></td></tr>
+                  <tr data-status="未开始" data-stage="未开始"><td><img src="assets/avatar-male-1.svg"/>扎西旺姆</td><td>20250015</td><td>—</td><td>未开始</td><td>—</td><td><div class="mini-progress muted"><i style="width:0"></i></div><span>0%</span></td><td><em class="state gray-text">未开始</em></td><td><button class="row-action remind" data-action="remind" disabled title="发送提醒功能暂未开通">发送提醒</button></td></tr>
+                  <tr data-status="已完成" data-stage="报告完成"><td><img src="assets/avatar-male-2.svg"/>普布次仁</td><td>20250016</td><td>08:27</td><td>报告完成</td><td>78 分钟</td><td><div class="mini-progress green"><i style="width:100%"></i></div><span>100%</span></td><td><em class="state green-text">已完成</em></td><td><button class="row-action" data-action="report">查看报告</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <footer class="table-footer"><span>共 48 人</span><div class="pagination"><button disabled>‹</button><button class="active">1</button><button>2</button><button>3</button><span>…</span><button>5</button><button disabled>›</button></div><div class="page-size"><select><option>10 条/页</option><option>20 条/页</option></select><span>前往</span><input value="1"/><span>页</span></div></footer>
+          </section>
+        </div>
+
+        <aside class="panel anomaly-panel">
+          <header class="panel-header"><h2>异常情况 <i class="info">i</i></h2><span>共 4 项</span></header>
+          <article class="anomaly-card" data-kind="record"><div class="anomaly-title"><i class="alert red"><svg><use href="#i-alert"/></svg></i><strong>录音失败</strong><b>2 <small>人</small></b></div><p><span>普布次仁（08:32）</span><button class="handle" data-action="unsupported" disabled title="处理功能暂未开通">去处理</button></p><p><span>格桑央金（08:41）</span><button class="handle" data-action="unsupported" disabled title="处理功能暂未开通">去处理</button></p></article>
+          <article class="anomaly-card" data-kind="timeout"><div class="anomaly-title"><i class="alert orange"><svg><use href="#i-clock"/></svg></i><strong>超时未完成</strong><b>1 <small>人</small></b></div><p><span>洛桑卓玛（已超时 15 分钟）</span><button class="handle" data-action="unsupported" disabled title="处理功能暂未开通">去处理</button></p></article>
+          <article class="anomaly-card" data-kind="review"><div class="anomaly-title"><i class="alert blue"><svg><use href="#i-user"/></svg></i><strong>需人工复核</strong><b>1 <small>人</small></b></div><p><span>仁青多杰（读写一致性异常）</span><button class="handle" data-action="review">去复核</button></p></article>
+          <button class="all-anomalies" data-modal="anomaly">查看全部异常</button>
+        </aside>
+      </div>
+
+      <section class="analytics-grid">
+        <article class="panel distribution-panel"><header><h2>问题分布 <small>（基于已完成报告）</small></h2></header><div class="distribution-body"><div class="donut"><div><strong>128</strong><span>总问题数</span></div></div><ul><li><i class="green"></i><span>理解与概括</span><b>32</b><small>（25.0%）</small></li><li><i class="blue"></i><span>细节捕捉</span><b>28</b><small>（21.9%）</small></li><li><i class="red"></i><span>逻辑与推理</span><b>24</b><small>（18.8%）</small></li><li><i class="orange"></i><span>词句运用</span><b>22</b><small>（17.2%）</small></li><li><i class="slate"></i><span>表达与结构</span><b>14</b><small>（10.9%）</small></li><li><i class="gray"></i><span>其他</span><b>8</b><small>（6.2%）</small></li></ul></div></article>
+        <article class="panel ability-panel"><header><h2>能力维度表现 <small>（平均正确率）</small></h2></header><div class="ability-bars"><p><span>理解与概括</span><i><b class="green" style="width:78%"></b></i><strong>78%</strong></p><p><span>细节捕捉</span><i><b class="orange" style="width:72%"></b></i><strong>72%</strong></p><p><span>逻辑与推理</span><i><b class="blue" style="width:65%"></b></i><strong>65%</strong></p><p><span>词句运用</span><i><b class="orange" style="width:69%"></b></i><strong>69%</strong></p><p><span>表达与结构</span><i><b class="blue" style="width:63%"></b></i><strong>63%</strong></p></div></article>
+        <article class="panel coverage-panel"><header><h2>推荐覆盖范围</h2></header><div class="coverage-body"><div class="semicircle"><div><strong>82%</strong><span>推荐覆盖率</span></div></div><div class="coverage-copy"><p>本测评推荐覆盖了</p><strong><em>124</em> / 150 <small>个核心知识点</small></strong><hr/><p>未覆盖知识点数：26 个</p><button id="coverageDetailBtn">查看未覆盖详情 <b>›</b></button></div></div></article>
+      </section>
+    </main>
+  </section>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+<div class="modal-backdrop" id="modalBackdrop" hidden>
+  <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button class="modal-close" aria-label="关闭">×</button>
+    <div class="modal-icon"><svg><use href="#i-clock"/></svg></div>
+    <h2 id="modalTitle">延长测评时间</h2>
+    <p id="modalText">为尚未完成的学生统一延长测评时间。</p>
+    <div class="modal-form" id="modalForm"><label>延长时长<select><option>15 分钟</option><option>30 分钟</option><option>45 分钟</option></select></label></div>
+    <footer><button class="cancel">取消</button><button class="confirm">确认</button></footer>
+  </section>
+</div>
+<script src="app.js"></script>
+  <script src="/shared/teacher-shell.js" defer></script>
+
+</html>

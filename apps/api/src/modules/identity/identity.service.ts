@@ -7,6 +7,8 @@ import {
   type Principal,
   type TenantContext,
 } from "../../common/security/index.js";
+import { Prisma } from "@yuzan/database";
+import { PrismaService } from "../../shared/database/prisma.service.js";
 import {
   CLOCK,
   MEMBERSHIP_REPOSITORY,
@@ -33,6 +35,8 @@ import type {
 const ACCESS_TOKEN_TTL_MS = 15 * 60 * 1000; // 15 minutes
 const REFRESH_TOKEN_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 
+const DEFAULT_SCHOOL_CODE = "default-school";
+
 @Injectable()
 export class IdentityService {
   constructor(
@@ -48,10 +52,12 @@ export class IdentityService {
     private readonly tokens: SessionTokenService,
     @Inject(CLOCK)
     private readonly clock: Clock,
+    private readonly prisma: PrismaService,
   ) {}
 
   async login(identifier: string, password: string): Promise<IdentitySession> {
-    const user = await this.users.findByIdentifier(identifier);
+    const normalizedIdentifier = identifier.trim();
+    const user = await this.users.findByIdentifier(normalizedIdentifier);
     const passwordValid = user
       ? await this.passwordVerifier.verify(password, user.passwordHash)
       : await this.passwordVerifier.verifyDummy(password);
@@ -391,5 +397,97 @@ export class IdentityService {
         throw new IdentityException("AUTH_ROLE_UNSUPPORTED");
       }
     }
+  }
+
+  /**
+   * Register a new user with phone number, password, and role.
+   *
+   * Creates: User → default School (if not exists) → Membership → Session.
+   * Returns the same structure as login (auto-login after registration).
+   */
+  async register(
+    identifier: string,
+    password: string,
+    role: MembershipRole,
+  ): Promise<IdentitySession> {
+    const normalizedIdentifier = identifier.trim();
+    if (!normalizedIdentifier) {
+      throw new IdentityException("AUTH_INVALID_CREDENTIALS");
+    }
+
+    // 1. Check if identifier already exists
+    const existing = await this.users.findByIdentifier(normalizedIdentifier);
+    if (existing) {
+      throw new IdentityException("AUTH_IDENTIFIER_CONFLICT");
+    }
+
+    // 2. Validate role
+    if (!isMembershipRole(role)) {
+      throw new IdentityException("AUTH_ROLE_UNSUPPORTED");
+    }
+
+    // 3. Hash the password
+    const passwordHash = await this.passwordVerifier.hash(password);
+
+    // 4. Find or create the default school
+    let school = await this.prisma.school.findUnique({
+      where: { code: DEFAULT_SCHOOL_CODE },
+    });
+    if (!school) {
+      school = await this.prisma.school.create({
+        data: {
+          code: DEFAULT_SCHOOL_CODE,
+          name: "默认学校",
+          timezone: "Asia/Shanghai",
+          isActive: true,
+        },
+      });
+    }
+
+    // 5. Create User + Membership in a transaction
+    const createdUser = await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+      const user = await tx.user.create({
+        data: {
+          loginIdentifier: normalizedIdentifier,
+          displayName: normalizedIdentifier,
+          passwordHash,
+          status: "ACTIVE",
+          preferredLocale: "zh-CN",
+        },
+      });
+
+      await tx.membership.create({
+        data: {
+          schoolId: school!.id,
+          userId: user.id,
+          role,
+          status: "ACTIVE",
+        },
+      });
+
+      return user;
+    });
+
+    // 6. Reload user and memberships through the repository
+    const user = await this.users.findById(createdUser.id);
+    if (!user) {
+      throw new IdentityException("AUTH_SERVICE_UNAVAILABLE");
+    }
+
+    const allMemberships =
+      await this.memberships.findActiveMembershipsByUser(user.id);
+    const activeMemberships = allMemberships.filter(
+      (m) => m.status === MembershipStatus.ACTIVE,
+    );
+
+    const activeSchoolId = this.resolveActiveSchoolId(activeMemberships);
+    const session = await this.createSession(user.id, activeSchoolId);
+
+    return {
+      user,
+      memberships: activeMemberships,
+      activeSchoolId,
+      tokens: session,
+    };
   }
 }

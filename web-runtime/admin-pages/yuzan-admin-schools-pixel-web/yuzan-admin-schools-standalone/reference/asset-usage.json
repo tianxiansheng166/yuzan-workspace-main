@@ -1,0 +1,59 @@
+{
+  "assetId": "admin-schools-main-v31",
+  "pageId": "admin-schools",
+  "title": "学校管理中心",
+  "route": "/admin/schools",
+  "classification": "REFERENCE_PAGE",
+  "status": "AWAITING_GENERATION",
+  "selectedFile": null,
+  "sourceCandidates": [],
+  "usage": "学校管理中心页面级视觉参考",
+  "frontend": {
+    "rebuildWithCode": [
+      "layout",
+      "navigation",
+      "buttons",
+      "forms",
+      "tables",
+      "dynamic text",
+      "data visualizations",
+      "states"
+    ],
+    "productionCandidate": [
+      "background texture",
+      "terrain lines",
+      "decorative sound field",
+      "illustrative layer"
+    ],
+    "dynamicAreas": [
+      "地区、学段、状态、套餐筛选",
+      "学校名称与最小必要信息",
+      "服务期和合同状态",
+      "学生教师志愿者数量",
+      "课程授权和测评使用",
+      "学校管理员",
+      "启用、停用、归档",
+      "批量导入和导出"
+    ],
+    "doNotRasterize": [
+      "user names",
+      "scores",
+      "school data",
+      "button text",
+      "forms",
+      "permissions",
+      "AI results"
+    ]
+  },
+  "responsive": {
+    "desktop": "完整构图",
+    "tablet": "主工作流优先，次栏折叠",
+    "mobile": "纵向路径与单一主行动"
+  },
+  "apiAndStateBoundaries": [
+    "不得因参考图修改既有 API",
+    "不得伪造成功、评分、推荐或同步状态",
+    "必须保留租户、权限、隐私和离线边界"
+  ],
+  "multimodalReviewRequired": true
+}

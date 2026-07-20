@@ -1,0 +1,24 @@
+{
+  "name": "语赞心声学生语言实践社区",
+  "route": "/student/community",
+  "type": "standalone-static-prototype",
+  "viewportReference": "1659x948",
+  "entry": "index.html",
+  "assets": {
+    "brand": "assets/brand-mark.png",
+    "hero": "assets/hero-mountains.webp",
+    "sidebar": "assets/side-valley.webp",
+    "featuredCover": "assets/featured-cover.webp",
+    "avatar": "assets/avatar.webp",
+    "texture": "assets/paper-texture.webp"
+  },
+  "interactive": [
+    "navigation",
+    "theme-selection",
+    "audio-player",
+    "submission-status",
+    "teacher-feedback-modal",
+    "privacy-and-rules-modals",
+    "mobile-information-drawer"
+  ]
+}

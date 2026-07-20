@@ -1,4 +1,4 @@
-import { scrypt, timingSafeEqual } from "node:crypto";
+import { randomBytes, scrypt, timingSafeEqual } from "node:crypto";
 import type { PasswordVerifier } from "../ports/index.js";
 
 function derive(
@@ -14,6 +14,11 @@ function derive(
     });
   });
 }
+
+const SCRYPT_N = 16384;
+const SCRYPT_R = 8;
+const SCRYPT_P = 1;
+const KEY_LENGTH = 32;
 const DUMMY_HASH =
   "$scrypt$16384$8$1$YXV0aC1kdW1teS1zYWx0$yNQ2sR+uXjCKhOMJcC6YSpQ2UqQH3G73cUjYfWZcRnw=";
 
@@ -48,5 +53,16 @@ export class ScryptPasswordVerifier implements PasswordVerifier {
   async verifyDummy(password: string): Promise<boolean> {
     await this.verify(password, DUMMY_HASH);
     return false;
+  }
+
+  async hash(password: string): Promise<string> {
+    const salt = randomBytes(16);
+    const derived = (await derive(password, salt, KEY_LENGTH, {
+      N: SCRYPT_N,
+      r: SCRYPT_R,
+      p: SCRYPT_P,
+      maxmem: 64 * 1024 * 1024,
+    })) as Buffer;
+    return `$scrypt$${SCRYPT_N}$${SCRYPT_R}$${SCRYPT_P}$${salt.toString("base64")}$${derived.toString("base64")}`;
   }
 }

@@ -11,6 +11,8 @@
     "test": "vitest run --passWithNoTests --pool=forks --poolOptions.forks.singleFork"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1090.0",
+    "@aws-sdk/s3-request-presigner": "^3.1090.0",
     "@nestjs/common": "^11.1.27",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.1.27",
@@ -19,9 +21,11 @@
     "@yuzan/contracts": "workspace:*",
     "@yuzan/database": "workspace:*",
     "@yuzan/domain": "workspace:*",
+    "bullmq": "^5.80.8",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "helmet": "^8.1.0",
+    "ioredis": "^5.11.1",
     "pg": "^8.22.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2"

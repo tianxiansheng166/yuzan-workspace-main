@@ -18,6 +18,7 @@ import {
 } from "../../common/security/index.js";
 import { IdentityService } from "./identity.service.js";
 import { LoginDto } from "./dto/login.dto.js";
+import { RegisterDto } from "./dto/register.dto.js";
 import { RefreshSessionDto } from "./dto/refresh-session.dto.js";
 import { LogoutDto } from "./dto/logout.dto.js";
 import { SelectSchoolDto } from "./dto/select-school.dto.js";
@@ -82,6 +83,38 @@ export class IdentityController {
         ),
       },
       meta: { requestId: "identity-login" },
+    };
+  }
+
+  @Public()
+  @Post("/auth/register")
+  @HttpCode(HttpStatus.CREATED)
+  async register(
+    @Body() dto: RegisterDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const session = await this.identityService.register(
+      dto.identifier,
+      dto.password,
+      dto.role,
+    );
+    const cookies = buildSessionCookies(session.tokens);
+    response.cookie(...cookies.access);
+    response.cookie(...cookies.refresh);
+
+    return {
+      data: {
+        accessToken: session.tokens.accessToken,
+        activeSchoolId: session.activeSchoolId,
+        expiresIn: Math.floor(
+          (session.tokens.accessExpiresAt.getTime() - Date.now()) / 1000,
+        ),
+        user: this.identityService.toCurrentUser(
+          session.user,
+          session.memberships,
+        ),
+      },
+      meta: { requestId: "identity-register" },
     };
   }
 

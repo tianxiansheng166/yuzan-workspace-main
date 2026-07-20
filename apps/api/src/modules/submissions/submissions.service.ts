@@ -26,6 +26,9 @@ import { SUBMISSION_REPOSITORY } from "./ports/submission-repository.port.js";
 import type { SubmissionLookupPort } from "./ports/submission-lookup.port.js";
 import { SUBMISSION_LOOKUP } from "./ports/submission-lookup.port.js";
 import { SubmissionsPolicy } from "./submissions.policy.js";
+import { PrismaService } from "../../shared/database/prisma.service.js";
+import type { StoragePort } from "../../shared/storage/storage.port.js";
+import { STORAGE_PORT } from "../../shared/storage/storage.port.js";
 
 @Injectable()
 export class SubmissionsService {
@@ -36,6 +39,9 @@ export class SubmissionsService {
     private readonly submissionRepo: SubmissionRepositoryPort,
     @Inject(SUBMISSION_LOOKUP)
     private readonly submissionLookup: SubmissionLookupPort,
+    private readonly prisma: PrismaService,
+    @Inject(STORAGE_PORT)
+    private readonly storage: StoragePort,
   ) {}
 
   async createSubmission(
@@ -102,15 +108,18 @@ export class SubmissionsService {
       throw new SubmissionForbiddenException();
     }
 
-    // The student's enrollmentId should be resolved from auth context.
-    // For now, we pass schoolId and the service will need the enrollmentId.
-    // This requires looking up the student's enrollment for the school.
-    // The controller will need to resolve the enrollmentId.
-    // As a placeholder, we accept enrollmentId via a different path.
-    // For "me" endpoint, we list by the user's enrollments in the school.
-    // This requires a lookup - but we only have submissionRepo here.
-    // The controller should pass enrollmentIds.
-    const enrollments: readonly string[] = [];
+    // Resolve the student's active enrollments in this school
+    const enrollmentRows = await this.prisma.enrollment.findMany({
+      where: {
+        userId: auth.principal.userId,
+        schoolId,
+        status: "ACTIVE",
+        role: "STUDENT",
+      },
+      select: { id: true },
+    });
+    const enrollments = enrollmentRows.map((e) => e.id);
+
     const allSubmissions: Submission[] = [];
 
     for (const enrollmentId of enrollments) {
@@ -178,11 +187,48 @@ export class SubmissionsService {
   }
 
   async getUploadUrls(
-    _auth: AuthContext,
-    _schoolId: string,
-    _submissionId: string,
-  ): Promise<never> {
-    throw new SubmissionUnavailableException("上传功能尚未实现");
+    auth: AuthContext,
+    schoolId: string,
+    submissionId: string,
+  ) {
+    if (!this.policy.canReadOwnSubmissions(auth, schoolId)) {
+      throw new SubmissionForbiddenException();
+    }
+
+    const submission = await this.submissionRepo.findById(schoolId, submissionId);
+    if (!submission) {
+      throw new SubmissionNotFoundException();
+    }
+
+    // Verify the submission belongs to the current student
+    const enrollment = await this.prisma.enrollment.findFirst({
+      where: {
+        id: submission.enrollmentId,
+        userId: auth.principal.userId,
+        schoolId,
+        status: "ACTIVE",
+        role: "STUDENT",
+      },
+    });
+
+    if (!enrollment) {
+      throw new SubmissionForbiddenException();
+    }
+
+    if (submission.status !== "IN_PROGRESS" && submission.status !== "PENDING_SYNC") {
+      throw new SubmissionStatusException("当前状态不允许上传");
+    }
+
+    // Use STORAGE_PORT to generate presigned upload URLs
+    const objectKey = `submissions/${submissionId}/${crypto.randomUUID()}`;
+    const urls = await this.storage.generateUploadUrl(objectKey, "audio/webm");
+
+    return {
+      submissionId,
+      uploadUrl: urls.url,
+      objectKey: urls.objectKey,
+      expiresInSeconds: urls.expiresInSeconds,
+    };
   }
 
   async transitionSubmissionStatus(

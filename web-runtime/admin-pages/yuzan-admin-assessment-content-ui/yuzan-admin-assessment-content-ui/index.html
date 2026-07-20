@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#f7f4ef" />
+  <title>语赞心声｜测评内容配置中心</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<svg class="svg-sprite" aria-hidden="true">
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V21h-6v-7H9v7H3z"/></symbol>
+  <symbol id="i-school" viewBox="0 0 24 24"><path d="m3 9 9-6 9 6v12H3zM8 21v-7h8v7M3 9h18"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2"/><path d="M3 21v-2a6 6 0 0 1 12 0v2M15 16a5 5 0 0 1 6 5"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 4h7a3 3 0 0 1 3 3v13H7a3 3 0 0 0-3 1zM20 4h-7a3 3 0 0 0-3 3v13h7a3 3 0 0 1 3 1z"/></symbol>
+  <symbol id="i-assess" viewBox="0 0 24 24"><circle cx="12" cy="7" r="3"/><path d="M5 21v-2a7 7 0 0 1 14 0v2M4 13h5M15 13h5M7 10v6M17 10v6"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></symbol>
+  <symbol id="i-kit" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V4h8v3M3 12h18M10 12v2h4v-2"/></symbol>
+  <symbol id="i-review" viewBox="0 0 24 24"><path d="M4 4h16v16H4zM8 9h8M8 13h5M15 16l2 2 4-5"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.4 8 8 10 4.6-2 8-5 8-10V6z"/><path d="m9 12 2 2 4-5"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21h-4v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H3v-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.6V3h4v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.1v4H21a1.7 1.7 0 0 0-1.6 1Z"/></symbol>
+  <symbol id="i-log" viewBox="0 0 24 24"><path d="M6 3h12v18H6zM9 8h6M9 12h6M9 16h4"/></symbol>
+  <symbol id="i-export" viewBox="0 0 24 24"><path d="M12 3v12m-4-4 4 4 4-4M5 20h14"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M9 21h6"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.8 9a2.4 2.4 0 1 1 3.5 2.1c-.9.5-1.3 1-1.3 2M12 17h.01"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-6 10-6 10 6 10 6-4 6-10 6S2 12 2 12z"/><circle cx="12" cy="12" r="2.5"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path d="m4 16-1 5 5-1L19 9l-4-4zM14 6l4 4"/></symbol>
+  <symbol id="i-publish" viewBox="0 0 24 24"><path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h5"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.5.5l2-2a5 5 0 0 0-7-7l-1.2 1.2M14 11a5 5 0 0 0-7.5-.5l-2 2a5 5 0 0 0 7 7l1.2-1.2"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m6 12 4 4 8-9"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 2h8l4 4v16H6zM14 2v5h5M9 12h6m-6 4h6"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-collapse" viewBox="0 0 24 24"><path d="m15 6-6 6 6 6"/></symbol>
+</svg>
+
+<div class="app-shell">
+  <aside class="sidebar">
+    <a href="#" class="brand">
+      <img src="assets/logo-symbol.png" alt="" />
+      <div><strong>语赞心声</strong><small>援藏教育公益平台</small></div>
+    </a>
+    <nav id="mainNav" class="main-nav"></nav>
+    <button class="collapse-btn"><svg><use href="#i-collapse"/></svg><span>收起菜单</span></button>
+  </aside>
+
+  <main class="main-area">
+    <header class="topbar">
+      <div class="breadcrumb"><button class="menu-btn"><svg><use href="#i-menu"/></svg></button><strong>测评管理</strong><span>›</span><strong>测评内容配置中心</strong></div>
+      <div class="top-actions">
+        <button class="icon-top notification"><svg><use href="#i-bell"/></svg><b>12</b></button>
+        <button class="icon-top"><svg><use href="#i-help"/></svg></button>
+        <button class="user-menu"><span class="user-avatar"><svg><use href="#i-user"/></svg></span><span>燕宾（只读）</span><span>⌄</span></button>
+      </div>
+    </header>
+
+    <section class="titlebar">
+      <div class="title-info">
+        <h1>阅读理解 · 高原生态保护主题（小学高年级）</h1>
+        <span class="status waiting">待审核</span>
+        <span class="autosave">自动保存于：10:24:36</span>
+      </div>
+      <div class="action-row">
+        <button class="toolbar-btn" id="previewBtn"><svg><use href="#i-eye"/></svg>预览</button>
+        <button class="toolbar-btn" id="editBtn"><svg><use href="#i-edit"/></svg>编辑</button>
+        <button class="toolbar-btn" id="publishBtn"><svg><use href="#i-publish"/></svg>发布新版本</button>
+        <button class="toolbar-btn primary" id="linkBtn"><svg><use href="#i-link"/></svg>关联任务</button>
+        <button class="toolbar-btn">更多 <span>⌄</span></button>
+      </div>
+    </section>
+
+    <section class="workspace-grid">
+      <aside class="library-panel panel">
+        <h2>内容库</h2>
+        <label class="search-box"><svg><use href="#i-search"/></svg><input id="searchInput" placeholder="搜索标题 / 主题 / 关键词" /></label>
+        <div class="filters">
+          <label><span>学段</span><select id="gradeFilter"><option>小学高年级</option><option>小学中年级</option><option>初中阶段</option></select></label>
+          <label><span>难度</span><select><option>全部</option><option>基础</option><option>进阶</option></select></label>
+          <label><span>主题</span><select><option>生态保护</option><option>民族文化</option><option>阅读成长</option></select></label>
+          <label><span>语言</span><select><option>全部</option><option>国家通用语言</option></select></label>
+          <button class="reset-btn" id="resetBtn">重置筛选</button>
+        </div>
+        <div class="library-count">共 128 条内容</div>
+        <div id="libraryList" class="library-list"></div>
+        <div class="pagination"><button>‹</button><button class="active">1</button><button>2</button><button>3</button><span>…</span><button>13</button><button>›</button></div>
+      </aside>
+
+      <section class="canvas-panel panel">
+        <div class="canvas-head"><h2>测评内容画布</h2><div><span>总分 100 分</span><i></i><span>建议用时 30 分钟</span><span class="info">i</span></div></div>
+        <div class="flow-label">测评流程</div>
+        <div class="flow-wrap">
+          <div class="flow-line"></div>
+          <article class="flow-section reading-section">
+            <div class="step-dot green">1</div>
+            <div class="section-card">
+              <div class="section-title"><h3>阅读材料</h3><span class="score green-soft">40 分</span><span class="fill-status">已填写</span></div>
+              <div class="reading-content">
+                <div class="reading-copy" contenteditable="false" id="readingCopy">
+                  <h4>高原上的守护者</h4>
+                  <p>在青藏高原，有这样一群人，他们世代守护着这片净土。</p>
+                  <p>三江源地区，被誉为“中华水塔”，滋养着长江、黄河、澜沧江。</p>
+                  <p>近年来，随着生态保护意识的增强，越来越多的牧民参与到保护行动中。</p>
+                  <p>他们减少放牧、捡拾垃圾、救助野生动物，让高原的生态环境逐渐好转。</p>
+                </div>
+                <div class="reading-visual" aria-hidden="true"></div>
+              </div>
+            </div>
+          </article>
+          <button class="flow-plus" data-add-after="reading"><svg><use href="#i-plus"/></svg></button>
+
+          <article class="flow-section question-section">
+            <div class="step-dot orange">2</div>
+            <div class="section-card">
+              <div class="section-title"><h3>阅读理解题</h3><span class="score green-soft">40 分</span><span class="fill-status">已填写</span></div>
+              <div class="question-table" id="questionTable"></div>
+            </div>
+          </article>
+          <button class="flow-plus" data-add-after="question"><svg><use href="#i-plus"/></svg></button>
+
+          <article class="flow-section writing-section">
+            <div class="step-dot orange">3</div>
+            <div class="section-card">
+              <div class="section-title"><h3>写作表达</h3><span class="score green-soft">20 分</span><span class="fill-status">已填写</span></div>
+              <div class="writing-row"><span class="pencil">✎</span><strong>写作题</strong><span>1 题</span><span>|</span><span>20 分</span></div>
+              <p class="writing-prompt">围绕“我为家乡的生态保护做一件事”写一篇短文，题目自拟，字数不少于120字。</p>
+            </div>
+          </article>
+        </div>
+        <button class="add-section" id="addSectionBtn"><svg><use href="#i-plus"/></svg>添加评测环节</button>
+      </section>
+
+      <aside class="meta-panel">
+        <section class="panel meta-card">
+          <h2>内容维度</h2>
+          <h3>能力维度</h3>
+          <div class="tag-list" id="abilityTags"></div>
+          <div class="divider"></div>
+          <h3>评分规则</h3>
+          <dl><div><dt>总分</dt><dd>100 分</dd></div><div><dt>阅读材料理解</dt><dd>40 分</dd></div><div><dt>阅读理解题</dt><dd>40 分</dd></div><div><dt>写作表达</dt><dd>20 分</dd></div></dl>
+        </section>
+        <section class="panel meta-card"><h2>版本信息</h2><dl><div><dt>当前版本</dt><dd>v1.2.0</dd></div><div><dt>创建时间</dt><dd>2024-05-28 14:30</dd></div><div><dt>最后更新</dt><dd>2024-06-05 10:24</dd></div><div><dt>更新人</dt><dd>张老师</dd></div></dl></section>
+        <section class="panel meta-card"><h2>版权信息</h2><dl><div><dt>来源</dt><dd>原创内容</dd></div><div><dt>版权状态</dt><dd class="ok">正常 <svg><use href="#i-check"/></svg></dd></div><div><dt>授权范围</dt><dd>平台内使用</dd></div></dl></section>
+        <section class="panel meta-card"><h2>发布状态</h2><dl><div><dt>当前状态</dt><dd><span class="status waiting small">待审核</span></dd></div><div><dt>审核人</dt><dd>未指派</dd></div><div><dt>提交时间</dt><dd>2024-06-05 10:24</dd></div><div><dt>备注</dt><dd>–</dd></div></dl></section>
+      </aside>
+    </section>
+
+    <section class="bottom-grid">
+      <section class="panel related-panel">
+        <div class="bottom-head"><h2>关联任务</h2><button id="bottomLinkBtn"><svg><use href="#i-plus"/></svg>关联任务</button></div>
+        <div id="relatedList" class="related-list"></div>
+      </section>
+      <section class="panel version-panel">
+        <div class="bottom-head"><h2>版本历史</h2><button>查看全部历史</button></div>
+        <table><thead><tr><th>版本号</th><th>状态</th><th>更新内容</th><th>更新时间</th><th>更新人</th><th>操作</th></tr></thead><tbody id="versionRows"></tbody></table>
+      </section>
+    </section>
+  </main>
+</div>
+
+<div class="modal" id="modal" aria-hidden="true">
+  <div class="modal-backdrop" data-close></div>
+  <div class="modal-card" role="dialog" aria-modal="true">
+    <button class="modal-close" data-close>×</button>
+    <div id="modalBody"></div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<script src="app.js"></script>
+</body>
+</html>

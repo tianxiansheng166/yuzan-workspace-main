@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#f8faf8" />
+  <title>语赞心声｜志愿者培训</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<svg class="svg-sprite" aria-hidden="true">
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.8 12 3l9 7.8v9.2a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 8h4M7 12h3m4-4h3m-3 4h3M12 4v16"/></symbol>
+  <symbol id="i-brief" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V4h8v3M3 12h18M10 12v2h4v-2"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 2h8l4 4v16H6z"/><path d="M14 2v5h5M9 12h6m-6 4h6"/></symbol>
+  <symbol id="i-award" viewBox="0 0 24 24"><circle cx="12" cy="8" r="5"/><path d="m8.5 12-1 10 4.5-2 4.5 2-1-10"/></symbol>
+  <symbol id="i-box" viewBox="0 0 24 24"><path d="M3 7h18v13H3zM7 7V4h10v3M3 11h18"/></symbol>
+  <symbol id="i-community" viewBox="0 0 24 24"><path d="M4 5h16v12H8l-4 3z"/><path d="M8 9h8m-8 4h5"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M9 21h6"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21h-4v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H3v-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.6V3h4v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.1v4H21a1.7 1.7 0 0 0-1.6 1Z"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M15 15a5 5 0 0 1 6 5"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 4h16v13H9l-5 4z"/><circle cx="8" cy="10" r="1"/><circle cx="12" cy="10" r="1"/><circle cx="16" cy="10" r="1"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.4 8 8 10 4.6-2 8-5 8-10V6z"/><path d="m9 12 2 2 4-5"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="m12 3 10 18H2z"/><path d="M12 9v5m0 3h.01"/></symbol>
+  <symbol id="i-clipboard" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="16" rx="2"/><path d="M9 5V3h6v2m-6 6 2 2 4-4m-6 8h6"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m6 12 4 4 8-9"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m10 8 6 4-6 4z"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v8m-3-3 3 3 3-3M8 18h8"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+  <symbol id="i-user-switch" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 19a6 6 0 0 1 12 0M17 6h4m-2-2 2 2-2 2M21 16h-4m2-2-2 2 2 2"/></symbol>
+</svg>
+<div class="app-shell">
+  <aside class="sidebar">
+    <a class="brand" href="#" aria-label="语赞心声首页">
+      <img src="assets/logo-symbol.png" alt="" />
+      <span class="brand-copy"><strong>语赞心声</strong><small>援藏教育公益平台</small></span>
+    </a>
+    <nav class="nav-list" aria-label="主导航">
+      <button class="nav-item"><svg><use href="#i-home"/></svg><span>工作台</span></button>
+      <button class="nav-item active"><svg><use href="#i-book"/></svg><span>学习与培训</span></button>
+      <button class="nav-item"><svg><use href="#i-brief"/></svg><span>服务任务</span></button>
+      <button class="nav-item"><svg><use href="#i-file"/></svg><span>服务记录</span></button>
+      <button class="nav-item"><svg><use href="#i-award"/></svg><span>成长与证书</span></button>
+      <button class="nav-item"><svg><use href="#i-box"/></svg><span>资源中心</span></button>
+      <button class="nav-item"><svg><use href="#i-community"/></svg><span>公益社区</span></button>
+      <button class="nav-item has-badge"><svg><use href="#i-bell"/></svg><span>消息中心</span><b>3</b></button>
+      <button class="nav-item"><svg><use href="#i-settings"/></svg><span>帮助与支持</span></button>
+    </nav>
+    <div class="sidebar-art" aria-hidden="true"></div>
+    <button class="identity-btn" id="identityBtn"><svg><use href="#i-user-switch"/></svg>切换身份</button>
+  </aside>
+
+  <main class="main-area">
+    <header class="topbar">
+      <div class="header-ridge" aria-hidden="true"></div>
+      <div>
+        <h1>志愿者培训</h1>
+        <p>系统学习 · 提升能力 · 专业服务</p>
+      </div>
+      <div class="top-actions">
+        <button class="icon-btn" aria-label="切换语言"><svg><use href="#i-globe"/></svg></button>
+        <button class="icon-btn notification" aria-label="通知"><svg><use href="#i-bell"/></svg><span>3</span></button>
+        <button class="profile-btn" id="profileBtn"><span class="avatar">李</span><strong>李明</strong><span class="down">⌄</span></button>
+      </div>
+    </header>
+
+    <section class="dashboard-grid">
+      <div class="primary-column">
+        <section class="path-card panel">
+          <div class="section-heading">
+            <h2>培训路径</h2>
+            <p>完成全部学习并通过考核，即可获得志愿服务资格</p>
+          </div>
+          <div class="path-row">
+            <article class="path-node done"><span class="step">1</span><span class="node-icon"><svg><use href="#i-file"/></svg></span><h3>项目介绍</h3><p>了解项目背景<br>与服务意义</p></article>
+            <article class="path-node done"><span class="step">2</span><span class="node-icon"><svg><use href="#i-chat"/></svg></span><h3>通用语言<br>辅助教学</h3><p>掌握语言支持<br>基础技巧</p></article>
+            <article class="path-node active"><span class="step">3</span><span class="node-icon"><svg><use href="#i-users"/></svg></span><h3>跨文化沟通</h3><p>理解差异<br>建立信任</p></article>
+            <article class="path-node"><span class="step">4</span><span class="node-icon"><svg><use href="#i-shield"/></svg></span><h3>未成年人保护</h3><p>守护安全<br>合规服务</p></article>
+            <article class="path-node"><span class="step">5</span><span class="node-icon"><svg><use href="#i-users"/></svg></span><h3>课堂协作</h3><p>有效配合<br>提升教学效果</p></article>
+            <article class="path-node"><span class="step">6</span><span class="node-icon"><svg><use href="#i-alert"/></svg></span><h3>突发情况</h3><p>识别风险<br>妥善应对</p></article>
+            <article class="path-node"><span class="step">7</span><span class="node-icon"><svg><use href="#i-clipboard"/></svg></span><h3>最终考核</h3><p>综合考核<br>检验学习成果</p></article>
+            <article class="path-node final"><span class="step">8</span><span class="node-icon"><svg><use href="#i-award"/></svg></span><h3>获得服务资格</h3><p>开启志愿服务<br>传递温暖</p></article>
+          </div>
+          <div class="path-landscape" aria-hidden="true"><span></span></div>
+        </section>
+
+        <div class="lower-grid">
+          <section class="course-card panel">
+            <div class="card-title-row"><h2>课程学习</h2><button>查看全部 <svg><use href="#i-chevron"/></svg></button></div>
+            <div class="segmented"><button class="selected">进行中 <b>4</b></button><button>未开始 <b>6</b></button><button>已完成 <b>8</b></button></div>
+            <div class="course-list" id="courseList"></div>
+          </section>
+
+          <section class="resources-card panel">
+            <div class="card-title-row"><h2>学习资源</h2><button>查看全部 <svg><use href="#i-chevron"/></svg></button></div>
+            <div class="resource-tabs" role="tablist"><button class="selected">资料文档</button><button>案例分享</button><button>教学工具</button><button>政策法规</button></div>
+            <div class="resource-list" id="resourceList"></div>
+          </section>
+        </div>
+      </div>
+
+      <aside class="right-column">
+        <section class="progress-card panel">
+          <h2>我的学习进度</h2>
+          <div class="progress-layout">
+            <div class="ring" style="--value:66"><span>66<small>%</small></span></div>
+            <div class="progress-details">
+              <p>已完成 <strong>4 / 8</strong> 阶段</p>
+              <div class="mini-bar"><i></i></div>
+              <p>累计学习 <strong>18.5</strong> / 28 小时</p>
+              <p>完成课程 <strong>12</strong> / 18 门</p>
+            </div>
+          </div>
+          <button class="primary-btn" id="continueMain">继续学习</button>
+          <p class="today"><svg><use href="#i-clock"/></svg>今日计划：学习 1 门课程（约 40 分钟）</p>
+        </section>
+
+        <section class="duration-card panel">
+          <h2>培训时长</h2>
+          <div class="duration-grid">
+            <div class="duration-main"><strong>28</strong><span>小时</span><p>预计总学习时长</p></div>
+            <div class="duration-split"><p><svg><use href="#i-play"/></svg><span><b>18</b> 小时<small>视频课程</small></span></p><p><svg><use href="#i-book"/></svg><span><b>10</b> 小时<small>阅读与实践</small></span></p></div>
+          </div>
+        </section>
+
+        <section class="rules-card panel">
+          <h2>必读守则</h2>
+          <ul><li>志愿者行为准则</li><li>服务安全与风险提示</li><li>未成年人保护承诺书</li><li>隐私与信息保护规范</li></ul>
+          <button class="outline-btn" id="rulesBtn">查看完整守则</button>
+        </section>
+      </aside>
+    </section>
+  </main>
+</div>
+
+<div class="modal" id="rulesModal" aria-hidden="true">
+  <div class="modal-backdrop" data-close></div>
+  <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="rulesTitle">
+    <button class="modal-close" data-close aria-label="关闭">×</button>
+    <h2 id="rulesTitle">志愿服务必读守则</h2>
+    <p>尊重学生与当地文化，保护未成年人隐私，严格遵守服务流程。遇到安全、健康或沟通风险时，应暂停独立处理并及时联系项目负责人。</p>
+    <label><input type="checkbox" id="ruleAgree" /> 我已阅读并理解上述规范</label>
+    <button class="primary-btn" data-close>确认</button>
+  </div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<script src="app.js"></script>
+</body>
+</html>

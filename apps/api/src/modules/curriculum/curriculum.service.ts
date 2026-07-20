@@ -318,4 +318,111 @@ export class CurriculumService {
       auth.principal.roles.length === 1 && hasRole(auth, MembershipRole.STUDENT)
     );
   }
+
+  async attachResource(
+    auth: AuthContext,
+    schoolId: string,
+    courseVersionId: string,
+    dto: { resourceId: string; purpose: string; meta?: Record<string, unknown> },
+  ) {
+    const version = await this.courseRepo.findById(schoolId, courseVersionId);
+    if (!version) {
+      throw new CurriculumNotFoundException();
+    }
+    if (!this.policy.canManage(auth, version)) {
+      throw new CurriculumForbiddenException();
+    }
+
+    // Verify the resource exists via the lookup port
+    const resourceExists = await this.resourceRepo.exists(
+      schoolId,
+      dto.resourceId,
+    );
+    if (!resourceExists) {
+      return {
+        status: "PROVIDER_NOT_CONFIGURED" as const,
+        message:
+          "资源服务暂未配置，无法关联资源。请联系管理员配置资源服务后重试。",
+        resourceId: dto.resourceId,
+      };
+    }
+
+    // If the course version has a resources array, add to it
+    const existingResources =
+      (version as CourseVersion & { resources?: unknown[] }).resources ?? [];
+    const newResource = {
+      resourceId: dto.resourceId,
+      purpose: dto.purpose,
+      meta: dto.meta ?? {},
+      attachedAt: new Date().toISOString(),
+      attachedBy: auth.principal.userId,
+    };
+
+    const updated: CourseVersion = {
+      ...version,
+      updatedAt: new Date(),
+    } as CourseVersion;
+    (updated as CourseVersion & { resources?: unknown[] }).resources = [
+      ...existingResources,
+      newResource,
+    ];
+
+    await this.courseRepo.save(updated, { generateVersion: false });
+    return newResource;
+  }
+
+  async listResources(
+    auth: AuthContext,
+    schoolId: string,
+    courseVersionId: string,
+  ) {
+    const version = await this.courseRepo.findById(schoolId, courseVersionId);
+    if (!version) {
+      throw new CurriculumNotFoundException();
+    }
+    if (!this.policy.canManage(auth, version)) {
+      throw new CurriculumForbiddenException();
+    }
+
+    const resources =
+      (version as CourseVersion & { resources?: unknown[] }).resources ?? [];
+
+    // If no resources attached, check if provider is available
+    if (resources.length === 0) {
+      const hasProvider = await this.resourceRepo.exists(schoolId, "");
+      if (!hasProvider) {
+        return {
+          status: "PROVIDER_NOT_CONFIGURED" as const,
+          items: [],
+          message:
+            "资源服务暂未配置，无法查询课程资源。请联系管理员配置资源服务。",
+        };
+      }
+    }
+
+    return { items: resources };
+  }
+
+  async attachOfflinePackage(
+    auth: AuthContext,
+    schoolId: string,
+    courseVersionId: string,
+    dto: { offlinePackageId: string },
+  ) {
+    const version = await this.courseRepo.findById(schoolId, courseVersionId);
+    if (!version) {
+      throw new CurriculumNotFoundException();
+    }
+    if (!this.policy.canManage(auth, version)) {
+      throw new CurriculumForbiddenException();
+    }
+
+    // Offline package management is P2 — return PROVIDER_NOT_CONFIGURED
+    return {
+      status: "PROVIDER_NOT_CONFIGURED" as const,
+      message:
+        "离线资源包服务暂未配置，无法关联离线包。此功能将在后续版本中提供。",
+      offlinePackageId: dto.offlinePackageId,
+    };
+  }
 }

@@ -1,0 +1,22 @@
+{
+  "status": "ok",
+  "renderer": "Python Playwright + system Chromium",
+  "screenshots": {
+    "desktop.png": {
+      "width": 1659,
+      "height": 948
+    },
+    "tablet.png": {
+      "width": 1024,
+      "height": 1598
+    },
+    "mobile.png": {
+      "width": 390,
+      "height": 3105
+    },
+    "current.png": {
+      "width": 1659,
+      "height": 948
+    }
+  }
+}

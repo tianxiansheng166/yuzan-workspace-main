@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#f7f2e7" />
+  <title>项目成效与社会影响｜语赞心声</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <img src="./assets/logo-mark.png" alt="" class="brand-mark" />
+      <div class="brand-text"><strong>语赞心声</strong><span>YUZAN PUBLIC PLATFORM</span></div>
+    </div>
+    <nav class="side-nav" aria-label="主导航">
+      <a href="#" class="nav-item"><span class="nav-icon">⌂</span><span>首页</span></a>
+      <a href="#" class="nav-item"><span class="nav-icon">▤</span><span>项目概览</span></a>
+      <a href="#" class="nav-item"><span class="nav-icon">▧</span><span>课程与资源</span></a>
+      <a href="#" class="nav-item"><span class="nav-icon">⌘</span><span>研究与评估</span></a>
+      <a href="#" class="nav-item active"><span class="nav-icon">▥</span><span>项目成效</span></a>
+      <a href="#" class="nav-item"><span class="nav-icon">♧</span><span>合作伙伴</span></a>
+      <a href="#" class="nav-item"><span class="nav-icon">♙</span><span>志愿者与培训</span></a>
+      <a href="#" class="nav-item"><span class="nav-icon">▣</span><span>资料库</span></a>
+      <a href="#" class="nav-item"><span class="nav-icon">?</span><span>关于我们</span></a>
+    </nav>
+    <div class="sidebar-art"><img src="./assets/sidebar-mountains.png" alt="" /></div>
+    <blockquote>“教育有证据，<br/>改变才发生。”<small>—— 语赞心声</small></blockquote>
+  </aside>
+
+  <main class="main-area">
+    <header class="topbar">
+      <div class="header-mountains"><img src="./assets/header-mountains.png" alt="" /></div>
+      <div class="top-actions">
+        <button class="top-search" id="searchBtn" aria-label="站内搜索">⌕ <span>站内搜索</span></button>
+        <span class="top-sep"></span>
+        <button class="icon-btn notify" aria-label="通知">♢<em></em></button>
+        <button class="help-btn">◎ <span>帮助中心</span></button>
+        <button class="user-btn"><span class="avatar">语</span><strong>Yuzan</strong><span>⌄</span></button>
+      </div>
+    </header>
+
+    <section class="workspace">
+      <div class="title-row">
+        <div>
+          <h1>项目成效与社会影响 <span class="seal">眼见</span></h1>
+          <p>以证据链呈现项目如何在课堂中发生改变，并持续产生社会影响。</p>
+        </div>
+        <div class="filters" aria-label="筛选条件">
+          <label><span>▣ 时间范围</span><select id="timeFilter"><option>全部时间</option><option>近一年</option><option>本学期</option></select></label>
+          <label><span>项目阶段</span><select id="stageFilter"><option>全部阶段</option><option>课程试点</option><option>教师培训</option><option>社会共创</option></select></label>
+          <label><span>学校类型</span><select id="schoolFilter"><option>全部</option><option>小学</option><option>中学</option></select></label>
+          <button class="reset-btn" id="resetBtn">↻ 重置筛选</button>
+        </div>
+      </div>
+
+      <section class="journey-band">
+        <h2><span>♜</span> 服务历程</h2>
+        <div class="journey-line" aria-label="服务历程">
+          <button class="journey-node selected" data-stage="项目启动"><i>✦</i><strong>项目启动</strong><small>课程共创与试点学校遴选</small></button>
+          <button class="journey-node" data-stage="课程试点"><i>✦</i><strong>课程试点</strong><small>课堂实施与迭代优化</small></button>
+          <button class="journey-node" data-stage="教师培训"><i>✦</i><strong>教师培训</strong><small>能力建设与社群支持</small></button>
+          <button class="journey-node" data-stage="评估与反馈"><i>✦</i><strong>评估与反馈</strong><small>测评与质性反馈收集</small></button>
+          <button class="journey-node" data-stage="推广与深化"><i>✦</i><strong>推广与深化</strong><small>扩大覆盖与在地化</small></button>
+          <button class="journey-node" data-stage="社会共创"><i>✦</i><strong>社会共创</strong><small>链接伙伴与公众参与</small></button>
+          <span class="journey-flag">⚑</span>
+        </div>
+      </section>
+
+      <section class="evidence-chain">
+        <aside class="legend-panel">
+          <h2>证据链路</h2>
+          <p>从活动到影响，<br/>以证据支撑每一步改变。</p>
+          <ul>
+            <li><i class="dot green"></i>过程证据</li>
+            <li><i class="square navy"></i>结果证据</li>
+            <li><i class="diamond red"></i>影响证据</li>
+          </ul>
+        </aside>
+        <div class="chain-flow" id="chainFlow">
+          <article class="chain-stage green-stage selected" tabindex="0" data-key="schools">
+            <div class="stage-head"><span class="stage-badge">♜</span><strong>覆盖学校</strong></div>
+            <section><h3>关键证据</h3><div class="evidence-row">合作学校名单（待更新）<b class="file xlsx">XLSX</b></div><div class="evidence-row">学校合作协议（样例）<b class="file pdf">PDF</b></div></section>
+            <section><h3>案例故事</h3><button class="story-btn">高原小学的第一堂课 <em>案例</em></button></section>
+          </article>
+          <span class="chain-arrow">›</span>
+          <article class="chain-stage green-stage" tabindex="0" data-key="courses">
+            <div class="stage-head"><span class="stage-badge">▤</span><strong>课程完成</strong></div>
+            <section><h3>关键证据</h3><div class="evidence-row">课程实施记录（样例）<b class="file xlsx">XLSX</b></div><div class="evidence-row">学生学习作品（精选）<b class="file pdf">PDF</b></div></section>
+            <section><h3>案例故事</h3><button class="story-btn">从好奇到行动的转变 <em>案例</em></button></section>
+          </article>
+          <span class="chain-arrow">›</span>
+          <article class="chain-stage navy-stage" tabindex="0" data-key="assessment">
+            <div class="stage-head"><span class="stage-badge">▥</span><strong>测评前后变化</strong></div>
+            <section><h3>关键证据</h3><div class="evidence-row">学生测评工具说明<b class="file pdf">PDF</b></div><div class="evidence-row">测评前后对比样例<b class="file pdf">PDF</b></div></section>
+            <section><h3>案例故事</h3><button class="story-btn">一位学生的变化轨迹 <em>案例</em></button></section>
+          </article>
+          <span class="chain-arrow">›</span>
+          <article class="chain-stage green-stage" tabindex="0" data-key="teachers">
+            <div class="stage-head"><span class="stage-badge">♙</span><strong>教师培训</strong></div>
+            <section><h3>关键证据</h3><div class="evidence-row">培训计划与大纲<b class="file pdf">PDF</b></div><div class="evidence-row">培训签到与反馈（样例）<b class="file xlsx">XLSX</b></div></section>
+            <section><h3>案例故事</h3><button class="story-btn">教师如何在课堂中应用 <em>案例</em></button></section>
+          </article>
+          <span class="chain-arrow">›</span>
+          <article class="chain-stage red-stage" tabindex="0" data-key="volunteer">
+            <div class="stage-head"><span class="stage-badge">♡</span><strong>志愿服务</strong></div>
+            <section><h3>关键证据</h3><div class="evidence-row">志愿者服务记录（待更新）<b class="file xlsx">XLSX</b></div><div class="evidence-row">志愿者反馈（精选）<b class="file pdf">PDF</b></div></section>
+            <section><h3>案例故事</h3><button class="story-btn">志愿者的一节自然课 <em>案例</em></button></section>
+          </article>
+        </div>
+      </section>
+
+      <section class="detail-grid">
+        <article class="detail-panel report-panel">
+          <header class="panel-head navy"><span>♧ 研究与评估报告（节选）</span><i>✦</i></header>
+          <div class="report-cards">
+            <div class="report-item"><img src="./assets/report-cover-1.webp" alt="报告封面"/><div><h3>语赞心声项目阶段性评估报告（节选）</h3><p>采用混合研究方法，关注学生学习态度与行动的变化。</p><small>来源：内部评估团队</small><button class="text-link report-open">PDF　查看全文 ↗</button></div></div>
+            <div class="report-item"><img src="./assets/report-cover-2.webp" alt="课堂观察记录"/><div><h3>课堂观察记录（节选）</h3><p>基于课堂观察量表，记录学生参与、合作与探究行为。</p><small>来源：研究合作伙伴</small><button class="text-link report-open">PDF　查看全文 ↗</button></div></div>
+          </div>
+          <button class="empty-slot">＋　待积累<span>更多评估报告将持续补充，敬请期待。</span></button>
+        </article>
+
+        <article class="detail-panel feedback-panel">
+          <header class="panel-head green"><span>☵ 学校与教师反馈（节选）</span><i>✦</i></header>
+          <div class="quote-card"><q>课程内容贴近孩子的生活，课堂氛围更开放，他们更愿意表达自己的想法。</q><p>—— 中学 科学教师 <b>教师反馈</b></p></div>
+          <div class="quote-card"><q>学生开始主动观察身边的环境，并尝试提出解决方案。</q><p>—— 县域小学 校长 <b>学校反馈</b></p></div>
+          <button class="empty-slot compact">＋　待积累<span>更多反馈将持续收集与呈现。</span></button>
+        </article>
+
+        <article class="detail-panel tools-panel">
+          <header class="panel-head red"><span>♜ 方法与工具</span></header>
+          <div class="tool-layout">
+            <div class="tool-list">
+              <button class="tool-row"><span class="tool-file pdf-icon">PDF</span><div><strong>学生测评工具包</strong><p>包含量表、情境题与开放性问题，用于评估知识、态度与行动意向。</p></div><em>查看工具说明 ↗</em></button>
+              <button class="tool-row"><span class="tool-file xlsx-icon">XLSX</span><div><strong>课堂观察量表</strong><p>聚焦参与度、探究行为、合作与反馈等维度。</p></div><em>查看量表 ↗</em></button>
+              <button class="tool-row"><span class="tool-file pdf-icon">PDF</span><div><strong>质性访谈提纲（教师/学生）</strong><p>用于深入了解课堂体验与项目影响。</p></div><em>查看提纲 ↗</em></button>
+            </div>
+            <button class="tool-empty">＋<strong>待积累</strong><span>更多工具与方法<br/>将持续补充。</span></button>
+          </div>
+        </article>
+      </section>
+
+      <footer class="data-footer">
+        <strong>数据与资料来源</strong>
+        <span></span>
+        <button>▰ 内部文档库　进入 ↗</button>
+        <span></span>
+        <button>♧ 合作伙伴共享资料　进入 ↗</button>
+        <span></span>
+        <button>♜ 公开资料与政策文件　进入 ↗</button>
+        <span></span>
+        <p>如需引用本项目资料，请遵循引用规范</p>
+        <button class="citation-btn">查看引用规范 ↗</button>
+      </footer>
+    </section>
+  </main>
+</div>
+
+<div class="drawer-backdrop" id="drawerBackdrop" hidden>
+  <aside class="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
+    <button class="drawer-close" id="drawerClose">×</button>
+    <h2 id="drawerTitle">证据详情</h2>
+    <p id="drawerText">当前指标的统计口径、时间范围和数据来源将在这里展示。</p>
+    <dl><div><dt>统计口径</dt><dd>按已完成归档且具备公开授权的记录汇总</dd></div><div><dt>时间范围</dt><dd id="drawerTime">全部时间</dd></div><div><dt>数据状态</dt><dd>部分数据待积累</dd></div></dl>
+    <button class="primary-action" id="downloadBtn">下载节选报告</button>
+  </aside>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="./app.js"></script>
+</body>
+</html>

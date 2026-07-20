@@ -1,0 +1,288 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#fbfaf7" />
+  <title>创建测评｜语赞心声</title>
+  <link rel="stylesheet" href="./styles.css" />
+<link rel="stylesheet" href="/shared/teacher-shell.css" />
+  
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="主导航">
+      <div class="brand">
+        <img class="brand-mark" src="./assets/yuzan-logo-mark.png" alt="" />
+        <div class="brand-copy">
+          <strong>语赞心声</strong>
+          <span>智趣教育公益平台</span>
+        </div>
+      </div>
+
+      <nav class="nav-list">
+        <a class="nav-item" href="/teacher/courses/">
+          <span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M8 9h8M8 13h5M7 3v4M17 3v4"/></svg></span>
+          <span><b>课程</b><small>备课与资源</small></span>
+        </a>
+        <a class="nav-item" href="/teacher/assignments">
+          <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M6 5h12l2 4v10H4V9zM8 5V3h8v2M8 11h8M8 15h5"/></svg></span>
+          <span><b>任务</b><small>发布与管理</small></span>
+        </a>
+        <a class="nav-item active" href="/teacher/assessments" aria-current="page">
+          <span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="m8 12 3 3 5-7"/></svg></span>
+          <span><b>测评</b><small>学习与练习</small></span>
+        </a>
+        <a class="nav-item" href="/teacher/reviews/submission-1/">
+          <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4zM7 15l3-3 2 2 3-4 2 3"/></svg></span>
+          <span><b>复核</b><small>朗读与反馈</small></span>
+        </a>
+        <a class="nav-item" href="/teacher/assessments/detail/">
+          <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4zM8 16V9M12 16V6M16 16v-4"/></svg></span>
+          <span><b>报告</b><small>学情与成长</small></span>
+        </a>
+      </nav>
+
+      <a class="support-link" href="#" data-unsupported="true">
+        <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.3-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.7-7 10-7 10z"/></svg></span>
+        <b>公益与支持</b>
+      </a>
+
+      <div class="sidebar-art" aria-hidden="true">
+        <img src="./assets/sidebar-landscape.webp" alt="" />
+        <span class="sun-dot"></span>
+      </div>
+      <button class="collapse-button" aria-label="收起侧栏">‹</button>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="context-selectors">
+          <button class="context-button">
+            <svg viewBox="0 0 24 24"><path d="M3 10 12 3l9 7M5 9v11h14V9M9 20v-6h6v6"/></svg>
+            <span>林芝市第一中学</span><b>⌄</b>
+          </button>
+          <button class="context-button">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 20c0-4 3-7 7-7s7 3 7 7"/></svg>
+            <span>2024-2025 学年下学期</span><b>⌄</b>
+          </button>
+          <span class="sync-pill"><i></i>已同步 2 分钟前</span>
+        </div>
+        <div class="top-actions">
+          <button class="icon-button notification" aria-label="通知">
+            <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 7h18s-3 0-3-7M10 20h4"/></svg>
+            <span>12</span>
+          </button>
+          <button class="help-button">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.8 9a2.4 2.4 0 1 1 3.6 2.1c-.9.5-1.4 1.1-1.4 2M12 17h.01"/></svg>
+            帮助
+          </button>
+          <button class="profile-button">
+            <span class="avatar teacher-avatar">扎</span>
+            <span><strong>扎西卓玛</strong><small>普通话教师</small></span>
+            <b>⌄</b>
+          </button>
+        </div>
+      </header>
+
+      <div class="page-layout">
+        <section class="creator-column">
+          <header class="page-heading">
+            <h1>创建测评</h1>
+            <p>通过四个步骤，创建一份科学、公正、有效的学生测评。</p>
+          </header>
+
+          <ol class="steps" aria-label="创建测评步骤">
+            <li class="active" data-step="1"><span>1</span><strong>选择测评类型与目标</strong></li>
+            <li data-step="2"><span>2</span><strong>配置读写材料</strong></li>
+            <li data-step="3"><span>3</span><strong>选择班级与学生</strong></li>
+            <li data-step="4"><span>4</span><strong>安排时间与权限</strong></li>
+          </ol>
+
+          <section class="work-card">
+            <section class="step-panel active-panel" data-panel="1">
+              <h2>第一步：选择测评类型与目标</h2>
+              <div class="step-one-grid">
+                <div class="form-column">
+                  <label class="section-label">测评类型 <button class="info-button" aria-label="测评类型说明">?</button></label>
+                  <div class="type-grid" role="radiogroup">
+                    <button class="type-card selected" data-type="朗读测评" role="radio" aria-checked="true">
+                      <span class="selected-check">✓</span>
+                      <svg viewBox="0 0 48 48"><path d="M6 11c8-2 12 0 18 5v26c-6-4-11-6-18-4zM42 11c-8-2-12 0-18 5v26c6-4 11-6 18-4z"/></svg>
+                      <strong>朗读测评</strong>
+                      <small>评估学生的朗读流畅度、准确度与表达效果</small>
+                    </button>
+                    <button class="type-card" data-type="写作测评" role="radio" aria-checked="false">
+                      <svg viewBox="0 0 48 48"><path d="M10 8h22v32H10zM31 29l9-9 4 4-9 9-7 2zM16 16h10M16 22h8"/></svg>
+                      <strong>写作测评</strong>
+                      <small>评估学生的写作内容、结构、语言与表达</small>
+                    </button>
+                    <button class="type-card" data-type="读写综合测评" role="radio" aria-checked="false">
+                      <svg viewBox="0 0 48 48"><path d="M9 8h26v27H9zM15 15h14M15 21h10M29 32l8-8 4 4-8 8-6 2z"/></svg>
+                      <strong>读写综合测评</strong>
+                      <small>综合评估学生的阅读与写作能力</small>
+                    </button>
+                  </div>
+
+                  <label class="field">
+                    <span>测评名称 <b>*</b></span>
+                    <div class="text-input">
+                      <input id="assessmentName" value="春天的足迹·朗读测评" maxlength="50" />
+                      <small><span id="nameCount">9</span>/50</small>
+                    </div>
+                  </label>
+
+                  <label class="field">
+                    <span>测评目标 <b>*</b></span>
+                    <div class="textarea-box">
+                      <textarea id="assessmentGoal" maxlength="200">通过朗读《春天的足迹》，评估学生普通话发音、语调、流畅度与情感表达，帮助教师掌握学生朗读能力。</textarea>
+                      <small><span id="goalCount">38</span>/200</small>
+                    </div>
+                  </label>
+
+                  <div class="dimension-section">
+                    <span class="section-label">能力维度（可多选）</span>
+                    <div class="dimension-list" id="dimensionList">
+                      <button class="selected" data-dimension="发音准确"><i>✓</i>发音准确</button>
+                      <button class="selected" data-dimension="语调节奏"><i>✓</i>语调节奏</button>
+                      <button class="selected" data-dimension="流畅度"><i>✓</i>流畅度</button>
+                      <button class="selected" data-dimension="情感表达"><i>✓</i>情感表达</button>
+                      <button class="add-dimension" data-modal="dimension">＋ 自定义维度</button>
+                    </div>
+                  </div>
+                </div>
+
+                <aside class="preview-card">
+                  <div class="preview-heading">
+                    <h3>测评示例预览</h3>
+                    <span>⚑ 朗读测评</span>
+                  </div>
+                  <div class="reading-sheet">
+                    <h4>春天的足迹（节选）</h4>
+                    <small>作者：宗白华</small>
+                    <p>盼望着，盼望着，东风来了，春天的脚步近了。</p>
+                    <p>一切都像刚睡醒的样子，欣欣然张开了眼。</p>
+                    <p>山朗润起来了，水涨起来了，太阳的脸红起来了。</p>
+                    <p>小草偷偷地从土里钻出来，嫩嫩的，绿绿的。</p>
+                    <p>……</p>
+                    <footer>选自《春天的足迹》 · 字数 128 · 建议用时 2–3 分钟</footer>
+                  </div>
+                  <button class="change-material" data-action="material">更换材料</button>
+                </aside>
+              </div>
+            </section>
+
+            <section class="step-panel" data-panel="2">
+              <h2>第二步：配置读写材料</h2>
+              <div class="placeholder-step">
+                <svg viewBox="0 0 72 72"><path d="M14 12h44v48H14zM24 24h24M24 34h18M24 44h21"/></svg>
+                <h3>选择朗读材料与书面练习</h3>
+                <p>可从资源库选择，也可上传经过授权的教学材料。</p>
+                <button data-action="material">选择材料</button>
+              </div>
+            </section>
+
+            <section class="step-panel" data-panel="3">
+              <h2>第三步：选择班级与学生</h2>
+              <div class="placeholder-step">
+                <svg viewBox="0 0 72 72"><circle cx="28" cy="28" r="10"/><circle cx="50" cy="31" r="8"/><path d="M9 61c0-13 8-21 19-21s19 8 19 21M40 61c0-10 6-17 14-17 6 0 10 3 13 8"/></svg>
+                <h3>设置参与范围</h3>
+                <p>支持整班发布、分组发布或选择具体学生。</p>
+                <button data-action="students">选择五年级二班</button>
+              </div>
+            </section>
+
+            <section class="step-panel" data-panel="4">
+              <h2>第四步：安排时间与权限</h2>
+              <div class="schedule-grid">
+                <label><span>开放时间</span><input type="datetime-local" id="startTime" /></label>
+                <label><span>截止时间</span><input type="datetime-local" id="endTime" /></label>
+                <label class="toggle-row"><input type="checkbox" id="anonymousToggle" /><i></i><span>允许匿名访问</span></label>
+                <label class="toggle-row"><input type="checkbox" checked /><i></i><span>要求录音授权确认</span></label>
+                <div class="privacy-note">
+                  <strong>隐私与录音说明</strong>
+                  <p>发布前应确认学生和监护人已了解录音用途、保存期限及删除方式。</p>
+                </div>
+              </div>
+            </section>
+          </section>
+        </section>
+
+        <aside class="precheck-column">
+          <section class="precheck-card">
+            <header>
+              <h2>测评预检</h2>
+              <p>完成当前步骤后将实时检查风险点</p>
+            </header>
+
+            <div class="summary-counts">
+              <div class="danger"><b id="riskCount">2</b><span>风险项</span></div>
+              <div class="warning"><b id="warningCount">1</b><span>警示项</span></div>
+              <div class="normal"><b id="normalCount">3</b><span>正常项</span></div>
+            </div>
+
+            <section class="check-group danger-group">
+              <h3>风险项 <span id="riskHeaderCount">2</span></h3>
+              <div class="check-item" id="materialRisk"><i>1</i><span><b>未配置测评材料</b><small>请在下一步配置朗读材料。</small></span></div>
+              <div class="check-item" id="timeRisk"><i>1</i><span><b>未设置测评时间</b><small>请在第四步设置测评开始与结束时间。</small></span></div>
+            </section>
+
+            <section class="check-group warning-group">
+              <h3>警示项 <span>1</span></h3>
+              <div class="check-item"><i>1</i><span><b>未设置最低合格标准</b><small>建议设置合格标准，便于结果应用。</small></span></div>
+            </section>
+
+            <section class="check-group normal-group">
+              <h3>正常项 <span id="normalHeaderCount">3</span></h3>
+              <div class="check-item"><i>✓</i><span><b>已选择测评类型</b></span></div>
+              <div class="check-item"><i>✓</i><span><b>已填写测评名称与目标</b></span></div>
+              <div class="check-item"><i>✓</i><span><b>已选择能力维度</b></span></div>
+            </section>
+
+            <button class="help-center" data-modal="help">
+              <span><b>帮助中心</b><small>如何创建一份有效的朗读测评？</small></span>
+              <strong>›</strong>
+            </button>
+          </section>
+        </aside>
+      </div>
+
+      <footer class="bottom-bar">
+        <div class="left-actions">
+          <button class="secondary-action" data-action="cancel">取消创建</button>
+          <button class="secondary-action wide" data-action="save">保存草稿</button>
+          <span class="autosave" id="autosaveHint" hidden></span>
+        </div>
+        <div class="right-actions">
+          <button class="secondary-action" id="previousBtn">上一步</button>
+          <button class="next-action" id="nextBtn">下一步</button>
+          <div class="publish-group">
+            <button class="publish-action" id="publishBtn">发布测评</button>
+            <button class="publish-menu" id="publishMenuBtn">⌄</button>
+            <div class="publish-dropdown" id="publishDropdown" hidden>
+              <button data-action="publish-now">立即发布</button>
+              <button data-action="schedule" disabled title="后端暂无定时发布接口">定时发布（暂未开通）</button>
+              <button data-action="preview">发布前预览</button>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="modalBackdrop" hidden>
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="modal-close" id="modalClose" aria-label="关闭">×</button>
+      <div class="modal-mark" id="modalMark">✓</div>
+      <h2 id="modalTitle">操作详情</h2>
+      <p id="modalText"></p>
+      <div class="modal-actions">
+        <button class="modal-secondary" id="modalCancel">取消</button>
+        <button class="modal-primary" id="modalConfirm">确认</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="./app.js"></script>
+  <script src="/shared/teacher-shell.js" defer></script>
+

@@ -1,0 +1,18 @@
+{
+  "pageId": "admin-content-review",
+  "route": "/admin/reviews",
+  "assets": [
+    {"file": "assets/logo-symbol.png", "usage": "品牌图案，仅图形，不含原始文字"},
+    {"file": "assets/banner-mountains.png", "usage": "顶部克制山脊背景，低透明度混合"},
+    {"file": "assets/content-illustration.png", "usage": "图片证据页中的媒体预览"},
+    {"file": "assets/preview-plateau.png", "usage": "文本证据中的局部示意图"}
+  ],
+  "rebuildWithCode": [
+    "layout",
+    "navigation",
+    "buttons",
+    "forms",
+    "dynamic text",
+    "states"
+  ]
+}

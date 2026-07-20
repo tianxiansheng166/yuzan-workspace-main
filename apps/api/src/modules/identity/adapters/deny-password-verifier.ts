@@ -14,4 +14,8 @@ export class DenyPasswordVerifier implements PasswordVerifier {
   async verifyDummy(_password: string): Promise<boolean> {
     return false;
   }
+
+  async hash(_password: string): Promise<string> {
+    throw new Error("Password hashing is not available in deny-all mode");
+  }
 }

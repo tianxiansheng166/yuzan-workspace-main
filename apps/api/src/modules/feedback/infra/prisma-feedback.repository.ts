@@ -123,6 +123,53 @@ export class PrismaFeedbackRepository implements FeedbackRepositoryPort {
       throw new FeedbackUnavailableException();
     }
   }
+
+  async findByStudentEnrollments(
+    schoolId: string,
+    enrollmentIds: readonly string[],
+    options?: { limit?: number; cursor?: string },
+  ): Promise<PaginatedResult<Feedback>> {
+    try {
+      if (enrollmentIds.length === 0) {
+        return { items: [], nextCursor: null, hasMore: false };
+      }
+
+      const limit = options?.limit ?? 20;
+
+      const where: Prisma.FeedbackWhereInput = {
+        schoolId,
+        deletedAt: null,
+        submission: {
+          enrollmentId: { in: [...enrollmentIds] },
+        },
+      };
+
+      if (options?.cursor) {
+        where.id = { gt: options.cursor };
+      }
+
+      const rows = await this.prisma.feedback.findMany({
+        where,
+        orderBy: { releasedAt: "desc" },
+        take: limit + 1,
+      });
+
+      const hasMore = rows.length > limit;
+      const items = hasMore ? rows.slice(0, -1) : rows;
+
+      const nextCursor = hasMore
+        ? items[items.length - 1]?.id ?? null
+        : null;
+
+      return {
+        items: items.map(toFeedback),
+        nextCursor,
+        hasMore,
+      };
+    } catch {
+      throw new FeedbackUnavailableException();
+    }
+  }
 }
 
 function toFeedback(

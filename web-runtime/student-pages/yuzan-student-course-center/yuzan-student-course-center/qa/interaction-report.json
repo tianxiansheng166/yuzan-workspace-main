@@ -1,0 +1,11 @@
+{
+  "status": "passed",
+  "errors": [],
+  "checks": [
+    "filter menu",
+    "weakness highlight",
+    "category tab",
+    "continue modal",
+    "modal close"
+  ]
+}

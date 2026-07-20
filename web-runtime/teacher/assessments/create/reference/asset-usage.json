@@ -1,0 +1,60 @@
+{
+  "assetId": "teacher-assessment-create-main-v31",
+  "pageId": "teacher-assessment-create",
+  "title": "教师创建测评任务",
+  "route": "/teacher/assessments/new",
+  "classification": "REFERENCE_PAGE",
+  "status": "AWAITING_GENERATION",
+  "selectedFile": null,
+  "sourceCandidates": [],
+  "usage": "教师创建测评任务页面级视觉参考",
+  "frontend": {
+    "rebuildWithCode": [
+      "layout",
+      "navigation",
+      "buttons",
+      "forms",
+      "tables",
+      "dynamic text",
+      "data visualizations",
+      "states"
+    ],
+    "productionCandidate": [
+      "background texture",
+      "terrain lines",
+      "decorative sound field",
+      "illustrative layer"
+    ],
+    "dynamicAreas": [
+      "首测、复测、专项测评选择",
+      "朗读材料预览",
+      "书面练习配置",
+      "班级和学生范围",
+      "开放与截止时间",
+      "是否允许匿名访问",
+      "唯一链接与二维码生成策略",
+      "隐私与录音授权说明",
+      "发布前校验错误"
+    ],
+    "doNotRasterize": [
+      "user names",
+      "scores",
+      "school data",
+      "button text",
+      "forms",
+      "permissions",
+      "AI results"
+    ]
+  },
+  "responsive": {
+    "desktop": "完整构图",
+    "tablet": "主工作流优先，次栏折叠",
+    "mobile": "纵向路径与单一主行动"
+  },
+  "apiAndStateBoundaries": [
+    "不得因参考图修改既有 API",
+    "不得伪造成功、评分、推荐或同步状态",
+    "必须保留租户、权限、隐私和离线边界"
+  ],
+  "multimodalReviewRequired": true
+}

@@ -4,8 +4,10 @@ import { ClassesService } from "./classes.service.js";
 import { CLASS_REPOSITORY } from "./ports/class-repository.port.js";
 import { CLASS_ENROLLMENT_LOOKUP } from "./ports/class-enrollment-lookup.port.js";
 import { PrismaClassRepository } from "./infra/prisma-class.repository.js";
+import { AssessmentModule } from "../assessment/assessment.module.js";
 
 @Module({
+  imports: [AssessmentModule],
   controllers: [ClassesController],
   providers: [
     ClassesService,

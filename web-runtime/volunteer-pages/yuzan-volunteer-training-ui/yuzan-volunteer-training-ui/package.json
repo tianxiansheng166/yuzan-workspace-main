@@ -1,0 +1,11 @@
+{
+  "name": "yuzan-volunteer-training-ui",
+  "private": true,
+  "scripts": {
+    "screenshot": "node scripts/screenshot.mjs",
+    "qa": "node scripts/qa.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.61.1"
+  }
+}

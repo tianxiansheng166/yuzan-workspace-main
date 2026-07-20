@@ -1,0 +1,59 @@
+{
+  "engine": "Playwright Chromium",
+  "viewports": [
+    {
+      "name": "desktop",
+      "viewport": [
+        1659,
+        948
+      ],
+      "document": {
+        "w": 1659,
+        "h": 948
+      },
+      "horizontal_overflow": false,
+      "errors": []
+    },
+    {
+      "name": "tablet",
+      "viewport": [
+        768,
+        1024
+      ],
+      "document": {
+        "w": 768,
+        "h": 1038
+      },
+      "horizontal_overflow": false,
+      "errors": []
+    },
+    {
+      "name": "mobile",
+      "viewport": [
+        390,
+        844
+      ],
+      "document": {
+        "w": 390,
+        "h": 986
+      },
+      "horizontal_overflow": false,
+      "errors": []
+    }
+  ],
+  "checks": [
+    {
+      "name": "row selection",
+      "passed": true
+    },
+    {
+      "name": "search filter",
+      "passed": true
+    },
+    {
+      "name": "add user modal",
+      "passed": true
+    }
+  ],
+  "all_passed": true
+}

@@ -78,6 +78,7 @@ export class PrismaAssignmentRepository
         where,
         orderBy: { createdAt: "desc" },
         take: options.limit + 1,
+        include: { targets: true },
       });
 
       const hasMore = rows.length > options.limit;
@@ -108,6 +109,7 @@ export class PrismaAssignmentRepository
           targets: { some: { enrollmentId } },
         },
         orderBy: { createdAt: "desc" },
+        include: { targets: true },
       });
       return rows.map(toAssignmentSummary);
     } catch {
@@ -291,7 +293,7 @@ function toAssignment(row: AssignmentRow): Assignment {
 }
 
 function toAssignmentSummary(
-  row: Prisma.AssignmentGetPayload<Record<string, never>>,
+  row: Prisma.AssignmentGetPayload<{ include: { targets: true } }>,
 ): AssignmentSummary {
   return {
     id: row.id,
@@ -303,6 +305,7 @@ function toAssignmentSummary(
     revision: row.revision,
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
+    targets: row.targets.map(toAssignmentTarget),
   };
 }
 

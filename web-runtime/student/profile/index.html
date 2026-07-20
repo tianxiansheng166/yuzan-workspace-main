@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>个人中心｜语赞心声</title>
+  <link rel="stylesheet" href="/assets/common.css">
+  <link rel="stylesheet" href="/shared/student-nav.css">
+  <style>
+    :root{
+      --student-red:#c91518;
+      --student-green:#2f7a50;
+      --student-gold:#df8d15;
+      --student-blue:#3479bf;
+      --student-paper:#f8f4ec;
+      --student-ink:#272c29;
+      --student-muted:#727873;
+      --student-line:#e8e0d6;
+      --student-font:Inter,"Noto Sans SC","Microsoft YaHei","PingFang SC",Arial,sans-serif;
+    }
+    body{margin:0;background:var(--student-paper);font-family:var(--student-font);color:var(--student-ink);}
+    .viewport{min-height:100vh;}
+    .design.profile{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:48px 32px;box-sizing:border-box;background:var(--student-paper);}
+    .profile-card{width:100%;max-width:720px;background:#fff;border-radius:24px;box-shadow:0 12px 40px rgba(0,0,0,.06);overflow:hidden;margin-bottom:24px;}
+    .profile-header{position:relative;height:160px;background:linear-gradient(135deg,#2f7a50 0%,#df8d15 100%);}
+    .profile-header::after{content:"";position:absolute;inset:0;background:url('/assets/growth-hero.jpg') center/cover;opacity:.25;}
+    .profile-avatar{position:relative;z-index:1;width:110px;height:110px;border-radius:50%;border:4px solid #fff;margin:-55px auto 0;overflow:hidden;background:#f0ece3;box-shadow:0 6px 20px rgba(0,0,0,.1);}
+    .profile-avatar img{width:100%;height:100%;object-fit:cover;}
+    .profile-body{text-align:center;padding:18px 32px 32px;}
+    .profile-body h1{font-size:28px;margin:0 0 6px;font-weight:700;}
+    .profile-body .meta{color:var(--student-muted);font-size:15px;margin-bottom:24px;}
+    .profile-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px;}
+    .stat-item{background:var(--student-paper);border-radius:16px;padding:18px 12px;}
+    .stat-item b{display:block;font-size:26px;color:var(--student-green);margin-bottom:4px;}
+    .stat-item span{font-size:13px;color:var(--student-muted);}
+    .profile-actions{display:grid;gap:12px;text-align:left;}
+    .profile-actions a,
+    .profile-actions button{display:flex;align-items:center;gap:14px;padding:16px 18px;border-radius:14px;border:1px solid var(--student-line);background:#fff;color:var(--student-ink);font-size:15px;text-decoration:none;cursor:pointer;transition:.15s;}
+    .profile-actions a:hover,
+    .profile-actions button:hover{background:#faf8f3;border-color:#d9d0c4;}
+    .profile-actions .icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:var(--student-paper);color:var(--student-green);font-size:18px;}
+    .profile-actions .arrow{margin-left:auto;color:var(--student-muted);}
+    .profile-section{width:100%;max-width:720px;}
+    .profile-section h2{font-size:18px;margin:0 0 14px;font-weight:600;}
+    @media(max-width:900px){
+      .design.profile{padding:24px 16px;}
+      .profile-stats{grid-template-columns:repeat(3,1fr);gap:10px;}
+      .stat-item b{font-size:20px;}
+    }
+</style>
+<script src="/assets/app-core.js"></script>
+<script src="/assets/api-client.js"></script>
+</head>
+<body>
+<div class="viewport">
+  <main id="profileDesign" class="design profile desktop-mode" data-width="1280" data-height="800" data-fit="center">
+    <div class="profile-card">
+      <div class="profile-header"></div>
+      <div class="profile-avatar"><img src="/assets/student-avatar.jpg" alt="学生头像"></div>
+      <div class="profile-body">
+        <h1 id="profileName">加载中…</h1>
+        <p class="meta" id="profileMeta">—</p>
+        <div class="profile-stats">
+          <div class="stat-item"><b id="statCompleted">-</b><span>已完成课程</span></div>
+          <div class="stat-item"><b id="statAssessments">-</b><span>朗读测评</span></div>
+          <div class="stat-item"><b id="statStreak">-</b><span>连续学习天</span></div>
+        </div>
+        <div class="profile-actions">
+          <a href="/student/courses"><span class="icon">▣</span><span>我的课程</span><span class="arrow">›</span></a>
+          <a href="/student/growth"><span class="icon">〰</span><span>成长报告</span><span class="arrow">›</span></a>
+          <a href="/assessment"><span class="icon">♙</span><span>测评中心</span><span class="arrow">›</span></a>
+          <button type="button" id="offlineBtn"><span class="icon">☁</span><span>离线资源管理</span><span class="arrow">›</span></button>
+          <button type="button" id="logoutBtn"><span class="icon">↩</span><span>退出登录</span><span class="arrow">›</span></button>
+        </div>
+      </div>
+    </div>
+    <section class="profile-section">
+      <h2>学习提醒</h2>
+      <p style="color:var(--student-muted);font-size:14px;line-height:1.7;">每天坚持 20 分钟朗读练习，效果会更好哦！老师为你提供了新的学习建议，快去看看吧。</p>
+    </section>
+  </main>
+</div>
+<script>
+document.getElementById('offlineBtn').addEventListener('click',()=>alert('离线资源管理功能开发中'));
+document.getElementById('logoutBtn').addEventListener('click',()=>{
+  if(confirm('确定要退出登录吗？')){YuzanApi.logout().catch(()=>{});location.href='/login';}
+});
+
+(async()=>{
+  if(!YuzanApi.requireAuth()) return;
+  const schoolId=YuzanApi.getActiveSchoolId();
+  if(!schoolId){location.href='/select-school';return;}
+  try{
+    const data=await YuzanApi.getStudentProfile();
+    const p=data.profile||data;
+    document.getElementById('profileName').textContent=p.displayName||'同学';
+    const metaParts=[p.schoolName,p.gradeBand,p.className].filter(Boolean);
+    document.getElementById('profileMeta').textContent=metaParts.join(' · ')||'—';
+    document.getElementById('statCompleted').textContent=p.completedActivities??0;
+    document.getElementById('statAssessments').textContent=p.totalActivities??0;
+    document.getElementById('statStreak').textContent=p.learningStreakDays??0;
+  }catch(err){
+    YuzanDemo.toast(err.message||'加载个人信息失败','error');
+    document.getElementById('profileName').textContent='加载失败';
+  }
+})();
+</script>
+<script src="/assets/fit.js"></script>
+<script src="/shared/student-nav.js"></script>
+</body>
+</html>

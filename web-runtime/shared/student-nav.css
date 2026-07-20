@@ -1,0 +1,305 @@
+/* 学生域统一导航栏 —— 顶部主导航 + 左侧边栏 */
+:root{
+  --student-header:90px;
+  --student-left:210px;
+  --student-red:#c91518;
+  --student-green:#2f7a50;
+  --student-paper:#f8f4ec;
+  --student-ink:#272c29;
+  --student-muted:#727873;
+  --student-line:#e8e0d6;
+  --student-sidebar-collapsed:54px;
+}
+
+.student-has-nav{
+  --nav-header-height:var(--student-header);
+  --nav-sidebar-width:var(--student-left);
+}
+
+.student-topbar{
+  position:fixed;
+  inset:0 0 auto 0;
+  height:var(--student-header);
+  z-index:1000;
+  background:rgba(255,255,255,.97);
+  border-bottom:1px solid var(--student-line);
+  display:grid;
+  grid-template-columns:210px 1fr 340px;
+  align-items:center;
+}
+
+.student-topbar .sn-brand{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  padding-left:18px;
+  text-decoration:none;
+  color:inherit;
+}
+.student-topbar .sn-brand img{width:42px;height:50px;object-fit:contain}
+.student-topbar .sn-brand strong{font-family:"STKaiti","KaiTi",serif;color:#c82722;font-size:20px;letter-spacing:2px}
+.student-topbar .sn-brand small{display:block;margin-top:3px;color:#666c67;font-size:9px}
+
+.student-topbar .sn-menu-toggle{
+  display:none;
+  position:absolute;
+  left:12px;
+  top:50%;
+  transform:translateY(-50%);
+  width:38px;
+  height:38px;
+  border:0;
+  background:transparent;
+  font-size:20px;
+  color:#4d544f;
+  cursor:pointer;
+  z-index:2;
+}
+
+.student-topbar .sn-topnav{
+  height:100%;
+  display:flex;
+  align-items:stretch;
+  gap:8px;
+  padding-left:20px;
+}
+.student-topbar .sn-topnav a{
+  min-width:64px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  white-space:nowrap;
+  text-decoration:none;
+  color:#5f6661;
+  font-size:14px;
+  position:relative;
+}
+.student-topbar .sn-topnav a svg{width:20px;height:20px}
+.student-topbar .sn-topnav a.active{color:var(--student-red);font-weight:750}
+.student-topbar .sn-topnav a.active:after{
+  content:"";
+  position:absolute;
+  left:14px;
+  right:14px;
+  bottom:0;
+  height:3px;
+  background:var(--student-red);
+  border-radius:2px;
+}
+
+.student-topbar .sn-account{
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:14px;
+  padding-right:22px;
+}
+.student-topbar .sn-account .sn-offline{display:flex;align-items:center;gap:6px;color:#505752;cursor:pointer;font-size:13px}
+.student-topbar .sn-account .sn-state{display:flex;align-items:center;gap:5px;color:#52645a;font-size:13px}
+.student-topbar .sn-account .sn-state i{width:7px;height:7px;border-radius:50%;background:#3b855a}
+.student-topbar .sn-account .sn-user{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding-left:8px;
+  border-left:1px solid #e6dfd6;
+}
+.student-topbar .sn-account .sn-user img{width:40px;height:40px;border-radius:50%;object-fit:cover}
+.student-topbar .sn-account .sn-user small{display:block;color:#777;font-size:11px}
+
+/* ── 侧边栏 ── */
+.student-sidebar{
+  position:fixed;
+  left:0;
+  top:var(--student-header);
+  bottom:0;
+  width:var(--student-left);
+  border-right:1px solid var(--student-line);
+  background:linear-gradient(180deg,#faf7f1,#f8f4ed);
+  padding:18px 12px;
+  overflow-y:auto;
+  overflow-x:hidden;
+  z-index:999;
+  transition:width .25s ease, padding .25s ease, transform .25s ease;
+}
+
+/* 收起状态 */
+.student-sidebar.collapsed{
+  width:var(--student-sidebar-collapsed);
+  padding:18px 6px;
+}
+.student-sidebar.collapsed .sn-profile span,
+.student-sidebar.collapsed .sn-profile strong,
+.student-sidebar.collapsed .sn-profile small,
+.student-sidebar.collapsed .sn-sidenav a span,
+.student-sidebar.collapsed .sn-sidenav button span,
+.student-sidebar.collapsed .sn-weekly,
+.student-sidebar.collapsed .sn-collapse-label{
+  display:none;
+}
+.student-sidebar.collapsed .sn-profile{
+  justify-content:center;
+  padding:0 0 14px;
+}
+.student-sidebar.collapsed .sn-profile img{width:36px;height:36px}
+.student-sidebar.collapsed .sn-sidenav a,
+.student-sidebar.collapsed .sn-sidenav button{
+  justify-content:center;
+  padding:0;
+  gap:0;
+  height:42px;
+}
+
+/* 收回按钮 */
+.sn-collapse-btn{
+  position:absolute;
+  right:0;
+  top:50%;
+  transform:translateY(-50%);
+  width:22px;
+  height:48px;
+  border:1px solid var(--student-line);
+  border-right:0;
+  border-radius:8px 0 0 8px;
+  background:rgba(255,255,255,.95);
+  color:#777;
+  font-size:14px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:1000;
+  box-shadow:-2px 0 6px rgba(0,0,0,.06);
+  transition:background .15s;
+}
+.sn-collapse-btn:hover{background:#fff;color:#555}
+.student-sidebar.collapsed .sn-collapse-btn{right:0}
+
+.sn-collapse-label{
+  display:none;
+  position:absolute;
+  left:50%;
+  bottom:14px;
+  transform:translateX(-50%);
+  font-size:10px;
+  color:#aaa;
+  white-space:nowrap;
+}
+.student-sidebar.collapsed .sn-collapse-label{display:block}
+
+.student-sidebar .sn-profile{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:0 4px 18px;
+}
+.student-sidebar .sn-profile img{width:48px;height:48px;border-radius:50%;object-fit:cover;border:1px solid #ded4c7}
+.student-sidebar .sn-profile strong{display:block;font-size:17px}
+.student-sidebar .sn-profile span{display:block;margin-top:2px;color:#757a76;font-size:13px}
+.student-sidebar .sn-profile small{display:block;margin-top:4px;color:#626963;font-size:11px}
+
+.student-sidebar .sn-sidenav{display:grid;gap:2px}
+.student-sidebar .sn-sidenav a,
+.student-sidebar .sn-sidenav button{
+  height:40px;
+  border-radius:8px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:0 12px;
+  color:#4d544f;
+  font-size:14px;
+  text-align:left;
+  text-decoration:none;
+  background:transparent;
+  border:0;
+  cursor:pointer;
+  font:inherit;
+  white-space:nowrap;
+  overflow:hidden;
+}
+.student-sidebar .sn-sidenav a svg,
+.student-sidebar .sn-sidenav button svg{width:20px;height:20px;flex-shrink:0}
+.student-sidebar .sn-sidenav a.active,
+.student-sidebar .sn-sidenav button.active{
+  background:linear-gradient(90deg,#fff2ed,#f6ebe1);
+  color:var(--student-red);
+  font-weight:750;
+  box-shadow:inset 3px 0 var(--student-red);
+}
+
+.student-sidebar .sn-weekly{
+  position:absolute;
+  left:12px;
+  right:12px;
+  bottom:14px;
+  border:1px solid var(--student-line);
+  border-radius:8px;
+  background:rgba(255,255,255,.82);
+  padding:12px;
+}
+.student-sidebar .sn-weekly-head{display:flex;font-weight:750;font-size:13px}
+.student-sidebar .sn-weekly-head span{margin-left:auto;color:var(--student-red)}
+.student-sidebar .sn-weekly p{color:#606762;margin:10px 0 5px;font-size:12px}
+.student-sidebar .sn-track{height:5px;background:#e9e5df;border-radius:3px;overflow:hidden}
+.student-sidebar .sn-track i{display:block;height:100%;border-radius:inherit}
+.student-sidebar .sn-more{margin-top:10px;color:#795e36;display:flex;align-items:center;gap:5px;background:transparent;border:0;padding:0;font:inherit;cursor:pointer;font-size:12px}
+
+/* 没有侧边栏时，主体内容不需要左侧内边距 */
+body.student-has-nav.no-sidebar{--student-left:0px}
+body.student-has-nav.no-sidebar .student-topbar{grid-template-columns:210px 1fr 340px}
+
+/* 强制 fit.js 设计页左上角对齐，并允许横向滚动条 */
+body.student-has-nav{overflow-x:auto;overflow-y:auto}
+body.student-has-nav .viewport{overflow-x:auto !important;overflow-y:auto !important}
+body.student-has-nav .design{left:0 !important;top:0 !important;margin:0 !important}
+
+/* 最小宽度保证内容不被挤坏 */
+.student-has-nav{min-width:900px}
+
+@media(max-width:1100px){
+  :root{--student-left:190px;--student-header:90px}
+  .student-topbar{grid-template-columns:190px 1fr 290px}
+  .student-topbar .sn-topnav{gap:4px;padding-left:10px;overflow-x:auto}
+  .student-topbar .sn-topnav a{min-width:58px;font-size:13px}
+}
+
+@media(max-width:900px){
+  :root{--student-left:0px;--student-header:78px}
+  .student-topbar{grid-template-columns:1fr;height:78px}
+  .student-topbar .sn-menu-toggle{display:block}
+  .student-topbar .sn-brand{padding-left:58px}
+  .student-topbar .sn-brand img{width:36px;height:44px}
+  .student-topbar .sn-brand strong{font-size:17px}
+  .student-topbar .sn-brand small{display:none}
+  .student-topbar .sn-topnav{justify-content:center;padding-left:0}
+  .student-topbar .sn-topnav a{min-width:55px;font-size:12px}
+  .student-topbar .sn-topnav a svg{width:17px;height:17px}
+  .student-topbar .sn-account{display:none}
+  .student-sidebar{transform:translateX(-100%);transition:.25s;z-index:998;top:78px;width:230px}
+  .student-sidebar.open{transform:none;width:230px;box-shadow:16px 0 40px rgba(0,0,0,.17)}
+  .student-sidebar.collapsed{width:230px;padding:18px 12px}
+  .student-sidebar.collapsed .sn-profile span,
+  .student-sidebar.collapsed .sn-profile strong,
+  .student-sidebar.collapsed .sn-profile small,
+  .student-sidebar.collapsed .sn-sidenav a span,
+  .student-sidebar.collapsed .sn-sidenav button span,
+  .student-sidebar.collapsed .sn-weekly,
+  .student-sidebar.collapsed .sn-collapse-label{
+    display:/* restore on mobile open */block;
+  }
+  .sn-collapse-btn{display:none}
+  .student-has-nav{min-width:0}
+}
+
+@media(max-width:600px){
+  .student-topbar .sn-topnav a:nth-child(n+4){display:none}
+  .student-topbar .sn-topnav a{min-width:50px;font-size:11px;gap:4px}
+  .student-topbar .sn-brand strong{letter-spacing:1px}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .student-sidebar{transition:none}
+}

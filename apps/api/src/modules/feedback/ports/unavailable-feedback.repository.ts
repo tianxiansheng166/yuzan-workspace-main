@@ -33,4 +33,12 @@ export class UnavailableFeedbackRepository implements FeedbackRepositoryPort {
   async save(_input: CreateFeedbackInput): Promise<Feedback> {
     throw new FeedbackUnavailableException();
   }
+
+  async findByStudentEnrollments(
+    _schoolId: string,
+    _enrollmentIds: readonly string[],
+    _options?: { limit?: number; cursor?: string },
+  ): Promise<PaginatedResult<Feedback>> {
+    throw new FeedbackUnavailableException();
+  }
 }

@@ -1,0 +1,15 @@
+{
+  "page": "/student/recommendations",
+  "viewport": "1659x948",
+  "assets": [
+    {"file":"logo-symbol.png","usage":"顶部品牌图案；品牌文字由 HTML 渲染"},
+    {"file":"hero-mountain.png","usage":"顶部非交互山谷路径装饰层"},
+    {"file":"avatar.jpg","usage":"学生头像和路径起点图像"},
+    {"file":"course-1.jpg","usage":"第一门推荐课程封面"},
+    {"file":"course-2.jpg","usage":"第二项推荐练习封面"},
+    {"file":"course-3.jpg","usage":"第三项强化练习封面"},
+    {"file":"paper-texture.jpg","usage":"低对比度纸张纹理背景"}
+  ],
+  "codeRendered": ["布局","导航","动态文本","按钮","课程卡","路径","雷达图","进度状态","弹窗","响应式布局"],
+  "wholePageRasterized": false
+}

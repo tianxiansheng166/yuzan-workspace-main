@@ -1,0 +1,64 @@
+.player{background:#fdfbf6}
+.desktop-view{position:relative;width:1672px;height:941px}
+.mobile-view{display:none!important}
+
+.path-side{position:absolute;left:0;top:0;width:274px;height:941px;border-right:1px solid #ded8ce;background:#fbfaf6}
+.path-side h2{margin:42px 0 0 36px;font-size:20px;font-weight:500}
+.path-rail{position:absolute;left:56px;top:98px;height:350px;border-left:2px dashed #bbb}
+.path-item{position:absolute;left:31px;width:220px;display:flex;gap:17px;align-items:center;color:#777;font-size:17px;line-height:1.55;border:0;background:transparent;text-align:left;font-family:inherit;cursor:pointer}
+.path-item:nth-of-type(2){top:126px}
+.path-item:nth-of-type(3){top:260px}
+.path-item:nth-of-type(4){top:410px}
+.path-item i{width:52px;height:52px;border-radius:50%;border:1px solid #aaa;background:#fff;display:grid;place-items:center;font-size:25px;font-style:normal;z-index:2}
+.path-item.completed i{background:#d92a18;color:#fff;border:7px solid #fff;box-shadow:0 0 0 1px #df9c7b}
+.path-item.active{color:#d20a0e}
+.path-item.active i{background:#e5a225;color:#fff;border:7px solid #fff;box-shadow:0 0 0 1px #e5c17c}
+.path-item b{font-weight:500}
+.path-item:hover span{color:#b60b10}
+.path-item:focus-visible{outline-offset:5px}
+.path-side img{position:absolute;left:0;bottom:0;width:274px;height:331px;object-fit:cover}
+
+.lesson{position:absolute;left:274px;top:0;width:1080px;height:941px;background:#fffdf8}
+.lesson-title{position:absolute;left:68px;top:50px;display:flex;align-items:center;gap:22px}
+.lesson-title i{width:62px;height:62px;border-radius:50%;border:1px solid #e9ce94;color:#d99a1d;display:grid;place-items:center;font-size:31px;font-style:normal}
+.lesson-title h2{font:29px var(--serif);letter-spacing:.08em}
+.sentence{position:absolute;left:65px;top:182px;margin:0;font:35px var(--serif);letter-spacing:.12em;white-space:nowrap}
+.sentence mark{padding:10px 16px;background:linear-gradient(90deg,#f4d693,#f6e5c6);border-radius:3px;margin-right:18px}
+.mountains{position:absolute;left:0;top:260px;width:1080px;height:200px;object-fit:cover}
+.recorder{position:absolute;left:0;top:460px;width:1080px;height:316px;border-radius:28px;overflow:hidden}
+.recorder img{width:100%;height:100%;display:block}
+.record-toggle{position:absolute;right:25px;bottom:39px;width:151px;height:58px;border:0;background:transparent}
+.paused .recorder img{filter:brightness(.95)}
+
+.status-side{position:absolute;left:1354px;top:0;width:318px;height:941px;border-left:1px solid #ddd7ce;background:#fffdf9;padding:43px 31px}
+.status-side h2{font-size:20px;font-weight:500;margin:0 0 54px}
+.status-block{display:flex;gap:18px;align-items:center;margin-bottom:64px}
+.status-block i{width:68px;height:68px;border-radius:50%;background:#2b6749;color:#fff;display:grid;place-items:center;font-style:normal;font-size:31px}
+.status-block p{font-size:18px;line-height:1.55;margin:0}
+.status-side hr{border:0;border-top:1px solid #ddd5c9;margin:0 0 48px}
+.status-side .next{margin-top:0}
+.complete{position:absolute;left:29px;bottom:88px;width:240px;height:63px;border:0;border-radius:7px;background:#d0cfcc;color:#fff;font-size:18px;cursor:pointer}
+
+.live-sound-icon{display:flex!important;align-items:center!important;justify-content:center!important;gap:4px!important}
+.live-sound-icon span{display:block;width:3px;border-radius:3px;background:#dda126;animation:voiceBars 1.1s ease-in-out infinite}
+.live-sound-icon span:nth-child(1){height:18px;animation-delay:-.15s}
+.live-sound-icon span:nth-child(2){height:30px;animation-delay:-.35s}
+.live-sound-icon span:nth-child(3){height:40px;animation-delay:-.55s}
+.live-sound-icon span:nth-child(4){height:28px;animation-delay:-.25s}
+.live-sound-icon span:nth-child(5){height:16px;animation-delay:-.45s}
+@keyframes voiceBars{0%,100%{transform:scaleY(.45);opacity:.65}50%{transform:scaleY(1);opacity:1}}
+
+.recorder{border-radius:28px;overflow:visible}
+.recorder img{display:none}
+.recorder.voice-recorder{overflow:hidden}
+.recorder .vr-grid{grid-template-columns:230px 1fr}
+.recorder .vr-main{padding-top:18px}
+.recorder .vr-canvas-wrap{height:128px}
+.recorder .vr-bottom{bottom:18px}
+.recorder .vr-pipeline{height:40px}
+.recorder .vr-action{min-width:142px}
+.status-side .sync-state b{font-weight:500}
+.status-side .sync-state span{color:#777}
+.complete:not(:disabled){background:linear-gradient(#d01815,#b70605);box-shadow:0 8px 20px rgba(178,10,10,.14)}
+.complete:disabled{cursor:not-allowed}
+.complete:hover:not(:disabled){transform:translateY(-1px)}

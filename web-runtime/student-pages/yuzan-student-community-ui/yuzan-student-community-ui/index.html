@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#fbfaf7" />
+  <title>语赞心声 · 声音河谷</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <svg class="svg-sprite" aria-hidden="true">
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11.2 12 4l9 7.2v8.3a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 19.5z"/><path d="M9 21v-6h6v6"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v17H6.5A2.5 2.5 0 0 0 4 22zM20 5.5A2.5 2.5 0 0 0 17.5 3H13v17h4.5A2.5 2.5 0 0 1 20 22z"/></symbol>
+    <symbol id="i-wave" viewBox="0 0 24 24"><path d="M3 12h2m2-5v10m3-14v18m3-13v8m3-11v14m3-9v4m2-2h1"/></symbol>
+    <symbol id="i-growth" viewBox="0 0 24 24"><path d="M12 21V10m0 0c0-4.5 3-7 7-7 0 4.5-2.5 7-7 7Zm0 4c0-4-2.7-6.3-7-6.3 0 4.1 2.5 6.3 7 6.3Z"/><path d="M5 21h14"/></symbol>
+    <symbol id="i-community" viewBox="0 0 24 24"><path d="M7 17.5c-2.2 0-4-1.8-4-4s1.8-4 4-4c.4-3 2.4-5 5-5 3.1 0 5.2 2.4 5.2 5.5 2.2.4 3.8 2.2 3.8 4.5 0 2.5-2 4.5-4.5 4.5H9l-4 2 .9-3.6"/><path d="M8.5 13h7m-5.3 3h4"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M4 21c.8-5 3.4-7 8-7s7.2 2 8 7"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-4-4 4 4 4-4M4 19v2h16v-2"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5M9 12h6m-6 4h6"/></symbol>
+    <symbol id="i-feedback" viewBox="0 0 24 24"><path d="M4 5h16v12H9l-5 4z"/><path d="M8 9h8m-8 4h5"/></symbol>
+    <symbol id="i-message" viewBox="0 0 24 24"><path d="M4 4h16v13H8l-4 4z"/><path d="M8 9h.01M12 9h.01M16 9h.01"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1 1.2 2.1-2.5 2.5-2.1-1.2-.1-.1a8 8 0 0 1-2.1.9V22h-4v-2.7a8 8 0 0 1-2.1-.9l-.1.1-2.1 1.2-2.5-2.5 1.2-2.1.1-.1a8 8 0 0 1-.9-2.1H3v-4h2.7a8 8 0 0 1 .9-2.1l-.1-.1-1.2-2.1 2.5-2.5 2.1 1.2.1.1a8 8 0 0 1 2.1-.9V2h4v2.7a8 8 0 0 1 2.1.9l.1-.1 2.1-1.2 2.5 2.5-1.2 2.1-.1.1a8 8 0 0 1 .9 2.1H22v4h-2.7a8 8 0 0 1-.9 2.1Z"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24"><path d="m5 9 7 7 7-7"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10h.01"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7z"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 5v14m8-14v14"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4 10-10"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 22V3m0 1h11l-2 4 2 4H5"/></symbol>
+    <symbol id="i-mic" viewBox="0 0 24 24"><rect x="8" y="3" width="8" height="13" rx="4"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3m-4 0h8"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 5 6v5c0 4.6 2.7 8.4 7 10 4.3-1.6 7-5.4 7-10V6z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 6.5 12 6.5 21.5 12 21.5 12 18 17.5 12 17.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="2.5"/></symbol>
+    <symbol id="i-report" viewBox="0 0 24 24"><path d="M5 22V3m0 1h13l-2 4 2 4H5"/><path d="M10 7h4"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M5 17h14l-1.6-2.2V10a5.4 5.4 0 0 0-10.8 0v4.8zM10 20h4"/></symbol>
+    <symbol id="i-edit" viewBox="0 0 24 24"><path d="m4 20 4.2-1 10-10-3.2-3.2-10 10zM13.8 7 17 10.2M4 20h5"/></symbol>
+    <symbol id="i-review" viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M8 8h8m-8 4h6m-6 4h5"/></symbol>
+    <symbol id="i-crown" viewBox="0 0 24 24"><path d="m4 8 4 4 4-7 4 7 4-4-2 11H6z"/></symbol>
+  </svg>
+
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="语赞心声首页">
+        <img src="assets/brand-mark.png" alt="" />
+        <span class="brand-copy"><strong>语赞心声</strong><small>同声成长 · 同心公益</small></span>
+      </a>
+      <nav class="topnav" aria-label="主导航">
+        <button data-nav><svg><use href="#i-home"/></svg><span>今日</span></button>
+        <button data-nav><svg><use href="#i-book"/></svg><span>课程</span></button>
+        <button data-nav><svg><use href="#i-wave"/></svg><span>测评</span></button>
+        <button data-nav><svg><use href="#i-growth"/></svg><span>成长</span></button>
+        <button class="active" data-nav><svg><use href="#i-community"/></svg><span>社区</span></button>
+        <button data-nav><svg><use href="#i-user"/></svg><span>我的</span></button>
+      </nav>
+      <div class="top-actions">
+        <button class="offline-manage" data-action="offline"><svg><use href="#i-download"/></svg><span>离线管理</span></button>
+        <span class="online-state"><i></i>离线可用</span>
+        <button class="user-menu" data-action="profile">
+          <img src="assets/avatar.webp" alt="扎西罗布头像" />
+          <span><strong>扎西罗布</strong><small>六年级</small></span>
+          <svg><use href="#i-down"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="workspace">
+      <aside class="left-rail" aria-label="学生功能导航">
+        <section class="student-profile">
+          <img src="assets/avatar.webp" alt="" />
+          <div><h2>扎西罗布</h2><p>六年级学生</p><small>拉萨市城关区第一小学</small></div>
+        </section>
+        <nav class="side-nav">
+          <button data-side><svg><use href="#i-home"/></svg><span>我的学习</span></button>
+          <button data-side><svg><use href="#i-download"/></svg><span>我的下载</span></button>
+          <button data-side><svg><use href="#i-file"/></svg><span>学习记录</span></button>
+          <button data-side><svg><use href="#i-feedback"/></svg><span>教师反馈</span><i class="notice-dot"></i></button>
+          <button class="active" data-side><svg><use href="#i-community"/></svg><span>社区</span></button>
+          <button data-side><svg><use href="#i-message"/></svg><span>消息中心</span><b>2</b></button>
+          <button data-side><svg><use href="#i-settings"/></svg><span>设置</span></button>
+        </nav>
+        <div class="left-art" aria-hidden="true"><div class="art-sun"></div></div>
+      </aside>
+
+      <main class="main-shell">
+        <section class="hero">
+          <div class="hero-copy">
+            <div class="title-line"><h1>声音河谷</h1><button class="icon-button" data-action="about" aria-label="关于声音河谷"><svg><use href="#i-info"/></svg></button></div>
+            <p>用语言传递温度，用声音连接世界</p>
+          </div>
+          <div class="theme-ribbon" role="tablist" aria-label="声音河谷主题">
+            <button class="theme-tab active" data-theme="朗读之声" data-title="《我爱这土地》朗读" data-sub="经典诵读 · 声入人心">
+              <span class="theme-icon green"><svg><use href="#i-book"/></svg></span><span><strong>朗读之声</strong><small>经典诵读 · 声入人心</small></span>
+            </button>
+            <button class="theme-tab" data-theme="红色故事" data-title="《一盏不熄的灯》讲述" data-sub="传承精神 · 致敬先烈">
+              <span class="theme-icon red"><svg><use href="#i-flag"/></svg></span><span><strong>红色故事</strong><small>传承精神 · 致敬先烈</small></span>
+            </button>
+            <button class="theme-tab" data-theme="校园表达" data-title="《我的校园一天》表达" data-sub="自信表达 · 展现风采">
+              <span class="theme-icon blue"><svg><use href="#i-mic"/></svg></span><span><strong>校园表达</strong><small>自信表达 · 展现风采</small></span>
+            </button>
+            <button class="theme-tab" data-theme="文化交流" data-title="《高原上的四季》分享" data-sub="多元文化 · 理解尊重">
+              <span class="theme-icon gold"><svg><use href="#i-globe"/></svg></span><span><strong>文化交流</strong><small>多元文化 · 理解尊重</small></span>
+            </button>
+          </div>
+        </section>
+
+        <div class="content-grid">
+          <section class="theme-panel panel">
+            <header class="section-header"><h2>主题入口</h2><p>选择你想参与的主题</p></header>
+            <div class="theme-list">
+              <button class="theme-card active" data-theme="朗读之声" data-title="《我爱这土地》朗读" data-sub="经典诵读 · 声入人心">
+                <span class="theme-icon green"><svg><use href="#i-book"/></svg></span><span><strong>朗读之声</strong><small>本期主题：秋天的诗</small></span><em>正在进行</em>
+              </button>
+              <button class="theme-card" data-theme="红色故事" data-title="《一盏不熄的灯》讲述" data-sub="传承精神 · 致敬先烈">
+                <span class="theme-icon red"><svg><use href="#i-flag"/></svg></span><span><strong>红色故事</strong><small>本期主题：小英雄雨来</small></span><em>正在进行</em>
+              </button>
+              <button class="theme-card" data-theme="校园表达" data-title="《我的校园一天》表达" data-sub="自信表达 · 展现风采">
+                <span class="theme-icon blue"><svg><use href="#i-mic"/></svg></span><span><strong>校园表达</strong><small>开始时间：6月10日</small></span><em class="soon">即将开始</em>
+              </button>
+              <button class="theme-card" data-theme="文化交流" data-title="《高原上的四季》分享" data-sub="多元文化 · 理解尊重">
+                <span class="theme-icon gold"><svg><use href="#i-globe"/></svg></span><span><strong>文化交流</strong><small>本期主题：我的家乡</small></span><em>正在进行</em>
+              </button>
+            </div>
+            <button class="outline-link" data-action="all-themes">查看全部主题<svg><use href="#i-chevron"/></svg></button>
+          </section>
+
+          <section class="featured-area">
+            <article class="featured panel">
+              <header class="section-header inline"><div><h2>本周精选作品</h2><p>每周优选 · 共同学习</p></div><button class="text-link" data-action="more">查看更多<svg><use href="#i-chevron"/></svg></button></header>
+              <div class="featured-card">
+                <div class="cover-wrap">
+                  <img src="assets/featured-cover.webp" alt="高原河谷作品封面" />
+                  <button class="cover-play" data-play aria-label="播放精选作品"><svg class="play-icon"><use href="#i-play"/></svg><svg class="pause-icon"><use href="#i-pause"/></svg></button>
+                  <span>02:18</span>
+                </div>
+                <div class="featured-info">
+                  <h3 id="featured-title">《我爱这土地》朗读</h3>
+                  <div class="tags"><span class="green-tag" id="featured-theme">朗读之声</span><span class="gold-tag">精选作品</span></div>
+                  <div class="author"><strong>扎西罗布</strong><span>六年级</span><span>拉萨市城关区第一小学</span></div>
+                  <div class="audio-player">
+                    <button data-play aria-label="播放音频"><svg class="play-icon"><use href="#i-play"/></svg><svg class="pause-icon"><use href="#i-pause"/></svg></button>
+                    <div class="waveform" aria-hidden="true"></div>
+                    <time id="audio-time">02:18</time>
+                  </div>
+                  <p><b>作品简介：</b>用真挚的情感表达对这片土地的热爱。</p>
+                  <p><b>教师评语：</b>声音洪亮，情感充沛，节奏把握得当，继续保持！</p>
+                </div>
+              </div>
+            </article>
+
+            <section class="how-to">
+              <header class="section-header"><h2>如何参与</h2><p>简单 4 步，分享你的声音</p></header>
+              <div class="steps">
+                <button class="step" data-action="choose-theme"><span class="step-icon green"><svg><use href="#i-book"/></svg></span><strong>1. 选择主题</strong><small>进入感兴趣的主题</small></button>
+                <i class="step-arrow"></i>
+                <button class="step" data-action="submit"><span class="step-icon blue"><svg><use href="#i-edit"/></svg></span><strong>2. 提交作品</strong><small>朗读或录制你的声音</small></button>
+                <i class="step-arrow"></i>
+                <button class="step" data-action="review"><span class="step-icon gold"><svg><use href="#i-review"/></svg></span><strong>3. 等待评审</strong><small>老师将认真聆听</small></button>
+                <i class="step-arrow"></i>
+                <button class="step" data-action="growth"><span class="step-icon red"><svg><use href="#i-crown"/></svg></span><strong>4. 收获成长</strong><small>获得反馈与认可</small></button>
+              </div>
+            </section>
+          </section>
+        </div>
+      </main>
+
+      <aside class="right-rail" aria-label="社区信息">
+        <section class="rail-card submissions">
+          <header><h2>我的提交状态</h2><p>本学期作品：3 个</p></header>
+          <div class="status-list">
+            <button data-action="status"><span class="status-icon ok"><svg><use href="#i-check"/></svg></span><span><strong>已通过</strong><small>《雪夜雷锋》</small></span><time>评审通过 05-20</time></button>
+            <button data-action="status"><span class="status-icon draft"><svg><use href="#i-file"/></svg></span><span><strong>首次提交</strong><small>《秋天的诗》</small></span><time>提交于 05-28</time></button>
+            <button data-action="status"><span class="status-icon waiting"><svg><use href="#i-clock"/></svg></span><span><strong>待评审</strong><small>《我爱这土地》</small></span><time>提交于 05-29</time></button>
+            <button data-action="status"><span class="status-icon reject"><svg><use href="#i-message"/></svg></span><span><strong>已退回</strong><small>《少年中国说（节选）》</small></span><time>待修改 05-24</time></button>
+          </div>
+          <button class="rail-link" data-action="all-submissions">查看我的全部作品<svg><use href="#i-chevron"/></svg></button>
+        </section>
+
+        <section class="rail-card feedback-card">
+          <header class="split"><h2>教师评审反馈</h2><span>3 条新反馈</span></header>
+          <p>老师为你提供了新的反馈，请及时查看并优化你的作品。</p>
+          <button class="rail-button" data-action="feedback">查看反馈</button>
+        </section>
+
+        <section class="rail-card rules-card">
+          <header><h2>社区公约</h2></header>
+          <ul><li>尊重他人，友善交流</li><li>内容健康，积极向上</li><li>原创为主，禁止抄袭</li><li>文明用语，杜绝广告</li></ul>
+          <button class="rail-link" data-action="rules">查看完整公约<svg><use href="#i-chevron"/></svg></button>
+        </section>
+
+        <section class="rail-card protection-card">
+          <header><h2>未成年人保护</h2><p>我们将严格保护你的隐私与安全</p></header>
+          <div class="protection-grid">
+            <button data-action="content-review"><span><svg><use href="#i-shield"/></svg></span><small>内容审核</small></button>
+            <button data-action="privacy"><span><svg><use href="#i-lock"/></svg></span><small>隐私保护</small></button>
+            <button data-action="report"><span><svg><use href="#i-report"/></svg></span><small>校园投诉</small></button>
+          </div>
+          <button class="rail-button" data-action="parent">家长控制设置</button>
+        </section>
+      </aside>
+    </div>
+
+    <footer class="footer">
+      <span>语赞心声</span><span>声音河谷</span><span>© 2025 All Rights Reserved</span>
+      <nav><button data-action="agreement">用户协议</button><button data-action="privacy">隐私政策</button><button data-action="help">帮助中心</button><button data-action="feedback-general">反馈建议</button></nav>
+    </footer>
+
+    <button class="mobile-rail-toggle" data-action="mobile-rail"><svg><use href="#i-bell"/></svg><span>社区信息</span></button>
+    <div class="scrim" data-close-modal></div>
+    <dialog class="modal" id="modal">
+      <button class="modal-close" data-close-modal aria-label="关闭">×</button>
+      <div class="modal-icon"><svg><use href="#i-community"/></svg></div>
+      <h2 id="modal-title">声音河谷</h2>
+      <p id="modal-copy">这里展示经过教师审核的语言实践作品。未审核内容仅作者和教师可见。</p>
+      <div class="modal-actions"><button data-close-modal>我知道了</button></div>
+    </dialog>
+    <div class="toast" role="status" aria-live="polite"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

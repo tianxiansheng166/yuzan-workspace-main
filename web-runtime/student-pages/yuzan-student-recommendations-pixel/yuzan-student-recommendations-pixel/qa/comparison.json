@@ -1,0 +1,15 @@
+{
+  "referenceViewport": [
+    1659,
+    948
+  ],
+  "renderedViewport": [
+    1659,
+    948
+  ],
+  "meanAbsoluteError255": 14.2265,
+  "normalizedMeanAbsoluteError": 0.05579,
+  "rmse255": 33.6175,
+  "ssim": 0.683006,
+  "note": "数值包含浏览器字体栅格化与平台字体差异。"
+}

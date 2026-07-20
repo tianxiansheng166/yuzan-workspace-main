@@ -1,0 +1,9 @@
+{
+  "name": "yuzan-student-exercise-ui",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Standalone high-fidelity student exercise page",
+  "scripts": {
+    "shot": "python scripts/screenshot.py"
+  }
+}

@@ -6,6 +6,6 @@ export class LoginDto {
   identifier!: string;
 
   @IsString()
-  @Length(8, 128)
+  @Length(6, 128)
   password!: string;
 }

@@ -18,6 +18,7 @@ import { SubmissionsModule } from "../submissions/submissions.module.js";
       useClass: PrismaFeedbackRepository,
     },
   ],
-  exports: [FeedbackService],
+  exports: [FeedbackService, FEEDBACK_REPOSITORY],
 })
 export class FeedbackModule {}
+

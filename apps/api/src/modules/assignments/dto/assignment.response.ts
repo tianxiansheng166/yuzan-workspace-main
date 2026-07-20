@@ -32,6 +32,7 @@ export interface AssignmentSummaryResponse {
   readonly revision: number;
   readonly createdAt: string;
   readonly updatedAt: string;
+  readonly targets: readonly AssignmentTargetResponse[];
 }
 
 export function toAssignmentSummaryResponse(
@@ -47,6 +48,7 @@ export function toAssignmentSummaryResponse(
     revision: assignment.revision,
     createdAt: assignment.createdAt.toISOString(),
     updatedAt: assignment.updatedAt.toISOString(),
+    targets: assignment.targets.map(toAssignmentTargetResponse),
   };
 }
 

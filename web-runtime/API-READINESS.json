@@ -1,0 +1,242 @@
+{
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-07-17T21:45:00+08:00",
+  "apiBaseUrl": "http://127.0.0.1:4000/api/v1",
+  "frontendProxy": "http://127.0.0.1:4175/api/v1",
+  "smokeTest": {
+    "status": "PASS",
+    "time": "2026-07-17T21:45:00+08:00",
+    "pages": [
+      "/login",
+      "/select-school",
+      "/teacher/assignments",
+      "/teacher/courses/spring/studio",
+      "/student/today",
+      "/student/growth"
+    ]
+  },
+  "summary": {
+    "total": 24,
+    "ready": 14,
+    "pending": 8,
+    "notConfigured": 2
+  },
+  "interfaces": [
+    {
+      "id": "auth-login",
+      "domain": "identity",
+      "method": "POST",
+      "path": "/api/v1/auth/login",
+      "status": "READY",
+      "consumers": ["/login/index.html"],
+      "notes": "账号密码登录，返回 accessToken、user、activeSchoolId"
+    },
+    {
+      "id": "auth-select-school",
+      "domain": "identity",
+      "method": "POST",
+      "path": "/api/v1/auth/select-school",
+      "status": "READY",
+      "consumers": ["/select-school/index.html"],
+      "notes": "切换当前学校，更新 activeSchoolId"
+    },
+    {
+      "id": "auth-me",
+      "domain": "identity",
+      "method": "GET",
+      "path": "/api/v1/me",
+      "status": "READY",
+      "consumers": ["全局导航、角色入口"],
+      "notes": "获取当前用户与成员关系"
+    },
+    {
+      "id": "classes-teachers-me",
+      "domain": "classes",
+      "method": "GET",
+      "path": "/api/v1/schools/:schoolId/classes/teachers/me",
+      "status": "READY",
+      "consumers": ["/teacher/assignments/index.html"],
+      "notes": "教师所属班级列表"
+    },
+    {
+      "id": "course-versions-list",
+      "domain": "curriculum",
+      "method": "GET",
+      "path": "/api/v1/schools/:schoolId/course-versions",
+      "status": "READY",
+      "consumers": ["/teacher/courses/spring/studio/index.html", "/teacher/assignments/index.html"],
+      "notes": "课程版本列表，含 DRAFT/PUBLISHED 状态"
+    },
+    {
+      "id": "course-versions-detail",
+      "domain": "curriculum",
+      "method": "GET",
+      "path": "/api/v1/schools/:schoolId/course-versions/:courseVersionId",
+      "status": "READY",
+      "consumers": ["/teacher/courses/spring/studio/index.html"],
+      "notes": "课程版本详情，包含 units/lessons/activities 结构"
+    },
+    {
+      "id": "course-versions-publish",
+      "domain": "curriculum",
+      "method": "POST",
+      "path": "/api/v1/schools/:schoolId/course-versions/:courseVersionId/publish",
+      "status": "READY",
+      "consumers": ["/teacher/courses/spring/studio/index.html"],
+      "notes": "发布课程版本；提交审核按钮当前调用发布接口作为过渡"
+    },
+    {
+      "id": "course-versions-submit-review",
+      "domain": "curriculum",
+      "method": "POST",
+      "path": "/api/v1/schools/:schoolId/course-versions/:courseVersionId/submit-review",
+      "status": "PENDING",
+      "consumers": ["/teacher/courses/spring/studio/index.html"],
+      "notes": "后端 service 已实现 submitForReview，但 Controller 未暴露端点"
+    },
+    {
+      "id": "assignments-list",
+      "domain": "assignments",
+      "method": "GET",
+      "path": "/api/v1/schools/:schoolId/assignments",
+      "status": "READY",
+      "consumers": ["/teacher/assignments/index.html"],
+      "notes": "作业列表"
+    },
+    {
+      "id": "assignments-create",
+      "domain": "assignments",
+      "method": "POST",
+      "path": "/api/v1/schools/:schoolId/assignments",
+      "status": "READY",
+      "consumers": ["/teacher/assignments/index.html"],
+      "notes": "创建作业/任务"
+    },
+    {
+      "id": "assignment-submissions-list",
+      "domain": "submissions",
+      "method": "GET",
+      "path": "/api/v1/schools/:schoolId/assignments/:assignmentId/submissions",
+      "status": "READY",
+      "consumers": ["/teacher/reviews/submission-1/index.html"],
+      "notes": "某作业下学生提交列表"
+    },
+    {
+      "id": "submissions-me",
+      "domain": "submissions",
+      "method": "GET",
+      "path": "/api/v1/schools/:schoolId/submissions/me",
+      "status": "READY",
+      "consumers": ["/student/growth/index.html"],
+      "notes": "学生自己的提交列表；已修复硬编码空数组问题"
+    },
+    {
+      "id": "submissions-upload-urls",
+      "domain": "submissions",
+      "method": "POST",
+      "path": "/api/v1/schools/:schoolId/submissions/:submissionId/upload-urls",
+      "status": "PENDING",
+      "consumers": ["/student/learn/spring-2/index.html"],
+      "notes": "当前返回尚未实现，需 MediaAsset 支持"
+    },
+    {
+      "id": "feedback-list",
+      "domain": "feedback",
+      "method": "GET",
+      "path": "/api/v1/schools/:schoolId/submissions/:submissionId/feedback",
+      "status": "READY",
+      "consumers": ["/teacher/reviews/submission-1/index.html", "/student/growth/index.html"],
+      "notes": "提交反馈列表"
+    },
+    {
+      "id": "feedback-create",
+      "domain": "feedback",
+      "method": "POST",
+      "path": "/api/v1/schools/:schoolId/submissions/:submissionId/feedback",
+      "status": "READY",
+      "consumers": ["/teacher/reviews/submission-1/index.html"],
+      "notes": "教师创建反馈/评分"
+    },
+    {
+      "id": "learning-tasks",
+      "domain": "learning",
+      "method": "GET",
+      "path": "/api/v1/schools/:schoolId/learning/tasks",
+      "status": "READY",
+      "consumers": ["/student/today/index.html", "/student/growth/index.html"],
+      "notes": "学生今日/当前学习任务"
+    },
+    {
+      "id": "learning-progress",
+      "domain": "learning",
+      "method": "GET",
+      "path": "/api/v1/schools/:schoolId/learning/activities/:activityId/progress",
+      "status": "READY",
+      "consumers": [],
+      "notes": "学生活动进度查询"
+    },
+    {
+      "id": "recordings-init",
+      "domain": "media",
+      "method": "POST",
+      "path": "/api/v1/schools/:schoolId/recordings/init",
+      "status": "PENDING",
+      "consumers": ["/student/learn/spring-2/index.html", "/assessment/reading/2/index.html"],
+      "notes": "录音证据基础设施未实现"
+    },
+    {
+      "id": "assessment-status",
+      "domain": "assessment",
+      "method": "GET",
+      "path": "/api/v1/schools/:schoolId/assessments/status",
+      "status": "NOT_CONFIGURED",
+      "consumers": ["/assessment/index.html"],
+      "notes": "mvp-gaps/assessment-stub.controller.ts 占位，返回 PERSISTENCE_PENDING"
+    },
+    {
+      "id": "assessment-reading-item",
+      "domain": "assessment",
+      "method": "GET",
+      "path": "/api/v1/schools/:schoolId/assessments/:sessionId/reading/:itemId",
+      "status": "NOT_CONFIGURED",
+      "consumers": ["/assessment/reading/2/index.html"],
+      "notes": "朗读测评题目下发未实现"
+    },
+    {
+      "id": "assessment-report",
+      "domain": "assessment",
+      "method": "GET",
+      "path": "/api/v1/schools/:schoolId/assessments/:sessionId/report",
+      "status": "NOT_CONFIGURED",
+      "consumers": ["/assessment/report/demo/index.html"],
+      "notes": "测评报告未实现"
+    },
+    {
+      "id": "student-courses-dashboard",
+      "domain": "student",
+      "method": "GET",
+      "path": "/api/v1/schools/:schoolId/student/courses-dashboard",
+      "status": "PENDING",
+      "consumers": ["/student/today/index.html", "/student/courses"],
+      "notes": "学生课程中心聚合视图未实现，当前复用 today 页面"
+    },
+    {
+      "id": "student-growth-report",
+      "domain": "student",
+      "method": "GET",
+      "path": "/api/v1/schools/:schoolId/student-growth/:enrollmentId",
+      "status": "PENDING",
+      "consumers": ["/student/growth/index.html"],
+      "notes": "完整成长报告聚合接口未实现；当前通过 submissions/me + learning/tasks 拼接"
+    },
+    {
+      "id": "teacher-dashboard",
+      "domain": "teacher",
+      "method": "GET",
+      "path": "/api/v1/schools/:schoolId/teacher/dashboard",
+      "status": "PENDING",
+      "consumers": ["/teacher.html"],
+      "notes": "教师工作台聚合数据未实现"
+    }
+  ]
+}

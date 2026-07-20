@@ -45,6 +45,7 @@ export interface AssignmentSummary {
   readonly revision: number;
   readonly createdAt: Date;
   readonly updatedAt: Date;
+  readonly targets: readonly AssignmentTarget[];
 }
 
 export interface CreateAssignmentInput {

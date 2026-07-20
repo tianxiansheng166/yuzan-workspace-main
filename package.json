@@ -8,6 +8,8 @@
     "pnpm": ">=10"
   },
   "scripts": {
+    "start": "node web-runtime/server.mjs",
+    "web": "node web-runtime/server.mjs",
     "dev": "pnpm --parallel --filter @yuzan/web --filter @yuzan/api --filter @yuzan/worker dev",
     "build": "pnpm -r build",
     "lint": "pnpm -r lint",

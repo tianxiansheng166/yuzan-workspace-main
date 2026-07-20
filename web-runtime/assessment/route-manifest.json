@@ -1,0 +1,18 @@
+{
+  "version": "4.0.0-prototype",
+  "coreObject": "AssessmentSession",
+  "sessionId": "SZ20250530-PT-0032",
+  "routes": [
+    {"name":"测评中心","path":"/assessment/","page":"center"},
+    {"name":"测评准备","path":"/assessment/sessions/:sessionId/","page":"prep"},
+    {"name":"朗读测评","path":"/assessment/sessions/:sessionId/reading/:itemId/","page":"reading"},
+    {"name":"书面练习","path":"/assessment/sessions/:sessionId/written/:itemId/","page":"written","supporting":true},
+    {"name":"提交前检查","path":"/assessment/sessions/:sessionId/submit/","page":"submit"},
+    {"name":"处理中","path":"/assessment/sessions/:sessionId/processing/","page":"processing"},
+    {"name":"正式报告","path":"/assessment/sessions/:sessionId/report/","page":"report"},
+    {"name":"我的录音","path":"/assessment/recordings/","page":"recordings"},
+    {"name":"历史测评","path":"/assessment/history/","page":"history"}
+  ],
+  "identities": ["sessionId","itemId","recordingId","speechJobId","reportId"],
+  "prototypeBoundary": "No production API is bundled; simulated transitions are visibly labeled as prototype data."
+}

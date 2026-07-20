@@ -1,0 +1,18 @@
+{
+  "reference_size": [
+    1659,
+    948
+  ],
+  "screenshot_size": [
+    1659,
+    948
+  ],
+  "mae_0_255": 14.6985,
+  "rmse_0_255": 36.6771,
+  "ssim": 0.60823,
+  "notes": [
+    "Dynamic UI is reconstructed with HTML/CSS/JavaScript.",
+    "Decorative mountain assets are used only in bounded illustration regions.",
+    "Metrics include unavoidable font and SVG icon rasterization differences."
+  ]
+}

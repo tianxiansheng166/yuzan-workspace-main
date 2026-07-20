@@ -1,0 +1,59 @@
+{
+  "assetId": "volunteer-recruitment-main-v31",
+  "pageId": "volunteer-recruitment",
+  "title": "志愿者招募页",
+  "route": "/volunteer/apply",
+  "classification": "REFERENCE_PAGE",
+  "status": "AWAITING_GENERATION",
+  "selectedFile": null,
+  "sourceCandidates": [],
+  "usage": "志愿者招募页页面级视觉参考",
+  "frontend": {
+    "rebuildWithCode": [
+      "layout",
+      "navigation",
+      "buttons",
+      "forms",
+      "tables",
+      "dynamic text",
+      "data visualizations",
+      "states"
+    ],
+    "productionCandidate": [
+      "background texture",
+      "terrain lines",
+      "decorative sound field",
+      "illustrative layer"
+    ],
+    "dynamicAreas": [
+      "服务内容",
+      "资格要求",
+      "培训流程",
+      "时间投入",
+      "未成年人保护",
+      "申请步骤",
+      "常见问题",
+      "申请按钮"
+    ],
+    "doNotRasterize": [
+      "user names",
+      "scores",
+      "school data",
+      "button text",
+      "forms",
+      "permissions",
+      "AI results"
+    ]
+  },
+  "responsive": {
+    "desktop": "完整构图",
+    "tablet": "主工作流优先，次栏折叠",
+    "mobile": "纵向路径与单一主行动"
+  },
+  "apiAndStateBoundaries": [
+    "不得因参考图修改既有 API",
+    "不得伪造成功、评分、推荐或同步状态",
+    "必须保留租户、权限、隐私和离线边界"
+  ],
+  "multimodalReviewRequired": true
+}

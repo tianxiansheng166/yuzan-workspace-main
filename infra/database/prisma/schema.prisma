@@ -29,6 +29,81 @@ enum MembershipStatus {
   LEFT
 }
 
+enum PrivacyRequestType {
+  EXPORT
+  DELETE
+  FREEZE
+}
+
+enum PrivacyRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  COMPLETED
+  CANCELLED
+}
+
+enum ProviderCategory {
+  SPEECH
+  TRANSLATION
+  AI
+  STORAGE
+}
+
+enum ProviderStatus {
+  ENABLED
+  DISABLED
+  DEGRADED
+}
+
+enum ProviderHealthStatus {
+  HEALTHY
+  UNHEALTHY
+  MISCONFIGURED
+  UNKNOWN
+}
+
+enum ProductPlanStatus {
+  DRAFT
+  ACTIVE
+  RETIRED
+}
+
+enum SubscriptionStatus {
+  TRIAL
+  ACTIVE
+  PAST_DUE
+  SUSPENDED
+  EXPIRED
+  CANCELLED
+}
+
+enum DataPolicyStatus {
+  DRAFT
+  ACTIVE
+  RETIRED
+}
+
+enum RetentionJobStatus {
+  QUEUED
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
+enum AssessmentLinkStatus {
+  ACTIVE
+  REVOKED
+  EXPIRED
+}
+
+enum SchoolImportStatus {
+  QUEUED
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
 enum CourseVersionStatus {
   DRAFT
   IN_REVIEW
@@ -157,6 +232,37 @@ enum SyncBatchStatus {
   PERMISSION_CHANGED
 }
 
+enum NotificationType {
+  TASK_DEADLINE
+  REVIEW_REMINDER
+  SYSTEM
+  COURSE_REVIEW_RESULT
+  ASSESSMENT_ASSIGNED
+}
+
+enum NotificationPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+enum RecordingStatus {
+  INITIALIZED
+  UPLOADING
+  COMPLETE
+  PROCESSING
+  READY
+  FAILED
+}
+
+enum DraftToolSource {
+  MINDMATE
+  MINDGRAPH
+  LESSON_PLAN
+  WORKSHEET
+}
+
 model School {
   id                    String                  @id @default(uuid()) @db.Uuid
   code                  String                  @unique
@@ -194,6 +300,19 @@ model School {
   supportPairings       SupportPairing[]
   volunteerServiceTasks VolunteerServiceTask[]
   volunteerIncidents    VolunteerIncident[]
+  notifications         Notification[]
+  teacherDrafts         TeacherDraft[]
+  inviteCodes           InviteCode[]
+  recordings            Recording[]
+  learningPlans         LearningPlan[]
+  assessmentSessions    AssessmentSession[]
+  assessmentReports     AssessmentReport[]
+  deviceCheckLogs       DeviceCheckLog[]
+  privacyRequests       PrivacyRequest[]
+  subscriptions         SchoolSubscription[]
+  retentionJobs         PrivacyRetentionJob[]
+  assessmentLinks       AssessmentLink[]
+  assessmentLinkAccesses AssessmentLinkAccess[]
 
   @@index([isActive])
   @@index([deletedAt])
@@ -233,6 +352,18 @@ model User {
   createdAssignments  Assignment[]
   feedback            Feedback[]           @relation("FeedbackAuthor")
   auditLogs           AuditLog[]           @relation("AuditActor")
+  privacySubjectRequests   PrivacyRequest[] @relation("PrivacySubject")
+  privacyRequestedRequests PrivacyRequest[] @relation("PrivacyRequester")
+  privacyReviewedRequests  PrivacyRequest[] @relation("PrivacyReviewer")
+  privacyRevokedRequests   PrivacyRequest[] @relation("PrivacyRevoker")
+  providerConfigs          ProviderConfig[]
+  createdProductPlans      ProductPlan[]
+  createdSubscriptions     SchoolSubscription[]
+  subscriptionEvents       SubscriptionEvent[]
+  dataPolicies             DataPolicyVersion[]
+  retentionJobsCreated     PrivacyRetentionJob[]
+  schoolImportJobs         SchoolImportJob[]
+  createdAssessmentLinks   AssessmentLink[]
   volunteerProfiles   VolunteerProfile[]
   trainingEnrollments TrainingEnrollment[]
 
@@ -338,6 +469,8 @@ model Enrollment {
   submissions Submission[]
   progress    ActivityProgress[]
   targets     AssignmentTarget[]
+  recordings  Recording[]
+  assessmentSessions AssessmentSession[]
 
   @@unique([schoolId, id])
   @@unique([classId, userId, role])
@@ -576,6 +709,7 @@ model Question {
   explanation Json?
   sortOrder   Int
   activity    LearningActivity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  assessmentItems AssessmentItem[]
 
   @@unique([activityId, sortOrder])
 }
@@ -620,6 +754,7 @@ model Submission {
   attempts       ActivityAttempt[]
   feedback       Feedback[]
   speechJobs     SpeechJob[]
+  recordings     Recording[]
 
   @@unique([schoolId, id])
   @@unique([assignmentId, enrollmentId, attemptNo])
@@ -690,23 +825,33 @@ model AudioAsset {
 
 model SpeechJob {
   id                String          @id @default(uuid()) @db.Uuid
-  submissionId      String          @db.Uuid
-  audioAssetId      String          @db.Uuid
+  submissionId      String?         @db.Uuid
+  audioAssetId      String?         @db.Uuid
+  recordingId       String?         @db.Uuid
+  assessmentItemId  String?         @db.Uuid
+  schoolId          String?         @db.Uuid
+  targetText        String?
+  targetTextVersion String          @default("")
+  scorerVersion     String?
   status            SpeechJobStatus @default(CREATED)
   provider          String?
   providerModel     String?
-  targetTextVersion String
   result            Json?
   confidence        Float?
   processingMs      Int?
   retryCount        Int             @default(0)
+  maxRetries        Int             @default(3)
   errorCode         String?
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
-  submission        Submission      @relation(fields: [submissionId], references: [id], onDelete: Cascade)
-  audioAsset        AudioAsset      @relation(fields: [audioAssetId], references: [id], onDelete: Cascade)
+  submission        Submission?     @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  audioAsset        AudioAsset?     @relation(fields: [audioAssetId], references: [id], onDelete: Cascade)
+  recording         Recording?      @relation(fields: [recordingId], references: [id], onDelete: Cascade)
+  assessmentItem    AssessmentItem? @relation(fields: [assessmentItemId], references: [id], onDelete: Cascade)
 
   @@index([status, createdAt])
+  @@index([recordingId])
+  @@index([assessmentItemId])
 }
 
 model SyncOperation {
@@ -787,6 +932,189 @@ model AuditLog {
   @@index([schoolId, createdAt])
   @@index([actorUserId, createdAt])
   @@index([resourceType, resourceId])
+}
+
+model PrivacyRequest {
+  id                String               @id @default(uuid()) @db.Uuid
+  schoolId          String               @db.Uuid
+  subjectUserId     String               @db.Uuid
+  requestedByUserId String               @db.Uuid
+  reviewedByUserId  String?              @db.Uuid
+  type              PrivacyRequestType
+  status            PrivacyRequestStatus @default(PENDING)
+  reason            String?
+  decisionComment   String?
+  approvedAt        DateTime?
+  completedAt       DateTime?
+  executionSnapshot Json?
+  revokedAt         DateTime?
+  revokedByUserId   String?              @db.Uuid
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+  school            School               @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  subjectUser       User                 @relation("PrivacySubject", fields: [subjectUserId], references: [id], onDelete: Cascade)
+  requestedByUser   User                 @relation("PrivacyRequester", fields: [requestedByUserId], references: [id], onDelete: Restrict)
+  reviewedByUser    User?                @relation("PrivacyReviewer", fields: [reviewedByUserId], references: [id], onDelete: SetNull)
+  revokedByUser     User?                @relation("PrivacyRevoker", fields: [revokedByUserId], references: [id], onDelete: SetNull)
+
+  @@index([schoolId, status, createdAt])
+  @@index([subjectUserId, type, status])
+}
+
+model DataPolicyVersion {
+  id              String           @id @default(uuid()) @db.Uuid
+  name            String
+  version         Int              @default(1)
+  resourceType    String
+  retentionDays   Int
+  status          DataPolicyStatus @default(DRAFT)
+  rules           Json?
+  createdByUserId String           @db.Uuid
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  createdBy       User             @relation(fields: [createdByUserId], references: [id], onDelete: Restrict)
+  retentionJobs   PrivacyRetentionJob[]
+
+  @@unique([name, version])
+  @@index([resourceType, status])
+}
+
+model PrivacyRetentionJob {
+  id              String            @id @default(uuid()) @db.Uuid
+  policyId        String            @db.Uuid
+  schoolId        String?           @db.Uuid
+  cutoffAt        DateTime
+  status          RetentionJobStatus @default(QUEUED)
+  dryRun          Boolean           @default(true)
+  scannedCount    Int               @default(0)
+  redactedCount   Int               @default(0)
+  errorCode       String?
+  createdByUserId String            @db.Uuid
+  startedAt       DateTime?
+  completedAt     DateTime?
+  createdAt       DateTime          @default(now())
+  policy          DataPolicyVersion @relation(fields: [policyId], references: [id], onDelete: Restrict)
+  school          School?           @relation(fields: [schoolId], references: [id], onDelete: SetNull)
+  createdBy       User              @relation(fields: [createdByUserId], references: [id], onDelete: Restrict)
+
+  @@index([schoolId, status, cutoffAt])
+  @@index([policyId, createdAt])
+}
+
+model ProductPlan {
+  id              String           @id @default(uuid()) @db.Uuid
+  code            String           @unique
+  name            String
+  version         Int              @default(1)
+  status          ProductPlanStatus @default(DRAFT)
+  priceCents      Int              @default(0)
+  currency        String           @default("CNY")
+  trialDays       Int              @default(0)
+  metadata        Json?
+  createdByUserId String           @db.Uuid
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  createdBy       User             @relation(fields: [createdByUserId], references: [id], onDelete: Restrict)
+  entitlements    PlanEntitlement[]
+  subscriptions   SchoolSubscription[]
+
+  @@index([status, updatedAt])
+}
+
+model PlanEntitlement {
+  id          String      @id @default(uuid()) @db.Uuid
+  planId      String      @db.Uuid
+  key         String
+  enabled     Boolean     @default(true)
+  limitValue  Int?
+  config      Json?
+  plan        ProductPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+
+  @@unique([planId, key])
+  @@index([key])
+}
+
+model SchoolSubscription {
+  id              String             @id @default(uuid()) @db.Uuid
+  schoolId        String             @db.Uuid
+  planId          String             @db.Uuid
+  status          SubscriptionStatus @default(TRIAL)
+  startsAt        DateTime
+  endsAt          DateTime?
+  autoRenew       Boolean            @default(false)
+  externalRef     String?
+  createdByUserId String             @db.Uuid
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  school          School             @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  plan            ProductPlan        @relation(fields: [planId], references: [id], onDelete: Restrict)
+  createdBy       User               @relation(fields: [createdByUserId], references: [id], onDelete: Restrict)
+  events          SubscriptionEvent[]
+
+  @@index([schoolId, status, endsAt])
+  @@index([planId, status])
+}
+
+model SchoolImportJob {
+  id              String            @id @default(uuid()) @db.Uuid
+  fileHash        String
+  status          SchoolImportStatus @default(QUEUED)
+  rowCount        Int               @default(0)
+  successCount    Int               @default(0)
+  errorCount      Int               @default(0)
+  rowErrors       Json?
+  payload         Json?
+  createdByUserId String            @db.Uuid
+  createdAt       DateTime          @default(now())
+  completedAt     DateTime?
+  createdBy       User              @relation(fields: [createdByUserId], references: [id], onDelete: Restrict)
+
+  @@unique([fileHash])
+  @@index([status, createdAt])
+}
+
+model SubscriptionEvent {
+  id             String             @id @default(uuid()) @db.Uuid
+  subscriptionId String             @db.Uuid
+  type           String
+  payload        Json?
+  actorUserId    String             @db.Uuid
+  createdAt      DateTime           @default(now())
+  subscription   SchoolSubscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  actor          User               @relation(fields: [actorUserId], references: [id], onDelete: Restrict)
+
+  @@index([subscriptionId, createdAt])
+}
+
+model ProviderConfig {
+  id            String          @id @default(uuid()) @db.Uuid
+  category      ProviderCategory
+  name          String
+  endpoint      String?
+  secretRef     String?
+  status        ProviderStatus   @default(DISABLED)
+  isDefault     Boolean          @default(false)
+  config        Json?
+  createdByUserId String          @db.Uuid
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  createdByUser User             @relation(fields: [createdByUserId], references: [id], onDelete: Restrict)
+  healthChecks  ProviderHealthCheck[]
+
+  @@unique([category, name])
+  @@index([category, status])
+}
+
+model ProviderHealthCheck {
+  id          String               @id @default(uuid()) @db.Uuid
+  providerId  String               @db.Uuid
+  status      ProviderHealthStatus
+  latencyMs   Int?
+  errorCode   String?
+  checkedAt   DateTime             @default(now())
+  provider    ProviderConfig       @relation(fields: [providerId], references: [id], onDelete: Cascade)
+
+  @@index([providerId, checkedAt])
 }
 
 model Report {
@@ -1067,4 +1395,302 @@ model SupportSession {
 
   @@unique([schoolId, id])
   @@index([schoolId, pairingId, scheduledAt])
+}
+
+model Notification {
+  id               String              @id @default(uuid()) @db.Uuid
+  schoolId         String              @db.Uuid
+  recipientUserId  String              @db.Uuid
+  type             NotificationType
+  priority         NotificationPriority @default(NORMAL)
+  title            String
+  body             String
+  readAt           DateTime?
+  actionUrl        String?
+  relatedEntityType String?
+  relatedEntityId  String?
+  expiresAt        DateTime?
+  createdAt        DateTime            @default(now())
+
+  school           School              @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  @@unique([schoolId, id])
+  @@index([schoolId, recipientUserId, readAt, createdAt])
+  @@index([schoolId, recipientUserId, type])
+  @@index([expiresAt])
+}
+
+model TeacherDraft {
+  id           String          @id @default(uuid()) @db.Uuid
+  schoolId     String          @db.Uuid
+  authorUserId String          @db.Uuid
+  toolSource   DraftToolSource
+  title        String
+  content      Json
+  revision     Int             @default(1)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  school       School          @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  @@unique([schoolId, id])
+  @@index([schoolId, authorUserId, toolSource, updatedAt])
+}
+
+model InviteCode {
+  id              String    @id @default(uuid()) @db.Uuid
+  schoolId        String    @db.Uuid
+  code            String    @unique
+  createdByUserId String    @db.Uuid
+  maxUses         Int       @default(10)
+  usedCount       Int       @default(0)
+  expiresAt       DateTime
+  revokedAt       DateTime?
+  createdAt       DateTime  @default(now())
+
+  school          School    @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  @@unique([schoolId, id])
+  @@index([code, expiresAt])
+  @@index([schoolId, expiresAt])
+}
+
+model AssessmentLink {
+  id              String              @id @default(uuid()) @db.Uuid
+  schoolId        String              @db.Uuid
+  assessmentKey   String
+  title           String
+  targetType      String
+  targetId        String
+  tokenHash       String              @unique
+  tokenPreview    String
+  status          AssessmentLinkStatus @default(ACTIVE)
+  expiresAt       DateTime
+  maxUses         Int                 @default(1)
+  usedCount       Int                 @default(0)
+  createdByUserId String              @db.Uuid
+  revokedAt       DateTime?
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  school          School              @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  createdBy       User                @relation(fields: [createdByUserId], references: [id], onDelete: Restrict)
+  accesses        AssessmentLinkAccess[]
+
+  @@index([schoolId, status, expiresAt])
+  @@index([schoolId, targetType, targetId])
+}
+
+model AssessmentLinkAccess {
+  id          String         @id @default(uuid()) @db.Uuid
+  linkId      String         @db.Uuid
+  schoolId    String         @db.Uuid
+  outcome     String
+  sessionId   String?        @db.Uuid
+  ipHash      String?
+  userAgentHash String?
+  accessedAt  DateTime       @default(now())
+  link        AssessmentLink @relation(fields: [linkId], references: [id], onDelete: Cascade)
+  school      School         @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  @@index([schoolId, accessedAt])
+  @@index([linkId, accessedAt])
+}
+
+model Recording {
+  id              String           @id @default(uuid()) @db.Uuid
+  schoolId        String           @db.Uuid
+  enrollmentId    String           @db.Uuid
+  submissionId    String?          @db.Uuid
+  status          RecordingStatus  @default(INITIALIZED)
+  partCount       Int              @default(0)
+  uploadedParts   Int[]            @default([])
+  durationMs      Int?
+  mimeType        String?
+  objectKey       String?
+  revision        Int              @default(1)
+  idempotencyKey  String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  school          School           @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  enrollment      Enrollment       @relation(fields: [schoolId, enrollmentId], references: [schoolId, id], onDelete: Restrict)
+  submission      Submission?      @relation(fields: [schoolId, submissionId], references: [schoolId, id], onDelete: SetNull)
+  chunks          RecordingChunk[]
+  assessmentItems AssessmentItem[]
+  speechJobs       SpeechJob[]
+
+  @@unique([schoolId, id])
+  @@unique([enrollmentId, idempotencyKey])
+  @@index([schoolId, status])
+  @@index([submissionId])
+}
+
+model RecordingChunk {
+  id          String    @id @default(uuid()) @db.Uuid
+  recordingId String    @db.Uuid
+  partNumber  Int
+  objectKey   String
+  byteSize    Int
+  checksumMd5 String?
+  createdAt   DateTime  @default(now())
+  recording   Recording @relation(fields: [recordingId], references: [id], onDelete: Cascade)
+
+  @@unique([recordingId, partNumber])
+  @@index([recordingId])
+}
+
+// ─── Learning Plan ───────────────────────────────────────
+
+model LearningPlan {
+  id           String   @id @default(uuid()) @db.Uuid
+  schoolId     String   @db.Uuid
+  enrollmentId String   @db.Uuid
+  authorUserId String   @db.Uuid
+  planContent  Json
+  periodStart  DateTime
+  periodEnd    DateTime
+  revision     Int      @default(1)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  school       School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  @@unique([schoolId, id])
+  @@index([enrollmentId, updatedAt])
+  @@index([schoolId, authorUserId])
+}
+
+// ─── Assessment ──────────────────────────────────────────
+
+enum AssessmentType {
+  READING
+  WRITTEN
+  MIXED
+}
+
+enum AssessmentSessionStatus {
+  CREATED
+  IN_PROGRESS
+  SUBMITTED
+  PROCESSING
+  COMPLETED
+  CANCELLED
+}
+
+enum AssessmentItemStatus {
+  PENDING
+  ANSWERED
+  REVIEWED
+  FLAGGED
+}
+
+model AssessmentSession {
+  id                String                  @id @default(uuid()) @db.Uuid
+  schoolId          String                  @db.Uuid
+  enrollmentId      String                  @db.Uuid
+  classId           String                  @db.Uuid
+  initiatorUserId   String                  @db.Uuid
+  type              AssessmentType
+  status            AssessmentSessionStatus @default(CREATED)
+  startedAt         DateTime?
+  submittedAt       DateTime?
+  completedAt       DateTime?
+  retestOfSessionId String?                 @db.Uuid
+  revision          Int                     @default(1)
+  createdAt         DateTime                @default(now())
+  updatedAt         DateTime                @updatedAt
+
+  school            School                  @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  enrollment        Enrollment              @relation(fields: [schoolId, enrollmentId], references: [schoolId, id], onDelete: Restrict)
+  items             AssessmentItem[]
+  report            AssessmentReport?
+
+  @@unique([schoolId, id])
+  @@index([schoolId, status])
+  @@index([enrollmentId, createdAt])
+  @@index([classId])
+}
+
+model AssessmentItem {
+  id              String                @id @default(uuid()) @db.Uuid
+  sessionId       String                @db.Uuid
+  questionId      String?               @db.Uuid
+  recordingId     String?               @db.Uuid
+  prompt          Json
+  itemType        String
+  status          AssessmentItemStatus  @default(PENDING)
+  sortOrder       Int
+  maxScore        Float?
+  scoredScore     Float?
+  autoResult      Json?
+  reviewerUserId  String?               @db.Uuid
+  reviewerComment String?
+  reviewedAt      DateTime?
+  revision        Int                   @default(1)
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+
+  session         AssessmentSession     @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  question        Question?             @relation(fields: [questionId], references: [id], onDelete: SetNull)
+  recording       Recording?            @relation(fields: [recordingId], references: [id], onDelete: SetNull)
+  writtenAnswer   WrittenAnswer?
+  speechJobs      SpeechJob[]
+
+  @@unique([sessionId, sortOrder])
+  @@index([sessionId, status])
+}
+
+model WrittenAnswer {
+  id                String          @id @default(uuid()) @db.Uuid
+  itemId            String          @unique @db.Uuid
+  content           Json
+  wordCount         Int             @default(0)
+  charCount         Int             @default(0)
+  autoSavedAt       DateTime?
+  finalSubmittedAt  DateTime?
+  revision          Int             @default(1)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  item              AssessmentItem  @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@index([itemId])
+}
+
+model AssessmentReport {
+  id                String            @id @default(uuid()) @db.Uuid
+  sessionId         String            @unique @db.Uuid
+  schoolId          String            @db.Uuid
+  overallScore      Float?
+  readingScore      Float?
+  writtenScore      Float?
+  summary           Json?
+  recommendations   Json?
+  dataCompleteness  Float             @default(0)
+  generatedAt       DateTime?
+  generatedByUserId String?           @db.Uuid
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  session           AssessmentSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  school            School            @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  @@unique([schoolId, id])
+  @@index([schoolId, generatedAt])
+}
+
+model DeviceCheckLog {
+  id           String   @id @default(uuid()) @db.Uuid
+  schoolId     String   @db.Uuid
+  userId       String   @db.Uuid
+  sessionId    String?  @db.Uuid
+  checkType    String
+  checkResult  Json
+  userAgent    String?
+  createdAt    DateTime @default(now())
+
+  school       School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  @@unique([schoolId, id])
+  @@index([userId, createdAt])
+  @@index([sessionId])
 }

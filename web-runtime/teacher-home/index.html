@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f7f0e4">
+  <title>语赞心声｜教师今日教学指挥台</title>
+  <link rel="stylesheet" href="/teacher-home/styles.css?v=202607190100">
+  <link rel="stylesheet" href="/shared/teacher-shell.css?v=202607190100">
+</head>
+<body>
+  <svg class="svg-sprite" aria-hidden="true">
+    <symbol id="i-course" viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v16H6.5A2.5 2.5 0 0 0 4 21.5z"/><path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v16h4.5a2.5 2.5 0 0 1 2.5 2.5z"/></symbol>
+    <symbol id="i-task" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 3.5h6M8 9h8M8 13h5M8 17h7"/></symbol>
+    <symbol id="i-assess" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12 2.4 2.4L16 8.8"/></symbol>
+    <symbol id="i-review" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="15" rx="2"/><path d="M7 5V3m10 2V3M7 10h4m-4 4h8"/></symbol>
+    <symbol id="i-report" viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5z"/><path d="M16 3v4h4M8 17v-4m4 4V9m4 8v-6"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 21s-8-4.7-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 6.3-8 11-8 11z"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></symbol>
+    <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 4 2c-1 .8-1.5 1.3-1.5 2.5M12 17h.01"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21h-4v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H3v-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.6V3h4v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.1v4H21a1.7 1.7 0 0 0-1.6 1z"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h13m-5-5 5 5-5 5"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 2 1.4 5.6L19 9l-5.6 1.4L12 16l-1.4-5.6L5 9l5.6-1.4zM19 15l.8 3.2L23 19l-3.2.8L19 23l-.8-3.2L15 19l3.2-.8z"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-people" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20a6 6 0 0 1 12 0M14 20a5 5 0 0 1 7 0"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z"/><circle cx="12" cy="12" r="2.5"/></symbol>
+    <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M9 21h6"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10m5 10V4m5 16v-7m5 7V7"/></symbol>
+    <symbol id="i-message" viewBox="0 0 24 24"><path d="M4 4h16v12H8l-4 4z"/><path d="M8 9h8m-8 3h5"/></symbol>
+    <symbol id="i-fold" viewBox="0 0 24 24"><path d="m15 5 7 7-7 7M9 5l-7 7 7 7"/></symbol>
+  </svg>
+
+  <div class="app-shell">
+    <!-- sidebar 已移除，由 teacher-shell.js 统一管理 -->
+    <div class="workspace">
+      <!-- topbar 已移除，由 teacher-shell.js 统一管理 -->
+      <main class="main-stage">
+        <section class="hero" id="hero">
+          <div class="hero-landscape" aria-hidden="true"></div>
+          <div class="hero-copy">
+            <p class="eyebrow">今日教学指挥台</p>
+            <h1>上午好，扎西卓玛老师</h1>
+            <p>今天不是处理一堆事项，而是沿着一条教学路径，让每一步都产生可见的学生变化。</p>
+            <div class="hero-meta"><span><i></i>4 月 26 日 · 星期五</span><span>当前课程《高原上的春天》</span></div>
+          </div>
+          <button class="action-creator" id="actionCreator"><span class="action-line"></span><svg><use href="#i-plus"/></svg><span>创建教学行动</span><svg class="arrow"><use href="#i-arrow"/></svg></button>
+        </section>
+
+        <section class="urgent-strip" aria-label="最高优先任务">
+          <div class="urgent-kicker"><span></span>今日唯一紧急任务</div>
+          <div class="urgent-main"><strong>五年级二班《春天的足迹》将在 2 小时后截止</strong><p>仍有 8 名学生未提交，影响今日学习进度与班级统计。</p></div>
+          <div class="urgent-impact"><b>8</b><small>名学生待跟进</small></div>
+          <button class="text-action" data-stage="publish">立即处理 <svg><use href="#i-arrow"/></svg></button>
+        </section>
+
+        <section class="journey-section">
+          <div class="section-heading">
+            <div><p class="eyebrow">TEACHING RHYTHM</p><h2>今日教学路径</h2></div>
+            <p>点击节点，当前工作、班级证据与智能建议会围绕同一阶段切换。</p>
+          </div>
+          <div class="journey-canvas">
+            <div class="journey-bg" aria-hidden="true"></div>
+            <svg class="journey-path" viewBox="0 0 1000 170" preserveAspectRatio="none" aria-hidden="true">
+              <path class="path-shadow" d="M40 108 C150 45 230 145 335 89 S520 46 610 95 S805 145 960 68"/>
+              <path class="path-base" d="M40 108 C150 45 230 145 335 89 S520 46 610 95 S805 145 960 68"/>
+              <path class="path-draw" d="M40 108 C150 45 230 145 335 89 S520 46 610 95 S805 145 960 68"/>
+            </svg>
+            <div class="travelling-light" id="travellingLight"></div>
+            <div class="journey-nodes" role="tablist" aria-label="今日教学阶段">
+              <button class="journey-node active" data-stage="prepare" style="--x:7%;--y:58%;--tone:#ba1e18" role="tab" aria-selected="true"><span class="node-ring"><b>01</b></span><strong>晨间备课</strong><small>2 项待完善</small></button>
+              <button class="journey-node" data-stage="publish" style="--x:29%;--y:49%;--tone:#d9911a" role="tab"><span class="node-ring"><b>02</b></span><strong>发布任务</strong><small>1 项临近截止</small></button>
+              <button class="journey-node" data-stage="observe" style="--x:50%;--y:43%;--tone:#1f704d" role="tab"><span class="node-ring"><b>03</b></span><strong>学习观察</strong><small>96 人进行中</small></button>
+              <button class="journey-node" data-stage="review" style="--x:70%;--y:58%;--tone:#b91f1c" role="tab"><span class="node-ring"><b>04</b></span><strong>反馈复核</strong><small>6 份待复核</small></button>
+              <button class="journey-node" data-stage="intervene" style="--x:91%;--y:36%;--tone:#5a6d68" role="tab"><span class="node-ring"><b>05</b></span><strong>教学干预</strong><small>4 人需关注</small></button>
+            </div>
+          </div>
+
+          <div class="stage-panel" id="stagePanel" aria-live="polite">
+            <div class="stage-summary">
+              <p class="stage-index" id="stageIndex">01 / 晨间备课</p>
+              <h3 id="stageTitle">把今天的教学目标，变成一条可执行路径</h3>
+              <p id="stageDescription">围绕《高原上的春天》完成课程目标、示范朗读和练习编排，发布前只保留真正需要学生完成的动作。</p>
+              <div class="stage-stats" id="stageStats"><span><b>2</b> 项待完善</span><span><b>18</b> 分钟预计用时</span><span><b>1</b> 条智能建议</span></div>
+              <button class="primary-action" id="stageAction">进入备课工作区 <svg><use href="#i-arrow"/></svg></button>
+            </div>
+            <div class="stage-items" id="stageItems"></div>
+          </div>
+        </section>
+
+        <section class="insight-grid">
+          <article class="insight-main">
+            <div class="insight-head">
+              <div><p class="eyebrow">DOMINANT INSIGHT</p><h2>班级成长主洞察</h2></div>
+              <div class="class-switch"><button class="active">五年级二班</button><button>年级平均</button></div>
+            </div>
+            <div class="insight-callout"><strong>朗读流利度连续三周提升</strong><p>但"长句换气"仍低于年级平均 9.4 分，是本周最值得投入的教学问题。</p></div>
+            <div class="chart-wrap">
+              <svg class="growth-chart" viewBox="0 0 760 265" role="img" aria-label="近六周班级朗读流利度趋势">
+                <defs><linearGradient id="area" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#1d704c" stop-opacity=".22"/><stop offset="1" stop-color="#1d704c" stop-opacity="0"/></linearGradient></defs>
+                <g class="grid-lines"><path d="M55 35H725M55 90H725M55 145H725M55 200H725"/><path d="M55 35V215"/></g>
+                <path class="area" d="M55 184 C130 166 165 151 220 147 S325 131 390 116 S505 102 560 81 S655 68 725 44 L725 215 L55 215Z"/>
+                <path class="series" d="M55 184 C130 166 165 151 220 147 S325 131 390 116 S505 102 560 81 S655 68 725 44"/>
+                <g class="points"><circle cx="55" cy="184" r="5"/><circle cx="220" cy="147" r="5"/><circle cx="390" cy="116" r="5"/><circle cx="560" cy="81" r="5"/><circle class="hot" cx="725" cy="44" r="7"/></g>
+                <g class="chart-labels"><text x="55" y="242">03-26</text><text x="205" y="242">04-02</text><text x="375" y="242">04-09</text><text x="545" y="242">04-16</text><text x="690" y="242">04-23</text><text x="675" y="27">82.6</text></g>
+                <g class="event-marker"><path d="M560 74V215"/><circle cx="560" cy="215" r="4"/><text x="518" y="232">示范分句训练</text></g>
+              </svg>
+              <div class="chart-summary"><span><small>本周提升</small><b>+6.8</b></span><span><small>参与学生</small><b>32</b></span><span><small>建议动作</small><b>分句练习</b></span></div>
+            </div>
+          </article>
+
+          <aside class="evidence-column">
+            <div class="evidence-tabs" role="tablist"><button class="active" data-evidence="pronunciation">薄弱发音</button><button data-evidence="students">关注学生</button></div>
+            <div class="evidence-content" id="evidenceContent"></div>
+            <button class="evidence-more">查看完整学情证据 <svg><use href="#i-arrow"/></svg></button>
+          </aside>
+        </section>
+      </main>
+
+      <!-- AI助手移入 workspace 内部，使用固定定位 -->
+      <aside class="ai-assistant" id="aiAssistant" aria-label="上下文智能支持">
+        <button class="assistant-toggle" id="assistantToggle" aria-expanded="true"><svg><use href="#i-fold"/></svg></button>
+        <div class="assistant-art" aria-hidden="true"></div>
+        <div class="assistant-head"><span class="assistant-mark"><svg><use href="#i-spark"/></svg></span><div><p>上下文智能支持</p><h2 id="assistantTitle">备课路径建议</h2></div></div>
+        <p class="assistant-context" id="assistantContext">基于当前课程、班级学情和今日截止任务，只给出此刻能执行的建议。</p>
+        <div class="assistant-focus" id="assistantFocus"></div>
+        <div class="assistant-suggestions" id="assistantSuggestions"></div>
+        <button class="assistant-primary" id="assistantPrimary">应用本阶段建议 <svg><use href="#i-arrow"/></svg></button>
+        <div class="assistant-status"><span><i></i>AI 服务已连接</span><span>数据同步正常</span></div>
+      </aside>
+    </div>
+  </div>
+
+  <div class="action-sheet" id="actionSheet" aria-hidden="true">
+    <button class="sheet-backdrop" aria-label="关闭"></button>
+    <div class="sheet-panel">
+      <div class="sheet-header"><div><p class="eyebrow">CREATE ACTION</p><h2>创建教学行动</h2></div><button class="sheet-close">×</button></div>
+      <div class="action-options">
+        <button><svg><use href="#i-course"/></svg><span><strong>创建课程</strong><small>从目标与内容开始备课</small></span></button>
+        <button><svg><use href="#i-task"/></svg><span><strong>发布任务</strong><small>将学习动作分发给学生</small></span></button>
+        <button><svg><use href="#i-assess"/></svg><span><strong>发起测评</strong><small>建立能力起点与复测证据</small></span></button>
+        <button><svg><use href="#i-people"/></svg><span><strong>创建干预</strong><small>针对学生形成支持计划</small></span></button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/assets/api-client.js?v=202607190100"></script>
+  <script src="/teacher-home/app.js?v=202607190100" defer></script>
+  <script src="/shared/teacher-shell.js?v=202607190100" defer></script>
+</body>
+</html>

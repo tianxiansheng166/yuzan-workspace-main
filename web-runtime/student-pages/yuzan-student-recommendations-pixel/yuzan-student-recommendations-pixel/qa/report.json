@@ -1,0 +1,33 @@
+{
+  "desktop": {
+    "scrollWidth": 1659,
+    "scrollHeight": 948,
+    "viewport": [
+      1659,
+      948
+    ],
+    "hasHorizontalOverflow": false
+  },
+  "issueSelection": true,
+  "saveToggle": "已保存",
+  "progress": "33%",
+  "dialogOpen": true,
+  "tablet": {
+    "scrollWidth": 768,
+    "scrollHeight": 2596,
+    "viewport": [
+      768,
+      1024
+    ],
+    "hasHorizontalOverflow": false
+  },
+  "mobile": {
+    "scrollWidth": 390,
+    "scrollHeight": 2654,
+    "viewport": [
+      390,
+      844
+    ],
+    "hasHorizontalOverflow": false
+  }
+}

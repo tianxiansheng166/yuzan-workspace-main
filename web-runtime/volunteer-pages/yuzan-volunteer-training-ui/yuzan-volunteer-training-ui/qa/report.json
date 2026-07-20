@@ -1,0 +1,11 @@
+{
+  "viewport": "1672x941",
+  "mae_rgb_0_255": 17.543,
+  "rmse_rgb_0_255": 46.213,
+  "global_similarity_1_minus_mae": 0.9312,
+  "ink_region_mae": 72.426,
+  "notes": [
+    "Reference image was used only for QA comparison, not as a webpage layer.",
+    "Illustrations are independent assets; interactive UI is HTML/CSS/JavaScript."
+  ]
+}

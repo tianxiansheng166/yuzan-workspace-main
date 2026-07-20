@@ -1,0 +1,1 @@
+document.querySelectorAll('.urgency').forEach((button)=>button.addEventListener('click',()=>{document.querySelectorAll('.urgency').forEach(x=>x.classList.remove('selected'));button.classList.add('selected')}));

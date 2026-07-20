@@ -1,0 +1,151 @@
+:root{
+  --ts-red:#d7070f;--ts-red-dark:#bb0008;--ts-red-soft:#fff3f0;
+  --ts-orange:#ef8118;--ts-green:#16814a;--ts-blue:#1473ac;--ts-gray:#788188;
+  --ts-ink:#172028;--ts-muted:#6e767c;--ts-line:#e8ded4;--ts-paper:#fbfaf7;
+  --ts-sidebar:190px;--ts-topbar:69px;--ts-font:"Microsoft YaHei","PingFang SC","Noto Sans SC",Arial,sans-serif;
+  --ts-sidebar-collapsed:56px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-width:320px;min-height:100%;font-family:var(--ts-font);color:var(--ts-ink);background:var(--ts-paper)}
+body{overflow-x:auto;overflow-y:auto}
+button,input,select{font:inherit}button{cursor:pointer}
+svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+.ts-app-shell{min-height:100vh;background:#fff;display:grid;grid-template-columns:var(--ts-sidebar) minmax(0,1fr);min-width:900px}
+
+.ts-sidebar{position:fixed;z-index:30;inset:0 auto 0 0;width:var(--ts-sidebar);border-right:1px solid #e8e0d8;background:#fffdfa;overflow:hidden;transition:width .25s ease}
+.ts-sidebar:before{content:"";position:absolute;inset:0;background-image:url("/assets/paper-noise.png");background-size:cover;opacity:.08;pointer-events:none}
+.ts-brand{position:relative;z-index:3;height:var(--ts-topbar);display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid #efe8e1;text-decoration:none;color:inherit}
+.ts-brand img{width:36px;height:36px;object-fit:contain}
+.ts-brand-copy{display:grid;gap:2px;white-space:nowrap}
+.ts-brand-copy strong{font-family:"STKaiti","KaiTi",serif;font-size:16px;letter-spacing:2px;color:#d91816;font-weight:800}
+.ts-brand-copy span{font-size:9px;letter-spacing:.5px;color:#e44d31;font-weight:700}
+
+/* ── 收回按钮 ── */
+.ts-collapse-btn{
+  position:absolute;
+  right:0;
+  top:50%;
+  transform:translateY(-50%);
+  width:20px;
+  height:44px;
+  border:1px solid var(--ts-line);
+  border-right:0;
+  border-radius:7px 0 0 7px;
+  background:rgba(255,255,255,.95);
+  color:#888;
+  font-size:13px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:35;
+  box-shadow:-2px 0 6px rgba(0,0,0,.05);
+  transition:background .15s;
+}
+.ts-collapse-btn:hover{background:#fff;color:#555}
+
+/* 收起状态 */
+.ts-sidebar.collapsed{
+  width:var(--ts-sidebar-collapsed);
+}
+.ts-sidebar.collapsed .ts-brand-copy,
+.ts-sidebar.collapsed .ts-nav-item span:not(.ts-nav-circle),
+.ts-sidebar.collapsed .ts-nav-kicker,
+.ts-sidebar.collapsed .ts-footer-link span,
+.ts-sidebar.collapsed .ts-sidebar-art{display:none}
+.ts-sidebar.collapsed .ts-brand{justify-content:center;padding:8px}
+.ts-sidebar.collapsed .ts-nav{padding:10px 8px}
+.ts-sidebar.collapsed .ts-nav-item{justify-content:center;padding:0;min-height:36px}
+.ts-sidebar.collapsed .ts-footer-link{justify-content:center;padding:0}
+.ts-sidebar.collapsed .ts-sidebar-art{display:none}
+
+.ts-nav{position:relative;z-index:3;padding:10px 12px 0;display:grid;gap:2px;overflow-y:auto;height:calc(100vh - var(--ts-topbar) - 180px)}
+.ts-nav::-webkit-scrollbar{width:0;height:0}
+.ts-nav-group{margin-top:6px}
+.ts-nav-kicker{margin:8px 6px 4px;color:#9a9fa3;font-size:10px}
+.ts-nav-item{min-height:36px;display:flex;align-items:center;gap:10px;padding:0 9px;border-radius:7px;color:#1e272d;text-decoration:none;font-size:14px;transition:background .15s;white-space:nowrap;overflow:hidden}
+.ts-nav-item:hover{background:#f7f2ed}
+.ts-nav-item svg{width:19px;height:19px;flex:none}
+.ts-nav-item.active{border:1px solid #efd6cc;background:#f8eee7;color:#d7070f;font-weight:700}
+.ts-nav-item .ts-badge{margin-left:auto;min-width:17px;height:17px;display:grid;place-items:center;border-radius:50%;background:#d7070f;color:#fff;font-size:9px}
+.ts-nav-circle{width:20px;height:20px;display:grid;place-items:center;border-radius:50%;background:#d7070f;color:#fff}
+.ts-nav-circle svg{width:13px;height:13px}
+
+.ts-sidebar-footer{position:absolute;z-index:4;left:0;right:0;bottom:0;padding:0 0 10px;background:linear-gradient(to top,#fffdfa 78%,transparent)}
+.ts-footer-link{position:relative;z-index:4;height:36px;display:flex;align-items:center;gap:10px;padding:0 18px;color:#273038;text-decoration:none;font-size:14px;white-space:nowrap}
+.ts-footer-link svg{width:19px;height:19px}
+.ts-footer-link .ts-badge{margin-left:auto;min-width:17px;height:17px;display:grid;place-items:center;border-radius:50%;background:#d7070f;color:#fff;font-size:9px}
+.ts-sidebar-art{height:120px;position:relative;overflow:hidden}
+.ts-sidebar-art:before{content:"";position:absolute;z-index:2;inset:0;background:linear-gradient(to bottom,#fffdfa 0,rgba(255,253,250,.55) 18%,transparent 42%)}
+.ts-sidebar-art img{width:100%;height:100%;object-fit:cover;object-position:22% 45%}
+
+.ts-main{grid-column:2;min-width:0;min-height:100vh;background:#fff}
+.ts-topbar{height:var(--ts-topbar);display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid #eee6de;background:#fff}
+.ts-context{display:flex;align-items:center;gap:10px}
+.ts-context-btn,.ts-sync-pill{height:36px;display:inline-flex;align-items:center;gap:7px;border:1px solid #ded8d2;border-radius:8px;background:#fff;padding:0 12px;font-size:12px;color:#30373c}
+.ts-context-btn svg{width:16px;height:16px}.ts-context-btn b{color:#777f84;font-weight:400}
+.ts-sync-pill{border-radius:18px}.ts-sync-pill i{width:8px;height:8px;border-radius:50%;background:#16814a}
+.ts-top-actions{display:flex;align-items:center;gap:14px}
+.ts-icon-btn,.ts-help-btn,.ts-profile-btn{border:0;background:transparent;color:#222b31}
+.ts-icon-btn{position:relative;width:28px;height:34px;padding:7px}.ts-icon-btn svg{width:20px;height:20px}
+.ts-icon-btn .ts-badge{position:absolute;right:-1px;top:1px;display:grid;place-items:center;min-width:16px;height:16px;padding:0 2px;border-radius:8px;background:#d20009;color:#fff;font-size:10px;font-weight:900}
+.ts-help-btn{display:flex;align-items:center;gap:5px;padding:5px 0;font-size:13px}.ts-help-btn svg{width:18px;height:18px}
+.ts-profile-btn{display:flex;align-items:center;gap:6px;padding:0}.ts-profile-btn>span:nth-child(2){display:grid;text-align:left;line-height:1.2}.ts-profile-btn strong{font-size:12px}.ts-profile-btn small{font-size:10px;color:#737b80}.ts-profile-btn>b{margin-left:4px;font-size:16px;font-weight:400}
+.ts-seal{width:34px;height:34px;display:grid;place-items:center;border-radius:50%;background:#8d1d2e;color:#edc471;border:2px solid #c49f54;font-family:"STKaiti","KaiTi",serif;font-size:13px;font-weight:700}
+
+.ts-crumb{display:flex;align-items:center;gap:6px;color:#4e575d;font-size:13px}
+.ts-crumb strong{color:#172028}.ts-crumb b{color:#b0b4b6;font-weight:400}
+.ts-crumb-home{width:30px;height:30px;display:grid;place-items:center;border:1px solid #ded8d2;border-radius:7px;background:#fff;color:#30373c}
+.ts-crumb-home svg{width:16px;height:16px}
+
+#ts-page-root{position:relative;min-height:calc(100vh - var(--ts-topbar));background:#fff}
+#ts-page-root > .main-wrap,
+#ts-page-root > main.content,
+#ts-page-root > .main,
+#ts-page-root > .workspace,
+#ts-page-root > .content-shell,
+#ts-page-root > .teacher-main,
+#ts-page-root > section.main{width:auto!important;margin-left:0!important;min-height:calc(100vh - var(--ts-topbar))}
+
+/* 设计稿页面（.design）需要按比例缩放，不能强制 width:auto，否则绝对定位画布会 collapsed */
+.ts-design-host{position:relative;width:100%;height:calc(100vh - var(--ts-topbar));overflow:hidden;background:#fff}
+.ts-design-host > main.design{position:absolute!important;left:50%;top:50%;transform-origin:center center!important}
+.ts-design-host > main.design > header.topbar,
+.ts-design-host > main.design > aside.sidebar{display:none!important}
+/* 修正 studio 等设计稿内 workspace 的绝对定位偏移：原 sidebar(224)/topbar(72) 已被隐藏，
+   需让 workspace 贴近设计稿左上角，避免内容偏右下 */
+.ts-design-host > main.design .workspace{left:0!important;top:0!important;width:100%!important;height:100%!important}
+.ts-design-host > main.design .status-footer{left:0!important;width:100%!important}
+
+.ts-page{padding:14px 14px 16px;background-image:linear-gradient(rgba(255,255,255,.975),rgba(255,255,255,.975)),url("/assets/paper-noise.png");background-size:auto,cover;min-height:calc(100vh - var(--ts-topbar))}
+
+/* 消除各页面残留的旧 sidebar / topbar / header，防止遮挡与重复 logo */
+.ts-app-shell ~ .sidebar,
+.ts-app-shell ~ header,
+.ts-app-shell ~ .topbar,
+.ts-app-shell ~ .viewport,
+.ts-app-shell ~ .app-shell,
+.ts-app-shell ~ .teacher-shell,
+.ts-app-shell ~ .layout{display:none!important}
+
+@media(max-width:1160px){
+  :root{--ts-sidebar:72px}
+  .ts-brand{justify-content:center;padding:8px}
+  .ts-brand-copy,.ts-nav-item span:not(.ts-nav-circle),.ts-nav-kicker,.ts-footer-link span{display:none}
+  .ts-nav{padding:10px 8px}
+  .ts-nav-item{justify-content:center;padding:0}
+  .ts-footer-link{justify-content:center;padding:0}.ts-footer-link .ts-badge{position:absolute;right:8px}
+  .ts-sidebar-art{display:none}
+  .ts-collapse-btn{display:none}
+}
+@media(max-width:760px){
+  /* 窄屏保持横向滚动，不堆叠；侧边栏改为抽屉式 */
+  :root{--ts-sidebar:0px}
+  .ts-app-shell{grid-template-columns:1fr;min-width:900px}
+  .ts-sidebar{transform:translateX(-100%);transition:transform .25s}
+  .ts-sidebar.open{transform:none;box-shadow:14px 0 40px rgba(0,0,0,.17)}
+  .ts-main{grid-column:1/-1}
+  .ts-context{overflow-x:auto}
+}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}

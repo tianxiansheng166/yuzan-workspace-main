@@ -1,0 +1,48 @@
+{
+  "reference": "candidate(3).png",
+  "viewport": {
+    "width": 1659,
+    "height": 948
+  },
+  "pixel_metrics": {
+    "mae_0_255": 16.394,
+    "rmse_0_255": 39.896
+  },
+  "rendered_sizes": {
+    "desktop.png": {
+      "width": 1659,
+      "height": 948
+    },
+    "tablet.png": {
+      "width": 768,
+      "height": 1395
+    },
+    "mobile.png": {
+      "width": 390,
+      "height": 1300
+    }
+  },
+  "interaction_test": {
+    "page_errors": [],
+    "checks": {
+      "answer_saved_locally": true,
+      "next_question_changes_content": true,
+      "submit_modal_opens": true,
+      "incomplete_items_shown": true,
+      "pending_sync_status_shown": true,
+      "offline_state_shown": true
+    },
+    "passed": true
+  },
+  "checks": {
+    "desktop_rendered": true,
+    "tablet_rendered": true,
+    "mobile_rendered": true,
+    "logo_text_rendered_as_html": true,
+    "real_input_and_local_save": true,
+    "submit_confirmation_modal": true,
+    "offline_pending_sync_semantics": true,
+    "whole_reference_used_as_background": false
+  },
+  "note": "Raw pixel metrics include font rendering and reconstructed dynamic UI differences. The reference was not used as an overlay or page background."
+}

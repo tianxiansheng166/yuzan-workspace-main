@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>内容审核工作台</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="admin-app">
+    <aside class="sidebar">
+      <div class="brand">
+        <img src="assets/logo-symbol.png" alt="语赞心声" class="brand-symbol" />
+        <div class="brand-text">
+          <div class="brand-name">语赞心声</div>
+          <div class="brand-sub">援藏教育公益平台</div>
+        </div>
+      </div>
+
+      <nav class="side-nav" aria-label="管理菜单">
+        <button class="nav-item"><span class="icon">⌂</span><span>驾驶舱</span></button>
+        <button class="nav-item"><span class="icon">▦</span><span>学校管理</span></button>
+        <button class="nav-item"><span class="icon">◌</span><span>用户管理</span></button>
+        <button class="nav-item"><span class="icon">▤</span><span>课程管理</span></button>
+        <button class="nav-item"><span class="icon">⟡</span><span>测评管理</span></button>
+        <button class="nav-item"><span class="icon">◎</span><span>志愿者管理</span></button>
+        <button class="nav-item"><span class="icon">▣</span><span>套餐管理</span></button>
+        <button class="nav-item active"><span class="icon">✎</span><span>内容审核</span><span class="count">5</span></button>
+        <button class="nav-item"><span class="icon">🛡</span><span>隐私与合规</span></button>
+        <button class="nav-item"><span class="icon">⚙</span><span>系统运维</span></button>
+        <button class="nav-item"><span class="icon">◫</span><span>审计日志</span></button>
+        <button class="nav-item"><span class="icon">⇩</span><span>数据导出</span></button>
+        <button class="nav-item"><span class="icon">⎋</span><span>设置</span></button>
+      </nav>
+
+      <button class="collapse-btn">‹ 收起菜单</button>
+    </aside>
+
+    <div class="content-shell">
+      <header class="top-header">
+        <div>
+          <h1>内容审核工作台 <span class="route">/ admin/reviews</span></h1>
+        </div>
+        <div class="header-right">
+          <button class="circle-btn" aria-label="消息">🔔<span class="badge">12</span></button>
+          <button class="circle-btn" aria-label="帮助">?</button>
+          <div class="account-pill">
+            <div class="avatar"></div>
+            <div>
+              <div class="user-name">嘉宾（只读）</div>
+            </div>
+            <span class="caret">⌄</span>
+          </div>
+        </div>
+        <div class="header-bg"></div>
+      </header>
+
+      <main class="workbench">
+        <section class="toolbar panel">
+          <div class="status-tabs" role="tablist" aria-label="审核状态">
+            <button class="status-tab active">全部 <span>28</span></button>
+            <button class="status-tab">待审核 <span>12</span></button>
+            <button class="status-tab">审核中 <span>5</span></button>
+            <button class="status-tab">等待补充 <span>3</span></button>
+            <button class="status-tab">已批准 <span>6</span></button>
+            <button class="status-tab">冲突 <span>1</span></button>
+            <button class="status-tab">权限不足 <span>1</span></button>
+          </div>
+
+          <div class="flow-steps" aria-label="审核流程">
+            <div class="step">选择</div>
+            <div class="step active">审核</div>
+            <div class="step">决策</div>
+            <div class="step">完成</div>
+          </div>
+
+          <div class="reviewer-meta">
+            <div>审核员：<strong>嘉宾（只读）</strong></div>
+            <div>角色：内容审核员</div>
+          </div>
+        </section>
+
+        <section class="main-grid">
+          <aside class="queue-column panel">
+            <div class="panel-head">
+              <div>
+                <h2>审核队列</h2>
+                <p>按风险与截止时间</p>
+              </div>
+              <button class="filter-btn" id="queueFilterBtn">⏳</button>
+            </div>
+            <div class="popover" id="queuePopover" hidden>
+              <button>按截止时间</button>
+              <button>按风险等级</button>
+              <button>按提交时间</button>
+            </div>
+            <div class="queue-list">
+              <button class="queue-card active" data-title="《高原生态与环境保护》课程" data-risk="高风险" data-deadline="2小时15分" data-submitter="改则县中学 索朗多吉" data-target="初中一年级" data-version="v1.2">
+                <div class="queue-top"><span class="risk high">高风险</span><span class="deadline">2小时后截止</span><span class="state-pill wait">待审核</span></div>
+                <h3>《高原生态与环境保护》</h3>
+                <p>课程</p>
+                <p>提交人：改则县中学 索朗多吉</p>
+                <p>提交时间：2024-06-04 09:15</p>
+              </button>
+              <button class="queue-card" data-title="《藏文书法基础笔画》资源包" data-risk="高风险" data-deadline="5小时" data-submitter="班戈县中学 格桑旺堆" data-target="小学四年级" data-version="v2.0">
+                <div class="queue-top"><span class="risk high">高风险</span><span class="deadline">5小时后截止</span><span class="state-pill wait">待审核</span></div>
+                <h3>《藏文书法基础笔画》</h3>
+                <p>资源包</p>
+                <p>提交人：班戈县中学 格桑旺堆</p>
+                <p>提交时间：2024-06-04 08:45</p>
+              </button>
+              <button class="queue-card" data-title="《藏族传统节日》课程" data-risk="中风险" data-deadline="1天" data-submitter="那曲市第二中学 次仁卓玛" data-target="初中二年级" data-version="v1.6">
+                <div class="queue-top"><span class="risk mid">中风险</span><span class="deadline">1天后截止</span><span class="state-pill progress">审核中</span></div>
+                <h3>《藏族传统节日》</h3>
+                <p>课程</p>
+                <p>提交人：那曲市第二中学 次仁卓玛</p>
+                <p>提交时间：2024-06-03 16:20</p>
+              </button>
+              <button class="queue-card" data-title="《中学数学：一元二次方程》课程" data-risk="中风险" data-deadline="2天" data-submitter="申扎县小学 教务组" data-target="初中三年级" data-version="v3.1">
+                <div class="queue-top"><span class="risk mid">中风险</span><span class="deadline">2天后截止</span><span class="state-pill supplement">待补充</span></div>
+                <h3>《中学数学：一元二次方程》</h3>
+                <p>课程</p>
+                <p>提交人：申扎县小学 教务组</p>
+                <p>提交时间：2024-06-02 11:05</p>
+              </button>
+              <button class="queue-card" data-title="《科学实验：水的三态变化》教师视频" data-risk="低风险" data-deadline="2天" data-submitter="色尼区小学 扎西" data-target="小学五年级" data-version="v1.8">
+                <div class="queue-top"><span class="risk low">低风险</span><span class="deadline">2天后截止</span><span class="state-pill done">已批准</span></div>
+                <h3>《科学实验：水的三态变化》</h3>
+                <p>教师视频</p>
+                <p>提交人：色尼区小学 扎西</p>
+                <p>提交时间：2024-06-02 10:30</p>
+              </button>
+            </div>
+            <div class="queue-footer"><span>共 28 条</span><div class="pager"><button>‹</button><button class="active">1</button><button>2</button><button>3</button><button>4</button><button>5</button><button>›</button></div></div>
+          </aside>
+
+          <section class="center-column">
+            <div class="article-header panel">
+              <div>
+                <div class="article-title-row">
+                  <h2 id="articleTitle">《高原生态与环境保护》课程</h2>
+                  <span class="tiny-chip">课程</span>
+                  <span class="tiny-chip danger" id="articleRisk">高风险</span>
+                </div>
+                <div class="article-meta">
+                  <span>提交人：<strong id="articleSubmitter">改则县中学 索朗多吉</strong></span>
+                  <span>提交时间：2024-06-04 09:15</span>
+                  <span>版本：<span id="articleVersion">v1.2</span></span>
+                  <span>目标学段：<span id="articleTarget">初中一年级</span></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="evidence panel">
+              <div class="panel-head compact">
+                <div>
+                  <h3>课程结构与内容证据</h3>
+                  <p>点击左侧节点完成下方证据，右侧将关联显示对应审核要点</p>
+                </div>
+              </div>
+
+              <div class="evidence-grid">
+                <aside class="toc-card">
+                  <div class="toc-head">课程目录（18）</div>
+                  <ul class="toc-list">
+                    <li class="section open">
+                      <button class="toc-node active">1. 高原生态概述</button>
+                      <ul>
+                        <li><button class="toc-subnode active" data-highlight="accuracy">1.1 高原生态系统的特征</button></li>
+                        <li><button class="toc-subnode" data-highlight="culture">1.2 主要生态类型</button></li>
+                      </ul>
+                    </li>
+                    <li class="section open">
+                      <button class="toc-node">2. 高原环境问题</button>
+                      <ul>
+                        <li><button class="toc-subnode" data-highlight="age">2.1 水土流失</button></li>
+                        <li><button class="toc-subnode" data-highlight="accessibility">2.2 草地退化</button></li>
+                        <li><button class="toc-subnode" data-highlight="tech">2.3 垃圾污染</button></li>
+                      </ul>
+                    </li>
+                    <li class="section">
+                      <button class="toc-node">3. 生态保护措施</button>
+                    </li>
+                    <li class="section">
+                      <button class="toc-node">4. 实践与探究</button>
+                    </li>
+                  </ul>
+                </aside>
+
+                <div class="evidence-card">
+                  <div class="evidence-tabs" role="tablist">
+                    <button class="evidence-tab active" data-tab="text">文本内容</button>
+                    <button class="evidence-tab" data-tab="image">图片 / 图表（2）</button>
+                    <button class="evidence-tab" data-tab="video">音视频（1）</button>
+                    <button class="evidence-tab" data-tab="source">拓展资源（3）</button>
+                    <button class="evidence-tab" data-tab="translation">藏文翻译对照</button>
+                  </div>
+
+                  <div class="evidence-pane active" id="pane-text">
+                    <div class="text-preview">
+                      <h4>1.1 高原生态系统的特征</h4>
+                      <p data-pin="accuracy">青藏高原海拔高、太阳辐射强、昼夜温差大，形成了独特的高原生态系统。平均海拔超过 4000 米以上，空气稀薄、蒸发量大，降水分布不均，是学习“环境适应”与“生态脆弱性”的基础案例。</p>
+                      <p data-pin="age">主要特征包括：① 生物多样性丰富；② 生态系统脆弱；③ 生产力较低；④ 对气候变化敏感。文本整体准确，但“生产力较低”的表述建议补充生活化例子，降低理解门槛。</p>
+                      <div class="inline-preview">
+                        <img src="assets/preview-plateau.png" alt="课程配图" />
+                        <span class="pin pin-a"></span>
+                        <span class="pin pin-b"></span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="evidence-pane" id="pane-image">
+                    <div class="media-grid">
+                      <figure class="media-card">
+                        <img src="assets/content-illustration.png" alt="内容预览" />
+                        <figcaption>配图 1：高原生态系统示意图</figcaption>
+                      </figure>
+                      <figure class="media-card">
+                        <img src="assets/banner-mountains.png" alt="内容配图" />
+                        <figcaption>配图 2：高原山脉与生态走廊</figcaption>
+                      </figure>
+                    </div>
+                  </div>
+
+                  <div class="evidence-pane" id="pane-video">
+                    <div class="resource-card large">
+                      <div class="resource-icon">▶</div>
+                      <div>
+                        <h4>课堂讲解音频与示意短片</h4>
+                        <p>时长 03:45 ｜ 普通话讲解，含环境音字幕</p>
+                      </div>
+                      <button class="ghost-btn">播放预览</button>
+                    </div>
+                  </div>
+
+                  <div class="evidence-pane" id="pane-source">
+                    <div class="source-list">
+                      <div class="source-item"><div><strong>图片来源说明</strong><p data-pin="copyright">配图 1 来源：平台自制插画；配图 2 来源：学校上传，缺少授权证明。</p></div><span class="tag warning">待核验</span></div>
+                      <div class="source-item"><div><strong>参考文献</strong><p>《高原环境保护基础读本》、生态文明教育资源库</p></div><span class="tag ok">已登记</span></div>
+                      <div class="source-item"><div><strong>版本差异</strong><p>v1.2 相比 v1.1 修正了“太阳辐射”表述，并新增案例图片。</p></div><span class="tag neutral">2 处修改</span></div>
+                    </div>
+                  </div>
+
+                  <div class="evidence-pane" id="pane-translation">
+                    <div class="translation-compare">
+                      <div class="translation-box">
+                        <h5>中文（原文）</h5>
+                        <p>青藏高原被称为“世界屋脊”，平均海拔在 4000 米以上。这里空气稀薄，太阳辐射强，昼夜温差大，形成了独特的高原生态系统。</p>
+                      </div>
+                      <div class="translation-box">
+                        <h5>藏文（译文）</h5>
+                        <p class="faux-tibetan">༄༅། མཐོ་སྒང་ས་ཁུལ་ནི་ས་ཡི་རྩེ་མོ་ལྟ་བུ་ཡིན། ཆ་སྙོམས་རྒྱ་མཚོའི་ངོས་ལས་མཐོ་ཚད་མི་ལྟར་མཐོ།</p>
+                      </div>
+                    </div>
+                    <div class="consistency-row">
+                      <button class="ghost-btn">对照一致性检查</button>
+                      <span>一致性：<strong class="warning-text">中</strong>（存在术语 / 表达差异）</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <aside class="feedback-column panel" id="feedbackPanel">
+            <div class="panel-head compact feedback-top">
+              <div>
+                <div class="deadline-block"><span>截止时间：2024-06-04 16:00</span></div>
+                <div class="remaining">剩余：<strong>2小时15分</strong></div>
+              </div>
+            </div>
+
+            <div class="feedback-title-row">
+              <h3>结构化审核要点</h3>
+              <div class="feedback-tools"><span>关联：<strong>1.1 高原生态系统的特征</strong></span><button id="collapseFeedbackBtn">收起</button></div>
+            </div>
+
+            <div class="feedback-list">
+              <section class="feedback-item highlight" data-feedback="accuracy">
+                <div class="feedback-head"><div><span class="criterion-dot red"></span><h4>准确性</h4><p>高风险</p></div><div class="options"><button class="option">通过</button><button class="option active">问题</button><button class="option">不通过</button></div></div>
+                <textarea>内容准确，数据表达符合现有科学认知。</textarea>
+                <div class="counter">16/200</div>
+              </section>
+              <section class="feedback-item" data-feedback="age">
+                <div class="feedback-head"><div><span class="criterion-dot amber"></span><h4>适龄性</h4><p>中风险</p></div><div class="options"><button class="option">通过</button><button class="option active">问题</button><button class="option">不通过</button></div></div>
+                <textarea>对“生产力较低”的解释较抽象，建议增加生活化例子。</textarea>
+                <div class="counter">22/200</div>
+              </section>
+              <section class="feedback-item" data-feedback="culture">
+                <div class="feedback-head"><div><span class="criterion-dot red"></span><h4>文化表达</h4><p>中风险</p></div><div class="options"><button class="option active">通过</button><button class="option">问题</button><button class="option">不通过</button></div></div>
+                <textarea>体现了高原地区生态价值，表达恰当。</textarea>
+                <div class="counter">13/200</div>
+              </section>
+              <section class="feedback-item" data-feedback="copyright">
+                <div class="feedback-head"><div><span class="criterion-dot red"></span><h4>版权</h4><p>高风险</p></div><div class="options"><button class="option">通过</button><button class="option active">问题</button><button class="option">不通过</button></div></div>
+                <textarea>配图版权来源不明，需提供授权证明或替换素材。</textarea>
+                <div class="counter">18/200</div>
+              </section>
+              <section class="feedback-item" data-feedback="accessibility">
+                <div class="feedback-head"><div><span class="criterion-dot green"></span><h4>无障碍</h4><p>低风险</p></div><div class="options"><button class="option active">通过</button><button class="option">问题</button><button class="option">不通过</button></div></div>
+                <textarea>文本对比清晰，建议为图片补充文字描述。</textarea>
+                <div class="counter">17/200</div>
+              </section>
+              <section class="feedback-item" data-feedback="tech">
+                <div class="feedback-head"><div><span class="criterion-dot red"></span><h4>技术完整性</h4><p>中风险</p></div><div class="options"><button class="option active">通过</button><button class="option">问题</button><button class="option">不通过</button></div></div>
+                <textarea>章节结构完整，资源可正常播放与打开。</textarea>
+                <div class="counter">14/200</div>
+              </section>
+            </div>
+
+            <div class="overall-risk">总体风险：<strong>高</strong></div>
+          </aside>
+        </section>
+
+        <section class="action-bar panel">
+          <div class="task-meta">
+            <span>创建任务：系统自动分配</span>
+            <span>任务 ID：REV-20240604-0001</span>
+            <button class="ghost-btn compact-btn">⎘ 查看提交包</button>
+          </div>
+          <div class="action-group">
+            <button class="primary-btn" data-action="approve">批准</button>
+            <button class="secondary-btn" data-action="return">退回</button>
+            <button class="secondary-btn strong" data-action="supplement">要求补充证据</button>
+            <button class="ghost-btn">更多操作 ⌄</button>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="actionModal" hidden>
+    <div class="modal-card">
+      <h3 id="modalTitle">操作已记录</h3>
+      <p id="modalText">审核决定将写入课程版本状态和审计日志，请确认后提交。</p>
+      <div class="modal-actions"><button class="primary-btn modal-close">知道了</button></div>
+    </div>
+  </div>
+
+  <script src="/assets/api-client.js"></script><script src="app.js"></script>
+</body>
+</html>

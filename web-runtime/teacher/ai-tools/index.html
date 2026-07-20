@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#fbfaf7" />
+  <title>教师 AI 工具中心｜语赞心声</title>
+  <link rel="stylesheet" href="./styles.css" />
+<link rel="stylesheet" href="/shared/teacher-shell.css" />
+  
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="教师端主导航">
+      <div class="brand">
+        <img src="./assets/yuzan-logo-mark.png" alt="" class="brand-mark" />
+        <div class="brand-copy"><strong>语赞心声</strong><span>援藏教育公益平台</span></div>
+      </div>
+      <nav class="nav-list">
+        <a class="nav-item active" aria-current="page"><span class="nav-icon ai-icon">AI</span><b>工具中心</b></a>
+        <a class="nav-item" href="/teacher/courses/"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="13" rx="2"/><path d="M8 21h8M12 18v3M8 9h8"/></svg><b>课程工作台</b></a>
+        <a class="nav-item" href="/teacher/classes"><svg viewBox="0 0 24 24"><circle cx="8" cy="8" r="3"/><circle cx="16" cy="10" r="3"/><path d="M2 21v-2a6 6 0 0 1 12 0v2M12 21v-1a5 5 0 0 1 10 0v1"/></svg><b>班级管理</b></a>
+        <a class="nav-item" data-unsupported="资源中心功能暂未开通"><svg viewBox="0 0 24 24"><path d="M4 7h7l2 2h7v10H4zM8 4h8v3H8"/></svg><b>资源中心</b></a>
+        <a class="nav-item" data-unsupported="学情分析功能暂未开通"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4zM8 16V9M12 16V6M16 16v-4"/></svg><b>学情分析</b></a>
+        <a class="nav-item" data-unsupported="学生成长功能暂未开通"><svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="3"/><path d="M5 21c0-5 3-8 7-8s7 3 7 8"/></svg><b>学生成长</b></a>
+        <a class="nav-item" data-unsupported="公益活动功能暂未开通"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.9 4.9 7 7M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1 7 17M17 7l2.1-2.1"/></svg><b>公益活动</b></a>
+        <a class="nav-item notice" data-unsupported="消息中心功能暂未开通"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 7h18s-3 0-3-7M10 20h4"/></svg><b>消息中心</b><i>3</i></a>
+        <a class="nav-item" data-unsupported="设置中心功能暂未开通"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.9 4.9 7 7M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1 7 17M17 7l2.1-2.1"/></svg><b>设置中心</b></a>
+      </nav>
+      <div class="sidebar-lower">
+        <section class="invite-card">
+          <div class="mini-title"><b>教师邀请码</b><span>i</span></div>
+          <p>邀请同事加入，共建优质课堂</p>
+          <strong id="inviteCode">TCH-7Q1A-B9K2</strong>
+          <button data-action="copy-code"><svg viewBox="0 0 24 24"><path d="M8 8h11v11H8zM5 16H3V3h13v2"/></svg>复制邀请码</button>
+        </section>
+        <section class="guide-card">
+          <div class="mini-title"><b>新手引导</b><span>?</span></div>
+          <p>3 分钟了解工具中心</p>
+          <div class="guide-progress"><i></i><span>2/4</span></div>
+          <button data-action="guide">继续引导</button>
+        </section>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="collapse-button" aria-label="收起侧栏">«</button>
+        <div class="top-actions">
+          <button class="help-button"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.8 9a2.4 2.4 0 1 1 3.6 2.1c-.9.5-1.4 1.1-1.4 2M12 17h.01"/></svg>帮助中心</button>
+          <button class="icon-button notification" aria-label="通知"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 7h18s-3 0-3-7M10 20h4"/></svg><span>3</span></button>
+          <button class="profile-button"><span class="teacher-avatar">李</span><span><strong>李老师</strong><small>拉萨市第一小学</small></span><b>⌄</b></button>
+        </div>
+      </header>
+
+      <section class="page">
+        <div class="hero-art"><img src="./assets/top-mountain-panorama.webp" alt="" /></div>
+        <div class="page-title-row">
+          <div><h1>教师 AI 工具中心</h1><p>智能备课 · 精准教学 · 共育成长</p></div>
+          <div class="privacy-banner"><svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3 8 8 9 5-1 8-4 8-9V6z"/><path d="m9 12 2 2 4-5"/></svg><span><b>数据安全与隐私保护：</b>本平台遵循最小必要原则，AI 处理内容仅用于教学辅助，结果需教师人工确认后使用。</span><button data-action="privacy">了解更多 ›</button></div>
+        </div>
+
+        <div class="layout-grid">
+          <section class="workspace-column">
+            <section class="objective-card">
+              <label><span>本次备课目标 <small>（可选）</small></span><div class="textarea-box"><textarea id="goalInput" maxlength="100" placeholder="例如：理解《高原上的春天》朗读与表达目标"></textarea><em><span id="goalCount">0</span>/100</em></div></label>
+              <label><span>关联课程 <small>（可选）</small></span><select id="courseSelect"><option value="">选择课程或单元</option><option>三年级下册 · 高原上的春天</option><option>三年级下册 · 第3章朗读与表达</option><option>四年级上册 · 语文综合实践</option></select></label>
+              <button class="generate-button" id="generatePath"><svg viewBox="0 0 24 24"><path d="m12 3 1.4 4.1L18 9l-4.6 1.9L12 15l-1.4-4.1L6 9l4.6-1.9zM19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8zM5 14l.7 1.8L8 16.5l-2.3.7L5 19l-.7-1.8L2 16.5l2.3-.7z"/></svg>生成备课路径</button>
+            </section>
+
+            <section class="workflow-card">
+              <header class="workflow-head"><div><h2>备课工作流地图</h2><p>根据目标智能推荐备课步骤与工具，点击节点进入相应工具</p></div><div class="workflow-controls"><button data-action="route-help">? 路径说明</button><div class="route-tabs"><button class="active" data-route="recommend">推荐路径</button><button data-route="custom">自定义路径</button></div></div></header>
+              <div class="route-line" aria-hidden="true"><svg viewBox="0 0 1000 120" preserveAspectRatio="none"><path d="M20 72 C95 20 135 112 214 56 S360 104 426 54 S584 106 650 50 S808 98 980 54"/></svg></div>
+              <div class="stage-grid" id="stageGrid">
+                <article class="stage-card active-stage red-stage" data-stage="1"><span class="stage-number">1</span><div class="stage-icon"><svg viewBox="0 0 48 48"><path d="M6 12c8-2 13 0 18 5v25c-6-4-11-6-18-4zM42 12c-8-2-13 0-18 5v25c6-4 11-6 18-4zM12 8l5 5M36 8l-5 5"/></svg></div><h3>理解教材</h3><p>梳理课文结构与核心内容</p><section class="tool-box"><span class="tool-mark red">M</span><div><b>MindMate</b><small>智能备课助手</small></div></section><button class="tool-primary" data-action="mindmate">进入 MindMate</button><button class="tool-secondary" data-action="material-analysis">查看教材解析</button></article>
+                <article class="stage-card orange-stage" data-stage="2"><span class="stage-number">2</span><div class="stage-icon"><svg viewBox="0 0 48 48"><path d="M24 5a13 13 0 0 0-8 23c2 2 3 4 3 7h10c0-3 1-5 3-7A13 13 0 0 0 24 5Z"/><path d="M19 39h10M20 43h8M24 12v8M17 18h14"/></svg></div><h3>构建思路</h3><p>拆解目标，设计教学思路</p><button class="dashed-action" data-action="new-idea">＋ 选择或新建思路</button><div class="stage-empty">尚未创建思路<br />建议先完成步骤 1</div></article>
+                <article class="stage-card green-stage" data-stage="3"><span class="stage-number">3</span><div class="stage-icon"><svg viewBox="0 0 48 48"><circle cx="24" cy="9" r="5"/><circle cx="10" cy="34" r="5"/><circle cx="38" cy="34" r="5"/><circle cx="24" cy="27" r="5"/><path d="M24 14v8M20 29l-6 3M28 29l6 3"/></svg></div><h3>生成图示</h3><p>生成思维导图与课堂图示</p><section class="tool-box"><span class="tool-mark green">●</span><div><b>MindGraph</b><small>图示与学习单</small></div></section><button class="tool-primary green-button" data-action="mindgraph">创建思维导图</button><button class="tool-secondary" data-action="from-route">从思路生成图示</button></article>
+                <article class="stage-card orange-stage" data-stage="4"><span class="stage-number">4</span><div class="stage-icon translate-icon"><span>藏⇄汉</span></div><h3>翻译术语</h3><p>藏汉互译，理解关键术语</p><section class="tool-box"><span class="tool-mark orange">译</span><div><b>藏汉翻译</b><small>术语互译工具</small></div></section><button class="tool-primary orange-button" data-action="translate">打开翻译工具</button><button class="tool-secondary" data-action="glossary">术语对照表</button></article>
+                <article class="stage-card green-stage" data-stage="5"><span class="stage-number">5</span><div class="stage-icon"><svg viewBox="0 0 48 48"><path d="M10 7h24v34H10zM17 16h10M17 23h10M17 30h7M30 29l8-8 4 4-8 8-6 2z"/></svg></div><h3>形成学习单</h3><p>生成练习与学习单</p><section class="tool-box"><span class="tool-mark green">▤</span><div><b>学习单工具</b><small>练习与活动设计</small></div></section><button class="tool-primary green-button" data-action="worksheet">生成学习单</button><button class="tool-secondary" data-action="preview-edit">预览与编辑</button></article>
+              </div>
+              <footer class="workflow-legend"><span>状态说明：</span><i class="dot green-dot"></i>已完成<i class="dot orange-dot"></i>当前推荐<i class="dot hollow-dot"></i>可进行<i class="dot gray-dot"></i>未解锁<i class="dot border-dot"></i>受限<strong>⚠ AI 结果需人工确认后使用</strong></footer>
+            </section>
+
+            <section class="resource-library">
+              <header><h2>教学资源库</h2><p>精选资源，为备课提供丰富素材</p></header>
+              <div class="resource-grid">
+                <button data-action="courseware"><span class="resource-icon red-bg"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h5"/></svg></span><b>课文资源</b><small>课文朗读、文本解析</small></button>
+                <button data-action="courseware"><span class="resource-icon orange-bg"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="13" rx="2"/><path d="M8 21h8M12 18v3M8 9h8"/></svg></span><b>教学课件</b><small>PPT、教案模板</small></button>
+                <button data-action="activities"><span class="resource-icon blue-bg"><svg viewBox="0 0 24 24"><path d="M5 3h14v18H5zM8 7h8M8 11h8M8 15h5"/></svg></span><b>活动素材</b><small>课堂活动与游戏</small></button>
+                <button data-action="media"><span class="resource-icon blue-bg"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="m5 17 4-4 3 3 3-4 4 5"/></svg></span><b>图片视频</b><small>多媒体素材库</small></button>
+                <button data-action="question-bank"><span class="resource-icon purple-bg"><svg viewBox="0 0 24 24"><path d="M5 3h14v18H5zM8 8h8M8 12h8M8 16h5"/></svg></span><b>试题库</b><small>分层练习与试题</small></button>
+                <button class="enter-resource" data-action="resource-center"><span class="globe">◎</span><b>进入资源库</b><small>更多优质资源</small></button>
+              </div>
+            </section>
+          </section>
+
+          <aside class="right-rail">
+            <section class="rail-card recent-card"><header><h2>最近使用</h2><button>全部 ›</button></header>
+              <button class="recent-row" data-action="open-recent"><span class="row-icon red-pencil">✎</span><div><b>高原上的春天</b><small>朗读与表达 · 三年级下册　<span>MindMate</span></small></div><time>今天 10:32</time></button>
+              <button class="recent-row" data-action="open-recent"><span class="row-icon green-home">⌂</span><div><b>第3章 朗读与表达思路</b><small>教学思路预览　<span>MindGraph</span></small></div><time>昨天 16:45</time></button>
+              <button class="recent-row" data-action="open-recent"><span class="row-icon orange-chat">译</span><div><b>春天相关术语翻译</b><small>藏汉对照表　<span class="orange-label">藏汉翻译</span></small></div><time>昨天 11:20</time></button>
+              <button class="recent-row" data-action="open-recent"><span class="row-icon blue-doc">▤</span><div><b>春天主题学习单</b><small>课堂活动设计　<span>学习单工具</span></small></div><time>05-12</time></button>
+            </section>
+
+            <section class="rail-card draft-card"><header><h2>我的草稿</h2><button>全部 ›</button></header>
+              <button class="draft-row" data-action="draft"><span class="row-icon red-pencil">✎</span><div><b>未命名思路草稿</b><small><span>MindGraph</span>　草稿 · 05-13</small></div><em>›</em></button>
+              <button class="draft-row" data-action="draft"><span class="row-icon red-pencil">✎</span><div><b>三年级下册备课计划</b><small><span>MindMate</span>　草稿 · 05-11</small></div><em>›</em></button>
+              <button class="draft-row" data-action="draft"><span class="row-icon blue-doc">▤</span><div><b>词语积累学习单</b><small><span>学习单工具</span>　草稿 · 05-10</small></div><em>›</em></button>
+            </section>
+
+            <section class="rail-card service-card"><header><h2>外部服务状态</h2><button data-action="manage-services">管理 ›</button></header>
+              <div class="service-row"><span>⌂</span><b>MindMate 服务</b><em class="connected">✓ 已连接</em></div>
+              <div class="service-row"><span class="green-service">●</span><b>MindGraph 服务</b><em class="connected">✓ 已连接</em></div>
+              <div class="service-row"><span class="orange-service">译</span><b>藏汉翻译服务</b><em class="connected">✓ 已连接</em></div>
+              <div class="service-row"><span class="orange-service">▧</span><b>资源库服务</b><em class="warning">需配置　去配置 ›</em></div>
+              <div class="service-row"><span>◈</span><b>AI 能力服务</b><em class="disabled">不可用　查看说明 ›</em></div>
+              <p>部分服务由第三方提供，使用前需完成授权配置。</p>
+            </section>
+          </aside>
+        </div>
+        <footer class="page-tip"><span>i</span><p>提示：根据“高原上的春天”目标，建议按上方路径依次完成备课。如需调整路径或工具，可切换至“自定义路径”模式。</p><button id="dismissTip">不再提示 ›</button></footer>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="modalBackdrop" hidden><section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><button class="modal-close" id="modalClose">×</button><div class="modal-mark" id="modalMark">✓</div><h2 id="modalTitle">操作说明</h2><p id="modalText"></p><div class="modal-actions"><button class="modal-secondary" id="modalCancel">取消</button><button class="modal-primary" id="modalConfirm">确认</button></div></section></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="/assets/api-client.js"></script>
+ <script src="./app.js"></script>
+  <script src="/shared/teacher-shell.js" defer></script>
+
+</html>

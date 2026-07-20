@@ -16,6 +16,7 @@ export class PrismaAssignmentLookupRepository implements AssignmentLookupPort {
     try {
       const row = await this.prisma.assignment.findFirst({
         where: { id: assignmentId, schoolId, deletedAt: null },
+        include: { targets: true },
       });
       return row ? toAssignmentSummary(row) : null;
     } catch {
@@ -54,6 +55,7 @@ export class PrismaAssignmentLookupRepository implements AssignmentLookupPort {
           },
         },
         orderBy: { dueAt: "asc" },
+        include: { targets: true },
       });
       return rows.map(toAssignmentSummary);
     } catch {
@@ -63,7 +65,7 @@ export class PrismaAssignmentLookupRepository implements AssignmentLookupPort {
 }
 
 function toAssignmentSummary(
-  row: Prisma.AssignmentGetPayload<Record<string, never>>,
+  row: Prisma.AssignmentGetPayload<{ include: { targets: true } }>,
 ): AssignmentSummary {
   return {
     id: row.id,
@@ -75,5 +77,13 @@ function toAssignmentSummary(
     revision: row.revision,
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
+    targets: row.targets.map((t) => ({
+      id: t.id,
+      schoolId: t.schoolId,
+      assignmentId: t.assignmentId,
+      targetType: t.targetType as "CLASS" | "STUDENT",
+      ...(t.classId ? { classId: t.classId } : {}),
+      ...(t.enrollmentId ? { enrollmentId: t.enrollmentId } : {}),
+    })),
   };
 }

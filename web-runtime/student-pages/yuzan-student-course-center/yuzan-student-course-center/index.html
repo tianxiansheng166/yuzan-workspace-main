@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>语赞心声｜学生课程中心</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <svg class="svg-defs" aria-hidden="true">
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11.2 12 4l9 7.2v8.3a1.5 1.5 0 0 1-1.5 1.5H15v-6H9v6H4.5A1.5 1.5 0 0 1 3 19.5z"/><path d="M8.2 21v-6.4h7.6V21"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 4.5c2.8-.6 5.5.1 8 2v13c-2.5-1.9-5.2-2.5-8-2z"/><path d="M20 4.5c-2.8-.6-5.5.1-8 2v13c2.5-1.9 5.2-2.5 8-2z"/></symbol>
+    <symbol id="i-wave" viewBox="0 0 24 24"><path d="M3 12h2m2-4v8m3-12v16m3-12v8m3-10v12m3-7v2m2-5v8"/></symbol>
+    <symbol id="i-growth" viewBox="0 0 24 24"><path d="M12 21v-8"/><path d="M12 13c-4.8 0-7.5-2.6-7.5-6.2C9 6.3 11.6 8.2 12 13Z"/><path d="M12 13c4.8 0 7.5-2.6 7.5-6.2C15 6.3 12.4 8.2 12 13Z"/><path d="M7 21h10"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="7.2" r="3.7"/><path d="M4.2 21c.5-5 3.1-7.5 7.8-7.5S19.3 16 19.8 21Z"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7.5 11 4.5 4.5 4.5-4.5"/><path d="M4 20h16"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5"/><path d="M9 12h6m-6 4h6"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 10h8m-8 3h5"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 7 5 5-5 5"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24"><path d="m7 9 5 5 5-5"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4.2 4.2L19 6.5"/></symbol>
+    <symbol id="i-flag" viewBox="0 0 24 24"><path d="M6 22V3"/><path d="M6 4c4-2.5 7 2 12 0v9c-5 2-8-2.5-12 0"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3 2.7 5.5 6 .9-4.4 4.2 1.1 6-5.4-2.8-5.4 2.8 1-6-4.3-4.2 6-.9z"/></symbol>
+    <symbol id="i-cloud-off" viewBox="0 0 24 24"><path d="M6.5 18H5a3.5 3.5 0 0 1-.8-6.9A7 7 0 0 1 17.5 9a4.5 4.5 0 0 1 1.5 8.8"/><path d="M4 4l16 16"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 10v6"/><path d="M12 7.2h.01"/></symbol>
+  </svg>
+
+  <header class="topbar">
+    <div class="brand" aria-label="语赞心声">
+      <img src="assets/logo-symbol.png" alt="" />
+      <div class="brand-copy"><strong>语赞心声</strong><span>用声音连接心与心</span></div>
+    </div>
+    <nav class="topnav" aria-label="主导航">
+      <button class="topnav-item"><svg><use href="#i-home"/></svg><span>今日</span></button>
+      <button class="topnav-item active"><svg><use href="#i-book"/></svg><span>课程</span></button>
+      <button class="topnav-item"><svg><use href="#i-wave"/></svg><span>测评</span></button>
+      <button class="topnav-item"><svg><use href="#i-growth"/></svg><span>成长</span></button>
+      <button class="topnav-item"><svg><use href="#i-user"/></svg><span>我的</span></button>
+    </nav>
+    <div class="top-actions">
+      <button class="offline-manage"><svg><use href="#i-download"/></svg>离线管理</button>
+      <span class="online"><i></i>离线可用</span>
+      <button class="profile-menu" data-action="profile">
+        <img src="assets/avatar.jpg" alt="用户头像" />
+        <span><b>扎西罗布</b><small>六年级</small></span>
+        <svg><use href="#i-down"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="shell">
+    <aside class="sidebar">
+      <section class="student-card">
+        <img src="assets/avatar.jpg" alt="学生头像" />
+        <div><h2>扎西罗布</h2><p>六年级学生</p><span>拉萨市城关区第一小学</span></div>
+      </section>
+      <nav class="side-nav" aria-label="课程中心导航">
+        <button class="side-item active"><svg><use href="#i-book"/></svg><span>课程中心</span></button>
+        <button class="side-item"><svg><use href="#i-home"/></svg><span>我的学习</span></button>
+        <button class="side-item"><svg><use href="#i-download"/></svg><span>我的下载</span></button>
+        <button class="side-item"><svg><use href="#i-file"/></svg><span>学习记录</span></button>
+        <button class="side-item"><svg><use href="#i-chat"/></svg><span>教师反馈</span></button>
+      </nav>
+      <section class="weekly-goal">
+        <div class="goal-title"><strong>本周学习目标</strong><span><b>2</b> / 4</span></div>
+        <div class="goal-row"><p>继续学习 2 节课程</p><div class="bar"><i style="width:58%"></i></div></div>
+        <div class="goal-row green"><p>完成 1 次朗读测评</p><div class="bar"><i style="width:43%"></i></div></div>
+        <button>查看目标详情 <svg><use href="#i-chevron"/></svg></button>
+      </section>
+      <div class="side-art" aria-hidden="true"></div>
+    </aside>
+
+    <main class="workspace">
+      <section class="hero">
+        <div class="hero-copy">
+          <div class="title-line"><h1>我的学习路径</h1><svg><use href="#i-info"/></svg></div>
+          <p>沿着推荐路径，提升朗读与表达能力</p>
+          <div class="filters">
+            <button class="filter" data-filter="grade"><span>年级</span><b>六年级</b><svg><use href="#i-down"/></svg></button>
+            <button class="filter" data-filter="type"><span>课程类型</span><b>全部</b><svg><use href="#i-down"/></svg></button>
+            <button class="filter" data-filter="language"><span>授课语言</span><b>全部</b><svg><use href="#i-down"/></svg></button>
+          </div>
+        </div>
+        <div class="hero-visual" aria-hidden="true"></div>
+      </section>
+
+      <section class="course-area">
+        <div class="category-tabs" role="tablist">
+          <button class="category-tab active" data-tab="school"><svg><use href="#i-flag"/></svg><span>学校安排课程</span><i></i></button>
+          <button class="category-tab" data-tab="ai"><svg><use href="#i-star"/></svg><span>AI 推荐课程</span></button>
+          <button class="category-tab" data-tab="download"><svg><use href="#i-download"/></svg><span>已下载</span></button>
+          <button class="category-tab" data-tab="done"><svg><use href="#i-check"/></svg><span>已完成</span></button>
+        </div>
+
+        <div class="learning-map" id="learningMap">
+          <svg class="route-lines" viewBox="0 0 960 555" preserveAspectRatio="none" aria-hidden="true">
+            <path class="route school-route" d="M225 92 C175 92 193 144 213 153 C236 165 225 190 205 210 C185 232 193 267 226 270"/>
+            <path class="route ai-route" d="M226 270 C180 275 194 330 217 339 C242 349 220 378 200 397 C180 417 188 454 223 458"/>
+            <path class="route download-route" d="M229 458 C206 480 208 515 226 533"/>
+            <path class="route branch" d="M242 92 C317 82 386 75 470 84"/>
+            <path class="route branch" d="M246 270 C330 267 410 267 500 267"/>
+            <path class="route branch" d="M240 458 C330 452 418 456 506 458"/>
+            <path class="route branch" d="M495 458 C587 456 640 458 720 458"/>
+          </svg>
+
+          <aside class="start-panel">
+            <h3><span>起点：</span>了解自己</h3>
+            <p>基于测评与教师建议</p>
+            <div class="radar-wrap">
+              <svg viewBox="0 0 132 118" aria-label="能力雷达图">
+                <polygon class="radar-grid" points="66,9 117,47 98,107 34,107 15,47"/>
+                <polygon class="radar-grid small" points="66,29 98,52 86,89 46,89 34,52"/>
+                <polygon class="radar-data" points="66,26 100,51 82,91 42,82 35,48"/>
+                <line x1="66" y1="9" x2="66" y2="107"/><line x1="117" y1="47" x2="34" y2="107"/><line x1="98" y1="107" x2="15" y2="47"/><line x1="34" y1="107" x2="117" y2="47"/><line x1="15" y1="47" x2="98" y2="107"/>
+              </svg>
+              <span class="radar-label l1">声韵发音</span><span class="radar-label l2">语调节奏</span><span class="radar-label l3">情感表达</span><span class="radar-label l4">流畅度</span><span class="radar-label l5">理解表达</span>
+            </div>
+            <div class="weakness"><span>你的薄弱点</span><div><button data-weak="rhythm">语调节奏</button><button data-weak="emotion">情感表达</button></div></div>
+            <div class="teacher-note"><b>教师建议</b><p>继续加强语调变化和情感表达，让朗读更有感染力。</p><button data-action="details">查看详情 <svg><use href="#i-chevron"/></svg></button></div>
+          </aside>
+
+          <div class="route-node node-school"><span><svg><use href="#i-flag"/></svg></span></div>
+          <div class="route-caption cap-school"><i></i>学校安排课程</div>
+          <div class="route-node node-ai"><span><svg><use href="#i-star"/></svg></span></div>
+          <div class="route-node node-download"><span><svg><use href="#i-download"/></svg></span></div>
+          <div class="route-node node-done"><span><svg><use href="#i-check"/></svg></span></div>
+          <div class="route-caption cap-download">已下载</div>
+          <div class="route-caption cap-done"><i></i>已完成</div>
+
+          <article class="course-card c1" data-kind="school" data-weakness="rhythm">
+            <img src="assets/course-spring.jpg" alt="高原上的春天课程封面" />
+            <div class="course-info"><h4>高原上的春天</h4><p>语文 · 六年级下册</p><span class="status ongoing">进行中</span><div class="progress"><i style="width:75%"></i><b>75%</b></div></div>
+          </article>
+          <article class="course-card c2" data-kind="school" data-weakness="rhythm">
+            <img src="assets/course-youth.jpg" alt="少年中国说课程封面" />
+            <div class="course-info"><h4>少年中国说（节选）</h4><p>语文 · 六年级下册</p><span class="status ongoing">进行中</span><div class="progress"><i style="width:40%"></i><b>40%</b></div></div>
+          </article>
+          <article class="course-card c3" data-kind="ai" data-weakness="rhythm">
+            <img src="assets/course-picture.jpg" alt="把句子读出画面感课程封面" />
+            <div class="course-info"><h4>把句子读出画面感</h4><p>朗读技巧</p><span class="status recommend">推荐</span><div class="progress"><i style="width:0%"></i><b>0%</b></div></div>
+          </article>
+          <article class="course-card c4" data-kind="ai" data-weakness="emotion">
+            <img src="assets/course-emotion.jpg" alt="情感的声音课程封面" />
+            <div class="course-info"><h4>情感的声音：喜与忧</h4><p>表达提升</p><span class="status recommend">推荐</span><div class="progress"><i style="width:0%"></i><b>0%</b></div></div>
+          </article>
+          <article class="course-card c5" data-kind="download" data-weakness="rhythm">
+            <img src="assets/course-pinyin.jpg" alt="声母韵母基础练习课程封面" />
+            <div class="course-info"><h4>声母韵母基础练习</h4><p>发音基础</p><span class="status downloaded">已下载</span><div class="progress"><i style="width:0%"></i><b>0%</b></div></div>
+            <button class="local-mark" title="已保存在本地"><svg><use href="#i-download"/></svg></button>
+          </article>
+          <article class="course-card c6" data-kind="done" data-weakness="emotion">
+            <img src="assets/course-pause.jpg" alt="正确停顿的小技巧课程封面" />
+            <div class="course-info"><h4>正确停顿的小技巧</h4><p>朗读技巧</p><span class="status completed">已完成</span><div class="progress"><i style="width:100%"></i><b>100%</b></div></div>
+          </article>
+          <button class="empty-recommendation" data-action="recommend"><span>＋</span><b>暂无更多推荐</b><small>完成学习后将继续为你推荐</small></button>
+        </div>
+      </section>
+    </main>
+
+    <aside class="rightbar">
+      <section class="right-card continue-card">
+        <div class="right-card-title"><h3>继续学习</h3><span>本周计划</span></div>
+        <div class="continue-course"><img src="assets/course-spring.jpg" alt="高原上的春天" /><div><h4>高原上的春天</h4><p>语文 · 六年级下册</p><span>进行中</span></div></div>
+        <div class="wide-progress"><i style="width:75%"></i></div>
+        <p class="continue-meta">已学 75% <em></em> 继续学习第 3 节</p>
+        <button class="primary" data-action="continue">继续学习</button>
+      </section>
+      <section class="right-card offline-card">
+        <h3>离线状态</h3>
+        <div class="offline-stat"><span>已下载课程 3 个</span><span>可用空间 2.4 GB</span></div>
+        <p class="offline-ok"><i><svg><use href="#i-check"/></svg></i>已离线，可正常学习</p>
+        <button class="outline" data-action="offline"><svg><use href="#i-download"/></svg>管理离线内容</button>
+      </section>
+      <section class="right-card advice-card">
+        <div class="right-card-title"><h3>教师建议</h3><span>3 条建议</span></div>
+        <p>老师为你提供了新的学习建议，快去看看吧！</p>
+        <button class="outline" data-action="feedback"><svg><use href="#i-user"/></svg>查看教师反馈</button>
+      </section>
+      <section class="right-card tip-card">
+        <h3>学习小贴士</h3>
+        <p>每天坚持 20 分钟朗读练习，效果会更好哦！</p>
+        <div class="grass" aria-hidden="true"></div>
+      </section>
+    </aside>
+  </div>
+
+  <div class="popover" id="filterPopover" hidden></div>
+  <div class="modal-backdrop" id="modalBackdrop" hidden>
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="modal-close" data-action="close">×</button>
+      <h2 id="modalTitle">课程学习</h2>
+      <p id="modalText">正在打开课程内容。</p>
+      <button class="primary" data-action="close">知道了</button>
+    </section>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>

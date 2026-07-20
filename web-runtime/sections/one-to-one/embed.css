@@ -1,0 +1,3 @@
+html,body{min-width:0!important;background:#f8f3e9!important;overflow:hidden!important}body{display:block!important}.app{width:100%!important;height:941px!important;min-height:0!important;display:block!important;box-shadow:none!important}.sidebar{display:none!important}.main{width:100%!important;height:941px!important;min-height:0!important;overflow:hidden!important}.page-header{padding-left:5vw!important;padding-right:5vw!important}.login-button{display:none!important}
+@media(max-width:1200px){.app,.main{height:auto!important;min-height:1100px!important}.trust-panel{padding-bottom:120px!important}}
+@media(max-width:780px){.app,.main{height:auto!important;min-height:1500px!important}.page-header{padding-top:28px!important}.footer{position:absolute!important}}

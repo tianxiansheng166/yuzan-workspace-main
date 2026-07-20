@@ -1,5 +1,7 @@
 import { Inject, Injectable } from "@nestjs/common";
 import type { AuthContext } from "../../common/security/auth.types.js";
+import { PrismaService } from "../../shared/database/prisma.service.js";
+import { Prisma } from "@yuzan/database";
 import type {
   IntegrationConfig,
   IntegrationKey,
@@ -31,6 +33,8 @@ export class ToolsService {
   constructor(
     @Inject(TOOL_REPOSITORY)
     private readonly toolRepo: ToolRepositoryPort,
+    @Inject(PrismaService)
+    private readonly prisma: PrismaService,
   ) {}
 
   async listIntegrations(auth: AuthContext, schoolId: string) {
@@ -190,5 +194,279 @@ export class ToolsService {
     });
 
     return toClickAuditEntryResponse(entry);
+  }
+
+  // ---------- Teacher AI Tools Center methods ----------
+
+  async getTeacherToolsState(auth: AuthContext, schoolId: string) {
+    if (!this.policy.canViewIntegrations(auth, schoolId)) {
+      throw new IntegrationForbiddenException();
+    }
+
+    const userId = auth.principal.userId;
+
+    // Get integrations
+    const configs = await this.toolRepo.listConfigs(schoolId);
+    const tools = configs.map((c) => ({
+      key: c.key,
+      label: this.toolKeyToLabel(c.key),
+      description: this.toolKeyToDescription(c.key),
+      enabled: c.enabled,
+      status: c.status,
+    }));
+
+    // Get recent usage from click audits (simplified)
+    const recentUsage: { toolKey: string; lastUsedAt: string; action: string }[] = [];
+
+    // Get drafts
+    const drafts = await this.prisma.teacherDraft.findMany({
+      where: { schoolId, authorUserId: userId },
+      orderBy: { updatedAt: "desc" },
+      take: 10,
+      select: { id: true, toolSource: true, title: true, updatedAt: true },
+    });
+
+    // Get invite code
+    const inviteCode = await this.prisma.inviteCode.findFirst({
+      where: {
+        schoolId,
+        expiresAt: { gt: new Date() },
+        revokedAt: null,
+        usedCount: { lt: 10 },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    // External services from integrations
+    const externalServices = configs.map((c) => ({
+      key: c.key,
+      label: this.toolKeyToLabel(c.key),
+      status: c.status,
+      enabled: c.enabled,
+    }));
+
+    return {
+      tools,
+      recentUsage,
+      drafts: drafts.map((d) => ({
+        id: d.id,
+        toolSource: d.toolSource,
+        title: d.title,
+        updatedAt: d.updatedAt.toISOString(),
+      })),
+      externalServices,
+      inviteCode: inviteCode
+        ? {
+            code: inviteCode.code,
+            expiresAt: inviteCode.expiresAt.toISOString(),
+            remainingUses: inviteCode.maxUses - inviteCode.usedCount,
+          }
+        : null,
+    };
+  }
+
+  async generatePlan(
+    auth: AuthContext,
+    schoolId: string,
+    dto: { goal: string; courseVersionId?: string; gradeBand?: string },
+  ) {
+    if (!this.policy.canTriggerMindGraph(auth, schoolId)) {
+      throw new IntegrationForbiddenException();
+    }
+
+    // Check if MINDMATE integration is available
+    const config = await this.toolRepo.findConfigByKey(
+      schoolId,
+      "MINDMATE" as IntegrationKey,
+    );
+
+    if (!config || !config.enabled) {
+      return {
+        status: "PROVIDER_NOT_CONFIGURED" as const,
+        jobId: null,
+        plan: null,
+      };
+    }
+
+    if (config.status === "PROVIDER_UNAVAILABLE" || config.status === "OFFLINE") {
+      return {
+        status: "PROVIDER_NOT_CONFIGURED" as const,
+        jobId: null,
+        plan: null,
+      };
+    }
+
+    // Create a MindGraph job with the teaching plan request
+    const job = await this.toolRepo.createMindGraphJob({
+      schoolId,
+      configId: config.id,
+      status: "CREATED" as MindGraphJobStatus,
+      inputPayload: {
+        goal: dto.goal,
+        courseVersionId: dto.courseVersionId,
+        gradeBand: dto.gradeBand,
+      },
+      resultPayload: null,
+      errorCode: null,
+    });
+
+    return {
+      status: "PENDING" as const,
+      jobId: job.id,
+      plan: null,
+    };
+  }
+
+  async listDrafts(auth: AuthContext, schoolId: string) {
+    if (!this.policy.canViewOwnJobs(auth, schoolId)) {
+      throw new IntegrationForbiddenException();
+    }
+
+    const drafts = await this.prisma.teacherDraft.findMany({
+      where: { schoolId, authorUserId: auth.principal.userId },
+      orderBy: { updatedAt: "desc" },
+      select: {
+        id: true,
+        toolSource: true,
+        title: true,
+        content: true,
+        revision: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
+    return {
+      items: drafts.map((d) => ({
+        id: d.id,
+        toolSource: d.toolSource,
+        title: d.title,
+        content: d.content,
+        revision: d.revision,
+        createdAt: d.createdAt.toISOString(),
+        updatedAt: d.updatedAt.toISOString(),
+      })),
+    };
+  }
+
+  async saveDraft(
+    auth: AuthContext,
+    schoolId: string,
+    dto: { toolSource: string; title: string; content: Record<string, unknown> },
+  ) {
+    if (!this.policy.canManageIntegrations(auth, schoolId)) {
+      throw new IntegrationForbiddenException();
+    }
+
+    const draft = await this.prisma.teacherDraft.create({
+      data: {
+        schoolId,
+        authorUserId: auth.principal.userId,
+        toolSource: dto.toolSource as "MINDMATE" | "MINDGRAPH" | "LESSON_PLAN" | "WORKSHEET",
+        title: dto.title,
+        content: JSON.parse(JSON.stringify(dto.content)),
+      },
+    });
+
+    return {
+      id: draft.id,
+      toolSource: draft.toolSource,
+      title: draft.title,
+      revision: draft.revision,
+      createdAt: draft.createdAt.toISOString(),
+      updatedAt: draft.updatedAt.toISOString(),
+    };
+  }
+
+  async listExternalServices(auth: AuthContext, schoolId: string) {
+    if (!this.policy.canViewIntegrations(auth, schoolId)) {
+      throw new IntegrationForbiddenException();
+    }
+
+    const configs = await this.toolRepo.listConfigs(schoolId);
+
+    return {
+      items: configs.map((c) => ({
+        key: c.key,
+        label: this.toolKeyToLabel(c.key),
+        status: c.status,
+        enabled: c.enabled,
+        providerDisclosure: this.getProviderDisclosure(c.key),
+      })),
+    };
+  }
+
+  async getOrCreateInviteCode(auth: AuthContext, schoolId: string) {
+    if (!this.policy.canManageIntegrations(auth, schoolId)) {
+      throw new IntegrationForbiddenException();
+    }
+
+    // Find existing valid code
+    const existing = await this.prisma.inviteCode.findFirst({
+      where: {
+        schoolId,
+        expiresAt: { gt: new Date() },
+        revokedAt: null,
+        usedCount: { lt: 10 },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    if (existing) {
+      return {
+        code: existing.code,
+        expiresAt: existing.expiresAt.toISOString(),
+        remainingUses: existing.maxUses - existing.usedCount,
+      };
+    }
+
+    // Generate new code
+    const crypto = await import("node:crypto");
+    const code = crypto.randomBytes(4).toString("hex").toUpperCase();
+    const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
+
+    const newCode = await this.prisma.inviteCode.create({
+      data: {
+        schoolId,
+        code,
+        createdByUserId: auth.principal.userId,
+        maxUses: 10,
+        usedCount: 0,
+        expiresAt,
+      },
+    });
+
+    return {
+      code: newCode.code,
+      expiresAt: newCode.expiresAt.toISOString(),
+      remainingUses: newCode.maxUses - newCode.usedCount,
+    };
+  }
+
+  private toolKeyToLabel(key: string): string {
+    const map: Record<string, string> = {
+      MINDMATE: "MindMate 智能助手",
+      MINDGRAPH: "MindGraph 思维导图",
+      TIBETAN_TRANSLATION: "藏汉翻译工具",
+    };
+    return map[key] ?? key;
+  }
+
+  private toolKeyToDescription(key: string): string {
+    const map: Record<string, string> = {
+      MINDMATE: "AI驱动的备课和教学辅助工具",
+      MINDGRAPH: "可视化思维导图生成工具",
+      TIBETAN_TRANSLATION: "藏语与汉语之间的互译工具",
+    };
+    return map[key] ?? "";
+  }
+
+  private getProviderDisclosure(key: string): string {
+    const map: Record<string, string> = {
+      MINDMATE: "教学目标和课程信息将发送至AI服务生成建议",
+      MINDGRAPH: "课程结构和关键词将发送至思维导图服务",
+      TIBETAN_TRANSLATION: "翻译文本将发送至翻译服务处理",
+    };
+    return map[key] ?? "";
   }
 }

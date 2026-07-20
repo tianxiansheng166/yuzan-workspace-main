@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#fbfaf7">
+<title>系统运维｜服务提供商管理</title>
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<div class="app-shell">
+<aside class="sidebar">
+  <div class="brand"><img src="./assets/logo-mark.png" alt=""><div><strong>语赞心声</strong><span>援藏教育公益平台</span></div></div>
+  <nav class="side-nav">
+    <a><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5v9H3z"/><path d="M9 21v-7h6v7"/></svg>驾驶舱</a>
+    <a><svg viewBox="0 0 24 24"><path d="M4 20V8l8-5 8 5v12z"/><path d="M8 11h2v3H8zM14 11h2v3h-2zM8 16h8"/></svg>学校管理</a>
+    <a><svg viewBox="0 0 24 24"><circle cx="8" cy="8" r="3"/><circle cx="16" cy="9" r="2.5"/><path d="M3 21a5 5 0 0 1 10 0M13 20c.5-3 2.2-4.5 5-4.5 1.2 0 2.2.3 3 .9"/></svg>用户管理</a>
+    <a><svg viewBox="0 0 24 24"><path d="M4 5h16v15H4zM8 3v4M16 3v4M8 11h8M8 15h5"/></svg>课程管理</a>
+    <a><svg viewBox="0 0 24 24"><circle cx="8" cy="8" r="2.5"/><path d="M4 20v-3a4 4 0 0 1 8 0v3M15 5l4 2v5c0 3-1.8 5.2-4 6-2.2-.8-4-3-4-6V7z"/></svg>测评管理</a>
+    <a><svg viewBox="0 0 24 24"><circle cx="8" cy="8" r="3"/><circle cx="16" cy="9" r="2.4"/><path d="M3 21a5 5 0 0 1 10 0M13 20c.6-2.9 2.2-4.3 5-4.3"/></svg>志愿者管理</a>
+    <a><svg viewBox="0 0 24 24"><path d="M3 18c3-6 6-9 9-9s6 3 9 9"/><path d="M5 18h14M8 9V5h8v4"/></svg>套餐管理</a>
+    <a class="with-badge"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4zM8 9h8M8 13h5"/><path d="m15 17 2-2 2 2"/></svg>内容审核<b>5</b></a>
+    <a><svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 4.5 3.2 7.4 8 9 4.8-1.6 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-5"/></svg>隐私与合规</a>
+    <a class="active"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.9 4.9 7 7M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1 7 17M17 7l2.1-2.1"/></svg>系统运维</a>
+    <a><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5zM9 8h6M9 12h6M9 16h3"/></svg>审计日志</a>
+    <a><svg viewBox="0 0 24 24"><path d="M5 4h10l4 4v12H5zM15 4v5h5"/><path d="M9 14h6M9 17h4"/></svg>数据导出</a>
+    <a><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.9 4.9 7 7M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1 7 17M17 7l2.1-2.1"/></svg>设置</a>
+  </nav>
+  <button class="collapse-btn"><span>‹</span>收起菜单</button>
+</aside>
+<section class="main">
+<header class="topbar">
+  <div class="top-title"><button class="hamburger">☰</button><h1>系统运维 <span>/</span> 服务提供商管理</h1><span class="ops-pill">◉ 运维模式</span></div>
+  <div class="top-actions"><button class="bell">♧<em>12</em></button><button class="help">?</button><button class="profile"><span>○</span>嘉宾（只读）⌄</button></div>
+</header>
+<div class="workspace">
+  <div class="maintenance-banner"><span class="warn-icon">!</span><p>系统维护中：服务提供商切换将自动触发连通性验证，可能影响部分功能响应延迟。</p><button id="endMaintenance">结束维护</button></div>
+  <div class="content-grid">
+    <aside class="category-panel panel">
+      <div class="category-top"><h2>服务分类</h2>
+        <button class="category active" data-filter="all">全部服务</button>
+        <button class="category" data-filter="voice">语音服务</button>
+        <button class="category" data-filter="translation">机器翻译</button>
+        <button class="category" data-filter="ai">AI 能力分析</button>
+        <button class="category" data-filter="mind">思维伙伴</button>
+        <button class="category" data-filter="storage">存储服务</button>
+        <button class="category" data-filter="message">消息服务</button>
+      </div>
+      <img src="./assets/filter-mountain.webp" alt="" class="category-art">
+    </aside>
+
+    <main class="topology-panel panel">
+      <div class="panel-head"><h2>服务连接拓扑图 <button class="info-btn">i</button></h2><div class="legend"><span><i class="g"></i>健康</span><span><i class="y"></i>降级</span><span><i class="r"></i>异常</span><span><i class="n"></i>未配置</span><button class="refresh" id="refreshBtn">↻</button></div></div>
+      <div class="topology-canvas">
+        <svg class="links" viewBox="0 0 850 650" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M425 325 L425 175"/>
+          <path d="M425 325 L265 185"/>
+          <path d="M425 325 L595 185"/>
+          <path d="M425 325 L255 350"/>
+          <path d="M425 325 L600 350"/>
+          <path d="M425 325 L315 505"/>
+          <path d="M425 325 L545 505"/>
+          <circle cx="425" cy="175" r="6"/><circle cx="265" cy="185" r="6"/><circle cx="595" cy="185" r="6"/><circle cx="255" cy="350" r="6"/><circle cx="600" cy="350" r="6"/><circle cx="315" cy="505" r="6"/><circle cx="545" cy="505" r="6"/>
+        </svg>
+        <div class="core-node"><img src="./assets/logo-mark.png" alt=""><strong>语赞心声平台</strong><span><i></i>健康</span><small>最后调用：1 分钟前</small></div>
+        <article class="provider-card p-voice" data-type="voice"><div class="provider-title"><span class="provider-icon red">▥</span><div><h3>语音服务</h3><p>提供商：阿里云语音</p></div></div><dl><div><dt>健康状态：</dt><dd class="healthy">● 健康</dd></div><div><dt>最后调用：</dt><dd>1 分钟前</dd></div><div><dt>降级策略：</dt><dd>切换备选</dd></div></dl><div class="provider-actions"><button data-action="config">配置</button><button data-action="switch">切换</button><button data-action="test">测试</button></div></article>
+        <article class="provider-card p-translation" data-type="translation"><div class="provider-title"><span class="provider-icon green">A<small>译</small></span><div><h3>机器翻译</h3><p>提供商：腾讯云 TMT</p></div></div><dl><div><dt>健康状态：</dt><dd class="healthy">● 健康</dd></div><div><dt>最后调用：</dt><dd>2 分钟前</dd></div><div><dt>降级策略：</dt><dd>切换备选</dd></div></dl><div class="provider-actions"><button data-action="config">配置</button><button data-action="switch">切换</button><button data-action="test">测试</button></div></article>
+        <article class="provider-card p-ai" data-type="ai"><div class="provider-title"><span class="provider-icon gold">AI</span><div><h3>AI 能力分析</h3><p>提供商：通义千问</p></div></div><dl><div><dt>健康状态：</dt><dd class="healthy">● 健康</dd></div><div><dt>最后调用：</dt><dd>1 分钟前</dd></div><div><dt>降级策略：</dt><dd>切换备选</dd></div></dl><div class="provider-actions"><button data-action="config">配置</button><button data-action="switch">切换</button><button data-action="test">测试</button></div></article>
+        <article class="provider-card p-mindmate" data-type="mind"><div class="provider-title"><span class="provider-icon red">♡</span><div><h3>MindMate 思维伙伴</h3><p>提供商：火山引擎</p></div></div><dl><div><dt>健康状态：</dt><dd class="healthy">● 健康</dd></div><div><dt>最后调用：</dt><dd>3 分钟前</dd></div><div><dt>降级策略：</dt><dd>切换备选</dd></div></dl><div class="provider-actions"><button data-action="config">配置</button><button data-action="switch">切换</button><button data-action="test">测试</button></div></article>
+        <article class="provider-card p-mindgraph" data-type="mind"><div class="provider-title"><span class="provider-icon green">⌘</span><div><h3>MindGraph 思维导图</h3><p>提供商：火山引擎</p></div></div><dl><div><dt>健康状态：</dt><dd class="healthy">● 健康</dd></div><div><dt>最后调用：</dt><dd>2 分钟前</dd></div><div><dt>降级策略：</dt><dd>切换备选</dd></div></dl><div class="provider-actions"><button data-action="config">配置</button><button data-action="switch">切换</button><button data-action="test">测试</button></div></article>
+        <article class="provider-card p-storage" data-type="storage"><div class="provider-title"><span class="provider-icon red">▱</span><div><h3>MinIO 存储服务</h3><p>提供商：自建 MinIO</p></div></div><dl><div><dt>健康状态：</dt><dd class="healthy">● 健康</dd></div><div><dt>最后调用：</dt><dd>1 分钟前</dd></div><div><dt>降级策略：</dt><dd>本地缓存</dd></div></dl><div class="provider-actions"><button data-action="config">配置</button><button data-action="switch">切换</button><button data-action="test">测试</button></div></article>
+        <article class="provider-card p-message" data-type="message"><div class="provider-title"><span class="provider-icon gold">✉</span><div><h3>消息服务（邮件 / 短信）</h3><p>提供商：阿里云通信</p></div></div><dl><div><dt>健康状态：</dt><dd class="healthy">● 健康</dd></div><div><dt>最后调用：</dt><dd>1 分钟前</dd></div><div><dt>降级策略：</dt><dd>备用通道</dd></div></dl><div class="provider-actions"><button data-action="config">配置</button><button data-action="switch">切换</button><button data-action="test">测试</button></div></article>
+      </div>
+    </main>
+
+    <aside class="security-panel panel">
+      <section><h2>安全与配置摘要</h2><div class="kv"><span>密钥管理</span><b>已启用密钥掩码与访问控制 <i>◆</i></b></div><div class="kv"><span>密钥轮换周期</span><b>90 天</b></div><div class="kv"><span>最近轮换时间</span><b>2024-04-18 11:22</b></div><div class="kv"><span>访问策略</span><b>最小权限访问</b></div></section>
+      <hr><section><h2>影响范围</h2><div class="kv"><span>已关联模块</span><b>8 个核心模块</b></div><div class="kv"><span>覆盖环境</span><b>生产环境</b></div><div class="kv"><span>预计影响</span><b>切换瞬时可能出现短暂延迟</b></div></section>
+      <hr><section class="connectivity"><h2>连通性测试</h2><div class="steps"><span class="done">1<small>发起请求</small></span><i>→</i><span class="done">2<small>服务响应</small></span><i>→</i><span class="done">3<small>权限校验</small></span><i>→</i><span class="done">4<small>结果判定</small></span></div><label>测试目标服务</label><div class="test-row"><select id="serviceSelect"><option>语音服务（阿里云语音）</option><option>机器翻译（腾讯云 TMT）</option><option>AI 能力分析（通义千问）</option><option>MinIO 存储服务</option></select><button id="startTest">开始测试</button></div><div class="result success"><strong>✓ 测试成功</strong><span>耗时：632ms</span><p>各项指标正常，服务可用。</p></div><div class="result fail"><strong>! 测试失败</strong><span>耗时：-</span><p>服务未响应或校验失败，请检查配置或网络。</p></div><button class="records">查看测试记录 ›</button></section>
+    </aside>
+  </div>
+</div>
+</section>
+</div>
+<div class="modal-backdrop" id="modal"><div class="modal"><button class="close">×</button><h2 id="modalTitle">服务配置</h2><p id="modalDesc">密钥已配置但不可见。更改提供商前请确认影响范围。</p><label>当前提供商<input value="阿里云语音" readonly></label><label>密钥状态<input value="••••••••••••（已配置）" readonly></label><div class="modal-actions"><button class="cancel">取消</button><button class="confirm">确认</button></div></div></div>
+<div class="toast" id="toast"></div>
+<script src="/assets/api-client.js"></script><script src="./app.js"></script>
+</body></html>

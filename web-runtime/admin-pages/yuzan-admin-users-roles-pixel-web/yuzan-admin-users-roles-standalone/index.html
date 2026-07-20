@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>平台管理驾驶舱｜用户与角色</title>
+<link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+<div class="app-shell">
+  <aside class="side-nav">
+    <div class="brand"><img src="./assets/logo-mark.png" alt=""/><div><strong>语赞心声</strong><span>援藏教育公益平台</span></div></div>
+    <nav>
+      <button class="nav-row"><span class="nav-ico">⌂</span><span>驾驶舱</span></button>
+      <button class="nav-row"><span class="nav-ico">⌂</span><span>学校管理</span></button>
+      <button class="nav-row active"><span class="nav-ico users"></span><span>用户管理</span></button>
+      <button class="nav-row"><span class="nav-ico bars"></span><span>课程管理</span></button>
+      <button class="nav-row"><span class="nav-ico radar"></span><span>测评管理</span></button>
+      <button class="nav-row"><span class="nav-ico person"></span><span>志愿者管理</span></button>
+      <button class="nav-row"><span class="nav-ico brief"></span><span>套餐管理</span></button>
+      <button class="nav-row badge-row"><span class="nav-ico edit"></span><span>内容审核</span><em>5</em></button>
+      <button class="nav-row"><span class="nav-ico shield"></span><span>隐私与合规</span></button>
+      <button class="nav-row"><span class="nav-ico gear"></span><span>系统运维</span></button>
+      <button class="nav-row"><span class="nav-ico doc"></span><span>审计日志</span></button>
+      <button class="nav-row"><span class="nav-ico export"></span><span>数据导出</span></button>
+      <button class="nav-row"><span class="nav-ico gear"></span><span>设置</span></button>
+    </nav>
+    <button class="collapse-btn"><span>‹</span>收起菜单</button>
+  </aside>
+
+  <main class="workspace">
+    <header class="topbar">
+      <div class="top-mountain" aria-hidden="true"></div>
+      <div class="top-left"><button class="menu-btn">☰</button><h1>平台管理驾驶舱</h1><span class="readonly"><b>◉</b>只读嘉宾模式</span></div>
+      <div class="top-right"><button class="head-icon bell">♢<em>12</em></button><button class="head-icon">?</button><button class="guest"><span class="guest-avatar"></span><strong>嘉宾（只读）</strong><span>⌄</span></button></div>
+    </header>
+
+    <section class="page-head">
+      <div class="crumb"><strong>用户管理</strong><span>/</span><b>用户与角色</b></div>
+      <div class="actions">
+        <button class="btn primary" data-action="add">添加用户</button>
+        <button class="btn" data-action="import">批量导入</button>
+        <button class="btn" data-action="role">创建角色</button>
+        <i></i>
+        <button class="btn" data-action="disable">禁用</button>
+        <button class="btn" data-action="reset">重置权限</button>
+        <button class="btn">更多操作⌄</button>
+      </div>
+    </section>
+
+    <section class="layout-grid">
+      <aside class="tree-column">
+        <article class="panel role-tree-panel">
+          <div class="panel-title"><h2>角色层级</h2><button>＋</button></div>
+          <div class="tree-list">
+            <div class="tree-group"><button class="tree-head"><span>⌄</span><i class="role-dot red">◆</i><b>平台管理员</b><em>(1)</em></button></div>
+            <div class="tree-group"><button class="tree-head"><span>⌄</span><i class="role-dot green">◆</i><b>学校管理员</b><em>(28)</em></button><div class="tree-children"><button>校级管理员 <em>(12)</em></button><button>院系管理员 <em>(9)</em></button><button>班级管理员 <em>(7)</em></button></div></div>
+            <div class="tree-group"><button class="tree-head"><span>⌄</span><i class="role-dot teal">♧</i><b>教师</b><em>(1,652)</em></button><div class="tree-children"><button>学科教师 <em>(1,102)</em></button><button>辅导教师 <em>(550)</em></button></div></div>
+            <div class="tree-group"><button class="tree-head"><span>⌄</span><i class="role-dot orange">♧</i><b>志愿者</b><em>(486)</em></button><div class="tree-children"><button>校内志愿者 <em>(312)</em></button><button>校外志愿者 <em>(174)</em></button></div></div>
+          </div>
+        </article>
+        <article class="panel permission-tree-panel">
+          <div class="panel-title"><h2>权限树</h2></div>
+          <label class="tree-search"><input placeholder="搜索权限名称"/><span>⌕</span></label>
+          <div class="tree-list permission-list">
+            <div class="tree-group"><button class="tree-head"><span>⌄</span><i class="role-dot red">◆</i><b>平台管理</b></button><div class="tree-children"><button>系统设置</button><button>组织架构管理</button><button class="selected">角色与权限管理</button><button>审计日志查看</button><button>数据导出</button></div></div>
+            <div class="tree-group"><button class="tree-head"><span>⌄</span><i class="role-dot green">◆</i><b>学校管理</b></button><div class="tree-children"><button>学校信息管理</button><button>成员管理</button><button>年级与班级管理</button></div></div>
+            <div class="tree-group compact"><button class="tree-head"><span>›</span><i class="role-dot teal">♧</i><b>课程管理</b></button></div>
+          </div>
+        </article>
+      </aside>
+
+      <section class="table-panel panel">
+        <div class="filters">
+          <select id="roleFilter"><option value="all">全部角色</option><option>学校管理员</option><option>教师</option><option>志愿者</option></select>
+          <select id="statusFilter"><option value="all">全部状态</option><option>正常</option><option>待激活</option><option>已停用</option></select>
+          <select><option>全部学校</option><option>西藏大学</option><option>西藏民族大学</option></select>
+          <label class="search-box"><input id="searchInput" placeholder="搜索姓名/手机号/邮箱/工号"/><span>⌕</span></label>
+          <button class="btn filter-btn">高级筛选</button>
+          <button class="settings-btn">⚙</button>
+        </div>
+        <div class="selection-bar">已选 <b id="selectedCount">0</b> 项 <button id="clearSelection">清空</button></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th class="check-col"><input type="checkbox" id="selectAll"/></th><th>用户信息</th><th>所属组织</th><th>角色</th><th>登录状态</th><th>最近活跃</th><th>多因子认证</th><th>权限范围</th><th>操作</th></tr></thead>
+            <tbody id="userRows">
+              <tr data-name="张三" data-status="正常" data-role="学校管理员"><td><input type="checkbox" class="row-check"/></td><td><div class="user-cell"><span class="mini-avatar"></span><div><b>张三</b><small>zhangsan@xxu.edu.cn<br/>138****0011</small></div></div></td><td>西藏大学<br/>教育学院</td><td><span class="role-tag">学校管理员</span></td><td><span class="state normal">正常</span></td><td>2024-06-04<br/>09:32</td><td><span class="mfa enabled">已启用</span></td><td>本校</td><td><div class="row-actions"><button class="edit">编辑</button><button class="danger">禁用</button><button>更多⌄</button></div></td></tr>
+              <tr data-name="李四" data-status="正常" data-role="教师"><td><input type="checkbox" class="row-check"/></td><td><div class="user-cell"><span class="mini-avatar"></span><div><b>李四</b><small>lisi@xxu.edu.cn<br/>138****0012</small></div></div></td><td>西藏大学<br/>教育学院</td><td><span class="role-tag">教师</span></td><td><span class="state normal">正常</span></td><td>2024-06-04<br/>08:15</td><td><span class="mfa enabled">已启用</span></td><td>本校<br/>教育学院</td><td><div class="row-actions"><button class="edit">编辑</button><button class="danger">禁用</button><button>更多⌄</button></div></td></tr>
+              <tr data-name="王五" data-status="待激活" data-role="教师"><td><input type="checkbox" class="row-check"/></td><td><div class="user-cell"><span class="mini-avatar"></span><div><b>王五</b><small>wangwu@xxu.edu.cn<br/>138****0013</small></div></div></td><td>西藏大学<br/>计算机学院</td><td><span class="role-tag">教师</span></td><td><span class="state pending">待激活</span></td><td>--</td><td><span class="mfa off">未启用</span></td><td>本校<br/>计算机学院</td><td><div class="row-actions"><button class="edit">编辑</button><button class="danger">重发激活</button><button>更多⌄</button></div></td></tr>
+              <tr data-name="赵六" data-status="正常" data-role="班级管理员"><td><input type="checkbox" class="row-check"/></td><td><div class="user-cell"><span class="mini-avatar"></span><div><b>赵六</b><small>zhaoliu@xxu.edu.cn<br/>138****0014</small></div></div></td><td>西藏大学<br/>附属中学</td><td><span class="role-tag">班级管理员</span></td><td><span class="state normal">正常</span></td><td>2024-06-03<br/>17:46</td><td><span class="mfa enabled">已启用</span></td><td>本校<br/>附属中学<br/>初三(2)班</td><td><div class="row-actions"><button class="edit">编辑</button><button class="danger">禁用</button><button>更多⌄</button></div></td></tr>
+              <tr data-name="钱七" data-status="正常" data-role="志愿者"><td><input type="checkbox" class="row-check"/></td><td><div class="user-cell"><span class="mini-avatar"></span><div><b>钱七</b><small>qianqi@xxu.edu.cn<br/>138****0015</small></div></div></td><td>西藏大学<br/>教育学院</td><td><span class="role-tag">志愿者</span></td><td><span class="state normal">正常</span></td><td>2024-06-02<br/>14:21</td><td><span class="mfa off">未启用</span></td><td>指定项目<br/>格桑花支教</td><td><div class="row-actions"><button class="edit">编辑</button><button class="danger">禁用</button><button>更多⌄</button></div></td></tr>
+              <tr data-name="孙八" data-status="已停用" data-role="教师"><td><input type="checkbox" class="row-check"/></td><td><div class="user-cell"><span class="mini-avatar"></span><div><b>孙八</b><small>sunba@xxu.edu.cn<br/>138****0016</small></div></div></td><td>西藏大学<br/>医学院</td><td><span class="role-tag">教师</span></td><td><span class="state disabled">已停用</span></td><td>2024-05-30<br/>11:05</td><td><span class="mfa enabled">已启用</span></td><td>本校<br/>医学院</td><td><div class="row-actions"><button class="edit">编辑</button><button class="enable">启用</button><button>更多⌄</button></div></td></tr>
+              <tr data-name="周九" data-status="正常" data-role="院系管理员"><td><input type="checkbox" class="row-check"/></td><td><div class="user-cell"><span class="mini-avatar"></span><div><b>周九</b><small>zhoujiu@xxu.edu.cn<br/>138****0017</small></div></div></td><td>西藏大学<br/>管理学院</td><td><span class="role-tag">院系管理员</span></td><td><span class="state normal">正常</span></td><td>2024-06-04<br/>10:11</td><td><span class="mfa enabled">已启用</span></td><td>本校<br/>管理学院</td><td><div class="row-actions"><button class="edit">编辑</button><button class="danger">禁用</button><button>更多⌄</button></div></td></tr>
+              <tr data-name="吴十" data-status="待激活" data-role="校级管理员"><td><input type="checkbox" class="row-check"/></td><td><div class="user-cell"><span class="mini-avatar"></span><div><b>吴十</b><small>wushi@xxu.edu.cn<br/>138****0018</small></div></div></td><td>西藏大学<br/>附属小学</td><td><span class="role-tag">校级管理员</span></td><td><span class="state pending">待激活</span></td><td>--</td><td><span class="mfa off">未启用</span></td><td>本校<br/>附属小学</td><td><div class="row-actions"><button class="edit">编辑</button><button class="danger">重发激活</button><button>更多⌄</button></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <footer class="pagination"><span>共 2,167 条</span><div><select><option>20条/页</option></select><button>‹</button><button class="page active">1</button><button class="page">2</button><button class="page">3</button><button class="page">4</button><button class="page">5</button><span>…</span><button class="page">109</button><button>›</button><span>前往</span><input value="1"/><span>页</span></div></footer>
+      </section>
+
+      <aside class="detail-column">
+        <article class="panel detail-card">
+          <h2>角色详情</h2>
+          <div class="role-summary"><span class="detail-shield">◆</span><div><h3 id="detailRole">学校管理员</h3><p>管理本校内的用户、课程、志愿者及相关数据。</p></div><em>正常</em></div>
+          <dl><dt>角色编码</dt><dd>ROLE_SCHOOL_ADMIN</dd><dt>角色类型</dt><dd>系统内置</dd><dt>创建时间</dt><dd>2023-08-15 10:30</dd><dt>创建者</dt><dd>平台管理员</dd><dt>绑定用户</dt><dd>28 人</dd><dt>权限范围</dt><dd>本校</dd></dl>
+          <button class="wide-btn">编辑角色</button>
+        </article>
+        <article class="panel policy-card"><h2>访问策略</h2><dl><dt>权限范围</dt><dd><b>本校（西藏大学）</b><button>修改</button></dd><dt>数据范围</dt><dd>本校及下级院系、班级数据</dd><dt>时间范围</dt><dd>全部时间</dd></dl><p class="hint">ⓘ 该角色默认继承上级角色（平台管理员）的部分权限</p></article>
+        <article class="panel matrix-card"><h2>权限矩阵（模块级）</h2><table><thead><tr><th>模块</th><th>查看</th><th>新增</th><th>编辑</th><th>删除</th><th>导出</th></tr></thead><tbody><tr><td>用户管理</td><td>●</td><td>●</td><td>●</td><td>●</td><td>●</td></tr><tr><td>课程管理</td><td>●</td><td>●</td><td>●</td><td>●</td><td>●</td></tr><tr><td>志愿者管理</td><td>●</td><td>—</td><td>●</td><td>—</td><td class="no">×</td></tr><tr><td>测评管理</td><td>●</td><td>●</td><td>●</td><td>●</td><td class="no">×</td></tr><tr><td>内容审核</td><td>●</td><td>—</td><td class="no">×</td><td class="no">×</td><td class="no">×</td></tr></tbody></table><button class="wide-btn">查看全部权限 ›</button></article>
+      </aside>
+    </section>
+  </main>
+</div>
+<div class="modal-backdrop" id="modalBackdrop" hidden><div class="modal"><div class="modal-head"><h2 id="modalTitle">添加用户</h2><button id="modalClose">×</button></div><div id="modalBody"><label>用户姓名<input placeholder="请输入姓名"/></label><label>所属学校<select><option>请选择学校</option><option>西藏大学</option><option>西藏民族大学</option></select></label><label>分配角色<select><option>学校管理员</option><option>教师</option><option>志愿者</option></select></label></div><footer><button class="btn" id="cancelModal">取消</button><button class="btn primary" id="confirmModal">确认</button></footer></div></div>
+<div class="toast" id="toast"></div>
+<script src="/assets/api-client.js"></script><script src="./app.js"></script>
+</body>
+</html>

@@ -1,6 +1,7 @@
 import { Inject, Injectable } from "@nestjs/common";
 import type { AuthContext } from "../../common/security/auth.types.js";
 import { MembershipRole } from "../../common/security/index.js";
+import { PrismaService } from "../../shared/database/prisma.service.js";
 import {
   AssignmentForbiddenException,
   AssignmentNotFoundException,
@@ -29,6 +30,8 @@ export class AssignmentsService {
   constructor(
     @Inject(ASSIGNMENT_REPOSITORY)
     private readonly assignmentRepo: AssignmentRepositoryPort,
+    @Inject(PrismaService)
+    private readonly prisma: PrismaService,
   ) {}
 
   async listAssignments(
@@ -119,7 +122,60 @@ export class AssignmentsService {
       { ...input, schoolId },
       auth.principal.userId,
     );
+
+    // Create notifications for target students
+    this.createAssignmentNotifications(schoolId, assignment.id, input).catch(() => {
+      // Non-blocking: notification creation failure should not block assignment creation
+    });
+
     return toAssignmentResponse(assignment);
+  }
+
+  /**
+   * Fire-and-forget: create notifications for students targeted by this assignment.
+   */
+  private async createAssignmentNotifications(
+    schoolId: string,
+    assignmentId: string,
+    input: CreateAssignmentInput,
+  ) {
+    // Resolve target student userIds from targets
+    const targetUserIds: string[] = [];
+
+    for (const target of input.targets) {
+      if (target.targetType === "CLASS" && target.classId) {
+        // Get all students in the class
+        const enrollments = await this.prisma.enrollment.findMany({
+          where: { schoolId, classId: target.classId, role: "STUDENT", status: "ACTIVE" },
+          select: { userId: true },
+        });
+        targetUserIds.push(...enrollments.map((e) => e.userId));
+      } else if (target.targetType === "STUDENT" && target.enrollmentId) {
+        const enrollment = await this.prisma.enrollment.findFirst({
+          where: { id: target.enrollmentId, schoolId, status: "ACTIVE" },
+          select: { userId: true },
+        });
+        if (enrollment) targetUserIds.push(enrollment.userId);
+      }
+    }
+
+    // Deduplicate
+    const uniqueUserIds = [...new Set(targetUserIds)];
+
+    // Batch create notifications
+    if (uniqueUserIds.length > 0) {
+      await this.prisma.notification.createMany({
+        data: uniqueUserIds.map((userId) => ({
+          schoolId,
+          recipientUserId: userId,
+          type: "TASK_DEADLINE",
+          priority: "NORMAL",
+          title: "新任务已发布",
+          body: `您有一项新的学习任务，请及时完成`,
+          actionUrl: `/student/today`,
+        })),
+      });
+    }
   }
 
   async updateAssignment(
@@ -259,5 +315,93 @@ export class AssignmentsService {
     }
 
     await this.assignmentRepo.softDelete(schoolId, assignmentId);
+  }
+
+  /**
+   * Get submission statistics for an assignment.
+   * Returns total target students, submitted count, and reviewed count.
+   */
+  async getAssignmentStats(
+    auth: AuthContext,
+    schoolId: string,
+    assignmentId: string,
+  ) {
+    if (!this.policy.canReadAssignment(auth, schoolId)) {
+      throw new AssignmentForbiddenException();
+    }
+
+    const assignment = await this.assignmentRepo.findById(schoolId, assignmentId);
+    if (!assignment) {
+      throw new AssignmentNotFoundException();
+    }
+
+    // Count target students from assignment targets
+    const targets = (assignment as unknown as Record<string, unknown>).targets as Array<{ targetType: string; classId?: string | null; enrollmentId?: string | null }> | undefined;
+    const targetClassIds = (targets ?? [])
+      .filter((t) => t.targetType === "CLASS" && t.classId)
+      .map((t) => t.classId!);
+
+    const targetEnrollmentIds = (targets ?? [])
+      .filter((t) => t.targetType === "STUDENT" && t.enrollmentId)
+      .map((t) => t.enrollmentId!);
+
+    // Count total target students
+    let totalStudents = 0;
+    if (targetClassIds.length > 0) {
+      const classStudentCount = await this.prisma.enrollment.count({
+        where: {
+          schoolId,
+          classId: { in: targetClassIds },
+          role: "STUDENT",
+          status: "ACTIVE",
+        },
+      });
+      totalStudents += classStudentCount;
+    }
+    totalStudents += targetEnrollmentIds.length;
+
+    // Count submissions by status
+    const [
+      submittedCount,
+      reviewedCount,
+      needsReviewCount,
+    ] = await Promise.all([
+      this.prisma.submission.count({
+        where: {
+          schoolId,
+          assignmentId,
+          status: { in: ["SUBMITTED", "NEEDS_REVIEW", "REVIEWED", "ACCEPTED"] },
+          deletedAt: null,
+        },
+      }),
+      this.prisma.submission.count({
+        where: {
+          schoolId,
+          assignmentId,
+          status: { in: ["REVIEWED", "ACCEPTED"] },
+          deletedAt: null,
+        },
+      }),
+      this.prisma.submission.count({
+        where: {
+          schoolId,
+          assignmentId,
+          status: "NEEDS_REVIEW",
+          deletedAt: null,
+        },
+      }),
+    ]);
+
+    const notSubmittedCount = Math.max(0, totalStudents - submittedCount);
+
+    return {
+      assignmentId,
+      totalStudents,
+      submittedCount,
+      notSubmittedCount,
+      reviewedCount,
+      needsReviewCount,
+      submissionRate: totalStudents > 0 ? Math.round((submittedCount / totalStudents) * 100) : 0,
+    };
   }
 }

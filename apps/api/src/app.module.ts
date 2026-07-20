@@ -24,6 +24,14 @@ import { TrainingModule } from "./modules/training/training.module.js";
 import { TranslationsModule } from "./modules/translations/translations.module.js";
 import { VolunteersModule } from "./modules/volunteers/volunteers.module.js";
 import { MvpGapsModule } from "./modules/mvp-gaps/mvp-gaps.module.js";
+import { TeacherModule } from "./modules/teacher/teacher.module.js";
+import { RecordingsModule } from "./modules/recordings/recordings.module.js";
+import { SpeechJobModule } from "./modules/speech-job/speech-job.module.js";
+import { StudentDashboardModule } from "./modules/student-dashboard/student-dashboard.module.js";
+import { AssessmentModule } from "./modules/assessment/assessment.module.js";
+import { SyncModule } from "./modules/sync/sync.module.js";
+import { TeacherToolsModule } from "./modules/teacher-tools/teacher-tools.module.js";
+import { InternalModule } from "./modules/internal/internal.module.js";
 import { DatabaseModule } from "./shared/database/index.js";
 
 markRootHealthRoutesPublic();
@@ -55,6 +63,14 @@ applyRootRouteCompatibility();
     ReportingModule,
     OfflineModule,
     OperationsModule,
+    TeacherModule,
+    RecordingsModule,
+    SpeechJobModule,
+    StudentDashboardModule,
+    AssessmentModule,
+    SyncModule,
+    TeacherToolsModule,
+    InternalModule,
     // P2 stub modules expose routes but return PERSISTENCE_PENDING /
     // UNAVAILABLE / PROVIDER_NOT_CONFIGURED so they cannot block MVP.
     MvpGapsModule,

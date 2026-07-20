@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#fffdf9" />
+  <title>一对一帮扶管理｜语赞心声</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="brand">
+      <img src="./assets/logo-mark.png" alt="" class="brand-mark" />
+      <div class="brand-copy"><strong>语赞心声</strong><span>援藏教育公益平台</span></div>
+    </div>
+    <nav class="nav" aria-label="志愿者导航">
+      <a href="#" class="nav-item"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 19.5z"/><path d="M9 21v-7h6v7"/></svg><span>工作台</span></a>
+      <a href="#" class="nav-item"><svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="16" rx="2"/><path d="M9 2v4M15 2v4M8 11h8M8 15h5"/></svg><span>学习与培训</span></a>
+      <a href="#" class="nav-item active"><svg viewBox="0 0 24 24"><path d="M6 4h12l2 4v12H4V8z"/><path d="M8 12h8M8 16h5"/></svg><span>服务任务</span></a>
+      <a href="#" class="nav-item"><svg viewBox="0 0 24 24"><path d="M6 3h12v18H6z"/><path d="M9 7h6M9 11h6M9 15h6"/></svg><span>服务记录</span></a>
+      <a href="#" class="nav-item"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 16V9M12 16V6M16 16v-4"/></svg><span>成长与证书</span></a>
+      <a href="#" class="nav-item"><svg viewBox="0 0 24 24"><path d="M4 7h16v12H4zM7 4h10v3"/><path d="M8 13h8"/></svg><span>资源中心</span></a>
+      <a href="#" class="nav-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/></svg><span>公益社区</span></a>
+      <a href="#" class="nav-item with-badge"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 7h18s-3 0-3-7M10 20h4"/></svg><span>消息中心</span><b>3</b></a>
+      <a href="#" class="nav-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.9 4.9 7 7M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1 7 17M17 7l2.1-2.1"/></svg><span>帮助与支持</span></a>
+    </nav>
+    <div class="sidebar-art"><img src="./assets/sidebar-art.webp" alt="" /></div>
+    <button class="switch-role"><svg viewBox="0 0 24 24"><circle cx="8" cy="10" r="3"/><circle cx="16" cy="8" r="2.4"/><path d="M3 20a5 5 0 0 1 10 0M14 18c.6-1.8 2.2-3 4.3-3 1 0 1.9.2 2.7.7"/></svg>切换身份</button>
+  </aside>
+
+  <section class="main">
+    <header class="topbar">
+      <div class="title-block"><h1>一对一帮扶管理</h1><p>用心陪伴，用爱成长，助力每一个孩子看见更广阔的世界</p></div>
+      <div class="top-right-art"><img src="./assets/hero-top.webp" alt="" /></div>
+      <div class="user-actions">
+        <button class="top-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M4 12h16M12 4a15 15 0 0 1 0 16M12 4a15 15 0 0 0 0 16"/></svg></button>
+        <button class="top-icon notify"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 7h18s-3 0-3-7M10 20h4"/></svg><span>3</span></button>
+        <button class="profile-btn"><span class="avatar teacher">李</span><strong>李明</strong><svg viewBox="0 0 24 24"><path d="m7 9 5 5 5-5"/></svg></button>
+      </div>
+    </header>
+
+    <div class="page-grid">
+      <aside class="pairing-list card">
+        <div class="list-head"><h2>当前帮扶 <span>(3)</span></h2><button id="filterBtn"><svg viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></svg>筛选</button></div>
+        <div class="student-list" id="studentList">
+          <button class="student-card selected" data-student="A" data-name="学生 A" data-grade="小学四年级" data-status="帮扶中">
+            <span class="student-avatar a"></span><span class="student-info"><strong>学生 A <em>(小四)</em></strong><small>小学四年级</small></span><b class="status green">帮扶中</b>
+          </button>
+          <button class="student-card" data-student="B" data-name="学生 B" data-grade="初中一年级" data-status="准备中">
+            <span class="student-avatar b"></span><span class="student-info"><strong>学生 B <em>(初一)</em></strong><small>初中一年级</small></span><b class="status orange">准备中</b>
+          </button>
+          <button class="student-card" data-student="C" data-name="学生 C" data-grade="小学二年级" data-status="已结束">
+            <span class="student-avatar c"></span><span class="student-info"><strong>学生 C <em>(小二)</em></strong><small>小学二年级</small></span><b class="status gray">已结束</b>
+          </button>
+        </div>
+        <button class="add-student" id="addStudentBtn">＋ 添加帮扶对象</button>
+      </aside>
+
+      <main class="center-column">
+        <section class="flow-card card">
+          <h2>帮扶流程</h2>
+          <div class="flow" id="flow">
+            <button class="flow-step active"><span>1</span><strong>目标</strong><small>明确方向</small></button><i></i>
+            <button class="flow-step"><span>2</span><strong>活动</strong><small>计划执行</small></button><i></i>
+            <button class="flow-step"><span>3</span><strong>复盘</strong><small>总结改进</small></button><i></i>
+            <button class="flow-step"><span>4</span><strong>持续陪伴</strong><small>共同成长</small></button>
+          </div>
+        </section>
+
+        <section class="two-col">
+          <div>
+            <section class="goal-card card"><div class="card-title"><h2>帮扶目标</h2><button class="text-action" id="editGoalBtn"><svg viewBox="0 0 24 24"><path d="m4 20 4-1 10-10-3-3L5 16l-1 4zM14 5l3 3"/></svg>编辑</button></div><p id="goalText">提升阅读理解能力和学习兴趣，培养良好学习习惯</p></section>
+            <section class="plan-card card"><h2>阶段计划</h2><div class="timeline">
+              <article class="phase current"><span></span><div><strong>阶段一：阅读兴趣建立（第1-4周）</strong><p>了解学生阅读兴趣，完成每日阅读打卡，培养阅读习惯</p></div><b>进行中</b></article>
+              <article class="phase"><span></span><div><strong>阶段二：阅读能力提升（第5-12周）</strong><p>掌握阅读方法，提升理解能力，完成阅读笔记</p></div><b>待开始</b></article>
+              <article class="phase"><span></span><div><strong>阶段三：学习方法优化（第13-20周）</strong><p>总结学习方法，建立错题本，提升综合学习能力</p></div><b>待开始</b></article>
+            </div></section>
+          </div>
+          <section class="difficulty-card card"><h2>学习困难摘要</h2><ul><li>阅读理解能力有待提升</li><li>注意力容易分散，学习效率不稳定</li><li>缺乏系统的学习方法和计划</li><li>对部分学科存在畏难情绪</li></ul><button class="text-link">展开更多 ›</button></section>
+        </section>
+
+        <section class="history-card card"><h2>历次沟通</h2>
+          <div class="history-list">
+            <article><div><strong>第8次沟通</strong><small>2024-11-20 16:30</small></div><p>讨论了课文理解的疑问，学生尝试用思维导图梳理内容，效果较好。</p><button>线上沟通 ›</button></article>
+            <article><div><strong>第7次沟通</strong><small>2024-11-13 16:30</small></div><p>分享了阅读方法，布置了阅读笔记任务，学生积极完成。</p><button>线上沟通 ›</button></article>
+            <article><div><strong>第6次沟通</strong><small>2024-11-06 16:30</small></div><p>了解近期学习情况，制定本周阅读计划，鼓励坚持。</p><button>线上沟通 ›</button></article>
+          </div>
+          <button class="all-history">查看全部沟通记录（8） ›</button>
+        </section>
+      </main>
+
+      <aside class="right-column">
+        <section class="teacher-card card"><h2>教师确认</h2><div class="teacher-row"><span class="avatar female">次</span><div><strong>次仁老师</strong><small>项目教师</small></div><b>已确认</b></div><p>确认时间：2024-09-01 10:30</p><button class="outline-wide" id="contactTeacherBtn"><svg viewBox="0 0 24 24"><path d="M4 5h16v12H8l-4 3z"/></svg>联系教师</button></section>
+        <section class="appointment-card card"><h2>预约沟通</h2><p>下次沟通时间</p><strong>2024-12-04（周三）16:30</strong><div><button class="outline-red" id="adjustTimeBtn">调整时间</button><button class="primary-red" id="startCallBtn"><svg viewBox="0 0 24 24"><path d="M4 8h12v8H4zM16 10l4-2v8l-4-2z"/></svg>发起沟通</button></div></section>
+        <section class="service-card card"><h2>服务记录</h2><div class="stats"><div><span class="stat-icon"><svg viewBox="0 0 24 24"><path d="M5 18v-4a7 7 0 0 1 14 0v4"/><path d="M7 17c1.5 2 3 3 5 3s3.5-1 5-3"/></svg></span><b>8<small> 次</small></b><em>累计沟通</em></div><div><span class="stat-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><b>6.5<small> 小时</small></b><em>累计时长</em></div><div><span class="stat-icon"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4-7-10a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 6-7 10-7 10z"/></svg></span><b>56<small> 天</small></b><em>累计陪伴</em></div></div><button class="outline-wide">查看服务记录 ›</button></section>
+        <section class="risk-card card"><div class="risk-title"><svg viewBox="0 0 24 24"><path d="M12 3 4 6v5c0 5 3 8 8 10 5-2 8-5 8-10V6z"/><path d="M12 8v4M12 16h.01"/></svg><div><h2>风险标记</h2><p>当前无风险标记<br/>如发现风险，请及时标记并上报</p></div></div><button id="riskBtn">标记风险</button></section>
+        <section class="end-card card"><h2>结束帮扶</h2><p>结束后将归档记录，无法继续沟通</p><button class="primary-red full" id="endPairingBtn">结束帮扶关系</button></section>
+      </aside>
+    </div>
+  </section>
+</div>
+
+<div class="modal-backdrop" id="modal" hidden>
+  <section class="modal" role="dialog" aria-modal="true"><button class="modal-close" id="modalClose">×</button><div class="modal-content"><h2 id="modalTitle">操作确认</h2><p id="modalText"></p><div class="modal-actions"><button class="secondary" id="modalCancel">取消</button><button class="primary-red" id="modalConfirm">确认</button></div></div></section>
+</div>
+<div class="toast" id="toast"></div>
+<script src="./app.js"></script>
+</body></html>

@@ -29,5 +29,11 @@ export interface FeedbackRepositoryPort {
     options: ListPendingFeedbackOptions,
   ): Promise<PaginatedResult<Feedback>>;
 
+  findByStudentEnrollments(
+    schoolId: string,
+    enrollmentIds: readonly string[],
+    options?: { limit?: number; cursor?: string },
+  ): Promise<PaginatedResult<Feedback>>;
+
   save(input: CreateFeedbackInput): Promise<Feedback>;
 }

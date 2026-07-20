@@ -1,0 +1,16 @@
+{
+  "viewport": [
+    1659,
+    948
+  ],
+  "errors": [],
+  "checks": {
+    "document_size": {
+      "w": 1659,
+      "h": 948
+    },
+    "certificate_modal_visible": true,
+    "modal_closed": true,
+    "review_modal_title": "复习课程"
+  }
+}

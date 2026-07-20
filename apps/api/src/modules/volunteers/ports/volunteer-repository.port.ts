@@ -36,6 +36,7 @@ export interface VolunteerRepositoryPort {
   listServiceTasks(schoolId: string, options: ListServiceTasksOptions): Promise<PaginatedResult<VolunteerServiceTask>>;
   findServiceTaskById(schoolId: string, taskId: string): Promise<VolunteerServiceTask | null>;
   assignServiceTask(schoolId: string, taskId: string, volunteerId: string): Promise<VolunteerServiceTask>;
+  updateServiceTaskStatus(schoolId: string, taskId: string, volunteerId: string, status: string): Promise<VolunteerServiceTask>;
   createIncidentReport(schoolId: string, data: CreateIncidentData): Promise<IncidentReport>;
   findIncidentById(schoolId: string, incidentId: string): Promise<IncidentReport | null>;
   listIncidents(schoolId: string, options: { severity?: string | undefined; status?: string | undefined; limit: number; cursor?: string | undefined }): Promise<PaginatedResult<IncidentReport>>;

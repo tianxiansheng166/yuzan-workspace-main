@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#f6f2ed" />
+  <title>语赞心声｜学生书面练习</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<svg class="svg-sprite" aria-hidden="true">
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11.2 12 3l9 8.2v8.3a1.5 1.5 0 0 1-1.5 1.5h-5v-6h-5v6h-5A1.5 1.5 0 0 1 3 19.5z"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5.5A3.5 3.5 0 0 1 7.5 2H11v17H7.5A3.5 3.5 0 0 0 4 22zM20 5.5A3.5 3.5 0 0 0 16.5 2H13v17h3.5A3.5 3.5 0 0 1 20 22z"/></symbol>
+  <symbol id="i-wave" viewBox="0 0 24 24"><path d="M3 10v4M6 7v10M9 4v16M12 8v8M15 5v14M18 9v6M21 11v2"/></symbol>
+  <symbol id="i-growth" viewBox="0 0 24 24"><path d="M12 21V11M12 12c-4-1-7-3-7-7 4 0 7 2 7 6M12 13c4-1 7-3 7-7-4 0-7 2-7 6"/><path d="M7 21h10"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 20h16"/></symbol>
+  <symbol id="i-books" viewBox="0 0 24 24"><rect x="4" y="3" width="12" height="18" rx="2"/><path d="M8 3v18M18 6h2v14h-2"/></symbol>
+  <symbol id="i-pencil" viewBox="0 0 24 24"><path d="m4 17-.8 4 4-.8L19 8.4 15.6 5zM14 6.6l3.4 3.4"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 2h8l4 4v16H6zM14 2v5h5M9 12h6m-6 4h6"/></symbol>
+  <symbol id="i-message" viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 1-3-6.2L21 4l-.8 4A8 8 0 0 1 20 11Z"/><path d="M8 10h8m-8 4h5"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m6 12 4 4 8-9"/></symbol>
+  <symbol id="i-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="m10 13 4-4M8 15l-1.5 1.5a3.5 3.5 0 0 1-5-5L5 8a3.5 3.5 0 0 1 5 0M16 9l1.5-1.5a3.5 3.5 0 0 1 5 5L19 16a3.5 3.5 0 0 1-5 0"/></symbol>
+  <symbol id="i-volume" viewBox="0 0 24 24"><path d="M5 10h4l5-4v12l-5-4H5zM17 9a5 5 0 0 1 0 6"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+  <symbol id="i-left" viewBox="0 0 24 24"><path d="m15 5-7 7 7 7"/></symbol>
+  <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M6 18h12a4 4 0 0 0 .6-8A7 7 0 0 0 5.3 8.5 4.8 4.8 0 0 0 6 18Z"/></symbol>
+  <symbol id="i-offline" viewBox="0 0 24 24"><path d="M3 8a16 16 0 0 1 18 0M6 12a11 11 0 0 1 10-1M9 16a6 6 0 0 1 4-.4M12 20h.01M3 3l18 18"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+</svg>
+
+<div class="app" id="app">
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="语赞心声首页">
+      <img src="assets/logo-symbol.png" alt="" />
+      <span><strong>语赞心声</strong><small>用声音连接心与心</small></span>
+    </a>
+    <nav class="topnav" aria-label="顶部导航">
+      <button class="topnav-item"><svg><use href="#i-home"/></svg><span>今日</span></button>
+      <button class="topnav-item"><svg><use href="#i-book"/></svg><span>课程</span></button>
+      <button class="topnav-item"><svg><use href="#i-wave"/></svg><span>测评</span></button>
+      <button class="topnav-item"><svg><use href="#i-growth"/></svg><span>成长</span></button>
+      <button class="topnav-item"><svg><use href="#i-user"/></svg><span>我的</span></button>
+    </nav>
+    <div class="top-actions">
+      <button class="offline-manage" id="offlineManage"><svg><use href="#i-download"/></svg><span>离线管理</span></button>
+      <span class="online-state" id="onlineState"><i></i>离线可用</span>
+      <button class="student-menu" id="studentMenu">
+        <img src="assets/student-avatar.jpg" alt="学生头像" />
+        <span><strong>扎西罗布</strong><small>六年级</small></span>
+        <svg><use href="#i-chevron"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="page-grid">
+    <aside class="sidebar" id="sidebar">
+      <section class="student-card">
+        <img src="assets/student-avatar.jpg" alt="学生头像" />
+        <div><strong>扎西罗布</strong><span>六年级学生</span><small>拉萨市城关区第一小学</small></div>
+      </section>
+      <nav class="side-nav" aria-label="学生导航">
+        <button><svg><use href="#i-books"/></svg><span>课程中心</span></button>
+        <button><svg><use href="#i-home"/></svg><span>我的学习</span></button>
+        <button class="active"><svg><use href="#i-pencil"/></svg><span>练习</span></button>
+        <button><svg><use href="#i-download"/></svg><span>我的下载</span></button>
+        <button><svg><use href="#i-file"/></svg><span>学习记录</span></button>
+        <button><svg><use href="#i-message"/></svg><span>教师反馈</span></button>
+      </nav>
+      <section class="weekly-card">
+        <div class="weekly-head"><strong>本周学习目标</strong><span><b>2</b> / 4</span></div>
+        <div class="goal-row"><p>完成 4 次朗读练习</p><div class="mini-progress"><i style="width:64%"></i></div></div>
+        <div class="goal-row green"><p>完成 2 篇阅读理解</p><div class="mini-progress"><i style="width:64%"></i></div></div>
+        <button>查看目标详情 <svg><use href="#i-chevron"/></svg></button>
+      </section>
+    </aside>
+
+    <main class="workspace">
+      <section class="page-intro">
+        <div class="intro-copy">
+          <div class="breadcrumb">练习中心 <span>›</span> 阅读写作 <span>›</span> 练习详情</div>
+          <div class="title-row"><h1>高原上的春天</h1><span class="type-pill">阅读理解</span></div>
+          <div class="meta-row"><span>语文 · 六年级下册</span><i></i><span>第三单元</span><i></i><span>难度 <b class="stars">★ ★ ★</b><b class="empty-stars">☆ ☆</b></span></div>
+        </div>
+        <div class="mountain-ridge" aria-hidden="true"></div>
+        <div class="autosave-top" id="autosaveTop"><svg><use href="#i-check-circle"/></svg><span>已自动保存草稿 10:24:35</span></div>
+      </section>
+
+      <section class="work-grid">
+        <section class="exercise-panel">
+          <div class="stepper" id="stepper">
+            <button class="step active" data-step="0"><span>1</span><b>文章理解</b></button>
+            <i></i>
+            <button class="step" data-step="1"><span>2</span><b>词句赏析</b></button>
+            <i></i>
+            <button class="step" data-step="2"><span>3</span><b>阅读思考</b></button>
+            <i></i>
+            <button class="step" data-step="3"><span>4</span><b>表达运用</b></button>
+          </div>
+
+          <article class="reading-card">
+            <h2>阅读下面的短文，完成练习。</h2>
+            <div class="article-body" id="articleBody">
+              <p>高原的春天，是从冰雪消融开始的。远处的雪山在阳光下银光闪闪，近处的山坡上，枯黄的小草悄悄探出头来，像是在打量这个熟悉又陌生的世界。风，依旧带着一丝寒意，却多了几分温柔，吹拂着沉睡一冬的土地。</p>
+              <p>不知从哪一天起，溪流开始欢唱，叮冬叮冬，仿佛在呼唤着春天的脚步。接着，野花一朵两朵地开了，红的、黄的、蓝的、紫的，点缀在草地上，像一块块彩色的地毯。牦牛悠闲地吃着嫩草，牧民的脸上也洒满了笑容。</p>
+              <p>高原的春天，来得虽晚，却用最热烈的色彩，告诉人们：生命的力量，永远不会被严寒击败。</p>
+            </div>
+          </article>
+
+          <section class="question-card">
+            <div class="question-head"><div><strong id="questionLabel">问题 1</strong><span>（必答题）</span></div><b id="questionScore">5 分</b></div>
+            <p id="questionText">短文是按照怎样的顺序描写高原春天的？请简要概括。</p>
+            <div class="answer-wrap">
+              <textarea id="answerInput" maxlength="300" placeholder="请在这里输入你的答案..."></textarea>
+              <span class="counter" id="counter">0 / 300</span>
+            </div>
+            <div class="answer-tools">
+              <div><button id="insertSymbol"><svg><use href="#i-link"/></svg>插入符号</button><button id="readQuestion"><svg><use href="#i-volume"/></svg>朗读题目</button></div>
+              <span class="save-state" id="saveState"><svg><use href="#i-check-circle"/></svg>你的答案将自动保存</span>
+            </div>
+          </section>
+
+          <div class="bottom-actions">
+            <button class="secondary" id="prevBtn">上一步</button>
+            <button class="text-action" id="skipBtn">跳过本题 <svg><use href="#i-chevron"/></svg></button>
+            <button class="primary" id="nextBtn">下一题</button>
+          </div>
+        </section>
+
+        <aside class="right-column">
+          <section class="rubric-card panel-card">
+            <div class="panel-head"><h2>教师评分标准</h2><button>查看详细评分细则 <svg><use href="#i-chevron"/></svg></button></div>
+            <div class="rubric-table">
+              <div class="rubric-row header"><span>评分维度</span><span>权重</span><span>满分</span></div>
+              <div class="rubric-row"><span><strong>内容理解</strong><small>准确把握文章内容要点</small></span><b>40%</b><b>2 分</b></div>
+              <div class="rubric-row"><span><strong>概括能力</strong><small>能够提炼关键信息并概括</small></span><b>30%</b><b>1.5 分</b></div>
+              <div class="rubric-row"><span><strong>表达条理</strong><small>语言通顺，条理清晰</small></span><b>20%</b><b>1 分</b></div>
+              <div class="rubric-row"><span><strong>书写规范</strong><small>书写工整，标点正确</small></span><b>10%</b><b>0.5 分</b></div>
+              <div class="rubric-row total"><span>总分</span><b></b><b>5 分</b></div>
+            </div>
+          </section>
+
+          <section class="feedback-card panel-card">
+            <div class="feedback-head"><h2>教师反馈</h2></div>
+            <div class="teacher-line"><img src="assets/teacher-avatar.jpg" alt="教师头像" /><strong>次仁老师</strong><time>05-20 14:32</time></div>
+            <div class="teacher-copy"><p>扎西罗布同学：</p><p>你对高原春天的整体感受很到位，能抓住景物变化的顺序进行描述。</p><p>继续加油，尝试用更丰富的词语来表达，你会写得更生动！</p></div>
+            <img class="grass" src="assets/grass.svg" alt="" />
+          </section>
+
+          <section class="mobile-status panel-card">
+            <h2>保存与提交状态</h2>
+            <div class="status-line"><svg><use href="#i-cloud"/></svg><span id="mobileStatusText">草稿已保存到本地</span></div>
+            <button id="mobileSubmit">提交练习</button>
+          </section>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="打开菜单"><svg><use href="#i-menu"/></svg></button>
+</div>
+
+<div class="drawer-backdrop" id="drawerBackdrop"></div>
+<div class="submit-modal" id="submitModal" aria-hidden="true">
+  <div class="modal-backdrop" data-close-modal></div>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="submitTitle">
+    <button class="modal-close" data-close-modal aria-label="关闭"><svg><use href="#i-close"/></svg></button>
+    <div class="modal-icon"><svg><use href="#i-file"/></svg></div>
+    <h2 id="submitTitle">提交练习前确认</h2>
+    <p id="submitSummary">你还有 3 道题未完成。可以继续作答，也可以先保存草稿。</p>
+    <div class="incomplete-list" id="incompleteList"></div>
+    <div class="modal-actions"><button class="secondary" data-close-modal>继续作答</button><button class="primary" id="confirmSubmit">仍然提交</button></div>
+  </div>
+</div>
+
+<div class="offline-popover" id="offlinePopover">
+  <strong>离线练习管理</strong>
+  <p>当前练习已缓存，可在无网络时继续作答。联网后会提示同步，不会伪造已同步状态。</p>
+  <button id="toggleOffline">模拟切换网络状态</button>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<script src="app.js"></script>
+</body>
+</html>

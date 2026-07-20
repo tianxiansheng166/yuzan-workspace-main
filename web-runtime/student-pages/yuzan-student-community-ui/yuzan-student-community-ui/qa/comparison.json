@@ -1,0 +1,10 @@
+{
+  "viewport": [
+    1659,
+    948
+  ],
+  "mae_rgb_0_255": 17.411,
+  "rmse_rgb_0_255": 38.79,
+  "normalized_pixel_similarity_percent": 93.17,
+  "note": "Metrics compare the reference raster with the rendered code rebuild; text antialiasing and independent asset crops materially affect pixel scores."
+}

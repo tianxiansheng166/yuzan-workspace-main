@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#fbfaf7" />
+  <title>测评任务列表｜语赞心声</title>
+  <link rel="stylesheet" href="./styles.css" />
+<link rel="stylesheet" href="/shared/teacher-shell.css" />
+  
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="主导航">
+      <div class="brand">
+        <img class="brand-mark" src="./assets/yuzan-logo-mark.png" alt="" />
+        <div class="brand-copy">
+          <strong>语赞心声</strong>
+          <span>智趣教育公益平台</span>
+        </div>
+      </div>
+
+      <nav class="nav-list">
+        <a class="nav-item" href="/teacher/courses/">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M8 9h8M8 13h5M7 3v4M17 3v4"/></svg>
+          </span>
+          <span><b>课程</b><small>备课与资源</small></span>
+        </a>
+        <a class="nav-item" href="/teacher/assignments">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24"><path d="M6 5h12l2 4v10H4V9zM8 5V3h8v2M8 11h8M8 15h5"/></svg>
+          </span>
+          <span><b>任务</b><small>发布与管理</small></span>
+        </a>
+        <a class="nav-item active" href="/teacher/assessments" aria-current="page">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="m8 12 3 3 5-7"/></svg>
+          </span>
+          <span><b>测评</b><small>学习与练习</small></span>
+        </a>
+        <a class="nav-item" href="/teacher/reviews/submission-1/">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24"><path d="M4 5h16v14H4zM7 15l3-3 2 2 3-4 2 3"/></svg>
+          </span>
+          <span><b>复核</b><small>朗读与反馈</small></span>
+        </a>
+        <a class="nav-item" href="/teacher/assessments/detail/">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24"><path d="M4 4h16v16H4zM8 16V9M12 16V6M16 16v-4"/></svg>
+          </span>
+          <span><b>报告</b><small>学情与成长</small></span>
+        </a>
+      </nav>
+
+      <a class="support-link" href="/teacher/assessments/" data-unsupported="true" title="公益与支持页面暂未开通">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 20s-7-4.3-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.7-7 10-7 10z"/></svg>
+        </span>
+        <b>公益与支持</b>
+      </a>
+
+      <div class="sidebar-art" aria-hidden="true">
+        <img src="./assets/sidebar-mountain.webp" alt="" />
+        <span class="sun-dot"></span>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="breadcrumbs">
+          <span>首页</span><b>›</b><span>测评</span><b>›</b><strong>任务列表</strong>
+        </div>
+
+        <div class="context-selectors">
+          <button class="context-button">
+            <svg viewBox="0 0 24 24"><path d="M3 10 12 3l9 7M5 9v11h14V9M9 20v-6h6v6"/></svg>
+            <span>林芝市第一中学</span><b>⌄</b>
+          </button>
+          <button class="context-button">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 20c0-4 3-7 7-7s7 3 7 7"/></svg>
+            <span>2024-2025 学年下学期</span><b>⌄</b>
+          </button>
+        </div>
+
+        <div class="top-actions">
+          <button class="help-button">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.8 9a2.4 2.4 0 1 1 3.6 2.1c-.9.5-1.4 1.1-1.4 2M12 17h.01"/></svg>
+            帮助
+          </button>
+          <button class="icon-button notification" aria-label="通知">
+            <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 7h18s-3 0-3-7M10 20h4"/></svg>
+            <span>12</span>
+          </button>
+          <button class="profile-button">
+            <span class="avatar teacher-avatar">扎</span>
+            <span><strong>扎西卓玛</strong><small>普通话教师</small></span>
+            <b>⌄</b>
+          </button>
+        </div>
+      </header>
+
+      <section class="page">
+        <header class="page-heading">
+          <div>
+            <h1>测评任务列表</h1>
+            <p>创建、管理与跟踪学生测评任务的进度与效果，支持多维度筛选与数据分析。</p>
+          </div>
+          <div class="heading-actions">
+            <button class="export-button" data-action="export" disabled title="导出功能暂未开通，请联系管理员">
+              <svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 19h14"/></svg>
+              导出数据
+            </button>
+            <button class="create-button" data-route="/teacher/assessments/create">
+              <svg viewBox="0 0 24 24"><path d="M12 4v16M4 12h16"/></svg>
+              创建测评任务
+            </button>
+          </div>
+        </header>
+
+        <section class="filter-bar">
+          <label class="search-box">
+            <svg viewBox="0 0 24 24"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></svg>
+            <input id="searchInput" type="search" placeholder="搜索任务名称 / 内容" />
+          </label>
+
+          <label class="filter-field">
+            <span>任务类型</span>
+            <select id="typeFilter">
+              <option value="all">全部</option>
+              <option value="reading">朗读</option>
+              <option value="recognition">识别</option>
+              <option value="speaking">说话</option>
+              <option value="review">复测</option>
+            </select>
+          </label>
+
+          <label class="filter-field">
+            <span>测评范围</span>
+            <select id="scopeFilter">
+              <option value="all">全部</option>
+              <option value="grade5">五年级</option>
+              <option value="class2">五年级二班</option>
+              <option value="class3">五年级三班</option>
+            </select>
+          </label>
+
+          <label class="filter-field">
+            <span>所属班级</span>
+            <select id="classFilter">
+              <option value="all">全部</option>
+              <option value="class1">五年级一班</option>
+              <option value="class2">五年级二班</option>
+              <option value="class3">五年级三班</option>
+            </select>
+          </label>
+
+          <label class="filter-field">
+            <span>状态</span>
+            <select id="statusFilter">
+              <option value="all">全部</option>
+              <option value="ongoing">进行中</option>
+              <option value="completed">已完成</option>
+              <option value="failed">未通过</option>
+              <option value="paused">已暂停</option>
+              <option value="expired">已过期</option>
+              <option value="empty">无参与</option>
+            </select>
+          </label>
+
+          <label class="date-field">
+            <span>创建时间</span>
+            <div>
+              <input id="startDate" type="text" placeholder="开始日期" />
+              <i>~</i>
+              <input id="endDate" type="text" placeholder="结束日期" />
+              <svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>
+            </div>
+          </label>
+
+          <button class="reset-button" id="resetBtn">重置</button>
+        </section>
+
+        <section class="task-groups" id="taskGroups">
+          <section class="task-group expanded" data-group="ongoing">
+            <button class="group-heading" aria-expanded="true">
+              <span class="chevron">⌄</span>
+              <strong>进行中</strong>
+              <b>（3）</b>
+              <span class="column-label scope-label">测评范围</span>
+              <span class="column-label participant-label">参与情况</span>
+              <span class="column-label deadline-label">截止时间</span>
+              <span class="column-label trend-label">覆盖趋势（最近7天）</span>
+              <span class="column-label status-label">状态</span>
+              <span class="column-label action-label">操作</span>
+            </button>
+
+            <div class="group-content">
+              <article class="task-row" data-name="高原上的春天 朗读评测" data-type="reading" data-scope="class2" data-class="class2" data-status="ongoing">
+                <div class="task-info">
+                  <span class="task-icon green">
+                    <svg viewBox="0 0 24 24"><path d="M7 3h10l3 3v15H7zM16 3v4h4M10 11h6M10 15h6"/></svg>
+                  </span>
+                  <div><strong>高原上的春天 朗读评测</strong><span><i class="tag green-tag">朗读</i>创建于 2025-05-10 10:32</span></div>
+                </div>
+                <div class="scope-cell"><strong>五年级二班</strong><span>学生 48 人</span></div>
+                <div class="participant-cell"><strong>32 / 48 <small>66.7%</small></strong><span class="progress"><i style="width:66.7%"></i></span></div>
+                <div class="deadline-cell"><strong>2025-05-16 23:59</strong><span class="danger-text">剩余 2 天</span></div>
+                <div class="trend-cell">
+                  <span class="trend-start">45%</span><b>68%</b>
+                  <svg viewBox="0 0 170 52"><defs><linearGradient id="greenArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5b9d79" stop-opacity=".25"/><stop offset="1" stop-color="#5b9d79" stop-opacity="0"/></linearGradient></defs><path class="area green-area" d="M5 42 L20 32 L36 32 L53 32 L70 34 L88 25 L106 18 L124 10 L142 15 L160 18 L160 48 L5 48 Z"/><path class="line green-line" d="M5 42 L20 32 L36 32 L53 32 L70 34 L88 25 L106 18 L124 10 L142 15 L160 18"/><g class="points green-points"><circle cx="5" cy="42" r="2.5"/><circle cx="20" cy="32" r="2.5"/><circle cx="36" cy="32" r="2.5"/><circle cx="53" cy="32" r="2.5"/><circle cx="70" cy="34" r="2.5"/><circle cx="88" cy="25" r="2.5"/><circle cx="106" cy="18" r="2.5"/><circle cx="124" cy="10" r="2.5"/><circle cx="142" cy="15" r="2.5"/><circle cx="160" cy="18" r="2.5"/></g></svg>
+                </div>
+                <div class="status-cell"><span class="status-pill ongoing">进行中</span></div>
+                <div class="action-cell">
+	                  <button data-route="/teacher/assessments/detail/"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 4v8l5 3"/></svg>查看分析</button>
+	                  <button data-route="/teacher/assessments/detail/"><svg viewBox="0 0 24 24"><path d="M6 3h10l3 3v15H6zM15 3v4h4M9 12h6M9 16h6"/></svg>查看报告</button>
+	                  <button data-unsupported="cancel" disabled title="当前版本不支持取消测评任务"><svg viewBox="0 0 24 24"><path d="M5 7h14M9 7V4h6v3M8 10v8M12 10v8M16 10v8M7 7l1 14h8l1-14"/></svg>取消任务</button>
+	                  <button class="more-button" data-menu="task1">•••</button>
+	                </div>
+	              </article>
+
+	              <article class="task-row" data-name="第三普通话单元 语音识别测评" data-type="recognition" data-scope="grade5" data-class="class1" data-status="ongoing">
+	                <div class="task-info">
+	                  <span class="task-icon blue">
+	                    <svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v4M9 21h6"/></svg>
+	                  </span>
+	                  <div><strong>第三普通话单元 语音识别测评</strong><span><i class="tag blue-tag">识别</i>创建于 2025-05-08 09:15</span></div>
+	                </div>
+	                <div class="scope-cell"><strong>五年级一班、五年级三班</strong><span>学生 96 人</span></div>
+	                <div class="participant-cell"><strong>62 / 96 <small>64.6%</small></strong><span class="progress"><i style="width:64.6%"></i></span></div>
+	                <div class="deadline-cell"><strong>2025-05-20 23:59</strong><span>剩余 6 天</span></div>
+	                <div class="trend-cell blue-trend">
+	                  <span class="trend-start">42%</span><b>65%</b>
+	                  <svg viewBox="0 0 170 52"><path class="area blue-area" d="M5 42 L20 32 L36 32 L53 32 L70 34 L88 27 L106 20 L124 15 L142 10 L160 17 L160 48 L5 48 Z"/><path class="line blue-line" d="M5 42 L20 32 L36 32 L53 32 L70 34 L88 27 L106 20 L124 15 L142 10 L160 17"/><g class="points blue-points"><circle cx="5" cy="42" r="2.5"/><circle cx="20" cy="32" r="2.5"/><circle cx="36" cy="32" r="2.5"/><circle cx="53" cy="32" r="2.5"/><circle cx="70" cy="34" r="2.5"/><circle cx="88" cy="27" r="2.5"/><circle cx="106" cy="20" r="2.5"/><circle cx="124" cy="15" r="2.5"/><circle cx="142" cy="10" r="2.5"/><circle cx="160" cy="17" r="2.5"/></g></svg>
+	                </div>
+	                <div class="status-cell"><span class="status-pill ongoing">进行中</span></div>
+	                <div class="action-cell">
+	                  <button data-route="/teacher/assessments/detail/"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 4v8l5 3"/></svg>查看分析</button>
+	                  <button data-route="/teacher/assessments/detail/"><svg viewBox="0 0 24 24"><path d="M6 3h10l3 3v15H6zM15 3v4h4M9 12h6M9 16h6"/></svg>查看报告</button>
+	                  <button data-unsupported="cancel" disabled title="当前版本不支持取消测评任务"><svg viewBox="0 0 24 24"><path d="M5 7h14M9 7V4h6v3M8 10v8M12 10v8M16 10v8M7 7l1 14h8l1-14"/></svg>取消任务</button>
+	                  <button class="more-button" data-menu="task2">•••</button>
+	                </div>
+	              </article>
+
+	              <article class="task-row" data-name="绕口令挑战赛" data-type="speaking" data-scope="class2" data-class="class2" data-status="ongoing">
+	                <div class="task-info">
+	                  <span class="task-icon orange">
+	                    <svg viewBox="0 0 24 24"><path d="M5 17a7 7 0 0 1 14 0v2h-4v-4M5 17v2h4v-4M9 8a3 3 0 0 1 6 0"/></svg>
+	                  </span>
+	                  <div><strong>绕口令挑战赛</strong><span><i class="tag orange-tag">说话</i>创建于 2025-05-06 14:20</span></div>
+	                </div>
+	                <div class="scope-cell"><strong>五年级二班</strong><span>学生 48 人</span></div>
+	                <div class="participant-cell orange-progress"><strong>28 / 48 <small>58.3%</small></strong><span class="progress"><i style="width:58.3%"></i></span></div>
+	                <div class="deadline-cell"><strong>2025-05-15 23:59</strong><span class="danger-text">剩余 1 天</span></div>
+	                <div class="trend-cell orange-trend">
+	                  <span class="trend-start">38%</span><b>58%</b>
+	                  <svg viewBox="0 0 170 52"><path class="area orange-area" d="M5 42 L20 32 L36 32 L53 32 L70 34 L88 27 L106 20 L124 12 L142 18 L160 21 L160 48 L5 48 Z"/><path class="line orange-line" d="M5 42 L20 32 L36 32 L53 32 L70 34 L88 27 L106 20 L124 12 L142 18 L160 21"/><g class="points orange-points"><circle cx="5" cy="42" r="2.5"/><circle cx="20" cy="32" r="2.5"/><circle cx="36" cy="32" r="2.5"/><circle cx="53" cy="32" r="2.5"/><circle cx="70" cy="34" r="2.5"/><circle cx="88" cy="27" r="2.5"/><circle cx="106" cy="20" r="2.5"/><circle cx="124" cy="12" r="2.5"/><circle cx="142" cy="18" r="2.5"/><circle cx="160" cy="21" r="2.5"/></g></svg>
+	                </div>
+	                <div class="status-cell"><span class="status-pill ongoing">进行中</span></div>
+	                <div class="action-cell">
+	                  <button data-route="/teacher/assessments/detail/"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 4v8l5 3"/></svg>查看分析</button>
+	                  <button data-route="/teacher/assessments/detail/"><svg viewBox="0 0 24 24"><path d="M6 3h10l3 3v15H6zM15 3v4h4M9 12h6M9 16h6"/></svg>查看报告</button>
+	                  <button data-unsupported="cancel" disabled title="当前版本不支持取消测评任务"><svg viewBox="0 0 24 24"><path d="M5 7h14M9 7V4h6v3M8 10v8M12 10v8M16 10v8M7 7l1 14h8l1-14"/></svg>取消任务</button>
+	                  <button class="more-button" data-menu="task3">•••</button>
+	                </div>
+	              </article>
+            </div>
+          </section>
+
+          <section class="task-group expanded" data-group="completed">
+            <button class="group-heading" aria-expanded="true">
+              <span class="chevron">⌄</span>
+              <strong>已完成</strong>
+              <b>（2）</b>
+              <span class="column-label scope-label">测评范围</span>
+              <span class="column-label participant-label">参与情况</span>
+              <span class="column-label deadline-label">截止时间</span>
+              <span class="column-label trend-label">覆盖趋势（最近7天）</span>
+              <span class="column-label status-label">状态</span>
+              <span class="column-label action-label">操作</span>
+            </button>
+
+            <div class="group-content">
+              <article class="task-row" data-name="第2章 朗读与表达单元测评" data-type="reading" data-scope="class1" data-class="class1" data-status="completed">
+                <div class="task-info">
+                  <span class="task-icon green">
+                    <svg viewBox="0 0 24 24"><path d="M7 3h10l3 3v15H7zM16 3v4h4M9 13l2 2 4-5"/></svg>
+                  </span>
+                  <div><strong>第2章 朗读与表达单元测评</strong><span><i class="tag green-tag">朗读</i>创建于 2025-04-28 10:00</span></div>
+                </div>
+                <div class="scope-cell"><strong>五年级一班</strong><span>学生 48 人</span></div>
+                <div class="participant-cell"><strong>48 / 48 <small>100%</small></strong><span class="progress"><i style="width:100%"></i></span></div>
+                <div class="deadline-cell"><strong>2025-05-05 23:59</strong><span>已结束</span></div>
+                <div class="trend-cell">
+                  <span class="trend-start">80%</span><b>100%</b>
+                  <svg viewBox="0 0 170 52"><path class="area green-area" d="M5 42 L20 32 L36 32 L53 32 L70 34 L88 25 L106 18 L124 10 L142 15 L160 10 L160 48 L5 48 Z"/><path class="line green-line" d="M5 42 L20 32 L36 32 L53 32 L70 34 L88 25 L106 18 L124 10 L142 15 L160 10"/><g class="points green-points"><circle cx="5" cy="42" r="2.5"/><circle cx="20" cy="32" r="2.5"/><circle cx="36" cy="32" r="2.5"/><circle cx="53" cy="32" r="2.5"/><circle cx="70" cy="34" r="2.5"/><circle cx="88" cy="25" r="2.5"/><circle cx="106" cy="18" r="2.5"/><circle cx="124" cy="10" r="2.5"/><circle cx="142" cy="15" r="2.5"/><circle cx="160" cy="10" r="2.5"/></g></svg>
+                </div>
+                <div class="status-cell"><span class="status-pill completed">已完成</span></div>
+                <div class="action-cell">
+	                  <button data-route="/teacher/assessments/detail/"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 4v8l5 3"/></svg>查看分析</button>
+	                  <button data-route="/teacher/assessments/detail/"><svg viewBox="0 0 24 24"><path d="M6 3h10l3 3v15H6zM15 3v4h4M9 12h6M9 16h6"/></svg>查看报告</button>
+	                  <button data-unsupported="copy-task" disabled title="复制任务功能暂未开通"><svg viewBox="0 0 24 24"><path d="M7 7h12v12H7zM5 15H3V3h12v2"/></svg>复制任务</button>
+	                  <button class="more-button" data-menu="task4">•••</button>
+	                </div>
+	              </article>
+
+	              <article class="task-row" data-name="寓言故事复述测评" data-type="review" data-scope="class3" data-class="class3" data-status="completed">
+	                <div class="task-info">
+	                  <span class="task-icon blue">
+	                    <svg viewBox="0 0 24 24"><path d="M7 3h10l3 3v15H7zM16 3v4h4M10 11h6M10 15h4"/></svg>
+	                  </span>
+	                  <div><strong>寓言故事复述测评</strong><span><i class="tag blue-tag">复述</i>创建于 2025-04-20 16:30</span></div>
+	                </div>
+	                <div class="scope-cell"><strong>五年级三班</strong><span>学生 48 人</span></div>
+	                <div class="participant-cell"><strong>44 / 48 <small>91.7%</small></strong><span class="progress"><i style="width:91.7%"></i></span></div>
+	                <div class="deadline-cell"><strong>2025-04-27 23:59</strong><span>已结束</span></div>
+	                <div class="trend-cell blue-trend">
+	                  <span class="trend-start">70%</span><b>92%</b>
+	                  <svg viewBox="0 0 170 52"><path class="area blue-area" d="M5 42 L20 32 L36 32 L53 32 L70 34 L88 27 L106 20 L124 15 L142 10 L160 14 L160 48 L5 48 Z"/><path class="line blue-line" d="M5 42 L20 32 L36 32 L53 32 L70 34 L88 27 L106 20 L124 15 L142 10 L160 14"/><g class="points blue-points"><circle cx="5" cy="42" r="2.5"/><circle cx="20" cy="32" r="2.5"/><circle cx="36" cy="32" r="2.5"/><circle cx="53" cy="32" r="2.5"/><circle cx="70" cy="34" r="2.5"/><circle cx="88" cy="27" r="2.5"/><circle cx="106" cy="20" r="2.5"/><circle cx="124" cy="15" r="2.5"/><circle cx="142" cy="10" r="2.5"/><circle cx="160" cy="14" r="2.5"/></g></svg>
+	                </div>
+	                <div class="status-cell"><span class="status-pill completed">已完成</span></div>
+	                <div class="action-cell">
+	                  <button data-route="/teacher/assessments/detail/"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 4v8l5 3"/></svg>查看分析</button>
+	                  <button data-route="/teacher/assessments/detail/"><svg viewBox="0 0 24 24"><path d="M6 3h10l3 3v15H6zM15 3v4h4M9 12h6M9 16h6"/></svg>查看报告</button>
+	                  <button data-unsupported="copy-task" disabled title="复制任务功能暂未开通"><svg viewBox="0 0 24 24"><path d="M7 7h12v12H7zM5 15H3V3h12v2"/></svg>复制任务</button>
+	                  <button class="more-button" data-menu="task5">•••</button>
+	                </div>
+	              </article>
+            </div>
+          </section>
+
+          <section class="task-group collapsed compact-group" data-group="failed">
+            <button class="group-heading" aria-expanded="false">
+              <span class="status-dot failed">×</span><strong>未通过</strong><b>（1）</b><span class="compact-chevron">⌄</span>
+            </button>
+            <div class="group-content"><div class="compact-placeholder">有 1 个测评任务未通过发布校验。</div></div>
+          </section>
+
+          <section class="task-group collapsed compact-group" data-group="paused">
+            <button class="group-heading" aria-expanded="false">
+              <span class="status-dot paused">Ⅱ</span><strong>已暂停</strong><b>（1）</b><span class="compact-chevron">⌄</span>
+            </button>
+            <div class="group-content"><div class="compact-placeholder">有 1 个测评任务已暂停。</div></div>
+          </section>
+
+          <section class="task-group collapsed compact-group" data-group="expired">
+            <button class="group-heading" aria-expanded="false">
+              <span class="status-dot expired">!</span><strong>已过期</strong><b>（1）</b><span class="compact-chevron">⌄</span>
+            </button>
+            <div class="group-content"><div class="compact-placeholder">有 1 个测评任务已经过期。</div></div>
+          </section>
+
+          <section class="task-group collapsed compact-group" data-group="empty">
+            <button class="group-heading" aria-expanded="false">
+              <span class="status-dot empty">!</span><strong>无参与</strong><b>（1）</b><span class="compact-chevron">⌄</span>
+            </button>
+            <div class="group-content"><div class="compact-placeholder">有 1 个测评任务暂无参与学生。</div></div>
+          </section>
+        </section>
+
+        <div id="emptyState" class="empty-state" hidden>
+          <img src="./assets/sound-wave-layer.png" alt="" />
+          <h2>没有找到匹配的测评任务</h2>
+          <p>请调整筛选条件，或创建一项新的测评任务。</p>
+          <button data-route="/teacher/assessments/create">创建测评任务</button>
+        </div>
+
+        <footer class="page-footer">共 9 个任务</footer>
+      </section>
+    </main>
+  </div>
+
+  <div class="floating-menu" id="floatingMenu" hidden>
+    <button data-action="copy-link">复制链接</button>
+    <button data-unsupported="qr" disabled title="二维码功能暂未开通">下载二维码</button>
+    <button data-unsupported="disable" disabled title="停用任务功能暂未开通">停用任务</button>
+  </div>
+
+  <div class="modal-backdrop" id="modalBackdrop" hidden>
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="modal-close" id="modalClose" aria-label="关闭">×</button>
+      <div class="modal-mark" id="modalMark">✓</div>
+      <h2 id="modalTitle">操作详情</h2>
+      <p id="modalText"></p>
+      <div class="modal-actions">
+        <button class="modal-secondary" id="modalCancel">取消</button>
+        <button class="modal-primary" id="modalConfirm">确认</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="./app.js"></script>
+  <script src="/shared/teacher-shell.js" defer></script>
+
+</html>

@@ -1,0 +1,9 @@
+{
+  "viewport": [
+    1659,
+    948
+  ],
+  "mae": 17.83,
+  "rmse": 42.941,
+  "note": "Reference includes rasterized design text; implementation intentionally rebuilds dynamic UI with HTML/CSS/SVG."
+}

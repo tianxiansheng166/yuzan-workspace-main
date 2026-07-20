@@ -103,6 +103,21 @@ export class AssignmentsController {
     );
   }
 
+  @Get(":assignmentId/stats")
+  @RequireRoles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
+  async getAssignmentStats(
+    @Param("schoolId", ParseUUIDPipe) schoolId: string,
+    @Param("assignmentId", ParseUUIDPipe) assignmentId: string,
+    @CurrentTenant() tenant: TenantContext,
+    @CurrentPrincipal() principal: Principal,
+  ) {
+    return this.service.getAssignmentStats(
+      createAuthContext("request-id", principal, tenant),
+      schoolId,
+      assignmentId,
+    );
+  }
+
   @Post(":assignmentId")
   @RequireRoles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
   async updateAssignment(

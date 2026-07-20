@@ -24,6 +24,9 @@ import { CreateClassDto } from "./dto/create-class.dto.js";
 import { UpdateClassDto } from "./dto/update-class.dto.js";
 import { AddEnrollmentDto } from "./dto/add-enrollment.dto.js";
 import { ListClassesQueryDto } from "./dto/list-classes-query.dto.js";
+import { SupplementaryPracticeDto } from "./dto/supplementary-practice.dto.js";
+import { ClassAssessmentDto } from "./dto/class-assessment.dto.js";
+import { ImportStudentsDto } from "./dto/import-students.dto.js";
 import { toEnrollmentResponse } from "./dto/enrollment.response.js";
 
 @Controller("schools/:schoolId/classes")
@@ -129,6 +132,53 @@ export class ClassesController {
     );
   }
 
+  @Get(":classId/detail")
+  @RequireRoles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN, MembershipRole.PLATFORM_ADMIN)
+  async getClassDetail(
+    @Param("schoolId", ParseUUIDPipe) schoolId: string,
+    @Param("classId", ParseUUIDPipe) classId: string,
+    @CurrentTenant() tenant: TenantContext,
+    @CurrentPrincipal() principal: Principal,
+  ) {
+    return this.service.getClassDetail(
+      createAuthContext("request-id", principal, tenant),
+      schoolId,
+      classId,
+    );
+  }
+
+  @Get(":classId/pending-stats")
+  @RequireRoles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN, MembershipRole.PLATFORM_ADMIN)
+  async getClassPendingStats(
+    @Param("schoolId", ParseUUIDPipe) schoolId: string,
+    @Param("classId", ParseUUIDPipe) classId: string,
+    @CurrentTenant() tenant: TenantContext,
+    @CurrentPrincipal() principal: Principal,
+  ) {
+    return this.service.getClassPendingStats(
+      createAuthContext("request-id", principal, tenant),
+      schoolId,
+      classId,
+    );
+  }
+
+  @Get(":classId/export")
+  @RequireRoles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN, MembershipRole.PLATFORM_ADMIN)
+  async exportClassData(
+    @Param("schoolId", ParseUUIDPipe) schoolId: string,
+    @Param("classId", ParseUUIDPipe) classId: string,
+    @Query("format") format: string = "json",
+    @CurrentTenant() tenant: TenantContext,
+    @CurrentPrincipal() principal: Principal,
+  ) {
+    return this.service.exportClassData(
+      createAuthContext("request-id", principal, tenant),
+      schoolId,
+      classId,
+      format ?? "json",
+    );
+  }
+
   @Get(":classId/members")
   @RequireRoles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
   async listClassMembers(
@@ -186,8 +236,47 @@ export class ClassesController {
     return enrollments.map(toEnrollmentResponse);
   }
 
+  @Post(":classId/supplementary-practice")
+  @RequireRoles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
+  async createSupplementaryPractice(
+    @Param("schoolId", ParseUUIDPipe) schoolId: string,
+    @Param("classId", ParseUUIDPipe) classId: string,
+    @Body() dto: SupplementaryPracticeDto,
+    @CurrentTenant() tenant: TenantContext,
+    @CurrentPrincipal() principal: Principal,
+  ) {
+    return this.service.createSupplementaryPractice(
+      createAuthContext("request-id", principal, tenant),
+      schoolId,
+      classId,
+      dto,
+    );
+  }
+
+  @Post(":classId/assessments")
+  @RequireRoles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
+  async createClassAssessment(
+    @Param("schoolId", ParseUUIDPipe) schoolId: string,
+    @Param("classId", ParseUUIDPipe) classId: string,
+    @Body() dto: ClassAssessmentDto,
+    @CurrentTenant() tenant: TenantContext,
+    @CurrentPrincipal() principal: Principal,
+  ) {
+    return this.service.createClassAssessment(
+      createAuthContext("request-id", principal, tenant),
+      schoolId,
+      classId,
+      {
+        type: dto.type,
+        ...(dto.title !== undefined ? { title: dto.title } : {}),
+        ...(dto.enrollmentIds !== undefined ? { targetEnrollmentIds: dto.enrollmentIds } : {}),
+        ...(dto.questionIds !== undefined ? { questionIds: dto.questionIds } : {}),
+      },
+    );
+  }
+
   @Post(":classId/enrollments")
-  @RequireRoles(MembershipRole.SCHOOL_ADMIN, MembershipRole.PLATFORM_ADMIN)
+  @RequireRoles(MembershipRole.SCHOOL_ADMIN, MembershipRole.PLATFORM_ADMIN, MembershipRole.TEACHER)
   async addEnrollment(
     @Param("schoolId", ParseUUIDPipe) schoolId: string,
     @Param("classId", ParseUUIDPipe) classId: string,
@@ -201,6 +290,23 @@ export class ClassesController {
       classId,
       dto.userId,
       dto.role,
+    );
+  }
+
+  @Post(":classId/students/import")
+  @RequireRoles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN, MembershipRole.PLATFORM_ADMIN)
+  async importStudents(
+    @Param("schoolId", ParseUUIDPipe) schoolId: string,
+    @Param("classId", ParseUUIDPipe) classId: string,
+    @Body() dto: ImportStudentsDto,
+    @CurrentTenant() tenant: TenantContext,
+    @CurrentPrincipal() principal: Principal,
+  ) {
+    return this.service.importStudents(
+      createAuthContext("request-id", principal, tenant),
+      schoolId,
+      classId,
+      dto.students,
     );
   }
 

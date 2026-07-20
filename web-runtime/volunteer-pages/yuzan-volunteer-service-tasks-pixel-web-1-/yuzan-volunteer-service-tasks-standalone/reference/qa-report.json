@@ -1,0 +1,38 @@
+{
+  "1659x948": {
+    "dims": {
+      "sw": 1659,
+      "sh": 948,
+      "cw": 1659,
+      "ch": 948
+    },
+    "errors": [],
+    "horizontalOverflow": false
+  },
+  "768x1024": {
+    "dims": {
+      "sw": 768,
+      "sh": 2259,
+      "cw": 768,
+      "ch": 1024
+    },
+    "errors": [],
+    "horizontalOverflow": false
+  },
+  "390x844": {
+    "dims": {
+      "sw": 390,
+      "sh": 2889,
+      "cw": 390,
+      "ch": 844
+    },
+    "errors": [],
+    "horizontalOverflow": false
+  },
+  "interactions": {
+    "activeFilterVisible": 1,
+    "confirmText": "已确认参加",
+    "modalOpened": true,
+    "modalClosed": true
+  }
+}

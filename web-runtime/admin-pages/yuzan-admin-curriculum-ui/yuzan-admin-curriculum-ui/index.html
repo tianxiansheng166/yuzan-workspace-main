@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>课程内容治理中心</title>
+  <link rel="icon" href="assets/favicon.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <svg class="svg-sprite" aria-hidden="true">
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11.5 12 5l8 6.5"/><path d="M7 10.5V19h10v-8.5"/></symbol>
+    <symbol id="i-school" viewBox="0 0 24 24"><path d="m4 10 8-5 8 5"/><path d="M5.5 10.5V19h13v-8.5"/><path d="M9 19v-5h6v5"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><path d="M8.5 11.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M15.5 10a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"/><path d="M3.5 19.5a5 5 0 0 1 10 0"/><path d="M13 19.5a4.5 4.5 0 0 1 7.5-3.3"/></symbol>
+    <symbol id="i-books" viewBox="0 0 24 24"><path d="M4.5 6.5A2.5 2.5 0 0 1 7 4h9.5A2.5 2.5 0 0 1 19 6.5V19H7A2.5 2.5 0 0 0 4.5 21Z"/><path d="M7 4v17"/><path d="M12 7h4"/><path d="M12 10.5h4"/></symbol>
+    <symbol id="i-wave" viewBox="0 0 24 24"><path d="M4 12h1"/><path d="M7 8v8"/><path d="M10 6v12"/><path d="M13 8v8"/><path d="M16 4v16"/><path d="M19 9v6"/></symbol>
+    <symbol id="i-badge" viewBox="0 0 24 24"><path d="M12 3.5a4.5 4.5 0 0 1 4.5 4.5v3l2.5 3.5-7 7-7-7L7.5 11V8A4.5 4.5 0 0 1 12 3.5Z"/><path d="m9.5 11.5 1.8 1.8 3.2-3.3"/></symbol>
+    <symbol id="i-volunteer" viewBox="0 0 24 24"><path d="M8 10.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/><path d="M16.5 11a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"/><path d="M4 19.5a5 5 0 0 1 8 0"/><path d="M12.5 18a4.5 4.5 0 0 1 7 1.5"/></symbol>
+    <symbol id="i-box" viewBox="0 0 24 24"><path d="M4 7.5 12 4l8 3.5v9L12 20l-8-3.5Z"/><path d="M12 4v16"/><path d="M4 7.5 12 11l8-3.5"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 4 19 7v5c0 4.5-3 7.8-7 9-4-1.2-7-4.5-7-9V7Z"/><path d="m9.5 12 1.7 1.8 3.4-3.7"/></symbol>
+    <symbol id="i-cog" viewBox="0 0 24 24"><path d="M12 8.2a3.8 3.8 0 1 0 0 7.6 3.8 3.8 0 0 0 0-7.6Z"/><path d="m3.5 13 1.5.3a7.3 7.3 0 0 0 .7 1.8l-.9 1.2 1.7 1.7 1.2-.9a7.3 7.3 0 0 0 1.8.7l.3 1.5h2.4l.3-1.5a7.3 7.3 0 0 0 1.8-.7l1.2.9 1.7-1.7-.9-1.2a7.3 7.3 0 0 0 .7-1.8l1.5-.3v-2.4l-1.5-.3a7.3 7.3 0 0 0-.7-1.8l.9-1.2-1.7-1.7-1.2.9a7.3 7.3 0 0 0-1.8-.7l-.3-1.5h-2.4l-.3 1.5a7.3 7.3 0 0 0-1.8.7l-1.2-.9-1.7 1.7.9 1.2a7.3 7.3 0 0 0-.7 1.8L3.5 10.6Z"/></symbol>
+    <symbol id="i-audit" viewBox="0 0 24 24"><path d="M7 4h10v16H7Z"/><path d="M9.5 8h5M9.5 12h5M9.5 16h3"/><path d="M5 8h2M5 12h2M5 16h2"/></symbol>
+    <symbol id="i-export" viewBox="0 0 24 24"><path d="M12 4v10"/><path d="m8.5 8 3.5-4 3.5 4"/><path d="M5 14v4.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V14"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6.5 17h11l-1.2-1.8V10a4.3 4.3 0 1 0-8.6 0v5.2Z"/><path d="M10 18.5a2 2 0 0 0 4 0"/></symbol>
+    <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M9.7 9.5a2.6 2.6 0 0 1 4.9 1.2c0 1.8-2 2.2-2.6 3.3"/><path d="M12 17h0"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/><path d="M5 20a7 7 0 0 1 14 0"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="5.7"/><path d="m15 15 4.5 4.5"/></symbol>
+    <symbol id="i-filter" viewBox="0 0 24 24"><path d="M4 6h16l-6 7.5V19l-4 1v-6.5Z"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+    <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><path d="M5 5h6v6H5zM13 5h6v6h-6zM5 13h6v6H5zM13 13h6v6h-6z"/></symbol>
+    <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 7h11M8 12h11M8 17h11"/><path d="M4.5 7h0M4.5 12h0M4.5 17h0"/></symbol>
+    <symbol id="i-folder" viewBox="0 0 24 24"><path d="M4 8.5h5l1.7 2H20v8A1.5 1.5 0 0 1 18.5 20h-13A1.5 1.5 0 0 1 4 18.5Z"/></symbol>
+    <symbol id="i-folder-open" viewBox="0 0 24 24"><path d="M4 10h6l1.8 2H20l-1.4 6.5a1.5 1.5 0 0 1-1.5 1.2H5.4A1.5 1.5 0 0 1 4 18.5Z"/><path d="M4 10V7.5A1.5 1.5 0 0 1 5.5 6H10l1.8 2H20"/></symbol>
+    <symbol id="i-book-small" viewBox="0 0 24 24"><path d="M6.5 5.5h9.8a2.2 2.2 0 0 1 2.2 2.2V19H8.8a2.3 2.3 0 0 0-2.3 2.3Z"/><path d="M8.8 5.5V19"/></symbol>
+    <symbol id="i-dots" viewBox="0 0 24 24"><circle cx="5.5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="18.5" cy="12" r="1.4"/></symbol>
+    <symbol id="i-drag" viewBox="0 0 24 24"><circle cx="8" cy="7" r="1"/><circle cx="8" cy="12" r="1"/><circle cx="8" cy="17" r="1"/><circle cx="16" cy="7" r="1"/><circle cx="16" cy="12" r="1"/><circle cx="16" cy="17" r="1"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12s3.4-5.5 9.5-5.5S21.5 12 21.5 12 18.1 17.5 12 17.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="2.8"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4.2 4.2L19 6.8"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v10"/><path d="m8 10 4 4 4-4"/><path d="M5 19h14"/></symbol>
+    <symbol id="i-compare" viewBox="0 0 24 24"><path d="M7 5v14M17 5v14"/><path d="M10 8h4M10 12h4M10 16h4"/></symbol>
+    <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="m14 6-6 6 6 6"/></symbol>
+  </svg>
+
+  <header class="topbar">
+    <div class="brand-wrap">
+      <button class="icon-button mobile-sidebar-button" id="mobileSidebarButton" aria-label="打开导航"><svg><use href="#i-menu"/></svg></button>
+      <a class="brand" href="#">
+        <img src="assets/logo-mark.png" alt="语赞心声" class="brand-mark">
+        <span class="brand-copy"><strong>语赞心声</strong><small>援藏教育公益平台</small></span>
+      </a>
+    </div>
+    <div class="topbar-title">
+      <button class="icon-button"><svg><use href="#i-menu"/></svg></button>
+      <h1>课程与内容管理</h1>
+      <span class="mode-badge"><svg><use href="#i-eye"/></svg>只读竞赛模式</span>
+      <div class="header-art"></div>
+    </div>
+    <div class="topbar-actions">
+      <button class="icon-button has-badge" aria-label="通知"><svg><use href="#i-bell"/></svg><b>12</b></button>
+      <button class="icon-button" aria-label="帮助"><svg><use href="#i-help"/></svg></button>
+      <button class="profile-button"><svg><use href="#i-user"/></svg><span>嘉宾（只读）</span><svg class="chev"><use href="#i-chevron-down"/></svg></button>
+    </div>
+  </header>
+
+  <div class="mobile-sidebar-backdrop" id="sidebarBackdrop" hidden></div>
+
+  <main class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <nav class="side-nav">
+        <a href="#"><svg><use href="#i-home"/></svg><span>驾驶舱</span></a>
+        <a href="#"><svg><use href="#i-school"/></svg><span>学校管理</span></a>
+        <a href="#"><svg><use href="#i-users"/></svg><span>用户管理</span></a>
+        <a class="active" href="#"><svg><use href="#i-books"/></svg><span>课程管理</span></a>
+        <a href="#"><svg><use href="#i-wave"/></svg><span>测评管理</span></a>
+        <a href="#"><svg><use href="#i-volunteer"/></svg><span>志愿者管理</span></a>
+        <a href="#"><svg><use href="#i-box"/></svg><span>套餐管理</span></a>
+        <a href="#"><svg><use href="#i-badge"/></svg><span>内容审核</span><em>5</em></a>
+        <a href="#"><svg><use href="#i-shield"/></svg><span>隐私与合规</span></a>
+        <a href="#"><svg><use href="#i-cog"/></svg><span>系统运维</span></a>
+        <a href="#"><svg><use href="#i-audit"/></svg><span>审计日志</span></a>
+        <a href="#"><svg><use href="#i-export"/></svg><span>数据导出</span></a>
+        <a href="#"><svg><use href="#i-cog"/></svg><span>设置</span></a>
+      </nav>
+      <button class="collapse-sidebar"><svg><use href="#i-arrow-left"/></svg><span>收起菜单</span></button>
+    </aside>
+
+    <section class="workspace">
+      <div class="workspace-head">
+        <div class="breadcrumbs">课程管理 <span>/</span> 课程目录</div>
+      </div>
+
+      <section class="toolbar card">
+        <div class="toolbar-left">
+          <div class="search-box"><svg><use href="#i-search"/></svg><input id="searchInput" type="search" placeholder="搜索课程名称或编码"></div>
+          <button class="mini-icon"><svg><use href="#i-filter"/></svg></button>
+          <button class="select-btn">全部学段 <svg><use href="#i-chevron-down"/></svg></button>
+        </div>
+        <div class="toolbar-right">
+          <button class="primary-btn" id="createCourseBtn"><svg><use href="#i-plus"/></svg>创建课程</button>
+          <button class="ghost-btn" id="newVersionBtn"><svg><use href="#i-plus"/></svg>新建版本</button>
+          <button class="select-btn small">批量操作 <svg><use href="#i-chevron-down"/></svg></button>
+          <button class="ghost-btn small"><svg><use href="#i-export"/></svg>导出</button>
+          <button class="mini-icon"><svg><use href="#i-chevron"/></svg></button>
+        </div>
+      </section>
+
+      <div class="content-split">
+        <section class="main-card card">
+          <div class="tree-pane">
+            <div class="pane-title"><h2>课程目录</h2><button class="pane-action"><svg><use href="#i-chevron-down"/></svg></button></div>
+            <div class="tree-scroll"><ul class="tree-list" id="treeList"></ul></div>
+            <div class="legend"><span><i class="dot draft"></i>草稿</span><span><i class="dot review"></i>待审核</span><span><i class="dot published"></i>已发布</span><span><i class="dot archived"></i>已停用</span><span><i class="dot rejected"></i>授权缺失</span></div>
+          </div>
+
+          <div class="table-pane">
+            <div class="table-head">
+              <div>
+                <h2>阅读与鉴赏（小学 · 语文）</h2>
+                <small>共 12 门课程</small>
+              </div>
+              <div class="table-view-controls">
+                <button class="select-btn compact">按排序 <svg><use href="#i-chevron-down"/></svg></button>
+                <button class="icon-toggle active"><svg><use href="#i-list"/></svg></button>
+                <button class="icon-toggle"><svg><use href="#i-grid"/></svg></button>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table class="course-table">
+                <thead>
+                  <tr>
+                    <th class="small-col"><input type="checkbox" aria-label="全选"></th>
+                    <th>课程/模块</th>
+                    <th>当前版本</th>
+                    <th>版本状态</th>
+                    <th>更新人</th>
+                    <th>时长</th>
+                    <th>许可证</th>
+                    <th>发布状态</th>
+                    <th class="small-col">操作</th>
+                  </tr>
+                </thead>
+                <tbody id="courseTableBody"></tbody>
+              </table>
+            </div>
+            <div class="table-footer">
+              <span>共 12 条</span>
+              <div class="pagination">
+                <button class="pager"><svg><use href="#i-arrow-left"/></svg></button>
+                <button class="page active">1</button>
+                <button class="pager"><svg><use href="#i-chevron"/></svg></button>
+              </div>
+              <button class="select-btn compact">20 条/页 <svg><use href="#i-chevron-down"/></svg></button>
+            </div>
+          </div>
+        </section>
+
+        <aside class="detail-panel card">
+          <section class="detail-header">
+            <div class="title-line">
+              <h2 id="detailTitle">现代文阅读入门</h2>
+              <span class="status-pill published" id="detailStatusPill">已发布</span>
+            </div>
+            <div class="meta-line"><span id="detailCode">CHN-X-YY-0001</span><span>·</span><span id="detailVersion">v2.3.0</span></div>
+            <div class="meta-line"><span>更新于</span><span id="detailUpdated">2024-06-01 12:30</span></div>
+            <div class="detail-actions">
+              <button class="ghost-btn small" id="previewBtn"><svg><use href="#i-eye"/></svg>预览</button>
+              <button class="primary-btn small" id="publishBtn"><svg><use href="#i-check"/></svg>发布</button>
+              <button class="ghost-btn small" id="archiveBtn"><svg><use href="#i-download"/></svg>下线</button>
+              <button class="mini-icon"><svg><use href="#i-dots"/></svg></button>
+            </div>
+          </section>
+
+          <div class="detail-grid">
+            <section class="subcard">
+              <div class="subcard-head"><h3>课程大纲</h3><button class="tag-btn">编辑大纲</button></div>
+              <ol class="outline-list" id="outlineList"></ol>
+              <button class="more-link">展开全部（共 8 节） <svg><use href="#i-chevron-down"/></svg></button>
+            </section>
+            <section class="subcard preview-subcard">
+              <div class="subcard-head"><h3>课程预览</h3></div>
+              <div class="preview-card">
+                <div class="preview-thumb">
+                  <img src="assets/preview-art.png" alt="课程预览图">
+                  <button class="play-button" aria-label="播放预览"><svg><use href="#i-eye"/></svg></button>
+                </div>
+                <div class="preview-meta">
+                  <span>时长：<b id="previewDuration">34 分钟</b></span>
+                  <span>资源：<b id="previewAssets">18 个</b></span>
+                </div>
+                <button class="more-link">查看全部资源 <svg><use href="#i-chevron"/></svg></button>
+              </div>
+            </section>
+            <section class="subcard">
+              <div class="subcard-head"><h3>关联学校（<span id="schoolCount">3</span>）</h3><button class="more-link text-link">管理关联</button></div>
+              <ul class="school-list" id="schoolList"></ul>
+            </section>
+            <section class="subcard">
+              <div class="subcard-head"><h3>版本历史</h3><button class="more-link text-link">查看全部</button></div>
+              <ul class="version-history" id="versionHistory"></ul>
+            </section>
+            <section class="subcard validation-card">
+              <div class="subcard-head"><h3>发布校验</h3><button class="tag-btn muted"><svg><use href="#i-compare"/></svg>对比差异</button></div>
+              <ul class="validation-list" id="validationList"></ul>
+            </section>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal-backdrop" id="modalBackdrop" hidden>
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="modal-close" id="modalClose" aria-label="关闭"><svg><use href="#i-x"/></svg></button>
+      <h2 id="modalTitle">发布课程版本</h2>
+      <p>即将发布“现代文阅读入门”当前版本。系统将再次检查版权证据、资源完整性和双语内容审核状态。</p>
+      <div class="modal-checks">
+        <div><i class="dot published"></i><span>课程树定位正确，章节路径可追踪</span></div>
+        <div><i class="dot published"></i><span>封面、活动与资源已完成引用校验</span></div>
+        <div><i class="dot review"></i><span>双语审校建议已附带，不影响发布</span></div>
+      </div>
+      <div class="modal-actions"><button class="ghost-btn" id="modalCancel">取消</button><button class="primary-btn" id="modalConfirm">确认发布</button></div>
+    </section>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>

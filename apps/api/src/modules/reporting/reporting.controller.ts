@@ -20,6 +20,7 @@ import {
 import { ReportingService } from "./reporting.service.js";
 import { CreateReportDto } from "./dto/create-report.dto.js";
 import { ListReportsQueryDto } from "./dto/list-reports-query.dto.js";
+import { SaveLearningPlanDto } from "./dto/save-learning-plan.dto.js";
 import type { ReportType, ReportStatus } from "./domain/report.types.js";
 
 @Controller("schools/:schoolId/reports")
@@ -103,6 +104,43 @@ export class StudentGrowthController {
       createAuthContext("request-id", principal, tenant),
       schoolId,
       enrollmentId,
+    );
+  }
+
+  @Get(":enrollmentId/learning-plan")
+  @RequireRoles(MembershipRole.STUDENT, MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
+  async getLearningPlan(
+    @Param("schoolId", ParseUUIDPipe) schoolId: string,
+    @Param("enrollmentId", ParseUUIDPipe) enrollmentId: string,
+    @CurrentTenant() tenant: TenantContext,
+    @CurrentPrincipal() principal: Principal,
+  ) {
+    return this.service.getLearningPlan(
+      createAuthContext("request-id", principal, tenant),
+      schoolId,
+      enrollmentId,
+    );
+  }
+
+  @Post(":enrollmentId/learning-plan")
+  @RequireRoles(MembershipRole.STUDENT, MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
+  async saveLearningPlan(
+    @Param("schoolId", ParseUUIDPipe) schoolId: string,
+    @Param("enrollmentId", ParseUUIDPipe) enrollmentId: string,
+    @Body() dto: SaveLearningPlanDto,
+    @CurrentTenant() tenant: TenantContext,
+    @CurrentPrincipal() principal: Principal,
+  ) {
+    return this.service.saveLearningPlan(
+      createAuthContext("request-id", principal, tenant),
+      schoolId,
+      enrollmentId,
+      {
+        planContent: dto.planContent,
+        periodStart: new Date(dto.periodStart),
+        periodEnd: new Date(dto.periodEnd),
+        ...(dto.expectedRevision != null ? { expectedRevision: dto.expectedRevision } : {}),
+      },
     );
   }
 }

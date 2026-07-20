@@ -1,0 +1,55 @@
+{
+  "pageId": "student-exercise",
+  "route": "/student/exercises/:exerciseId",
+  "assets": [
+    {
+      "file": "assets/logo-symbol.png",
+      "usage": "顶部品牌 Logo 图案；品牌文字由 HTML 渲染",
+      "placement": "topbar brand",
+      "treatment": "去除棋盘背景并保留透明通道"
+    },
+    {
+      "file": "assets/header-ridge.png",
+      "usage": "题目标题区域的远景山脊",
+      "placement": "page intro right",
+      "treatment": "降饱和、提亮、渐隐，避免与工作区形成明显色差"
+    },
+    {
+      "file": "assets/student-avatar.jpg",
+      "usage": "学生头像",
+      "placement": "header and sidebar",
+      "treatment": "圆形裁切"
+    },
+    {
+      "file": "assets/teacher-avatar.jpg",
+      "usage": "教师反馈头像",
+      "placement": "teacher feedback",
+      "treatment": "局部裁切和低饱和处理"
+    },
+    {
+      "file": "assets/paper-noise.png",
+      "usage": "纸张质感",
+      "placement": "global background",
+      "treatment": "极低透明度平铺"
+    },
+    {
+      "file": "assets/grass.svg",
+      "usage": "教师反馈区的轻量装饰",
+      "placement": "feedback card bottom right",
+      "treatment": "低对比金色线稿"
+    }
+  ],
+  "notRasterized": [
+    "navigation",
+    "student data text",
+    "exercise title",
+    "article text",
+    "answer input",
+    "question progress",
+    "rubric table",
+    "teacher feedback text",
+    "auto-save state",
+    "offline state",
+    "submission modal"
+  ]
+}

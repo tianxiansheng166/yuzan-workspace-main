@@ -163,8 +163,34 @@ export class VolunteersController {
     );
   }
 
+  @Post("service-tasks/:taskId/start")
+  @RequireRoles(MembershipRole.VOLUNTEER)
+  async startMyServiceTask(
+    @Param("schoolId", ParseUUIDPipe) schoolId: string,
+    @Param("taskId", ParseUUIDPipe) taskId: string,
+    @CurrentTenant() tenant: TenantContext,
+    @CurrentPrincipal() principal: Principal,
+  ) {
+    return this.service.updateMyServiceTaskStatus(
+      createAuthContext("request-id", principal, tenant), schoolId, taskId, "IN_PROGRESS",
+    );
+  }
+
+  @Post("service-tasks/:taskId/complete")
+  @RequireRoles(MembershipRole.VOLUNTEER)
+  async completeMyServiceTask(
+    @Param("schoolId", ParseUUIDPipe) schoolId: string,
+    @Param("taskId", ParseUUIDPipe) taskId: string,
+    @CurrentTenant() tenant: TenantContext,
+    @CurrentPrincipal() principal: Principal,
+  ) {
+    return this.service.updateMyServiceTaskStatus(
+      createAuthContext("request-id", principal, tenant), schoolId, taskId, "COMPLETED",
+    );
+  }
+
   @Post("incidents")
-  @RequireRoles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
+  @RequireRoles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN, MembershipRole.VOLUNTEER)
   async reportIncident(
     @Param("schoolId", ParseUUIDPipe) schoolId: string,
     @Body() dto: CreateIncidentDto,

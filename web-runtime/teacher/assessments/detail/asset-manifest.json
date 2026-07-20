@@ -1,0 +1,22 @@
+{
+  "reference": {
+    "source": "teacher-assessment-detail-candidate.png",
+    "use": "visual reference only"
+  },
+  "spring-highland.png": {
+    "source": "C01-cover-spring-highland(2).png",
+    "use": "original supplied illustration"
+  },
+  "sidebar-landscape.png": {
+    "source": "derived from supplied illustration",
+    "use": "sidebar decorative landscape"
+  },
+  "logo-original.png": {
+    "source": "yuzanxinsheng_LOGO(6).png",
+    "use": "original supplied logo"
+  },
+  "brand-mark.png": {
+    "source": "derived from supplied logo",
+    "use": "transparent emblem in sidebar"
+  }
+}

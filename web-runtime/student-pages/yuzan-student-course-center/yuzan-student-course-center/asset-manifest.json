@@ -1,0 +1,16 @@
+{
+  "referencePage": "qa/reference.png",
+  "logo": {"file": "assets/logo-symbol.png", "usage": "header brand symbol only; text rebuilt with HTML"},
+  "hero": {"file": "assets/hero-mountains.jpg", "usage": "masked and softened mountain-path decorative layer"},
+  "sidebar": {"file": "assets/sidebar-landscape.jpg", "usage": "low-opacity blurred lower sidebar atmosphere"},
+  "avatar": {"file": "assets/avatar.jpg", "usage": "demo profile illustration"},
+  "courseCovers": [
+    "assets/course-spring.jpg",
+    "assets/course-youth.jpg",
+    "assets/course-picture.jpg",
+    "assets/course-emotion.jpg",
+    "assets/course-pinyin.jpg",
+    "assets/course-pause.jpg"
+  ],
+  "dynamicUI": "All navigation, labels, buttons, filters, cards, progress, path states and modal content are HTML/CSS/SVG/JavaScript."
+}

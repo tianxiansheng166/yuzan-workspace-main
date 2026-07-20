@@ -56,7 +56,8 @@ export class VolunteersPolicy {
     if (!this.isMemberOfSchool(auth, schoolId)) return false;
     return (
       hasRole(auth, MembershipRole.TEACHER) ||
-      hasRole(auth, MembershipRole.SCHOOL_ADMIN)
+      hasRole(auth, MembershipRole.SCHOOL_ADMIN) ||
+      hasRole(auth, MembershipRole.VOLUNTEER)
     );
   }
 

@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#fffdf9" />
+  <title>一对一帮扶管理｜语赞心声</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <svg class="svg-defs" aria-hidden="true">
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10.5V20h13v-9.5"/><path d="M9.5 20v-5.5h5V20"/></symbol>
+    <symbol id="i-learn" viewBox="0 0 24 24"><rect x="4" y="4.5" width="16" height="15" rx="2"/><path d="M8 4.5v-2M16 4.5v-2M8 9h8M8 13h4"/><path d="m14.5 15 1.7 1.7 3.1-3.5"/></symbol>
+    <symbol id="i-task" viewBox="0 0 24 24"><rect x="5" y="3.5" width="14" height="17" rx="2"/><path d="M9 3.5V2h6v1.5M8.5 9h7M8.5 13h5M8.5 17h7"/></symbol>
+    <symbol id="i-record" viewBox="0 0 24 24"><path d="M6 3.5h9l3 3V20H6z"/><path d="M15 3.5V7h3M9 11h6M9 15h6"/></symbol>
+    <symbol id="i-cert" viewBox="0 0 24 24"><path d="M7 3h10v18H7z"/><path d="M10 7h4M10 11h4"/><path d="m10 21 2-3 2 3"/></symbol>
+    <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3.5 7.5h7l2-2h8v14h-17z"/><path d="M3.5 10h17"/></symbol>
+    <symbol id="i-community" viewBox="0 0 24 24"><path d="M4 6h16v12H4z"/><path d="m8 9-2 3 2 3M16 9l2 3-2 3M10 12h4"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 9a6 6 0 0 0-12 0c0 6-2.5 7-2.5 7h17S18 15 18 9Z"/><path d="M10 20h4"/></symbol>
+    <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.7 9.2a2.6 2.6 0 1 1 3.7 2.4c-.9.5-1.4 1.1-1.4 2.2M12 17h.01"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.4 2.7 3.6 5.7 3.6 9S14.4 18.3 12 21M12 3c-2.4 2.7-3.6 5.7-3.6 9S9.6 18.3 12 21"/></symbol>
+    <symbol id="i-filter" viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></symbol>
+    <symbol id="i-edit" viewBox="0 0 24 24"><path d="m5 19 4.2-1 9.3-9.3-3.2-3.2L6 14.8zM13.8 7l3.2 3.2"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5.5h16v11H9l-5 3z"/></symbol>
+    <symbol id="i-video" viewBox="0 0 24 24"><rect x="3.5" y="6" width="12" height="12" rx="2"/><path d="m15.5 10 5-3v10l-5-3"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7-4.6-8.5-9.1C2.1 6.7 7 3.7 12 8.2c5-4.5 9.9-1.5 8.5 2.7C19 15.4 12 20 12 20Z"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 2.8 20 6v5.8c0 4.8-3 8-8 10.2-5-2.2-8-5.4-8-10.2V6z"/><path d="M12 7v6M12 17h.01"/></symbol>
+    <symbol id="i-user-switch" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3.5 19v-2.2A4.8 4.8 0 0 1 8.3 12h1.4a4.8 4.8 0 0 1 4.1 2.3M15 7h5l-2-2M20 7l-2 2M20.5 17h-5l2 2M15.5 17l2-2"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
+  </svg>
+
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="志愿者端主导航">
+      <div class="brand">
+        <img src="./assets/logo-mark.png" alt="" class="brand-mark" />
+        <div class="brand-copy">
+          <strong>语赞心声</strong>
+          <span>援藏教育公益平台</span>
+        </div>
+      </div>
+
+      <nav class="nav-list">
+        <a class="nav-item" href="#"><svg><use href="#i-home"/></svg><span>工作台</span></a>
+        <a class="nav-item" href="#"><svg><use href="#i-learn"/></svg><span>学习与培训</span></a>
+        <a class="nav-item active" href="#" aria-current="page"><svg><use href="#i-task"/></svg><span>服务任务</span></a>
+        <a class="nav-item" href="#"><svg><use href="#i-record"/></svg><span>服务记录</span></a>
+        <a class="nav-item" href="#"><svg><use href="#i-cert"/></svg><span>成长与证书</span></a>
+        <a class="nav-item" href="#"><svg><use href="#i-folder"/></svg><span>资源中心</span></a>
+        <a class="nav-item" href="#"><svg><use href="#i-community"/></svg><span>公益社区</span></a>
+        <a class="nav-item message" href="#"><svg><use href="#i-bell"/></svg><span>消息中心</span><b>3</b></a>
+        <a class="nav-item" href="#"><svg><use href="#i-help"/></svg><span>帮助与支持</span></a>
+      </nav>
+
+      <div class="sidebar-art" aria-hidden="true"></div>
+      <button class="identity-button" data-action="identity"><svg><use href="#i-user-switch"/></svg><span>切换身份</span></button>
+    </aside>
+
+    <main class="main">
+      <header class="page-header">
+        <div class="header-illustration" aria-hidden="true"></div>
+        <div class="title-block">
+          <h1>一对一帮扶管理</h1>
+          <p>用心陪伴，用爱成长，助力每一个孩子看见更广阔的世界</p>
+        </div>
+        <div class="user-tools">
+          <button aria-label="语言"><svg><use href="#i-globe"/></svg></button>
+          <span class="tool-divider"></span>
+          <button class="notification" aria-label="消息"><svg><use href="#i-bell"/></svg><b>3</b></button>
+          <img src="./assets/user-avatar.png" class="user-avatar" alt="李明" />
+          <strong>李明</strong>
+          <span class="dropdown-caret"></span>
+        </div>
+      </header>
+
+      <section class="dashboard">
+        <aside class="pairing-column panel">
+          <header class="panel-header compact">
+            <h2>当前帮扶 <span>（3）</span></h2>
+            <button class="filter-button"><svg><use href="#i-filter"/></svg>筛选</button>
+          </header>
+          <div class="student-list">
+            <button class="student-card selected" data-student="学生A">
+              <span class="student-avatar"><i></i></span>
+              <span class="student-copy"><strong>学生A <small>（小四）</small></strong><em>小学四年级</em></span>
+              <span class="status-chip green">帮扶中</span>
+            </button>
+            <button class="student-card" data-student="学生B">
+              <span class="student-avatar"><i></i></span>
+              <span class="student-copy"><strong>学生B <small>（初一）</small></strong><em>初中一年级</em></span>
+              <span class="status-chip amber">准备中</span>
+            </button>
+            <button class="student-card" data-student="学生C">
+              <span class="student-avatar"><i></i></span>
+              <span class="student-copy"><strong>学生C <small>（小二）</small></strong><em>小学二年级</em></span>
+              <span class="status-chip gray">已结束</span>
+            </button>
+          </div>
+          <button class="add-student" data-action="add"><svg><use href="#i-plus"/></svg>添加帮扶对象</button>
+        </aside>
+
+        <section class="center-column">
+          <section class="workflow panel">
+            <header class="panel-header"><h2>帮扶流程</h2></header>
+            <div class="workflow-steps">
+              <button class="workflow-step current" data-step="1"><span>1</span><strong>目标</strong><em>明确方向</em></button>
+              <button class="workflow-step" data-step="2"><span>2</span><strong>活动</strong><em>计划执行</em></button>
+              <button class="workflow-step" data-step="3"><span>3</span><strong>复盘</strong><em>总结改进</em></button>
+              <button class="workflow-step" data-step="4"><span>4</span><strong>持续陪伴</strong><em>共同成长</em></button>
+            </div>
+          </section>
+
+          <div class="summary-row">
+            <section class="goal panel small-panel">
+              <header><h2>帮扶目标</h2><button data-action="edit"><svg><use href="#i-edit"/></svg>编辑</button></header>
+              <p>提升阅读理解能力和学习兴趣，培养良好学习习惯</p>
+            </section>
+            <section class="difficulty panel small-panel">
+              <header><h2>学习困难摘要</h2></header>
+              <ul>
+                <li>阅读理解能力有待提升</li>
+                <li>注意力容易分散，学习效率不稳定</li>
+                <li>缺乏系统的学习方法和计划</li>
+                <li>对部分学科存在畏难情绪</li>
+              </ul>
+              <button class="more-button">展开更多 <svg><use href="#i-chevron"/></svg></button>
+            </section>
+          </div>
+
+          <section class="plan panel">
+            <header class="panel-header"><h2>阶段计划</h2></header>
+            <div class="plan-list">
+              <article class="plan-item active">
+                <span class="plan-dot"></span>
+                <div><h3>阶段一：阅读兴趣建立（第1–4周）</h3><p>了解学生阅读兴趣，完成每日阅读打卡，培养阅读习惯</p></div>
+                <strong>进行中</strong>
+              </article>
+              <article class="plan-item">
+                <span class="plan-dot"></span>
+                <div><h3>阶段二：阅读能力提升（第5–12周）</h3><p>掌握阅读方法，提升理解能力，完成阅读笔记</p></div>
+                <strong>待开始</strong>
+              </article>
+              <article class="plan-item">
+                <span class="plan-dot"></span>
+                <div><h3>阶段三：学习方法优化（第13–20周）</h3><p>总结学习方法，建立错题本，提升综合学习能力</p></div>
+                <strong>待开始</strong>
+              </article>
+            </div>
+          </section>
+
+          <section class="history panel">
+            <header class="panel-header"><h2>历次沟通</h2></header>
+            <div class="history-list">
+              <button class="history-item">
+                <span><strong>第8次沟通</strong><em>2024-11-20 16:30</em></span>
+                <p>讨论了课文理解的疑问，学生尝试用思维导图梳理内容，效果较好。</p>
+                <span class="history-kind">线上沟通 <svg><use href="#i-chevron"/></svg></span>
+              </button>
+              <button class="history-item">
+                <span><strong>第7次沟通</strong><em>2024-11-13 16:30</em></span>
+                <p>分享了阅读方法，布置了阅读笔记任务，学生积极完成。</p>
+                <span class="history-kind">线上沟通 <svg><use href="#i-chevron"/></svg></span>
+              </button>
+              <button class="history-item">
+                <span><strong>第6次沟通</strong><em>2024-11-06 16:30</em></span>
+                <p>了解近期学习情况，制定本周阅读计划，鼓励坚持。</p>
+                <span class="history-kind">线上沟通 <svg><use href="#i-chevron"/></svg></span>
+              </button>
+            </div>
+            <button class="history-all">查看全部沟通记录（8）<svg><use href="#i-chevron"/></svg></button>
+          </section>
+        </section>
+
+        <aside class="right-column">
+          <section class="teacher-card panel">
+            <header class="panel-header"><h2>教师确认</h2></header>
+            <div class="teacher-info">
+              <img src="./assets/teacher-avatar.png" alt="次仁老师" />
+              <span><strong>次仁老师</strong><em>项目教师</em></span>
+              <b>已确认</b>
+            </div>
+            <p>确认时间：2024-09-01 10:30</p>
+            <button data-action="teacher"><svg><use href="#i-chat"/></svg>联系教师</button>
+          </section>
+
+          <section class="appointment panel">
+            <header class="panel-header"><h2>预约沟通</h2></header>
+            <p>下次沟通时间</p>
+            <strong>2024-12-04（周三）16:30</strong>
+            <div class="button-pair">
+              <button class="outline" data-action="reschedule">调整时间</button>
+              <button class="primary" data-action="meeting"><svg><use href="#i-video"/></svg>发起沟通</button>
+            </div>
+          </section>
+
+          <section class="service-record panel">
+            <header class="panel-header"><h2>服务记录</h2></header>
+            <div class="stats">
+              <div><svg class="green-icon"><use href="#i-chat"/></svg><span>累计沟通</span><strong>8<small>次</small></strong></div>
+              <div><svg><use href="#i-clock"/></svg><span>累计时长</span><strong>6.5<small>小时</small></strong></div>
+              <div><svg><use href="#i-heart"/></svg><span>累计陪伴</span><strong>56<small>天</small></strong></div>
+            </div>
+            <button>查看服务记录 <svg><use href="#i-chevron"/></svg></button>
+          </section>
+
+          <section class="risk panel">
+            <div class="risk-main"><svg><use href="#i-shield"/></svg><span><strong>风险标记</strong><em>当前无风险标记<br>如发现风险，请及时标记并上报</em></span></div>
+            <button data-action="risk">标记风险</button>
+          </section>
+
+          <section class="end-support panel">
+            <header class="panel-header"><h2>结束帮扶</h2></header>
+            <p>结束后将归档记录，无法继续沟通</p>
+            <button data-action="end">结束帮扶关系</button>
+          </section>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="modalBackdrop" hidden>
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="modal-close" id="modalClose" aria-label="关闭">×</button>
+      <span class="modal-icon"><svg><use href="#i-chat"/></svg></span>
+      <h2 id="modalTitle">操作说明</h2>
+      <p id="modalText"></p>
+      <div class="modal-actions"><button id="modalCancel">取消</button><button class="confirm" id="modalConfirm">确认</button></div>
+    </section>
+  </div>
+  <div class="toast" id="toast"></div>
+  <script src="./app.js"></script>
+</body>
+</html>

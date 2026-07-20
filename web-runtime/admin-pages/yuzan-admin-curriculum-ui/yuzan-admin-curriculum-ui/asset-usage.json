@@ -1,0 +1,59 @@
+{
+  "assetId": "admin-curriculum-main-v31",
+  "pageId": "admin-curriculum",
+  "title": "课程内容治理中心",
+  "route": "/admin/curriculum",
+  "classification": "REFERENCE_PAGE",
+  "status": "AWAITING_GENERATION",
+  "selectedFile": null,
+  "sourceCandidates": [],
+  "usage": "课程内容治理中心页面级视觉参考",
+  "frontend": {
+    "rebuildWithCode": [
+      "layout",
+      "navigation",
+      "buttons",
+      "forms",
+      "tables",
+      "dynamic text",
+      "data visualizations",
+      "states"
+    ],
+    "productionCandidate": [
+      "background texture",
+      "terrain lines",
+      "decorative sound field",
+      "illustrative layer"
+    ],
+    "dynamicAreas": [
+      "课程树和学段",
+      "版本状态",
+      "作者与学校",
+      "审核意见",
+      "发布校验",
+      "双语内容审核",
+      "资源和版权状态",
+      "预览、批准、退回、发布、归档"
+    ],
+    "doNotRasterize": [
+      "user names",
+      "scores",
+      "school data",
+      "button text",
+      "forms",
+      "permissions",
+      "AI results"
+    ]
+  },
+  "responsive": {
+    "desktop": "完整构图",
+    "tablet": "主工作流优先，次栏折叠",
+    "mobile": "纵向路径与单一主行动"
+  },
+  "apiAndStateBoundaries": [
+    "不得因参考图修改既有 API",
+    "不得伪造成功、评分、推荐或同步状态",
+    "必须保留租户、权限、隐私和离线边界"
+  ],
+  "multimodalReviewRequired": true
+}

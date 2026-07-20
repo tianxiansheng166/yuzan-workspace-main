@@ -1,0 +1,59 @@
+{
+  "assetId": "project-impact-main-v31",
+  "pageId": "project-impact",
+  "title": "项目成效与社会影响",
+  "route": "/impact",
+  "classification": "REFERENCE_PAGE",
+  "status": "AWAITING_GENERATION",
+  "selectedFile": null,
+  "sourceCandidates": [],
+  "usage": "项目成效与社会影响页面级视觉参考",
+  "frontend": {
+    "rebuildWithCode": [
+      "layout",
+      "navigation",
+      "buttons",
+      "forms",
+      "tables",
+      "dynamic text",
+      "data visualizations",
+      "states"
+    ],
+    "productionCandidate": [
+      "background texture",
+      "terrain lines",
+      "decorative sound field",
+      "illustrative layer"
+    ],
+    "dynamicAreas": [
+      "覆盖与服务数据",
+      "测评前后变化",
+      "课程完成",
+      "教师培训",
+      "志愿服务",
+      "真实案例",
+      "数据来源说明",
+      "下载报告"
+    ],
+    "doNotRasterize": [
+      "user names",
+      "scores",
+      "school data",
+      "button text",
+      "forms",
+      "permissions",
+      "AI results"
+    ]
+  },
+  "responsive": {
+    "desktop": "完整构图",
+    "tablet": "主工作流优先，次栏折叠",
+    "mobile": "纵向路径与单一主行动"
+  },
+  "apiAndStateBoundaries": [
+    "不得因参考图修改既有 API",
+    "不得伪造成功、评分、推荐或同步状态",
+    "必须保留租户、权限、隐私和离线边界"
+  ],
+  "multimodalReviewRequired": true
+}

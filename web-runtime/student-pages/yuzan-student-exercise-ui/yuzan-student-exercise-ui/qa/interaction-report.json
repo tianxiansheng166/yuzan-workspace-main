@@ -1,0 +1,12 @@
+{
+  "page_errors": [],
+  "checks": {
+    "answer_saved_locally": true,
+    "next_question_changes_content": true,
+    "submit_modal_opens": true,
+    "incomplete_items_shown": true,
+    "pending_sync_status_shown": true,
+    "offline_state_shown": true
+  },
+  "passed": true
+}

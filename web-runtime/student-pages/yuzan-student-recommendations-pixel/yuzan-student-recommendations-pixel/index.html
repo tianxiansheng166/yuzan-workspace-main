@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="语赞心声学生端 AI 精准课程推荐页面高保真前端实现" />
+  <title>语赞心声｜为你定制的成长路径</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="语赞心声首页">
+        <img src="assets/logo-symbol.png" alt="" class="brand-mark" />
+        <span class="brand-copy">
+          <strong>语赞心声</strong>
+          <small>同声成长·心声相连</small>
+        </span>
+      </a>
+
+      <nav class="topnav" aria-label="主导航">
+        <button class="topnav-item" data-nav="today"><span class="nav-icon" data-icon="home"></span><span>今日</span></button>
+        <button class="topnav-item" data-nav="courses"><span class="nav-icon" data-icon="book"></span><span>课程</span></button>
+        <button class="topnav-item active" data-nav="recommend"><span class="nav-icon sound-icon"><i></i><i></i><i></i><i></i><i></i></span><span>推荐</span></button>
+        <button class="topnav-item" data-nav="assessment"><span class="nav-icon" data-icon="sun"></span><span>测评</span></button>
+        <button class="topnav-item" data-nav="growth"><span class="nav-icon" data-icon="spark"></span><span>成长</span></button>
+        <button class="topnav-item" data-nav="profile"><span class="nav-icon" data-icon="user"></span><span>我的</span></button>
+      </nav>
+
+      <div class="top-actions">
+        <button class="offline-action" type="button"><span data-icon="download"></span>离线管理</button>
+        <span class="online-state"><i></i>离线可用</span>
+        <button class="profile-chip" type="button" aria-haspopup="menu">
+          <img src="assets/avatar.jpg" alt="扎西罗布头像" />
+          <span><strong>扎西罗布</strong><small>六年级</small></span>
+          <span class="chevron">⌄</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="workspace">
+      <aside class="sidebar">
+        <section class="student-card">
+          <img src="assets/avatar.jpg" alt="" />
+          <div><h2>扎西罗布</h2><p>六年级学生</p><span>拉萨市城关区第一小学</span></div>
+        </section>
+
+        <nav class="sidenav" aria-label="学生端导航">
+          <button><span data-icon="book"></span>课程中心</button>
+          <button class="active"><span data-icon="like"></span>推荐</button>
+          <button><span data-icon="home"></span>我的学习</button>
+          <button><span data-icon="download"></span>我的下载</button>
+          <button><span data-icon="document"></span>学习记录</button>
+          <button><span data-icon="smile"></span>教师反馈</button>
+        </nav>
+
+        <section class="overview-card">
+          <div class="section-line"><h3>学情概览</h3><button>详情</button></div>
+          <div class="radar-wrap" aria-label="学情雷达图">
+            <svg viewBox="0 0 190 150" role="img" aria-label="语言发音、语言节奏、情感表达、流畅度、理解表达雷达图">
+              <g class="radar-grid">
+                <polygon points="95,20 157,65 133,137 57,137 33,65"></polygon>
+                <polygon points="95,36 139,68 122,119 68,119 51,68"></polygon>
+                <polygon points="95,52 122,72 112,102 78,102 68,72"></polygon>
+                <line x1="95" y1="20" x2="95" y2="90"></line><line x1="157" y1="65" x2="95" y2="90"></line>
+                <line x1="133" y1="137" x2="95" y2="90"></line><line x1="57" y1="137" x2="95" y2="90"></line><line x1="33" y1="65" x2="95" y2="90"></line>
+              </g>
+              <polygon class="radar-fill" points="95,42 139,72 118,116 66,123 49,70"></polygon>
+              <g class="radar-labels"><text x="95" y="11" text-anchor="middle">语音发音</text><text x="164" y="64">语言节奏</text><text x="134" y="148">情感表达</text><text x="20" y="148">流畅度</text><text x="0" y="64">理解表达</text></g>
+            </svg>
+          </div>
+          <div class="level-row"><span>综合水平</span><strong>良好</strong></div>
+          <p class="overview-tip">继续保持，针对薄弱项加强练习</p>
+        </section>
+      </aside>
+
+      <main class="main-content">
+        <section class="hero-panel">
+          <div class="hero-copy">
+            <h1>为你定制的成长路径 <button class="info-button" aria-label="查看说明">i</button></h1>
+            <p>基于你的测评结果与学习表现量身推荐</p>
+          </div>
+          <div class="hero-art" aria-hidden="true"></div>
+          <section class="recommend-target">
+            <div class="target-title"><span data-icon="flag"></span><strong>推荐目标</strong></div>
+            <p>提升情感表达的丰富度与语调变化的自然度，增强朗读感染力。</p>
+            <div class="target-tags">
+              <span class="label">当前薄弱</span>
+              <button class="issue active" data-course="0">情感表达</button>
+              <button class="issue" data-course="1">语言节奏</button>
+              <span class="divider"></span>
+              <span class="label green">当前优势</span>
+              <span class="tag green">语音发音</span>
+              <span class="tag green">理解表达</span>
+            </div>
+          </section>
+        </section>
+
+        <section class="path-area">
+          <div class="path-rail" aria-hidden="true">
+            <svg viewBox="0 0 170 430" preserveAspectRatio="none">
+              <path d="M82 27 L82 121 C82 151 45 153 45 188 L45 240 C45 270 82 274 82 307 L82 409" />
+            </svg>
+          </div>
+          <div class="step-list">
+            <div class="path-step step-1 active" data-step="0">
+              <div class="step-badge image"><img src="assets/avatar.jpg" alt="" /></div>
+              <span class="step-num">1</span>
+              <div class="step-copy"><strong>学习</strong><small>打基础</small></div>
+            </div>
+            <div class="path-step step-2" data-step="1">
+              <div class="step-badge star">★</div>
+              <span class="step-num">2</span>
+              <div class="step-copy"><strong>练习</strong><small>提能力</small></div>
+            </div>
+            <div class="path-step step-3" data-step="2">
+              <div class="step-badge check">✓</div>
+              <span class="step-num">3</span>
+              <div class="step-copy"><strong>巩固</strong><small>固提升</small></div>
+            </div>
+          </div>
+
+          <div class="course-stack">
+            <article class="course-card selected" data-course-card="0">
+              <img class="course-cover" src="assets/course-1.jpg" alt="高原上的春天课程封面" />
+              <div class="course-main">
+                <span class="eyebrow">推荐课程</span><h2>高原上的春天</h2><p>语文 · 六年级下册</p>
+                <div class="chips"><span>情感表达</span><span>语言节奏</span></div>
+              </div>
+              <div class="course-reason"><span class="reason-label">推荐理由</span><p>本课情感层次丰富，包含喜悦、赞美等情绪，能帮助你练习语调起伏与情感投入。</p><small><span data-icon="clock"></span>预计学习 15 分钟</small></div>
+              <div class="course-actions"><button class="primary start-course">开始学习</button><button class="secondary save-course">保存到计划</button></div>
+            </article>
+
+            <article class="course-card" data-course-card="1">
+              <img class="course-cover" src="assets/course-2.jpg" alt="语调起伏练习课程封面" />
+              <div class="course-main"><span class="eyebrow">推荐练习</span><h2>语调起伏练习</h2><p>专项练习</p><div class="chips"><span>语言节奏</span><span>情感表达</span></div></div>
+              <div class="course-reason"><span class="reason-label">推荐理由</span><p>通过句子语调的起伏练习，掌握停连与重音，增强朗读的自然度与表现力。</p><small><span data-icon="clock"></span>预计练习 10 分钟</small></div>
+              <div class="course-actions"><button class="primary start-course">开始练习</button><button class="secondary save-course">保存到计划</button></div>
+            </article>
+
+            <article class="course-card" data-course-card="2">
+              <img class="course-cover" src="assets/course-3.jpg" alt="情感表达强化练习课程封面" />
+              <div class="course-main"><span class="eyebrow">推荐练习</span><h2>情感表达强化练习</h2><p>专项练习</p><div class="chips"><span>情感表达</span><span>理解表达</span></div></div>
+              <div class="course-reason"><span class="reason-label">推荐理由</span><p>结合文本情境，练习情感的细腻表达与语气变化，提升朗读的感染力与共鸣感。</p><small><span data-icon="clock"></span>预计练习 12 分钟</small></div>
+              <div class="course-actions"><button class="primary start-course">开始练习</button><button class="secondary save-course">保存到计划</button></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="basis-section">
+          <h3>推荐依据</h3>
+          <div class="basis-grid">
+            <article><span class="basis-icon green" data-icon="report"></span><div><strong>测评结果</strong><p>你在“情感表达”“语言节奏”维度得分相对较低，存在提升空间。</p></div></article>
+            <article><span class="basis-icon orange" data-icon="star"></span><div><strong>学习记录</strong><p>近期在情感类课文的朗读中，语调变化较少，情感表现不够充分。</p></div></article>
+            <article><span class="basis-icon blue" data-icon="award"></span><div><strong>表现亮点</strong><p>语音发音准确，理解能力较强，具有较好的文本把握能力。</p></div></article>
+            <article><span class="basis-icon green-outline" data-icon="spark"></span><div><strong>成长建议</strong><p>先打基础，再通过专项练习强化表达，最后在真实语境中巩固提升。</p></div></article>
+          </div>
+        </section>
+      </main>
+
+      <aside class="rightbar">
+        <section class="right-card plan-card">
+          <div class="section-line"><h3>你的推荐计划 <small>（本周）</small></h3><button id="adjustPlan">调整计划</button></div>
+          <div class="time-row"><span><i data-icon="clock"></i>预计总时长</span><strong><i data-icon="clock"></i><b id="totalMinutes">37</b> 分钟</strong></div>
+          <div class="progress-copy"><span>计划完成度</span><strong id="progressText">0%</strong></div>
+          <div class="progress-bar"><i id="progressFill"></i></div>
+          <div class="reward-row"><span><i data-icon="spark"></i>完成奖励</span><strong><i class="coin">★</i>20 学习积分</strong></div>
+        </section>
+
+        <section class="right-card progress-card">
+          <h3>路径进度</h3>
+          <ol class="progress-path">
+            <li><span class="dot green">1</span><div><strong>学习</strong><small>打基础</small></div><em>未开始</em></li>
+            <li><span class="dot orange">2</span><div><strong>练习</strong><small>提能力</small></div><em>未开始</em></li>
+            <li><span class="dot blue">3</span><div><strong>巩固</strong><small>固提升</small></div><em>未开始</em></li>
+          </ol>
+        </section>
+
+        <section class="right-card teacher-card">
+          <h3>老师寄语</h3>
+          <div class="teacher-note"><p>扎西罗布同学：<br>你的朗读基础扎实，理解能力很棒！本周重点在于让情感“活”起来，声音“动”起来，相信你会有更出色的表现！</p><span>—— 次仁老师</span><i class="grass"></i></div>
+        </section>
+
+        <section class="right-card free-card">
+          <p>不想按推荐学习？</p><button>前往课程中心自由学习 <span>›</span></button>
+        </section>
+      </aside>
+    </div>
+  </div>
+
+  <div class="toast" role="status" aria-live="polite"></div>
+  <dialog id="planDialog">
+    <form method="dialog" class="dialog-panel">
+      <div class="dialog-head"><h2>调整本周推荐计划</h2><button value="cancel" aria-label="关闭">×</button></div>
+      <p>选择希望加入本周计划的学习内容。推荐顺序仍会按薄弱项优先排列。</p>
+      <label><input type="checkbox" checked /> 高原上的春天 <span>15 分钟</span></label>
+      <label><input type="checkbox" checked /> 语调起伏练习 <span>10 分钟</span></label>
+      <label><input type="checkbox" checked /> 情感表达强化练习 <span>12 分钟</span></label>
+      <div class="dialog-actions"><button value="cancel" class="secondary">取消</button><button value="default" class="primary" id="confirmPlan">保存计划</button></div>
+    </form>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>

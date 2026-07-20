@@ -44,6 +44,6 @@ import { CryptoSessionTokenService } from "./adapters/crypto-session-token.servi
       useClass: SystemClock,
     },
   ],
-  exports: [IdentityService],
+  exports: [IdentityService, PASSWORD_VERIFIER],
 })
 export class IdentityModule {}

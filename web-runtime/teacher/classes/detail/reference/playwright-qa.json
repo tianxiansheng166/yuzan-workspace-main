@@ -1,0 +1,60 @@
+{
+  "engine": "Playwright Chromium",
+  "checks": [
+    {
+      "name": "issue tab switch",
+      "passed": true
+    },
+    {
+      "name": "stage selection",
+      "passed": true
+    },
+    {
+      "name": "action drawer",
+      "passed": true
+    },
+    {
+      "name": "date range",
+      "passed": true
+    }
+  ],
+  "viewports": [
+    {
+      "name": "desktop",
+      "width": 1659,
+      "height": 948,
+      "document": {
+        "w": 1659,
+        "h": 948
+      },
+      "errors": []
+    },
+    {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024,
+      "document": {
+        "w": 768,
+        "h": 1312
+      },
+      "errors": []
+    },
+    {
+      "name": "mobile",
+      "width": 390,
+      "height": 844,
+      "document": {
+        "w": 390,
+        "h": 2587
+      },
+      "errors": []
+    }
+  ],
+  "all_passed": true,
+  "visual_reference": {
+    "viewport": "1659x948",
+    "ssim": 0.6321,
+    "mean_absolute_error": 22.13,
+    "note": "Whole-page metric includes font rendering and dynamic-content differences; used only as a calibration aid."
+  }
+}

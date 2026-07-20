@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>语赞心声｜测评链接与二维码管理</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand-wrap">
+        <div class="brand-mark"><img src="assets/logo-head.png" alt="语赞心声标识"></div>
+        <div class="brand-copy">
+          <div class="brand-cn">语赞心声</div>
+        </div>
+        <div class="brand-divider"></div>
+        <div class="backend-title">管理后台</div>
+      </div>
+      <div class="topbar-actions">
+        <button class="icon-btn" aria-label="通知">
+          <svg viewBox="0 0 24 24"><path d="M12 3a4 4 0 0 0-4 4v2.4c0 .7-.23 1.39-.65 1.95L5.7 13.5A2 2 0 0 0 7.2 17h9.6a2 2 0 0 0 1.5-3.5l-1.65-2.15A3.2 3.2 0 0 1 16 9.4V7a4 4 0 0 0-4-4Z"></path><path d="M10 18a2 2 0 0 0 4 0"></path></svg>
+          <span class="badge">12</span>
+        </button>
+        <button class="icon-btn" aria-label="帮助">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M9.5 9.3A2.7 2.7 0 0 1 12 7.8c1.7 0 2.9 1.03 2.9 2.5 0 1.14-.6 1.74-1.66 2.42-.88.56-1.24 1.02-1.24 2.08"></path><circle cx="12" cy="17.4" r=".7" fill="currentColor" stroke="none"></circle></svg>
+        </button>
+        <button class="user-chip">
+          <span class="avatar">嘉</span>
+          <span class="user-name">嘉宾（只读）</span>
+          <svg class="caret" viewBox="0 0 20 20"><path d="m5 7 5 6 5-6"/></svg>
+        </button>
+      </div>
+    </header>
+    <div class="body-shell">
+      <aside class="sidebar" id="sidebar">
+        <nav class="side-nav">
+          <button class="nav-item"><span class="nav-ico"><svg viewBox="0 0 24 24"><path d="M4 20h16M5 20V9l7-5 7 5v11M9 20v-5h6v5"></path></svg></span><span>驾驶舱</span></button>
+          <button class="nav-item"><span class="nav-ico"><svg viewBox="0 0 24 24"><path d="M4 20h16M5 20V8l7-4 7 4v12M9 12h6M9 16h6"></path></svg></span><span>学校管理</span></button>
+          <button class="nav-item"><span class="nav-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"></circle><path d="M5 20a7 7 0 0 1 14 0"></path></svg></span><span>用户管理</span></button>
+          <button class="nav-item"><span class="nav-ico"><svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z"></path><path d="M8 6v12M16 6v12"></path></svg></span><span>课程管理</span></button>
+          <button class="nav-item active"><span class="nav-ico"><svg viewBox="0 0 24 24"><path d="M12 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14Z"></path><path d="M12 11V7M12 15h.01M5 20h14"></path></svg></span><span>测评管理</span></button>
+          <button class="nav-item"><span class="nav-ico"><svg viewBox="0 0 24 24"><path d="M12 6c-3.9 0-7 2.7-7 6s3.1 6 7 6 7-2.7 7-6-3.1-6-7-6Z"></path><path d="M12 6V4M12 20v-2"></path></svg></span><span>志愿者管理</span></button>
+          <button class="nav-item"><span class="nav-ico"><svg viewBox="0 0 24 24"><path d="M6 8h12M6 12h12M6 16h12M4 5h16v14H4z"></path></svg></span><span>套餐管理</span></button>
+          <button class="nav-item"><span class="nav-ico"><svg viewBox="0 0 24 24"><path d="M12 3 5 6v6c0 4.2 3 7.8 7 8.8 4-1 7-4.6 7-8.8V6l-7-3Z"></path><path d="M9 12.5 11 14.5 15 10.5"></path></svg></span><span>内容审核</span><em class="dot-note">5</em></button>
+          <button class="nav-item"><span class="nav-ico"><svg viewBox="0 0 24 24"><path d="M12 3 5 6v6c0 4.2 3 7.8 7 8.8 4-1 7-4.6 7-8.8V6l-7-3Z"></path><path d="M9.5 12h5"></path></svg></span><span>隐私与合规</span></button>
+          <button class="nav-item"><span class="nav-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.6 1.6 0 0 0 .32 1.76l.04.04a2 2 0 1 1-2.83 2.83l-.04-.04a1.6 1.6 0 0 0-1.76-.32 1.6 1.6 0 0 0-.97 1.46V21a2 2 0 1 1-4 0v-.06a1.6 1.6 0 0 0-.97-1.46 1.6 1.6 0 0 0-1.76.32l-.04.04a2 2 0 1 1-2.83-2.83l.04-.04A1.6 1.6 0 0 0 4.6 15a1.6 1.6 0 0 0-1.46-.97H3a2 2 0 1 1 0-4h.14c.69 0 1.31-.4 1.46-.97a1.6 1.6 0 0 0-.32-1.76l-.04-.04a2 2 0 1 1 2.83-2.83l.04.04c.49.49 1.23.64 1.76.32A1.6 1.6 0 0 0 10 3.14V3a2 2 0 1 1 4 0v.14c0 .69.4 1.31.97 1.46.53.32 1.27.17 1.76-.32l.04-.04a2 2 0 1 1 2.83 2.83l-.04.04c-.49.49-.64 1.23-.32 1.76.15.57.77.97 1.46.97H21a2 2 0 1 1 0 4h-.14c-.69 0-1.31.4-1.46.97Z"></path></svg></span><span>系统运维</span></button>
+          <button class="nav-item"><span class="nav-ico"><svg viewBox="0 0 24 24"><path d="M8 7h8M8 12h8M8 17h5"></path><path d="M5 4h14v16H5z"></path></svg></span><span>审计日志</span></button>
+          <button class="nav-item"><span class="nav-ico"><svg viewBox="0 0 24 24"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 20h14"></path></svg></span><span>数据导出</span></button>
+          <button class="nav-item"><span class="nav-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.6 1.6 0 0 0 .32 1.76l.04.04"></path></svg></span><span>设置</span></button>
+        </nav>
+        <button class="collapse-btn"><span>‹</span><span>收起菜单</span></button>
+      </aside>
+      <main class="content-area">
+        <div class="page-topline">
+          <div class="breadcrumb">测评管理 <span>/</span> 测评链接与二维码管理</div>
+          <button class="mobile-menu" id="mobileMenu" aria-label="打开菜单">
+            <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+          </button>
+        </div>
+
+        <section class="hero-card">
+          <div class="hero-track">
+            <h2>链接生命周期</h2>
+            <div class="track-steps">
+              <div class="track-step active"><div class="step-icon">＋</div><div><strong>1 创建</strong><p>配置测评任务与规则</p></div></div>
+              <div class="track-line"></div>
+              <div class="track-step"><div class="step-icon">➤</div><div><strong>2 分发</strong><p>生成链接 / 二维码并分发</p></div></div>
+              <div class="track-line"></div>
+              <div class="track-step"><div class="step-icon">○</div><div><strong>3 访问</strong><p>学生访问并开始测评</p></div></div>
+              <div class="track-line"></div>
+              <div class="track-step"><div class="step-icon">✓</div><div><strong>4 完成</strong><p>提交完成，生成结果</p></div></div>
+              <div class="track-line"></div>
+              <div class="track-step warning"><div class="step-icon">×</div><div><strong>5 停用</strong><p>到期 / 停用，禁止访问</p></div></div>
+            </div>
+          </div>
+          <div class="hero-bg"></div>
+        </section>
+
+        <section class="workspace-card">
+          <div class="filters-bar">
+            <div class="search-box">
+              <input id="searchInput" type="text" placeholder="搜索链接名称、学校、任务编码" />
+              <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"></circle><path d="m16 16 4 4"></path></svg>
+            </div>
+            <select id="schoolFilter"><option value="all">全部学校</option><option>拉萨市藏文中学</option><option>那曲市第二中学</option><option>日喀则市第一中学</option><option>昌都市实验中学</option></select>
+            <select id="statusFilter"><option value="all">全部状态</option><option value="active">进行中</option><option value="expiring">即将到期</option><option value="disabled">已停用</option><option value="abnormal">异常</option></select>
+            <div class="date-box"><span>创建时间</span><input type="date" value="2024-05-06"><span>~</span><input type="date" value="2024-06-04"></div>
+            <div class="filter-actions"><button class="btn ghost" id="resetFilters">重置</button><button class="btn primary">＋ 新建测评链接</button></div>
+          </div>
+          <div class="workspace-main">
+            <div class="table-pane">
+              <div class="table-header grid-row">
+                <div>链接名称 / 任务编码</div><div>学校 / 班级</div><div>测评对象</div><div>有效期</div><div>身份策略</div><div>访问 / 完成</div><div>状态</div><div></div>
+              </div>
+              <div id="linkList" class="table-list"></div>
+            </div>
+            <aside class="detail-pane">
+              <div class="detail-head">
+                <div><h3 id="detailTitle">高原心理健康普测 - 初二（1）班</h3><p id="detailStatus" class="state-pill active">进行中</p></div>
+                <button class="icon-btn small" aria-label="关闭"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+              </div>
+              <div class="detail-tabs"><button class="tab active" data-tab="info">链接信息</button><button class="tab" data-tab="qr">二维码预览</button></div>
+              <div class="detail-body" id="tab-info">
+                <dl class="info-grid">
+                  <div><dt>测评任务编码</dt><dd id="taskCode">T20240529001</dd></div>
+                  <div><dt>测评链接</dt><dd class="link-field"><input id="linkField" value="https://yuzan.org/p/ab12cd34ef56" readonly><button id="copyLink" class="icon-copy" title="复制"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="10" height="10" rx="2"></rect><rect x="5" y="5" width="10" height="10" rx="2"></rect></svg></button></dd></div>
+                </dl>
+                <div class="qr-block"><img src="assets/sample-qr.svg" alt="二维码"><button class="btn outline small-btn">下载二维码</button><div class="qr-code-text">QR-AB12-CD34-EF56</div></div>
+                <dl class="meta-list">
+                  <div><dt>创建人</dt><dd id="creator">嘉宾（只读）</dd></div>
+                  <div><dt>创建时间</dt><dd id="createdAt">2024-05-29 09:30</dd></div>
+                  <div><dt>备注</dt><dd id="remark">高原心理健康普测（学生匿名作答）</dd></div>
+                </dl>
+              </div>
+              <div class="detail-body hidden" id="tab-qr">
+                <div class="qr-large"><img src="assets/sample-qr.svg" alt="二维码大图"></div>
+                <div class="qr-tips">
+                  <p>用于线下海报、班级群或打印分发。二维码失效时，系统会同步提示并阻止继续访问。</p>
+                  <ul>
+                    <li>支持导出 PNG / SVG</li>
+                    <li>下载前请确认有效期和身份策略</li>
+                    <li>检测到异常访问时将出现断点提示</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="detail-actions">
+                <button class="btn outline" id="regenBtn">重新生成链接</button>
+                <button class="btn ghost" id="disableBtn">停用链接</button>
+                <button class="btn primary" id="exportBtn">导出数据</button>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="bottom-grid">
+          <div class="trend-card card">
+            <div class="card-head"><h3>异常访问趋势（近 7 天）</h3><button class="subtle">查看异常访问明细</button></div>
+            <div class="trend-wrap">
+              <svg viewBox="0 0 560 180" class="trend-svg" aria-label="异常访问趋势图">
+                <defs>
+                  <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ee5a3d" stop-opacity=".18"/><stop offset="100%" stop-color="#ee5a3d" stop-opacity="0"/></linearGradient>
+                </defs>
+                <g stroke="#ece2d2" stroke-dasharray="4 4">
+                  <line x1="35" y1="25" x2="535" y2="25"/><line x1="35" y1="65" x2="535" y2="65"/><line x1="35" y1="105" x2="535" y2="105"/><line x1="35" y1="145" x2="535" y2="145"/>
+                </g>
+                <path d="M35 145 L35 130 C75 100, 110 34, 145 44 C180 54, 220 92, 255 104 C290 116, 325 112, 360 110 C395 108, 430 110, 465 108 C500 106, 518 140, 535 146 L535 160 L35 160 Z" fill="url(#areaGrad)"></path>
+                <path d="M35 130 C75 100, 110 34, 145 44 C180 54, 220 92, 255 104 C290 116, 325 112, 360 110 C395 108, 430 110, 465 108 C500 106, 518 140, 535 146" fill="none" stroke="#eb5b3c" stroke-width="3"></path>
+                <g fill="#eb5b3c"><circle cx="35" cy="130" r="4"/><circle cx="110" cy="44" r="4"/><circle cx="180" cy="70" r="4"/><circle cx="255" cy="104" r="4"/><circle cx="325" cy="112" r="4"/><circle cx="395" cy="110" r="4"/><circle cx="465" cy="108" r="4"/><circle cx="535" cy="146" r="4"/></g>
+                <g class="axis-text"><text x="32" y="172">05-29</text><text x="104" y="172">05-30</text><text x="175" y="172">05-31</text><text x="247" y="172">06-01</text><text x="317" y="172">06-02</text><text x="387" y="172">06-03</text><text x="458" y="172">06-04</text></g>
+              </svg>
+            </div>
+          </div>
+          <div class="metric-stack">
+            <div class="metric-card card"><div class="metric-icon warning">!</div><div><p>异常访问总数</p><strong>37</strong></div></div>
+            <div class="metric-card card"><div class="metric-icon shield">◈</div><div><p>异常任务数</p><strong>2</strong></div></div>
+            <div class="metric-card card"><div class="metric-icon chart">▮</div><div><p>占总访问比例</p><strong>4.2%</strong></div></div>
+          </div>
+          <div class="distribution-card card">
+            <div class="card-head"><h3>异常类型分布</h3></div>
+            <div class="bar-list">
+              <div class="bar-row"><span>同一设备短时段多次访问</span><div class="bar"><i style="width:70.3%"></i></div><em>26（70.3%）</em></div>
+              <div class="bar-row"><span>非常规地域访问</span><div class="bar"><i style="width:18.9%; background:#f2a220"></i></div><em>7（18.9%）</em></div>
+              <div class="bar-row"><span>代理 / 匿名网络访问</span><div class="bar"><i style="width:10.8%; background:#949494"></i></div><em>4（10.8%）</em></div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script src="script.js"></script>
+</body>
+</html>

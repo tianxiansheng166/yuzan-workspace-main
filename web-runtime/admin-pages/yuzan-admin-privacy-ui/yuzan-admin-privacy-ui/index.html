@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light" />
+  <title>语赞心声｜隐私与审计中心</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <svg class="sprite" aria-hidden="true">
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5v8.5a1 1 0 0 1-1 1h-5.5v-6h-3v6H5a1 1 0 0 1-1-1z"/></symbol>
+    <symbol id="i-school" viewBox="0 0 24 24"><path d="M3 10 12 4l9 6-9 6z"/><path d="M6 11v6h12v-6"/><path d="M10 17v-4h4v4"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="7" r="2.5"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><path d="M14 18a4 4 0 0 1 6.5-2.9"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11a3 3 0 0 1 3 3v14a3 3 0 0 0-3-3H6.5A2.5 2.5 0 0 0 4 19.5z"/><path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H14v17a3 3 0 0 1 3-3h.5a2.5 2.5 0 0 1 2.5 2.5z"/></symbol>
+    <symbol id="i-wave" viewBox="0 0 24 24"><path d="M4 12c2-4 4-4 6 0s4 4 6 0 4-4 4 0"/><path d="M4 16c2-4 4-4 6 0s4 4 6 0 4-4 4 0"/></symbol>
+    <symbol id="i-volunteer" viewBox="0 0 24 24"><path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 11c0 5.5-7 10-7 10Z"/></symbol>
+    <symbol id="i-package" viewBox="0 0 24 24"><path d="M12 3 4 7l8 4 8-4-8-4Z"/><path d="M4 7v10l8 4 8-4V7"/><path d="M12 11v10"/></symbol>
+    <symbol id="i-checksheet" viewBox="0 0 24 24"><path d="M8 3h8l4 4v14H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M16 3v4h4"/><path d="m10 14 2 2 4-4"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v11"/><path d="m7 10 5 5 5-5"/><path d="M4 19v2h16v-2"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.8 1.8 0 0 0 .3 1.9l-1.7 1.7a1.8 1.8 0 0 0-1.9-.3 1.8 1.8 0 0 0-1 1.6h-2.4a1.8 1.8 0 0 0-1-1.6 1.8 1.8 0 0 0-1.9.3l-1.7-1.7a1.8 1.8 0 0 0 .3-1.9 1.8 1.8 0 0 0-1.6-1H3.4v-2.4a1.8 1.8 0 0 0 1.6-1 1.8 1.8 0 0 0-.3-1.9L6.4 5a1.8 1.8 0 0 0 1.9.3 1.8 1.8 0 0 0 1-1.6h2.4a1.8 1.8 0 0 0 1 1.6 1.8 1.8 0 0 0 1.9-.3l1.7 1.7a1.8 1.8 0 0 0-.3 1.9 1.8 1.8 0 0 0 1.6 1V14a1.8 1.8 0 0 0-1.6 1z"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 5 6v6c0 4.5 2.8 7.8 7 9 4.2-1.2 7-4.5 7-9V6z"/></symbol>
+    <symbol id="i-server" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="6" rx="2"/><rect x="4" y="14" width="16" height="6" rx="2"/><path d="M8 7h.01M8 17h.01"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 17h12l-1-2v-4a5 5 0 1 0-10 0v4z"/><path d="M10 19a2 2 0 0 0 4 0"/></symbol>
+    <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 4 2c-1 .7-1.5 1.2-1.5 2.5"/><path d="M12 17h.01"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="m16 16 5 5"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></symbol>
+    <symbol id="i-export" viewBox="0 0 24 24"><path d="M12 4v10"/><path d="m8 8 4-4 4 4"/><rect x="4" y="13" width="16" height="7" rx="2"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+    <symbol id="i-danger" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 16h.01"/></symbol>
+    <symbol id="i-warning" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5M12 15h.01"/></symbol>
+    <symbol id="i-safe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.3 2.3L15.5 9.6"/></symbol>
+    <symbol id="i-record" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-logout" viewBox="0 0 24 24"><path d="M10 4H5v16h5"/><path d="M14 8l5 4-5 4"/><path d="M8 12h11"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M8 3h8l4 4v14H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M16 3v4h4"/></symbol>
+  </svg>
+
+  <div class="page-shell">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="展开导航"><svg><use href="#i-menu"/></svg></button>
+      <a class="brand" href="#">
+        <img src="assets/logo-mark.png" alt="" />
+        <span class="brand-copy"><strong>语赞心声</strong><small>摄藏教育公益平台</small></span>
+      </a>
+      <h1>隐私与合规 <span>/ 审计中心</span></h1>
+      <div class="topbar-actions">
+        <button class="icon-badge"><svg><use href="#i-bell"/></svg><i>12</i></button>
+        <button class="icon-btn"><svg><use href="#i-help"/></svg></button>
+        <button class="profile-btn"><svg><use href="#i-user"/></svg><span>嘉亮（只读）</span><svg class="chev"><use href="#i-down"/></svg></button>
+      </div>
+    </header>
+
+    <aside class="sidebar" id="sidebar">
+      <nav class="sidebar-nav">
+        <button><svg><use href="#i-home"/></svg><span>驾驶舱</span></button>
+        <button><svg><use href="#i-school"/></svg><span>学校管理</span></button>
+        <button><svg><use href="#i-users"/></svg><span>用户管理</span></button>
+        <button><svg><use href="#i-book"/></svg><span>课程管理</span></button>
+        <button><svg><use href="#i-wave"/></svg><span>测评管理</span></button>
+        <button><svg><use href="#i-volunteer"/></svg><span>志愿者管理</span></button>
+        <button><svg><use href="#i-package"/></svg><span>套餐管理</span></button>
+        <button><svg><use href="#i-checksheet"/></svg><span>内容审核</span><em>5</em></button>
+        <button class="active"><svg><use href="#i-shield"/></svg><span>隐私与合规</span></button>
+        <button><svg><use href="#i-server"/></svg><span>系统运维</span></button>
+        <button><svg><use href="#i-record"/></svg><span>审计日志</span></button>
+        <button><svg><use href="#i-download"/></svg><span>数据导出</span></button>
+        <button><svg><use href="#i-settings"/></svg><span>设置</span></button>
+      </nav>
+      <button class="collapse-btn"><svg><use href="#i-chevron"/></svg><span>收起菜单</span></button>
+    </aside>
+
+    <main class="workspace">
+      <section class="risk-panel panel">
+        <div class="risk-header">
+          <h2>风险趋势 <small>（近 7 天）</small></h2>
+          <button class="ghost-btn">近 7 天 <svg><use href="#i-down"/></svg></button>
+        </div>
+        <div class="risk-body">
+          <div class="risk-stats" id="riskStats"></div>
+          <div class="trend-chart">
+            <div class="chart-legend">
+              <span class="red">● 高风险</span>
+              <span class="orange">● 中风险</span>
+              <span class="green">● 低风险</span>
+            </div>
+            <svg viewBox="0 0 360 130" class="line-chart" aria-label="风险趋势图">
+              <g class="grid"><line x1="0" y1="12" x2="360" y2="12"/><line x1="0" y1="42" x2="360" y2="42"/><line x1="0" y1="72" x2="360" y2="72"/><line x1="0" y1="102" x2="360" y2="102"/></g>
+              <polyline class="line red" points="10,84 60,60 110,70 160,45 210,44 260,26 310,35 350,28"></polyline>
+              <polyline class="line orange" points="10,76 60,74 110,80 160,76 210,75 260,68 310,69 350,63"></polyline>
+              <polyline class="line green" points="10,94 60,96 110,98 160,93 210,92 260,90 310,92 350,90"></polyline>
+              <g class="points red"><circle cx="10" cy="84" r="3"/><circle cx="60" cy="60" r="3"/><circle cx="110" cy="70" r="3"/><circle cx="160" cy="45" r="3"/><circle cx="210" cy="44" r="3"/><circle cx="260" cy="26" r="3"/><circle cx="310" cy="35" r="3"/><circle cx="350" cy="28" r="3"/></g>
+              <g class="points orange"><circle cx="10" cy="76" r="3"/><circle cx="60" cy="74" r="3"/><circle cx="110" cy="80" r="3"/><circle cx="160" cy="76" r="3"/><circle cx="210" cy="75" r="3"/><circle cx="260" cy="68" r="3"/><circle cx="310" cy="69" r="3"/><circle cx="350" cy="63" r="3"/></g>
+              <g class="points green"><circle cx="10" cy="94" r="3"/><circle cx="60" cy="96" r="3"/><circle cx="110" cy="98" r="3"/><circle cx="160" cy="93" r="3"/><circle cx="210" cy="92" r="3"/><circle cx="260" cy="90" r="3"/><circle cx="310" cy="92" r="3"/><circle cx="350" cy="90" r="3"/></g>
+              <g class="xlabels"><text x="0" y="124">05-30</text><text x="50" y="124">05-31</text><text x="100" y="124">06-01</text><text x="150" y="124">06-02</text><text x="200" y="124">06-03</text><text x="250" y="124">06-04</text><text x="300" y="124">06-05</text></g>
+            </svg>
+          </div>
+        </div>
+      </section>
+
+      <section class="audit-area">
+        <div class="audit-main">
+          <div class="tabs" id="tabs">
+            <button class="active" data-tab="all">全部事件</button>
+            <button data-tab="export">数据导出</button>
+            <button data-tab="consent">同意变更</button>
+            <button data-tab="visit">访问异常</button>
+          </div>
+
+          <section class="filters panel">
+            <div class="searchbox"><svg><use href="#i-search"/></svg><input placeholder="搜索事件 / 资源 / 操作人" /></div>
+            <button class="filter-btn">全部事件类型 <svg><use href="#i-down"/></svg></button>
+            <button class="filter-btn">全部风险等级 <svg><use href="#i-down"/></svg></button>
+            <button class="filter-btn">全部学校 <svg><use href="#i-down"/></svg></button>
+            <button class="filter-btn date-btn"><svg><use href="#i-calendar"/></svg>2024-05-30 － 2024-06-05</button>
+            <button class="export-btn"><svg><use href="#i-export"/></svg>导出记录</button>
+          </section>
+
+          <section class="table-panel panel">
+            <table class="audit-table">
+              <thead>
+                <tr><th>事件时间</th><th>事件类型</th><th>风险等级</th><th>事件摘要</th><th>操作者</th><th>学校 / 资源范围</th><th></th></tr>
+              </thead>
+              <tbody id="tableBody"></tbody>
+            </table>
+            <div class="table-footer">
+              <span>共 92 条</span>
+              <div class="pagination">
+                <button class="page muted">‹</button>
+                <button class="page active">1</button>
+                <button class="page">2</button>
+                <button class="page">3</button>
+                <button class="page">4</button>
+                <button class="page">5</button>
+                <span>…</span>
+                <button class="page">10</button>
+                <button class="page">›</button>
+              </div>
+              <div class="page-size"><button class="filter-btn">10 条 / 页 <svg><use href="#i-down"/></svg></button><span>跳至 <b>1</b> 页</span></div>
+            </div>
+          </section>
+        </div>
+
+        <aside class="detail-panel panel">
+          <div class="detail-header"><h2>事件详情</h2><button class="icon-btn"><svg><use href="#i-close"/></svg></button></div>
+          <div class="detail-scroll">
+            <div class="detail-summary"><span class="chip red" id="detailRisk">高风险</span><strong id="detailTitle">数据导出：导出学生测评数据（含敏感字段）</strong></div>
+            <p class="detail-time" id="detailTime">2024-06-05 14:32:18</p>
+
+            <section class="detail-card">
+              <h3>基本信息</h3>
+              <dl class="info-grid" id="infoGrid"></dl>
+            </section>
+
+            <section class="detail-card">
+              <h3>变更对比 <small>（导出内容）</small></h3>
+              <div class="compare-grid">
+                <div><h4>导出前（未导出）</h4><pre id="beforeJson"></pre></div>
+                <div class="compare-arrow">→</div>
+                <div><h4>导出后（已包含）</h4><pre id="afterJson"></pre></div>
+              </div>
+            </section>
+
+            <section class="detail-card tags-card">
+              <h3>政策与依据</h3>
+              <div class="tag-row" id="policyTags"></div>
+              <h3>脱敏与遮蔽</h3>
+              <div class="tag-row" id="maskTags"></div>
+              <h3>证据留存</h3>
+              <div class="evidence-list" id="evidenceList"></div>
+            </section>
+          </div>
+          <div class="detail-actions">
+            <button class="subtle-btn" id="markReview">标记已评审</button>
+            <button class="green-btn" id="confirmRecord">确认并记录</button>
+            <button class="red-btn" id="escalate">升级处理</button>
+            <p>如需实时阻断或冻结账号，请前往 <a href="#">系统运维</a> → <a href="#">账号管理</a> 处理</p>
+          </div>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script src="/assets/api-client.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#f5ecdc" />
+  <meta name="description" content="语赞心声沉浸式登录与注册入口" />
+  <title>语赞心声｜高原声音入口</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="intro" id="intro" aria-hidden="true">
+    <div class="intro__mark">
+      <span class="intro__pulse"></span>
+      <img src="assets/yuzan-logo.png" alt="" />
+    </div>
+    <p>声音正在穿越雪山</p>
+    <svg class="intro__route" viewBox="0 0 620 120" role="presentation">
+      <path d="M18 90 C130 10 226 122 334 48 C420 -10 506 88 602 28" />
+      <circle cx="18" cy="90" r="7" />
+      <circle cx="334" cy="48" r="7" />
+      <circle cx="602" cy="28" r="7" />
+    </svg>
+  </div>
+
+  <main class="portal" id="portal">
+    <section class="world" id="world" aria-label="高原学习世界">
+      <div class="world__paper"></div>
+      <div class="world__halo"></div>
+      <div class="world__landscape parallax" data-depth="0.06"></div>
+      <div class="world__snow parallax" data-depth="0.025" aria-hidden="true"></div>
+      <div class="world__red parallax" data-depth="0.085" aria-hidden="true"></div>
+      <div class="world__cloud world__cloud--a parallax" data-depth="0.11"></div>
+      <div class="world__cloud world__cloud--b parallax" data-depth="0.14"></div>
+      <div class="world__grain"></div>
+
+      <svg class="world__route" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <filter id="routeGlow" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="7" result="blur" />
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <linearGradient id="routeGradient" x1="0" x2="1" y1="1" y2="0">
+            <stop offset="0" stop-color="#fff2b7"/>
+            <stop offset=".45" stop-color="#ffd46e"/>
+            <stop offset="1" stop-color="#fff7d6"/>
+          </linearGradient>
+        </defs>
+        <path class="route route--ghost" d="M320 1020 C265 910 438 844 370 720 C315 621 501 581 445 472 C398 381 601 347 552 245 C527 193 605 132 685 67" />
+        <path class="route route--flow" d="M320 1020 C265 910 438 844 370 720 C315 621 501 581 445 472 C398 381 601 347 552 245 C527 193 605 132 685 67" />
+        <g class="route-nodes">
+          <circle cx="322" cy="962" r="11"/><circle cx="376" cy="820" r="9"/>
+          <circle cx="379" cy="705" r="12"/><circle cx="444" cy="566" r="9"/>
+          <circle cx="445" cy="470" r="11"/><circle cx="555" cy="330" r="9"/>
+          <circle cx="554" cy="245" r="12"/><circle cx="640" cy="112" r="9"/>
+        </g>
+      </svg>
+
+      <svg class="world__wave world__wave--left" viewBox="0 0 520 140" aria-hidden="true">
+        <path class="wave-line" d="M0 72 C18 72 18 70 35 70 C53 70 53 81 70 81 C88 81 88 39 106 39 C124 39 124 100 142 100 C160 100 160 23 178 23 C196 23 196 113 214 113 C232 113 232 48 250 48 C268 48 268 83 286 83 C304 83 304 60 322 60 C340 60 340 74 358 74 C376 74 376 69 394 69 C412 69 412 72 430 72 C448 72 448 70 466 70 C484 70 484 72 520 72"/>
+      </svg>
+      <svg class="world__wave world__wave--right" viewBox="0 0 520 140" aria-hidden="true">
+        <path class="wave-line" d="M0 72 C18 72 18 70 35 70 C53 70 53 81 70 81 C88 81 88 39 106 39 C124 39 124 100 142 100 C160 100 160 23 178 23 C196 23 196 113 214 113 C232 113 232 48 250 48 C268 48 268 83 286 83 C304 83 304 60 322 60 C340 60 340 74 358 74 C376 74 376 69 394 69 C412 69 412 72 430 72 C448 72 448 70 466 70 C484 70 484 72 520 72"/>
+      </svg>
+
+      <header class="brand">
+        <img src="assets/yuzan-logo.png" alt="语赞心声" />
+        <button class="sound-switch" id="soundSwitch" type="button" aria-pressed="false">
+          <span class="sound-switch__bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <span>唤醒声场</span>
+        </button>
+      </header>
+
+      <div class="story">
+        <p class="story__eyebrow"><span></span> 普通话教育 · 援藏助学计划</p>
+        <div class="story__copy" aria-live="polite">
+          <p class="story__red" id="storyRed">进入语赞心声</p>
+          <h1 id="storyTitle">继续你的高原学习旅程</h1>
+          <p class="story__lead" id="storyLead">从声音出发，连接课程、教师支持、练习反馈与持续复测，让每一次发声都在雪山与山谷之间被认真听见。</p>
+        </div>
+        <div class="story__signal">
+          <span class="signal-dot"></span>
+          <p id="storySignal">今天，第 <strong>12,842</strong> 次发声正在穿越雪山。</p>
+          <svg viewBox="0 0 180 28" role="presentation"><path d="M1 14h14l5-9 6 19 8-13 7 7 9-17 8 25 7-12 9 5 8-11 7 11 6-5h14l5-7 6 13 8-9 8 5 8-2h16"/></svg>
+        </div>
+      </div>
+
+      <div class="world__coordinates" aria-hidden="true">
+        <span style="--x:16%;--y:68%;--d:.2s"></span>
+        <span style="--x:29%;--y:54%;--d:1.1s"></span>
+        <span style="--x:49%;--y:72%;--d:1.8s"></span>
+        <span style="--x:66%;--y:44%;--d:.7s"></span>
+        <span style="--x:83%;--y:63%;--d:2.4s"></span>
+      </div>
+
+      <div class="journey-note">
+        <span class="journey-note__line"></span>
+        <p><strong>声音坐标已连接</strong><br />高原学习网络正在响应</p>
+      </div>
+    </section>
+
+    <section class="gate" aria-label="登录与注册">
+      <div class="gate__paper"></div>
+      <div class="gate__contours" aria-hidden="true"></div>
+      <span class="corner corner--tl"></span><span class="corner corner--tr"></span>
+      <span class="corner corner--bl"></span><span class="corner corner--br"></span>
+
+      <div class="gate__header">
+        <p class="gate__kicker">HIGH-ALTITUDE VOICE PORTAL</p>
+        <h2 id="gateTitle">欢迎回来</h2>
+        <p id="gateSubtitle">连接你的声音旅程</p>
+        <svg class="gate__header-wave" viewBox="0 0 240 46" aria-hidden="true"><path d="M0 24h28l6-8 7 18 9-29 10 38 11-22 8 6 10-13 10 17 10-8 8 3 7-5 8 8 9-5h49"/></svg>
+      </div>
+
+      <div class="tabs" role="tablist" aria-label="登录方式">
+        <button class="tab is-active" id="loginTab" type="button" role="tab" aria-selected="true" aria-controls="loginPanel">登录</button>
+        <button class="tab" id="registerTab" type="button" role="tab" aria-selected="false" aria-controls="registerPanel">注册</button>
+        <span class="tabs__track" aria-hidden="true"></span>
+      </div>
+
+      <div class="gate__body">
+        <form class="auth-panel is-active" id="loginPanel" role="tabpanel" aria-labelledby="loginTab" novalidate>
+          <div class="field-group">
+            <label for="loginAccount">账号坐标</label>
+            <div class="field">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.4"/><path d="M5.5 19c.8-3.6 3-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/></svg>
+              <input id="loginAccount" name="account" autocomplete="username" placeholder="手机号 / 工号 / 学号" required />
+              <span class="field__beam"></span>
+            </div>
+          </div>
+          <div class="field-group">
+            <label for="loginPassword">通行密钥</label>
+            <div class="field">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v2.8"/></svg>
+              <input id="loginPassword" name="password" type="password" autocomplete="current-password" placeholder="请输入密码" minlength="6" required />
+              <button class="field__action" type="button" data-password-target="loginPassword" aria-label="显示或隐藏密码">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.5-5.5 9.5-5.5 9.5 5.5 9.5 5.5-3.5 5.5-9.5 5.5S2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="2.5"/></svg>
+              </button>
+              <span class="field__beam"></span>
+            </div>
+          </div>
+
+          <div class="form-meta">
+            <label class="remember"><input type="checkbox" checked /><span></span>记住本次声音坐标</label>
+            <button class="text-link" type="button" id="forgotButton">找回密钥</button>
+          </div>
+
+          <button class="route-button" type="submit" data-action="login">
+            <span class="route-button__mountains" aria-hidden="true"></span>
+            <svg viewBox="0 0 520 76" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M5 60 C105 14 165 72 255 38 C330 10 393 59 515 18"/>
+              <circle cx="67" cy="43" r="5"/><circle cx="255" cy="38" r="5"/><circle cx="450" cy="30" r="5"/>
+            </svg>
+            <strong>点亮学习路径</strong>
+            <span class="route-button__arrow" aria-hidden="true"><i></i></span>
+          </button>
+
+          <div class="connection-status">
+            <span class="connection-status__wave"><i></i><i></i><i></i><i></i><i></i></span>
+            <p>正在连接声音旅程</p>
+            <span class="connection-status__dot"></span>
+          </div>
+        </form>
+
+        <form class="auth-panel" id="registerPanel" role="tabpanel" aria-labelledby="registerTab" hidden novalidate>
+          <div class="field-row">
+            <div class="field-group">
+              <label for="registerPhone">手机号</label>
+              <div class="field field--compact">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 3.5h9a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2h-9a2 2 0 0 1-2-2v-13a2 2 0 0 1 2-2ZM9.5 6h5M10 17.5h4"/></svg>
+                <input id="registerPhone" name="phone" inputmode="tel" autocomplete="tel" placeholder="请输入手机号" required />
+                <span class="field__beam"></span>
+              </div>
+            </div>
+            <div class="field-group">
+              <label for="registerPassword">设置密钥</label>
+              <div class="field field--compact">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v2.8"/></svg>
+                <input id="registerPassword" name="password" type="password" minlength="6" placeholder="至少 6 位" required />
+                <button class="field__action" type="button" data-password-target="registerPassword" aria-label="显示或隐藏密码">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.5-5.5 9.5-5.5 9.5 5.5 9.5 5.5-3.5 5.5-9.5 5.5S2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="2.5"/></svg>
+                </button>
+                <span class="field__beam"></span>
+              </div>
+            </div>
+          </div>
+
+          <fieldset class="identity">
+            <legend><span></span>选择你的身份坐标<span></span></legend>
+            <div class="identity__grid">
+              <label class="identity-card identity-card--student is-selected">
+                <input type="radio" name="role" value="student" checked />
+                <span class="identity-card__seal"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M11 18c10-3 16-1 21 5v29c-5-6-11-8-21-5V18Zm42 0c-10-3-16-1-21 5v29c5-6 11-8 21-5V18Z"/><path d="M32 24c0-8 4-12 10-14-1 8-4 13-10 17M32 27c-5-5-9-6-14-5 3 7 7 10 14 11"/></svg></span>
+                <strong>学生</strong><small>探索知识<br />开启成长之路</small><i class="identity-card__node"></i>
+              </label>
+              <label class="identity-card identity-card--teacher">
+                <input type="radio" name="role" value="teacher" />
+                <span class="identity-card__seal"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="20" cy="18" r="7"/><path d="M8 48c1-12 5-18 12-18 6 0 10 4 12 12M34 13h22v27H34M39 20h12M39 27h9M42 40v10M49 40v10"/></svg></span>
+                <strong>教师</strong><small>传递知识<br />点亮更多可能</small><i class="identity-card__node"></i>
+              </label>
+              <label class="identity-card identity-card--volunteer">
+                <input type="radio" name="role" value="volunteer" />
+                <span class="identity-card__seal"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 29S17 20 17 10c0-6 5-9 10-9 3 0 5 2 7 5 2-3 4-5 8-5 5 0 10 3 10 9 0 10-20 23-20 23Z" transform="translate(0 7) scale(.95)"/><path d="M10 48h14l7-6h15c5 0 8 4 8 8H35l-7 6H10v-8Z"/></svg></span>
+                <strong>志愿者</strong><small>用爱发声<br />共建温暖高原</small><i class="identity-card__node"></i>
+              </label>
+              <label class="identity-card identity-card--admin">
+                <input type="radio" name="role" value="admin" />
+                <span class="identity-card__seal"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 5 53 14v15c0 14-8 24-21 30C19 53 11 43 11 29V14L32 5Z"/><circle cx="32" cy="27" r="8"/><path d="m32 19 3 5 6 1-4 4 1 6-6-3-6 3 1-6-4-4 6-1 3-5Z"/></svg></span>
+                <strong>管理员</strong><small>守护秩序<br />支持平台发展</small><i class="identity-card__node"></i>
+              </label>
+            </div>
+          </fieldset>
+
+          <button class="route-button" type="submit" data-action="register">
+            <span class="route-button__mountains" aria-hidden="true"></span>
+            <svg viewBox="0 0 520 76" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M5 60 C105 14 165 72 255 38 C330 10 393 59 515 18"/>
+              <circle cx="67" cy="43" r="5"/><circle cx="255" cy="38" r="5"/><circle cx="450" cy="30" r="5"/>
+            </svg>
+            <strong>注册并启程</strong>
+            <span class="route-button__arrow" aria-hidden="true"><i></i></span>
+          </button>
+
+          <div class="connection-status">
+            <span class="connection-status__wave"><i></i><i></i><i></i><i></i><i></i></span>
+            <p id="roleStatus">学生坐标已选定</p>
+            <span class="connection-status__dot"></span>
+          </div>
+        </form>
+      </div>
+
+      <footer class="gate__footer">
+        <span>安全连接</span><i></i><span>公益教育平台</span><i></i><button type="button" id="motionToggle">减少动态</button>
+      </footer>
+    </section>
+  </main>
+
+  <div class="transition" id="transition" aria-hidden="true">
+    <div class="transition__light"></div>
+    <svg viewBox="0 0 1000 420" preserveAspectRatio="none"><path d="M-10 350 C220 70 390 410 590 160 C720 0 830 220 1010 48"/></svg>
+    <div class="transition__copy">
+      <span class="transition__ring"></span>
+      <p id="transitionTitle">正在点亮高原学习路径</p>
+      <small id="transitionDetail">声音坐标正在与学习网络建立连接</small>
+    </div>
+  </div>
+
+  <dialog class="dialog" id="dialog">
+    <button class="dialog__close" type="button" aria-label="关闭">×</button>
+    <span class="dialog__mark"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 4 42 12v13c0 10-6 17-18 23C12 42 6 35 6 25V12L24 4Z"/><path d="m15 25 6 6 13-15"/></svg></span>
+    <h3>演示转场已完成</h3>
+    <p>当前压缩包为独立前端视觉版本。接入项目时，可在 <code>app.js</code> 的 <code>AUTH_ENDPOINTS</code> 中配置真实登录与注册接口，并在成功回调里跳转对应工作台。</p>
+    <button class="dialog__primary" type="button">返回入口</button>
+  </dialog>
+
+  <script src="/assets/app-core.js"></script>
+  <script src="/assets/api-client.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

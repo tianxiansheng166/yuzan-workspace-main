@@ -1,0 +1,4 @@
+html,body{min-width:0!important;background:#f8f4ea!important;overflow:hidden!important}
+.app{min-height:0!important}.sidebar{display:none!important}.main{margin-left:0!important;width:100%!important;min-height:0!important}.topbar{height:126px!important;padding-left:5vw!important;padding-right:5vw!important}.user{display:none!important}.header-art{right:2vw!important}.canvas{height:815px!important}.routes{left:0!important;width:100%!important}
+@media(max-width:1100px){.main{margin-left:0!important;width:100%!important}.canvas{height:1200px!important;min-height:1200px!important}.routes{left:0!important;width:100%!important}}
+@media(max-width:760px){body{overflow:hidden!important}.topbar{padding-bottom:90px!important}.canvas{height:2100px!important;min-height:2100px!important}}

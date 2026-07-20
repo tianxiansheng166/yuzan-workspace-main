@@ -49,6 +49,10 @@ export class UnavailableVolunteerRepository implements VolunteerRepositoryPort {
     throw new VolunteerUnavailableException();
   }
 
+  async updateServiceTaskStatus(): Promise<VolunteerServiceTask> {
+    throw new VolunteerUnavailableException();
+  }
+
   async createIncidentReport(): Promise<IncidentReport> {
     throw new VolunteerUnavailableException();
   }

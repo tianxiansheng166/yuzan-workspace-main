@@ -163,6 +163,22 @@ export class PrismaVolunteerRepository implements VolunteerRepositoryPort {
     return task;
   }
 
+  async updateServiceTaskStatus(
+    schoolId: string,
+    taskId: string,
+    volunteerId: string,
+    status: string,
+  ): Promise<VolunteerServiceTask> {
+    const result = await this.prisma.volunteerServiceTask.updateMany({
+      where: { schoolId, id: taskId, assignedVolunteerId: volunteerId },
+      data: { status },
+    });
+    if (result.count !== 1) throw new Error("VOLUNTEER_SERVICE_TASK_NOT_FOUND");
+    const task = await this.findServiceTaskById(schoolId, taskId);
+    if (!task) throw new Error("VOLUNTEER_SERVICE_TASK_NOT_FOUND");
+    return task;
+  }
+
   async createIncidentReport(
     schoolId: string,
     data: CreateIncidentData,

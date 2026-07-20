@@ -1,0 +1,13 @@
+{
+  "status": "partial",
+  "static_checks": {
+    "javascript_syntax": "pass",
+    "html_parse": "pass",
+    "assets_packaged": "pass"
+  },
+  "browser_qa": {
+    "playwright_script_included": true,
+    "executed_in_container": false,
+    "note": "Container browser policy prevented headless capture during this run."
+  }
+}

@@ -169,6 +169,22 @@ export class VolunteersService {
     return toServiceTaskResponse(updated);
   }
 
+  async updateMyServiceTaskStatus(auth: AuthContext, schoolId: string, taskId: string, status: "IN_PROGRESS" | "COMPLETED") {
+    if (!this.policy.canViewAssignedServiceTasks(auth, schoolId)) {
+      throw new ServiceTaskForbiddenException();
+    }
+    const volunteer = await this.repo.findByUserId(schoolId, auth.principal.userId);
+    if (!volunteer || !isQualified(volunteer.status)) throw new ServiceTaskForbiddenException();
+    const task = await this.repo.findServiceTaskById(schoolId, taskId);
+    if (!task || task.assignedVolunteerId !== volunteer.id) throw new ServiceTaskNotFoundException();
+    const allowed = status === "IN_PROGRESS"
+      ? ["ASSIGNED", "CONFIRMED"].includes(task.status)
+      : ["IN_PROGRESS"].includes(task.status);
+    if (!allowed) throw new ServiceTaskForbiddenException();
+    const updated = await this.repo.updateServiceTaskStatus(schoolId, taskId, volunteer.id, status);
+    return toServiceTaskResponse(updated);
+  }
+
   async reportIncident(auth: AuthContext, schoolId: string, data: CreateIncidentData) {
     if (!this.policy.canReportIncident(auth, schoolId)) {
       throw new IncidentReportForbiddenException();

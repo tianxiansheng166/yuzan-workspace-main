@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#fbfaf7" />
+  <title>我的班级｜语赞心声</title>
+  <link rel="stylesheet" href="./styles.css" />
+<link rel="stylesheet" href="/shared/teacher-shell.css" />
+  
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="教师端主导航">
+      <div class="brand">
+        <img class="brand-mark" src="./assets/yuzan-logo-mark.png" alt="" />
+        <div class="brand-copy">
+          <strong>语赞心声</strong>
+          <span>智慧教育公益平台</span>
+        </div>
+      </div>
+
+      <nav class="nav-sections">
+        <a class="nav-item" href="/teacher/assignments"><svg viewBox="0 0 24 24"><path d="M3 10 12 3l9 7M5 9v11h14V9M9 20v-6h6v6"/></svg><span>首页</span></a>
+
+        <p class="nav-kicker">教学</p>
+        <a class="nav-item active" href="#" aria-current="page">
+          <span class="nav-circle"><svg viewBox="0 0 24 24"><path d="M8 9a3 3 0 1 1 0-6 3 3 0 0 1 0 6ZM16 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6ZM7 21v-3a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v3"/><path d="M2 21v-2a4 4 0 0 1 4-4h1M22 21v-2a4 4 0 0 0-4-4h-1"/></svg></span>
+          <span>班级</span>
+        </a>
+        <a class="nav-item" href="/teacher/courses/"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M8 9h8M8 13h5M7 3v4M17 3v4"/></svg><span>课程</span></a>
+        <a class="nav-item" href="/teacher/assignments"><svg viewBox="0 0 24 24"><path d="M6 5h12l2 4v10H4V9zM8 5V3h8v2M8 11h8M8 15h5"/></svg><span>任务</span></a>
+        <a class="nav-item" href="/teacher/assessments"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="m8 12 3 3 5-7"/></svg><span>测评</span></a>
+        <a class="nav-item" data-unsupported="学情分析功能暂未开通"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4zM8 16V9M12 16V6M16 16v-4"/></svg><span>学情分析</span></a>
+
+        <p class="nav-kicker">资源</p>
+        <a class="nav-item" data-unsupported="资源中心功能暂未开通"><svg viewBox="0 0 24 24"><path d="M4 7h7l2 2h7v10H4zM8 4h8v3H8"/></svg><span>资源中心</span></a>
+        <a class="nav-item" data-unsupported="题库中心功能暂未开通"><svg viewBox="0 0 24 24"><path d="M5 3h14v18H5zM8 7h8M8 11h8M8 15h5"/></svg><span>题库中心</span></a>
+        <a class="nav-item" data-unsupported="教学工具功能暂未开通"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5zM8 8h8M8 12h5M15 15l4 4"/></svg><span>教学工具</span></a>
+
+        <p class="nav-kicker">成长</p>
+        <a class="nav-item" data-unsupported="我的备课功能暂未开通"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5zM9 2v4M15 2v4M8 10h8M8 14h5"/></svg><span>我的备课</span></a>
+        <a class="nav-item" data-unsupported="我的教研功能暂未开通"><svg viewBox="0 0 24 24"><path d="M4 6h16v12H4zM8 10h8M8 14h5"/></svg><span>我的教研</span></a>
+        <a class="nav-item" data-unsupported="培训学习功能暂未开通"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4zM8 16v-4M12 16V8M16 16v-7"/></svg><span>培训学习</span></a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a class="footer-link" data-unsupported="消息中心功能暂未开通"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 7h18s-3 0-3-7M10 20h4"/></svg><span>消息中心</span><b>12</b></a>
+        <a class="footer-link" data-unsupported="设置中心功能暂未开通"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.9 4.9 7 7M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1 7 17M17 7l2.1-2.1"/></svg><span>设置中心</span></a>
+        <div class="sidebar-art" aria-hidden="true">
+          <img src="./assets/sidebar-landscape.webp" alt="" />
+          <i></i>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="context-selectors">
+          <button class="context-button">
+            <svg viewBox="0 0 24 24"><path d="M3 10 12 3l9 7M5 9v11h14V9M9 20v-6h6v6"/></svg>
+            <span>林芝市第一中学</span><b>⌄</b>
+          </button>
+          <button class="context-button">
+            <svg viewBox="0 0 24 24"><path d="M5 4h14v16H5zM8 8h8M8 12h8"/></svg>
+            <span>2024-2025 学年下学期</span><b>⌄</b>
+          </button>
+          <span class="sync-pill"><i></i>已同步 2 分钟前</span>
+        </div>
+
+        <div class="top-actions">
+          <button class="icon-button notification" aria-label="通知">
+            <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 7h18s-3 0-3-7M10 20h4"/></svg>
+            <span>12</span>
+          </button>
+          <button class="help-button"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.8 9a2.4 2.4 0 1 1 3.6 2.1c-.9.5-1.4 1.1-1.4 2M12 17h.01"/></svg>帮助</button>
+          <button class="icon-button"><svg viewBox="0 0 24 24"><path d="M4 5h16v12H8l-4 4zM8 9h8M8 13h5"/></svg></button>
+          <button class="profile-button">
+            <span class="teacher-seal">师</span>
+            <span><strong>扎西卓玛老师</strong><small>普通话教师</small></span>
+            <b>⌄</b>
+          </button>
+        </div>
+      </header>
+
+      <section class="page">
+        <div class="content-grid">
+          <section class="workspace">
+            <div class="page-heading">
+              <div><h1>我的班级</h1><p>共 6 个班级</p></div>
+              <div class="heading-actions">
+                <button class="primary-action" data-action="create"><span>＋</span>创建班级</button>
+                <button class="secondary-action" data-action="import"><svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5-5 5 5M5 21h14"/></svg>导入学生</button>
+                <div class="view-switch">
+                  <button class="active" data-view="map"><svg viewBox="0 0 24 24"><path d="M5 4h4v4H5zM10 4h4v4h-4zM15 4h4v4h-4zM5 9h4v4H5zM10 9h4v4h-4zM15 9h4v4h-4zM5 14h4v4H5zM10 14h4v4h-4zM15 14h4v4h-4z"/></svg>地图视图</button>
+                  <button data-view="list" aria-label="列表视图"><svg viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg></button>
+                </div>
+              </div>
+            </div>
+
+            <section class="guide-banner">
+              <div><span class="guide-icon"><svg viewBox="0 0 24 24"><path d="M8 9a3 3 0 1 1 0-6 3 3 0 0 1 0 6ZM16 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6ZM7 21v-3a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v3"/></svg></span><span><strong>班级学习路径</strong><small>沿着学习路径推进教学：课程 → 任务 → 测评 → 复盘，循序渐进，见证成长。</small></span></div>
+              <button data-action="guide">查看指南</button>
+            </section>
+
+            <section class="class-map" id="mapView">
+              <img class="map-background" src="./assets/class-valley-background.webp" alt="" />
+              <div class="map-toolbar">
+                <div class="legend">
+                  <span><i class="legend-icon red-book"></i>课程</span>
+                  <span><i class="legend-icon orange-task"></i>任务</span>
+                  <span><i class="legend-icon green-eval"></i>测评</span>
+                  <span><i class="legend-icon blue-review"></i>复盘</span>
+                </div>
+                <select id="gradeFilter" aria-label="年级筛选">
+                  <option value="all">全部年级</option>
+                  <option value="高一">高一年级</option>
+                  <option value="高二">高二年级</option>
+                  <option value="初二">初二年级</option>
+                  <option value="初一">初一年级</option>
+                  <option value="高三">高三年级</option>
+                </select>
+              </div>
+
+              <svg class="learning-route" viewBox="0 0 1050 660" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M104 190 C250 145 420 165 475 245 C520 315 340 340 385 405 C425 470 580 405 630 505 C675 590 625 618 712 647"/>
+                <circle cx="104" cy="190" r="12"/><circle cx="475" cy="245" r="11"/><circle cx="385" cy="405" r="10"/><circle cx="630" cy="505" r="10"/><circle cx="712" cy="647" r="8"/>
+              </svg>
+
+              <article class="class-card red-card selected-card" style="left:11%;top:10%" data-grade="高一" tabindex="0">
+                <span class="class-book red">▮</span>
+                <div class="card-top"><span class="grade red-bg">高一</span><button class="state-dot done">✓</button></div>
+                <h3>高一（2）班</h3>
+                <p>学生 48 人 <i></i> 扎西卓玛　语文</p>
+                <hr />
+                <div class="metrics"><span>学习进度 <b>68%</b></span><span>覆盖率 <b class="green-text">82%</b></span></div>
+                <div class="bar"><i style="width:68%;background:#d7070f"></i></div>
+                <button class="enter-card" data-action="enter">进入班级</button>
+              </article>
+
+              <article class="class-card orange-card" style="left:54%;top:22%" data-grade="高二" tabindex="0">
+                <span class="class-book orange">▮</span>
+                <div class="card-top"><span class="grade orange-bg">高二</span><button class="state-dot pending"></button></div>
+                <h3>高二（1）班</h3>
+                <p>学生 45 人 <i></i> 索朗多吉　语文</p>
+                <hr />
+                <div class="metrics"><span>学习进度 <b>54%</b></span><span>覆盖率 <b class="green-text">76%</b></span></div>
+                <div class="bar"><i style="width:54%;background:#ef8118"></i></div>
+                <button class="enter-card" data-action="enter">进入班级</button>
+              </article>
+
+              <article class="class-card green-card" style="left:13%;top:47%" data-grade="初二" tabindex="0">
+                <span class="class-book green">▮</span>
+                <div class="card-top"><span class="grade green-bg">初二</span><button class="state-dot done green-dot">✓</button></div>
+                <h3>初二（3）班</h3>
+                <p>学生 42 人 <i></i> 央金拉姆　语文</p>
+                <hr />
+                <div class="metrics"><span>学习进度 <b>72%</b></span><span>覆盖率 <b class="green-text">88%</b></span></div>
+                <div class="bar"><i style="width:72%;background:#16814a"></i></div>
+                <button class="enter-card" data-action="enter">进入班级</button>
+              </article>
+
+              <article class="class-card blue-card" style="left:63%;top:56%" data-grade="初一" tabindex="0">
+                <span class="class-book blue">▮</span>
+                <div class="card-top"><span class="grade blue-bg">初一</span><button class="state-dot pending blue-dot"></button></div>
+                <h3>初一（1）班</h3>
+                <p>学生 46 人 <i></i> 次仁央宗　语文</p>
+                <hr />
+                <div class="metrics"><span>学习进度 <b>36%</b></span><span>覆盖率 <b class="blue-text">60%</b></span></div>
+                <div class="bar"><i style="width:36%;background:#1473ac"></i></div>
+                <button class="enter-card" data-action="enter">进入班级</button>
+              </article>
+
+              <article class="class-card gray-card" style="left:19%;top:76%" data-grade="高三" tabindex="0">
+                <span class="class-book gray">◷</span>
+                <div class="card-top"><span class="grade gray-bg">高三</span><button class="state-dot paused">◌</button></div>
+                <h3>高三（5）班</h3>
+                <p>学生 50 人 <i></i> 扎西卓玛　语文</p>
+                <hr />
+                <div class="metrics"><span>学习进度 <b>18%</b></span><span>覆盖率 <b>42%</b></span></div>
+                <div class="bar"><i style="width:18%;background:#7a838a"></i></div>
+                <button class="enter-card" data-action="enter">进入班级</button>
+              </article>
+
+              <button class="create-empty" data-action="create" style="left:68%;top:82%">
+                <span class="briefcase"><svg viewBox="0 0 32 32"><path d="M5 10h22v17H5zM11 10V6h10v4M12 17h8"/></svg></span>
+                <span><strong>创建新班级</strong><small>开启新的教学旅程</small></span>
+              </button>
+            </section>
+
+            <section class="list-view" id="listView" hidden>
+              <table>
+                <thead><tr><th>班级名称</th><th>年级</th><th>学生人数</th><th>任课教师</th><th>学习进度</th><th>覆盖率</th><th>操作</th></tr></thead>
+                <tbody>
+                  <tr><td>高一（2）班</td><td>高一</td><td>48</td><td>扎西卓玛</td><td>68%</td><td>82%</td><td><button data-action="enter">进入班级</button></td></tr>
+                  <tr><td>高二（1）班</td><td>高二</td><td>45</td><td>索朗多吉</td><td>54%</td><td>76%</td><td><button data-action="enter">进入班级</button></td></tr>
+                  <tr><td>初二（3）班</td><td>初二</td><td>42</td><td>央金拉姆</td><td>72%</td><td>88%</td><td><button data-action="enter">进入班级</button></td></tr>
+                  <tr><td>初一（1）班</td><td>初一</td><td>46</td><td>次仁央宗</td><td>36%</td><td>60%</td><td><button data-action="enter">进入班级</button></td></tr>
+                  <tr><td>高三（5）班</td><td>高三</td><td>50</td><td>扎西卓玛</td><td>18%</td><td>42%</td><td><button data-action="enter">进入班级</button></td></tr>
+                </tbody>
+              </table>
+            </section>
+          </section>
+
+          <aside class="right-rail">
+            <section class="side-card calendar-card">
+              <header><h2>教学日历</h2><div><button>‹</button><span>2025 年 5 月</span><button>›</button></div></header>
+              <div class="weekdays"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
+              <div class="calendar-grid">
+                <span class="muted">28</span><span class="muted">29</span><span class="muted">30</span><span>1</span><span>2</span><span>3</span><span>4</span>
+                <span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span>
+                <span class="event-day">12</span><span>13</span><span>14</span><span>15</span><span class="today">16</span><span>17</span><span>18</span>
+                <span class="event-day">19</span><span>20</span><span>21</span><span>22</span><span class="event-day">23</span><span>24</span><span>25</span>
+                <span class="event-day">26</span><span class="event-day">27</span><span>28</span><span>29</span><span>30</span><span>31</span><span class="muted">1</span>
+              </div>
+            </section>
+
+            <section class="side-card schedule-card">
+              <header><h2>今日安排 <small>· 5月16日</small></h2><button>查看全部 ›</button></header>
+              <article><time>10:20</time><div><strong>高一（2）班</strong><span>语文课</span><small>《高原上的春天》第3课时</small></div></article>
+              <article><time>14:30</time><div><strong>初二（3）班</strong><span>作文讲评</span><small>议论文写作指导</small></div></article>
+              <article><time>16:10</time><div><strong>教研组会议</strong><small>语文组集体备课</small></div></article>
+            </section>
+
+            <section class="side-card todo-card">
+              <header><h2>待处理事项</h2><button>全部 ›</button></header>
+              <button><span class="todo-icon orange">▣</span><b>待批改任务</b><em>18 ›</em></button>
+              <button><span class="todo-icon green">▣</span><b>待发布测评</b><em>3 ›</em></button>
+              <button><span class="todo-icon red">A</span><b>学情预警</b><em>5 ›</em></button>
+              <button><span class="todo-icon blue">▣</span><b>学生提问</b><em>7 ›</em></button>
+            </section>
+
+            <section class="side-card quick-card">
+              <header><h2>快捷操作</h2></header>
+              <div class="quick-grid">
+                <button data-action="task"><span><svg viewBox="0 0 24 24"><path d="m5 19 4-1 9-9-3-3-9 9zM14 7l3 3"/></svg></span>发布任务</button>
+                <button data-action="assessment"><span><svg viewBox="0 0 24 24"><path d="M7 3h10v18H7zM10 7h4M10 11h4M10 15h3"/></svg></span>发布测评</button>
+                <button data-action="analytics"><span><svg viewBox="0 0 24 24"><path d="M5 19V9M12 19V5M19 19v-7"/></svg></span>学情分析</button>
+                <button data-action="resource"><span><svg viewBox="0 0 24 24"><path d="M4 7h7l2 2h7v10H4zM8 4h8v3H8"/></svg></span>资源中心</button>
+              </div>
+            </section>
+          </aside>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="modalBackdrop" hidden>
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="modal-close" id="modalClose" aria-label="关闭">×</button>
+      <div class="modal-mark" id="modalMark">✓</div>
+      <h2 id="modalTitle">操作说明</h2>
+      <p id="modalText"></p>
+      <div class="modal-actions">
+        <button class="modal-secondary" id="modalCancel">取消</button>
+        <button class="modal-primary" id="modalConfirm">确认</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="./app.js"></script>
+  <script src="/shared/teacher-shell.js" defer></script>
+
+</html>
