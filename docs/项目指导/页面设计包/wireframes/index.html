@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>P0 学生端低保真功能线框</title>
+    <link rel="stylesheet" href="./styles.css">
+    <script src="./states.js" defer></script>
+    <script src="./pages.js" defer></script>
+    <script src="./app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#wireframe-main">跳到主要内容</a>
+    <div class="prototype-banner" role="note">低保真功能线框，不代表接口已实现</div>
+    <header class="site-header">
+      <a class="brand" href="#/S01?state=normal" aria-label="语赞心声练习与测评中心">
+        <span class="brand-mark" aria-hidden="true">声</span>
+        <span><strong>语赞心声</strong><small>学生练习与证据闭环</small></span>
+      </a>
+      <nav class="primary-nav" aria-label="学生一级导航">
+        <a href="#/S01?state=normal">今日学习</a>
+        <a href="#/S02?state=normal">课程学习</a>
+        <a class="active" aria-current="page" href="#/S01?state=normal">练习与测评</a>
+        <a href="#/S09?state=normal">成长档案</a>
+      </nav>
+      <div class="student-context" id="student-context" aria-live="polite"></div>
+    </header>
+    <div class="design-toolbar" aria-label="线框检查工具">
+      <label>页面 <select id="page-select"></select></label>
+      <label>状态 <select id="state-select"></select></label>
+      <label id="type-control">S04题型 <select id="type-select"></select></label>
+      <button id="reload-fixture" type="button">重新加载 Fixture</button>
+    </div>
+    <main id="wireframe-main" tabindex="-1">
+      <div id="app" aria-live="polite"></div>
+    </main>
+    <nav class="mobile-nav" aria-label="移动端一级导航">
+      <a href="#/S01?state=normal">今日</a>
+      <a href="#/S02?state=normal">课程</a>
+      <a class="active" href="#/S01?state=normal">练习</a>
+      <a href="#/S09?state=normal">成长</a>
+    </nav>
+    <div class="demo-watermark" aria-hidden="true">设计原型 · 示例数据</div>
+  </body>
+</html>
+

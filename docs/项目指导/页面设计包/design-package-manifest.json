@@ -1,0 +1,63 @@
+{
+  "taskId": "P0-STUDENT-DESIGN-PACKAGE-001",
+  "version": "1.0.0",
+  "baselineCommit": "5728016fcd0397ea62fa330790d91cb2d97f4297",
+  "fixturePath": "../design-fixtures/古诗文朗读与理解训练-v1.json",
+  "runtimeBoundary": "LOW_FIDELITY_DESIGN_ONLY",
+  "pages": [
+    {"id": "S01", "name": "练习与测评中心", "route": "/student/practices"},
+    {"id": "S02", "name": "练习详情", "route": "/student/practices/{practiceDefinitionId}"},
+    {"id": "S03", "name": "准备与设备检查", "route": "/student/practices/{practiceDefinitionId}/start"},
+    {"id": "S04", "name": "通用练习执行器", "route": "/student/practices/run/{attemptId}"},
+    {"id": "S05", "name": "提交前检查", "route": "/student/practices/run/{attemptId}/review"},
+    {"id": "S06", "name": "评分处理中", "route": "/student/practices/run/{attemptId}/processing"},
+    {"id": "S07", "name": "正式报告", "route": "/student/reports/{attemptId}"},
+    {"id": "S08", "name": "我的录音", "route": "/student/recordings?attemptId={attemptId}"},
+    {"id": "S09", "name": "历史记录", "route": "/student/history"}
+  ],
+  "executorTypes": [
+    "LISTEN_ONLY",
+    "LISTEN_REPEAT",
+    "READ_ALOUD",
+    "LISTEN_RETELL",
+    "LISTEN_ANSWER",
+    "SINGLE_CHOICE",
+    "FILL_BLANK",
+    "SHORT_ANSWER",
+    "MULTIPLE_CHOICE"
+  ],
+  "fixtureMissingExecutorTypes": ["LISTEN_ANSWER", "FILL_BLANK"],
+  "states": [
+    "loading",
+    "normal",
+    "empty",
+    "error",
+    "offline",
+    "permission",
+    "processing",
+    "provider-unavailable",
+    "playing",
+    "preparing",
+    "recording",
+    "reviewing",
+    "saved-local",
+    "uploading",
+    "upload-failed",
+    "synced",
+    "audio-rejected",
+    "completed"
+  ],
+  "apiStatusVocabulary": ["CURRENT", "PARTIAL", "PROPOSED", "BLOCKED"],
+  "wireframe": {
+    "entry": "wireframes/index.html",
+    "fixtureLoadError": "设计Fixture加载失败",
+    "usesRealApi": false,
+    "usesFallbackBusinessData": false
+  },
+  "visualPrompts": [
+    "visual-prompts/00-页面族统一视觉母版提示词.md",
+    "visual-prompts/第一批页面视觉提示词.md",
+    "visual-prompts/第二批页面视觉提示词.md"
+  ]
+}
+
