@@ -62,8 +62,22 @@
     } catch (err) { button.disabled = false; alert(err.message || '收藏操作失败'); }
   }
   const extraCatalogFilters = () => `<div class="filter-group"><h3>投放方式</h3>${facetValues('mode').map(item => chip(({ ASSIGNMENT: '教师任务', SELF_PRACTICE: '自主练习' })[item.value], item.value, 'mode', item.count)).join('')}</div><div class="filter-group"><h3>录音要求</h3>${facetValues('requiresRecording').map(item => chip(item.value === 'true' ? '需要录音' : '无需录音', item.value, 'requiresRecording', item.count)).join('')}</div><div class="filter-group"><h3>反馈方式</h3>${facetValues('instantFeedback').map(item => chip(item.value === 'true' ? '即时反馈' : '提交后反馈', item.value, 'instantFeedback', item.count)).join('')}</div>`;
+  const compactCatalogFilters = () => {
+    const panel = document.querySelector('.catalog-filters');
+    if (!panel) return;
+    const primary = new Set(['学段', '难度', '预计时长', '录音要求', '完成状态']);
+    const groups = [...panel.querySelectorAll('.filter-group')];
+    const secondary = groups.filter(group => !primary.has(group.querySelector('h3')?.textContent));
+    if (!secondary.length) return;
+    const more = document.createElement('details');
+    more.className = 'more-filters';
+    more.innerHTML = `<summary>更多条件 <span>${secondary.length} 项</span></summary>`;
+    secondary.forEach(group => more.append(group));
+    panel.append(more);
+  };
   function bindCatalog() {
     document.querySelector('.catalog-filters')?.insertAdjacentHTML('beforeend', extraCatalogFilters());
+    compactCatalogFilters();
     document.querySelector('[data-search-form]')?.addEventListener('submit', event => { event.preventDefault(); state.query = document.querySelector('[data-search-input]').value.trim(); refreshCatalog(); });
     document.querySelectorAll('[data-tab]').forEach(button => button.addEventListener('click', () => { state.tab = button.dataset.tab; if (state.tab !== 'RECOMMENDED') state.sort = 'RECOMMENDED'; refreshCatalog(); }));
     document.querySelectorAll('[data-filter-key]').forEach(button => button.addEventListener('click', () => { const key = button.dataset.filterKey; const value = button.dataset.filterValue; state.filters[key] = state.filters[key] === value ? undefined : value; refreshCatalog(); }));
