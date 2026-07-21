@@ -318,6 +318,9 @@ model School {
   teacherInvitations      TeacherInvitation[]
   studentActivityNotes    StudentActivityNote[]
   courseActivityPractices CourseActivityPractice[]
+  courseFavorites         CourseFavorite[]
+  aiGenerationJobs        AiGenerationJob[]
+  lessonPlanDrafts        LessonPlanDraft[]
 
   @@index([isActive])
   @@index([deletedAt])
@@ -371,6 +374,8 @@ model User {
   createdAssessmentLinks   AssessmentLink[]
   volunteerProfiles        VolunteerProfile[]
   trainingEnrollments      TrainingEnrollment[]
+  aiGenerationJobs         AiGenerationJob[]
+  lessonPlanDrafts         LessonPlanDraft[]
 
   @@index([status])
 }
@@ -478,6 +483,7 @@ model Enrollment {
   recordings         Recording[]
   assessmentSessions AssessmentSession[]
   activityNotes      StudentActivityNote[]
+  courseFavorites    CourseFavorite[]
 
   @@unique([schoolId, id])
   @@unique([classId, userId, role])
@@ -543,6 +549,8 @@ model CourseVersion {
   estimatedMinutes   Int?
   coverAsset         String?
   deviceRequirements Json?
+  taskGroups         Json?
+  culturalElements   Json?
   submittedAt        DateTime?
   approvedAt         DateTime?
   publishedAt        DateTime?
@@ -555,6 +563,7 @@ model CourseVersion {
   reviews            CourseReview[]
   contentPackages    ContentPackage[]
   offlinePackages    OfflineContentPackage[]
+  favorites          CourseFavorite[]
 
   @@unique([schoolId, id])
   @@unique([courseId, version])
@@ -571,6 +580,22 @@ model CourseReview {
   courseVersion   CourseVersion @relation(fields: [courseVersionId], references: [id], onDelete: Cascade)
 
   @@index([courseVersionId, createdAt])
+}
+
+model CourseFavorite {
+  id              String        @id @default(uuid()) @db.Uuid
+  schoolId        String        @db.Uuid
+  enrollmentId    String        @db.Uuid
+  courseVersionId String        @db.Uuid
+  createdAt       DateTime      @default(now())
+  school          School        @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  enrollment      Enrollment    @relation(fields: [schoolId, enrollmentId], references: [schoolId, id], onDelete: Cascade)
+  courseVersion   CourseVersion @relation(fields: [courseVersionId], references: [id], onDelete: Cascade)
+
+  @@unique([schoolId, id])
+  @@unique([enrollmentId, courseVersionId])
+  @@index([schoolId, enrollmentId])
+  @@index([courseVersionId])
 }
 
 model Unit {
@@ -1801,21 +1826,22 @@ model AssessmentSession {
 
 /// A student's private, optimistic-concurrency note for one published activity.
 model StudentActivityNote {
-  id           String   @id @default(uuid()) @db.Uuid
-  schoolId     String   @db.Uuid
-  enrollmentId String   @db.Uuid
-  activityId   String   @db.Uuid
-  content      String
-  revision     Int      @default(1)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id              String    @id @default(uuid()) @db.Uuid
+  schoolId        String    @db.Uuid
+  enrollmentId    String    @db.Uuid
+  activityId      String    @db.Uuid
+  content         String
+  videoTimestamp  Float?    /// Seconds offset into the video, null for general notes
+  revision        Int       @default(1)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
   school     School           @relation(fields: [schoolId], references: [id], onDelete: Cascade)
   enrollment Enrollment       @relation(fields: [schoolId, enrollmentId], references: [schoolId, id], onDelete: Cascade)
   activity   LearningActivity @relation(fields: [activityId], references: [id], onDelete: Cascade)
 
   @@unique([schoolId, id])
-  @@unique([enrollmentId, activityId])
+  @@index([schoolId, enrollmentId, activityId, videoTimestamp])
   @@index([schoolId, enrollmentId, updatedAt])
 }
 
@@ -1922,4 +1948,139 @@ model DeviceCheckLog {
   @@unique([schoolId, id])
   @@index([userId, createdAt])
   @@index([sessionId])
+}
+
+// ─── AI Lesson Planning ──────────────────────────────────
+
+enum AiWorkflowStatus {
+  ACTIVE
+  DISABLED
+  DEPRECATED
+}
+
+enum AiPromptStatus {
+  ACTIVE
+  DISABLED
+}
+
+enum AiJobStatus {
+  QUEUED
+  RUNNING
+  SUCCEEDED
+  FAILED
+  CANCELLED
+  PROVIDER_NOT_CONFIGURED
+  PROVIDER_UNAVAILABLE
+  OUTPUT_SCHEMA_INVALID
+  TIMEOUT
+}
+
+enum LessonPlanDraftStatus {
+  NEEDS_REVIEW
+  APPROVED
+}
+
+enum LessonPlanRevisionSource {
+  AI_GENERATION
+  TEACHER_EDIT
+  TEACHER_APPROVE
+}
+
+model AiWorkflowDefinition {
+  id                  String           @id @default(uuid()) @db.Uuid
+  provider            String           @default("flowise")
+  externalFlowId      String?
+  workflowKey         String           @unique
+  version             Int              @default(0)
+  status              AiWorkflowStatus @default(ACTIVE)
+  inputSchemaVersion  String?
+  outputSchemaVersion String?
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  jobs     AiGenerationJob[]
+  prompts  AiPromptVersion[]
+
+  @@index([workflowKey, status])
+}
+
+model AiPromptVersion {
+  id               String         @id @default(uuid()) @db.Uuid
+  workflowKey      String
+  version          Int
+  systemPromptHash String
+  templateSnapshot Json?
+  status           AiPromptStatus @default(ACTIVE)
+  createdAt        DateTime       @default(now())
+
+  workflow AiWorkflowDefinition @relation(fields: [workflowKey], references: [workflowKey], onDelete: Cascade)
+
+  @@unique([workflowKey, version])
+  @@index([workflowKey, status])
+}
+
+model AiGenerationJob {
+  id                    String        @id @default(uuid()) @db.Uuid
+  schoolId              String        @db.Uuid
+  teacherId             String        @db.Uuid
+  workflowDefinitionId  String        @db.Uuid
+  idempotencyKey        String        @unique
+  status                AiJobStatus   @default(QUEUED)
+  inputSnapshot         Json?
+  outputSnapshot        Json?
+  errorCode             String?
+  providerRequestId     String?
+  tokenUsage            Json?
+  latencyMs             Int?
+  startedAt             DateTime?
+  completedAt           DateTime?
+  createdAt             DateTime      @default(now())
+
+  school              School                 @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  teacher             User                   @relation(fields: [teacherId], references: [id], onDelete: Restrict)
+  workflowDefinition  AiWorkflowDefinition   @relation(fields: [workflowDefinitionId], references: [id], onDelete: Restrict)
+  lessonPlanDraft     LessonPlanDraft?
+
+  @@unique([schoolId, id])
+  @@index([schoolId, teacherId, status, createdAt])
+  @@index([status, createdAt])
+}
+
+model LessonPlanDraft {
+  id               String                 @id @default(uuid()) @db.Uuid
+  schoolId         String                 @db.Uuid
+  teacherId        String                 @db.Uuid
+  courseVersionId  String?                @db.Uuid
+  lessonId         String?                @db.Uuid
+  generationJobId  String                 @unique @db.Uuid
+  title            String
+  content          Json
+  revision         Int                    @default(1)
+  status           LessonPlanDraftStatus  @default(NEEDS_REVIEW)
+  approvedAt       DateTime?
+  createdAt        DateTime               @default(now())
+  updatedAt        DateTime               @updatedAt
+
+  school          School                @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  teacher         User                  @relation(fields: [teacherId], references: [id], onDelete: Restrict)
+  generationJob   AiGenerationJob       @relation(fields: [generationJobId], references: [id], onDelete: Restrict)
+  revisions       LessonPlanRevision[]
+
+  @@unique([schoolId, id])
+  @@index([schoolId, teacherId, status, updatedAt])
+}
+
+model LessonPlanRevision {
+  id            String                    @id @default(uuid()) @db.Uuid
+  draftId       String                    @db.Uuid
+  revision      Int
+  content       Json
+  source        LessonPlanRevisionSource
+  editorUserId  String?                   @db.Uuid
+  createdAt     DateTime                  @default(now())
+
+  draft  LessonPlanDraft @relation(fields: [draftId], references: [id], onDelete: Cascade)
+
+  @@unique([draftId, revision])
+  @@index([draftId, createdAt])
 }

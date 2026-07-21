@@ -2,10 +2,12 @@ import { Queue } from "bullmq";
 import pino from "pino";
 import { SpeechJobConsumer } from "./speech/speech-job.consumer.js";
 import { SpeechScoringClient } from "./speech/speech-scoring.client.js";
+import { AiGenerationConsumer } from "./ai-generation/ai-generation.consumer.js";
 
 const logger = pino({ level: process.env.LOG_LEVEL ?? "info" });
 
 const SPEECH_QUEUE_NAME = "speech-jobs";
+const AI_GENERATION_QUEUE_NAME = "ai-generation-jobs";
 
 interface RedisConfig {
   host: string;
@@ -72,10 +74,34 @@ async function main(): Promise<void> {
     }
   }
 
+  // Start AI generation consumer
+  let aiConsumer: AiGenerationConsumer | null = null;
+  const flowiseFlowId = process.env.FLOWISE_FLOW_ID ?? "";
+  const flowiseApiKey = process.env.FLOWISE_API_KEY ?? "";
+
+  if (flowiseFlowId && flowiseApiKey) {
+    aiConsumer = new AiGenerationConsumer(AI_GENERATION_QUEUE_NAME, redisConfig);
+    aiConsumer.start();
+    logger.info({ queue: AI_GENERATION_QUEUE_NAME }, "AI generation consumer started");
+  } else {
+    logger.info("AI generation is disabled (FLOWISE_FLOW_ID or FLOWISE_API_KEY not set). Skipping consumer startup.");
+
+    // Still create the queue so API can enqueue jobs
+    try {
+      const aiQueue = new Queue(AI_GENERATION_QUEUE_NAME, { connection: redisConfig });
+      logger.info({ queue: AI_GENERATION_QUEUE_NAME }, "AI generation queue created (consumer not started)");
+    } catch (error: unknown) {
+      logger.warn({ error }, "Could not connect to Redis. AI queue creation skipped.");
+    }
+  }
+
   const shutdown = async (signal: string): Promise<void> => {
     logger.info({ signal }, "Worker stopping");
     if (speechConsumer) {
       await speechConsumer.stop();
+    }
+    if (aiConsumer) {
+      await aiConsumer.stop();
     }
     process.exit(0);
   };

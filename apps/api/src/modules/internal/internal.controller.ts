@@ -3,18 +3,23 @@ import {
   Controller,
   Get,
   Headers,
+  HttpCode,
   Inject,
+  Post,
   Param,
   ParseUUIDPipe,
   Put,
   Query,
+  Res,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+import type { Response } from "express";
 import { Public } from "../../common/security/public.decorator.js";
 import { PrismaService } from "../../shared/database/prisma.service.js";
 import type { StoragePort } from "../../shared/storage/storage.port.js";
 import { STORAGE_PORT } from "../../shared/storage/storage.port.js";
 import { AssessmentService } from "../assessment/assessment.service.js";
+import { AiLessonPlanningService } from "../ai-lesson-planning/ai-lesson-planning.service.js";
 
 /**
  * Internal API controller for Worker callbacks.
@@ -35,6 +40,7 @@ export class InternalController {
     @Inject(STORAGE_PORT)
     private readonly storage: StoragePort,
     private readonly assessmentService: AssessmentService,
+    private readonly aiLessonPlanningService: AiLessonPlanningService,
     config: ConfigService,
   ) {
     this.internalKey = config.get<string>("API_INTERNAL_KEY") ?? "";
@@ -152,5 +158,144 @@ export class InternalController {
     });
 
     return { id: updated.id, status: updated.status };
+  }
+
+  // ─── AI Lesson Planning: Job Result ────────────────────
+
+  @Put("ai-generation-jobs/:jobId/result")
+  async updateAiGenerationJobResult(
+    @Param("jobId", ParseUUIDPipe) jobId: string,
+    @Body() body: {
+      status: string;
+      outputSnapshot?: Record<string, unknown>;
+      errorCode?: string;
+      tokenUsage?: Record<string, unknown>;
+      latencyMs?: number;
+      providerRequestId?: string;
+    },
+    @Headers("X-Internal-Key") key: string | undefined,
+  ) {
+    this.validateKey(key);
+    await this.aiLessonPlanningService.updateJobResult(jobId, body);
+    return { id: jobId, status: body.status };
+  }
+
+  // ─── AI Provider Proxy ─────────────────────────────────
+
+  /**
+   * Internal OpenAI-compatible proxy endpoint.
+   *
+   * Flowise calls this endpoint instead of the real AI provider directly.
+   * The real AI_API_KEY is substituted server-side, never exposed to Flowise.
+   *
+   * Requires X-Internal-Key header for authentication.
+   * Only forwards to the configured AI_BASE_URL.
+   * Strips any API key from response headers.
+   */
+  @Post("ai/openai/v1/chat/completions")
+  @HttpCode(200)
+  async proxyOpenAiChatCompletions(
+    @Body() body: Record<string, unknown>,
+    @Headers("X-Internal-Key") key: string | undefined,
+    @Res() res: Response,
+  ) {
+    this.validateKey(key);
+
+    const baseUrl = process.env.AI_BASE_URL;
+    const apiKey = process.env.AI_API_KEY;
+
+    if (!baseUrl || !apiKey) {
+      res.status(503).json({
+        error: {
+          message: "AI provider not configured",
+          code: "PROVIDER_NOT_CONFIGURED",
+        },
+      });
+      return;
+    }
+
+    const targetUrl = `${baseUrl.replace(/\/+$/, "")}/v1/chat/completions`;
+
+    const startTime = Date.now();
+    let statusCode = 0;
+    let tokenUsage: Record<string, unknown> | null = null;
+
+    try {
+      const controller = new AbortController();
+      const timeoutMs = parseInt(process.env.AI_TIMEOUT_MS ?? "120000", 10);
+      const timeout = setTimeout(() => controller.abort(), timeoutMs);
+
+      const upstream = await fetch(targetUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify(body),
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeout);
+      statusCode = upstream.status;
+
+      const responseText = await upstream.text();
+
+      // Parse response to extract token usage (for audit logging)
+      try {
+        const parsed = JSON.parse(responseText);
+        if (parsed.usage) {
+          tokenUsage = parsed.usage as Record<string, unknown>;
+        }
+        // Strip any API key from response
+        if (typeof parsed === "object" && parsed !== null) {
+          delete (parsed as Record<string, unknown>).apiKey;
+        }
+        res.status(statusCode).json(parsed);
+      } catch {
+        // If not valid JSON, forward as-is (could be SSE stream)
+        res.status(statusCode).send(responseText);
+      }
+
+      // Audit log — no sensitive content logged
+      const latencyMs = Date.now() - startTime;
+      console.info(
+        JSON.stringify({
+          msg: "AI proxy request completed",
+          statusCode,
+          latencyMs,
+          tokenUsage,
+          // Do NOT log: prompt, completion, API key, or full request/response
+        }),
+      );
+    } catch (err: unknown) {
+      const latencyMs = Date.now() - startTime;
+      const errorMessage =
+        err instanceof Error ? err.message : "Unknown error";
+
+      console.error(
+        JSON.stringify({
+          msg: "AI proxy request failed",
+          latencyMs,
+          error: errorMessage,
+          // Do NOT log stack trace that might contain keys
+        }),
+      );
+
+      if (errorMessage.includes("abort")) {
+        res.status(504).json({
+          error: {
+            message: "AI provider request timed out",
+            code: "AI_GENERATION_TIMEOUT",
+          },
+        });
+      } else {
+        res.status(502).json({
+          error: {
+            message: "AI provider request failed",
+            code: "AI_PROVIDER_UNAVAILABLE",
+          },
+        });
+      }
+    }
   }
 }

@@ -33,6 +33,8 @@ import { SyncModule } from "./modules/sync/sync.module.js";
 import { TeacherToolsModule } from "./modules/teacher-tools/teacher-tools.module.js";
 import { TeacherInvitationsModule } from "./modules/teacher-invitations/teacher-invitations.module.js";
 import { StudentCoursesModule } from "./modules/student-courses/student-courses.module.js";
+import { ResourcesModule } from "./modules/resources/resources.module.js";
+import { AiLessonPlanningModule } from "./modules/ai-lesson-planning/ai-lesson-planning.module.js";
 import { InternalModule } from "./modules/internal/internal.module.js";
 import { DatabaseModule } from "./shared/database/index.js";
 
@@ -74,6 +76,8 @@ applyRootRouteCompatibility();
     TeacherToolsModule,
     TeacherInvitationsModule,
     StudentCoursesModule,
+    ResourcesModule,
+    AiLessonPlanningModule,
     InternalModule,
     // P2 stub modules expose routes but return PERSISTENCE_PENDING /
     // UNAVAILABLE / PROVIDER_NOT_CONFIGURED so they cannot block MVP.
