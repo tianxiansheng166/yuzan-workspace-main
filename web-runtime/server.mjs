@@ -170,7 +170,28 @@ const server = createServer((req, res) => {
     }
   }
 
-  // For directory-like routes, prefer static file if it exists, otherwise SPA fallback
+  // These application routes deliberately shadow matching on-disk directories.
+  // In particular, /assessment/ must not fall through to assessment/index.html:
+  // it is the non-redirecting compatibility entry for the practice catalog.
+  const isAssessmentApplicationRoute = pathname === '/assessment'
+    || pathname === '/assessment/'
+    || pathname.startsWith('/assessment/history')
+    || pathname.startsWith('/assessment/recordings')
+    || pathname.startsWith('/assessment/sessions/');
+  const isPracticeApplicationRoute = pathname === '/student/practices'
+    || pathname.startsWith('/student/practices/');
+  if (isAssessmentApplicationRoute || isPracticeApplicationRoute) {
+    const spaResult = routeToSpa(pathname);
+    const spaFile = typeof spaResult === 'string' ? spaResult : spaResult?.file;
+    const spaPage = typeof spaResult === 'string' ? null : spaResult?.page;
+    if (spaFile && fileExists(spaFile)) {
+      if (spaPage) serveShell(spaFile, spaPage, req, res);
+      else serveFile(spaFile, req, res);
+      return;
+    }
+  }
+
+  // For directory-like routes, prefer static file if it exists, otherwise SPA fallback.
   const staticFile = resolveStatic(pathname);
   if (staticFile) {
     serveFile(staticFile, req, res);
