@@ -507,10 +507,21 @@ describe("AiLessonPlanningService", () => {
 
     it("should update non-cancelled job and create draft on SUCCEEDED", async () => {
       const service = createService();
-      mockPrisma.aiGenerationJob.findUnique.mockResolvedValue({ status: "RUNNING" });
+      // First findUnique: CANCELLED guard check → not cancelled
+      // Second findUnique: fetch full job for draft creation
+      const fullJob = makeJob({ status: "SUCCEEDED", schoolId: SCHOOL_ID, teacherId: TEACHER_ID, inputSnapshot: { goal: "test goal" } });
+      mockPrisma.aiGenerationJob.findUnique
+        .mockResolvedValueOnce({ status: "RUNNING" })
+        .mockResolvedValueOnce(fullJob);
       mockPrisma.aiGenerationJob.update.mockResolvedValue(makeJob({ status: "SUCCEEDED" }));
-      mockPrisma.lessonPlanDraft.create.mockResolvedValue(makeDraft());
-      mockPrisma.lessonPlanRevision.create.mockResolvedValue({});
+      mockPrisma.lessonPlanDraft.findUnique.mockResolvedValue(null); // No existing draft (idempotency check)
+
+      // $transaction callback receives a mock tx with draft.create and revision.create
+      const mockTx = {
+        lessonPlanDraft: { create: vi.fn().mockResolvedValue(makeDraft()) },
+        lessonPlanRevision: { create: vi.fn().mockResolvedValue({}) },
+      };
+      mockPrisma.$transaction.mockImplementation(async (fn: Function) => fn(mockTx));
 
       await service.updateJobResult(JOB_ID, {
         status: "SUCCEEDED",
@@ -521,6 +532,12 @@ describe("AiLessonPlanningService", () => {
       expect(mockPrisma.aiGenerationJob.update).toHaveBeenCalled();
       // Draft + revision created in transaction
       expect(mockPrisma.$transaction).toHaveBeenCalled();
+      expect(mockTx.lessonPlanDraft.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({ generationJobId: JOB_ID }),
+        }),
+      );
+      expect(mockTx.lessonPlanRevision.create).toHaveBeenCalled();
     });
   });
 });

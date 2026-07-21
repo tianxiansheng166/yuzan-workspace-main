@@ -412,6 +412,7 @@ export class AiGenerationConsumer {
       "..",
       "..",
       "..",
+      "..",
       "infra",
       "ai",
       "flowise",
@@ -420,7 +421,8 @@ export class AiGenerationConsumer {
     );
 
     try {
-      const Ajv = require("ajv").default;
+      const AjvModule = require("ajv");
+      const Ajv = AjvModule.default ?? AjvModule;
       const schema = require(schemaPath);
 
       const ajv = new Ajv({ allErrors: true });

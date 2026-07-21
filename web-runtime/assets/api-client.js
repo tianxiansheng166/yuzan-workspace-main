@@ -642,7 +642,7 @@
     });
   }
   async function getLessonPlanWorkflowStatus() {
-    return request(`/schools/${getActiveSchoolId()}/ai/workflow-status`);
+    return request(`/schools/${getActiveSchoolId()}/ai/workflows/lesson-planner/status`);
   }
   async function getInviteCode() {
     return request(`/schools/${getActiveSchoolId()}/teacher-tools/invite-code`);

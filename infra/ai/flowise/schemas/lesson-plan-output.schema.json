@@ -1,5 +1,5 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "lesson-plan-output.v0",
   "title": "LessonPlanOutput",
   "description": "语赞心声 AI 备课方案输出 Schema v0 — 面向西藏地区国家通用语言文字教学",
