@@ -63,7 +63,7 @@
           <section class="workspace-column">
             <section class="objective-card">
               <label><span>本次备课目标 <small>（可选）</small></span><div class="textarea-box"><textarea id="goalInput" maxlength="100" placeholder="例如：理解《高原上的春天》朗读与表达目标"></textarea><em><span id="goalCount">0</span>/100</em></div></label>
-              <label><span>关联课程 <small>（可选）</small></span><select id="courseSelect"><option value="">选择课程或单元</option><option>三年级下册 · 高原上的春天</option><option>三年级下册 · 第3章朗读与表达</option><option>四年级上册 · 语文综合实践</option></select></label>
+              <label><span>关联课程 <small>（可选）</small></span><select id="courseSelect"><option value="">选择课程或单元</option></select></label>
               <button class="generate-button" id="generatePath"><svg viewBox="0 0 24 24"><path d="m12 3 1.4 4.1L18 9l-4.6 1.9L12 15l-1.4-4.1L6 9l4.6-1.9zM19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8zM5 14l.7 1.8L8 16.5l-2.3.7L5 19l-.7-1.8L2 16.5l2.3-.7z"/></svg>生成备课路径</button>
               <div class="job-status-bar" id="jobStatusBar" hidden data-state="idle"><span class="job-status-text" id="jobStatusText"></span><button class="job-cancel-btn" id="jobCancelBtn">取消</button></div>
             </section>
@@ -122,6 +122,62 @@
   </div>
 
   <div class="modal-backdrop" id="modalBackdrop" hidden><section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><button class="modal-close" id="modalClose">×</button><div class="modal-mark" id="modalMark">✓</div><h2 id="modalTitle">操作说明</h2><p id="modalText"></p><div class="modal-actions"><button class="modal-secondary" id="modalCancel">取消</button><button class="modal-primary" id="modalConfirm">确认</button></div></section></div>
+  <div class="draft-editor-backdrop" id="draftEditorBackdrop" hidden>
+    <section class="draft-editor" role="dialog" aria-modal="true" aria-label="备课草稿编辑">
+      <header class="draft-editor-header">
+        <div><h2 id="draftEditorTitle">编辑备课草稿</h2><small id="draftEditorMeta"></small></div>
+        <div class="draft-editor-actions">
+          <em class="draft-revision-conflict" id="revisionConflict" hidden>版本冲突：他人已修改，请重新加载</em>
+          <button class="draft-btn draft-save-btn" id="draftSaveBtn">保存</button>
+          <button class="draft-btn draft-approve-btn" id="draftApproveBtn">确认采纳</button>
+          <button class="draft-btn draft-back-btn" id="draftBackBtn">返回列表</button>
+        </div>
+      </header>
+      <div class="draft-editor-body" id="draftEditorBody">
+        <div class="draft-field draft-field-title">
+          <label>标题</label>
+          <input type="text" id="draftFieldTitle" placeholder="备课草稿标题" maxlength="120" />
+        </div>
+        <div class="draft-field">
+          <label>摘要</label>
+          <textarea id="draftFieldSummary" rows="2" placeholder="本课概要"></textarea>
+        </div>
+        <div class="draft-field">
+          <label>教学目标</label>
+          <textarea id="draftFieldObjectives" rows="3" placeholder="学生应达到的学习目标"></textarea>
+        </div>
+        <div class="draft-field-row">
+          <div class="draft-field"><label>重点</label><textarea id="draftFieldKeyPoints" rows="2" placeholder="教学重点"></textarea></div>
+          <div class="draft-field"><label>难点</label><textarea id="draftFieldDifficulties" rows="2" placeholder="教学难点"></textarea></div>
+        </div>
+        <div class="draft-field">
+          <label>课堂流程</label>
+          <textarea id="draftFieldClassFlow" rows="3" placeholder="课堂环节安排"></textarea>
+        </div>
+        <div class="draft-field-row">
+          <div class="draft-field"><label>教师活动</label><textarea id="draftFieldTeacherActivities" rows="3" placeholder="教师主导的活动"></textarea></div>
+          <div class="draft-field"><label>学生活动</label><textarea id="draftFieldStudentActivities" rows="3" placeholder="学生参与的活动"></textarea></div>
+        </div>
+        <div class="draft-field">
+          <label>差异化支持</label>
+          <textarea id="draftFieldDifferentiatedSupport" rows="2" placeholder="针对不同水平学生的支持策略"></textarea>
+        </div>
+        <div class="draft-field-row">
+          <div class="draft-field"><label>学习单草稿</label><textarea id="draftFieldWorksheetDraft" rows="3" placeholder="学习单内容"></textarea></div>
+          <div class="draft-field"><label>练习草稿</label><textarea id="draftFieldExerciseDraft" rows="3" placeholder="练习题内容"></textarea></div>
+        </div>
+        <div class="draft-field-row">
+          <div class="draft-field"><label>术语表</label><textarea id="draftFieldGlossary" rows="2" placeholder="关键术语及解释"></textarea></div>
+          <div class="draft-field"><label>风险提示</label><textarea id="draftFieldRisks" rows="2" placeholder="教学可能遇到的问题"></textarea></div>
+        </div>
+        <div class="draft-field">
+          <label>教师检查清单</label>
+          <textarea id="draftFieldTeacherChecklist" rows="3" placeholder="课前准备及课后自查项"></textarea>
+        </div>
+      </div>
+    </section>
+  </div>
+
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="/assets/api-client.js"></script>
  <script src="./app.js"></script>
