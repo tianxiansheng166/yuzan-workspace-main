@@ -1,5 +1,12 @@
 # Flowise — Local AI Workflow Orchestration
-# Pinned version: 3.0.12 (Apache-2.0 Community Edition)
+# Pinned version: 3.1.1 (Apache-2.0 Community Edition)
+#
+# Version choice: 3.1.1 over 3.0.12
+#   - 3.0.12 (Jan 2026) is outdated; missing Agentflow V2 stability fixes
+#   - 3.1.1 (Mar 2026) is validated in deployment guides and includes
+#     security fixes for internal HTTP access and Agentflow V2 improvements
+#   - 3.1.2 (May 2026) is the latest image but has less community validation
+#   - We pin 3.1.1 for stability; upgrade to 3.1.2 after validation
 # DO NOT use :latest — always pin to a specific version.
 #
 # Usage:
@@ -18,7 +25,7 @@
 
 services:
   flowise:
-    image: flowiseai/flowise:3.0.12
+    image: flowiseai/flowise:3.1.1
     container_name: yuzan-flowise
     restart: unless-stopped
     ports:
@@ -35,10 +42,10 @@ services:
       - DISABLE_COMMUNITY_NODES=true
       - NODE_OPTIONS=--max-old-space-size=4096
     volumes:
-      - ../../runtime-local/flowise/data:/opt/flowise/data
-      - ../../runtime-local/flowise/logs:/opt/flowise/logs
-      - ../../runtime-local/flowise/storage:/opt/flowise/storage
-      - ../../runtime-local/flowise/secret:/opt/flowise/secret
+      - ../../../runtime-local/flowise/data:/opt/flowise/data
+      - ../../../runtime-local/flowise/logs:/opt/flowise/logs
+      - ../../../runtime-local/flowise/storage:/opt/flowise/storage
+      - ../../../runtime-local/flowise/secret:/opt/flowise/secret
     healthcheck:
       test: ["CMD-SHELL", "curl -sf http://localhost:4300/api/v1/ping || exit 1"]
       interval: 15s

@@ -1,10 +1,16 @@
 import { Worker, type Job } from "bullmq";
 import { createRequire } from "node:module";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
 import pino from "pino";
 
 const logger = pino({ level: process.env.LOG_LEVEL ?? "info" });
 
-// Use createRequire to load JSON Schema (ESM compatible)
+// ESM-compatible path resolution for schema loading
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Use createRequire for JSON loading (ESM compatible)
 const require = createRequire(import.meta.url);
 
 export interface AiGenerationJobPayload {
@@ -15,6 +21,16 @@ export interface AiGenerationJobPayload {
   courseVersionId?: string;
   lessonId?: string;
   gradeBand?: string;
+  subject?: string;
+  durationMinutes?: number;
+  keyRequirements?: string;
+  outputModules?: string;
+  locale?: string;
+  courseTitle?: string;
+  courseSummary?: string;
+  lessonTitle?: string;
+  lessonContentSummary?: string;
+  classAggregateSummary?: string;
 }
 
 interface FlowisePredictionResponse {
@@ -27,16 +43,21 @@ interface FlowisePredictionResponse {
  *
  * Flow:
  * 1. Mark job as RUNNING via internal API
- * 2. Call Flowise Prediction API with structured input
+ * 2. Call Flowise Prediction API with { form, streaming, overrideConfig }
  * 3. Validate output against JSON Schema
  * 4. If valid, report SUCCEEDED with output via internal API
- * 5. If schema-invalid, attempt one auto-repair retry, then report OUTPUT_SCHEMA_INVALID
+ * 5. If schema-invalid, report OUTPUT_SCHEMA_INVALID
  * 6. On any other failure, report FAILED with error code
  *
  * Security:
  * - Flowise URL, flowId, and Flow API Key are only in server environment
  * - Student PII is never sent to AI
  * - API keys are never logged
+ *
+ * Flowise Agentflow V2 Prediction API contract:
+ *   POST /api/v1/prediction/{flowId}
+ *   Body: { form: { ...fieldValues }, streaming: false, overrideConfig: { ... } }
+ *   The `form` field maps to the Agentflow Form Input node's fields.
  */
 export class AiGenerationConsumer {
   private worker: Worker<AiGenerationJobPayload> | null = null;
@@ -45,7 +66,7 @@ export class AiGenerationConsumer {
   private readonly flowiseBaseUrl: string;
   private readonly flowiseFlowId: string;
   private readonly flowiseApiKey: string;
-  private schemaValidator: ((data: unknown) => boolean) | null = null;
+  private schemaValidator: (data: unknown) => boolean;
 
   constructor(
     private readonly queueName: string,
@@ -56,11 +77,12 @@ export class AiGenerationConsumer {
     this.flowiseBaseUrl = process.env.FLOWISE_BASE_URL ?? "http://127.0.0.1:4300";
     this.flowiseFlowId = process.env.FLOWISE_FLOW_ID ?? "";
     this.flowiseApiKey = process.env.FLOWISE_API_KEY ?? "";
+
+    // Schema validator must load successfully — crash if it fails
+    this.schemaValidator = this.loadSchemaValidator();
   }
 
   start(): void {
-    this.loadSchemaValidator();
-
     this.worker = new Worker<AiGenerationJobPayload>(
       this.queueName,
       async (job: Job<AiGenerationJobPayload>) => {
@@ -97,11 +119,29 @@ export class AiGenerationConsumer {
   }
 
   private async processJob(job: Job<AiGenerationJobPayload>): Promise<void> {
-    const { jobId, schoolId, teacherId, goal, courseVersionId, lessonId, gradeBand } = job.data;
+    const {
+      jobId,
+      schoolId,
+      teacherId,
+      goal,
+      courseVersionId,
+      lessonId,
+      gradeBand,
+      subject,
+      durationMinutes,
+      keyRequirements,
+      outputModules,
+      locale,
+      courseTitle,
+      courseSummary,
+      lessonTitle,
+      lessonContentSummary,
+      classAggregateSummary,
+    } = job.data;
     const startTime = Date.now();
 
     // Check if Flowise is configured
-    if (!this.flowiseFlowId || !this.flowiseApiKey) {
+    if (!this.flowiseFlowId) {
       await this.reportResult(jobId, {
         status: "PROVIDER_NOT_CONFIGURED",
         errorCode: "FLOWISE_NOT_CONFIGURED",
@@ -114,27 +154,30 @@ export class AiGenerationConsumer {
     await this.reportResult(jobId, { status: "RUNNING" });
 
     try {
-      // Step 2: Call Flowise Prediction API
-      const predictionInput = {
+      // Step 2: Build form data for Flowise Agentflow V2 Form Input node
+      // All fields come from the BullMQ job payload (populated by the API
+      // service from the teacher's request and course context).
+      const formPayload: Record<string, unknown> = {
         requestId: `ai-job-${jobId}`,
         schoolContextId: schoolId,
         teacherContextId: teacherId,
         goal,
         gradeBand: gradeBand ?? "",
-        subject: "",
-        durationMinutes: 40,
+        subject: subject ?? "",
+        durationMinutes: durationMinutes ?? 40,
+        keyRequirements: keyRequirements ?? "",
+        outputModules: outputModules ?? "all",
+        locale: locale ?? "zh-CN",
         courseVersionId: courseVersionId ?? "",
         lessonId: lessonId ?? "",
-        courseTitle: "",
-        courseSummary: "",
-        lessonTitle: "",
-        lessonContentSummary: "",
-        classAggregateSummary: "",
-        outputModules: "all",
-        locale: "zh-CN",
+        courseTitle: courseTitle ?? "",
+        courseSummary: courseSummary ?? "",
+        lessonTitle: lessonTitle ?? "",
+        lessonContentSummary: lessonContentSummary ?? "",
+        classAggregateSummary: classAggregateSummary ?? "",
       };
 
-      const predictionResult = await this.callFlowise(predictionInput);
+      const predictionResult = await this.callFlowise(formPayload);
       const latencyMs = Date.now() - startTime;
 
       // Step 3: Validate output against schema
@@ -149,10 +192,10 @@ export class AiGenerationConsumer {
         return;
       }
 
-      if (this.schemaValidator && !this.schemaValidator(output)) {
+      if (!this.schemaValidator(output)) {
         logger.warn(
           { jobId, latencyMs },
-          "Schema validation failed on first attempt — will not auto-retry in worker (Flowise workflow should handle retry internally)",
+          "Schema validation failed — reporting OUTPUT_SCHEMA_INVALID",
         );
 
         await this.reportResult(jobId, {
@@ -212,10 +255,15 @@ export class AiGenerationConsumer {
   }
 
   /**
-   * Call Flowise Prediction API with structured input.
+   * Call Flowise Prediction API with Agentflow V2 form input.
+   *
+   * Flowise Agentflow V2 expects:
+   *   { form: { ...fieldValues }, streaming: false, overrideConfig: { ... } }
+   *
+   * NOT: { question, input, overrideConfig } — that is the legacy chatflow format.
    */
   private async callFlowise(
-    input: Record<string, unknown>,
+    form: Record<string, unknown>,
   ): Promise<FlowisePredictionResponse> {
     const url = `${this.flowiseBaseUrl}/api/v1/prediction/${this.flowiseFlowId}`;
 
@@ -228,14 +276,14 @@ export class AiGenerationConsumer {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${this.flowiseApiKey}`,
+          ...(this.flowiseApiKey ? { Authorization: `Bearer ${this.flowiseApiKey}` } : {}),
         },
         body: JSON.stringify({
-          question: input.goal ?? "",
+          form,
+          streaming: false,
           overrideConfig: {
-            sessionId: input.requestId,
+            sessionId: `ai-job-${form.requestId ?? "unknown"}`,
           },
-          input,
         }),
         signal: controller.signal,
       });
@@ -338,22 +386,47 @@ export class AiGenerationConsumer {
 
   /**
    * Load the JSON Schema validator for lesson plan output.
+   *
+   * CRITICAL: If the schema cannot be loaded, the Worker MUST crash.
+   * Running without schema validation allows invalid AI output to be
+   * persisted as lesson drafts — a data integrity violation.
+   *
+   * Uses import.meta.url + fileURLToPath for ESM-compatible path resolution
+   * instead of relative require paths that break in bundled contexts.
    */
-  private loadSchemaValidator(): void {
+  private loadSchemaValidator(): (data: unknown) => boolean {
+    const schemaPath = join(
+      __dirname,
+      "..",
+      "..",
+      "..",
+      "infra",
+      "ai",
+      "flowise",
+      "schemas",
+      "lesson-plan-output.schema.json",
+    );
+
     try {
-      // Dynamically load Ajv for schema validation
       const Ajv = require("ajv").default;
-      const schema = require("../../../infra/ai/flowise/schemas/lesson-plan-output.schema.json");
+      const schema = require(schemaPath);
 
       const ajv = new Ajv({ allErrors: true });
-      this.schemaValidator = ajv.compile(schema) as (data: unknown) => boolean;
-      logger.info("Lesson plan output schema validator loaded");
+      const validate = ajv.compile(schema) as (data: unknown) => boolean;
+      logger.info({ schemaPath }, "Lesson plan output schema validator loaded");
+      return validate;
     } catch (err: unknown) {
-      logger.warn(
-        { error: err instanceof Error ? err.message : String(err) },
-        "Could not load schema validator — output will not be validated",
+      const message = err instanceof Error ? err.message : String(err);
+      logger.fatal(
+        { schemaPath, error: message },
+        "FATAL: Could not load schema validator — Worker cannot start without output validation. " +
+        "Ensure lesson-plan-output.schema.json exists at the expected path.",
       );
-      this.schemaValidator = null;
+      throw new Error(
+        `FATAL: Schema validator load failed — ${message}. ` +
+        "Worker must not run without output validation. " +
+        `Expected schema at: ${schemaPath}`,
+      );
     }
   }
 

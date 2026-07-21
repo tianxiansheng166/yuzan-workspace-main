@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "type": "AgentflowV2",
   "schemaVersion": "lesson-plan.v0",
-  "flowiseVersion": "3.0.12",
+  "flowiseVersion": "3.1.1",
   "nodes": [
     {
       "id": "start-1",
@@ -198,6 +198,6 @@
     "workflowKey": "lesson-planner",
     "version": "0.1.0",
     "description": "First version of the Yuzan lesson planning workflow with 13 nodes covering input normalization, safety check, teaching context analysis, lesson structure generation, activity generation, worksheet/practice/glossary drafts, JSON assembly, schema validation, and single-retry mechanism.",
-    "notes": "This is a template definition. Actual Flowise deployment uses bootstrap-flow.ps1 to create/update the workflow in the running Flowise instance. Credential IDs and secrets are stripped from this versioned file."
+    "notes": "This is a template definition (raw nodes/edges format). bootstrap-flow.ps1 automatically wraps nodes/edges into the flowData string field that the Flowise chatflows API expects. Actual Flowise deployment uses bootstrap-flow.ps1 to create/update the workflow in the running Flowise instance. Credential IDs and secrets are stripped from this versioned file."
   }
 }
