@@ -1,0 +1,52 @@
+# Flowise — Local AI Workflow Orchestration
+# Pinned version: 3.0.12 (Apache-2.0 Community Edition)
+# DO NOT use :latest — always pin to a specific version.
+#
+# Usage:
+#   cp .env.example .env   # then edit .env with real values
+#   docker compose up -d
+#
+# Flowise UI:  http://127.0.0.1:4300
+# Health:      http://127.0.0.1:4300/api/v1/ping
+#
+# Production notes (DO NOT implement in P0):
+#   - Use independent PostgreSQL instead of SQLite
+#   - Use independent secret management (Vault / K8s Secrets)
+#   - Do NOT use SQLite in production
+#   - Add TLS termination
+#   - Restrict network at infrastructure level
+
+services:
+  flowise:
+    image: flowiseai/flowise:3.0.12
+    container_name: yuzan-flowise
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:4300:4300"
+    environment:
+      - PORT=4300
+      - DATABASE_TYPE=sqlite
+      - DATABASE_PATH=/opt/flowise/data/database.sqlite
+      - SECRETKEY_PATH=/opt/flowise/secret/encryption.key
+      - FLOWISE_USERNAME=${FLOWISE_USERNAME:-admin}
+      - FLOWISE_PASSWORD=${FLOWISE_PASSWORD:-}
+      - CORS_ORIGINS=${CORS_ORIGINS:-http://127.0.0.1:4175,http://localhost:4175}
+      - IFRAME_ORIGINS=${IFRAME_ORIGINS:-}
+      - DISABLE_COMMUNITY_NODES=true
+      - NODE_OPTIONS=--max-old-space-size=4096
+    volumes:
+      - ../../runtime-local/flowise/data:/opt/flowise/data
+      - ../../runtime-local/flowise/logs:/opt/flowise/logs
+      - ../../runtime-local/flowise/storage:/opt/flowise/storage
+      - ../../runtime-local/flowise/secret:/opt/flowise/secret
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:4300/api/v1/ping || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    entrypoint: /bin/sh -c "sleep 3; flowise start"
+    deploy:
+      resources:
+        limits:
+          memory: 4G

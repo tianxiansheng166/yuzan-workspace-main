@@ -22,4 +22,6 @@ infra/database/generated/
 *.bundle
 *.local.json
 runtime-local/
+!runtime-local/secrets/
+!runtime-local/secrets/ai-provider.env.example
 _tmp/
