@@ -300,3 +300,13 @@
 - Command: start the canonical root API/Nuxt runtime and execute four-role browser journeys
 - Result: the previous Nuxt listener was an old V4-adoption worktree; the new API initially missed root `.env` because the filtered package runs from `apps/api`; the browser's IPv4 `127.0.0.1` target was refused while Nuxt listened through `localhost`.
 - Resolution: stopped only the identified old process, made `integration/four-port-role-navigation-connectivity-003` the root checkout branch after a verified recovery snapshot, loaded root `.env` into the API launch process, and used `localhost` for browser journeys. API runs on 4000, Nuxt runs on 3000, and all tested routes originate from the canonical root checkout.
+
+## [ERR-20260721-030] playwright-context-viewport
+
+- Logged: 2026-07-21T19:06:00+08:00
+- Priority: low
+- Status: resolved
+- Area: browser test
+- Command: run continuous-practice Playwright validation
+- Result: `BrowserContext.new_page()` rejected its unsupported `viewport` keyword argument.
+- Resolution: create the context with `browser.new_context(viewport={...})`, then call `context.new_page()` without arguments.

@@ -79,7 +79,18 @@ function routeToSpa(pathname) {
   }
   // `/assessment` stays a compatibility route; new entry uses the existing V4 visual language.
   if (pathname === '/student/practices' || pathname === '/student/practices/') return { file: join(root, 'assessment', 'practice-shell.html'), page: 'catalog' };
-  if (/^\/student\/practices\/attempts\/[^/]+\/prepare\/?$/.test(pathname)) return { file: join(root, 'assessment', '_shell.html'), page: 'prep' };
+  const practiceAttemptMatch = pathname.match(/^\/student\/practices\/attempts\/([^/]+)(?:\/(.*)|\/?)?$/);
+  if (practiceAttemptMatch) {
+    const rest = (practiceAttemptMatch[2] || '').replace(/\/+$/, '');
+    let page = 'prep';
+    if (rest === 'prepare' || rest === '') page = 'prep';
+    else if (rest.startsWith('reading/')) page = 'reading';
+    else if (rest.startsWith('written/')) page = 'written';
+    else if (rest === 'submit') page = 'submit';
+    else if (rest === 'processing') page = 'processing';
+    else if (rest === 'report') page = 'report';
+    return { file: join(root, 'assessment', '_shell.html'), page };
+  }
   if (/^\/student\/practices\/[^/]+\/?$/.test(pathname)) return { file: join(root, 'assessment', 'practice-shell.html'), page: 'detail' };
   if (pathname === '/teacher' || pathname.startsWith('/teacher/')) {
     if (pathname.startsWith('/teacher/courses/')) return join(root, 'teacher', 'courses', 'spring', 'studio', 'index.html');

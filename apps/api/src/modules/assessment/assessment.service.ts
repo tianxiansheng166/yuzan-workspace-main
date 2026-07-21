@@ -275,7 +275,15 @@ export class AssessmentService {
 
     const items = await this.itemRepo.findBySessionId(sessionId);
     const writtenItems = items.filter((i) => ["WRITTEN", "CHOICE", "FILL_BLANK", "SINGLE_CHOICE", "MULTIPLE_CHOICE", "SHORT_ANSWER", "LISTEN_RETELL"].includes(i.itemType));
-    return writtenItems.map(toWrittenItemResponse);
+    const answers = await this.answerRepo.findBySessionId(sessionId);
+    const answersByItemId = new Map(answers.map((answer) => [answer.itemId, answer]));
+    return writtenItems.map((item) => {
+      const answer = answersByItemId.get(item.id);
+      return {
+        ...toWrittenItemResponse(item),
+        answer: answer ? toWrittenAnswerResponse(answer) : null,
+      };
+    });
   }
 
   async saveWrittenAnswer(auth: AuthContext, schoolId: string, sessionId: string, itemId: string, content: Record<string, unknown>, wordCount?: number, charCount?: number) {

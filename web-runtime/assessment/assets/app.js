@@ -26,9 +26,14 @@
     if (pathParts[3] === 'reading' && pathParts[4]) READING_ITEM_ID = pathParts[4];
     if (pathParts[3] === 'written' && pathParts[4]) WRITTEN_ITEM_ID = pathParts[4];
   }
-  if (isPracticeAttempt && pathParts[3]) SESSION_ID = pathParts[3];
+  if (isPracticeAttempt && pathParts[3]) {
+    SESSION_ID = pathParts[3];
+    if (pathParts[4] === 'reading' && pathParts[5]) READING_ITEM_ID = pathParts[5];
+    if (pathParts[4] === 'written' && pathParts[5]) WRITTEN_ITEM_ID = pathParts[5];
+  }
 
-  const isOralItem = (item) => ['READING','SPEECH','LISTEN_ONLY','LISTEN_REPEAT','READ_ALOUD'].includes(item?.itemType);
+  const isListeningItem = (item) => item?.itemType === 'LISTEN_ONLY';
+  const isOralItem = (item) => ['READING','SPEECH','LISTEN_REPEAT','READ_ALOUD'].includes(item?.itemType);
   const isWrittenItem = (item) => ['WRITTEN','CHOICE','FILL_BLANK','SINGLE_CHOICE','MULTIPLE_CHOICE','SHORT_ANSWER','LISTEN_RETELL'].includes(item?.itemType);
 
   // ── 演示模式：仅显式 ?demo=1 时启用，并始终显示"演示模式"标识 ──
@@ -39,14 +44,15 @@
   const urlEnrollmentId = query.get('enrollmentId') || '';
 
   const base = '/assessment';
+  const attemptBase = isPracticeAttempt && SESSION_ID ? `/student/practices/attempts/${SESSION_ID}` : `${base}/sessions/${SESSION_ID}`;
   const routes = {
-    center: `${base}/`,
-    prep: SESSION_ID ? `${base}/sessions/${SESSION_ID}/` : `${base}/`,
-    reading: SESSION_ID && READING_ITEM_ID ? `${base}/sessions/${SESSION_ID}/reading/${READING_ITEM_ID}/` : `${base}/`,
-    written: SESSION_ID && WRITTEN_ITEM_ID ? `${base}/sessions/${SESSION_ID}/written/${WRITTEN_ITEM_ID}/` : (SESSION_ID ? `${base}/sessions/${SESSION_ID}/` : `${base}/`),
-    submit: SESSION_ID ? `${base}/sessions/${SESSION_ID}/submit/` : `${base}/`,
-    processing: SESSION_ID ? `${base}/sessions/${SESSION_ID}/processing/` : `${base}/`,
-    report: SESSION_ID ? `${base}/sessions/${SESSION_ID}/report/` : `${base}/`,
+    center: isPracticeAttempt ? '/student/practices/' : `${base}/`,
+    prep: SESSION_ID ? (isPracticeAttempt ? `${attemptBase}/prepare/` : `${attemptBase}/`) : `${base}/`,
+    reading: SESSION_ID && READING_ITEM_ID ? `${attemptBase}/reading/${READING_ITEM_ID}/` : `${base}/`,
+    written: SESSION_ID && WRITTEN_ITEM_ID ? `${attemptBase}/written/${WRITTEN_ITEM_ID}/` : (SESSION_ID ? (isPracticeAttempt ? `${attemptBase}/prepare/` : `${attemptBase}/`) : `${base}/`),
+    submit: SESSION_ID ? `${attemptBase}/submit/` : `${base}/`,
+    processing: SESSION_ID ? `${attemptBase}/processing/` : `${base}/`,
+    report: SESSION_ID ? `${attemptBase}/report/` : `${base}/`,
     recordings: `${base}/recordings/`,
     history: `${base}/history/`
   };
@@ -84,7 +90,8 @@
     // ── 错误状态 ──
     lastError: null,
     // ── 同步状态标识 ──
-    writtenSyncStatus: {} // { [itemId]: 'LOCAL' | 'SYNCED' | 'FINALIZED' | 'FAILED' }
+    writtenSyncStatus: {}, // { [itemId]: 'LOCAL' | 'SYNCED' | 'FINALIZED' | 'FAILED' }
+    completedListenItems: {}
   };
   const loadState = () => {
     try { return { ...defaultState, ...JSON.parse(storage.getItem(stateKey) || '{}') }; }
@@ -99,6 +106,37 @@
     const { _recordingBlob, _recordingUrl, ...persistable } = appState;
     storage.setItem(stateKey, JSON.stringify(persistable));
   };
+
+  function orderedItems() {
+    return [...(appState.apiItems || [])].sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+  }
+  function executionRoute(item) {
+    if (isWrittenItem(item)) return `${attemptBase}/written/${item.id}/`;
+    return `${attemptBase}/reading/${item.id}/`;
+  }
+  function nextExecutionRoute(currentItemId) {
+    const items = orderedItems();
+    const currentIndex = items.findIndex((item) => item.id === currentItemId);
+    const nextItem = currentIndex >= 0 ? items[currentIndex + 1] : null;
+    return nextItem ? executionRoute(nextItem) : routes.submit;
+  }
+  function firstPendingRoute(items) {
+    const next = [...items].sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)).find((item) => {
+      if (isListeningItem(item)) return !appState.completedListenItems[item.id];
+      if (isOralItem(item)) return !item.recordingId;
+      return appState.writtenSyncStatus[item.id] !== 'FINALIZED';
+    });
+    return next ? executionRoute(next) : routes.submit;
+  }
+  function hydrateWrittenAnswers(items) {
+    for (const writtenItem of items || []) {
+      const answer = writtenItem.answer;
+      if (!answer) continue;
+      const content = answer.content || {};
+      appState.writtenAnswers[writtenItem.id] = typeof content.optionIndex === 'number' ? content.optionIndex : (content.text ?? '');
+      appState.writtenSyncStatus[writtenItem.id] = answer.finalSubmittedAt ? 'FINALIZED' : 'SYNCED';
+    }
+  }
 
   // ── 图标库 ──
   const iconPaths = {
@@ -152,7 +190,7 @@
 
   const statChip = (iconName,label,value,sub,color='') => `<div class="stat"><div class="icon ${color}">${icon(iconName)}</div><b>${value}</b><span>${label} · ${sub}</span></div>`;
   const statusChip = (text, type='gray') => `<span class="chip ${type}">${text}</span>`;
-  const metaCell = (label,value) => `<div><small class="muted">${label}</small><b>${value}</b></div>`;
+  const metaCell = (label,value) => label === 'Session ID' ? '' : `<div><small class="muted">${label}</small><b>${value}</b></div>`;
 
   function waveBars(count=65) {
     let html='';
@@ -327,6 +365,10 @@
       else if (item.questionPrompt?.sentence) promptText = item.questionPrompt.sentence;
     }
 
+    if (isListeningItem(item)) {
+      return shell(`<main class="page"><section class="reading-head"><div><h1 class="page-title" style="font-size:29px">听读练习</h1><p class="page-subtitle">完整听完示范材料后，系统将自动进入下一环节。</p></div></section><section class="reading-layout"><article class="card reading-main" style="grid-column:span 2"><h2>请认真聆听</h2><div class="reading-sentence"><mark>${promptText}</mark></div><div class="audio-prompt" style="margin:26px 0"><button class="play-circle" data-listen-play>${icon('play')}</button><div class="wave-mini" style="flex:1">${waveBars(44)}</div></div><p class="muted" data-listen-note>播放完成后将自动进入下一题。</p><div class="reading-actions"><button class="btn primary" data-listen-complete>我已听完，进入下一题 ${icon('arrow')}</button></div></article><aside class="grid"><article class="card requirements"><h3 class="card-title">聆听提示</h3><div class="req-list" style="margin-top:16px"><span><i>✓</i>注意停顿和语气</span><span><i>✓</i>可按需要回放一次</span></div></article></aside></section></main>`);
+    }
+
     const stages = [
       ['PLAYING_PROMPT','wave','示范音频'],['PREPARING','clock','准备倒计时'],['RECORDING','mic','正式录音'],['REVIEWING','headphones','试听确认'],['UPLOADING','cloud','上传录音']
     ];
@@ -339,7 +381,7 @@
 
     const content = `
       <main class="page">
-        <section class="reading-head"><div><h1 class="page-title" style="font-size:29px">${session ? (session.type === 'READING' ? '朗读测评' : '综合测评') : '朗读测评'} ${statusChip(session?.status || 'IN_PROGRESS','gold')}</h1><p class="page-subtitle">跟随示范完成朗读，上传后系统将自动分析。</p></div><div class="identity-chips"><div class="identity-chip">当前环节<b>${readingStateLabels[state]}</b></div><a class="btn" href="${routes.prep}">${icon('logout')} 返回准备页</a></div></section>
+        <section class="reading-head"><div><h1 class="page-title" style="font-size:29px">${session ? (session.type === 'READING' ? '朗读测评' : '综合测评') : '朗读测评'} ${statusChip(session?.status || 'IN_PROGRESS','gold')}</h1><p class="page-subtitle">跟随示范完成朗读，上传后系统将自动分析并继续下一题。</p></div><div class="identity-chips"><div class="identity-chip">当前环节<b>${readingStateLabels[state]}</b></div></div></section>
         <section class="card stage-stepper" data-stage-stepper>${stageHtml}</section>
         <section class="reading-layout">
           <aside class="grid">
@@ -378,7 +420,7 @@
     if(state==='REVIEWING') return `<button class="btn ghost" data-rerecord>${icon('refresh')} 重新录制</button><button class="btn" data-play-recording>${icon('play')} 播放录音</button><button class="btn primary" data-upload ${!apiEnabled?'disabled':''}>${icon('cloud')} 确认并上传</button>`;
     if(state==='UPLOADING') return `<button class="btn" disabled>上传中 ${appState.uploadProgress}%</button>`;
     if(state==='UPLOAD_FAILED') return `<button class="btn ghost" data-rerecord>${icon('refresh')} 重新录制</button><button class="btn primary" data-upload ${!apiEnabled?'disabled':''}>${icon('upload')} 重新上传</button>`;
-    if(state==='UPLOADED'||state==='PROCESSING') return `<a class="btn primary" href="${routes.prep}">返回测评准备 ${icon('arrow')}</a>`;
+    if(state==='UPLOADED'||state==='PROCESSING') return `<button class="btn primary" data-continue-next>进入下一题 ${icon('arrow')}</button>`;
     return `<button class="btn primary" data-skip-prompt>开始 ${icon('arrow')}</button>`;
   }
   function formatTime(seconds){const s=Math.max(0,Math.round(Number(seconds)||0));return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`}
@@ -430,8 +472,8 @@
 
     const session = appState.apiSession;
     const items = appState.apiItems || [];
-    const readingItems = items.filter(i => i.itemType === 'READING' || i.itemType === 'SPEECH');
-    const writtenItems = items.filter(i => i.itemType === 'WRITTEN' || i.itemType === 'CHOICE' || i.itemType === 'FILL_BLANK');
+    const readingItems = items.filter(isOralItem);
+    const writtenItems = items.filter(isWrittenItem);
 
     const readingComplete = readingItems.length > 0 ? readingItems.every(i => i.recordingId) : true;
     const answeredWritten = writtenItems.filter(i => appState.writtenAnswers[i.id] !== undefined).length;
@@ -447,7 +489,7 @@
     const alreadySubmitted = session && (session.status === 'SUBMITTED' || session.status === 'PROCESSING' || session.status === 'COMPLETED');
 
     const content=`<main class="page"><div class="hero-landscape" style="height:300px;opacity:.88"></div><section class="submit-head"><div><h1 class="page-title">提交前检查</h1><p class="page-subtitle">请仔细检查本次测评的完成情况，确认无误后提交。</p></div><div class="submit-stepper"><div class="submit-step"><b>01</b><small>朗读测评</small></div><div class="submit-step"><b>02</b><small>书面练习</small></div><div class="submit-step active"><b>03</b><small>提交前检查</small></div><div class="submit-step"><b>04</b><small>提交完成</small></div></div></section><section class="submit-layout"><div><article class="card summary-state"><h2 class="card-title">本次测评总体状态</h2><div class="state-cards" style="margin-top:16px"><div class="state-card"><div class="icon red">${icon('mic')}</div><div><small>朗读题</small><b>${readingItems.filter(i => i.recordingId).length} / ${readingItems.length}</b><div>${statusChip(readingComplete?'已完成':'未完成',readingComplete?'green':'red')}</div></div></div><div class="state-card"><div class="icon green">${icon('book')}</div><div><small>书面题</small><b>${answeredWritten} / ${writtenItems.length}</b><div>${statusChip(allWrittenAnswered?'已完成':'未完成',allWrittenAnswered?'green':'red')}</div></div></div><div class="state-card"><div class="icon blue">${icon('cloud')}</div><div><small>Session 状态</small><b>${session?.status || '—'}</b><div>${statusChip(session?.status || 'UNKNOWN', session?.status === 'IN_PROGRESS' ? 'gold' : 'green')}</div></div></div><div class="state-card"><div class="icon">${icon('alert')}</div><div><small>问题项</small><b>${blockers.length}</b><div>${statusChip(blockers.length?'阻止提交':'无阻塞',blockers.length?'red':'green')}</div></div></div></div></article>${readingItems.length > 0 ? `<article class="card items-panel"><div class="section-title"><h2>朗读题（${readingItems.filter(i => i.recordingId).length} / ${readingItems.length} 已完成）</h2></div><div class="item-grid">${readingItems.map((it,i)=>`<div class="item-card"><h4>朗读题 ${i+1} ${statusChip(it.recordingId?'COMPLETE':'INCOMPLETE',it.recordingId?'green':'red')}</h4><p>Item ID　${it.id}</p><p>Recording ID　${it.recordingId || '未绑定'}</p><p>状态　${it.status || '—'}</p></div>`).join('')}</div></article>`:''}${writtenItems.length > 0 ? `<article class="card items-panel"><div class="section-title"><h2>书面题（${answeredWritten} / ${writtenItems.length} 已完成）</h2></div><div class="item-grid">${writtenItems.map((it,i)=>{const ans=appState.writtenAnswers[it.id];const syn=appState.writtenSyncStatus[it.id];return `<div class="item-card"><h4>书面题 ${i+1} ${statusChip(ans!==undefined?'COMPLETE':'INCOMPLETE',ans!==undefined?'green':'red')}</h4><p>Item ID　${it.id}</p><p>同步状态　${syn || '本机草稿'}</p></div>`}).join('')}</div></article>`:''}</div><aside class="submit-side"><article class="card blocking"><h2 class="card-title">${blockers.length?`发现 ${blockers.length} 个阻止提交的问题`:'已满足提交条件'}</h2><div style="margin-top:14px">${blockers.length?blockers.map(b=>`<div class="notice danger" style="margin-bottom:10px">${icon('alert')} ${b}</div>`).join(''):`<div class="notice">朗读、书面与录音状态均已通过校验。</div>`}</div></article><article class="card rules"><h2 class="card-title">提交规则</h2><div class="rule"><div class="icon red">${icon('alert')}</div><div><strong>未完成的题目无法提交</strong><p class="muted small">所有朗读题和书面题必须完成。</p></div></div><div class="rule"><div class="icon">${icon('cloud')}</div><div><strong>录音未上传无法提交</strong><p class="muted small">Recording 必须绑定到 AssessmentItem。</p></div></div><div class="rule"><div class="icon green">${icon('check')}</div><div><strong>提交后不可修改</strong><p class="muted small">AssessmentSession 提交后进入处理状态。</p></div></div></article><div class="submit-actions"><a class="btn ghost" href="${routes.prep}">${icon('left')} 返回检查</a>${alreadySubmitted ? `<a class="btn primary" href="${routes.processing}">${session.status === 'COMPLETED' ? '查看报告' : '查看处理状态'} ${icon('arrow')}</a>` : `<button class="btn primary" data-submit-session ${canSubmit?'':'disabled'}>提交整次测评 ${icon('arrow')}</button>`}</div></aside></section></main>`;
-    return shell(content);
+    return shell(content.replace(/<p>Item ID[^<]*<\/p>/g, '').replace(/<p>Recording ID[^<]*<\/p>/g, ''));
   }
 
   function renderProcessing(){
@@ -634,18 +676,11 @@
         if (appState.apiSession?.status === 'CREATED') {
           await Api.startAssessmentSession(SESSION_ID);
         }
-        // 加载 items 找到第一个未完成的 reading item
+        // 依照 Attempt 的真实快照顺序继续；绝不回到准备页让学生选题。
         const items = appState.apiItems && appState.apiItems.length ? appState.apiItems : (isPracticeAttempt ? await Api.getPracticeAttemptItems(SESSION_ID) : await Api.listAssessmentItems(SESSION_ID));
-        const firstReading = items.find(i => isOralItem(i) && !i.recordingId);
-        const firstWritten = items.find(i => isWrittenItem(i) && appState.writtenAnswers[i.id] === undefined);
-        if (firstReading) {
-          location.href = `${base}/sessions/${SESSION_ID}/reading/${firstReading.id}/`;
-        } else if (firstWritten) {
-          location.href = `${base}/sessions/${SESSION_ID}/written/${firstWritten.id}/`;
-        } else {
-          // 全部完成，去提交页
-          location.href = `${base}/sessions/${SESSION_ID}/submit/`;
-        }
+        appState.apiItems = Array.isArray(items) ? items : (items?.items || []);
+        saveState();
+        location.href = firstPendingRoute(appState.apiItems);
       } catch (err) {
         console.error('[assessment] 启动测评失败:', err);
         start.disabled = false;
@@ -660,6 +695,36 @@
 
   let recordInterval=null, waveAnim=null;
   function bindReading(){
+    const currentItem = appState.apiReadingItem;
+    if (isListeningItem(currentItem)) {
+      const completeListening = () => {
+        appState.completedListenItems[READING_ITEM_ID] = true;
+        saveState();
+        location.href = nextExecutionRoute(READING_ITEM_ID);
+      };
+      document.querySelector('[data-listen-complete]')?.addEventListener('click', completeListening);
+      document.querySelector('[data-listen-play]')?.addEventListener('click', async (event) => {
+        const button = event.currentTarget;
+        button.disabled = true;
+        button.innerHTML = icon('pause');
+        const note = document.querySelector('[data-listen-note]');
+        const audioUrl = currentItem?.demoAudioUrl;
+        if (audioUrl) {
+          try {
+            const audio = new Audio(audioUrl);
+            audio.onended = completeListening;
+            await audio.play();
+            return;
+          } catch (error) {
+            console.warn('[assessment] 听读音频播放失败:', error);
+          }
+        }
+        if (note) note.textContent = '示范音频暂不可播放，请确认已听读后继续。';
+        button.disabled = false;
+        button.innerHTML = icon('play');
+      });
+      return;
+    }
     drawWave();
     const setState=(s)=>{appState.currentReadingState=s;saveState();renderCurrent();};
 
@@ -717,6 +782,9 @@
       }
     });
     document.querySelector('[data-upload]')?.addEventListener('click',()=>startRealUpload());
+    document.querySelector('[data-continue-next]')?.addEventListener('click',()=>{
+      location.href = nextExecutionRoute(READING_ITEM_ID);
+    });
     if(appState.currentReadingState==='PREPARING')startCountdown();
     if(appState.currentReadingState==='RECORDING')startRecordingTimer();
   }
@@ -833,6 +901,8 @@
       appState.currentReadingState = 'UPLOADED';
       saveState();
       renderCurrent();
+      // 上传与题目绑定都已成功后，连续进入 Attempt 快照中的下一题。
+      window.setTimeout(() => { location.href = nextExecutionRoute(READING_ITEM_ID); }, 450);
     } catch (err) {
       console.error('[assessment] 真实上传失败:', err);
       appState.uploadProgress = 0;
@@ -947,26 +1017,16 @@
     }
 
     document.querySelector('[data-written-prev]')?.addEventListener('click',async()=>{
-      const items = appState.apiWrittenItems || [];
+      const items = orderedItems();
       const idx = items.findIndex(i => i.id === WRITTEN_ITEM_ID);
-      if (idx > 0) {
-        location.href = `${base}/sessions/${SESSION_ID}/written/${items[idx-1].id}/`;
-      }
+      if (idx > 0) location.href = executionRoute(items[idx - 1]);
     });
     document.querySelector('[data-written-next]')?.addEventListener('click',async()=>{
-      const items = appState.apiWrittenItems || [];
-      const idx = items.findIndex(i => i.id === WRITTEN_ITEM_ID);
       const btn = document.querySelector('[data-written-next]');
       if (btn) { btn.disabled = true; btn.innerHTML = `${icon('spinner')} 同步中…`; }
       try {
-        // 先保存到平台
-        await saveCurrentWrittenAnswer(currentItem);
-        if (idx >= items.length - 1) {
-          // 最后一题，跳到提交页
-          location.href = `${base}/sessions/${SESSION_ID}/submit/`;
-        } else {
-          location.href = `${base}/sessions/${SESSION_ID}/written/${items[idx+1].id}/`;
-        }
+        await finalizeCurrentWrittenAnswer(currentItem);
+        location.href = nextExecutionRoute(WRITTEN_ITEM_ID);
       } catch (err) {
         console.error('[assessment] 保存书面题失败:', err);
         if (btn) { btn.disabled = false; btn.innerHTML = `保存并下一题 ${icon('arrow')}`; }
@@ -987,14 +1047,15 @@
     });
     document.querySelectorAll('[data-jump-item]').forEach(b=>b.addEventListener('click',()=>{
       const itemId = b.dataset.jumpItem;
-      if (itemId) location.href = `${base}/sessions/${SESSION_ID}/written/${itemId}/`;
+      const item = orderedItems().find((candidate) => candidate.id === itemId);
+      if (item) location.href = executionRoute(item);
     }));
   }
 
   async function saveCurrentWrittenAnswer(item) {
     if (!apiEnabled) return;
     const answer = appState.writtenAnswers[item.id];
-    if (answer === undefined) return;
+    if (answer === undefined || (typeof answer === 'string' && !answer.trim())) throw new Error('请先完成本题作答');
     // 构造 content payload
     const content = typeof answer === 'number'
       ? { optionIndex: answer, optionLabel: String.fromCharCode(65 + answer) }
@@ -1006,6 +1067,13 @@
     saveState();
   }
 
+  async function finalizeCurrentWrittenAnswer(item) {
+    await saveCurrentWrittenAnswer(item);
+    await Api.finalizeWrittenAnswer(SESSION_ID, item.id);
+    appState.writtenSyncStatus[item.id] = 'FINALIZED';
+    saveState();
+  }
+
   function bindSubmit(){
     document.querySelector('[data-submit-session]')?.addEventListener('click',async()=>{
       const btn = document.querySelector('[data-submit-session]');
@@ -1013,26 +1081,22 @@
       try {
         // 先把所有未定稿的书面题定稿
         const items = appState.apiItems || [];
-        const writtenItems = items.filter(i => i.itemType === 'WRITTEN' || i.itemType === 'CHOICE' || i.itemType === 'FILL_BLANK');
+        const writtenItems = items.filter(isWrittenItem);
         for (const it of writtenItems) {
           if (appState.writtenAnswers[it.id] !== undefined && appState.writtenSyncStatus[it.id] !== 'FINALIZED') {
             // 确保已同步
             if (appState.writtenSyncStatus[it.id] !== 'SYNCED') {
               await saveCurrentWrittenAnswer(it);
             }
-            try {
-              await Api.finalizeWrittenAnswer(SESSION_ID, it.id);
-              appState.writtenSyncStatus[it.id] = 'FINALIZED';
-            } catch (err) {
-              console.warn(`[assessment] 定稿 ${it.id} 失败:`, err);
-            }
+            await Api.finalizeWrittenAnswer(SESSION_ID, it.id);
+            appState.writtenSyncStatus[it.id] = 'FINALIZED';
           }
         }
         saveState();
         // 调用真实 submitAssessmentSession
         await Api.submitAssessmentSession(SESSION_ID);
         // 提交成功后才跳转
-        location.href = `${base}/sessions/${SESSION_ID}/processing/`;
+        location.href = routes.processing;
       } catch (err) {
         console.error('[assessment] 提交测评失败:', err);
         if (btn) { btn.disabled = false; btn.innerHTML = `提交整次测评 ${icon('arrow')}`; }
@@ -1089,15 +1153,17 @@
     appState._loadingPrep = true;
     renderCurrent();
     try {
-      const [session, items] = await Promise.all([
+      const [session, items, writtenItems] = await Promise.all([
         (isPracticeAttempt ? Api.getPracticeAttempt(SESSION_ID) : Api.getAssessmentSession(SESSION_ID)),
         (isPracticeAttempt ? Api.getPracticeAttemptItems(SESSION_ID) : Api.listAssessmentItems(SESSION_ID)).catch(err => {
           console.warn('[assessment] 加载 items 失败:', err);
           return [];
-        })
+        }),
+        Api.getWrittenItems(SESSION_ID).catch(() => [])
       ]);
       appState.apiSession = session;
       appState.apiItems = Array.isArray(items) ? items : (items?.items || []);
+      hydrateWrittenAnswers(Array.isArray(writtenItems) ? writtenItems : (writtenItems?.items || []));
       appState._prepError = null;
     } catch (err) {
       console.error('[assessment] 加载 session 详情失败:', err);
@@ -1123,6 +1189,14 @@
       appState.apiSession = session;
       appState.apiItems = Array.isArray(items) ? items : (items?.items || []);
       appState.apiReadingItem = readingItem;
+      if (appState._activeReadingItemId !== READING_ITEM_ID) {
+        appState._activeReadingItemId = READING_ITEM_ID;
+        appState.currentReadingState = readingItem?.recordingId ? 'UPLOADED' : 'PLAYING_PROMPT';
+        appState.readingElapsed = 0;
+        appState.promptPlayCount = 0;
+        appState.uploadProgress = 0;
+        appState._uploadError = null;
+      }
       appState._readingError = null;
       // 如果该 item 已有 recordingId，恢复状态
       if (readingItem?.recordingId && !appState.apiRecordingId) {
@@ -1146,26 +1220,16 @@
     appState._loadingWritten = true;
     renderCurrent();
     try {
-      const [session, items] = await Promise.all([
+      const [session, allItems, items] = await Promise.all([
         Api.getAssessmentSession(SESSION_ID).catch(() => appState.apiSession),
-        isPracticeAttempt ? Api.getPracticeAttemptItems(SESSION_ID).then(all => all.filter(isWrittenItem)) : Api.getWrittenItems(SESSION_ID)
+        isPracticeAttempt ? Api.getPracticeAttemptItems(SESSION_ID) : Api.listAssessmentItems(SESSION_ID),
+        Api.getWrittenItems(SESSION_ID)
       ]);
       appState.apiSession = session;
       const writtenItems = Array.isArray(items) ? items : (items?.items || []);
       appState.apiWrittenItems = writtenItems;
-      // 同时刷新 apiItems（用于 submit 页统计）
-      if (!appState.apiItems.length) {
-        try {
-          const allItems = await Api.listAssessmentItems(SESSION_ID);
-          appState.apiItems = Array.isArray(allItems) ? allItems : (allItems?.items || []);
-        } catch {}
-      } else {
-        // 合并 written items 状态
-        appState.apiItems = appState.apiItems.map(i => {
-          const wUpdate = writtenItems.find(w => w.id === i.id);
-          return wUpdate ? { ...i, ...wUpdate } : i;
-        });
-      }
+      appState.apiItems = Array.isArray(allItems) ? allItems : (allItems?.items || []);
+      hydrateWrittenAnswers(writtenItems);
       appState._writtenError = null;
     } catch (err) {
       console.error('[assessment] 加载书面题失败:', err);
@@ -1182,12 +1246,14 @@
     appState._loadingSubmit = true;
     renderCurrent();
     try {
-      const [session, items] = await Promise.all([
+      const [session, items, writtenItems] = await Promise.all([
         Api.getAssessmentSession(SESSION_ID),
-        Api.listAssessmentItems(SESSION_ID).catch(() => appState.apiItems || [])
+        (isPracticeAttempt ? Api.getPracticeAttemptItems(SESSION_ID) : Api.listAssessmentItems(SESSION_ID)).catch(() => appState.apiItems || []),
+        Api.getWrittenItems(SESSION_ID).catch(() => [])
       ]);
       appState.apiSession = session;
       appState.apiItems = Array.isArray(items) ? items : (items?.items || []);
+      hydrateWrittenAnswers(Array.isArray(writtenItems) ? writtenItems : (writtenItems?.items || []));
     } catch (err) {
       console.error('[assessment] 加载提交数据失败:', err);
     } finally {

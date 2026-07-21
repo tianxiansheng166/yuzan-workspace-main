@@ -42,6 +42,7 @@ export function toReadingItemResponse(item: AssessmentItem & { questionPrompt?: 
     id: item.id,
     sessionId: item.sessionId,
     prompt: item.prompt,
+    itemType: item.itemType,
     questionPrompt: item.questionPrompt,
     demoAudioUrl: item.demoAudioUrl,
     recordingId: item.recordingId,
