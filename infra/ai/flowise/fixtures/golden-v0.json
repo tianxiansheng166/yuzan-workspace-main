@@ -1,0 +1,256 @@
+{
+  "schemaVersion": "lesson-plan.v0",
+  "title": "G3-4 国通语朗读与表达：春天的故事",
+  "summary": "面向小学3-4年级的朗读与表达课时教案，通过春天的主题引导学生练习国通语朗读、理解和口头表达，兼顾藏语辅助理解。",
+  "context": {
+    "gradeBand": "G3-4",
+    "durationMinutes": 40,
+    "courseTitle": "国家通用语言文字",
+    "lessonTitle": "春天的故事——朗读与表达"
+  },
+  "objectives": [
+    {
+      "id": "OBJ-1",
+      "description": "能正确朗读课文《春天的故事》，语音语调基本准确",
+      "domain": "reading"
+    },
+    {
+      "id": "OBJ-2",
+      "description": "能用国通语口头描述春天的3个以上特征",
+      "domain": "speaking"
+    },
+    {
+      "id": "OBJ-3",
+      "description": "能听懂教师关于春天的提问并作出回应",
+      "domain": "listening"
+    },
+    {
+      "id": "OBJ-4",
+      "description": "能用完整句子书写自己观察到的春天现象",
+      "domain": "writing"
+    }
+  ],
+  "keyPoints": [
+    {
+      "id": "KP-1",
+      "description": "课文重点词语的准确发音：融化、嫩芽、播种"
+    },
+    {
+      "id": "KP-2",
+      "description": "用国通语描述自然现象的句式结构"
+    },
+    {
+      "id": "KP-3",
+      "description": "朗读时的停顿和语气处理"
+    }
+  ],
+  "difficulties": [
+    {
+      "id": "DF-1",
+      "description": "部分学生'融化'与'溶化'的发音区分困难",
+      "strategy": "通过对比朗读和图片辅助帮助学生区分"
+    },
+    {
+      "id": "DF-2",
+      "description": "用完整句子表达观察结果",
+      "strategy": "提供句式框架：'我看到春天______了'"
+    }
+  ],
+  "prerequisites": [
+    "已掌握基本拼音规则",
+    "已学习过简单陈述句结构",
+    "了解季节的基本概念"
+  ],
+  "lessonFlow": [
+    {
+      "id": "STG-1",
+      "stage": "导入",
+      "minutes": 5,
+      "teacherActions": [
+        "播放春天图片，提问：'这是什么季节？你怎么知道的？'",
+        "引导学生用国通语说出春天的特征"
+      ],
+      "studentActions": [
+        "观看图片，思考并回答问题",
+        "尝试用国通语说出1-2个春天特征"
+      ],
+      "resources": ["春天风景图片集"],
+      "assessmentChecks": ["学生能否用国通语说出至少一个春天特征"]
+    },
+    {
+      "id": "STG-2",
+      "stage": "新授",
+      "minutes": 12,
+      "teacherActions": [
+        "范读课文，强调重点词语发音",
+        "讲解'融化、嫩芽、播种'等词语含义",
+        "必要时提供藏语辅助说明"
+      ],
+      "studentActions": [
+        "听教师范读，标注重点词语",
+        "跟读重点词语3遍",
+        "在教师指导下理解词语含义"
+      ],
+      "resources": ["课文挂图", "词语卡片"],
+      "assessmentChecks": ["重点词语发音准确度", "词语理解正确性"]
+    },
+    {
+      "id": "STG-3",
+      "stage": "练习",
+      "minutes": 12,
+      "teacherActions": [
+        "组织小组朗读练习，轮流朗读段落",
+        "巡视指导，纠正发音",
+        "提供句式框架帮助表达"
+      ],
+      "studentActions": [
+        "小组内轮流朗读",
+        "互相听读并给出反馈",
+        "用'我看到春天______了'句式表达观察"
+      ],
+      "resources": ["句式框架卡片"],
+      "assessmentChecks": ["朗读流畅度", "句式使用正确性"]
+    },
+    {
+      "id": "STG-4",
+      "stage": "拓展",
+      "minutes": 8,
+      "teacherActions": [
+        "引导学生观察校园或窗外，描述春天的变化",
+        "鼓励学生用完整句子书写观察结果"
+      ],
+      "studentActions": [
+        "观察周围环境",
+        "口头分享观察发现",
+        "写1-2句关于春天的句子"
+      ],
+      "assessmentChecks": ["书面表达完整性"]
+    },
+    {
+      "id": "STG-5",
+      "stage": "总结",
+      "minutes": 3,
+      "teacherActions": [
+        "总结本课重点词语和朗读要点",
+        "布置课后练习"
+      ],
+      "studentActions": [
+        "回顾本课内容",
+        "记录课后任务"
+      ]
+    }
+  ],
+  "differentiation": {
+    "support": [
+      "为基础薄弱学生提供带拼音标注的课文",
+      "提供藏语辅助说明帮助理解关键词语"
+    ],
+    "extension": [
+      "学有余力的学生尝试用自己的话复述课文内容",
+      "尝试写出更详细的春天观察日记"
+    ]
+  },
+  "worksheetDraft": {
+    "title": "春天的故事——朗读与表达学习单",
+    "sections": [
+      {
+        "title": "词语朗读",
+        "instructions": "大声朗读下列词语，在读音正确的词语后画√",
+        "type": "labeling",
+        "items": ["融化", "嫩芽", "播种"]
+      },
+      {
+        "title": "句子填空",
+        "instructions": "根据课文内容填空",
+        "type": "fill-in",
+        "items": ["春天来了，冰雪______了。", "树上长出了______。"]
+      },
+      {
+        "title": "观察记录",
+        "instructions": "观察校园中的春天，用完整句子写出你的发现",
+        "type": "short-answer",
+        "items": []
+      }
+    ]
+  },
+  "practiceDraft": {
+    "title": "春天的故事——课后练习",
+    "modeRecommendation": "HOMEWORK",
+    "sections": [
+      {
+        "title": "选择题",
+        "type": "multiple-choice",
+        "items": [
+          {
+            "stem": "'融化'的意思是：",
+            "options": ["A. 冰雪变成水", "B. 冰雪变硬了", "C. 冰雪消失了"],
+            "answerHint": "A"
+          }
+        ]
+      },
+      {
+        "title": "判断题",
+        "type": "true-false",
+        "items": [
+          {
+            "stem": "'嫩芽'是指刚长出来的新芽。",
+            "answerHint": "正确"
+          }
+        ]
+      }
+    ],
+    "abilityTags": ["朗读", "词语理解", "观察表达"]
+  },
+  "glossary": [
+    {
+      "term": "融化",
+      "definition": "冰雪因温度升高而变成水",
+      "tibetanHint": "ཁ་བ་བཞུ་བ།",
+      "isAiDraft": true
+    },
+    {
+      "term": "嫩芽",
+      "definition": "植物刚长出来的幼小芽叶",
+      "tibetanHint": "མྱུ་གུ་གསར་པོ།",
+      "isAiDraft": true
+    },
+    {
+      "term": "播种",
+      "definition": "把种子种到土里",
+      "tibetanHint": "ས་བོན་འདེབས་པ།",
+      "isAiDraft": true
+    }
+  ],
+  "resourceSuggestions": [
+    {
+      "title": "春天风景图片集",
+      "type": "image",
+      "description": "用于导入环节的西藏春天风景图片"
+    },
+    {
+      "title": "课文朗读音频",
+      "type": "audio",
+      "description": "标准国通语朗读示范音频"
+    }
+  ],
+  "risks": [
+    {
+      "description": "部分学生对'融化'等词语发音困难",
+      "mitigation": "增加跟读次数，提供藏语辅助说明"
+    },
+    {
+      "description": "学生书写能力差异大，拓展环节时间可能不够",
+      "mitigation": "降低书写要求，口头表达也可作为替代"
+    }
+  ],
+  "teacherReviewChecklist": [
+    "教学目标是否可观察、可评估？",
+    "课堂流程时间分配是否合理？",
+    "师生活动是否与目标一一对应？",
+    "是否包含听、说、读、写适当组合？",
+    "藏语辅助是否适切且不暗示能力缺陷？",
+    "练习草稿是否需要调整难度？",
+    "术语释义是否准确？",
+    "是否存在文化敏感内容需修改？"
+  ]
+}

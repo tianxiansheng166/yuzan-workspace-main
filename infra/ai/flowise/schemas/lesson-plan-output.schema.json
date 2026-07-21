@@ -1,0 +1,464 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "lesson-plan-output.v0",
+  "title": "LessonPlanOutput",
+  "description": "语赞心声 AI 备课方案输出 Schema v0 — 面向西藏地区国家通用语言文字教学",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "title",
+    "summary",
+    "context",
+    "objectives",
+    "keyPoints",
+    "difficulties",
+    "lessonFlow",
+    "teacherReviewChecklist"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "lesson-plan.v0",
+      "description": "固定版本标识，用于后端校验"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120,
+      "description": "备课方案标题"
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 800,
+      "description": "备课方案摘要"
+    },
+    "context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["gradeBand", "durationMinutes"],
+      "properties": {
+        "gradeBand": {
+          "type": "string",
+          "enum": ["G1-2", "G3-4", "G5-6", "G7-9", "G10-12"],
+          "description": "年级段"
+        },
+        "durationMinutes": {
+          "type": "integer",
+          "minimum": 20,
+          "maximum": 120,
+          "description": "课时时长（分钟）"
+        },
+        "courseTitle": {
+          "type": "string",
+          "maxLength": 120,
+          "description": "课程名称"
+        },
+        "lessonTitle": {
+          "type": "string",
+          "maxLength": 120,
+          "description": "课时名称"
+        }
+      }
+    },
+    "objectives": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "description", "domain"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 20,
+            "description": "目标编号如 OBJ-1"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300,
+            "description": "可观察、可评估的学习目标描述"
+          },
+          "domain": {
+            "type": "string",
+            "enum": ["listening", "speaking", "reading", "writing", "integrated"],
+            "description": "能力领域"
+          }
+        }
+      }
+    },
+    "keyPoints": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "description"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 20
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300
+          }
+        }
+      }
+    },
+    "difficulties": {
+      "type": "array",
+      "minItems": 0,
+      "maxItems": 6,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "description", "strategy"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 20
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300
+          },
+          "strategy": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300,
+            "description": "突破策略"
+          }
+        }
+      }
+    },
+    "prerequisites": {
+      "type": "array",
+      "minItems": 0,
+      "maxItems": 8,
+      "items": {
+        "type": "string",
+        "maxLength": 200,
+        "description": "先备知识条目"
+      }
+    },
+    "lessonFlow": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "stage", "minutes", "teacherActions", "studentActions"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 20,
+            "description": "阶段编号如 STG-1"
+          },
+          "stage": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 60,
+            "description": "阶段名称，如 导入、新授、练习、拓展、总结"
+          },
+          "minutes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 60,
+            "description": "本阶段时长（分钟）"
+          },
+          "teacherActions": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 6,
+            "items": {
+              "type": "string",
+              "maxLength": 300
+            }
+          },
+          "studentActions": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 6,
+            "items": {
+              "type": "string",
+              "maxLength": 300
+            }
+          },
+          "resources": {
+            "type": "array",
+            "minItems": 0,
+            "maxItems": 5,
+            "items": {
+              "type": "string",
+              "maxLength": 200
+            }
+          },
+          "assessmentChecks": {
+            "type": "array",
+            "minItems": 0,
+            "maxItems": 4,
+            "items": {
+              "type": "string",
+              "maxLength": 300
+            }
+          }
+        }
+      }
+    },
+    "differentiation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "support": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 6,
+          "items": {
+            "type": "string",
+            "maxLength": 300,
+            "description": "对基础薄弱学生的支持措施"
+          }
+        },
+        "extension": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 6,
+          "items": {
+            "type": "string",
+            "maxLength": 300,
+            "description": "对学有余力学生的拓展活动"
+          }
+        }
+      }
+    },
+    "worksheetDraft": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "sections"],
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120,
+          "description": "学习单标题（草稿）"
+        },
+        "sections": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["title", "instructions", "type"],
+            "properties": {
+              "title": {
+                "type": "string",
+                "maxLength": 120
+              },
+              "instructions": {
+                "type": "string",
+                "maxLength": 500
+              },
+              "type": {
+                "type": "string",
+                "enum": ["fill-in", "short-answer", "matching", "ordering", "labeling", "drawing", "other"],
+                "description": "题型分类"
+              },
+              "items": {
+                "type": "array",
+                "minItems": 0,
+                "maxItems": 10,
+                "items": {
+                  "type": "string",
+                  "maxLength": 300
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "practiceDraft": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "modeRecommendation"],
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120,
+          "description": "练习标题（草稿）"
+        },
+        "modeRecommendation": {
+          "type": "string",
+          "enum": ["COURSE_PRACTICE", "HOMEWORK", "ASSESSMENT", "ORAL_PRACTICE"],
+          "description": "推荐练习模式"
+        },
+        "sections": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 8,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["title", "type"],
+            "properties": {
+              "title": {
+                "type": "string",
+                "maxLength": 120
+              },
+              "type": {
+                "type": "string",
+                "enum": ["multiple-choice", "fill-in-the-blank", "short-answer", "true-false", "matching", "ordering", "other"],
+                "description": "练习题型"
+              },
+              "items": {
+                "type": "array",
+                "minItems": 0,
+                "maxItems": 10,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "stem": {
+                      "type": "string",
+                      "maxLength": 500,
+                      "description": "题干"
+                    },
+                    "options": {
+                      "type": "array",
+                      "minItems": 0,
+                      "maxItems": 6,
+                      "items": {
+                        "type": "string",
+                        "maxLength": 200
+                      }
+                    },
+                    "answerHint": {
+                      "type": "string",
+                      "maxLength": 300,
+                      "description": "答案提示（仅供教师参考）"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "abilityTags": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 10,
+          "items": {
+            "type": "string",
+            "maxLength": 60,
+            "description": "能力标签"
+          }
+        }
+      }
+    },
+    "glossary": {
+      "type": "array",
+      "minItems": 0,
+      "maxItems": 20,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["term", "definition"],
+        "properties": {
+          "term": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 60,
+            "description": "国通语术语"
+          },
+          "definition": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300,
+            "description": "释义"
+          },
+          "tibetanHint": {
+            "type": "string",
+            "maxLength": 200,
+            "description": "藏语辅助说明（可选）"
+          },
+          "isAiDraft": {
+            "type": "boolean",
+            "default": true,
+            "description": "标记为AI草稿，需教师确认"
+          }
+        }
+      }
+    },
+    "resourceSuggestions": {
+      "type": "array",
+      "minItems": 0,
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["title", "type"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 120,
+            "description": "资源标题"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["text", "audio", "video", "image", "interactive", "other"],
+            "description": "资源类型"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 300,
+            "description": "资源说明"
+          }
+        }
+      }
+    },
+    "risks": {
+      "type": "array",
+      "minItems": 0,
+      "maxItems": 6,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["description", "mitigation"],
+        "properties": {
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300,
+            "description": "风险描述"
+          },
+          "mitigation": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300,
+            "description": "缓解措施"
+          }
+        }
+      }
+    },
+    "teacherReviewChecklist": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 12,
+      "items": {
+        "type": "string",
+        "maxLength": 300,
+        "description": "教师确认清单条目"
+      }
+    }
+  }
+}
