@@ -20,11 +20,16 @@
   let SESSION_ID = '';
   let READING_ITEM_ID = '';
   let WRITTEN_ITEM_ID = '';
+  const isPracticeAttempt = pathParts[0] === 'student' && pathParts[1] === 'practices' && pathParts[2] === 'attempts';
   if (pathParts[0] === 'assessment' && pathParts[1] === 'sessions' && pathParts[2]) {
     SESSION_ID = pathParts[2];
     if (pathParts[3] === 'reading' && pathParts[4]) READING_ITEM_ID = pathParts[4];
     if (pathParts[3] === 'written' && pathParts[4]) WRITTEN_ITEM_ID = pathParts[4];
   }
+  if (isPracticeAttempt && pathParts[3]) SESSION_ID = pathParts[3];
+
+  const isOralItem = (item) => ['READING','SPEECH','LISTEN_ONLY','LISTEN_REPEAT','READ_ALOUD'].includes(item?.itemType);
+  const isWrittenItem = (item) => ['WRITTEN','CHOICE','FILL_BLANK','SINGLE_CHOICE','MULTIPLE_CHOICE','SHORT_ANSWER','LISTEN_RETELL'].includes(item?.itemType);
 
   // ── 演示模式：仅显式 ?demo=1 时启用，并始终显示"演示模式"标识 ──
   const query = new URLSearchParams(location.search);
@@ -242,8 +247,8 @@
     if (!session) return renderLoading('正在加载测评详情…');
 
     const items = appState.apiItems || [];
-    const readingItems = items.filter(i => i.itemType === 'READING' || i.itemType === 'SPEECH');
-    const writtenItems = items.filter(i => i.itemType === 'WRITTEN' || i.itemType === 'CHOICE' || i.itemType === 'FILL_BLANK');
+    const readingItems = items.filter(isOralItem);
+    const writtenItems = items.filter(isWrittenItem);
 
     // 开始按钮：根据 session 状态决定行为
     let startLabel = '开始本次测评';
@@ -259,18 +264,18 @@
         <section class="hero-head"><h1 class="page-title">测评准备</h1><p class="page-subtitle">${session.type === 'READING' ? '朗读测评' : session.type === 'WRITTEN' ? '书面表达' : '综合测评'}</p><p class="page-subtitle" style="font-size:15px">科学测评，精准反馈，见证每一次进步</p></section>
         <section class="prep-layout">
           <article class="card prep-card">
-            <div class="section-title"><h2>本次测评概览</h2>${statusChip(`AssessmentSession ${session.status}`, session.status === 'IN_PROGRESS' ? 'gold' : 'green')}</div>
+            <div class="section-title"><h2>${isPracticeAttempt ? '设备检查' : '本次测评概览'}</h2>${statusChip(isPracticeAttempt ? '练习准备中' : `AssessmentSession ${session.status}`, session.status === 'IN_PROGRESS' ? 'gold' : 'green')}</div>
             <div class="assessment-summary">
               <div class="mic-orbit" style="width:112px;height:112px">${icon('wave')}</div>
               <div><h2>${session.type === 'READING' ? '朗读测评' : session.type === 'WRITTEN' ? '书面表达' : '综合测评'} ${statusChip(session.type, 'gold')}</h2><div class="summary-metrics">
-                <div class="summary-metric"><div class="icon green">${icon('users')}</div><div><small>Session ID</small><b style="font-size:12px;word-break:break-all">${session.id}</b></div></div>
+                ${isPracticeAttempt ? '' : `<div class="summary-metric"><div class="icon green">${icon('users')}</div><div><small>Session ID</small><b style="font-size:12px;word-break:break-all">${session.id}</b></div></div>`}
                 <div class="summary-metric"><div class="icon">${icon('assessment')}</div><div><small>题型数量</small><b>${items.length} 项</b></div></div>
                 <div class="summary-metric"><div class="icon blue">${icon('clock')}</div><div><small>创建时间</small><b>${new Date(session.createdAt).toLocaleString()}</b></div></div>
                 <div class="summary-metric"><div class="icon green">${icon('refresh')}</div><div><small>是否允许重录</small><b>允许</b></div></div>
               </div></div>
             </div>
             <div class="privacy-box"><div><strong>隐私说明</strong><p class="muted">录音仅用于本次测评、自动评分和教师复核；服务端证据仅对本人和授权教师可见。</p></div></div>
-            <div class="session-strip">${metaCell('Session ID', session.id)}${metaCell('状态', session.status)}${metaCell('题型', session.type)}${metaCell('已开始', session.startedAt ? new Date(session.startedAt).toLocaleString() : '未开始')}</div>
+            ${isPracticeAttempt ? '' : `<div class="session-strip">${metaCell('Session ID', session.id)}${metaCell('状态', session.status)}${metaCell('题型', session.type)}${metaCell('已开始', session.startedAt ? new Date(session.startedAt).toLocaleString() : '未开始')}</div>`}
           </article>
           <article class="card prep-card">
             <div class="section-title"><h2>设备检测</h2><button class="btn" data-recheck>${icon('refresh')} 重新检测</button></div>
@@ -283,8 +288,8 @@
             <p class="muted small" style="margin-top:14px">检测结果将写入 DeviceCheckLog；未通过时不会显示"已就绪"。</p>
           </article>
           <article class="card prep-card">
-            <div class="section-title"><h2>测评项</h2></div>
-            ${items.length === 0 ? '<p class="muted">本次测评暂无测评项。请联系教师确认。</p>' : `<div class="task-cards">${items.map(it => `<a class="task-card" href="${it.itemType === 'READING' || it.itemType === 'SPEECH' ? `${base}/sessions/${SESSION_ID}/reading/${it.id}/` : `${base}/sessions/${SESSION_ID}/written/${it.id}/`}"><div class="icon">${icon(it.itemType === 'READING' ? 'book' : 'file')}</div><h4>${it.itemType === 'READING' ? '朗读' : it.itemType === 'WRITTEN' ? '书面' : it.itemType}</h4><p>${it.status || ''}</p>${statusChip(it.recordingId ? '已录音' : '未录音', it.recordingId ? 'green' : 'red')}</a>`).join('')}</div>`}
+            <div class="section-title"><h2>${isPracticeAttempt ? '检查完成后进入练习' : '测评项'}</h2></div>
+            ${isPracticeAttempt ? '<p class="muted">本页仅检查设备。通过后将自动进入第一个真实练习环节。</p>' : (items.length === 0 ? '<p class="muted">本次测评暂无测评项。请联系教师确认。</p>' : `<div class="task-cards">${items.map(it => `<a class="task-card" href="${isOralItem(it) ? `${base}/sessions/${SESSION_ID}/reading/${it.id}/` : `${base}/sessions/${SESSION_ID}/written/${it.id}/`}"><div class="icon">${icon(isOralItem(it) ? 'book' : 'file')}</div><h4>${isOralItem(it) ? '朗读' : '书面'}</h4><p>${it.status || ''}</p>${statusChip(it.recordingId ? '已录音' : '未录音', it.recordingId ? 'green' : 'red')}</a>`).join('')}</div>`)}
           </article>
           <article class="card prep-action">
             <div><strong class="serif" style="font-size:20px">测评环境状态：<span data-ready-label>待检测</span></strong><p class="muted">建议佩戴耳机、关闭其他音频应用，并保持网络稳定。</p></div>
@@ -317,6 +322,8 @@
       if (item.prompt?.text) promptText = item.prompt.text;
       else if (item.prompt?.sentence) promptText = item.prompt.sentence;
       else if (typeof item.prompt === 'string') promptText = item.prompt;
+      else if (item.prompt?.targetText) promptText = item.prompt.targetText;
+      else if (item.prompt?.stimulus) promptText = item.prompt.stimulus;
       else if (item.questionPrompt?.text) promptText = item.questionPrompt.text;
       else if (item.questionPrompt?.sentence) promptText = item.questionPrompt.sentence;
     }
@@ -403,6 +410,7 @@
       else {
         if (currentItem.prompt.text) qText = currentItem.prompt.text;
         else if (currentItem.prompt.question) qText = currentItem.prompt.question;
+        else if (currentItem.prompt.prompt) qText = currentItem.prompt.prompt;
         if (Array.isArray(currentItem.prompt.options)) qOptions = currentItem.prompt.options;
       }
     }
@@ -631,9 +639,9 @@
           await Api.startAssessmentSession(SESSION_ID);
         }
         // 加载 items 找到第一个未完成的 reading item
-        const items = appState.apiItems && appState.apiItems.length ? appState.apiItems : await Api.listAssessmentItems(SESSION_ID);
-        const firstReading = items.find(i => (i.itemType === 'READING' || i.itemType === 'SPEECH') && !i.recordingId);
-        const firstWritten = items.find(i => (i.itemType === 'WRITTEN' || i.itemType === 'CHOICE' || i.itemType === 'FILL_BLANK') && appState.writtenAnswers[i.id] === undefined);
+        const items = appState.apiItems && appState.apiItems.length ? appState.apiItems : (isPracticeAttempt ? await Api.getPracticeAttemptItems(SESSION_ID) : await Api.listAssessmentItems(SESSION_ID));
+        const firstReading = items.find(i => isOralItem(i) && !i.recordingId);
+        const firstWritten = items.find(i => isWrittenItem(i) && appState.writtenAnswers[i.id] === undefined);
         if (firstReading) {
           location.href = `${base}/sessions/${SESSION_ID}/reading/${firstReading.id}/`;
         } else if (firstWritten) {
@@ -1086,8 +1094,8 @@
     renderCurrent();
     try {
       const [session, items] = await Promise.all([
-        Api.getAssessmentSession(SESSION_ID),
-        Api.listAssessmentItems(SESSION_ID).catch(err => {
+        (isPracticeAttempt ? Api.getPracticeAttempt(SESSION_ID) : Api.getAssessmentSession(SESSION_ID)),
+        (isPracticeAttempt ? Api.getPracticeAttemptItems(SESSION_ID) : Api.listAssessmentItems(SESSION_ID)).catch(err => {
           console.warn('[assessment] 加载 items 失败:', err);
           return [];
         })
@@ -1113,7 +1121,7 @@
       // 并行加载 session 详情、items、当前 reading item
       const [session, items, readingItem] = await Promise.all([
         Api.getAssessmentSession(SESSION_ID).catch(() => appState.apiSession),
-        appState.apiItems.length ? Promise.resolve(appState.apiItems) : Api.listAssessmentItems(SESSION_ID).catch(() => []),
+        appState.apiItems.length ? Promise.resolve(appState.apiItems) : (isPracticeAttempt ? Api.getPracticeAttemptItems(SESSION_ID) : Api.listAssessmentItems(SESSION_ID)).catch(() => []),
         Api.getReadingItem(SESSION_ID, READING_ITEM_ID)
       ]);
       appState.apiSession = session;
@@ -1144,7 +1152,7 @@
     try {
       const [session, items] = await Promise.all([
         Api.getAssessmentSession(SESSION_ID).catch(() => appState.apiSession),
-        Api.getWrittenItems(SESSION_ID)
+        isPracticeAttempt ? Api.getPracticeAttemptItems(SESSION_ID).then(all => all.filter(isWrittenItem)) : Api.getWrittenItems(SESSION_ID)
       ]);
       appState.apiSession = session;
       const writtenItems = Array.isArray(items) ? items : (items?.items || []);

@@ -75,6 +75,10 @@ function routeToSpa(pathname) {
     }
     return { file: join(root, 'assessment', 'index.html'), page: 'center' };
   }
+  // `/assessment` stays a compatibility route; new entry uses the existing V4 visual language.
+  if (pathname === '/student/practices' || pathname === '/student/practices/') return { file: join(root, 'assessment', 'practice-shell.html'), page: 'catalog' };
+  if (/^\/student\/practices\/attempts\/[^/]+\/prepare\/?$/.test(pathname)) return { file: join(root, 'assessment', '_shell.html'), page: 'prep' };
+  if (/^\/student\/practices\/[^/]+\/?$/.test(pathname)) return { file: join(root, 'assessment', 'practice-shell.html'), page: 'detail' };
   if (pathname === '/teacher' || pathname.startsWith('/teacher/')) {
     if (pathname.startsWith('/teacher/courses/')) return join(root, 'teacher', 'courses', 'spring', 'studio', 'index.html');
     if (pathname.startsWith('/teacher/assignments')) return join(root, 'teacher', 'assignments', 'index.html');

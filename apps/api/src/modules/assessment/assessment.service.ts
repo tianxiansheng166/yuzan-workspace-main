@@ -151,6 +151,29 @@ export class AssessmentService {
       throw new AssessmentForbiddenException("您不是该测评的参与者");
     }
 
+    // Idempotent client retries return the persisted submission instead of a conflict.
+    if (session.status === "SUBMITTED" || session.status === "PROCESSING" || session.status === "COMPLETED") {
+      return toAssessmentSessionResponse(session);
+    }
+
+    const items = await this.itemRepo.findBySessionId(sessionId);
+    if (items.length === 0) throw new AssessmentConflictException("测评没有可提交的题目");
+    const oralItems = items.filter((item) => ["READING", "SPEECH", "LISTEN_REPEAT", "READ_ALOUD"].includes(item.itemType));
+    if (oralItems.some((item) => !item.recordingId)) {
+      throw new AssessmentConflictException("仍有必做录音尚未同步");
+    }
+    const writtenItems = items.filter((item) => ["WRITTEN", "CHOICE", "FILL_BLANK", "SINGLE_CHOICE", "MULTIPLE_CHOICE", "SHORT_ANSWER", "LISTEN_RETELL"].includes(item.itemType));
+    if (writtenItems.length) {
+      const answers = await this.prisma.writtenAnswer.findMany({ where: { itemId: { in: writtenItems.map((item) => item.id) } }, select: { itemId: true, finalSubmittedAt: true } });
+      const finalized = new Set(answers.filter((answer) => answer.finalSubmittedAt).map((answer) => answer.itemId));
+      if (writtenItems.some((item) => !finalized.has(item.id))) throw new AssessmentConflictException("仍有必答书面题尚未保存");
+    }
+    const recordingIds = oralItems.flatMap((item) => item.recordingId ? [item.recordingId] : []);
+    if (recordingIds.length) {
+      const failed = await this.prisma.recording.count({ where: { id: { in: recordingIds }, status: "FAILED" } });
+      if (failed) throw new AssessmentConflictException("存在阻塞性的音频上传错误");
+    }
+
     if (!canTransition(session.status, "SUBMITTED")) {
       throw new AssessmentConflictException(`无法从 ${session.status} 转换为 SUBMITTED`);
     }
@@ -176,7 +199,7 @@ export class AssessmentService {
 
     // Get question details if available
     let questionPrompt: Record<string, unknown> | undefined;
-    let demoAudioUrl: string | null = null;
+    let demoAudioUrl: string | null = typeof item.prompt.demoAudioUrl === "string" ? item.prompt.demoAudioUrl : null;
     if (item.questionId) {
       const question = await this.prisma.question.findUnique({
         where: { id: item.questionId },
@@ -251,7 +274,7 @@ export class AssessmentService {
     await this.verifyAccess(auth, schoolId, session);
 
     const items = await this.itemRepo.findBySessionId(sessionId);
-    const writtenItems = items.filter((i) => i.itemType === "WRITTEN" || i.itemType === "CHOICE" || i.itemType === "FILL_BLANK");
+    const writtenItems = items.filter((i) => ["WRITTEN", "CHOICE", "FILL_BLANK", "SINGLE_CHOICE", "MULTIPLE_CHOICE", "SHORT_ANSWER", "LISTEN_RETELL"].includes(i.itemType));
     return writtenItems.map(toWrittenItemResponse);
   }
 

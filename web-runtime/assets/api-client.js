@@ -815,6 +815,23 @@
     return request(`/schools/${getActiveSchoolId()}/assessments/history/events${qs ? '?' + qs : ''}`);
   }
 
+  /* ── Reusable student practices ── */
+  async function listPractices() {
+    return request(`/schools/${getActiveSchoolId()}/practices`);
+  }
+  async function getPractice(practiceDefinitionId) {
+    return request(`/schools/${getActiveSchoolId()}/practices/${encodeURIComponent(practiceDefinitionId)}`);
+  }
+  async function createOrResumePractice(practiceDefinitionId) {
+    return request(`/schools/${getActiveSchoolId()}/practices/${encodeURIComponent(practiceDefinitionId)}/attempts`, { method: 'POST', body: '{}' });
+  }
+  async function getPracticeAttempt(attemptId) {
+    return request(`/schools/${getActiveSchoolId()}/practices/attempts/${encodeURIComponent(attemptId)}`);
+  }
+  async function getPracticeAttemptItems(attemptId) {
+    return request(`/schools/${getActiveSchoolId()}/practices/attempts/${encodeURIComponent(attemptId)}/items`);
+  }
+
   window.YuzanApi = {
     request,
     login,
@@ -966,5 +983,10 @@
     scheduleRetest,
     getAssessmentHistory,
     getAssessmentHistoryEvents,
+    listPractices,
+    getPractice,
+    createOrResumePractice,
+    getPracticeAttempt,
+    getPracticeAttemptItems,
   };
 })();
