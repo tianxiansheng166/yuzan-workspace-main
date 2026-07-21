@@ -79,17 +79,64 @@ svg{fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-l
 .overview-card{margin-top:21px;padding:20px 17px 16px;border-radius:9px;background:#fff}.overview-card h2{margin:0 0 13px;font-size:17px}.overview-metric{height:69px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid #ece4de}.overview-metric span{display:grid;gap:7px;font-size:12px}.overview-metric span small{color:#7d8589;font-size:9px}.overview-metric span small b{color:#d80c13}.overview-metric>strong{color:#21795c;font-size:12px;font-weight:500}.overview-card>button{margin-top:11px;border:0;background:transparent;padding:0;color:#d20c13;font-size:11px;font-weight:600}.overview-card>button span{font-size:18px}
 .toast{position:fixed;z-index:100;left:50%;bottom:30px;transform:translate(-50%,18px);padding:10px 17px;border-radius:7px;background:#1d2a2f;color:#fff;font-size:12px;opacity:0;pointer-events:none;transition:.2s}.toast.show{opacity:1;transform:translate(-50%,0)}
 .drawer-backdrop{position:fixed;z-index:80;inset:0;background:rgba(18,28,33,.32)}.drawer-backdrop[hidden]{display:none}.drawer{position:absolute;right:0;top:0;bottom:0;width:min(430px,92vw);padding:55px 31px;background:#fff;box-shadow:-20px 0 60px rgba(0,0,0,.15)}.drawer-close{position:absolute;right:18px;top:13px;border:0;background:none;font-size:30px}.drawer-kicker{color:#d30b13;font-size:11px;font-weight:700}.drawer h2{margin:8px 0 12px;font-size:25px}.drawer p{color:#667075;line-height:1.7;font-size:13px}.drawer-data{margin:25px 0;padding:18px;border:1px solid #e8ddd3;border-radius:8px;background:#fffaf5;font-size:12px;line-height:2}.drawer-primary{width:100%;height:42px;border:0;border-radius:6px;background:#cf080f;color:#fff}.date-popover{position:fixed;z-index:90;top:58px;right:410px;width:270px;padding:16px;border:1px solid #ddd5cd;border-radius:8px;background:#fff;box-shadow:0 14px 35px rgba(0,0,0,.12)}.date-popover[hidden]{display:none}.date-popover strong{display:block;margin-bottom:10px}.date-popover label{display:grid;grid-template-columns:70px 1fr;align-items:center;gap:8px;margin:10px 0;font-size:11px}.date-popover input{height:32px;border:1px solid #d8d3ce;border-radius:5px;padding:0 7px}.date-popover button{width:100%;height:34px;border:0;border-radius:5px;background:#cf080f;color:#fff}
+/* ── 新区块：学生名单 ── */
+.roster-section{margin-top:18px;padding:19px 20px 14px;border:1px solid #e8ded4;border-radius:10px;background:rgba(255,253,250,.97)}
+.roster-section .section-heading h2{font-size:16px;margin:0}
+.roster-section .section-heading p{margin:4px 0 10px;color:#737b80;font-size:11px}
+.roster-table-wrap{overflow-x:auto}
+.roster-table{font-size:10px;min-width:700px}
+.roster-row{display:grid;grid-template-columns:1.2fr .7fr .8fr .8fr .5fr .5fr 1fr .8fr .6fr;align-items:center;height:32px;padding:0 8px;border-bottom:1px solid #ece5df}
+.roster-row.header{height:28px;color:#7c8489;border-bottom:1px solid #d8d2cc}
+.roster-row:not(.header){cursor:pointer;transition:background .12s}
+.roster-row:not(.header):hover{background:#f8f2ec}
+.roster-row b{font-weight:500}
+.roster-row span{color:#5f686d}
+.risk-ok{display:inline-block;padding:1px 6px;border-radius:999px;background:#e4f2e9;color:#187653;font-size:9px;font-weight:600}
+.risk-at{display:inline-block;padding:1px 6px;border-radius:999px;background:#fff0dc;color:#e77d13;font-size:9px;font-weight:600}
+.risk-inactive{display:inline-block;padding:1px 6px;border-radius:999px;background:#ffe9e4;color:#d60d14;font-size:9px;font-weight:600}
+/* ── 新区块：任务和答案 ── */
+.assignments-section{margin-top:14px;padding:19px 20px 14px;border:1px solid #e8ded4;border-radius:10px;background:rgba(255,253,250,.97)}
+.assignments-section .section-heading h2{font-size:16px;margin:0}
+.assignments-section .section-heading p{margin:4px 0 10px;color:#737b80;font-size:11px}
+.assignment-row{display:grid;grid-template-columns:1fr .6fr .6fr .7fr auto;align-items:center;gap:10px;height:44px;padding:0 8px;border-bottom:1px solid #ece5df;font-size:11px}
+.assignment-row:last-child{border-bottom:0}
+.assignment-info strong{display:block;font-size:12px;font-weight:500}
+.assignment-info small{color:#7d8589;font-size:9px}
+.assignment-status{display:inline-block;padding:1px 7px;border-radius:999px;background:#f2f7f4;color:#287050;font-size:9px;font-weight:600}
+.pending-count{color:#e77d13;font-weight:500}
+.view-answers-btn{height:26px;padding:0 10px;border:1px solid #d8d2cd;border-radius:5px;background:#fff;color:#293136;font-size:10px;white-space:nowrap;cursor:pointer;transition:border-color .12s}
+.view-answers-btn:hover{border-color:#d00b12;color:#d00b12}
+/* ── 新区块：测评结果 ── */
+.assessments-section{margin-top:14px;padding:19px 20px 14px;border:1px solid #e8ded4;border-radius:10px;background:rgba(255,253,250,.97)}
+.assessments-section .section-heading h2{font-size:16px;margin:0}
+.assessments-section .section-heading p{margin:4px 0 10px;color:#737b80;font-size:11px}
+.assessment-row{display:grid;grid-template-columns:1fr .5fr .6fr .5fr .5fr;align-items:center;gap:10px;height:40px;padding:0 8px;border-bottom:1px solid #ece5df;font-size:11px}
+.assessment-row:last-child{border-bottom:0}
+.assessment-info strong{display:block;font-size:12px;font-weight:500}
+.assessment-info small{color:#7d8589;font-size:9px}
+.assessment-status{display:inline-block;padding:1px 7px;border-radius:999px;background:#e4f1f3;color:#1f7884;font-size:9px;font-weight:600}
+/* ── 新区块：待处理事项 ── */
+.pending-section{margin-top:14px;padding:19px 20px 14px;border:1px solid #e8ded4;border-radius:10px;background:rgba(255,253,250,.97)}
+.pending-section .section-heading h2{font-size:16px;margin:0}
+.pending-section .section-heading p{margin:4px 0 10px;color:#737b80;font-size:11px}
+.pending-list{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.pending-item{display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid #ece5df;border-radius:8px;background:#fffaf5;font-size:11px}
+.pending-icon{font-size:16px}
+.pending-item strong{font-size:18px;font-weight:600;color:#d60810}
+.pending-item span:last-child{color:#7d8589;font-size:10px}
+/* ── 通用空状态 ── */
+.empty-hint{padding:24px;color:#888;text-align:center;font-size:12px}
 @media(max-width:1400px){
   :root{--sidebar:205px}.page-grid{grid-template-columns:minmax(0,1fr) 305px}.class-main{padding-left:18px;padding-right:18px}.growth-section{margin-left:-18px;margin-right:-18px}.course-card{grid-template-columns:86px minmax(235px,1fr) 400px 105px}.course-card>img{width:86px;height:86px}.course-copy h2{font-size:20px}.metric{padding:0 8px}.teacher-panel{padding-left:12px;padding-right:12px}.distribution-content{gap:16px;padding-left:10px;padding-right:10px}.distribution-content ul{min-width:240px}
 }
 @media(max-width:1050px){
-  :root{--sidebar:82px}.brand{justify-content:center;padding:8px}.brand-copy,.nav-item span,.nav-item.with-badge b{display:none}.main-nav{padding:6px 10px}.nav-item{justify-content:center;padding:0}.page-grid{grid-template-columns:1fr}.teacher-panel{display:grid;grid-template-columns:1fr 1fr;gap:16px;background:#123f4b;padding:20px}.overview-card{margin-top:0}.course-card{grid-template-columns:82px minmax(220px,1fr) 1fr 110px}.course-progress{grid-template-columns:repeat(2,1fr)}.metric:nth-child(3),.metric:nth-child(4){display:none}
+  :root{--sidebar:82px}.brand{justify-content:center;padding:8px}.brand-copy,.nav-item span,.nav-item.with-badge b{display:none}.main-nav{padding:6px 10px}.nav-item{justify-content:center;padding:0}.page-grid{grid-template-columns:1fr}.teacher-panel{display:grid;grid-template-columns:1fr 1fr;gap:16px;background:#123f4b;padding:20px}.overview-card{margin-top:0}.course-card{grid-template-columns:82px minmax(220px,1fr) 1fr 110px}.course-progress{grid-template-columns:repeat(2,1fr)}.metric:nth-child(3),.metric:nth-child(4){display:none}.pending-list{grid-template-columns:repeat(2,1fr)}
 }
 @media(max-width:760px){
-  :root{--sidebar:0px;--topbar:58px}.sidebar{display:none}.topbar{padding:0 11px}.crumbs span,.crumbs b,.icon-text-btn,.toolbar-divider,.date-range span{display:none}.date-range{min-width:38px;width:38px;padding:0;justify-content:center}.toolbar-btn{padding:0 8px}.profile>span{display:none}.class-main{padding:14px 10px}.class-title{align-items:flex-start}.class-title h1{font-size:23px}.class-title p{line-height:1.8}.class-title p i{display:none}.settings-btn{padding:0 10px}.course-card{height:auto;grid-template-columns:78px 1fr;padding:11px}.course-card>img{width:78px;height:78px}.course-progress{grid-column:1/-1}.course-detail{grid-column:1/-1}.growth-section{height:590px;margin-left:-10px;margin-right:-10px}.growth-map{background-size:auto 100%;background-position:51% center}.stage-card{width:132px}.stage-1{left:8%;top:65px}.stage-2{left:49%;top:170px}.stage-3{left:14%;top:300px}.stage-4{left:52%;top:418px}.bottom-grid{grid-template-columns:1fr;margin:0}.panel{height:auto;min-height:300px}.distribution-content{height:auto;flex-direction:column}.distribution-content ul{width:100%;min-width:0}.teacher-panel{grid-template-columns:1fr;padding:14px}.date-popover{right:11px;top:52px}.stage-card:after{height:20px}
+  :root{--sidebar:0px;--topbar:58px}.sidebar{display:none}.topbar{padding:0 11px}.crumbs span,.crumbs b,.icon-text-btn,.toolbar-divider,.date-range span{display:none}.date-range{min-width:38px;width:38px;padding:0;justify-content:center}.toolbar-btn{padding:0 8px}.profile>span{display:none}.class-main{padding:14px 10px}.class-title{align-items:flex-start}.class-title h1{font-size:23px}.class-title p{line-height:1.8}.class-title p i{display:none}.settings-btn{padding:0 10px}.course-card{height:auto;grid-template-columns:78px 1fr;padding:11px}.course-card>img{width:78px;height:78px}.course-progress{grid-column:1/-1}.course-detail{grid-column:1/-1}.growth-section{height:590px;margin-left:-10px;margin-right:-10px}.growth-map{background-size:auto 100%;background-position:51% center}.stage-card{width:132px}.stage-1{left:8%;top:65px}.stage-2{left:49%;top:170px}.stage-3{left:14%;top:300px}.stage-4{left:52%;top:418px}.bottom-grid{grid-template-columns:1fr;margin:0}.panel{height:auto;min-height:300px}.distribution-content{height:auto;flex-direction:column}.distribution-content ul{width:100%;min-width:0}.teacher-panel{grid-template-columns:1fr;padding:14px}.date-popover{right:11px;top:52px}.stage-card:after{height:20px}.roster-section,.assignments-section,.assessments-section,.pending-section{padding:14px 13px}.roster-table{min-width:600px}.pending-list{grid-template-columns:repeat(2,1fr)}
 }
 @media(max-width:430px){
-  .toolbar-btn{font-size:0}.toolbar-btn svg{width:20px;height:20px}.class-title p{font-size:10px}.course-copy h2{font-size:17px}.course-copy p{font-size:9px}.course-progress{grid-template-columns:1fr 1fr}.metric.progress i{width:100px}.bottom-grid{gap:10px}.stage-distribution,.issue-panel{padding-left:13px;padding-right:13px}.distribution-content{padding:15px}.issue-row{grid-template-columns:26px 1.5fr .8fr .7fr}.teacher-actions h2{font-size:20px}
+  .toolbar-btn{font-size:0}.toolbar-btn svg{width:20px;height:20px}.class-title p{font-size:10px}.course-copy h2{font-size:17px}.course-copy p{font-size:9px}.course-progress{grid-template-columns:1fr 1fr}.metric.progress i{width:100px}.bottom-grid{gap:10px}.stage-distribution,.issue-panel{padding-left:13px;padding-right:13px}.distribution-content{padding:15px}.issue-row{grid-template-columns:26px 1.5fr .8fr .7fr}.teacher-actions h2{font-size:20px}.roster-table{min-width:500px;font-size:9px}.assignment-row,.assessment-row{font-size:10px}.pending-list{grid-template-columns:1fr 1fr;gap:8px}
 }
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
 .stage-card{transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease}.stage-card:hover,.stage-card.selected{transform:translateY(-3px);border-color:#d9a38c;box-shadow:0 8px 18px rgba(80,45,20,.12)}button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #236f88;outline-offset:2px}
