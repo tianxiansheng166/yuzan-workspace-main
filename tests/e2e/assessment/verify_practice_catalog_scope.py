@@ -1,4 +1,5 @@
 import json
+import time
 from pathlib import Path
 
 from playwright.sync_api import sync_playwright
@@ -63,10 +64,21 @@ with sync_playwright() as playwright:
     page.screenshot(path=str(OUT / "catalog-desktop.png"), full_page=True)
     print("catalog desktop verified", flush=True)
 
-    # Search is served by the catalog API, not by a front-end fixture.
+    # A delayed real request must leave the existing result list in place; the
+    # catalogue uses only a small pending indicator rather than a full-page
+    # loading replacement.
+    def delay_catalog(route):
+        time.sleep(0.35)
+        route.continue_()
+
+    page.route("**/api/v1/schools/*/practices?**", delay_catalog)
     page.locator("[data-search-input]").fill("声母")
     page.locator("[data-search-form]").press("Enter")
+    assert page.locator(".practice-tile").count() >= 6
+    page.locator("[data-catalog-refreshing]").wait_for(timeout=2_000)
     wait_catalog(page)
+    page.unroute("**/api/v1/schools/*/practices?**", delay_catalog)
+    # Search is served by the catalog API, not by a front-end fixture.
     assert page.locator(".practice-tile h2").all_inner_texts() == ["声母发音专项训练"]
     print("search verified", flush=True)
 

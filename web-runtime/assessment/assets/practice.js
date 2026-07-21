@@ -11,7 +11,7 @@
     ['RECOMMENDED', '推荐给我'], ['ALL', '全部练习'], ['SPECIALIZED', '专项训练'],
     ['COMPREHENSIVE', '综合练习'], ['MOCK', '模拟测评'], ['FAVORITE', '我的收藏'],
   ];
-  const state = { query: '', tab: 'RECOMMENDED', filters: {}, sort: 'RECOMMENDED', view: 'grid', cursor: null, catalog: null, loadingMore: false };
+  const state = { query: '', tab: 'RECOMMENDED', filters: {}, sort: 'RECOMMENDED', view: 'grid', cursor: null, catalog: null, loadingMore: false, requestSerial: 0 };
   const safe = value => String(value ?? '').replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character]));
   const shell = body => `<div class="shell practice-${page}"><main class="page practice-page"><div class="practice-contours"></div>${body}</main></div>`;
   const icon = name => ({ search: '⌕', filter: '≡', grid: '▦', list: '☷', arrow: '→', star: '☆', filledStar: '★', clock: '◷', mic: '◉', close: '×', book: '▤' }[name] || '•');
@@ -42,15 +42,34 @@
     app.innerHTML = shell(`<section class="practice-catalog-head"><div class="catalog-intro"><p class="eyebrow">学生练习中心</p><h1>把每一次听、读、说、写，练成看得见的进步</h1><p>从老师开放的练习与自主专项中选择；开始后才会创建一次真实练习记录。</p></div><form class="catalog-search" data-search-form><label><span>${icon('search')}</span><input data-search-input value="${safe(state.query)}" placeholder="搜索练习名称、能力或文化主题"></label><button class="btn primary" type="submit">搜索</button></form></section><nav class="catalog-tabs" aria-label="练习范围">${tabs.map(([value, label]) => `<button class="${state.tab === value ? 'active' : ''}" data-tab="${value}">${label}</button>`).join('')}</nav><section class="catalog-ability"><div class="catalog-section-head"><div><p class="eyebrow">能力方向</p><h2>先从想巩固的一项能力开始</h2></div><button class="text-action ${selectedCategory ? '' : 'selected'}" data-clear-filter="abilityCategory">全部方向</button></div><div class="ability-rail">${categoryOrder.filter(category => abilityFacets.some(item => item.value === category)).map(category => { const facet = abilityFacets.find(item => item.value === category); return `<button class="ability-button ${selectedCategory === category ? 'selected' : ''}" data-filter-key="abilityCategory" data-filter-value="${safe(category)}"><b>${safe(category)}</b><small>${facet.count} 项可练</small></button>`; }).join('')}</div></section><section class="catalog-workbench"><aside class="catalog-filters"><div class="filter-heading"><h2>${icon('filter')} 筛选练习</h2>${activeFilters ? '<button class="text-action" data-clear-all>清除全部</button>' : ''}</div><div class="filter-group"><h3>学段</h3>${facetValues('gradeBand').map(item => chip(item.value, item.value, 'gradeBand', item.count)).join('')}</div><div class="filter-group"><h3>难度</h3>${facetValues('difficulty').map(item => chip(item.value, item.value, 'difficulty', item.count)).join('')}</div><div class="filter-group"><h3>预计时长</h3>${facetValues('duration').map(item => chip(({ SHORT: '10 分钟以内', MEDIUM: '11–20 分钟', LONG: '20 分钟以上' })[item.value], item.value, 'duration', item.count)).join('')}</div><div class="filter-group"><h3>题型</h3>${facetValues('itemType').map(item => chip(item.value.replaceAll('_', ' '), item.value, 'itemType', item.count)).join('')}</div><div class="filter-group"><h3>文化主题</h3>${facetValues('cultureTag').map(item => chip(item.value, item.value, 'cultureTag', item.count)).join('')}</div><div class="filter-group"><h3>完成状态</h3>${facetValues('completionStatus').map(item => chip(({ NOT_STARTED: '未开始', IN_PROGRESS: '进行中', COMPLETED: '已完成', FAVORITE: '我的收藏' })[item.value], item.value, 'completionStatus', item.count)).join('')}</div></aside><section class="catalog-results"><div class="result-toolbar"><div><p class="eyebrow">${state.tab === 'RECOMMENDED' ? '针对我的薄弱项' : '练习库'}</p><h2>${catalog.total} 项真实练习</h2>${activeFilters ? `<div class="active-filter-row">${activeFilters}</div>` : ''}</div><div class="result-actions"><select data-sort aria-label="排序"><option value="RECOMMENDED" ${state.sort === 'RECOMMENDED' ? 'selected' : ''}>优先推荐</option><option value="DURATION_ASC" ${state.sort === 'DURATION_ASC' ? 'selected' : ''}>时长由短到长</option><option value="DURATION_DESC" ${state.sort === 'DURATION_DESC' ? 'selected' : ''}>时长由长到短</option><option value="TITLE" ${state.sort === 'TITLE' ? 'selected' : ''}>按名称</option></select><div class="view-switch"><button data-view="grid" class="${state.view === 'grid' ? 'active' : ''}" aria-label="网格视图">${icon('grid')}</button><button data-view="list" class="${state.view === 'list' ? 'active' : ''}" aria-label="列表视图">${icon('list')}</button></div></div></div>${results.length ? `<div class="${state.view === 'grid' ? 'practice-grid' : 'practice-list'}">${results.map(state.view === 'grid' ? card : listRow).join('')}</div>${catalog.nextCursor ? '<button class="load-more" data-load-more>加载更多练习</button>' : ''}` : `<div class="practice-state no-results"><img src="/assessment/assets/practice-catalog/snow-peak-success.png" alt=""><div><h2>${state.query || activeFilters ? '没有匹配的练习' : '暂时没有开放练习'}</h2><p>${state.query || activeFilters ? '可以清除部分筛选条件，或换一个关键词再试。' : '老师开放练习后会在这里出现；练习内容不会由 Attempt 列表代替。'}</p>${state.query || activeFilters ? '<button class="btn" data-clear-all>清除筛选</button>' : ''}</div></div>`}</section></section>`);
     bindCatalog();
   }
+  const setCatalogRefreshing = refreshing => {
+    const results = document.querySelector('.catalog-results');
+    if (!results) return;
+    results.classList.toggle('is-refreshing', refreshing);
+    results.setAttribute('aria-busy', String(refreshing));
+    let indicator = results.querySelector('[data-catalog-refreshing]');
+    if (refreshing && !indicator) {
+      indicator = document.createElement('span');
+      indicator.dataset.catalogRefreshing = 'true';
+      indicator.className = 'catalog-refreshing';
+      indicator.textContent = '正在更新结果';
+      results.querySelector('.result-toolbar')?.append(indicator);
+    }
+    if (!refreshing) indicator?.remove();
+  };
   async function refreshCatalog({ resetCursor = true } = {}) {
     if (resetCursor) state.cursor = null;
-    loading();
+    const serial = ++state.requestSerial;
+    if (!state.catalog) loading(); else setCatalogRefreshing(true);
     try {
       const result = await Api.listPractices(requestFilters());
+      if (serial !== state.requestSerial) return;
       state.catalog = result;
       catalogView();
     } catch (err) {
-      error(err.message || '后端服务暂不可用', err.status);
+      if (serial !== state.requestSerial) return;
+      if (!state.catalog) error(err.message || '后端服务暂不可用', err.status);
+      else setCatalogRefreshing(false);
     }
   }
   async function toggleFavorite(id, button) {
