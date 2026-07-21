@@ -48,16 +48,15 @@
   }
 
   // ── data-action 按钮分类 ──
-  // LIVE_ROUTE: course → /teacher/courses/, assessment → /teacher/assessments/create
-  // UNSUPPORTED: export, analysis, practice, group, volunteer, report
+  // LIVE_ROUTE: course → /teacher/courses/
+  // LIVE_API: practice → POST supplementary-practice, assessment → POST class assessments
+  // UNSUPPORTED: export, analysis, group, volunteer, report
   const actionRoutes = {
     course: '/teacher/courses/',
-    assessment: '/teacher/assessments/create',
   };
   const actionUnsupported = {
     export: '导出班级报表功能暂未开通',
     analysis: '问题分析详情功能暂未开通',
-    practice: '布置补充练习功能暂未开通',
     group: '创建小组任务功能暂未开通',
     volunteer: '志愿者协作功能暂未开通',
     report: '班级学情报告功能暂未开通',
@@ -69,6 +68,68 @@
       btn.addEventListener("click", () => { location.href = actionRoutes[action]; });
     } else if (action === 'settings') {
       btn.addEventListener("click", () => openDrawer('settings'));
+    } else if (action === 'practice') {
+      btn.addEventListener("click", async () => {
+        if (!schoolId || !classId || typeof YuzanApi === 'undefined') { showToast('请先登录'); return; }
+        btn.disabled = true; btn.textContent = '布置中...';
+        try {
+          await YuzanApi.request(`/schools/${schoolId}/classes/${classId}/supplementary-practice`, {
+            method: 'POST', body: JSON.stringify({ title: '补充练习', description: '基于班级学情自动推送' }),
+          });
+          showToast('补充练习已布置');
+        } catch (err) { showToast(err.message || '布置失败'); }
+        finally { btn.disabled = false; btn.textContent = '去布置'; }
+      });
+    } else if (action === 'assessment') {
+      btn.addEventListener("click", async () => {
+        if (!schoolId || !classId || typeof YuzanApi === 'undefined') { showToast('请先登录'); return; }
+        btn.disabled = true; btn.textContent = '创建中...';
+        try {
+          await YuzanApi.request(`/schools/${schoolId}/classes/${classId}/assessments`, {
+            method: 'POST', body: JSON.stringify({ type: 'FORMATIVE' }),
+          });
+          showToast('阶段测评已发起');
+        } catch (err) { showToast(err.message || '发起失败'); }
+        finally { btn.disabled = false; btn.textContent = '去测评'; }
+      });
+    } else if (action === 'assign-selected') {
+      btn.addEventListener("click", async () => {
+        if (!schoolId || !classId || typeof YuzanApi === 'undefined') { showToast('请先登录'); return; }
+        // 收集勾选的学生 enrollmentId
+        const checked = document.querySelectorAll('.roster-row input[type=checkbox]:checked');
+        const enrollmentIds = [...checked].map(c => c.closest('.roster-row')?.dataset.enrollmentId).filter(Boolean);
+        if (enrollmentIds.length === 0) { showToast('请先在学生名单中勾选学生'); return; }
+        btn.disabled = true; btn.textContent = '布置中...';
+        try {
+          await YuzanApi.request(`/schools/${schoolId}/classes/${classId}/supplementary-practice`, {
+            method: 'POST', body: JSON.stringify({ title: '定向补充练习', description: `为${enrollmentIds.length}名学生推送`, targetEnrollmentIds: enrollmentIds }),
+          });
+          showToast(`已为${enrollmentIds.length}名学生布置补充练习`);
+        } catch (err) { showToast(err.message || '布置失败'); }
+        finally { btn.disabled = false; btn.textContent = '去布置'; }
+      });
+    } else if (action === 'pending-reviews') {
+      btn.addEventListener("click", () => { location.href = '/teacher/reviews/'; });
+    } else if (action === 'save-plan') {
+      btn.addEventListener("click", async () => {
+        if (!schoolId || !classId || typeof YuzanApi === 'undefined') { showToast('请先登录'); return; }
+        // 为所有风险学生保存学习计划
+        const riskRows = document.querySelectorAll('.roster-row[data-risk="AT_RISK"],.roster-row[data-risk="INACTIVE"]');
+        const enrollmentIds = [...riskRows].map(r => r.dataset.enrollmentId).filter(Boolean);
+        if (enrollmentIds.length === 0) { showToast('当前无风险学生需要保存计划'); return; }
+        btn.disabled = true; btn.textContent = '保存中...';
+        let saved = 0;
+        for (const eid of enrollmentIds) {
+          try {
+            await YuzanApi.request(`/schools/${schoolId}/reports/${eid}/learning-plan`, {
+              method: 'POST', body: JSON.stringify({ goals: ['加强薄弱知识点练习', '提升课堂参与度'], strategies: ['每日5分钟专项练习', '增加口语表达机会'] }),
+            });
+            saved++;
+          } catch (_) { /* skip individual failures */ }
+        }
+        showToast(`已为${saved}名学生保存学习计划`);
+        btn.disabled = false; btn.textContent = '保存';
+      });
     } else if (actionUnsupported[action]) {
       btn.disabled = true;
       btn.title = actionUnsupported[action];
@@ -283,11 +344,12 @@
       table.innerHTML = '<div class="empty-hint">数据不足，暂无相关信息</div>';
       return;
     }
-    const header = '<div class="roster-row header"><b>姓名</b><b>课程进度</b><b>已提交/未交</b><b>最新测评</b><b>得分</b><b>录音数</b><b>主要问题</b><b>最近活跃</b><b>风险状态</b></div>';
+    const header = '<div class="roster-row header"><b><input type="checkbox" id="checkAll" title="全选"></b><b>姓名</b><b>课程进度</b><b>已提交/未交</b><b>最新测评</b><b>得分</b><b>录音数</b><b>主要问题</b><b>最近活跃</b><b>风险状态</b></div>';
     const rows = summaries.map(s => {
       const riskClass = s.riskStatus === 'OK' ? 'risk-ok' : s.riskStatus === 'AT_RISK' ? 'risk-at' : 'risk-inactive';
       const riskLabel = s.riskStatus === 'OK' ? '正常' : s.riskStatus === 'AT_RISK' ? '关注' : '不活跃';
-      return `<div class="roster-row" data-enrollment-id="${s.enrollmentId || ''}">
+      return `<div class="roster-row" data-enrollment-id="${s.enrollmentId || ''}" data-risk="${s.riskStatus || 'OK'}">
+        <b><input type="checkbox" class="roster-check" data-enrollment-id="${s.enrollmentId || ''}"></b>
         <b>${s.studentName || '—'}</b>
         <span>${s.courseProgress != null ? Math.round(s.courseProgress * 100) + '%' : '—'}</span>
         <span>${s.submittedCount ?? 0} / ${s.unsubmittedCount ?? 0}</span>
@@ -300,6 +362,13 @@
       </div>`;
     }).join('');
     table.innerHTML = header + rows;
+    // 全选
+    const checkAll = document.getElementById('checkAll');
+    if (checkAll) {
+      checkAll.addEventListener('change', () => {
+        document.querySelectorAll('.roster-check').forEach(c => { c.checked = checkAll.checked; });
+      });
+    }
   }
 
   // ── 渲染：任务和答案 ──
@@ -378,15 +447,36 @@
   });
 
   // ── 事件委托：查看答案按钮 ──
-  document.addEventListener('click', e => {
+  document.addEventListener('click', async e => {
     const btn = e.target.closest('.view-answers-btn');
     if (!btn) return;
+    const aid = btn.dataset.assignmentId;
     const title = btn.dataset.title || '任务详情';
     const submitted = btn.dataset.submitted ?? '0';
     const pending = btn.dataset.pending ?? '0';
     drawerTitle.textContent = title;
     drawerText.textContent = '任务提交概要';
-    drawerData.innerHTML = `<div>提交数：${submitted}</div><div>待批改数：${pending}</div>`;
+    // 尝试加载该任务的提交列表
+    if (schoolId && aid && typeof YuzanApi !== 'undefined') {
+      try {
+        const subs = await YuzanApi.request(`/schools/${schoolId}/submissions?assignmentId=${aid}&limit=20`);
+        if (Array.isArray(subs) && subs.length > 0) {
+          drawerData.innerHTML = subs.map(s => {
+            const studentName = s.studentName || s.enrollmentId?.slice(0, 8) || '—';
+            const time = s.submittedAt ? new Date(s.submittedAt).toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : '—';
+            const status = s.status === 'REVIEWED' ? '已复核' : s.status === 'SUBMITTED' ? '待复核' : s.status || '—';
+            const score = s.autoScore != null ? s.autoScore : '—';
+            return `<div class="drawer-row"><b>${studentName}</b><span>${time}</span><span>${status}</span><span>得分: ${score}</span></div>`;
+          }).join('');
+        } else {
+          drawerData.innerHTML = `<div>提交数：${submitted}</div><div>待批改数：${pending}</div>`;
+        }
+      } catch (_) {
+        drawerData.innerHTML = `<div>提交数：${submitted}</div><div>待批改数：${pending}</div>`;
+      }
+    } else {
+      drawerData.innerHTML = `<div>提交数：${submitted}</div><div>待批改数：${pending}</div>`;
+    }
     drawerBackdrop.hidden = false;
     document.body.style.overflow = 'hidden';
     drawerBackdrop.dataset.type = 'assignment-answers';

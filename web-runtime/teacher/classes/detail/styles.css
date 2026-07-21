@@ -126,6 +126,16 @@ svg{fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-l
 .pending-item span:last-child{color:#7d8589;font-size:10px}
 /* ── 通用空状态 ── */
 .empty-hint{padding:24px;color:#888;text-align:center;font-size:12px}
+/* ── 学生勾选 ── */
+.roster-check{width:14px;height:14px;cursor:pointer;accent-color:#4d9a63}
+#checkAll{width:14px;height:14px;cursor:pointer;accent-color:#4d9a63}
+/* ── 抽屉提交行 ── */
+.drawer-row{display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #ece5df;font-size:12px;align-items:center}
+.drawer-row b{flex:1}
+.drawer-row span{color:#7d8589}
+/* ── action-icon purple ── */
+.action-icon.purple{background:linear-gradient(135deg,#7c3aed,#a78bfa);color:#fff;border-radius:8px;width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.action-icon.purple svg{width:18px;height:18px;fill:currentColor}
 @media(max-width:1400px){
   :root{--sidebar:205px}.page-grid{grid-template-columns:minmax(0,1fr) 305px}.class-main{padding-left:18px;padding-right:18px}.growth-section{margin-left:-18px;margin-right:-18px}.course-card{grid-template-columns:86px minmax(235px,1fr) 400px 105px}.course-card>img{width:86px;height:86px}.course-copy h2{font-size:20px}.metric{padding:0 8px}.teacher-panel{padding-left:12px;padding-right:12px}.distribution-content{gap:16px;padding-left:10px;padding-right:10px}.distribution-content ul{min-width:240px}
 }
