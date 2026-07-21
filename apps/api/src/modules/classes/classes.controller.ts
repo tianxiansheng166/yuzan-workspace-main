@@ -162,6 +162,66 @@ export class ClassesController {
     );
   }
 
+  @Get(":classId/dashboard")
+  @RequireRoles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN, MembershipRole.PLATFORM_ADMIN)
+  async getClassDashboard(
+    @Param("schoolId", ParseUUIDPipe) schoolId: string,
+    @Param("classId", ParseUUIDPipe) classId: string,
+    @CurrentTenant() tenant: TenantContext,
+    @CurrentPrincipal() principal: Principal,
+  ) {
+    return this.service.getClassDashboard(
+      createAuthContext("request-id", principal, tenant),
+      schoolId,
+      classId,
+    );
+  }
+
+  @Get(":classId/student-summaries")
+  @RequireRoles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN, MembershipRole.PLATFORM_ADMIN)
+  async getStudentSummaries(
+    @Param("schoolId", ParseUUIDPipe) schoolId: string,
+    @Param("classId", ParseUUIDPipe) classId: string,
+    @CurrentTenant() tenant: TenantContext,
+    @CurrentPrincipal() principal: Principal,
+  ) {
+    return this.service.getStudentSummaries(
+      createAuthContext("request-id", principal, tenant),
+      schoolId,
+      classId,
+    );
+  }
+
+  @Get(":classId/assignment-summaries")
+  @RequireRoles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN, MembershipRole.PLATFORM_ADMIN)
+  async getAssignmentSummaries(
+    @Param("schoolId", ParseUUIDPipe) schoolId: string,
+    @Param("classId", ParseUUIDPipe) classId: string,
+    @CurrentTenant() tenant: TenantContext,
+    @CurrentPrincipal() principal: Principal,
+  ) {
+    return this.service.getAssignmentSummaries(
+      createAuthContext("request-id", principal, tenant),
+      schoolId,
+      classId,
+    );
+  }
+
+  @Get(":classId/assessment-summaries")
+  @RequireRoles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN, MembershipRole.PLATFORM_ADMIN)
+  async getAssessmentSummaries(
+    @Param("schoolId", ParseUUIDPipe) schoolId: string,
+    @Param("classId", ParseUUIDPipe) classId: string,
+    @CurrentTenant() tenant: TenantContext,
+    @CurrentPrincipal() principal: Principal,
+  ) {
+    return this.service.getAssessmentSummaries(
+      createAuthContext("request-id", principal, tenant),
+      schoolId,
+      classId,
+    );
+  }
+
   @Get(":classId/export")
   @RequireRoles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN, MembershipRole.PLATFORM_ADMIN)
   async exportClassData(

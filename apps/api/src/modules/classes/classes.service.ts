@@ -18,7 +18,7 @@ import type {
   CreateClassInput,
   UpdateClassInput,
 } from "./domain/class.types.js";
-import type { ClassDetail, ClassGrowthStage, PronunciationClusterItem, ClassPendingStats } from "./domain/class-detail.types.js";
+import type { ClassDetail, ClassGrowthStage, PronunciationClusterItem, ClassPendingStats, ClassDashboard, StudentSummary, AssignmentSummary, AssessmentSummary } from "./domain/class-detail.types.js";
 import {
   toClassMemberResponse,
   toClassResponse,
@@ -480,7 +480,7 @@ export class ClassesService {
         },
         select: { enrollmentId: true, completed: true },
       }),
-      // Speech jobs for pronunciation analysis
+      // Speech jobs for pronunciation analysis (include enrollmentId for proper dedup)
       this.prisma.speechJob.findMany({
         where: {
           status: { in: ["AUTO_RESULT", "NEEDS_REVIEW", "FINALIZED"] },
@@ -490,7 +490,7 @@ export class ClassesService {
             enrollment: { classId, schoolId, role: "STUDENT", status: "ACTIVE" },
           },
         },
-        select: { result: true },
+        select: { result: true, submission: { select: { enrollmentId: true } } },
       }),
     ]);
 
@@ -586,29 +586,30 @@ export class ClassesService {
       aspiration: "送气音混淆",
     };
 
-    const errorCounts = new Map<string, Set<string>>();
+    // Section IX: Deduplicate pronunciation errors by enrollmentId
+    // errorCounts maps error type → { affectedEnrollmentIds, occurrenceCount }
+    const errorCounts = new Map<string, { enrollmentIds: Set<string>; occurrences: number }>();
     for (const job of speechJobs) {
       const result = job.result as Record<string, unknown> | null;
       if (!result) continue;
       const errors = (result as { pronunciationErrors?: { type: string }[] }).pronunciationErrors ?? [];
+      const enrollmentId = (job as { submission?: { enrollmentId?: string } }).submission?.enrollmentId ?? '';
       for (const err of errors) {
         if (!errorCounts.has(err.type)) {
-          errorCounts.set(err.type, new Set());
+          errorCounts.set(err.type, { enrollmentIds: new Set<string>(), occurrences: 0 });
         }
-        // We don't have the student ID here, so count occurrences
-        const count = errorCounts.get(err.type)!;
-        // Add a unique key per job to approximate affected student count
-        count.add(String((job as Record<string, unknown>).id ?? Math.random()));
+        const entry = errorCounts.get(err.type)!;
+        entry.occurrences += 1;
+        if (enrollmentId) entry.enrollmentIds.add(enrollmentId);
       }
     }
 
-    const totalJobs = speechJobs.length || 1;
     const pronunciationClusters: PronunciationClusterItem[] = Array.from(errorCounts.entries())
-      .map(([type, affectedSet]) => ({
+      .map(([type, entry]) => ({
         type,
         label: ERROR_TYPE_LABEL_MAP[type] ?? type,
-        affectedCount: affectedSet.size,
-        percentage: Math.round((affectedSet.size / totalJobs) * 100),
+        affectedCount: entry.enrollmentIds.size, // affected STUDENT count, not occurrence count
+        percentage: enrollments.length > 0 ? Math.round((entry.enrollmentIds.size / enrollments.length) * 100) : 0,
       }))
       .sort((a, b) => b.affectedCount - a.affectedCount)
       .slice(0, 5);
@@ -1089,5 +1090,405 @@ export class ClassesService {
         status: s.status,
       })),
     };
+  }
+
+  // ─── Section VIII: Dashboard Aggregation Endpoints ───
+
+  async getClassDashboard(auth: AuthContext, schoolId: string, classId: string): Promise<ClassDashboard> {
+    if (!this.policy.canReadClassMembers(auth, schoolId)) {
+      throw new ClassForbiddenException();
+    }
+
+    const classItem = await this.classRepo.findById(schoolId, classId);
+    if (!classItem) throw new ClassNotFoundException();
+
+    const [
+      enrollments,
+      assignments,
+      pendingSubmissions,
+      activityProgressRows,
+      speechJobs,
+      submissionCount,
+      assessmentSessionCount,
+      lastActivityRow,
+    ] = await Promise.all([
+      this.prisma.enrollment.findMany({
+        where: { schoolId, classId, status: "ACTIVE", role: "STUDENT" },
+        select: { id: true, userId: true },
+      }),
+      this.prisma.assignment.findMany({
+        where: { schoolId, targets: { some: { classId } }, deletedAt: null },
+        select: { id: true, title: true, status: true, courseVersionId: true, courseVersion: { select: { id: true, title: true } } },
+        orderBy: { createdAt: "desc" },
+        take: 20,
+      }),
+      this.prisma.submission.count({
+        where: { schoolId, status: { in: ["SUBMITTED", "NEEDS_REVIEW"] }, enrollment: { classId, schoolId, role: "STUDENT", status: "ACTIVE" }, deletedAt: null },
+      }),
+      this.prisma.activityProgress.findMany({
+        where: { schoolId, enrollment: { classId, schoolId, role: "STUDENT", status: "ACTIVE" } },
+        select: { enrollmentId: true, completed: true },
+      }),
+      this.prisma.speechJob.findMany({
+        where: { status: { in: ["AUTO_RESULT", "NEEDS_REVIEW", "FINALIZED"] }, result: { not: Prisma.AnyNull }, submission: { schoolId, enrollment: { classId, schoolId, role: "STUDENT", status: "ACTIVE" } } },
+        select: { result: true, submission: { select: { enrollmentId: true } } },
+      }),
+      // Total submitted/Reviewed/Accepted submissions (for submissionRate)
+      this.prisma.submission.count({
+        where: { schoolId, status: { in: ["SUBMITTED", "REVIEWED", "ACCEPTED"] }, enrollment: { classId, schoolId, role: "STUDENT", status: "ACTIVE" }, deletedAt: null },
+      }),
+      // Completed assessment sessions (for assessmentParticipationRate)
+      this.prisma.assessmentSession.count({
+        where: { schoolId, classId, status: "COMPLETED" },
+      }),
+      // Last activity time across the class
+      this.prisma.activityProgress.findFirst({
+        where: { schoolId, enrollment: { classId, schoolId, role: "STUDENT", status: "ACTIVE" } },
+        select: { updatedAt: true },
+        orderBy: { updatedAt: "desc" },
+      }),
+    ]);
+
+    const studentCount = enrollments.length;
+    const currentCourse = assignments.length > 0 && assignments[0]?.courseVersion
+      ? { id: assignments[0].courseVersion!.id, title: assignments[0].courseVersion!.title }
+      : null;
+
+    // Completion rate
+    const enrollmentIds = new Set(enrollments.map((e) => e.id));
+    const relevantProgress = activityProgressRows.filter((p) => enrollmentIds.has(p.enrollmentId));
+    const completedProgress = relevantProgress.filter((p) => p.completed).length;
+    const completionRate = relevantProgress.length > 0 ? Math.round((completedProgress / relevantProgress.length) * 100) : 0;
+
+    // Submission rate: students who submitted at least once / total students
+    const submittedEnrollmentIds = new Set(
+      await this.prisma.submission.findMany({
+        where: { schoolId, enrollment: { classId, schoolId, role: "STUDENT", status: "ACTIVE" }, status: { in: ["SUBMITTED", "REVIEWED", "ACCEPTED"] }, deletedAt: null },
+        select: { enrollmentId: true },
+        distinct: ["enrollmentId"],
+      }).then((rows) => rows.map((r) => r.enrollmentId)),
+    );
+    const submissionRate = studentCount > 0 ? Math.round((submittedEnrollmentIds.size / studentCount) * 100) : 0;
+
+    // Assessment participation rate
+    const assessedEnrollmentIds = new Set(
+      await this.prisma.assessmentSession.findMany({
+        where: { schoolId, classId, status: "COMPLETED" },
+        select: { enrollmentId: true },
+        distinct: ["enrollmentId"],
+      }).then((rows) => rows.map((r) => r.enrollmentId)),
+    );
+    const assessmentParticipationRate = studentCount > 0 ? Math.round((assessedEnrollmentIds.size / studentCount) * 100) : 0;
+
+    // At-risk students: no activity in 7 days
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    let atRiskStudentCount = 0;
+    if (enrollmentIds.size > 0) {
+      const activeRecently = await this.prisma.activityProgress.findMany({
+        where: { schoolId, enrollmentId: { in: [...enrollmentIds] }, updatedAt: { gte: sevenDaysAgo } },
+        select: { enrollmentId: true },
+        distinct: ["enrollmentId"],
+      });
+      const activeSet = new Set(activeRecently.map((p) => p.enrollmentId));
+      atRiskStudentCount = [...enrollmentIds].filter((id) => !activeSet.has(id)).length;
+    }
+
+    // Growth stages (reuse same logic as getClassDetail)
+    const hasRecordingEnrollmentIds = new Set(
+      await this.prisma.recording.findMany({
+        where: { schoolId, enrollment: { classId, schoolId, role: "STUDENT", status: "ACTIVE" }, status: { in: ["COMPLETE", "READY"] } },
+        select: { enrollmentId: true },
+        distinct: ["enrollmentId"],
+      }).then((rows) => rows.map((r) => r.enrollmentId)),
+    );
+    const stages: ClassGrowthStage[] = [
+      { id: "course-learning", title: "课程学习", completionRate, participantCount: relevantProgress.length > 0 ? new Set(relevantProgress.map((p) => p.enrollmentId)).size : 0, totalCount: studentCount },
+      { id: "practice", title: "课后练习", completionRate: submissionRate, participantCount: submittedEnrollmentIds.size, totalCount: studentCount },
+      { id: "assessment", title: "阶段测评", completionRate: assessmentParticipationRate, participantCount: assessedEnrollmentIds.size, totalCount: studentCount },
+      { id: "review", title: "复习巩固", completionRate: studentCount > 0 ? Math.round((hasRecordingEnrollmentIds.size / studentCount) * 100) : 0, participantCount: hasRecordingEnrollmentIds.size, totalCount: studentCount },
+    ];
+
+    // Pronunciation clusters (reuse dedup logic)
+    const ERROR_TYPE_LABEL_MAP: Record<string, string> = { nasal_confusion: "前后鼻音混淆", retroflex: "平翘舌音混淆", tone: "声调起伏不足", pause: "多音节停顿不当", retroflex_curled: "卷舌音不到位", vowel: "元音发音不准", aspiration: "送气音混淆" };
+    const errorCounts = new Map<string, { enrollmentIds: Set<string>; occurrences: number }>();
+    for (const job of speechJobs) {
+      const result = job.result as Record<string, unknown> | null;
+      if (!result) continue;
+      const errors = (result as { pronunciationErrors?: { type: string }[] }).pronunciationErrors ?? [];
+      const enrollmentId = (job as { submission?: { enrollmentId?: string } }).submission?.enrollmentId ?? '';
+      for (const err of errors) {
+        if (!errorCounts.has(err.type)) errorCounts.set(err.type, { enrollmentIds: new Set<string>(), occurrences: 0 });
+        const entry = errorCounts.get(err.type)!;
+        entry.occurrences += 1;
+        if (enrollmentId) entry.enrollmentIds.add(enrollmentId);
+      }
+    }
+    const pronunciationClusters: PronunciationClusterItem[] = Array.from(errorCounts.entries())
+      .map(([type, entry]) => ({ type, label: ERROR_TYPE_LABEL_MAP[type] ?? type, affectedCount: entry.enrollmentIds.size, percentage: enrollments.length > 0 ? Math.round((entry.enrollmentIds.size / enrollments.length) * 100) : 0 }))
+      .sort((a, b) => b.affectedCount - a.affectedCount)
+      .slice(0, 5);
+
+    return {
+      classId,
+      className: classItem.name,
+      grade: classItem.grade,
+      studentCount,
+      currentCourse,
+      completionRate,
+      submissionRate,
+      assessmentParticipationRate,
+      pendingReviewCount: pendingSubmissions,
+      atRiskStudentCount,
+      lastActivityAt: lastActivityRow?.updatedAt?.toISOString() ?? null,
+      stages,
+      pronunciationClusters,
+    };
+  }
+
+  async getStudentSummaries(auth: AuthContext, schoolId: string, classId: string): Promise<readonly StudentSummary[]> {
+    if (!this.policy.canReadClassMembers(auth, schoolId)) throw new ClassForbiddenException();
+    const classItem = await this.classRepo.findById(schoolId, classId);
+    if (!classItem) throw new ClassNotFoundException();
+
+    const enrollments = await this.prisma.enrollment.findMany({
+      where: { schoolId, classId, status: "ACTIVE", role: "STUDENT" },
+      select: { id: true, userId: true, user: { select: { displayName: true } } },
+    });
+    if (enrollments.length === 0) return [];
+
+    const enrollmentIds = enrollments.map((e) => e.id);
+
+    // Batch queries in parallel
+    const [progressRows, submissionRows, assessmentRows, recordingRows, speechJobs, activityRows] = await Promise.all([
+      // Activity progress per enrollment
+      this.prisma.activityProgress.findMany({
+        where: { schoolId, enrollmentId: { in: enrollmentIds } },
+        select: { enrollmentId: true, completed: true },
+      }),
+      // Submissions per enrollment
+      this.prisma.submission.findMany({
+        where: { schoolId, enrollmentId: { in: enrollmentIds }, deletedAt: null },
+        select: { enrollmentId: true, assignmentId: true, status: true },
+      }),
+      // Latest assessment session per enrollment
+      this.prisma.assessmentSession.findMany({
+        where: { schoolId, classId, enrollmentId: { in: enrollmentIds } },
+        select: { enrollmentId: true, status: true, score: true, createdAt: true },
+        orderBy: { createdAt: "desc" },
+      }),
+      // Recording count per enrollment
+      this.prisma.recording.findMany({
+        where: { schoolId, enrollmentId: { in: enrollmentIds } },
+        select: { enrollmentId: true },
+      }),
+      // Speech jobs for top issue detection
+      this.prisma.speechJob.findMany({
+        where: { status: { in: ["AUTO_RESULT", "NEEDS_REVIEW", "FINALIZED"] }, result: { not: Prisma.AnyNull }, submission: { schoolId, enrollmentId: { in: enrollmentIds } } },
+        select: { result: true, submission: { select: { enrollmentId: true } } },
+      }),
+      // Last activity per enrollment
+      this.prisma.activityProgress.findMany({
+        where: { schoolId, enrollmentId: { in: enrollmentIds } },
+        select: { enrollmentId: true, updatedAt: true },
+        orderBy: { updatedAt: "desc" },
+      }),
+    ]);
+
+    // Build per-enrollment maps
+    const progressMap = new Map<string, { total: number; completed: number }>();
+    for (const p of progressRows) {
+      const entry = progressMap.get(p.enrollmentId) ?? { total: 0, completed: 0 };
+      entry.total += 1;
+      if (p.completed) entry.completed += 1;
+      progressMap.set(p.enrollmentId, entry);
+    }
+
+    const submissionMap = new Map<string, { submitted: number; assignmentIds: Set<string> }>();
+    for (const s of submissionRows) {
+      const entry = submissionMap.get(s.enrollmentId) ?? { submitted: 0, assignmentIds: new Set<string>() };
+      entry.assignmentIds.add(s.assignmentId);
+      if (["SUBMITTED", "REVIEWED", "ACCEPTED"].includes(s.status)) entry.submitted += 1;
+      submissionMap.set(s.enrollmentId, entry);
+    }
+
+    // Total assignments targeting this class
+    const totalAssignments = await this.prisma.assignment.findMany({
+      where: { schoolId, targets: { some: { classId } }, deletedAt: null },
+      select: { id: true },
+    });
+    const totalAssignmentIds = new Set(totalAssignments.map((a) => a.id));
+
+    // Latest assessment per enrollment
+    const latestAssessmentMap = new Map<string, { status: string; score: number | null }>();
+    for (const a of assessmentRows) {
+      if (!latestAssessmentMap.has(a.enrollmentId)) {
+        latestAssessmentMap.set(a.enrollmentId, { status: a.status, score: a.score });
+      }
+    }
+
+    const recordingCountMap = new Map<string, number>();
+    for (const r of recordingRows) {
+      recordingCountMap.set(r.enrollmentId, (recordingCountMap.get(r.enrollmentId) ?? 0) + 1);
+    }
+
+    // Top issue per enrollment from speech jobs
+    const issueMap = new Map<string, string>();
+    const ERROR_LABELS: Record<string, string> = { nasal_confusion: "前后鼻音", retroflex: "平翘舌音", tone: "声调", pause: "停顿", retroflex_curled: "卷舌音", vowel: "元音", aspiration: "送气音" };
+    for (const job of speechJobs) {
+      const result = job.result as Record<string, unknown> | null;
+      if (!result) continue;
+      const errors = (result as { pronunciationErrors?: { type: string }[] }).pronunciationErrors ?? [];
+      const eid = (job as { submission?: { enrollmentId?: string } }).submission?.enrollmentId ?? '';
+      if (!eid || errors.length === 0) continue;
+      if (!issueMap.has(eid)) {
+        issueMap.set(eid, ERROR_LABELS[errors[0].type] ?? errors[0].type);
+      }
+    }
+
+    const lastActivityMap = new Map<string, Date>();
+    for (const a of activityRows) {
+      if (!lastActivityMap.has(a.enrollmentId)) {
+        lastActivityMap.set(a.enrollmentId, a.updatedAt);
+      }
+    }
+
+    // At-risk: no activity in 7 days
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    const fourteenDaysAgo = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000);
+
+    return enrollments.map((e) => {
+      const progress = progressMap.get(e.id);
+      const courseProgress = progress && progress.total > 0 ? Math.round((progress.completed / progress.total) * 100) : 0;
+      const sub = submissionMap.get(e.id);
+      const submittedCount = sub?.submitted ?? 0;
+      const submittedAssignmentIds = sub?.assignmentIds ?? new Set<string>();
+      const missingCount = [...totalAssignmentIds].filter((aid) => !submittedAssignmentIds.has(aid)).length;
+      const latestAssessment = latestAssessmentMap.get(e.id);
+      const lastActive = lastActivityMap.get(e.id);
+
+      let riskStatus: StudentSummary["riskStatus"] = "OK";
+      if (!lastActive || lastActive < fourteenDaysAgo) riskStatus = "INACTIVE";
+      else if (lastActive < sevenDaysAgo) riskStatus = "AT_RISK";
+
+      return {
+        enrollmentId: e.id,
+        userId: e.userId,
+        displayName: e.user?.displayName ?? "",
+        courseProgress,
+        submittedAssignmentCount: submittedCount,
+        missingAssignmentCount: missingCount,
+        latestAssessmentStatus: latestAssessment?.status ?? null,
+        latestAssessmentScore: latestAssessment?.score ?? null,
+        recordingCount: recordingCountMap.get(e.id) ?? 0,
+        topIssue: issueMap.get(e.id) ?? null,
+        lastActiveAt: lastActive?.toISOString() ?? null,
+        riskStatus,
+      };
+    });
+  }
+
+  async getAssignmentSummaries(auth: AuthContext, schoolId: string, classId: string): Promise<readonly AssignmentSummary[]> {
+    if (!this.policy.canReadClassMembers(auth, schoolId)) throw new ClassForbiddenException();
+    const classItem = await this.classRepo.findById(schoolId, classId);
+    if (!classItem) throw new ClassNotFoundException();
+
+    const assignments = await this.prisma.assignment.findMany({
+      where: { schoolId, targets: { some: { classId } }, deletedAt: null },
+      select: {
+        id: true, title: true, status: true, dueAt: true,
+        courseVersion: { select: { title: true } },
+        targets: { where: { classId }, select: { targetType: true, enrollmentId: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 50,
+    });
+
+    if (assignments.length === 0) return [];
+
+    const assignmentIds = assignments.map((a) => a.id);
+
+    // Batch submission stats per assignment
+    const submissionRows = await this.prisma.submission.findMany({
+      where: { schoolId, assignmentId: { in: assignmentIds }, enrollment: { classId, schoolId, role: "STUDENT", status: "ACTIVE" }, deletedAt: null },
+      select: { assignmentId: true, status: true },
+    });
+
+    const subMap = new Map<string, { total: number; pendingReview: number }>();
+    for (const s of submissionRows) {
+      const entry = subMap.get(s.assignmentId) ?? { total: 0, pendingReview: 0 };
+      entry.total += 1;
+      if (["SUBMITTED", "NEEDS_REVIEW"].includes(s.status)) entry.pendingReview += 1;
+      subMap.set(s.assignmentId, entry);
+    }
+
+    return assignments.map((a) => {
+      const sub = subMap.get(a.id) ?? { total: 0, pendingReview: 0 };
+      // Total target count: CLASS target → all class students; STUDENT targets → count of individual targets
+      const studentTargets = a.targets.filter((t) => t.enrollmentId);
+      const totalTargetCount = studentTargets.length > 0 ? studentTargets.length : 0; // 0 means "whole class"
+
+      return {
+        assignmentId: a.id,
+        title: a.title,
+        status: a.status,
+        dueAt: a.dueAt?.toISOString() ?? null,
+        submissionCount: sub.total,
+        pendingReviewCount: sub.pendingReview,
+        totalTargetCount,
+        courseTitle: a.courseVersion?.title ?? null,
+      };
+    });
+  }
+
+  async getAssessmentSummaries(auth: AuthContext, schoolId: string, classId: string): Promise<readonly AssessmentSummary[]> {
+    if (!this.policy.canReadClassMembers(auth, schoolId)) throw new ClassForbiddenException();
+    const classItem = await this.classRepo.findById(schoolId, classId);
+    if (!classItem) throw new ClassNotFoundException();
+
+    const sessions = await this.prisma.assessmentSession.findMany({
+      where: { schoolId, classId },
+      select: { id: true, type: true, status: true, createdAt: true, enrollmentId: true, score: true },
+      orderBy: { createdAt: "desc" },
+      take: 50,
+    });
+
+    if (sessions.length === 0) return [];
+
+    // Group by type+createdAt proximity to identify "same assessment event"
+    // For simplicity, each session is its own entry; teacher sees individual student sessions
+    // But for class-level view, we aggregate by type
+    const activeEnrollmentCount = await this.prisma.enrollment.count({
+      where: { schoolId, classId, status: "ACTIVE", role: "STUDENT" },
+    });
+
+    // Group sessions by type for class-level summary
+    const typeGroups = new Map<string, { sessions: typeof sessions; scores: number[] }>();
+    for (const s of sessions) {
+      const key = s.type;
+      if (!typeGroups.has(key)) typeGroups.set(key, { sessions: [], scores: [] });
+      const group = typeGroups.get(key)!;
+      group.sessions.push(s);
+      if (s.score !== null) group.scores.push(s.score);
+    }
+
+    return Array.from(typeGroups.entries()).map(([type, group]) => {
+      const completedCount = group.sessions.filter((s) => s.status === "COMPLETED").length;
+      const scores = group.scores.sort((a, b) => a - b);
+      const averageScore = scores.length > 0 ? Math.round((scores.reduce((sum, s) => sum + s, 0) / scores.length) * 10) / 10 : null;
+      const medianScore = scores.length > 0 ? Math.round((scores[Math.floor(scores.length / 2)]) * 10) / 10 : null;
+      const latestSession = group.sessions[0];
+
+      return {
+        sessionId: latestSession.id,
+        title: null,
+        type,
+        status: completedCount > 0 ? "COMPLETED" : latestSession.status,
+        completedCount,
+        averageScore,
+        medianScore,
+        totalTargetCount: activeEnrollmentCount,
+        createdAt: latestSession.createdAt.toISOString(),
+      };
+    });
   }
 }
