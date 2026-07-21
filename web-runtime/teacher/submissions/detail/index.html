@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#fdfaf6" />
+  <title>提交详情｜语赞心声</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="/shared/teacher-shell.css" />
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="brand">
+      <img src="/teacher/students/detail/assets/logo-mark.png" alt="" class="brand-mark" />
+      <div class="brand-copy">
+        <strong>语赞心声</strong>
+        <span>智慧教育公益平台</span>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <a class="nav-item" href="/teacher/assignments"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 19.5z"/><path d="M9 21v-7h6v7"/></svg><span>首页</span></a>
+      <a class="nav-item" href="/teacher/courses/"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 12h8M8 17h5"/></svg><span>课程</span></a>
+      <a class="nav-item" href="/teacher/assignments"><svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 2v4M15 2v4M8 11l2 2 5-5M8 17h8"/></svg><span>任务</span></a>
+      <a class="nav-item" href="/teacher/assessments"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12 2.5 2.5L16 8"/></svg><span>测评</span></a>
+      <div class="nav-group open">
+        <a class="nav-item active" href="/teacher/classes"><svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="3"/><path d="M5 21v-3.5a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5V21M8 17h8"/></svg><span>班级</span><b>⌃</b></a>
+        <div class="subnav">
+          <a href="/teacher/classes">班级概览</a>
+          <a href="#" class="current">学生</a>
+          <a>小组</a>
+          <a>班级通知</a>
+        </div>
+      </div>
+      <a class="nav-item" href="/teacher/reviews/"><svg viewBox="0 0 24 24"><path d="M4 6h16v14H4zM8 4v4M16 4v4M8 12h8M8 16h5"/></svg><span>复核</span><b>›</b></a>
+      <a class="nav-item" href="/teacher/assessments/detail/"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4zM8 16V9M12 16V6M16 16v-4"/></svg><span>报告</span></a>
+    </nav>
+
+    <div class="support-box">公益与支持</div>
+  </aside>
+
+  <section class="main">
+    <header class="topbar">
+      <div class="crumbs">
+        <span>🏠</span><b>›</b>
+        <a href="/teacher/classes">班级</a><b>›</b>
+        <a id="crumbClass" href="/teacher/classes">班级</a><b>›</b>
+        <a id="crumbStudent" href="#">学生</a><b>›</b>
+        <strong>提交详情</strong>
+      </div>
+      <div class="top-actions">
+        <button class="icon-btn bell"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 7h18s-3 0-3-7M10 20h4"/></svg></button>
+        <button class="profile-btn"><span class="profile-avatar">师</span><span class="profile-copy"><strong>教师</strong><small>普通话教师</small></span></button>
+      </div>
+    </header>
+
+    <div class="page-content">
+      <!-- 学生信息 + 提交时间 -->
+      <section class="card header-card">
+        <div class="header-meta">
+          <div class="header-avatar"><span></span></div>
+          <div class="header-copy">
+            <h1 id="studentName">加载中…</h1>
+            <p id="studentInfo">—</p>
+            <p id="submitTime">提交时间：—</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 任务信息 -->
+      <section class="card">
+        <h2>任务信息</h2>
+        <div class="detail-row"><span class="label">任务标题</span><span id="assignmentTitle" class="value">—</span></div>
+        <div class="detail-row"><span class="label">任务类型</span><span id="assignmentType" class="value">—</span></div>
+        <div class="detail-row"><span class="label">提交状态</span><span id="submitStatus" class="value">—</span></div>
+      </section>
+
+      <!-- 书面答案 -->
+      <section class="card">
+        <h2>书面答案</h2>
+        <div id="writtenAnswer" class="answer-content">—</div>
+      </section>
+
+      <!-- 录音播放 -->
+      <section class="card" id="recordingSection" style="display:none">
+        <h2>录音</h2>
+        <div class="recording-player">
+          <button class="play-btn" id="playBtn">▶</button>
+          <div class="recording-info">
+            <strong id="recordingTitle">朗读录音</strong>
+            <span id="recordingDuration">—</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 自动评分 -->
+      <section class="card" id="autoScoreSection" style="display:none">
+        <h2>自动评分</h2>
+        <div class="score-grid">
+          <div class="score-item"><span class="label">发音</span><strong id="scorePronunciation">—</strong></div>
+          <div class="score-item"><span class="label">流畅度</span><strong id="scoreFluency">—</strong></div>
+          <div class="score-item"><span class="label">情感</span><strong id="scoreEmotion">—</strong></div>
+          <div class="score-item"><span class="label">综合</span><strong id="scoreOverall">—</strong></div>
+        </div>
+      </section>
+
+      <!-- 教师复核 -->
+      <section class="card" id="teacherReviewSection" style="display:none">
+        <h2>教师复核</h2>
+        <div class="detail-row"><span class="label">复核状态</span><span id="reviewStatus" class="value">—</span></div>
+        <div class="detail-row"><span class="label">评语</span><span id="reviewComment" class="value">—</span></div>
+        <div class="detail-row"><span class="label">分数</span><span id="reviewScore" class="value">—</span></div>
+      </section>
+
+      <!-- 操作按钮 -->
+      <section class="card actions-card">
+        <button class="action-btn primary" id="btnGrade">批改</button>
+        <button class="action-btn success" id="btnAccept">通过</button>
+        <button class="action-btn warning" id="btnReturn">退回</button>
+      </section>
+    </div>
+  </section>
+</div>
+<div class="toast" id="toast"></div>
+<script src="./app.js"></script>
+<script src="/shared/teacher-shell.js" defer></script>
+</body>
+</html>
