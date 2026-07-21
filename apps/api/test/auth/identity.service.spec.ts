@@ -242,6 +242,20 @@ describe("IdentityService", () => {
     expect(session.activeSchoolId).toBeNull();
   });
 
+  it("selects a stable school for a student with multiple invitation memberships", async () => {
+    const f = createIdentityServiceFixture();
+    const user = activeStudent();
+    f.users.add(user);
+    f.passwords.register(user.passwordHash, "password");
+    f.memberships.add({ ...studentMembership(user.id), id: "membership-student-b", schoolId: "school-b", schoolName: "示例学校 B" });
+    f.memberships.add({ ...studentMembership(user.id), id: "membership-student-a", schoolId: "school-a", schoolName: "示例学校 A" });
+
+    const session = await f.service.login(user.loginIdentifier, "password");
+
+    expect(session.activeSchoolId).toBe("school-a");
+    await expect(f.service.resolveSession("req-student-multi", session.tokens.accessToken)).resolves.toMatchObject({ tenant: { schoolId: "school-a" } });
+  });
+
   it("does not create a session with zero active memberships", async () => {
     const f = createIdentityServiceFixture();
     const user = activeTeacher();

@@ -371,9 +371,17 @@ export class IdentityService {
     if (memberships.length === 0) {
       return null;
     }
-    // If the user has only one active membership, default to it.
-    // Multiple memberships require an explicit selection step.
-    return memberships.length === 1 ? memberships[0]!.schoolId : null;
+    // Students enter learning directly. Invitation binding may give a student
+    // more than one school membership, but sending that student through the
+    // tenant-dependent school picker creates a login/select-school loop.
+    // Choose a stable student tenant; the invitation bind response can still
+    // switch the active session to the newly joined school explicitly.
+    if (memberships.length === 1) return memberships[0]!.schoolId;
+    if (memberships.every((membership) => membership.role === MembershipRole.STUDENT)) {
+      return [...memberships].sort((left, right) => left.schoolId.localeCompare(right.schoolId))[0]!.schoolId;
+    }
+    // Staff with multiple schools still make an explicit tenant choice.
+    return null;
   }
 
   private resolveSessionSchoolId(

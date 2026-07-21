@@ -95,7 +95,7 @@
     const data = result.data || result;
     if (data.accessToken) setToken(data.accessToken);
     if (data.user) setStoredUser(data.user);
-    if (data.activeSchoolId) setActiveSchoolId(data.activeSchoolId);
+    setActiveSchoolId(data.activeSchoolId || '');
     return data;
   }
 
@@ -107,7 +107,7 @@
     const data = result.data || result;
     if (data.accessToken) setToken(data.accessToken);
     if (data.user) setStoredUser(data.user);
-    if (data.activeSchoolId) setActiveSchoolId(data.activeSchoolId);
+    setActiveSchoolId(data.activeSchoolId || '');
     return data;
   }
   async function redeemInvitation(payload) {
@@ -134,7 +134,7 @@
     const result = await request('/me', { method: 'GET' });
     const data = result.data || result;
     if (data.user) setStoredUser(data.user);
-    if (data.activeSchoolId) setActiveSchoolId(data.activeSchoolId);
+    setActiveSchoolId(data.activeSchoolId || '');
     return data;
   }
 

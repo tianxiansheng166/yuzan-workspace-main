@@ -109,9 +109,30 @@
       await Api.logout();
       location.href = '/';
     });
-    if (!Api?.requireAuth?.()) return;
-    if (!Api.getActiveSchoolId()) { location.href = '/select-school'; return; }
-    loadProfile();
+    async function enterStudentProfile() {
+      if (!Api?.requireAuth?.()) return;
+      if (!Api.getActiveSchoolId()) {
+        const memberships = Api.getStoredUser()?.memberships || [];
+        const studentMembership = [...memberships]
+          .filter(item => item.role === 'STUDENT')
+          .sort((left, right) => left.schoolId.localeCompare(right.schoolId))[0];
+        if (!studentMembership) {
+          text('profileMeta', '当前账号尚未建立学生学校关系');
+          text('connectionStatus', '等待老师邀请码');
+          text('connectionDescription', '请先完成账号所属学校的基础绑定，再输入老师邀请码加入班级。');
+          return;
+        }
+        try {
+          await Api.selectSchool(studentMembership.schoolId);
+        } catch (error) {
+          message.textContent = error.message || '无法恢复学生学校，请重新登录。';
+          message.className = 'form-message error';
+          return;
+        }
+      }
+      await loadProfile();
+    }
+    enterStudentProfile();
   })();
   </script>
   <script src="/shared/student-nav.js?v=202607211600"></script>

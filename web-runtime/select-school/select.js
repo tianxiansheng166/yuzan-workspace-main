@@ -57,13 +57,33 @@
     }
 
     try {
+      const storedUser = YuzanApi.getStoredUser();
+      const storedMemberships = storedUser?.memberships || [];
+      const studentMemberships = storedMemberships.filter(membership => membership.role === 'STUDENT');
+      if (!YuzanApi.getActiveSchoolId() && storedMemberships.length > 0 && studentMemberships.length === storedMemberships.length) {
+        const membership = [...studentMemberships].sort((left, right) => left.schoolId.localeCompare(right.schoolId))[0];
+        await YuzanApi.selectSchool(membership.schoolId);
+        YuzanDemo.toast('已进入你的学生学校', 'success');
+        location.replace('/student/courses');
+        return;
+      }
+      if (!YuzanApi.getActiveSchoolId() && storedMemberships.length > 0) {
+        renderSchools(storedMemberships);
+        return;
+      }
       const data = await YuzanApi.me();
       const user = data.user || data;
       renderSchools(user.memberships || []);
       YuzanDemo.hydrate({ user: { displayName: user.displayName, role: (user.memberships?.[0]?.role || 'STUDENT').toLowerCase() } }, 'backend');
     } catch (err) {
-      YuzanDemo.toast(err.message || '无法获取学校信息', 'error');
-      setTimeout(() => location.href = '/login', 800);
+      const storedMemberships = YuzanApi.getStoredUser()?.memberships || [];
+      if (storedMemberships.length > 0) {
+        renderSchools(storedMemberships);
+        YuzanDemo.toast('已使用登录时的学校信息，请继续选择', 'warning');
+        return;
+      }
+      YuzanDemo.toast(err.message || '无法获取学校信息，请重新登录', 'error');
+      setTimeout(() => location.replace('/login'), 800);
     }
   }
 
