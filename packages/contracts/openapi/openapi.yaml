@@ -1854,7 +1854,10 @@ paths:
             schema: { type: string, format: uuid },
           }
       responses:
-        "201": { description: Practice Attempt linked and ActivityProgress completed }
+        "201":
+          {
+            description: Practice Attempt linked and ActivityProgress completed,
+          }
         "403": { $ref: "#/components/responses/Forbidden" }
         "404": { $ref: "#/components/responses/NotFound" }
         "409": { $ref: "#/components/responses/Conflict" }

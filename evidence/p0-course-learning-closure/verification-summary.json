@@ -1,0 +1,25 @@
+{
+  "courses": 4,
+  "requiredActivities": "4/4",
+  "requiredPractices": "1/1",
+  "completionPercent": 100,
+  "attainmentStatus": "PENDING",
+  "submissionStatus": "SUBMITTED",
+  "practiceStatus": "SUBMITTED",
+  "practiceRecordings": 2,
+  "noteRefreshRestored": true,
+  "crossSchoolStatus": 403,
+  "crossAssignmentSubmissionStatus": 404,
+  "screenshots": [
+    "catalog-1440.png",
+    "catalog-1024.png",
+    "catalog-390.png",
+    "detail-1440.png",
+    "detail-1024.png",
+    "detail-390.png",
+    "player-text-1440.png",
+    "player-1024.png",
+    "player-390.png",
+    "course-complete-pending-1440.png"
+  ]
+}

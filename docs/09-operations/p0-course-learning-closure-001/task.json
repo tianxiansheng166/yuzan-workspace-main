@@ -2,7 +2,7 @@
   "id": "P0-COURSE-LEARNING-CLOSURE-001",
   "branch": "integration/p0-golden-flow-001",
   "worktree": "D:/program/test_program/yuzanxinsheng/three/workers/p0-integration",
-  "status": "IN_PROGRESS",
+  "status": "COMPLETED",
   "journey": "student course catalog -> detail -> submission -> activities -> practice -> submit -> completion record",
   "allowed_paths": [
     "apps/api/src/app.module.ts",

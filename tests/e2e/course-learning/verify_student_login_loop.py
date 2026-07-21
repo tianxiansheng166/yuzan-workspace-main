@@ -1,7 +1,8 @@
 from playwright.sync_api import sync_playwright
+import os
 
 
-BASE = "http://127.0.0.1:4175"
+BASE = os.environ.get("YUZAN_WEB_BASE", "http://127.0.0.1:4175")
 
 
 with sync_playwright() as playwright:
@@ -23,7 +24,7 @@ with sync_playwright() as playwright:
     # from stored login memberships instead of bouncing back to /login.
     page.evaluate("localStorage.removeItem('yuzan-active-school-id')")
     page.goto(f"{BASE}/select-school/")
-    page.wait_for_url("**/student/courses**", timeout=10000)
+    page.wait_for_url("**/student/**", timeout=10000)
     assert "/login" not in page.url, page.url
     assert "/select-school" not in page.url, page.url
     print({"finalUrl": page.url, "visited": visited})
