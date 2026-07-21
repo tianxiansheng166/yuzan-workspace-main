@@ -108,18 +108,18 @@ async function seedReusablePractices() {
   for (const practice of practices) {
     await prisma.practiceDefinition.upsert({
       where: { id: practice.id },
-      update: { title: practice.title, summary: practice.summary, difficulty: practice.difficulty, estimatedMinutes: practice.estimatedMinutes, status: "PUBLISHED" },
+      // Bootstrap never edits an already-published definition/version. A new
+      // version is the only valid route for content changes outside this seed.
+      update: {},
       create: { id: practice.id, schoolId: ids.school, visibility: "SCHOOL", title: practice.title, summary: practice.summary, coverAsset: "/assessment/assets/mountain-world.webp", difficulty: practice.difficulty, estimatedMinutes: practice.estimatedMinutes, status: "PUBLISHED" },
     });
-    await prisma.practiceVersion.upsert({
-      where: { id: practice.versionId },
-      update: { status: "PUBLISHED", contentHash: `seed-${practice.id}-v1`, publishedAt: new Date("2026-07-21T00:00:00.000Z") },
-      create: { id: practice.versionId, definitionId: practice.id, version: 1, status: "PUBLISHED", contentHash: `seed-${practice.id}-v1`, publishedAt: new Date("2026-07-21T00:00:00.000Z") },
-    });
-    await prisma.practiceSection.deleteMany({ where: { versionId: practice.versionId } });
-    for (const [sectionIndex, section] of practice.sections.entries()) {
-      const created = await prisma.practiceSection.create({ data: { versionId: practice.versionId, title: section.title, description: section.description, sortOrder: sectionIndex + 1, estimatedMinutes: section.minutes } });
-      await prisma.practiceItemRef.createMany({ data: section.items.map((item, itemIndex) => ({ sectionId: created.id, questionId: `73000000-0000-4000-8000-${String(sectionIndex * 10 + itemIndex + 1).padStart(12, "0")}`, itemType: item.type, sortOrder: itemIndex + 1, config: item.config })) });
+    const existingVersion = await prisma.practiceVersion.findUnique({ where: { id: practice.versionId }, select: { id: true } });
+    if (!existingVersion) {
+      await prisma.practiceVersion.create({ data: { id: practice.versionId, definitionId: practice.id, version: 1, status: "PUBLISHED", contentHash: `seed-${practice.id}-v1`, publishedAt: new Date("2026-07-21T00:00:00.000Z") } });
+      for (const [sectionIndex, section] of practice.sections.entries()) {
+        const created = await prisma.practiceSection.create({ data: { versionId: practice.versionId, title: section.title, description: section.description, sortOrder: sectionIndex + 1, estimatedMinutes: section.minutes } });
+        await prisma.practiceItemRef.createMany({ data: section.items.map((item, itemIndex) => ({ sectionId: created.id, questionId: `73000000-0000-4000-8000-${String(sectionIndex * 10 + itemIndex + 1).padStart(12, "0")}`, itemType: item.type, sortOrder: itemIndex + 1, config: item.config })) });
+      }
     }
     await prisma.practiceDelivery.upsert({
       where: { id: practice.deliveryId },

@@ -450,7 +450,7 @@ describe("AssessmentService", () => {
 
   describe("submitSession — state transitions", () => {
     it("transitions IN_PROGRESS → SUBMITTED for owning student", async () => {
-      const { service, sessionRepo } = await buildService();
+      const { service, sessionRepo } = await buildService({ itemRepo: createFakeItemRepo([makeItem({ recordingId: RECORDING_ID })]) });
       sessionRepo._setSession(makeSession({ status: "IN_PROGRESS" }));
       const result = await service.submitSession(studentAuthA, SCHOOL_A, SESSION_ID);
       expect(result.status).toBe("SUBMITTED");
@@ -465,12 +465,10 @@ describe("AssessmentService", () => {
       ).rejects.toThrow(AssessmentConflictException);
     });
 
-    it("rejects double submit (SUBMITTED → SUBMITTED)", async () => {
+    it("returns the persisted state for an idempotent double submit", async () => {
       const { service, sessionRepo } = await buildService();
       sessionRepo._setSession(makeSession({ status: "SUBMITTED" }));
-      await expect(
-        service.submitSession(studentAuthA, SCHOOL_A, SESSION_ID),
-      ).rejects.toThrow(AssessmentConflictException);
+      await expect(service.submitSession(studentAuthA, SCHOOL_A, SESSION_ID)).resolves.toMatchObject({ status: "SUBMITTED" });
     });
   });
 
@@ -478,7 +476,7 @@ describe("AssessmentService", () => {
 
   describe("idempotent complete — full session lifecycle", () => {
     it("walks CREATED → IN_PROGRESS → SUBMITTED → PROCESSING → COMPLETED", async () => {
-      const { service, sessionRepo } = await buildService();
+      const { service, sessionRepo } = await buildService({ itemRepo: createFakeItemRepo([makeItem({ recordingId: RECORDING_ID })]) });
 
       // CREATED → IN_PROGRESS
       sessionRepo._setSession(makeSession({ status: "CREATED" }));
