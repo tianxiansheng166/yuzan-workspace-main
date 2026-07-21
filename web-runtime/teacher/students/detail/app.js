@@ -46,7 +46,10 @@
     const txt = btn.textContent.replace(/\s+/g, ' ').trim();
     // 一些按钮可以路由到真实页面
     if (txt.includes('查看学习轨迹')) {
-      btn.addEventListener('click', () => { location.href = '/teacher/students/demo/'; });
+      btn.addEventListener('click', () => {
+        if (enrollmentId) location.href = `/teacher/students/${enrollmentId}`;
+        else showToast('缺少学生标识，无法查看学习轨迹');
+      });
       return;
     }
     if (txt.includes('查看全部')) {
@@ -67,13 +70,26 @@
     btn.addEventListener('click', () => showToast('此处显示学习路径的详细说明'));
   });
 
+  // ── LIVE_ROUTE: 动态路由（enrollmentId + classId） ──
+  let enrollmentId = '';
+  let classIdFromContext = '';
+
+  function getEnrollmentIdFromPath() {
+    // /teacher/students/:enrollmentId — 3rd segment
+    const parts = location.pathname.split('/').filter(Boolean);
+    if (parts.length >= 3 && parts[0] === 'teacher' && parts[1] === 'students') {
+      return parts[2];
+    }
+    return '';
+  }
+
   // ── LIVE_ROUTE: 侧栏导航修复 ──
   const navRoutes = {
     '首页': '/teacher/assignments',
     '课程': '/teacher/courses/',
     '任务': '/teacher/assignments',
     '测评': '/teacher/assessments',
-    '复核': '/teacher/reviews/submission-1/',
+    '复核': '/teacher/reviews/',
     '报告': '/teacher/assessments/detail/',
   };
   document.querySelectorAll('.nav .nav-item').forEach(link => {
@@ -95,12 +111,17 @@
     }
   });
 
-  // ── LIVE_ROUTE: 面包屑修复 ──
+  // ── LIVE_ROUTE: 面包屑修复（动态classId） ──
   document.querySelectorAll('.crumbs a').forEach(link => {
     const txt = link.textContent.trim();
-    if (txt === '班级') link.href = '/teacher/classes/';
-    else if (txt.includes('五年级')) link.href = '/teacher/classes/detail/';
+    if (txt === '班级') link.href = '/teacher/classes';
+    else if (txt.includes('班')) {
+      // 面包屑中的班级链接：如果有classId上下文则跳转，否则回退到班级列表
+      link.href = classIdFromContext ? `/teacher/classes/${classIdFromContext}` : '/teacher/classes';
+    }
   });
+
+  enrollmentId = getEnrollmentIdFromPath();
 
   // ── UNSUPPORTED: 侧栏子导航 ──
   document.querySelectorAll('.subnav a').forEach(link => {
