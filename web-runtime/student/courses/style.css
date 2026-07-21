@@ -15,7 +15,7 @@ body { margin: 0; background: var(--student-paper); font-family: var(--student-f
 .design.courses { background: var(--student-paper); }
 
 /* ── Desktop Layout ── */
-.desktop-view { display: grid; grid-template-columns: 320px 1fr; gap: 32px; padding: 40px 48px; min-height: 100%; box-sizing: border-box; }
+.desktop-view { display: grid; grid-template-columns: 320px 1fr; gap: 32px; padding: 40px 24px 40px 0; min-height: 100%; box-sizing: border-box; }
 
 /* ── Left Column ── */
 .left-col { display: flex; flex-direction: column; gap: 20px; }
@@ -70,7 +70,7 @@ body { margin: 0; background: var(--student-paper); font-family: var(--student-f
 .empty-state p { font-size: 14px; margin: 0; }
 
 @media (max-width: 900px) {
-  .desktop-view { grid-template-columns: 1fr; padding: 24px 16px; }
+  .desktop-view { grid-template-columns: 1fr; padding: 24px 16px 24px 0; }
   .stats-row { grid-template-columns: repeat(3, 1fr); }
   .course-grid { grid-template-columns: 1fr 1fr; }
 }
