@@ -60,9 +60,9 @@
       const storedUser = YuzanApi.getStoredUser();
       const storedMemberships = storedUser?.memberships || [];
       const studentMemberships = storedMemberships.filter(membership => membership.role === 'STUDENT');
-      if (!YuzanApi.getActiveSchoolId() && storedMemberships.length > 0 && studentMemberships.length === storedMemberships.length) {
+      if (storedMemberships.length > 0 && studentMemberships.length === storedMemberships.length) {
         const membership = [...studentMemberships].sort((left, right) => left.schoolId.localeCompare(right.schoolId))[0];
-        await YuzanApi.selectSchool(membership.schoolId);
+        if (YuzanApi.getActiveSchoolId() !== membership.schoolId) await YuzanApi.selectSchool(membership.schoolId);
         YuzanDemo.toast('已进入你的学生学校', 'success');
         location.replace('/student/courses');
         return;
