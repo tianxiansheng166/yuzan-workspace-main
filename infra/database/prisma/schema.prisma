@@ -315,6 +315,7 @@ model School {
   assessmentLinkAccesses AssessmentLinkAccess[]
   practiceDefinitions   PracticeDefinition[]
   practiceDeliveries    PracticeDelivery[]
+  teacherInvitations    TeacherInvitation[]
 
   @@index([isActive])
   @@index([deletedAt])
@@ -451,6 +452,7 @@ model Class {
   campus      Campus?            @relation(fields: [schoolId, campusId], references: [schoolId, id], onDelete: Restrict)
   enrollments Enrollment[]
   targets     AssignmentTarget[]
+  teacherInvitations TeacherInvitation[]
 
   @@unique([schoolId, id])
   @@unique([schoolId, termId, name])
@@ -477,6 +479,29 @@ model Enrollment {
   @@unique([schoolId, id])
   @@unique([classId, userId, role])
   @@index([userId, role, status])
+}
+
+/// A teacher-issued, class-scoped invitation. Redeeming it creates the
+/// student's school membership and ACTIVE enrollment; it never grants a
+/// school-wide role by itself.
+model TeacherInvitation {
+  id            String   @id @default(uuid()) @db.Uuid
+  schoolId      String   @db.Uuid
+  classId       String   @db.Uuid
+  teacherUserId String   @db.Uuid
+  code          String   @unique
+  maxUses       Int      @default(30)
+  usedCount     Int      @default(0)
+  expiresAt     DateTime
+  revokedAt     DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  school        School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  class         Class    @relation(fields: [schoolId, classId], references: [schoolId, id], onDelete: Cascade)
+
+  @@unique([schoolId, id])
+  @@index([schoolId, teacherUserId, createdAt])
+  @@index([schoolId, classId, expiresAt])
 }
 
 model Course {

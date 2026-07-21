@@ -2,110 +2,118 @@
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>个人中心｜语赞心声</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f7f2e8">
+  <title>我的｜语赞心声</title>
   <link rel="stylesheet" href="/assets/common.css">
-  <link rel="stylesheet" href="/shared/student-nav.css">
+  <link rel="stylesheet" href="/shared/student-nav.css?v=202607211600">
   <style>
-    :root{
-      --student-red:#c91518;
-      --student-green:#2f7a50;
-      --student-gold:#df8d15;
-      --student-blue:#3479bf;
-      --student-paper:#f8f4ec;
-      --student-ink:#272c29;
-      --student-muted:#727873;
-      --student-line:#e8e0d6;
-      --student-font:Inter,"Noto Sans SC","Microsoft YaHei","PingFang SC",Arial,sans-serif;
-    }
-    body{margin:0;background:var(--student-paper);font-family:var(--student-font);color:var(--student-ink);}
-    .viewport{min-height:100vh;}
-    .design.profile{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:48px 32px;box-sizing:border-box;background:var(--student-paper);}
-    .profile-card{width:100%;max-width:720px;background:#fff;border-radius:24px;box-shadow:0 12px 40px rgba(0,0,0,.06);overflow:hidden;margin-bottom:24px;}
-    .profile-header{position:relative;height:160px;background:linear-gradient(135deg,#2f7a50 0%,#df8d15 100%);}
-    .profile-header::after{content:"";position:absolute;inset:0;background:url('/assets/growth-hero.jpg') center/cover;opacity:.25;}
-    .profile-avatar{position:relative;z-index:1;width:110px;height:110px;border-radius:50%;border:4px solid #fff;margin:-55px auto 0;overflow:hidden;background:#f0ece3;box-shadow:0 6px 20px rgba(0,0,0,.1);}
-    .profile-avatar img{width:100%;height:100%;object-fit:cover;}
-    .profile-body{text-align:center;padding:18px 32px 32px;}
-    .profile-body h1{font-size:28px;margin:0 0 6px;font-weight:700;}
-    .profile-body .meta{color:var(--student-muted);font-size:15px;margin-bottom:24px;}
-    .profile-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px;}
-    .stat-item{background:var(--student-paper);border-radius:16px;padding:18px 12px;}
-    .stat-item b{display:block;font-size:26px;color:var(--student-green);margin-bottom:4px;}
-    .stat-item span{font-size:13px;color:var(--student-muted);}
-    .profile-actions{display:grid;gap:12px;text-align:left;}
-    .profile-actions a,
-    .profile-actions button{display:flex;align-items:center;gap:14px;padding:16px 18px;border-radius:14px;border:1px solid var(--student-line);background:#fff;color:var(--student-ink);font-size:15px;text-decoration:none;cursor:pointer;transition:.15s;}
-    .profile-actions a:hover,
-    .profile-actions button:hover{background:#faf8f3;border-color:#d9d0c4;}
-    .profile-actions .icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:var(--student-paper);color:var(--student-green);font-size:18px;}
-    .profile-actions .arrow{margin-left:auto;color:var(--student-muted);}
-    .profile-section{width:100%;max-width:720px;}
-    .profile-section h2{font-size:18px;margin:0 0 14px;font-weight:600;}
-    @media(max-width:900px){
-      .design.profile{padding:24px 16px;}
-      .profile-stats{grid-template-columns:repeat(3,1fr);gap:10px;}
-      .stat-item b{font-size:20px;}
-    }
-</style>
-<script src="/assets/app-core.js"></script>
-<script src="/assets/api-client.js"></script>
+    :root{--paper:#f7f2e8;--paper-deep:#eee2cf;--ink:#26312c;--muted:#6e7771;--line:#dfd4c4;--red:#c91d1c;--red-deep:#9f1718;--green:#397557;--green-pale:#edf5ee;--gold:#c98719;--white:#fffdfa;--serif:"Noto Serif SC","Songti SC","STSong",serif;--sans:"Noto Sans SC","Microsoft YaHei","PingFang SC",sans-serif}
+    *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);min-width:320px}.profile-page{min-height:calc(100vh - 90px);padding:32px clamp(18px,4vw,68px) 54px;position:relative;overflow:hidden}.profile-page:before{content:"";position:absolute;inset:0;background:linear-gradient(115deg,rgba(255,253,248,.76),rgba(247,242,232,.18) 55%),url('/assets/growth-hero.jpg') right -145px top 8px/720px auto no-repeat;opacity:.18;pointer-events:none}.profile-wrap{position:relative;z-index:1;max-width:1280px;margin:auto}.crumb{font-size:13px;letter-spacing:.08em;color:var(--green);font-weight:700;margin:3px 0 18px}.profile-hero{min-height:222px;border:1px solid rgba(147,114,69,.24);background:linear-gradient(108deg,rgba(255,253,248,.96) 0%,rgba(255,253,248,.88) 48%,rgba(244,232,207,.76));position:relative;overflow:hidden;padding:30px 34px;display:flex;align-items:flex-end;box-shadow:0 14px 38px rgba(94,67,34,.08)}.profile-hero:after{content:"";position:absolute;right:-20px;top:-10px;width:52%;height:116%;background:url('/assets/growth-hero.jpg') center/cover;opacity:.35;mix-blend-mode:multiply;mask-image:linear-gradient(90deg,transparent,black 35%);pointer-events:none}.identity{position:relative;z-index:1;display:flex;align-items:center;gap:20px}.portrait{width:96px;height:96px;border-radius:50%;padding:5px;background:var(--white);box-shadow:0 8px 24px rgba(51,47,34,.14);border:1px solid rgba(174,130,69,.24)}.portrait img{width:100%;height:100%;object-fit:cover;border-radius:50%}.identity h1{font-family:var(--serif);font-size:33px;letter-spacing:.05em;margin:0 0 7px}.identity p{margin:0;color:var(--muted);font-size:15px}.identity .role{display:inline-flex;margin-top:11px;padding:4px 10px;border:1px solid #bfd2c2;color:var(--green);background:rgba(237,245,238,.86);font-size:12px;font-weight:700;letter-spacing:.08em}.profile-grid{display:grid;grid-template-columns:minmax(0,1.38fr) minmax(310px,.62fr);gap:20px;margin-top:20px}.paper-panel{border:1px solid var(--line);background:rgba(255,253,248,.92);box-shadow:0 10px 28px rgba(79,58,32,.055)}.section-head{display:flex;align-items:flex-end;justify-content:space-between;padding:20px 24px 14px;border-bottom:1px solid var(--line)}.section-head h2{font-family:var(--serif);font-size:22px;margin:0;letter-spacing:.06em}.section-head p{margin:0;color:var(--muted);font-size:13px}.connection-panel{position:relative;overflow:hidden}.connection-panel:before{content:"";position:absolute;inset:0 auto 0 0;width:5px;background:var(--gold)}.connection-panel.connected:before{background:var(--green)}.connection-body{padding:22px 24px 24px}.connection-line{display:flex;gap:14px;align-items:flex-start}.seal{width:45px;height:45px;flex:0 0 auto;border:1px solid #e7d2ac;background:#fff8eb;color:var(--gold);display:grid;place-items:center}.seal svg{width:23px;height:23px}.connection-copy h3{font-size:17px;margin:0 0 6px}.connection-copy p{margin:0;color:var(--muted);font-size:14px;line-height:1.75}.connection-meta{display:flex;flex-wrap:wrap;gap:8px;margin:17px 0 20px}.meta-tag{border:1px solid var(--line);background:#fff;padding:7px 10px;color:#5e6962;font-size:13px}.connection-form{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;max-width:650px}.connection-form input{height:46px;border:1px solid #cfc2ae;background:#fffdf9;padding:0 14px;outline:0;letter-spacing:.08em;font-size:15px}.connection-form input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(57,117,87,.12)}button,a{font:inherit}.bind-btn,.primary-link{min-height:46px;border:0;background:var(--red);color:#fff;padding:0 18px;font-weight:700;cursor:pointer;box-shadow:0 6px 14px rgba(165,25,24,.16);text-decoration:none;display:inline-flex;align-items:center;justify-content:center}.bind-btn:hover,.primary-link:hover{background:var(--red-deep)}.form-message{min-height:22px;margin:10px 0 0;font-size:13px;color:var(--muted)}.form-message.error{color:#ad3029}.form-message.success{color:var(--green)}.security-note{display:flex;gap:8px;margin-top:16px;color:#7c746a;font-size:12px;line-height:1.65}.security-note svg{width:16px;height:16px;flex:0 0 auto;color:var(--green);margin-top:2px}.stats-panel{margin-top:20px}.stat-list{display:grid;grid-template-columns:repeat(3,1fr)}.stat{padding:23px 24px 25px;border-right:1px solid var(--line)}.stat:last-child{border-right:0}.stat b{font-family:var(--serif);font-size:31px;font-weight:600;color:var(--green);display:block;line-height:1}.stat span{display:block;color:var(--muted);font-size:13px;margin-top:10px}.journey-panel{margin-top:20px}.journey-list{padding:5px 24px 14px}.journey-row{padding:15px 0;border-bottom:1px solid #eee5d8;display:flex;align-items:center;gap:13px}.journey-row:last-child{border-bottom:0}.journey-index{width:25px;height:25px;border:1px solid #d9c9ac;color:var(--gold);font-size:12px;display:grid;place-items:center;flex:0 0 auto}.journey-row strong{font-size:15px}.journey-row small{margin-left:auto;color:var(--muted);font-size:12px}.side-panel{padding:23px 24px}.side-panel h2{font-family:var(--serif);font-size:22px;margin:0 0 16px;letter-spacing:.06em}.quick-link{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink);padding:14px 0;border-bottom:1px solid #ebe2d5}.quick-link:last-of-type{border-bottom:0}.quick-icon{width:34px;height:34px;border:1px solid var(--line);background:#fff;display:grid;place-items:center;color:var(--green)}.quick-icon svg{width:18px;height:18px}.quick-link b{font-size:14px}.quick-link span{font-size:12px;color:var(--muted);margin-left:auto}.account-panel{margin-top:20px;border-top:4px solid var(--green)}.account-panel p{color:var(--muted);font-size:13px;line-height:1.7;margin:0 0 15px}.logout-btn{display:flex;width:100%;align-items:center;justify-content:center;gap:9px;min-height:43px;color:var(--red);background:#fff;border:1px solid #e4bbb5;font-weight:700;cursor:pointer}.logout-btn:hover{background:#fff5f3}.logout-btn svg{width:17px;height:17px}.load-note{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:14px}.load-dot{width:9px;height:9px;border-radius:50%;background:var(--gold);animation:pulse 1.3s infinite}@keyframes pulse{50%{opacity:.25;transform:scale(.65)}}@media(max-width:840px){.profile-page{padding:20px 14px 40px}.profile-hero{padding:25px 20px;min-height:190px}.profile-hero:after{width:82%;opacity:.19}.identity h1{font-size:27px}.profile-grid{grid-template-columns:1fr}.stat-list{grid-template-columns:repeat(3,1fr)}.stat{padding:18px 14px}.stat b{font-size:26px}.connection-form{grid-template-columns:1fr}.bind-btn{width:100%}}@media(max-width:480px){.profile-hero{align-items:center}.identity{gap:14px}.portrait{width:72px;height:72px}.identity h1{font-size:24px}.identity p{font-size:13px}.section-head,.connection-body,.side-panel{padding-left:17px;padding-right:17px}.journey-list{padding-left:17px;padding-right:17px}.stat-list{grid-template-columns:1fr}.stat{border-right:0;border-bottom:1px solid var(--line)}.stat:last-child{border-bottom:0}.journey-row small{display:none}}
+  </style>
 </head>
 <body>
-<div class="viewport">
-  <main id="profileDesign" class="design profile desktop-mode" data-width="1280" data-height="800" data-fit="center">
-    <div class="profile-card">
-      <div class="profile-header"></div>
-      <div class="profile-avatar"><img src="/assets/student-avatar.jpg" alt="学生头像"></div>
-      <div class="profile-body">
-        <h1 id="profileName">加载中…</h1>
-        <p class="meta" id="profileMeta">—</p>
-        <div class="profile-stats">
-          <div class="stat-item"><b id="statCompleted">-</b><span>已完成课程</span></div>
-          <div class="stat-item"><b id="statAssessments">-</b><span>朗读测评</span></div>
-          <div class="stat-item"><b id="statStreak">-</b><span>连续学习天</span></div>
+  <main class="profile-page">
+    <div class="profile-wrap">
+      <div class="crumb">学生端 / 我的</div>
+      <section class="profile-hero" aria-labelledby="profileName">
+        <div class="identity">
+          <div class="portrait"><img src="/assets/student-avatar.jpg" alt="学生头像"></div>
+          <div><h1 id="profileName">正在读取个人档案</h1><p id="profileMeta">请稍候…</p><span class="role">学生学习档案</span></div>
         </div>
-        <div class="profile-actions">
-          <a href="/student/courses"><span class="icon">▣</span><span>我的课程</span><span class="arrow">›</span></a>
-          <a href="/student/growth"><span class="icon">〰</span><span>成长报告</span><span class="arrow">›</span></a>
-          <a href="/assessment"><span class="icon">♙</span><span>测评中心</span><span class="arrow">›</span></a>
-          <button type="button" id="offlineBtn"><span class="icon">☁</span><span>离线资源管理</span><span class="arrow">›</span></button>
-          <button type="button" id="logoutBtn"><span class="icon">↩</span><span>退出登录</span><span class="arrow">›</span></button>
+      </section>
+
+      <div class="profile-grid">
+        <div>
+          <section id="connectionPanel" class="paper-panel connection-panel" aria-labelledby="connectionTitle">
+            <div class="section-head"><div><h2 id="connectionTitle">连接我的老师</h2><p>绑定老师邀请码，即可自动加入对应学校和班级。</p></div></div>
+            <div class="connection-body">
+              <div class="connection-line"><div class="seal" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V9l8-5 8 5v11"/><path d="M8 20v-5h8v5M7 10h.01M12 10h.01M17 10h.01"/></svg></div><div class="connection-copy"><h3 id="connectionStatus">正在核对班级关系</h3><p id="connectionDescription">你的练习、录音和报告只会在已加入的班级中开放。</p></div></div>
+              <div id="connectionMeta" class="connection-meta"></div>
+              <form id="bindTeacherForm" class="connection-form" novalidate><input id="teacherCode" name="teacherCode" autocomplete="off" placeholder="输入老师提供的邀请码，例如 TC-ABCDE-12345" aria-label="教师邀请码"><button id="bindTeacherBtn" class="bind-btn" type="submit">绑定老师</button></form>
+              <p id="bindMessage" class="form-message" role="status"></p>
+              <div class="security-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 5 6v5c0 4.6 2.9 8.6 7 10 4.1-1.4 7-5.4 7-10V6l-7-3Z"/><path d="m9 12 2 2 4-4"/></svg><span>邀请码只用于验证老师所属班级，不会公开你的学习记录；绑定后可直接进入测评与练习。</span></div>
+            </div>
+          </section>
+
+          <section class="paper-panel stats-panel" aria-label="学习概览"><div class="section-head"><h2>学习概览</h2><p>来自已加入班级的真实学习记录</p></div><div class="stat-list"><div class="stat"><b id="statCompleted">—</b><span>已完成学习活动</span></div><div class="stat"><b id="statTotal">—</b><span>可追踪学习活动</span></div><div class="stat"><b id="statStreak">—</b><span>连续学习天</span></div></div></section>
+          <section class="paper-panel journey-panel"><div class="section-head"><h2>我的学习路径</h2><p>每一步都与班级关系同步</p></div><div class="journey-list"><div class="journey-row"><span class="journey-index">01</span><strong>连接老师与班级</strong><small id="journeyConnection">核对中</small></div><div class="journey-row"><span class="journey-index">02</span><strong>完成朗读与书面练习</strong><small>练习中心</small></div><div class="journey-row"><span class="journey-index">03</span><strong>查看录音、报告与反馈</strong><small>学习记录</small></div></div></section>
         </div>
+        <aside>
+          <section class="paper-panel side-panel"><h2>快捷入口</h2><a class="quick-link" href="/student/practices/"><span class="quick-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 4h10v16H7z"/><path d="M10 8h4M10 12h4M10 16h2"/></svg></span><b>练习中心</b><span>去练习</span></a><a class="quick-link" href="/assessment/recordings/"><span class="quick-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4M8 21h8"/></svg></span><b>我的录音</b><span>查看</span></a><a class="quick-link" href="/assessment/history/"><span class="quick-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/><path d="M12 7v5l3 2"/></svg></span><b>历次记录</b><span>回顾</span></a></section>
+          <section class="paper-panel side-panel account-panel"><h2>账户与安全</h2><p>退出后将清除本设备的登录凭据，并返回首页。</p><button id="logoutBtn" class="logout-btn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 17l5-5-5-5M15 12H3M13 4h5v16h-5"/></svg>退出登录</button></section>
+        </aside>
       </div>
     </div>
-    <section class="profile-section">
-      <h2>学习提醒</h2>
-      <p style="color:var(--student-muted);font-size:14px;line-height:1.7;">每天坚持 20 分钟朗读练习，效果会更好哦！老师为你提供了新的学习建议，快去看看吧。</p>
-    </section>
   </main>
-</div>
-<script>
-document.getElementById('offlineBtn').addEventListener('click',()=>alert('离线资源管理功能开发中'));
-document.getElementById('logoutBtn').addEventListener('click',()=>{
-  if(confirm('确定要退出登录吗？')){YuzanApi.logout().catch(()=>{});location.href='/login';}
-});
-
-(async()=>{
-  if(!YuzanApi.requireAuth()) return;
-  const schoolId=YuzanApi.getActiveSchoolId();
-  if(!schoolId){location.href='/select-school';return;}
-  try{
-    const data=await YuzanApi.getStudentProfile();
-    const p=data.profile||data;
-    document.getElementById('profileName').textContent=p.displayName||'同学';
-    const metaParts=[p.schoolName,p.gradeBand,p.className].filter(Boolean);
-    document.getElementById('profileMeta').textContent=metaParts.join(' · ')||'—';
-    document.getElementById('statCompleted').textContent=p.completedActivities??0;
-    document.getElementById('statAssessments').textContent=p.totalActivities??0;
-    document.getElementById('statStreak').textContent=p.learningStreakDays??0;
-  }catch(err){
-    YuzanDemo.toast(err.message||'加载个人信息失败','error');
-    document.getElementById('profileName').textContent='加载失败';
-  }
-})();
-</script>
-<script src="/assets/fit.js"></script>
-<script src="/shared/student-nav.js"></script>
+  <script src="/assets/app-core.js?v=202607211600"></script>
+  <script src="/assets/api-client.js?v=202607211600"></script>
+  <script>
+  (() => {
+    const Api = window.YuzanApi;
+    const text = (id, value) => { document.getElementById(id).textContent = value; };
+    const panel = document.getElementById('connectionPanel');
+    const meta = document.getElementById('connectionMeta');
+    const message = document.getElementById('bindMessage');
+    const code = document.getElementById('teacherCode');
+    const bindButton = document.getElementById('bindTeacherBtn');
+    const profile = { loaded: false };
+    function connectionInfo(data) {
+      const connected = Boolean(data.className);
+      panel.classList.toggle('connected', connected);
+      text('connectionStatus', connected ? '已连接到学习班级' : '尚未绑定老师');
+      text('connectionDescription', connected ? '你的练习会按照老师所在班级和学校的投放规则开放。' : '输入老师的邀请码后，系统会自动加入老师所在的学校和班级。');
+      text('journeyConnection', connected ? '已完成' : '待绑定');
+      meta.replaceChildren();
+      const labels = connected ? [data.schoolName || '已加入学校', data.gradeBand || '班级年级', data.className] : ['尚未加入有效学生班级'];
+      labels.forEach(label => { const tag = document.createElement('span'); tag.className = 'meta-tag'; tag.textContent = label; meta.append(tag); });
+      bindButton.textContent = connected ? '更换/添加老师' : '绑定老师';
+    }
+    async function loadProfile() {
+      try {
+        const response = await Api.getStudentProfile();
+        const data = response.profile || response;
+        profile.loaded = true;
+        text('profileName', data.displayName || '同学');
+        text('profileMeta', [data.schoolName, data.gradeBand, data.className].filter(Boolean).join(' · ') || '先绑定老师，开启班级学习');
+        text('statCompleted', data.completedActivities ?? 0);
+        text('statTotal', data.totalActivities ?? 0);
+        text('statStreak', data.learningStreakDays ?? 0);
+        connectionInfo(data);
+      } catch (error) {
+        text('profileName', '个人档案暂不可用');
+        text('profileMeta', error.message || '请检查网络后重试');
+        text('connectionStatus', '暂时无法核对班级关系');
+        text('connectionDescription', '你仍可输入老师邀请码完成绑定。');
+        text('journeyConnection', '待重试');
+        message.textContent = error.message || '加载失败，请稍后重试';
+        message.className = 'form-message error';
+      }
+    }
+    document.getElementById('bindTeacherForm').addEventListener('submit', async event => {
+      event.preventDefault();
+      const value = code.value.trim();
+      if (!value) { message.textContent = '请输入老师提供的邀请码。'; message.className = 'form-message error'; code.focus(); return; }
+      bindButton.disabled = true; bindButton.textContent = '正在验证…'; message.textContent = ''; message.className = 'form-message';
+      try {
+        const result = await Api.bindTeacherInvitation(value);
+        message.textContent = result.message || '绑定成功，正在进入对应学校…'; message.className = 'form-message success';
+        if (result.schoolId && result.schoolId !== Api.getActiveSchoolId()) await Api.selectSchool(result.schoolId);
+        setTimeout(() => { location.href = '/student/practices/'; }, 360);
+      } catch (error) {
+        message.textContent = error.message || '绑定失败，请检查邀请码后重试。'; message.className = 'form-message error'; bindButton.disabled = false; bindButton.textContent = profile.loaded && document.getElementById('connectionPanel').classList.contains('connected') ? '更换/添加老师' : '绑定老师';
+      }
+    });
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      if (!confirm('确定退出当前账号吗？')) return;
+      await Api.logout();
+      location.href = '/';
+    });
+    if (!Api?.requireAuth?.()) return;
+    if (!Api.getActiveSchoolId()) { location.href = '/select-school'; return; }
+    loadProfile();
+  })();
+  </script>
+  <script src="/shared/student-nav.js?v=202607211600"></script>
 </body>
 </html>

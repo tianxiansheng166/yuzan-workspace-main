@@ -1,5 +1,7 @@
 (() => {
   'use strict';
+  // 在 iframe 中由外层整合壳提供统一导航栏，避免重复渲染
+  if (window.self !== window.top) return;
   if (document.body.classList.contains('student-has-nav')) return;
 
   const svg = (b, s = 23) => `<svg viewBox="0 0 24 24" width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${b}</svg>`;

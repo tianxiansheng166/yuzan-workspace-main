@@ -81,7 +81,7 @@
       const data = await YuzanApi.login(identifier, password);
       localStorage.setItem('yuzan-demo-session', JSON.stringify({ account: identifier, loggedInAt: Date.now(), offline: false }));
       YuzanDemo.toast('登录成功', 'success');
-      const homeUrl = YuzanApi.getHomeUrlByRole(data.user);
+      const homeUrl = selectedRole === 'STUDENT' ? '/student/profile/' : YuzanApi.getHomeUrlByRole(data.user);
       setTimeout(() => location.href = homeUrl, 260);
     } catch (err) {
       // 演示环境兜底

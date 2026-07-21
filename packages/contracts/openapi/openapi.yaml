@@ -40,6 +40,8 @@ tags:
     description: 录音初始化、分片上传、完成与证据查询
   - name: SpeechJobs
     description: 语音评分任务创建、查询与 worker 回写
+  - name: TeacherInvitations
+    description: 教师班级邀请码创建与学生绑定
 paths:
   /health/live:
     get:
@@ -1620,6 +1622,78 @@ paths:
                 $ref: "#/components/schemas/AssessmentHistoryEventsResponse"
         "403":
           $ref: "#/components/responses/Forbidden"
+  /schools/{schoolId}/teacher-invitations:
+    post:
+      summary: 为当前任教班级创建学生邀请码
+      tags: [TeacherInvitations]
+      operationId: createTeacherInvitation
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTeacherInvitationRequest"
+      responses:
+        "201":
+          description: Class-scoped teacher invitation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TeacherInvitationResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+  /schools/{schoolId}/teacher-invitations/mine:
+    get:
+      summary: 列出当前教师创建的邀请码
+      tags: [TeacherInvitations]
+      operationId: listMyTeacherInvitations
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+      responses:
+        "200":
+          description: Current teacher invitations
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/TeacherInvitationResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+  /student/teacher-invitations/bind:
+    post:
+      summary: 学生绑定教师邀请码并加入目标班级
+      tags: [TeacherInvitations]
+      operationId: bindTeacherInvitation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BindTeacherInvitationRequest"
+      responses:
+        "201":
+          description: Student membership and enrollment created or restored
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TeacherInvitationBindResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
 components:
   securitySchemes:
     bearerAuth:
@@ -1939,6 +2013,82 @@ components:
               details: {}
               requestId: "00000000-0000-0000-0000-000000000017"
   schemas:
+    CreateTeacherInvitationRequest:
+      type: object
+      required: [classId]
+      properties:
+        classId:
+          type: string
+          format: uuid
+        maxUses:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 30
+        expiresInDays:
+          type: integer
+          minimum: 1
+          maximum: 90
+          default: 30
+    BindTeacherInvitationRequest:
+      type: object
+      required: [code]
+      properties:
+        code:
+          type: string
+          minLength: 6
+          maxLength: 40
+    TeacherInvitationResponse:
+      type: object
+      required: [id, code, class, maxUses, usedCount, expiresAt, createdAt, status]
+      properties:
+        id:
+          type: string
+          format: uuid
+        code:
+          type: string
+        class:
+          $ref: "#/components/schemas/TeacherInvitationClass"
+        maxUses:
+          type: integer
+        usedCount:
+          type: integer
+        expiresAt:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum: [ACTIVE, REVOKED, EXPIRED, EXHAUSTED]
+    TeacherInvitationClass:
+      type: object
+      required: [id, name, grade]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        grade:
+          type: string
+    TeacherInvitationBindResponse:
+      type: object
+      required: [alreadyBound, schoolId, class, teacherUserId, message]
+      properties:
+        alreadyBound:
+          type: boolean
+        schoolId:
+          type: string
+          format: uuid
+        class:
+          $ref: "#/components/schemas/TeacherInvitationClass"
+        teacherUserId:
+          type: string
+          format: uuid
+        message:
+          type: string
     EnvelopeMeta:
       type: object
       required: [requestId]

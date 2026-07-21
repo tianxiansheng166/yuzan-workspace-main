@@ -513,6 +513,21 @@
   async function getInviteCode() {
     return request(`/schools/${getActiveSchoolId()}/teacher-tools/invite-code`);
   }
+  async function createTeacherInvitation(payload) {
+    return request(`/schools/${getActiveSchoolId()}/teacher-invitations`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  }
+  async function listMyTeacherInvitations() {
+    return request(`/schools/${getActiveSchoolId()}/teacher-invitations/mine`);
+  }
+  async function bindTeacherInvitation(code) {
+    return request('/student/teacher-invitations/bind', {
+      method: 'POST',
+      body: JSON.stringify({ code }),
+    });
+  }
 
   /* ── Student Dashboard ── */
   async function getStudentProfile() {
@@ -929,6 +944,9 @@
     saveDraft,
     getExternalServices,
     getInviteCode,
+    createTeacherInvitation,
+    listMyTeacherInvitations,
+    bindTeacherInvitation,
     /* Student Dashboard */
     getStudentProfile,
     getStudentToday,

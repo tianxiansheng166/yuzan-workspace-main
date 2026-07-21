@@ -10,6 +10,9 @@
   const frame = document.getElementById('student-integrated-frame');
   frame.src = routes[location.pathname] || routes['/student/course-center'];
 
+  // 整合壳自己提供统一导航栏，iframe 内页面不需要左侧边栏占位
+  document.documentElement.style.setProperty('--student-content-left', '0px');
+
   function fit() {
     try {
       const doc = frame.contentDocument;
@@ -20,8 +23,10 @@
         style.id = 'yuzan-student-integration-reset';
         style.textContent = `
           html, body { width:100%!important; min-width:0!important; overflow-x:hidden!important; margin:0!important; padding:0!important; }
-          .sidebar, .sidebar-decoration, .topbar, .leftbar, .rightbar,
-          .left-sidebar, .left-rail, .side-nav, .sidenav, .nav-list { display:none!important; }
+          /* 隐藏原页面自己的导航栏和侧边栏，统一使用外层整合壳导航 */
+          .sidebar, .sidebar-decoration, .topbar, header.topbar, .leftbar, .rightbar,
+          .left-sidebar, .left-rail, .side-nav, .sidenav, .nav-list,
+          .student-topbar, body.student-has-nav .student-topbar { display:none!important; }
           .app-shell, .app, .page-shell, .content-shell, .workspace,
           .page, .page-grid, .dashboard-grid {
             display:block!important; width:100%!important; min-width:0!important; max-width:none!important;
