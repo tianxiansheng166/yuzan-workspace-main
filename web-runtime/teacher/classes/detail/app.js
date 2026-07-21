@@ -491,7 +491,8 @@
             const time = s.submittedAt ? new Date(s.submittedAt).toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : '—';
             const status = s.status === 'REVIEWED' ? '已复核' : s.status === 'SUBMITTED' ? '待复核' : s.status || '—';
             const score = s.autoScore != null ? s.autoScore : '—';
-            return `<div class="drawer-row"><b>${studentName}</b><span>${time}</span><span>${status}</span><span>得分: ${score}</span></div>`;
+            const link = s.id ? `<a href="/teacher/submissions/${s.id}" style="color:var(--red);text-decoration:none;font-size:11px;margin-left:6px">详情→</a>` : '';
+            return `<div class="drawer-row"><b>${studentName}</b><span>${time}</span><span>${status}</span><span>得分: ${score}${link}</span></div>`;
           }).join('');
         } else {
           drawerData.innerHTML = `<div>提交数：${submitted}</div><div>待批改数：${pending}</div>`;
