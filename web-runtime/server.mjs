@@ -57,7 +57,9 @@ function routeToSpa(pathname) {
   if (pathname === '/login' || pathname.startsWith('/login/')) return join(root, 'login', 'index.html');
   if (pathname === '/select-school' || pathname.startsWith('/select-school/')) return join(root, 'select-school', 'index.html');
   if (pathname === '/assessment' || pathname.startsWith('/assessment/')) {
-    if (pathname === '/assessment' || pathname === '/assessment/') return { file: join(root, 'assessment', 'index.html'), page: 'center' };
+    // Compatibility entry: the legacy assessment center now opens the reusable
+    // practice catalog without a redirect, so existing navigation keeps working.
+    if (pathname === '/assessment' || pathname === '/assessment/') return { file: join(root, 'assessment', 'practice-shell.html'), page: 'catalog' };
     if (pathname === '/assessment/history' || pathname.startsWith('/assessment/history/')) return { file: join(root, 'assessment', '_shell.html'), page: 'history' };
     if (pathname === '/assessment/recordings' || pathname.startsWith('/assessment/recordings/')) return { file: join(root, 'assessment', '_shell.html'), page: 'recordings' };
     // 动态 session 路由：/assessment/sessions/:sessionId/[reading|written|submit|processing|report]
