@@ -22,7 +22,8 @@ export interface ClassGrowthStage {
 export interface PronunciationClusterItem {
   readonly type: string;
   readonly label: string;
-  readonly affectedCount: number;
+  readonly occurrenceCount: number;
+  readonly affectedStudentCount: number;
   readonly percentage: number;
 }
 
@@ -41,11 +42,15 @@ export interface ClassDashboard {
   readonly studentCount: number;
   readonly currentCourse: { readonly id: string; readonly title: string } | null;
   readonly completionRate: number;
+  readonly averageProgress: number | null;
+  readonly medianProgress: number | null;
+  readonly zeroProgressCount: number;
   readonly submissionRate: number;
   readonly assessmentParticipationRate: number;
   readonly pendingReviewCount: number;
   readonly atRiskStudentCount: number;
   readonly lastActivityAt: string | null;
+  readonly dataSufficient: boolean;
   readonly stages: readonly ClassGrowthStage[];
   readonly pronunciationClusters: readonly PronunciationClusterItem[];
 }
@@ -87,6 +92,8 @@ export interface AssessmentSummary {
   readonly completedCount: number;
   readonly averageScore: number | null;
   readonly medianScore: number | null;
+  readonly zeroScoreCount: number;
   readonly totalTargetCount: number;
+  readonly dataSufficient: boolean;
   readonly createdAt: string;
 }

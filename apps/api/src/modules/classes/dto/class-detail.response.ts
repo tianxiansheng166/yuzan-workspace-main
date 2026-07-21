@@ -29,7 +29,8 @@ function toPronunciationClusterResponse(item: PronunciationClusterItem) {
   return {
     type: item.type,
     label: item.label,
-    affectedCount: item.affectedCount,
+    occurrenceCount: item.occurrenceCount,
+    affectedStudentCount: item.affectedStudentCount,
     percentage: item.percentage,
   };
 }

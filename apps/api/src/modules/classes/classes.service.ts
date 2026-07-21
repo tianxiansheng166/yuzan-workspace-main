@@ -608,10 +608,11 @@ export class ClassesService {
       .map(([type, entry]) => ({
         type,
         label: ERROR_TYPE_LABEL_MAP[type] ?? type,
-        affectedCount: entry.enrollmentIds.size, // affected STUDENT count, not occurrence count
+        occurrenceCount: entry.occurrences,
+        affectedStudentCount: entry.enrollmentIds.size,
         percentage: enrollments.length > 0 ? Math.round((entry.enrollmentIds.size / enrollments.length) * 100) : 0,
       }))
-      .sort((a, b) => b.affectedCount - a.affectedCount)
+      .sort((a, b) => b.affectedStudentCount - a.affectedStudentCount)
       .slice(0, 5);
 
     const detail: ClassDetail = {
@@ -1193,6 +1194,24 @@ export class ClassesService {
       atRiskStudentCount = [...enrollmentIds].filter((id) => !activeSet.has(id)).length;
     }
 
+    // Per-student progress for average/median/zero-progress (Section IX)
+    const perStudentProgress = new Map<string, { total: number; completed: number }>();
+    for (const p of relevantProgress) {
+      const entry = perStudentProgress.get(p.enrollmentId) ?? { total: 0, completed: 0 };
+      entry.total += 1;
+      if (p.completed) entry.completed += 1;
+      perStudentProgress.set(p.enrollmentId, entry);
+    }
+    const progressValues = [...perStudentProgress.values()]
+      .filter((e) => e.total > 0)
+      .map((e) => Math.round((e.completed / e.total) * 100));
+    const averageProgress = progressValues.length > 0 ? Math.round((progressValues.reduce((s, v) => s + v, 0) / progressValues.length) * 10) / 10 : null;
+    const sortedProgress = [...progressValues].sort((a, b) => a - b);
+    const midP = Math.floor(sortedProgress.length / 2);
+    const medianProgress = sortedProgress.length > 0 && sortedProgress[midP] !== undefined ? Math.round(sortedProgress[midP] * 10) / 10 : null;
+    const zeroProgressCount = progressValues.filter((v) => v === 0).length;
+    const dataSufficient = enrollmentIds.size >= 3 && relevantProgress.length >= enrollmentIds.size;
+
     // Growth stages (reuse same logic as getClassDetail)
     const hasRecordingEnrollmentIds = new Set(
       await this.prisma.recording.findMany({
@@ -1224,8 +1243,8 @@ export class ClassesService {
       }
     }
     const pronunciationClusters: PronunciationClusterItem[] = Array.from(errorCounts.entries())
-      .map(([type, entry]) => ({ type, label: ERROR_TYPE_LABEL_MAP[type] ?? type, affectedCount: entry.enrollmentIds.size, percentage: enrollments.length > 0 ? Math.round((entry.enrollmentIds.size / enrollments.length) * 100) : 0 }))
-      .sort((a, b) => b.affectedCount - a.affectedCount)
+      .map(([type, entry]) => ({ type, label: ERROR_TYPE_LABEL_MAP[type] ?? type, occurrenceCount: entry.occurrences, affectedStudentCount: entry.enrollmentIds.size, percentage: enrollments.length > 0 ? Math.round((entry.enrollmentIds.size / enrollments.length) * 100) : 0 }))
+      .sort((a, b) => b.affectedStudentCount - a.affectedStudentCount)
       .slice(0, 5);
 
     return {
@@ -1235,11 +1254,15 @@ export class ClassesService {
       studentCount,
       currentCourse,
       completionRate,
+      averageProgress,
+      medianProgress,
+      zeroProgressCount,
       submissionRate,
       assessmentParticipationRate,
       pendingReviewCount: pendingSubmissions,
       atRiskStudentCount,
       lastActivityAt: lastActivityRow?.updatedAt?.toISOString() ?? null,
+      dataSufficient,
       stages,
       pronunciationClusters,
     };
@@ -1484,7 +1507,9 @@ export class ClassesService {
       const averageScore = scores.length > 0 ? Math.round((scores.reduce((sum, s) => sum + s, 0) / scores.length) * 10) / 10 : null;
       const midIdx = Math.floor(scores.length / 2);
       const medianScore = scores.length > 0 && scores[midIdx] !== undefined ? Math.round(scores[midIdx] * 10) / 10 : null;
+      const zeroScoreCount = scores.filter((s) => s === 0).length;
       const latestSession = group.sessions[0];
+      const dataSufficient = completedCount >= 2;
 
       return {
         sessionId: latestSession?.id ?? "",
@@ -1494,7 +1519,9 @@ export class ClassesService {
         completedCount,
         averageScore,
         medianScore,
+        zeroScoreCount,
         totalTargetCount: activeEnrollmentCount,
+        dataSufficient,
         createdAt: latestSession?.createdAt?.toISOString() ?? new Date().toISOString(),
       };
     });

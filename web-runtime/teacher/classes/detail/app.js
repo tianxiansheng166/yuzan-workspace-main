@@ -247,12 +247,35 @@
       if (courseH2) courseH2.innerHTML = `${detail.currentCourse.title || '—'} <span>进行中</span>`;
     }
 
-    // 更新整体进度
-    const progressStr = `${detail.overallProgress ?? 0}`;
+    // 更新整体进度（dashboard: completionRate 0-100; classDetail: overallProgress 0-100）
+    const completionRate = detail.completionRate ?? detail.overallProgress ?? 0;
+    const progressStr = `${completionRate}`;
     const progressB = document.querySelector('.metric.progress strong');
     if (progressB) progressB.textContent = progressStr + '%';
     const progressBar = document.querySelector('.metric.progress i b');
     if (progressBar) progressBar.style.width = progressStr + '%';
+
+    // 显示平均/中位数进度和零进度人数（Section IX）
+    const progressDetail = document.querySelector('.metric.progress small');
+    if (progressDetail) {
+      const parts = [];
+      if (detail.averageProgress != null) parts.push(`平均${detail.averageProgress}%`);
+      if (detail.medianProgress != null) parts.push(`中位数${detail.medianProgress}%`);
+      if (detail.zeroProgressCount > 0) parts.push(`${detail.zeroProgressCount}人零进度`);
+      if (parts.length > 0) progressDetail.textContent = parts.join(' · ');
+    }
+
+    // 数据不足标记
+    if (detail.dataSufficient === false) {
+      const headEl = document.querySelector('.class-head');
+      if (headEl && !headEl.querySelector('.data-insufficient-tip')) {
+        const tip = document.createElement('div');
+        tip.className = 'data-insufficient-tip';
+        tip.textContent = '当前数据不足，以下指标仅供参考';
+        tip.style.cssText = 'margin:8px 3px;padding:8px 12px;border:1px solid #f0c89b;border-radius:6px;background:#fff5e9;color:#e96e12;font-size:11px';
+        headEl.appendChild(tip);
+      }
+    }
 
     // 更新待批改
     const pendingEl = document.querySelector('.class-title [data-pending]');
@@ -268,7 +291,7 @@
         const strong = stageCards[i].querySelector('strong');
         if (strong) strong.textContent = stage.title;
         const ps = stageCards[i].querySelectorAll('p');
-        if (ps[0]) ps[0].textContent = `完成率 ${Math.round((stage.completionRate ?? 0) * 100)}%`;
+        if (ps[0]) ps[0].textContent = `完成率 ${stage.completionRate ?? 0}%`;
         if (ps[1]) ps[1].textContent = `${stage.participantCount ?? 0} / ${stage.totalCount ?? 0}`;
       });
     }
@@ -276,10 +299,10 @@
     // 更新概览指标：任务完成率、测评参与率、风险学生数
     const overviewMetrics = document.querySelectorAll('.overview-card .overview-metric');
     if (detail.submissionRate !== undefined && overviewMetrics[1]) {
-      overviewMetrics[1].querySelector('strong').textContent = `${Math.round(detail.submissionRate * 100)}%`;
+      overviewMetrics[1].querySelector('strong').textContent = `${detail.submissionRate}%`;
     }
     if (detail.assessmentParticipationRate !== undefined && overviewMetrics[3]) {
-      overviewMetrics[3].querySelector('strong').textContent = `${Math.round(detail.assessmentParticipationRate * 100)}%`;
+      overviewMetrics[3].querySelector('strong').textContent = `${detail.assessmentParticipationRate}%`;
     }
     if (detail.atRiskStudentCount !== undefined) {
       const riskEl = document.getElementById('atRiskBadge');
@@ -405,14 +428,16 @@
     list.innerHTML = summaries.map(a => {
       const statusLabel = a.status === 'COMPLETED' ? '已完成' : a.status === 'IN_PROGRESS' ? '进行中' : a.status === 'SCHEDULED' ? '未开始' : a.status || '—';
       const typeLabel = a.type === 'FORMATIVE' ? '形成性' : a.type === 'SUMMATIVE' ? '总结性' : a.type || '—';
+      const insufficient = a.dataSufficient === false ? ' <em style="color:#e96e12;font-style:normal;font-size:10px">数据不足</em>' : '';
+      const zeroInfo = (a.zeroScoreCount ?? 0) > 0 ? ` · ${a.zeroScoreCount}人零分` : '';
       return `<div class="assessment-row">
         <div class="assessment-info">
           <strong>${a.title || '—'}</strong>
           <small>${typeLabel}</small>
         </div>
-        <span class="assessment-status">${statusLabel}</span>
-        <span>${a.completedCount ?? 0} / ${a.totalCount ?? 0}</span>
-        <span>均分 ${a.averageScore != null ? a.averageScore : '—'}</span>
+        <span class="assessment-status">${statusLabel}${insufficient}</span>
+        <span>${a.completedCount ?? 0} / ${a.totalTargetCount ?? a.totalCount ?? 0}</span>
+        <span>均分 ${a.averageScore != null ? a.averageScore : '—'}${zeroInfo}</span>
         <span>中位 ${a.medianScore != null ? a.medianScore : '—'}</span>
       </div>`;
     }).join('');
