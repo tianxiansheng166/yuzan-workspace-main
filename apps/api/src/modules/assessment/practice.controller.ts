@@ -1,6 +1,7 @@
 import { Body, Controller, Delete, Get, Inject, Param, ParseUUIDPipe, Post, Query } from "@nestjs/common";
 import { IsIn, IsOptional, IsString, IsUUID } from "class-validator";
 import { createAuthContext, CurrentPrincipal, CurrentTenant, MembershipRole, RequireRoles, type Principal, type TenantContext } from "../../common/security/index.js";
+import { AssessmentService } from "./assessment.service.js";
 import { PracticeService, type PracticeCatalogQuery } from "./practice.service.js";
 
 export class PracticeCatalogQueryDto implements PracticeCatalogQuery {
@@ -29,11 +30,25 @@ export class CreatePracticeAttemptDto {
 @Controller("schools/:schoolId/practices")
 @RequireRoles(MembershipRole.STUDENT)
 export class PracticeController {
-  constructor(@Inject(PracticeService) private readonly service: PracticeService) {}
+  constructor(
+    @Inject(PracticeService) private readonly service: PracticeService,
+    @Inject(AssessmentService) private readonly assessmentService: AssessmentService,
+  ) {}
 
   @Get()
   list(@Param("schoolId", ParseUUIDPipe) schoolId: string, @Query() query: PracticeCatalogQueryDto, @CurrentTenant() tenant: TenantContext, @CurrentPrincipal() principal: Principal) {
     return this.service.listForStudent(createAuthContext("request-id", principal, tenant), schoolId, query);
+  }
+
+  // Compatibility for the student practice archive.  This static route must
+  // precede `:practiceDefinitionId` so it is not parsed as a UUID.
+  @Get("history")
+  history(@Param("schoolId", ParseUUIDPipe) schoolId: string, @Query("range") range: string | undefined, @CurrentTenant() tenant: TenantContext, @CurrentPrincipal() principal: Principal) {
+    return this.assessmentService.getAssessmentHistory(
+      createAuthContext("request-id", principal, tenant),
+      schoolId,
+      range ? { range: range as "8w" | "6m" | "all" } : {},
+    );
   }
 
   @Get("attempts/:attemptId")

@@ -390,8 +390,8 @@ export class AssessmentService {
   /**
    * Finalize a report only when every current oral recording has an automatic
    * result. This is called from the trusted worker callback path, never from a
-   * student request. A provider outage or a teacher-review requirement keeps
-   * the attempt processing instead of fabricating a score.
+   * student request. A provider outage keeps the attempt processing. A model
+   * result that needs teacher review is reported truthfully with that state.
    */
   async finalizeAutomaticReportFromSpeechJob(schoolId: string, sessionId: string) {
     const session = await this.sessionRepo.findByIdAndSchool(sessionId, schoolId);
@@ -412,17 +412,20 @@ export class AssessmentService {
     const currentJobs = oralItems.map((item) =>
       item.speechJobs.find((job) => job.recordingId === item.recordingId) ?? null,
     );
-    const allAutomaticallyScored = currentJobs.every((job) => job && (job.status === "AUTO_RESULT" || job.status === "FINALIZED"));
-    if (!allAutomaticallyScored) {
+    const allModelScored = currentJobs.every((job) => job && ["AUTO_RESULT", "FINALIZED", "NEEDS_REVIEW"].includes(job.status));
+    if (!allModelScored) {
       if (session.status === "SUBMITTED") await this.sessionRepo.updateStatus(sessionId, "PROCESSING");
       return null;
     }
+
+    const requiresTeacherReview = currentJobs.some((job) => job?.status === "NEEDS_REVIEW");
 
     if (session.status === "SUBMITTED") await this.sessionRepo.updateStatus(sessionId, "PROCESSING");
     return this.createReportFromScoredItems({
       schoolId,
       sessionId,
       items,
+      requiresTeacherReview,
     });
   }
 
@@ -434,8 +437,9 @@ export class AssessmentService {
       scoredScore: number | null;
     }>;
     generatedByUserId?: string;
+    requiresTeacherReview?: boolean;
   }) {
-    const { schoolId, sessionId, items, generatedByUserId } = input;
+    const { schoolId, sessionId, items, generatedByUserId, requiresTeacherReview = false } = input;
     const scoredItems = items.filter((i) => i.scoredScore != null);
 
     const readingItems = scoredItems.filter((i) => ["READING", "SPEECH", "LISTEN_REPEAT", "READ_ALOUD"].includes(i.itemType));
@@ -464,7 +468,8 @@ export class AssessmentService {
       summary: {
         totalItems: items.length,
         answeredItems: scoredItems.length,
-        scoringState: "AUTO_RESULT",
+        scoringState: requiresTeacherReview ? "NEEDS_REVIEW" : "AUTO_RESULT",
+        requiresTeacherReview,
         generatedAt: new Date().toISOString(),
       },
     };

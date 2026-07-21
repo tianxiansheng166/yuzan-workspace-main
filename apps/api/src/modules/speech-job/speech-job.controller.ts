@@ -123,11 +123,11 @@ export class SpeechJobController {
 
   /**
    * GET /schools/:schoolId/speech-jobs/by-item/:assessmentItemId
-   * List all SpeechJobs for a given assessment item.
-   * Teacher must be assigned to the class that owns the assessment session.
+   * List all SpeechJobs for a given assessment item. Students may read only
+   * their own attempt; teachers remain limited to their assigned class.
    */
   @Get("by-item/:assessmentItemId")
-  @RequireRoles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
+  @RequireRoles(MembershipRole.STUDENT, MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
   async listSpeechJobsByItem(
     @Param("schoolId", ParseUUIDPipe) schoolId: string,
     @Param("assessmentItemId", ParseUUIDPipe) assessmentItemId: string,
@@ -137,10 +137,17 @@ export class SpeechJobController {
     // Verify the assessmentItem belongs to a session in this school.
     const item = await this.prisma.assessmentItem.findFirst({
       where: { id: assessmentItemId, session: { schoolId } },
-      select: { session: { select: { classId: true } } },
+      select: { session: { select: { classId: true, enrollment: { select: { userId: true } } } } },
     });
     if (!item) {
       throw new SpeechJobNotFoundException("测评题目不存在或不属于当前学校");
+    }
+
+    if (principal.roles.includes(MembershipRole.STUDENT)) {
+      if (item.session.enrollment?.userId !== principal.userId) {
+        throw new SpeechJobNotFoundException();
+      }
+      return this.service.listSpeechJobsByItem(assessmentItemId);
     }
 
     // Teacher must be assigned to the class (admin bypasses).
