@@ -166,9 +166,24 @@ export class AiLessonPlanningController {
 
   // ─── Workflow status ──────────────────────────────────
 
+  /** Canonical path — descriptive, versioned per-workflow. */
   @Get("workflows/lesson-planner/status")
   @RequireRoles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
   async getWorkflowStatus(
+    @Param("schoolId", ParseUUIDPipe) schoolId: string,
+    @CurrentTenant() tenant: TenantContext,
+    @CurrentPrincipal() principal: Principal,
+  ) {
+    return this.service.getWorkflowStatus(
+      createAuthContext("request-id", principal, tenant),
+      schoolId,
+    );
+  }
+
+  /** Convenience alias — matches the frontend api-client path. */
+  @Get("workflow-status")
+  @RequireRoles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
+  async getWorkflowStatusAlias(
     @Param("schoolId", ParseUUIDPipe) schoolId: string,
     @CurrentTenant() tenant: TenantContext,
     @CurrentPrincipal() principal: Principal,
