@@ -1270,10 +1270,10 @@ export class ClassesService {
         where: { schoolId, enrollmentId: { in: enrollmentIds }, deletedAt: null },
         select: { enrollmentId: true, assignmentId: true, status: true },
       }),
-      // Latest assessment session per enrollment
+      // Latest assessment session per enrollment (score computed from items)
       this.prisma.assessmentSession.findMany({
         where: { schoolId, classId, enrollmentId: { in: enrollmentIds } },
-        select: { enrollmentId: true, status: true, score: true, createdAt: true },
+        select: { enrollmentId: true, status: true, createdAt: true, items: { select: { scoredScore: true, maxScore: true } } },
         orderBy: { createdAt: "desc" },
       }),
       // Recording count per enrollment
@@ -1318,11 +1318,13 @@ export class ClassesService {
     });
     const totalAssignmentIds = new Set(totalAssignments.map((a) => a.id));
 
-    // Latest assessment per enrollment
+    // Latest assessment per enrollment (score computed from AssessmentItem.scoredScore)
     const latestAssessmentMap = new Map<string, { status: string; score: number | null }>();
     for (const a of assessmentRows) {
       if (!latestAssessmentMap.has(a.enrollmentId)) {
-        latestAssessmentMap.set(a.enrollmentId, { status: a.status, score: a.score });
+        const scored = a.items.filter((i) => i.scoredScore !== null);
+        const avgScore = scored.length > 0 ? Math.round((scored.reduce((sum, i) => sum + (i.scoredScore ?? 0), 0) / scored.length) * 10) / 10 : null;
+        latestAssessmentMap.set(a.enrollmentId, { status: a.status, score: avgScore });
       }
     }
 
@@ -1340,7 +1342,7 @@ export class ClassesService {
       const errors = (result as { pronunciationErrors?: { type: string }[] }).pronunciationErrors ?? [];
       const eid = (job as { submission?: { enrollmentId?: string } }).submission?.enrollmentId ?? '';
       if (!eid || errors.length === 0) continue;
-      if (!issueMap.has(eid)) {
+      if (!issueMap.has(eid) && errors[0]) {
         issueMap.set(eid, ERROR_LABELS[errors[0].type] ?? errors[0].type);
       }
     }
@@ -1447,7 +1449,7 @@ export class ClassesService {
 
     const sessions = await this.prisma.assessmentSession.findMany({
       where: { schoolId, classId },
-      select: { id: true, type: true, status: true, createdAt: true, enrollmentId: true, score: true },
+      select: { id: true, type: true, status: true, createdAt: true, enrollmentId: true, items: { select: { scoredScore: true, maxScore: true } } },
       orderBy: { createdAt: "desc" },
       take: 50,
     });
@@ -1461,33 +1463,39 @@ export class ClassesService {
       where: { schoolId, classId, status: "ACTIVE", role: "STUDENT" },
     });
 
-    // Group sessions by type for class-level summary
+    // Group sessions by type for class-level summary (score computed from items)
     const typeGroups = new Map<string, { sessions: typeof sessions; scores: number[] }>();
     for (const s of sessions) {
       const key = s.type;
       if (!typeGroups.has(key)) typeGroups.set(key, { sessions: [], scores: [] });
       const group = typeGroups.get(key)!;
       group.sessions.push(s);
-      if (s.score !== null) group.scores.push(s.score);
+      // Compute per-session average score from items
+      const scoredItems = s.items.filter((i) => i.scoredScore !== null);
+      if (scoredItems.length > 0) {
+        const avg = scoredItems.reduce((sum, i) => sum + (i.scoredScore ?? 0), 0) / scoredItems.length;
+        group.scores.push(Math.round(avg * 10) / 10);
+      }
     }
 
     return Array.from(typeGroups.entries()).map(([type, group]) => {
       const completedCount = group.sessions.filter((s) => s.status === "COMPLETED").length;
       const scores = group.scores.sort((a, b) => a - b);
       const averageScore = scores.length > 0 ? Math.round((scores.reduce((sum, s) => sum + s, 0) / scores.length) * 10) / 10 : null;
-      const medianScore = scores.length > 0 ? Math.round((scores[Math.floor(scores.length / 2)]) * 10) / 10 : null;
+      const midIdx = Math.floor(scores.length / 2);
+      const medianScore = scores.length > 0 && scores[midIdx] !== undefined ? Math.round(scores[midIdx] * 10) / 10 : null;
       const latestSession = group.sessions[0];
 
       return {
-        sessionId: latestSession.id,
+        sessionId: latestSession?.id ?? "",
         title: null,
         type,
-        status: completedCount > 0 ? "COMPLETED" : latestSession.status,
+        status: completedCount > 0 ? "COMPLETED" : (latestSession?.status ?? "UNKNOWN"),
         completedCount,
         averageScore,
         medianScore,
         totalTargetCount: activeEnrollmentCount,
-        createdAt: latestSession.createdAt.toISOString(),
+        createdAt: latestSession?.createdAt?.toISOString() ?? new Date().toISOString(),
       };
     });
   }
