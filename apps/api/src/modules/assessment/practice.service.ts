@@ -107,7 +107,11 @@ export class PracticeService {
       await tx.assessmentItem.createMany({
         data: snapshot.map(({ section, item }, index) => ({
           sessionId: attempt.id,
-          questionId: item.questionId,
+          // PracticeItemRef preserves the authored question reference, while
+          // AssessmentItem is a self-contained execution snapshot. Do not
+          // attach an unscoped legacy Question FK here: the copied config is
+          // the immutable runtime source and remains valid after content moves.
+          questionId: null,
           prompt: item.config as Prisma.InputJsonValue,
           itemConfig: item.config as Prisma.InputJsonValue,
           itemType: item.itemType,
