@@ -224,6 +224,8 @@
     const version = detail.courseVersion || {};
     const completion = detail.courseCompletion || { progressPercent: 0 };
     const submission = detail.existingSubmission;
+    const courseSubmitted = submission && ["SUBMITTED", "PROCESSING", "NEEDS_REVIEW", "REVIEWED", "ACCEPTED"].includes(submission.status);
+    const courseActionLabel = !submission ? "开始课程" : completion.progressPercent < 100 ? "继续学习" : courseSubmitted ? "查看完成记录" : "提交课程";
     $("#detailStatus").textContent =
       statusLabel[
         state.courses.find(
@@ -249,7 +251,7 @@
       )
       .join("");
     $("#detailContent").innerHTML =
-      `<section class="detail-hero"><img src="${escapeHtml(version.coverAsset || "/assets/student-course-header.jpg")}" alt=""><div class="detail-intro"><p class="eyebrow">${escapeHtml(version.capabilityTheme || "综合课程")}</p><h1 id="detailTitle">${escapeHtml(version.title || detail.assignment?.title)}</h1><p>${escapeHtml(version.description || "")}</p><div class="detail-facts"><span>${escapeHtml(version.gradeBand || "学段待定")}</span><span>${escapeHtml(version.difficulty || "难度待定")}</span><span>约 ${Number(version.estimatedMinutes) || 0} 分钟</span><span>${activityCount} 个活动</span><span>${detail.practiceReferences?.length || 0} 个课程练习</span></div></div></section><div class="detail-body"><div><section><h2>学习目标</h2>${objectives.length ? `<ol class="objective-list">${objectives.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ol>` : "<p>课程发布者暂未填写学习目标。</p>"}</section><section><h2>章节与活动</h2>${outlines}</section></div><aside class="completion-sheet"><p class="eyebrow">完成条件</p><h2>${completion.progressPercent}% 学习完成</h2><p class="completion-progress">${completion.completedRequiredCount || 0} / ${completion.requiredActivityCount || activityCount} 个必修活动 · ${completion.completedPracticeCount || 0} / ${completion.requiredPracticeCount || 0} 个必做练习</p><ul><li>完成全部必修 Activity</li><li>提交全部必做 Practice</li><li>口语评分可在完成后继续处理</li><li>设备要求：${version.deviceRequirements?.microphone ? "需要麦克风，" : "无需麦克风，"}需要音频播放</li></ul><button type="button" class="primary-button" id="startCourse">${submission ? (completion.progressPercent === 100 ? "查看完成记录" : "继续学习") : "开始课程"}</button></aside></div>`;
+      `<section class="detail-hero"><img src="${escapeHtml(version.coverAsset || "/assets/student-course-header.jpg")}" alt=""><div class="detail-intro"><p class="eyebrow">${escapeHtml(version.capabilityTheme || "综合课程")}</p><h1 id="detailTitle">${escapeHtml(version.title || detail.assignment?.title)}</h1><p>${escapeHtml(version.description || "")}</p><div class="detail-facts"><span>${escapeHtml(version.gradeBand || "学段待定")}</span><span>${escapeHtml(version.difficulty || "难度待定")}</span><span>约 ${Number(version.estimatedMinutes) || 0} 分钟</span><span>${activityCount} 个活动</span><span>${detail.practiceReferences?.length || 0} 个课程练习</span></div></div></section><div class="detail-body"><div><section><h2>学习目标</h2>${objectives.length ? `<ol class="objective-list">${objectives.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ol>` : "<p>课程发布者暂未填写学习目标。</p>"}</section><section><h2>章节与活动</h2>${outlines}</section></div><aside class="completion-sheet"><p class="eyebrow">完成条件</p><h2>${completion.progressPercent}% 学习完成</h2><p class="completion-progress">${completion.completedRequiredCount || 0} / ${completion.requiredActivityCount || activityCount} 个必修活动 · ${completion.completedPracticeCount || 0} / ${completion.requiredPracticeCount || 0} 个必做练习</p><ul><li>完成全部必修 Activity</li><li>提交全部必做 Practice</li><li>口语评分可在完成后继续处理</li><li>学习达标度：${escapeHtml(completion.attainmentStatus || "PENDING")}</li><li>设备要求：${version.deviceRequirements?.microphone ? "需要麦克风，" : "无需麦克风，"}需要音频播放</li></ul><button type="button" class="primary-button" id="startCourse">${courseActionLabel}</button></aside></div>`;
     $("#startCourse").addEventListener("click", startCourse);
   }
   async function startCourse() {
@@ -258,6 +260,21 @@
     button.textContent = "正在准备课程…";
     try {
       const assignmentId = state.detail.assignment.id;
+      const currentSubmission = state.detail.existingSubmission;
+      if (currentSubmission && state.detail.courseCompletion.progressPercent === 100) {
+        if (["SUBMITTED", "PROCESSING", "NEEDS_REVIEW", "REVIEWED", "ACCEPTED"].includes(currentSubmission.status)) {
+          button.disabled = false;
+          button.textContent = "查看完成记录";
+          toast(`学习完成度 100%，达标状态 ${state.detail.courseCompletion.attainmentStatus}`);
+          return;
+        }
+        const submitted = await YuzanApi.submitStudentCourse(assignmentId, currentSubmission.id, currentSubmission.revision);
+        state.detail.existingSubmission = submitted.submission;
+        state.detail.courseCompletion = submitted.courseCompletion;
+        renderDetail(state.detail);
+        toast(`课程已提交，达标状态 ${submitted.courseCompletion.attainmentStatus}`);
+        return;
+      }
       const result =
         await YuzanApi.createOrResumeCourseSubmission(assignmentId);
       const submission = result.submission;

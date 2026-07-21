@@ -41,6 +41,11 @@ export class StudentCoursesController {
     return this.service.linkRecording(createAuthContext("request-id", principal, tenant), schoolId, assignmentId, submissionId, activityId, recordingId);
   }
 
+  @Post(":assignmentId/submissions/:submissionId/activities/:activityId/practice-attempts/:attemptId/complete")
+  completePractice(@Param("schoolId", ParseUUIDPipe) schoolId: string, @Param("assignmentId", ParseUUIDPipe) assignmentId: string, @Param("submissionId", ParseUUIDPipe) submissionId: string, @Param("activityId", ParseUUIDPipe) activityId: string, @Param("attemptId", ParseUUIDPipe) attemptId: string, @CurrentTenant() tenant: TenantContext, @CurrentPrincipal() principal: Principal) {
+    return this.service.completePractice(createAuthContext("request-id", principal, tenant), schoolId, assignmentId, submissionId, activityId, attemptId);
+  }
+
   @Post(":assignmentId/submissions/:submissionId/submit")
   submit(@Param("schoolId", ParseUUIDPipe) schoolId: string, @Param("assignmentId", ParseUUIDPipe) assignmentId: string, @Param("submissionId", ParseUUIDPipe) submissionId: string, @Body() body: SubmitCourseDto, @CurrentTenant() tenant: TenantContext, @CurrentPrincipal() principal: Principal) {
     return this.service.submitCourse(createAuthContext("request-id", principal, tenant), schoolId, assignmentId, submissionId, body.revision);

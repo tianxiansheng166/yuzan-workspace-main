@@ -193,6 +193,39 @@ export class StudentCoursesService {
     return { attempt, recordingId, synced: true, courseCompletion: await this.completionFor(context.enrollment.id, assignmentId, context.assignment.courseVersionId, submissionId) };
   }
 
+  async completePractice(auth: AuthContext, schoolId: string, assignmentId: string, submissionId: string, activityId: string, attemptId: string) {
+    const context = await this.activityContext(auth, schoolId, assignmentId, submissionId, activityId);
+    const practiceReference = context.activity.coursePractice;
+    if (!practiceReference) throw new UnprocessableEntityException("当前活动没有关联课程练习");
+    const practiceAttempt = await this.prisma.assessmentSession.findFirst({
+      where: {
+        id: attemptId,
+        schoolId,
+        enrollmentId: context.enrollment.id,
+        courseSubmissionId: submissionId,
+        courseActivityId: activityId,
+        practiceDefinitionId: practiceReference.practiceDefinitionId,
+        status: { in: [...FINISHED_PRACTICE_STATUSES] },
+      },
+      select: { id: true, status: true },
+    });
+    if (!practiceAttempt) throw new ConflictException("课程练习尚未提交，不能完成当前活动");
+    const result = await this.prisma.$transaction(async (tx) => {
+      const attempt = await tx.activityAttempt.upsert({
+        where: { submissionId_activityId: { submissionId, activityId } },
+        update: { kind: "COURSE_PRACTICE", value: { practiceAttemptId: attemptId, status: practiceAttempt.status } },
+        create: { schoolId, submissionId, activityId, kind: "COURSE_PRACTICE", value: { practiceAttemptId: attemptId, status: practiceAttempt.status } },
+      });
+      const progress = await tx.activityProgress.upsert({
+        where: { activityId_enrollmentId: { activityId, enrollmentId: context.enrollment.id } },
+        update: { position: 1, completed: true, revision: { increment: 1 } },
+        create: { schoolId, activityId, enrollmentId: context.enrollment.id, position: 1, completed: true },
+      });
+      return { attempt, progress };
+    });
+    return { ...result, practiceAttemptId: attemptId, courseCompletion: await this.completionFor(context.enrollment.id, assignmentId, context.assignment.courseVersionId, submissionId) };
+  }
+
   async submitCourse(auth: AuthContext, schoolId: string, assignmentId: string, submissionId: string, expectedRevision: number) {
     const enrollment = await this.studentEnrollment(auth, schoolId);
     const assignment = await this.visibleAssignment(schoolId, assignmentId, enrollment);

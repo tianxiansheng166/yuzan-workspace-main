@@ -1837,6 +1837,27 @@ paths:
         "201": { description: Recording linked and progress updated }
         "404": { $ref: "#/components/responses/NotFound" }
         "409": { $ref: "#/components/responses/Conflict" }
+  /schools/{schoolId}/student/courses/{assignmentId}/submissions/{submissionId}/activities/{activityId}/practice-attempts/{attemptId}/complete:
+    post:
+      summary: 校验已提交的课程 Practice Attempt 并完成 Activity
+      tags: [StudentCourses]
+      operationId: completeCoursePracticeActivity
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/AssignmentId"
+        - $ref: "#/components/parameters/SubmissionId"
+        - $ref: "#/components/parameters/ActivityId"
+        - {
+            in: path,
+            name: attemptId,
+            required: true,
+            schema: { type: string, format: uuid },
+          }
+      responses:
+        "201": { description: Practice Attempt linked and ActivityProgress completed }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "409": { $ref: "#/components/responses/Conflict" }
   /schools/{schoolId}/student/courses/{assignmentId}/submissions/{submissionId}/submit:
     post:
       summary: 提交已完成的学生课程

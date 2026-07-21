@@ -9,6 +9,8 @@ import type { Prisma } from "@yuzan/database";
 import { PrismaService } from "../../shared/database/index.js";
 import type { AuthContext } from "../../common/security/auth.types.js";
 
+type CoursePracticeContext = { assignmentId?: string; submissionId?: string; activityId?: string };
+
 const OPEN_ATTEMPT_STATUSES = ["CREATED", "IN_PROGRESS"] as const;
 
 @Injectable()
@@ -32,7 +34,7 @@ export class PracticeService {
     });
 
     const attempts = await this.prisma.assessmentSession.findMany({
-      where: { schoolId, enrollmentId: enrollment.id, status: { in: [...OPEN_ATTEMPT_STATUSES] } },
+      where: { schoolId, enrollmentId: enrollment.id, courseSubmissionId: null, status: { in: [...OPEN_ATTEMPT_STATUSES] } },
       select: { id: true, practiceDefinitionId: true, deliveryId: true, status: true, updatedAt: true },
     });
     const attemptByDelivery = new Map(attempts.filter((a) => a.deliveryId).map((a) => [a.deliveryId!, a]));
@@ -45,7 +47,7 @@ export class PracticeService {
     const delivery = await this.findVisibleDelivery(schoolId, definitionId, enrollment.classId, auth.principal.userId);
     if (!delivery) throw new NotFoundException("练习不存在或暂未向你开放");
     const attempt = await this.prisma.assessmentSession.findFirst({
-      where: { schoolId, enrollmentId: enrollment.id, deliveryId: delivery.id, status: { in: [...OPEN_ATTEMPT_STATUSES] } },
+      where: { schoolId, enrollmentId: enrollment.id, deliveryId: delivery.id, courseSubmissionId: null, status: { in: [...OPEN_ATTEMPT_STATUSES] } },
       select: { id: true, status: true, updatedAt: true },
       orderBy: { updatedAt: "desc" },
     });
@@ -63,7 +65,7 @@ export class PracticeService {
     };
   }
 
-  async createOrResume(auth: AuthContext, schoolId: string, definitionId: string) {
+  async createOrResume(auth: AuthContext, schoolId: string, definitionId: string, context: CoursePracticeContext = {}) {
     this.assertStudentTenant(auth, schoolId);
     const enrollment = await this.activeEnrollment(auth, schoolId);
     const result = await this.prisma.$transaction(async (tx) => {
@@ -81,8 +83,17 @@ export class PracticeService {
       });
       if (!delivery) throw new NotFoundException("没有可用的练习投放");
 
+      const courseContext = await this.validateCourseContext(tx, schoolId, enrollment.id, definitionId, context);
+
       const existing = await tx.assessmentSession.findFirst({
-        where: { schoolId, enrollmentId: enrollment.id, deliveryId: delivery.id, status: { in: [...OPEN_ATTEMPT_STATUSES] } },
+        where: {
+          schoolId,
+          enrollmentId: enrollment.id,
+          deliveryId: delivery.id,
+          courseActivityId: courseContext?.activityId ?? null,
+          courseSubmissionId: courseContext?.submissionId ?? null,
+          status: { in: [...OPEN_ATTEMPT_STATUSES] },
+        },
         orderBy: { updatedAt: "desc" },
       });
       if (existing) return { attempt: existing, resumed: true };
@@ -102,6 +113,7 @@ export class PracticeService {
           practiceDefinitionId: definitionId,
           practiceVersionId: delivery.practiceVersionId,
           deliveryId: delivery.id,
+          ...(courseContext ? { courseActivityId: courseContext.activityId, courseSubmissionId: courseContext.submissionId } : {}),
         },
       });
       await tx.assessmentItem.createMany({
@@ -123,7 +135,30 @@ export class PracticeService {
       });
       return { attempt, resumed: false };
     });
-    return { attemptId: result.attempt.id, status: result.attempt.status, resumed: result.resumed };
+    return {
+      attemptId: result.attempt.id,
+      status: result.attempt.status,
+      resumed: result.resumed,
+      mode: result.attempt.courseSubmissionId ? "COURSE_PRACTICE" : "SELF_PRACTICE",
+      courseContext: result.attempt.courseSubmissionId ? { submissionId: result.attempt.courseSubmissionId, activityId: result.attempt.courseActivityId } : null,
+    };
+  }
+
+  private async validateCourseContext(tx: Prisma.TransactionClient, schoolId: string, enrollmentId: string, definitionId: string, context: CoursePracticeContext) {
+    const values = [context.assignmentId, context.submissionId, context.activityId];
+    if (values.every((value) => !value)) return null;
+    if (values.some((value) => !value)) throw new BadRequestException("课程练习上下文必须同时包含 assignmentId、submissionId 和 activityId");
+    const assignmentId = context.assignmentId!;
+    const submissionId = context.submissionId!;
+    const activityId = context.activityId!;
+    const submission = await tx.submission.findFirst({ where: { id: submissionId, schoolId, assignmentId, enrollmentId, deletedAt: null, status: { in: ["IN_PROGRESS", "PENDING_SYNC"] } }, select: { id: true } });
+    if (!submission) throw new ForbiddenException("课程 Submission 不存在或不属于当前学生");
+    const reference = await tx.courseActivityPractice.findFirst({
+      where: { schoolId, activityId, practiceDefinitionId: definitionId, activity: { lesson: { unit: { courseVersion: { assignments: { some: { id: assignmentId, schoolId } } } } } } },
+      select: { activityId: true },
+    });
+    if (!reference) throw new ForbiddenException("该练习未被当前课程活动引用");
+    return { assignmentId, submissionId, activityId: reference.activityId };
   }
 
   async getAttempt(auth: AuthContext, schoolId: string, attemptId: string) {

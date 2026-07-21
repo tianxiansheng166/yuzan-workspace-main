@@ -1131,6 +1131,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/schools/{schoolId}/student/courses/{assignmentId}/submissions/{submissionId}/activities/{activityId}/practice-attempts/{attemptId}/complete": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** 校验已提交的课程 Practice Attempt 并完成 Activity */
+    post: operations["completeCoursePracticeActivity"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/schools/{schoolId}/student/courses/{assignmentId}/submissions/{submissionId}/submit": {
     parameters: {
       query?: never;
@@ -4586,6 +4603,37 @@ export interface operations {
         };
         content?: never;
       };
+      404: components["responses"]["NotFound"];
+      409: components["responses"]["Conflict"];
+    };
+  };
+  completeCoursePracticeActivity: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 任务 ID */
+        assignmentId: components["parameters"]["AssignmentId"];
+        /** @description 提交 ID */
+        submissionId: components["parameters"]["SubmissionId"];
+        /** @description 学习活动 ID */
+        activityId: components["parameters"]["ActivityId"];
+        attemptId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Practice Attempt linked and ActivityProgress completed */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      403: components["responses"]["Forbidden"];
       404: components["responses"]["NotFound"];
       409: components["responses"]["Conflict"];
     };

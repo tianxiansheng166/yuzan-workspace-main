@@ -777,9 +777,19 @@
     });
   }
   async function submitAssessmentSession(sessionId) {
-    return request(`/schools/${getActiveSchoolId()}/assessments/sessions/${sessionId}/submit`, {
+    const result = await request(`/schools/${getActiveSchoolId()}/assessments/sessions/${sessionId}/submit`, {
       method: 'POST',
     });
+    const contextKey = `yuzan-course-practice-context:${sessionId}`;
+    let courseContext = null;
+    try { courseContext = JSON.parse(localStorage.getItem(contextKey) || 'null'); } catch {}
+    if (courseContext?.assignmentId && courseContext?.submissionId && courseContext?.activityId && courseContext?.returnTo) {
+      await completeCoursePractice(courseContext.assignmentId, courseContext.submissionId, courseContext.activityId, sessionId);
+      localStorage.removeItem(contextKey);
+      location.href = `${courseContext.returnTo}${courseContext.returnTo.includes('?') ? '&' : '?'}practiceAttemptId=${encodeURIComponent(sessionId)}`;
+      return new Promise(() => {});
+    }
+    return result;
   }
 
   /* ── Assessment Reading ── */
@@ -864,8 +874,8 @@
   async function getPractice(practiceDefinitionId) {
     return request(`/schools/${getActiveSchoolId()}/practices/${encodeURIComponent(practiceDefinitionId)}`);
   }
-  async function createOrResumePractice(practiceDefinitionId) {
-    return request(`/schools/${getActiveSchoolId()}/practices/${encodeURIComponent(practiceDefinitionId)}/attempts`, { method: 'POST', body: '{}' });
+  async function createOrResumePractice(practiceDefinitionId, context = {}) {
+    return request(`/schools/${getActiveSchoolId()}/practices/${encodeURIComponent(practiceDefinitionId)}/attempts`, { method: 'POST', body: JSON.stringify(context) });
   }
   async function getPracticeAttempt(attemptId) {
     return request(`/schools/${getActiveSchoolId()}/practices/attempts/${encodeURIComponent(attemptId)}`);
@@ -909,6 +919,10 @@
   async function submitStudentCourse(assignmentId, submissionId, revision) {
     const schoolId = await requireActiveSchoolId();
     return request(`/schools/${schoolId}/student/courses/${encodeURIComponent(assignmentId)}/submissions/${encodeURIComponent(submissionId)}/submit`, { method: 'POST', body: JSON.stringify({ revision }) });
+  }
+  async function completeCoursePractice(assignmentId, submissionId, activityId, attemptId) {
+    const schoolId = await requireActiveSchoolId();
+    return request(`/schools/${schoolId}/student/courses/${encodeURIComponent(assignmentId)}/submissions/${encodeURIComponent(submissionId)}/activities/${encodeURIComponent(activityId)}/practice-attempts/${encodeURIComponent(attemptId)}/complete`, { method: 'POST', body: '{}' });
   }
 
   window.YuzanApi = {
@@ -1078,5 +1092,6 @@
     getStudentActivityNote,
     saveStudentActivityNote,
     submitStudentCourse,
+    completeCoursePractice,
   };
 })();

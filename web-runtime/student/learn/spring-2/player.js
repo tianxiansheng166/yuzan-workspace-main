@@ -64,7 +64,7 @@
     if (activity.practiceReference) {
       target.innerHTML = `<div class="practice-callout"><p class="eyebrow">COURSE_PRACTICE</p><h3>${escapeHtml(activity.practiceReference.title)}</h3><p>使用统一练习执行器完成，结果会关联回当前课程活动。</p></div>`;
       action.innerHTML = '<button type="button" class="primary-button" id="launchPractice">进入课程练习</button>';
-      $('#launchPractice').onclick = () => toast('课程练习连接将在下一阶段启用');
+      $('#launchPractice').onclick = launchPractice;
       return;
     }
     if (activity.type === 'TEXT') target.innerHTML = (content.paragraphs || []).map((paragraph) => `<p class="reading-paragraph">${escapeHtml(paragraph)}</p>`).join('');
@@ -77,6 +77,16 @@
       if (window.YuzanVoiceRecorder) $('#courseRecorder').__voiceRecorder = new window.YuzanVoiceRecorder($('#courseRecorder'));
       $('#completeActivity').textContent = activity.progress?.completed ? '下一个活动' : '上传录音并继续';
     } else target.innerHTML = '<p class="muted">当前活动内容暂不可用。</p>';
+  }
+
+  async function launchPractice() {
+    const button = $('#launchPractice'); button.disabled = true; button.textContent = '正在准备统一练习…';
+    try {
+      const result = await YuzanApi.createOrResumePractice(state.activity.practiceReference.practiceDefinitionId, { assignmentId: state.assignmentId, submissionId: state.submissionId, activityId: state.activity.id });
+      const returnTo = activityUrl(state.activity.id);
+      localStorage.setItem(`yuzan-course-practice-context:${result.attemptId}`, JSON.stringify({ assignmentId: state.assignmentId, submissionId: state.submissionId, activityId: state.activity.id, returnTo }));
+      location.href = `/student/practices/attempts/${encodeURIComponent(result.attemptId)}/prepare/?returnTo=${encodeURIComponent(returnTo)}`;
+    } catch (error) { button.disabled = false; button.textContent = '重试进入课程练习'; toast(error.message || '课程练习准备失败'); }
   }
 
   function answerPayload() {
