@@ -79,6 +79,8 @@ function routeToSpa(pathname) {
   }
   // `/assessment` stays a compatibility route; new entry uses the existing V4 visual language.
   if (pathname === '/student/practices' || pathname === '/student/practices/') return { file: join(root, 'assessment', 'practice-shell.html'), page: 'catalog' };
+  if (pathname === '/student/practices/history' || pathname.startsWith('/student/practices/history/')) return { file: join(root, 'assessment', '_shell.html'), page: 'history' };
+  if (pathname === '/student/practices/recordings' || pathname.startsWith('/student/practices/recordings/')) return { file: join(root, 'assessment', '_shell.html'), page: 'recordings' };
   const practiceAttemptMatch = pathname.match(/^\/student\/practices\/attempts\/([^/]+)(?:\/(.*)|\/?)?$/);
   if (practiceAttemptMatch) {
     const rest = (practiceAttemptMatch[2] || '').replace(/\/+$/, '');

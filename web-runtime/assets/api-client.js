@@ -609,6 +609,9 @@
   async function getRecordingStatus(recordingId) {
     return request(`/schools/${getActiveSchoolId()}/recordings/${recordingId}`);
   }
+  async function listMyAssessmentRecordings() {
+    return request(`/schools/${getActiveSchoolId()}/recordings/mine`);
+  }
   async function getRecordingEvidence(recordingId) {
     return request(`/schools/${getActiveSchoolId()}/recordings/${recordingId}/evidence`);
   }
@@ -1047,6 +1050,7 @@
     getRecordingPartUploadUrl,
     completeRecording,
     getRecordingStatus,
+    listMyAssessmentRecordings,
     getRecordingEvidence,
     initSimpleRecording,
     uploadBlobToPresignedUrl,

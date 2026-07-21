@@ -344,6 +344,51 @@ export class RecordingsService {
     return toRecordingStatusResponse(recording);
   }
 
+  /** Student-facing recording archive. It is scoped by the active enrollment,
+   * so another school's or student's recording can never enter this list. */
+  async listMyAssessmentRecordings(auth: AuthContext, schoolId: string) {
+    if (!this.policy.canReadRecording(auth, schoolId)) {
+      throw new RecordingForbiddenException();
+    }
+
+    const enrollment = await this.prisma.enrollment.findFirst({
+      where: { schoolId, userId: auth.principal.userId, role: "STUDENT", status: "ACTIVE" },
+      select: { id: true },
+    });
+    if (!enrollment) throw new RecordingForbiddenException();
+
+    const items = await this.prisma.assessmentItem.findMany({
+      where: {
+        recordingId: { not: null },
+        session: { schoolId, enrollmentId: enrollment.id },
+      },
+      include: {
+        recording: { select: { id: true, status: true, durationMs: true, mimeType: true, createdAt: true } },
+        session: { select: { id: true, status: true, completedAt: true, practiceDefinitionId: true } },
+        speechJobs: { orderBy: { createdAt: "desc" }, take: 1, select: { status: true, errorCode: true } },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    return items.flatMap((item) => {
+      if (!item.recording) return [];
+      const prompt = item.prompt && typeof item.prompt === "object" ? item.prompt as Record<string, unknown> : {};
+      return [{
+        recordingId: item.recording.id,
+        sessionId: item.session.id,
+        label: typeof prompt.title === "string" ? prompt.title : `第 ${item.sortOrder + 1} 段练习录音`,
+        itemType: item.itemType,
+        recordingStatus: item.recording.status,
+        durationMs: item.recording.durationMs,
+        createdAt: item.recording.createdAt.toISOString(),
+        attemptStatus: item.session.status,
+        completedAt: item.session.completedAt?.toISOString() ?? null,
+        speechStatus: item.speechJobs[0]?.status ?? null,
+        speechErrorCode: item.speechJobs[0]?.errorCode ?? null,
+      }];
+    });
+  }
+
   async getRecordingEvidence(
     auth: AuthContext,
     schoolId: string,

@@ -154,6 +154,7 @@ svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 
 /* Reusable practice entry intentionally inherits V4 surfaces, not a new SaaS card system. */
+.practice-attempt-actions{position:fixed;z-index:20;top:18px;right:24px;display:flex;gap:7px}.practice-attempt-actions a{display:inline-flex;align-items:center;gap:5px;padding:8px 10px;border:1px solid rgba(221,211,195,.95);border-radius:9px;background:rgba(255,253,248,.92);box-shadow:0 6px 16px rgba(55,48,35,.08);color:#365647;font-size:12px;font-weight:700;text-decoration:none}.practice-attempt-actions a:hover{color:var(--red);border-color:#dca99d}@media(max-width:860px){.practice-attempt-actions{top:10px;right:12px}.practice-attempt-actions a{padding:6px 8px;font-size:11px}}
 .practice-catalog .center-board{display:block;max-width:100%}
 .practice-catalog .board-panel{min-height:auto}
 .practice-catalog .task-cards{grid-template-columns:repeat(auto-fit,minmax(250px,1fr));align-items:stretch}

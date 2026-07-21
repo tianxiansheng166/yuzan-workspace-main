@@ -153,7 +153,11 @@ export class AssessmentService {
 
     // Idempotent client retries return the persisted submission instead of a conflict.
     if (session.status === "SUBMITTED" || session.status === "PROCESSING" || session.status === "COMPLETED") {
-      return toAssessmentSessionResponse(session);
+      if (session.status !== "COMPLETED") {
+        await this.finalizeAutomaticReportFromSpeechJob(schoolId, sessionId);
+      }
+      const current = await this.sessionRepo.findByIdAndSchool(sessionId, schoolId);
+      return toAssessmentSessionResponse(current ?? session);
     }
 
     const items = await this.itemRepo.findBySessionId(sessionId);
@@ -179,7 +183,9 @@ export class AssessmentService {
     }
 
     const updated = await this.sessionRepo.updateStatus(sessionId, "SUBMITTED", { submittedAt: new Date() } as Partial<AssessmentSession>);
-    return toAssessmentSessionResponse(updated);
+    await this.finalizeAutomaticReportFromSpeechJob(schoolId, sessionId);
+    const current = await this.sessionRepo.findByIdAndSchool(sessionId, schoolId);
+    return toAssessmentSessionResponse(current ?? updated);
   }
 
   // ─── Reading Assessment ────────────────────────────────
@@ -362,17 +368,78 @@ export class AssessmentService {
       throw new AssessmentConflictException("测评尚未提交，无法生成报告");
     }
 
+    const existingReport = await this.reportRepo.findBySessionId(sessionId);
+    if (existingReport) {
+      return toAssessmentReportResponse(existingReport);
+    }
+
     // Update to PROCESSING
     if (session.status === "SUBMITTED") {
       await this.sessionRepo.updateStatus(sessionId, "PROCESSING");
     }
 
-    // Calculate scores from items
     const items = await this.itemRepo.findBySessionId(sessionId);
+    return this.createReportFromScoredItems({
+      schoolId,
+      sessionId,
+      items,
+      generatedByUserId: auth.principal.userId,
+    });
+  }
+
+  /**
+   * Finalize a report only when every current oral recording has an automatic
+   * result. This is called from the trusted worker callback path, never from a
+   * student request. A provider outage or a teacher-review requirement keeps
+   * the attempt processing instead of fabricating a score.
+   */
+  async finalizeAutomaticReportFromSpeechJob(schoolId: string, sessionId: string) {
+    const session = await this.sessionRepo.findByIdAndSchool(sessionId, schoolId);
+    if (!session || session.status === "COMPLETED" || session.status === "CANCELLED") return null;
+    if (session.status !== "SUBMITTED" && session.status !== "PROCESSING") return null;
+
+    const existingReport = await this.reportRepo.findBySessionId(sessionId);
+    if (existingReport) return toAssessmentReportResponse(existingReport);
+
+    const items = await this.prisma.assessmentItem.findMany({
+      where: { sessionId },
+      include: { speechJobs: { orderBy: { createdAt: "desc" } } },
+      orderBy: { sortOrder: "asc" },
+    });
+    const oralItems = items.filter((item) => ["READING", "SPEECH", "LISTEN_REPEAT", "READ_ALOUD"].includes(item.itemType));
+    if (!oralItems.length) return null;
+
+    const currentJobs = oralItems.map((item) =>
+      item.speechJobs.find((job) => job.recordingId === item.recordingId) ?? null,
+    );
+    const allAutomaticallyScored = currentJobs.every((job) => job && (job.status === "AUTO_RESULT" || job.status === "FINALIZED"));
+    if (!allAutomaticallyScored) {
+      if (session.status === "SUBMITTED") await this.sessionRepo.updateStatus(sessionId, "PROCESSING");
+      return null;
+    }
+
+    if (session.status === "SUBMITTED") await this.sessionRepo.updateStatus(sessionId, "PROCESSING");
+    return this.createReportFromScoredItems({
+      schoolId,
+      sessionId,
+      items,
+    });
+  }
+
+  private async createReportFromScoredItems(input: {
+    schoolId: string;
+    sessionId: string;
+    items: Array<{
+      itemType: string;
+      scoredScore: number | null;
+    }>;
+    generatedByUserId?: string;
+  }) {
+    const { schoolId, sessionId, items, generatedByUserId } = input;
     const scoredItems = items.filter((i) => i.scoredScore != null);
 
-    const readingItems = scoredItems.filter((i) => i.itemType === "READING" || i.itemType === "SPEECH");
-    const writtenItems = scoredItems.filter((i) => i.itemType === "WRITTEN" || i.itemType === "CHOICE" || i.itemType === "FILL_BLANK");
+    const readingItems = scoredItems.filter((i) => ["READING", "SPEECH", "LISTEN_REPEAT", "READ_ALOUD"].includes(i.itemType));
+    const writtenItems = scoredItems.filter((i) => ["WRITTEN", "CHOICE", "FILL_BLANK", "SINGLE_CHOICE", "MULTIPLE_CHOICE", "SHORT_ANSWER", "LISTEN_RETELL"].includes(i.itemType));
 
     const readingScore = readingItems.length > 0
       ? Math.round((readingItems.reduce((s, i) => s + (i.scoredScore ?? 0), 0) / readingItems.length) * 10) / 10
@@ -393,14 +460,14 @@ export class AssessmentService {
       ...(readingScore !== null ? { readingScore } : {}),
       ...(writtenScore !== null ? { writtenScore } : {}),
       dataCompleteness,
-      generatedByUserId: auth.principal.userId,
+      ...(generatedByUserId ? { generatedByUserId } : {}),
       summary: {
         totalItems: items.length,
         answeredItems: scoredItems.length,
+        scoringState: "AUTO_RESULT",
         generatedAt: new Date().toISOString(),
       },
     };
-
     const report = await this.reportRepo.create(reportData);
 
     // Update session to COMPLETED

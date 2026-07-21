@@ -14,6 +14,7 @@ import { Public } from "../../common/security/public.decorator.js";
 import { PrismaService } from "../../shared/database/prisma.service.js";
 import type { StoragePort } from "../../shared/storage/storage.port.js";
 import { STORAGE_PORT } from "../../shared/storage/storage.port.js";
+import { AssessmentService } from "../assessment/assessment.service.js";
 
 /**
  * Internal API controller for Worker callbacks.
@@ -33,6 +34,7 @@ export class InternalController {
     private readonly prisma: PrismaService,
     @Inject(STORAGE_PORT)
     private readonly storage: StoragePort,
+    private readonly assessmentService: AssessmentService,
     config: ConfigService,
   ) {
     this.internalKey = config.get<string>("API_INTERNAL_KEY") ?? "";
@@ -118,7 +120,16 @@ export class InternalController {
         autoResult: body.autoResult as any,
         scoredScore: body.scoredScore,
       },
+      include: { session: { select: { id: true, schoolId: true } } },
     });
+
+    // A report is created only after every oral item in this submitted attempt
+    // has a real automatic result. Failed or review-required jobs deliberately
+    // leave the attempt in processing; no placeholder score is produced.
+    await this.assessmentService.finalizeAutomaticReportFromSpeechJob(
+      updated.session.schoolId,
+      updated.session.id,
+    );
 
     return { id: updated.id, scoredScore: updated.scoredScore };
   }

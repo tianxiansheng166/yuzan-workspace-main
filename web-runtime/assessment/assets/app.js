@@ -53,8 +53,8 @@
     submit: SESSION_ID ? `${attemptBase}/submit/` : `${base}/`,
     processing: SESSION_ID ? `${attemptBase}/processing/` : `${base}/`,
     report: SESSION_ID ? `${attemptBase}/report/` : `${base}/`,
-    recordings: `${base}/recordings/`,
-    history: `${base}/history/`
+    recordings: isPracticeAttempt ? '/student/practices/recordings/' : `${base}/recordings/`,
+    history: isPracticeAttempt ? '/student/practices/history/' : `${base}/history/`
   };
 
   // ── 本地草稿存储（仅用于断网草稿，不用于伪造成功） ──
@@ -82,6 +82,8 @@
     apiWrittenItems: [],
     apiReport: null,
     apiSpeechJob: null,
+    apiSpeechJobs: [],
+    apiRecordings: [],
     apiRecordingId: null,
     apiSpeechJobId: null,
     // ── 真实录音 Blob（仅本机临时） ──
@@ -185,7 +187,8 @@
   function shell(content, opts={}) {
     const pageClass = opts.pageClass || '';
     const demoBanner = demoMode ? `<div class="demo-banner" style="background:#fff0cf;color:#a56608;padding:8px 16px;font-size:13px;border-bottom:1px solid #d89b25;text-align:center">⚠ 演示模式 · 当前使用本地示例数据，不会写入后端</div>` : '';
-    return `${demoBanner}<div class="shell ${pageClass}">${content}</div>`;
+    const practiceActions = isPracticeAttempt ? `<nav class="practice-attempt-actions" aria-label="练习档案"><a href="${routes.report}">${icon('file')} 本次报告</a><a href="${routes.history}">${icon('chart')} 历史记录</a></nav>` : '';
+    return `${demoBanner}<div class="shell ${pageClass}">${practiceActions}${content}</div>`;
   }
 
   const statChip = (iconName,label,value,sub,color='') => `<div class="stat"><div class="icon ${color}">${icon(iconName)}</div><b>${value}</b><span>${label} · ${sub}</span></div>`;
@@ -498,12 +501,14 @@
     if (appState._loadingProcessing) return renderLoading('正在加载处理状态…');
 
     const session = appState.apiSession;
-    const speechJob = appState.apiSpeechJob;
+    const speechJobs = appState.apiSpeechJobs?.length ? appState.apiSpeechJobs : (appState.apiSpeechJob ? [appState.apiSpeechJob] : []);
+    const speechJob = speechJobs[0] || null;
     const items = appState.apiItems || [];
-    const readingItems = items.filter(i => i.itemType === 'READING' || i.itemType === 'SPEECH');
+    const readingItems = items.filter(isOralItem);
 
     // 真实 SpeechJob 状态映射
-    const jobStatus = speechJob?.status;
+    const jobStatus = speechJobs.some(job => job.status === 'FAILED') ? 'FAILED' : speechJobs.some(job => job.status === 'NEEDS_REVIEW') ? 'NEEDS_REVIEW' : speechJob?.status;
+    const reportReady = session?.status === 'COMPLETED';
     const stageStatus = (stageName) => {
       if (!jobStatus) return '';
       const order = ['CREATED','QUEUED','PROCESSING','AUTO_RESULT','NEEDS_REVIEW','FINALIZED','FAILED'];
@@ -525,7 +530,7 @@
     };
     const stages=[['录音已上传', session?.submittedAt ? new Date(session.submittedAt).toLocaleTimeString() : '—', stageStatus('录音已上传'),'cloud'],['音频质量检查','—', stageStatus('音频质量检查'),'check'],['语音识别','—', stageStatus('语音识别'),'wave'],['文本对齐','—', stageStatus('文本对齐'),'file'],['发音评分', jobStatus === 'PROCESSING' ? '进行中' : '—', stageStatus('发音评分'),'mic'],['等待教师复核', jobStatus === 'NEEDS_REVIEW' ? '进行中' : '—', stageStatus('等待教师复核'),'users'],['报告生成', jobStatus === 'FINALIZED' ? '已完成' : '—', stageStatus('报告生成'),'file']];
 
-    const content=`<main class="page"><div class="hero-landscape" style="height:300px"></div><section class="processing-head"><h1 class="page-title">语音评分处理中</h1><p class="page-subtitle">系统正在对录音进行多维分析与评分，请耐心等待。</p><div class="processing-meta">${metaCell('Session ID', SESSION_ID)}${metaCell('Session 状态', session?.status || '—')}${metaCell('SpeechJob 状态', jobStatus || '尚未创建')}${metaCell('提交时间', session?.submittedAt ? new Date(session.submittedAt).toLocaleString() : '—')}</div></section><article class="card leave-banner"><div><strong class="serif" style="font-size:20px">你可以离开页面，稍后在测评中心查看进度，无需重复提交。</strong><p class="muted">完成后通过站内通知提醒查看报告。</p></div><a class="btn" href="${routes.center}">返回测评中心 ${icon('arrow')}</a></article><article class="card pipeline"><div class="pipeline-row">${stages.map(s=>`<div class="pipe-stage ${s[2]}"><div class="pipe-icon">${s[2]==='done'?icon('check'):icon(s[3])}</div><div><strong>${s[0]}</strong><small>${s[1]}</small></div></div>`).join('')}</div><div class="notice" style="margin-top:20px">${jobStatus === 'FAILED' ? `${icon('alert')} SpeechJob 处理失败。请重试或联系教师。` : jobStatus === 'NEEDS_REVIEW' ? '当前阶段：等待教师复核。' : jobStatus === 'FINALIZED' ? '已完成评分，可查看报告。' : jobStatus === 'PROCESSING' ? '当前阶段：系统正在从准确性、流利度、完整性、声调等维度进行评分。' : '正在等待 SpeechJob 创建或处理。'}</div>${jobStatus === 'FAILED' ? `<div style="margin-top:16px"><button class="btn primary" data-retry-job>${icon('refresh')} 重试评分</button></div>` : ''}${jobStatus === 'FINALIZED' || session?.status === 'COMPLETED' ? `<div style="margin-top:16px"><a class="btn primary" href="${routes.report}">${icon('arrow')} 查看报告</a></div>` : ''}</article><section class="processing-lower"><article class="card record-list"><div class="section-title"><h2>已上传录音</h2>${statusChip(`${readingItems.filter(i=>i.recordingId).length} 段录音`,'gray')}</div>${readingItems.length === 0 ? '<p class="muted">本次测评无朗读题。</p>' : readingItems.map((it,i)=>`<div class="record-row"><button class="play-circle" data-recording-id="${it.recordingId || ''}" ${!it.recordingId?'disabled':''}>${icon('play')}</button><div><strong>朗读题 ${i+1}</strong><p class="muted small">Item ID：${it.id}</p></div><div><small>Recording ID</small><b>${it.recordingId || '未绑定'}</b></div><div><small>状态</small><b>${it.status || '—'}</b></div><div>${statusChip(it.recordingId ? (jobStatus || 'UPLOADED') : '未上传', it.recordingId ? 'green' : 'red')}</div></div>`).join('')}</article><aside class="card tips"><h2 class="card-title">温馨提示</h2><div class="rule"><div class="icon">${icon('clock')}</div><div><strong>预计完成时间</strong><p class="muted small">取决于 FunASR 服务可用性与队列状态。</p></div></div><div class="rule"><div class="icon">${icon('bell')}</div><div><strong>完成后提醒</strong><p class="muted small">站内通知会提示报告状态。</p></div></div><div class="rule"><div class="icon green">${icon('shield')}</div><div><strong>数据安全</strong><p class="muted small">录音与结果按权限边界存储。</p></div></div><a class="btn" href="${routes.center}" style="width:100%;margin-top:16px">返回测评中心 ${icon('arrow')}</a></aside></section></main>`;
+    const content=`<main class="page"><div class="hero-landscape" style="height:300px"></div><section class="processing-head"><h1 class="page-title">${reportReady ? '测评报告已生成' : '语音评分处理中'}</h1><p class="page-subtitle">${reportReady ? '本次结果已保存到你的练习档案。' : '系统正在对录音进行真实分析与评分，请耐心等待。'}</p><div class="processing-meta">${metaCell('练习状态', session?.status || '—')}${metaCell('评分状态', jobStatus || '等待创建')}${metaCell('提交时间', session?.submittedAt ? new Date(session.submittedAt).toLocaleString() : '—')}</div></section><article class="card leave-banner"><div><strong class="serif" style="font-size:20px">${reportReady ? '报告已生成，可随时回看。' : '你可以离开页面，评分完成后结果会保存在练习档案中。'}</strong><p class="muted">不会因为离开页面而重复提交或丢失录音。</p></div><a class="btn" href="${routes.history}">查看历史记录 ${icon('arrow')}</a></article><article class="card pipeline"><div class="pipeline-row">${stages.map(s=>`<div class="pipe-stage ${reportReady && s[0] === '报告生成' ? 'done' : s[2]}"><div class="pipe-icon">${(reportReady && s[0] === '报告生成') || s[2]==='done'?icon('check'):icon(s[3])}</div><div><strong>${s[0]}</strong><small>${s[1]}</small></div></div>`).join('')}</div><div class="notice" style="margin-top:20px">${jobStatus === 'FAILED' ? `${icon('alert')} 评分服务当前不可用，录音已保存，未生成虚假分数。请稍后重试或联系教师。` : jobStatus === 'NEEDS_REVIEW' ? '当前阶段：等待教师复核后生成报告。' : reportReady ? '评分结果已汇总为真实报告。' : jobStatus === 'PROCESSING' ? '当前阶段：系统正在从准确性、流利度、完整性、声调等维度进行评分。' : '正在等待评分任务进入处理。'}</div>${jobStatus === 'FAILED' ? `<div style="margin-top:16px"><a class="btn" href="${routes.recordings}">${icon('wave')} 查看已保存录音</a></div>` : ''}${reportReady ? `<div style="margin-top:16px"><a class="btn primary" href="${routes.report}">${icon('arrow')} 查看报告</a></div>` : ''}</article><section class="processing-lower"><article class="card record-list"><div class="section-title"><h2>已上传录音</h2>${statusChip(`${readingItems.filter(i=>i.recordingId).length} 段录音`,'gray')}</div>${readingItems.length === 0 ? '<p class="muted">本次测评无朗读题。</p>' : readingItems.map((it,i)=>`<div class="record-row"><div class="play-circle">${icon('mic')}</div><div><strong>口语练习 ${i+1}</strong><p class="muted small">录音已${it.recordingId ? '保存到练习档案' : '等待上传'}</p></div><div><small>作答状态</small><b>${it.status || '—'}</b></div><div>${statusChip(it.recordingId ? (speechJobs.find(job => job.assessmentItemId === it.id)?.status || '已上传') : '未上传', it.recordingId ? 'green' : 'red')}</div></div>`).join('')}</article><aside class="card tips"><h2 class="card-title">温馨提示</h2><div class="rule"><div class="icon">${icon('clock')}</div><div><strong>预计完成时间</strong><p class="muted small">取决于评分服务与队列状态。</p></div></div><div class="rule"><div class="icon green">${icon('shield')}</div><div><strong>数据安全</strong><p class="muted small">录音与结果按学生和学校权限边界保存。</p></div></div><a class="btn" href="${routes.recordings}" style="width:100%;margin-top:16px">我的录音 ${icon('arrow')}</a></aside></section></main>`;
     return shell(content);
   }
 
@@ -542,14 +547,17 @@
       return shell(content);
     }
 
-    const content=`<main class="page"><div class="hero-landscape" style="height:220px"></div><section class="report-head"><a class="muted small" href="${routes.center}">‹ 返回测评列表</a><h1 class="page-title" style="margin-top:16px">${session?.type === 'READING' ? '朗读测评' : '综合测评'} ${statusChip('已完成','green')}</h1><p class="page-subtitle">科学测评，精准反馈，见证每一次进步</p></section><article class="card report-info"><div class="icon red">${icon('mic')}</div><div class="info-cell">Session ID<b>${SESSION_ID}</b></div><div class="info-cell">报告编号<b>${report.id}</b></div><div class="info-cell">数据完整度<b>${report.dataCompleteness != null ? Math.round(report.dataCompleteness) + '%' : '—'}</b></div><div class="info-cell">生成时间<b>${report.generatedAt ? new Date(report.generatedAt).toLocaleString() : '—'}</b></div></article><section class="report-grid"><article class="card score-card"><h3 class="card-title" style="color:var(--red)">总体得分</h3><div class="score-number">${report.overallScore != null ? report.overallScore : '—'} <small style="font-size:17px;color:#777">/100</small></div>${statusChip(report.overallScore != null ? (report.overallScore >= 80 ? '良好' : report.overallScore >= 60 ? '中等' : '需提升') : '—', 'green')}<p class="muted small">${report.summary?.text || (report.recommendations?.text || '基于本次测评的评分结果。')}</p></article>${report.readingScore != null ? metricCard('wave','朗读得分',report.readingScore,'基于朗读录音的评分','green') : ''}${report.writtenScore != null ? metricCard('book','书面得分',report.writtenScore,'基于书面作答的评分','green') : ''}</section>${report.recommendations ? `<section class="report-bottom"><article class="card"><h2 class="card-title">推荐练习</h2>${Array.isArray(report.recommendations) ? report.recommendations.map(r => `<div class="recommend-item"><div><strong>${typeof r === 'string' ? r : (r.title || r.text || JSON.stringify(r))}</strong><p class="muted small">基于本次报告的个性化建议</p></div></div>`).join('') : `<p class="muted">${typeof report.recommendations === 'string' ? report.recommendations : JSON.stringify(report.recommendations)}</p>`}</article></section>` : ''}<section class="report-bottom"><article class="card"><h2 class="card-title">复测建议</h2><p class="muted">建议在教师安排后进行复测。</p>${apiEnabled ? `<button class="btn primary" style="width:100%" data-schedule-retest ${session?.status !== 'COMPLETED' ? 'disabled' : ''}>${icon('calendar')} 安排复测</button>` : ''}</article></section></main>`;
+    const content=`<main class="page"><div class="hero-landscape" style="height:220px"></div><section class="report-head"><a class="muted small" href="${routes.center}">‹ 返回练习中心</a><h1 class="page-title" style="margin-top:16px">${session?.type === 'READING' ? '朗读练习' : '综合练习'} ${statusChip('已完成','green')}</h1><p class="page-subtitle">科学测评，精准反馈，见证每一次进步</p></section><article class="card report-info"><div class="icon red">${icon('mic')}</div><div class="info-cell">数据完整度<b>${report.dataCompleteness != null ? Math.round(report.dataCompleteness) + '%' : '—'}</b></div><div class="info-cell">生成时间<b>${report.generatedAt ? new Date(report.generatedAt).toLocaleString() : '—'}</b></div><div class="info-cell">结果状态<b>已保存</b></div></article><section class="report-grid"><article class="card score-card"><h3 class="card-title" style="color:var(--red)">总体得分</h3><div class="score-number">${report.overallScore != null ? report.overallScore : '—'} <small style="font-size:17px;color:#777">/100</small></div>${statusChip(report.overallScore != null ? (report.overallScore >= 80 ? '良好' : report.overallScore >= 60 ? '中等' : '需提升') : '等待复核', 'green')}<p class="muted small">${report.summary?.text || (report.recommendations?.text || '基于本次已完成评分的真实结果。')}</p></article>${report.readingScore != null ? metricCard('wave','朗读得分',report.readingScore,'基于本次朗读录音的实际评分','green') : ''}${report.writtenScore != null ? metricCard('book','书面得分',report.writtenScore,'基于已完成评分的书面作答','green') : ''}</section>${report.recommendations ? `<section class="report-bottom"><article class="card"><h2 class="card-title">推荐练习</h2>${Array.isArray(report.recommendations) ? report.recommendations.map(r => `<div class="recommend-item"><div><strong>${typeof r === 'string' ? r : (r.title || r.text || JSON.stringify(r))}</strong><p class="muted small">基于本次报告的个性化建议</p></div></div>`).join('') : `<p class="muted">${typeof report.recommendations === 'string' ? report.recommendations : JSON.stringify(report.recommendations)}</p>`}</article></section>` : ''}<section class="report-bottom"><article class="card"><h2 class="card-title">练习档案</h2><p class="muted">录音、报告与历史记录已按本次练习保存。</p><div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="${routes.recordings}">${icon('wave')} 我的录音</a><a class="btn primary" href="${routes.history}">${icon('chart')} 历史记录</a></div></article></section></main>`;
     return shell(content);
   }
   function metricCard(ic,title,value,detail,color='green'){return `<article class="card metric-card"><div style="display:flex;gap:10px;align-items:center"><div class="icon ${color}">${icon(ic)}</div><h3>${title}</h3></div><div class="metric-value" style="color:${color==='red'?'var(--red)':'var(--green)'}">${value}<small style="font-size:14px;color:#777"> /100</small></div><div class="metric-rail"><i style="width:${value}%;background:${color==='red'?'var(--red)':'var(--green)'}"></i><b style="left:${value}%;background:${color==='red'?'var(--red)':'var(--green)'}"></b></div><p class="muted small">${detail}</p></article>`}
 
   function renderRecordings(){
     if (!apiEnabled && !demoMode) return renderApiDisabled('录音库需要登录后端服务。');
-    return shell(`<main class="page"><div class="hero-landscape" style="height:220px"></div><section class="hero-head" style="min-height:130px"><h1 class="page-title">我的录音</h1><p class="page-subtitle">管理所有测评录音，随时查看上传、处理与评分状态</p></section><article class="card" style="padding:40px;text-align:center"><div class="icon" style="margin:0 auto 16px;width:56px;height:56px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#eef0ec">${icon('info')}</div><h2>录音库按测评 Session 组织</h2><p class="muted">请前往<a href="${base}/">测评中心</a>选择具体测评，查看该 Session 下的录音与处理状态。</p><div style="margin-top:24px"><a class="btn primary" href="${base}/">${icon('arrow')} 前往测评中心</a></div></article></main>`);
+    if (appState._loadingRecordings) return renderLoading('正在加载我的录音…');
+    if (appState._recordingsError) return renderError('加载录音失败', { detail: appState._recordingsError, retry: true });
+    const recordings = appState.apiRecordings || [];
+    return shell(`<main class="page"><div class="hero-landscape" style="height:220px"></div><section class="hero-head" style="min-height:130px"><h1 class="page-title">我的录音</h1><p class="page-subtitle">这里保存你本人完成的练习录音和真实处理状态。</p></section><section class="history-layout"><div>${recordings.length ? `<article class="card record-list"><div class="section-title"><h2>已保存录音</h2>${statusChip(`${recordings.length} 段`,'gray')}</div>${recordings.map((recording,index)=>`<div class="record-row"><button class="play-circle" data-play-recording="${recording.recordingId}">${icon('play')}</button><div><strong>${recording.label || `练习录音 ${index + 1}`}</strong><p class="muted small">${recording.createdAt ? new Date(recording.createdAt).toLocaleString() : ''}${recording.durationMs ? ` · ${Math.ceil(recording.durationMs / 1000)} 秒` : ''}</p></div><div><small>同步状态</small><b>${recording.recordingStatus}</b></div><div>${statusChip(recording.speechStatus === 'FAILED' ? '评分服务不可用' : (recording.speechStatus || '已保存'), recording.speechStatus === 'FAILED' ? 'red' : 'green')}</div></div>`).join('')}</article>` : `<article class="card" style="padding:40px;text-align:center"><div class="icon" style="margin:0 auto 16px;width:56px;height:56px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#eef0ec">${icon('info')}</div><h2>还没有保存的录音</h2><p class="muted">完成需要录音的练习后，录音会自动出现在这里。</p><a class="btn primary" href="${routes.center}">${icon('arrow')} 前往练习中心</a></article>`}</div><aside class="history-side"><article class="card retest"><h2 class="card-title">练习档案</h2><p class="muted">只显示当前登录学生在当前学校的录音。</p><a class="btn" href="${routes.history}" style="margin-top:12px">${icon('chart')} 查看历史记录</a></article></aside></section></main>`);
   }
 
   function renderHistory(){
@@ -1129,6 +1137,26 @@
 
   function bindHistory(){}
 
+  function bindRecordings(){
+    document.querySelector('[data-retry]')?.addEventListener('click', loadRecordings);
+    document.querySelectorAll('[data-play-recording]').forEach((button) => button.addEventListener('click', async () => {
+      if (button.dataset.loading === 'true') return;
+      button.dataset.loading = 'true';
+      button.innerHTML = icon('spinner');
+      try {
+        const evidence = await Api.getRecordingEvidence(button.dataset.playRecording);
+        const player = new Audio(evidence.downloadUrl);
+        await player.play();
+        button.innerHTML = icon('pause');
+        player.addEventListener('ended', () => { button.innerHTML = icon('play'); button.dataset.loading = ''; }, { once: true });
+      } catch (err) {
+        button.innerHTML = icon('play');
+        button.dataset.loading = '';
+        alert(`暂时无法播放录音：${err.message || err}`);
+      }
+    }));
+  }
+
   // ── 后端数据加载 ──
   async function loadCenter() {
     if (!apiEnabled) return;
@@ -1268,31 +1296,22 @@
     appState._loadingProcessing = true;
     renderCurrent();
     try {
-      const session = await Api.getAssessmentSession(SESSION_ID);
+      const session = await (isPracticeAttempt ? Api.getPracticeAttempt(SESSION_ID) : Api.getAssessmentSession(SESSION_ID));
       appState.apiSession = session;
       // 加载 items 以便显示录音列表
       if (!appState.apiItems.length) {
         try {
-          const items = await Api.listAssessmentItems(SESSION_ID);
+          const items = await (isPracticeAttempt ? Api.getPracticeAttemptItems(SESSION_ID) : Api.listAssessmentItems(SESSION_ID));
           appState.apiItems = Array.isArray(items) ? items : (items?.items || []);
         } catch {}
       }
-      // 查找已绑定录音的 reading item，查询其 SpeechJob
-      const readingItemWithRecording = appState.apiItems.find(i => (i.itemType === 'READING' || i.itemType === 'SPEECH') && i.recordingId);
-      if (readingItemWithRecording && !appState.apiSpeechJobId) {
-        try {
-          const jobs = await Api.getSpeechJobByItem(readingItemWithRecording.id);
-          const latestJob = Array.isArray(jobs) ? jobs[jobs.length - 1] : jobs;
-          if (latestJob?.id) {
-            appState.apiSpeechJobId = latestJob.id;
-            appState.apiSpeechJob = latestJob;
-            saveState();
-            pollSpeechJob(latestJob.id);
-          }
-        } catch (err) {
-          console.warn('[assessment] 查询 SpeechJob 失败:', err);
-        }
-      } else if (appState.apiSpeechJobId) {
+      // 每个真实口语题都可能有自己的评分任务；不能只读取旧题型的第一条任务。
+      const oralItems = appState.apiItems.filter(isOralItem).filter(item => item.recordingId);
+      const jobLists = await Promise.all(oralItems.map(item => Api.getSpeechJobByItem(item.id).catch(() => [])));
+      appState.apiSpeechJobs = jobLists.flatMap((jobs) => Array.isArray(jobs) ? (jobs[0] ? [jobs[0]] : []) : (jobs ? [jobs] : []));
+      appState.apiSpeechJob = appState.apiSpeechJobs[0] || null;
+      appState.apiSpeechJobId = appState.apiSpeechJob?.id || null;
+      if (appState.apiSpeechJobId && !['AUTO_RESULT', 'NEEDS_REVIEW', 'FINALIZED', 'FAILED'].includes(appState.apiSpeechJob.status)) {
         pollSpeechJob(appState.apiSpeechJobId);
       }
     } catch (err) {
@@ -1343,6 +1362,23 @@
     }
   }
 
+  async function loadRecordings() {
+    if (!apiEnabled) return;
+    appState._loadingRecordings = true;
+    appState._recordingsError = null;
+    renderCurrent();
+    try {
+      appState.apiRecordings = await Api.listMyAssessmentRecordings();
+    } catch (err) {
+      console.error('[assessment] 加载我的录音失败:', err);
+      appState._recordingsError = err.message || String(err);
+    } finally {
+      appState._loadingRecordings = false;
+      saveState();
+      renderCurrent();
+    }
+  }
+
   const renderers={
     center:renderCenter,
     prep:renderPrep,
@@ -1361,7 +1397,7 @@
     const renderer=renderers[page]||renderCenter;
     document.getElementById('app').innerHTML=renderer();
     bindCommon();
-    ({prep:bindPrep,reading:bindReading,written:bindWritten,submit:bindSubmit,report:bindReport,history:bindHistory}[page]||(()=>{}))();
+    ({prep:bindPrep,reading:bindReading,written:bindWritten,submit:bindSubmit,report:bindReport,recordings:bindRecordings,history:bindHistory}[page]||(()=>{}))();
   }
 
   // ── 入口：首次渲染 + 触发对应数据加载 ──
@@ -1375,6 +1411,7 @@
     else if (page === 'submit') loadSubmitData();
     else if (page === 'processing') loadProcessingData();
     else if (page === 'report') loadReport();
+    else if (page === 'recordings') loadRecordings();
     else if (page === 'history') loadHistory();
   }
 })();

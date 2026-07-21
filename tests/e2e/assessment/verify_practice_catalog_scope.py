@@ -60,6 +60,8 @@ with sync_playwright() as playwright:
     assert expected.issubset(set(titles)), titles
     assert page.locator(".student-topbar").count() == 1
     assert page.locator(".sidebar, .global-sidebar").count() == 0
+    assert page.locator(".catalog-archive-nav a", has_text="测评报告").count() == 1
+    assert page.locator(".catalog-archive-nav a", has_text="历史记录").count() == 1
     OUT.mkdir(parents=True, exist_ok=True)
     page.screenshot(path=str(OUT / "catalog-desktop.png"), full_page=True)
     print("catalog desktop verified", flush=True)
@@ -130,6 +132,14 @@ with sync_playwright() as playwright:
     assert api_result["selected"]["facets"]["abilityCategory"], api_result
     assert api_result["deniedStatus"] == 403, api_result
     print("API facets and tenant denial verified", flush=True)
+
+    # Archive pages are separate student routes, backed by the current user's
+    # real history/recording APIs rather than by a return-to-home placeholder.
+    page.goto(f"{BASE}/student/practices/recordings/", wait_until="networkidle")
+    assert page.locator(".page-title").inner_text() == "我的录音"
+    page.goto(f"{BASE}/student/practices/history/", wait_until="networkidle")
+    assert page.locator(".page-title").inner_text() == "历史测评"
+    print("archive routes verified", flush=True)
 
     mobile = context.new_page()
     mobile.set_viewport_size({"width": 390, "height": 844})

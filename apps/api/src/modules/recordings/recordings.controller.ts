@@ -111,6 +111,19 @@ export class RecordingsController {
     );
   }
 
+  @Get("mine")
+  @RequireRoles(MembershipRole.STUDENT)
+  async listMyAssessmentRecordings(
+    @Param("schoolId", ParseUUIDPipe) schoolId: string,
+    @CurrentTenant() tenant: TenantContext,
+    @CurrentPrincipal() principal: Principal,
+  ) {
+    return this.service.listMyAssessmentRecordings(
+      createAuthContext("request-id", principal, tenant),
+      schoolId,
+    );
+  }
+
   @Get(":recordingId")
   @RequireRoles(
     MembershipRole.STUDENT,
@@ -131,7 +144,7 @@ export class RecordingsController {
   }
 
   @Get(":recordingId/evidence")
-  @RequireRoles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
+  @RequireRoles(MembershipRole.STUDENT, MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
   async getRecordingEvidence(
     @Param("schoolId", ParseUUIDPipe) schoolId: string,
     @Param("recordingId", ParseUUIDPipe) recordingId: string,
