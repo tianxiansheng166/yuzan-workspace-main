@@ -13,6 +13,7 @@ import {
   Res,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+import { timingSafeEqual } from "node:crypto";
 import type { Response } from "express";
 import { Public } from "../../common/security/public.decorator.js";
 import { PrismaService } from "../../shared/database/prisma.service.js";
@@ -47,17 +48,33 @@ export class InternalController {
   }
 
   /**
-   * Validate internal API key.
+   * Validate internal API key using constant-time comparison.
+   * Accepts key from either X-Internal-Key header or Authorization: Bearer header.
    */
-  private validateKey(key: string | undefined): void {
+  private validateKey(
+    xInternalKey: string | undefined,
+    authorization: string | undefined,
+  ): void {
     if (!this.internalKey) {
-      // If no key configured, reject all internal requests
       throw Object.assign(
         new Error("Internal API key not configured"),
         { code: "PROVIDER_NOT_CONFIGURED" },
       );
     }
-    if (key !== this.internalKey) {
+
+    // Extract key: prefer X-Internal-Key, fall back to Authorization: Bearer
+    const key = xInternalKey ?? this.extractBearerToken(authorization);
+    if (!key) {
+      throw Object.assign(
+        new Error("Missing internal API key"),
+        { code: "FORBIDDEN" },
+      );
+    }
+
+    // Constant-time comparison to prevent timing attacks
+    const keyBuf = Buffer.from(key, "utf-8");
+    const expectedBuf = Buffer.from(this.internalKey, "utf-8");
+    if (keyBuf.length !== expectedBuf.length || !timingSafeEqual(keyBuf, expectedBuf)) {
       throw Object.assign(
         new Error("Invalid internal API key"),
         { code: "FORBIDDEN" },
@@ -65,14 +82,22 @@ export class InternalController {
     }
   }
 
+  private extractBearerToken(authorization: string | undefined): string | undefined {
+    if (!authorization) return undefined;
+    const parts = authorization.split(" ");
+    if (parts.length === 2 && parts[0] === "Bearer") return parts[1];
+    return undefined;
+  }
+
   // ─── Storage ────────────────────────────────────────────
 
   @Get("storage/download-url")
   async getDownloadUrl(
     @Query("objectKey") objectKey: string,
-    @Headers("X-Internal-Key") key: string | undefined,
+    @Headers("X-Internal-Key") xInternalKey: string | undefined,
+    @Headers("Authorization") authorization: string | undefined,
   ) {
-    this.validateKey(key);
+    this.validateKey(xInternalKey, authorization);
     const result = await this.storage.generateDownloadUrl(objectKey);
     return { url: result.url, expiresInSeconds: result.expiresInSeconds };
   }
@@ -89,9 +114,10 @@ export class InternalController {
       processingMs?: number;
       errorCode?: string;
     },
-    @Headers("X-Internal-Key") key: string | undefined,
+    @Headers("X-Internal-Key") xInternalKey: string | undefined,
+    @Headers("Authorization") authorization: string | undefined,
   ) {
-    this.validateKey(key);
+    this.validateKey(xInternalKey, authorization);
 
     const updated = await this.prisma.speechJob.update({
       where: { id: jobId },
@@ -116,9 +142,10 @@ export class InternalController {
       autoResult: Record<string, unknown>;
       scoredScore: number;
     },
-    @Headers("X-Internal-Key") key: string | undefined,
+    @Headers("X-Internal-Key") xInternalKey: string | undefined,
+    @Headers("Authorization") authorization: string | undefined,
   ) {
-    this.validateKey(key);
+    this.validateKey(xInternalKey, authorization);
 
     const updated = await this.prisma.assessmentItem.update({
       where: { id: itemId },
@@ -146,9 +173,10 @@ export class InternalController {
   async updateRecordingStatus(
     @Param("recordingId", ParseUUIDPipe) recordingId: string,
     @Body() body: { status: string },
-    @Headers("X-Internal-Key") key: string | undefined,
+    @Headers("X-Internal-Key") xInternalKey: string | undefined,
+    @Headers("Authorization") authorization: string | undefined,
   ) {
-    this.validateKey(key);
+    this.validateKey(xInternalKey, authorization);
 
     const updated = await this.prisma.recording.update({
       where: { id: recordingId },
@@ -173,9 +201,10 @@ export class InternalController {
       latencyMs?: number;
       providerRequestId?: string;
     },
-    @Headers("X-Internal-Key") key: string | undefined,
+    @Headers("X-Internal-Key") xInternalKey: string | undefined,
+    @Headers("Authorization") authorization: string | undefined,
   ) {
-    this.validateKey(key);
+    this.validateKey(xInternalKey, authorization);
     await this.aiLessonPlanningService.updateJobResult(jobId, body);
     return { id: jobId, status: body.status };
   }
@@ -196,10 +225,11 @@ export class InternalController {
   @HttpCode(200)
   async proxyOpenAiChatCompletions(
     @Body() body: Record<string, unknown>,
-    @Headers("X-Internal-Key") key: string | undefined,
+    @Headers("X-Internal-Key") xInternalKey: string | undefined,
+    @Headers("Authorization") authorization: string | undefined,
     @Res() res: Response,
   ) {
-    this.validateKey(key);
+    this.validateKey(xInternalKey, authorization);
 
     const baseUrl = process.env.AI_BASE_URL;
     const apiKey = process.env.AI_API_KEY;

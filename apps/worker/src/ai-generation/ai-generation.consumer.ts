@@ -208,12 +208,21 @@ export class AiGenerationConsumer {
       }
 
       // Step 4: Report success
-      await this.reportResult(jobId, {
+      const tokenUsage = this.extractTokenUsage(predictionResult);
+      const successData: {
+        status: string;
+        outputSnapshot: Record<string, unknown>;
+        latencyMs: number;
+        tokenUsage?: Record<string, unknown>;
+      } = {
         status: "SUCCEEDED",
         outputSnapshot: output as Record<string, unknown>,
-        tokenUsage: this.extractTokenUsage(predictionResult),
         latencyMs,
-      });
+      };
+      if (tokenUsage) {
+        successData.tokenUsage = tokenUsage;
+      }
+      await this.reportResult(jobId, successData);
 
       logger.info(
         { jobId, schoolId, teacherId, latencyMs },
@@ -336,9 +345,12 @@ export class AiGenerationConsumer {
   private extractTokenUsage(
     result: FlowisePredictionResponse,
   ): Record<string, unknown> | undefined {
-    const json = result.json as Record<string, unknown> | null;
-    if (json?._meta?.tokenUsage) {
-      return (json._meta as Record<string, unknown>).tokenUsage as Record<string, unknown>;
+    const json = result.json as Record<string, unknown> | null | undefined;
+    if (json && typeof json === "object" && "_meta" in json) {
+      const meta = json._meta as Record<string, unknown> | undefined;
+      if (meta && "tokenUsage" in meta) {
+        return meta.tokenUsage as Record<string, unknown>;
+      }
     }
     return undefined;
   }

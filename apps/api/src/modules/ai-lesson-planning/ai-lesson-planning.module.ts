@@ -15,21 +15,18 @@ const bullMqAiGenerationFactory = {
     const redisHost = config.get<string>("REDIS_HOST") ?? "127.0.0.1";
     const redisPort = parseInt(config.get<string>("REDIS_PORT") ?? "6379", 10);
 
-    const connection: Record<string, unknown> = redisUrl
-      ? { url: redisUrl }
-      : { host: redisHost, port: redisPort };
-
     const redisPassword = config.get<string>("REDIS_PASSWORD");
-    if (redisPassword) {
-      connection.password = redisPassword;
-    }
+
+    // Always use object form for BullMQ connection — passing a raw URL string
+    // is not compatible with BullMQ's ConnectionOptions type.
+    const connection: { host: string; port: number; password?: string } = {
+      host: redisHost,
+      port: redisPort,
+      ...(redisPassword ? { password: redisPassword } : {}),
+    };
 
     try {
-      return new Queue("ai-generation-jobs", {
-        connection: redisUrl
-          ? redisUrl
-          : { host: redisHost, port: redisPort, ...(redisPassword ? { password: redisPassword } : {}) },
-      });
+      return new Queue("ai-generation-jobs", { connection });
     } catch {
       return null;
     }

@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Put,
+  Patch,
   Body,
   Param,
   Query,
@@ -115,6 +116,23 @@ export class AiLessonPlanningController {
   }
 
   @Put("lesson-plan-drafts/:draftId")
+  @RequireRoles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
+  async replaceDraft(
+    @Param("schoolId", ParseUUIDPipe) schoolId: string,
+    @Param("draftId", ParseUUIDPipe) draftId: string,
+    @Body() dto: UpdateDraftDto,
+    @CurrentTenant() tenant: TenantContext,
+    @CurrentPrincipal() principal: Principal,
+  ) {
+    return this.service.updateDraft(
+      createAuthContext("request-id", principal, tenant),
+      schoolId,
+      draftId,
+      dto,
+    );
+  }
+
+  @Patch("lesson-plan-drafts/:draftId")
   @RequireRoles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
   async updateDraft(
     @Param("schoolId", ParseUUIDPipe) schoolId: string,

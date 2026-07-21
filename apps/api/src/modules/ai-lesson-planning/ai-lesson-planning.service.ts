@@ -15,9 +15,21 @@ import type {
   LessonPlanDraftResponse,
   WorkflowStatusResponse,
 } from "./dto/lesson-plan-job.response.js";
+import type { AiJobStatus } from "@yuzan/database";
 
 const AI_GENERATION_QUEUE = "ai-generation-jobs";
 const LESSON_PLANNER_WORKFLOW_KEY = "lesson-planner";
+
+/** Terminal states — a job in any of these cannot transition further. */
+const TERMINAL_STATES: ReadonlySet<string> = new Set([
+  "SUCCEEDED",
+  "FAILED",
+  "PROVIDER_NOT_CONFIGURED",
+  "PROVIDER_UNAVAILABLE",
+  "OUTPUT_SCHEMA_INVALID",
+  "TIMEOUT",
+  "CANCELLED",
+]);
 
 @Injectable()
 export class AiLessonPlanningService {
@@ -52,8 +64,8 @@ export class AiLessonPlanningService {
           teacherId,
           workflowDefinitionId: await this.getOrCreateWorkflowDefinitionId(),
           idempotencyKey: dto.idempotencyKey ?? crypto.randomUUID(),
-          status: "PROVIDER_NOT_CONFIGURED",
-          inputSnapshot: dto as unknown as Record<string, unknown>,
+          status: "PROVIDER_NOT_CONFIGURED" as AiJobStatus,
+          inputSnapshot: dto as any,
           errorCode: "PROVIDER_NOT_CONFIGURED",
         },
       });
@@ -76,6 +88,9 @@ export class AiLessonPlanningService {
 
     const workflowDefinitionId = await this.getOrCreateWorkflowDefinitionId();
 
+    // Enrich inputSnapshot with real course data if courseVersionId provided
+    const enrichedInput = await this.enrichInputWithCourseData(dto);
+
     // Create job in QUEUED state
     const job = await this.prisma.aiGenerationJob.create({
       data: {
@@ -83,12 +98,12 @@ export class AiLessonPlanningService {
         teacherId,
         workflowDefinitionId,
         idempotencyKey: dto.idempotencyKey ?? crypto.randomUUID(),
-        status: "QUEUED",
-        inputSnapshot: dto as unknown as Record<string, unknown>,
+        status: "QUEUED" as AiJobStatus,
+        inputSnapshot: enrichedInput as any,
       },
     });
 
-    // Enqueue to BullMQ
+    // Enqueue to BullMQ — send full payload so Worker has all fields
     if (this.aiQueue) {
       await this.aiQueue.add(
         "generate-lesson-plan",
@@ -96,10 +111,21 @@ export class AiLessonPlanningService {
           jobId: job.id,
           schoolId,
           teacherId,
-          goal: dto.goal,
-          courseVersionId: dto.courseVersionId,
-          lessonId: dto.lessonId,
-          gradeBand: dto.gradeBand,
+          goal: enrichedInput.goal,
+          courseVersionId: enrichedInput.courseVersionId ?? null,
+          unitId: enrichedInput.unitId ?? null,
+          lessonId: enrichedInput.lessonId ?? null,
+          gradeBand: enrichedInput.gradeBand ?? null,
+          subject: enrichedInput.subject ?? null,
+          durationMinutes: enrichedInput.durationMinutes ?? 40,
+          keyRequirements: enrichedInput.keyRequirements ?? null,
+          outputModules: enrichedInput.outputModules ?? null,
+          locale: enrichedInput.locale ?? "zh-CN",
+          courseTitle: enrichedInput.courseTitle ?? null,
+          courseSummary: enrichedInput.courseSummary ?? null,
+          lessonTitle: enrichedInput.lessonTitle ?? null,
+          lessonContentSummary: enrichedInput.lessonContentSummary ?? null,
+          classAggregateSummary: enrichedInput.classAggregateSummary ?? null,
         },
         {
           jobId: job.id,
@@ -164,7 +190,7 @@ export class AiLessonPlanningService {
     const updated = await this.prisma.aiGenerationJob.update({
       where: { id: jobId },
       data: {
-        status: "CANCELLED",
+        status: "CANCELLED" as AiJobStatus,
         completedAt: new Date(),
       },
     });
@@ -203,7 +229,7 @@ export class AiLessonPlanningService {
       take: limit,
     });
 
-    return drafts.map((d) => this.toDraftResponse(d));
+    return drafts.map((d: any) => this.toDraftResponse(d));
   }
 
   /**
@@ -266,7 +292,7 @@ export class AiLessonPlanningService {
       data: {
         draftId,
         revision: nextRevision,
-        content: dto.content as unknown as import("@yuzan/database").Prisma.InputJsonValue,
+        content: dto.content as any,
         source: "TEACHER_EDIT",
         editorUserId: auth.principal.userId,
       },
@@ -277,7 +303,7 @@ export class AiLessonPlanningService {
       where: { id: draftId },
       data: {
         title: dto.title ?? draft.title,
-        content: dto.content as unknown as import("@yuzan/database").Prisma.InputJsonValue,
+        content: dto.content as any,
         revision: nextRevision,
       },
     });
@@ -312,7 +338,7 @@ export class AiLessonPlanningService {
       data: {
         draftId,
         revision: nextRevision,
-        content: draft.content as unknown as import("@yuzan/database").Prisma.InputJsonValue,
+        content: draft.content as any,
         source: "TEACHER_APPROVE",
         editorUserId: auth.principal.userId,
       },
@@ -334,6 +360,7 @@ export class AiLessonPlanningService {
 
   /**
    * Check the status of the lesson-planner workflow and provider availability.
+   * Reports each component separately for frontend diagnostics.
    */
   async getWorkflowStatus(
     _auth: AuthContext,
@@ -344,17 +371,41 @@ export class AiLessonPlanningService {
     });
 
     const providerConfigured = this.isProviderConfigured();
+    const workflowAvailable = !!(workflow?.externalFlowId);
+    const flowiseAvailable = this.isFlowiseReachable();
+    const workerAvailable = !!this.aiQueue;
+
+    // Derive overall status
+    let status = "DISABLED";
+    let message: string | null = null;
+
+    if (!providerConfigured) {
+      status = "PROVIDER_NOT_CONFIGURED";
+      message = "AI 服务尚未配置。请在 runtime-local/secrets/ai-provider.env 中设置 API 密钥。";
+    } else if (!flowiseAvailable) {
+      status = "PROVIDER_UNAVAILABLE";
+      message = "Flowise 服务不可达。请确认 Docker 容器已启动。";
+    } else if (!workflowAvailable) {
+      status = "PROVIDER_NOT_CONFIGURED";
+      message = "工作流尚未导入。请运行 bootstrap-flow.ps1 导入教案生成流程。";
+    } else if (!workerAvailable) {
+      status = "PROVIDER_UNAVAILABLE";
+      message = "Worker 未连接 Redis 队列，无法处理生成任务。";
+    } else {
+      status = workflow?.status ?? "ACTIVE";
+    }
 
     return {
       workflowKey: LESSON_PLANNER_WORKFLOW_KEY,
-      status: workflow?.status ?? "DISABLED",
-      version: workflow?.version ?? "v0",
+      status,
+      version: workflow?.version ?? 0,
       provider: workflow?.provider ?? "flowise",
       externalFlowId: workflow?.externalFlowId ?? null,
-      providerAvailable: providerConfigured,
-      message: providerConfigured
-        ? null
-        : "AI 服务尚未配置。请在 runtime-local/secrets/ai-provider.env 中设置 API 密钥。",
+      flowiseAvailable,
+      workflowAvailable,
+      providerConfigured,
+      workerAvailable,
+      message,
     };
   }
 
@@ -362,8 +413,7 @@ export class AiLessonPlanningService {
 
   /**
    * Called by the worker to update a job's result.
-   * This method is intentionally permissive — it trusts the internal key validation
-   * that already happened in the controller.
+   * Guards against overwriting a CANCELLED job.
    */
   async updateJobResult(
     jobId: string,
@@ -376,21 +426,24 @@ export class AiLessonPlanningService {
       providerRequestId?: string;
     },
   ): Promise<void> {
+    // Guard: do not overwrite a CANCELLED job
+    const current = await this.prisma.aiGenerationJob.findUnique({
+      where: { id: jobId },
+      select: { status: true },
+    });
+    if (!current) return;
+    if (current.status === "CANCELLED") {
+      // Job was cancelled while worker was processing — discard result
+      return;
+    }
+
     const now = new Date();
-    const isTerminal = [
-      "SUCCEEDED",
-      "FAILED",
-      "PROVIDER_NOT_CONFIGURED",
-      "PROVIDER_UNAVAILABLE",
-      "OUTPUT_SCHEMA_INVALID",
-      "TIMEOUT",
-      "CANCELLED",
-    ].includes(data.status);
+    const isTerminal = TERMINAL_STATES.has(data.status);
 
     await this.prisma.aiGenerationJob.update({
       where: { id: jobId },
       data: {
-        status: data.status as import("@prisma/client").AiJobStatus,
+        status: data.status as AiJobStatus,
         ...(data.outputSnapshot !== undefined
           ? { outputSnapshot: data.outputSnapshot as any }
           : {}),
@@ -435,8 +488,6 @@ export class AiLessonPlanningService {
             generationJobId: jobId,
             title,
             content: data.outputSnapshot as any,
-            revision: 1,
-            status: "NEEDS_REVIEW",
           },
         });
 
@@ -461,6 +512,25 @@ export class AiLessonPlanningService {
     return !!(baseUrl && apiKey && model);
   }
 
+  /**
+   * Check if Flowise is reachable (best-effort, non-blocking).
+   * Returns false if FLOWISE_BASE_URL is not configured or if
+   * we cannot determine reachability synchronously.
+   */
+  private isFlowiseReachable(): boolean {
+    const flowiseUrl = this.config.get<string>("FLOWISE_BASE_URL");
+    // If Flowise URL is configured, we assume it's reachable.
+    // Actual health check would be async; for status endpoint
+    // we use this heuristic. The worker will discover the truth
+    // at runtime and report PROVIDER_UNAVAILABLE if needed.
+    return !!flowiseUrl;
+  }
+
+  /**
+   * Get or create the workflow definition for the lesson planner.
+   * New definitions start as DISABLED with null externalFlowId
+   * until a real flow is imported via bootstrap-flow.ps1.
+   */
   private async getOrCreateWorkflowDefinitionId(): Promise<string> {
     let workflow = await this.prisma.aiWorkflowDefinition.findUnique({
       where: { workflowKey: LESSON_PLANNER_WORKFLOW_KEY },
@@ -469,16 +539,75 @@ export class AiLessonPlanningService {
       workflow = await this.prisma.aiWorkflowDefinition.create({
         data: {
           provider: "flowise",
-          externalFlowId: "",
+          externalFlowId: null,
           workflowKey: LESSON_PLANNER_WORKFLOW_KEY,
-          version: "v0",
-          status: "ACTIVE",
+          version: 0,
+          status: "DISABLED",
           inputSchemaVersion: "v0",
           outputSchemaVersion: "v0",
         },
       });
     }
     return workflow.id;
+  }
+
+  /**
+   * Enrich the DTO input with real course data from the database.
+   * If courseVersionId is provided, fetch CourseVersion, Unit, and Lesson
+   * titles and summaries to include in the inputSnapshot for the Worker.
+   */
+  private async enrichInputWithCourseData(
+    dto: CreateLessonPlanJobDto,
+  ): Promise<Record<string, unknown>> {
+    const input: Record<string, unknown> = {
+      goal: dto.goal,
+      gradeBand: dto.gradeBand ?? null,
+      subject: dto.subject ?? null,
+      durationMinutes: dto.durationMinutes ?? 40,
+      keyRequirements: dto.keyRequirements ?? null,
+      courseVersionId: dto.courseVersionId ?? null,
+      unitId: dto.unitId ?? null,
+      lessonId: dto.lessonId ?? null,
+      outputModules: dto.outputModules ?? null,
+      locale: dto.locale ?? "zh-CN",
+      // Will be filled from DB below
+      courseTitle: null as string | null,
+      courseSummary: null as string | null,
+      lessonTitle: null as string | null,
+      lessonContentSummary: null as string | null,
+      classAggregateSummary: null as string | null,
+    };
+
+    if (dto.courseVersionId) {
+      try {
+        const cv = await this.prisma.courseVersion.findUnique({
+          where: { id: dto.courseVersionId },
+          select: { title: true, description: true },
+        });
+        if (cv) {
+          input.courseTitle = cv.title;
+          input.courseSummary = cv.description;
+        }
+      } catch {
+        // Course version may not exist or table may not be queryable — best effort
+      }
+    }
+
+    if (dto.lessonId) {
+      try {
+        const lesson = await this.prisma.lesson.findUnique({
+          where: { id: dto.lessonId },
+          select: { title: true },
+        });
+        if (lesson) {
+          input.lessonTitle = lesson.title;
+        }
+      } catch {
+        // Lesson may not exist — best effort
+      }
+    }
+
+    return input;
   }
 
   private assertJobAccess(auth: AuthContext, teacherId: string): void {
@@ -500,11 +629,12 @@ export class AiLessonPlanningService {
   }
 
   private toJobResponse(
-    job: Record<string, any>,
+    job: any,
     lessonPlanDraftId: string | null,
   ): LessonPlanJobResponse {
     return {
       id: job.id,
+      jobId: job.id,
       schoolId: job.schoolId,
       teacherId: job.teacherId,
       status: job.status,
@@ -521,7 +651,7 @@ export class AiLessonPlanningService {
   }
 
   private toDraftResponse(
-    draft: Record<string, any>,
+    draft: any,
   ): LessonPlanDraftResponse {
     return {
       id: draft.id,

@@ -3,6 +3,8 @@
  */
 export interface LessonPlanJobResponse {
   id: string;
+  /** Alias for id — frontend reads jobId, backend uses id internally. */
+  jobId: string;
   schoolId: string;
   teacherId: string;
   status: string;
@@ -43,9 +45,12 @@ export interface LessonPlanDraftResponse {
 export interface WorkflowStatusResponse {
   workflowKey: string;
   status: string;
-  version: string;
+  version: number;
   provider: string;
   externalFlowId: string | null;
-  providerAvailable: boolean;
+  flowiseAvailable: boolean;
+  workflowAvailable: boolean;
+  providerConfigured: boolean;
+  workerAvailable: boolean;
   message: string | null;
 }
