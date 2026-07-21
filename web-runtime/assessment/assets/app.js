@@ -196,7 +196,7 @@
       const target = s.status === 'COMPLETED' ? `${base}/sessions/${s.id}/report/` : s.status === 'SUBMITTED' || s.status === 'PROCESSING' ? `${base}/sessions/${s.id}/processing/` : `${base}/sessions/${s.id}/`;
       return `<a class="task-card" href="${target}">
         <div class="icon ${chipType}">${icon(ic)}</div><h4>${label}</h4><p>${s.type || ''} · ${new Date(s.createdAt).toLocaleDateString()}</p>
-        ${statusChip(btn, chipType)}<p>状态：${s.status}</p><div class="soft-divider"></div><p>Session ID<br>${s.id}</p>
+        ${statusChip(btn, chipType)}<p>状态：${s.status}</p><div class="soft-divider"></div><p>创建于 ${new Date(s.createdAt).toLocaleDateString()}</p>
       </a>`;
     };
 
@@ -218,7 +218,7 @@
                 <a class="btn primary" href="${base}/sessions/${priority.id}/">${priority.status === 'CREATED' ? '开始测评' : '继续测评'} ${icon('arrow')}</a>
                 <a class="btn" href="${base}/sessions/${priority.id}/">查看详情</a>
               </div>
-              <div class="meta-row" style="margin-top:12px"><span>Session ID：${priority.id}</span><span>创建：${new Date(priority.createdAt).toLocaleString()}</span></div>
+              <div class="meta-row" style="margin-top:12px"><span>创建：${new Date(priority.createdAt).toLocaleString()}</span></div>
             </div>
           </article>
         </section>` : ''}
@@ -238,7 +238,7 @@
 
   // ── 测评准备页：从后端加载 session 与 items ──
   function renderPrep() {
-    if (!SESSION_ID) return renderError('缺少 sessionId', { detail: '请从测评中心进入。' });
+    if (!SESSION_ID) return renderError('无法确认本次测评', { detail: '请从测评中心进入。' });
     if (!apiEnabled && !demoMode) return renderApiDisabled('测评准备需要登录后端服务。');
     if (appState._loadingPrep) return renderLoading('正在加载测评详情…');
     if (appState._prepError) return renderError('加载测评详情失败', { detail: appState._prepError, retry: true });
@@ -264,18 +264,17 @@
         <section class="hero-head"><h1 class="page-title">测评准备</h1><p class="page-subtitle">${session.type === 'READING' ? '朗读测评' : session.type === 'WRITTEN' ? '书面表达' : '综合测评'}</p><p class="page-subtitle" style="font-size:15px">科学测评，精准反馈，见证每一次进步</p></section>
         <section class="prep-layout">
           <article class="card prep-card">
-            <div class="section-title"><h2>${isPracticeAttempt ? '设备检查' : '本次测评概览'}</h2>${statusChip(isPracticeAttempt ? '练习准备中' : `AssessmentSession ${session.status}`, session.status === 'IN_PROGRESS' ? 'gold' : 'green')}</div>
+            <div class="section-title"><h2>${isPracticeAttempt ? '设备检查' : '本次测评概览'}</h2>${statusChip(isPracticeAttempt ? '练习准备中' : session.status, session.status === 'IN_PROGRESS' ? 'gold' : 'green')}</div>
             <div class="assessment-summary">
               <div class="mic-orbit" style="width:112px;height:112px">${icon('wave')}</div>
               <div><h2>${session.type === 'READING' ? '朗读测评' : session.type === 'WRITTEN' ? '书面表达' : '综合测评'} ${statusChip(session.type, 'gold')}</h2><div class="summary-metrics">
-                ${isPracticeAttempt ? '' : `<div class="summary-metric"><div class="icon green">${icon('users')}</div><div><small>Session ID</small><b style="font-size:12px;word-break:break-all">${session.id}</b></div></div>`}
                 <div class="summary-metric"><div class="icon">${icon('assessment')}</div><div><small>题型数量</small><b>${items.length} 项</b></div></div>
                 <div class="summary-metric"><div class="icon blue">${icon('clock')}</div><div><small>创建时间</small><b>${new Date(session.createdAt).toLocaleString()}</b></div></div>
                 <div class="summary-metric"><div class="icon green">${icon('refresh')}</div><div><small>是否允许重录</small><b>允许</b></div></div>
               </div></div>
             </div>
             <div class="privacy-box"><div><strong>隐私说明</strong><p class="muted">录音仅用于本次测评、自动评分和教师复核；服务端证据仅对本人和授权教师可见。</p></div></div>
-            ${isPracticeAttempt ? '' : `<div class="session-strip">${metaCell('Session ID', session.id)}${metaCell('状态', session.status)}${metaCell('题型', session.type)}${metaCell('已开始', session.startedAt ? new Date(session.startedAt).toLocaleString() : '未开始')}</div>`}
+            ${isPracticeAttempt ? '' : `<div class="session-strip">${metaCell('状态', session.status)}${metaCell('题型', session.type)}${metaCell('已开始', session.startedAt ? new Date(session.startedAt).toLocaleString() : '未开始')}</div>`}
           </article>
           <article class="card prep-card">
             <div class="section-title"><h2>设备检测</h2><button class="btn" data-recheck>${icon('refresh')} 重新检测</button></div>
@@ -307,7 +306,7 @@
     LOADING_ITEM:'加载题目',PLAYING_PROMPT:'播放示范音频',PREPARING:'准备倒计时',RECORDING:'正式录音',PAUSED:'录音暂停',REVIEWING:'试听确认',UPLOADING:'上传录音',UPLOAD_FAILED:'上传失败',UPLOADED:'上传完成',PROCESSING:'进入评分',REJECTED_AUDIO:'音频不合格',READY:'准备就绪'
   };
   function renderReading() {
-    if (!SESSION_ID || !READING_ITEM_ID) return renderError('缺少 sessionId 或 itemId', { detail: '请从测评准备页进入。' });
+    if (!SESSION_ID || !READING_ITEM_ID) return renderError('无法确认当前朗读题', { detail: '请从测评准备页进入。' });
     if (!apiEnabled && !demoMode) return renderApiDisabled('朗读测评需要登录后端服务。');
     if (appState._loadingReading) return renderLoading('正在加载朗读题目…');
     if (appState._readingError) return renderError('加载朗读题目失败', { detail: appState._readingError, retry: true });
@@ -338,12 +337,9 @@
       return `<div class="stage ${done?'done':''} ${active?'active':''}"><div class="icon">${done?icon('check'):icon(ic)}</div><div><strong>${label}</strong><small>${done?'已完成':active?'当前阶段':'待开始'}</small></div></div>`;
     }).join('');
 
-    const recordingIdDisplay = appState.apiRecordingId || (state==='PLAYING_PROMPT'?'待初始化':'待初始化');
-    const speechJobDisplay = appState.apiSpeechJobId || (currentIdx<5?'待创建':'待创建');
-
     const content = `
       <main class="page">
-        <section class="reading-head"><div><h1 class="page-title" style="font-size:29px">${session ? (session.type === 'READING' ? '朗读测评' : '综合测评') : '朗读测评'} ${statusChip(session?.status || 'IN_PROGRESS','gold')}</h1><p class="page-subtitle">Session ${SESSION_ID}</p></div><div class="identity-chips"><div class="identity-chip">Session ID<b>${SESSION_ID}</b></div><div class="identity-chip">Item ID<b>${READING_ITEM_ID}</b></div><div class="identity-chip">Recording ID<b>${recordingIdDisplay}</b></div><div class="identity-chip">SpeechJob<b>${speechJobDisplay}</b></div><a class="btn" href="${routes.prep}">${icon('logout')} 退出测评</a></div></section>
+        <section class="reading-head"><div><h1 class="page-title" style="font-size:29px">${session ? (session.type === 'READING' ? '朗读测评' : '综合测评') : '朗读测评'} ${statusChip(session?.status || 'IN_PROGRESS','gold')}</h1><p class="page-subtitle">跟随示范完成朗读，上传后系统将自动分析。</p></div><div class="identity-chips"><div class="identity-chip">当前环节<b>${readingStateLabels[state]}</b></div><a class="btn" href="${routes.prep}">${icon('logout')} 返回准备页</a></div></section>
         <section class="card stage-stepper" data-stage-stepper>${stageHtml}</section>
         <section class="reading-layout">
           <aside class="grid">
@@ -366,7 +362,7 @@
           </article>
           <aside class="grid">
             <article class="card side-status"><h3>当前状态</h3><div class="state-display"><div class="icon">${icon(stateIcon(state))}</div><div><strong data-current-state>${readingStateLabels[state]}</strong><small class="muted" data-current-copy>${stateCopy(state)}</small></div></div></article>
-            <article class="card side-status"><h3>接下来会发生什么</h3><div class="flow-list"><div class="flow-item"><div class="icon blue">${icon('cloud')}</div><div><strong>上传录音</strong><small>初始化 Recording，预签名 PUT 上传 Blob，completeRecording 完成录音。</small></div></div><div class="flow-item"><div class="icon green">${icon('wave')}</div><div><strong>音频质检</strong><small>检测噪声、时长、静音和完整性。</small></div></div><div class="flow-item"><div class="icon">${icon('file')}</div><div><strong>绑定 AssessmentItem</strong><small>通过 reading/:itemId/recording 绑定录音到题目。</small></div></div><div class="flow-item"><div class="icon red">${icon('star')}</div><div><strong>SpeechJob 评分</strong><small>查询 SpeechJob 状态，进入教师复核或报告生成。</small></div></div></div></article>
+            <article class="card side-status"><h3>接下来会发生什么</h3><div class="flow-list"><div class="flow-item"><div class="icon blue">${icon('cloud')}</div><div><strong>上传录音</strong><small>录音会安全上传到学习档案。</small></div></div><div class="flow-item"><div class="icon green">${icon('wave')}</div><div><strong>音频质检</strong><small>检测噪声、时长、静音和完整性。</small></div></div><div class="flow-item"><div class="icon">${icon('file')}</div><div><strong>保存本题作答</strong><small>录音会与当前题目自动关联。</small></div></div><div class="flow-item"><div class="icon red">${icon('star')}</div><div><strong>语音评分</strong><small>评分完成后进入教师复核或报告生成。</small></div></div></div></article>
           </aside>
         </section>
       </main>`;
@@ -389,7 +385,7 @@
 
   // ── 书面题：从后端获取 items，调用真实保存接口 ──
   function renderWritten(){
-    if (!SESSION_ID || !WRITTEN_ITEM_ID) return renderError('缺少 sessionId 或 itemId', { detail: '请从测评准备页进入。' });
+    if (!SESSION_ID || !WRITTEN_ITEM_ID) return renderError('无法确认当前书面题', { detail: '请从测评准备页进入。' });
     if (!apiEnabled && !demoMode) return renderApiDisabled('书面题需要登录后端服务。');
     if (appState._loadingWritten) return renderLoading('正在加载书面题…');
     if (appState._writtenError) return renderError('加载书面题失败', { detail: appState._writtenError, retry: true });
@@ -423,7 +419,7 @@
     const syncStatus = appState.writtenSyncStatus[currentItem.id] || 'LOCAL';
     const syncLabel = syncStatus === 'SYNCED' ? '已同步到平台' : syncStatus === 'FINALIZED' ? '已正式提交' : syncStatus === 'FAILED' ? '同步失败' : '已保存到本机';
 
-    const content=`<main class="page"><div class="written-layout"><section class="written-main"><div class="written-top"><div><h1 class="question-title">书面练习</h1><p><b style="color:var(--red)">第 ${idx+1} 题</b>　/　共 ${items.length} 题</p></div><div class="meta-row"><span>${statusChip(syncLabel, syncStatus === 'SYNCED' || syncStatus === 'FINALIZED' ? 'green' : syncStatus === 'FAILED' ? 'red' : 'blue')}</span><span>Item ID：${currentItem.id}</span></div></div><p class="muted">${currentItem.itemType || 'WRITTEN'}</p><h2 class="question-copy">${qText}</h2><div class="answer-list">${qOptions.length > 0 ? qOptions.map((opt,i)=>`<label class="answer-option ${answer===i?'selected':''}"><input type="radio" name="answer" value="${i}" ${answer===i?'checked':''}><strong>${String.fromCharCode(65+i)}.</strong><span>${opt}</span></label>`).join('') : `<textarea class="written-textarea" data-written-textarea placeholder="请在此作答…" style="width:100%;min-height:200px;padding:12px;border:1px solid #d4cfc1;border-radius:8px;font-size:15px">${typeof answer === 'string' ? answer : ''}</textarea>`}</div><div class="written-footer"><button class="btn ghost" data-written-prev ${idx===0?'disabled':''}>${icon('left')} 上一题</button>${qOptions.length > 0 ? `<button class="btn" data-written-save ${answer===undefined?'disabled':''}>${icon('save')} 保存到平台</button>` : `<button class="btn" data-written-save>${icon('save')} 保存到平台</button>`}<button class="btn primary" data-written-next>${idx>=items.length-1?'完成书面题':'保存并下一题'} ${icon('arrow')}</button></div></section><aside class="written-side"><div class="directory-head"><h2>题目目录</h2><p>✓ 已同步　● 待检查　◎ 当前题</p></div><div class="directory">${items.map((it,i)=>{const ans=appState.writtenAnswers[it.id];const syn=appState.writtenSyncStatus[it.id];const isCur=it.id===currentItem.id;return `<button class="dir-item ${isCur?'active':''} ${ans!==undefined?'done':''}" data-jump-item="${it.id}" style="width:100%;border:0;background:${isCur?'#fff0cf':'transparent'};text-align:left;padding:10px;cursor:pointer"><span class="dir-dot">${syn==='SYNCED'||syn==='FINALIZED'?'✓':ans!==undefined?'●':'◎'}</span><strong>第 ${i+1} 题</strong><span>${isCur?'当前题':syn==='SYNCED'||syn==='FINALIZED'?'已同步':ans!==undefined?'本机草稿':'待检查'}</span></button>`}).join('')}<div class="directory-art"></div></div><div style="margin-top:16px;padding:12px;background:#f6f1e6;border-radius:8px"><p class="small muted"><b>状态说明</b></p><p class="small muted">已保存到本机：仅本地草稿，刷新后保留</p><p class="small muted">已同步到平台：调用 saveWrittenAnswer 成功</p><p class="small muted">已正式提交：调用 finalizeWrittenAnswer 成功</p></div></aside></div></main>`;
+    const content=`<main class="page"><div class="written-layout"><section class="written-main"><div class="written-top"><div><h1 class="question-title">书面练习</h1><p><b style="color:var(--red)">第 ${idx+1} 题</b>　/　共 ${items.length} 题</p></div><div class="meta-row"><span>${statusChip(syncLabel, syncStatus === 'SYNCED' || syncStatus === 'FINALIZED' ? 'green' : syncStatus === 'FAILED' ? 'red' : 'blue')}</span></div></div><p class="muted">${currentItem.itemType || 'WRITTEN'}</p><h2 class="question-copy">${qText}</h2><div class="answer-list">${qOptions.length > 0 ? qOptions.map((opt,i)=>`<label class="answer-option ${answer===i?'selected':''}"><input type="radio" name="answer" value="${i}" ${answer===i?'checked':''}><strong>${String.fromCharCode(65+i)}.</strong><span>${opt}</span></label>`).join('') : `<textarea class="written-textarea" data-written-textarea placeholder="请在此作答…" style="width:100%;min-height:200px;padding:12px;border:1px solid #d4cfc1;border-radius:8px;font-size:15px">${typeof answer === 'string' ? answer : ''}</textarea>`}</div><div class="written-footer"><button class="btn ghost" data-written-prev ${idx===0?'disabled':''}>${icon('left')} 上一题</button>${qOptions.length > 0 ? `<button class="btn" data-written-save ${answer===undefined?'disabled':''}>${icon('save')} 保存到平台</button>` : `<button class="btn" data-written-save>${icon('save')} 保存到平台</button>`}<button class="btn primary" data-written-next>${idx>=items.length-1?'完成书面题':'保存并下一题'} ${icon('arrow')}</button></div></section><aside class="written-side"><div class="directory-head"><h2>题目目录</h2><p>✓ 已同步　● 待检查　◎ 当前题</p></div><div class="directory">${items.map((it,i)=>{const ans=appState.writtenAnswers[it.id];const syn=appState.writtenSyncStatus[it.id];const isCur=it.id===currentItem.id;return `<button class="dir-item ${isCur?'active':''} ${ans!==undefined?'done':''}" data-jump-item="${it.id}" style="width:100%;border:0;background:${isCur?'#fff0cf':'transparent'};text-align:left;padding:10px;cursor:pointer"><span class="dir-dot">${syn==='SYNCED'||syn==='FINALIZED'?'✓':ans!==undefined?'●':'◎'}</span><strong>第 ${i+1} 题</strong><span>${isCur?'当前题':syn==='SYNCED'||syn==='FINALIZED'?'已同步':ans!==undefined?'本机草稿':'待检查'}</span></button>`}).join('')}<div class="directory-art"></div></div><div style="margin-top:16px;padding:12px;background:#f6f1e6;border-radius:8px"><p class="small muted"><b>状态说明</b></p><p class="small muted">已保存到本机：仅本地草稿，刷新后保留</p><p class="small muted">已同步到平台：答案已保存</p><p class="small muted">已正式提交：答案已锁定</p></div></aside></div></main>`;
     return shell(content,{pageClass:'written-shell'});
   }
 
