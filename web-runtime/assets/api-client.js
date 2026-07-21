@@ -890,6 +890,26 @@
     const schoolId = await requireActiveSchoolId();
     return request(`/schools/${schoolId}/student/courses/${encodeURIComponent(assignmentId)}/submissions`, { method: 'POST', body: '{}' });
   }
+  async function saveCourseActivityAttempt(assignmentId, submissionId, activityId, payload) {
+    const schoolId = await requireActiveSchoolId();
+    return request(`/schools/${schoolId}/student/courses/${encodeURIComponent(assignmentId)}/submissions/${encodeURIComponent(submissionId)}/activities/${encodeURIComponent(activityId)}/attempt`, { method: 'PUT', body: JSON.stringify(payload) });
+  }
+  async function linkCourseRecording(assignmentId, submissionId, activityId, recordingId) {
+    const schoolId = await requireActiveSchoolId();
+    return request(`/schools/${schoolId}/student/courses/${encodeURIComponent(assignmentId)}/submissions/${encodeURIComponent(submissionId)}/activities/${encodeURIComponent(activityId)}/recordings/${encodeURIComponent(recordingId)}/link`, { method: 'POST', body: '{}' });
+  }
+  async function getStudentActivityNote(activityId) {
+    const schoolId = await requireActiveSchoolId();
+    return request(`/schools/${schoolId}/learning/activities/${encodeURIComponent(activityId)}/note`);
+  }
+  async function saveStudentActivityNote(activityId, content, revision) {
+    const schoolId = await requireActiveSchoolId();
+    return request(`/schools/${schoolId}/learning/activities/${encodeURIComponent(activityId)}/note`, { method: 'PUT', body: JSON.stringify({ content, revision }) });
+  }
+  async function submitStudentCourse(assignmentId, submissionId, revision) {
+    const schoolId = await requireActiveSchoolId();
+    return request(`/schools/${schoolId}/student/courses/${encodeURIComponent(assignmentId)}/submissions/${encodeURIComponent(submissionId)}/submit`, { method: 'POST', body: JSON.stringify({ revision }) });
+  }
 
   window.YuzanApi = {
     request,
@@ -1053,5 +1073,10 @@
     listStudentCourses,
     getStudentCourse,
     createOrResumeCourseSubmission,
+    saveCourseActivityAttempt,
+    linkCourseRecording,
+    getStudentActivityNote,
+    saveStudentActivityNote,
+    submitStudentCourse,
   };
 })();

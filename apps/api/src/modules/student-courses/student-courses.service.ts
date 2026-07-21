@@ -94,7 +94,7 @@ export class StudentCoursesService {
           content: activity.content,
           required: activity.required,
           completionRule: activity.completionRule,
-          studentNotes: activity.studentNotes,
+          studentNotes: this.publishedStudentNotes(activity.studentNotes),
           resources: activity.resources.map((link) => ({ purpose: link.purpose, meta: link.meta, resource: { ...link.resource, byteSize: String(link.resource.byteSize) } })),
           progress: activity.progress[0] ?? null,
           attempt: activity.attempts[0] ?? null,
@@ -244,7 +244,7 @@ export class StudentCoursesService {
             units: { orderBy: { sortOrder: "asc" }, include: { lessons: { orderBy: { sortOrder: "asc" }, include: { activities: { orderBy: { sortOrder: "asc" }, include: {
               resources: { include: { resource: { select: { id: true, kind: true, originalName: true, mediaType: true, byteSize: true } } } },
               progress: { where: { enrollmentId: enrollment.id }, take: 1 },
-              attempts: { orderBy: { createdAt: "desc" }, take: 1 },
+              attempts: { where: { submission: { enrollmentId: enrollment.id } }, orderBy: { createdAt: "desc" }, take: 1 },
               coursePractice: { include: { practiceDefinition: { select: { id: true, title: true } } } },
             } } } } } },
           },
@@ -299,6 +299,12 @@ export class StudentCoursesService {
     if (progressPercent < 100) return "IN_PROGRESS";
     if (attainmentStatus === "PENDING") return "RESULT_PENDING";
     return "COMPLETED";
+  }
+
+  private publishedStudentNotes(value: unknown) {
+    if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+    const notes = value as Record<string, unknown>;
+    return notes.published === true ? notes : null;
   }
 
   private submissionSummary(submission: { id: string; assignmentId: string; enrollmentId: string; attemptNo: number; status: string; revision: number; submittedAt: Date | null; createdAt: Date; updatedAt: Date }) {
