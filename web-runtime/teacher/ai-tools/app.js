@@ -10,11 +10,18 @@
   const modalText = document.querySelector('#modalText');
   const modalMark = document.querySelector('#modalMark');
   const toast = document.querySelector('#toast');
+  const jobStatusBar = document.querySelector('#jobStatusBar');
+  const jobStatusText = document.querySelector('#jobStatusText');
+  const jobCancelButton = document.querySelector('#jobCancelBtn');
+  const draftListEl = document.querySelector('#draftList');
+  const aiServiceRow = document.querySelector('#aiServiceRow');
   let toastTimer;
 
   /* ── 工具状态 ── */
   let toolsState = null;
   let inviteCodeValue = '';
+  let activeJobId = null;
+  let pollTimer = null;
 
   const content = {
     privacy: ['数据安全与隐私保护', '外部工具打开前会提示数据范围。平台不会把学生敏感信息自动发送给第三方服务，AI 结果必须由教师复核。', '盾'],
@@ -44,7 +51,7 @@
     clearTimeout(toastTimer);
     toast.textContent = message;
     toast.classList.add('show');
-    toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 3200);
   }
 
   function openModal(action) {
@@ -65,7 +72,98 @@
     goalCount.textContent = String(goalInput.value.length);
   });
 
-  /* ── 生成备课路径 - 调用后端 API ── */
+  /* ── 作业状态显示 ── */
+  function showJobStatus(text, canCancel) {
+    if (!jobStatusBar) return;
+    jobStatusText.textContent = text;
+    jobStatusBar.hidden = false;
+    jobStatusBar.dataset.state = 'running';
+    jobCancelButton.style.display = canCancel ? '' : 'none';
+  }
+
+  function showJobSuccess(text) {
+    if (!jobStatusBar) return;
+    jobStatusText.textContent = text;
+    jobStatusBar.dataset.state = 'success';
+    jobCancelButton.style.display = 'none';
+    setTimeout(() => { jobStatusBar.hidden = true; }, 5000);
+  }
+
+  function showJobError(text) {
+    if (!jobStatusBar) return;
+    jobStatusText.textContent = text;
+    jobStatusBar.dataset.state = 'error';
+    jobCancelButton.style.display = 'none';
+    setTimeout(() => { jobStatusBar.hidden = true; }, 8000);
+  }
+
+  function hideJobStatus() {
+    if (jobStatusBar) jobStatusBar.hidden = true;
+  }
+
+  /* ── 作业轮询 ── */
+  function stopPolling() {
+    if (pollTimer) {
+      clearTimeout(pollTimer);
+      pollTimer = null;
+    }
+  }
+
+  async function pollJobStatus(jobId) {
+    const api = window.YuzanApi;
+    if (!api || !api.getLessonPlanJob) return;
+
+    try {
+      const job = await api.getLessonPlanJob(jobId);
+      if (!job) { stopPolling(); return; }
+
+      const status = job.status;
+      if (status === 'COMPLETED') {
+        stopPolling();
+        activeJobId = null;
+        generatePath.disabled = false;
+        generatePath.innerHTML = '<svg viewBox="0 0 24 24"><path d="m12 3 1.4 4.1L18 9l-4.6 1.9L12 15l-1.4-4.1L6 9l4.6-1.9zM19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8zM5 14l.7 1.8L8 16.5l-2.3.7L5 19l-.7-1.8L2 16.5l2.3-.7z"/></svg>生成备课路径';
+        document.body.classList.add('path-ready');
+        document.querySelectorAll('.stage-card').forEach((card, index) => {
+          card.classList.toggle('active-stage', index <= 2);
+        });
+        showJobSuccess('AI 备课路径已生成');
+        showToast('备课路径已生成，可点击各阶段工具开始备课');
+        loadDrafts();
+      } else if (status === 'FAILED') {
+        stopPolling();
+        activeJobId = null;
+        generatePath.disabled = false;
+        generatePath.innerHTML = '<svg viewBox="0 0 24 24"><path d="m12 3 1.4 4.1L18 9l-4.6 1.9L12 15l-1.4-4.1L6 9l4.6-1.9zM19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8zM5 14l.7 1.8L8 16.5l-2.3.7L5 19l-.7-1.8L2 16.5l2.3-.7z"/></svg>生成备课路径';
+        const errMsg = job.errorMessage || 'AI 服务处理失败';
+        showJobError('生成失败：' + errMsg);
+        document.body.classList.add('path-ready');
+        document.querySelectorAll('.stage-card').forEach((card, index) => {
+          card.classList.toggle('active-stage', index <= 1);
+        });
+      } else if (status === 'CANCELLED') {
+        stopPolling();
+        activeJobId = null;
+        generatePath.disabled = false;
+        generatePath.innerHTML = '<svg viewBox="0 0 24 24"><path d="m12 3 1.4 4.1L18 9l-4.6 1.9L12 15l-1.4-4.1L6 9l4.6-1.9zM19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8zM5 14l.7 1.8L8 16.5l-2.3.7L5 19l-.7-1.8L2 16.5l2.3-.7z"/></svg>生成备课路径';
+        hideJobStatus();
+        showToast('已取消生成');
+      } else {
+        // QUEUED or RUNNING — continue polling
+        const label = status === 'QUEUED' ? '排队中…' : 'AI 正在生成备课路径…';
+        showJobStatus(label, true);
+        pollTimer = setTimeout(() => pollJobStatus(jobId), 3000);
+      }
+    } catch (err) {
+      stopPolling();
+      activeJobId = null;
+      generatePath.disabled = false;
+      generatePath.innerHTML = '<svg viewBox="0 0 24 24"><path d="m12 3 1.4 4.1L18 9l-4.6 1.9L12 15l-1.4-4.1L6 9l4.6-1.9zM19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8zM5 14l.7 1.8L8 16.5l-2.3.7L5 19l-.7-1.8L2 16.5l2.3-.7z"/></svg>生成备课路径';
+      showJobError('查询状态失败：' + err.message);
+    }
+  }
+
+  /* ── 生成备课路径 - 调用异步作业 API ── */
   generatePath.addEventListener('click', async () => {
     const hasInput = goalInput.value.trim() || courseSelect.value;
     if (!hasInput) {
@@ -74,58 +172,125 @@
       return;
     }
 
-    // 如果 API 可用，尝试调用后端生成备课路径
     const api = window.YuzanApi;
-    if (api && api.getToken && api.getToken()) {
-      generatePath.disabled = true;
-      const originalText = generatePath.textContent;
-      generatePath.textContent = '正在生成…';
-      try {
-        const result = await api.generatePlan(
-          goalInput.value.trim(),
-          courseSelect.value || undefined,
-          undefined
-        );
-        if (result && result.status === 'PROVIDER_NOT_CONFIGURED') {
-          // AI 服务未配置，仍显示本地路径但提示
-          document.body.classList.add('path-ready');
-          document.querySelectorAll('.stage-card').forEach((card, index) => {
-            card.classList.toggle('active-stage', index <= 1);
-          });
-          showToast('AI 服务暂未配置，已展示默认备课路径供参考');
-        } else if (result && result.status === 'PENDING') {
-          document.body.classList.add('path-ready');
-          document.querySelectorAll('.stage-card').forEach((card, index) => {
-            card.classList.toggle('active-stage', index <= 1);
-          });
-          showToast('已提交备课路径生成请求，请稍后查看结果');
-        } else {
-          // 有结果直接展示
-          document.body.classList.add('path-ready');
-          document.querySelectorAll('.stage-card').forEach((card, index) => {
-            card.classList.toggle('active-stage', index <= 1);
-          });
-          showToast('已生成推荐备课路径，当前建议从构建思路开始');
-        }
-      } catch (err) {
-        document.body.classList.add('path-ready');
-        document.querySelectorAll('.stage-card').forEach((card, index) => {
-          card.classList.toggle('active-stage', index <= 1);
-        });
-        showToast('路径生成请求已发送，当前展示默认路径');
-      } finally {
-        generatePath.disabled = false;
-        generatePath.textContent = originalText;
-      }
-    } else {
+    if (!api || !api.getToken || !api.getToken()) {
       // 无 API 连接，使用本地演示
       document.body.classList.add('path-ready');
       document.querySelectorAll('.stage-card').forEach((card, index) => {
         card.classList.toggle('active-stage', index <= 1);
       });
       showToast('已生成推荐备课路径，当前建议从构建思路开始');
+      return;
+    }
+
+    // 优先使用新的异步作业 API
+    if (api.createLessonPlanJob) {
+      generatePath.disabled = true;
+      generatePath.innerHTML = '<svg viewBox="0 0 24 24"><path d="m12 3 1.4 4.1L18 9l-4.6 1.9L12 15l-1.4-4.1L6 9l4.6-1.9zM19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8zM5 14l.7 1.8L8 16.5l-2.3.7L5 19l-.7-1.8L2 16.5l2.3-.7z"/></svg>提交中…';
+
+      try {
+        const result = await api.createLessonPlanJob(
+          goalInput.value.trim(),
+          courseSelect.value || undefined,
+          undefined,
+          undefined
+        );
+
+        if (result && result.jobId) {
+          activeJobId = result.jobId;
+          showJobStatus('AI 正在生成备课路径…', true);
+          showToast('已提交备课路径生成请求');
+          pollJobStatus(result.jobId);
+        } else if (result && result.code === 'PROVIDER_NOT_CONFIGURED') {
+          generatePath.disabled = false;
+          generatePath.innerHTML = '<svg viewBox="0 0 24 24"><path d="m12 3 1.4 4.1L18 9l-4.6 1.9L12 15l-1.4-4.1L6 9l4.6-1.9zM19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8zM5 14l.7 1.8L8 16.5l-2.3.7L5 19l-.7-1.8L2 16.5l2.3-.7z"/></svg>生成备课路径';
+          document.body.classList.add('path-ready');
+          document.querySelectorAll('.stage-card').forEach((card, index) => {
+            card.classList.toggle('active-stage', index <= 1);
+          });
+          showJobError('AI 服务暂未配置');
+          showToast('AI 服务暂未配置，已展示默认备课路径供参考');
+        } else {
+          generatePath.disabled = false;
+          generatePath.innerHTML = '<svg viewBox="0 0 24 24"><path d="m12 3 1.4 4.1L18 9l-4.6 1.9L12 15l-1.4-4.1L6 9l4.6-1.9zM19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8zM5 14l.7 1.8L8 16.5l-2.3.7L5 19l-.7-1.8L2 16.5l2.3-.7z"/></svg>生成备课路径';
+          document.body.classList.add('path-ready');
+          document.querySelectorAll('.stage-card').forEach((card, index) => {
+            card.classList.toggle('active-stage', index <= 1);
+          });
+          showToast('已展示默认备课路径');
+        }
+      } catch (err) {
+        generatePath.disabled = false;
+        generatePath.innerHTML = '<svg viewBox="0 0 24 24"><path d="m12 3 1.4 4.1L18 9l-4.6 1.9L12 15l-1.4-4.1L6 9l4.6-1.9zM19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8zM5 14l.7 1.8L8 16.5l-2.3.7L5 19l-.7-1.8L2 16.5l2.3-.7z"/></svg>生成备课路径';
+        document.body.classList.add('path-ready');
+        document.querySelectorAll('.stage-card').forEach((card, index) => {
+          card.classList.toggle('active-stage', index <= 1);
+        });
+        showJobError('请求失败：' + err.message);
+      }
+      return;
+    }
+
+    // 降级：使用旧的同步 generatePlan API
+    generatePath.disabled = true;
+    const originalText = generatePath.textContent;
+    generatePath.textContent = '正在生成…';
+    try {
+      const result = await api.generatePlan(
+        goalInput.value.trim(),
+        courseSelect.value || undefined,
+        undefined
+      );
+      if (result && result.status === 'PROVIDER_NOT_CONFIGURED') {
+        document.body.classList.add('path-ready');
+        document.querySelectorAll('.stage-card').forEach((card, index) => {
+          card.classList.toggle('active-stage', index <= 1);
+        });
+        showToast('AI 服务暂未配置，已展示默认备课路径供参考');
+      } else if (result && result.status === 'PENDING') {
+        document.body.classList.add('path-ready');
+        document.querySelectorAll('.stage-card').forEach((card, index) => {
+          card.classList.toggle('active-stage', index <= 1);
+        });
+        showToast('已提交备课路径生成请求，请稍后查看结果');
+      } else {
+        document.body.classList.add('path-ready');
+        document.querySelectorAll('.stage-card').forEach((card, index) => {
+          card.classList.toggle('active-stage', index <= 1);
+        });
+        showToast('已生成推荐备课路径，当前建议从构建思路开始');
+      }
+    } catch (err) {
+      document.body.classList.add('path-ready');
+      document.querySelectorAll('.stage-card').forEach((card, index) => {
+        card.classList.toggle('active-stage', index <= 1);
+      });
+      showToast('路径生成请求已发送，当前展示默认路径');
+    } finally {
+      generatePath.disabled = false;
+      generatePath.textContent = originalText;
     }
   });
+
+  /* ── 取消作业 ── */
+  if (jobCancelButton) {
+    jobCancelButton.addEventListener('click', async () => {
+      if (!activeJobId) return;
+      const api = window.YuzanApi;
+      if (!api || !api.cancelLessonPlanJob) return;
+      try {
+        await api.cancelLessonPlanJob(activeJobId);
+        stopPolling();
+        activeJobId = null;
+        generatePath.disabled = false;
+        generatePath.innerHTML = '<svg viewBox="0 0 24 24"><path d="m12 3 1.4 4.1L18 9l-4.6 1.9L12 15l-1.4-4.1L6 9l4.6-1.9zM19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8zM5 14l.7 1.8L8 16.5l-2.3.7L5 19l-.7-1.8L2 16.5l2.3-.7z"/></svg>生成备课路径';
+        hideJobStatus();
+        showToast('已取消生成');
+      } catch (err) {
+        showToast('取消失败：' + err.message);
+      }
+    });
+  }
 
   routeButtons.forEach((button) => {
     button.addEventListener('click', () => {
@@ -148,14 +313,12 @@
         const api = window.YuzanApi;
         let codeToCopy = '';
 
-        // 尝试从后端获取邀请码
         if (api && api.getToken && api.getToken()) {
           try {
             const result = await api.getInviteCode();
             if (result && result.code) {
               codeToCopy = result.code;
               inviteCodeValue = result.code;
-              // 更新页面上的邀请码显示
               const codeEl = document.querySelector('#inviteCode');
               if (codeEl) codeEl.textContent = result.code;
             }
@@ -164,7 +327,6 @@
           }
         }
 
-        // 如果 API 没有返回，使用页面上的值
         if (!codeToCopy) {
           const codeEl = document.querySelector('#inviteCode');
           codeToCopy = codeEl ? codeEl.textContent : '';
@@ -206,6 +368,70 @@
     if (event.key === 'Escape' && !modalBackdrop.hidden) closeModal();
   });
 
+  /* ── 加载草稿列表 ── */
+  async function loadDrafts() {
+    const api = window.YuzanApi;
+    if (!api || !api.listLessonPlanDrafts || !api.getToken || !api.getToken()) return;
+    if (!draftListEl) return;
+
+    try {
+      const drafts = await api.listLessonPlanDrafts();
+      if (!drafts || !drafts.length) {
+        draftListEl.innerHTML = '<div class="draft-empty">暂无备课草稿</div>';
+        return;
+      }
+
+      draftListEl.innerHTML = drafts.slice(0, 5).map(d => {
+        const statusLabel = d.status === 'APPROVED' ? '已确认' : d.status === 'DRAFT' ? '草稿' : d.status;
+        const dateStr = d.updatedAt ? new Date(d.updatedAt).toLocaleDateString('zh-CN', { month: '2-digit', day: '2-digit' }) : '';
+        return '<button class="draft-row" data-draft-id="' + d.id + '">' +
+          '<span class="row-icon red-pencil">✎</span>' +
+          '<div><b>' + (d.title || '未命名备课草稿') + '</b>' +
+          '<small><span>AI备课</span>　' + statusLabel + ' · ' + dateStr + '</small></div>' +
+          '<em>›</em></button>';
+      }).join('');
+
+      draftListEl.querySelectorAll('[data-draft-id]').forEach(row => {
+        row.addEventListener('click', () => {
+          showToast('正在打开草稿…');
+        });
+      });
+    } catch (err) {
+      draftListEl.innerHTML = '<div class="draft-empty">加载失败</div>';
+    }
+  }
+
+  /* ── 更新 AI 服务状态 ── */
+  async function loadWorkflowStatus() {
+    const api = window.YuzanApi;
+    if (!api || !api.getLessonPlanWorkflowStatus || !api.getToken || !api.getToken()) return;
+    if (!aiServiceRow) return;
+
+    try {
+      const status = await api.getLessonPlanWorkflowStatus();
+      if (!status) return;
+
+      const statusEl = aiServiceRow.querySelector('em');
+      if (!statusEl) return;
+
+      if (status.available === false || status.status === 'UNAVAILABLE') {
+        statusEl.className = 'disabled';
+        statusEl.textContent = '不可用　查看说明 ›';
+      } else if (status.status === 'PENDING' || status.status === 'QUEUED') {
+        statusEl.className = 'warning';
+        statusEl.textContent = '配置中…';
+      } else if (status.available === true || status.status === 'ACTIVE') {
+        statusEl.className = 'connected';
+        statusEl.textContent = '✓ 已连接';
+      } else {
+        statusEl.className = 'warning';
+        statusEl.textContent = '需配置　去配置 ›';
+      }
+    } catch (err) {
+      // 静默失败
+    }
+  }
+
   /* ── 页面初始化 - 加载工具状态 ── */
   async function initToolsState() {
     const api = window.YuzanApi;
@@ -237,9 +463,12 @@
         }
       }
     } catch (err) {
-      // 静默失败，不影响页面使用
       console.warn('加载工具状态失败:', err.message);
     }
+
+    // 并行加载草稿列表和 AI 工作流状态
+    loadDrafts();
+    loadWorkflowStatus();
   }
 
   initToolsState();

@@ -65,6 +65,7 @@
               <label><span>本次备课目标 <small>（可选）</small></span><div class="textarea-box"><textarea id="goalInput" maxlength="100" placeholder="例如：理解《高原上的春天》朗读与表达目标"></textarea><em><span id="goalCount">0</span>/100</em></div></label>
               <label><span>关联课程 <small>（可选）</small></span><select id="courseSelect"><option value="">选择课程或单元</option><option>三年级下册 · 高原上的春天</option><option>三年级下册 · 第3章朗读与表达</option><option>四年级上册 · 语文综合实践</option></select></label>
               <button class="generate-button" id="generatePath"><svg viewBox="0 0 24 24"><path d="m12 3 1.4 4.1L18 9l-4.6 1.9L12 15l-1.4-4.1L6 9l4.6-1.9zM19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8zM5 14l.7 1.8L8 16.5l-2.3.7L5 19l-.7-1.8L2 16.5l2.3-.7z"/></svg>生成备课路径</button>
+              <div class="job-status-bar" id="jobStatusBar" hidden data-state="idle"><span class="job-status-text" id="jobStatusText"></span><button class="job-cancel-btn" id="jobCancelBtn">取消</button></div>
             </section>
 
             <section class="workflow-card">
@@ -102,9 +103,7 @@
             </section>
 
             <section class="rail-card draft-card"><header><h2>我的草稿</h2><button>全部 ›</button></header>
-              <button class="draft-row" data-action="draft"><span class="row-icon red-pencil">✎</span><div><b>未命名思路草稿</b><small><span>MindGraph</span>　草稿 · 05-13</small></div><em>›</em></button>
-              <button class="draft-row" data-action="draft"><span class="row-icon red-pencil">✎</span><div><b>三年级下册备课计划</b><small><span>MindMate</span>　草稿 · 05-11</small></div><em>›</em></button>
-              <button class="draft-row" data-action="draft"><span class="row-icon blue-doc">▤</span><div><b>词语积累学习单</b><small><span>学习单工具</span>　草稿 · 05-10</small></div><em>›</em></button>
+              <div id="draftList"></div>
             </section>
 
             <section class="rail-card service-card"><header><h2>外部服务状态</h2><button data-action="manage-services">管理 ›</button></header>
@@ -112,7 +111,7 @@
               <div class="service-row"><span class="green-service">●</span><b>MindGraph 服务</b><em class="connected">✓ 已连接</em></div>
               <div class="service-row"><span class="orange-service">译</span><b>藏汉翻译服务</b><em class="connected">✓ 已连接</em></div>
               <div class="service-row"><span class="orange-service">▧</span><b>资源库服务</b><em class="warning">需配置　去配置 ›</em></div>
-              <div class="service-row"><span>◈</span><b>AI 能力服务</b><em class="disabled">不可用　查看说明 ›</em></div>
+              <div class="service-row" id="aiServiceRow"><span>◈</span><b>AI 能力服务</b><em class="disabled">不可用　查看说明 ›</em></div>
               <p>部分服务由第三方提供，使用前需完成授权配置。</p>
             </section>
           </aside>

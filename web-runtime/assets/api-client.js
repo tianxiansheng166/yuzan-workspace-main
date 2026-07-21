@@ -488,7 +488,33 @@
     });
   }
 
-  /* ── Curriculum ── */
+  /* ── Curriculum (Course Versions) ── */
+  async function listCourseVersions(options = {}) {
+    const params = new URLSearchParams();
+    if (options.status) params.set('status', options.status);
+    if (options.limit) params.set('limit', String(options.limit));
+    if (options.cursor) params.set('cursor', options.cursor);
+    const qs = params.toString();
+    return request(`/schools/${getActiveSchoolId()}/course-versions${qs ? '?' + qs : ''}`);
+  }
+  async function getCourseVersionDetail(courseVersionId) {
+    return request(`/schools/${getActiveSchoolId()}/course-versions/${encodeURIComponent(courseVersionId)}`);
+  }
+  async function createCourseDraft(payload) {
+    return request(`/schools/${getActiveSchoolId()}/course-versions`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  }
+  async function updateCourseDraft(courseVersionId, payload) {
+    return request(`/schools/${getActiveSchoolId()}/course-versions/${encodeURIComponent(courseVersionId)}`, {
+      method: 'PATCH',
+      body: JSON.stringify(payload),
+    });
+  }
+  async function publishCourseVersion(courseVersionId) {
+    return request(`/schools/${getActiveSchoolId()}/course-versions/${encodeURIComponent(courseVersionId)}/publish`, { method: 'POST' });
+  }
   async function submitForReview(courseVersionId, expectedUpdatedAt) {
     return request(`/schools/${getActiveSchoolId()}/course-versions/${courseVersionId}/submit-review`, {
       method: 'POST',
@@ -509,6 +535,42 @@
       method: 'POST',
       body: JSON.stringify({ offlinePackageId }),
     });
+  }
+
+  /* ── Resources (Presigned Upload) ── */
+  async function presignUpload(payload) {
+    return request(`/schools/${getActiveSchoolId()}/resources/presign-upload`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  }
+  async function confirmUpload(resourceId, payload) {
+    return request(`/schools/${getActiveSchoolId()}/resources/${encodeURIComponent(resourceId)}/confirm-upload`, {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+    });
+  }
+  async function getResourcePlaybackUrl(resourceId) {
+    return request(`/schools/${getActiveSchoolId()}/resources/${encodeURIComponent(resourceId)}/playback-url`);
+  }
+  async function getResourceInfo(resourceId) {
+    return request(`/schools/${getActiveSchoolId()}/resources/${encodeURIComponent(resourceId)}`);
+  }
+
+  /* ── Assignments ── */
+  async function createAssignment(payload) {
+    return request(`/schools/${getActiveSchoolId()}/assignments`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  }
+  async function listAssignments(options = {}) {
+    const params = new URLSearchParams();
+    if (options.status) params.set('status', options.status);
+    if (options.limit) params.set('limit', String(options.limit));
+    if (options.cursor) params.set('cursor', options.cursor);
+    const qs = params.toString();
+    return request(`/schools/${getActiveSchoolId()}/assignments${qs ? '?' + qs : ''}`);
   }
 
   /* ── Teacher Tools ── */
@@ -536,6 +598,51 @@
   }
   async function getExternalServices() {
     return request(`/schools/${getActiveSchoolId()}/external-services`);
+  }
+
+  /* ── AI Lesson Planning ── */
+  async function createLessonPlanJob(goal, courseVersionId, gradeBand, idempotencyKey) {
+    return request(`/schools/${getActiveSchoolId()}/ai/lesson-plan-jobs`, {
+      method: 'POST',
+      body: JSON.stringify({
+        goal,
+        ...(courseVersionId ? { courseVersionId } : {}),
+        ...(gradeBand ? { gradeBand } : {}),
+        ...(idempotencyKey ? { idempotencyKey } : {}),
+      }),
+    });
+  }
+  async function getLessonPlanJob(jobId) {
+    return request(`/schools/${getActiveSchoolId()}/ai/lesson-plan-jobs/${encodeURIComponent(jobId)}`);
+  }
+  async function cancelLessonPlanJob(jobId) {
+    return request(`/schools/${getActiveSchoolId()}/ai/lesson-plan-jobs/${encodeURIComponent(jobId)}/cancel`, {
+      method: 'POST',
+    });
+  }
+  async function listLessonPlanDrafts() {
+    return request(`/schools/${getActiveSchoolId()}/ai/lesson-plan-drafts`);
+  }
+  async function getLessonPlanDraft(draftId) {
+    return request(`/schools/${getActiveSchoolId()}/ai/lesson-plan-drafts/${encodeURIComponent(draftId)}`);
+  }
+  async function updateLessonPlanDraft(draftId, title, content, expectedRevision) {
+    return request(`/schools/${getActiveSchoolId()}/ai/lesson-plan-drafts/${encodeURIComponent(draftId)}`, {
+      method: 'PATCH',
+      body: JSON.stringify({
+        ...(title != null ? { title } : {}),
+        content,
+        expectedRevision,
+      }),
+    });
+  }
+  async function approveLessonPlanDraft(draftId) {
+    return request(`/schools/${getActiveSchoolId()}/ai/lesson-plan-drafts/${encodeURIComponent(draftId)}/approve`, {
+      method: 'POST',
+    });
+  }
+  async function getLessonPlanWorkflowStatus() {
+    return request(`/schools/${getActiveSchoolId()}/ai/workflow-status`);
   }
   async function getInviteCode() {
     return request(`/schools/${getActiveSchoolId()}/teacher-tools/invite-code`);
@@ -938,6 +1045,34 @@
     const schoolId = await requireActiveSchoolId();
     return request(`/schools/${schoolId}/student/courses/${encodeURIComponent(assignmentId)}/submissions/${encodeURIComponent(submissionId)}/activities/${encodeURIComponent(activityId)}/practice-attempts/${encodeURIComponent(attemptId)}/complete`, { method: 'POST', body: '{}' });
   }
+  async function addCourseFavorite(assignmentId) {
+    const schoolId = await requireActiveSchoolId();
+    return request(`/schools/${schoolId}/student/courses/${encodeURIComponent(assignmentId)}/favorite`, { method: 'POST' });
+  }
+  async function removeCourseFavorite(assignmentId) {
+    const schoolId = await requireActiveSchoolId();
+    return request(`/schools/${schoolId}/student/courses/${encodeURIComponent(assignmentId)}/favorite`, { method: 'DELETE' });
+  }
+  async function listStudentActivityNotes(activityId) {
+    const schoolId = await requireActiveSchoolId();
+    return request(`/schools/${schoolId}/learning/activities/${encodeURIComponent(activityId)}/notes`);
+  }
+  async function createStudentActivityNote(activityId, content, videoTimestamp) {
+    const schoolId = await requireActiveSchoolId();
+    return request(`/schools/${schoolId}/learning/activities/${encodeURIComponent(activityId)}/notes`, { method: 'POST', body: JSON.stringify({ content, videoTimestamp }) });
+  }
+  async function deleteStudentActivityNote(activityId, noteId) {
+    const schoolId = await requireActiveSchoolId();
+    return request(`/schools/${schoolId}/learning/activities/${encodeURIComponent(activityId)}/notes/${encodeURIComponent(noteId)}`, { method: 'DELETE' });
+  }
+  async function updateStudentActivityNote(activityId, noteId, content, videoTimestamp) {
+    const schoolId = await requireActiveSchoolId();
+    return request(`/schools/${schoolId}/learning/activities/${encodeURIComponent(activityId)}/notes/${encodeURIComponent(noteId)}`, { method: 'PUT', body: JSON.stringify({ content, videoTimestamp }) });
+  }
+  async function getStudentRecommendationsForCourse(assignmentId) {
+    const schoolId = await requireActiveSchoolId();
+    return request(`/schools/${schoolId}/student/courses/${encodeURIComponent(assignmentId)}/recommendations`);
+  }
 
   window.YuzanApi = {
     request,
@@ -1024,17 +1159,39 @@
     /* Notifications */
     getNotifications,
     markNotificationRead,
-    /* Curriculum */
+    /* Curriculum (Course Versions) */
+    listCourseVersions,
+    getCourseVersionDetail,
+    createCourseDraft,
+    updateCourseDraft,
+    publishCourseVersion,
     submitForReview,
     attachResource,
     listResources,
     attachOfflinePackage,
+    /* Resources (Presigned Upload) */
+    presignUpload,
+    confirmUpload,
+    getResourcePlaybackUrl,
+    getResourceInfo,
+    /* Assignments */
+    createAssignment,
+    listAssignments,
     /* Teacher Tools */
     getTeacherToolsState,
     generatePlan,
     listDrafts,
     saveDraft,
     getExternalServices,
+    /* AI Lesson Planning */
+    createLessonPlanJob,
+    getLessonPlanJob,
+    cancelLessonPlanJob,
+    listLessonPlanDrafts,
+    getLessonPlanDraft,
+    updateLessonPlanDraft,
+    approveLessonPlanDraft,
+    getLessonPlanWorkflowStatus,
     getInviteCode,
     createTeacherInvitation,
     listMyTeacherInvitations,
@@ -1110,5 +1267,12 @@
     saveStudentActivityNote,
     submitStudentCourse,
     completeCoursePractice,
+    addCourseFavorite,
+    removeCourseFavorite,
+    listStudentActivityNotes,
+    createStudentActivityNote,
+    deleteStudentActivityNote,
+    updateStudentActivityNote,
+    getStudentRecommendationsForCourse,
   };
 })();
