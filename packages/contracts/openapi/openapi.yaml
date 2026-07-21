@@ -42,6 +42,8 @@ tags:
     description: 语音评分任务创建、查询与 worker 回写
   - name: TeacherInvitations
     description: 教师班级邀请码创建与学生绑定
+  - name: PracticeCatalog
+    description: 学生可发现练习目录、详情、收藏与可恢复 Attempt
 paths:
   /health/live:
     get:
@@ -1888,6 +1890,157 @@ paths:
         "201": { description: Course submitted; attainment may remain PENDING }
         "409": { $ref: "#/components/responses/Conflict" }
         "422": { description: Required course work is incomplete }
+  /schools/{schoolId}/practices:
+    get:
+      summary: 获取学生可发现的练习目录
+      tags: [PracticeCatalog]
+      operationId: listPractices
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - { in: query, name: query, schema: { type: string } }
+        - { in: query, name: abilityCategory, schema: { type: string } }
+        - { in: query, name: gradeBand, schema: { type: string } }
+        - { in: query, name: difficulty, schema: { type: string } }
+        - {
+            in: query,
+            name: duration,
+            schema: { type: string, enum: [SHORT, MEDIUM, LONG] },
+          }
+        - { in: query, name: itemType, schema: { type: string } }
+        - { in: query, name: cultureTag, schema: { type: string } }
+        - {
+            in: query,
+            name: mode,
+            schema: { type: string, enum: [ASSIGNMENT, SELF_PRACTICE] },
+          }
+        - { in: query, name: requiresRecording, schema: { type: boolean } }
+        - { in: query, name: instantFeedback, schema: { type: boolean } }
+        - {
+            in: query,
+            name: completionStatus,
+            schema:
+              {
+                type: string,
+                enum: [NOT_STARTED, IN_PROGRESS, COMPLETED, FAVORITE],
+              },
+          }
+        - {
+            in: query,
+            name: sort,
+            schema:
+              {
+                type: string,
+                enum: [RECOMMENDED, DURATION_ASC, DURATION_DESC, TITLE],
+              },
+          }
+        - { in: query, name: cursor, schema: { type: string } }
+      responses:
+        "200":
+          {
+            description: "Catalog items, facets, nextCursor, total, studentState and recommendationReason",
+          }
+        "403": { $ref: "#/components/responses/Forbidden" }
+  /schools/{schoolId}/practices/{practiceDefinitionId}:
+    get:
+      summary: 获取练习详情（不含题目正文）
+      tags: [PracticeCatalog]
+      operationId: getPractice
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - {
+            in: path,
+            name: practiceDefinitionId,
+            required: true,
+            schema: { type: string, format: uuid },
+          }
+      responses:
+        "200":
+          {
+            description: "Definition metadata, visible sections, policies, recent result and recommendation",
+          }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /schools/{schoolId}/practices/{practiceDefinitionId}/attempts:
+    post:
+      summary: 创建或恢复当前学生的练习 Attempt
+      tags: [PracticeCatalog]
+      operationId: createOrResumePractice
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - {
+            in: path,
+            name: practiceDefinitionId,
+            required: true,
+            schema: { type: string, format: uuid },
+          }
+      responses:
+        "201":
+          {
+            description: "Returns a real attemptId; published item snapshots are copied atomically",
+          }
+        "403": { $ref: "#/components/responses/Forbidden" }
+  /schools/{schoolId}/practices/{practiceDefinitionId}/favorite:
+    post:
+      summary: 收藏当前可见练习
+      tags: [PracticeCatalog]
+      operationId: favoritePractice
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - {
+            in: path,
+            name: practiceDefinitionId,
+            required: true,
+            schema: { type: string, format: uuid },
+          }
+      responses:
+        "201": { description: Favorite saved }
+        "403": { $ref: "#/components/responses/Forbidden" }
+    delete:
+      summary: 取消收藏当前练习
+      tags: [PracticeCatalog]
+      operationId: unfavoritePractice
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - {
+            in: path,
+            name: practiceDefinitionId,
+            required: true,
+            schema: { type: string, format: uuid },
+          }
+      responses:
+        "200": { description: Favorite removed }
+        "403": { $ref: "#/components/responses/Forbidden" }
+  /schools/{schoolId}/practices/attempts/{attemptId}:
+    get:
+      summary: 获取当前学生可访问的练习 Attempt
+      tags: [PracticeCatalog]
+      operationId: getPracticeAttempt
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - {
+            in: path,
+            name: attemptId,
+            required: true,
+            schema: { type: string, format: uuid },
+          }
+      responses:
+        "200": { description: Attempt state }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /schools/{schoolId}/practices/attempts/{attemptId}/items:
+    get:
+      summary: 获取 Attempt 的不可变题目快照
+      tags: [PracticeCatalog]
+      operationId: getPracticeAttemptItems
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - {
+            in: path,
+            name: attemptId,
+            required: true,
+            schema: { type: string, format: uuid },
+          }
+      responses:
+        "200": { description: Ordered AssessmentItem snapshots }
+        "404": { $ref: "#/components/responses/NotFound" }
   /schools/{schoolId}/learning/activities/{activityId}/note:
     get:
       summary: 获取当前学生的私人活动笔记

@@ -36,7 +36,8 @@ def create_or_resume_first_practice(page):
           };
           const practicesResponse = await fetch(`/api/v1/schools/${schoolId}/practices`, { headers });
           const practicesPayload = await practicesResponse.json();
-          const practices = practicesPayload.data || practicesPayload;
+          const catalog = practicesPayload.data || practicesPayload;
+          const practices = catalog.items || catalog;
           const practice = practices.find(item => item.title === '古诗文朗读与理解训练');
           if (!practice) throw new Error('找不到古诗文练习');
           const attemptResponse = await fetch(`/api/v1/schools/${schoolId}/practices/${practice.id}/attempts`, {

@@ -40,12 +40,21 @@ const ids = {
   practiceClassical: "70000000-0000-4000-8000-000000000001",
   practiceModern: "70000000-0000-4000-8000-000000000002",
   practiceRhythm: "70000000-0000-4000-8000-000000000003",
+  practiceInitials: "70000000-0000-4000-8000-000000000004",
+  practiceTones: "70000000-0000-4000-8000-000000000005",
+  practiceRetell: "70000000-0000-4000-8000-000000000006",
   versionClassical: "71000000-0000-4000-8000-000000000001",
   versionModern: "71000000-0000-4000-8000-000000000002",
   versionRhythm: "71000000-0000-4000-8000-000000000003",
+  versionInitials: "71000000-0000-4000-8000-000000000004",
+  versionTones: "71000000-0000-4000-8000-000000000005",
+  versionRetell: "71000000-0000-4000-8000-000000000006",
   deliveryClassical: "72000000-0000-4000-8000-000000000001",
   deliveryModern: "72000000-0000-4000-8000-000000000002",
   deliveryRhythm: "72000000-0000-4000-8000-000000000003",
+  deliveryInitials: "72000000-0000-4000-8000-000000000004",
+  deliveryTones: "72000000-0000-4000-8000-000000000005",
+  deliveryRetell: "72000000-0000-4000-8000-000000000006",
 } as const;
 
 async function passwordHash(password: string) {
@@ -62,6 +71,8 @@ async function passwordHash(password: string) {
 type SeedPractice = {
   id: string; versionId: string; deliveryId: string; title: string; summary: string;
   difficulty: string; estimatedMinutes: number; mode: "ASSIGNMENT" | "SELF_PRACTICE";
+  gradeBand: string; abilityCategories: string[]; cultureTags: string[]; catalogType: "SPECIALIZED" | "COMPREHENSIVE" | "MOCK";
+  requiresRecording: boolean; instantFeedback: boolean; coverAsset: string;
   sections: Array<{ title: string; description: string; minutes: number; items: Array<{ type: string; config: Record<string, unknown> }> }>;
 };
 
@@ -74,7 +85,7 @@ async function seedReusablePractices() {
   const practices: SeedPractice[] = [
     {
       id: ids.practiceClassical, versionId: ids.versionClassical, deliveryId: ids.deliveryClassical,
-      title: "古诗文朗读与理解训练", summary: "在听读、跟读和理解表达中感受古诗文的节奏与意境。", difficulty: "七年级", estimatedMinutes: 22, mode: "ASSIGNMENT",
+      title: "古诗文朗读与理解训练", summary: "在听读、跟读和理解表达中感受古诗文的节奏与意境。", difficulty: "进阶", estimatedMinutes: 22, mode: "ASSIGNMENT", gradeBand: "七年级", abilityCategories: ["古诗文", "跟读模仿", "独立朗读", "阅读理解", "书面表达"], cultureTags: ["古诗文", "传统文化"], catalogType: "COMPREHENSIVE", requiresRecording: true, instantFeedback: false, coverAsset: "/assessment/assets/practice-catalog/spring-highland.png",
       sections: [
         { title: "听读感知", description: "先听范读，留意停顿和语气。", minutes: 4, items: [{ type: "LISTEN_ONLY", config: { instruction: "聆听《木兰诗》节选范读，记录两个停顿位置。", stimulus: "唧唧复唧唧，木兰当户织。", demoAudioUrl: "/student/growth/assets/practice-sample.wav" } }] },
         { title: "跟读练习", description: "跟随范读完成一句一句的练习。", minutes: 5, items: [{ type: "LISTEN_REPEAT", config: { instruction: "听完示范后，跟读下面的句子。", targetText: "万里赴戎机，关山度若飞。", demoAudioUrl: "/student/growth/assets/practice-sample.wav", maxScore: 20 } }] },
@@ -85,7 +96,7 @@ async function seedReusablePractices() {
     },
     {
       id: ids.practiceModern, versionId: ids.versionModern, deliveryId: ids.deliveryModern,
-      title: "现代文朗读与信息提取", summary: "在真实短文中练习倾听、朗读和抓取关键信息。", difficulty: "七年级", estimatedMinutes: 15, mode: "SELF_PRACTICE",
+      title: "现代文朗读与信息提取", summary: "在真实短文中练习倾听、朗读和抓取关键信息。", difficulty: "基础", estimatedMinutes: 15, mode: "SELF_PRACTICE", gradeBand: "七年级", abilityCategories: ["听辨训练", "独立朗读", "阅读理解", "书面表达"], cultureTags: ["现代文", "自然观察"], catalogType: "COMPREHENSIVE", requiresRecording: true, instantFeedback: true, coverAsset: "/assessment/assets/practice-catalog/morning-valley.png",
       sections: [
         { title: "听材料", description: "先整体理解材料内容。", minutes: 3, items: [{ type: "LISTEN_ONLY", config: { instruction: "聆听关于高原春天的短文。", stimulus: "冰雪消融后，山坡上的草芽最先醒来。", demoAudioUrl: "/student/growth/assets/practice-sample.wav" } }] },
         { title: "朗读短文", description: "读出叙述的节奏。", minutes: 4, items: [{ type: "READ_ALOUD", config: { instruction: "请朗读材料句子。", targetText: "清晨的风穿过山谷，带来泥土和松针的清香。", maxScore: 25 } }] },
@@ -95,7 +106,7 @@ async function seedReusablePractices() {
     },
     {
       id: ids.practiceRhythm, versionId: ids.versionRhythm, deliveryId: ids.deliveryRhythm,
-      title: "停顿与节奏专项训练", summary: "通过听辨、跟读、朗读和回听，找到更自然的表达节奏。", difficulty: "基础巩固", estimatedMinutes: 10, mode: "SELF_PRACTICE",
+      title: "停顿与节奏专项训练", summary: "通过听辨、跟读、朗读和回听，找到更自然的表达节奏。", difficulty: "基础", estimatedMinutes: 10, mode: "SELF_PRACTICE", gradeBand: "七年级", abilityCategories: ["听辨训练", "跟读模仿", "独立朗读"], cultureTags: ["古诗文", "朗读节奏"], catalogType: "SPECIALIZED", requiresRecording: true, instantFeedback: true, coverAsset: "/assessment/assets/practice-catalog/barley-year.png",
       sections: [
         { title: "听辨停顿", description: "辨认更自然的朗读停顿。", minutes: 2, items: [{ type: "SINGLE_CHOICE", config: { prompt: "哪一种停顿更自然？", options: ["春风 / 又绿江南岸", "春 / 风又绿江南岸"], required: true, maxScore: 25 } }] },
         { title: "跟读节奏", description: "模仿示范的轻重与停连。", minutes: 3, items: [{ type: "LISTEN_REPEAT", config: { instruction: "听完示范后跟读。", targetText: "春风又绿江南岸，明月何时照我还。", demoAudioUrl: "/student/growth/assets/practice-sample.wav", maxScore: 25 } }] },
@@ -103,15 +114,46 @@ async function seedReusablePractices() {
         { title: "回听反思", description: "回听后写下一个可改进点。", minutes: 2, items: [{ type: "LISTEN_RETELL", config: { prompt: "回听自己的朗读后，写下一个准备调整的停顿或语速问题。", required: true, maxScore: 25 } }] },
       ],
     },
+    {
+      id: ids.practiceInitials, versionId: ids.versionInitials, deliveryId: ids.deliveryInitials,
+      title: "声母发音专项训练", summary: "围绕双唇音、舌尖音和送气差异，建立清晰稳定的发音基础。", difficulty: "入门", estimatedMinutes: 12, mode: "SELF_PRACTICE", gradeBand: "七年级", abilityCategories: ["发音基础", "听辨训练", "跟读模仿"], cultureTags: ["普通话", "发音方法"], catalogType: "SPECIALIZED", requiresRecording: true, instantFeedback: true, coverAsset: "/assessment/assets/practice-catalog/morning-valley.png",
+      sections: [
+        { title: "口型观察", description: "先听辨，再观察送气和不送气的差别。", minutes: 3, items: [{ type: "LISTEN_ONLY", config: { instruction: "聆听 p 和 b 的发音示范。", stimulus: "八百标兵奔北坡。", demoAudioUrl: "/student/growth/assets/practice-sample.wav" } }] },
+        { title: "声母听辨", description: "分辨相近声母。", minutes: 3, items: [{ type: "SINGLE_CHOICE", config: { prompt: "下面哪组读音的送气更明显？", options: ["p 与 b", "m 与 n", "l 与 r"], required: true, maxScore: 30 } }] },
+        { title: "跟读练习", description: "用稳定气流完成跟读。", minutes: 3, items: [{ type: "LISTEN_REPEAT", config: { instruction: "听完示范后跟读。", targetText: "白白的蒲公英飘过平静的湖面。", demoAudioUrl: "/student/growth/assets/practice-sample.wav", maxScore: 35 } }] },
+        { title: "独立发音", description: "把准确口型用于完整句子。", minutes: 3, items: [{ type: "READ_ALOUD", config: { instruction: "请独立朗读，注意双唇音。", targetText: "爸爸把盆里的白布平平地铺开。", maxScore: 35 } }] },
+      ],
+    },
+    {
+      id: ids.practiceTones, versionId: ids.versionTones, deliveryId: ids.deliveryTones,
+      title: "声调听辨与跟读", summary: "在四声、轻声和词语节奏中训练准确听辨与自然跟读。", difficulty: "基础", estimatedMinutes: 14, mode: "SELF_PRACTICE", gradeBand: "七年级", abilityCategories: ["听辨训练", "跟读模仿", "发音基础"], cultureTags: ["普通话", "声调"], catalogType: "SPECIALIZED", requiresRecording: true, instantFeedback: true, coverAsset: "/assessment/assets/practice-catalog/barley-year.png",
+      sections: [
+        { title: "四声听辨", description: "先辨认词语中的声调变化。", minutes: 3, items: [{ type: "SINGLE_CHOICE", config: { prompt: "“妈妈骑马”中第二个“马”应读第几声？", options: ["第一声", "第二声", "第三声", "第四声"], required: true, maxScore: 25 } }] },
+        { title: "轻声聆听", description: "感受轻声的短促与自然。", minutes: 3, items: [{ type: "LISTEN_ONLY", config: { instruction: "聆听带轻声的词语。", stimulus: "桌子、孩子、月亮。", demoAudioUrl: "/student/growth/assets/practice-sample.wav" } }] },
+        { title: "声调跟读", description: "跟随示范保持音高走向。", minutes: 4, items: [{ type: "LISTEN_REPEAT", config: { instruction: "听完示范后跟读。", targetText: "妈妈骑马，马慢，妈妈骂马。", demoAudioUrl: "/student/growth/assets/practice-sample.wav", maxScore: 35 } }] },
+        { title: "词语朗读", description: "在完整句中保持自然节奏。", minutes: 4, items: [{ type: "READ_ALOUD", config: { instruction: "请独立朗读。", targetText: "清晨的鸟儿唱着明亮的歌。", maxScore: 40 } }] },
+      ],
+    },
+    {
+      id: ids.practiceRetell, versionId: ids.versionRetell, deliveryId: ids.deliveryRetell,
+      title: "听后复述入门", summary: "用关键词梳理材料，再以完整句子完成简短复述。", difficulty: "入门", estimatedMinutes: 16, mode: "SELF_PRACTICE", gradeBand: "七年级", abilityCategories: ["听后复述", "口语交际", "书面表达"], cultureTags: ["现代文", "自然观察"], catalogType: "COMPREHENSIVE", requiresRecording: true, instantFeedback: false, coverAsset: "/assessment/assets/practice-catalog/spring-highland.png",
+      sections: [
+        { title: "整体听读", description: "先完整理解材料。", minutes: 4, items: [{ type: "LISTEN_ONLY", config: { instruction: "聆听山谷护林员的故事。", stimulus: "清晨，护林员沿着山谷巡查，在溪边发现了新长出的云杉幼苗。", demoAudioUrl: "/student/growth/assets/practice-sample.wav" } }] },
+        { title: "信息提取", description: "抓住人物、地点和事件。", minutes: 4, items: [{ type: "MULTIPLE_CHOICE", config: { prompt: "材料中护林员在哪里发现了幼苗？", options: ["溪边", "教室", "车站", "操场"], required: true, maxScore: 25 } }] },
+        { title: "口头复述", description: "依据关键词完成复述。", minutes: 5, items: [{ type: "READ_ALOUD", config: { instruction: "请用自己的话复述材料要点。", targetText: "清晨，护林员在山谷溪边发现了新长出的云杉幼苗。", maxScore: 45 } }] },
+        { title: "复述反思", description: "用一句话记录下次要改进的表达。", minutes: 3, items: [{ type: "SHORT_ANSWER", config: { prompt: "写下你下次复述时准备做到的一点。", required: true, maxScore: 30 } }] },
+      ],
+    },
   ];
 
   for (const practice of practices) {
     await prisma.practiceDefinition.upsert({
       where: { id: practice.id },
-      // Bootstrap never edits an already-published definition/version. A new
-      // version is the only valid route for content changes outside this seed.
-      update: {},
-      create: { id: practice.id, schoolId: ids.school, visibility: "SCHOOL", title: practice.title, summary: practice.summary, coverAsset: "/assessment/assets/mountain-world.webp", difficulty: practice.difficulty, estimatedMinutes: practice.estimatedMinutes, status: "PUBLISHED" },
+      // Bootstrap never edits an already-published version or its item/rubric
+      // content. Catalog metadata belongs to the definition and may be safely
+      // completed for development/test discovery after a schema upgrade.
+      update: { gradeBand: practice.gradeBand, abilityCategories: practice.abilityCategories, cultureTags: practice.cultureTags, catalogType: practice.catalogType, requiresRecording: practice.requiresRecording, instantFeedback: practice.instantFeedback, coverAsset: practice.coverAsset },
+      create: { id: practice.id, schoolId: ids.school, visibility: "SCHOOL", title: practice.title, summary: practice.summary, coverAsset: practice.coverAsset, difficulty: practice.difficulty, estimatedMinutes: practice.estimatedMinutes, gradeBand: practice.gradeBand, abilityCategories: practice.abilityCategories, cultureTags: practice.cultureTags, catalogType: practice.catalogType, requiresRecording: practice.requiresRecording, instantFeedback: practice.instantFeedback, status: "PUBLISHED" },
     });
     const existingVersion = await prisma.practiceVersion.findUnique({ where: { id: practice.versionId }, select: { id: true } });
     if (!existingVersion) {
@@ -393,6 +435,16 @@ async function main() {
         status: "ACTIVE",
       },
     });
+  }
+
+  // Keep the reusable-practice bootstrap independent from unrelated demo
+  // modules. This mode creates only active fictional identities, enrolments,
+  // definitions, published versions, sections, item references and deliveries;
+  // it never creates completed recordings, scores, or reports.
+  if (process.env.P0_BOOTSTRAP_ONLY === "true") {
+    await seedReusablePractices();
+    console.log("Seeded six fictional reusable practices and active student deliveries.");
+    return;
   }
 
   await prisma.course.upsert({

@@ -1,7 +1,24 @@
-import { Body, Controller, Get, Inject, Param, ParseUUIDPipe, Post } from "@nestjs/common";
-import { IsOptional, IsUUID } from "class-validator";
+import { Body, Controller, Delete, Get, Inject, Param, ParseUUIDPipe, Post, Query } from "@nestjs/common";
+import { IsIn, IsOptional, IsString, IsUUID } from "class-validator";
 import { createAuthContext, CurrentPrincipal, CurrentTenant, MembershipRole, RequireRoles, type Principal, type TenantContext } from "../../common/security/index.js";
-import { PracticeService } from "./practice.service.js";
+import { PracticeService, type PracticeCatalogQuery } from "./practice.service.js";
+
+export class PracticeCatalogQueryDto implements PracticeCatalogQuery {
+  @IsOptional() @IsString() query?: string;
+  @IsOptional() @IsString() abilityCategory?: string;
+  @IsOptional() @IsString() gradeBand?: string;
+  @IsOptional() @IsString() difficulty?: string;
+  @IsOptional() @IsIn(["SHORT", "MEDIUM", "LONG"]) duration?: string;
+  @IsOptional() @IsString() itemType?: string;
+  @IsOptional() @IsString() cultureTag?: string;
+  @IsOptional() @IsIn(["ASSIGNMENT", "SELF_PRACTICE"]) mode?: string;
+  @IsOptional() @IsIn(["true", "false"]) requiresRecording?: string;
+  @IsOptional() @IsIn(["true", "false"]) instantFeedback?: string;
+  @IsOptional() @IsIn(["SPECIALIZED", "COMPREHENSIVE", "MOCK"]) catalogType?: string;
+  @IsOptional() @IsIn(["NOT_STARTED", "IN_PROGRESS", "COMPLETED", "FAVORITE"]) completionStatus?: string;
+  @IsOptional() @IsIn(["RECOMMENDED", "DURATION_ASC", "DURATION_DESC", "TITLE"]) sort?: string;
+  @IsOptional() @IsString() cursor?: string;
+}
 
 export class CreatePracticeAttemptDto {
   @IsOptional() @IsUUID() assignmentId?: string;
@@ -15,8 +32,8 @@ export class PracticeController {
   constructor(@Inject(PracticeService) private readonly service: PracticeService) {}
 
   @Get()
-  list(@Param("schoolId", ParseUUIDPipe) schoolId: string, @CurrentTenant() tenant: TenantContext, @CurrentPrincipal() principal: Principal) {
-    return this.service.listForStudent(createAuthContext("request-id", principal, tenant), schoolId);
+  list(@Param("schoolId", ParseUUIDPipe) schoolId: string, @Query() query: PracticeCatalogQueryDto, @CurrentTenant() tenant: TenantContext, @CurrentPrincipal() principal: Principal) {
+    return this.service.listForStudent(createAuthContext("request-id", principal, tenant), schoolId, query);
   }
 
   @Get("attempts/:attemptId")
@@ -32,6 +49,16 @@ export class PracticeController {
   @Get(":practiceDefinitionId")
   detail(@Param("schoolId", ParseUUIDPipe) schoolId: string, @Param("practiceDefinitionId", ParseUUIDPipe) definitionId: string, @CurrentTenant() tenant: TenantContext, @CurrentPrincipal() principal: Principal) {
     return this.service.getDetail(createAuthContext("request-id", principal, tenant), schoolId, definitionId);
+  }
+
+  @Post(":practiceDefinitionId/favorite")
+  favorite(@Param("schoolId", ParseUUIDPipe) schoolId: string, @Param("practiceDefinitionId", ParseUUIDPipe) definitionId: string, @CurrentTenant() tenant: TenantContext, @CurrentPrincipal() principal: Principal) {
+    return this.service.addFavorite(createAuthContext("request-id", principal, tenant), schoolId, definitionId);
+  }
+
+  @Delete(":practiceDefinitionId/favorite")
+  unfavorite(@Param("schoolId", ParseUUIDPipe) schoolId: string, @Param("practiceDefinitionId", ParseUUIDPipe) definitionId: string, @CurrentTenant() tenant: TenantContext, @CurrentPrincipal() principal: Principal) {
+    return this.service.removeFavorite(createAuthContext("request-id", principal, tenant), schoolId, definitionId);
   }
 
   @Post(":practiceDefinitionId/attempts")

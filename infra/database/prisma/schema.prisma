@@ -1661,6 +1661,12 @@ model PracticeDefinition {
   coverAsset       String?
   difficulty       String
   estimatedMinutes Int
+  gradeBand        String             @default("七年级")
+  abilityCategories String[]          @default([])
+  cultureTags      String[]           @default([])
+  catalogType      String             @default("COMPREHENSIVE")
+  requiresRecording Boolean           @default(false)
+  instantFeedback  Boolean            @default(false)
   status           PracticeStatus     @default(DRAFT)
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
@@ -1668,9 +1674,24 @@ model PracticeDefinition {
   school           School?                  @relation(fields: [schoolId], references: [id], onDelete: Cascade)
   versions         PracticeVersion[]
   courseActivities CourseActivityPractice[]
+  favorites        PracticeFavorite[]
 
   @@index([schoolId, status])
   @@index([visibility, status])
+  @@index([gradeBand, difficulty])
+}
+
+model PracticeFavorite {
+  id           String             @id @default(uuid()) @db.Uuid
+  schoolId     String             @db.Uuid
+  studentId    String             @db.Uuid
+  definitionId String             @db.Uuid
+  createdAt    DateTime           @default(now())
+
+  definition PracticeDefinition @relation(fields: [definitionId], references: [id], onDelete: Cascade)
+
+  @@unique([schoolId, studentId, definitionId])
+  @@index([schoolId, studentId, createdAt])
 }
 
 model PracticeVersion {

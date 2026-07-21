@@ -868,8 +868,13 @@
   }
 
   /* ── Reusable student practices ── */
-  async function listPractices() {
-    return request(`/schools/${getActiveSchoolId()}/practices`);
+  async function listPractices(filters = {}) {
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries(filters)) {
+      if (value !== undefined && value !== null && value !== '') params.set(key, String(value));
+    }
+    const suffix = params.toString();
+    return request(`/schools/${getActiveSchoolId()}/practices${suffix ? `?${suffix}` : ''}`);
   }
   async function getPractice(practiceDefinitionId) {
     return request(`/schools/${getActiveSchoolId()}/practices/${encodeURIComponent(practiceDefinitionId)}`);
@@ -882,6 +887,12 @@
   }
   async function getPracticeAttemptItems(attemptId) {
     return request(`/schools/${getActiveSchoolId()}/practices/attempts/${encodeURIComponent(attemptId)}/items`);
+  }
+  async function favoritePractice(practiceDefinitionId) {
+    return request(`/schools/${getActiveSchoolId()}/practices/${encodeURIComponent(practiceDefinitionId)}/favorite`, { method: 'POST' });
+  }
+  async function unfavoritePractice(practiceDefinitionId) {
+    return request(`/schools/${getActiveSchoolId()}/practices/${encodeURIComponent(practiceDefinitionId)}/favorite`, { method: 'DELETE' });
   }
 
   /* ── Student course learning closure ── */
@@ -1084,6 +1095,8 @@
     createOrResumePractice,
     getPracticeAttempt,
     getPracticeAttemptItems,
+    favoritePractice,
+    unfavoritePractice,
     listStudentCourses,
     getStudentCourse,
     createOrResumeCourseSubmission,
