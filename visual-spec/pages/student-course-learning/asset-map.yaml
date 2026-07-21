@@ -1,0 +1,31 @@
+pageId: "student-course-learning"
+route: "/student/courses"
+referenceImages:
+  - path: "web-runtime/student-pages/yuzan-student-course-center/yuzan-student-course-center/qa/reference.png"
+    digest: "3709655A19CF73FBD78FDC6F679FDF0ED4C0F9CFFF8F3403697AE2F05D0EC954"
+    width: 1659
+    height: 948
+    role: "primary-composition-reference"
+assets:
+  - assetId: "student-course-cover-set"
+    type: "course-cover"
+    sourcePath: "web-runtime/assets/student-course-{1..6}.jpg"
+    sourceClass: "main-production"
+    digest: "registered-per-file-in-page-spec-evidence"
+    width: 136
+    height: 166
+    alpha: false
+    role: "database-referenced course covers"
+    focalPoint: "50% 50%"
+    safeZones: ["center"]
+    desktopUsage: "cover image in asymmetric course row"
+    mobileUsage: "compact cover with preserved focal point"
+    allowedTransforms: ["responsive crop", "warm overlay"]
+    forbiddenTransforms: ["bake interface text into image", "use full screenshot as UI"]
+    provenanceConfidence: "confirmed"
+    approvalStatus: "approved"
+missingAssets: []
+forbiddenScreenshotCrops:
+  - "reference UI regions containing labels, controls or progress"
+notes:
+  - "No generated raster is required. Bootstrap stores production-relative cover URLs only."

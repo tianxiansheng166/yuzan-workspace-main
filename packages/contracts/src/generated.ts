@@ -1046,6 +1046,126 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/schools/{schoolId}/student/courses": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 获取学生可访问的已发布课程目录 */
+    get: operations["listStudentCourses"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/student/courses/{assignmentId}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 获取学生课程树、进度、Submission 与练习引用聚合 */
+    get: operations["getStudentCourseAggregate"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/student/courses/{assignmentId}/submissions": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** 创建或恢复当前学生的课程 Submission */
+    post: operations["createOrResumeCourseSubmission"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/student/courses/{assignmentId}/submissions/{submissionId}/activities/{activityId}/attempt": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /** 保存课程 ActivityAttempt 并更新 ActivityProgress */
+    put: operations["saveCourseActivityAttempt"];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/student/courses/{assignmentId}/submissions/{submissionId}/activities/{activityId}/recordings/{recordingId}/link": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** 将已完成课程录音关联到 ActivityAttempt 与 Submission */
+    post: operations["linkCourseActivityRecording"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/student/courses/{assignmentId}/submissions/{submissionId}/submit": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** 提交已完成的学生课程 */
+    post: operations["submitStudentCourse"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/learning/activities/{activityId}/note": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 获取当前学生的私人活动笔记 */
+    get: operations["getStudentActivityNote"];
+    /** 以 revision 乐观并发保存当前学生私人笔记 */
+    put: operations["saveStudentActivityNote"];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1928,6 +2048,101 @@ export interface components {
         }[];
       };
       meta: components["schemas"]["EnvelopeMeta"];
+    };
+    StudentCourseCompletion: {
+      requiredActivityCount: number;
+      completedRequiredCount: number;
+      requiredPracticeCount: number;
+      completedPracticeCount: number;
+      progressPercent: number;
+      /** @enum {string} */
+      attainmentStatus:
+        | "PENDING"
+        | "PASSED"
+        | "NEEDS_PRACTICE"
+        | "NEEDS_REVIEW"
+        | "PROVIDER_UNAVAILABLE";
+      completedActivityIds: string[];
+    };
+    StudentCourseCatalogItem: {
+      /** Format: uuid */
+      assignmentId: string;
+      title: string;
+      description?: string | null;
+      capabilityTheme?: string | null;
+      gradeBand?: string | null;
+      difficulty?: string | null;
+      estimatedMinutes?: number | null;
+      coverAsset?: string | null;
+      /** @enum {string} */
+      source: "TEACHER_ASSIGNED" | "RECOMMENDED" | "SELF_STUDY";
+      /** @enum {string} */
+      status: "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED" | "RESULT_PENDING";
+      progressPercent: number;
+      nextActivity?: {
+        [key: string]: unknown;
+      } | null;
+      submission?: components["schemas"]["Submission"] | null;
+    };
+    StudentCourseCatalogResponse: {
+      categories: string[];
+      sources: string[];
+      statuses: string[];
+      courses: components["schemas"]["StudentCourseCatalogItem"][];
+    };
+    StudentCourseAggregateResponse: {
+      assignment: {
+        [key: string]: unknown;
+      };
+      course: {
+        [key: string]: unknown;
+      };
+      courseVersion: {
+        [key: string]: unknown;
+      };
+      units: {
+        [key: string]: unknown;
+      }[];
+      resources: {
+        [key: string]: unknown;
+      }[];
+      studentProgress: components["schemas"]["StudentCourseCompletion"];
+      existingSubmission: components["schemas"]["Submission"] | null;
+      nextActivity: {
+        [key: string]: unknown;
+      } | null;
+      courseCompletion: components["schemas"]["StudentCourseCompletion"];
+      practiceReferences: {
+        [key: string]: unknown;
+      }[];
+    };
+    CourseSubmissionStartResponse: {
+      submission: components["schemas"]["Submission"];
+      resumed: boolean;
+    };
+    SaveCourseActivityAttemptRequest: {
+      kind: string;
+      value?: {
+        [key: string]: unknown;
+      };
+      completed?: boolean;
+      expectedProgressRevision?: number;
+    };
+    StudentActivityNote: {
+      /** Format: uuid */
+      id?: string | null;
+      /** Format: uuid */
+      schoolId: string;
+      /** Format: uuid */
+      enrollmentId: string;
+      /** Format: uuid */
+      activityId: string;
+      content: string;
+      revision: number;
+      /** Format: date-time */
+      createdAt?: string | null;
+      /** Format: date-time */
+      updatedAt?: string | null;
     };
   };
   responses: {
@@ -4224,6 +4439,252 @@ export interface operations {
       400: components["responses"]["BadRequest"];
       403: components["responses"]["Forbidden"];
       404: components["responses"]["NotFound"];
+      409: components["responses"]["Conflict"];
+    };
+  };
+  listStudentCourses: {
+    parameters: {
+      query?: {
+        capabilityTheme?: string;
+        gradeBand?: string;
+        difficulty?: string;
+        source?: "TEACHER_ASSIGNED" | "RECOMMENDED" | "SELF_STUDY";
+        status?: "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED" | "RESULT_PENDING";
+      };
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Published courses visible to the current student */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["StudentCourseCatalogResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+    };
+  };
+  getStudentCourseAggregate: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 任务 ID */
+        assignmentId: components["parameters"]["AssignmentId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Published student-safe course aggregate */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["StudentCourseAggregateResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  createOrResumeCourseSubmission: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 任务 ID */
+        assignmentId: components["parameters"]["AssignmentId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Course submission created or resumed */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CourseSubmissionStartResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  saveCourseActivityAttempt: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 任务 ID */
+        assignmentId: components["parameters"]["AssignmentId"];
+        /** @description 提交 ID */
+        submissionId: components["parameters"]["SubmissionId"];
+        /** @description 学习活动 ID */
+        activityId: components["parameters"]["ActivityId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["SaveCourseActivityAttemptRequest"];
+      };
+    };
+    responses: {
+      /** @description Attempt and progress saved */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+      409: components["responses"]["Conflict"];
+    };
+  };
+  linkCourseActivityRecording: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 任务 ID */
+        assignmentId: components["parameters"]["AssignmentId"];
+        /** @description 提交 ID */
+        submissionId: components["parameters"]["SubmissionId"];
+        /** @description 学习活动 ID */
+        activityId: components["parameters"]["ActivityId"];
+        recordingId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Recording linked and progress updated */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      404: components["responses"]["NotFound"];
+      409: components["responses"]["Conflict"];
+    };
+  };
+  submitStudentCourse: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 任务 ID */
+        assignmentId: components["parameters"]["AssignmentId"];
+        /** @description 提交 ID */
+        submissionId: components["parameters"]["SubmissionId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          revision: number;
+        };
+      };
+    };
+    responses: {
+      /** @description Course submitted; attainment may remain PENDING */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      409: components["responses"]["Conflict"];
+      /** @description Required course work is incomplete */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getStudentActivityNote: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 学习活动 ID */
+        activityId: components["parameters"]["ActivityId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Student private note, or an empty revision-zero note */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["StudentActivityNote"];
+        };
+      };
+      404: components["responses"]["NotFound"];
+    };
+  };
+  saveStudentActivityNote: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 学习活动 ID */
+        activityId: components["parameters"]["ActivityId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          content: string;
+          revision: number;
+        };
+      };
+    };
+    responses: {
+      /** @description Note saved */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["StudentActivityNote"];
+        };
+      };
       409: components["responses"]["Conflict"];
     };
   };

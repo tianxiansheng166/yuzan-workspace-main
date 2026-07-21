@@ -1210,7 +1210,15 @@ paths:
           name: status
           schema:
             type: string
-            enum: [CREATED, IN_PROGRESS, SUBMITTED, PROCESSING, COMPLETED, CANCELLED]
+            enum:
+              [
+                CREATED,
+                IN_PROGRESS,
+                SUBMITTED,
+                PROCESSING,
+                COMPLETED,
+                CANCELLED,
+              ]
       responses:
         "200":
           description: 测评会话列表
@@ -1694,6 +1702,229 @@ paths:
           $ref: "#/components/responses/NotFound"
         "409":
           $ref: "#/components/responses/Conflict"
+  /schools/{schoolId}/student/courses:
+    get:
+      summary: 获取学生可访问的已发布课程目录
+      tags: [StudentCourses]
+      operationId: listStudentCourses
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - { in: query, name: capabilityTheme, schema: { type: string } }
+        - { in: query, name: gradeBand, schema: { type: string } }
+        - { in: query, name: difficulty, schema: { type: string } }
+        - {
+            in: query,
+            name: source,
+            schema:
+              {
+                type: string,
+                enum: [TEACHER_ASSIGNED, RECOMMENDED, SELF_STUDY],
+              },
+          }
+        - {
+            in: query,
+            name: status,
+            schema:
+              {
+                type: string,
+                enum: [NOT_STARTED, IN_PROGRESS, COMPLETED, RESULT_PENDING],
+              },
+          }
+      responses:
+        "200":
+          description: Published courses visible to the current student
+          content:
+            {
+              application/json:
+                {
+                  schema:
+                    {
+                      $ref: "#/components/schemas/StudentCourseCatalogResponse",
+                    },
+                },
+            }
+        "403": { $ref: "#/components/responses/Forbidden" }
+  /schools/{schoolId}/student/courses/{assignmentId}:
+    get:
+      summary: 获取学生课程树、进度、Submission 与练习引用聚合
+      tags: [StudentCourses]
+      operationId: getStudentCourseAggregate
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/AssignmentId"
+      responses:
+        "200":
+          description: Published student-safe course aggregate
+          content:
+            {
+              application/json:
+                {
+                  schema:
+                    {
+                      $ref: "#/components/schemas/StudentCourseAggregateResponse",
+                    },
+                },
+            }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /schools/{schoolId}/student/courses/{assignmentId}/submissions:
+    post:
+      summary: 创建或恢复当前学生的课程 Submission
+      tags: [StudentCourses]
+      operationId: createOrResumeCourseSubmission
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/AssignmentId"
+      responses:
+        "201":
+          description: Course submission created or resumed
+          content:
+            {
+              application/json:
+                {
+                  schema:
+                    {
+                      $ref: "#/components/schemas/CourseSubmissionStartResponse",
+                    },
+                },
+            }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /schools/{schoolId}/student/courses/{assignmentId}/submissions/{submissionId}/activities/{activityId}/attempt:
+    put:
+      summary: 保存课程 ActivityAttempt 并更新 ActivityProgress
+      tags: [StudentCourses]
+      operationId: saveCourseActivityAttempt
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/AssignmentId"
+        - $ref: "#/components/parameters/SubmissionId"
+        - $ref: "#/components/parameters/ActivityId"
+      requestBody:
+        required: true
+        content:
+          {
+            application/json:
+              {
+                schema:
+                  {
+                    $ref: "#/components/schemas/SaveCourseActivityAttemptRequest",
+                  },
+              },
+          }
+      responses:
+        "200": { description: Attempt and progress saved }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "409": { $ref: "#/components/responses/Conflict" }
+  /schools/{schoolId}/student/courses/{assignmentId}/submissions/{submissionId}/activities/{activityId}/recordings/{recordingId}/link:
+    post:
+      summary: 将已完成课程录音关联到 ActivityAttempt 与 Submission
+      tags: [StudentCourses]
+      operationId: linkCourseActivityRecording
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/AssignmentId"
+        - $ref: "#/components/parameters/SubmissionId"
+        - $ref: "#/components/parameters/ActivityId"
+        - {
+            in: path,
+            name: recordingId,
+            required: true,
+            schema: { type: string, format: uuid },
+          }
+      responses:
+        "201": { description: Recording linked and progress updated }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "409": { $ref: "#/components/responses/Conflict" }
+  /schools/{schoolId}/student/courses/{assignmentId}/submissions/{submissionId}/submit:
+    post:
+      summary: 提交已完成的学生课程
+      tags: [StudentCourses]
+      operationId: submitStudentCourse
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/AssignmentId"
+        - $ref: "#/components/parameters/SubmissionId"
+      requestBody:
+        required: true
+        content:
+          {
+            application/json:
+              {
+                schema:
+                  {
+                    type: object,
+                    required: [revision],
+                    properties: { revision: { type: integer, minimum: 0 } },
+                  },
+              },
+          }
+      responses:
+        "201": { description: Course submitted; attainment may remain PENDING }
+        "409": { $ref: "#/components/responses/Conflict" }
+        "422": { description: Required course work is incomplete }
+  /schools/{schoolId}/learning/activities/{activityId}/note:
+    get:
+      summary: 获取当前学生的私人活动笔记
+      tags: [StudentCourses]
+      operationId: getStudentActivityNote
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/ActivityId"
+      responses:
+        "200":
+          {
+            description: "Student private note, or an empty revision-zero note",
+            content:
+              {
+                application/json:
+                  {
+                    schema:
+                      { $ref: "#/components/schemas/StudentActivityNote" },
+                  },
+              },
+          }
+        "404": { $ref: "#/components/responses/NotFound" }
+    put:
+      summary: 以 revision 乐观并发保存当前学生私人笔记
+      tags: [StudentCourses]
+      operationId: saveStudentActivityNote
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/ActivityId"
+      requestBody:
+        required: true
+        content:
+          {
+            application/json:
+              {
+                schema:
+                  {
+                    type: object,
+                    required: [content, revision],
+                    properties:
+                      {
+                        content: { type: string, maxLength: 10000 },
+                        revision: { type: integer, minimum: 0 },
+                      },
+                  },
+              },
+          }
+      responses:
+        "200":
+          {
+            description: Note saved,
+            content:
+              {
+                application/json:
+                  {
+                    schema:
+                      { $ref: "#/components/schemas/StudentActivityNote" },
+                  },
+              },
+          }
+        "409": { $ref: "#/components/responses/Conflict" }
 components:
   securitySchemes:
     bearerAuth:
@@ -2040,7 +2271,8 @@ components:
           maxLength: 40
     TeacherInvitationResponse:
       type: object
-      required: [id, code, class, maxUses, usedCount, expiresAt, createdAt, status]
+      required:
+        [id, code, class, maxUses, usedCount, expiresAt, createdAt, status]
       properties:
         id:
           type: string
@@ -3269,7 +3501,8 @@ components:
           format: uuid
         status:
           type: string
-          enum: [CREATED, PROCESSING, AUTO_RESULT, NEEDS_REVIEW, FINALIZED, FAILED]
+          enum:
+            [CREATED, PROCESSING, AUTO_RESULT, NEEDS_REVIEW, FINALIZED, FAILED]
         result:
           type: [object, "null"]
         confidence:
@@ -3350,7 +3583,8 @@ components:
           enum: [READING, WRITTEN, MIXED]
         status:
           type: string
-          enum: [CREATED, IN_PROGRESS, SUBMITTED, PROCESSING, COMPLETED, CANCELLED]
+          enum:
+            [CREATED, IN_PROGRESS, SUBMITTED, PROCESSING, COMPLETED, CANCELLED]
         score:
           type: [number, "null"]
         retestOfSessionId:
@@ -3588,5 +3822,136 @@ components:
                     type: [string, "null"]
         meta:
           $ref: "#/components/schemas/EnvelopeMeta"
+    StudentCourseCompletion:
+      type: object
+      required:
+        [
+          requiredActivityCount,
+          completedRequiredCount,
+          requiredPracticeCount,
+          completedPracticeCount,
+          progressPercent,
+          attainmentStatus,
+          completedActivityIds,
+        ]
+      properties:
+        requiredActivityCount: { type: integer }
+        completedRequiredCount: { type: integer }
+        requiredPracticeCount: { type: integer }
+        completedPracticeCount: { type: integer }
+        progressPercent: { type: integer, minimum: 0, maximum: 100 }
+        attainmentStatus:
+          {
+            type: string,
+            enum:
+              [
+                PENDING,
+                PASSED,
+                NEEDS_PRACTICE,
+                NEEDS_REVIEW,
+                PROVIDER_UNAVAILABLE,
+              ],
+          }
+        completedActivityIds:
+          { type: array, items: { type: string, format: uuid } }
+    StudentCourseCatalogItem:
+      type: object
+      required: [assignmentId, title, source, status, progressPercent]
+      properties:
+        assignmentId: { type: string, format: uuid }
+        title: { type: string }
+        description: { type: [string, "null"] }
+        capabilityTheme: { type: [string, "null"] }
+        gradeBand: { type: [string, "null"] }
+        difficulty: { type: [string, "null"] }
+        estimatedMinutes: { type: [integer, "null"] }
+        coverAsset: { type: [string, "null"] }
+        source:
+          { type: string, enum: [TEACHER_ASSIGNED, RECOMMENDED, SELF_STUDY] }
+        status:
+          {
+            type: string,
+            enum: [NOT_STARTED, IN_PROGRESS, COMPLETED, RESULT_PENDING],
+          }
+        progressPercent: { type: integer, minimum: 0, maximum: 100 }
+        nextActivity: { type: [object, "null"], additionalProperties: true }
+        submission:
+          {
+            oneOf:
+              [{ $ref: "#/components/schemas/Submission" }, { type: "null" }],
+          }
+    StudentCourseCatalogResponse:
+      type: object
+      required: [categories, sources, statuses, courses]
+      properties:
+        categories: { type: array, items: { type: string } }
+        sources: { type: array, items: { type: string } }
+        statuses: { type: array, items: { type: string } }
+        courses:
+          {
+            type: array,
+            items: { $ref: "#/components/schemas/StudentCourseCatalogItem" },
+          }
+    StudentCourseAggregateResponse:
+      type: object
+      required:
+        [
+          assignment,
+          course,
+          courseVersion,
+          units,
+          resources,
+          studentProgress,
+          existingSubmission,
+          nextActivity,
+          courseCompletion,
+          practiceReferences,
+        ]
+      properties:
+        assignment: { type: object, additionalProperties: true }
+        course: { type: object, additionalProperties: true }
+        courseVersion: { type: object, additionalProperties: true }
+        units:
+          { type: array, items: { type: object, additionalProperties: true } }
+        resources:
+          { type: array, items: { type: object, additionalProperties: true } }
+        studentProgress:
+          { $ref: "#/components/schemas/StudentCourseCompletion" }
+        existingSubmission:
+          {
+            oneOf:
+              [{ $ref: "#/components/schemas/Submission" }, { type: "null" }],
+          }
+        nextActivity: { type: [object, "null"], additionalProperties: true }
+        courseCompletion:
+          { $ref: "#/components/schemas/StudentCourseCompletion" }
+        practiceReferences:
+          { type: array, items: { type: object, additionalProperties: true } }
+    CourseSubmissionStartResponse:
+      type: object
+      required: [submission, resumed]
+      properties:
+        submission: { $ref: "#/components/schemas/Submission" }
+        resumed: { type: boolean }
+    SaveCourseActivityAttemptRequest:
+      type: object
+      required: [kind]
+      properties:
+        kind: { type: string, maxLength: 40 }
+        value: { type: object, additionalProperties: true }
+        completed: { type: boolean }
+        expectedProgressRevision: { type: integer, minimum: 0 }
+    StudentActivityNote:
+      type: object
+      required: [schoolId, enrollmentId, activityId, content, revision]
+      properties:
+        id: { type: [string, "null"], format: uuid }
+        schoolId: { type: string, format: uuid }
+        enrollmentId: { type: string, format: uuid }
+        activityId: { type: string, format: uuid }
+        content: { type: string }
+        revision: { type: integer, minimum: 0 }
+        createdAt: { type: [string, "null"], format: date-time }
+        updatedAt: { type: [string, "null"], format: date-time }
 security:
   - bearerAuth: []

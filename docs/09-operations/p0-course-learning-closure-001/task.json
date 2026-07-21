@@ -1,0 +1,42 @@
+{
+  "id": "P0-COURSE-LEARNING-CLOSURE-001",
+  "branch": "integration/p0-golden-flow-001",
+  "worktree": "D:/program/test_program/yuzanxinsheng/three/workers/p0-integration",
+  "status": "IN_PROGRESS",
+  "journey": "student course catalog -> detail -> submission -> activities -> practice -> submit -> completion record",
+  "allowed_paths": [
+    "apps/api/src/app.module.ts",
+    "apps/api/src/modules/student-courses/**",
+    "apps/api/src/modules/assessment/practice.controller.ts",
+    "apps/api/src/modules/assessment/practice.service.ts",
+    "apps/api/test/student-courses/**",
+    "infra/database/prisma/schema.prisma",
+    "infra/database/prisma/seed.ts",
+    "infra/database/prisma/migrations/**course_learning_closure/**",
+    "packages/contracts/openapi/openapi.yaml",
+    "packages/contracts/src/generated.ts",
+    "web-runtime/server.mjs",
+    "web-runtime/assets/api-client.js",
+    "web-runtime/student/courses/**",
+    "web-runtime/student/learn/**",
+    "web-runtime/assessment/assets/practice.js",
+    "tests/e2e/course-learning/**",
+    "evidence/p0-course-learning-closure/**",
+    "visual-spec/pages/student-course-learning/**",
+    "docs/09-operations/backend-v31-change-requests/p0-course-learning-closure-contract-request.md",
+    "docs/09-operations/p0-course-learning-closure-001/**"
+  ],
+  "shared_owner_changes": [
+    "Prisma schema and migration",
+    "OpenAPI and generated contract types",
+    "API application module",
+    "runtime router and API client"
+  ],
+  "required_commits": [
+    "feat: add student course aggregate and course bootstrap",
+    "feat: add course catalog and routed course detail",
+    "feat: add dynamic course learning player and private notes",
+    "feat: connect course activities to reusable practice engine",
+    "test: verify student course learning closure"
+  ]
+}

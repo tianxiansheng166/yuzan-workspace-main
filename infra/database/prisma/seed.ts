@@ -129,6 +129,173 @@ async function seedReusablePractices() {
   }
 }
 
+type SeedCourse = {
+  ordinal: number;
+  title: string;
+  description: string;
+  capabilityTheme: string;
+  difficulty: string;
+  estimatedMinutes: number;
+  coverAsset: string;
+  source: "TEACHER_ASSIGNED" | "RECOMMENDED" | "SELF_STUDY";
+  practiceDefinitionId: string;
+  activities: Array<{
+    type: "TEXT" | "VIDEO" | "AUDIO" | "CHOICE" | "FILL_BLANK" | "SPEECH";
+    title: string;
+    instruction: string;
+    content: Record<string, unknown>;
+    studentNotes: string[];
+    practice?: boolean;
+  }>;
+};
+
+async function seedStudentCourses() {
+  const environment = process.env.NODE_ENV ?? "development";
+  if (environment !== "development" && environment !== "test") {
+    throw new Error("Student course bootstrap is restricted to development/test");
+  }
+
+  const courses: SeedCourse[] = [
+    {
+      ordinal: 1,
+      title: "声母发音与口型基础",
+      description: "从发音部位、送气差异和口型观察开始，建立清晰稳定的普通话声母基础。",
+      capabilityTheme: "发音基础",
+      difficulty: "入门",
+      estimatedMinutes: 24,
+      coverAsset: "/assets/student-course-1.jpg",
+      source: "TEACHER_ASSIGNED",
+      practiceDefinitionId: ids.practiceRhythm,
+      activities: [
+        { type: "TEXT", title: "认识发音部位", instruction: "阅读说明并观察发音位置。", content: { paragraphs: ["双唇音发音时，两片嘴唇先形成阻碍，再让气流有控制地冲出。", "练习时关注下颌放松，不要用力抿嘴。"] }, studentNotes: ["先找准阻碍位置，再练习送气。", "镜面观察比用力模仿更有效。"] },
+        { type: "AUDIO", title: "听辨送气差异", instruction: "完整听一遍示范，留意气流强弱。", content: { audioUrl: "/student/growth/assets/practice-sample.wav", transcript: "玻璃杯旁边放着一盆薄荷。" }, studentNotes: ["p、t、k 的气流更明显。"] },
+        { type: "SPEECH", title: "独立朗读声母句", instruction: "请清晰朗读目标句，录音完成后上传。", content: { targetText: "白白的蒲公英飘过平静的湖面。" }, studentNotes: ["保持音节完整，不要为了速度吞音。"] },
+        { type: "CHOICE", title: "声母专项课程练习", instruction: "进入统一练习执行器完成听辨、跟读和独立录音。", content: { practiceLabel: "停顿与节奏专项训练" }, studentNotes: ["课程练习会保存为独立 Practice Attempt。"], practice: true }
+      ]
+    },
+    {
+      ordinal: 2,
+      title: "韵母、声调与普通话节奏",
+      description: "在韵母口型和四声变化中建立自然节奏，避免逐字顿读。",
+      capabilityTheme: "发音基础",
+      difficulty: "基础",
+      estimatedMinutes: 28,
+      coverAsset: "/assets/student-course-2.jpg",
+      source: "RECOMMENDED",
+      practiceDefinitionId: ids.practiceRhythm,
+      activities: [
+        { type: "TEXT", title: "韵母口型变化", instruction: "阅读并跟随提示完成无声口型练习。", content: { paragraphs: ["复韵母不是两个单韵母的简单拼接，口型需要连续滑动。", "声音要连贯，主元音保持清楚。"] }, studentNotes: ["口型移动要连续。"] },
+        { type: "AUDIO", title: "听四声与轻声", instruction: "播放示范并标记你听到的声调变化。", content: { audioUrl: "/student/growth/assets/practice-sample.wav", transcript: "妈妈骑马，马慢，妈妈骂马。" }, studentNotes: ["轻声短而轻，但前一音节仍要完整。"] },
+        { type: "FILL_BLANK", title: "节奏停连标注", instruction: "在空格中填写适合停顿的位置。", content: { prompt: "清晨的风____穿过山谷____带来松针的清香。", placeholder: "填写停顿符号 /" }, studentNotes: ["按语义群停顿，而不是每个词都停。"] },
+        { type: "CHOICE", title: "声调与节奏课程练习", instruction: "进入统一练习执行器完成专项训练。", content: { practiceLabel: "停顿与节奏专项训练" }, studentNotes: ["完成练习后会回到课程原位置。"], practice: true }
+      ]
+    },
+    {
+      ordinal: 3,
+      title: "古诗文朗读：停顿与情感",
+      description: "依据句意安排停顿，用语气、轻重和速度呈现古诗文的画面与情感。",
+      capabilityTheme: "古诗文",
+      difficulty: "进阶",
+      estimatedMinutes: 32,
+      coverAsset: "/assets/student-course-3.jpg",
+      source: "TEACHER_ASSIGNED",
+      practiceDefinitionId: ids.practiceClassical,
+      activities: [
+        { type: "TEXT", title: "从句意寻找停顿", instruction: "阅读诗句和停顿说明。", content: { paragraphs: ["朗读古诗文时，停顿首先服从句意和语法关系。", "标点是线索，但不是唯一依据。"] }, studentNotes: ["先理解谁在做什么，再安排停顿。"] },
+        { type: "AUDIO", title: "聆听节奏示范", instruction: "先完整听，再对照文本回听一次。", content: { audioUrl: "/student/growth/assets/practice-sample.wav", transcript: "万里赴戎机，关山度若飞。" }, studentNotes: ["长句中的小停顿不能切断词义。"] },
+        { type: "SPEECH", title: "朗读并表达情感", instruction: "朗读目标诗句，注意速度和语气变化。", content: { targetText: "朔气传金柝，寒光照铁衣。" }, studentNotes: ["画面庄重，语速可以稳一些。"] },
+        { type: "CHOICE", title: "古诗文综合课程练习", instruction: "进入通用练习执行器完成古诗文听读、跟读与表达。", content: { practiceLabel: "古诗文朗读与理解训练" }, studentNotes: ["练习结果与课程完成度分别保存。"], practice: true }
+      ]
+    },
+    {
+      ordinal: 4,
+      title: "现代文听说：信息提取与复述",
+      description: "从真实短文中抓取人物、事件和因果信息，并用自己的语言完成有条理的复述。",
+      capabilityTheme: "听说理解",
+      difficulty: "进阶",
+      estimatedMinutes: 30,
+      coverAsset: "/assets/student-course-4.jpg",
+      source: "SELF_STUDY",
+      practiceDefinitionId: ids.practiceModern,
+      activities: [
+        { type: "AUDIO", title: "带着问题听材料", instruction: "播放材料，记录时间、地点和主要事件。", content: { audioUrl: "/student/growth/assets/practice-sample.wav", transcript: "清晨，护林员沿着山谷巡查，在溪边发现了新长出的云杉幼苗。" }, studentNotes: ["第一次听整体，第二次听细节。"] },
+        { type: "CHOICE", title: "提取关键信息", instruction: "选择材料中出现的地点。", content: { prompt: "护林员在哪里发现幼苗？", options: ["溪边", "教室", "车站", "操场"] }, studentNotes: ["答案应直接来自材料。"] },
+        { type: "FILL_BLANK", title: "整理复述提纲", instruction: "补全复述提纲。", content: { prompt: "时间：清晨；人物：____；地点：溪边；事件：发现云杉幼苗。", placeholder: "填写人物" }, studentNotes: ["提纲只保留关键词。"] },
+        { type: "SPEECH", title: "完成口头复述", instruction: "根据提纲用完整句子复述材料。", content: { targetText: "清晨，护林员巡查山谷时，在溪边发现了新长出的云杉幼苗。" }, studentNotes: ["使用先、接着、最后等连接词。"] },
+        { type: "CHOICE", title: "现代文听说课程练习", instruction: "进入通用练习执行器完成信息提取和简答。", content: { practiceLabel: "现代文朗读与信息提取" }, studentNotes: ["提交练习后返回本活动。"], practice: true }
+      ]
+    }
+  ];
+
+  for (const course of courses) {
+    const suffix = String(course.ordinal).padStart(12, "0");
+    const courseId = `80000000-0000-4000-8000-${suffix}`;
+    const versionId = `81000000-0000-4000-8000-${suffix}`;
+    const unitId = `82000000-0000-4000-8000-${suffix}`;
+    const lessonId = `83000000-0000-4000-8000-${suffix}`;
+    const assignmentId = `85000000-0000-4000-8000-${suffix}`;
+    const targetId = `86000000-0000-4000-8000-${suffix}`;
+
+    await prisma.course.upsert({
+      where: { id: courseId },
+      update: {},
+      create: { id: courseId, schoolId: ids.school, authorUserId: ids.teacher, stableKey: `p0-course-${course.ordinal}`, title: course.title }
+    });
+    await prisma.courseVersion.upsert({
+      where: { id: versionId },
+      update: {},
+      create: {
+        id: versionId, schoolId: ids.school, courseId, version: 1, status: "PUBLISHED",
+        title: course.title, description: course.description, gradeBand: "七年级",
+        objectives: ["理解课程关键概念", "完成必修活动与课程练习", "留下可复核的学习证据"],
+        capabilityTheme: course.capabilityTheme, difficulty: course.difficulty,
+        estimatedMinutes: course.estimatedMinutes, coverAsset: course.coverAsset,
+        deviceRequirements: { audioPlayback: true, microphone: course.activities.some((activity) => activity.type === "SPEECH") },
+        publishedAt: new Date("2026-07-21T00:00:00.000Z")
+      }
+    });
+    await prisma.unit.upsert({ where: { id: unitId }, update: {}, create: { id: unitId, courseVersionId: versionId, title: "核心学习路径", sortOrder: 1 } });
+    await prisma.lesson.upsert({ where: { id: lessonId }, update: {}, create: { id: lessonId, unitId, title: "观察、理解与表达", sortOrder: 1 } });
+
+    for (const [index, activity] of course.activities.entries()) {
+      const activitySuffix = String(course.ordinal * 100 + index + 1).padStart(12, "0");
+      const activityId = `84000000-0000-4000-8000-${activitySuffix}`;
+      await prisma.learningActivity.upsert({
+        where: { id: activityId },
+        update: {},
+        create: {
+          id: activityId, lessonId, type: activity.type, title: activity.title,
+          instruction: { text: activity.instruction }, content: activity.content,
+          sortOrder: index + 1, required: true,
+          completionRule: activity.practice ? { type: "COURSE_PRACTICE_SUBMITTED" } : { type: activity.type === "SPEECH" ? "RECORDING_UPLOADED" : "ACKNOWLEDGED" },
+          studentNotes: { title: "课程要点", items: activity.studentNotes, source: "TEACHER_AUTHORED", published: true }
+        }
+      });
+      if (activity.practice) {
+        await prisma.courseActivityPractice.upsert({
+          where: { activityId }, update: {},
+          create: { id: `87000000-0000-4000-8000-${suffix}`, schoolId: ids.school, activityId, practiceDefinitionId: course.practiceDefinitionId, required: true }
+        });
+      }
+    }
+
+    await prisma.assignment.upsert({
+      where: { id: assignmentId },
+      update: { status: "OPEN" },
+      create: {
+        id: assignmentId, schoolId: ids.school, courseVersionId: versionId, createdByUserId: ids.teacher,
+        title: course.title, status: "OPEN", startsAt: new Date("2026-07-21T00:00:00.000Z"),
+        dueAt: new Date("2027-07-21T23:59:59.000Z"), openedAt: new Date("2026-07-21T00:00:00.000Z"),
+        source: course.source, completionRule: { requiredActivities: "ALL", requiredPractices: "ALL", attainmentIndependent: true }
+      }
+    });
+    await prisma.assignmentTarget.upsert({
+      where: { id: targetId }, update: {},
+      create: { id: targetId, schoolId: ids.school, assignmentId, targetType: "CLASS", classId: ids.class }
+    });
+  }
+}
+
 async function main() {
   if (!["development", "test"].includes(process.env.NODE_ENV ?? "development")) {
     throw new Error("Seed is restricted to development/test");
@@ -457,12 +624,13 @@ async function main() {
   });
 
   await seedReusablePractices();
+  await seedStudentCourses();
 }
 
 try {
   await main();
   console.log(
-    "Seeded fictional four-port identities, teaching loop, reports, and volunteer training data.",
+    "Seeded fictional identities, teaching loop, four student courses, reusable practices, reports, and volunteer training data.",
   );
 } finally {
   await prisma.$disconnect();
