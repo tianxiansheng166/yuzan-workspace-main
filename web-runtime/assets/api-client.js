@@ -29,7 +29,17 @@
   }
 
   function getActiveSchoolId() {
-    return localStorage.getItem(SCHOOL_KEY) || '';
+    const activeSchoolId = localStorage.getItem(SCHOOL_KEY) || '';
+    if (activeSchoolId) return activeSchoolId;
+    const studentMemberships = (getStoredUser()?.memberships || [])
+      .filter((membership) => membership?.role === 'STUDENT' && membership?.schoolId)
+      .sort((left, right) => String(left.schoolId).localeCompare(String(right.schoolId)));
+    if (studentMemberships.length > 0) {
+      const schoolId = studentMemberships[0].schoolId;
+      localStorage.setItem(SCHOOL_KEY, schoolId);
+      return schoolId;
+    }
+    return '';
   }
 
   function setActiveSchoolId(schoolId) {
@@ -148,6 +158,23 @@
     if (data.user) setStoredUser(data.user);
     if (data.activeSchoolId) setActiveSchoolId(data.activeSchoolId);
     return data;
+  }
+
+  async function requireActiveSchoolId() {
+    let schoolId = getActiveSchoolId();
+    if (schoolId) return schoolId;
+    if (!getToken()) {
+      const error = new Error('登录已过期，请重新登录');
+      error.status = 401;
+      throw error;
+    }
+    await me();
+    schoolId = getActiveSchoolId();
+    if (schoolId) return schoolId;
+    const error = new Error('当前账号尚未绑定学校，请使用老师提供的邀请码完成绑定');
+    error.status = 403;
+    error.code = 'STUDENT_SCHOOL_NOT_BOUND';
+    throw error;
   }
 
   async function logout() {
@@ -847,6 +874,23 @@
     return request(`/schools/${getActiveSchoolId()}/practices/attempts/${encodeURIComponent(attemptId)}/items`);
   }
 
+  /* ── Student course learning closure ── */
+  async function listStudentCourses(filters = {}) {
+    const schoolId = await requireActiveSchoolId();
+    const params = new URLSearchParams();
+    Object.entries(filters).forEach(([key, value]) => { if (value) params.set(key, value); });
+    const query = params.toString();
+    return request(`/schools/${schoolId}/student/courses${query ? `?${query}` : ''}`);
+  }
+  async function getStudentCourse(assignmentId) {
+    const schoolId = await requireActiveSchoolId();
+    return request(`/schools/${schoolId}/student/courses/${encodeURIComponent(assignmentId)}`);
+  }
+  async function createOrResumeCourseSubmission(assignmentId) {
+    const schoolId = await requireActiveSchoolId();
+    return request(`/schools/${schoolId}/student/courses/${encodeURIComponent(assignmentId)}/submissions`, { method: 'POST', body: '{}' });
+  }
+
   window.YuzanApi = {
     request,
     login,
@@ -1006,5 +1050,8 @@
     createOrResumePractice,
     getPracticeAttempt,
     getPracticeAttemptItems,
+    listStudentCourses,
+    getStudentCourse,
+    createOrResumeCourseSubmission,
   };
 })();

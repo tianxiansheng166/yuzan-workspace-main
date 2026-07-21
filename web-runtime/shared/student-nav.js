@@ -62,7 +62,7 @@
   // 学生端统一导航：原有页面与新增页面共用同一组入口，避免按页面切换成不同侧栏。
   const topNav = [
     { label: '今日学习', route: '/student/today', icon: 'home', match: /^\/student\/(today|learn)/ },
-    { label: '课程', route: '/student/courses', icon: 'book', match: /^\/student\/(courses|course-center|downloads|records|feedback)|^\/student-courses\.html/ },
+    { label: '课程中心', route: '/student/courses', icon: 'book', match: /^\/student\/(courses|course-center|downloads|records|feedback)|^\/student-courses\.html/ },
     { label: '任务', route: '/student/assignments', icon: 'record', match: /^\/student\/assignments/ },
     { label: '测评', route: '/assessment', icon: 'wave', match: /^\/assessment|^\/student\/exercises/ },
     { label: '推荐', route: '/student/recommendations', icon: 'growth', match: /^\/student\/recommendations/ },

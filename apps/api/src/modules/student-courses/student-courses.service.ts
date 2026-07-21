@@ -18,7 +18,7 @@ export class StudentCoursesService {
         schoolId,
         status: "OPEN",
         deletedAt: null,
-        courseVersion: { status: "PUBLISHED", publishedAt: { not: null }, retiredAt: null },
+        courseVersion: { status: "PUBLISHED", publishedAt: { not: null }, retiredAt: null, capabilityTheme: { not: null } },
         targets: { some: { OR: [{ enrollmentId: enrollment.id }, { classId: enrollment.classId }] } },
       },
       include: {
@@ -95,7 +95,7 @@ export class StudentCoursesService {
           required: activity.required,
           completionRule: activity.completionRule,
           studentNotes: activity.studentNotes,
-          resources: activity.resources.map((link) => ({ purpose: link.purpose, meta: link.meta, resource: link.resource })),
+          resources: activity.resources.map((link) => ({ purpose: link.purpose, meta: link.meta, resource: { ...link.resource, byteSize: String(link.resource.byteSize) } })),
           progress: activity.progress[0] ?? null,
           attempt: activity.attempts[0] ?? null,
           practiceReference: activity.coursePractice ? { practiceDefinitionId: activity.coursePractice.practiceDefinitionId, title: activity.coursePractice.practiceDefinition.title, required: activity.coursePractice.required } : null,

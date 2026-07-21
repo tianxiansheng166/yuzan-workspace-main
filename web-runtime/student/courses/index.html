@@ -1,76 +1,159 @@
 <!doctype html>
 <html lang="zh-CN">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>课程中心｜语赞心声</title>
-  <link rel="stylesheet" href="/assets/common.css">
-  <link rel="stylesheet" href="/student/courses/style.css">
-  <link rel="stylesheet" href="/shared/student-nav.css">
-</head>
-<body>
-<div class="viewport">
-  <main id="coursesDesign" class="design courses desktop-mode" data-width="1484" data-height="900">
-    <section class="desktop-view">
-      <aside class="left-col">
-        <h1>课程中心</h1>
-        <p>查看你的课程与学习进度</p>
-        <div class="stats-row">
-          <div class="stat-card"><b id="statTotal">-</b><span>全部课程</span></div>
-          <div class="stat-card"><b id="statActive">-</b><span>进行中</span></div>
-          <div class="stat-card"><b id="statDone">-</b><span>已完成</span></div>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>课程中心｜语赞心声</title>
+    <link rel="stylesheet" href="/assets/common.css" />
+    <link rel="stylesheet" href="/shared/student-nav.css" />
+    <link rel="stylesheet" href="/student/courses/style.css" />
+  </head>
+  <body>
+    <main class="course-page" id="coursePage">
+      <header class="course-masthead">
+        <div>
+          <p class="eyebrow">我的学习书架</p>
+          <h1>课程中心</h1>
+          <p>从一段声音出发，沿着清楚的章节路径完成一次真正的学习。</p>
         </div>
-      </aside>
+        <div class="course-tally" aria-label="课程统计">
+          <span><strong id="totalCount">—</strong>门课程</span>
+          <span><strong id="activeCount">—</strong>门进行中</span>
+        </div>
+      </header>
 
-      <section class="courses-main">
-        <div class="filter-bar">
-          <button class="filter-btn active" data-filter="all">全部</button>
-          <button class="filter-btn" data-filter="active">进行中</button>
-          <button class="filter-btn" data-filter="completed">已完成</button>
-          <button class="filter-btn" data-filter="not_started">未开始</button>
-        </div>
-
-        <div id="courseGrid" class="course-grid">
-          <!-- 课程卡片由 JS 动态渲染 -->
-          <div class="course-skeleton">
-            <div class="skel-cover"></div>
-            <div class="skel-body">
-              <div class="skel-title"></div>
-              <div class="skel-line"></div>
-              <div class="skel-line short"></div>
-            </div>
-          </div>
-          <div class="course-skeleton">
-            <div class="skel-cover"></div>
-            <div class="skel-body">
-              <div class="skel-title"></div>
-              <div class="skel-line"></div>
-              <div class="skel-line short"></div>
-            </div>
-          </div>
-          <div class="course-skeleton">
-            <div class="skel-cover"></div>
-            <div class="skel-body">
-              <div class="skel-title"></div>
-              <div class="skel-line"></div>
-              <div class="skel-line short"></div>
-            </div>
-          </div>
-        </div>
-
-        <div id="emptyState" class="empty-state" style="display:none">
-          <i>▣</i>
-          <h3>暂无课程</h3>
-          <p>老师还没有布置课程，请耐心等待</p>
-        </div>
+      <section id="catalogLoading" class="state-panel" aria-live="polite">
+        <div class="loading-line"></div>
+        <div class="loading-line short"></div>
+        <p>正在整理你的课程路径…</p>
       </section>
-    </section>
-  </main>
-</div>
-<script src="/assets/app-core.js"></script>
-<script src="/assets/api-client.js"></script>
-<script src="/assets/fit.js"></script>
-<script src="/student/courses/courses.js"></script>
-<script src="/shared/student-nav.js"></script>
-</body>
+      <section id="catalogState" class="state-panel" hidden></section>
+
+      <div id="catalogContent" hidden>
+        <section
+          class="continue-section"
+          id="continueSection"
+          aria-labelledby="continueTitle"
+        >
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">下一站</p>
+              <h2 id="continueTitle">继续学习</h2>
+            </div>
+            <span class="section-rule"></span>
+          </div>
+          <div id="continueCourse"></div>
+        </section>
+
+        <section class="catalog-layout">
+          <div class="catalog-main">
+            <div class="section-heading compact">
+              <div>
+                <p class="eyebrow">你的课程</p>
+                <h2>我的课程</h2>
+              </div>
+              <p id="resultCount" class="result-count"></p>
+            </div>
+            <nav
+              id="themeFilters"
+              class="theme-filters"
+              aria-label="能力主题筛选"
+            ></nav>
+            <div id="courseList" class="course-list"></div>
+            <div id="emptyState" class="state-panel" hidden>
+              <svg viewBox="0 0 48 48" aria-hidden="true">
+                <path
+                  d="M9 10h12c4 0 7 3 7 7v23c-2-3-5-4-9-4H9V10Zm30 0H27c-4 0-7 3-7 7v23c2-3 5-4 9-4h10V10Z"
+                />
+              </svg>
+              <h3>这里暂时没有符合条件的课程</h3>
+              <p>可以换一个能力主题或清除辅助筛选。</p>
+              <button type="button" id="clearFilters" class="text-button">
+                清除筛选
+              </button>
+            </div>
+          </div>
+
+          <aside class="catalog-aside" aria-label="辅助筛选与最近完成">
+            <section class="filter-sheet">
+              <p class="eyebrow">缩小范围</p>
+              <h2>辅助筛选</h2>
+              <label
+                >学段<select id="gradeFilter">
+                  <option value="">全部学段</option>
+                </select></label
+              >
+              <label
+                >难度<select id="difficultyFilter">
+                  <option value="">全部难度</option>
+                </select></label
+              >
+              <label
+                >来源<select id="sourceFilter">
+                  <option value="">全部来源</option>
+                  <option value="TEACHER_ASSIGNED">教师布置</option>
+                  <option value="RECOMMENDED">推荐课程</option>
+                  <option value="SELF_STUDY">自主学习</option>
+                </select></label
+              >
+              <label
+                >状态<select id="statusFilter">
+                  <option value="">全部状态</option>
+                  <option value="NOT_STARTED">未开始</option>
+                  <option value="IN_PROGRESS">进行中</option>
+                  <option value="COMPLETED">已完成</option>
+                  <option value="RESULT_PENDING">结果处理中</option>
+                </select></label
+              >
+            </section>
+            <section class="recent-sheet">
+              <p class="eyebrow">学习留痕</p>
+              <h2>最近完成</h2>
+              <div id="recentCompleted"></div>
+            </section>
+          </aside>
+        </section>
+      </div>
+    </main>
+
+    <div id="detailLayer" class="detail-layer" hidden aria-hidden="true">
+      <button
+        class="detail-scrim"
+        type="button"
+        data-close-detail
+        aria-label="关闭课程详情"
+      ></button>
+      <article
+        class="detail-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="detailTitle"
+      >
+        <header class="detail-toolbar">
+          <button
+            type="button"
+            class="icon-button"
+            data-close-detail
+            aria-label="关闭课程详情"
+          >
+            <svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6" /></svg>
+          </button>
+          <span>课程详情</span>
+          <span id="detailStatus" class="detail-status"></span>
+        </header>
+        <div id="detailLoading" class="detail-loading">
+          <div class="loading-line"></div>
+          <p>正在展开课程目录…</p>
+        </div>
+        <div id="detailError" class="state-panel" hidden></div>
+        <div id="detailContent" hidden></div>
+      </article>
+    </div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+    <script src="/assets/app-core.js"></script>
+    <script src="/assets/api-client.js"></script>
+    <script src="/student/courses/courses.js"></script>
+    <script src="/shared/student-nav.js"></script>
+  </body>
 </html>
