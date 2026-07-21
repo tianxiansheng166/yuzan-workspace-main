@@ -313,6 +313,8 @@ model School {
   retentionJobs         PrivacyRetentionJob[]
   assessmentLinks       AssessmentLink[]
   assessmentLinkAccesses AssessmentLinkAccess[]
+  practiceDefinitions   PracticeDefinition[]
+  practiceDeliveries    PracticeDelivery[]
 
   @@index([isActive])
   @@index([deletedAt])
@@ -1583,6 +1585,119 @@ enum AssessmentItemStatus {
   FLAGGED
 }
 
+/// Reusable student practice content is versioned independently of attempts.
+/// A PUBLISHED version is append-only: delivery and attempt records always point
+/// at the version that was selected when the attempt was created.
+enum PracticeStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum PracticeVisibility {
+  SYSTEM
+  SCHOOL
+}
+
+enum PracticeDeliveryMode {
+  ASSIGNMENT
+  SELF_PRACTICE
+}
+
+enum PracticeDeliveryStatus {
+  DRAFT
+  OPEN
+  CLOSED
+  ARCHIVED
+}
+
+model PracticeDefinition {
+  id               String             @id @default(uuid()) @db.Uuid
+  schoolId         String?            @db.Uuid
+  visibility       PracticeVisibility @default(SCHOOL)
+  title            String
+  summary          String
+  coverAsset       String?
+  difficulty       String
+  estimatedMinutes Int
+  status           PracticeStatus     @default(DRAFT)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+
+  school           School?            @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  versions         PracticeVersion[]
+
+  @@index([schoolId, status])
+  @@index([visibility, status])
+}
+
+model PracticeVersion {
+  id           String         @id @default(uuid()) @db.Uuid
+  definitionId String         @db.Uuid
+  version      Int
+  status       PracticeStatus @default(DRAFT)
+  contentHash  String
+  publishedAt  DateTime?
+  createdAt    DateTime       @default(now())
+
+  definition   PracticeDefinition @relation(fields: [definitionId], references: [id], onDelete: Cascade)
+  sections     PracticeSection[]
+  deliveries   PracticeDelivery[]
+
+  @@unique([definitionId, version])
+  @@index([definitionId, status, publishedAt])
+}
+
+model PracticeSection {
+  id               String          @id @default(uuid()) @db.Uuid
+  versionId        String          @db.Uuid
+  title            String
+  description      String?
+  sortOrder        Int
+  estimatedMinutes Int
+
+  version          PracticeVersion @relation(fields: [versionId], references: [id], onDelete: Cascade)
+  items            PracticeItemRef[]
+
+  @@unique([versionId, sortOrder])
+}
+
+model PracticeItemRef {
+  id        String          @id @default(uuid()) @db.Uuid
+  sectionId String          @db.Uuid
+  questionId String?        @db.Uuid
+  itemType  String
+  sortOrder Int
+  config    Json
+
+  section   PracticeSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+
+  @@unique([sectionId, sortOrder])
+  @@index([questionId])
+}
+
+model PracticeDelivery {
+  id                String                 @id @default(uuid()) @db.Uuid
+  practiceVersionId String                 @db.Uuid
+  schoolId          String                 @db.Uuid
+  classId           String?                @db.Uuid
+  studentId         String?                @db.Uuid
+  mode              PracticeDeliveryMode
+  deadline          DateTime?
+  reRecordPolicy    Json
+  mobilePolicy      Json
+  status            PracticeDeliveryStatus @default(DRAFT)
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
+
+  practiceVersion   PracticeVersion        @relation(fields: [practiceVersionId], references: [id], onDelete: Restrict)
+  school            School                 @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  attempts          AssessmentSession[]
+
+  @@index([schoolId, status, mode])
+  @@index([schoolId, classId, studentId])
+}
+
 model AssessmentSession {
   id                String                  @id @default(uuid()) @db.Uuid
   schoolId          String                  @db.Uuid
@@ -1595,6 +1710,9 @@ model AssessmentSession {
   submittedAt       DateTime?
   completedAt       DateTime?
   retestOfSessionId String?                 @db.Uuid
+  practiceDefinitionId String?              @db.Uuid
+  practiceVersionId    String?              @db.Uuid
+  deliveryId           String?              @db.Uuid
   revision          Int                     @default(1)
   createdAt         DateTime                @default(now())
   updatedAt         DateTime                @updatedAt
@@ -1603,11 +1721,14 @@ model AssessmentSession {
   enrollment        Enrollment              @relation(fields: [schoolId, enrollmentId], references: [schoolId, id], onDelete: Restrict)
   items             AssessmentItem[]
   report            AssessmentReport?
+  delivery          PracticeDelivery?       @relation(fields: [deliveryId], references: [id], onDelete: SetNull)
 
   @@unique([schoolId, id])
   @@index([schoolId, status])
   @@index([enrollmentId, createdAt])
   @@index([classId])
+  @@index([practiceDefinitionId, enrollmentId, status])
+  @@index([deliveryId, status])
 }
 
 model AssessmentItem {
@@ -1617,6 +1738,9 @@ model AssessmentItem {
   recordingId     String?               @db.Uuid
   prompt          Json
   itemType        String
+  sectionTitle    String?
+  sectionOrder    Int?
+  itemConfig      Json?
   status          AssessmentItemStatus  @default(PENDING)
   sortOrder       Int
   maxScore        Float?

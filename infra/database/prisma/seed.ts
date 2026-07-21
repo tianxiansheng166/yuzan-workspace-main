@@ -37,6 +37,15 @@ const ids = {
   activityProgress: "fa111111-1111-4111-8111-111111111111",
   submission: "fa222222-2222-4222-8222-222222222222",
   report: "fa333333-3333-4333-8333-333333333333",
+  practiceClassical: "70000000-0000-4000-8000-000000000001",
+  practiceModern: "70000000-0000-4000-8000-000000000002",
+  practiceRhythm: "70000000-0000-4000-8000-000000000003",
+  versionClassical: "71000000-0000-4000-8000-000000000001",
+  versionModern: "71000000-0000-4000-8000-000000000002",
+  versionRhythm: "71000000-0000-4000-8000-000000000003",
+  deliveryClassical: "72000000-0000-4000-8000-000000000001",
+  deliveryModern: "72000000-0000-4000-8000-000000000002",
+  deliveryRhythm: "72000000-0000-4000-8000-000000000003",
 } as const;
 
 async function passwordHash(password: string) {
@@ -50,7 +59,80 @@ async function passwordHash(password: string) {
   return `$scrypt$16384$8$1$${salt.toString("base64")}$${derived.toString("base64")}`;
 }
 
+type SeedPractice = {
+  id: string; versionId: string; deliveryId: string; title: string; summary: string;
+  difficulty: string; estimatedMinutes: number; mode: "ASSIGNMENT" | "SELF_PRACTICE";
+  sections: Array<{ title: string; description: string; minutes: number; items: Array<{ type: string; config: Record<string, unknown> }> }>;
+};
+
+async function seedReusablePractices() {
+  const environment = process.env.NODE_ENV ?? "development";
+  if (environment !== "development" && environment !== "test") {
+    throw new Error("Reusable practice bootstrap is restricted to development/test");
+  }
+
+  const practices: SeedPractice[] = [
+    {
+      id: ids.practiceClassical, versionId: ids.versionClassical, deliveryId: ids.deliveryClassical,
+      title: "古诗文朗读与理解训练", summary: "在听读、跟读和理解表达中感受古诗文的节奏与意境。", difficulty: "七年级", estimatedMinutes: 22, mode: "ASSIGNMENT",
+      sections: [
+        { title: "听读感知", description: "先听范读，留意停顿和语气。", minutes: 4, items: [{ type: "LISTEN_ONLY", config: { instruction: "聆听《木兰诗》节选范读，记录两个停顿位置。", stimulus: "唧唧复唧唧，木兰当户织。", demoAudioUrl: "/student/growth/assets/practice-sample.wav" } }] },
+        { title: "跟读练习", description: "跟随范读完成一句一句的练习。", minutes: 5, items: [{ type: "LISTEN_REPEAT", config: { instruction: "听完示范后，跟读下面的句子。", targetText: "万里赴戎机，关山度若飞。", demoAudioUrl: "/student/growth/assets/practice-sample.wav", maxScore: 20 } }] },
+        { title: "独立朗读", description: "用清晰的语速朗读选段。", minutes: 5, items: [{ type: "READ_ALOUD", config: { instruction: "请独立朗读下面的句子，注意节奏。", targetText: "朔气传金柝，寒光照铁衣。", maxScore: 20 } }] },
+        { title: "文意选择", description: "根据材料完成理解判断。", minutes: 4, items: [{ type: "SINGLE_CHOICE", config: { prompt: "“关山度若飞”主要表现了什么？", options: ["行军路途遥远而迅疾", "关山飞翔", "军营生活安逸", "木兰正在织布"], required: true, maxScore: 20 } }] },
+        { title: "意境表达", description: "用自己的话说明诗句传递的感受。", minutes: 4, items: [{ type: "SHORT_ANSWER", config: { prompt: "用两三句话说说这段诗给你的画面感。", required: true, maxScore: 20 } }] },
+      ],
+    },
+    {
+      id: ids.practiceModern, versionId: ids.versionModern, deliveryId: ids.deliveryModern,
+      title: "现代文朗读与信息提取", summary: "在真实短文中练习倾听、朗读和抓取关键信息。", difficulty: "七年级", estimatedMinutes: 15, mode: "SELF_PRACTICE",
+      sections: [
+        { title: "听材料", description: "先整体理解材料内容。", minutes: 3, items: [{ type: "LISTEN_ONLY", config: { instruction: "聆听关于高原春天的短文。", stimulus: "冰雪消融后，山坡上的草芽最先醒来。", demoAudioUrl: "/student/growth/assets/practice-sample.wav" } }] },
+        { title: "朗读短文", description: "读出叙述的节奏。", minutes: 4, items: [{ type: "READ_ALOUD", config: { instruction: "请朗读材料句子。", targetText: "清晨的风穿过山谷，带来泥土和松针的清香。", maxScore: 25 } }] },
+        { title: "信息提取", description: "选择材料中的明确信息。", minutes: 4, items: [{ type: "MULTIPLE_CHOICE", config: { prompt: "材料中提到了哪些景物？", options: ["山谷", "松针", "海浪", "泥土"], required: true, maxScore: 25 } }] },
+        { title: "简要回答", description: "准确而完整地表达。", minutes: 4, items: [{ type: "SHORT_ANSWER", config: { prompt: "作者从哪些感觉写出了清晨的特点？", required: true, maxScore: 25 } }] },
+      ],
+    },
+    {
+      id: ids.practiceRhythm, versionId: ids.versionRhythm, deliveryId: ids.deliveryRhythm,
+      title: "停顿与节奏专项训练", summary: "通过听辨、跟读、朗读和回听，找到更自然的表达节奏。", difficulty: "基础巩固", estimatedMinutes: 10, mode: "SELF_PRACTICE",
+      sections: [
+        { title: "听辨停顿", description: "辨认更自然的朗读停顿。", minutes: 2, items: [{ type: "SINGLE_CHOICE", config: { prompt: "哪一种停顿更自然？", options: ["春风 / 又绿江南岸", "春 / 风又绿江南岸"], required: true, maxScore: 25 } }] },
+        { title: "跟读节奏", description: "模仿示范的轻重与停连。", minutes: 3, items: [{ type: "LISTEN_REPEAT", config: { instruction: "听完示范后跟读。", targetText: "春风又绿江南岸，明月何时照我还。", demoAudioUrl: "/student/growth/assets/practice-sample.wav", maxScore: 25 } }] },
+        { title: "自主朗读", description: "将节奏用于完整句子。", minutes: 3, items: [{ type: "READ_ALOUD", config: { instruction: "请独立朗读。", targetText: "海日生残夜，江春入旧年。", maxScore: 25 } }] },
+        { title: "回听反思", description: "回听后写下一个可改进点。", minutes: 2, items: [{ type: "LISTEN_RETELL", config: { prompt: "回听自己的朗读后，写下一个准备调整的停顿或语速问题。", required: true, maxScore: 25 } }] },
+      ],
+    },
+  ];
+
+  for (const practice of practices) {
+    await prisma.practiceDefinition.upsert({
+      where: { id: practice.id },
+      update: { title: practice.title, summary: practice.summary, difficulty: practice.difficulty, estimatedMinutes: practice.estimatedMinutes, status: "PUBLISHED" },
+      create: { id: practice.id, schoolId: ids.school, visibility: "SCHOOL", title: practice.title, summary: practice.summary, coverAsset: "/assessment/assets/mountain-world.webp", difficulty: practice.difficulty, estimatedMinutes: practice.estimatedMinutes, status: "PUBLISHED" },
+    });
+    await prisma.practiceVersion.upsert({
+      where: { id: practice.versionId },
+      update: { status: "PUBLISHED", contentHash: `seed-${practice.id}-v1`, publishedAt: new Date("2026-07-21T00:00:00.000Z") },
+      create: { id: practice.versionId, definitionId: practice.id, version: 1, status: "PUBLISHED", contentHash: `seed-${practice.id}-v1`, publishedAt: new Date("2026-07-21T00:00:00.000Z") },
+    });
+    await prisma.practiceSection.deleteMany({ where: { versionId: practice.versionId } });
+    for (const [sectionIndex, section] of practice.sections.entries()) {
+      const created = await prisma.practiceSection.create({ data: { versionId: practice.versionId, title: section.title, description: section.description, sortOrder: sectionIndex + 1, estimatedMinutes: section.minutes } });
+      await prisma.practiceItemRef.createMany({ data: section.items.map((item, itemIndex) => ({ sectionId: created.id, questionId: `73000000-0000-4000-8000-${String(sectionIndex * 10 + itemIndex + 1).padStart(12, "0")}`, itemType: item.type, sortOrder: itemIndex + 1, config: item.config })) });
+    }
+    await prisma.practiceDelivery.upsert({
+      where: { id: practice.deliveryId },
+      update: { status: "OPEN", mode: practice.mode, practiceVersionId: practice.versionId, classId: ids.class, studentId: null },
+      create: { id: practice.deliveryId, practiceVersionId: practice.versionId, schoolId: ids.school, classId: ids.class, mode: practice.mode, reRecordPolicy: { maxAttempts: 2, allowAfterUpload: true }, mobilePolicy: { allowed: true, minNetwork: "3g" }, status: "OPEN" },
+    });
+  }
+}
+
 async function main() {
+  if (!["development", "test"].includes(process.env.NODE_ENV ?? "development")) {
+    throw new Error("Seed is restricted to development/test");
+  }
   const hash = await passwordHash("YuzanTest!2026");
   await prisma.school.upsert({
     where: { id: ids.school },
@@ -373,6 +455,8 @@ async function main() {
       status: "ENROLLED",
     },
   });
+
+  await seedReusablePractices();
 }
 
 try {

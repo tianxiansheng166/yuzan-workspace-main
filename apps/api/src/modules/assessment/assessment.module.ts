@@ -1,5 +1,7 @@
 import { Module } from "@nestjs/common";
 import { AssessmentSessionController, AssessmentDeviceController } from "./assessment.controller.js";
+import { PracticeController } from "./practice.controller.js";
+import { PracticeService } from "./practice.service.js";
 import { AssessmentService } from "./assessment.service.js";
 import { ASSESSMENT_SESSION_REPOSITORY } from "./ports/assessment-session-repository.port.js";
 import { ASSESSMENT_ITEM_REPOSITORY } from "./ports/assessment-item-repository.port.js";
@@ -11,9 +13,10 @@ import { PrismaWrittenAnswerRepository } from "./infra/prisma-written-answer.rep
 import { PrismaAssessmentReportRepository } from "./infra/prisma-assessment-report.repository.js";
 
 @Module({
-  controllers: [AssessmentSessionController, AssessmentDeviceController],
+  controllers: [AssessmentSessionController, AssessmentDeviceController, PracticeController],
   providers: [
     AssessmentService,
+    PracticeService,
     {
       provide: ASSESSMENT_SESSION_REPOSITORY,
       useClass: PrismaAssessmentSessionRepository,
