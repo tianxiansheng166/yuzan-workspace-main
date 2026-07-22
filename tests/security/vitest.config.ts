@@ -3,7 +3,7 @@ import { fileURLToPath } from "node:url";
 import { defineConfig } from "vitest/config";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const apiNodeModules = path.resolve(__dirname, "../../apps/api/node_modules");
+const apiNodeModules = path.resolve(__dirname, "../../backend/api/node_modules");
 
 export default defineConfig({
   root: "../..",

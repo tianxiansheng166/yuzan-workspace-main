@@ -38,9 +38,9 @@ import {
   SpeechProviderUnavailableException,
 } from "../../src/modules/speech-job/domain/speech-job.errors.js";
 
-/** 读取 OpenAPI 契约文件（与 apps/api 同 monorepo 顶层的 packages/contracts）。 */
+/** 读取 OpenAPI 契约文件（与 backend/api 同 monorepo 顶层的 packages/contracts）。 */
 function readOpenApiYaml(): string {
-  // 从 apps/api/test/contracts 向上回退到 monorepo root，再进入 packages/contracts。
+  // 从 backend/api/test/contracts 向上回退到 monorepo root，再进入 packages/contracts。
   const candidates = [
     resolve(__dirname, "../../../../packages/contracts/openapi/openapi.yaml"),
     resolve(__dirname, "../../../../../packages/contracts/openapi/openapi.yaml"),

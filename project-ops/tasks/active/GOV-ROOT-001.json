@@ -16,7 +16,7 @@
     ".env.example",
     "docker-compose.yml",
     "pnpm-lock.yaml",
-    "services/speech-scoring/**",
+    "backend/speech-scoring/**",
     "infra/ai/flowise/**",
     "scripts/local-runtime/**",
     "scripts/repo/**",

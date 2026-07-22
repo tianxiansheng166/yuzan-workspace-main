@@ -10,7 +10,7 @@ APPROVED — self-authorized (no other Trae owns app.module.ts)
 
 ### 1. AppModule Registration
 
-**File**: `apps/api/src/app.module.ts`
+**File**: `backend/api/src/app.module.ts`
 
 **Change**: Add 4 new module imports to the NestJS `@Module()` imports array:
 

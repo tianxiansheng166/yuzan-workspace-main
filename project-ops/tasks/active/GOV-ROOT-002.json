@@ -15,7 +15,7 @@
     "apps/**",
     "backend/**",
     "frontend/**",
-    "web-runtime/**",
+    "frontend/**",
     "services/**",
     "packages/**",
     "infra/**",
@@ -31,6 +31,7 @@
     "package.json",
     "pnpm-workspace.yaml",
     "pnpm-lock.yaml",
+    ".env.example",
     "tsconfig.base.json",
     "README.md",
     "README-FIRST.md",
@@ -38,6 +39,8 @@
     "AGENTS.md",
     "start-web.cmd",
     "start-web.ps1",
+    "start-frontend.cmd",
+    "start-frontend.ps1",
     "run-b-tests.mjs"
   ],
   "shared_owner_changes": [

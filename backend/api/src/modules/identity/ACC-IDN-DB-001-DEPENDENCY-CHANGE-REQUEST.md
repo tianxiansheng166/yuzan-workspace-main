@@ -27,7 +27,7 @@ successfully updates the predecessor row may create the successor pair.
 
 ## Approved dependency change
 
-Added to `apps/api/package.json` and `pnpm-lock.yaml`:
+Added to `backend/api/package.json` and `pnpm-lock.yaml`:
 
 - `@prisma/adapter-pg@^7.8.0`
 - `pg@^8.15.6`
@@ -39,7 +39,7 @@ Added to `apps/api/package.json` and `pnpm-lock.yaml`:
 1. Regenerated and built `@yuzan/database`.
 2. Created migration `20260710180000_identity_session_pairing` and applied it
    with `prisma migrate deploy`.
-3. Ran `apps/api/test/integration/identity/prisma-identity.repository.spec.ts`
+3. Ran `backend/api/test/integration/identity/prisma-identity.repository.spec.ts`
    against PostgreSQL: 21 integration tests covering construction, credential
    lookup, membership filtering, pair creation, atomic rotation, replay
    rejection, revocation, expiry, cleanup and transaction rollback.

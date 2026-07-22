@@ -7,8 +7,8 @@ import {
   MembershipRole,
   SecurityException,
   TenantAuthorizationGuard,
-} from "../../apps/api/src/common/security/index.js";
-import { StubAuthContextSource } from "../../apps/api/src/modules/auth/stub-auth-context.source.js";
+} from "../../backend/api/src/common/security/index.js";
+import { StubAuthContextSource } from "../../backend/api/src/modules/auth/stub-auth-context.source.js";
 import { createMockExecutionContext } from "./mock-context.js";
 
 describe("TenantAuthorizationGuard", () => {

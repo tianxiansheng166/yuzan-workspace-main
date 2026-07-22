@@ -109,7 +109,7 @@ console.log("");
 
 for (const cfg of apiConfigs) {
   process.stdout.write(`[API] ${cfg} ... `);
-  const r = runVitest(cfg, "apps/api", "@yuzan/api");
+  const r = runVitest(cfg, "backend/api", "@yuzan/api");
   results.push(r);
   totalPassed += r.passed;
   totalSkipped += r.skipped;
@@ -124,7 +124,7 @@ for (const cfg of apiConfigs) {
 
 for (const cfg of workerConfigs) {
   process.stdout.write(`[WORKER] ${cfg} ... `);
-  const r = runVitest(cfg, "apps/worker", "@yuzan/worker");
+  const r = runVitest(cfg, "backend/worker", "@yuzan/worker");
   results.push(r);
   totalPassed += r.passed;
   totalSkipped += r.skipped;

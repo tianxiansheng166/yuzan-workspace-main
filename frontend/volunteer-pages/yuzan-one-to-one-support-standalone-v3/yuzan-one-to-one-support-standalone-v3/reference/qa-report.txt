@@ -1,8 +1,0 @@
-Viewport: 1659 x 948
-Document dimensions: 1659 x 948
-Chromium render: PASS
-Student selection interaction: PASS
-Workflow step switching: PASS
-Modal open/close interaction: PASS
-Console errors: 0
-Page errors: 0

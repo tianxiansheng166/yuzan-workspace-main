@@ -4,14 +4,14 @@
 
 ## 1. 重启服务（代码变更后必须执行）
 
-### web-runtime（前端服务器）
+### frontend（前端服务器）
 ```powershell
 # 查找并停止旧进程
 $pid = (Get-NetTCPConnection -LocalPort 4175 -ErrorAction SilentlyContinue | Select-Object -First 1).OwningProcess
 if ($pid) { Stop-Process -Id $pid -Force }
 
 # 启动新进程
-cd D:\program\test_program\yuzanxinsheng\three\yuzan-next\web-runtime
+cd D:\program\test_program\yuzanxinsheng\three\yuzan-next\frontend
 node server.mjs
 ```
 

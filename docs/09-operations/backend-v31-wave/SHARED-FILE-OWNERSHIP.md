@@ -12,10 +12,10 @@
 | `infra/database/prisma/migrations/**` | 数据库迁移文件 |
 | `packages/contracts/openapi/**` | OpenAPI 契约文件 |
 | `packages/contracts/src/generated*` | 生成的契约代码 |
-| `apps/api/src/app.module.ts` | 根模块 wiring |
-| `apps/api/src/main.ts` | 应用入口 |
-| `apps/api/src/shared/database/**` | 共享数据库 runtime |
-| `apps/api/src/common/**` | 共享通用代码（guard、filter、interceptor 等） |
+| `backend/api/src/app.module.ts` | 根模块 wiring |
+| `backend/api/src/main.ts` | 应用入口 |
+| `backend/api/src/shared/database/**` | 共享数据库 runtime |
+| `backend/api/src/common/**` | 共享通用代码（guard、filter、interceptor 等） |
 | `package.json` | 根依赖与脚本 |
 | `pnpm-lock.yaml` | 依赖锁定文件 |
 

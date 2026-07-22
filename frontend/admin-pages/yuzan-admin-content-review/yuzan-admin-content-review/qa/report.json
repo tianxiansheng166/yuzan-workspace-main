@@ -1,9 +1,0 @@
-{
-  "viewport": [
-    1659,
-    948
-  ],
-  "mae": 22.585,
-  "rmse": 49.147,
-  "note": "Reference includes rasterized original design content; implementation rebuilds editable UI with HTML/CSS/JS."
-}

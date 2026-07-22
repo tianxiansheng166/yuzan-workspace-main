@@ -11,6 +11,19 @@ Before changing code, read these repository-local sources in order:
 Concurrent task worktrees belong in the sibling `../worktrees/` directory. Do not
 create full repository clones under the project root.
 
+## Canonical source layout
+
+- `frontend/` is the only active frontend during the current closure phase.
+- `backend/api/`, `backend/worker/` and `backend/speech-scoring/` are the backend services.
+- `packages/` contains shared source packages; `infra/` contains database and local infrastructure.
+- Archived frontends and design evidence under `../legacy-archive/` are recovery material, not development inputs.
+- Do not recreate `apps/apps-web`, `web-runtime`, `apps/api`, `apps/worker` or `services/speech-scoring`.
+
+pnpm owns dependencies for the whole workspace. Run installs only at the repository
+root. Package-level `package.json` files declare dependency ownership and must stay;
+package-level `node_modules` entries are pnpm links into the shared root virtual store.
+Never run `npm install` inside a backend service or shared package.
+
 ## Hard rules
 
 - Work only in the assigned branch/worktree.

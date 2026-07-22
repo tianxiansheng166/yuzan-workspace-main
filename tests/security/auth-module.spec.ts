@@ -6,10 +6,10 @@ import {
   AuthenticationGuard,
   Public,
   SecurityException,
-} from "../../apps/api/src/common/security/index.js";
-import { AuthModule } from "../../apps/api/src/modules/auth/auth.module.js";
-import { DenyAllAuthContextSource } from "../../apps/api/src/modules/auth/deny-all-auth-context.source.js";
-import { StubAuthContextSource } from "../../apps/api/src/modules/auth/stub-auth-context.source.js";
+} from "../../backend/api/src/common/security/index.js";
+import { AuthModule } from "../../backend/api/src/modules/auth/auth.module.js";
+import { DenyAllAuthContextSource } from "../../backend/api/src/modules/auth/deny-all-auth-context.source.js";
+import { StubAuthContextSource } from "../../backend/api/src/modules/auth/stub-auth-context.source.js";
 import { createMockExecutionContext } from "./mock-context.js";
 
 describe("AuthModule default wiring", () => {

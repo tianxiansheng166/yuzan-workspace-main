@@ -4,7 +4,7 @@ import { defineConfig } from "vitest/config";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, "../../../../../");
-const apiNodeModules = path.resolve(repoRoot, "apps/api/node_modules");
+const apiNodeModules = path.resolve(repoRoot, "backend/api/node_modules");
 
 export default defineConfig({
   root: repoRoot,
@@ -16,7 +16,7 @@ export default defineConfig({
     },
   },
   test: {
-    include: ["apps/api/test/modules/assignments/**/*.spec.ts"],
+    include: ["backend/api/test/modules/assignments/**/*.spec.ts"],
     environment: "node",
     globals: true,
   },

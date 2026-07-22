@@ -15,7 +15,7 @@ export default defineConfig({
     },
   },
   test: {
-    include: ["apps/api/test/reporting/**/*.spec.ts"],
+    include: ["backend/api/test/reporting/**/*.spec.ts"],
     environment: "node",
     globals: true,
   },

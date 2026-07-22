@@ -201,7 +201,7 @@ async function getToastText(page: Page): Promise<string | null> {
  */
 async function setupPage(page: Page, overrides: Record<string, any> = {}) {
   // Use a file:// URL for local testing, or a served URL in CI
-  const htmlPath = "web-runtime/teacher/ai-tools/index.html";
+  const htmlPath = "frontend/teacher/ai-tools/index.html";
   await page.goto(`/${htmlPath}`);
   await injectMockApi(page, overrides);
   // Re-trigger init by reloading to pick up the mock

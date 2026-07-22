@@ -155,7 +155,7 @@ pnpm check          # Runs all quality checks sequentially
 
 | Service        | Port  | URL                          |
 | -------------- | ----- | ---------------------------- |
-| Web (Nuxt)     | 3000  | http://localhost:3000        |
+| Frontend       | 4175  | http://127.0.0.1:4175        |
 | API (NestJS)   | 4000  | http://localhost:4000/api/v1 |
 | MinIO Console  | 59001 | http://localhost:59001       |
 | PostgreSQL     | 55432 | localhost:55432              |
@@ -215,17 +215,14 @@ pnpm db:generate
 
 ```
 yuzan-next/
-├── apps/
-│   ├── api/          # NestJS backend
-│   ├── apps-web/     # Nuxt 4 frontend
-│   └── worker/       # Background worker
+├── frontend/         # Current backend-connected static frontend
+├── backend/
+│   ├── api/          # NestJS API
+│   ├── worker/       # Background worker
+│   └── speech-scoring/ # Python speech scoring service
 ├── packages/
-│   ├── config/       # Shared configuration
 │   ├── contracts/    # OpenAPI schema & generated types
 │   ├── domain/       # Domain logic
-│   ├── observability/# Logging & metrics
-│   ├── test-utils/   # Testing helpers
-│   └── ui/           # Shared Vue components
 ├── infra/
 │   └── database/     # Prisma schema & migrations
 ├── docker-compose.yml
@@ -234,9 +231,18 @@ yuzan-next/
 └── tsconfig.base.json
 ```
 
-## Known Limitations
+## Frontend source of truth
 
-- OpenAPI contract validation has pending issues (missing operation summaries, license, tag descriptions)
-- Vue typecheck shows plugin warnings (non-blocking)
+`frontend/` is the only active frontend for the current product closure. The old
+Nuxt tree is stored outside the repository in `../legacy-archive` and does not
+participate in pnpm, CI or source discovery. A future framework migration is a
+separate architecture task and must not recreate a second active frontend.
+
+## Dependency ownership
+
+Run `pnpm install` only from the repository root. pnpm stores physical packages
+once in the root virtual store/global content-addressed store; the `node_modules`
+entries inside backend/shared packages are generated links. Each package keeps
+its own `package.json` so undeclared dependencies cannot leak between services.
 
 This scaffold is a foundation for the project. All commands listed have been verified to exist in package.json.

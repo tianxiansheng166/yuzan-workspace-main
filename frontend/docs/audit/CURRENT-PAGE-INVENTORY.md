@@ -1,9 +1,9 @@
 # 语赞心声 — 当前页面完整清单
 
 > 审计日期：2026-07-18
-> 数据来源：web-runtime/server.mjs 路由映射 + 文件系统扫描
-> 前端端口：4175（web-runtime/server.mjs）
-> 后端端口：4000（apps/api）
+> 数据来源：frontend/server.mjs 路由映射 + 文件系统扫描
+> 前端端口：4175（frontend/server.mjs）
+> 后端端口：4000（backend/api）
 
 ## 路由汇总
 

@@ -8,9 +8,6 @@ on:
 permissions:
   contents: read
 
-env:
-  NUXT_TELEMETRY_DISABLED: "1"
-
 # GOV-002 baseline note:
 # Root-level checks (contract validation, database validation, recursive
 # lint/typecheck/test/build) are temporarily allowed to fail until GOV-002
@@ -91,17 +88,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Prepare Nuxt
-        run: pnpm --filter @yuzan/web exec nuxt prepare
+      - name: Frontend runtime tests
+        run: pnpm --filter @yuzan/frontend test
 
-      - name: Web tests
-        run: pnpm --filter @yuzan/web test
+      - name: Frontend syntax check
+        run: pnpm --filter @yuzan/frontend typecheck
 
-      - name: Web typecheck
-        run: pnpm --filter @yuzan/web typecheck
-
-      - name: Web build
-        run: pnpm --filter @yuzan/web build
+      - name: Frontend delivery check
+        run: pnpm --filter @yuzan/frontend build
 
   root-baseline:
     name: Root-level baseline (experimental)

@@ -18,16 +18,16 @@
 ## 允许修改的路径
 
 ```text
-apps/api/src/modules/classes/**
-apps/api/src/modules/assignments/**
-apps/api/src/modules/learning/**
-apps/api/src/modules/submissions/**
-apps/api/src/modules/feedback/**
-apps/api/test/modules/classes/**
-apps/api/test/modules/assignments/**
-apps/api/test/modules/learning/**
-apps/api/test/modules/submissions/**
-apps/api/test/modules/feedback/**
+backend/api/src/modules/classes/**
+backend/api/src/modules/assignments/**
+backend/api/src/modules/learning/**
+backend/api/src/modules/submissions/**
+backend/api/src/modules/feedback/**
+backend/api/test/modules/classes/**
+backend/api/test/modules/assignments/**
+backend/api/test/modules/learning/**
+backend/api/test/modules/submissions/**
+backend/api/test/modules/feedback/**
 ```
 
 ## 禁止修改的路径
@@ -42,25 +42,25 @@ docs/09-operations/backend-v31-change-requests/b31-101-contract-request.md
 禁止修改其他 Trae 负责的业务模块：
 
 ```text
-apps/api/src/modules/assessment/**
-apps/api/src/modules/recommendations/**
-apps/api/src/modules/speech/**
-apps/api/src/modules/reports/**
-apps/api/src/modules/admin/**
-apps/api/src/modules/curriculum-governance/**
-apps/api/src/modules/product-plans/**
-apps/api/src/modules/privacy/**
-apps/api/src/modules/audit/**
-apps/api/src/modules/volunteers/**
-apps/api/src/modules/training/**
-apps/api/src/modules/support-pairings/**
-apps/api/src/modules/tools/**
-apps/api/src/modules/translations/**
-apps/api/src/modules/community/**
-apps/api/src/modules/cooperation/**
-apps/api/src/modules/operations/**
-apps/api/src/modules/offline/**
-apps/api/src/modules/reporting/**
+backend/api/src/modules/assessment/**
+backend/api/src/modules/recommendations/**
+backend/api/src/modules/speech/**
+backend/api/src/modules/reports/**
+backend/api/src/modules/admin/**
+backend/api/src/modules/curriculum-governance/**
+backend/api/src/modules/product-plans/**
+backend/api/src/modules/privacy/**
+backend/api/src/modules/audit/**
+backend/api/src/modules/volunteers/**
+backend/api/src/modules/training/**
+backend/api/src/modules/support-pairings/**
+backend/api/src/modules/tools/**
+backend/api/src/modules/translations/**
+backend/api/src/modules/community/**
+backend/api/src/modules/cooperation/**
+backend/api/src/modules/operations/**
+backend/api/src/modules/offline/**
+backend/api/src/modules/reporting/**
 ```
 
 也禁止修改：
@@ -70,10 +70,10 @@ infra/database/prisma/schema.prisma
 infra/database/prisma/migrations/**
 packages/contracts/openapi/**
 packages/contracts/src/generated*
-apps/api/src/app.module*
-apps/api/src/main*
-apps/api/src/shared/database/**
-apps/api/src/common/**
+backend/api/src/app.module*
+backend/api/src/main*
+backend/api/src/shared/database/**
+backend/api/src/common/**
 package.json
 pnpm-lock.yaml
 ```

@@ -16,11 +16,11 @@
 
 | 类型 | 文件或位置 | 已确认事实 |
 | --- | --- | --- |
-| 当前主项目 | `web-runtime/student/courses/**` | 薄课程列表，跳固定 `spring-2` |
-| 参考图 | `web-runtime/student-pages/yuzan-student-course-center/**/qa/reference.png` | 1659×948 课程中心构图 |
-| 历史候选 | `web-runtime/student-pages/yuzan-student-course-center/**` | 可复用筛选、主次布局、覆盖式详情逻辑 |
-| 后端 | `apps/api/src/modules/{student-dashboard,learning,submissions,assessment}` | 基础模型与 Practice 执行器已存在 |
-| 页面族母版 | `web-runtime/shared/student-nav.*` | 顶部学生一级导航已独立提交 |
+| 当前主项目 | `frontend/student/courses/**` | 薄课程列表，跳固定 `spring-2` |
+| 参考图 | `frontend/student-pages/yuzan-student-course-center/**/qa/reference.png` | 1659×948 课程中心构图 |
+| 历史候选 | `frontend/student-pages/yuzan-student-course-center/**` | 可复用筛选、主次布局、覆盖式详情逻辑 |
+| 后端 | `backend/api/src/modules/{student-dashboard,learning,submissions,assessment}` | 基础模型与 Practice 执行器已存在 |
+| 页面族母版 | `frontend/shared/student-nav.*` | 顶部学生一级导航已独立提交 |
 
 ## 参考图记录
 
@@ -31,8 +31,8 @@
 
 ## 现有实现与复用决策
 
-- 当前页面：`web-runtime/student/courses/index.html`
-- 固定播放器：`web-runtime/student/learn/spring-2/**`
+- 当前页面：`frontend/student/courses/index.html`
+- 固定播放器：`frontend/student/learn/spring-2/**`
 - 数据入口：`GET /schools/:schoolId/student/courses-dashboard`
 - 决策：课程中心原地重构；将固定播放器替换为动态路由执行器；复用 Practice 通用执行器和现有录音 API。
 - 原因：历史页面视觉层级可用，但业务数据、固定活动和跳转链路不可保留。

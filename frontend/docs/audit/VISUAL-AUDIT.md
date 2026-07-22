@@ -1,7 +1,7 @@
 # 视觉审计报告
 
 > 审计日期：2026-07-18
-> 扫描范围：web-runtime 下所有 HTML/CSS 文件（排除 node_modules）
+> 扫描范围：frontend 下所有 HTML/CSS 文件（排除 node_modules）
 > 审计方法：静态扫描 + 已知问题交叉验证
 
 ---

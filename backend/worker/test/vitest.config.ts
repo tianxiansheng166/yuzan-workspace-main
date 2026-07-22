@@ -15,7 +15,7 @@ export default defineConfig({
     },
   },
   test: {
-    include: ["apps/worker/test/**/*.spec.ts"],
+    include: ["backend/worker/test/**/*.spec.ts"],
     environment: "node",
     globals: true,
   },

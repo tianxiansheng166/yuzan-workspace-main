@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { redact } from "../../apps/api/src/common/security/log-redaction.js";
+import { redact } from "../../backend/api/src/common/security/log-redaction.js";
 
 describe("redact", () => {
   it("leaves primitive values unchanged", () => {

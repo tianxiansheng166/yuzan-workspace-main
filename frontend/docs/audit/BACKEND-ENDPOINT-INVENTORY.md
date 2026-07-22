@@ -1,7 +1,7 @@
 # 后端接口全量清单
 
 > 审计时间：2026-07-18
-> 审计范围：apps/api/src/modules 下所有 Controller
+> 审计范围：backend/api/src/modules 下所有 Controller
 > 端点总数：约 165 个
 
 ## 一、接口总览

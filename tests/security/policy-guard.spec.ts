@@ -12,7 +12,7 @@ import {
   RequireRoles,
   RESOURCE_POLICY_KEY,
   SecurityException,
-} from "../../apps/api/src/common/security/index.js";
+} from "../../backend/api/src/common/security/index.js";
 import { createMockExecutionContext } from "./mock-context.js";
 
 function makeAuthContext(roles: readonly MembershipRole[]): AuthContext {

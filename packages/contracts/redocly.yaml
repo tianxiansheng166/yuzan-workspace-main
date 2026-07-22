@@ -17,6 +17,6 @@ rules:
   # 3. 段数不同：GET /speech-jobs/:jobId 匹配 1 段，
   #    GET /speech-jobs/by-item/:assessmentItemId 匹配 2 段，无交集。
   #
-  # 证明见：apps/api/test/contracts/p0-golden-flow.contract.spec.ts
+  # 证明见：backend/api/test/contracts/p0-golden-flow.contract.spec.ts
   #   describe("no-ambiguous-paths: speech-jobs route disambiguation")
   no-ambiguous-paths: off

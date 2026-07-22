@@ -24,10 +24,10 @@
 
 | 复核项 | 结果 | 证据 |
 |--------|------|------|
-| 单一 Pool | 通过 | `apps/api/src/shared/database/database.module.ts` 使用 `useFactory` 单例 `PrismaService` |
+| 单一 Pool | 通过 | `backend/api/src/shared/database/database.module.ts` 使用 `useFactory` 单例 `PrismaService` |
 | 单一 Prisma Client | 通过 | 仅 `PrismaService` 实例化 `@yuzan/database` PrismaClient，全局模块导出 |
 | Startup / Shutdown | 通过 | `PrismaService` 实现 `OnModuleInit` / `OnModuleDestroy` |
-| Refresh Rotation | 通过 | `apps/api/src/modules/identity/` 中 refresh token 轮换持久化 |
+| Refresh Rotation | 通过 | `backend/api/src/modules/identity/` 中 refresh token 轮换持久化 |
 | Refresh Replay 保护 | 通过 | refresh token 单次使用，旧 token 失效 |
 | Active Membership | 通过 | 中间件/守卫校验 membership status = `ACTIVE` |
 | Active School | 通过 | Tenant 上下文过滤 `deletedAt IS NULL` 且 status 有效 |
@@ -38,19 +38,19 @@
 | Atomic Concurrency | 通过 | course draft update 使用 `version` 条件更新，冲突返回 409 |
 | Error Sanitization | 通过 | `database.errors.ts` 中 `sanitizeDriverError` 不返回 SQL/host/schema/token |
 | OpenAPI Consistency | 通过 | 现有契约与 `packages/contracts/openapi/` 一致 |
-| PostgreSQL Integration Tests | 通过 | `apps/api/test/database/database-runtime.integration.spec.ts` 通过 |
-| Identity Repository Tests | 通过 | `apps/api/test/integration/identity/prisma-identity.repository.spec.ts` 通过 |
+| PostgreSQL Integration Tests | 通过 | `backend/api/test/database/database-runtime.integration.spec.ts` 通过 |
+| Identity Repository Tests | 通过 | `backend/api/test/integration/identity/prisma-identity.repository.spec.ts` 通过 |
 | API Health | 通过 | `HealthModule` 暴露 `/health` |
 
 ## 关键修复（相对于原始实现）
 
 1. **测试清理顺序**：调整 `database-runtime.integration.spec.ts` 与 `prisma-identity.repository.spec.ts` 的表清理顺序，先删除依赖 `User`/`School` 的外键表（`CourseVersion`、`Course` 等），避免外键约束冲突。
-2. **测试并发控制**：`apps/api/package.json` 的 test 脚本增加 `--pool=forks --poolOptions.forks.singleFork`，确保集成测试顺序执行，避免共享数据库状态竞争。
+2. **测试并发控制**：`backend/api/package.json` 的 test 脚本增加 `--pool=forks --poolOptions.forks.singleFork`，确保集成测试顺序执行，避免共享数据库状态竞争。
 
 ## 测试命令
 
 ```powershell
-# 在 apps/api 目录执行
+# 在 backend/api 目录执行
 pnpm test
 ```
 

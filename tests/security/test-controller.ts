@@ -9,7 +9,7 @@ import {
   RequireRoles,
   type Principal,
   type TenantContext,
-} from "../../apps/api/src/common/security/index.js";
+} from "../../backend/api/src/common/security/index.js";
 
 @Controller("schools/:schoolId")
 export class TestSchoolController {

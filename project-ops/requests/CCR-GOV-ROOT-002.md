@@ -7,15 +7,17 @@
 ## Decision
 
 For the current product-closure phase, the static backend-connected runtime is
-the only active frontend. It moves from `web-runtime/` to `frontend/`.
-`apps/apps-web` is archived outside the canonical repository and must not
+the only active frontend. It moves from the former `web-runtime/` path to
+`frontend/`.
+The former Nuxt `apps/apps-web` tree is archived under
+`../legacy-archive/root-cleanup-20260722/apps-web` and must not
 participate in source discovery, dependency installation, tests or CI.
 
 Backend services move to explicit names:
 
-- `apps/api` -> `backend/api`
-- `apps/worker` -> `backend/worker`
-- `services/speech-scoring` -> `backend/speech-scoring`
+- former `apps/api` -> `backend/api`
+- former `apps/worker` -> `backend/worker`
+- former `services/speech-scoring` -> `backend/speech-scoring`
 
 Package manifests remain per workspace package because they declare dependency
 ownership. pnpm continues to share physical package content through the root

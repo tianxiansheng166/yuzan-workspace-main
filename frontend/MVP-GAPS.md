@@ -1,6 +1,6 @@
 # MVP 缺口清单
 
-> 范围：`d:\program\test_program\yuzanxinsheng\three\yuzan-next\web-runtime`
+> 范围：`d:\program\test_program\yuzanxinsheng\three\yuzan-next\frontend`
 > 后端：`d:\program\test_program\yuzanxinsheng\three\yuzan-next\apps\api`
 > 更新日期：2026-07-22（加入藏中翻译语料系统缺口）
 

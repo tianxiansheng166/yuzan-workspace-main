@@ -1,8 +1,0 @@
-{
-  "extends": "@vue/tsconfig/tsconfig.dom.json",
-  "compilerOptions": {
-    "strict": true,
-    "noUncheckedIndexedAccess": true
-  },
-  "include": ["src/**/*.ts", "src/**/*.vue"]
-}

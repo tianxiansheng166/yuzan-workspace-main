@@ -16,7 +16,7 @@
 
 ## implementation
 
-- `apps/api/src/modules/identity/identity.controller.ts`
+- `backend/api/src/modules/identity/identity.controller.ts`
   - `POST /auth/select-school`
   - 读取当前 access token（Authorization Bearer 或 `access_token` cookie）
   - 调用 `IdentityService.selectActiveSchoolWithAccessToken`
@@ -24,7 +24,7 @@
   - 设置新的 `access_token` / `refresh_token` httpOnly cookies
   - 返回 `AuthSessionResponse`
 
-- `apps/api/src/modules/identity/identity.service.ts`
+- `backend/api/src/modules/identity/identity.service.ts`
   - `selectActiveSchool(userId, schoolId)`：校验用户 ACTIVE、membership ACTIVE、学校活跃且未删除、角色受支持
   - `selectActiveSchoolWithAccessToken(accessToken, schoolId)`：校验当前 access token 未过期/未吊销，然后执行选择并吊销旧 session
 
@@ -45,7 +45,7 @@ GET  /me
 
 ## request
 
-- DTO：`SelectSchoolDto`（`apps/api/src/modules/identity/dto/select-school.dto.ts`）
+- DTO：`SelectSchoolDto`（`backend/api/src/modules/identity/dto/select-school.dto.ts`）
 - 字段：`schoolId: UUID`
 - 校验：`@IsUUID()`
 
@@ -133,15 +133,15 @@ OpenAPI schema：`#/components/schemas/SelectSchoolRequest`
 
 ## tests
 
-- `apps/api/test/auth/identity.service.spec.ts`：38 tests
+- `backend/api/test/auth/identity.service.spec.ts`：38 tests
   - 覆盖登录默认选择单学校
   - 覆盖多学校时 `activeSchoolId = null`
   - 覆盖 `selectActiveSchool` 成功与失败（无 membership、 suspended、非 active 学校等）
   - 覆盖 refresh 旋转、并发刷新、token 过期、session 吊销
-- `apps/api/test/auth/identity.controller.spec.ts`：9 tests
+- `backend/api/test/auth/identity.controller.spec.ts`：9 tests
   - 覆盖 controller 路由元数据（包括 `/auth/select-school`）
   - 覆盖 DTO 校验、错误统一化、logout 无响应体
-- `apps/api/test/auth/session-auth-context.source.spec.ts`：5 tests
+- `backend/api/test/auth/session-auth-context.source.spec.ts`：5 tests
 - 本次运行结果：**52 passed, 0 failed**
 
 命令：
@@ -159,8 +159,8 @@ pnpm --filter @yuzan/api test -- test/auth
 
 本次 freeze 校验产生的未提交修改：
 
-- `apps/api/src/modules/identity/identity.service.ts`：修正 `selectActiveSchool` 注释，明确其对应正式 OpenAPI `/auth/select-school` 端点
-- `apps/api/test/auth/identity.controller.spec.ts`：补充 `selectSchool` 路由元数据断言
+- `backend/api/src/modules/identity/identity.service.ts`：修正 `selectActiveSchool` 注释，明确其对应正式 OpenAPI `/auth/select-school` 端点
+- `backend/api/test/auth/identity.controller.spec.ts`：补充 `selectSchool` 路由元数据断言
 
 ## remote commit
 

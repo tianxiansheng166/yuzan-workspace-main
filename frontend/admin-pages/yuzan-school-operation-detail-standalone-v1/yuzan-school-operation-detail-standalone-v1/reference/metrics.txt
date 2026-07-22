@@ -1,2 +1,0 @@
-viewport: 1659x948
-render: generated with Playwright inline assets

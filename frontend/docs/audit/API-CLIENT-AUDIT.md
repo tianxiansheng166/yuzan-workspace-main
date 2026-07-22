@@ -1,7 +1,7 @@
 # API Client 审计报告
 
 > 审计日期：2026-07-18
-> 审计对象：web-runtime/assets/api-client.js（682行）
+> 审计对象：frontend/assets/api-client.js（682行）
 > 审计范围：全部封装方法、调用方式、参数编码、错误处理
 
 ## 一、基础架构

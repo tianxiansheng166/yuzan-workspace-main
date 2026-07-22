@@ -78,7 +78,7 @@
 - Status: resolved
 - Area: local runtime
 - Command: `pnpm --filter @yuzan/api start`
-- Result: pnpm starts in `apps/api`, so Nest could not find the root ignored `.env` and rejected the missing `SESSION_SECRET`.
+- Result: pnpm starts in `backend/api`, so Nest could not find the root ignored `.env` and rejected the missing `SESSION_SECRET`.
 - Resolution: launch the already-built API from repository root with Node's `--env-file=.env`, while overriding only the task database URL in the process environment.
 
 ## [ERR-20260714-009] playwright-python-selection
@@ -298,7 +298,7 @@
 - Status: resolved
 - Area: local runtime and browser validation
 - Command: start the canonical root API/Nuxt runtime and execute four-role browser journeys
-- Result: the previous Nuxt listener was an old V4-adoption worktree; the new API initially missed root `.env` because the filtered package runs from `apps/api`; the browser's IPv4 `127.0.0.1` target was refused while Nuxt listened through `localhost`.
+- Result: the previous Nuxt listener was an old V4-adoption worktree; the new API initially missed root `.env` because the filtered package runs from `backend/api`; the browser's IPv4 `127.0.0.1` target was refused while Nuxt listened through `localhost`.
 - Resolution: stopped only the identified old process, made `integration/four-port-role-navigation-connectivity-003` the root checkout branch after a verified recovery snapshot, loaded root `.env` into the API launch process, and used `localhost` for browser journeys. API runs on 4000, Nuxt runs on 3000, and all tested routes originate from the canonical root checkout.
 
 ## [ERR-20260721-030] playwright-context-viewport

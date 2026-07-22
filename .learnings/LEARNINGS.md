@@ -62,20 +62,20 @@ Keep root `AGENTS.md`, `project-ops/CURRENT.md` and active task JSON inside ever
 
 ### Summary
 
-The currently selected user-facing frontend is `web-runtime`; `apps/apps-web` is a separate Nuxt migration line and must not be treated as the same runtime.
+The currently selected user-facing frontend is `frontend`; `../legacy-archive/root-cleanup-20260722/apps-web` is a separate Nuxt migration line and must not be treated as the same runtime.
 
 ### Details
 
-Root `start` and `web` launch `web-runtime/server.mjs`, while the pnpm workspace, root `dev`/quality scripts and CI still select the Nuxt package `@yuzan/web` in `apps/apps-web`. The Nuxt tree also contains recent API/session/assessment work, so it affects dependency installation and gates even when it is not the selected product runtime.
+Root `start` and `web` launch `frontend/server.mjs`, while the pnpm workspace, root `dev`/quality scripts and CI still select the Nuxt package `@yuzan/web` in `../legacy-archive/root-cleanup-20260722/apps-web`. The Nuxt tree also contains recent API/session/assessment work, so it affects dependency installation and gates even when it is not the selected product runtime.
 
 ### Suggested Action
 
-Make an explicit architecture decision before archiving anything: either promote `web-runtime` as the sole maintained frontend and extract any unique Nuxt logic, or complete the documented migration into Nuxt. Then update workspace filters, root scripts, CI, lockfile and documentation atomically.
+Make an explicit architecture decision before archiving anything: either promote `frontend` as the sole maintained frontend and extract any unique Nuxt logic, or complete the documented migration into Nuxt. Then update workspace filters, root scripts, CI, lockfile and documentation atomically.
 
 ### Metadata
 
 - Source: user_feedback
-- Related Files: package.json, pnpm-workspace.yaml, apps/apps-web/package.json, web-runtime/server.mjs, web-runtime/NUXT-INTEGRATION.md
-- Tags: frontend-source-of-truth, nuxt, web-runtime, migration
+- Related Files: package.json, pnpm-workspace.yaml, ../legacy-archive/root-cleanup-20260722/apps-web/package.json, frontend/server.mjs, frontend/NUXT-INTEGRATION.md
+- Tags: frontend-source-of-truth, nuxt, frontend, migration
 
 ---

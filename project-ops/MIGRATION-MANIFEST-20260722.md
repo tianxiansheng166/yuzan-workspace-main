@@ -30,7 +30,7 @@ three/
 - `p0-product-spec`：`a3792e9`，干净
 - `p0-student-design-package`：`64edb74`，干净
 - `p0-student-functional-closure-001`：`a78c927`，干净
-- `p0-tests`：`d206378`，保留 `web-runtime/login/styles.css` 修改和 `.baseline-api.txt`
+- `p0-tests`：`d206378`，保留 `frontend/login/styles.css` 修改和 `.baseline-api.txt`
 
 ## 依赖与运行时
 

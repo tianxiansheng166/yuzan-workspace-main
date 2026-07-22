@@ -21,5 +21,5 @@
 /packages/ui/src/tokens.css @design-owner
 
 # Security-sensitive API surface.
-/apps/api/src/modules/auth/ @security-owner
-/apps/api/src/common/ @security-owner
+/backend/api/src/modules/auth/ @security-owner
+/backend/api/src/common/ @security-owner

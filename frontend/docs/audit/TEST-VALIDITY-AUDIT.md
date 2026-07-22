@@ -1,7 +1,7 @@
 # 测试真实性审计报告
 
 > 审计日期：2026-07-18
-> 扫描范围：web-runtime 下所有 JS 文件（排除 node_modules）
+> 扫描范围：frontend 下所有 JS 文件（排除 node_modules）
 > 审计方法：静态模式扫描 + 代码路径追踪
 
 ---

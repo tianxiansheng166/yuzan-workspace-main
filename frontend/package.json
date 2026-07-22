@@ -1,1 +1,14 @@
-{"name":"yuzan-pixel-interactive-v4","version":"4.0.0","private":true,"type":"module","scripts":{"start":"node server.mjs"}}
+{
+  "name": "@yuzan/frontend",
+  "version": "4.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node server.mjs",
+    "start": "node server.mjs",
+    "lint": "node --check server.mjs && node --check scripts/verify-runtime.mjs",
+    "typecheck": "node --check server.mjs && node --check scripts/verify-runtime.mjs",
+    "test": "node scripts/verify-runtime.mjs",
+    "build": "node scripts/verify-runtime.mjs"
+  }
+}

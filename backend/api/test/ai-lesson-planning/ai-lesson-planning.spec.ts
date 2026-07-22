@@ -4,7 +4,7 @@
  * Tests cover the AiLessonPlanningService methods directly,
  * using a mock PrismaService and mock BullMQ Queue.
  *
- * Run: pnpm --filter @yuzan/api test -- apps/api/test/ai-lesson-planning/
+ * Run: pnpm --filter @yuzan/api test -- backend/api/test/ai-lesson-planning/
  *
  * Coverage:
  *   - Provider not configured → job created with PROVIDER_NOT_CONFIGURED

@@ -4,7 +4,7 @@
 # Checks:
 #   1. Flowise container running and healthy
 #   2. Flowise API ping response
-#   3. AI provider configuration status (via apps/api internal endpoint)
+#   3. AI provider configuration status (via backend/api internal endpoint)
 #
 $ErrorActionPreference = "Continue"
 
@@ -33,9 +33,9 @@ try {
     Write-Host "Ping: UNREACHABLE - $_" -ForegroundColor Red
 }
 
-# ── AI Provider (via apps/api) ──
+# ── AI Provider (via backend/api) ──
 Write-Host ""
-Write-Host "=== AI Provider Status (via apps/api) ===" -ForegroundColor Cyan
+Write-Host "=== AI Provider Status (via backend/api) ===" -ForegroundColor Cyan
 try {
     $token = $null
     $tokenKey = "yuzan-access-token"

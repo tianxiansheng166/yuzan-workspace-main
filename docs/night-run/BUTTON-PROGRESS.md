@@ -1,7 +1,7 @@
 # 夜间执行 · 按钮接线进度表
 
 > 时间：2026-07-19  
-> 范围：yuzan-next web-runtime + apps/api  
+> 范围：yuzan-next frontend + backend/api
 > 目标：删除硬编码业务 ID，跑通真实录音测评完整链路，所有按钮归入 LIVE_API / LIVE_LOCAL / LIVE_ROUTE / BLOCKED / UNSUPPORTED 之一
 
 ## 状态分类

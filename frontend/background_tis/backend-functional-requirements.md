@@ -1,6 +1,6 @@
 # 语赞心声 — 未开发后端功能需求清单（详细版）
 
-> 分析范围：`d:\program\test_program\yuzanxinsheng\three\yuzan-next\web-runtime` 下已存在的页面
+> 分析范围：`d:\program\test_program\yuzanxinsheng\three\yuzan-next\frontend` 下已存在的页面
 > 后端对照：`d:\program\test_program\yuzanxinsheng\three\yuzan-next\apps\api\src`
 > 更新日期：2026-07-18
 > 分析方法：逐页面 HTML/JS 源码审查，精确记录每个交互元素的触发行为与数据依赖

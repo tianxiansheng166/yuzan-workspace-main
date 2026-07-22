@@ -1,7 +1,7 @@
 pageId: "student-course-learning"
 route: "/student/courses"
 referenceImages:
-  - path: "web-runtime/student-pages/yuzan-student-course-center/yuzan-student-course-center/qa/reference.png"
+  - path: "frontend/student-pages/yuzan-student-course-center/yuzan-student-course-center/qa/reference.png"
     digest: "3709655A19CF73FBD78FDC6F679FDF0ED4C0F9CFFF8F3403697AE2F05D0EC954"
     width: 1659
     height: 948
@@ -9,7 +9,7 @@ referenceImages:
 assets:
   - assetId: "student-course-cover-set"
     type: "course-cover"
-    sourcePath: "web-runtime/assets/student-course-{1..6}.jpg"
+    sourcePath: "frontend/assets/student-course-{1..6}.jpg"
     sourceClass: "main-production"
     digest: "registered-per-file-in-page-spec-evidence"
     width: 136
