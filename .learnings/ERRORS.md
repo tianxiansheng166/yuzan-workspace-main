@@ -350,3 +350,13 @@
 - Command: search current governance and the removed top-level `orchestration` path for contract-change records
 - Result: `rg` returned exit 1 because the obsolete `orchestration` directory no longer exists in the canonical repository.
 - Resolution: searched repository-local governance and docs only, then created the canonical request under `project-ops/requests/`.
+
+## [ERR-20260722-005] concurrent-first-push-reference-race
+
+- Logged: 2026-07-22T18:35:00+08:00
+- Priority: low
+- Status: resolved
+- Area: Git delivery
+- Command: retry the initial large-history push after the first client wait was terminated
+- Result: the retry uploaded the pack but GitHub rejected reference creation because the first push had completed in the background and created the same branch meanwhile.
+- Resolution: compared `git ls-remote` with local `HEAD`; both resolved to `9b0ebce30660d96e61390f903e817aa0cd26cf54`, confirming the task branch was delivered without divergence.
