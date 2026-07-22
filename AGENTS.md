@@ -1,11 +1,23 @@
 # AGENTS.md
 
-Read `../README-FIRST.md`, `../orchestration/AI-COLLABORATION-PROTOCOL.md`, and the task JSON before changing code.
+Before changing code, read these repository-local sources in order:
+
+1. `README-FIRST.md`
+2. `PROJECT-CHARTER.md`
+3. `project-ops/CURRENT.md`
+4. the active task JSON under `project-ops/tasks/active/`
+
+`D:/program/test_program/yuzanxinsheng/three/yuzan-next` is the canonical project root.
+Concurrent task worktrees belong in the sibling `../worktrees/` directory. Do not
+create full repository clones under the project root.
 
 ## Hard rules
 
 - Work only in the assigned branch/worktree.
 - Modify only task `allowed_paths`.
+- Record dependencies, base commit and integration order in the task JSON.
+- Keep stable decisions in `project-ops/decisions/`; do not leave them only in chat.
+- Update `project-ops/CURRENT.md` at every accepted integration checkpoint.
 - OpenAPI, Prisma schema, UI tokens, root config and CI are shared-owner files.
 - Submit a Contract Change Request before changing shared facts.
 - Never use legacy JSON files at runtime.

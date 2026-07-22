@@ -54,7 +54,7 @@ sudo usermod -aG docker $USER
 # Project setup
 pnpm install --frozen-lockfile
 cp .env.example .env
-docker compose up -d postgres minio
+docker compose up -d minio redis
 pnpm db:generate
 pnpm db:migrate
 pnpm dev
@@ -79,7 +79,7 @@ corepack prepare pnpm@10.13.1 --activate
 # Project setup
 pnpm install --frozen-lockfile
 cp .env.example .env
-docker compose up -d postgres minio
+docker compose up -d minio redis
 pnpm db:generate
 pnpm db:migrate
 pnpm dev
@@ -103,7 +103,7 @@ corepack prepare pnpm@10.13.1 --activate
 # Project setup
 pnpm install
 Copy-Item .env.example .env
-docker compose up -d postgres minio
+docker compose up -d minio redis
 pnpm db:generate
 pnpm db:migrate
 pnpm dev
@@ -113,13 +113,13 @@ pnpm dev
 
 Copy `.env.example` to `.env` and configure:
 
-| Variable         | Description            | Example                                                  |
-| ---------------- | ---------------------- | -------------------------------------------------------- |
-| `DATABASE_URL`   | PostgreSQL connection  | `postgresql://yuzan:yuzan_dev_only@localhost:5432/yuzan` |
-| `SESSION_SECRET` | Session encryption key | Generate 32+ random bytes                                |
-| `S3_ENDPOINT`    | MinIO endpoint         | `http://localhost:9000`                                  |
-| `S3_ACCESS_KEY`  | MinIO access key       | `minio`                                                  |
-| `S3_SECRET_KEY`  | MinIO secret key       | Set your own password                                    |
+| Variable         | Description            | Example                                                       |
+| ---------------- | ---------------------- | ------------------------------------------------------------- |
+| `DATABASE_URL`   | PostgreSQL connection  | `postgresql://yuzan:yuzan_dev_only@127.0.0.1:55432/yuzan_dev` |
+| `SESSION_SECRET` | Session encryption key | Generate 32+ random bytes                                     |
+| `S3_ENDPOINT`    | MinIO endpoint         | `http://127.0.0.1:59000`                                      |
+| `S3_ACCESS_KEY`  | MinIO access key       | `minio`                                                       |
+| `S3_SECRET_KEY`  | MinIO secret key       | Set your own password                                         |
 
 **Important:** Never commit `.env` or real secrets to the repository.
 
@@ -130,7 +130,7 @@ Copy `.env.example` to `.env` and configure:
 pnpm install --frozen-lockfile
 
 # Start infrastructure
-docker compose up -d postgres minio
+docker compose up -d minio redis
 
 # Database setup
 pnpm db:generate    # Generate Prisma client
@@ -153,25 +153,28 @@ pnpm check          # Runs all quality checks sequentially
 
 ## Services
 
-| Service       | Port | URL                          |
-| ------------- | ---- | ---------------------------- |
-| Web (Nuxt)    | 3000 | http://localhost:3000        |
-| API (NestJS)  | 4000 | http://localhost:4000/api/v1 |
-| MinIO Console | 9001 | http://localhost:9001        |
-| PostgreSQL    | 5432 | localhost:5432               |
+| Service        | Port  | URL                          |
+| -------------- | ----- | ---------------------------- |
+| Web (Nuxt)     | 3000  | http://localhost:3000        |
+| API (NestJS)   | 4000  | http://localhost:4000/api/v1 |
+| MinIO Console  | 59001 | http://localhost:59001       |
+| PostgreSQL     | 55432 | localhost:55432              |
+| Redis          | 6380  | localhost:6380               |
+| Flowise        | 4300  | http://127.0.0.1:4300        |
+| Speech scoring | 8100  | http://127.0.0.1:8100        |
 
 ## Troubleshooting
 
 ### Port Already in Use
 
-If ports 5432 or 9000 are already allocated:
+If ports 55432, 59000, or 6380 are already allocated:
 
 ```bash
 # Check what's using the port
 docker ps -a
 
 # Option 1: Use existing containers from main workspace
-# The .env already points to localhost:5432
+# The .env points to the project-specific local ports above
 
 # Option 2: Stop conflicting containers
 docker stop <container_name>
@@ -202,7 +205,7 @@ corepack prepare pnpm@10.13.1 --activate
 
 ```bash
 # Ensure database container is running
-docker compose up -d postgres
+docker start yuzan-four-port-postgres-55432
 
 # Regenerate client
 pnpm db:generate
@@ -214,7 +217,7 @@ pnpm db:generate
 yuzan-next/
 ├── apps/
 │   ├── api/          # NestJS backend
-│   ├── web/          # Nuxt 4 frontend
+│   ├── apps-web/     # Nuxt 4 frontend
 │   └── worker/       # Background worker
 ├── packages/
 │   ├── config/       # Shared configuration

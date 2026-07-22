@@ -1,0 +1,38 @@
+{
+  "id": "GOV-ROOT-001",
+  "status": "IN_REVIEW",
+  "title": "Promote P0 integration to canonical repository root",
+  "branch": "task/gov-root-001",
+  "base_commit": "49b8277c3b8cd7572b7c087db0eb79dda3fc5c0b",
+  "depends_on": [],
+  "allowed_paths": [
+    "AGENTS.md",
+    "README.md",
+    "README-FIRST.md",
+    "START-HERE-CHECKLIST.md",
+    "SETUP-WITH-LEGACY.md",
+    "PROJECT-CHARTER.md",
+    ".gitignore",
+    ".env.example",
+    "docker-compose.yml",
+    "pnpm-lock.yaml",
+    "services/speech-scoring/**",
+    "infra/ai/flowise/README.md",
+    "scripts/local-runtime/**",
+    "scripts/repo/**",
+    "project-ops/**",
+    ".learnings/**"
+  ],
+  "shared_owner_changes": [
+    "repository root governance",
+    "root dependency lockfile",
+    "local Docker and environment contract"
+  ],
+  "verification": [
+    "Node 24 frozen dependency install",
+    "Docker Compose config and service health",
+    "no stale workers/p0-integration path references",
+    "Git worktree and remote validation"
+  ],
+  "rollback": "Restore the prior directory layout from ../legacy-archive and reset Git remotes to legacy-local."
+}

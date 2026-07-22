@@ -1,55 +1,31 @@
 # 开工检查清单
 
-## A. 先保护旧项目
+## 项目入口
 
-- [ ] 将当前旧项目保持原样，不在其中继续做结构性重构。
-- [ ] 将 `legacy/source-archives/two-副本.zip` 校验后保存为只读档案。
-- [ ] 删除或脱敏旧项目中的真实个人信息、密钥、手机号、地址和学校数据。
-- [ ] 不把旧 `db/*.json` 当作新系统运行时数据库。
-- [ ] 不复制 `site-polish.js`、`yx-design-upgrade.css` 和演示微服务到新主干。
+- [ ] 当前路径是 `three/yuzan-next`。
+- [ ] 已阅读 `README-FIRST.md`、`PROJECT-CHARTER.md` 和 `project-ops/CURRENT.md`。
+- [ ] 已领取 `project-ops/tasks/active/` 中的任务 JSON。
+- [ ] 已确认 `base_commit`、依赖、允许路径和共享文件 owner。
 
-## B. 初始化新仓库
+## 工作区
 
-- [ ] 将 `yuzan-next/` 单独初始化为 Git 仓库。
-- [ ] 采用 `main` 保护分支；任何 AI 不得直接提交到 `main`。
-- [ ] 安装 Node.js LTS、Corepack/pnpm、Docker Desktop 或等价容器环境。
-- [ ] 复制 `.env.example` 为 `.env`，生成真实随机密钥。
-- [ ] 执行 `pnpm install`、数据库迁移、lint、typecheck、test、build。
-- [ ] 对依赖版本和许可证做一次人工复核。
+- [ ] 功能开发位于 `three/worktrees/<task-id>`，不在 `main` 直接开发。
+- [ ] 没有从 `legacy-archive` 启动或修改旧项目。
+- [ ] 没有创建新的完整 worker clone。
+- [ ] 当前 worktree 在开工前无未知未提交变化。
 
-## C. 冻结共享基线
+## 本地环境
 
-Wave 0 完成前，不允许大量并发开发。必须先合并：
+- [ ] Node 版本为 24–26，pnpm 为 10。
+- [ ] `.env` 来自当前 `.env.example`，真实密钥未进入 Git。
+- [ ] PostgreSQL、Redis、MinIO 端口与 `project-ops/runbooks/LOCAL-RUNTIME.md` 一致。
+- [ ] 任务需要 Flowise 或语音服务时，已检查对应嵌套配置和健康端点。
 
-- [ ] OpenAPI 基线；
-- [ ] Prisma 数据模型基线；
-- [ ] 身份与租户边界；
-- [ ] 错误响应和分页规范；
-- [ ] 设计 token 与基础可访问性规则；
-- [ ] CI 和分支保护；
-- [ ] 任务领取与交接规范。
+## 交付
 
-## D. 启动并发
-
-- [ ] 集成负责人把首批任务状态改为 `READY`。
-- [ ] 每个 AI 领取一个任务并登记分支、worktree 和 owner。
-- [ ] 每个任务只修改 `allowed_paths`。
-- [ ] 需要改共享契约时先提交 Contract Change Request。
-- [ ] PR 必须包含测试证据、截图/录屏、迁移说明和回滚说明。
-- [ ] 同一时刻不要让两个 AI 修改同一个 Prisma 模型、OpenAPI 文件或 token 文件。
-
-## E. 首个演示里程碑
-
-首个可演示版本必须用真实数据库完成：
-
-1. 教研创建课程草稿并发布版本；
-2. 教师创建班级并布置任务；
-3. 学生登录后看到今日任务；
-4. 学生完成图文/视频和一道练习；
-5. 提交写入数据库；
-6. 教师看到提交并反馈；
-7. 权限测试证明学生不能查看他人数据；
-8. 页面在 1440、1024、390 像素下通过视觉检查；
-9. 控制台无错误，关键链路有 E2E 测试。
-
-没有做到以上九项，不得宣称“产品 MVP 已完成”。
+- [ ] 只修改 `allowed_paths`。
+- [ ] 实际运行并记录相关测试；失败结果同样记录。
+- [ ] 覆盖适用的异常、离线和权限状态。
+- [ ] UI 任务完成 1440、1024、390 截图。
+- [ ] 填写 handoff、迁移/回滚和已知限制。
+- [ ] 集成负责人验收后更新 `project-ops/CURRENT.md`。

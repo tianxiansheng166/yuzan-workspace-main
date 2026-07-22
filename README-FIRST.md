@@ -1,75 +1,32 @@
-# 语赞心声 `yuzan-next` 并发开发工作区 v2.0
+# 语赞心声开发入口
 
-> 这不是“再美化一次旧页面”的补丁包，而是一套可直接启动新项目、组织多 AI 并行开发、控制接口和质量、逐步迁移旧资产的工程工作区。
-
-## 先读结论
-
-旧项目保留为 `legacy` 证据库和内容来源，不再作为生产主干继续堆叠。新项目位于 `yuzan-next/`，目标是建立：
-
-- 可投入试点的真实教学产品，而不是只有页面的 Demo；
-- Nuxt 4 + Vue 3 的统一 Web/PWA；
-- NestJS 模块化单体 API；
-- PostgreSQL + Prisma 的正式数据模型；
-- Contract-first 的 OpenAPI 契约；
-- 可离线完成任务并可靠同步的学习链路；
-- 可复核、可解释、可评测的语音学习能力；
-- 自定义设计系统和“高原声纹地图”品牌语言；
-- 多 AI 并行开发但不互相覆盖的任务、分支、目录和集成规则。
-
-## 开始顺序
-
-1. 阅读 `START-HERE-CHECKLIST.md`。
-2. 阅读 `docs/00-executive/00-最终整合决策.md`。
-3. 阅读 `orchestration/README.md` 和 `orchestration/AI-COLLABORATION-PROTOCOL.md`。
-4. 在 Git 仓库中执行 `orchestration/scripts/bootstrap_worktrees.*` 前，先完成 Wave 0。
-5. 所有 AI 只能领取 `orchestration/task-board.csv` 中状态为 `READY` 的任务。
-6. 共享契约只能通过 `orchestration/requests/CONTRACT-CHANGE-TEMPLATE.md` 提交变更。
-7. 新功能必须纵向贯通数据库、API、权限、前端状态、异常状态、测试和审计，禁止只交付页面。
-
-## 第一阶段真正要交付的产品闭环
+## 唯一主路径
 
 ```text
-教研发布不可变课程版本
-        ↓
-教师创建班级并布置任务
-        ↓
-学生在“今日任务”中在线或离线完成活动
-        ↓
-答题/录音/学习事件可靠保存与同步
-        ↓
-自动处理结果与原始证据并列
-        ↓
-教师复核、反馈和必要时退回重做
-        ↓
-学生收到可行动反馈
-        ↓
-学校看到有口径、可追溯的完成与成效数据
+D:/program/test_program/yuzanxinsheng/three/yuzan-next
 ```
 
-## 明确不进入 MVP 的内容
+`three` 顶层只承担三类职责：
 
-- 社区、公益基金、志愿者匹配；
-- 支付、会员商城和未经验证的套餐；
-- 大型直播课堂；
-- 复杂推荐、知识图谱、GraphRAG；
-- 微服务拆分；
-- 为比赛而制作的虚假数据大屏；
-- 没有数据集、基线和教师校准的“AI 发音精准评分”。
+- `yuzan-next/`：唯一主项目与集成仓库；
+- `worktrees/`：当前并发任务的 Git worktree；
+- `legacy-archive/`：迁移前项目、旧 worker、依赖与恢复证据。
 
-## 目录导览
+不要再从 `legacy-archive` 直接开发，也不要在 `three` 下创建新的完整克隆。
 
-| 目录                | 用途                                                   |
-| ------------------- | ------------------------------------------------------ |
-| `source-materials/` | 两套方案、专家意见、历史对话和前期文档                 |
-| `legacy/`           | 旧项目压缩包、资产清单和复用判定                       |
-| `docs/`             | 产品、领域、架构、设计、质量、迁移、比赛和试点文档     |
-| `orchestration/`    | 多 AI 并发任务、领取规则、依赖、提示词、交接和集成门禁 |
-| `design-lab/`       | Codex 多模态设计、生成资产 brief、资产登记和视觉评审   |
-| `yuzan-next/`       | 新项目 monorepo 工程骨架                               |
-| `manifests/`        | 文件清单、校验和与版本说明                             |
+## 每次开始
 
-## 重要说明
+1. 阅读 `PROJECT-CHARTER.md`。
+2. 阅读 `project-ops/CURRENT.md`。
+3. 打开 `project-ops/tasks/active/` 中分配给自己的任务 JSON。
+4. 确认依赖、`base_commit`、`allowed_paths` 和共享文件 owner。
+5. 在 `../worktrees/<task-id>` 中开发；主目录只由集成负责人使用。
+6. 完成后填写 `project-ops/handoffs/`，再进入集成队列。
 
-- 此包提供的是“可开工的工程地基、约束、契约基线和任务系统”，不是已经完成的生产产品。
-- 当前环境未安装整套 Node 依赖，也未运行数据库，因此工程骨架需要由 Wave 0 在实际开发机上完成安装、迁移、构建和端到端验证。
-- 竞品、模型、法规、第三方 API 和依赖版本在正式决策前都要再次核验；禁止将研究材料中的宣传数字直接写入比赛材料或产品承诺。
+## 本地启动
+
+- 环境与 Docker：`project-ops/runbooks/LOCAL-RUNTIME.md`
+- 并发 worktree：`project-ops/runbooks/WORKTREES.md`
+- 开发与合并：`project-ops/DEVELOPMENT-WORKFLOW.md`
+
+旧 `orchestration/` 已不再是有效入口；历史副本只保存在归档中。

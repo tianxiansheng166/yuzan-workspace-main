@@ -6,7 +6,7 @@
 >
 > 当前模式：`RAPID_PRODUCT_CONVERGENCE`
 >
-> 总入口：`orchestration/operating-system/README.md`
+> 总入口：`project-ops/README.md`
 
 ## 1. 项目现在真正缺的是什么
 
@@ -161,7 +161,7 @@ P2 不是删除，只是在当前快速收敛阶段不主动消耗主力资源�
 - 一处有辨识度的交互机制，而不是统一轻微上浮；
 - 真实 API 或明确 gap 状态，不以示例数据冒充完成。
 
-详细标准见 `orchestration/operating-system/FRONTEND-QUALITY-BAR.md`。
+详细标准见 `project-ops/FRONTEND-QUALITY-BAR.md`。
 
 ## 9. 后端最低质量线
 
@@ -189,7 +189,7 @@ AI 不得自主执行：
 - 批量终止所有同名进程；
 - 提交密钥和真实学生数据。
 
-详细规则见 `orchestration/operating-system/SAFE-AUTONOMY.md`。
+详细规则见 `project-ops/SAFE-AUTONOMY.md`。
 
 ## 11. 两周内判断是否有效
 

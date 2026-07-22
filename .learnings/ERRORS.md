@@ -310,3 +310,23 @@
 - Command: run continuous-practice Playwright validation
 - Result: `BrowserContext.new_page()` rejected its unsupported `viewport` keyword argument.
 - Resolution: create the context with `browser.new_context(viewport={...})`, then call `context.new_page()` without arguments.
+
+## [ERR-20260722-001] repository-root-partial-moves
+
+- Logged: 2026-07-22T17:20:00+08:00
+- Priority: high
+- Status: resolved
+- Area: repository migration
+- Command: move full Git clones and pnpm dependencies with PowerShell `Move-Item`
+- Result: Windows hidden `.git` attributes caused partial directory moves, active service handles blocked two directories, and pnpm absolute junctions/long paths prevented a valid direct `node_modules` relocation.
+- Resolution: stopped only identified project services, reconciled split repositories with `git status` and `git fsck`, archived old dependencies, rebuilt them with Node 24/pnpm, and verified no junction metadata references the old path.
+
+## [ERR-20260722-002] canonical-validation-baseline-blockers
+
+- Logged: 2026-07-22T18:00:00+08:00
+- Priority: high
+- Status: pending
+- Area: integration gates
+- Command: `pnpm typecheck` and API/worker package tests after canonical-root migration
+- Result: Web typecheck fails at `useRecordingUpload.ts:98`; worker speech tests cannot load an incorrect `../../src/speech/speech-job.consumer.js` path. API 903 tests and worker AI 25 tests pass.
+- Suggested action: review the archived `p0-tests` branch first, then fix the two scoped baseline gates before fast-forwarding GitHub `main`.
