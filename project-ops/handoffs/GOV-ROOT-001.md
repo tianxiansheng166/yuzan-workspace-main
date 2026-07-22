@@ -3,6 +3,8 @@
 - Owner: Integration Lead
 - Branch: `task/gov-root-001`
 - Base commit: `49b8277c3b8cd7572b7c087db0eb79dda3fc5c0b`
+- Governance commit: `a5611c1`
+- Runtime commit: `ee8991e`
 - Status: `IN_REVIEW`
 
 ## User outcome
@@ -18,6 +20,7 @@
 - 恢复旧主仓库的语音评分实现，保留 P0 兼容初始化代码；
 - 新增安全 worktree 创建/移除脚本和核心运行启动脚本；
 - 归档临时登录脚本、旧 worker 和旧依赖，不删除 Docker volume。
+- 提交 `CCR-GOV-ROOT-001`，明确本地端口、volume、环境变量和回滚责任。
 
 ## Tests actually run
 
@@ -46,3 +49,10 @@
 - 修复 Web nullable type error；
 - 修复 worker speech test 的错误相对导入或 Vitest config 加载；
 - 完成上述门禁前不更新 GitHub `main`。
+
+## Session-exit cleanup
+
+旧 `workers/p0-integration` 目前为空，但被本次 Codex 会话持有。后台清理器
+`../legacy-archive/cleanup-empty-workers-after-session.ps1` 会等会话进程退出后，
+先归档任何意外残留，再删除空目录，使 `three` 最终只保留主目录、worktrees
+和 legacy-archive。

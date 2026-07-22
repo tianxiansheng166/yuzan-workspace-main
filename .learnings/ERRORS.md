@@ -340,3 +340,13 @@
 - Command: scan staged additions for likely credentials before committing runtime configuration
 - Result: the broad password expression treated the documented local-only example `yuzan_dev_only` as a real secret and stopped the commit.
 - Resolution: retained the safe example value, verified `.env` files remain ignored, and narrowed the final scan to recognizable private-key and provider-token formats instead of flagging every non-empty password example.
+
+## [ERR-20260722-004] search-removed-orchestration-directory
+
+- Logged: 2026-07-22T18:30:00+08:00
+- Priority: low
+- Status: resolved
+- Area: documentation review
+- Command: search current governance and the removed top-level `orchestration` path for contract-change records
+- Result: `rg` returned exit 1 because the obsolete `orchestration` directory no longer exists in the canonical repository.
+- Resolution: searched repository-local governance and docs only, then created the canonical request under `project-ops/requests/`.

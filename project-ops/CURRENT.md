@@ -7,6 +7,7 @@
 - 路径：`D:/program/test_program/yuzanxinsheng/three/yuzan-next`
 - 治理分支：`task/gov-root-001`
 - 提升前集成提交：`49b8277c3b8cd7572b7c087db0eb79dda3fc5c0b`
+- 当前迁移提交：`ee8991e6ec08ad256d8c9707ffa63b52df0f39ef`
 - GitHub：`git@github.com:tianxiansheng166/yuzan-workspace-main.git`
 - 旧本地仓库：`../legacy-archive/root-before-p0-20260722/yuzan-next`
 
@@ -26,7 +27,7 @@
 - worker 语音测试使用错误的 `../../src` 导入路径，测试套件未加载；
 - 语音评分服务来自旧主仓库的未跟踪源码，已恢复并通过 `/health`，仍需正式代码审查；
 - 当前 PostgreSQL 容器不由主 Compose 管理，接管前必须先备份数据卷；
-- `infra/ai/flowise/test-login-*.sh` 是迁移过程中出现的未跟踪文件，尚未纳入本任务。
+- 旧空 `workers/p0-integration` 仍被当前会话占用，退出后由归档清理器安全删除。
 
 ## 下一恢复动作
 

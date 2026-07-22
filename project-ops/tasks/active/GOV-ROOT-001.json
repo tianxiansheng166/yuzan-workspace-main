@@ -17,7 +17,7 @@
     "docker-compose.yml",
     "pnpm-lock.yaml",
     "services/speech-scoring/**",
-    "infra/ai/flowise/README.md",
+    "infra/ai/flowise/**",
     "scripts/local-runtime/**",
     "scripts/repo/**",
     "project-ops/**",
@@ -28,6 +28,7 @@
     "root dependency lockfile",
     "local Docker and environment contract"
   ],
+  "contract_change_request": "project-ops/requests/CCR-GOV-ROOT-001.md",
   "verification": [
     "Node 24 frozen dependency install",
     "Docker Compose config and service health",
