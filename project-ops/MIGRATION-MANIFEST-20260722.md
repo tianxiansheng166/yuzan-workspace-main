@@ -9,7 +9,7 @@ three/
 └── legacy-archive/   # 全部旧项目与恢复材料
 ```
 
-当前 Codex 会话仍占用旧空目录 `workers/p0-integration`。归档中的 `cleanup-empty-workers-after-session.ps1` 会在本会话进程退出后，只删除空目录壳；若出现新文件会先移到 `session-residue-20260722`。
+当前 Codex 会话仍占用旧空目录 `workers/p0-integration`。本会话结束后运行归档中的 `cleanup-empty-workers-after-session.ps1`；它只删除空目录壳，若出现新文件会先移到 `session-residue-20260722`。
 
 ## 迁移映射
 

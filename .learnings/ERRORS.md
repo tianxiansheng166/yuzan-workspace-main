@@ -360,3 +360,13 @@
 - Command: retry the initial large-history push after the first client wait was terminated
 - Result: the retry uploaded the pack but GitHub rejected reference creation because the first push had completed in the background and created the same branch meanwhile.
 - Resolution: compared `git ls-remote` with local `HEAD`; both resolved to `9b0ebce30660d96e61390f903e817aa0cd26cf54`, confirming the task branch was delivered without divergence.
+
+## [ERR-20260722-006] scheduled-cleanup-registration
+
+- Logged: 2026-07-22T18:40:00+08:00
+- Priority: low
+- Status: resolved
+- Area: repository migration
+- Command: register a temporary per-minute scheduled cleanup for the current-session directory handle
+- Result: Windows Task Scheduler rejected registration with access denied; no scheduled task was created.
+- Resolution: did not bypass permissions. Retained a one-shot, residue-preserving cleanup script and documented that it must be run after the current Codex session exits.

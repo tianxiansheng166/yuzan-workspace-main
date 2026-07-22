@@ -52,7 +52,8 @@
 
 ## Session-exit cleanup
 
-旧 `workers/p0-integration` 目前为空，但被本次 Codex 会话持有。后台清理器
-`../legacy-archive/cleanup-empty-workers-after-session.ps1` 会等会话进程退出后，
-先归档任何意外残留，再删除空目录，使 `three` 最终只保留主目录、worktrees
-和 legacy-archive。
+旧 `workers/p0-integration` 目前为空，但被本次 Codex 会话持有，Windows 不允许
+在进程退出前删除。结束本会话后运行
+`../legacy-archive/cleanup-empty-workers-after-session.ps1`；脚本会先归档任何
+意外残留，再删除空目录，使 `three` 最终只保留主目录、worktrees 和
+legacy-archive。
