@@ -99,6 +99,11 @@ svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-l
 .ts-crumb-home{width:30px;height:30px;display:grid;place-items:center;border:1px solid #ded8d2;border-radius:7px;background:#fff;color:#30373c}
 .ts-crumb-home svg{width:16px;height:16px}
 
+/* 页面级 data-bind 锚点迁移容器（例如 studio 的 crumb-title） */
+.ts-page-crumb{display:flex;align-items:center;gap:6px;color:#4e575d;font-size:13px;margin-right:10px;padding-right:12px;border-right:1px solid #eee6de;white-space:nowrap;max-width:40vw;overflow:hidden;text-overflow:ellipsis}
+.ts-page-crumb-prefix{color:#9a9fa3;font-weight:400}
+.ts-page-crumb [data-bind]{color:#172028;font-weight:700;font-size:13px;overflow:hidden;text-overflow:ellipsis;max-width:30vw}
+
 #ts-page-root{position:relative;min-height:calc(100vh - var(--ts-topbar));background:#fff}
 #ts-page-root > .main-wrap,
 #ts-page-root > main.content,

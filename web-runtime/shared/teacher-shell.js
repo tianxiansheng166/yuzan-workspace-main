@@ -108,7 +108,35 @@
       pageRoot.appendChild(contentRoot);
 
       // 清理内容区内部的旧 header / sidebar / topbar，避免与统一导航重复或遮挡内容
-      contentRoot.querySelectorAll('header.topbar, header.teacher-header, aside.sidebar, aside.teacher-sidebar, aside.nav, nav.sidebar').forEach(el => el.remove());
+      // 但需保留其中的 data-bind 锚点（例如 studio 的 crumb-title），迁移到统一 shell 的 .ts-topbar 中
+      const tsTopbarForCrumb = shell.querySelector('.ts-topbar');
+      contentRoot.querySelectorAll('header.topbar, header.teacher-header, aside.sidebar, aside.teacher-sidebar, aside.nav, nav.sidebar').forEach(el => {
+        const dataBindEls = el.querySelectorAll('[data-bind]');
+        if (dataBindEls.length > 0 && tsTopbarForCrumb && !tsTopbarForCrumb.querySelector('.ts-page-crumb')) {
+          const crumbHost = document.createElement('div');
+          crumbHost.className = 'ts-page-crumb';
+          // 尝试读取原 topbar 中 .crumb 容器的纯文本前缀作为面包屑前导
+          const originalCrumb = el.querySelector('.crumb');
+          if (originalCrumb) {
+            const prefixText = (originalCrumb.textContent || '').trim().split('›')[0].trim();
+            if (prefixText) {
+              const prefixSpan = document.createElement('span');
+              prefixSpan.className = 'ts-page-crumb-prefix';
+              prefixSpan.textContent = prefixText + ' ›';
+              crumbHost.appendChild(prefixSpan);
+            }
+          }
+          dataBindEls.forEach(b => crumbHost.appendChild(b));
+          // 插入到 ts-topbar 最左侧（context 之前）
+          const firstChild = tsTopbarForCrumb.firstChild;
+          if (firstChild) {
+            tsTopbarForCrumb.insertBefore(crumbHost, firstChild);
+          } else {
+            tsTopbarForCrumb.appendChild(crumbHost);
+          }
+        }
+        el.remove();
+      });
 
       // 对 .design 等比布局的画布做自适应缩放，避免被 shell 的 width:auto 撑坏
       let designRoot = contentRoot.classList.contains('design') ? contentRoot : contentRoot.querySelector('main.design');

@@ -2,7 +2,7 @@
 
 > 范围：`d:\program\test_program\yuzanxinsheng\three\yuzan-next\web-runtime`
 > 后端：`d:\program\test_program\yuzanxinsheng\three\yuzan-next\apps\api`
-> 更新日期：2026-07-17（联调冒烟测试通过）
+> 更新日期：2026-07-22（加入藏中翻译语料系统页面绑定）
 
 ## 冒烟测试结论
 
@@ -191,7 +191,61 @@
   - `research` 模块当前为占位实现，所有端点返回 `PERSISTENCE_PENDING`。
   - 页面当前为静态展示。
 
-## 10. 通用基础设施
+## 10. 藏中翻译语料系统
+
+### /teacher/translation（教师翻译工作台）
+- **文件**：`teacher/translation/index.html` + `teacher/translation/script.js`
+- **后端接口**：
+  - `POST /api/v1/schools/:schoolId/translations/jobs`（NOT_CONFIGURED）
+  - `GET /api/v1/schools/:schoolId/translations/jobs/me`（NOT_CONFIGURED）
+  - `GET /api/v1/schools/:schoolId/translations/glossary`（NOT_CONFIGURED）
+  - `GET /api/v1/schools/:schoolId/translations/memory/search`（NOT_CONFIGURED）
+  - `POST /api/v1/schools/:schoolId/translations/glossary/proposals`（NOT_CONFIGURED）
+  - `POST /api/v1/schools/:schoolId/translations/corpus/submissions`（NOT_CONFIGURED）
+  - `POST /api/v1/schools/:schoolId/translations/jobs/:jobId/corrections`（NOT_CONFIGURED）
+- **绑定说明**：
+  - 当前 `script.js` 已损坏（仅剩2行不完整代码），页面为静态展示。
+  - 需恢复：中文/藏文交换、翻译、重新翻译、复制、清空、历史、词典、教师修改、提交术语、提交语料审核。
+  - 不得恢复静态历史和假进度。
+  - 四端共用同一 `translation-client.js`，但权限和功能不同。
+
+### /student/translation（学生翻译助手）
+- **文件**：不存在，需新建 `student/translation/index.html`
+- **后端接口**：
+  - `POST /api/v1/schools/:schoolId/translations/jobs`（NOT_CONFIGURED）
+  - `GET /api/v1/schools/:schoolId/translations/jobs/me`（NOT_CONFIGURED）
+  - `GET /api/v1/schools/:schoolId/translations/glossary`（NOT_CONFIGURED）
+  - `POST /api/v1/schools/:schoolId/translations/jobs/:jobId/corrections`（NOT_CONFIGURED）
+- **绑定说明**：
+  - 需正式接入学生导航或"学习工具"入口，不得仅存在隐藏URL。
+  - 提供：双向翻译、常用教学短语、术语解释、自己历史、收藏、复制、纠错、机器翻译免责声明。
+  - 不得显示其他学生记录；不得自动把输入加入训练语料。
+
+### /volunteer/translation（志愿者翻译）
+- **文件**：不存在，需新建 `volunteer/translation/index.html`
+- **后端接口**：
+  - `POST /api/v1/schools/:schoolId/translations/jobs`（NOT_CONFIGURED）
+  - `GET /api/v1/schools/:schoolId/translations/jobs/me`（NOT_CONFIGURED）
+  - `POST /api/v1/schools/:schoolId/translations/jobs/:jobId/corrections`（NOT_CONFIGURED）
+- **绑定说明**：
+  - 志愿者可翻译和提交纠正，纠正进入待审核状态。
+  - 需接入志愿者导航入口。
+
+### /admin/language-resources（管理端语言资源）
+- **文件**：不存在，需新建 `admin/language-resources/index.html`
+- **后端接口**：
+  - `GET/POST/PATCH /api/v1/schools/:schoolId/language-resources/glossary`（NOT_CONFIGURED）
+  - `GET/POST/PATCH /api/v1/schools/:schoolId/language-resources/memory`（NOT_CONFIGURED）
+  - `GET/POST /api/v1/schools/:schoolId/language-resources/corpus/imports`（NOT_CONFIGURED）
+  - `POST /api/v1/schools/:schoolId/language-resources/reviews/:id/approve`（NOT_CONFIGURED）
+  - `POST /api/v1/schools/:schoolId/language-resources/reviews/:id/reject`（NOT_CONFIGURED）
+  - `POST /api/v1/admin/translation-providers/:id/health-check`（NOT_CONFIGURED）
+- **绑定说明**：
+  - 需提供：Provider真实状态、语料来源、许可证、词典版本、翻译记忆、审核队列、模型评测、导入导出、发布和回滚。
+  - 不得在浏览器返回secretRef或密钥。
+  - 所有公共语料必须记录来源和许可证。
+
+## 11. 通用基础设施
 
 - **API 代理**：`server.mjs` 将 `/api/*` 请求反向代理到 `http://127.0.0.1:4000`。
 - **API 客户端**：`assets/api-client.js` 封装请求、token 管理、学校切换、统一错误处理。

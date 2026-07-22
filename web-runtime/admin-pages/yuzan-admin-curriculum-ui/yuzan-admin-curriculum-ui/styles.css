@@ -145,6 +145,15 @@ svg{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:1.8;stroke-l
 .modal-close{position:absolute;top:14px;right:14px;width:32px;height:32px;border:1px solid var(--line);border-radius:50%;background:#fff;display:grid;place-items:center;color:#6d7277}
 .modal h2{margin:0 0 10px;font-size:20px}.modal p{margin:0;color:#666c70;line-height:1.65}.modal-checks{display:grid;gap:10px;margin:18px 0 20px}.modal-checks div{display:flex;align-items:flex-start;gap:8px;color:#4a5054;font-size:13px}
 .modal-actions{display:flex;justify-content:flex-end;gap:10px}
+.create-form{display:grid;gap:14px;margin-top:16px}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-group label{font-size:13px;font-weight:600;color:#3b4043}
+.form-group label em{color:var(--red);font-style:normal}
+.form-group input,.form-group select,.form-group textarea{height:36px;padding:0 10px;border:1px solid var(--line-strong);border-radius:9px;background:#fff;font-size:13px;color:var(--ink);outline:none;transition:border-color .16s}
+.form-group textarea{height:72px;padding:8px 10px;resize:vertical}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(214,69,34,.08)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-group input::placeholder,.form-group textarea::placeholder{color:#b0b5ba}
 .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(18px);background:#24323a;color:#fff;padding:11px 16px;border-radius:12px;box-shadow:0 14px 30px rgba(20,20,20,.2);opacity:0;pointer-events:none;transition:.24s;z-index:70;font-size:13px}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .mobile-sidebar-backdrop{position:fixed;inset:var(--topbar) 0 0 0;background:rgba(10,12,15,.32);z-index:22}
 @media (max-width:1360px){

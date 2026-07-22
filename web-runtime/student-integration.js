@@ -22,17 +22,24 @@
         style = doc.createElement('style');
         style.id = 'yuzan-student-integration-reset';
         style.textContent = `
+          :root { --left:0px!important; --right:0px!important; --header:0px!important; }
           html, body { width:100%!important; min-width:0!important; overflow-x:hidden!important; margin:0!important; padding:0!important; }
           /* 隐藏原页面自己的导航栏和侧边栏，统一使用外层整合壳导航 */
           .sidebar, .sidebar-decoration, .topbar, header.topbar, .leftbar, .rightbar,
           .left-sidebar, .left-rail, .side-nav, .sidenav, .nav-list,
-          .student-topbar, body.student-has-nav .student-topbar { display:none!important; }
-          .app-shell, .app, .page-shell, .content-shell, .workspace,
+          .student-topbar, body.student-has-nav .student-topbar,
+          .right-rail, .app-shell > .topbar, .workspace > .left-rail, .workspace > aside,
+          .workspace > .right-rail { display:none!important; height:0!important; min-height:0!important; }
+          .app-shell, .app, .page-shell, .content-shell,
           .page, .page-grid, .dashboard-grid {
             display:block!important; width:100%!important; min-width:0!important; max-width:none!important;
             margin:0!important; padding:0!important; border:0!important; border-radius:0!important; box-shadow:none!important;
           }
-          .workspace { display:block!important; }
+          .workspace {
+            display:block!important; width:100%!important; min-width:0!important; max-width:none!important;
+            margin:0!important; padding:0!important; border:0!important;
+            grid-template-columns:1fr!important; height:auto!important; min-height:0!important;
+          }
           .workspace > * { width:100%!important; min-width:0!important; margin:0!important; padding:0!important; }
           .main, .main-column, .main-content, .main-shell {
             width:100%!important; min-width:0!important; max-width:none!important;

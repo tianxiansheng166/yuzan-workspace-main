@@ -1,0 +1,81 @@
+{
+  "scenario": "teacher studio dynamic load + field 1:1 mapping",
+  "steps": [
+    {
+      "step": "teacher_login",
+      "ok": true,
+      "user": "测试教师"
+    },
+    {
+      "step": "studio_binds",
+      "ok": true,
+      "missing": [],
+      "values": {
+        "course-title": "现代文听说：信息提取与复述",
+        "crumb-title": "现代文听说：信息提取与复述",
+        "status-label": "已发布",
+        "steps": "▤课程草稿\n        \n        ✎内容完善\n        \n        ♙教学审核\n        \n        ▷发布使用",
+        "structure-tree": "⌄　核心学习路径○　观察、理解与表达△　带着问题听材料△　提取关键信息△　整理复述提纲△　完成口头复述△　现代文听说课程练习",
+        "editor-body": "学习目标\n      \n        \n        点击添加学习目标…\n      \n      ＋ 添加目标\n\n      \n\n      知识要点\n ",
+        "prop-body": "活动类型\n      AUDIO　⌄\n\n      建议时长\n      \n        \n        分钟\n      \n\n      难度等级\n   "
+      }
+    },
+    {
+      "step": "dynamic_load",
+      "ok": true,
+      "course_title": "现代文听说：信息提取与复述",
+      "crumb_title": "现代文听说：信息提取与复述",
+      "status_label": "已发布"
+    },
+    {
+      "step": "tabs_present",
+      "ok": true,
+      "missing": []
+    },
+    {
+      "step": "tab_switch",
+      "ok": true,
+      "results": [
+        {
+          "tab": "goals",
+          "activated": true
+        },
+        {
+          "tab": "media",
+          "activated": true
+        },
+        {
+          "tab": "interaction",
+          "activated": true
+        },
+        {
+          "tab": "support",
+          "activated": true
+        },
+        {
+          "tab": "offline",
+          "activated": true
+        }
+      ]
+    },
+    {
+      "step": "lifecycle_steps",
+      "ok": true,
+      "missing": []
+    },
+    {
+      "step": "structure_tree_loaded",
+      "ok": true,
+      "preview": "⌄　核心学习路径○　观察、理解与表达△　带着问题听材料△　提取关键信息△　整理复述提纲△　完成口头复述△　现代文听说课程练习"
+    },
+    {
+      "step": "field_1to1_mapping",
+      "ok": true,
+      "studio_course_title": "现代文听说：信息提取与复述",
+      "player_info_title": "",
+      "player_directory_present": true,
+      "player_section_info_present": true
+    }
+  ],
+  "success": true
+}

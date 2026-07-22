@@ -1165,6 +1165,74 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/schools/{schoolId}/student/courses/favorites": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 获取当前学生收藏的课程版本 */
+    get: operations["listStudentCourseFavorites"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/student/courses/stats": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 获取当前学生的课程学习统计 */
+    get: operations["getStudentCourseStats"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/student/courses/{assignmentId}/favorite": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** 切换当前学生对课程的收藏状态 */
+    post: operations["toggleStudentCourseFavorite"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/student/courses/{assignmentId}/recommendations": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 获取与当前课程相关的可访问课程建议 */
+    get: operations["getStudentCourseRecommendations"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/schools/{schoolId}/practices": {
     parameters: {
       query?: never;
@@ -1279,6 +1347,110 @@ export interface paths {
     get: operations["getStudentActivityNote"];
     /** 以 revision 乐观并发保存当前学生私人笔记 */
     put: operations["saveStudentActivityNote"];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/learning/activities/{activityId}/notes": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 获取当前学生在活动中的时间点笔记列表 */
+    get: operations["listStudentActivityNotes"];
+    put?: never;
+    /** 创建当前学生在活动中的时间点笔记 */
+    post: operations["createStudentActivityNote"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/learning/activities/{activityId}/notes/{noteId}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /** 以 revision 乐观并发更新当前学生的一条时间点笔记 */
+    put: operations["updateStudentActivityNote"];
+    post?: never;
+    /** 删除当前学生的一条时间点笔记 */
+    delete: operations["deleteStudentActivityNote"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/resources/presign-upload": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** 为学校教师或管理员创建资源上传凭证 */
+    post: operations["presignResourceUpload"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/resources/{resourceId}/confirm-upload": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /** 验证已上传的资源并更新其存储元数据 */
+    put: operations["confirmResourceUpload"];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/resources/{resourceId}/playback-url": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 获取当前租户可访问资源的短期播放地址 */
+    get: operations["getResourcePlaybackUrl"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/resources/{resourceId}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 获取当前租户可访问资源的元数据 */
+    get: operations["getResourceInfo"];
+    put?: never;
     post?: never;
     delete?: never;
     options?: never;
@@ -4570,6 +4742,15 @@ export interface operations {
         difficulty?: string;
         source?: "TEACHER_ASSIGNED" | "RECOMMENDED" | "SELF_STUDY";
         status?: "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED" | "RESULT_PENDING";
+        search?: string;
+        taskGroup?: string;
+        culturalElement?: string;
+        sortBy?: "createdAt" | "publishedAt" | "popularity";
+        sortOrder?: "asc" | "desc";
+        /** @description 游标， opaque 字符串 */
+        cursor?: components["parameters"]["Cursor"];
+        /** @description 分页返回数量上限 */
+        limit?: components["parameters"]["Limit"];
       };
       header?: never;
       path: {
@@ -4778,6 +4959,100 @@ export interface operations {
         };
         content?: never;
       };
+    };
+  };
+  listStudentCourseFavorites: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Current student's course favorites */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      403: components["responses"]["Forbidden"];
+    };
+  };
+  getStudentCourseStats: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Current student's course learning counts */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      403: components["responses"]["Forbidden"];
+    };
+  };
+  toggleStudentCourseFavorite: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 任务 ID */
+        assignmentId: components["parameters"]["AssignmentId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Favorite state toggled */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  getStudentCourseRecommendations: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 任务 ID */
+        assignmentId: components["parameters"]["AssignmentId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Student-visible related courses */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
     };
   };
   listPractices: {
@@ -5012,6 +5287,235 @@ export interface operations {
         };
       };
       409: components["responses"]["Conflict"];
+    };
+  };
+  listStudentActivityNotes: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 学习活动 ID */
+        activityId: components["parameters"]["ActivityId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Student private activity notes */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  createStudentActivityNote: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 学习活动 ID */
+        activityId: components["parameters"]["ActivityId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          content: string;
+          videoTimestamp?: number;
+        };
+      };
+    };
+    responses: {
+      /** @description Note created */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      403: components["responses"]["Forbidden"];
+    };
+  };
+  updateStudentActivityNote: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 学习活动 ID */
+        activityId: components["parameters"]["ActivityId"];
+        noteId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          content: string;
+          videoTimestamp?: number;
+          revision: number;
+        };
+      };
+    };
+    responses: {
+      /** @description Note updated */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+      409: components["responses"]["Conflict"];
+    };
+  };
+  deleteStudentActivityNote: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 学习活动 ID */
+        activityId: components["parameters"]["ActivityId"];
+        noteId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Note deleted */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  presignResourceUpload: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          fileName: string;
+          /** @enum {string} */
+          kind: "IMAGE" | "AUDIO" | "VIDEO" | "DOCUMENT" | "SUBTITLE" | "OTHER";
+          contentType?: string;
+          byteSize?: number;
+        };
+      };
+    };
+    responses: {
+      /** @description Pending resource with a presigned upload URL */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      403: components["responses"]["Forbidden"];
+    };
+  };
+  confirmResourceUpload: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        resourceId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          objectKey: string;
+          checksumSha256?: string;
+        };
+      };
+    };
+    responses: {
+      /** @description Uploaded resource confirmed */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      400: components["responses"]["BadRequest"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  getResourcePlaybackUrl: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        resourceId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Short-lived download URL */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  getResourceInfo: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        resourceId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Resource metadata */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
     };
   };
 }

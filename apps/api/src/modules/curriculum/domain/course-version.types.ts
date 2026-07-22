@@ -88,9 +88,16 @@ export interface CourseVersion {
   readonly title: string;
   readonly description?: string | undefined;
   readonly gradeBand?: string | undefined;
+  readonly capabilityTheme?: string | undefined;
+  readonly difficulty?: string | undefined;
   readonly locale: string;
   readonly dialect?: string | undefined;
   readonly objectives: readonly BilingualContent[];
+  readonly coverAsset?: string | undefined;
+  readonly taskGroups?: readonly string[] | undefined;
+  readonly culturalElements?: readonly string[] | undefined;
+  readonly estimatedMinutes?: number | undefined;
+  readonly deviceRequirements?: unknown;
   readonly units: readonly Unit[];
   readonly submittedAt?: Date | undefined;
   readonly approvedAt?: Date | undefined;

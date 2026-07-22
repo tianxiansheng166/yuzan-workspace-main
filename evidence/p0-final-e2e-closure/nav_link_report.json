@@ -1,0 +1,34 @@
+{
+  "scenario": "courses -> player navigation",
+  "steps": [
+    {
+      "step": "login",
+      "ok": true,
+      "user": "测试学生"
+    },
+    {
+      "step": "courses_loaded",
+      "ok": true,
+      "card_count": 4,
+      "first_assignment_id": "85000000-0000-4000-8000-000000000004"
+    },
+    {
+      "step": "click_card",
+      "ok": true
+    },
+    {
+      "step": "url_jump",
+      "ok": true,
+      "current_url": "http://127.0.0.1:4175/student/courses/course-detail/?id=85000000-0000-4000-8000-000000000004",
+      "expected_prefix": "http://127.0.0.1:4175/student/courses/course-detail/"
+    },
+    {
+      "step": "player_load",
+      "ok": true,
+      "player_state": "main_loaded",
+      "cp_video_present": true,
+      "cp_info_title": ""
+    }
+  ],
+  "success": true
+}

@@ -30,12 +30,39 @@ export class UpdateCourseDraftDto {
 
   @IsOptional()
   @IsString()
+  @MaxLength(100)
+  capabilityTheme?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(20)
+  difficulty?: string;
+
+  @IsOptional()
+  @IsString()
   @MaxLength(20)
   locale?: string;
 
   @IsOptional()
+  @IsString()
+  @MaxLength(20)
+  dialect?: string;
+
+  @IsOptional()
   @IsArray()
   objectives?: readonly BilingualContent[];
+
+  @IsOptional()
+  @IsString()
+  coverAsset?: string;
+
+  @IsOptional()
+  @IsArray()
+  taskGroups?: readonly string[];
+
+  @IsOptional()
+  @IsArray()
+  culturalElements?: readonly string[];
 
   @IsOptional()
   @IsArray()

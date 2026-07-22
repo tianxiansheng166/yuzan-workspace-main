@@ -31,6 +31,27 @@ describe("StudentCoursesService security and completion", () => {
     await expect(service.list(auth("33333333-3333-4333-8333-333333333333"), schoolId)).rejects.toBeInstanceOf(ForbiddenException);
   });
 
+  it("keeps the catalog cursor out of the Prisma where filter", async () => {
+    const prisma = {
+      enrollment: { findFirst: vi.fn().mockResolvedValue({ id: enrollmentId, classId: null }) },
+      assignment: {
+        findFirst: vi.fn().mockResolvedValue({ id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa" }),
+        findMany: vi.fn().mockResolvedValue([]),
+        count: vi.fn().mockResolvedValue(0),
+      },
+      courseVersion: { findMany: vi.fn().mockResolvedValue([]) },
+    };
+    const service = new StudentCoursesService(prisma as any);
+
+    await service.list(auth(), schoolId, { cursor: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", limit: 20 });
+
+    expect(prisma.assignment.findMany).toHaveBeenCalledWith(expect.objectContaining({
+      cursor: { id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa" },
+      skip: 1,
+    }));
+    expect(prisma.assignment.count.mock.calls[0]?.[0].where).not.toHaveProperty("cursor");
+  });
+
   it("keeps attainment PENDING when learning is 100 percent but speech is processing", () => {
     const service = new StudentCoursesService({} as any);
     const result = (service as any).attainment([{ status: "PROCESSING", result: null, errorCode: null }], 100);

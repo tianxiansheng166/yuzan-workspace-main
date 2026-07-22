@@ -1065,9 +1065,9 @@
     const schoolId = await requireActiveSchoolId();
     return request(`/schools/${schoolId}/learning/activities/${encodeURIComponent(activityId)}/notes/${encodeURIComponent(noteId)}`, { method: 'DELETE' });
   }
-  async function updateStudentActivityNote(activityId, noteId, content, videoTimestamp) {
+  async function updateStudentActivityNote(activityId, noteId, content, videoTimestamp, revision) {
     const schoolId = await requireActiveSchoolId();
-    return request(`/schools/${schoolId}/learning/activities/${encodeURIComponent(activityId)}/notes/${encodeURIComponent(noteId)}`, { method: 'PUT', body: JSON.stringify({ content, videoTimestamp }) });
+    return request(`/schools/${schoolId}/learning/activities/${encodeURIComponent(activityId)}/notes/${encodeURIComponent(noteId)}`, { method: 'PUT', body: JSON.stringify({ content, videoTimestamp, revision }) });
   }
   async function getStudentRecommendationsForCourse(assignmentId) {
     const schoolId = await requireActiveSchoolId();

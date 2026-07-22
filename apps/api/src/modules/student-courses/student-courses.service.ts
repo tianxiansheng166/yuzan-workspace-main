@@ -2,7 +2,7 @@ import { ConflictException, ForbiddenException, Injectable, NotFoundException, U
 import type { Prisma } from "@yuzan/database";
 import type { AuthContext } from "../../common/security/auth.types.js";
 import { PrismaService } from "../../shared/database/prisma.service.js";
-import type { ListStudentCoursesQueryDto, SaveActivityAttemptDto, SaveStudentActivityNoteDto } from "./dto/student-course.dto.js";
+import type { CreateStudentActivityNoteDto, ListStudentCoursesQueryDto, SaveActivityAttemptDto, SaveStudentActivityNoteDto, UpdateStudentActivityNoteDto } from "./dto/student-course.dto.js";
 
 const ACTIVE_SUBMISSION_STATUSES = ["IN_PROGRESS", "PENDING_SYNC", "SUBMITTED", "PROCESSING", "NEEDS_REVIEW", "REVIEWED", "ACCEPTED"] as const;
 const FINISHED_PRACTICE_STATUSES = ["SUBMITTED", "PROCESSING", "COMPLETED"] as const;
@@ -13,31 +13,76 @@ export class StudentCoursesService {
 
   async list(auth: AuthContext, schoolId: string, filters: ListStudentCoursesQueryDto = {}) {
     const enrollment = await this.studentEnrollment(auth, schoolId);
-    const assignments = await this.prisma.assignment.findMany({
-      where: {
-        schoolId,
-        status: "OPEN",
-        deletedAt: null,
-        courseVersion: { status: "PUBLISHED", publishedAt: { not: null }, retiredAt: null, capabilityTheme: { not: null } },
-        targets: { some: { OR: [{ enrollmentId: enrollment.id }, { classId: enrollment.classId }] } },
-      },
-      include: {
-        courseVersion: {
-          include: {
-            course: { select: { id: true, title: true } },
-            units: { include: { lessons: { include: { activities: { orderBy: { sortOrder: "asc" } } }, orderBy: { sortOrder: "asc" } } }, orderBy: { sortOrder: "asc" } },
+    const limit = filters.limit ?? 20;
+
+    const cvWhere: Prisma.CourseVersionWhereInput = {
+      status: "PUBLISHED",
+      publishedAt: { not: null },
+      retiredAt: null,
+      capabilityTheme: { not: null },
+      ...(filters.capabilityTheme ? { capabilityTheme: filters.capabilityTheme } : {}),
+      ...(filters.gradeBand ? { gradeBand: filters.gradeBand } : {}),
+      ...(filters.difficulty ? { difficulty: filters.difficulty } : {}),
+      ...(filters.search ? { title: { contains: filters.search, mode: "insensitive" } } : {}),
+      ...(filters.taskGroup ? { taskGroups: { array_contains: filters.taskGroup } } : {}),
+      ...(filters.culturalElement ? { culturalElements: { array_contains: filters.culturalElement } } : {}),
+    };
+
+    const assignmentWhere: Prisma.AssignmentWhereInput = {
+      schoolId,
+      status: "OPEN",
+      deletedAt: null,
+      ...(filters.source ? { source: filters.source } : {}),
+      courseVersion: cvWhere,
+      targets: { some: { OR: [{ enrollmentId: enrollment.id }, { classId: enrollment.classId }] } },
+    };
+
+    if (filters.cursor) {
+      const cursorAssignment = await this.prisma.assignment.findFirst({ where: { ...assignmentWhere, id: filters.cursor }, select: { id: true } });
+      if (cursorAssignment) {
+        // `cursor` is a top-level Prisma findMany option. Keeping it out of
+        // `where` prevents an invalid runtime query and keeps count accurate.
+      } else {
+        throw new NotFoundException("课程分页游标无效或不可访问");
+      }
+    }
+
+    const direction = filters.sortOrder === "asc" ? "asc" : "desc";
+    const orderBy: Prisma.AssignmentOrderByWithRelationInput[] = filters.sortBy === "publishedAt"
+      ? [{ courseVersion: { publishedAt: direction } }, { id: direction }]
+      : filters.sortBy === "popularity"
+        ? [{ submissions: { _count: direction } }, { id: direction }]
+        : [{ createdAt: direction }, { id: direction }];
+
+    const [assignments, total] = await Promise.all([
+      this.prisma.assignment.findMany({
+        where: assignmentWhere,
+        include: {
+          courseVersion: {
+            include: {
+              course: { select: { id: true, title: true } },
+              units: { include: { lessons: { include: { activities: { orderBy: { sortOrder: "asc" } } }, orderBy: { sortOrder: "asc" } } }, orderBy: { sortOrder: "asc" } },
+              favorites: { where: { enrollmentId: enrollment.id }, select: { id: true } },
+            },
           },
+          submissions: { where: { enrollmentId: enrollment.id, deletedAt: null }, orderBy: { createdAt: "desc" }, take: 1 },
         },
-        submissions: { where: { enrollmentId: enrollment.id, deletedAt: null }, orderBy: { createdAt: "desc" }, take: 1 },
-      },
-      orderBy: { createdAt: "asc" },
-    });
+        orderBy,
+        ...(filters.cursor ? { cursor: { id: filters.cursor }, skip: 1 } : {}),
+        take: limit + 1,
+      }),
+      this.prisma.assignment.count({ where: assignmentWhere }),
+    ]);
+
+    const hasMore = assignments.length > limit;
+    const sliced = hasMore ? assignments.slice(0, limit) : assignments;
 
     const items = [];
-    for (const assignment of assignments) {
+    for (const assignment of sliced) {
       const activities = assignment.courseVersion.units.flatMap((unit) => unit.lessons.flatMap((lesson) => lesson.activities));
       const completion = await this.completionFor(enrollment.id, assignment.id, assignment.courseVersionId, assignment.submissions[0]?.id);
       const status = this.catalogStatus(assignment.submissions[0]?.status, completion.progressPercent, completion.attainmentStatus);
+      if (filters.status && status !== filters.status) continue;
       const nextActivity = activities.find((activity) => !completion.completedActivityIds.includes(activity.id)) ?? null;
       items.push({
         assignmentId: assignment.id,
@@ -49,27 +94,44 @@ export class StudentCoursesService {
         difficulty: assignment.courseVersion.difficulty,
         estimatedMinutes: assignment.courseVersion.estimatedMinutes,
         coverAsset: assignment.courseVersion.coverAsset,
+        taskGroups: assignment.courseVersion.taskGroups,
+        culturalElements: assignment.courseVersion.culturalElements,
         source: assignment.source,
         status,
         progressPercent: completion.progressPercent,
+        isFavorite: assignment.courseVersion.favorites.length > 0,
         nextActivity: nextActivity ? { id: nextActivity.id, title: nextActivity.title, type: nextActivity.type } : null,
         submission: assignment.submissions[0] ? this.submissionSummary(assignment.submissions[0]) : null,
         completedAt: assignment.submissions[0]?.submittedAt?.toISOString() ?? null,
       });
     }
 
-    const filtered = items.filter((item) =>
-      (!filters.capabilityTheme || item.capabilityTheme === filters.capabilityTheme) &&
-      (!filters.gradeBand || item.gradeBand === filters.gradeBand) &&
-      (!filters.difficulty || item.difficulty === filters.difficulty) &&
-      (!filters.source || item.source === filters.source) &&
-      (!filters.status || item.status === filters.status)
-    );
+    const distinctThemes = await this.prisma.courseVersion.findMany({
+      where: { schoolId, status: "PUBLISHED", retiredAt: null, capabilityTheme: { not: null } },
+      select: { capabilityTheme: true },
+      distinct: ["capabilityTheme"],
+    });
+    const distinctGrades = await this.prisma.courseVersion.findMany({
+      where: { schoolId, status: "PUBLISHED", retiredAt: null, gradeBand: { not: null } },
+      select: { gradeBand: true },
+      distinct: ["gradeBand"],
+    });
+    const distinctDifficulties = await this.prisma.courseVersion.findMany({
+      where: { schoolId, status: "PUBLISHED", retiredAt: null, difficulty: { not: null } },
+      select: { difficulty: true },
+      distinct: ["difficulty"],
+    });
+
     return {
-      categories: ["全部", "发音基础", "听说理解", "朗读表达", "阅读写作", "古诗文"],
-      sources: ["TEACHER_ASSIGNED", "RECOMMENDED", "SELF_STUDY"],
+      categories: distinctThemes.map((r) => r.capabilityTheme).filter(Boolean) as string[],
+      gradeBands: distinctGrades.map((r) => r.gradeBand).filter(Boolean) as string[],
+      difficulties: distinctDifficulties.map((r) => r.difficulty).filter(Boolean) as string[],
       statuses: ["NOT_STARTED", "IN_PROGRESS", "COMPLETED", "RESULT_PENDING"],
-      courses: filtered,
+      sources: ["TEACHER_ASSIGNED", "RECOMMENDED", "SELF_STUDY"],
+      courses: items,
+      total,
+      hasMore,
+      nextCursor: hasMore && sliced.length > 0 ? sliced[sliced.length - 1]!.id : null,
     };
   }
 
@@ -78,6 +140,21 @@ export class StudentCoursesService {
     const assignment = await this.visibleAssignment(schoolId, assignmentId, enrollment);
     const submission = await this.prisma.submission.findFirst({ where: { schoolId, assignmentId, enrollmentId: enrollment.id, deletedAt: null }, orderBy: { createdAt: "desc" } });
     const completion = await this.completionFor(enrollment.id, assignmentId, assignment.courseVersionId, submission?.id);
+
+    // Fetch student's personal notes for all activities in this course
+    const activityIds = assignment.courseVersion.units.flatMap((u) => u.lessons.flatMap((l) => l.activities.map((a) => a.id)));
+    const personalNotes = await this.prisma.studentActivityNote.findMany({
+      where: { schoolId, enrollmentId: enrollment.id, activityId: { in: activityIds } },
+      orderBy: [{ videoTimestamp: "asc" }, { createdAt: "asc" }],
+      select: { id: true, activityId: true, content: true, videoTimestamp: true, revision: true, createdAt: true, updatedAt: true },
+    });
+    const notesByActivity = new Map<string, typeof personalNotes>();
+    for (const note of personalNotes) {
+      const list = notesByActivity.get(note.activityId) ?? [];
+      list.push(note);
+      notesByActivity.set(note.activityId, list);
+    }
+
     const units = assignment.courseVersion.units.map((unit) => ({
       id: unit.id,
       title: unit.title,
@@ -95,6 +172,7 @@ export class StudentCoursesService {
           required: activity.required,
           completionRule: activity.completionRule,
           studentNotes: this.publishedStudentNotes(activity.studentNotes),
+          personalNotes: notesByActivity.get(activity.id) ?? [],
           resources: activity.resources.map((link) => ({ purpose: link.purpose, meta: link.meta, resource: { ...link.resource, byteSize: String(link.resource.byteSize) } })),
           progress: activity.progress[0] ?? null,
           attempt: activity.attempts[0] ?? null,
@@ -158,10 +236,12 @@ export class StudentCoursesService {
       });
       const current = await tx.activityProgress.findUnique({ where: { activityId_enrollmentId: { activityId, enrollmentId: context.enrollment.id } } });
       if (body.expectedProgressRevision != null && current && current.revision !== body.expectedProgressRevision) throw new ConflictException("学习进度已在其他页面更新，请刷新后重试");
+      const resolvedPosition = body.videoPosition != null ? body.videoPosition : (body.completed === false ? 0.5 : 1);
+      const resolvedCompleted = body.completed !== undefined ? body.completed !== false : (body.videoPosition != null ? body.videoPosition >= 1 : true);
       const progress = await tx.activityProgress.upsert({
         where: { activityId_enrollmentId: { activityId, enrollmentId: context.enrollment.id } },
-        update: { position: body.completed === false ? 0.5 : 1, completed: body.completed !== false, revision: { increment: 1 } },
-        create: { schoolId, activityId, enrollmentId: context.enrollment.id, position: body.completed === false ? 0.5 : 1, completed: body.completed !== false },
+        update: { position: resolvedPosition, completed: resolvedCompleted, revision: { increment: 1 } },
+        create: { schoolId, activityId, enrollmentId: context.enrollment.id, position: resolvedPosition, completed: resolvedCompleted },
       });
       return { attempt, progress };
     });
@@ -240,24 +320,166 @@ export class StudentCoursesService {
     return { submission: this.submissionSummary(saved), courseCompletion: await this.completionFor(enrollment.id, assignmentId, assignment.courseVersionId, submissionId) };
   }
 
+  async listNotes(auth: AuthContext, schoolId: string, activityId: string) {
+    const enrollment = await this.studentEnrollment(auth, schoolId);
+    await this.assertActivityVisible(schoolId, activityId, enrollment);
+    return this.prisma.studentActivityNote.findMany({
+      where: { schoolId, enrollmentId: enrollment.id, activityId },
+      orderBy: [{ videoTimestamp: "asc" }, { createdAt: "asc" }],
+      select: { id: true, content: true, videoTimestamp: true, revision: true, createdAt: true, updatedAt: true },
+    });
+  }
+
+  /** Compatibility API for the existing single general-note player. */
   async getNote(auth: AuthContext, schoolId: string, activityId: string) {
     const enrollment = await this.studentEnrollment(auth, schoolId);
     await this.assertActivityVisible(schoolId, activityId, enrollment);
-    const note = await this.prisma.studentActivityNote.findUnique({ where: { enrollmentId_activityId: { enrollmentId: enrollment.id, activityId } } });
+    const note = await this.prisma.studentActivityNote.findFirst({
+      where: { schoolId, enrollmentId: enrollment.id, activityId, videoTimestamp: null },
+      orderBy: { createdAt: "asc" },
+    });
     return note ?? { id: null, schoolId, enrollmentId: enrollment.id, activityId, content: "", revision: 0, createdAt: null, updatedAt: null };
   }
 
+  async createNote(auth: AuthContext, schoolId: string, activityId: string, body: CreateStudentActivityNoteDto) {
+    const enrollment = await this.studentEnrollment(auth, schoolId);
+    await this.assertActivityVisible(schoolId, activityId, enrollment);
+    return this.prisma.studentActivityNote.create({
+      data: { schoolId, enrollmentId: enrollment.id, activityId, content: body.content, videoTimestamp: body.videoTimestamp ?? null, revision: 1 },
+    });
+  }
+
+  /** Compatibility API for the existing single general-note player. */
   async saveNote(auth: AuthContext, schoolId: string, activityId: string, body: SaveStudentActivityNoteDto) {
     const enrollment = await this.studentEnrollment(auth, schoolId);
     await this.assertActivityVisible(schoolId, activityId, enrollment);
-    if (body.revision === 0) {
-      try {
-        return await this.prisma.studentActivityNote.create({ data: { schoolId, enrollmentId: enrollment.id, activityId, content: body.content, revision: 1 } });
-      } catch { throw new ConflictException("笔记已在其他页面创建，请刷新后重试"); }
+    const existing = await this.prisma.studentActivityNote.findFirst({
+      where: { schoolId, enrollmentId: enrollment.id, activityId, videoTimestamp: null },
+      orderBy: { createdAt: "asc" },
+    });
+    if (!existing) {
+      if (body.revision !== 0) throw new ConflictException("笔记已在其他页面创建，请刷新后重试");
+      return this.prisma.studentActivityNote.create({ data: { schoolId, enrollmentId: enrollment.id, activityId, content: body.content, revision: 1 } });
     }
-    const updated = await this.prisma.studentActivityNote.updateMany({ where: { schoolId, enrollmentId: enrollment.id, activityId, revision: body.revision }, data: { content: body.content, revision: { increment: 1 } } });
-    if (updated.count !== 1) throw new ConflictException("笔记版本冲突，请刷新后保留最新内容");
-    return this.prisma.studentActivityNote.findUniqueOrThrow({ where: { enrollmentId_activityId: { enrollmentId: enrollment.id, activityId } } });
+    if (existing.revision !== body.revision) throw new ConflictException("笔记版本冲突，请刷新后保留最新内容");
+    return this.prisma.studentActivityNote.update({ where: { id: existing.id }, data: { content: body.content, revision: { increment: 1 } } });
+  }
+
+  async updateNote(auth: AuthContext, schoolId: string, activityId: string, noteId: string, body: UpdateStudentActivityNoteDto) {
+    const enrollment = await this.studentEnrollment(auth, schoolId);
+    const existing = await this.prisma.studentActivityNote.findFirst({ where: { id: noteId, schoolId, enrollmentId: enrollment.id, activityId } });
+    if (!existing) throw new NotFoundException("笔记不存在");
+    if (existing.revision !== body.revision) throw new ConflictException("笔记版本冲突，请刷新后保留最新内容");
+    return this.prisma.studentActivityNote.update({
+      where: { id: noteId },
+      data: { content: body.content, videoTimestamp: body.videoTimestamp ?? existing.videoTimestamp, revision: { increment: 1 } },
+    });
+  }
+
+  async deleteNote(auth: AuthContext, schoolId: string, activityId: string, noteId: string) {
+    const enrollment = await this.studentEnrollment(auth, schoolId);
+    const existing = await this.prisma.studentActivityNote.findFirst({ where: { id: noteId, schoolId, enrollmentId: enrollment.id, activityId } });
+    if (!existing) throw new NotFoundException("笔记不存在");
+    await this.prisma.studentActivityNote.delete({ where: { id: noteId } });
+    return { deleted: true };
+  }
+
+  async toggleFavorite(auth: AuthContext, schoolId: string, assignmentId: string) {
+    const enrollment = await this.studentEnrollment(auth, schoolId);
+    const assignment = await this.visibleAssignment(schoolId, assignmentId, enrollment);
+    const courseVersionId = assignment.courseVersionId;
+
+    const existing = await this.prisma.courseFavorite.findUnique({
+      where: { enrollmentId_courseVersionId: { enrollmentId: enrollment.id, courseVersionId } },
+    });
+
+    if (existing) {
+      await this.prisma.courseFavorite.delete({ where: { id: existing.id } });
+      return { favorited: false };
+    }
+
+    await this.prisma.courseFavorite.create({
+      data: { schoolId, enrollmentId: enrollment.id, courseVersionId },
+    });
+    return { favorited: true };
+  }
+
+  async recommendations(auth: AuthContext, schoolId: string, assignmentId: string) {
+    const enrollment = await this.studentEnrollment(auth, schoolId);
+    const assignment = await this.visibleAssignment(schoolId, assignmentId, enrollment);
+    const cv = assignment.courseVersion;
+
+    // Recommend courses with same capabilityTheme or gradeBand, excluding current
+    const recommended = await this.prisma.assignment.findMany({
+      where: {
+        schoolId,
+        status: "OPEN",
+        deletedAt: null,
+        id: { not: assignmentId },
+        courseVersion: {
+          status: "PUBLISHED",
+          publishedAt: { not: null },
+          retiredAt: null,
+          OR: [
+            ...(cv.capabilityTheme ? [{ capabilityTheme: cv.capabilityTheme }] : []),
+            ...(cv.gradeBand ? [{ gradeBand: cv.gradeBand }] : []),
+          ],
+        },
+        targets: { some: { OR: [{ enrollmentId: enrollment.id }, { classId: enrollment.classId }] } },
+      },
+      include: {
+        courseVersion: { select: { id: true, title: true, capabilityTheme: true, gradeBand: true, difficulty: true, coverAsset: true, estimatedMinutes: true } },
+      },
+      take: 6,
+      orderBy: { createdAt: "desc" },
+    });
+
+    return recommended.map((r) => ({
+      assignmentId: r.id,
+      courseVersion: r.courseVersion,
+    }));
+  }
+
+  async listFavorites(auth: AuthContext, schoolId: string) {
+    const enrollment = await this.studentEnrollment(auth, schoolId);
+    const favorites = await this.prisma.courseFavorite.findMany({
+      where: { enrollmentId: enrollment.id, schoolId },
+      include: { courseVersion: { select: { id: true, title: true, capabilityTheme: true, gradeBand: true, difficulty: true, coverAsset: true } } },
+      orderBy: { createdAt: "desc" },
+    });
+    return favorites.map((fav) => ({
+      courseVersionId: fav.courseVersionId,
+      favoritedAt: fav.createdAt.toISOString(),
+      courseVersion: fav.courseVersion,
+    }));
+  }
+
+  async stats(auth: AuthContext, schoolId: string) {
+    const enrollment = await this.studentEnrollment(auth, schoolId);
+    const totalAssigned = await this.prisma.assignment.count({
+      where: { schoolId, status: "OPEN", deletedAt: null, targets: { some: { OR: [{ enrollmentId: enrollment.id }, { classId: enrollment.classId }] } } },
+    });
+    const inProgress = await this.prisma.submission.count({
+      where: { schoolId, enrollmentId: enrollment.id, deletedAt: null, status: { in: ["IN_PROGRESS", "PENDING_SYNC"] } },
+    });
+    const completed = await this.prisma.submission.count({
+      where: { schoolId, enrollmentId: enrollment.id, deletedAt: null, status: { in: ["SUBMITTED", "PROCESSING", "REVIEWED", "ACCEPTED"] } },
+    });
+    const favoriteCount = await this.prisma.courseFavorite.count({
+      where: { enrollmentId: enrollment.id, schoolId },
+    });
+    const totalLearningMinutes = await this.prisma.activityProgress.aggregate({
+      _sum: { position: true },
+      where: { enrollmentId: enrollment.id, schoolId },
+    });
+    return {
+      totalAssigned,
+      inProgress,
+      completed,
+      notStarted: totalAssigned - inProgress - completed,
+      favoriteCount,
+      totalLearningMinutes: Math.round((totalLearningMinutes._sum.position ?? 0) * 10),
+    };
   }
 
   private async studentEnrollment(auth: AuthContext, schoolId: string) {
@@ -311,8 +533,23 @@ export class StudentCoursesService {
     const progress = await this.prisma.activityProgress.findMany({ where: { enrollmentId, completed: true, activityId: { in: requiredActivities.map((activity) => activity.id) } }, select: { activityId: true } });
     const completedActivityIds = progress.map((item) => item.activityId);
     const requiredPracticeIds = requiredActivities.filter((activity) => activity.coursePractice?.required).map((activity) => activity.id);
-    const completedPracticeCount = submissionId ? await this.prisma.assessmentSession.count({ where: { enrollmentId, courseSubmissionId: submissionId, courseActivityId: { in: requiredPracticeIds }, status: { in: [...FINISHED_PRACTICE_STATUSES] } } }) : 0;
-    const completedRequiredCount = requiredActivities.filter((activity) => completedActivityIds.includes(activity.id) && (!activity.coursePractice?.required || completedPracticeCount > 0)).length;
+
+    // Per-activity practice completion: check each required practice individually
+    // across ALL submissions (not just the current one)
+    let completedPracticeActivityIds: string[] = [];
+    if (requiredPracticeIds.length > 0) {
+      const finishedSessions = await this.prisma.assessmentSession.findMany({
+        where: { enrollmentId, courseActivityId: { in: requiredPracticeIds }, status: { in: [...FINISHED_PRACTICE_STATUSES] } },
+        select: { courseActivityId: true },
+        distinct: ["courseActivityId"],
+      });
+      completedPracticeActivityIds = finishedSessions.map((s) => s.courseActivityId!);
+    }
+    const completedPracticeCount = completedPracticeActivityIds.length;
+
+    const completedRequiredCount = requiredActivities.filter((activity) =>
+      completedActivityIds.includes(activity.id) && (!activity.coursePractice?.required || completedPracticeActivityIds.includes(activity.id))
+    ).length;
     const progressPercent = requiredActivities.length === 0 ? 0 : Math.round((completedRequiredCount / requiredActivities.length) * 100);
     const speechJobs = submissionId ? await this.prisma.speechJob.findMany({ where: { submissionId }, select: { status: true, result: true, errorCode: true } }) : [];
     const attainmentStatus = this.attainment(speechJobs, progressPercent);

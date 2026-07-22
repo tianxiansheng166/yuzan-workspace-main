@@ -1,159 +1,160 @@
 <!doctype html>
 <html lang="zh-CN">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>课程中心｜语赞心声</title>
-    <link rel="stylesheet" href="/assets/common.css" />
-    <link rel="stylesheet" href="/shared/student-nav.css" />
-    <link rel="stylesheet" href="/student/courses/style.css" />
-  </head>
-  <body>
-    <main class="course-page" id="coursePage">
-      <header class="course-masthead">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>课程中心｜语赞心声</title>
+  <link rel="stylesheet" href="/assets/common.css" />
+  <link rel="stylesheet" href="/shared/student-nav.css" />
+  <link rel="stylesheet" href="/student/courses/style.css" />
+</head>
+<body>
+  <main class="cc-page" id="coursePage">
+    <!-- Hero banner -->
+    <section class="cc-hero" style="background-image:url('/assets/course-bg/hero-sunrise.png')">
+      <div class="cc-hero-overlay"></div>
+      <div class="cc-hero-inner">
         <div>
-          <p class="eyebrow">我的学习书架</p>
-          <h1>课程中心</h1>
-          <p>从一段声音出发，沿着清楚的章节路径完成一次真正的学习。</p>
+          <h1 class="cc-hero-title">课程中心</h1>
+          <p class="cc-hero-sub">探索丰富的国家通用语言文字学习资源</p>
         </div>
-        <div class="course-tally" aria-label="课程统计">
-          <span><strong id="totalCount">—</strong>门课程</span>
-          <span><strong id="activeCount">—</strong>门进行中</span>
-        </div>
-      </header>
+        <nav class="cc-breadcrumb" aria-label="面包屑">
+          <a href="/student/today">首页</a>
+          <span>/</span>
+          <span>课程中心</span>
+        </nav>
+      </div>
+    </section>
 
-      <section id="catalogLoading" class="state-panel" aria-live="polite">
-        <div class="loading-line"></div>
-        <div class="loading-line short"></div>
-        <p>正在整理你的课程路径…</p>
-      </section>
-      <section id="catalogState" class="state-panel" hidden></section>
+    <!-- Loading state -->
+    <section id="catalogLoading" class="cc-state" aria-live="polite">
+      <div class="cc-spinner"></div>
+      <p>正在整理你的课程路径…</p>
+    </section>
+    <section id="catalogState" class="cc-state" hidden></section>
 
-      <div id="catalogContent" hidden>
-        <section
-          class="continue-section"
-          id="continueSection"
-          aria-labelledby="continueTitle"
-        >
-          <div class="section-heading">
-            <div>
-              <p class="eyebrow">下一站</p>
-              <h2 id="continueTitle">继续学习</h2>
-            </div>
-            <span class="section-rule"></span>
+    <!-- Main content -->
+    <div id="catalogContent" hidden>
+      <div class="cc-layout">
+        <!-- Left sidebar filters -->
+        <aside class="cc-sidebar" aria-label="课程筛选">
+          <!-- Grade filter -->
+          <div class="cc-filter-group">
+            <h3 class="cc-filter-title">年级与学段</h3>
+            <div id="gradeFilters" class="cc-filter-list"></div>
           </div>
-          <div id="continueCourse"></div>
-        </section>
-
-        <section class="catalog-layout">
-          <div class="catalog-main">
-            <div class="section-heading compact">
-              <div>
-                <p class="eyebrow">你的课程</p>
-                <h2>我的课程</h2>
+          <!-- Category filter -->
+          <div class="cc-filter-group">
+            <h3 class="cc-filter-title">课程分类</h3>
+            <div id="categoryFilters" class="cc-filter-list"></div>
+          </div>
+          <!-- Task groups filter -->
+          <div class="cc-filter-group">
+            <h3 class="cc-filter-title">学习任务群</h3>
+            <div id="taskGroupFilters" class="cc-filter-list"></div>
+          </div>
+          <!-- Cultural elements filter -->
+          <div class="cc-filter-group">
+            <h3 class="cc-filter-title">文化元素</h3>
+            <div id="culturalFilters" class="cc-filter-list"></div>
+          </div>
+          <!-- Difficulty filter -->
+          <div class="cc-filter-group">
+            <h3 class="cc-filter-title">难度</h3>
+            <div class="cc-difficulty-slider">
+              <input type="range" id="difficultyRange" min="1" max="5" value="5" class="cc-range" />
+              <div class="cc-range-labels">
+                <span>入门</span><span>基础</span><span>进阶</span><span>高级</span><span>专家</span>
               </div>
-              <p id="resultCount" class="result-count"></p>
             </div>
-            <nav
-              id="themeFilters"
-              class="theme-filters"
-              aria-label="能力主题筛选"
-            ></nav>
-            <div id="courseList" class="course-list"></div>
-            <div id="emptyState" class="state-panel" hidden>
-              <svg viewBox="0 0 48 48" aria-hidden="true">
-                <path
-                  d="M9 10h12c4 0 7 3 7 7v23c-2-3-5-4-9-4H9V10Zm30 0H27c-4 0-7 3-7 7v23c2-3 5-4 9-4h10V10Z"
-                />
-              </svg>
-              <h3>这里暂时没有符合条件的课程</h3>
-              <p>可以换一个能力主题或清除辅助筛选。</p>
-              <button type="button" id="clearFilters" class="text-button">
-                清除筛选
+          </div>
+          <!-- Clear filters -->
+          <button type="button" id="clearAllFilters" class="cc-btn-outline cc-mt-sm">清除全部筛选</button>
+        </aside>
+
+        <!-- Right content -->
+        <div class="cc-main">
+          <!-- Search bar -->
+          <div class="cc-search-bar">
+            <svg class="cc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input type="search" id="searchInput" class="cc-search-input" placeholder="搜索课程名称、教师、描述…" aria-label="搜索课程" />
+            <button type="button" id="searchBtn" class="cc-btn-primary cc-search-btn">搜索</button>
+          </div>
+
+          <!-- Active filter tags -->
+          <div id="activeTags" class="cc-active-tags" hidden></div>
+
+          <!-- Sort and view toggle -->
+          <div class="cc-toolbar">
+            <div class="cc-sort-group">
+              <span class="cc-sort-label">排序：</span>
+              <select id="sortSelect" class="cc-sort-select">
+                <option value="latest">最新上线</option>
+                <option value="popular">最多学习</option>
+                <option value="rating">评分最高</option>
+              </select>
+            </div>
+            <div class="cc-view-group">
+              <button type="button" class="cc-view-btn active" data-view="grid" aria-label="网格视图">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+              </button>
+              <button type="button" class="cc-view-btn" data-view="list" aria-label="列表视图">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
               </button>
             </div>
+            <span id="resultCount" class="cc-result-count"></span>
           </div>
 
-          <aside class="catalog-aside" aria-label="辅助筛选与最近完成">
-            <section class="filter-sheet">
-              <p class="eyebrow">缩小范围</p>
-              <h2>辅助筛选</h2>
-              <label
-                >学段<select id="gradeFilter">
-                  <option value="">全部学段</option>
-                </select></label
-              >
-              <label
-                >难度<select id="difficultyFilter">
-                  <option value="">全部难度</option>
-                </select></label
-              >
-              <label
-                >来源<select id="sourceFilter">
-                  <option value="">全部来源</option>
-                  <option value="TEACHER_ASSIGNED">教师布置</option>
-                  <option value="RECOMMENDED">推荐课程</option>
-                  <option value="SELF_STUDY">自主学习</option>
-                </select></label
-              >
-              <label
-                >状态<select id="statusFilter">
-                  <option value="">全部状态</option>
-                  <option value="NOT_STARTED">未开始</option>
-                  <option value="IN_PROGRESS">进行中</option>
-                  <option value="COMPLETED">已完成</option>
-                  <option value="RESULT_PENDING">结果处理中</option>
-                </select></label
-              >
-            </section>
-            <section class="recent-sheet">
-              <p class="eyebrow">学习留痕</p>
-              <h2>最近完成</h2>
-              <div id="recentCompleted"></div>
-            </section>
-          </aside>
-        </section>
-      </div>
-    </main>
+          <!-- Course grid -->
+          <div id="courseGrid" class="cc-grid cc-grid--3"></div>
 
-    <div id="detailLayer" class="detail-layer" hidden aria-hidden="true">
-      <button
-        class="detail-scrim"
-        type="button"
-        data-close-detail
-        aria-label="关闭课程详情"
-      ></button>
-      <article
-        class="detail-panel"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="detailTitle"
-      >
-        <header class="detail-toolbar">
-          <button
-            type="button"
-            class="icon-button"
-            data-close-detail
-            aria-label="关闭课程详情"
-          >
-            <svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6" /></svg>
-          </button>
-          <span>课程详情</span>
-          <span id="detailStatus" class="detail-status"></span>
-        </header>
-        <div id="detailLoading" class="detail-loading">
-          <div class="loading-line"></div>
-          <p>正在展开课程目录…</p>
+          <!-- Empty state -->
+          <div id="emptyState" class="cc-state" hidden>
+            <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M9 10h12c4 0 7 3 7 7v23c-2-3-5-4-9-4H9V10Zm30 0H27c-4 0-7 3-7 7v23c2-3 5-4 9-4h10V10Z" fill="currentColor" opacity=".15"/></svg>
+            <h3>这里暂时没有符合条件的课程</h3>
+            <p>可以换一个筛选条件试试。</p>
+            <button type="button" id="clearFilters" class="cc-btn-outline">清除筛选</button>
+          </div>
+
+          <!-- Load more -->
+          <div id="loadMore" class="cc-load-more" hidden>
+            <button type="button" id="loadMoreBtn" class="cc-btn-outline">加载更多课程</button>
+          </div>
         </div>
-        <div id="detailError" class="state-panel" hidden></div>
-        <div id="detailContent" hidden></div>
-      </article>
+      </div>
     </div>
 
-    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
-    <script src="/assets/app-core.js"></script>
-    <script src="/assets/api-client.js"></script>
-    <script src="/student/courses/courses.js"></script>
-    <script src="/shared/student-nav.js"></script>
-  </body>
+    <!-- Offline download modal -->
+    <div id="offlineModal" class="cc-modal" hidden aria-hidden="true">
+      <div class="cc-modal-scrim" data-close-modal></div>
+      <div class="cc-modal-panel" role="dialog" aria-modal="true" aria-labelledby="offlineTitle">
+        <div class="cc-modal-header">
+          <h2 id="offlineTitle">离线下载管理</h2>
+          <button type="button" class="cc-modal-close" data-close-modal aria-label="关闭">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="cc-modal-body">
+          <div id="offlineQueue" class="cc-offline-section">
+            <h3>下载队列</h3>
+            <div id="offlineList" class="cc-offline-list"></div>
+          </div>
+          <div class="cc-offline-section">
+            <h3>已下载</h3>
+            <div id="offlineCompleted" class="cc-offline-list"></div>
+          </div>
+          <div class="cc-offline-info">
+            <span>本地存储：已用 <strong id="storageUsed">0 MB</strong></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div id="toast" class="cc-toast" role="status" aria-live="polite" hidden></div>
+  <script src="/assets/app-core.js"></script>
+  <script src="/assets/api-client.js"></script>
+  <script src="/student/courses/courses.js"></script>
+  <script src="/shared/student-nav.js"></script>
+</body>
 </html>

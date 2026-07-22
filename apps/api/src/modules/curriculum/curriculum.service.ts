@@ -7,6 +7,7 @@ import {
   type ResourceLookupPort,
 } from "../resources/ports/resource-lookup.port.js";
 import type {
+  BilingualContent,
   CourseVersion,
   CourseVersionSummary,
 } from "./domain/course-version.types.js";
@@ -93,6 +94,13 @@ export class CurriculumService {
       updatedAt: now,
       ...(dto.description ? { description: dto.description } : {}),
       ...(dto.gradeBand ? { gradeBand: dto.gradeBand } : {}),
+      ...(dto.capabilityTheme ? { capabilityTheme: dto.capabilityTheme } : {}),
+      ...(dto.difficulty ? { difficulty: dto.difficulty } : {}),
+      ...(dto.dialect ? { dialect: dto.dialect } : {}),
+      ...(dto.objectives ? { objectives: dto.objectives as unknown as BilingualContent[] } : {}),
+      ...(dto.coverAsset ? { coverAsset: dto.coverAsset } : {}),
+      ...(dto.taskGroups ? { taskGroups: dto.taskGroups } : {}),
+      ...(dto.culturalElements ? { culturalElements: dto.culturalElements } : {}),
     };
 
     const saved = await this.courseRepo.save(version, {
@@ -157,10 +165,16 @@ export class CurriculumService {
         ? { description: update.description }
         : {}),
       ...(update.gradeBand !== undefined ? { gradeBand: update.gradeBand } : {}),
+      ...(update.capabilityTheme !== undefined ? { capabilityTheme: update.capabilityTheme } : {}),
+      ...(update.difficulty !== undefined ? { difficulty: update.difficulty } : {}),
       ...(update.locale !== undefined ? { locale: update.locale } : {}),
+      ...(update.dialect !== undefined ? { dialect: update.dialect } : {}),
       ...(update.objectives !== undefined
         ? { objectives: update.objectives }
         : {}),
+      ...(update.coverAsset !== undefined ? { coverAsset: update.coverAsset } : {}),
+      ...(update.taskGroups !== undefined ? { taskGroups: update.taskGroups } : {}),
+      ...(update.culturalElements !== undefined ? { culturalElements: update.culturalElements } : {}),
       ...(update.units !== undefined ? { units: update.units } : {}),
       id: version.id,
       schoolId: version.schoolId,

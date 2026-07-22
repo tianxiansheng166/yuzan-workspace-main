@@ -16,10 +16,10 @@
     ]
   },
   "summary": {
-    "total": 24,
+    "total": 40,
     "ready": 14,
-    "pending": 8,
-    "notConfigured": 2
+    "pending": 22,
+    "notConfigured": 4
   },
   "interfaces": [
     {
@@ -237,6 +237,132 @@
       "status": "PENDING",
       "consumers": ["/teacher.html"],
       "notes": "教师工作台聚合数据未实现"
+    },
+    {
+      "id": "translation-jobs-create",
+      "domain": "translation",
+      "method": "POST",
+      "path": "/api/v1/schools/:schoolId/translations/jobs",
+      "status": "NOT_CONFIGURED",
+      "consumers": ["/teacher/translation/index.html", "/student/translation/index.html", "/volunteer/translation/index.html"],
+      "notes": "创建翻译任务（短文本同步、长文本入BullMQ队列）；需AES-GCM加密sourceText"
+    },
+    {
+      "id": "translation-jobs-me",
+      "domain": "translation",
+      "method": "GET",
+      "path": "/api/v1/schools/:schoolId/translations/jobs/me",
+      "status": "NOT_CONFIGURED",
+      "consumers": ["/teacher/translation/index.html", "/student/translation/index.html", "/volunteer/translation/index.html"],
+      "notes": "当前用户翻译历史；需按createdByUserId过滤"
+    },
+    {
+      "id": "translation-jobs-detail",
+      "domain": "translation",
+      "method": "GET",
+      "path": "/api/v1/schools/:schoolId/translations/jobs/:jobId",
+      "status": "NOT_CONFIGURED",
+      "consumers": ["/teacher/translation/index.html", "/student/translation/index.html"],
+      "notes": "查询单个翻译任务结果与状态"
+    },
+    {
+      "id": "translation-jobs-corrections",
+      "domain": "translation",
+      "method": "POST",
+      "path": "/api/v1/schools/:schoolId/translations/jobs/:jobId/corrections",
+      "status": "NOT_CONFIGURED",
+      "consumers": ["/teacher/translation/index.html", "/student/translation/index.html", "/volunteer/translation/index.html"],
+      "notes": "提交翻译纠正；进入待审核状态，不自动加入语料"
+    },
+    {
+      "id": "translation-glossary-list",
+      "domain": "translation",
+      "method": "GET",
+      "path": "/api/v1/schools/:schoolId/translations/glossary",
+      "status": "NOT_CONFIGURED",
+      "consumers": ["/teacher/translation/index.html", "/student/translation/index.html"],
+      "notes": "学校术语表查询"
+    },
+    {
+      "id": "translation-memory-search",
+      "domain": "translation",
+      "method": "GET",
+      "path": "/api/v1/schools/:schoolId/translations/memory/search",
+      "status": "NOT_CONFIGURED",
+      "consumers": ["/teacher/translation/index.html"],
+      "notes": "翻译记忆相似段搜索"
+    },
+    {
+      "id": "translation-glossary-proposals",
+      "domain": "translation",
+      "method": "POST",
+      "path": "/api/v1/schools/:schoolId/translations/glossary/proposals",
+      "status": "NOT_CONFIGURED",
+      "consumers": ["/teacher/translation/index.html"],
+      "notes": "教师提交术语提案；进入待审核状态"
+    },
+    {
+      "id": "translation-corpus-submissions",
+      "domain": "translation",
+      "method": "POST",
+      "path": "/api/v1/schools/:schoolId/translations/corpus/submissions",
+      "status": "NOT_CONFIGURED",
+      "consumers": ["/teacher/translation/index.html"],
+      "notes": "教师提交语料审核申请；需记录来源和许可证"
+    },
+    {
+      "id": "admin-glossary-crud",
+      "domain": "language-resources",
+      "method": "GET/POST/PATCH",
+      "path": "/api/v1/schools/:schoolId/language-resources/glossary",
+      "status": "NOT_CONFIGURED",
+      "consumers": ["/admin/language-resources/index.html"],
+      "notes": "管理端术语版本管理"
+    },
+    {
+      "id": "admin-memory-crud",
+      "domain": "language-resources",
+      "method": "GET/POST/PATCH",
+      "path": "/api/v1/schools/:schoolId/language-resources/memory",
+      "status": "NOT_CONFIGURED",
+      "consumers": ["/admin/language-resources/index.html"],
+      "notes": "管理端翻译记忆管理"
+    },
+    {
+      "id": "admin-corpus-imports",
+      "domain": "language-resources",
+      "method": "GET/POST",
+      "path": "/api/v1/schools/:schoolId/language-resources/corpus/imports",
+      "status": "NOT_CONFIGURED",
+      "consumers": ["/admin/language-resources/index.html"],
+      "notes": "管理端语料导入；需记录来源和许可证"
+    },
+    {
+      "id": "admin-reviews-approve",
+      "domain": "language-resources",
+      "method": "POST",
+      "path": "/api/v1/schools/:schoolId/language-resources/reviews/:id/approve",
+      "status": "NOT_CONFIGURED",
+      "consumers": ["/admin/language-resources/index.html"],
+      "notes": "审核通过纠正/术语/语料提交"
+    },
+    {
+      "id": "admin-reviews-reject",
+      "domain": "language-resources",
+      "method": "POST",
+      "path": "/api/v1/schools/:schoolId/language-resources/reviews/:id/reject",
+      "status": "NOT_CONFIGURED",
+      "consumers": ["/admin/language-resources/index.html"],
+      "notes": "审核拒绝"
+    },
+    {
+      "id": "admin-provider-health",
+      "domain": "language-resources",
+      "method": "POST",
+      "path": "/api/v1/admin/translation-providers/:id/health-check",
+      "status": "NOT_CONFIGURED",
+      "consumers": ["/admin/language-resources/index.html"],
+      "notes": "翻译Provider健康检查；不得在浏览器返回secretRef或密钥"
     }
   ]
 }

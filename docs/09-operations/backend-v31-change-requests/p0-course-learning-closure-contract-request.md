@@ -18,7 +18,7 @@ All new relations are tenant-checked in the student course service. Published st
 
 ## API changes
 
-Add student-only endpoints under `/schools/{schoolId}/student/courses` for catalog, aggregate detail, create/resume submission, activity progress/attempts, completion, and submission. Add private note GET/PUT endpoints at `/schools/{schoolId}/learning/activities/{activityId}/note` with revision conflicts. Extend the reusable practice create/resume endpoint to accept optional course context and validate the course activity, submission, student enrollment, and referenced published practice.
+Add student-only endpoints under `/schools/{schoolId}/student/courses` for catalog, aggregate detail, create/resume submission, activity progress/attempts, completion, submission, favorites, statistics, and related-course recommendations. Keep the existing private general-note GET/PUT endpoint at `/schools/{schoolId}/learning/activities/{activityId}/note` with revision conflicts, and add timestamped private note CRUD at `/schools/{schoolId}/learning/activities/{activityId}/notes`. Add tenant-scoped resource upload confirmation and short-lived playback URL endpoints; every resource read/write verifies the current tenant's `schoolId` server-side. Extend the reusable practice create/resume endpoint to accept optional course context and validate the course activity, submission, student enrollment, and referenced published practice.
 
 ## Completion semantics
 

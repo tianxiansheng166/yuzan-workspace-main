@@ -6,7 +6,7 @@ export class AttachResourceDto {
   readonly resourceId!: string;
 
   @IsString()
-  @IsIn(["INSTRUCTION", "DEMO_AUDIO", "TEACHER_NOTE", "STUDENT_REFERENCE", "WORKSHEET", "SUBTITLE"])
+  @IsIn(["INSTRUCTION", "DEMO_AUDIO", "TEACHER_NOTE", "STUDENT_REFERENCE", "WORKSHEET", "SUBTITLE", "VIDEO", "POSTER", "COVER"])
   readonly purpose!: string;
 
   @IsOptional()

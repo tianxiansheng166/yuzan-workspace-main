@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Param, ParseUUIDPipe, Post, Put, Query } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Inject, Param, ParseUUIDPipe, Post, Put, Query } from "@nestjs/common";
 import {
   createAuthContext,
   CurrentPrincipal,
@@ -8,7 +8,7 @@ import {
   type Principal,
   type TenantContext,
 } from "../../common/security/index.js";
-import { ListStudentCoursesQueryDto, SaveActivityAttemptDto, SaveStudentActivityNoteDto, SubmitCourseDto } from "./dto/student-course.dto.js";
+import { CreateStudentActivityNoteDto, ListStudentCoursesQueryDto, SaveActivityAttemptDto, SaveStudentActivityNoteDto, UpdateStudentActivityNoteDto, SubmitCourseDto } from "./dto/student-course.dto.js";
 import { StudentCoursesService } from "./student-courses.service.js";
 
 @Controller("schools/:schoolId/student/courses")
@@ -19,6 +19,16 @@ export class StudentCoursesController {
   @Get()
   list(@Param("schoolId", ParseUUIDPipe) schoolId: string, @Query() query: ListStudentCoursesQueryDto, @CurrentTenant() tenant: TenantContext, @CurrentPrincipal() principal: Principal) {
     return this.service.list(createAuthContext("request-id", principal, tenant), schoolId, query);
+  }
+
+  @Get("favorites")
+  listFavorites(@Param("schoolId", ParseUUIDPipe) schoolId: string, @CurrentTenant() tenant: TenantContext, @CurrentPrincipal() principal: Principal) {
+    return this.service.listFavorites(createAuthContext("request-id", principal, tenant), schoolId);
+  }
+
+  @Get("stats")
+  stats(@Param("schoolId", ParseUUIDPipe) schoolId: string, @CurrentTenant() tenant: TenantContext, @CurrentPrincipal() principal: Principal) {
+    return this.service.stats(createAuthContext("request-id", principal, tenant), schoolId);
   }
 
   @Get(":assignmentId")
@@ -50,6 +60,16 @@ export class StudentCoursesController {
   submit(@Param("schoolId", ParseUUIDPipe) schoolId: string, @Param("assignmentId", ParseUUIDPipe) assignmentId: string, @Param("submissionId", ParseUUIDPipe) submissionId: string, @Body() body: SubmitCourseDto, @CurrentTenant() tenant: TenantContext, @CurrentPrincipal() principal: Principal) {
     return this.service.submitCourse(createAuthContext("request-id", principal, tenant), schoolId, assignmentId, submissionId, body.revision);
   }
+
+  @Post(":assignmentId/favorite")
+  toggleFavorite(@Param("schoolId", ParseUUIDPipe) schoolId: string, @Param("assignmentId", ParseUUIDPipe) assignmentId: string, @CurrentTenant() tenant: TenantContext, @CurrentPrincipal() principal: Principal) {
+    return this.service.toggleFavorite(createAuthContext("request-id", principal, tenant), schoolId, assignmentId);
+  }
+
+  @Get(":assignmentId/recommendations")
+  recommendations(@Param("schoolId", ParseUUIDPipe) schoolId: string, @Param("assignmentId", ParseUUIDPipe) assignmentId: string, @CurrentTenant() tenant: TenantContext, @CurrentPrincipal() principal: Principal) {
+    return this.service.recommendations(createAuthContext("request-id", principal, tenant), schoolId, assignmentId);
+  }
 }
 
 @Controller("schools/:schoolId/learning/activities")
@@ -65,5 +85,25 @@ export class StudentActivityNotesController {
   @Put(":activityId/note")
   saveNote(@Param("schoolId", ParseUUIDPipe) schoolId: string, @Param("activityId", ParseUUIDPipe) activityId: string, @Body() body: SaveStudentActivityNoteDto, @CurrentTenant() tenant: TenantContext, @CurrentPrincipal() principal: Principal) {
     return this.service.saveNote(createAuthContext("request-id", principal, tenant), schoolId, activityId, body);
+  }
+
+  @Get(":activityId/notes")
+  listNotes(@Param("schoolId", ParseUUIDPipe) schoolId: string, @Param("activityId", ParseUUIDPipe) activityId: string, @CurrentTenant() tenant: TenantContext, @CurrentPrincipal() principal: Principal) {
+    return this.service.listNotes(createAuthContext("request-id", principal, tenant), schoolId, activityId);
+  }
+
+  @Post(":activityId/notes")
+  createNote(@Param("schoolId", ParseUUIDPipe) schoolId: string, @Param("activityId", ParseUUIDPipe) activityId: string, @Body() body: CreateStudentActivityNoteDto, @CurrentTenant() tenant: TenantContext, @CurrentPrincipal() principal: Principal) {
+    return this.service.createNote(createAuthContext("request-id", principal, tenant), schoolId, activityId, body);
+  }
+
+  @Put(":activityId/notes/:noteId")
+  updateNote(@Param("schoolId", ParseUUIDPipe) schoolId: string, @Param("activityId", ParseUUIDPipe) activityId: string, @Param("noteId", ParseUUIDPipe) noteId: string, @Body() body: UpdateStudentActivityNoteDto, @CurrentTenant() tenant: TenantContext, @CurrentPrincipal() principal: Principal) {
+    return this.service.updateNote(createAuthContext("request-id", principal, tenant), schoolId, activityId, noteId, body);
+  }
+
+  @Delete(":activityId/notes/:noteId")
+  deleteNote(@Param("schoolId", ParseUUIDPipe) schoolId: string, @Param("activityId", ParseUUIDPipe) activityId: string, @Param("noteId", ParseUUIDPipe) noteId: string, @CurrentTenant() tenant: TenantContext, @CurrentPrincipal() principal: Principal) {
+    return this.service.deleteNote(createAuthContext("request-id", principal, tenant), schoolId, activityId, noteId);
   }
 }

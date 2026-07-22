@@ -119,8 +119,8 @@
           <div class="table-pane">
             <div class="table-head">
               <div>
-                <h2>阅读与鉴赏（小学 · 语文）</h2>
-                <small>共 12 门课程</small>
+                <h2 id="tableTitle">全部课程</h2>
+                <small id="tableCount">加载中…</small>
               </div>
               <div class="table-view-controls">
                 <button class="select-btn compact">按排序 <svg><use href="#i-chevron-down"/></svg></button>
@@ -147,7 +147,7 @@
               </table>
             </div>
             <div class="table-footer">
-              <span>共 12 条</span>
+              <span id="tableTotal">共 0 条</span>
               <div class="pagination">
                 <button class="pager"><svg><use href="#i-arrow-left"/></svg></button>
                 <button class="page active">1</button>
@@ -168,6 +168,9 @@
             <div class="meta-line"><span>更新于</span><span id="detailUpdated">2024-06-01 12:30</span></div>
             <div class="detail-actions">
               <button class="ghost-btn small" id="previewBtn"><svg><use href="#i-eye"/></svg>预览</button>
+              <button class="ghost-btn small" id="uploadResourceBtn"><svg><use href="#i-export"/></svg>上传资源</button>
+              <button class="ghost-btn small" id="assignBtn"><svg><use href="#i-school"/></svg>分配</button>
+              <button class="ghost-btn small" id="submitReviewBtn" style="display:none"><svg><use href="#i-badge"/></svg>提交审核</button>
               <button class="primary-btn small" id="publishBtn"><svg><use href="#i-check"/></svg>发布</button>
               <button class="ghost-btn small" id="archiveBtn"><svg><use href="#i-download"/></svg>下线</button>
               <button class="mini-icon"><svg><use href="#i-dots"/></svg></button>
@@ -226,7 +229,145 @@
     </section>
   </div>
 
+  <!-- 创建课程弹窗 -->
+  <div class="modal-backdrop" id="createModalBackdrop" hidden>
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="createModalTitle" style="max-width:560px">
+      <button class="modal-close" id="createModalClose" aria-label="关闭"><svg><use href="#i-x"/></svg></button>
+      <h2 id="createModalTitle">创建课程</h2>
+      <form id="createForm" class="create-form">
+        <div class="form-group">
+          <label for="createTitle">课程名称 <em>*</em></label>
+          <input id="createTitle" name="title" type="text" required maxlength="160" placeholder="例如：现代文阅读入门">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="createGradeBand">学段</label>
+            <select id="createGradeBand" name="gradeBand">
+              <option value="">不指定</option>
+              <option value="小学低段">小学低段</option>
+              <option value="小学中段">小学中段</option>
+              <option value="小学高段">小学高段</option>
+              <option value="初中">初中</option>
+              <option value="高中">高中</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="createDifficulty">难度</label>
+            <select id="createDifficulty" name="difficulty">
+              <option value="">不指定</option>
+              <option value="基础">基础</option>
+              <option value="进阶">进阶</option>
+              <option value="挑战">挑战</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="createTheme">能力主题</label>
+          <input id="createTheme" name="capabilityTheme" type="text" maxlength="100" placeholder="例如：阅读与鉴赏">
+        </div>
+        <div class="form-group">
+          <label for="createDesc">课程简介</label>
+          <textarea id="createDesc" name="description" rows="3" maxlength="2000" placeholder="简要描述课程目标和内容"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="createTaskGroups">学习任务群 <small>逗号分隔</small></label>
+          <input id="createTaskGroups" name="taskGroups" type="text" placeholder="例如：文学阅读,实用性阅读">
+        </div>
+        <div class="form-group">
+          <label for="createCultural">文化元素 <small>逗号分隔</small></label>
+          <input id="createCultural" name="culturalElements" type="text" placeholder="例如：藏文辅助,地方文化">
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="ghost-btn" id="createModalCancel">取消</button>
+          <button type="submit" class="primary-btn" id="createModalSubmit">创建草稿</button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <!-- 资源上传弹窗 -->
+  <div class="modal-backdrop" id="uploadModalBackdrop" hidden>
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="uploadModalTitle" style="max-width:520px">
+      <button class="modal-close" id="uploadModalClose" aria-label="关闭"><svg><use href="#i-x"/></svg></button>
+      <h2 id="uploadModalTitle">上传资源</h2>
+      <form id="uploadForm" class="create-form">
+        <div class="form-group">
+          <label for="uploadFile">选择文件 <em>*</em></label>
+          <input id="uploadFile" name="file" type="file" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="uploadKind">资源类型 <em>*</em></label>
+            <select id="uploadKind" name="kind" required>
+              <option value="VIDEO">视频</option>
+              <option value="IMAGE">图片</option>
+              <option value="AUDIO">音频</option>
+              <option value="SUBTITLE">字幕</option>
+              <option value="DOCUMENT">文档</option>
+              <option value="OTHER">其他</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="uploadPurpose">绑定用途 <em>*</em></label>
+            <select id="uploadPurpose" name="purpose" required>
+              <option value="VIDEO">课程视频</option>
+              <option value="COVER">课程封面</option>
+              <option value="POSTER">海报</option>
+              <option value="SUBTITLE">字幕文件</option>
+              <option value="INSTRUCTION">教学说明</option>
+              <option value="DEMO_AUDIO">示范音频</option>
+              <option value="TEACHER_NOTE">教师笔记</option>
+              <option value="STUDENT_REFERENCE">学生参考</option>
+              <option value="WORKSHEET">练习单</option>
+            </select>
+          </div>
+        </div>
+        <div id="uploadProgress" style="display:none;font-size:13px;color:#84898d;padding:4px 0"></div>
+        <div class="modal-actions">
+          <button type="button" class="ghost-btn" id="uploadModalCancel">取消</button>
+          <button type="submit" class="primary-btn" id="uploadModalSubmit">上传并绑定</button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <!-- 课程分配弹窗 -->
+  <div class="modal-backdrop" id="assignModalBackdrop" hidden>
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="assignModalTitle" style="max-width:520px">
+      <button class="modal-close" id="assignModalClose" aria-label="关闭"><svg><use href="#i-x"/></svg></button>
+      <h2 id="assignModalTitle">分配课程</h2>
+      <form id="assignForm" class="create-form">
+        <div class="form-group">
+          <label for="assignTitle">任务标题 <em>*</em></label>
+          <input id="assignTitle" name="title" type="text" required maxlength="160" placeholder="例如：第3周阅读作业">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="assignStart">开始时间 <em>*</em></label>
+            <input id="assignStart" name="startsAt" type="datetime-local" required>
+          </div>
+          <div class="form-group">
+            <label for="assignDue">截止时间 <em>*</em></label>
+            <input id="assignDue" name="dueAt" type="datetime-local" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="assignClassId">班级 ID <em>*</em></label>
+          <input id="assignClassId" name="classId" type="text" required placeholder="粘贴班级UUID">
+        </div>
+        <div class="form-group">
+          <label><input type="checkbox" id="assignOffline" name="offlineRequired"> 需要离线下载</label>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="ghost-btn" id="assignModalCancel">取消</button>
+          <button type="submit" class="primary-btn" id="assignModalSubmit">确认分配</button>
+        </div>
+      </form>
+    </section>
+  </div>
+
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="../../assets/api-client.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>课程详情 - 学习中心</title>
+  <link rel="stylesheet" href="/assets/common.css">
+  <link rel="stylesheet" href="/shared/student-nav.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Shared top navigation -->
+  <nav class="student-nav" id="studentNav"></nav>
+
+  <!-- Loading state -->
+  <div class="cp-loading" id="cpLoading">
+    <div class="cp-spinner"></div>
+    <p>正在加载课程…</p>
+  </div>
+
+  <!-- Error state -->
+  <div class="cp-error" id="cpError" hidden>
+    <svg class="cp-error-icon" viewBox="0 0 24 24" width="48" height="48"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><line x1="12" y1="8" x2="12" y2="12" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="16" r="1" fill="currentColor"/></svg>
+    <p class="cp-error-msg" id="cpErrorMsg">加载失败，请稍后重试</p>
+    <button class="cp-btn cp-btn-primary" id="cpRetryBtn">重新加载</button>
+  </div>
+
+  <!-- Main content shell (starts hidden) -->
+  <main class="cp-page" id="cpMain" hidden>
+
+    <!-- 1. Hero banner -->
+    <section class="cp-hero" id="cpHero">
+      <div class="cp-hero-overlay"></div>
+      <div class="cp-hero-content">
+        <nav class="cp-breadcrumb" aria-label="面包屑导航">
+          <a href="/student/courses/">我的课程</a>
+          <span class="cp-breadcrumb-sep">/</span>
+          <span id="cpBreadcrumbCourse">课程名称</span>
+          <span class="cp-breadcrumb-sep">/</span>
+          <span id="cpBreadcrumbChapter">当前章节</span>
+        </nav>
+        <h1 class="cp-hero-title" id="cpHeroTitle">课程标题</h1>
+        <p class="cp-hero-chapter" id="cpHeroChapter">章节标题</p>
+      </div>
+    </section>
+
+    <!-- 2. Player Layout — Master Template 2/3 + 1/3 -->
+    <section class="cp-player-layout">
+
+      <!-- Left column (2/3): video + all learning content -->
+      <div class="cp-player-main">
+
+        <!-- Video player card -->
+        <div class="cp-card cp-card-video">
+          <div class="cp-video-container" id="cpVideoContainer">
+            <video class="cp-video" id="cpVideo" preload="metadata" playsinline>
+              <source id="cpVideoSrc" src="" type="video/mp4">
+              <track id="cpTrackZh" kind="subtitles" srclang="zh" label="中文字幕" default>
+              <track id="cpTrackBo" kind="subtitles" srclang="bo" label="藏文字幕">
+            </video>
+
+            <!-- Poster overlay -->
+            <div class="cp-video-overlay" id="cpVideoOverlay">
+              <img class="cp-video-poster" id="cpVideoPoster" src="" alt="">
+              <button class="cp-play-big" id="cpPlayBig" aria-label="播放">
+                <svg viewBox="0 0 24 24" width="64" height="64"><polygon points="6,4 20,12 6,20" fill="#fff"/></svg>
+              </button>
+            </div>
+
+            <!-- Timeline knowledge markers -->
+            <div class="cp-timeline-markers" id="cpTimelineMarkers"></div>
+
+            <!-- Video controls -->
+            <div class="cp-video-controls" id="cpVideoControls">
+              <div class="cp-progress-bar" id="cpProgressBar">
+                <div class="cp-progress-buffered" id="cpProgressBuffered"></div>
+                <div class="cp-progress-played" id="cpProgressPlayed"></div>
+                <input class="cp-progress-input" id="cpProgressInput" type="range" min="0" max="1000" value="0" step="1" aria-label="播放进度">
+              </div>
+              <div class="cp-controls-row">
+                <div class="cp-controls-left">
+                  <button class="cp-ctrl-btn" id="cpPrevBtn" aria-label="上一个" title="上一个">
+                    <svg viewBox="0 0 24 24" width="20" height="20"><polygon points="16,4 8,12 16,20" fill="currentColor"/><rect x="5" y="4" width="2" height="16" fill="currentColor"/></svg>
+                  </button>
+                  <button class="cp-ctrl-btn cp-ctrl-play" id="cpPlayBtn" aria-label="播放" title="播放">
+                    <svg class="cp-icon-play" viewBox="0 0 24 24" width="20" height="20"><polygon points="6,4 20,12 6,20" fill="currentColor"/></svg>
+                    <svg class="cp-icon-pause" viewBox="0 0 24 24" width="20" height="20" hidden><rect x="5" y="4" width="4" height="16" fill="currentColor"/><rect x="15" y="4" width="4" height="16" fill="currentColor"/></svg>
+                  </button>
+                  <button class="cp-ctrl-btn" id="cpNextBtn" aria-label="下一个" title="下一个">
+                    <svg viewBox="0 0 24 24" width="20" height="20"><polygon points="8,4 16,12 8,20" fill="currentColor"/><rect x="17" y="4" width="2" height="16" fill="currentColor"/></svg>
+                  </button>
+                  <span class="cp-time-display">
+                    <span id="cpTimeCurrent">0:00</span> / <span id="cpTimeDuration">0:00</span>
+                  </span>
+                </div>
+                <div class="cp-controls-right">
+                  <div class="cp-speed-wrapper" id="cpSpeedWrapper">
+                    <button class="cp-ctrl-btn" id="cpSpeedBtn" aria-label="播放速度" title="播放速度">
+                      <span id="cpSpeedLabel">1x</span>
+                    </button>
+                    <div class="cp-speed-menu" id="cpSpeedMenu" hidden>
+                      <button data-speed="0.5">0.5x</button>
+                      <button data-speed="0.75">0.75x</button>
+                      <button data-speed="1" class="cp-speed-active">1x</button>
+                      <button data-speed="1.25">1.25x</button>
+                      <button data-speed="1.5">1.5x</button>
+                      <button data-speed="2">2x</button>
+                    </div>
+                  </div>
+                  <div class="cp-subtitle-btns" id="cpSubtitleBtns">
+                    <button class="cp-ctrl-btn" id="cpSubZhBtn" aria-label="中文字幕" title="中文字幕">中</button>
+                    <button class="cp-ctrl-btn" id="cpSubBoBtn" aria-label="藏文字幕" title="藏文字幕">བོ</button>
+                  </div>
+                  <div class="cp-volume-wrapper" id="cpVolumeWrapper">
+                    <button class="cp-ctrl-btn" id="cpVolumeBtn" aria-label="音量" title="音量">
+                      <svg class="cp-icon-vol" viewBox="0 0 24 24" width="20" height="20"><polygon points="3,9 7,9 12,4 12,20 7,15 3,15" fill="currentColor"/><path d="M16 8a4 4 0 010 8" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+                      <svg class="cp-icon-mute" viewBox="0 0 24 24" width="20" height="20" hidden><polygon points="3,9 7,9 12,4 12,20 7,15 3,15" fill="currentColor"/><line x1="18" y1="9" x2="22" y2="15" stroke="currentColor" stroke-width="2"/><line x1="22" y1="9" x2="18" y2="15" stroke="currentColor" stroke-width="2"/></svg>
+                    </button>
+                    <input class="cp-volume-slider" id="cpVolumeSlider" type="range" min="0" max="100" value="80" aria-label="音量">
+                  </div>
+                  <button class="cp-ctrl-btn" id="cpCCBtn" aria-label="字幕" title="字幕">
+                    <svg viewBox="0 0 24 24" width="20" height="20"><rect x="2" y="5" width="20" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><text x="12" y="14" text-anchor="middle" font-size="8" fill="currentColor" font-weight="bold">CC</text></svg>
+                  </button>
+                  <button class="cp-ctrl-btn" id="cpFullscreenBtn" aria-label="全屏" title="全屏">
+                    <svg viewBox="0 0 24 24" width="20" height="20"><polyline points="3,8 3,3 8,3" fill="none" stroke="currentColor" stroke-width="2"/><polyline points="16,3 21,3 21,8" fill="none" stroke="currentColor" stroke-width="2"/><polyline points="3,16 3,21 8,21" fill="none" stroke="currentColor" stroke-width="2"/><polyline points="16,21 21,21 21,16" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Course info card -->
+        <section class="cp-card cp-section cp-section-info" id="cpSectionInfo">
+          <h2 class="cp-section-title">课程信息</h2>
+          <div class="cp-info-grid">
+            <div class="cp-info-main">
+              <h3 class="cp-info-title" id="cpInfoTitle">课程标题</h3>
+              <div class="cp-info-meta">
+                <span class="cp-info-teacher" id="cpInfoTeacher">
+                  <svg viewBox="0 0 24 24" width="16" height="16"><circle cx="12" cy="8" r="4" fill="currentColor"/><path d="M4 20c0-4 4-7 8-7s8 3 8 7" fill="currentColor"/></svg>
+                  <span>授课教师</span>
+                </span>
+                <span class="cp-info-duration" id="cpInfoDuration">
+                  <svg viewBox="0 0 24 24" width="16" height="16"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><polyline points="12,6 12,12 16,14" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+                  <span>时长</span>
+                </span>
+              </div>
+              <div class="cp-info-tags" id="cpInfoTags"></div>
+              <p class="cp-info-desc" id="cpInfoDesc">课程描述</p>
+            </div>
+            <div class="cp-info-actions">
+              <button class="cp-btn cp-btn-outline" id="cpShareBtn" aria-label="分享">
+                <svg viewBox="0 0 24 24" width="18" height="18"><circle cx="18" cy="5" r="3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="6" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="18" cy="19" r="3" fill="none" stroke="currentColor" stroke-width="2"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5" stroke="currentColor" stroke-width="2"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5" stroke="currentColor" stroke-width="2"/></svg>
+                分享
+              </button>
+              <button class="cp-btn cp-btn-outline" id="cpFavoriteBtn" aria-label="收藏">
+                <svg viewBox="0 0 24 24" width="18" height="18"><path d="M12 21l-1.5-1.3C5 14.5 2 11.6 2 8.2 2 5.5 4.2 3 7 3c1.7 0 3.3.8 5 2.6C13.7 3.8 15.3 3 17 3c2.8 0 5 2.5 5 5.2 0 3.4-3 6.3-8.5 11.5L12 21z" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+                收藏
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. Learning objectives & key points -->
+        <section class="cp-card cp-section cp-section-objectives" id="cpSectionObjectives">
+          <h2 class="cp-section-title">学习目标与要点</h2>
+          <div class="cp-objectives-grid">
+            <div class="cp-objectives-col">
+              <h3>学习目标</h3>
+              <ul class="cp-objectives-list" id="cpObjectivesList"></ul>
+            </div>
+            <div class="cp-objectives-col">
+              <h3>知识要点</h3>
+              <ul class="cp-keypoints-list" id="cpKeyPointsList"></ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- 5. Teacher / AI summary -->
+        <section class="cp-card cp-section cp-section-summary" id="cpSectionSummary">
+          <h2 class="cp-section-title">教师总结 & AI 摘要</h2>
+          <div class="cp-summary-tabs" id="cpSummaryTabs">
+            <button class="cp-tab cp-tab-active" data-tab="teacher">教师总结</button>
+            <button class="cp-tab" data-tab="ai">AI 摘要</button>
+          </div>
+          <div class="cp-summary-panels">
+            <div class="cp-summary-panel cp-panel-teacher" id="cpPanelTeacher">
+              <p id="cpTeacherSummary">教师总结内容</p>
+            </div>
+            <div class="cp-summary-panel cp-panel-ai" id="cpPanelAI" hidden>
+              <p id="cpAISummary">AI 摘要内容</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6. Student notes -->
+        <section class="cp-card cp-section cp-section-notes" id="cpSectionNotes">
+          <h2 class="cp-section-title">学习笔记</h2>
+          <div class="cp-notes-list" id="cpNotesList"></div>
+          <div class="cp-note-add" id="cpNoteAdd">
+            <div class="cp-note-add-header">
+              <span class="cp-note-timestamp" id="cpNoteTimestamp">0:00</span>
+              <span>添加笔记</span>
+            </div>
+            <textarea class="cp-note-textarea" id="cpNoteTextarea" rows="3" placeholder="在此输入笔记…"></textarea>
+            <div class="cp-note-add-actions">
+              <button class="cp-btn cp-btn-primary cp-btn-sm" id="cpNoteSaveBtn">保存</button>
+              <button class="cp-btn cp-btn-outline cp-btn-sm" id="cpNoteCancelBtn">取消</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- 7. In-video interactive questions -->
+        <section class="cp-card cp-section cp-section-exercises" id="cpSectionExercises">
+          <h2 class="cp-section-title">视频中互动题目</h2>
+          <div class="cp-exercises-list" id="cpExercisesList"></div>
+        </section>
+
+        <!-- 8. Simple oral interaction -->
+        <section class="cp-card cp-section cp-section-oral" id="cpSectionOral">
+          <h2 class="cp-section-title">口语跟读练习</h2>
+          <div class="cp-oral-section">
+            <div class="cp-oral-demo">
+              <h3>示范音频</h3>
+              <audio class="cp-oral-audio" id="cpOralDemo" controls></audio>
+              <p class="cp-oral-text" id="cpOralText">示范文本</p>
+            </div>
+            <div class="cp-oral-record">
+              <button class="cp-btn cp-btn-accent cp-record-btn" id="cpRecordBtn" aria-label="录音">
+                <svg viewBox="0 0 24 24" width="24" height="24"><circle cx="12" cy="12" r="5" fill="currentColor"/><path d="M5 12a7 7 0 0014 0" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+                <span>按住录音</span>
+              </button>
+              <p class="cp-oral-hint" id="cpOralHint">点击按钮开始录音，再次点击停止</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 9. Formal post-lesson practice -->
+        <section class="cp-card cp-section cp-section-practice" id="cpSectionPractice">
+          <h2 class="cp-section-title">课后练习</h2>
+          <div class="cp-practice-link" id="cpPracticeLink">
+            <div class="cp-practice-info">
+              <h3 id="cpPracticeTitle">正式课后练习</h3>
+              <p id="cpPracticeDesc">完成课后练习，巩固所学知识</p>
+            </div>
+            <a class="cp-btn cp-btn-primary" id="cpPracticeGoBtn" href="#">
+              开始练习
+              <svg viewBox="0 0 24 24" width="18" height="18"><polyline points="9,6 15,12 9,18" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+            </a>
+          </div>
+        </section>
+
+        <!-- 10. Course completion status -->
+        <section class="cp-card cp-section cp-section-completion" id="cpSectionCompletion">
+          <h2 class="cp-section-title">学习进度</h2>
+          <div class="cp-completion-grid">
+            <div class="cp-completion-item">
+              <div class="cp-completion-badge" id="cpCompletionBadge">
+                <svg viewBox="0 0 24 24" width="48" height="48"><circle cx="12" cy="12" r="10" fill="none" stroke="var(--cp-gold)" stroke-width="2"/><polyline points="8,12 11,15 16,9" fill="none" stroke="var(--cp-gold)" stroke-width="2.5"/></svg>
+              </div>
+              <p class="cp-completion-label">完成进度</p>
+              <p class="cp-completion-value" id="cpCompletionValue">0%</p>
+            </div>
+            <div class="cp-completion-item">
+              <div class="cp-completion-ring" id="cpAttainmentRing">
+                <span id="cpAttainmentValue">0%</span>
+              </div>
+              <p class="cp-completion-label">达成率</p>
+            </div>
+            <div class="cp-completion-item">
+              <p class="cp-completion-stat" id="cpLearnedCount">0</p>
+              <p class="cp-completion-label">已学活动</p>
+            </div>
+            <div class="cp-completion-item">
+              <p class="cp-completion-stat" id="cpRemainingCount">0</p>
+              <p class="cp-completion-label">待学活动</p>
+            </div>
+          </div>
+        </section>
+
+      </div>
+      <!-- /.cp-player-main -->
+
+      <!-- Right column (1/3, sticky): directory + recommendations + statistics -->
+      <aside class="cp-player-sidebar" id="cpDirectorySidebar">
+
+        <!-- Directory card -->
+        <div class="cp-card cp-card-directory">
+          <h2 class="cp-directory-title">课程目录</h2>
+          <div class="cp-progress-section" id="cpDirProgress">
+            <div class="cp-progress-track">
+              <div class="cp-progress-fill" id="cpDirProgressFill" style="width:0%"></div>
+            </div>
+            <span class="cp-progress-text"><span id="cpDirLearned">0</span> / <span id="cpDirTotal">0</span> 已学</span>
+          </div>
+          <ul class="cp-directory" id="cpDirectory"></ul>
+        </div>
+
+        <!-- Recommendations card (master template: in sidebar) -->
+        <div class="cp-card cp-card-recommendations" id="cpSectionRecommendations">
+          <h2 class="cp-section-title">推荐课程</h2>
+          <div class="cp-rec-list" id="cpRecGrid"></div>
+        </div>
+
+        <!-- Statistics card (master template: in sidebar) -->
+        <div class="cp-card cp-card-statistics" id="cpSectionStatistics">
+          <h2 class="cp-section-title">学习统计</h2>
+          <div id="cpStatsContainer"></div>
+        </div>
+
+      </aside>
+
+    </section>
+    <!-- /.cp-player-layout -->
+
+  </main>
+
+  <!-- Toast notification -->
+  <div class="cp-toast" id="cpToast" hidden>
+    <span class="cp-toast-msg" id="cpToastMsg"></span>
+  </div>
+
+  <!-- Prerequisite scripts -->
+  <script src="/assets/app-core.js"></script>
+  <script src="/assets/api-client.js"></script>
+  <script src="/shared/student-nav.js"></script>
+
+  <!-- Course player modules (IIFE, load order matters) -->
+  <script src="course-api-adapter.js"></script>
+  <script src="course-player-state.js"></script>
+  <script src="media-controller.js"></script>
+  <script src="note-controller.js"></script>
+  <script src="exercise-controller.js"></script>
+
+  <!-- Initialization -->
+  <script>
+  (function () {
+    'use strict';
+
+    function getQueryParam(name) {
+      var params = new URLSearchParams(window.location.search);
+      return params.get(name) || '';
+    }
+
+    function showToast(msg) {
+      var toast = document.getElementById('cpToast');
+      var msgEl = document.getElementById('cpToastMsg');
+      if (toast && msgEl) {
+        msgEl.textContent = msg;
+        toast.hidden = false;
+        setTimeout(function () { toast.hidden = true; }, 3000);
+      }
+    }
+
+    function showError(msg) {
+      var loading = document.getElementById('cpLoading');
+      var errorDiv = document.getElementById('cpError');
+      var errorMsg = document.getElementById('cpErrorMsg');
+      if (loading) loading.hidden = true;
+      if (errorDiv) errorDiv.hidden = false;
+      if (errorMsg) errorMsg.textContent = msg || '加载失败，请稍后重试';
+    }
+
+    function showMain() {
+      var loading = document.getElementById('cpLoading');
+      var main = document.getElementById('cpMain');
+      var errorDiv = document.getElementById('cpError');
+      if (loading) loading.hidden = true;
+      if (errorDiv) errorDiv.hidden = true;
+      if (main) main.hidden = false;
+    }
+
+    function renderHero(course) {
+      var titleEl = document.getElementById('cpHeroTitle');
+      var chapterEl = document.getElementById('cpHeroChapter');
+      var bcCourse = document.getElementById('cpBreadcrumbCourse');
+      var bcChapter = document.getElementById('cpBreadcrumbChapter');
+      if (titleEl) titleEl.textContent = course.title || '';
+      if (chapterEl) chapterEl.textContent = '';
+      if (bcCourse) bcCourse.textContent = course.title || '';
+      if (bcChapter) bcChapter.textContent = '';
+    }
+
+    function renderInfo(course) {
+      var titleEl = document.getElementById('cpInfoTitle');
+      var teacherEl = document.getElementById('cpInfoTeacher');
+      var durationEl = document.getElementById('cpInfoDuration');
+      var descEl = document.getElementById('cpInfoDesc');
+      var tagsEl = document.getElementById('cpInfoTags');
+
+      if (titleEl) titleEl.textContent = course.title || '';
+      if (teacherEl) teacherEl.querySelector('span').textContent = course.teacher || '—';
+      if (durationEl) durationEl.querySelector('span').textContent = (course.duration || 0) + ' 课时';
+      if (descEl) descEl.textContent = course.description || '';
+
+      if (tagsEl) {
+        tagsEl.innerHTML = '';
+        var tags = [].concat(course.tags || [], course.taskGroup ? ['任务群: ' + course.taskGroup] : [], course.difficulty ? ['难度: ' + course.difficulty] : []);
+        tags.forEach(function (t) {
+          var span = document.createElement('span');
+          span.className = 'cp-info-tag';
+          span.textContent = t;
+          tagsEl.appendChild(span);
+        });
+      }
+    }
+
+    function renderObjectives(activity) {
+      var objList = document.getElementById('cpObjectivesList');
+      var kpList = document.getElementById('cpKeyPointsList');
+      if (objList) {
+        objList.innerHTML = '';
+        (activity.objectives || []).forEach(function (o) {
+          var li = document.createElement('li');
+          li.textContent = o;
+          objList.appendChild(li);
+        });
+        if (!activity.objectives || !activity.objectives.length) {
+          objList.innerHTML = '<li>暂无</li>';
+        }
+      }
+      if (kpList) {
+        kpList.innerHTML = '';
+        (activity.keyPoints || []).forEach(function (k) {
+          var li = document.createElement('li');
+          li.textContent = k;
+          kpList.appendChild(li);
+        });
+        if (!activity.keyPoints || !activity.keyPoints.length) {
+          kpList.innerHTML = '<li>暂无</li>';
+        }
+      }
+    }
+
+    // --- renderDirectory: master template numbered badge + status pill ---
+    function renderDirectory(course, currentActivityId) {
+      var dirEl = document.getElementById('cpDirectory');
+      var progressFill = document.getElementById('cpDirProgressFill');
+      var learnedEl = document.getElementById('cpDirLearned');
+      var totalEl = document.getElementById('cpDirTotal');
+
+      if (!dirEl || !course || !course.units) return;
+      dirEl.innerHTML = '';
+
+      var total = 0;
+      var completed = 0;
+      var index = 0;
+
+      course.units.forEach(function (unit) {
+        var unitHeader = document.createElement('li');
+        unitHeader.className = 'cp-dir-unit';
+        unitHeader.textContent = unit.title;
+        dirEl.appendChild(unitHeader);
+
+        (unit.lessons || []).forEach(function (lesson) {
+          (lesson.activities || []).forEach(function (act) {
+            total++;
+            if (act.isCompleted) completed++;
+            index++;
+
+            var li = document.createElement('li');
+            var state = act.isCompleted ? 'learned' : (act.activityId === currentActivityId ? 'current' : 'locked');
+            li.className = 'cp-dir-item cp-dir-' + state;
+            li.setAttribute('data-activity-id', act.activityId);
+
+            // Numbered badge (.cp-dir-num) — colored by state
+            var num = document.createElement('span');
+            num.className = 'cp-dir-num';
+            num.textContent = index;
+
+            // Title
+            var title = document.createElement('span');
+            title.className = 'cp-dir-title';
+            title.textContent = act.title || '未命名活动';
+
+            // Status pill (.cp-dir-status)
+            var status = document.createElement('span');
+            status.className = 'cp-dir-status cp-dir-status-' + state;
+            status.textContent = act.isCompleted ? '已学习' : (act.activityId === currentActivityId ? '当前' : '未学习');
+
+            li.appendChild(num);
+            li.appendChild(title);
+            li.appendChild(status);
+
+            li.addEventListener('click', function () {
+              if (window.CoursePlayerState) {
+                window.CoursePlayerState.setCurrentActivity(act.activityId);
+              }
+            });
+
+            dirEl.appendChild(li);
+          });
+        });
+      });
+
+      if (progressFill) progressFill.style.width = (total > 0 ? Math.round((completed / total) * 100) : 0) + '%';
+      if (learnedEl) learnedEl.textContent = completed;
+      if (totalEl) totalEl.textContent = total;
+    }
+
+    function renderCompletion(course) {
+      var valEl = document.getElementById('cpCompletionValue');
+      var attEl = document.getElementById('cpAttainmentValue');
+      var learnedEl = document.getElementById('cpLearnedCount');
+      var remainingEl = document.getElementById('cpRemainingCount');
+      var progress = course.progress || {};
+      var pct = progress.percent || 0;
+      var completed = progress.completedActivities || 0;
+      var total = progress.totalActivities || 0;
+
+      if (valEl) valEl.textContent = pct + '%';
+      if (attEl) attEl.textContent = pct + '%';
+      if (learnedEl) learnedEl.textContent = completed;
+      if (remainingEl) remainingEl.textContent = Math.max(0, total - completed);
+    }
+
+    // --- renderRecommendations: master template horizontal layout (cover + info) ---
+    function renderRecommendations(recommendations) {
+      var list = document.getElementById('cpRecGrid');
+      if (!list) return;
+      list.innerHTML = '';
+      var recs = (recommendations || []).slice(0, 4);
+      if (!recs.length) {
+        list.innerHTML = '<p class="cp-empty-text">暂无推荐课程</p>';
+        return;
+      }
+      recs.forEach(function (rec) {
+        var card = document.createElement('a');
+        card.className = 'cp-rec-card';
+        card.href = '/student/courses/course-detail/?id=' + (rec.assignmentId || '');
+
+        var cover = document.createElement('div');
+        cover.className = 'cp-rec-cover';
+        var coverUrl = rec.coverUrl || '/assets/course-bg/golden-peak.png';
+        cover.style.backgroundImage = 'url(' + coverUrl + ')';
+
+        var info = document.createElement('div');
+        info.className = 'cp-rec-info';
+
+        var title = document.createElement('h4');
+        title.textContent = rec.title || '';
+        info.appendChild(title);
+
+        var meta = document.createElement('p');
+        meta.textContent = (rec.teacher || '') + ' · ' + (rec.duration || 0) + '课时';
+        info.appendChild(meta);
+
+        card.appendChild(cover);
+        card.appendChild(info);
+        list.appendChild(card);
+      });
+    }
+
+    // --- renderStatistics: master template (weekly progress bar + streak + 2-col grid) ---
+    function renderStatistics(dashboard) {
+      var container = document.getElementById('cpStatsContainer');
+      if (!container) return;
+      container.innerHTML = '';
+      if (!dashboard) return;
+
+      var weeklyHours = Math.round((dashboard.weeklyMinutes || 0) / 60);
+      var weeklyGoal = dashboard.weeklyGoalHours || 10;
+      var streak = dashboard.consecutiveDays || 0;
+      var badges = dashboard.badgesEarned || 0;
+      var coursesLearned = dashboard.coursesLearned || 0;
+      var totalHours = Math.round((dashboard.totalMinutes || 0) / 60);
+
+      // Block 1: weekly learning hours progress bar
+      var block1 = document.createElement('div');
+      block1.className = 'cp-stat-block';
+      block1.innerHTML =
+        '<p class="cp-stat-block-title">本周学习时长</p>' +
+        '<p class="cp-stat-block-value">' + weeklyHours + ' / ' + weeklyGoal + ' 小时</p>' +
+        '<div class="cp-stat-progress">' +
+          '<div class="cp-stat-progress-fill" style="width:' + Math.min(100, (weeklyGoal > 0 ? (weeklyHours / weeklyGoal) * 100 : 0)) + '%"></div>' +
+        '</div>';
+
+      // Block 2: 7-day streak visualization
+      var block2 = document.createElement('div');
+      block2.className = 'cp-stat-block';
+      var streakBars = '';
+      var dayLabels = ['一', '二', '三', '四', '五', '六', '日'];
+      var history = dashboard.recentDays || [];
+      for (var i = 0; i < 7; i++) {
+        var dayData = history[i] || {};
+        var mins = dayData.minutes || 0;
+        var active = mins > 0;
+        var height = active ? Math.min(100, Math.max(15, (mins / 60) * 100)) : 4;
+        streakBars +=
+          '<div class="cp-stat-streak-bar' + (active ? ' active' : '') + '">' +
+            '<div class="cp-stat-streak-fill" style="height:' + height + '%"></div>' +
+            '<span class="cp-stat-streak-label">' + dayLabels[i] + '</span>' +
+          '</div>';
+      }
+      block2.innerHTML =
+        '<p class="cp-stat-block-title">连续学习 <strong>' + streak + '</strong> 天</p>' +
+        '<div class="cp-stat-streak">' + streakBars + '</div>';
+
+      // Block 3: 2-column grid (courses learned + badges)
+      var block3 = document.createElement('div');
+      block3.className = 'cp-stat-grid-2';
+      block3.innerHTML =
+        '<div class="cp-stat-mini">' +
+          '<p class="cp-stat-mini-value">' + coursesLearned + '</p>' +
+          '<p class="cp-stat-mini-label">已学课程</p>' +
+        '</div>' +
+        '<div class="cp-stat-mini">' +
+          '<p class="cp-stat-mini-value">' + badges + '</p>' +
+          '<p class="cp-stat-mini-label">获得徽章</p>' +
+        '</div>';
+
+      // Block 4: total hours
+      var block4 = document.createElement('div');
+      block4.className = 'cp-stat-block';
+      block4.innerHTML =
+        '<p class="cp-stat-block-title">累计学习时长</p>' +
+        '<p class="cp-stat-block-value">' + totalHours + ' 小时</p>';
+
+      container.appendChild(block1);
+      container.appendChild(block2);
+      container.appendChild(block3);
+      container.appendChild(block4);
+    }
+
+    function loadVideoForActivity(activity) {
+      if (!activity) return;
+      if (window.MediaController && window.MediaController.loadSource) {
+        window.MediaController.loadSource(activity.videoUrl, activity.posterUrl, activity.subtitleZhUrl, activity.subtitleBoUrl);
+      }
+    }
+
+    function bindFavorite() {
+      var btn = document.getElementById('cpFavoriteBtn');
+      if (!btn) return;
+      btn.addEventListener('click', function () {
+        var state = window.CoursePlayerState.getState();
+        var course = state.course;
+        if (!course) return;
+        window.CourseApiAdapter.toggleFavorite(state.assignmentId, course.isFavorite).then(function (result) {
+          if (result && !result.error) {
+            course.isFavorite = result.isFavorite;
+            btn.classList.toggle('cp-favorited', course.isFavorite);
+            showToast(course.isFavorite ? '已收藏' : '已取消收藏');
+          }
+        }).catch(function () {
+          showToast('操作失败');
+        });
+      });
+    }
+
+    function bindSummaryTabs() {
+      var tabs = document.querySelectorAll('#cpSummaryTabs .cp-tab');
+      var panelTeacher = document.getElementById('cpPanelTeacher');
+      var panelAI = document.getElementById('cpPanelAI');
+      tabs.forEach(function (tab) {
+        tab.addEventListener('click', function () {
+          tabs.forEach(function (t) { t.classList.remove('cp-tab-active'); });
+          tab.classList.add('cp-tab-active');
+          var target = tab.getAttribute('data-tab');
+          if (panelTeacher) panelTeacher.hidden = (target !== 'teacher');
+          if (panelAI) panelAI.hidden = (target !== 'ai');
+        });
+      });
+    }
+
+    function bindRetry() {
+      var btn = document.getElementById('cpRetryBtn');
+      if (btn) {
+        btn.addEventListener('click', function () {
+          window.location.reload();
+        });
+      }
+    }
+
+    function bindPrevNext() {
+      var prevBtn = document.getElementById('cpPrevBtn');
+      var nextBtn = document.getElementById('cpNextBtn');
+      if (prevBtn) {
+        prevBtn.addEventListener('click', function () {
+          var prev = window.CoursePlayerState.getPrevActivity();
+          if (prev) window.CoursePlayerState.setCurrentActivity(prev.activityId);
+        });
+      }
+      if (nextBtn) {
+        nextBtn.addEventListener('click', function () {
+          var next = window.CoursePlayerState.getNextActivity();
+          if (next) window.CoursePlayerState.setCurrentActivity(next.activityId);
+        });
+      }
+    }
+
+    function bindOralRecord() {
+      var recordBtn = document.getElementById('cpRecordBtn');
+      var oralHint = document.getElementById('cpOralHint');
+      if (!recordBtn) return;
+      var recorderState = { status: 'idle', mediaRecorder: null, chunks: [] };
+
+      recordBtn.addEventListener('click', function () {
+        if (recorderState.status === 'idle') {
+          navigator.mediaDevices.getUserMedia({ audio: true }).then(function (stream) {
+            recorderState.status = 'recording';
+            recorderState.chunks = [];
+            recordBtn.classList.add('cp-recording');
+            var labelSpan = recordBtn.querySelector('span');
+            if (labelSpan) labelSpan.textContent = '录音中…';
+            if (oralHint) oralHint.textContent = '再次点击停止录音';
+
+            var mr = new MediaRecorder(stream);
+            recorderState.mediaRecorder = mr;
+            mr.ondataavailable = function (e) {
+              if (e.data && e.data.size > 0) recorderState.chunks.push(e.data);
+            };
+            mr.onstop = function () {
+              stream.getTracks().forEach(function (t) { t.stop(); });
+              var blob = new Blob(recorderState.chunks, { type: 'audio/webm' });
+              recorderState.chunks = [];
+              uploadOralBlob(blob);
+            };
+            mr.start();
+          }).catch(function () {
+            showToast('无法访问麦克风');
+          });
+        } else if (recorderState.status === 'recording' && recorderState.mediaRecorder) {
+          recorderState.mediaRecorder.stop();
+        }
+      });
+
+      function uploadOralBlob(blob) {
+        recorderState.status = 'uploading';
+        recordBtn.disabled = true;
+        recordBtn.classList.remove('cp-recording');
+        var labelSpan = recordBtn.querySelector('span');
+        if (labelSpan) labelSpan.textContent = '按住录音';
+        if (oralHint) oralHint.textContent = '上传中…';
+
+        var st = window.CoursePlayerState.getState();
+        window.CourseApiAdapter.initRecording(blob)
+          .then(function (initResult) {
+            return window.CourseApiAdapter.uploadRecording(initResult.uploadUrl, blob)
+              .then(function () { return initResult.recordingId; });
+          })
+          .then(function (recordingId) {
+            return window.CourseApiAdapter.completeRecording(recordingId);
+          })
+          .then(function (completeResult) {
+            return window.CourseApiAdapter.linkRecording(
+              st.assignmentId, st.submissionId, st.currentActivityId,
+              completeResult.recordingId
+            );
+          })
+          .then(function () {
+            if (oralHint) oralHint.textContent = '录音完成!';
+            recordBtn.disabled = false;
+            recorderState.status = 'idle';
+            window.CoursePlayerState.setActivityCompleted(st.currentActivityId);
+            showToast('录音提交成功');
+          })
+          .catch(function () {
+            showToast('录音提交失败');
+            recordBtn.disabled = false;
+            recorderState.status = 'idle';
+            if (oralHint) oralHint.textContent = '点击按钮开始录音，再次点击停止';
+          });
+      }
+    }
+
+    function bindPracticeLink() {
+      var practiceBtn = document.getElementById('cpPracticeGoBtn');
+      if (!practiceBtn) return;
+      practiceBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        var state = window.CoursePlayerState.getState();
+        var activityId = state.currentActivityId;
+        var practiceUrl = '/student/practice/?assignmentId=' + state.assignmentId + '&activityId=' + activityId + '&returnUrl=' + encodeURIComponent(window.location.pathname + window.location.search);
+        window.location.href = practiceUrl;
+      });
+    }
+
+    // ---- Main initialization ----
+    function main() {
+      var assignmentId = getQueryParam('id');
+      if (!assignmentId) {
+        showError('缺少课程ID参数');
+        return;
+      }
+
+      // Bind UI first
+      bindRetry();
+      bindFavorite();
+      bindSummaryTabs();
+      bindPrevNext();
+      bindOralRecord();
+      bindPracticeLink();
+
+      // Initialize player state (loads course data from API)
+      window.CoursePlayerState.init(assignmentId).then(function (state) {
+        if (state.error) {
+          showError(state.error);
+          return;
+        }
+
+        showMain();
+
+        var course = state.course || {};
+
+        // Render all sections
+        renderHero(course);
+        renderInfo(course);
+        renderDirectory(course, state.currentActivityId);
+        renderCompletion(course);
+        renderRecommendations(state.recommendations);
+        renderStatistics(state.dashboard);
+
+        if (state.currentActivity) {
+          renderObjectives(state.currentActivity);
+          loadVideoForActivity(state.currentActivity);
+        }
+
+        // Initialize sub-controllers
+        if (window.MediaController) window.MediaController.init('cpVideo');
+        if (window.NoteController) window.NoteController.init();
+        if (window.ExerciseController) window.ExerciseController.init();
+
+        // Restore activityId from URL if present
+        window.CoursePlayerState.restoreFromUrl();
+
+      }).catch(function (err) {
+        showError((err && err.message) || '加载课程数据失败');
+      });
+
+      // Subscribe to state changes for re-rendering
+      window.CoursePlayerState.subscribe(function (state, changedKeys) {
+        if (!changedKeys) return;
+
+        if (changedKeys.indexOf('currentActivity') !== -1 && state.currentActivity) {
+          renderObjectives(state.currentActivity);
+          loadVideoForActivity(state.currentActivity);
+          renderDirectory(state.course, state.currentActivityId);
+        }
+        if (changedKeys.indexOf('notes') !== -1) {
+          // NoteController handles its own rendering
+        }
+        if (changedKeys.indexOf('course') !== -1) {
+          renderCompletion(state.course);
+          renderDirectory(state.course, state.currentActivityId);
+        }
+        if (changedKeys.indexOf('recommendations') !== -1) {
+          renderRecommendations(state.recommendations);
+        }
+        if (changedKeys.indexOf('dashboard') !== -1) {
+          renderStatistics(state.dashboard);
+        }
+      });
+    }
+
+    // Wait for DOM
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', main);
+    } else {
+      main();
+    }
+  })();
+  </script>
+</body>
+</html>

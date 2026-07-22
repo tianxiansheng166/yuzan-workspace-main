@@ -34,12 +34,13 @@ services:
       - PORT=4300
       - DATABASE_TYPE=sqlite
       - DATABASE_PATH=/opt/flowise/data/database.sqlite
-      - SECRETKEY_PATH=/opt/flowise/secret/encryption.key
+      - SECRETKEY_PATH=/opt/flowise/secret
       - FLOWISE_USERNAME=${FLOWISE_USERNAME:-admin}
       - FLOWISE_PASSWORD=${FLOWISE_PASSWORD:-}
       - CORS_ORIGINS=${CORS_ORIGINS:-http://127.0.0.1:4175,http://localhost:4175}
       - IFRAME_ORIGINS=${IFRAME_ORIGINS:-}
       - DISABLE_COMMUNITY_NODES=true
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
       - NODE_OPTIONS=--max-old-space-size=4096
     volumes:
       - ../../../runtime-local/flowise/data:/opt/flowise/data

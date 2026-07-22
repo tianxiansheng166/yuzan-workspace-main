@@ -2,7 +2,7 @@
 
 > 范围：`d:\program\test_program\yuzanxinsheng\three\yuzan-next\web-runtime`
 > 后端：`d:\program\test_program\yuzanxinsheng\three\yuzan-next\apps\api`
-> 更新日期：2026-07-17（联调冒烟测试通过）
+> 更新日期：2026-07-22（加入藏中翻译语料系统缺口）
 
 ## 说明
 
@@ -108,6 +108,76 @@
 
 - **需要接口**：`GET /api/v1/schools/:schoolId/research/dashboard`
 - **当前状态**：模块占位实现，端点返回 `PERSISTENCE_PENDING`。
+
+## P0-TIBETAN 藏中翻译语料系统缺口
+
+> 任务编号：P0-TIBETAN-CHINESE-TRANSLATION-CORPUS-001
+> 选定模型：tencent/Hunyuan-MT-7B（INT4量化，Tencent Hunyuan Community License 免费商用，4785MB VRAM，18s加载，100/100测试通过）
+> 淘汰模型：google/madlad400-3b-mt（输出损坏）、facebook/nllb-200（CC-BY-NC不可商用）、Helsinki-NLP/opus-mt（不存在）
+
+### 已确认的12项问题（均未修复，禁止报告为已完成）
+
+| # | 问题 | 严重性 | 说明 |
+|---|---|---|---|
+| 1 | teacher/translation/script.js 已损坏 | 阻塞 | 仅剩2行不完整代码 |
+| 2 | 教师翻译页是静态页面 | 阻塞 | 无真实翻译交互 |
+| 3 | TranslationsModule绑定UnavailableTranslationRepository | 阻塞 | 所有翻译操作返回不可用 |
+| 4 | Prisma无TranslationJob/GlossaryEntry/翻译记忆模型 | 阻塞 | 无数据持久化 |
+| 5 | 无翻译Worker和真实Provider调用 | 阻塞 | 无实际翻译执行能力 |
+| 6 | encryptText是Base64占位 | 安全 | 非加密，需AES-GCM |
+| 7 | checkRateLimit是空实现 | 安全 | 无真实限流 |
+| 8 | listMyJobs未按createdByUserId过滤 | 安全 | 用户隔离缺失 |
+| 9 | api-client无translations方法 | 阻塞 | 前端无法调用翻译API |
+| 10 | 学生端、志愿者端无翻译入口 | 缺失 | 无页面和导航入口 |
+| 11 | Nuxt翻译路由标记TRUTHFUL_GAP | 缺失 | apps-web端路由未实现 |
+| 12 | 管理端Provider状态为静态展示 | 缺失 | 无真实健康检查 |
+
+### 需要实现的API端点
+
+- `POST /schools/:schoolId/translations/jobs` — 创建翻译任务
+- `GET /schools/:schoolId/translations/jobs/me` — 当前用户历史
+- `GET /schools/:schoolId/translations/jobs/:jobId` — 任务详情
+- `POST /schools/:schoolId/translations/jobs/:jobId/corrections` — 提交纠正
+- `GET /schools/:schoolId/translations/glossary` — 术语表
+- `GET /schools/:schoolId/translations/memory/search` — 翻译记忆搜索
+- `POST /schools/:schoolId/translations/glossary/proposals` — 教师术语提案
+- `POST /schools/:schoolId/translations/corpus/submissions` — 教师语料提交
+- `GET/POST/PATCH /schools/:schoolId/language-resources/glossary` — 管理端术语
+- `GET/POST/PATCH /schools/:schoolId/language-resources/memory` — 管理端翻译记忆
+- `GET/POST /schools/:schoolId/language-resources/corpus/imports` — 管理端语料导入
+- `POST /schools/:schoolId/language-resources/reviews/:id/approve` — 审核通过
+- `POST /schools/:schoolId/language-resources/reviews/:id/reject` — 审核拒绝
+- `POST /admin/translation-providers/:id/health-check` — Provider健康检查
+
+### 需要实现的页面
+
+| 端 | 路由 | 状态 | 关键能力 |
+|---|---|---|---|
+| 学生 | /student/translation | 不存在 | 双向翻译、教学短语、术语、历史、收藏、纠错、免责声明 |
+| 教师 | /teacher/translation | 损坏 | 双向翻译、重新翻译、词典、历史、修改、提交术语/语料 |
+| 志愿者 | /volunteer/translation | 不存在 | 翻译、纠正提交 |
+| 管理端 | /admin/language-resources | 不存在 | Provider状态、语料来源/许可证、术语版本、审核队列、模型评测、导入导出 |
+
+### 安全修复清单
+
+- AES-GCM加密替代Base64（密钥不得写入DB或Git）
+- Redis真实限流替代空实现
+- listMyJobs按createdByUserId过滤
+- Provider错误脱敏
+- 学校隔离（所有翻译API需schoolId）
+- 角色权限（STUDENT/TEACHER/VOLUNTEER/SCHOOL_ADMIN/PLATFORM_ADMIN）
+- 内容长度限制
+- 日志不得记录原文
+- 学生内容不得自动用于训练
+
+### 模型部署资源
+
+- 模型：tencent/Hunyuan-MT-7B
+- 量化：INT4（BitsAndBytesConfig load_in_4bit=True）
+- VRAM：4785MB allocated / 6382MB reserved（RTX 4070 12GB）
+- 加载时间：18秒
+- 平均延迟：3050ms（100样本，10类别）
+- Python服务：services/translation-engine/（独立进程，负责模型加载、藏文预处理、翻译执行、health接口）
 
 ## 建议实施顺序
 

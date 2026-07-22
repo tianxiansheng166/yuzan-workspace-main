@@ -1732,6 +1732,13 @@ paths:
                 enum: [NOT_STARTED, IN_PROGRESS, COMPLETED, RESULT_PENDING],
               },
           }
+        - { in: query, name: search, schema: { type: string } }
+        - { in: query, name: taskGroup, schema: { type: string } }
+        - { in: query, name: culturalElement, schema: { type: string } }
+        - { in: query, name: sortBy, schema: { type: string, enum: [createdAt, publishedAt, popularity] } }
+        - { in: query, name: sortOrder, schema: { type: string, enum: [asc, desc] } }
+        - $ref: "#/components/parameters/Cursor"
+        - $ref: "#/components/parameters/Limit"
       responses:
         "200":
           description: Published courses visible to the current student
@@ -1890,6 +1897,50 @@ paths:
         "201": { description: Course submitted; attainment may remain PENDING }
         "409": { $ref: "#/components/responses/Conflict" }
         "422": { description: Required course work is incomplete }
+  /schools/{schoolId}/student/courses/favorites:
+    get:
+      summary: 获取当前学生收藏的课程版本
+      tags: [StudentCourses]
+      operationId: listStudentCourseFavorites
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+      responses:
+        "200": { description: Current student's course favorites }
+        "403": { $ref: "#/components/responses/Forbidden" }
+  /schools/{schoolId}/student/courses/stats:
+    get:
+      summary: 获取当前学生的课程学习统计
+      tags: [StudentCourses]
+      operationId: getStudentCourseStats
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+      responses:
+        "200": { description: Current student's course learning counts }
+        "403": { $ref: "#/components/responses/Forbidden" }
+  /schools/{schoolId}/student/courses/{assignmentId}/favorite:
+    post:
+      summary: 切换当前学生对课程的收藏状态
+      tags: [StudentCourses]
+      operationId: toggleStudentCourseFavorite
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/AssignmentId"
+      responses:
+        "201": { description: Favorite state toggled }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /schools/{schoolId}/student/courses/{assignmentId}/recommendations:
+    get:
+      summary: 获取与当前课程相关的可访问课程建议
+      tags: [StudentCourses]
+      operationId: getStudentCourseRecommendations
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/AssignmentId"
+      responses:
+        "200": { description: Student-visible related courses }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
   /schools/{schoolId}/practices:
     get:
       summary: 获取学生可发现的练习目录
@@ -2102,6 +2153,144 @@ paths:
               },
           }
         "409": { $ref: "#/components/responses/Conflict" }
+  /schools/{schoolId}/learning/activities/{activityId}/notes:
+    get:
+      summary: 获取当前学生在活动中的时间点笔记列表
+      tags: [StudentCourses]
+      operationId: listStudentActivityNotes
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/ActivityId"
+      responses:
+        "200": { description: Student private activity notes }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+    post:
+      summary: 创建当前学生在活动中的时间点笔记
+      tags: [StudentCourses]
+      operationId: createStudentActivityNote
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/ActivityId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [content]
+              properties:
+                content: { type: string, maxLength: 10000 }
+                videoTimestamp: { type: number, minimum: 0 }
+      responses:
+        "201": { description: Note created }
+        "403": { $ref: "#/components/responses/Forbidden" }
+  /schools/{schoolId}/learning/activities/{activityId}/notes/{noteId}:
+    put:
+      summary: 以 revision 乐观并发更新当前学生的一条时间点笔记
+      tags: [StudentCourses]
+      operationId: updateStudentActivityNote
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/ActivityId"
+        - { in: path, name: noteId, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [content, revision]
+              properties:
+                content: { type: string, maxLength: 10000 }
+                videoTimestamp: { type: number, minimum: 0 }
+                revision: { type: integer, minimum: 1 }
+      responses:
+        "200": { description: Note updated }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "409": { $ref: "#/components/responses/Conflict" }
+    delete:
+      summary: 删除当前学生的一条时间点笔记
+      tags: [StudentCourses]
+      operationId: deleteStudentActivityNote
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/ActivityId"
+        - { in: path, name: noteId, required: true, schema: { type: string, format: uuid } }
+      responses:
+        "200": { description: Note deleted }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /schools/{schoolId}/resources/presign-upload:
+    post:
+      summary: 为学校教师或管理员创建资源上传凭证
+      tags: [Resources]
+      operationId: presignResourceUpload
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [fileName, kind]
+              properties:
+                fileName: { type: string, maxLength: 255 }
+                kind: { type: string, enum: [IMAGE, AUDIO, VIDEO, DOCUMENT, SUBTITLE, OTHER] }
+                contentType: { type: string }
+                byteSize: { type: integer, minimum: 1, maximum: 5368709120 }
+      responses:
+        "201": { description: Pending resource with a presigned upload URL }
+        "403": { $ref: "#/components/responses/Forbidden" }
+  /schools/{schoolId}/resources/{resourceId}/confirm-upload:
+    put:
+      summary: 验证已上传的资源并更新其存储元数据
+      tags: [Resources]
+      operationId: confirmResourceUpload
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - { in: path, name: resourceId, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [objectKey]
+              properties:
+                objectKey: { type: string }
+                checksumSha256: { type: string }
+      responses:
+        "200": { description: Uploaded resource confirmed }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /schools/{schoolId}/resources/{resourceId}/playback-url:
+    get:
+      summary: 获取当前租户可访问资源的短期播放地址
+      tags: [Resources]
+      operationId: getResourcePlaybackUrl
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - { in: path, name: resourceId, required: true, schema: { type: string, format: uuid } }
+      responses:
+        "200": { description: Short-lived download URL }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /schools/{schoolId}/resources/{resourceId}:
+    get:
+      summary: 获取当前租户可访问资源的元数据
+      tags: [Resources]
+      operationId: getResourceInfo
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - { in: path, name: resourceId, required: true, schema: { type: string, format: uuid } }
+      responses:
+        "200": { description: Resource metadata }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
 components:
   securitySchemes:
     bearerAuth:

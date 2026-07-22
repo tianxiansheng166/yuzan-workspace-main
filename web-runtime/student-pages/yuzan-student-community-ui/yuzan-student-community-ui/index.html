@@ -5,6 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#fbfaf7" />
   <title>语赞心声 · 声音河谷</title>
+  <style>
+    /* 当被整合壳通过 iframe 加载时，预先隐藏自身导航栏与侧边栏，避免与外层统一导航栏重叠/闪烁 */
+    html.in-iframe-shell .topbar,
+    html.in-iframe-shell .left-rail,
+    html.in-iframe-shell .right-rail,
+    html.in-iframe-shell .app-shell > footer,
+    html.in-iframe-shell body > footer { display:none !important; }
+  </style>
+  <script>
+    (function(){
+      if (window.self !== window.top) {
+        document.documentElement.classList.add('in-iframe-shell');
+      }
+    })();
+  </script>
   <link rel="stylesheet" href="/shared/student-nav.css" />
   <link rel="stylesheet" href="styles.css" />
 </head>

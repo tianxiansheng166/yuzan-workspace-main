@@ -55,8 +55,8 @@ svg{display:block}
 .world__wave--left{left:24%;top:47%}
 .world__wave--right{right:2%;top:56%;transform:scaleX(.8)}
 .wave-line{fill:none;stroke:#f6dd9e;stroke-width:2.2;stroke-linecap:round;stroke-dasharray:700;animation:waveTravel 5s linear infinite;filter:drop-shadow(0 0 5px rgba(255,220,130,.45))}
-.brand{position:absolute;z-index:18;left:clamp(28px,4vw,68px);right:clamp(24px,3vw,52px);top:clamp(24px,4vh,48px);display:flex;align-items:flex-start;justify-content:space-between}
-.brand img{width:clamp(180px,16vw,250px);filter:drop-shadow(0 6px 12px rgba(121,48,23,.1))}
+.brand{position:absolute;z-index:18;left:clamp(28px,4vw,68px);right:clamp(24px,3vw,52px);top:clamp(18px,3vh,38px);display:flex;align-items:flex-start;justify-content:space-between}
+.brand img{width:clamp(120px,12vw,180px);filter:drop-shadow(0 6px 12px rgba(121,48,23,.1))}
 .sound-switch{border:1px solid rgba(119,86,50,.24);background:rgba(255,250,239,.58);backdrop-filter:blur(12px);border-radius:999px;padding:10px 15px;display:flex;align-items:center;gap:10px;font-family:"Noto Sans SC","Microsoft YaHei",sans-serif;font-size:12px;color:#6d5945;cursor:pointer;transition:.3s ease}
 .sound-switch:hover,.sound-switch[aria-pressed="true"]{border-color:#c89431;color:#9b6010;box-shadow:0 8px 24px rgba(116,74,20,.12)}
 .sound-switch__bars{display:flex;align-items:center;gap:2px;height:16px}

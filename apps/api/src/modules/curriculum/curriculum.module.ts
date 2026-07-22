@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { RESOURCE_LOOKUP_PORT } from "../resources/ports/resource-lookup.port.js";
-import { UnavailableResourceLookupAdapter } from "../resources/ports/unavailable-resource-lookup.adapter.js";
+import { PrismaResourceLookupAdapter } from "../resources/ports/prisma-resource-lookup.adapter.js";
 import { CurriculumController } from "./curriculum.controller.js";
 import { CurriculumService } from "./curriculum.service.js";
 import { COURSE_VERSION_REPOSITORY } from "./ports/course-version-repository.port.js";
@@ -16,7 +16,7 @@ import { PrismaCourseVersionRepository } from "./ports/prisma-course-version.rep
     },
     {
       provide: RESOURCE_LOOKUP_PORT,
-      useClass: UnavailableResourceLookupAdapter,
+      useClass: PrismaResourceLookupAdapter,
     },
   ],
   exports: [CurriculumService],
