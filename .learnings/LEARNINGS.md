@@ -57,7 +57,7 @@ Keep root `AGENTS.md`, `project-ops/CURRENT.md` and active task JSON inside ever
 
 **Logged**: 2026-07-22T19:00:00+08:00
 **Priority**: high
-**Status**: pending
+**Status**: promoted
 **Area**: frontend
 
 ### Summary
@@ -77,5 +77,6 @@ Make an explicit architecture decision before archiving anything: either promote
 - Source: user_feedback
 - Related Files: package.json, pnpm-workspace.yaml, ../legacy-archive/root-cleanup-20260722/apps-web/package.json, frontend/server.mjs, frontend/NUXT-INTEGRATION.md
 - Tags: frontend-source-of-truth, nuxt, frontend, migration
+- Promoted: AGENTS.md, project-ops/CURRENT.md
 
 ---

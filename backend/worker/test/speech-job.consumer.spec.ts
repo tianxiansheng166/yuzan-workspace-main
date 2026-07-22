@@ -15,8 +15,8 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import type { SpeechJobPayload, SpeechScoringResult } from "../../src/speech/speech-job.consumer.js";
-import { SpeechJobConsumer } from "../../src/speech/speech-job.consumer.js";
+import type { SpeechJobPayload, SpeechScoringResult } from "../src/speech/speech-job.consumer.js";
+import { SpeechJobConsumer } from "../src/speech/speech-job.consumer.js";
 
 // ─── Test fixtures ──────────────────────────────────────
 

@@ -1,6 +1,6 @@
 {
   "id": "GOV-ROOT-002",
-  "status": "IN_PROGRESS",
+  "status": "COMPLETED",
   "title": "Establish explicit frontend/backend roots and archive legacy UI",
   "branch": "task/gov-root-002",
   "base_commit": "e42a67010092e6875394f1969292d1d751c2c7fe",
@@ -15,7 +15,6 @@
     "apps/**",
     "backend/**",
     "frontend/**",
-    "frontend/**",
     "services/**",
     "packages/**",
     "infra/**",
@@ -28,6 +27,11 @@
     "design-lab/**",
     "visual-spec/**",
     "evidence/**",
+    "demo/**",
+    "experiments/**",
+    "pilot/**",
+    "reports/**",
+    "logs/**",
     "package.json",
     "pnpm-workspace.yaml",
     "pnpm-lock.yaml",
@@ -41,7 +45,9 @@
     "start-web.ps1",
     "start-frontend.cmd",
     "start-frontend.ps1",
-    "run-b-tests.mjs"
+    "run-b-tests.mjs",
+    "b-test-results.json",
+    "PACKAGE-VALIDATION.md"
   ],
   "shared_owner_changes": [
     "frontend source of truth",
@@ -58,5 +64,13 @@
     "frontend/API/worker/database targeted gates",
     "runtime API proxy smoke"
   ],
+  "verification_results": {
+    "workspace": "7 pnpm projects; no Nuxt or Vue package remains in the active lock/install",
+    "quality": "database generate/validate, recursive typecheck/build, frontend gates, API 903 tests and worker 33 tests passed",
+    "runtime": "API readiness, frontend login and frontend-to-API readiness proxy returned HTTP 200",
+    "security": "real .env, dependency trees and generated build directories are not tracked; concurrent commits passed added-line secret scan"
+  },
+  "completed_at": "2026-07-22T20:30:00+08:00",
+  "handoff": "project-ops/handoffs/GOV-ROOT-002.md",
   "rollback": "Restore moved directories from Git and ../legacy-archive/root-cleanup-20260722, restore pnpm workspace/root scripts, then run a frozen pnpm install."
 }

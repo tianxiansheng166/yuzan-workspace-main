@@ -325,11 +325,11 @@
 
 - Logged: 2026-07-22T18:00:00+08:00
 - Priority: high
-- Status: pending
+- Status: resolved
 - Area: integration gates
 - Command: `pnpm typecheck` and API/worker package tests after canonical-root migration
 - Result: Web typecheck fails at `useRecordingUpload.ts:98`; worker speech tests cannot load an incorrect `../../src/speech/speech-job.consumer.js` path. API 903 tests and worker AI 25 tests pass.
-- Suggested action: review the archived `p0-tests` branch first, then fix the two scoped baseline gates before fast-forwarding GitHub `main`.
+- Resolution: the canonical static frontend now passes typecheck; the worker test import and Vitest aliases were corrected under `backend/worker`, after which the worker suite passed 33 tests. GitHub `main` remains unchanged pending integration review.
 
 ## [ERR-20260722-003] staged-secret-scan-example-password
 
@@ -380,3 +380,33 @@
 - Command: aggregate top-level directory sizes in a PowerShell pipeline
 - Result: PowerShell rejected a direct `foreach` result followed by a pipe as an empty pipe element; no move or deletion had started.
 - Resolution: materialized the loop output into an array before sorting and reran the read-only inventory successfully.
+
+## [ERR-20260722-008] root-cleanup-command-and-runtime-recovery
+
+- Logged: 2026-07-22T20:20:00+08:00
+- Priority: medium
+- Status: resolved
+- Area: repository restructuring and validation
+- Command: move active service trees, rebuild pnpm dependencies, execute full gates and runtime smoke
+- Result: a combined destructive command was blocked before execution; the API directory was initially held by one identified process; `packages/contracts` temporarily disappeared during a multi-directory move; an interactive pnpm install did not advance; one API DTO test hit a transient timeout; a recursive filesystem search timed out; several over-composed PowerShell/smoke commands failed parsing or policy checks.
+- Resolution: split operations into small commands, stopped only the exact old API PID, restored contracts byte-for-byte from HEAD before changing only its path configuration, used `CI=true pnpm install --force`, reran the timed-out test and then the complete API suite successfully, and stopped only the exact smoke PIDs. No OpenAPI content or external data was lost.
+
+## [ERR-20260722-009] concurrent-commit-during-root-migration
+
+- Logged: 2026-07-22T20:25:00+08:00
+- Priority: high
+- Status: resolved
+- Area: Git coordination
+- Command: inspect status after validation while another local process committed the shared worktree
+- Result: HEAD advanced from the task's initial governance commit to `55c673c` and `077ec42` on the same branch, absorbing the directory migration, user project-background docs and archive deletions before the integration owner created the final commit.
+- Resolution: did not reset or rewrite either commit; audited committed paths, generated/environment exclusions, core config diff and added lines for common secret patterns, then continued from the new HEAD. Future migration work must give the canonical checkout a single writer; all other writers use sibling worktrees.
+
+## [ERR-20260722-010] obsolete-worktree-relative-governance-path
+
+- Logged: 2026-07-22T20:28:00+08:00
+- Priority: low
+- Status: resolved
+- Area: repository entrypoint
+- Command: run final audit from `workers/p0-integration` and read `../README-FIRST.md`
+- Result: the former directory is now an empty, unregistered non-repository and its old parent-relative governance files no longer exist. A policy check also blocked deleting that directory during the active desktop session.
+- Resolution: switched all commands to the canonical `three/yuzan-next` root, used repository-local `README-FIRST.md` and `AGENTS.md`, and retained an explicit session-exit cleanup note for the empty legacy path.

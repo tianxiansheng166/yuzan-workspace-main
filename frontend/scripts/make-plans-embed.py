@@ -1,7 +1,9 @@
 import re
+from pathlib import Path
 
-src = r'D:\program\test_program\yuzanxinsheng\three\yuzan-next\web-runtime\plans.css'
-dst = r'D:\program\test_program\yuzanxinsheng\three\yuzan-next\web-runtime\plans-embed.css'
+frontend_dir = Path(__file__).resolve().parent.parent
+src = frontend_dir / 'plans.css'
+dst = frontend_dir / 'plans-embed.css'
 
 global_selectors = {':root', '*', 'html', 'body', 'button', 'input', 'select', 'textarea', 'a', 'svg', 'button:focus-visible', 'input:focus-visible', 'select:focus-visible', 'textarea:focus-visible', 'a:focus-visible', '.sr-only'}
 
