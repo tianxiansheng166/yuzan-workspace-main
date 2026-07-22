@@ -1,6 +1,6 @@
 {
   "id": "GOV-ROOT-001",
-  "status": "IN_REVIEW",
+  "status": "SUPERSEDED_BY_GOV_ROOT_002",
   "title": "Promote P0 integration to canonical repository root",
   "branch": "task/gov-root-001",
   "base_commit": "49b8277c3b8cd7572b7c087db0eb79dda3fc5c0b",

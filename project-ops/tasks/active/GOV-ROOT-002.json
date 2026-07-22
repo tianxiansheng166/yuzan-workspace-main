@@ -1,0 +1,59 @@
+{
+  "id": "GOV-ROOT-002",
+  "status": "IN_PROGRESS",
+  "title": "Establish explicit frontend/backend roots and archive legacy UI",
+  "branch": "task/gov-root-002",
+  "base_commit": "e42a67010092e6875394f1969292d1d751c2c7fe",
+  "depends_on": ["GOV-ROOT-001"],
+  "integration_order": [
+    "archive legacy Nuxt and generated caches",
+    "move active runtime and backend services",
+    "rewrite active path contracts",
+    "prune pnpm workspace and validate runtime"
+  ],
+  "allowed_paths": [
+    "apps/**",
+    "backend/**",
+    "frontend/**",
+    "web-runtime/**",
+    "services/**",
+    "packages/**",
+    "infra/**",
+    "tests/**",
+    "scripts/**",
+    ".github/**",
+    ".learnings/**",
+    "project-ops/**",
+    "docs/**",
+    "design-lab/**",
+    "visual-spec/**",
+    "evidence/**",
+    "package.json",
+    "pnpm-workspace.yaml",
+    "pnpm-lock.yaml",
+    "tsconfig.base.json",
+    "README.md",
+    "README-FIRST.md",
+    "PROJECT-CHARTER.md",
+    "AGENTS.md",
+    "start-web.cmd",
+    "start-web.ps1",
+    "run-b-tests.mjs"
+  ],
+  "shared_owner_changes": [
+    "frontend source of truth",
+    "workspace package locations",
+    "root scripts and CI",
+    "repository directory taxonomy"
+  ],
+  "contract_change_request": "project-ops/requests/CCR-GOV-ROOT-002.md",
+  "verification": [
+    "legacy Nuxt absent from canonical workspace",
+    "single frontend path named frontend",
+    "backend services under backend",
+    "workspace dependency links resolve to root pnpm virtual store",
+    "frontend/API/worker/database targeted gates",
+    "runtime API proxy smoke"
+  ],
+  "rollback": "Restore moved directories from Git and ../legacy-archive/root-cleanup-20260722, restore pnpm workspace/root scripts, then run a frozen pnpm install."
+}

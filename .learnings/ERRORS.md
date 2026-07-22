@@ -370,3 +370,13 @@
 - Command: register a temporary per-minute scheduled cleanup for the current-session directory handle
 - Result: Windows Task Scheduler rejected registration with access denied; no scheduled task was created.
 - Resolution: did not bypass permissions. Retained a one-shot, residue-preserving cleanup script and documented that it must be run after the current Codex session exits.
+
+## [ERR-20260722-007] inventory-pipeline-parser
+
+- Logged: 2026-07-22T19:10:00+08:00
+- Priority: low
+- Status: resolved
+- Area: repository migration
+- Command: aggregate top-level directory sizes in a PowerShell pipeline
+- Result: PowerShell rejected a direct `foreach` result followed by a pipe as an empty pipe element; no move or deletion had started.
+- Resolution: materialized the loop output into an array before sorting and reran the read-only inventory successfully.
