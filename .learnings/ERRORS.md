@@ -330,3 +330,13 @@
 - Command: `pnpm typecheck` and API/worker package tests after canonical-root migration
 - Result: Web typecheck fails at `useRecordingUpload.ts:98`; worker speech tests cannot load an incorrect `../../src/speech/speech-job.consumer.js` path. API 903 tests and worker AI 25 tests pass.
 - Suggested action: review the archived `p0-tests` branch first, then fix the two scoped baseline gates before fast-forwarding GitHub `main`.
+
+## [ERR-20260722-003] staged-secret-scan-example-password
+
+- Logged: 2026-07-22T18:25:00+08:00
+- Priority: low
+- Status: resolved
+- Area: configuration review
+- Command: scan staged additions for likely credentials before committing runtime configuration
+- Result: the broad password expression treated the documented local-only example `yuzan_dev_only` as a real secret and stopped the commit.
+- Resolution: retained the safe example value, verified `.env` files remain ignored, and narrowed the final scan to recognizable private-key and provider-token formats instead of flagging every non-empty password example.

@@ -56,7 +56,7 @@ Write-Host ""
 Write-Host "=== AI Provider Configuration ===" -ForegroundColor Cyan
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $composeDir = Split-Path -Parent $scriptDir
-# rootDir = workers/p0-integration/ (3 levels up from infra/ai/flowise/)
+# rootDir = repository root (3 levels up from infra/ai/flowise/)
 $rootDir = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $composeDir))
 $providerEnv = Join-Path $rootDir "runtime-local\secrets\ai-provider.env"
 

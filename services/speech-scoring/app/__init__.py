@@ -1,24 +1,19 @@
-"""Compatibility package for the local speech-scoring runtime.
-
-The canonical scorer source remains read-only in ``yuzan-next``.  This package
-only repairs its truncated package marker and extends Python's module path so
-the real scorer modules are loaded without copying or modifying that source.
-"""
+"""Compatibility hooks for the local speech-scoring runtime."""
 
 import os
 import tempfile
 from pathlib import Path
-from pkgutil import extend_path
 
 import httpx
 
-__path__ = extend_path(__path__, __name__)
-
-# The Windows development image already provides FFmpeg here.  The canonical
-# converter invokes ``ffmpeg`` by name, so expose that existing binary without
-# changing the read-only scorer source or installing another codec stack.
-_ffmpeg_dir = Path(r"D:\soft\FR")
-if _ffmpeg_dir.joinpath("ffmpeg.exe").is_file():
+# The converter invokes ``ffmpeg`` by name. A machine-specific installation can
+# be supplied through FFMPEG_DIR without hardcoding a workstation path.
+_ffmpeg_dir_value = os.environ.get("FFMPEG_DIR", "").strip()
+if _ffmpeg_dir_value:
+    _ffmpeg_dir = Path(_ffmpeg_dir_value).expanduser().resolve()
+    _ffmpeg_binary = "ffmpeg.exe" if os.name == "nt" else "ffmpeg"
+    if not _ffmpeg_dir.joinpath(_ffmpeg_binary).is_file():
+        raise RuntimeError(f"FFMPEG_DIR does not contain {_ffmpeg_binary}: {_ffmpeg_dir}")
     os.environ["PATH"] = f"{_ffmpeg_dir}{os.pathsep}{os.environ.get('PATH', '')}"
 
 

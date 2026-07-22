@@ -2,7 +2,7 @@
 
 ## 版本信息
 
-- **Flowise 镜像**: `flowiseai/flowise:3.0.12`
+- **Flowise 镜像**: `flowiseai/flowise:3.1.1`
 - **许可证**: Apache-2.0 (Community Edition)
 - **不使用**: `packages/server/src/enterprise` 或其他商业许可模块
 
@@ -33,10 +33,10 @@ cp ../../runtime-local/secrets/ai-provider.env.example ../../runtime-local/secre
 
 ## 访问地址
 
-| 服务 | 地址 |
-|------|------|
-| Flowise UI | http://127.0.0.1:4300 |
-| Flowise Ping | http://127.0.0.1:4300/api/v1/ping |
+| 服务           | 地址                                                   |
+| -------------- | ------------------------------------------------------ |
+| Flowise UI     | http://127.0.0.1:4300                                  |
+| Flowise Ping   | http://127.0.0.1:4300/api/v1/ping                      |
 | Prediction API | `POST http://127.0.0.1:4300/api/v1/prediction/:flowId` |
 
 ## 目录结构

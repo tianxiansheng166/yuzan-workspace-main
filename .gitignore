@@ -12,6 +12,8 @@ coverage/
 playwright-report/
 test-results/
 *.log
+__pycache__/
+*.py[cod]
 .DS_Store
 .idea/
 .vscode/

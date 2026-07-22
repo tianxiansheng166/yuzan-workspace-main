@@ -11,7 +11,7 @@
 $ErrorActionPreference = "Stop"
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $composeDir = Split-Path -Parent $scriptDir
-# rootDir = workers/p0-integration/ (3 levels up from infra/ai/flowise/)
+# rootDir = repository root (3 levels up from infra/ai/flowise/)
 $rootDir = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $composeDir))
 $flowiseUrl = "http://127.0.0.1:4300"
 $flowFile = Join-Path $composeDir "flows\lesson-planner-v0.json"

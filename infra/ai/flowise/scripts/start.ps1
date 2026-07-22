@@ -12,7 +12,7 @@ if (-not (Test-Path "$composeDir\.env")) {
 }
 
 # Ensure runtime directories exist
-# rootDir = workers/p0-integration/ (3 levels up from infra/ai/flowise/)
+# rootDir = repository root (3 levels up from infra/ai/flowise/)
 $rootDir = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $composeDir))
 @("runtime-local\flowise\data", "runtime-local\flowise\logs", "runtime-local\flowise\storage", "runtime-local\flowise\secret") | ForEach-Object {
     $dir = Join-Path $rootDir $_

@@ -138,7 +138,7 @@ if (-not $SkipApi) {
         $maxApiAttempts = 30
         for ($i = 1; $i -le $maxApiAttempts; $i++) {
             try {
-                $null = Invoke-WebRequest -Uri "http://127.0.0.1:4000/api/v1/health" -UseBasicParsing -TimeoutSec 3 -ErrorAction Stop
+                $null = Invoke-WebRequest -Uri "http://127.0.0.1:4000/api/v1/health/ready" -UseBasicParsing -TimeoutSec 3 -ErrorAction Stop
                 Write-Host "[OK] API server is ready (attempt $i)" -ForegroundColor Green
                 break
             } catch {
