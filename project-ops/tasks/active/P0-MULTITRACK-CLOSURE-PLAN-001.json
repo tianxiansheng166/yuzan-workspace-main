@@ -1,0 +1,80 @@
+{
+  "id": "P0-MULTITRACK-CLOSURE-PLAN-001",
+  "status": "IN_PROGRESS",
+  "title": "建立学生、教师教案与藏汉翻译的受控多路线闭环开发计划",
+  "owner": "Codex",
+  "reviewer": "Integration Lead",
+  "branch": "task/p0-multitrack-closure-plan-001",
+  "base_commit": "ca14c57f0534e4e8ddf3e273128668b6c12e685e",
+  "user_outcome": "项目拥有一套基于当前源码事实、可直接交给多个 Goal 模式执行者的闭环任务图、独立分支边界、跟踪看板、验收证据和合并规范。",
+  "current_facts": [
+    "P0-STUDENT-COURSE-PRACTICE-001 已在 ca14c57 完成真实课程关联练习闭环并推送远端。",
+    "P0-STUDENT-COURSE-SUBMIT-001 本地分支存在实现提交，但其 handoff、远端状态和真实录音及三尺寸浏览器证据不一致，当前不能视为已验收基线。",
+    "教师教案生成的 API、BullMQ worker、Flowise 资产和教师页面已存在于当前历史，但尚无独立闭环任务分支，OpenAPI 也没有对应路径。",
+    "藏汉翻译已有 controller、service、port 和 fail-closed 测试，但生产绑定仍是 UnavailableTranslationRepository，页面脚本未接通，当前没有真实翻译闭环。",
+    "仓库已有 task-context、task-gate、短契约、worktree 和 handoff 框架，可复用为多路线自动续作抓手。"
+  ],
+  "product_alignment": {
+    "p0": "以学生真实学习证据为核心，同时受控推进教师备课和藏汉翻译两个可独立验收的辅助闭环。",
+    "contribution": "把已有半成品从综合历史中重新纳入独立任务、单写者和证据门禁，允许资源丰富时并行开发而不制造契约、数据库和集成冲突。",
+    "non_goals": [
+      "本任务不实现教师教案、翻译、学生课程或练习业务代码",
+      "不把未验证分支合并到 main 或 integration",
+      "不重写历史以抽取 55c673c 中的半成品",
+      "不以静态页面、mock provider、固定 ID 或 HTTP 200 作为闭环完成"
+    ]
+  },
+  "context": {
+    "required": [
+      "project-ops/AI-DEVELOPMENT-CONTRACT.md",
+      "project-ops/DEVELOPMENT-WORKFLOW.md",
+      "project-ops/NEXT-DEVELOPMENT-QUEUE.md",
+      "project-ops/plans/P0-STUDENT-CLOSED-LOOPS.md",
+      "project-ops/CURRENT.md",
+      "docs/10-project-review/01-项目全景分析报告.md"
+    ],
+    "optional": [
+      "backend/api/src/modules/ai-lesson-planning/ai-lesson-planning.service.ts",
+      "backend/api/src/modules/translations/translations.service.ts",
+      "frontend/teacher/translation/script.js",
+      "packages/contracts/openapi/openapi.yaml"
+    ]
+  },
+  "depends_on": [
+    "P0-STUDENT-COURSE-PRACTICE-001"
+  ],
+  "integration_order": [
+    "核实每条路线当前源码与证据等级",
+    "定义共享事实单写者和依赖波次",
+    "形成每条路线的任务边界与 Goal 提示词",
+    "形成统一跟踪、审查、集成和回滚规范",
+    "读者测试后提交并推送规划分支"
+  ],
+  "allowed_paths": [
+    "project-ops/**"
+  ],
+  "shared_owner_changes": [],
+  "contract_change_request": null,
+  "minimal_tests": [
+    {
+      "name": "项目运维 JSON 可解析且任务上下文可恢复",
+      "command": "Get-ChildItem project-ops/tasks -Recurse -Filter *.json | ForEach-Object { Get-Content $_.FullName -Raw -Encoding UTF8 | ConvertFrom-Json | Out-Null }; & .\\scripts\\repo\\task-context.ps1 -Mode resume"
+    },
+    {
+      "name": "多路线文档中的任务、依赖、分支和证据入口一致",
+      "command": "& .\\project-ops\\scripts\\validate-multitrack-plan.ps1"
+    },
+    {
+      "name": "规划任务交付门禁",
+      "command": "& .\\scripts\\repo\\task-gate.ps1 -Mode review -TaskFile project-ops/tasks/active/P0-MULTITRACK-CLOSURE-PLAN-001.json"
+    }
+  ],
+  "test_evidence": [],
+  "handoff": "project-ops/handoffs/P0-MULTITRACK-CLOSURE-PLAN-001.md",
+  "rollback": "Revert this planning branch commits; no production code, schema, runtime or user data is changed.",
+  "delivery": {
+    "push_task_branch": true,
+    "remote": "origin",
+    "merge_target": "由 Integration Lead 指定"
+  }
+}
