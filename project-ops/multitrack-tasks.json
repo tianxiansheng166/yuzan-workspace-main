@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-07-24T00:00:00+08:00",
+  "updated_at": "2026-07-24T02:25:07+08:00",
   "control_ref": "origin/integration/p0-multitrack-001",
   "planning_branch": "task/p0-multitrack-closure-plan-001",
   "planning_base_commit": "ca14c57f0534e4e8ddf3e273128668b6c12e685e",
@@ -15,12 +15,12 @@
   ],
   "integration": {
     "id": "P0-MULTITRACK-INTEGRATION-001",
-    "status": "CONTROL_PLANE_PENDING",
+    "status": "ACTIVE",
     "branch": "integration/p0-multitrack-001",
     "worktree": "../worktrees/p0-multitrack-integration-001",
     "initial_base_strategy": "VERIFIED_PLANNING_BRANCH_HEAD",
     "initial_base_task_id": "P0-MULTITRACK-CLOSURE-PLAN-001",
-    "current_checkpoint_commit": null,
+    "current_checkpoint_commit": "7cd3b1a8f19a9536ae2a97ce917b39867e0b654b",
     "prompt": "project-ops/prompts/multitrack/P0-MULTITRACK-INTEGRATION-GOAL.md"
   },
   "tasks": [
@@ -55,7 +55,7 @@
       "id": "P0-AI-TOOL-CONTRACTS-001",
       "lane": "shared-contract",
       "wave": 0,
-      "dispatch_status": "WAITING_DEPENDENCY",
+      "dispatch_status": "READY_TO_DISPATCH",
       "execution_status": "NOT_CREATED",
       "evidence_status": "NOT_STARTED",
       "integration_status": "NOT_INTEGRATED",
@@ -81,7 +81,7 @@
       "id": "P0-STUDENT-INDEPENDENT-PRACTICE-001",
       "lane": "student-practice",
       "wave": 0,
-      "dispatch_status": "WAITING_DEPENDENCY",
+      "dispatch_status": "READY_TO_DISPATCH",
       "execution_status": "NOT_CREATED",
       "evidence_status": "NOT_STARTED",
       "integration_status": "NOT_INTEGRATED",

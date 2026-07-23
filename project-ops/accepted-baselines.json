@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-07-24T00:00:00+08:00",
+  "updated_at": "2026-07-24T02:25:07+08:00",
   "entries": [
     {
       "task_id": "GOV-DEV-FRAMEWORK-001",
@@ -28,11 +28,11 @@
     },
     {
       "task_id": "P0-MULTITRACK-CLOSURE-PLAN-001",
-      "acceptance_status": "PENDING",
+      "acceptance_status": "VERIFIED",
       "branch": "task/p0-multitrack-closure-plan-001",
-      "commit": null,
-      "accepted_at": null,
-      "note": "完成 reader test、review、finish 和 push 后更新"
+      "commit": "7cd3b1a8f19a9536ae2a97ce917b39867e0b654b",
+      "accepted_at": "2026-07-24T02:25:07+08:00",
+      "note": "reader 最终回归无 P0/P1，双 PowerShell、resolver、review/finish、远端 HEAD 与 Git clean 均通过"
     }
   ]
 }
