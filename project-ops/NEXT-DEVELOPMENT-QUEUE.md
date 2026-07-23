@@ -1,45 +1,76 @@
-# 唯一 P0 开发队列
+# P0 多泳道开发队列
 
-这不是并行铺开的功能清单。每次只把第一个依赖已满足的任务实例化为 active task；
-前一项未集成验证，不启动后一项的消费者工作。
+> 事实快照：2026-07-24
+> 机器可读任务图：`project-ops/multitrack-tasks.json`
 
-## 排序原则
+资源充足时可以多路推进，但只并行“不争用共享事实、依赖已满足”的任务。每条泳道
+内仍保持线性；共享事实先由唯一 owner 固化，再让多个 consumer 并行。
 
-1. 优先补齐动态 ID、真实持久化、真实状态转换的黄金闭环缺口；
-2. 先共享事实和后端提供者，再做前端消费者；
-3. 先让 unavailable / NEEDS_REVIEW 真实，再追求自动评分体验；
-4. 不以新增页面、AI 包装或竞品功能数量衡量进度；
-5. 每项都使用任务模板、独立 worktree、最小测试和 finish 门禁。
+## 当前事实
 
-## 顺序队列
+| 能力 | 状态 | 下一出口 |
+|---|---|---|
+| 课程关联古诗文练习 | `VERIFIED` | 保持 `ca14c57` 为可信基线 |
+| 普通课程提交 | `EVIDENCE_REPAIR` | 修复真实录音、三尺寸、动态 DB 证据与远端/handoff 一致性 |
+| 课程视频 | `PARTIAL` | 真实资源 URL、服务端进度、刷新恢复和完成回写 |
+| 时间点笔记 | `PARTIAL` | 在真实视频上完成 CRUD、revision 冲突与跨用户隔离 |
+| 独立专项练习 | `PLANNED` | 复用同一执行器完成自主开始、恢复、提交和历史 |
+| 教师 AI 教案 | `PARTIAL` | 真实 Flowise/provider、结构化草稿修改和教师审批 |
+| 藏汉翻译工具 | `BROKEN/PARTIAL` | 真实 provider、持久化、用户归属、人工修订和审批 |
+| 网页双语 | `NOT_STARTED` | 只消费已批准译文，不阻塞原文学习 |
 
-| 顺序 | 候选任务 | 可观察出口 | 最小证明 | 解锁 |
-|---|---|---|---|---|
-| 0 | `P0-STUDENT-GOAL-PLAN-001` 自动续作与学生路线 | AI 自动读取短契约、任务、最小上下文和现场；目标模式有唯一执行提示词 | PowerShell 7/5.1 smoke + reader questions + finish 门禁 | 不再依赖人工反复附文件 |
-| 1 | `P0-STUDENT-COURSE-PRACTICE-001` 课程关联练习 | 学生从课程进入古诗文练习，真实作答、提交、回到课程并持久化完成 | adapter/DTO/权限/幂等测试 + 动态 ID 浏览器/API/DB smoke | 学生端第一条真实证据链 |
-| 2 | `P0-STUDENT-COURSE-SUBMIT-001` 普通课程与作业 | 文本、音频、选择、填空、口语活动全部完成并提交整门课程 | 活动 DTO/revision 测试 + 刷新恢复 + 课程提交 smoke | 课程/作业可用 |
-| 3 | `P0-STUDENT-INDEPENDENT-PRACTICE-001` 独立专项练习 | 学生从练习中心自主开始、继续、完成并查看历史 | 无课程上下文隔离测试 + 真实执行器 smoke | 专项训练 |
-| 4 | `P0-STUDENT-MOCK-LISTEN-SPEAK-001` 听说模拟 | 同一执行器按冻结规则完成听、复述、朗读和表达时序 | 规则/计时/中断测试 + 三尺寸浏览器证据 | 广东听说式训练 |
-| 5 | `P0-STUDENT-REPORT-RETRY-001` 报告与再练 | 学生看到可信状态/反馈并从薄弱项启动下一次练习 | 报告权限/状态测试 + frontend/API 对齐 | 成长链路 |
-| 6 | `P0-SPEECH-STATE-001` 语音处理真状态 | 录音进入队列；成功、失败、未配置供应商分别可追踪 | worker/API 状态与幂等测试 + provider unavailable smoke | 教师复核 |
-| 7 | `P0-TEACHER-REVIEW-001` 教师复核与一对一干预 | 教师查看证据、修改/确认结果并下发一项针对性练习 | 权限正负向测试 + 复核/干预写入测试 | 教师数据工作台 |
-| 8 | `P0-GOLDEN-E2E-001` 试点准入 | 从发布到学生反馈和下一次干预全程动态 ID、有完整证据包 | 真实浏览器 E2E + API/DB 状态核对 + console/page error 审计 | 小规模试点 |
+`READY`、`PARTIAL` 或页面可访问都不等于闭环完成；只有实时浏览器、API、数据库和
+必要 provider 证据同时成立，才进入 `VERIFIED`。
 
-当前 seed 已能在 development/test 创建四门学生课程和六套可复用练习，因此不再
-默认安排一个“重新造 bootstrap”的前置任务。`P0-STUDENT-COURSE-PRACTICE-001`
-开工时先做动态 API 基线检查；只有当前运行环境确实无法恢复数据时，才实例化一个
-更小的环境修复任务。
+## 波次
 
-## 当前停止线
+### Wave 0：Submit 可先恢复，规划接受后扩为三路
 
-在 `P0-GOLDEN-E2E-001` 通过前，默认冻结：
+1. `P0-STUDENT-COURSE-SUBMIT-001`：只恢复现有分支并修复证据；若证据暴露代码
+   缺陷，再以新提交修复，不新造重复任务。
+2. `P0-AI-TOOL-CONTRACTS-001`：唯一 OpenAPI owner，先冻结教师教案和翻译工具
+   的 provider/consumer 契约及人工复核状态。
+3. `P0-STUDENT-INDEPENDENT-PRACTICE-001`：只用当前 Assessment 契约和页面局部
+   gateway；发现需要 OpenAPI 变更就阻塞，不与契约 owner 并发写。
 
-- 新社区、内容商城、泛化 CMS 或新终端；
-- 与闭环无关的大规模 UI 重做；
-- AI 备课 Agent、自动判定最终成绩或不可复核建议；
-- 管理端静态驾驶舱、完整藏中翻译平台和大规模资料库；
-- H5P/QTI 等标准化扩张；
-- 只为演示效果增加的 fixture、固定 ID 和静态分数。
+规划分支 finish/push 之前，只有第 1 项可恢复；第 2、3 项保持
+`WAITING_DEPENDENCY`。Integration Lead 把规划 commit 写入
+`accepted-baselines.json` 后，才将它们改为 `READY_TO_DISPATCH`。
 
-如果当前源码核查证明某一候选任务已真实完成，就把证据写入任务/decision，跳过它；
-不要为了匹配队列重复实现。
+### Wave 1：共享契约通过后并行
+
+1. `P0-TEACHER-AI-LESSON-PLAN-001`：不改 Prisma、OpenAPI、公共 API client 或
+   worker 启动入口。
+2. `P0-TIBETAN-TRANSLATION-TOOL-001`：翻译线唯一 Prisma 和 translation worker
+   启动入口 owner；不再修改已经冻结的 OpenAPI。
+
+### Wave 2：按泳道依赖推进
+
+1. `P0-STUDENT-COURSE-VIDEO-PROGRESS-001`：等待课程提交证据修复和 OpenAPI 锁
+   释放。
+
+### Wave 3：视频笔记
+
+`P0-STUDENT-COURSE-VIDEO-NOTE-001` 严格等待真实视频进度闭环。
+
+### Wave 4：网页双语
+
+`P1-TIBETAN-BILINGUAL-COURSE-001` 等待翻译工具和视频时间点笔记均通过，接管
+课程核心文件，只选择一种真实课程内容做原文/双语切换。
+
+### 持续控制面与硬化（贯穿所有波次）
+
+`P0-MULTITRACK-INTEGRATION-001` 在规划接受后立即启动，持续维护 accepted
+baselines 和共同 checkpoint，并按“共享契约 → 后端 provider → 前端 consumer →
+纵向 E2E”合并。每合入 2–3 个任务运行一次全量硬化，最终才决定是否更新 main。
+
+## 冻结项
+
+- 管理驾驶舱、社区、商城、泛化 CMS、新终端；
+- 自动发布 AI 教案、自动判定最终成绩、不可复核建议；
+- 完整语料平台、未批准译文的全站自动替换、没有真实模型的“离线可用”；
+- 第二套课程模型、第二套练习执行器或第二套全局 API client；
+- 只为演示增加的 fixture、固定业务 ID、静态分数或假成功。
+
+如果当前源码和实时证据证明候选任务已完成，应登记证据并跳过，不为匹配队列重复
+实现。

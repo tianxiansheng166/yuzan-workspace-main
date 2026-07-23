@@ -20,6 +20,9 @@
 | worker/语音评分 | 相关 worker、speech-scoring、队列契约 | 重试、幂等、provider unavailable、回写 |
 | 测试/运行环境 | 相关 package scripts、runtime runbook | Node/pnpm、服务地址、真实依赖 |
 | 仓库治理/CI | `DEVELOPMENT-WORKFLOW.md`、目标脚本/workflow | worktree、分支、共享 owner |
+| 多路线调度/集成 | 控制分支中的 `multitrack-tasks.json`、`accepted-baselines.json`、`MULTITRACK-BOARD.md`、`runbooks/MULTITRACK-INTEGRATION.md` | 控制 HEAD、依赖、波次、shared locks、task 远端 HEAD、checkpoint |
+| 教师 AI 教案 | AI lesson service、AI worker consumer、教师页面、tracked output schema | Job 状态、Flowise/provider、revision、教师审批 |
+| 藏汉翻译 | translation service/module、冻结 OpenAPI、翻译页面 | Job 归属、真实 provider、受控加密、人工修订和批准 |
 
 ## 路由原则
 

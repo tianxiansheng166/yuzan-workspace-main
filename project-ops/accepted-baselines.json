@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "updated_at": "2026-07-24T00:00:00+08:00",
+  "entries": [
+    {
+      "task_id": "GOV-DEV-FRAMEWORK-001",
+      "acceptance_status": "VERIFIED",
+      "branch": "task/gov-dev-framework-001",
+      "commit": "17cbbe0e39dcf1c401edef50508b1876ee82e6fd",
+      "accepted_at": "2026-07-23T00:00:00+08:00",
+      "note": "自动上下文、任务门禁和 worktree 框架可复用"
+    },
+    {
+      "task_id": "P0-STUDENT-GOAL-PLAN-001",
+      "acceptance_status": "VERIFIED",
+      "branch": "task/p0-student-goal-plan-001",
+      "commit": "61925325f4096d6a77b136201db6fa0a94dc0b53",
+      "accepted_at": "2026-07-23T00:00:00+08:00",
+      "note": "目标模式自动续作入口可复用"
+    },
+    {
+      "task_id": "P0-STUDENT-COURSE-PRACTICE-001",
+      "acceptance_status": "VERIFIED",
+      "branch": "task/p0-student-course-practice-001",
+      "commit": "ca14c57f0534e4e8ddf3e273128668b6c12e685e",
+      "accepted_at": "2026-07-23T17:05:00+08:00",
+      "note": "真实课程练习、录音、书面答案、课程回写与新上下文证据"
+    },
+    {
+      "task_id": "P0-MULTITRACK-CLOSURE-PLAN-001",
+      "acceptance_status": "PENDING",
+      "branch": "task/p0-multitrack-closure-plan-001",
+      "commit": null,
+      "accepted_at": null,
+      "note": "完成 reader test、review、finish 和 push 后更新"
+    }
+  ]
+}

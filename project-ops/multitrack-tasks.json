@@ -1,0 +1,263 @@
+{
+  "schema_version": 2,
+  "updated_at": "2026-07-24T00:00:00+08:00",
+  "control_ref": "origin/integration/p0-multitrack-001",
+  "planning_branch": "task/p0-multitrack-closure-plan-001",
+  "planning_base_commit": "ca14c57f0534e4e8ddf3e273128668b6c12e685e",
+  "accepted_baselines_file": "project-ops/accepted-baselines.json",
+  "template": "project-ops/templates/task.template.json",
+  "review_prompt": "project-ops/prompts/REVIEW-PROMPT.md",
+  "worktree_script": "scripts/repo/new-worktree.ps1",
+  "external_baseline_ids": [
+    "GOV-DEV-FRAMEWORK-001",
+    "P0-STUDENT-GOAL-PLAN-001",
+    "P0-STUDENT-COURSE-PRACTICE-001"
+  ],
+  "integration": {
+    "id": "P0-MULTITRACK-INTEGRATION-001",
+    "status": "CONTROL_PLANE_PENDING",
+    "branch": "integration/p0-multitrack-001",
+    "worktree": "../worktrees/p0-multitrack-integration-001",
+    "initial_base_strategy": "VERIFIED_PLANNING_BRANCH_HEAD",
+    "initial_base_task_id": "P0-MULTITRACK-CLOSURE-PLAN-001",
+    "current_checkpoint_commit": null,
+    "prompt": "project-ops/prompts/multitrack/P0-MULTITRACK-INTEGRATION-GOAL.md"
+  },
+  "tasks": [
+    {
+      "id": "P0-STUDENT-COURSE-SUBMIT-001",
+      "lane": "student-course",
+      "wave": 0,
+      "dispatch_status": "READY_TO_RESUME",
+      "execution_status": "IN_PROGRESS",
+      "evidence_status": "EVIDENCE_REPAIR",
+      "integration_status": "NOT_INTEGRATED",
+      "branch": "task/p0-student-course-submit-001",
+      "worktree": "../worktrees/P0-STUDENT-COURSE-SUBMIT-001",
+      "task_file": "project-ops/tasks/active/P0-STUDENT-COURSE-SUBMIT-001.json",
+      "base_ref": "ca14c57f0534e4e8ddf3e273128668b6c12e685e",
+      "base_strategy": "EXACT_COMMIT",
+      "base_task_id": "P0-STUDENT-COURSE-PRACTICE-001",
+      "depends_on": [
+        "P0-STUDENT-COURSE-PRACTICE-001"
+      ],
+      "shared_writes": [
+        "frontend/student/courses/course-detail/**",
+        "backend/api/src/modules/student-courses/**"
+      ],
+      "shared_locks": [
+        "COURSE_CORE"
+      ],
+      "prompt": "project-ops/prompts/multitrack/P0-STUDENT-COURSE-SUBMIT-REPAIR-GOAL.md",
+      "integration_rank": 20
+    },
+    {
+      "id": "P0-AI-TOOL-CONTRACTS-001",
+      "lane": "shared-contract",
+      "wave": 0,
+      "dispatch_status": "WAITING_DEPENDENCY",
+      "execution_status": "NOT_CREATED",
+      "evidence_status": "NOT_STARTED",
+      "integration_status": "NOT_INTEGRATED",
+      "branch": "task/p0-ai-tool-contracts-001",
+      "worktree": "../worktrees/p0-ai-tool-contracts-001",
+      "task_file": "project-ops/tasks/active/P0-AI-TOOL-CONTRACTS-001.json",
+      "base_ref": "accepted:P0-MULTITRACK-CLOSURE-PLAN-001",
+      "base_strategy": "ACCEPTED_BASELINE",
+      "base_task_id": "P0-MULTITRACK-CLOSURE-PLAN-001",
+      "depends_on": [
+        "P0-MULTITRACK-CLOSURE-PLAN-001"
+      ],
+      "shared_writes": [
+        "packages/contracts/openapi/openapi.yaml"
+      ],
+      "shared_locks": [
+        "OPENAPI"
+      ],
+      "prompt": "project-ops/prompts/multitrack/P0-AI-TOOL-CONTRACTS-GOAL.md",
+      "integration_rank": 10
+    },
+    {
+      "id": "P0-STUDENT-INDEPENDENT-PRACTICE-001",
+      "lane": "student-practice",
+      "wave": 0,
+      "dispatch_status": "WAITING_DEPENDENCY",
+      "execution_status": "NOT_CREATED",
+      "evidence_status": "NOT_STARTED",
+      "integration_status": "NOT_INTEGRATED",
+      "branch": "task/p0-student-independent-practice-001",
+      "worktree": "../worktrees/p0-student-independent-practice-001",
+      "task_file": "project-ops/tasks/active/P0-STUDENT-INDEPENDENT-PRACTICE-001.json",
+      "base_ref": "accepted:P0-MULTITRACK-CLOSURE-PLAN-001",
+      "base_strategy": "ACCEPTED_BASELINE",
+      "base_task_id": "P0-MULTITRACK-CLOSURE-PLAN-001",
+      "depends_on": [
+        "P0-STUDENT-COURSE-PRACTICE-001",
+        "P0-MULTITRACK-CLOSURE-PLAN-001"
+      ],
+      "shared_writes": [
+        "frontend/assessment/**",
+        "backend/api/src/modules/assessment/**"
+      ],
+      "shared_locks": [
+        "ASSESSMENT_CORE"
+      ],
+      "prompt": "project-ops/prompts/multitrack/P0-STUDENT-INDEPENDENT-PRACTICE-GOAL.md",
+      "integration_rank": 30
+    },
+    {
+      "id": "P0-TEACHER-AI-LESSON-PLAN-001",
+      "lane": "teacher-ai",
+      "wave": 1,
+      "dispatch_status": "WAITING_DEPENDENCY",
+      "execution_status": "NOT_CREATED",
+      "evidence_status": "PARTIAL",
+      "integration_status": "NOT_INTEGRATED",
+      "branch": "task/p0-teacher-ai-lesson-plan-001",
+      "worktree": "../worktrees/p0-teacher-ai-lesson-plan-001",
+      "task_file": "project-ops/tasks/active/P0-TEACHER-AI-LESSON-PLAN-001.json",
+      "base_ref": "accepted:P0-AI-TOOL-CONTRACTS-001",
+      "base_strategy": "ACCEPTED_DEPENDENCY_HEAD",
+      "base_task_id": "P0-AI-TOOL-CONTRACTS-001",
+      "depends_on": [
+        "P0-AI-TOOL-CONTRACTS-001"
+      ],
+      "shared_writes": [
+        "frontend/teacher/ai-tools/**",
+        "backend/api/src/modules/ai-lesson-planning/**",
+        "backend/worker/src/ai-generation/**",
+        "infra/ai/flowise/**"
+      ],
+      "shared_locks": [
+        "TEACHER_AI_CORE",
+        "FLOWISE"
+      ],
+      "prompt": "project-ops/prompts/multitrack/P0-TEACHER-AI-LESSON-PLAN-GOAL.md",
+      "integration_rank": 40
+    },
+    {
+      "id": "P0-TIBETAN-TRANSLATION-TOOL-001",
+      "lane": "tibetan-translation",
+      "wave": 1,
+      "dispatch_status": "WAITING_DEPENDENCY",
+      "execution_status": "NOT_CREATED",
+      "evidence_status": "PARTIAL",
+      "integration_status": "NOT_INTEGRATED",
+      "branch": "task/p0-tibetan-translation-tool-001",
+      "worktree": "../worktrees/p0-tibetan-translation-tool-001",
+      "task_file": "project-ops/tasks/active/P0-TIBETAN-TRANSLATION-TOOL-001.json",
+      "base_ref": "accepted:P0-AI-TOOL-CONTRACTS-001",
+      "base_strategy": "ACCEPTED_DEPENDENCY_HEAD",
+      "base_task_id": "P0-AI-TOOL-CONTRACTS-001",
+      "depends_on": [
+        "P0-AI-TOOL-CONTRACTS-001"
+      ],
+      "shared_writes": [
+        "backend/api/src/modules/translations/**",
+        "backend/worker/src/translation/**",
+        "backend/worker/src/main.ts",
+        "frontend/teacher/translation/**",
+        "infra/database/prisma/schema.prisma",
+        "infra/database/prisma/migrations/**"
+      ],
+      "shared_locks": [
+        "TRANSLATION_CORE",
+        "TRANSLATION_PRISMA",
+        "WORKER_BOOTSTRAP"
+      ],
+      "prompt": "project-ops/prompts/multitrack/P0-TIBETAN-TRANSLATION-TOOL-GOAL.md",
+      "integration_rank": 50
+    },
+    {
+      "id": "P0-STUDENT-COURSE-VIDEO-PROGRESS-001",
+      "lane": "student-course",
+      "wave": 2,
+      "dispatch_status": "WAITING_DEPENDENCY",
+      "execution_status": "NOT_CREATED",
+      "evidence_status": "PARTIAL",
+      "integration_status": "NOT_INTEGRATED",
+      "branch": "task/p0-student-course-video-progress-001",
+      "worktree": "../worktrees/p0-student-course-video-progress-001",
+      "task_file": "project-ops/tasks/active/P0-STUDENT-COURSE-VIDEO-PROGRESS-001.json",
+      "base_ref": "checkpoint:P0-MULTITRACK-INTEGRATION-001",
+      "base_strategy": "INTEGRATION_CHECKPOINT_CONTAINING_ALL_DEPENDENCIES",
+      "base_task_id": "P0-MULTITRACK-INTEGRATION-001",
+      "depends_on": [
+        "P0-STUDENT-COURSE-SUBMIT-001",
+        "P0-AI-TOOL-CONTRACTS-001"
+      ],
+      "shared_writes": [
+        "frontend/student/courses/course-detail/**",
+        "backend/api/src/modules/student-courses/**",
+        "packages/contracts/openapi/openapi.yaml"
+      ],
+      "shared_locks": [
+        "COURSE_CORE",
+        "OPENAPI"
+      ],
+      "prompt": "project-ops/prompts/multitrack/P0-STUDENT-COURSE-VIDEO-PROGRESS-GOAL.md",
+      "integration_rank": 60
+    },
+    {
+      "id": "P0-STUDENT-COURSE-VIDEO-NOTE-001",
+      "lane": "student-course",
+      "wave": 3,
+      "dispatch_status": "WAITING_DEPENDENCY",
+      "execution_status": "NOT_CREATED",
+      "evidence_status": "PARTIAL",
+      "integration_status": "NOT_INTEGRATED",
+      "branch": "task/p0-student-course-video-note-001",
+      "worktree": "../worktrees/p0-student-course-video-note-001",
+      "task_file": "project-ops/tasks/active/P0-STUDENT-COURSE-VIDEO-NOTE-001.json",
+      "base_ref": "accepted:P0-STUDENT-COURSE-VIDEO-PROGRESS-001",
+      "base_strategy": "ACCEPTED_DEPENDENCY_HEAD",
+      "base_task_id": "P0-STUDENT-COURSE-VIDEO-PROGRESS-001",
+      "depends_on": [
+        "P0-STUDENT-COURSE-VIDEO-PROGRESS-001"
+      ],
+      "shared_writes": [
+        "frontend/student/courses/course-detail/**",
+        "backend/api/src/modules/student-courses/**",
+        "packages/contracts/openapi/openapi.yaml"
+      ],
+      "shared_locks": [
+        "COURSE_CORE",
+        "OPENAPI"
+      ],
+      "prompt": "project-ops/prompts/multitrack/P0-STUDENT-COURSE-VIDEO-NOTE-GOAL.md",
+      "integration_rank": 70
+    },
+    {
+      "id": "P1-TIBETAN-BILINGUAL-COURSE-001",
+      "lane": "tibetan-translation",
+      "wave": 4,
+      "dispatch_status": "WAITING_DEPENDENCY",
+      "execution_status": "NOT_CREATED",
+      "evidence_status": "NOT_STARTED",
+      "integration_status": "NOT_INTEGRATED",
+      "branch": "task/p1-tibetan-bilingual-course-001",
+      "worktree": "../worktrees/p1-tibetan-bilingual-course-001",
+      "task_file": "project-ops/tasks/active/P1-TIBETAN-BILINGUAL-COURSE-001.json",
+      "base_ref": "checkpoint:P0-MULTITRACK-INTEGRATION-001",
+      "base_strategy": "INTEGRATION_CHECKPOINT_CONTAINING_ALL_DEPENDENCIES",
+      "base_task_id": "P0-MULTITRACK-INTEGRATION-001",
+      "depends_on": [
+        "P0-TIBETAN-TRANSLATION-TOOL-001",
+        "P0-STUDENT-COURSE-VIDEO-NOTE-001"
+      ],
+      "shared_writes": [
+        "frontend/student/courses/course-detail/**",
+        "backend/api/src/modules/student-courses/**",
+        "backend/api/src/modules/translations/**",
+        "packages/contracts/openapi/openapi.yaml"
+      ],
+      "shared_locks": [
+        "COURSE_CORE",
+        "TRANSLATION_CORE",
+        "OPENAPI"
+      ],
+      "prompt": "project-ops/prompts/multitrack/P1-TIBETAN-BILINGUAL-COURSE-GOAL.md",
+      "integration_rank": 80
+    }
+  ]
+}

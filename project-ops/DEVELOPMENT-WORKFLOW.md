@@ -56,12 +56,33 @@
 从 `templates/HANDOFF.template.md` 创建 handoff，并用
 `prompts/REVIEW-PROMPT.md` 检查 `base_commit...HEAD` 与当前未提交差异。
 
+先自动定位当前分支对应的 task JSON 并运行 review：
+
 ```powershell
-& .\scripts\repo\task-gate.ps1 -Mode review -TaskFile <task-json>
-git add -- <allowed-paths>
-git commit -m "<type>(<scope>): <outcome>"
-& .\scripts\repo\task-gate.ps1 -Mode finish -TaskFile <task-json>
-git push -u origin <task-branch>
+$branch = (git branch --show-current).Trim()
+$taskFiles = @(Get-ChildItem .\project-ops\tasks\active -Filter *.json |
+  Where-Object {
+    (Get-Content -LiteralPath $_.FullName -Raw -Encoding UTF8 |
+      ConvertFrom-Json).branch -eq $branch
+  })
+if ($taskFiles.Count -ne 1) { throw "Task file not unique for $branch" }
+$taskFile = $taskFiles[0].FullName
+$task = Get-Content -LiteralPath $taskFile -Raw -Encoding UTF8 | ConvertFrom-Json
+& .\scripts\repo\task-gate.ps1 -Mode review -TaskFile $taskFile
+```
+
+review 通过后，用 `git status --short` 和 `git diff --name-only` 取得完整清单，把逐项
+核对过的实际路径显式传给 `git add --`；不使用 `git add -A`，也不复制示意占位符。
+确认 staged 清单后填写真实提交说明，再执行：
+
+```powershell
+$stagedPaths = @(git diff --cached --name-only)
+if ($stagedPaths.Count -eq 0) { throw 'No reviewed paths are staged' }
+$commitMessage = Read-Host 'Commit message for the actual user outcome'
+if ([string]::IsNullOrWhiteSpace($commitMessage)) { throw 'Commit message is required' }
+git commit -m $commitMessage
+& .\scripts\repo\task-gate.ps1 -Mode finish -TaskFile $taskFile
+git push -u origin $task.branch
 ```
 
 只有任务明确授权推送时才执行最后一条命令。finish 必须证明：
@@ -85,3 +106,23 @@ OpenAPI、Prisma、根依赖、CI、全局路由和 UI token 采用单写者。�
 Integration Lead 按“共享事实 → 后端提供者 → 前端消费者 → E2E”合并。失败时用
 新修复提交，不重写共享历史。验收后更新 `CURRENT.md`，把任务移入
 `tasks/completed/`，再删除干净 worktree。
+
+## 6. 多泳道并行
+
+多路线开发先读取：
+
+```text
+project-ops/multitrack-tasks.json
+project-ops/MULTITRACK-BOARD.md
+project-ops/runbooks/MULTITRACK-INTEGRATION.md
+```
+
+并行只发生在依赖已由 accepted baselines 解除且 registry 的 `shared_locks` 不相交
+的任务之间；`shared_writes` 用于审查路径边界，不作为字符串相等的互斥算法。每条
+泳道内部仍按依赖顺序推进；发现必须写另一个任务持有的共享文件时，将任务置为
+`BLOCKED` 并提交 CCR，不以复制契约、页面内硬编码或延后补文档绕过。
+
+每个 Goal 检查点更新自己的 task JSON 和 handoff。Integration Lead 每次收到分支
+后在 `origin/integration/p0-multitrack-001` 控制分支更新接受表、看板和 checkpoint，
+并在合并 2–3 个任务后安排一次硬化窗口。硬化窗口期间不继续合入新功能，只处理
+当前集成线的回归、契约漂移和证据缺口。

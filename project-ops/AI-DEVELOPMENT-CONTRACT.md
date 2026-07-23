@@ -5,15 +5,34 @@
 
 ## 1. 当前方向
 
-当前唯一 P0 是把“古诗文朗读与理解训练”做成可审计的教师—学生黄金闭环：
+当前 P0 仍以“真实学习证据闭环”为主轴，但允许在资源充足时按受控泳道并行：
 
 ```text
-教师配置/发布 → 学生真实作答与录音 → 异步处理
-→ 教师复核 → 学生看到可信反馈 → 教师继续干预
+学生课程/练习证据 ──────────────┐
+教师教案草稿（必须人工复核） ─────┼→ 单一集成线复验 → 学校试点
+藏汉翻译工具（必须人工确认） ─────┘
 ```
 
-新任务必须直接闭合其中一环、修复一处阻塞，或提供必需的质量/治理能力。当前不以
-铺更多页面、增加社区/内容商城、重造通用平台或优先建设 AI Agent 为完成标准。
+三条产品泳道的边界是：
+
+1. **学生学习泳道**：课程练习、普通课程提交、真实视频进度、时间点笔记、独立
+   专项练习；始终复用同一课程模型、Submission、AssessmentSession 和练习执行器。
+2. **教师教案泳道**：只闭合“选择真实课程 → 真实 AI 生成草稿 → 教师修改 →
+   教师确认”的辅助链；AI 输出默认 `NEEDS_REVIEW`，不得自动发布或代替教师决策。
+3. **藏汉翻译泳道**：先闭合独立翻译工具的 provider、持久化、归属和人工修订；
+   网页双语只能消费 `APPROVED` 译文，不能在课程页面现场伪造机器翻译。
+
+并行不等于共享文件并发写。OpenAPI、Prisma、根依赖、CI、全局路由、worker 启动
+入口和 UI token 仍采用单写者；同一产品泳道内修改相同核心文件的任务必须串行。
+当前任务图、依赖和共享锁以 `project-ops/multitrack-tasks.json` 为准。
+某项依赖只有在 `project-ops/accepted-baselines.json` 中具有
+`VERIFIED/INTEGRATED` 状态、完整 commit 且远端 HEAD 一致时才算满足。
+这两个文件及看板只认 `origin/integration/p0-multitrack-001` 远端控制面同一 commit
+中的版本；task branch 内的副本只描述该任务创建时的快照。
+
+新任务必须闭合一个可观察用户动作、解除该动作的必要阻塞，或提供共享契约/集成
+能力。当前仍不以铺更多页面、增加社区/内容商城、重造通用平台、自动给最终成绩或
+建设泛化 Agent 平台为完成标准。
 
 ## 2. 默认上下文预算
 
@@ -54,10 +73,32 @@
 PLANNED 且干净时它运行 preflight；已有执行现场时它运行 resume。分支、基线、
 工作区、上下文或白名单不匹配时，不开始写代码。
 
+多路线 registry 的 `dispatch_status`、任务 JSON 的 `status`、`evidence_status` 和
+`integration_status` 是四个不同维度，不得用其中一个冒充另一个。任务分支只维护
+自己的执行状态和证据；Integration Lead 维护调度、接受基线和集成状态。
+
+状态转换固定为：
+
+```text
+Task Owner: PLANNED → IN_PROGRESS → READY_FOR_REVIEW / BLOCKED
+Reviewer + Integration Lead: READY_FOR_REVIEW → COMPLETED + VERIFIED
+Integration Lead: VERIFIED → INTEGRATED
+```
+
+Task Owner 先把阻塞写入 task JSON/handoff；Integration Lead 再在控制分支把
+dispatch 改为 `BLOCKED`。`READY_TO_DISPATCH/READY_TO_RESUME` 必须有所有依赖的
+accepted entry；task 进入 review 时调度为 `WAITING_REVIEW`；被接受后固定为
+`CLOSED + COMPLETED + VERIFIED`；`INTEGRATED` 还必须有对应的集成接受记录。
+
 ## 4. 实现规则
 
 - 一个任务只闭合一个最小纵向结果；
 - 先复用现有数据模型、API、组件和执行器；
+- 当前默认复用 Course/Submission/AssessmentSession、Resource/对象存储、
+  BullMQ/Flowise 和现有身份/学校边界；新通用轮子必须证明能缩短当前闭环，并有
+  license、安全、数据出境、adapter 和退出评估；
+- H5P/QTI/OneRoster/Uppy/tusd/Langfuse/OpenTelemetry 只在独立任务获批后接入；
+  不整体迁移到 Moodle/Open edX/Canvas，也不为当前小闭环扩根依赖或部署拓扑；
 - 前端字段以真实 DTO/OpenAPI/响应为准，不能分别猜契约；
 - 数据来自真实 API/持久化；禁止固定 ID、静态业务数据和假成功 fallback；
 - loading、empty、error、offline、permission、processing、provider unavailable
@@ -65,6 +106,8 @@ PLANNED 且干净时它运行 preflight；已有执行现场时它运行 resume�
 - school/resource/user scope 在服务端 fail closed；
 - AI 结果是可追踪、可复核的建议，不冒充确定评分；
 - OpenAPI、Prisma、根依赖、CI、全局路由和 UI token 是共享事实；
+- `project-ops/multitrack-tasks.json` 声明的依赖未满足或共享锁未释放时，不得开始
+  对应写入阶段；允许先做只读核查，但不能绕过依赖；
 - 超出白名单的必要改动先拆前置任务；OpenAPI/Prisma 变更必须有 CCR；
 - 稳定决策写入 `project-ops/decisions/`，不能只留在对话中。
 - PowerShell 读取 UTF-8 文本/JSON 时显式指定 `-Encoding UTF8`，保证 Windows
