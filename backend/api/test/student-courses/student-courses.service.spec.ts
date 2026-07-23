@@ -288,7 +288,7 @@ describe("saveActivityAttempt validation rules", () => {
   });
 
   it("rejects completing a PRACTICE activity via generic save", async () => {
-    const prisma = makePrismaMock({ activityType: "PRACTICE" });
+    const prisma = makePrismaMock({ activityType: "PRACTICE", coursePractice: { practiceDefinitionId: "def-id", required: true } });
     await expect(invoke(prisma, { kind: "PRACTICE", completed: true })).rejects.toMatchObject({
       message: "课程练习只能通过练习完成接口完成",
     });

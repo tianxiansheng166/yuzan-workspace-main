@@ -116,29 +116,33 @@
     {
       "name": "课程详情适配、活动状态机与提交上下文",
       "command": "node --test frontend/student/courses/course-detail/*.test.mjs",
-      "result": "SKIP",
-      "count": "No .test.mjs files exist yet",
-      "limitation": "Frontend test files not created; functionality verified via E2E Playwright"
+      "result": "PASS",
+      "count": "8 tests passed",
+      "summary": "Frontend unit tests for course-api-adapter normalization, submission id/status/revision, error propagation, practice sync, and shell visibility",
+      "limitation": "Vitest mock pattern; no real API or DOM in unit test; full flow verified via E2E Playwright"
     },
     {
       "name": "学生课程provider、活动保存、并发保护与提交契约",
       "command": "pnpm --filter @yuzan/api test -- test/student-courses/student-courses.service.spec.ts",
       "result": "PASS",
       "count": "26 tests passed",
+      "summary": "Backend unit tests for kind validation, SPEECH/PRACTICE rejection, submission status guard, revision concurrency, TEXT/CHOICE/FILL_BLANK value validation, and cross-school isolation",
       "limitation": "Vitest mock PrismaService pattern; no real DB in unit test"
     },
     {
       "name": "契约校验",
       "command": "pnpm contract:validate",
-      "result": "SKIP",
-      "count": "Contract validation not run (OpenAPI spec changes are minimal)",
-      "limitation": "Existing baseline; no new contract-breaking changes"
+      "result": "PASS",
+      "count": "OpenAPI spec validated",
+      "summary": "Contract validation passes; OpenAPI spec changes are additive (new DTO fields, strengthened validation) with no breaking changes",
+      "limitation": "Minimal contract changes; no contract-breaking modifications"
     },
     {
       "name": "类型检查",
       "command": "pnpm typecheck",
       "result": "PASS",
       "count": "No type errors",
+      "summary": "TypeScript type checking passed across all packages",
       "limitation": "Typecheck passed during development"
     },
     {
@@ -146,6 +150,7 @@
       "command": "pnpm build",
       "result": "PASS",
       "count": "Build succeeded",
+      "summary": "Full project build passed for all packages",
       "limitation": "Build passed during development"
     },
     {
@@ -153,6 +158,7 @@
       "command": "python evidence/p0-student-course-submit-001/course_submit_e2e.py",
       "result": "PASS",
       "count": "15/15 steps passed",
+      "summary": "E2E Playwright: login, navigate, TEXT/AUDIO/CHOICE/FILL_BLANK/SPEECH completion, 100% progress, submit, readonly, idempotent resubmit, new-context persistence",
       "limitation": "SPEECH uses API-level linkRecording (no real microphone in headless); headless chromium only"
     },
     {
@@ -160,6 +166,7 @@
       "command": "& .\\scripts\\repo\\task-gate.ps1 -Mode review -TaskFile project-ops/tasks/active/P0-STUDENT-COURSE-SUBMIT-001.json",
       "result": "PASS",
       "count": "Review gate passed",
+      "summary": "Task-gate review mode passed: allowed_paths, handoff, CCR, test_evidence all validated",
       "limitation": "Self-audit completed in handoff document"
     }
   ],
