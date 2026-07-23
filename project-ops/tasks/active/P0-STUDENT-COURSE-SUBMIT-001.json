@@ -1,0 +1,118 @@
+{
+  "id": "P0-STUDENT-COURSE-SUBMIT-001",
+  "status": "PLANNED",
+  "title": "闭合学生课程五类普通活动保存与整课提交闭环",
+  "owner": "Codex",
+  "reviewer": "Integration Lead",
+  "branch": "task/p0-student-course-submit-001",
+  "base_commit": "ca14c57f0534e4e8ddf3e273128668b6c12e685e",
+  "user_outcome": "一名真实登录学生在一门真实持久化课程中依次完成TEXT/AUDIO/CHOICE/FILL_BLANK/SPEECH五类必修活动，课程进度从0%变为100%，使用服务端revision提交整门课程，刷新和新浏览器上下文重新登录后仍看到100%进度、五类活动完成、答案恢复、播放进度恢复、录音证据和真实提交状态。",
+  "current_facts": [
+    "后端SaveActivityAttemptDto接受kind/value/completed/videoPosition/expectedProgressRevision，但选择和填空前端仍发送旧字段attemptType/answer/isCorrect",
+    "CourseApiAdapter.saveActivityAttempt丢弃服务端返回的attempt/progress/courseCompletion",
+    "CoursePlayerState.setActivityCompleted只修改本地对象并可能破坏progress对象结构",
+    "MediaController只更新本地播放状态，没有形成服务端AUDIO ActivityProgress",
+    "普通CHOICE/FILL_BLANK的seed内容位于content.prompt/content.options/content.placeholder，但当前前端期待questions",
+    "AUDIO地址位于content.audioUrl，TEXT内容位于content.paragraphs",
+    "当前课程页面存在静态拼贴区域，没有完整的按activity.type驱动的活动状态机",
+    "页面缺少完整课程提交按钮和提交后的只读状态",
+    "简单录音初始化需要动态enrollmentId，课程录音必须带当前submissionId否则linkRecording会拒绝",
+    "generic activity save当前可能伪造SPEECH或PRACTICE完成",
+    "progress revision检查不是可靠的原子并发保护",
+    "第一次课程提交成功后，使用原请求重试可能因revision已增加而错误返回409",
+    "提交后的Submission当前仍可能继续被活动写入"
+  ],
+  "product_alignment": {
+    "p0": "学生端普通课程五类活动真实完成与整课提交的可审计黄金闭环",
+    "contribution": "闭合真实课程活动保存(TEXT/AUDIO/CHOICE/FILL_BLANK/SPEECH)、进度聚合、并发保护、整课提交、幂等重试和持久化恢复之间的学生端纵向链路。",
+    "non_goals": [
+      "不扩张教师端、管理端、翻译、一对一帮扶或其他产品方向",
+      "不改变Prisma schema、权限语义或生产数据",
+      "不修复课程练习(PRACTICE)的保存路径，它由前序任务P0-STUDENT-COURSE-PRACTICE-001闭合",
+      "不实现服务端自动评分，只保存答案和录音证据",
+      "不使用固定业务ID、静态分数、假报告或假成功"
+    ]
+  },
+  "context": {
+    "required": [
+      "project-ops/plans/P0-STUDENT-CLOSED-LOOPS.md",
+      "project-ops/handoffs/P0-STUDENT-COURSE-PRACTICE-001.md",
+      "frontend/student/courses/course-detail/course-api-adapter.js",
+      "frontend/student/courses/course-detail/course-player-state.js",
+      "frontend/student/courses/course-detail/exercise-controller.js",
+      "backend/api/src/modules/student-courses/student-courses.service.ts"
+    ],
+    "optional": [
+      "frontend/student/courses/course-detail/index.html",
+      "frontend/student/courses/course-detail/media-controller.js",
+      "frontend/assets/api-client.js",
+      "backend/api/src/modules/student-courses/dto/student-course.dto.ts",
+      "backend/api/src/modules/student-courses/student-courses.controller.ts",
+      "backend/api/test/student-courses/student-courses.service.spec.ts",
+      "packages/contracts/openapi/openapi.yaml",
+      "infra/database/prisma/seed.ts"
+    ]
+  },
+  "depends_on": [
+    "P0-STUDENT-COURSE-PRACTICE-001"
+  ],
+  "integration_order": [
+    "刻画五种普通activity content的provider/consumer结构与SaveActivityAttemptDto契约",
+    "后端活动保存kind校验、事务写入、revision并发保护与提交后拒绝",
+    "前端按activity.type驱动活动状态机、adapter真实返回、409处理与刷新恢复",
+    "五种真实活动行为(TEXT确认/AUDIO播放+进度/CHOICE选择/FILL_BLANK非空/SPEECH录音闭环)",
+    "100%进度聚合与整课提交、幂等重试、新上下文验证"
+  ],
+  "allowed_paths": [
+    ".learnings/**",
+    "frontend/assets/api-client.js",
+    "frontend/student/courses/course-detail/**",
+    "backend/api/src/modules/student-courses/**",
+    "backend/api/test/student-courses/**",
+    "packages/contracts/openapi/openapi.yaml",
+    "project-ops/**",
+    "evidence/p0-student-course-submit-001/**"
+  ],
+  "shared_owner_changes": [
+    "学生课程活动保存provider/consumer OpenAPI契约(如契约刻画证明缺失)"
+  ],
+  "contract_change_request": "project-ops/requests/CCR-P0-STUDENT-COURSE-SUBMIT-001.md",
+  "minimal_tests": [
+    {
+      "name": "课程详情适配、活动状态机与提交上下文",
+      "command": "node --test frontend/student/courses/course-detail/*.test.mjs"
+    },
+    {
+      "name": "学生课程provider、活动保存、并发保护与提交契约",
+      "command": "pnpm --filter @yuzan/api test -- test/student-courses/student-courses.service.spec.ts"
+    },
+    {
+      "name": "契约校验",
+      "command": "pnpm contract:validate"
+    },
+    {
+      "name": "类型检查",
+      "command": "pnpm typecheck"
+    },
+    {
+      "name": "构建",
+      "command": "pnpm build"
+    },
+    {
+      "name": "真实浏览器课程提交闭环和中断恢复",
+      "command": "python evidence/p0-student-course-submit-001/course_submit_e2e.py"
+    },
+    {
+      "name": "任务变更与交付门禁",
+      "command": "& .\\scripts\\repo\\task-gate.ps1 -Mode review -TaskFile project-ops/tasks/active/P0-STUDENT-COURSE-SUBMIT-001.json"
+    }
+  ],
+  "test_evidence": [],
+  "handoff": "project-ops/handoffs/P0-STUDENT-COURSE-SUBMIT-001.md",
+  "rollback": "Revert this task branch commits; no Prisma migration or production data change is authorized. Existing course, submission, activity progress and recording rows remain server-owned.",
+  "delivery": {
+    "push_task_branch": true,
+    "remote": "origin",
+    "merge_target": "由 Integration Lead 指定"
+  }
+}
