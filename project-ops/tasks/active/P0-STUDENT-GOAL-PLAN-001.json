@@ -1,0 +1,87 @@
+{
+  "id": "P0-STUDENT-GOAL-PLAN-001",
+  "status": "PLANNED",
+  "title": "建立自动续作入口并规划学生端首个真实闭环",
+  "owner": "Codex",
+  "reviewer": "Integration Lead",
+  "branch": "task/p0-student-goal-plan-001",
+  "base_commit": "17cbbe0e39dcf1c401edef50508b1876ee82e6fd",
+  "user_outcome": "AI 每次开始或继续任务时自动发现任务、读取最小必要规范和现场状态，并能用一份目标模式提示词持续推进学生端课程到练习再回写课程的真实闭环。",
+  "current_facts": [
+    "开发框架已经定义最小上下文、任务 JSON、review/finish 门禁和干净分支要求，但开始与续作仍需人工指定任务文件并逐个打开上下文。",
+    "学生课程后端已经返回 assignment、courseVersion、units、practiceReference、existingSubmission 和 studentProgress，课程详情前端适配器仍按旧的顶层字段读取。",
+    "课程练习入口仍跳转到不存在的 /student/practice/ 单数路由，且没有把 practiceDefinitionId、submissionId 和 activityId 一起传入真实练习 attempt。",
+    "练习执行器、真实录音上传、书面作答、提交与课程完成回写接口已经存在，应优先复用并补齐契约和导航，而不是再造执行器。",
+    "翻译模块默认使用 UnavailableTranslationRepository，不能作为当前首个可验收学生闭环。"
+  ],
+  "product_alignment": {
+    "p0": "学生从真实课程进入古诗文朗读与理解练习，完成真实作答与提交后回到原课程，并看到持久化完成状态。",
+    "contribution": "把全局 AI 开发规则变成自动开始/续作入口，并提供按顺序执行、可测试、可提交的学生端闭环路线图与目标模式提示词。",
+    "non_goals": [
+      "本任务不修改学生端业务源码或数据库模型",
+      "本任务不实现教师端、管理端、一对一帮扶或翻译供应商",
+      "本任务不把历史截图、demo=1、固定 ID 或旧 evidence 当作当前运行证明"
+    ]
+  },
+  "context": {
+    "required": [
+      "project-ops/AI-DEVELOPMENT-CONTRACT.md",
+      "project-ops/CONTEXT-ROUTER.md",
+      "docs/10-project-review/01-项目全景分析报告.md",
+      "frontend/student/courses/course-detail/course-api-adapter.js",
+      "backend/api/src/modules/student-courses/student-courses.service.ts",
+      "backend/api/src/modules/assessment/practice.service.ts"
+    ],
+    "optional": [
+      "frontend/student/courses/course-detail/exercise-controller.js",
+      "frontend/assessment/assets/app.js",
+      "infra/database/prisma/seed.ts"
+    ]
+  },
+  "depends_on": [
+    "GOV-DEV-FRAMEWORK-001"
+  ],
+  "integration_order": [
+    "自动发现当前分支对应任务并输出最小上下文",
+    "把 start/resume 入口写入仓库级 AI 规范",
+    "形成学生端闭环的事实基线、实施序列和风险表",
+    "形成可直接粘贴到目标模式的自治执行提示词",
+    "用 PowerShell 5.1/7 smoke、门禁和读者问题自审"
+  ],
+  "allowed_paths": [
+    "AGENTS.md",
+    "README-FIRST.md",
+    ".learnings/ERRORS.md",
+    "project-ops/**",
+    "scripts/repo/**"
+  ],
+  "shared_owner_changes": [
+    "仓库级 AI 开始与续作入口",
+    "任务门禁模式",
+    "学生端闭环排程与目标模式提示词",
+    "仓库治理脚本和测试"
+  ],
+  "contract_change_request": null,
+  "minimal_tests": [
+    {
+      "name": "Task context and student goal package smoke",
+      "command": "& .\\scripts\\repo\\test-task-context.ps1"
+    },
+    {
+      "name": "Development framework regression",
+      "command": "& .\\scripts\\repo\\test-development-framework.ps1"
+    },
+    {
+      "name": "Patch hygiene",
+      "command": "git diff --check"
+    }
+  ],
+  "test_evidence": [],
+  "handoff": "project-ops/handoffs/P0-STUDENT-GOAL-PLAN-001.md",
+  "rollback": "Revert this task branch commits; no product runtime or database data is changed.",
+  "delivery": {
+    "push_task_branch": true,
+    "remote": "origin",
+    "merge_target": "由 Integration Lead 指定"
+  }
+}
