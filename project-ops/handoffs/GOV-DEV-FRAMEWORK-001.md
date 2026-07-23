@@ -35,7 +35,7 @@
 | Patch hygiene | `git diff --check` | `PASS` |
 | Preflight negative gate | 对当前脏实现运行 `task-gate.ps1 -Mode preflight` | `PASS`：只因 clean-worktree 条件拒绝 |
 | Review gate | `task-gate.ps1 -Mode review` | `PASS`：PowerShell 7 与 Windows PowerShell 5.1，19 changed paths |
-| Finish gate | `task-gate.ps1 -Mode finish` | 待最终提交后运行 |
+| Finish gate | `task-gate.ps1 -Mode finish` | `PASS`：PowerShell 7 与 Windows PowerShell 5.1，19 changed paths、领先 base 2 commits、worktree clean |
 
 ## 自审
 
@@ -58,4 +58,5 @@
 
 - 合并顺序：本治理任务应先于后续 P0 功能任务；
 - Integration Lead 需要复验：Windows PowerShell smoke、review/finish 输出、分支 clean；
-- 推送分支/commit：`task/gov-dev-framework-001`，最终 commit 以本 handoff 所在 HEAD 为准。
+- 实现 commit：`555254e888699f5083b24952c87f3b3e975d5dd7`；
+- 推送分支：`task/gov-dev-framework-001`，最终交付 commit 以本 handoff 所在 HEAD 为准。
