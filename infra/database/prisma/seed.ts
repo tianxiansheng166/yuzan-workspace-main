@@ -212,7 +212,8 @@ async function seedStudentCourses() {
         { type: "TEXT", title: "认识发音部位", instruction: "阅读说明并观察发音位置。", content: { paragraphs: ["双唇音发音时，两片嘴唇先形成阻碍，再让气流有控制地冲出。", "练习时关注下颌放松，不要用力抿嘴。"] }, studentNotes: ["先找准阻碍位置，再练习送气。", "镜面观察比用力模仿更有效。"] },
         { type: "AUDIO", title: "听辨送气差异", instruction: "完整听一遍示范，留意气流强弱。", content: { audioUrl: "/student/growth/assets/practice-sample.wav", transcript: "玻璃杯旁边放着一盆薄荷。" }, studentNotes: ["p、t、k 的气流更明显。"] },
         { type: "SPEECH", title: "独立朗读声母句", instruction: "请清晰朗读目标句，录音完成后上传。", content: { targetText: "白白的蒲公英飘过平静的湖面。" }, studentNotes: ["保持音节完整，不要为了速度吞音。"] },
-        { type: "CHOICE", title: "声母专项课程练习", instruction: "进入统一练习执行器完成听辨、跟读和独立录音。", content: { practiceLabel: "停顿与节奏专项训练" }, studentNotes: ["课程练习会保存为独立 Practice Attempt。"], practice: true }
+        { type: "CHOICE", title: "声母听辨选择", instruction: "选择送气更明显的声母组。", content: { prompt: "下面哪组读音的送气更明显？", options: ["p 与 b", "m 与 n", "l 与 r"] }, studentNotes: ["送气音气流强，不送气音气流弱。"] },
+        { type: "FILL_BLANK", title: "填写声母发音要点", instruction: "在空格中填写声母的发音部位。", content: { prompt: "双唇音b、p的阻碍位置在____，舌尖音d、t的阻碍位置在____。", placeholder: "填写发音部位" }, studentNotes: ["先找准阻碍位置，再练习送气。"] }
       ]
     },
     {
