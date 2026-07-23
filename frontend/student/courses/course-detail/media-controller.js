@@ -28,6 +28,8 @@
 
   var controlsTimeout = null;
   var duration = 0;
+  var lastSavedPosition = 0;
+  var POSITION_SAVE_INTERVAL = 10;
 
   // Bound handler references for cleanup
   var handlers = {};
@@ -83,6 +85,15 @@
     if (progressBar) progressBar.max = duration;
   }
 
+  function _saveVideoPosition(position) {
+    if (typeof CoursePlayerState === 'undefined') return;
+    var s = CoursePlayerState.getState();
+    if (!s.currentActivityId || !s.submissionId) return;
+    if (s.submissionStatus && ['SUBMITTED', 'PROCESSING', 'NEEDS_REVIEW', 'REVIEWED', 'ACCEPTED'].indexOf(s.submissionStatus) !== -1) return;
+    var activityKind = s.currentActivity ? s.currentActivity.activityType : 'VIDEO';
+    CoursePlayerState.saveActivityAttempt(s.currentActivityId, activityKind, { videoPosition: duration > 0 ? position / duration : 0 }, false).catch(function () {});
+  }
+
   function onTimeUpdate() {
     if (!video) return;
     var cur = video.currentTime;
@@ -92,6 +103,10 @@
       var pct = duration > 0 ? (cur / duration) * 100 : 0;
       CoursePlayerState.updateVideoProgress(pct, cur, duration);
     }
+    if (cur - lastSavedPosition >= POSITION_SAVE_INTERVAL) {
+      lastSavedPosition = cur;
+      _saveVideoPosition(cur);
+    }
   }
 
   function onPlay() {
@@ -100,6 +115,9 @@
 
   function onPause() {
     updatePlayPauseUI();
+    if (video && video.currentTime > 0) {
+      _saveVideoPosition(video.currentTime);
+    }
   }
 
   function onEnded() {
@@ -228,6 +246,7 @@
     loadSource: function (videoUrl, posterUrl, subtitleZhUrl, subtitleBoUrl) {
       if (!video) return;
 
+      lastSavedPosition = 0;
       video.src = videoUrl || '';
       video.poster = posterUrl || '';
 
