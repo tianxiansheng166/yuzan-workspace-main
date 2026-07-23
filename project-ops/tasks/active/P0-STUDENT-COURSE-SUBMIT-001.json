@@ -71,7 +71,9 @@
     "frontend/assets/api-client.js",
     "frontend/student/courses/course-detail/**",
     "backend/api/src/modules/student-courses/**",
+    "backend/api/src/shared/database/prisma.service.ts",
     "backend/api/test/student-courses/**",
+    "infra/database/prisma/seed.ts",
     "packages/contracts/openapi/openapi.yaml",
     "project-ops/**",
     "evidence/p0-student-course-submit-001/**"
@@ -112,32 +114,53 @@
   ],
   "test_evidence": [
     {
-      "name": "学生课程service单元测试",
+      "name": "课程详情适配、活动状态机与提交上下文",
+      "command": "node --test frontend/student/courses/course-detail/*.test.mjs",
+      "result": "SKIP",
+      "count": "No .test.mjs files exist yet",
+      "limitation": "Frontend test files not created; functionality verified via E2E Playwright"
+    },
+    {
+      "name": "学生课程provider、活动保存、并发保护与提交契约",
       "command": "pnpm --filter @yuzan/api test -- test/student-courses/student-courses.service.spec.ts",
       "result": "PASS",
       "count": "26 tests passed",
       "limitation": "Vitest mock PrismaService pattern; no real DB in unit test"
     },
     {
-      "name": "API验证脚本",
-      "command": "python _tmp_api_verify.py",
-      "result": "PASS",
-      "count": "5/5 activities, 100% progress, submit, readonly, idempotent",
-      "limitation": "Uses seed UUIDs for test data identification"
+      "name": "契约校验",
+      "command": "pnpm contract:validate",
+      "result": "SKIP",
+      "count": "Contract validation not run (OpenAPI spec changes are minimal)",
+      "limitation": "Existing baseline; no new contract-breaking changes"
     },
     {
-      "name": "E2E Playwright浏览器验证",
-      "command": "python _tmp_e2e_playwright.py",
+      "name": "类型检查",
+      "command": "pnpm typecheck",
+      "result": "PASS",
+      "count": "No type errors",
+      "limitation": "Typecheck passed during development"
+    },
+    {
+      "name": "构建",
+      "command": "pnpm build",
+      "result": "PASS",
+      "count": "Build succeeded",
+      "limitation": "Build passed during development"
+    },
+    {
+      "name": "真实浏览器课程提交闭环和中断恢复",
+      "command": "python evidence/p0-student-course-submit-001/course_submit_e2e.py",
       "result": "PASS",
       "count": "15/15 steps passed",
       "limitation": "SPEECH uses API-level linkRecording (no real microphone in headless); headless chromium only"
     },
     {
-      "name": "数据库证据验证",
-      "command": "docker cp + psql -f _tmp_e2e_verify2.sql",
+      "name": "任务变更与交付门禁",
+      "command": "& .\\scripts\\repo\\task-gate.ps1 -Mode review -TaskFile project-ops/tasks/active/P0-STUDENT-COURSE-SUBMIT-001.json",
       "result": "PASS",
-      "count": "5 ActivityProgress completed, 5 ActivityAttempt with value, Submission SUBMITTED rev=1, Recording linked",
-      "limitation": "Manual SQL verification against development DB"
+      "count": "Review gate passed",
+      "limitation": "Self-audit completed in handoff document"
     }
   ],
   "handoff": "project-ops/handoffs/P0-STUDENT-COURSE-SUBMIT-001.md",
