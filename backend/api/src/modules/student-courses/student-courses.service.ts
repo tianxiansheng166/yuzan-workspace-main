@@ -236,7 +236,7 @@ export class StudentCoursesService {
     if (context.activity.type === "SPEECH" && body.completed === true) throw new UnprocessableEntityException("口语活动只能通过录音关联完成");
 
     // 3. PRACTICE cannot be completed via generic save
-    if ((context.activity.type === "PRACTICE" || context.activity.coursePractice) && body.completed === true) throw new UnprocessableEntityException("课程练习只能通过练习完成接口完成");
+    if (context.activity.coursePractice && body.completed === true) throw new UnprocessableEntityException("课程练习只能通过练习完成接口完成");
 
     // 4. Reject saves on submitted submissions
     const submittedStatuses = ["SUBMITTED", "PROCESSING", "REVIEWED", "ACCEPTED"];
