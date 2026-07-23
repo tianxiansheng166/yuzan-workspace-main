@@ -1,0 +1,72 @@
+{
+  "id": "GOV-DEV-FRAMEWORK-001",
+  "status": "IN_PROGRESS",
+  "title": "建立轻量、可执行的 AI 开发控制框架",
+  "owner": "Codex",
+  "reviewer": "Integration Lead",
+  "branch": "task/gov-dev-framework-001",
+  "base_commit": "d22d8e14a78ee7bd78a2513fa099bbc93a538c45",
+  "user_outcome": "后续 AI 只读取最小必要上下文，也能按项目方向完成开发、自审、最小验证、交接和干净分支提交。",
+  "product_alignment": {
+    "p0": "古诗文朗读与理解训练的可审计黄金闭环",
+    "contribution": "建立所有后续纵向任务共用的方向、范围、验证和 Git 门禁，不新增业务功能。",
+    "non_goals": [
+      "新增产品页面或业务模块",
+      "重构现有前后端架构",
+      "改变 OpenAPI、Prisma schema 或运行时行为"
+    ]
+  },
+  "context": {
+    "required": [
+      "project-ops/AI-DEVELOPMENT-CONTRACT.md",
+      "project-ops/CONTEXT-ROUTER.md"
+    ],
+    "optional": [
+      "docs/项目指导/04-AI协作任务模板与验收清单.md"
+    ]
+  },
+  "depends_on": [
+    "GOV-ROOT-002"
+  ],
+  "integration_order": [
+    "轻量开发契约与上下文路由",
+    "任务和交接模板",
+    "任务门禁脚本",
+    "入口文档收敛"
+  ],
+  "allowed_paths": [
+    "AGENTS.md",
+    "README-FIRST.md",
+    ".github/pull_request_template.md",
+    "project-ops/**",
+    "scripts/repo/**"
+  ],
+  "shared_owner_changes": [
+    "仓库级 AI 开发入口",
+    "任务元数据契约",
+    "分支与交接门禁",
+    "仓库治理脚本"
+  ],
+  "contract_change_request": null,
+  "minimal_tests": [
+    {
+      "name": "PowerShell syntax",
+      "command": "PowerShell parser validates scripts/repo/*.ps1"
+    },
+    {
+      "name": "Task metadata",
+      "command": "All active task JSON files parse; framework task satisfies required fields"
+    },
+    {
+      "name": "Lifecycle gate",
+      "command": "task-gate.ps1 passes review before commit and finish after commit"
+    },
+    {
+      "name": "Patch hygiene",
+      "command": "git diff --check"
+    }
+  ],
+  "test_evidence": [],
+  "handoff": "project-ops/handoffs/GOV-DEV-FRAMEWORK-001.md",
+  "rollback": "Revert the framework commits; existing runtime and product data are unaffected."
+}
