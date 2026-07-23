@@ -1,0 +1,27 @@
+{
+  "task": "P0-STUDENT-COURSE-SUBMIT-001",
+  "timestamp": "2026-07-23T19:00:00Z",
+  "e2e_result": "PASS",
+  "total_steps": 15,
+  "passed_steps": 15,
+  "steps": [
+    {"step": "Login", "status": "PASS", "detail": "Logged in as student.test, redirected to /student/today"},
+    {"step": "Navigate", "status": "PASS", "detail": "Course detail page loaded"},
+    {"step": "TEXT", "status": "PASS", "detail": "确认阅读 completed, feedback visible"},
+    {"step": "AUDIO", "status": "PASS", "detail": "标记完成 completed, feedback visible"},
+    {"step": "CHOICE", "status": "PASS", "detail": "Choice submitted, feedback visible"},
+    {"step": "FILL_BLANK", "status": "PASS", "detail": "Fill blank submitted, feedback visible"},
+    {"step": "SPEECH", "status": "PASS", "detail": "Recording linked via API, activity completed"},
+    {"step": "100%_Progress", "status": "PASS", "detail": "Course progress reached 100%"},
+    {"step": "Submit_Course", "status": "PASS", "detail": "Course submitted successfully"},
+    {"step": "Readonly_After_Submit", "status": "PASS", "detail": "Activity writes rejected after submission"},
+    {"step": "Idempotent_Resubmit", "status": "PASS", "detail": "Re-submit returned same result"},
+    {"step": "New_Context_Login", "status": "PASS", "detail": "Re-login in new browser context succeeded"},
+    {"step": "Persistence_100%", "status": "PASS", "detail": "100% progress persisted"},
+    {"step": "Persistence_Activities", "status": "PASS", "detail": "All activities still completed"},
+    {"step": "Persistence_Submission", "status": "PASS", "detail": "Submission still SUBMITTED"}
+  ],
+  "viewport_tested": ["1440x900"],
+  "console_errors": [],
+  "limitation": "SPEECH uses API-level linkRecording; no real microphone in headless chromium"
+}

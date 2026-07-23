@@ -1,26 +1,29 @@
 {
   "id": "P0-STUDENT-COURSE-SUBMIT-001",
-  "status": "PLANNED",
+  "status": "READY_FOR_REVIEW",
   "title": "闭合学生课程五类普通活动保存与整课提交闭环",
   "owner": "Codex",
   "reviewer": "Integration Lead",
   "branch": "task/p0-student-course-submit-001",
   "base_commit": "ca14c57f0534e4e8ddf3e273128668b6c12e685e",
+  "started_at": "2026-07-23T08:00:00Z",
+  "completed_at": "2026-07-23T19:00:00Z",
+  "ready_for_review_at": "2026-07-23T19:00:00Z",
   "user_outcome": "一名真实登录学生在一门真实持久化课程中依次完成TEXT/AUDIO/CHOICE/FILL_BLANK/SPEECH五类必修活动，课程进度从0%变为100%，使用服务端revision提交整门课程，刷新和新浏览器上下文重新登录后仍看到100%进度、五类活动完成、答案恢复、播放进度恢复、录音证据和真实提交状态。",
   "current_facts": [
-    "后端SaveActivityAttemptDto接受kind/value/completed/videoPosition/expectedProgressRevision，但选择和填空前端仍发送旧字段attemptType/answer/isCorrect",
-    "CourseApiAdapter.saveActivityAttempt丢弃服务端返回的attempt/progress/courseCompletion",
-    "CoursePlayerState.setActivityCompleted只修改本地对象并可能破坏progress对象结构",
-    "MediaController只更新本地播放状态，没有形成服务端AUDIO ActivityProgress",
-    "普通CHOICE/FILL_BLANK的seed内容位于content.prompt/content.options/content.placeholder，但当前前端期待questions",
-    "AUDIO地址位于content.audioUrl，TEXT内容位于content.paragraphs",
-    "当前课程页面存在静态拼贴区域，没有完整的按activity.type驱动的活动状态机",
-    "页面缺少完整课程提交按钮和提交后的只读状态",
-    "简单录音初始化需要动态enrollmentId，课程录音必须带当前submissionId否则linkRecording会拒绝",
-    "generic activity save当前可能伪造SPEECH或PRACTICE完成",
-    "progress revision检查不是可靠的原子并发保护",
-    "第一次课程提交成功后，使用原请求重试可能因revision已增加而错误返回409",
-    "提交后的Submission当前仍可能继续被活动写入"
+    "后端SaveActivityAttemptDto接受kind/value/completed/videoPosition/expectedProgressRevision",
+    "前端exercise-controller.js按activity.type驱动五种活动渲染和保存",
+    "CourseApiAdapter.saveActivityAttempt返回真实attempt/progress/courseCompletion",
+    "CoursePlayerState跟踪submissionId/enrollmentId/revision和每个活动的progress",
+    "MediaController通过saveActivityAttempt保存AUDIO的videoPosition到服务端",
+    "CHOICE/FILL_BLANK前端从content.prompt/content.options/content.placeholder渲染",
+    "SPEECH通过linkRecording端点完成，不能通过generic save伪造",
+    "PRACTICE通过completePractice端点完成，不能通过generic save伪造",
+    "progress revision提供原子并发保护，冲突返回409",
+    "提交后活动写入被拒绝",
+    "幂等重试返回同一已提交结果",
+    "E2E Playwright验证15/15步骤通过",
+    "数据库证据验证5 ActivityProgress completed + 5 ActivityAttempt with value + Submission SUBMITTED rev=1 + Recording linked"
   ],
   "product_alignment": {
     "p0": "学生端普通课程五类活动真实完成与整课提交的可审计黄金闭环",
@@ -107,7 +110,36 @@
       "command": "& .\\scripts\\repo\\task-gate.ps1 -Mode review -TaskFile project-ops/tasks/active/P0-STUDENT-COURSE-SUBMIT-001.json"
     }
   ],
-  "test_evidence": [],
+  "test_evidence": [
+    {
+      "name": "学生课程service单元测试",
+      "command": "pnpm --filter @yuzan/api test -- test/student-courses/student-courses.service.spec.ts",
+      "result": "PASS",
+      "count": "26 tests passed",
+      "limitation": "Vitest mock PrismaService pattern; no real DB in unit test"
+    },
+    {
+      "name": "API验证脚本",
+      "command": "python _tmp_api_verify.py",
+      "result": "PASS",
+      "count": "5/5 activities, 100% progress, submit, readonly, idempotent",
+      "limitation": "Uses seed UUIDs for test data identification"
+    },
+    {
+      "name": "E2E Playwright浏览器验证",
+      "command": "python _tmp_e2e_playwright.py",
+      "result": "PASS",
+      "count": "15/15 steps passed",
+      "limitation": "SPEECH uses API-level linkRecording (no real microphone in headless); headless chromium only"
+    },
+    {
+      "name": "数据库证据验证",
+      "command": "docker cp + psql -f _tmp_e2e_verify2.sql",
+      "result": "PASS",
+      "count": "5 ActivityProgress completed, 5 ActivityAttempt with value, Submission SUBMITTED rev=1, Recording linked",
+      "limitation": "Manual SQL verification against development DB"
+    }
+  ],
   "handoff": "project-ops/handoffs/P0-STUDENT-COURSE-SUBMIT-001.md",
   "rollback": "Revert this task branch commits; no Prisma migration or production data change is authorized. Existing course, submission, activity progress and recording rows remain server-owned.",
   "delivery": {
