@@ -1,12 +1,17 @@
 {
   "id": "GOV-DEV-FRAMEWORK-001",
-  "status": "IN_PROGRESS",
+  "status": "READY_FOR_REVIEW",
   "title": "建立轻量、可执行的 AI 开发控制框架",
   "owner": "Codex",
   "reviewer": "Integration Lead",
   "branch": "task/gov-dev-framework-001",
   "base_commit": "d22d8e14a78ee7bd78a2513fa099bbc93a538c45",
   "user_outcome": "后续 AI 只读取最小必要上下文，也能按项目方向完成开发、自审、最小验证、交接和干净分支提交。",
+  "current_facts": [
+    "仓库已有 worktree、任务 JSON、handoff 和安全自治说明，但规则分散且结束门禁不可执行。",
+    "AGENTS.md 当前要求每个任务默认读取章程、CURRENT 和任务 JSON，缺少按任务类型的上下文路由。",
+    "new-worktree.ps1 与 remove-worktree.ps1 已提供安全工作区创建/删除能力，但缺少任务全生命周期检查。"
+  ],
   "product_alignment": {
     "p0": "古诗文朗读与理解训练的可审计黄金闭环",
     "contribution": "建立所有后续纵向任务共用的方向、范围、验证和 Git 门禁，不新增业务功能。",
@@ -38,6 +43,7 @@
     "AGENTS.md",
     "README-FIRST.md",
     ".github/pull_request_template.md",
+    ".learnings/ERRORS.md",
     "project-ops/**",
     "scripts/repo/**"
   ],
@@ -50,23 +56,34 @@
   "contract_change_request": null,
   "minimal_tests": [
     {
-      "name": "PowerShell syntax",
-      "command": "PowerShell parser validates scripts/repo/*.ps1"
-    },
-    {
-      "name": "Task metadata",
-      "command": "All active task JSON files parse; framework task satisfies required fields"
-    },
-    {
-      "name": "Lifecycle gate",
-      "command": "task-gate.ps1 passes review before commit and finish after commit"
+      "name": "Development framework smoke",
+      "command": "& .\\scripts\\repo\\test-development-framework.ps1"
     },
     {
       "name": "Patch hygiene",
       "command": "git diff --check"
     }
   ],
-  "test_evidence": [],
+  "test_evidence": [
+    {
+      "name": "Development framework smoke",
+      "command": "& .\\scripts\\repo\\test-development-framework.ps1; powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\\scripts\\repo\\test-development-framework.ps1",
+      "result": "PASS",
+      "summary": "PowerShell 7 与 Windows PowerShell 5.1 均通过：12 个框架文件存在，任务模板与 3 个 active task JSON 可解析，4 个 repo PowerShell 脚本无语法错误。"
+    },
+    {
+      "name": "Patch hygiene",
+      "command": "git diff --check",
+      "result": "PASS",
+      "summary": "命令无输出并返回 0。"
+    }
+  ],
+  "ready_for_review_at": "2026-07-23T11:37:54+08:00",
   "handoff": "project-ops/handoffs/GOV-DEV-FRAMEWORK-001.md",
-  "rollback": "Revert the framework commits; existing runtime and product data are unaffected."
+  "rollback": "Revert the framework commits; existing runtime and product data are unaffected.",
+  "delivery": {
+    "push_task_branch": true,
+    "remote": "origin",
+    "merge_target": "由 Integration Lead 指定"
+  }
 }

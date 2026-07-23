@@ -1,52 +1,49 @@
 # AGENTS.md
 
-Before changing code, read these repository-local sources in order:
+## 最小开工上下文
 
-1. `README-FIRST.md`
-2. `PROJECT-CHARTER.md`
-3. `project-ops/CURRENT.md`
-4. the active task JSON under `project-ops/tasks/active/`
+改动仓库前只按顺序读取：
 
-`D:/program/test_program/yuzanxinsheng/three/yuzan-next` is the canonical project root.
-Concurrent task worktrees belong in the sibling `../worktrees/` directory. Do not
-create full repository clones under the project root.
+1. `project-ops/AI-DEVELOPMENT-CONTRACT.md`；
+2. 分配给自己的 `project-ops/tasks/active/<task-id>.json`；
+3. 任务 `context.required` 中列出的文件。
 
-## Canonical source layout
+不要默认通读 `docs/`、`PROJECT-CHARTER.md` 或 `CURRENT.md`。创建新任务时先用
+`project-ops/CONTEXT-ROUTER.md` 选取最小上下文。任务元数据提交后运行：
 
-- `frontend/` is the only active frontend during the current closure phase.
-- `backend/api/`, `backend/worker/` and `backend/speech-scoring/` are the backend services.
-- `packages/` contains shared source packages; `infra/` contains database and local infrastructure.
-- Archived frontends and design evidence under `../legacy-archive/` are recovery material, not development inputs.
-- Do not recreate `apps/apps-web`, `web-runtime`, `apps/api`, `apps/worker` or `services/speech-scoring`.
+```powershell
+& .\scripts\repo\task-gate.ps1 -Mode preflight -TaskFile <task-json>
+```
 
-pnpm owns dependencies for the whole workspace. Run installs only at the repository
-root. Package-level `package.json` files declare dependency ownership and must stay;
-package-level `node_modules` entries are pnpm links into the shared root virtual store.
-Never run `npm install` inside a backend service or shared package.
+## 仓库边界
 
-## Hard rules
+- 唯一主项目是 `D:/program/test_program/yuzanxinsheng/three/yuzan-next`；
+- 每个任务使用 sibling `../worktrees/<task-id>`，不要在主项目内创建完整克隆；
+- `frontend/` 是唯一当前前端；
+- 后端只在 `backend/api/`、`backend/worker/`、`backend/speech-scoring/`；
+- 共享源码在 `packages/`，数据库与基础设施在 `infra/`；
+- `../legacy-archive/` 只作恢复证据，不作开发输入；
+- 不得重建 `apps/apps-web`、`web-runtime`、`apps/api`、`apps/worker` 或
+  `services/speech-scoring`。
 
-- Work only in the assigned branch/worktree.
-- Modify only task `allowed_paths`.
-- Record dependencies, base commit and integration order in the task JSON.
-- Keep stable decisions in `project-ops/decisions/`; do not leave them only in chat.
-- Update `project-ops/CURRENT.md` at every accepted integration checkpoint.
-- OpenAPI, Prisma schema, UI tokens, root config and CI are shared-owner files.
-- Submit a Contract Change Request before changing shared facts.
-- Never use legacy JSON files at runtime.
-- Never hardcode business data to make a page appear complete.
-- All reads/writes enforce school/resource scope server-side.
-- No emoji as product icons.
-- No generic card wall, card-in-card, purple-blue AI gradients or runtime DOM patch scripts.
-- AI output is advisory, versioned, auditable and reviewable.
-- Do not claim tests ran unless the commands actually ran.
-- Do not commit secrets, real student data, licensed assets without proof, or generated images without the asset register.
+pnpm 管理整个 workspace。依赖只在仓库根安装，不在子包运行 `npm install`。
+兼容 Windows PowerShell 5.1 的脚本读取 UTF-8 文本/JSON 时必须显式指定
+`-Encoding UTF8`。
 
-## Required delivery
+## 不可协商规则
 
-- implementation + tests;
-- normal/loading/empty/error/offline/permission states where applicable;
-- security and tenant-negative tests;
-- screenshots for UI at 1440/1024/390;
-- migration/rollback notes;
-- completed handoff.
+- 只在任务分支/worktree 和 `allowed_paths` 内工作；
+- 先复用现有模型、契约和执行器，再考虑新增抽象；
+- 禁止用固定 ID、静态业务数据、假成功或 demo fallback 冒充真实闭环；
+- 服务端强制 school/resource/user scope，失败必须显式；
+- OpenAPI、Prisma、根依赖、CI、全局路由和 UI token 是共享事实；
+- 共享事实变更必须声明 owner；OpenAPI/Prisma 变更还必须有 CCR；
+- 不执行破坏性 Git 清理，不覆盖其他人的脏工作区；
+- 不提交密钥、真实学生数据或来源不明资产；
+- 未实际运行的测试不得写成通过。
+
+## 完成门禁
+
+完成前更新测试证据和 handoff，运行 `task-gate.ps1 -Mode review`；提交后运行
+`task-gate.ps1 -Mode finish`。只有 finish 通过、`git status --porcelain` 为空，
+才能报告任务完成或推送分支。

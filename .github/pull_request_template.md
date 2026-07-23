@@ -2,7 +2,9 @@
 
 - ID:
 - Branch:
+- Base commit:
 - User outcome:
+- Golden-loop contribution:
 - Owner:
 - Reviewer:
 
@@ -15,15 +17,12 @@
 
 ## Evidence
 
-- [ ] lint
-- [ ] typecheck
-- [ ] unit/integration
-- [ ] contract
-- [ ] E2E where applicable
-- [ ] tenant/permission negative test
-- [ ] screenshots 1440/1024/390 for UI
-- [ ] loading/empty/error/offline/permission states
+- [ ] Every declared minimal test has a recorded `PASS`
+- [ ] Risk-triggered tests were added (contract/tenant/E2E/UI as applicable)
+- [ ] No fixed IDs, fake success or demo fallback was introduced
 - [ ] no secrets/real student data
+- [ ] `task-gate.ps1 -Mode finish` passes
+- [ ] `git status --porcelain` is empty
 
 Commands and results:
 
@@ -50,3 +49,6 @@ Commands and results:
 ## Known limitations
 
 ## Handoff
+
+- Handoff path:
+- Rollback:

@@ -1,0 +1,52 @@
+{
+  "id": "AREA-OUTCOME-001",
+  "status": "PLANNED",
+  "title": "一句话任务结果",
+  "owner": "Task Owner",
+  "reviewer": "Reviewer",
+  "branch": "task/area-outcome-001",
+  "base_commit": "<40-character-commit>",
+  "user_outcome": "一个用户完成一个可观察动作",
+  "current_facts": [
+    "由当前源码、契约、数据或运行验证的事实"
+  ],
+  "product_alignment": {
+    "p0": "古诗文朗读与理解训练的可审计黄金闭环",
+    "contribution": "闭合哪一环或解除哪一处阻塞",
+    "non_goals": [
+      "本任务明确不做的内容"
+    ]
+  },
+  "context": {
+    "required": [
+      "与任务直接相关的最少文件"
+    ],
+    "optional": []
+  },
+  "depends_on": [],
+  "integration_order": [
+    "共享事实",
+    "后端提供者",
+    "前端消费者",
+    "纵向验证"
+  ],
+  "allowed_paths": [
+    "精确文件或目录/**"
+  ],
+  "shared_owner_changes": [],
+  "contract_change_request": null,
+  "minimal_tests": [
+    {
+      "name": "能直接证伪改动的检查",
+      "command": "实际要运行的命令"
+    }
+  ],
+  "test_evidence": [],
+  "handoff": "project-ops/handoffs/AREA-OUTCOME-001.md",
+  "rollback": "如何安全回退本任务",
+  "delivery": {
+    "push_task_branch": true,
+    "remote": "origin",
+    "merge_target": "由 Integration Lead 指定"
+  }
+}

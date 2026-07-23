@@ -410,3 +410,16 @@
 - Command: run final audit from `workers/p0-integration` and read `../README-FIRST.md`
 - Result: the former directory is now an empty, unregistered non-repository and its old parent-relative governance files no longer exist. A policy check also blocked deleting that directory during the active desktop session.
 - Resolution: switched all commands to the canonical `three/yuzan-next` root, used repository-local `README-FIRST.md` and `AGENTS.md`, and retained an explicit session-exit cleanup note for the empty legacy path.
+
+## [ERR-20260723-001] windows-powershell-utf8-json-default
+
+- Logged: 2026-07-23T11:35:49+08:00
+- Priority: medium
+- Status: resolved
+- Area: repository governance scripts
+- Command: run `task-gate.ps1` with Windows PowerShell 5.1 against a UTF-8 task JSON containing Chinese text
+- Result: `Get-Content -Raw` used the legacy system code page, corrupted multibyte text and caused `ConvertFrom-Json` to reject otherwise valid JSON. After that fix, a UTF-8 script without BOM still failed before execution when its source contained a Chinese string literal.
+- Resolution: all new governance scripts use `Get-Content -Encoding UTF8` for repository text and keep their own source ASCII-only; the framework smoke parses the scripts and is exercised under both PowerShell 7 and Windows PowerShell 5.1.
+- Reproducible: yes
+- Related Files: `scripts/repo/task-gate.ps1`, `scripts/repo/test-development-framework.ps1`
+- See Also: ERR-20260714-024
