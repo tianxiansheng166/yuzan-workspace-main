@@ -187,6 +187,7 @@
         return {
           id: submissionId,
           submissionId: submissionId,
+          enrollmentId: submission.enrollmentId || resp.enrollmentId || '',
           status: submission.status || '',
           revision: submission.revision != null ? submission.revision : 0,
           resumed: !!(resp && resp.resumed)
