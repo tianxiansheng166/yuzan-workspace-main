@@ -1,6 +1,6 @@
 {
   "id": "P0-STUDENT-GOAL-PLAN-001",
-  "status": "PLANNED",
+  "status": "READY_FOR_REVIEW",
   "title": "建立自动续作入口并规划学生端首个真实闭环",
   "owner": "Codex",
   "reviewer": "Integration Lead",
@@ -76,7 +76,27 @@
       "command": "git diff --check"
     }
   ],
-  "test_evidence": [],
+  "test_evidence": [
+    {
+      "name": "Task context and student goal package smoke",
+      "command": "& .\\scripts\\repo\\test-task-context.ps1; powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\\scripts\\repo\\test-task-context.ps1",
+      "result": "PASS",
+      "summary": "PowerShell 7 与 Windows PowerShell 5.1 均通过：当前 branch 自动发现唯一任务，resume 门禁和最小上下文输出正常，超小总预算被拒绝，学生路线图与目标模式提示词的关键执行锚点齐全。"
+    },
+    {
+      "name": "Development framework regression",
+      "command": "& .\\scripts\\repo\\test-development-framework.ps1; powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\\scripts\\repo\\test-development-framework.ps1",
+      "result": "PASS",
+      "summary": "两套 PowerShell 均通过：16 个框架文件存在，5 个 JSON 文档可解析，6 个治理脚本保持 ASCII 且无语法错误，入口、工作流、提示词和学生规划的读者契约齐全。"
+    },
+    {
+      "name": "Patch hygiene",
+      "command": "git diff --check",
+      "result": "PASS",
+      "summary": "命令无输出并返回 0。"
+    }
+  ],
+  "ready_for_review_at": "2026-07-23T13:53:26+08:00",
   "handoff": "project-ops/handoffs/P0-STUDENT-GOAL-PLAN-001.md",
   "rollback": "Revert this task branch commits; no product runtime or database data is changed.",
   "delivery": {

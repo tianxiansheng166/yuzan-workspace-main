@@ -3,7 +3,8 @@
 ```text
 审查 TASK_FILE=<project-ops/tasks/active/...json> 对应任务。
 
-读取 AI-DEVELOPMENT-CONTRACT、TASK_FILE、context.required 和 handoff。检查
+先运行 `scripts/repo/task-context.ps1 -Mode resume`，自动读取
+AI-DEVELOPMENT-CONTRACT、TASK_FILE、context.required、handoff 和 Git 现场。检查
 base_commit...HEAD、staged、unstaged、untracked 的全部差异，但不要修改代码。
 
 按严重度报告可复现问题：

@@ -1,6 +1,6 @@
 param(
     [Parameter(Mandatory = $true)]
-    [ValidateSet('preflight', 'review', 'finish')]
+    [ValidateSet('preflight', 'resume', 'review', 'finish')]
     [string]$Mode,
 
     [Parameter(Mandatory = $true)]
@@ -175,6 +175,13 @@ if (@($task.context.required).Count -eq 0) {
 if (@($task.context.required).Count -gt 6) {
     Add-Failure 'Task context.required exceeds the six-file context budget; split or narrow the task.'
 }
+foreach ($contextPath in @($task.context.required)) {
+    $candidate = Join-Path $repoRoot ([string]$contextPath)
+    if (-not (Test-InsideRepo -Candidate $candidate) -or
+        -not (Test-Path -LiteralPath $candidate -PathType Leaf)) {
+        Add-Failure "Required context file does not exist: $contextPath"
+    }
+}
 if (@($task.integration_order).Count -eq 0) {
     Add-Failure 'Task integration_order must not be empty.'
 }
@@ -309,17 +316,15 @@ if ($Mode -eq 'preflight') {
     }
 }
 
+if ($Mode -eq 'resume') {
+    if (@('PLANNED', 'IN_PROGRESS', 'READY_FOR_REVIEW', 'BLOCKED') -notcontains [string]$task.status) {
+        Add-Failure 'Resume requires an active task status, not COMPLETED.'
+    }
+}
+
 if ($Mode -in @('review', 'finish')) {
     if (@('READY_FOR_REVIEW', 'COMPLETED') -notcontains [string]$task.status) {
         Add-Failure 'Review/finish requires task status READY_FOR_REVIEW or COMPLETED.'
-    }
-
-    foreach ($contextPath in @($task.context.required)) {
-        $candidate = Join-Path $repoRoot ([string]$contextPath)
-        if (-not (Test-InsideRepo -Candidate $candidate) -or
-            -not (Test-Path -LiteralPath $candidate)) {
-            Add-Failure "Required context path does not exist: $contextPath"
-        }
     }
 
     $handoffPath = Join-Path $repoRoot ([string]$task.handoff)

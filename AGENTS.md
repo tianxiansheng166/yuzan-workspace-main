@@ -2,18 +2,25 @@
 
 ## 最小开工上下文
 
-改动仓库前只按顺序读取：
-
-1. `project-ops/AI-DEVELOPMENT-CONTRACT.md`；
-2. 分配给自己的 `project-ops/tasks/active/<task-id>.json`；
-3. 任务 `context.required` 中列出的文件。
-
-不要默认通读 `docs/`、`PROJECT-CHARTER.md` 或 `CURRENT.md`。创建新任务时先用
-`project-ops/CONTEXT-ROUTER.md` 选取最小上下文。任务元数据提交后运行：
+已有 active task 的分支每次开始、继续、上下文压缩或机器重启后，第一条命令统一为：
 
 ```powershell
-& .\scripts\repo\task-gate.ps1 -Mode preflight -TaskFile <task-json>
+& .\scripts\repo\task-context.ps1 -Mode auto
 ```
+
+脚本从当前 branch 自动匹配唯一任务，执行 start/preflight 或 resume 门禁，并只
+输出：
+
+1. `project-ops/AI-DEVELOPMENT-CONTRACT.md`；
+2. 当前任务 JSON；
+3. 任务 `context.required` 中的 2–6 个文件；
+4. 已有 handoff（仅续作）；
+5. 当前 Git status、最近提交和相对 base 的 changed paths。
+
+不要要求用户重复上传这些文件，不要默认通读 `docs/`、`PROJECT-CHARTER.md` 或
+`CURRENT.md`。没有任务 JSON 时先用模板和 `CONTEXT-ROUTER.md` 创建任务，在独立
+worktree 提交元数据后再运行自动入口。脚本拒绝仓库外路径、二进制和超预算上下文，
+且不会生成临时文件或改变 Git 状态。
 
 ## 仓库边界
 

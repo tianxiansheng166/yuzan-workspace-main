@@ -17,11 +17,20 @@
 
 ## 2. 默认上下文预算
 
-开工只读三类内容：
+已有任务每次开工或续作先运行：
+
+```powershell
+& .\scripts\repo\task-context.ps1 -Mode auto
+```
+
+入口只输出三类稳定内容和实时 Git 现场：
 
 1. 本短契约；
 2. 自己的任务 JSON；
 3. 任务 `context.required`。
+
+续作时若 handoff 已存在则一并读取。脚本按当前 branch 自动发现任务，单文件和总量
+都有字节预算，且不写临时文件。不要让用户每次重新附加项目规范或任务文件。
 
 不要习惯性通读 `docs/`、历史报告、全部源码、`PROJECT-CHARTER.md` 或
 `CURRENT.md`。需要补事实时按 `CONTEXT-ROUTER.md` 增量读取直接相关文件。
@@ -41,8 +50,9 @@
 结果尚不确定时，将它定义为 discovery 任务：写清假设、时间边界、可证伪实验和
 退出条件；不能把探索结果直接写成已完成功能。
 
-任务元数据形成提交后，在独立 worktree 运行 preflight。分支、基线、工作区或
-白名单不匹配时，不开始写代码。
+任务元数据形成提交后，在独立 worktree 运行 `task-context.ps1 -Mode auto`。
+PLANNED 且干净时它运行 preflight；已有执行现场时它运行 resume。分支、基线、
+工作区、上下文或白名单不匹配时，不开始写代码。
 
 ## 4. 实现规则
 

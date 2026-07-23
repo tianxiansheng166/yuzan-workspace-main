@@ -9,12 +9,16 @@ $requiredFiles = @(
     'project-ops/CONTEXT-ROUTER.md',
     'project-ops/DEVELOPMENT-WORKFLOW.md',
     'project-ops/NEXT-DEVELOPMENT-QUEUE.md',
+    'project-ops/plans/P0-STUDENT-CLOSED-LOOPS.md',
     'project-ops/templates/task.template.json',
     'project-ops/templates/HANDOFF.template.md',
     'project-ops/prompts/TASK-PLANNING-PROMPT.md',
     'project-ops/prompts/IMPLEMENTATION-PROMPT.md',
     'project-ops/prompts/REVIEW-PROMPT.md',
-    'scripts/repo/task-gate.ps1'
+    'project-ops/prompts/P0-STUDENT-GOAL-MODE-PROMPT.md',
+    'scripts/repo/task-gate.ps1',
+    'scripts/repo/task-context.ps1',
+    'scripts/repo/test-task-context.ps1'
 )
 
 foreach ($relativePath in $requiredFiles) {
@@ -44,6 +48,14 @@ foreach ($jsonPath in $jsonFiles) {
 
 $powerShellFiles = Get-ChildItem -LiteralPath (Join-Path $repoRoot 'scripts/repo') -Filter '*.ps1'
 foreach ($file in $powerShellFiles) {
+    $bytes = [System.IO.File]::ReadAllBytes($file.FullName)
+    foreach ($value in $bytes) {
+        if ($value -gt 127) {
+            $failures.Add("PowerShell source must remain ASCII-only for Windows PowerShell 5.1: $($file.Name)")
+            break
+        }
+    }
+
     $tokens = $null
     $errors = $null
     [void][System.Management.Automation.Language.Parser]::ParseFile(
@@ -59,7 +71,7 @@ foreach ($file in $powerShellFiles) {
 $contentChecks = @(
     @{
         Path = 'AGENTS.md'
-        Patterns = @('AI-DEVELOPMENT-CONTRACT.md', 'task-gate.ps1 -Mode preflight', 'allowed_paths')
+        Patterns = @('task-context.ps1 -Mode auto', 'AI-DEVELOPMENT-CONTRACT.md', 'allowed_paths')
     },
     @{
         Path = 'project-ops/AI-DEVELOPMENT-CONTRACT.md'
@@ -67,7 +79,7 @@ $contentChecks = @(
     },
     @{
         Path = 'project-ops/DEVELOPMENT-WORKFLOW.md'
-        Patterns = @('-Mode preflight', '-Mode review', '-Mode finish', 'git push')
+        Patterns = @('task-context.ps1 -Mode auto', 'resume', '-Mode review', '-Mode finish', 'git push')
     },
     @{
         Path = 'project-ops/prompts/IMPLEMENTATION-PROMPT.md'
@@ -76,6 +88,14 @@ $contentChecks = @(
     @{
         Path = 'project-ops/prompts/REVIEW-PROMPT.md'
         Patterns = @('base_commit...HEAD', 'allowed_paths', 'findings')
+    },
+    @{
+        Path = 'project-ops/plans/P0-STUDENT-CLOSED-LOOPS.md'
+        Patterns = @('P0-STUDENT-COURSE-PRACTICE-001', 'practiceDefinitionId', 'MediaRecorder', 'git status --porcelain')
+    },
+    @{
+        Path = 'project-ops/prompts/P0-STUDENT-GOAL-MODE-PROMPT.md'
+        Patterns = @('task-context.ps1 -Mode auto', 'demo=1', 'git status --porcelain')
     }
 )
 foreach ($check in $contentChecks) {

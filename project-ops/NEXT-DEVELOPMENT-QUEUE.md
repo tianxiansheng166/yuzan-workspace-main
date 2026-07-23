@@ -15,12 +15,20 @@
 
 | 顺序 | 候选任务 | 可观察出口 | 最小证明 | 解锁 |
 |---|---|---|---|---|
-| 1 | `P0-BASELINE-001` 可复现黄金数据与契约基线 | 一名教师、一名学生、一份已发布练习可用动态 ID 恢复 | bootstrap/契约聚焦测试 + DB validate + API smoke | 后续任务不再依赖固定 demo ID |
-| 2 | `P0-STUDENT-EXEC-001` 学生真实执行与提交 | 学生从任务进入、作答、录音、提交，刷新后状态仍存在 | 相关 API 测试 + 前端聚焦测试 + 一次动态 ID runtime smoke | speech job 与教师处理 |
-| 3 | `P0-SPEECH-STATE-001` 语音处理真状态 | 录音进入队列；成功、失败、未配置供应商分别可追踪 | worker/API 状态与幂等测试 + provider unavailable smoke | 教师复核 |
-| 4 | `P0-TEACHER-REVIEW-001` 教师复核闭环 | 教师查看证据、修改/确认结果，版本与审计可恢复 | 权限正负向测试 + 复核写入集成测试 | 学生可信报告 |
-| 5 | `P0-STUDENT-REPORT-001` 学生反馈与再练 | 学生只看到已允许发布的可信反馈，并能继续练习 | 报告权限测试 + frontend/API 对齐 + 页面三尺寸证据 | 完整纵向验收 |
-| 6 | `P0-GOLDEN-E2E-001` 试点准入 | 从教师发布到学生反馈全程使用动态 ID，有完整证据包 | 真实浏览器 E2E + API/DB 状态核对 + console/page error 审计 | 小规模试点 |
+| 0 | `P0-STUDENT-GOAL-PLAN-001` 自动续作与学生路线 | AI 自动读取短契约、任务、最小上下文和现场；目标模式有唯一执行提示词 | PowerShell 7/5.1 smoke + reader questions + finish 门禁 | 不再依赖人工反复附文件 |
+| 1 | `P0-STUDENT-COURSE-PRACTICE-001` 课程关联练习 | 学生从课程进入古诗文练习，真实作答、提交、回到课程并持久化完成 | adapter/DTO/权限/幂等测试 + 动态 ID 浏览器/API/DB smoke | 学生端第一条真实证据链 |
+| 2 | `P0-STUDENT-COURSE-SUBMIT-001` 普通课程与作业 | 文本、音频、选择、填空、口语活动全部完成并提交整门课程 | 活动 DTO/revision 测试 + 刷新恢复 + 课程提交 smoke | 课程/作业可用 |
+| 3 | `P0-STUDENT-INDEPENDENT-PRACTICE-001` 独立专项练习 | 学生从练习中心自主开始、继续、完成并查看历史 | 无课程上下文隔离测试 + 真实执行器 smoke | 专项训练 |
+| 4 | `P0-STUDENT-MOCK-LISTEN-SPEAK-001` 听说模拟 | 同一执行器按冻结规则完成听、复述、朗读和表达时序 | 规则/计时/中断测试 + 三尺寸浏览器证据 | 广东听说式训练 |
+| 5 | `P0-STUDENT-REPORT-RETRY-001` 报告与再练 | 学生看到可信状态/反馈并从薄弱项启动下一次练习 | 报告权限/状态测试 + frontend/API 对齐 | 成长链路 |
+| 6 | `P0-SPEECH-STATE-001` 语音处理真状态 | 录音进入队列；成功、失败、未配置供应商分别可追踪 | worker/API 状态与幂等测试 + provider unavailable smoke | 教师复核 |
+| 7 | `P0-TEACHER-REVIEW-001` 教师复核与一对一干预 | 教师查看证据、修改/确认结果并下发一项针对性练习 | 权限正负向测试 + 复核/干预写入测试 | 教师数据工作台 |
+| 8 | `P0-GOLDEN-E2E-001` 试点准入 | 从发布到学生反馈和下一次干预全程动态 ID、有完整证据包 | 真实浏览器 E2E + API/DB 状态核对 + console/page error 审计 | 小规模试点 |
+
+当前 seed 已能在 development/test 创建四门学生课程和六套可复用练习，因此不再
+默认安排一个“重新造 bootstrap”的前置任务。`P0-STUDENT-COURSE-PRACTICE-001`
+开工时先做动态 API 基线检查；只有当前运行环境确实无法恢复数据时，才实例化一个
+更小的环境修复任务。
 
 ## 当前停止线
 
@@ -29,6 +37,7 @@
 - 新社区、内容商城、泛化 CMS 或新终端；
 - 与闭环无关的大规模 UI 重做；
 - AI 备课 Agent、自动判定最终成绩或不可复核建议；
+- 管理端静态驾驶舱、完整藏中翻译平台和大规模资料库；
 - H5P/QTI 等标准化扩张；
 - 只为演示效果增加的 fixture、固定 ID 和静态分数。
 

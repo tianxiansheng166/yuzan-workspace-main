@@ -16,14 +16,19 @@ D:/program/test_program/yuzanxinsheng/three/yuzan-next
 
 ## 每次开始
 
-1. 阅读 `project-ops/AI-DEVELOPMENT-CONTRACT.md`；
-2. 打开分配给自己的任务 JSON；
-3. 只读取任务 `context.required` 指定的上下文；
-4. 确认 branch、base、白名单和共享 owner；
-5. 在 `../worktrees/<task-id>` 中运行 preflight 后开发。
+在任务 worktree 中运行：
+
+```powershell
+& .\scripts\repo\task-context.ps1 -Mode auto
+```
+
+它会从当前 branch 自动发现任务，加载开发短契约、任务 JSON、最小必要上下文和
+续作现场，并执行 start/preflight 或 resume 门禁。AI 不应再要求人工逐个附加这些
+文件。
 
 没有任务 JSON 时，不直接写代码。用 `project-ops/templates/task.template.json`
-建任务，并用 `project-ops/CONTEXT-ROUTER.md` 选择按需资料。
+建任务，用 `project-ops/CONTEXT-ROUTER.md` 选择 2–6 个按需资料，先在独立
+worktree 提交任务元数据，再运行上面的自动入口。
 
 ## 本地启动
 
@@ -31,8 +36,10 @@ D:/program/test_program/yuzanxinsheng/three/yuzan-next
 - 并发 worktree：`project-ops/runbooks/WORKTREES.md`
 - 开发与合并：`project-ops/DEVELOPMENT-WORKFLOW.md`
 - 当前开发队列：`project-ops/NEXT-DEVELOPMENT-QUEUE.md`
+- 学生端闭环路线：`project-ops/plans/P0-STUDENT-CLOSED-LOOPS.md`
 - 排程提示词：`project-ops/prompts/TASK-PLANNING-PROMPT.md`
 - 执行提示词：`project-ops/prompts/IMPLEMENTATION-PROMPT.md`
 - 审查提示词：`project-ops/prompts/REVIEW-PROMPT.md`
+- 学生闭环目标模式：`project-ops/prompts/P0-STUDENT-GOAL-MODE-PROMPT.md`
 
 旧 `orchestration/` 已不再是有效入口；历史副本只保存在归档中。

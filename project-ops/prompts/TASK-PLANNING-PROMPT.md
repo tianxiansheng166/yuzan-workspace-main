@@ -17,7 +17,8 @@
 4. 从 templates/task.template.json 创建一个任务 JSON，范围只容纳一个用户结果。
 5. context.required 控制在 2–6 项；allowed_paths 尽量精确；声明共享 owner/CCR。
 6. minimal_tests 选择能最快证伪改动的最小集合，不能只写 HTTP 200 或“页面能开”。
-7. 创建 task worktree，先提交任务元数据，再运行 preflight。
+7. 创建 task worktree，先提交任务元数据，再运行
+   `scripts/repo/task-context.ps1 -Mode auto`；后续续作也使用同一入口。
 8. 使用 prompts/IMPLEMENTATION-PROMPT.md 执行任务。
 
 禁止：

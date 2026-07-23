@@ -380,6 +380,8 @@
 - Command: aggregate top-level directory sizes in a PowerShell pipeline
 - Result: PowerShell rejected a direct `foreach` result followed by a pipe as an empty pipe element; no move or deletion had started.
 - Resolution: materialized the loop output into an array before sorting and reran the read-only inventory successfully.
+- Recurrence-Count: 2
+- Last-Seen: 2026-07-23
 
 ## [ERR-20260722-008] root-cleanup-command-and-runtime-recovery
 
@@ -423,3 +425,109 @@
 - Reproducible: yes
 - Related Files: `scripts/repo/task-gate.ps1`, `scripts/repo/test-development-framework.ps1`
 - See Also: ERR-20260714-024
+
+## [ERR-20260723-002] powershell-repository-inspection-command-composition
+
+- Logged: 2026-07-23T13:33:13+08:00
+- Priority: low
+- Status: resolved
+- Area: repository inspection
+- Command: compose read-only PowerShell inventory, line-label, ripgrep glob and helper-script lookup commands
+- Result: a direct `foreach` pipeline recurred; `$Path:$Start` was parsed as an invalid variable reference; a Unix-style `frontend/**/*.js` argument did not expand as intended on Windows; and one lookup used the nonexistent name `new-task-worktree.ps1`.
+- Resolution: materialize loop output before piping, delimit interpolated variables with `$()`, search directories with `rg --glob`, and resolve helper names with `rg --files` before opening them.
+- Reproducible: yes
+- Related Files: `.learnings/ERRORS.md`
+- See Also: ERR-20260722-007, ERR-20260714-014
+
+## [ERR-20260723-003] powershell-cmdlet-boolean-parentheses
+
+- Logged: 2026-07-23T13:33:13+08:00
+- Priority: low
+- Status: resolved
+- Area: repository governance scripts
+- Command: parse the first `task-context.ps1` implementation
+- Result: PowerShell treated `-and` as part of the preceding cmdlet invocation inside an `if` condition and reported missing closing parentheses before execution.
+- Resolution: wrap the `Test-InsideRepo` cmdlet invocation in its own parentheses before applying the Boolean `-and`, then parse the script under both supported PowerShell engines.
+- Reproducible: yes
+- Related Files: `scripts/repo/task-context.ps1`, `scripts/repo/test-development-framework.ps1`
+- See Also: ERR-20260714-014
+
+## [ERR-20260723-004] powershell-empty-hashset-parameter-binding
+
+- Logged: 2026-07-23T13:35:00+08:00
+- Priority: low
+- Status: resolved
+- Area: repository governance scripts
+- Command: run `task-context.ps1 -Mode resume` for the first emitted context file
+- Result: PowerShell rejected the initially empty `HashSet[string]` bound to a mandatory collection parameter before the function could add its first path.
+- Resolution: mark the strongly typed `EmittedPaths` parameter with `AllowEmptyCollection`, preserving duplicate suppression without weakening its type.
+- Reproducible: yes
+- Related Files: `scripts/repo/task-context.ps1`
+- See Also: ERR-20260723-001
+
+## [ERR-20260723-005] multi-file-patch-header-omission
+
+- Logged: 2026-07-23T13:35:00+08:00
+- Priority: low
+- Status: resolved
+- Area: repository maintenance
+- Command: patch `task-context.ps1` and `.learnings/ERRORS.md` in one operation
+- Result: the second file's context was placed under the first update hunk because its `Update File` header was omitted; verification failed and changed nothing.
+- Resolution: use an explicit `Update File` header for every file in a multi-file patch and rerun the patch.
+- Reproducible: yes
+- Related Files: `scripts/repo/task-context.ps1`, `.learnings/ERRORS.md`
+- See Also: ERR-20260714-024
+- Recurrence-Count: 2
+- Last-Seen: 2026-07-23
+
+## [ERR-20260723-006] ascii-governance-test-self-violation
+
+- Logged: 2026-07-23T13:45:00+08:00
+- Priority: low
+- Status: resolved
+- Area: repository governance tests
+- Command: run `test-task-context.ps1`
+- Result: the test correctly rejected its own source because Chinese document-anchor literals made the no-BOM script non-ASCII and unsafe for the supported Windows PowerShell 5.1 entry path.
+- Resolution: keep Chinese content in UTF-8 documents, but assert it through stable ASCII identifiers and code symbols so every governance `.ps1` source remains ASCII-only.
+- Reproducible: yes
+- Related Files: `scripts/repo/test-task-context.ps1`
+- See Also: ERR-20260723-001
+
+## [ERR-20260723-007] implementation-prompt-context-anchor
+
+- Logged: 2026-07-23T13:47:00+08:00
+- Priority: low
+- Status: resolved
+- Area: repository governance tests
+- Command: run `test-development-framework.ps1` after switching the implementation prompt to automatic context loading
+- Result: the reader-contract smoke found that the revised prompt no longer named `context.required` explicitly, weakening the documented context boundary.
+- Resolution: state that the automatic entry loads `TASK_FILE.context.required`, preserving both automation and the six-file reader contract.
+- Reproducible: yes
+- Related Files: `project-ops/prompts/IMPLEMENTATION-PROMPT.md`, `scripts/repo/test-development-framework.ps1`
+- See Also: ERR-20260723-006
+
+## [ERR-20260723-008] windows-powershell-smoke-pattern-mojibake
+
+- Logged: 2026-07-23T13:50:00+08:00
+- Priority: medium
+- Status: resolved
+- Area: repository governance tests
+- Command: run `test-development-framework.ps1` with Windows PowerShell 5.1
+- Result: newly added Chinese reader-contract literals in the no-BOM test source were decoded with the legacy code page, so the smoke searched for mojibake and failed although the UTF-8 document was correct.
+- Resolution: replace script-source Chinese literals with stable ASCII code and identifier anchors; keep every repository governance script ASCII-only while reading UTF-8 documents explicitly.
+- Reproducible: yes
+- Related Files: `scripts/repo/test-development-framework.ps1`, `project-ops/plans/P0-STUDENT-CLOSED-LOOPS.md`
+- See Also: ERR-20260723-001, ERR-20260723-006
+
+## [ERR-20260723-009] staged-new-file-whitespace-check
+
+- Logged: 2026-07-23T13:58:00+08:00
+- Priority: low
+- Status: resolved
+- Area: Git hygiene
+- Command: run `git diff --cached --check` after staging new planning files
+- Result: two Markdown hard-break lines in the previously untracked plan had trailing spaces; earlier unstaged `git diff --check` did not inspect untracked content.
+- Resolution: remove the trailing spaces and require a staged `git diff --cached --check` before commit so newly added files are included.
+- Reproducible: yes
+- Related Files: `project-ops/plans/P0-STUDENT-CLOSED-LOOPS.md`
+- See Also: ERR-20260723-005

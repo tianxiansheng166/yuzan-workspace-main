@@ -3,7 +3,7 @@
 ## 一条标准任务链
 
 ```text
-定义任务 → 独立 worktree → preflight → 实现 → 最小测试
+定义任务 → 独立 worktree → 自动 start/resume → 实现 → 最小测试
 → 自审与 handoff → review → 提交 → finish → 推送 → 集成复验
 ```
 
@@ -32,8 +32,12 @@
 任务元数据应先形成一个小提交，使开工时工作区可验证为干净。进入 worktree 后：
 
 ```powershell
-& .\scripts\repo\task-gate.ps1 -Mode preflight -TaskFile <task-json>
+& .\scripts\repo\task-context.ps1 -Mode auto
 ```
+
+脚本自动匹配当前 branch 的 active task。PLANNED 且干净时调用 preflight；任务已有
+改动或处于 IN_PROGRESS/READY_FOR_REVIEW/BLOCKED 时调用 resume，并输出 handoff
+和实时 Git 现场。每次恢复任务都重复运行同一命令，不要求用户重新发送上下文。
 
 ## 3. 实现与最小测试
 
