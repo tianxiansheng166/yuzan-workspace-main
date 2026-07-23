@@ -771,9 +771,23 @@
       practiceBtn.addEventListener('click', function (e) {
         e.preventDefault();
         var state = window.CoursePlayerState.getState();
-        var activityId = state.currentActivityId;
-        var practiceUrl = '/student/practice/?assignmentId=' + state.assignmentId + '&activityId=' + activityId + '&returnUrl=' + encodeURIComponent(window.location.pathname + window.location.search);
-        window.location.href = practiceUrl;
+        var activity = state.currentActivity || {};
+        var practiceReference = activity.practiceReference || {};
+        practiceBtn.setAttribute('aria-busy', 'true');
+        practiceBtn.classList.add('disabled');
+        window.CourseApiAdapter.startCoursePractice({
+          assignmentId: state.assignmentId,
+          submissionId: state.submissionId,
+          activityId: activity.activityId,
+          practiceDefinitionId: practiceReference.practiceDefinitionId,
+          returnTo: window.location.pathname + window.location.search
+        }).then(function (result) {
+          window.location.href = result.navigateTo;
+        }).catch(function (error) {
+          practiceBtn.removeAttribute('aria-busy');
+          practiceBtn.classList.remove('disabled');
+          showToast((error && error.message) || '练习启动失败，请重试');
+        });
       });
     }
 

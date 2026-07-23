@@ -2023,11 +2023,20 @@ paths:
             required: true,
             schema: { type: string, format: uuid },
           }
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CoursePracticeContextRequest"
       responses:
         "201":
-          {
-            description: "Returns a real attemptId; published item snapshots are copied atomically",
-          }
+          description: Returns a real attemptId; published item snapshots are copied atomically
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PracticeAttemptStartResponse"
+        "400": { $ref: "#/components/responses/BadRequest" }
         "403": { $ref: "#/components/responses/Forbidden" }
   /schools/{schoolId}/practices/{practiceDefinitionId}/favorite:
     post:
@@ -4299,6 +4308,33 @@ components:
       properties:
         submission: { $ref: "#/components/schemas/Submission" }
         resumed: { type: boolean }
+    CoursePracticeContextRequest:
+      type: object
+      description: Empty for self-practice; course-linked practice requires all three UUIDs together.
+      properties:
+        assignmentId: { type: string, format: uuid }
+        submissionId: { type: string, format: uuid }
+        activityId: { type: string, format: uuid }
+      dependentRequired:
+        assignmentId: [submissionId, activityId]
+        submissionId: [assignmentId, activityId]
+        activityId: [assignmentId, submissionId]
+    PracticeAttemptStartResponse:
+      type: object
+      required: [attemptId, status, resumed, mode, courseContext]
+      properties:
+        attemptId: { type: string, format: uuid }
+        status: { type: string }
+        resumed: { type: boolean }
+        mode: { type: string, enum: [COURSE_PRACTICE, SELF_PRACTICE] }
+        courseContext:
+          oneOf:
+            - type: object
+              required: [submissionId, activityId]
+              properties:
+                submissionId: { type: string, format: uuid }
+                activityId: { type: string, format: uuid }
+            - type: "null"
     SaveCourseActivityAttemptRequest:
       type: object
       required: [kind]

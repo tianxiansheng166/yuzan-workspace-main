@@ -77,6 +77,11 @@ body.tibetan-language .cp-section-title { line-height: 2; }
   font-size: 16px;
   padding-top: var(--cp-nav-height);
 }
+.cp-loading[hidden],
+.cp-error[hidden],
+.cp-page[hidden] {
+  display: none;
+}
 .cp-spinner {
   width: 40px; height: 40px;
   border: 3px solid var(--cp-gray-light);

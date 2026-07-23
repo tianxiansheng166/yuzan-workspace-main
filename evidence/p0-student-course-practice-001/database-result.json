@@ -1,0 +1,64 @@
+{
+  "status": "PASSED",
+  "assignmentId": "85000000-0000-4000-8000-000000000003",
+  "submission": {
+    "id": "8218931a-6308-4811-a145-45f091174aba",
+    "status": "IN_PROGRESS",
+    "revision": 0
+  },
+  "activityId": "84000000-0000-4000-8000-000000000304",
+  "activityProgress": {
+    "completed": true,
+    "revision": 1
+  },
+  "activityAttempt": {
+    "id": "4fb6bf22-42c9-47af-b838-f40de167a0ee",
+    "kind": "COURSE_PRACTICE",
+    "value": {
+      "status": "PROCESSING",
+      "practiceAttemptId": "abf2394a-ba95-449f-b131-a45b12dccaa8"
+    }
+  },
+  "assessmentSession": {
+    "id": "abf2394a-ba95-449f-b131-a45b12dccaa8",
+    "status": "PROCESSING",
+    "practiceDefinitionId": "70000000-0000-4000-8000-000000000001",
+    "deliveryId": "72000000-0000-4000-8000-000000000001"
+  },
+  "oralItems": [
+    {
+      "itemId": "bdb8d168-7953-4ad0-a158-cb2d7bcad37d",
+      "itemStatus": "PENDING",
+      "recording": {
+        "id": "b501a430-3145-4803-9ed5-07c570dfed5f",
+        "status": "COMPLETE",
+        "durationMs": 3000,
+        "mimeType": "audio/webm;codecs=opus",
+        "objectKey": "recordings/b501a430-3145-4803-9ed5-07c570dfed5f/full"
+      }
+    },
+    {
+      "itemId": "37186ba7-445b-4c32-ab99-ee938e7f4f22",
+      "itemStatus": "PENDING",
+      "recording": {
+        "id": "ce3e3afd-a199-442a-8f5b-0129aeec5b28",
+        "status": "COMPLETE",
+        "durationMs": 3000,
+        "mimeType": "audio/webm;codecs=opus",
+        "objectKey": "recordings/ce3e3afd-a199-442a-8f5b-0129aeec5b28/full"
+      }
+    }
+  ],
+  "writtenItems": [
+    {
+      "itemId": "2be5553e-205f-4143-8440-50e60e7a4f05",
+      "itemStatus": "ANSWERED",
+      "hasNonEmptyFinalAnswer": true
+    },
+    {
+      "itemId": "5b836798-3259-4fca-b82b-0620904900ae",
+      "itemStatus": "ANSWERED",
+      "hasNonEmptyFinalAnswer": true
+    }
+  ]
+}

@@ -1,0 +1,631 @@
+{
+  "taskId": "P0-STUDENT-COURSE-PRACTICE-001",
+  "baseUrl": "http://127.0.0.1:4175",
+  "browser": "chromium-headless",
+  "target": {
+    "assignmentId": "85000000-0000-4000-8000-000000000003",
+    "activityId": "84000000-0000-4000-8000-000000000304",
+    "practiceDefinitionId": "70000000-0000-4000-8000-000000000001",
+    "courseTitle": "古诗文朗读：停顿与情感",
+    "practiceTitle": "古诗文朗读与理解训练",
+    "source": "TEACHER_ASSIGNED",
+    "capabilityTheme": "古诗文",
+    "oralItemCount": 2,
+    "writtenItemCount": 2
+  },
+  "submissionId": "8218931a-6308-4811-a145-45f091174aba",
+  "submissionStatusAtEntry": "IN_PROGRESS",
+  "entryVerification": {
+    "progressPercent": 0,
+    "completedPracticeCount": 0,
+    "activityCompleted": false
+  },
+  "attemptId": "abf2394a-ba95-449f-b131-a45b12dccaa8",
+  "attemptSnapshotItemIds": [
+    "dafc127a-219b-443e-b044-1741743a0e01",
+    "bdb8d168-7953-4ad0-a158-cb2d7bcad37d",
+    "37186ba7-445b-4c32-ab99-ee938e7f4f22",
+    "2be5553e-205f-4143-8440-50e60e7a4f05",
+    "5b836798-3259-4fca-b82b-0620904900ae"
+  ],
+  "itemIds": [
+    "2be5553e-205f-4143-8440-50e60e7a4f05",
+    "37186ba7-445b-4c32-ab99-ee938e7f4f22",
+    "5b836798-3259-4fca-b82b-0620904900ae",
+    "bdb8d168-7953-4ad0-a158-cb2d7bcad37d",
+    "dafc127a-219b-443e-b044-1741743a0e01"
+  ],
+  "oralItemIds": [
+    "37186ba7-445b-4c32-ab99-ee938e7f4f22",
+    "bdb8d168-7953-4ad0-a158-cb2d7bcad37d"
+  ],
+  "writtenItemIds": [
+    "2be5553e-205f-4143-8440-50e60e7a4f05",
+    "5b836798-3259-4fca-b82b-0620904900ae"
+  ],
+  "apiVerification": {
+    "course": {
+      "completedActivityIds": ["84000000-0000-4000-8000-000000000304"],
+      "completedPracticeCount": 1,
+      "requiredPracticeCount": 1,
+      "progressPercent": 25,
+      "activityProgress": {
+        "id": "3346d5be-576c-4d8f-9bd1-9cb3aaf3d4f7",
+        "schoolId": "11111111-1111-4111-8111-111111111111",
+        "activityId": "84000000-0000-4000-8000-000000000304",
+        "enrollmentId": "f1111111-1111-4111-8111-111111111111",
+        "position": 1,
+        "completed": true,
+        "revision": 1,
+        "updatedAt": "2026-07-23T08:09:19.215Z"
+      },
+      "attempt": {
+        "id": "4fb6bf22-42c9-47af-b838-f40de167a0ee",
+        "schoolId": "11111111-1111-4111-8111-111111111111",
+        "submissionId": "8218931a-6308-4811-a145-45f091174aba",
+        "activityId": "84000000-0000-4000-8000-000000000304",
+        "kind": "COURSE_PRACTICE",
+        "value": {
+          "status": "PROCESSING",
+          "practiceAttemptId": "abf2394a-ba95-449f-b131-a45b12dccaa8"
+        },
+        "autoResult": null,
+        "createdAt": "2026-07-23T08:09:19.212Z"
+      }
+    },
+    "attempt": {
+      "id": "abf2394a-ba95-449f-b131-a45b12dccaa8",
+      "status": "PROCESSING",
+      "practiceDefinitionId": "70000000-0000-4000-8000-000000000001",
+      "deliveryId": "72000000-0000-4000-8000-000000000001",
+      "enrollmentId": "f1111111-1111-4111-8111-111111111111"
+    },
+    "items": [
+      {
+        "id": "dafc127a-219b-443e-b044-1741743a0e01",
+        "itemType": "LISTEN_ONLY",
+        "status": "PENDING",
+        "recordingId": null
+      },
+      {
+        "id": "bdb8d168-7953-4ad0-a158-cb2d7bcad37d",
+        "itemType": "LISTEN_REPEAT",
+        "status": "PENDING",
+        "recordingId": "b501a430-3145-4803-9ed5-07c570dfed5f"
+      },
+      {
+        "id": "37186ba7-445b-4c32-ab99-ee938e7f4f22",
+        "itemType": "READ_ALOUD",
+        "status": "PENDING",
+        "recordingId": "ce3e3afd-a199-442a-8f5b-0129aeec5b28"
+      },
+      {
+        "id": "2be5553e-205f-4143-8440-50e60e7a4f05",
+        "itemType": "SINGLE_CHOICE",
+        "status": "ANSWERED",
+        "recordingId": null
+      },
+      {
+        "id": "5b836798-3259-4fca-b82b-0620904900ae",
+        "itemType": "SHORT_ANSWER",
+        "status": "ANSWERED",
+        "recordingId": null
+      }
+    ],
+    "written": [
+      {
+        "id": "2be5553e-205f-4143-8440-50e60e7a4f05",
+        "hasNonEmptyAnswer": true,
+        "finalized": true
+      },
+      {
+        "id": "5b836798-3259-4fca-b82b-0620904900ae",
+        "hasNonEmptyAnswer": true,
+        "finalized": true
+      }
+    ]
+  },
+  "recordingIds": [
+    "b501a430-3145-4803-9ed5-07c570dfed5f",
+    "ce3e3afd-a199-442a-8f5b-0129aeec5b28"
+  ],
+  "recordingEvidence": [
+    {
+      "id": "b501a430-3145-4803-9ed5-07c570dfed5f",
+      "status": "COMPLETE",
+      "durationMs": 3000,
+      "mimeType": "audio/webm;codecs=opus",
+      "objectKey": "recordings/b501a430-3145-4803-9ed5-07c570dfed5f/full",
+      "downloadedBytes": 46375
+    },
+    {
+      "id": "ce3e3afd-a199-442a-8f5b-0129aeec5b28",
+      "status": "COMPLETE",
+      "durationMs": 3000,
+      "mimeType": "audio/webm;codecs=opus",
+      "objectKey": "recordings/ce3e3afd-a199-442a-8f5b-0129aeec5b28/full",
+      "downloadedBytes": 46375
+    }
+  ],
+  "newContextVerification": {
+    "completedActivityIds": ["84000000-0000-4000-8000-000000000304"],
+    "completedPracticeCount": 1,
+    "requiredPracticeCount": 1,
+    "progressPercent": 25,
+    "activityProgress": {
+      "id": "3346d5be-576c-4d8f-9bd1-9cb3aaf3d4f7",
+      "schoolId": "11111111-1111-4111-8111-111111111111",
+      "activityId": "84000000-0000-4000-8000-000000000304",
+      "enrollmentId": "f1111111-1111-4111-8111-111111111111",
+      "position": 1,
+      "completed": true,
+      "revision": 1,
+      "updatedAt": "2026-07-23T08:09:19.215Z"
+    },
+    "attempt": {
+      "id": "4fb6bf22-42c9-47af-b838-f40de167a0ee",
+      "schoolId": "11111111-1111-4111-8111-111111111111",
+      "submissionId": "8218931a-6308-4811-a145-45f091174aba",
+      "activityId": "84000000-0000-4000-8000-000000000304",
+      "kind": "COURSE_PRACTICE",
+      "value": {
+        "status": "PROCESSING",
+        "practiceAttemptId": "abf2394a-ba95-449f-b131-a45b12dccaa8"
+      },
+      "autoResult": null,
+      "createdAt": "2026-07-23T08:09:19.212Z"
+    }
+  },
+  "recordingUploadBytesObservedByPlaywright": 0,
+  "downloadedRecordingBytes": 92750,
+  "audit": {
+    "consoleErrors": [],
+    "consoleWarnings": [],
+    "pageErrors": [],
+    "failedRequests": [],
+    "httpErrors": [],
+    "apiTrace": [
+      {
+        "method": "POST",
+        "path": "/api/v1/auth/login",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/student/today",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/student/profile",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/85000000-0000-4000-8000-000000000003",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/practices/70000000-0000-4000-8000-000000000001",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/student/profile",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/85000000-0000-4000-8000-000000000003",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/85000000-0000-4000-8000-000000000003/submissions",
+        "status": 201
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/learning/activities/84000000-0000-4000-8000-000000000301/notes",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/85000000-0000-4000-8000-000000000003/recommendations",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses-dashboard",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/learning/activities/84000000-0000-4000-8000-000000000304/notes",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/practices/70000000-0000-4000-8000-000000000001/attempts",
+        "status": 201
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessments/sessions/abf2394a-ba95-449f-b131-a45b12dccaa8/written",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessments/device-check",
+        "status": 201
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessments/device-check",
+        "status": 201
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/student/profile",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/practices/attempts/abf2394a-ba95-449f-b131-a45b12dccaa8",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/practices/attempts/abf2394a-ba95-449f-b131-a45b12dccaa8/items",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/health/ready",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessments/device-check",
+        "status": 201
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/practices/attempts/abf2394a-ba95-449f-b131-a45b12dccaa8/items",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessments/sessions/abf2394a-ba95-449f-b131-a45b12dccaa8/start",
+        "status": 201
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/student/profile",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessments/sessions/abf2394a-ba95-449f-b131-a45b12dccaa8",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessments/sessions/abf2394a-ba95-449f-b131-a45b12dccaa8/reading/dafc127a-219b-443e-b044-1741743a0e01",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessments/sessions/abf2394a-ba95-449f-b131-a45b12dccaa8",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/student/profile",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessments/sessions/abf2394a-ba95-449f-b131-a45b12dccaa8/reading/bdb8d168-7953-4ad0-a158-cb2d7bcad37d",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/recordings/simple",
+        "status": 201
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/recordings/b501a430-3145-4803-9ed5-07c570dfed5f/complete",
+        "status": 201
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessments/sessions/abf2394a-ba95-449f-b131-a45b12dccaa8/reading/bdb8d168-7953-4ad0-a158-cb2d7bcad37d/recording",
+        "status": 201
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/speech-jobs/by-item/bdb8d168-7953-4ad0-a158-cb2d7bcad37d",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessments/sessions/abf2394a-ba95-449f-b131-a45b12dccaa8",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/student/profile",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessments/sessions/abf2394a-ba95-449f-b131-a45b12dccaa8/reading/37186ba7-445b-4c32-ab99-ee938e7f4f22",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/recordings/simple",
+        "status": 201
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/recordings/ce3e3afd-a199-442a-8f5b-0129aeec5b28/complete",
+        "status": 201
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessments/sessions/abf2394a-ba95-449f-b131-a45b12dccaa8/reading/37186ba7-445b-4c32-ab99-ee938e7f4f22/recording",
+        "status": 201
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/speech-jobs/by-item/37186ba7-445b-4c32-ab99-ee938e7f4f22",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessments/sessions/abf2394a-ba95-449f-b131-a45b12dccaa8",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/practices/attempts/abf2394a-ba95-449f-b131-a45b12dccaa8/items",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessments/sessions/abf2394a-ba95-449f-b131-a45b12dccaa8/written",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/student/profile",
+        "status": 200
+      },
+      {
+        "method": "PUT",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessments/sessions/abf2394a-ba95-449f-b131-a45b12dccaa8/items/2be5553e-205f-4143-8440-50e60e7a4f05/answer",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessments/sessions/abf2394a-ba95-449f-b131-a45b12dccaa8/items/2be5553e-205f-4143-8440-50e60e7a4f05/answer/finalize",
+        "status": 201
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessments/sessions/abf2394a-ba95-449f-b131-a45b12dccaa8",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/practices/attempts/abf2394a-ba95-449f-b131-a45b12dccaa8/items",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/student/profile",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessments/sessions/abf2394a-ba95-449f-b131-a45b12dccaa8/written",
+        "status": 200
+      },
+      {
+        "method": "PUT",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessments/sessions/abf2394a-ba95-449f-b131-a45b12dccaa8/items/5b836798-3259-4fca-b82b-0620904900ae/answer",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessments/sessions/abf2394a-ba95-449f-b131-a45b12dccaa8/items/5b836798-3259-4fca-b82b-0620904900ae/answer/finalize",
+        "status": 201
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessments/sessions/abf2394a-ba95-449f-b131-a45b12dccaa8",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/practices/attempts/abf2394a-ba95-449f-b131-a45b12dccaa8/items",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/student/profile",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessments/sessions/abf2394a-ba95-449f-b131-a45b12dccaa8/written",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessments/sessions/abf2394a-ba95-449f-b131-a45b12dccaa8/submit",
+        "status": 201
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/85000000-0000-4000-8000-000000000003/submissions/8218931a-6308-4811-a145-45f091174aba/activities/84000000-0000-4000-8000-000000000304/practice-attempts/abf2394a-ba95-449f-b131-a45b12dccaa8/complete",
+        "status": 201
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/student/profile",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/85000000-0000-4000-8000-000000000003",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/85000000-0000-4000-8000-000000000003/submissions",
+        "status": 201
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/learning/activities/84000000-0000-4000-8000-000000000301/notes",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/85000000-0000-4000-8000-000000000003/recommendations",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses-dashboard",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/learning/activities/84000000-0000-4000-8000-000000000304/notes",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/practices/attempts/abf2394a-ba95-449f-b131-a45b12dccaa8",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/practices/attempts/abf2394a-ba95-449f-b131-a45b12dccaa8/items",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessments/sessions/abf2394a-ba95-449f-b131-a45b12dccaa8/written",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/85000000-0000-4000-8000-000000000003",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/recordings/b501a430-3145-4803-9ed5-07c570dfed5f",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/recordings/b501a430-3145-4803-9ed5-07c570dfed5f/evidence",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/recordings/ce3e3afd-a199-442a-8f5b-0129aeec5b28/evidence",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/recordings/ce3e3afd-a199-442a-8f5b-0129aeec5b28",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/auth/login",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/student/today",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/student/profile",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/student/profile",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/85000000-0000-4000-8000-000000000003",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/85000000-0000-4000-8000-000000000003/submissions",
+        "status": 201
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/learning/activities/84000000-0000-4000-8000-000000000301/notes",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/85000000-0000-4000-8000-000000000003/recommendations",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses-dashboard",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/learning/activities/84000000-0000-4000-8000-000000000304/notes",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/practices/attempts/abf2394a-ba95-449f-b131-a45b12dccaa8",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/practices/attempts/abf2394a-ba95-449f-b131-a45b12dccaa8/items",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessments/sessions/abf2394a-ba95-449f-b131-a45b12dccaa8/written",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/85000000-0000-4000-8000-000000000003",
+        "status": 200
+      }
+    ]
+  },
+  "status": "PASSED"
+}

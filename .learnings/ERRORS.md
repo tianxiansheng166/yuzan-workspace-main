@@ -531,3 +531,291 @@
 - Reproducible: yes
 - Related Files: `project-ops/plans/P0-STUDENT-CLOSED-LOOPS.md`
 - See Also: ERR-20260723-005
+
+## [ERR-20260723-010] scoped-vitest-entry-and-generated-database
+
+- Logged: 2026-07-23T15:22:00+08:00
+- Priority: medium
+- Status: resolved
+- Area: tests
+- Command: run the initial student-course and assessment minimal-test commands from the task JSON
+- Result: `test/student-courses/vitest.config.ts` does not exist; the assessment config also collected `assessment.service.spec.ts`, which could not resolve `@yuzan/database` before Prisma client generation; one filtered `pnpm exec vitest` invocation consequently reported `Command "vitest" not found`.
+- Resolution: copied the canonical ignored local `.env` into the isolated worktree without exposing or tracking it, ran `pnpm db:generate` and the database build, then invoked exact specs through `pnpm --filter @yuzan/api test -- <package-relative-spec>`. Student courses passed 6/6 and assessment practice passed 4/4.
+- Reproducible: yes
+- Related Files: `backend/api/test/student-courses/student-courses.service.spec.ts`, `backend/api/test/assessment/vitest.config.ts`, `project-ops/tasks/active/P0-STUDENT-COURSE-PRACTICE-001.json`
+
+## [ERR-20260723-011] node-vm-cross-realm-deep-equality
+
+- Logged: 2026-07-23T15:32:00+08:00
+- Priority: low
+- Status: resolved
+- Area: tests
+- Command: run the new `course-api-adapter.test.mjs` VM-based browser adapter tests
+- Result: two structurally identical result objects failed `deepStrictEqual` because objects created inside `vm.runInNewContext` have a different realm prototype.
+- Resolution: assert stable scalar fields for VM-produced objects; retain deep equality only for values normalized into the test realm.
+- Reproducible: yes
+- Related Files: `frontend/student/courses/course-detail/course-api-adapter.test.mjs`
+
+## [ERR-20260723-012] location-stub-relative-assignment
+
+- Logged: 2026-07-23T15:36:00+08:00
+- Priority: low
+- Status: resolved
+- Area: tests
+- Command: run the API-client course completion recovery contract test
+- Result: the test expected a browser-normalized absolute `location.href`, but its plain-object VM stub preserves the relative URL assigned by production code.
+- Resolution: assert the safe relative navigation target; browser E2E remains responsible for proving native URL normalization.
+- Reproducible: yes
+- Related Files: `frontend/student/courses/course-detail/course-practice-sync.test.mjs`
+
+## [ERR-20260723-013] package-cwd-seed-environment
+
+- Logged: 2026-07-23T15:40:00+08:00
+- Priority: medium
+- Status: resolved
+- Area: infra
+- Command: `pnpm --filter @yuzan/database seed` from the isolated worktree
+- Result: the database package build passed, then `seed.ts` exited before writes because a filtered package process does not automatically import the worktree root `.env`, so `DATABASE_URL` was absent.
+- Resolution: imported the ignored root `.env` into the current process with the same parser used by `scripts/local-runtime/start-core.ps1`; the repeatable fictional development seed then completed successfully without printing configuration values.
+- Reproducible: yes
+- Related Files: `infra/database/prisma/seed.ts`, `scripts/local-runtime/start-core.ps1`
+
+## [ERR-20260723-014] windows-hidden-process-redirection-access
+
+- Logged: 2026-07-23T15:45:00+08:00
+- Priority: low
+- Status: resolved
+- Area: infra
+- Command: start the built API with `Start-Process`, hidden window and redirected stdout/stderr
+- Result: Windows returned `AccessDenied`; read-only follow-up confirmed no node process, listener or log handle was created.
+- Resolution: `Start-Process` remained denied even without redirection, so launched the exact Node 24 entrypoints with `child_process.spawn({ detached: true, windowsHide: true, stdio: "ignore" })`. PID 38756 owns API port 4000 and PID 29616 owns frontend port 4175; both readiness checks passed and command lines resolve to this worktree.
+- Reproducible: unknown
+- Related Files: `backend/api/dist/main.js`
+
+## [ERR-20260723-015] npx-playwright-package-bootstrap-timeout
+
+- Logged: 2026-07-23T15:50:00+08:00
+- Priority: low
+- Status: resolved
+- Area: browser tests
+- Command: `npx playwright --version`
+- Result: npm attempted an online package bootstrap and timed out even though native Python Playwright and its Chromium browser were already installed locally.
+- Resolution: use the repository's native Python Playwright evidence entrypoint and the installed browser; do not add a JavaScript Playwright dependency for this task.
+- Reproducible: unknown
+- Related Files: `evidence/p0-student-course-practice-001/course_practice_e2e.py`, `project-ops/tasks/active/P0-STUDENT-COURSE-PRACTICE-001.json`
+
+## [ERR-20260723-016] direct-api-probe-missed-global-prefix
+
+- Logged: 2026-07-23T16:00:00+08:00
+- Priority: low
+- Status: resolved
+- Area: local runtime
+- Command: direct `Invoke-RestMethod` login probe against `/auth/login`
+- Result: the API correctly returned 404 because direct calls must include the Nest global prefix `/api/v1`; the browser client normally adds it automatically.
+- Resolution: use `/api/v1/auth/login` and `/api/v1/schools/...` for direct verification while retaining unprefixed paths inside `YuzanApi`.
+- Reproducible: yes
+- Related Files: `backend/api/src/main.ts`, `frontend/assets/api-client.js`
+
+## [ERR-20260723-017] python-playwright-wait-argument-signature
+
+- Logged: 2026-07-23T16:08:00+08:00
+- Priority: low
+- Status: resolved
+- Area: browser tests
+- Command: first run of `course_practice_e2e.py`
+- Result: the installed Python Playwright accepts the JavaScript argument to `Page.wait_for_function` only through the keyword-only `arg` parameter; a positional argument raised `TypeError` after real login and course discovery.
+- Resolution: pass the dynamic assignment/activity tuple with `arg=...`; no product request or practice attempt had started.
+- Reproducible: yes
+- Related Files: `evidence/p0-student-course-practice-001/course_practice_e2e.py`
+
+## [ERR-20260723-018] playwright-xhr-blob-body-is-opaque
+
+- Logged: 2026-07-23T16:16:00+08:00
+- Priority: low
+- Status: resolved
+- Area: browser evidence
+- Command: second run of `course_practice_e2e.py`
+- Result: the real closure passed and server state contained two 3000 ms COMPLETE recordings, but Python Playwright exposed no `post_data_buffer` for the XMLHttpRequest Blob PUT, so the transport-body byte assertion remained zero.
+- Resolution: verify each authorized recording through its status and evidence endpoints, fetch its short-lived download URL in the authenticated browser, and record only the downloaded byte count—not the signed URL. This proves non-empty stored audio more strongly than an in-flight request-body observation.
+- Reproducible: yes
+- Related Files: `evidence/p0-student-course-practice-001/course_practice_e2e.py`
+
+## [ERR-20260723-019] powershell-double-quoted-rg-alternation
+
+- Logged: 2026-07-23T16:20:00+08:00
+- Priority: low
+- Status: resolved
+- Area: shell
+- Command: `rg` with a double-quoted regular expression containing escaped quotes and `|`
+- Result: PowerShell ended the quoted argument early and interpreted `Loading` as a pipeline command.
+- Resolution: wrap the complete ripgrep expression in single quotes on PowerShell.
+- Reproducible: yes
+- Related Files: `frontend/student/courses/course-detail/index.html`
+
+## [ERR-20260723-020] course-loading-hidden-overridden-by-css
+
+- Logged: 2026-07-23T16:24:00+08:00
+- Priority: high
+- Status: resolved
+- Area: student course UI
+- Command: visual inspection and third evidence run with an explicit hidden-state assertion
+- Result: `showMain()` set `cpLoading.hidden = true`, but `.cp-loading { display: flex }` overrode the user-agent `[hidden]` rule. The course was loaded and interactive behind a permanently visible loading shell, producing invalid 1440 px and 390 px evidence.
+- Resolution: add explicit component-level `[hidden] { display: none }` rules for loading, error, and main shells, plus a static regression test. Keep the browser assertion so future visual regressions fail before screenshots are accepted.
+- Reproducible: yes
+- Related Files: `frontend/student/courses/course-detail/style.css`, `frontend/student/courses/course-detail/course-shell-visibility.test.mjs`, `evidence/p0-student-course-practice-001/course_practice_e2e.py`
+
+## [ERR-20260723-021] css-patch-context-mismatch
+
+- Logged: 2026-07-23T16:25:00+08:00
+- Priority: low
+- Status: resolved
+- Area: file editing
+- Command: first `apply_patch` for the course shell hidden-state rule
+- Result: the patch expected `var(--cp-text-secondary)`, while the existing component uses `var(--cp-secondary)`, so the safety context correctly rejected the edit.
+- Resolution: inspect the local CSS block and reapply against the exact existing context.
+- Reproducible: yes
+- Related Files: `frontend/student/courses/course-detail/style.css`
+
+## [ERR-20260723-022] screenshot-patch-context-mismatch
+
+- Logged: 2026-07-23T16:29:00+08:00
+- Priority: low
+- Status: resolved
+- Area: file editing
+- Command: first `apply_patch` for viewport-focused course screenshots
+- Result: the combined hunk did not match the exact multi-line locator block and was rejected without changing the evidence script.
+- Resolution: inspect the exact local block and apply smaller targeted hunks.
+- Reproducible: yes
+- Related Files: `evidence/p0-student-course-practice-001/course_practice_e2e.py`
+
+## [ERR-20260723-023] database-build-entrypoint-path
+
+- Logged: 2026-07-23T16:35:00+08:00
+- Priority: low
+- Status: resolved
+- Area: E2E fixture
+- Command: first run of `reset_fixture.mjs`
+- Result: the reset helper imported `infra/database/dist/index.js`, but this workspace package compiles its entrypoint to `dist/src/index.js`.
+- Resolution: use the exact package entrypoint declared in `infra/database/package.json`.
+- Reproducible: yes
+- Related Files: `infra/database/package.json`, `evidence/p0-student-course-practice-001/reset_fixture.mjs`
+
+## [ERR-20260723-024] prisma-seven-driver-adapter-required
+
+- Logged: 2026-07-23T16:37:00+08:00
+- Priority: low
+- Status: resolved
+- Area: E2E fixture
+- Command: second run of `reset_fixture.mjs`
+- Result: Prisma 7 rejected a parameterless `PrismaClient`; this repository uses the PostgreSQL driver-adapter runtime.
+- Resolution: mirror the seed runtime by constructing `Pool`, `PrismaPg`, and `PrismaClient({ adapter })`; resolve package-local dependencies from `infra/database/package.json` and close both client and pool.
+- Reproducible: yes
+- Related Files: `infra/database/prisma/seed.ts`, `evidence/p0-student-course-practice-001/reset_fixture.mjs`
+
+## [ERR-20260723-025] redocly-windows-update-notifier-exit-assertion
+
+- Logged: 2026-07-23T16:48:00+08:00
+- Priority: medium
+- Status: resolved
+- Area: contract validation
+- Command: `pnpm contract:validate` in the parallel final-test batch
+- Result: Redocly completed validation and printed that the API description was valid, then its Windows process teardown hit `UV_HANDLE_CLOSING` after showing the CLI update notifier, producing native exit code 3221226505.
+- Resolution: rerun contract validation separately in CI mode with update/telemetry side effects disabled and require a real zero exit code.
+- Reproducible: unknown
+- Related Files: `packages/contracts/openapi/openapi.yaml`
+
+## [ERR-20260723-026] api-eslint-dependency-not-declared
+
+- Logged: 2026-07-23T16:52:00+08:00
+- Priority: medium
+- Status: unresolved
+- Area: repository lint baseline
+- Command: `pnpm lint`
+- Result: `backend/api/eslint.config.mjs` imports `@eslint/js`, but `backend/api/package.json` does not declare it and pnpm therefore creates no package-local resolution link, even though the content-addressed store contains version 9.39.4.
+- Resolution: not changed in this task because package manifests, lockfile, and root lint configuration are shared-owner files outside `allowed_paths`. The precise task tests, typecheck, build, and contract validation remain green.
+- Reproducible: yes
+- Related Files: `backend/api/eslint.config.mjs`, `backend/api/package.json`
+
+## [ERR-20260723-027] temporary-eslint-scope-parent-absent
+
+- Logged: 2026-07-23T16:54:00+08:00
+- Priority: low
+- Status: resolved
+- Area: lint diagnostics
+- Command: first temporary package-local junction attempt for `@eslint/js`
+- Result: `backend/api/node_modules/@eslint` did not exist, so resolving that parent before creating the diagnostic link failed.
+- Resolution: create the missing package scope and junction together inside ignored `node_modules`, then remove both in `finally`; the cleanup check confirmed neither path remains.
+- Reproducible: yes
+- Related Files: `backend/api/node_modules`
+
+## [ERR-20260723-028] api-eslint-baseline-has-972-findings
+
+- Logged: 2026-07-23T16:56:00+08:00
+- Priority: high
+- Status: unresolved
+- Area: repository lint baseline
+- Command: `pnpm --filter @yuzan/api lint` after temporarily resolving the undeclared config dependency
+- Result: ESLint reported 971 errors and one warning across existing API source and tests. Many tests are rejected because the project service tsconfig does not include them; the remainder are broad pre-existing typed-lint findings. This task changes no API source file and its two changed specs pass Vitest.
+- Resolution: do not expand this bounded task into a shared ESLint/tsconfig cleanup. Record the baseline debt for a dedicated governance task; rely here on green exact specs, full typecheck, and full build.
+- Reproducible: yes
+- Related Files: `backend/api/eslint.config.mjs`, `backend/api/tsconfig.json`
+
+## [ERR-20260723-029] powershell-secret-scan-regex-quote
+
+- Logged: 2026-07-23T17:08:00+08:00
+- Priority: low
+- Status: resolved
+- Area: delivery hygiene
+- Command: combined `rg` regular-expression secret scan before task review
+- Result: embedded quotes truncated the PowerShell argument, so ripgrep returned an unclosed-group parse error; the independent task review still passed.
+- Resolution: rerun the delivery scan with multiple fixed-string `-e` patterns, check ripgrep exit codes explicitly, and keep the gate result separate.
+- Reproducible: yes
+- Related Files: `evidence/p0-student-course-practice-001`, `project-ops/handoffs/P0-STUDENT-COURSE-PRACTICE-001.md`
+
+## [ERR-20260723-030] powershell-native-diff-check-did-not-stop-commit
+
+- Logged: 2026-07-23T17:12:00+08:00
+- Priority: high
+- Status: resolved
+- Area: Git hygiene
+- Command: stage, `git diff --cached --check`, then commit in one PowerShell command
+- Result: Python-created JSON evidence used Windows CRLF; `git diff --cached --check` reported every line as trailing whitespace, but PowerShell did not turn the native nonzero exit into a terminating error and the following commit still ran.
+- Resolution: normalize evidence JSON with Prettier/LF, explicitly test `$LASTEXITCODE` for every Git check, amend the unpushed commit, and require `git show --check` plus finish gate before push.
+- Reproducible: yes
+- Related Files: `evidence/p0-student-course-practice-001/browser-result.json`, `evidence/p0-student-course-practice-001/database-result.json`
+
+## [ERR-20260723-031] detached-node-commandline-has-relative-entrypoint
+
+- Logged: 2026-07-23T17:18:00+08:00
+- Priority: low
+- Status: resolved
+- Area: local runtime cleanup
+- Command: first attempt to stop the two detached task services
+- Result: the safety check expected the worktree absolute path in `Win32_Process.CommandLine`, but detached Node was launched with relative entries (`dist/main.js`, `server.mjs`), so the check refused to stop either process.
+- Resolution: verify the immutable ownership tuple recorded at launch—exact PID, Node 24 executable, creation window, expected relative entrypoint, and exclusive listener port—then stop only those two PIDs. PostgreSQL, Redis, MinIO and other shared containers remained untouched.
+- Reproducible: yes
+- Related Files: `backend/api/dist/main.js`, `frontend/server.mjs`
+
+## [ERR-20260723-032] powershell-variable-colon-interpolation
+
+- Logged: 2026-07-23T17:20:00+08:00
+- Priority: low
+- Status: resolved
+- Area: shell
+- Command: ownership-tuple service cleanup
+- Result: PowerShell rejected the diagnostic string `"$processId: ..."` because a colon immediately after an unbraced variable is parsed as a scoped-variable separator; the script stopped before any process action.
+- Resolution: use `"${processId}: ..."` and rerun. The exact API/frontend PIDs stopped, no listener remained, and shared containers were not touched.
+- Reproducible: yes
+- Related Files: `.learnings/ERRORS.md`
+
+## [ERR-20260723-033] powershell-final-status-parenthesis
+
+- Logged: 2026-07-23T17:22:00+08:00
+- Priority: low
+- Status: resolved
+- Area: Git delivery
+- Command: amend, finish-gate and force-with-lease push compound command
+- Result: the final `clean` property expression omitted a closing parenthesis, so PowerShell rejected the complete command before staging, amending, gating or pushing.
+- Resolution: compute the clean status in a separate variable and keep the result object expression simple.
+- Reproducible: yes
+- Related Files: `.learnings/ERRORS.md`

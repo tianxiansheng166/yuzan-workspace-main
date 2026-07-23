@@ -1,6 +1,6 @@
 {
   "id": "P0-STUDENT-COURSE-PRACTICE-001",
-  "status": "PLANNED",
+  "status": "READY_FOR_REVIEW",
   "title": "闭合学生课程关联的古诗文练习真实链路",
   "owner": "Codex",
   "reviewer": "Integration Lead",
@@ -70,7 +70,7 @@
     "学生课程与课程练习 provider/consumer OpenAPI 契约（如契约刻画证明缺失）",
     "学生课程详情到通用练习执行器的全局路由桥"
   ],
-  "contract_change_request": null,
+  "contract_change_request": "project-ops/requests/CCR-P0-STUDENT-COURSE-PRACTICE-001.md",
   "minimal_tests": [
     {
       "name": "课程详情适配、错误传播与三 ID 启动上下文",
@@ -78,22 +78,55 @@
     },
     {
       "name": "学生课程 provider、租户与引用负向契约",
-      "command": "pnpm --filter @yuzan/api exec vitest run --config test/student-courses/vitest.config.ts"
+      "command": "pnpm --filter @yuzan/api test -- test/student-courses/student-courses.service.spec.ts"
     },
     {
       "name": "课程练习 create/resume/complete 幂等和越权契约",
-      "command": "pnpm --filter @yuzan/api exec vitest run --config test/assessment/vitest.config.ts"
+      "command": "pnpm --filter @yuzan/api test -- test/assessment/practice.service.spec.ts"
     },
     {
       "name": "真实浏览器课程练习闭环和中断恢复",
-      "command": "pnpm exec playwright test evidence/p0-student-course-practice-001/course-practice.e2e.spec.ts"
+      "command": "python evidence/p0-student-course-practice-001/course_practice_e2e.py"
     },
     {
       "name": "任务变更与交付门禁",
       "command": "& .\\scripts\\repo\\task-gate.ps1 -Mode review -TaskFile project-ops/tasks/active/P0-STUDENT-COURSE-PRACTICE-001.json"
     }
   ],
-  "test_evidence": [],
+  "test_evidence": [
+    {
+      "name": "课程详情适配、错误传播与三 ID 启动上下文",
+      "command": "node --test frontend/student/courses/course-detail/*.test.mjs",
+      "result": "PASS",
+      "summary": "8/8；嵌套课程聚合、submission revision、三 ID、安全 returnTo、同步恢复和 hidden shell 回归均通过。"
+    },
+    {
+      "name": "学生课程 provider、租户与引用负向契约",
+      "command": "pnpm --filter @yuzan/api test -- test/student-courses/student-courses.service.spec.ts",
+      "result": "PASS",
+      "summary": "9/9；课程聚合、practiceReference、组合键幂等、跨学生与跨学校负向行为通过。"
+    },
+    {
+      "name": "课程练习 create/resume/complete 幂等和越权契约",
+      "command": "pnpm --filter @yuzan/api test -- test/assessment/practice.service.spec.ts",
+      "result": "PASS",
+      "summary": "8/8；三 ID 同进同出、错误学生/引用拒绝、create-resume 和 complete 幂等通过。"
+    },
+    {
+      "name": "真实浏览器课程练习闭环和中断恢复",
+      "command": "python evidence/p0-student-course-practice-001/course_practice_e2e.py",
+      "result": "PASS",
+      "summary": "动态发现教师分配的古诗文课程；0% 起点完成 2 条真实非空录音和 2 条正式书面答案，提交回写到 25%；新 390px 浏览器上下文仍显示已学习；受权下载 92750 bytes；console/page/request/HTTP 错误均为 0；Prisma 交叉核验通过。"
+    },
+    {
+      "name": "任务变更与交付门禁",
+      "command": "& .\\scripts\\repo\\task-gate.ps1 -Mode review -TaskFile project-ops/tasks/active/P0-STUDENT-COURSE-PRACTICE-001.json",
+      "result": "PASS",
+      "summary": "branch、base、allowed_paths、CCR、handoff、evidence 与 whitespace review 门禁通过。"
+    }
+  ],
+  "started_at": "2026-07-23T14:20:00+08:00",
+  "completed_at": "2026-07-23T17:05:00+08:00",
   "handoff": "project-ops/handoffs/P0-STUDENT-COURSE-PRACTICE-001.md",
   "rollback": "Revert this task branch commits; no Prisma migration or production data change is authorized. Existing course, assessment, recording and progress rows remain server-owned.",
   "delivery": {

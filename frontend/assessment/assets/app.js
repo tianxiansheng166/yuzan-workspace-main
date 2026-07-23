@@ -491,8 +491,18 @@
 
     const canSubmit = blockers.length === 0 && session && (session.status === 'IN_PROGRESS' || session.status === 'CREATED');
     const alreadySubmitted = session && (session.status === 'SUBMITTED' || session.status === 'PROCESSING' || session.status === 'COMPLETED');
+    const courseContext = isPracticeAttempt && Api?.getCoursePracticeContext ? Api.getCoursePracticeContext(SESSION_ID) : null;
+    const courseSyncPending = !!(alreadySubmitted && courseContext);
+    const courseSyncNotice = courseSyncPending
+      ? `<article class="card blocking"><div class="notice danger">${icon('alert')} 练习已经提交，但课程完成状态尚未同步。可以安全重试；不会重复提交练习或创建第二条课程进度。</div></article>`
+      : '';
+    const submitAction = courseSyncPending
+      ? `<button class="btn primary" data-retry-course-sync>重试同步课程进度 ${icon('refresh')}</button>`
+      : alreadySubmitted
+        ? `<a class="btn primary" href="${routes.processing}">${session.status === 'COMPLETED' ? '查看报告' : '查看处理状态'} ${icon('arrow')}</a>`
+        : `<button class="btn primary" data-submit-session ${canSubmit?'':'disabled'}>提交整次测评 ${icon('arrow')}</button>`;
 
-    const content=`<main class="page"><div class="hero-landscape" style="height:300px;opacity:.88"></div><section class="submit-head"><div><h1 class="page-title">提交前检查</h1><p class="page-subtitle">请仔细检查本次测评的完成情况，确认无误后提交。</p></div><div class="submit-stepper"><div class="submit-step"><b>01</b><small>朗读测评</small></div><div class="submit-step"><b>02</b><small>书面练习</small></div><div class="submit-step active"><b>03</b><small>提交前检查</small></div><div class="submit-step"><b>04</b><small>提交完成</small></div></div></section><section class="submit-layout"><div><article class="card summary-state"><h2 class="card-title">本次测评总体状态</h2><div class="state-cards" style="margin-top:16px"><div class="state-card"><div class="icon red">${icon('mic')}</div><div><small>朗读题</small><b>${readingItems.filter(i => i.recordingId).length} / ${readingItems.length}</b><div>${statusChip(readingComplete?'已完成':'未完成',readingComplete?'green':'red')}</div></div></div><div class="state-card"><div class="icon green">${icon('book')}</div><div><small>书面题</small><b>${answeredWritten} / ${writtenItems.length}</b><div>${statusChip(allWrittenAnswered?'已完成':'未完成',allWrittenAnswered?'green':'red')}</div></div></div><div class="state-card"><div class="icon blue">${icon('cloud')}</div><div><small>Session 状态</small><b>${session?.status || '—'}</b><div>${statusChip(session?.status || 'UNKNOWN', session?.status === 'IN_PROGRESS' ? 'gold' : 'green')}</div></div></div><div class="state-card"><div class="icon">${icon('alert')}</div><div><small>问题项</small><b>${blockers.length}</b><div>${statusChip(blockers.length?'阻止提交':'无阻塞',blockers.length?'red':'green')}</div></div></div></div></article>${readingItems.length > 0 ? `<article class="card items-panel"><div class="section-title"><h2>朗读题（${readingItems.filter(i => i.recordingId).length} / ${readingItems.length} 已完成）</h2></div><div class="item-grid">${readingItems.map((it,i)=>`<div class="item-card"><h4>朗读题 ${i+1} ${statusChip(it.recordingId?'COMPLETE':'INCOMPLETE',it.recordingId?'green':'red')}</h4><p>Item ID　${it.id}</p><p>Recording ID　${it.recordingId || '未绑定'}</p><p>状态　${it.status || '—'}</p></div>`).join('')}</div></article>`:''}${writtenItems.length > 0 ? `<article class="card items-panel"><div class="section-title"><h2>书面题（${answeredWritten} / ${writtenItems.length} 已完成）</h2></div><div class="item-grid">${writtenItems.map((it,i)=>{const ans=appState.writtenAnswers[it.id];const syn=appState.writtenSyncStatus[it.id];return `<div class="item-card"><h4>书面题 ${i+1} ${statusChip(ans!==undefined?'COMPLETE':'INCOMPLETE',ans!==undefined?'green':'red')}</h4><p>Item ID　${it.id}</p><p>同步状态　${syn || '本机草稿'}</p></div>`}).join('')}</div></article>`:''}</div><aside class="submit-side"><article class="card blocking"><h2 class="card-title">${blockers.length?`发现 ${blockers.length} 个阻止提交的问题`:'已满足提交条件'}</h2><div style="margin-top:14px">${blockers.length?blockers.map(b=>`<div class="notice danger" style="margin-bottom:10px">${icon('alert')} ${b}</div>`).join(''):`<div class="notice">朗读、书面与录音状态均已通过校验。</div>`}</div></article><article class="card rules"><h2 class="card-title">提交规则</h2><div class="rule"><div class="icon red">${icon('alert')}</div><div><strong>未完成的题目无法提交</strong><p class="muted small">所有朗读题和书面题必须完成。</p></div></div><div class="rule"><div class="icon">${icon('cloud')}</div><div><strong>录音未上传无法提交</strong><p class="muted small">Recording 必须绑定到 AssessmentItem。</p></div></div><div class="rule"><div class="icon green">${icon('check')}</div><div><strong>提交后不可修改</strong><p class="muted small">AssessmentSession 提交后进入处理状态。</p></div></div></article><div class="submit-actions"><a class="btn ghost" href="${routes.prep}">${icon('left')} 返回检查</a>${alreadySubmitted ? `<a class="btn primary" href="${routes.processing}">${session.status === 'COMPLETED' ? '查看报告' : '查看处理状态'} ${icon('arrow')}</a>` : `<button class="btn primary" data-submit-session ${canSubmit?'':'disabled'}>提交整次测评 ${icon('arrow')}</button>`}</div></aside></section></main>`;
+    const content=`<main class="page"><div class="hero-landscape" style="height:300px;opacity:.88"></div><section class="submit-head"><div><h1 class="page-title">提交前检查</h1><p class="page-subtitle">请仔细检查本次测评的完成情况，确认无误后提交。</p></div><div class="submit-stepper"><div class="submit-step"><b>01</b><small>朗读测评</small></div><div class="submit-step"><b>02</b><small>书面练习</small></div><div class="submit-step active"><b>03</b><small>提交前检查</small></div><div class="submit-step"><b>04</b><small>提交完成</small></div></div></section><section class="submit-layout"><div><article class="card summary-state"><h2 class="card-title">本次测评总体状态</h2><div class="state-cards" style="margin-top:16px"><div class="state-card"><div class="icon red">${icon('mic')}</div><div><small>朗读题</small><b>${readingItems.filter(i => i.recordingId).length} / ${readingItems.length}</b><div>${statusChip(readingComplete?'已完成':'未完成',readingComplete?'green':'red')}</div></div></div><div class="state-card"><div class="icon green">${icon('book')}</div><div><small>书面题</small><b>${answeredWritten} / ${writtenItems.length}</b><div>${statusChip(allWrittenAnswered?'已完成':'未完成',allWrittenAnswered?'green':'red')}</div></div></div><div class="state-card"><div class="icon blue">${icon('cloud')}</div><div><small>Session 状态</small><b>${session?.status || '—'}</b><div>${statusChip(session?.status || 'UNKNOWN', session?.status === 'IN_PROGRESS' ? 'gold' : 'green')}</div></div></div><div class="state-card"><div class="icon">${icon('alert')}</div><div><small>问题项</small><b>${blockers.length}</b><div>${statusChip(blockers.length?'阻止提交':'无阻塞',blockers.length?'red':'green')}</div></div></div></div></article>${readingItems.length > 0 ? `<article class="card items-panel"><div class="section-title"><h2>朗读题（${readingItems.filter(i => i.recordingId).length} / ${readingItems.length} 已完成）</h2></div><div class="item-grid">${readingItems.map((it,i)=>`<div class="item-card"><h4>朗读题 ${i+1} ${statusChip(it.recordingId?'COMPLETE':'INCOMPLETE',it.recordingId?'green':'red')}</h4><p>Item ID　${it.id}</p><p>Recording ID　${it.recordingId || '未绑定'}</p><p>状态　${it.status || '—'}</p></div>`).join('')}</div></article>`:''}${writtenItems.length > 0 ? `<article class="card items-panel"><div class="section-title"><h2>书面题（${answeredWritten} / ${writtenItems.length} 已完成）</h2></div><div class="item-grid">${writtenItems.map((it,i)=>{const ans=appState.writtenAnswers[it.id];const syn=appState.writtenSyncStatus[it.id];return `<div class="item-card"><h4>书面题 ${i+1} ${statusChip(ans!==undefined?'COMPLETE':'INCOMPLETE',ans!==undefined?'green':'red')}</h4><p>Item ID　${it.id}</p><p>同步状态　${syn || '本机草稿'}</p></div>`}).join('')}</div></article>`:''}</div><aside class="submit-side"><article class="card blocking"><h2 class="card-title">${blockers.length?`发现 ${blockers.length} 个阻止提交的问题`:'已满足提交条件'}</h2><div style="margin-top:14px">${blockers.length?blockers.map(b=>`<div class="notice danger" style="margin-bottom:10px">${icon('alert')} ${b}</div>`).join(''):`<div class="notice">朗读、书面与录音状态均已通过校验。</div>`}</div></article>${courseSyncNotice}<article class="card rules"><h2 class="card-title">提交规则</h2><div class="rule"><div class="icon red">${icon('alert')}</div><div><strong>未完成的题目无法提交</strong><p class="muted small">所有朗读题和书面题必须完成。</p></div></div><div class="rule"><div class="icon">${icon('cloud')}</div><div><strong>录音未上传无法提交</strong><p class="muted small">Recording 必须绑定到 AssessmentItem。</p></div></div><div class="rule"><div class="icon green">${icon('check')}</div><div><strong>提交后不可修改</strong><p class="muted small">AssessmentSession 提交后进入处理状态。</p></div></div></article><div class="submit-actions"><a class="btn ghost" href="${routes.prep}">${icon('left')} 返回检查</a>${submitAction}</div></aside></section></main>`;
     return shell(content.replace(/<p>Item ID[^<]*<\/p>/g, '').replace(/<p>Recording ID[^<]*<\/p>/g, ''));
   }
 
@@ -1085,6 +1095,17 @@
   }
 
   function bindSubmit(){
+    document.querySelector('[data-retry-course-sync]')?.addEventListener('click', async () => {
+      const btn = document.querySelector('[data-retry-course-sync]');
+      if (btn) { btn.disabled = true; btn.innerHTML = `${icon('spinner')} 同步中…`; }
+      try {
+        await Api.retryCoursePracticeCompletion(SESSION_ID);
+      } catch (err) {
+        console.error('[assessment] 课程进度同步失败:', err);
+        if (btn) { btn.disabled = false; btn.innerHTML = `重试同步课程进度 ${icon('refresh')}`; }
+        alert(err?.message || '课程进度仍未同步，请稍后重试。');
+      }
+    });
     document.querySelector('[data-submit-session]')?.addEventListener('click',async()=>{
       const btn = document.querySelector('[data-submit-session]');
       if (btn) { btn.disabled = true; btn.innerHTML = `${icon('spinner')} 提交中…`; }
@@ -1104,13 +1125,19 @@
         }
         saveState();
         // 调用真实 submitAssessmentSession
-        await Api.submitAssessmentSession(SESSION_ID);
+        const submitResult = await Api.submitAssessmentSession(SESSION_ID);
+        if (submitResult?.courseSync?.linked) return;
         // 提交成功后才跳转
         location.href = routes.processing;
       } catch (err) {
         console.error('[assessment] 提交测评失败:', err);
         if (btn) { btn.disabled = false; btn.innerHTML = `提交整次测评 ${icon('arrow')}`; }
-        alert(`提交失败：${err.message || err}。请稍后重试。`);
+        if (err?.code === 'COURSE_PROGRESS_SYNC_PENDING') {
+          alert(err.message);
+          await loadSubmitData();
+        } else {
+          alert(`提交失败：${err.message || err}。请稍后重试。`);
+        }
       }
     });
   }

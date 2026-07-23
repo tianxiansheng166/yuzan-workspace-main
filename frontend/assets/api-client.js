@@ -886,18 +886,67 @@
       method: 'POST',
     });
   }
+  function getCoursePracticeContext(sessionId) {
+    try {
+      const value = JSON.parse(localStorage.getItem(`yuzan-course-practice-context:${sessionId}`) || 'null');
+      return value && typeof value === 'object' ? value : null;
+    } catch {
+      return null;
+    }
+  }
+  function safeCourseReturnTo(candidate) {
+    if (typeof candidate !== 'string' || !candidate.startsWith('/') || candidate.startsWith('//')) return null;
+    const parsed = new URL(candidate, location.origin);
+    if (parsed.origin !== location.origin || !parsed.pathname.startsWith('/student/courses/course-detail/')) return null;
+    return `${parsed.pathname}${parsed.search}${parsed.hash}`;
+  }
+  async function retryCoursePracticeCompletion(sessionId, options = {}) {
+    const contextKey = `yuzan-course-practice-context:${sessionId}`;
+    const courseContext = getCoursePracticeContext(sessionId);
+    if (!courseContext) return { linked: false, reason: 'NO_COURSE_CONTEXT' };
+    const returnTo = safeCourseReturnTo(courseContext.returnTo);
+    if (!courseContext.assignmentId || !courseContext.submissionId || !courseContext.activityId || !returnTo) {
+      const invalid = new Error('课程进度同步上下文不完整，请返回原课程重新进入练习');
+      invalid.code = 'COURSE_PROGRESS_CONTEXT_INVALID';
+      throw invalid;
+    }
+    try {
+      const completion = await completeCoursePractice(
+        courseContext.assignmentId,
+        courseContext.submissionId,
+        courseContext.activityId,
+        sessionId,
+      );
+      localStorage.removeItem(contextKey);
+      const separator = returnTo.includes('?') ? '&' : '?';
+      const navigateTo = `${returnTo}${separator}practiceAttemptId=${encodeURIComponent(sessionId)}`;
+      if (options.navigate !== false) location.href = navigateTo;
+      return { linked: true, completion, navigateTo };
+    } catch (cause) {
+      const pending = {
+        ...courseContext,
+        syncStatus: 'PENDING',
+        lastSyncError: {
+          code: cause?.code || 'COURSE_PROGRESS_SYNC_FAILED',
+          message: cause?.message || '课程进度同步失败',
+        },
+        updatedAt: new Date().toISOString(),
+      };
+      localStorage.setItem(contextKey, JSON.stringify(pending));
+      const error = new Error(`练习已提交，课程进度待同步：${pending.lastSyncError.message}`);
+      error.status = cause?.status || 0;
+      error.code = 'COURSE_PROGRESS_SYNC_PENDING';
+      error.cause = cause;
+      throw error;
+    }
+  }
   async function submitAssessmentSession(sessionId) {
     const result = await request(`/schools/${getActiveSchoolId()}/assessments/sessions/${sessionId}/submit`, {
       method: 'POST',
     });
-    const contextKey = `yuzan-course-practice-context:${sessionId}`;
-    let courseContext = null;
-    try { courseContext = JSON.parse(localStorage.getItem(contextKey) || 'null'); } catch {}
-    if (courseContext?.assignmentId && courseContext?.submissionId && courseContext?.activityId && courseContext?.returnTo) {
-      await completeCoursePractice(courseContext.assignmentId, courseContext.submissionId, courseContext.activityId, sessionId);
-      localStorage.removeItem(contextKey);
-      location.href = `${courseContext.returnTo}${courseContext.returnTo.includes('?') ? '&' : '?'}practiceAttemptId=${encodeURIComponent(sessionId)}`;
-      return new Promise(() => {});
+    if (getCoursePracticeContext(sessionId)) {
+      const courseSync = await retryCoursePracticeCompletion(sessionId);
+      return { ...result, courseSync };
     }
     return result;
   }
@@ -1233,6 +1282,8 @@
     createAssessmentSession,
     startAssessmentSession,
     submitAssessmentSession,
+    getCoursePracticeContext,
+    retryCoursePracticeCompletion,
     /* Assessment Reading */
     getReadingItem,
     attachAssessmentRecording,

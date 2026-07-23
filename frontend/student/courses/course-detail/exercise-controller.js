@@ -402,8 +402,23 @@
       startBtn.className = 'cp-exercise-practice-btn';
       startBtn.innerHTML = '开始练习 ' + ICONS.arrowRight;
       startBtn.addEventListener('click', function () {
-        var url = '/student/practice/?courseActivityId=' + activity.activityId + '&assignmentId=' + (state.assignmentId || '');
-        window.location.href = url;
+        var latestState = CoursePlayerState.getState();
+        var practiceReference = activity.practiceReference || {};
+        startBtn.disabled = true;
+        startBtn.textContent = '正在创建练习…';
+        CourseApiAdapter.startCoursePractice({
+          assignmentId: latestState.assignmentId,
+          submissionId: latestState.submissionId,
+          activityId: activity.activityId,
+          practiceDefinitionId: practiceReference.practiceDefinitionId,
+          returnTo: window.location.pathname + window.location.search
+        }).then(function (result) {
+          window.location.href = result.navigateTo;
+        }).catch(function (error) {
+          showToast(error && error.message ? error.message : '练习启动失败');
+          startBtn.disabled = false;
+          startBtn.innerHTML = '重试练习 ' + ICONS.arrowRight;
+        });
       });
       wrapper.appendChild(startBtn);
 

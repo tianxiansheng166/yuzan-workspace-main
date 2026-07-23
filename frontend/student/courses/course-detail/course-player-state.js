@@ -5,6 +5,8 @@ window.CoursePlayerState = (function () {
     assignmentId: '',
     course: null,
     submissionId: '',
+    submissionStatus: '',
+    submissionRevision: null,
     currentActivityId: '',
     currentActivity: null,
     notes: [],
@@ -90,11 +92,20 @@ window.CoursePlayerState = (function () {
 
     return CourseApiAdapter.loadCourse(assignmentId)
       .then(function (course) {
+        if (!course || !course.assignmentId) {
+          throw new Error('课程详情响应缺少 assignmentId');
+        }
         state.course = course;
+        _setInitialActivity();
         return CourseApiAdapter.createSubmission(assignmentId);
       })
       .then(function (submission) {
         state.submissionId = submission.id || submission.submissionId || '';
+        state.submissionStatus = submission.status || '';
+        state.submissionRevision = submission.revision != null ? submission.revision : null;
+        if (!state.submissionId) {
+          throw new Error('课程 Submission 响应缺少 id');
+        }
         return _loadNotesForCurrentActivity();
       })
       .then(function () {
@@ -106,9 +117,8 @@ window.CoursePlayerState = (function () {
       })
       .then(function (dashboard) {
         state.dashboard = dashboard;
-        _setInitialActivity();
         state.loading = false;
-        _notify(['assignmentId', 'course', 'submissionId', 'notes', 'recommendations', 'dashboard', 'currentActivityId', 'currentActivity', 'loading']);
+        _notify(['assignmentId', 'course', 'submissionId', 'submissionStatus', 'submissionRevision', 'notes', 'recommendations', 'dashboard', 'currentActivityId', 'currentActivity', 'loading']);
         return _shallowCopy(state);
       })
       .catch(function (err) {

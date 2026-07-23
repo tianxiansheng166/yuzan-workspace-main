@@ -21,7 +21,13 @@ const delivery = {
 
 function fakePrisma(overrides: Record<string, unknown> = {}) {
   const assessmentSession = { findFirst: vi.fn().mockResolvedValue(null), create: vi.fn().mockResolvedValue({ id: "cccccccc-cccc-4ccc-8ccc-cccccccccccc", status: "CREATED" }) };
-  const tx = { practiceDelivery: { findFirst: vi.fn().mockResolvedValue(delivery) }, assessmentSession, assessmentItem: { createMany: vi.fn().mockResolvedValue({ count: 1 }) } };
+  const tx = {
+    practiceDelivery: { findFirst: vi.fn().mockResolvedValue(delivery) },
+    assessmentSession,
+    assessmentItem: { createMany: vi.fn().mockResolvedValue({ count: 1 }) },
+    submission: { findFirst: vi.fn().mockResolvedValue({ id: "submission-1" }) },
+    courseActivityPractice: { findFirst: vi.fn().mockResolvedValue({ activityId: "activity-1" }) },
+  };
   return {
     enrollment: { findFirst: vi.fn().mockResolvedValue(enrollment) },
     practiceDelivery: { findMany: vi.fn().mockResolvedValue([]), findFirst: vi.fn().mockResolvedValue(delivery) },
@@ -59,5 +65,101 @@ describe("PracticeService", () => {
     const prisma = fakePrisma();
     await expect(new PracticeService(prisma as any).listForStudent(auth, otherSchoolId)).rejects.toBeInstanceOf(ForbiddenException);
     expect(prisma.enrollment.findFirst).not.toHaveBeenCalled();
+  });
+
+  it("requires assignment, submission and activity IDs together", async () => {
+    const prisma = fakePrisma();
+    await expect(new PracticeService(prisma as any).createOrResume(
+      auth,
+      schoolId,
+      "f1111111-1111-4111-8111-111111111111",
+      { assignmentId: "assignment-1", activityId: "activity-1" },
+    )).rejects.toBeInstanceOf(BadRequestException);
+    expect(prisma.__tx.submission.findFirst).not.toHaveBeenCalled();
+  });
+
+  it("validates the scoped course context and persists both course foreign keys", async () => {
+    const prisma = fakePrisma();
+    prisma.__tx.assessmentSession.create.mockResolvedValue({
+      id: "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+      status: "CREATED",
+      courseSubmissionId: "submission-1",
+      courseActivityId: "activity-1",
+    });
+    const context = {
+      assignmentId: "assignment-1",
+      submissionId: "submission-1",
+      activityId: "activity-1",
+    };
+
+    const result = await new PracticeService(prisma as any).createOrResume(
+      auth,
+      schoolId,
+      "f1111111-1111-4111-8111-111111111111",
+      context,
+    );
+
+    expect(result).toMatchObject({
+      mode: "COURSE_PRACTICE",
+      courseContext: { submissionId: "submission-1", activityId: "activity-1" },
+    });
+    expect(prisma.__tx.submission.findFirst).toHaveBeenCalledWith({
+      where: expect.objectContaining({
+        id: "submission-1",
+        schoolId,
+        assignmentId: "assignment-1",
+        enrollmentId: enrollment.id,
+      }),
+      select: { id: true },
+    });
+    expect(prisma.__tx.courseActivityPractice.findFirst).toHaveBeenCalledWith({
+      where: expect.objectContaining({
+        schoolId,
+        activityId: "activity-1",
+        practiceDefinitionId: "f1111111-1111-4111-8111-111111111111",
+      }),
+      select: { activityId: true },
+    });
+    expect(prisma.__tx.assessmentSession.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        schoolId,
+        courseSubmissionId: "submission-1",
+        courseActivityId: "activity-1",
+      }),
+    });
+  });
+
+  it("rejects another student's submission or an unrelated practice reference", async () => {
+    const context = { assignmentId: "assignment-1", submissionId: "submission-1", activityId: "activity-1" };
+    const wrongSubmission = fakePrisma();
+    wrongSubmission.__tx.submission.findFirst.mockResolvedValue(null);
+    await expect(new PracticeService(wrongSubmission as any).createOrResume(
+      auth, schoolId, "f1111111-1111-4111-8111-111111111111", context,
+    )).rejects.toBeInstanceOf(ForbiddenException);
+
+    const wrongReference = fakePrisma();
+    wrongReference.__tx.courseActivityPractice.findFirst.mockResolvedValue(null);
+    await expect(new PracticeService(wrongReference as any).createOrResume(
+      auth, schoolId, "f1111111-1111-4111-8111-111111111111", context,
+    )).rejects.toBeInstanceOf(ForbiddenException);
+  });
+
+  it("resumes the same scoped course attempt without a duplicate snapshot", async () => {
+    const prisma = fakePrisma();
+    prisma.__tx.assessmentSession.findFirst.mockResolvedValue({
+      id: "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+      status: "IN_PROGRESS",
+      courseSubmissionId: "submission-1",
+      courseActivityId: "activity-1",
+    });
+    const result = await new PracticeService(prisma as any).createOrResume(
+      auth,
+      schoolId,
+      "f1111111-1111-4111-8111-111111111111",
+      { assignmentId: "assignment-1", submissionId: "submission-1", activityId: "activity-1" },
+    );
+    expect(result).toMatchObject({ resumed: true, mode: "COURSE_PRACTICE" });
+    expect(prisma.__tx.assessmentSession.create).not.toHaveBeenCalled();
+    expect(prisma.__tx.assessmentItem.createMany).not.toHaveBeenCalled();
   });
 });
