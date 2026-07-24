@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-07-24T02:25:07+08:00",
+  "updated_at": "2026-07-24T19:30:00+08:00",
   "entries": [
     {
       "task_id": "GOV-DEV-FRAMEWORK-001",
@@ -33,6 +33,22 @@
       "commit": "7cd3b1a8f19a9536ae2a97ce917b39867e0b654b",
       "accepted_at": "2026-07-24T02:25:07+08:00",
       "note": "reader 最终回归无 P0/P1，双 PowerShell、resolver、review/finish、远端 HEAD 与 Git clean 均通过"
+    },
+    {
+      "task_id": "P0-AI-TOOL-CONTRACTS-001",
+      "acceptance_status": "VERIFIED",
+      "branch": "task/p0-ai-tool-contracts-001",
+      "commit": "1d0cd1bb0898ad47a6f9faebba42d3d18b84260d",
+      "accepted_at": "2026-07-24T19:30:00+08:00",
+      "note": "冻结教师教案与藏汉翻译共享OpenAPI契约：10 LessonPlanning路径+5 Translations路径，109 operationId唯一，Redocly lint通过，TypeScript类型生成870行"
+    },
+    {
+      "task_id": "P0-STUDENT-INDEPENDENT-PRACTICE-001",
+      "acceptance_status": "VERIFIED",
+      "branch": "task/p0-student-independent-practice-001",
+      "commit": "45fefdf361f7df4d0026c31b3e1d338f537acb47",
+      "accepted_at": "2026-07-24T19:30:00+08:00",
+      "note": "学生独立专项练习闭环：Playwright E2E 12类检查通过，后端15/15测试通过，task-gate review/finish通过"
     }
   ]
 }
