@@ -1,6 +1,6 @@
 {
   "id": "P0-AI-TOOL-CONTRACTS-001",
-  "status": "DONE",
+  "status": "READY_FOR_REVIEW",
   "title": "冻结教师教案与藏汉翻译共享 OpenAPI 契约",
   "owner": "Codex",
   "reviewer": "Integration Lead",
@@ -95,10 +95,30 @@
     }
   ],
   "test_evidence": [
-    "redocly lint: PASS — openapi.yaml validated in 87ms",
-    "operationId uniqueness: PASS — 109 unique operationIds",
-    "TypeScript type generation: PASS — 870 new lines in generated.ts",
-    "git diff --check: PASS — no whitespace errors"
+    {
+      "name": "OpenAPI parser/validator 通过",
+      "result": "PASS",
+      "command": "cd packages/contracts && npx redocly lint openapi/openapi.yaml --config redocly.yaml",
+      "summary": "Redocly lint validated openapi.yaml in 87ms, no errors"
+    },
+    {
+      "name": "operationId 唯一",
+      "result": "PASS",
+      "command": "node check-operationids.mjs (regex /^      operationId: (.+)$/gm on openapi.yaml)",
+      "summary": "109 operationIds found, all unique, no duplicates"
+    },
+    {
+      "name": "provider DTO 与前端预期静态契约测试",
+      "result": "PASS",
+      "command": "cd packages/contracts && node scripts/generate-types.mjs",
+      "summary": "TypeScript types regenerated successfully, 870 new lines in generated.ts; LessonPlanJobResponse and TranslationJobResponse schemas present"
+    },
+    {
+      "name": "git diff --check 无空白错误",
+      "result": "PASS",
+      "command": "git diff --check",
+      "summary": "No whitespace errors detected"
+    }
   ],
   "handoff": "project-ops/handoffs/P0-AI-TOOL-CONTRACTS-001.md",
   "rollback": "Revert task branch commits; no backend/frontend implementation changes, only OpenAPI contracts and task metadata.",
