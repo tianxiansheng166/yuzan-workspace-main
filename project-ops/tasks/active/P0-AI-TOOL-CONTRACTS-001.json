@@ -1,0 +1,105 @@
+{
+  "id": "P0-AI-TOOL-CONTRACTS-001",
+  "status": "PLANNED",
+  "title": "冻结教师教案与藏汉翻译共享 OpenAPI 契约",
+  "owner": "Codex",
+  "reviewer": "Integration Lead",
+  "branch": "task/p0-ai-tool-contracts-001",
+  "base_commit": "7cd3b1a8f19a9536ae2a97ce917b39867e0b654b",
+  "user_outcome": "OpenAPI 成为教师教案和翻译工具的共同 provider/consumer 事实，不再靠 controller、前端 mock 和旧 readiness 文档分别猜字段。",
+  "current_facts": [
+    "AiLessonPlanningController 有 Job create/get/cancel、Draft list/get/put/patch/approve、Workflow status 两个路径",
+    "LessonPlanJobResponse 含 id、jobId、lessonPlanDraftId 双 ID；LessonPlanDraftResponse 含 revision、status、content",
+    "TranslationsController 有 create/listOwn/listAll/getJob/glossary；TranslationJobResponse 不含 sourceTextEncrypted 和 provider 内部信息",
+    "当前 openapi.yaml 没有任何 lesson-plan 或 translation 路径或 schema",
+    "翻译 DTO 有 sourceLanguage/targetLanguage(BO|ZH)、sourceText(max 5000)、sourceTextHash",
+    "翻译 response 用 sanitizeErrorCode 过滤敏感错误码，只暴露 PROVIDER_UNAVAILABLE/QUOTA_EXCEEDED/INVALID_INPUT/INTERNAL_ERROR"
+  ],
+  "product_alignment": {
+    "p0": "为教师教案和翻译两个产品泳道建立共享契约基础，使后续实现任务不再猜字段",
+    "contribution": "消除 provider 和 consumer 之间的契约漂移，使字段名、状态值、错误码和权限边界成为单一事实",
+    "non_goals": [
+      "不实现 provider、数据库、worker 或页面",
+      "不修改 backend/frontend 实现来迁就验证",
+      "不做教师教案业务或翻译业务"
+    ]
+  },
+  "context": {
+    "required": [
+      "project-ops/AI-DEVELOPMENT-CONTRACT.md",
+      "project-ops/plans/P0-MULTITRACK-CLOSED-LOOPS.md",
+      "backend/api/src/modules/ai-lesson-planning/ai-lesson-planning.controller.ts",
+      "backend/api/src/modules/ai-lesson-planning/dto/lesson-plan-job.response.ts",
+      "backend/api/src/modules/translations/translations.controller.ts",
+      "backend/api/src/modules/translations/domain/translation.types.ts"
+    ],
+    "optional": [
+      "backend/api/src/modules/ai-lesson-planning/dto/create-lesson-plan-job.dto.ts",
+      "backend/api/src/modules/ai-lesson-planning/dto/update-draft.dto.ts",
+      "backend/api/src/modules/translations/dto/translation.dto.ts",
+      "backend/api/src/modules/translations/dto/translation.response.ts",
+      "backend/api/src/modules/translations/dto/list-jobs-query.dto.ts"
+    ]
+  },
+  "depends_on": [
+    "P0-MULTITRACK-CLOSURE-PLAN-001"
+  ],
+  "integration_order": [
+    "刻画当前教师 controller/DTO/response 的 characterization tests",
+    "冻结教师教案 OpenAPI 契约：Job/Draft/Revision/Approve/Workflow",
+    "冻结翻译工具最小契约：Job 归属/状态/结果/修订/审批/glossary",
+    "验证 OpenAPI parser/validator、operationId 唯一、schema/ref/response code",
+    "provider DTO 与前端预期的静态契约测试",
+    "创建 CCR 并提交",
+    "task-gate review/finish"
+  ],
+  "allowed_paths": [
+    "packages/contracts/**",
+    "project-ops/requests/CCR-P0-AI-TOOL-CONTRACTS-001.md",
+    "project-ops/tasks/active/P0-AI-TOOL-CONTRACTS-001.json",
+    "project-ops/handoffs/P0-AI-TOOL-CONTRACTS-001.md",
+    "evidence/p0-ai-tool-contracts-001/**"
+  ],
+  "shared_owner_changes": [
+    {
+      "path": "packages/contracts/openapi/openapi.yaml",
+      "change": "新增 LessonPlan 和 Translation 路径与 schemas",
+      "justification": "此任务是 OpenAPI 的唯一 writer (contract owner)"
+    }
+  ],
+  "contract_change_request": "project-ops/requests/CCR-P0-AI-TOOL-CONTRACTS-001.md",
+  "minimal_tests": [
+    {
+      "name": "OpenAPI parser/validator 通过",
+      "command": "cd packages/contracts && npx redocly lint openapi/openapi.yaml --config redocly.yaml"
+    },
+    {
+      "name": "operationId 唯一",
+      "command": "cd packages/contracts && node -e \"const yaml=require('yaml');const fs=require('fs');const d=yaml.parse(fs.readFileSync('openapi/openapi.yaml','utf8'));const ids=Object.values(d.paths).flatMap(p=>Object.values(p).map(o=>o.operationId)).filter(Boolean);const dupes=ids.filter((id,i)=>ids.indexOf(id)!==i);if(dupes.length){console.error('Duplicate operationIds:',dupes);process.exit(1)}else{console.log('All operationIds unique:',ids.length)}\""
+    },
+    {
+      "name": "provider DTO 与前端预期静态契约测试",
+      "command": "cd packages/contracts && node scripts/generate-types.mjs && node -e \"const d=require('./src/generated.js');const lpJob=d.LessonPlanJobResponse;const tJob=d.TranslationJobResponse;console.log('LessonPlanJobResponse keys:',Object.keys(lpJob?.properties||{}).join(','));console.log('TranslationJobResponse keys:',Object.keys(tJob?.properties||{}).join(','))\""
+    },
+    {
+      "name": "git diff --check 无空白错误",
+      "command": "git diff --check"
+    },
+    {
+      "name": "task-gate review",
+      "command": "& ./project-ops/scripts/task-gate.ps1 -Mode review -TaskFile project-ops/tasks/active/P0-AI-TOOL-CONTRACTS-001.json"
+    },
+    {
+      "name": "task-gate finish",
+      "command": "& ./project-ops/scripts/task-gate.ps1 -Mode finish -TaskFile project-ops/tasks/active/P0-AI-TOOL-CONTRACTS-001.json"
+    }
+  ],
+  "test_evidence": [],
+  "handoff": "project-ops/handoffs/P0-AI-TOOL-CONTRACTS-001.md",
+  "rollback": "Revert task branch commits; no backend/frontend implementation changes, only OpenAPI contracts and task metadata.",
+  "delivery": {
+    "push_task_branch": true,
+    "remote": "origin",
+    "merge_target": "integration/p0-multitrack-001"
+  }
+}
