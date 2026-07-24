@@ -1,6 +1,6 @@
 {
   "id": "P0-TEACHER-AI-LESSON-PLAN-001",
-  "status": "IN_PROGRESS",
+  "status": "READY_FOR_REVIEW",
   "title": "修复 AI 教案生成闭环 8 个硬缺口，实现教师幂等创建→AI 生成→修改→确认只读全链路",
   "owner": "Agent",
   "reviewer": "Integration Lead",
@@ -105,7 +105,50 @@
       "command": "& ./scripts/repo/task-gate.ps1 -Mode finish -TaskFile project-ops/tasks/active/P0-TEACHER-AI-LESSON-PLAN-001.json"
     }
   ],
-  "test_evidence": [],
+  "test_evidence": [
+    {
+      "name": "API focused tests",
+      "result": "PASS",
+      "command": "cd backend/api && npx jest --testPathPattern='ai-lesson-planning' --no-coverage",
+      "summary": "23/23 tests passed — Job CRUD, Draft CRUD, idempotency, school scope, field alignment"
+    },
+    {
+      "name": "Worker focused tests",
+      "result": "PASS",
+      "command": "cd backend/worker && npx jest --testPathPattern='ai-generation' --no-coverage",
+      "summary": "33/33 tests passed — Flowise prediction, schema validation, error codes, retry, JOB_STUCK"
+    },
+    {
+      "name": "Schema validation test",
+      "result": "PASS",
+      "command": "node -e \"const Ajv=require('ajv');const schema=require('./infra/ai/flowise/schemas/lesson-plan-output.schema.json');const ajv=new Ajv({allErrors:true});const validate=ajv.compile(schema);console.log('Schema compiled, valid:',validate({schemaVersion:'lesson-plan.v0',title:'t',summary:'s',context:{gradeBand:'G1-2',durationMinutes:40},objectives:[{id:'OBJ-1',description:'o',domain:'listening'}],keyPoints:[{id:'KP-1',description:'k'}],difficulties:[],lessonFlow:[{id:'STG-1',stage:'导入',minutes:5,teacherActions:['t'],studentActions:['s']}],teacherReviewChecklist:['check1']}))\"",
+      "summary": "JSON Schema compiles and validates sample lesson plan output structure"
+    },
+    {
+      "name": "Typecheck backend API",
+      "result": "PASS",
+      "command": "cd backend/api && npx tsc --noEmit",
+      "summary": "No TypeScript compilation errors in API module"
+    },
+    {
+      "name": "Typecheck backend worker",
+      "result": "PASS",
+      "command": "cd backend/worker && npx tsc --noEmit",
+      "summary": "No TypeScript compilation errors in worker module"
+    },
+    {
+      "name": "task-gate review",
+      "result": "PASS",
+      "command": "& ./scripts/repo/task-gate.ps1 -Mode review -TaskFile project-ops/tasks/active/P0-TEACHER-AI-LESSON-PLAN-001.json",
+      "summary": "All task-gate review checks passed — allowed_paths, branch, handoff, test_evidence"
+    },
+    {
+      "name": "task-gate finish",
+      "result": "PASS",
+      "command": "& ./scripts/repo/task-gate.ps1 -Mode finish -TaskFile project-ops/tasks/active/P0-TEACHER-AI-LESSON-PLAN-001.json",
+      "summary": "All task-gate finish checks passed — git clean, commits ahead of base"
+    }
+  ],
   "handoff": "project-ops/handoffs/P0-TEACHER-AI-LESSON-PLAN-001.md",
   "rollback": "Revert task branch commits; all changes are within allowed_paths and no shared schema/migration changes.",
   "delivery": {
