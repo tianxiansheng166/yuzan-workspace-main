@@ -296,6 +296,8 @@ export class AiGenerationConsumer {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          // Flowise 3.1.1 requires x-request-from: internal for server-to-server API access
+          "x-request-from": "internal",
           ...(this.flowiseApiKey ? { Authorization: `Bearer ${this.flowiseApiKey}` } : {}),
         },
         body: JSON.stringify({

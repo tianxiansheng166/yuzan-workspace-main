@@ -69,23 +69,23 @@ $envContent = Get-Content $envFile -ErrorAction SilentlyContinue
 $username = (($envContent | Where-Object { $_ -match "^FLOWISE_USERNAME=(.+)$" }) -replace "^FLOWISE_USERNAME=", "") | Select-Object -First 1
 $password = (($envContent | Where-Object { $_ -match "^FLOWISE_PASSWORD=(.+)$" }) -replace "^FLOWISE_PASSWORD=", "") | Select-Object -First 1
 
-if (-not $password) {
-    Write-Host "[WARN] FLOWISE_PASSWORD is empty in .env. Login may fail." -ForegroundColor Yellow
+# Step 3: Authenticate (skip when no password — dev mode with auth disabled)
+$headers = @{}
+if ($password) {
+    Write-Host "[INFO] Authenticating with Flowise ..." -ForegroundColor Cyan
+    $loginBody = @{ username = $username; password = $password } | ConvertTo-Json
+    try {
+        $loginResp = Invoke-RestMethod -Uri "$flowiseUrl/api/v1/login" -Method Post -Body $loginBody -ContentType "application/json" -ErrorAction Stop
+        $token = $loginResp.token ?? $loginResp.accessToken ?? $loginResp
+        $headers = @{ Authorization = "Bearer $token" }
+        Write-Host "[OK] Authenticated" -ForegroundColor Green
+    } catch {
+        Write-Host "[ERROR] Flowise login failed: $_" -ForegroundColor Red
+        exit 1
+    }
+} else {
+    Write-Host "[INFO] FLOWISE_PASSWORD is empty — using no-auth mode" -ForegroundColor Yellow
 }
-
-# Step 3: Authenticate
-Write-Host "[INFO] Authenticating with Flowise ..." -ForegroundColor Cyan
-$loginBody = @{ username = $username; password = $password } | ConvertTo-Json
-try {
-    $loginResp = Invoke-RestMethod -Uri "$flowiseUrl/api/v1/login" -Method Post -Body $loginBody -ContentType "application/json" -ErrorAction Stop
-    $token = $loginResp.token ?? $loginResp.accessToken ?? $loginResp
-    Write-Host "[OK] Authenticated" -ForegroundColor Green
-} catch {
-    Write-Host "[ERROR] Flowise login failed: $_" -ForegroundColor Red
-    exit 1
-}
-
-$headers = @{ Authorization = "Bearer $token" }
 
 # Step 4: Check for existing flow
 Write-Host "[INFO] Looking for existing '$flowName' workflow ..." -ForegroundColor Cyan
