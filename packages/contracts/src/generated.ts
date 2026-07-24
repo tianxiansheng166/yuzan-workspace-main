@@ -1458,6 +1458,229 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/schools/{schoolId}/ai/lesson-plan-jobs": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** 创建 AI 教案生成 Job */
+    post: operations["createLessonPlanJob"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/ai/lesson-plan-jobs/{jobId}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 获取教案生成 Job 状态 */
+    get: operations["getLessonPlanJob"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/ai/lesson-plan-jobs/{jobId}/cancel": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** 取消正在进行的教案生成 Job */
+    post: operations["cancelLessonPlanJob"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/ai/lesson-plan-drafts": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 列出当前教师的教案草稿 */
+    get: operations["listLessonPlanDrafts"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/ai/lesson-plan-drafts/{draftId}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 获取教案草稿详情 */
+    get: operations["getLessonPlanDraft"];
+    /** 替换教案草稿内容（乐观并发） */
+    put: operations["replaceLessonPlanDraft"];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /** 部分更新教案草稿内容（乐观并发） */
+    patch: operations["updateLessonPlanDraft"];
+    trace?: never;
+  };
+  "/schools/{schoolId}/ai/lesson-plan-drafts/{draftId}/approve": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** 教师确认教案草稿（APPROVED 后只读） */
+    post: operations["approveLessonPlanDraft"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/ai/workflows/lesson-planner/status": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 获取教案生成工作流状态 */
+    get: operations["getLessonPlannerWorkflowStatus"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/ai/workflow-status": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 获取教案工作流状态（前端兼容别名） */
+    get: operations["getLessonPlanWorkflowStatusAlias"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/translations/jobs": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** 创建翻译 Job（BO↔ZH） */
+    post: operations["createTranslationJob"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/translations/jobs/me": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 列出当前用户的翻译 Job */
+    get: operations["listMyTranslationJobs"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/translations/jobs/all": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 列出全校翻译 Job（教师/管理员） */
+    get: operations["listAllTranslationJobs"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/translations/jobs/{jobId}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 获取翻译 Job 状态与结果 */
+    get: operations["getTranslationJob"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/translations/glossary": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 获取术语表 */
+    get: operations["getTranslationGlossary"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -2412,6 +2635,29 @@ export interface components {
       submission: components["schemas"]["Submission"];
       resumed: boolean;
     };
+    /** @description Empty for self-practice; course-linked practice requires all three UUIDs together. */
+    CoursePracticeContextRequest: {
+      /** Format: uuid */
+      assignmentId?: string;
+      /** Format: uuid */
+      submissionId?: string;
+      /** Format: uuid */
+      activityId?: string;
+    };
+    PracticeAttemptStartResponse: {
+      /** Format: uuid */
+      attemptId: string;
+      status: string;
+      resumed: boolean;
+      /** @enum {string} */
+      mode: "COURSE_PRACTICE" | "SELF_PRACTICE";
+      courseContext: {
+        /** Format: uuid */
+        submissionId: string;
+        /** Format: uuid */
+        activityId: string;
+      } | null;
+    };
     SaveCourseActivityAttemptRequest: {
       kind: string;
       value?: {
@@ -2435,6 +2681,175 @@ export interface components {
       createdAt?: string | null;
       /** Format: date-time */
       updatedAt?: string | null;
+    };
+    CreateLessonPlanJobRequest: {
+      goal: string;
+      /** Format: uuid */
+      courseVersionId?: string | null;
+      /** Format: uuid */
+      unitId?: string | null;
+      /** Format: uuid */
+      lessonId?: string | null;
+      gradeBand?: string | null;
+      subject?: string | null;
+      durationMinutes?: number | null;
+      keyRequirements?: string | null;
+      outputModules?: string[] | null;
+      locale?: string | null;
+      idempotencyKey?: string | null;
+    };
+    LessonPlanJobResponse: {
+      /** Format: uuid */
+      id: string;
+      /**
+       * Format: uuid
+       * @description Alias for id — frontend reads jobId
+       */
+      jobId: string;
+      /** Format: uuid */
+      schoolId: string;
+      /** Format: uuid */
+      teacherId: string;
+      /** @enum {string} */
+      status:
+        | "QUEUED"
+        | "RUNNING"
+        | "SUCCEEDED"
+        | "FAILED"
+        | "CANCELLED"
+        | "TIMED_OUT"
+        | "SCHEMA_INVALID"
+        | "PROVIDER_UNAVAILABLE";
+      idempotencyKey: string | null;
+      inputSnapshot: {
+        [key: string]: unknown;
+      } | null;
+      outputSnapshot: {
+        [key: string]: unknown;
+      } | null;
+      errorCode: string | null;
+      latencyMs: number | null;
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: date-time */
+      startedAt: string | null;
+      /** Format: date-time */
+      completedAt: string | null;
+      /**
+       * Format: uuid
+       * @description ID of the lesson plan draft created on success
+       */
+      lessonPlanDraftId: string | null;
+    };
+    UpdateLessonPlanDraftRequest: {
+      title?: string | null;
+      /** @description Full replacement of draft content */
+      content: {
+        [key: string]: unknown;
+      };
+      /** @description Must match server revision for optimistic concurrency */
+      expectedRevision: number;
+    };
+    LessonPlanDraftResponse: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      schoolId: string;
+      /** Format: uuid */
+      teacherId: string;
+      /** Format: uuid */
+      courseVersionId?: string | null;
+      /** Format: uuid */
+      lessonId?: string | null;
+      /** Format: uuid */
+      generationJobId: string;
+      title: string;
+      content: {
+        [key: string]: unknown;
+      };
+      revision: number;
+      /** @enum {string} */
+      status: "NEEDS_REVIEW" | "APPROVED";
+      /** Format: date-time */
+      approvedAt?: string | null;
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: date-time */
+      updatedAt: string;
+    };
+    LessonPlanWorkflowStatusResponse: {
+      workflowKey: string;
+      status: string;
+      version: number;
+      provider: string;
+      externalFlowId: string | null;
+      flowiseAvailable: boolean;
+      workflowAvailable: boolean;
+      providerConfigured: boolean;
+      workerAvailable: boolean;
+      message?: string | null;
+    };
+    /** @enum {string} */
+    TranslationStatus:
+      | "CREATED"
+      | "QUEUED"
+      | "PROCESSING"
+      | "COMPLETED"
+      | "PROVIDER_UNAVAILABLE"
+      | "FAILED";
+    CreateTranslationJobRequest: {
+      /** @enum {string} */
+      sourceLanguage: "BO" | "ZH";
+      /** @enum {string} */
+      targetLanguage: "BO" | "ZH";
+      /** @description Plaintext to translate; encrypted payload never exposed to client */
+      sourceText: string;
+    };
+    TranslationJobResponse: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      schoolId: string;
+      /** @enum {string} */
+      sourceLanguage: "BO" | "ZH";
+      /** @enum {string} */
+      targetLanguage: "BO" | "ZH";
+      /** @description SHA-256 hash of source text for cache/matching */
+      sourceTextHash: string;
+      status: components["schemas"]["TranslationStatus"];
+      /** @description Machine translation output; absent until COMPLETED */
+      machineResult?: string | null;
+      /** @description Human-revised translation; set during NEEDS_REVIEW */
+      revisedResult?: string | null;
+      /** @enum {string|null} */
+      reviewStatus?: "NEEDS_REVIEW" | "APPROVED" | "REJECTED" | null;
+      revision?: number | null;
+      glossaryVersion: number;
+      /** @enum {string|null} */
+      errorCode?:
+        | "PROVIDER_UNAVAILABLE"
+        | "QUOTA_EXCEEDED"
+        | "INVALID_INPUT"
+        | "INTERNAL_ERROR"
+        | null;
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: date-time */
+      updatedAt: string;
+    };
+    GlossaryEntryResponse: {
+      /** Format: uuid */
+      id: string;
+      term: string;
+      /** @enum {string} */
+      sourceLanguage: "BO" | "ZH";
+      /** @enum {string} */
+      targetLanguage: "BO" | "ZH";
+      translation: string;
+      category: string;
+      version: number;
+      /** Format: date-time */
+      createdAt: string;
     };
   };
   responses: {
@@ -5126,15 +5541,22 @@ export interface operations {
       };
       cookie?: never;
     };
-    requestBody?: never;
+    requestBody?: {
+      content: {
+        "application/json": components["schemas"]["CoursePracticeContextRequest"];
+      };
+    };
     responses: {
       /** @description Returns a real attemptId; published item snapshots are copied atomically */
       201: {
         headers: {
           [name: string]: unknown;
         };
-        content?: never;
+        content: {
+          "application/json": components["schemas"]["PracticeAttemptStartResponse"];
+        };
       };
+      400: components["responses"]["BadRequest"];
       403: components["responses"]["Forbidden"];
     };
   };
@@ -5516,6 +5938,414 @@ export interface operations {
       };
       403: components["responses"]["Forbidden"];
       404: components["responses"]["NotFound"];
+    };
+  };
+  createLessonPlanJob: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CreateLessonPlanJobRequest"];
+      };
+    };
+    responses: {
+      /** @description Job created or existing idempotent job returned */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["LessonPlanJobResponse"];
+        };
+      };
+      400: components["responses"]["BadRequest"];
+      403: components["responses"]["Forbidden"];
+      503: components["responses"]["ProviderUnavailable"];
+    };
+  };
+  getLessonPlanJob: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        jobId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Job status */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["LessonPlanJobResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  cancelLessonPlanJob: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        jobId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Job cancelled */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["LessonPlanJobResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+      409: components["responses"]["Conflict"];
+    };
+  };
+  listLessonPlanDrafts: {
+    parameters: {
+      query?: {
+        limit?: number;
+      };
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Draft list */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["LessonPlanDraftResponse"][];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+    };
+  };
+  getLessonPlanDraft: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        draftId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Draft detail */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["LessonPlanDraftResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  replaceLessonPlanDraft: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        draftId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["UpdateLessonPlanDraftRequest"];
+      };
+    };
+    responses: {
+      /** @description Draft updated */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["LessonPlanDraftResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+      409: components["responses"]["Conflict"];
+    };
+  };
+  updateLessonPlanDraft: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        draftId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["UpdateLessonPlanDraftRequest"];
+      };
+    };
+    responses: {
+      /** @description Draft updated */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["LessonPlanDraftResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+      409: components["responses"]["Conflict"];
+    };
+  };
+  approveLessonPlanDraft: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        draftId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Draft approved */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["LessonPlanDraftResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+      409: components["responses"]["Conflict"];
+    };
+  };
+  getLessonPlannerWorkflowStatus: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Workflow status */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["LessonPlanWorkflowStatusResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+    };
+  };
+  getLessonPlanWorkflowStatusAlias: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Workflow status */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["LessonPlanWorkflowStatusResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+    };
+  };
+  createTranslationJob: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CreateTranslationJobRequest"];
+      };
+    };
+    responses: {
+      /** @description Translation job created */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["TranslationJobResponse"];
+        };
+      };
+      400: components["responses"]["BadRequest"];
+      403: components["responses"]["Forbidden"];
+      503: components["responses"]["ProviderUnavailable"];
+    };
+  };
+  listMyTranslationJobs: {
+    parameters: {
+      query?: {
+        limit?: number;
+        cursor?: string;
+        status?: components["schemas"]["TranslationStatus"];
+      };
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description My translation jobs */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["TranslationJobResponse"][];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+    };
+  };
+  listAllTranslationJobs: {
+    parameters: {
+      query?: {
+        limit?: number;
+        cursor?: string;
+        status?: components["schemas"]["TranslationStatus"];
+      };
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description All school translation jobs */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["TranslationJobResponse"][];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+    };
+  };
+  getTranslationJob: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        jobId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Translation job detail */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["TranslationJobResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  getTranslationGlossary: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Glossary entries */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["GlossaryEntryResponse"][];
+        };
+      };
+      403: components["responses"]["Forbidden"];
     };
   };
 }
