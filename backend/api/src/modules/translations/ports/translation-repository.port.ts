@@ -7,6 +7,7 @@ import type {
 export const TRANSLATION_REPOSITORY = Symbol("TRANSLATION_REPOSITORY");
 
 export interface ListJobsOptions {
+  readonly userId?: string;
   readonly status?: TranslationStatus;
   readonly cursor?: string;
   readonly limit: number;
@@ -21,16 +22,34 @@ export interface PaginatedResult<T> {
 export interface TranslationRepositoryPort {
   createJob(job: Omit<TranslationJob, "id" | "createdAt" | "updatedAt">): Promise<TranslationJob>;
   findJobById(schoolId: string, jobId: string): Promise<TranslationJob | null>;
+  findJobByIdOnly(jobId: string): Promise<TranslationJob | null>;
   listJobsBySchool(
     schoolId: string,
     options: ListJobsOptions,
   ): Promise<PaginatedResult<TranslationJob>>;
-  updateJobStatus(
+  updateJobResult(
     schoolId: string,
     jobId: string,
-    status: TranslationStatus,
-    resultText?: string,
-    errorCode?: string,
+    data: {
+      status: TranslationStatus;
+      machineResult?: string | null;
+      provider?: string;
+      providerRequestId?: string;
+      providerModel?: string;
+      providerLatencyMs?: number;
+      errorCode?: string;
+    },
+  ): Promise<TranslationJob | null>;
+  updateJobRevision(
+    schoolId: string,
+    jobId: string,
+    data: {
+      revisedResult: string;
+      reviewStatus: string;
+      reviewedByUserId: string;
+      reviewedAt: Date;
+      revision: number;
+    },
   ): Promise<TranslationJob | null>;
   listGlossary(
     schoolId: string,

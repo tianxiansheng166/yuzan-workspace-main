@@ -43,12 +43,35 @@ export class TranslationsPolicy {
     ) {
       return true;
     }
-    // Students can only view their own jobs — job ownership is checked at service level
-    return job.schoolId === schoolId;
+    // Students can only view their own jobs
+    return (
+      job.schoolId === schoolId &&
+      job.createdByUserId === auth.principal.userId
+    );
   }
 
   canViewGlossary(auth: AuthContext, schoolId: string): boolean {
     return this.isMemberOfSchool(auth, schoolId);
+  }
+
+  canReviseJob(auth: AuthContext, schoolId: string): boolean {
+    if (!this.isMemberOfSchool(auth, schoolId)) {
+      return false;
+    }
+    return hasAnyRole(auth, [
+      MembershipRole.TEACHER,
+      MembershipRole.SCHOOL_ADMIN,
+    ]);
+  }
+
+  canApproveJob(auth: AuthContext, schoolId: string): boolean {
+    if (!this.isMemberOfSchool(auth, schoolId)) {
+      return false;
+    }
+    return hasAnyRole(auth, [
+      MembershipRole.TEACHER,
+      MembershipRole.SCHOOL_ADMIN,
+    ]);
   }
 
   private isMemberOfSchool(auth: AuthContext, schoolId: string): boolean {
