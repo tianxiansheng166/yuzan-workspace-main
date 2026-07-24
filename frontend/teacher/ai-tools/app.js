@@ -475,15 +475,13 @@
     { id: 'draftFieldObjectives', key: 'objectives' },
     { id: 'draftFieldKeyPoints', key: 'keyPoints' },
     { id: 'draftFieldDifficulties', key: 'difficulties' },
-    { id: 'draftFieldClassFlow', key: 'classFlow' },
-    { id: 'draftFieldTeacherActivities', key: 'teacherActivities' },
-    { id: 'draftFieldStudentActivities', key: 'studentActivities' },
-    { id: 'draftFieldDifferentiatedSupport', key: 'differentiatedSupport' },
+    { id: 'draftFieldClassFlow', key: 'lessonFlow' },
+    { id: 'draftFieldDifferentiatedSupport', key: 'differentiation' },
     { id: 'draftFieldWorksheetDraft', key: 'worksheetDraft' },
-    { id: 'draftFieldExerciseDraft', key: 'exerciseDraft' },
+    { id: 'draftFieldExerciseDraft', key: 'practiceDraft' },
     { id: 'draftFieldGlossary', key: 'glossary' },
     { id: 'draftFieldRisks', key: 'risks' },
-    { id: 'draftFieldTeacherChecklist', key: 'teacherChecklist' },
+    { id: 'draftFieldTeacherChecklist', key: 'teacherReviewChecklist' },
   ];
 
   let currentDraft = null;  // { id, revision, status, title, content }
@@ -497,9 +495,33 @@
         el.value = draft.title || '';
       } else {
         const val = content[f.key];
-        el.value = Array.isArray(val) ? val.join('\n') : (val || '');
+        el.value = formatFieldValue(val);
       }
     });
+  }
+
+  /**
+   * Format a draft field value for display in a textarea.
+   * - Arrays of strings → one per line
+   * - Arrays of objects → JSON stringification per item
+   * - Objects → pretty-printed JSON
+   * - Primitives → string
+   */
+  function formatFieldValue(val) {
+    if (val == null) return '';
+    if (typeof val === 'string') return val;
+    if (typeof val === 'number' || typeof val === 'boolean') return String(val);
+    if (Array.isArray(val)) {
+      if (val.length === 0) return '';
+      // Array of primitives → one per line
+      if (typeof val[0] === 'string' || typeof val[0] === 'number') {
+        return val.join('\n');
+      }
+      // Array of objects → JSON each on its own line
+      return val.map(item => JSON.stringify(item, null, 2)).join('\n---\n');
+    }
+    // Object → pretty JSON
+    return JSON.stringify(val, null, 2);
   }
 
   function collectDraftContent() {
@@ -509,9 +531,70 @@
       if (!el) return;
       if (f.key === 'title') return; // title handled separately
       const raw = (el.value || '').trim();
-      content[f.key] = raw;
+      if (!raw) return;
+
+      // Preserve structured types: try JSON parse for object/array fields
+      const schemaKey = f.key;
+      if (schemaKey === 'lessonFlow' || schemaKey === 'objectives' ||
+          schemaKey === 'keyPoints' || schemaKey === 'difficulties' ||
+          schemaKey === 'glossary' || schemaKey === 'risks' ||
+          schemaKey === 'resourceSuggestions' ||
+          schemaKey === 'teacherReviewChecklist') {
+        // These are arrays — try to parse back from the display format
+        content[f.key] = tryParseArrayField(raw);
+      } else if (schemaKey === 'differentiation' || schemaKey === 'practiceDraft' ||
+                 schemaKey === 'worksheetDraft' || schemaKey === 'context') {
+        // These are objects — try JSON parse
+        content[f.key] = tryParseObjectField(raw);
+      } else {
+        content[f.key] = raw;
+      }
     });
+
+    // Preserve schemaVersion and context from the original AI output
+    if (currentDraft && currentDraft.content) {
+      if (currentDraft.content.schemaVersion) {
+        content.schemaVersion = currentDraft.content.schemaVersion;
+      }
+      if (currentDraft.content.context) {
+        content.context = currentDraft.content.context;
+      }
+    }
+
     return content;
+  }
+
+  /**
+   * Try to parse a textarea value back into an array.
+   * Handles both JSON arrays and newline-separated items.
+   */
+  function tryParseArrayField(raw) {
+    // If it starts with '[' try full JSON parse
+    const trimmed = raw.trim();
+    if (trimmed.startsWith('[')) {
+      try { return JSON.parse(trimmed); } catch {}
+    }
+    // If contains --- separators (array-of-objects format), parse each
+    if (trimmed.includes('\n---\n')) {
+      const items = trimmed.split('\n---\n').map(s => {
+        const item = s.trim();
+        try { return JSON.parse(item); } catch { return item; }
+      });
+      return items;
+    }
+    // Otherwise split by newline for string arrays
+    return trimmed.split('\n').filter(s => s.trim());
+  }
+
+  /**
+   * Try to parse a textarea value back into an object.
+   */
+  function tryParseObjectField(raw) {
+    const trimmed = raw.trim();
+    if (trimmed.startsWith('{')) {
+      try { return JSON.parse(trimmed); } catch {}
+    }
+    return trimmed;
   }
 
   function setDraftEditorReadonly(readOnly) {

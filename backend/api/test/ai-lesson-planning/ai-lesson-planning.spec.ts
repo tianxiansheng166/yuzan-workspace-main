@@ -265,7 +265,7 @@ describe("AiLessonPlanningService", () => {
       const result = await service.getJob(mockAuth, SCHOOL_ID, JOB_ID);
 
       expect(result.id).toBe(JOB_ID);
-      expect(result.lessonPlanDraftId).toBe(DRAFT_ID);
+      expect(result.draftId).toBe(DRAFT_ID);
     });
 
     it("should throw NOT_FOUND for missing job", async () => {

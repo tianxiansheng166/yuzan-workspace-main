@@ -88,8 +88,14 @@ export class AiLessonPlanningService {
 
     const workflowDefinitionId = await this.getOrCreateWorkflowDefinitionId();
 
+    // Gap 5 fix: Fetch the workflow definition to get externalFlowId for the payload
+    const workflowDef = await this.prisma.aiWorkflowDefinition.findUnique({
+      where: { id: workflowDefinitionId },
+    });
+    const externalFlowId = workflowDef?.externalFlowId ?? null;
+
     // Enrich inputSnapshot with real course data if courseVersionId provided
-    const enrichedInput = await this.enrichInputWithCourseData(dto);
+    const enrichedInput = await this.enrichInputWithCourseData(dto, schoolId);
 
     // Create job in QUEUED state
     const job = await this.prisma.aiGenerationJob.create({
@@ -104,6 +110,7 @@ export class AiLessonPlanningService {
     });
 
     // Enqueue to BullMQ — send full payload so Worker has all fields
+    // Gap 5: Include externalFlowId from DB as single source of truth
     if (this.aiQueue) {
       await this.aiQueue.add(
         "generate-lesson-plan",
@@ -126,6 +133,7 @@ export class AiLessonPlanningService {
           lessonTitle: enrichedInput.lessonTitle ?? null,
           lessonContentSummary: enrichedInput.lessonContentSummary ?? null,
           classAggregateSummary: enrichedInput.classAggregateSummary ?? null,
+          externalFlowId,
         },
         {
           jobId: job.id,
@@ -372,7 +380,7 @@ export class AiLessonPlanningService {
 
     const providerConfigured = this.isProviderConfigured();
     const workflowAvailable = !!(workflow?.externalFlowId);
-    const flowiseAvailable = this.isFlowiseReachable();
+    const flowiseAvailable = await this.isFlowiseReachable();
     const workerAvailable = !!this.aiQueue;
 
     // Derive overall status
@@ -513,17 +521,23 @@ export class AiLessonPlanningService {
   }
 
   /**
-   * Check if Flowise is reachable (best-effort, non-blocking).
-   * Returns false if FLOWISE_BASE_URL is not configured or if
-   * we cannot determine reachability synchronously.
+   * Check if Flowise is reachable by actually making a health check request.
+   * Gap 6 fix: Do NOT just return true because URL is configured — that
+   * misreports availability. Must verify runtime connectivity.
    */
-  private isFlowiseReachable(): boolean {
+  private async isFlowiseReachable(): Promise<boolean> {
     const flowiseUrl = this.config.get<string>("FLOWISE_BASE_URL");
-    // If Flowise URL is configured, we assume it's reachable.
-    // Actual health check would be async; for status endpoint
-    // we use this heuristic. The worker will discover the truth
-    // at runtime and report PROVIDER_UNAVAILABLE if needed.
-    return !!flowiseUrl;
+    if (!flowiseUrl) return false;
+
+    try {
+      const response = await fetch(`${flowiseUrl}/api/v1/ping`, {
+        method: "GET",
+        signal: AbortSignal.timeout(3000),
+      });
+      return response.ok;
+    } catch {
+      return false;
+    }
   }
 
   /**
@@ -555,9 +569,13 @@ export class AiLessonPlanningService {
    * Enrich the DTO input with real course data from the database.
    * If courseVersionId is provided, fetch CourseVersion, Unit, and Lesson
    * titles and summaries to include in the inputSnapshot for the Worker.
+   *
+   * Gap 8 fix: All queries include schoolId scope to prevent cross-school
+   * data leaks. Errors are logged, not silently swallowed.
    */
   private async enrichInputWithCourseData(
     dto: CreateLessonPlanJobDto,
+    schoolId: string,
   ): Promise<Record<string, unknown>> {
     const input: Record<string, unknown> = {
       goal: dto.goal,
@@ -582,28 +600,53 @@ export class AiLessonPlanningService {
       try {
         const cv = await this.prisma.courseVersion.findUnique({
           where: { id: dto.courseVersionId },
-          select: { title: true, description: true },
+          select: { title: true, description: true, schoolId: true },
         });
         if (cv) {
+          // Gap 8: Verify schoolId scope — reject cross-school access
+          if (cv.schoolId !== schoolId) {
+            throw Object.assign(
+              new Error("CourseVersion does not belong to this school"),
+              { code: "FORBIDDEN" },
+            );
+          }
           input.courseTitle = cv.title;
           input.courseSummary = cv.description;
         }
-      } catch {
-        // Course version may not exist or table may not be queryable — best effort
+      } catch (err: unknown) {
+        // Rethrow explicit FORBIDDEN — not a "best effort" case
+        if (err instanceof Error && (err as any).code === "FORBIDDEN") throw err;
+        // Other errors (e.g. table not queryable) — log but don't fail job creation
+        const msg = err instanceof Error ? err.message : String(err);
+        console.warn("[AiLessonPlanning] CourseVersion lookup failed:", dto.courseVersionId, msg);
       }
     }
 
     if (dto.lessonId) {
       try {
+        // Lesson has no schoolId — verify via Unit → CourseVersion chain
         const lesson = await this.prisma.lesson.findUnique({
           where: { id: dto.lessonId },
-          select: { title: true },
+          select: {
+            title: true,
+            unit: { select: { courseVersion: { select: { schoolId: true } } } },
+          },
         });
         if (lesson) {
+          // Gap 8: Verify schoolId scope through Unit → CourseVersion
+          const lessonSchoolId = lesson.unit?.courseVersion?.schoolId;
+          if (lessonSchoolId && lessonSchoolId !== schoolId) {
+            throw Object.assign(
+              new Error("Lesson does not belong to this school"),
+              { code: "FORBIDDEN" },
+            );
+          }
           input.lessonTitle = lesson.title;
         }
-      } catch {
-        // Lesson may not exist — best effort
+      } catch (err: unknown) {
+        if (err instanceof Error && (err as any).code === "FORBIDDEN") throw err;
+        const msg = err instanceof Error ? err.message : String(err);
+        console.warn("[AiLessonPlanning] Lesson lookup failed:", dto.lessonId, msg);
       }
     }
 
@@ -630,7 +673,7 @@ export class AiLessonPlanningService {
 
   private toJobResponse(
     job: any,
-    lessonPlanDraftId: string | null,
+    draftId: string | null,
   ): LessonPlanJobResponse {
     return {
       id: job.id,
@@ -646,7 +689,7 @@ export class AiLessonPlanningService {
       createdAt: job.createdAt.toISOString(),
       startedAt: job.startedAt?.toISOString() ?? null,
       completedAt: job.completedAt?.toISOString() ?? null,
-      lessonPlanDraftId,
+      draftId,
     };
   }
 
