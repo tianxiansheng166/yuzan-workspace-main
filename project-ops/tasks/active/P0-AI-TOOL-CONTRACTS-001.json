@@ -118,6 +118,18 @@
       "result": "PASS",
       "command": "git diff --check",
       "summary": "No whitespace errors detected"
+    },
+    {
+      "name": "task-gate review",
+      "result": "PASS",
+      "command": "& ./scripts/repo/task-gate.ps1 -Mode review -TaskFile project-ops/tasks/active/P0-AI-TOOL-CONTRACTS-001.json",
+      "summary": "All minimal_tests evidence present and PASS, git diff --check clean, scope within allowed_paths"
+    },
+    {
+      "name": "task-gate finish",
+      "result": "PASS",
+      "command": "& ./scripts/repo/task-gate.ps1 -Mode finish -TaskFile project-ops/tasks/active/P0-AI-TOOL-CONTRACTS-001.json",
+      "summary": "Task marked COMPLETED, all checks passed"
     }
   ],
   "handoff": "project-ops/handoffs/P0-AI-TOOL-CONTRACTS-001.md",
