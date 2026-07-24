@@ -1,0 +1,116 @@
+{
+  "id": "P0-TEACHER-AI-LESSON-PLAN-001",
+  "status": "IN_PROGRESS",
+  "title": "修复 AI 教案生成闭环 8 个硬缺口，实现教师幂等创建→AI 生成→修改→确认只读全链路",
+  "owner": "Agent",
+  "reviewer": "Integration Lead",
+  "branch": "task/p0-teacher-ai-lesson-plan-001",
+  "base_commit": "1d0cd1bb0898ad47a6f9faebba42d3d18b84260d",
+  "user_outcome": "真实教师选择本校一门已发布课程，输入教学目标，创建幂等 Job；BullMQ 调用真实 Flowise 和真实 AI provider，产出符合 versioned JSON Schema 的教案草稿；教师能完整查看结构、修改并保存 revision，再确认 APPROVED；刷新和新浏览器上下文仍能打开同一草稿，确认后只读。",
+  "current_facts": [
+    "AiLessonPlanningService 有 Job create/get/cancel、Draft list/get/put/approve、Workflow status",
+    "后端 toJobResponse 返回 lessonPlanDraftId，前端期望 draftId（缺口1）",
+    "前端 DRAFT_FIELDS 使用 classFlow/differentiatedSupport/exerciseDraft/teacherChecklist，后端 Schema 为 lessonFlow/differentiation/practiceDraft/teacherReviewChecklist（缺口2）",
+    "populateDraftFields 对对象数组直接 join 输出 [object Object]；updateDraft 不保留 schemaVersion/context（缺口3）",
+    "Worker 构造函数从环境变量读 FLOWISE_API_KEY 但无运行时 credential/base path 注入（缺口4）",
+    "bootstrap flow ID、Worker FLOWISE_FLOW_ID、数据库 externalFlowId 三处不一致（缺口5）",
+    "isFlowiseReachable 仅检查 URL 存在不验证真实可达性；isWorkerAvailable 仅检查 Queue 对象（缺口6）",
+    "reportResult 非 2xx/网络失败仅 log 不重试，Job 永久卡住（缺口7）",
+    "enrichInputWithCourseData 的 courseVersionId/lessonId 查询缺 school scope，异常被 catch 吞掉（缺口8）"
+  ],
+  "product_alignment": {
+    "p0": "教师 AI 备课方案从半成品到生产可用闭环",
+    "contribution": "闭合教师选择课程→幂等创建 Job→AI 生成教案→修改 revision→确认 APPROVED→只读持久化的完整链路",
+    "non_goals": [
+      "不修改 Prisma schema、OpenAPI、frontend/assets/api-client.js、backend/worker/src/main.ts",
+      "不创建新的 Flowise flow（仅修复已有 flow 的 credential/base path 注入）",
+      "不做翻译工具或双语课程功能",
+      "不把 mock 测试当 live 证据"
+    ]
+  },
+  "context": {
+    "required": [
+      "project-ops/AI-DEVELOPMENT-CONTRACT.md",
+      "project-ops/plans/P0-MULTITRACK-CLOSED-LOOPS.md",
+      "backend/api/src/modules/ai-lesson-planning/ai-lesson-planning.service.ts",
+      "backend/worker/src/ai-generation/ai-generation.consumer.ts",
+      "frontend/teacher/ai-tools/app.js",
+      "infra/ai/flowise/schemas/lesson-plan-output.schema.json"
+    ],
+    "optional": [
+      "backend/api/src/modules/ai-lesson-planning/ai-lesson-planning.controller.ts",
+      "backend/api/src/modules/ai-lesson-planning/dto/*.ts",
+      "backend/api/test/ai-lesson-planning/**",
+      "backend/worker/test/ai-generation/**",
+      "infra/ai/flowise/**/*.json"
+    ]
+  },
+  "depends_on": [
+    "P0-AI-TOOL-CONTRACTS-001"
+  ],
+  "integration_order": [
+    "修复后端 lessonPlanDraftId→draftId 字段名对齐（缺口1）",
+    "修复前端 DRAFT_FIELDS 与 JSON Schema 字段名对齐（缺口2）",
+    "修复对象数组渲染和 schemaVersion/context 保留（缺口3）",
+    "修复 Flowise 运行时 credential/base path 注入（缺口4）",
+    "统一 flow ID 单一来源为环境变量 + 数据库 fallback（缺口5）",
+    "替换 isFlowiseReachable/isWorkerAvailable 为真实健康检查（缺口6）",
+    "修复 reportResult 非幂等回写，加重试和 JOB_STUCK 标记（缺口7）",
+    "修复 courseVersionId/lessonId 查询加 school scope，异常不静默吞（缺口8）",
+    "API/worker/frontend focused tests",
+    "Flowise closure tests",
+    "typecheck/build",
+    "task-gate review/finish"
+  ],
+  "allowed_paths": [
+    "frontend/teacher/ai-tools/**",
+    "backend/api/src/modules/ai-lesson-planning/**",
+    "backend/api/test/ai-lesson-planning/**",
+    "backend/worker/src/ai-generation/**",
+    "backend/worker/test/ai-generation/**",
+    "infra/ai/flowise/**",
+    "project-ops/tasks/active/P0-TEACHER-AI-LESSON-PLAN-001.json",
+    "project-ops/handoffs/P0-TEACHER-AI-LESSON-PLAN-001.md",
+    "evidence/p0-teacher-ai-lesson-plan-001/**"
+  ],
+  "shared_owner_changes": [],
+  "contract_change_request": null,
+  "minimal_tests": [
+    {
+      "name": "API focused tests",
+      "command": "cd backend/api && npx jest --testPathPattern='ai-lesson-planning' --no-coverage"
+    },
+    {
+      "name": "Worker focused tests",
+      "command": "cd backend/worker && npx jest --testPathPattern='ai-generation' --no-coverage"
+    },
+    {
+      "name": "Schema validation test",
+      "command": "node -e \"const Ajv=require('ajv');const schema=require('./infra/ai/flowise/schemas/lesson-plan-output.schema.json');const ajv=new Ajv({allErrors:true});const validate=ajv.compile(schema);console.log('Schema compiled, valid:',validate({schemaVersion:'lesson-plan.v0',title:'t',summary:'s',context:{gradeBand:'G1-2',durationMinutes:40},objectives:[{id:'OBJ-1',description:'o',domain:'listening'}],keyPoints:[{id:'KP-1',description:'k'}],difficulties:[],lessonFlow:[{id:'STG-1',stage:'导入',minutes:5,teacherActions:['t'],studentActions:['s']}],teacherReviewChecklist:['check1']}))\""
+    },
+    {
+      "name": "Typecheck backend API",
+      "command": "cd backend/api && npx tsc --noEmit"
+    },
+    {
+      "name": "Typecheck backend worker",
+      "command": "cd backend/worker && npx tsc --noEmit"
+    },
+    {
+      "name": "task-gate review",
+      "command": "& ./scripts/repo/task-gate.ps1 -Mode review -TaskFile project-ops/tasks/active/P0-TEACHER-AI-LESSON-PLAN-001.json"
+    },
+    {
+      "name": "task-gate finish",
+      "command": "& ./scripts/repo/task-gate.ps1 -Mode finish -TaskFile project-ops/tasks/active/P0-TEACHER-AI-LESSON-PLAN-001.json"
+    }
+  ],
+  "test_evidence": [],
+  "handoff": "project-ops/handoffs/P0-TEACHER-AI-LESSON-PLAN-001.md",
+  "rollback": "Revert task branch commits; all changes are within allowed_paths and no shared schema/migration changes.",
+  "delivery": {
+    "push_task_branch": true,
+    "remote": "origin",
+    "merge_target": "integration/p0-multitrack-001"
+  }
+}
