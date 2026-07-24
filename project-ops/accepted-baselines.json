@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-07-24T19:30:00+08:00",
+  "updated_at": "2026-07-24T21:00:00+08:00",
   "entries": [
     {
       "task_id": "GOV-DEV-FRAMEWORK-001",
@@ -36,7 +36,7 @@
     },
     {
       "task_id": "P0-AI-TOOL-CONTRACTS-001",
-      "acceptance_status": "VERIFIED",
+      "acceptance_status": "INTEGRATED",
       "branch": "task/p0-ai-tool-contracts-001",
       "commit": "1d0cd1bb0898ad47a6f9faebba42d3d18b84260d",
       "accepted_at": "2026-07-24T19:30:00+08:00",

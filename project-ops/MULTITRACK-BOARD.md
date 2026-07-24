@@ -1,6 +1,6 @@
 # P0 多路线跟踪看板
 
-> 更新时间：2026-07-24 20:00 +08:00
+> 更新时间：2026-07-24 21:00 +08:00
 > 机器任务图：`project-ops/multitrack-tasks.json`
 > 已接受基线：`project-ops/accepted-baselines.json`
 > 权威来源：`origin/integration/p0-multitrack-001` 的同一远端 commit
@@ -23,7 +23,7 @@
 | 治理 | `P0-MULTITRACK-CLOSURE-PLAN-001` | `CLOSED` | `COMPLETED` | `VERIFIED` | `NOT_INTEGRATED` | 控制面已建立；保留规划 commit 为初始 checkpoint |
 | 学生课程 | `P0-STUDENT-COURSE-PRACTICE-001` | `N/A` | `COMPLETED` | `VERIFIED` | `NOT_INTEGRATED` | 等待 integration |
 | 学生课程 | `P0-STUDENT-COURSE-SUBMIT-001` | `READY_TO_RESUME` | `IN_PROGRESS` | `EVIDENCE_REPAIR` | `NOT_INTEGRATED` | 真实录音、提交脚本、三尺寸、动态 DB、handoff/remote 一致 |
-| 共享契约 | `P0-AI-TOOL-CONTRACTS-001` | `CLOSED` | `COMPLETED` | `VERIFIED` | `NOT_INTEGRATED` | 已接受；释放 OPENAPI 锁；等待 integration |
+| 共享契约 | `P0-AI-TOOL-CONTRACTS-001` | `CLOSED` | `COMPLETED` | `VERIFIED` | `INTEGRATED` | 已合入 integration/p0-multitrack-001 (e1505b3)；OPENAPI 锁已释放 |
 | 学生练习 | `P0-STUDENT-INDEPENDENT-PRACTICE-001` | `CLOSED` | `COMPLETED` | `VERIFIED` | `NOT_INTEGRATED` | 已接受；释放 ASSESSMENT_CORE 锁；等待 integration |
 | 教师教案 | `P0-TEACHER-AI-LESSON-PLAN-001` | `READY_TO_RESUME` | `IN_PROGRESS` | `PARTIAL` | `NOT_INTEGRATED` | worktree 已创建(base=1d0cd1b)；开始实现 |
 | 藏汉翻译 | `P0-TIBETAN-TRANSLATION-TOOL-001` | `READY_TO_RESUME` | `IN_PROGRESS` | `PARTIAL` | `NOT_INTEGRATED` | worktree 已创建(base=1d0cd1b)；开始实现 |
@@ -40,7 +40,7 @@
 | 共享事实 | 当前 owner | 释放条件 |
 |---|---|---|
 | `accepted-baselines.json`、integration checkpoint | Integration Lead | 更新后运行 validator、提交并推送 integration |
-| `packages/contracts/openapi/openapi.yaml` | `P0-AI-TOOL-CONTRACTS-001` | finish、推送并被 Integration Lead 接受 |
+| `packages/contracts/openapi/openapi.yaml` | 已释放 | `P0-AI-TOOL-CONTRACTS-001` 已 INTEGRATED；后续 consumer 可写 |
 | 翻译 Prisma schema 与本任务 migration | `P0-TIBETAN-TRANSLATION-TOOL-001` | 迁移/回滚与任务 finish 通过 |
 | `backend/worker/src/main.ts` | `P0-TIBETAN-TRANSLATION-TOOL-001` | translation consumer 启停测试通过 |
 | 学生课程核心文件 | 当前 `P0-STUDENT-COURSE-SUBMIT-001` | 证据修复接受后，依次转给 video-progress、video-note |
