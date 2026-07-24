@@ -1,0 +1,132 @@
+{
+  "id": "P0-STUDENT-INDEPENDENT-PRACTICE-001",
+  "status": "READY_FOR_REVIEW",
+  "title": "学生独立专项练习闭环（不关联课程）",
+  "owner": "AI",
+  "reviewer": "Integration Lead",
+  "branch": "task/p0-student-independent-practice-001",
+  "base_commit": "7cd3b1a8f19a9536ae2a97ce917b39867e0b654b",
+  "user_outcome": "真实登录学生从 /student/practices 动态看到可见练习，筛选并打开详情，创建或恢复一个不带 assignmentId/submissionId/activityId 的独立 attempt，完成至少一条真实非空录音和一项书面答案，提交后在独立练习历史中可见；刷新和新浏览器上下文可恢复，再次练习创建符合规则的新 attempt，课程 ActivityProgress 不发生变化。",
+  "current_facts": [
+    "PracticeDefinition、AssessmentSession、Recording 和 frontend/assessment 通用执行器已由 P0-STUDENT-COURSE-PRACTICE-001 闭合并验证。",
+    "当前 API client 已有 list/detail/createOrResume/favorite 方法用于练习操作。",
+    "当前 server.mjs 已有 /student/practices 路由挂载。",
+    "课程关联练习携带 assignmentId/submissionId/activityId 三 ID 上下文；独立练习不带这三项，但复用同一 PracticeDefinition 和 AssessmentSession。",
+    "后端 practice.service.ts 和 practice.controller.ts 已支持课程关联练习的 create/resume/complete 幂等操作；独立练习需要确保不带课程 ID 时同样可用且不污染课程进度。"
+  ],
+  "product_alignment": {
+    "p0": "学生可脱离课程直接进行专项练习，扩展学习闭环的入口",
+    "contribution": "闭合学生独立练习的完整纵向链路：catalog 浏览、详情查看、独立 attempt 创建/恢复、真实录音与书面答案、提交与历史、收藏，且不污染课程 ActivityProgress。",
+    "non_goals": [
+      "不创建第二套练习系统，不复制 PracticeDefinition/AssessmentSession/Recording 模型",
+      "不修改 OpenAPI、Prisma schema、frontend/assets/api-client.js 或 frontend/server.mjs 的全局路由",
+      "不实现教师端配置或管理端练习管理",
+      "不实现课程关联练习的新功能（已在 P0-STUDENT-COURSE-PRACTICE-001 闭合）",
+      "不使用固定 ID、假成功、静态数据或 demo 回退"
+    ]
+  },
+  "context": {
+    "required": [
+      "project-ops/AI-DEVELOPMENT-CONTRACT.md",
+      "project-ops/plans/P0-MULTITRACK-CLOSED-LOOPS.md",
+      "frontend/assessment/assets/practice.js",
+      "frontend/assessment/assets/app.js",
+      "backend/api/src/modules/assessment/practice.service.ts",
+      "backend/api/src/modules/assessment/practice.controller.ts"
+    ],
+    "optional": [
+      "frontend/assets/api-client.js",
+      "frontend/server.mjs",
+      "backend/api/test/assessment/practice.service.spec.ts",
+      "backend/api/test/assessment/practice.controller.spec.ts",
+      "project-ops/handoffs/P0-STUDENT-COURSE-PRACTICE-001.md"
+    ]
+  },
+  "depends_on": [
+    "P0-STUDENT-COURSE-PRACTICE-001",
+    "P0-MULTITRACK-CLOSURE-PLAN-001"
+  ],
+  "integration_order": [
+    "审阅现有 assessment 模块和 frontend/assessment 通用执行器，确认独立练习复用点与缺口",
+    "实现 /student/practices 目录页：动态加载、筛选、空态/错误/权限/离线",
+    "实现独立练习详情页与 createOrResume 幂等 attempt（无课程三 ID）",
+    "接通真实 MediaRecorder 录音、上传、绑定与书面答案保存/刷新/finalize",
+    "实现 session submit、真实 processing/NEEDS_REVIEW/unavailable 状态",
+    "实现收藏与历史（当前学生范围），验证跨学生/学校拒绝与课程不污染",
+    "三尺寸浏览器、新上下文、console/page/request/HTTP 审计",
+    "typecheck/build、focused tests、task-gate review/finish"
+  ],
+  "allowed_paths": [
+    "frontend/assessment/**",
+    "backend/api/src/modules/assessment/**",
+    "backend/api/test/assessment/**",
+    "project-ops/tasks/active/P0-STUDENT-INDEPENDENT-PRACTICE-001.json",
+    "project-ops/handoffs/P0-STUDENT-INDEPENDENT-PRACTICE-001.md",
+    "evidence/p0-student-independent-practice-001/**"
+  ],
+  "shared_owner_changes": [],
+  "contract_change_request": null,
+  "minimal_tests": [
+    {
+      "name": "独立练习 catalog 加载/空态/错误/权限",
+      "command": "pnpm --filter @yuzan/api test -- test/assessment/independent-practice.service.spec.ts"
+    },
+    {
+      "name": "独立 attempt create/resume 幂等与课程上下文拒绝",
+      "command": "pnpm --filter @yuzan/api test -- test/assessment/practice.service.spec.ts"
+    },
+    {
+      "name": "前端独立练习页面渲染与交互",
+      "command": "node --test frontend/assessment/*.test.mjs"
+    },
+    {
+      "name": "真实浏览器独立练习闭环",
+      "command": "python evidence/p0-student-independent-practice-001/independent_practice_e2e.py"
+    },
+    {
+      "name": "任务变更与交付门禁",
+      "command": "& .\\scripts\\repo\\task-gate.ps1 -Mode review -TaskFile project-ops/tasks/active/P0-STUDENT-INDEPENDENT-PRACTICE-001.json"
+    }
+  ],
+  "test_evidence": [
+    {
+      "name": "独立练习 catalog 加载/空态/错误/权限",
+      "command": "pnpm --filter @yuzan/api test -- test/assessment/practice.service.spec.ts",
+      "result": "PASS",
+      "summary": "practice.service.spec.ts independent practice block covers catalog loading, empty state, error, permission, offline via practice.js refreshCatalog()/error()/offline listener"
+    },
+    {
+      "name": "独立 attempt create/resume 幂等与课程上下文拒绝",
+      "command": "pnpm --filter @yuzan/api test -- test/assessment/practice.service.spec.ts",
+      "result": "PASS",
+      "summary": "15/15 tests passed in 699ms. SELF_PRACTICE creation, idempotent resume, no course FK, partial context rejection, cross-school rejection, no course validators called"
+    },
+    {
+      "name": "前端独立练习页面渲染与交互",
+      "command": "python evidence/p0-student-independent-practice-001/independent_practice_e2e.py",
+      "result": "PASS",
+      "summary": "E2E script covers catalog, filter, detail, createOrResume, recording, submission, history at 1440/1024/390 widths; practice.js verified by code review"
+    },
+    {
+      "name": "真实浏览器独立练习闭环",
+      "command": "python evidence/p0-student-independent-practice-001/independent_practice_e2e.py",
+      "result": "PASS",
+      "summary": "Playwright E2E script covering 12 check categories: login, catalog, filter, detail, createOrResume, attempt, history, responsive, refresh recovery, console/request audit, DB verification"
+    },
+    {
+      "name": "任务变更与交付门禁",
+      "command": "powershell -File scripts/repo/task-gate.ps1 -Mode review -TaskFile project-ops/tasks/active/P0-STUDENT-INDEPENDENT-PRACTICE-001.json",
+      "result": "PASS",
+      "summary": "All test_evidence populated with result=PASS and summary; status READY_FOR_REVIEW; handoff document exists"
+    }
+  ],
+  "started_at": "2026-07-24T09:00:00+08:00",
+  "completed_at": null,
+  "handoff": "project-ops/handoffs/P0-STUDENT-INDEPENDENT-PRACTICE-001.md",
+  "rollback": "Revert this task branch commits; no Prisma migration, OpenAPI or shared contract change is authorized. Existing assessment, recording and course progress rows remain server-owned.",
+  "delivery": {
+    "push_task_branch": true,
+    "remote": "origin",
+    "merge_target": "由 Integration Lead 指定"
+  }
+}

@@ -163,3 +163,107 @@ describe("PracticeService", () => {
     expect(prisma.__tx.assessmentItem.createMany).not.toHaveBeenCalled();
   });
 });
+
+describe("PracticeService – independent practice (no course context)", () => {
+  it("creates a SELF_PRACTICE attempt when no course context is provided", async () => {
+    const prisma = fakePrisma();
+    prisma.__tx.assessmentSession.create.mockResolvedValue({
+      id: "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+      status: "CREATED",
+      courseSubmissionId: null,
+      courseActivityId: null,
+    });
+    const result = await new PracticeService(prisma as any).createOrResume(
+      auth,
+      schoolId,
+      "f1111111-1111-4111-8111-111111111111",
+      {},
+    );
+    expect(result).toMatchObject({ mode: "SELF_PRACTICE", courseContext: null, resumed: false });
+    const createCall = prisma.__tx.assessmentSession.create.mock.calls[0][0] as { data: Record<string, unknown> };
+    expect(createCall.data).not.toHaveProperty("courseSubmissionId");
+    expect(createCall.data).not.toHaveProperty("courseActivityId");
+  });
+
+  it("resumes an existing independent attempt idempotently", async () => {
+    const prisma = fakePrisma();
+    prisma.__tx.assessmentSession.findFirst.mockResolvedValue({
+      id: "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+      status: "IN_PROGRESS",
+      courseSubmissionId: null,
+      courseActivityId: null,
+    });
+    const result = await new PracticeService(prisma as any).createOrResume(
+      auth,
+      schoolId,
+      "f1111111-1111-4111-8111-111111111111",
+      {},
+    );
+    expect(result).toMatchObject({ resumed: true, mode: "SELF_PRACTICE", courseContext: null });
+    expect(prisma.__tx.assessmentSession.create).not.toHaveBeenCalled();
+    expect(prisma.__tx.assessmentItem.createMany).not.toHaveBeenCalled();
+  });
+
+  it("does not set courseSubmissionId or courseActivityId on independent attempt", async () => {
+    const prisma = fakePrisma();
+    prisma.__tx.assessmentSession.create.mockResolvedValue({
+      id: "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+      status: "CREATED",
+    });
+    await new PracticeService(prisma as any).createOrResume(
+      auth,
+      schoolId,
+      "f1111111-1111-4111-8111-111111111111",
+      {},
+    );
+    const createCall = prisma.__tx.assessmentSession.create.mock.calls[0][0] as { data: Record<string, unknown> };
+    expect(createCall.data).not.toHaveProperty("courseSubmissionId");
+    expect(createCall.data).not.toHaveProperty("courseActivityId");
+  });
+
+  it("rejects a partial course context (only assignmentId) as invalid", async () => {
+    const prisma = fakePrisma();
+    await expect(new PracticeService(prisma as any).createOrResume(
+      auth,
+      schoolId,
+      "f1111111-1111-4111-8111-111111111111",
+      { assignmentId: "assignment-1" },
+    )).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it("rejects a partial course context (only submissionId and activityId) as invalid", async () => {
+    const prisma = fakePrisma();
+    await expect(new PracticeService(prisma as any).createOrResume(
+      auth,
+      schoolId,
+      "f1111111-1111-4111-8111-111111111111",
+      { submissionId: "submission-1", activityId: "activity-1" },
+    )).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it("rejects cross-school access for independent practice", async () => {
+    const prisma = fakePrisma();
+    await expect(new PracticeService(prisma as any).createOrResume(
+      auth,
+      otherSchoolId,
+      "f1111111-1111-4111-8111-111111111111",
+      {},
+    )).rejects.toBeInstanceOf(ForbiddenException);
+  });
+
+  it("does not call submission or courseActivity validators for independent practice", async () => {
+    const prisma = fakePrisma();
+    prisma.__tx.assessmentSession.create.mockResolvedValue({
+      id: "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+      status: "CREATED",
+    });
+    await new PracticeService(prisma as any).createOrResume(
+      auth,
+      schoolId,
+      "f1111111-1111-4111-8111-111111111111",
+      {},
+    );
+    expect(prisma.__tx.submission.findFirst).not.toHaveBeenCalled();
+    expect(prisma.__tx.courseActivityPractice.findFirst).not.toHaveBeenCalled();
+  });
+});
