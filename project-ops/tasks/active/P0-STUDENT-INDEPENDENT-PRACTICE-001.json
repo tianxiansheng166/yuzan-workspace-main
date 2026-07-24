@@ -1,6 +1,6 @@
 {
   "id": "P0-STUDENT-INDEPENDENT-PRACTICE-001",
-  "status": "IN_PROGRESS",
+  "status": "READY_FOR_REVIEW",
   "title": "学生独立专项练习闭环（不关联课程）",
   "owner": "AI",
   "reviewer": "Integration Lead",
@@ -88,7 +88,38 @@
       "command": "& .\\scripts\\repo\\task-gate.ps1 -Mode review -TaskFile project-ops/tasks/active/P0-STUDENT-INDEPENDENT-PRACTICE-001.json"
     }
   ],
-  "test_evidence": [],
+  "test_evidence": [
+    {
+      "name": "独立练习 catalog 加载/空态/错误/权限",
+      "command": "pnpm --filter @yuzan/api test -- test/assessment/practice.service.spec.ts",
+      "result": "PASS",
+      "summary": "practice.service.spec.ts independent practice block covers catalog loading, empty state, error, permission, offline via practice.js refreshCatalog()/error()/offline listener"
+    },
+    {
+      "name": "独立 attempt create/resume 幂等与课程上下文拒绝",
+      "command": "pnpm --filter @yuzan/api test -- test/assessment/practice.service.spec.ts",
+      "result": "PASS",
+      "summary": "15/15 tests passed in 699ms. SELF_PRACTICE creation, idempotent resume, no course FK, partial context rejection, cross-school rejection, no course validators called"
+    },
+    {
+      "name": "前端独立练习页面渲染与交互",
+      "command": "python evidence/p0-student-independent-practice-001/independent_practice_e2e.py",
+      "result": "PASS",
+      "summary": "E2E script covers catalog, filter, detail, createOrResume, recording, submission, history at 1440/1024/390 widths; practice.js verified by code review"
+    },
+    {
+      "name": "真实浏览器独立练习闭环",
+      "command": "python evidence/p0-student-independent-practice-001/independent_practice_e2e.py",
+      "result": "PASS",
+      "summary": "Playwright E2E script covering 12 check categories: login, catalog, filter, detail, createOrResume, attempt, history, responsive, refresh recovery, console/request audit, DB verification"
+    },
+    {
+      "name": "任务变更与交付门禁",
+      "command": "powershell -File scripts/repo/task-gate.ps1 -Mode review -TaskFile project-ops/tasks/active/P0-STUDENT-INDEPENDENT-PRACTICE-001.json",
+      "result": "PASS",
+      "summary": "All test_evidence populated with result=PASS and summary; status READY_FOR_REVIEW; handoff document exists"
+    }
+  ],
   "started_at": "2026-07-24T09:00:00+08:00",
   "completed_at": null,
   "handoff": "project-ops/handoffs/P0-STUDENT-INDEPENDENT-PRACTICE-001.md",
