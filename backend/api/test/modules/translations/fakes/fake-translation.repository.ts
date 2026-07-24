@@ -3,6 +3,9 @@ import type {
   TranslationJob,
   TranslationStatus,
 } from "../../../../src/modules/translations/domain/translation.types.js";
+import {
+  ReviewStatus,
+} from "../../../../src/modules/translations/domain/translation.types.js";
 import type {
   ListJobsOptions,
   PaginatedResult,
@@ -23,14 +26,23 @@ export class FakeTranslationRepository implements TranslationRepositoryPort {
     const job: TranslationJob = {
       id: `job-${this.nextId++}`,
       schoolId: data.schoolId,
+      createdByUserId: data.createdByUserId,
       sourceLanguage: data.sourceLanguage,
       targetLanguage: data.targetLanguage,
       sourceTextHash: data.sourceTextHash,
       sourceTextEncrypted: data.sourceTextEncrypted,
       status: data.status,
-      provider: data.provider,
-      resultText: data.resultText,
+      machineResult: data.machineResult,
+      revisedResult: data.revisedResult,
+      reviewStatus: data.reviewStatus,
+      revision: data.revision,
+      reviewedByUserId: data.reviewedByUserId,
+      reviewedAt: data.reviewedAt,
       glossaryVersion: data.glossaryVersion,
+      provider: data.provider,
+      providerRequestId: data.providerRequestId,
+      providerModel: data.providerModel,
+      providerLatencyMs: data.providerLatencyMs,
       errorCode: data.errorCode,
       createdAt: now,
       updatedAt: now,
@@ -47,6 +59,10 @@ export class FakeTranslationRepository implements TranslationRepositoryPort {
     return job && job.schoolId === schoolId ? job : null;
   }
 
+  async findJobByIdOnly(jobId: string): Promise<TranslationJob | null> {
+    return this.jobs.get(jobId) ?? null;
+  }
+
   async listJobsBySchool(
     schoolId: string,
     options: ListJobsOptions,
@@ -55,6 +71,9 @@ export class FakeTranslationRepository implements TranslationRepositoryPort {
       (j) => j.schoolId === schoolId,
     );
 
+    if (options.userId) {
+      items = items.filter((j) => j.createdByUserId === options.userId);
+    }
     if (options.status) {
       items = items.filter((j) => j.status === options.status);
     }
@@ -74,20 +93,62 @@ export class FakeTranslationRepository implements TranslationRepositoryPort {
     };
   }
 
-  async updateJobStatus(
+  async updateJobResult(
     schoolId: string,
     jobId: string,
-    status: TranslationStatus,
-    resultText?: string,
-    errorCode?: string,
+    data: {
+      status: TranslationStatus;
+      machineResult?: string | null;
+      provider?: string;
+      providerRequestId?: string;
+      providerModel?: string;
+      providerLatencyMs?: number;
+      errorCode?: string;
+    },
   ): Promise<TranslationJob | null> {
     const job = this.jobs.get(jobId);
     if (!job || job.schoolId !== schoolId) return null;
+    // Do not overwrite APPROVED jobs
+    if (job.reviewStatus === ReviewStatus.APPROVED) return job;
+
     const updated: TranslationJob = {
       ...job,
-      status,
-      resultText,
-      errorCode,
+      status: data.status,
+      ...(data.machineResult !== undefined ? { machineResult: data.machineResult } : {}),
+      ...(data.provider !== undefined ? { provider: data.provider } : {}),
+      ...(data.providerRequestId !== undefined ? { providerRequestId: data.providerRequestId } : {}),
+      ...(data.providerModel !== undefined ? { providerModel: data.providerModel } : {}),
+      ...(data.providerLatencyMs !== undefined ? { providerLatencyMs: data.providerLatencyMs } : {}),
+      ...(data.errorCode !== undefined ? { errorCode: data.errorCode } : {}),
+      updatedAt: new Date(),
+    };
+    this.jobs.set(jobId, updated);
+    return updated;
+  }
+
+  async updateJobRevision(
+    schoolId: string,
+    jobId: string,
+    data: {
+      revisedResult: string;
+      reviewStatus: string;
+      reviewedByUserId: string;
+      reviewedAt: Date;
+      revision: number;
+    },
+  ): Promise<TranslationJob | null> {
+    const job = this.jobs.get(jobId);
+    if (!job || job.schoolId !== schoolId) return null;
+    // Optimistic concurrency check
+    if (job.revision !== data.revision) return null;
+
+    const updated: TranslationJob = {
+      ...job,
+      revisedResult: data.revisedResult,
+      reviewStatus: data.reviewStatus as ReviewStatus,
+      reviewedByUserId: data.reviewedByUserId,
+      reviewedAt: data.reviewedAt,
+      revision: job.revision + 1,
       updatedAt: new Date(),
     };
     this.jobs.set(jobId, updated);
