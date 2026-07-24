@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-07-24T22:30:00+08:00",
+  "updated_at": "2026-07-25T11:00:00+08:00",
   "control_ref": "origin/integration/p0-multitrack-001",
   "planning_branch": "task/p0-multitrack-closure-plan-001",
   "planning_base_commit": "ca14c57f0534e4e8ddf3e273128668b6c12e685e",
@@ -139,7 +139,7 @@
       "id": "P0-TIBETAN-TRANSLATION-TOOL-001",
       "lane": "tibetan-translation",
       "wave": 1,
-      "dispatch_status": "READY_TO_RESUME",
+      "dispatch_status": "BLOCKED",
       "execution_status": "IN_PROGRESS",
       "evidence_status": "PARTIAL",
       "integration_status": "NOT_INTEGRATED",

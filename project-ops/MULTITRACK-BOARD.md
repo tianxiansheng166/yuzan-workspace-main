@@ -1,6 +1,6 @@
 # P0 多路线跟踪看板
 
-> 更新时间：2026-07-24 22:30 +08:00
+> 更新时间：2026-07-25 11:00 +08:00
 > 机器任务图：`project-ops/multitrack-tasks.json`
 > 已接受基线：`project-ops/accepted-baselines.json`
 > 权威来源：`origin/integration/p0-multitrack-001` 的同一远端 commit
@@ -25,8 +25,8 @@
 | 学生课程 | `P0-STUDENT-COURSE-SUBMIT-001` | `READY_TO_RESUME` | `IN_PROGRESS` | `EVIDENCE_REPAIR` | `NOT_INTEGRATED` | 真实录音、提交脚本、三尺寸、动态 DB、handoff/remote 一致 |
 | 共享契约 | `P0-AI-TOOL-CONTRACTS-001` | `CLOSED` | `COMPLETED` | `VERIFIED` | `INTEGRATED` | 已合入 integration/p0-multitrack-001 (e1505b3)；OPENAPI 锁已释放 |
 | 学生练习 | `P0-STUDENT-INDEPENDENT-PRACTICE-001` | `CLOSED` | `COMPLETED` | `VERIFIED` | `INTEGRATED` | 已合入 integration/p0-multitrack-001 (bd3c40f)；ASSESSMENT_CORE 锁已释放 |
-| 教师教案 | `P0-TEACHER-AI-LESSON-PLAN-001` | `READY_TO_RESUME` | `IN_PROGRESS` | `PARTIAL` | `NOT_INTEGRATED` | worktree 已创建(base=1d0cd1b)；开始实现 |
-| 藏汉翻译 | `P0-TIBETAN-TRANSLATION-TOOL-001` | `READY_TO_RESUME` | `IN_PROGRESS` | `PARTIAL` | `NOT_INTEGRATED` | worktree 已创建(base=1d0cd1b)；开始实现 |
+| 教师教案 | `P0-TEACHER-AI-LESSON-PLAN-001` | `READY_TO_RESUME` | `IN_PROGRESS` | `PARTIAL` | `NOT_INTEGRATED` | 8 硬缺口已修复(880ccc6)；API 23/23 + Worker 33/33；待 Flowise 闭环证据 + task-gate |
+| 藏汉翻译 | `P0-TIBETAN-TRANSLATION-TOOL-001` | `BLOCKED` | `IN_PROGRESS` | `PARTIAL` | `NOT_INTEGRATED` | 后端核心 1-10 完成(e8f2d8c)；45 测试 PASS；BLOCKED: provider 凭据缺失 |
 | 学生课程 | `P0-STUDENT-COURSE-VIDEO-PROGRESS-001` | `WAITING_DEPENDENCY` | `NOT_CREATED` | `PARTIAL` | `NOT_INTEGRATED` | 等课程提交、共享契约和共同 integration checkpoint |
 | 学生课程 | `P0-STUDENT-COURSE-VIDEO-NOTE-001` | `WAITING_DEPENDENCY` | `NOT_CREATED` | `PARTIAL` | `NOT_INTEGRATED` | 等视频进度 |
 | 网页双语 | `P1-TIBETAN-BILINGUAL-COURSE-001` | `WAITING_DEPENDENCY` | `NOT_CREATED` | `NOT_STARTED` | `NOT_INTEGRATED` | 等翻译工具、视频笔记和共同 integration checkpoint |
