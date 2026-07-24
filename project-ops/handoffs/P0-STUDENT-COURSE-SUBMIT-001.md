@@ -108,9 +108,9 @@ A real logged-in student can:
 ## Branch, Commit, Remote State
 
 - **Branch**: task/p0-student-course-submit-001
-- **Local HEAD**: TBD (after evidence commit)
-- **Remote HEAD**: 1fe5e94
-- **Local ahead of remote**: 3 implementation commits + 1 evidence commit pending push
+- **Local HEAD**: 03468b6
+- **Remote HEAD**: 03468b6
+- **Local and remote in sync**: true
 
 ## Evidence Defects Found on Resume (2026-07-24) — ALL RESOLVED
 
