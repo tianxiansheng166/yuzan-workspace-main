@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-07-24T21:00:00+08:00",
+  "updated_at": "2026-07-24T22:30:00+08:00",
   "entries": [
     {
       "task_id": "GOV-DEV-FRAMEWORK-001",
@@ -44,7 +44,7 @@
     },
     {
       "task_id": "P0-STUDENT-INDEPENDENT-PRACTICE-001",
-      "acceptance_status": "VERIFIED",
+      "acceptance_status": "INTEGRATED",
       "branch": "task/p0-student-independent-practice-001",
       "commit": "45fefdf361f7df4d0026c31b3e1d338f537acb47",
       "accepted_at": "2026-07-24T19:30:00+08:00",

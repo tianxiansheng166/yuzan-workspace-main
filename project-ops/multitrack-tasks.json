@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-07-24T21:00:00+08:00",
+  "updated_at": "2026-07-24T22:30:00+08:00",
   "control_ref": "origin/integration/p0-multitrack-001",
   "planning_branch": "task/p0-multitrack-closure-plan-001",
   "planning_base_commit": "ca14c57f0534e4e8ddf3e273128668b6c12e685e",
@@ -20,7 +20,7 @@
     "worktree": "../worktrees/p0-multitrack-integration-001",
     "initial_base_strategy": "VERIFIED_PLANNING_BRANCH_HEAD",
     "initial_base_task_id": "P0-MULTITRACK-CLOSURE-PLAN-001",
-    "current_checkpoint_commit": "e1505b3f96c1f0afba76740395cca25639f1cb71",
+    "current_checkpoint_commit": "bd3c40f1202150e225eb253c1a3092c8cc80c2e1",
     "prompt": "project-ops/prompts/multitrack/P0-MULTITRACK-INTEGRATION-GOAL.md"
   },
   "tasks": [
@@ -84,7 +84,7 @@
       "dispatch_status": "CLOSED",
       "execution_status": "COMPLETED",
       "evidence_status": "VERIFIED",
-      "integration_status": "NOT_INTEGRATED",
+      "integration_status": "INTEGRATED",
       "branch": "task/p0-student-independent-practice-001",
       "worktree": "../worktrees/p0-student-independent-practice-001",
       "task_file": "project-ops/tasks/active/P0-STUDENT-INDEPENDENT-PRACTICE-001.json",
