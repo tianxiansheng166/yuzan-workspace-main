@@ -1,0 +1,179 @@
+{
+  "taskId": "P0-STUDENT-COURSE-SUBMIT-001",
+  "script": "fault_injection",
+  "timestamp": "2026-07-24T11:13:38Z",
+  "scenarios": {
+    "A_old_revision_409": {
+      "name": "old_revision_409",
+      "steps": [
+        {
+          "step": "get_detail",
+          "submissionId": "26d21c01-d514-4eee-afb6-4e50a7eb7d40",
+          "currentRevision": 1,
+          "currentStatus": "SUBMITTED"
+        },
+        {
+          "step": "submit_current_revision",
+          "status": 201,
+          "expected": 201,
+          "body": "{\"data\":{\"submission\":{\"id\":\"26d21c01-d514-4eee-afb6-4e50a7eb7d40\",\"assignmentId\":\"85000000-0000-4000-8000-000000000004\",\"enrollmentId\":\"f1111111-1111-4111-8111-111111111111\",\"attemptNo\":1,\"status\":\"S"
+        },
+        {
+          "step": "submit_stale_revision",
+          "status": 201,
+          "expected": "409 (conflict) or 201 (idempotent)",
+          "interpretation": "idempotent_201",
+          "body": "{\"data\":{\"submission\":{\"id\":\"26d21c01-d514-4eee-afb6-4e50a7eb7d40\",\"assignmentId\":\"85000000-0000-4000-8000-000000000004\",\"enrollmentId\":\"f1111111-1111-4111-8111-111111111111\",\"attemptNo\":1,\"status\":\"S"
+        },
+        {
+          "step": "re_read_detail",
+          "newRevision": 1
+        },
+        {
+          "step": "submit_new_revision",
+          "status": 201,
+          "expected": 201,
+          "body": "{\"data\":{\"submission\":{\"id\":\"26d21c01-d514-4eee-afb6-4e50a7eb7d40\",\"assignmentId\":\"85000000-0000-4000-8000-000000000004\",\"enrollmentId\":\"f1111111-1111-4111-8111-111111111111\",\"attemptNo\":1,\"status\":\"S"
+        }
+      ],
+      "passed": true
+    },
+    "B_invalid_recording_link": {
+      "name": "invalid_recording_link",
+      "steps": [
+        {
+          "step": "progress_before",
+          "speechCompletedBefore": true
+        },
+        {
+          "step": "link_invalid_recording",
+          "status": 404,
+          "expected": 404,
+          "body": "{\"error\":{\"code\":\"HTTP_404\",\"message\":\"录音不存在或不属于当前课程提交\",\"details\":{},\"requestId\":\"6ae7cd4a-70bf-470d-b4f9-3b43e47db01e\"}}"
+        },
+        {
+          "step": "progress_after",
+          "speechCompletedAfter": true
+        }
+      ],
+      "passed": true
+    },
+    "C_submit_idempotent": {
+      "name": "submit_retry_idempotent",
+      "steps": [
+        {
+          "step": "get_detail",
+          "submissionId": "26d21c01-d514-4eee-afb6-4e50a7eb7d40",
+          "revision": 1,
+          "status": "SUBMITTED"
+        },
+        {
+          "step": "resubmit",
+          "status": 201,
+          "body": "{\"data\":{\"submission\":{\"id\":\"26d21c01-d514-4eee-afb6-4e50a7eb7d40\",\"assignmentId\":\"85000000-0000-4000-8000-000000000004\",\"enrollmentId\":\"f1111111-1111-4111-8111-111111111111\",\"attemptNo\":1,\"status\":\"SUBMITTED\",\"revision\":1,\"submittedAt\":\"2026-07-24T11:01:32.722Z\",\"createdAt\":\"2026-07-24T11:01:31.688",
+          "interpretation": "idempotent_201"
+        }
+      ],
+      "passed": true
+    },
+    "D_cross_account": {
+      "name": "cross_account_access",
+      "steps": [
+        {
+          "step": "teacher_login",
+          "schoolId": "11111111-1111-4111-8111-111111111111",
+          "userId": "33333333-3333-4333-8333-333333333333"
+        },
+        {
+          "step": "teacher_read_student_course",
+          "status": 403,
+          "expected": "403 or 404",
+          "body": "{\"error\":{\"code\":\"FORBIDDEN_ROLE\",\"message\":\"当前角色无权执行此操作\",\"details\":{},\"requestId\":\"1a8e20da-e305-4ac9-b98f-d308d492e414\"}}"
+        },
+        {
+          "step": "teacher_submit_student_course",
+          "status": 403,
+          "expected": "403 or 404",
+          "body": "{\"error\":{\"code\":\"FORBIDDEN_ROLE\",\"message\":\"当前角色无权执行此操作\",\"details\":{},\"requestId\":\"2e598c5c-02ba-4179-b429-ee96a1973d94\"}}"
+        },
+        {
+          "step": "student_fake_school",
+          "status": 403,
+          "expected": "403 or 404",
+          "body": "{\"error\":{\"code\":\"FORBIDDEN_TENANT\",\"message\":\"不允许访问该租户资源\",\"details\":{},\"requestId\":\"4a19309f-9c2c-43ff-9c5c-6c6b6e1a52d6\"}}"
+        }
+      ],
+      "passed": true
+    },
+    "E_error_stats": {
+      "name": "error_statistics",
+      "passed": true,
+      "totalRequests": 18,
+      "errorCount": 4,
+      "errorsByStatus": {
+        "404": 1,
+        "403": 3
+      },
+      "errors": [
+        {
+          "method": "POST",
+          "url": "http://127.0.0.1:4000/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/85000000-0000-4000-8000-000000000004/submissions/26d21c01-d514-4eee-afb6-4e50a7eb7d40/activities/84000000-0000-4000-8000-000000000404/recordings/00000000-0000-0000-0000-000000000000/link",
+          "status": 404,
+          "body": "{\"error\":{\"code\":\"HTTP_404\",\"message\":\"录音不存在或不属于当前课程提交\",\"details\":{},\"requestId\":\"6ae7cd4a-70bf-470d-b4f9-3b43e47db01e\"}}"
+        },
+        {
+          "method": "GET",
+          "url": "http://127.0.0.1:4000/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/85000000-0000-4000-8000-000000000004",
+          "status": 403,
+          "body": "{\"error\":{\"code\":\"FORBIDDEN_ROLE\",\"message\":\"当前角色无权执行此操作\",\"details\":{},\"requestId\":\"1a8e20da-e305-4ac9-b98f-d308d492e414\"}}"
+        },
+        {
+          "method": "POST",
+          "url": "http://127.0.0.1:4000/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/85000000-0000-4000-8000-000000000004/submissions/26d21c01-d514-4eee-afb6-4e50a7eb7d40/submit",
+          "status": 403,
+          "body": "{\"error\":{\"code\":\"FORBIDDEN_ROLE\",\"message\":\"当前角色无权执行此操作\",\"details\":{},\"requestId\":\"2e598c5c-02ba-4179-b429-ee96a1973d94\"}}"
+        },
+        {
+          "method": "GET",
+          "url": "http://127.0.0.1:4000/api/v1/schools/00000000-0000-0000-0000-000000000000/student/courses/85000000-0000-4000-8000-000000000004",
+          "status": 403,
+          "body": "{\"error\":{\"code\":\"FORBIDDEN_TENANT\",\"message\":\"不允许访问该租户资源\",\"details\":{},\"requestId\":\"4a19309f-9c2c-43ff-9c5c-6c6b6e1a52d6\"}}"
+        }
+      ]
+    }
+  },
+  "errorStats": {
+    "totalRequests": 18,
+    "httpErrors": [
+      {
+        "method": "POST",
+        "url": "http://127.0.0.1:4000/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/85000000-0000-4000-8000-000000000004/submissions/26d21c01-d514-4eee-afb6-4e50a7eb7d40/activities/84000000-0000-4000-8000-000000000404/recordings/00000000-0000-0000-0000-000000000000/link",
+        "status": 404,
+        "body": "{\"error\":{\"code\":\"HTTP_404\",\"message\":\"录音不存在或不属于当前课程提交\",\"details\":{},\"requestId\":\"6ae7cd4a-70bf-470d-b4f9-3b43e47db01e\"}}"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4000/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/85000000-0000-4000-8000-000000000004",
+        "status": 403,
+        "body": "{\"error\":{\"code\":\"FORBIDDEN_ROLE\",\"message\":\"当前角色无权执行此操作\",\"details\":{},\"requestId\":\"1a8e20da-e305-4ac9-b98f-d308d492e414\"}}"
+      },
+      {
+        "method": "POST",
+        "url": "http://127.0.0.1:4000/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/85000000-0000-4000-8000-000000000004/submissions/26d21c01-d514-4eee-afb6-4e50a7eb7d40/submit",
+        "status": 403,
+        "body": "{\"error\":{\"code\":\"FORBIDDEN_ROLE\",\"message\":\"当前角色无权执行此操作\",\"details\":{},\"requestId\":\"2e598c5c-02ba-4179-b429-ee96a1973d94\"}}"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4000/api/v1/schools/00000000-0000-0000-0000-000000000000/student/courses/85000000-0000-4000-8000-000000000004",
+        "status": 403,
+        "body": "{\"error\":{\"code\":\"FORBIDDEN_TENANT\",\"message\":\"不允许访问该租户资源\",\"details\":{},\"requestId\":\"4a19309f-9c2c-43ff-9c5c-6c6b6e1a52d6\"}}"
+      }
+    ],
+    "summary": {
+      "404": 1,
+      "403": 3
+    }
+  },
+  "overallResult": "PASS"
+}

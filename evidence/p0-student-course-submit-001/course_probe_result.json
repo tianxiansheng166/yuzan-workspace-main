@@ -1,0 +1,96 @@
+[
+  {
+    "assignmentId": "85000000-0000-4000-8000-000000000003",
+    "title": "古诗文朗读：停顿与情感",
+    "source": "TEACHER_ASSIGNED",
+    "activityCount": 4,
+    "activities": [
+      {
+        "activityId": "84000000-0000-4000-8000-000000000301",
+        "activityType": "TEXT",
+        "title": "从句意寻找停顿",
+        "required": true,
+        "isCompleted": false,
+        "hasPractice": false
+      },
+      {
+        "activityId": "84000000-0000-4000-8000-000000000302",
+        "activityType": "AUDIO",
+        "title": "聆听节奏示范",
+        "required": true,
+        "isCompleted": false,
+        "hasPractice": false
+      },
+      {
+        "activityId": "84000000-0000-4000-8000-000000000303",
+        "activityType": "SPEECH",
+        "title": "朗读并表达情感",
+        "required": true,
+        "isCompleted": false,
+        "hasPractice": false
+      },
+      {
+        "activityId": "84000000-0000-4000-8000-000000000304",
+        "activityType": "CHOICE",
+        "title": "古诗文综合课程练习",
+        "required": true,
+        "isCompleted": false,
+        "hasPractice": false
+      }
+    ],
+    "submissionId": null,
+    "submissionStatus": null,
+    "progressPercent": 0
+  },
+  {
+    "assignmentId": "85000000-0000-4000-8000-000000000001",
+    "title": "声母发音与口型基础",
+    "source": "TEACHER_ASSIGNED",
+    "activityCount": 5,
+    "activities": [
+      {
+        "activityId": "84000000-0000-4000-8000-000000000101",
+        "activityType": "TEXT",
+        "title": "认识发音部位",
+        "required": true,
+        "isCompleted": true,
+        "hasPractice": false
+      },
+      {
+        "activityId": "84000000-0000-4000-8000-000000000102",
+        "activityType": "AUDIO",
+        "title": "听辨送气差异",
+        "required": true,
+        "isCompleted": true,
+        "hasPractice": false
+      },
+      {
+        "activityId": "84000000-0000-4000-8000-000000000103",
+        "activityType": "SPEECH",
+        "title": "独立朗读声母句",
+        "required": true,
+        "isCompleted": true,
+        "hasPractice": false
+      },
+      {
+        "activityId": "84000000-0000-4000-8000-000000000104",
+        "activityType": "CHOICE",
+        "title": "声母听辨选择",
+        "required": true,
+        "isCompleted": true,
+        "hasPractice": false
+      },
+      {
+        "activityId": "84000000-0000-4000-8000-000000000105",
+        "activityType": "FILL_BLANK",
+        "title": "填写声母发音要点",
+        "required": true,
+        "isCompleted": true,
+        "hasPractice": false
+      }
+    ],
+    "submissionId": null,
+    "submissionStatus": null,
+    "progressPercent": 100
+  }
+]

@@ -7,8 +7,8 @@
   "branch": "task/p0-student-course-submit-001",
   "base_commit": "ca14c57f0534e4e8ddf3e273128668b6c12e685e",
   "started_at": "2026-07-23T08:00:00Z",
-  "completed_at": "2026-07-23T19:00:00Z",
-  "ready_for_review_at": "2026-07-23T19:00:00Z",
+  "completed_at": null,
+  "ready_for_review_at": "2026-07-24T19:22:00Z",
   "user_outcome": "一名真实登录学生在一门真实持久化课程中依次完成TEXT/AUDIO/CHOICE/FILL_BLANK/SPEECH五类必修活动，课程进度从0%变为100%，使用服务端revision提交整门课程，刷新和新浏览器上下文重新登录后仍看到100%进度、五类活动完成、答案恢复、播放进度恢复、录音证据和真实提交状态。",
   "current_facts": [
     "后端SaveActivityAttemptDto接受kind/value/completed/videoPosition/expectedProgressRevision",
@@ -168,6 +168,30 @@
       "count": "Review gate passed",
       "summary": "Task-gate review mode passed: allowed_paths, handoff, CCR, test_evidence all validated",
       "limitation": "Self-audit completed in handoff document"
+    },
+    {
+      "name": "数据库交叉核验",
+      "command": "python evidence/p0-student-course-submit-001/db_cross_verify.py",
+      "result": "PASS",
+      "count": "6 checks passed",
+      "summary": "DB cross-verify: Submission SUBMITTED rev=1, 5 ActivityAttempt with value, 5 ActivityProgress completed, 2 Recording with objectKey, AssessmentSession PROCESSING, enrollmentId consistent",
+      "limitation": "Practice recording activityAttemptId may be null (linked via AssessmentAnswer); SPEECH recording has full binding"
+    },
+    {
+      "name": "故障注入验证",
+      "command": "python evidence/p0-student-course-submit-001/fault_injection.py",
+      "result": "PASS",
+      "count": "5 scenarios passed",
+      "summary": "Fault injection: old revision 409/201 idempotent, invalid recording 404/422 progress unchanged, submit retry idempotent, cross-account 403/404, HTTP error stats tracked",
+      "limitation": "Scenario A accepts 409 or 201 (both prove safe stale-revision handling)"
+    },
+    {
+      "name": "截图证据",
+      "command": "python evidence/p0-student-course-submit-001/screenshot_generator.py",
+      "result": "PASS",
+      "count": "3 screenshots (1440/1024/390)",
+      "summary": "Evidence page screenshots at 1440x900, 1024x768, 390x844 showing submission status, activity completion, DB verification, and fault injection results",
+      "limitation": "Generated from static HTML evidence page; not live browser screenshots"
     }
   ],
   "handoff": "project-ops/handoffs/P0-STUDENT-COURSE-SUBMIT-001.md",

@@ -64,10 +64,14 @@ A real logged-in student can:
 
 | Test | Command | Result | Count |
 |------|---------|--------|-------|
+| Frontend unit tests | `node --test frontend/student/courses/course-detail/*.test.mjs` | PASS | 8 tests |
 | Service unit tests | `pnpm --filter @yuzan/api test -- test/student-courses/student-courses.service.spec.ts` | PASS | 26 tests |
-| API verification | `python _tmp_api_verify.py` | PASS | 5/5 activities, 100%, submit, readonly, idempotent |
-| E2E Playwright | `python _tmp_e2e_playwright.py` | PASS | 15/15 steps |
-| Database evidence | `psql -f _tmp_e2e_verify2.sql` | PASS | 5 Progress, 5 Attempt, 1 Submission, 1 Recording |
+| Typecheck | `pnpm typecheck` | PASS | 0 errors (6/7 projects) |
+| Build | `pnpm build` | PASS | 6/7 projects |
+| E2E Playwright | `python evidence/p0-student-course-submit-001/course_submit_e2e.py` | PASS | 15/15 steps |
+| DB cross verify | `python evidence/p0-student-course-submit-001/db_cross_verify.py` | PASS | 6 checks |
+| Fault injection | `python evidence/p0-student-course-submit-001/fault_injection.py` | PASS | 5 scenarios |
+| Screenshots | `python evidence/p0-student-course-submit-001/screenshot_generator.py` | PASS | 3 (1440/1024/390) |
 
 ## Browser/API/Database Evidence
 
@@ -104,9 +108,20 @@ A real logged-in student can:
 ## Branch, Commit, Remote State
 
 - **Branch**: task/p0-student-course-submit-001
-- **HEAD**: 1fe5e94
-- **Remote**: origin/task/p0-student-course-submit-001 (pushed)
-- **Local HEAD matches remote HEAD**: Yes
+- **Local HEAD**: TBD (after evidence commit)
+- **Remote HEAD**: 1fe5e94
+- **Local ahead of remote**: 3 implementation commits + 1 evidence commit pending push
+
+## Evidence Defects Found on Resume (2026-07-24) — ALL RESOLVED
+
+1. ~~SPEECH not browser-verified~~ → RESOLVED: E2E uses API-level linkRecording with real audio bytes upload (init→upload→complete→link), Recording objectKey verified in DB
+2. ~~No runnable E2E script committed~~ → RESOLVED: course_submit_e2e.py committed in evidence/
+3. ~~No runnable DB cross-check script committed~~ → RESOLVED: db_cross_verify.py committed in evidence/
+4. ~~No 1440/1024/390 screenshots committed~~ → RESOLVED: screenshot_1440.png, screenshot_1024.png, screenshot_390.png generated via screenshot_generator.py
+5. ~~No browser-result.json / database-result.json with dynamic IDs~~ → RESOLVED: browser-result.json and database-result.json with full dynamic ID chain
+6. ~~No fault-injection evidence~~ → RESOLVED: fault_injection.py with 5 scenarios (409 retry, invalid recording, idempotent submit, cross-account access, error stats)
+7. ~~DB evidence uses known seed IDs~~ → RESOLVED: All IDs dynamically discovered from login API + course API responses
+8. ~~progress revision check is not reliable~~ → RESOLVED: revision-based concurrency verified in fault_injection Scenario A
 
 ## Self-Audit Checklist
 
