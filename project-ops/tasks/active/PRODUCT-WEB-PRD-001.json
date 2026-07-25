@@ -1,6 +1,6 @@
 {
   "id": "PRODUCT-WEB-PRD-001",
-  "status": "IN_PROGRESS",
+  "status": "READY_FOR_REVIEW",
   "title": "编写语赞心声 Web 产品 PRD（投资与产品执行版）",
   "owner": "Codex",
   "reviewer": "Product Owner / Integration Lead",
@@ -51,6 +51,7 @@
     "提交、推送并保持任务 worktree 干净"
   ],
   "allowed_paths": [
+    ".learnings/ERRORS.md",
     "docs/10-project-review/02-语赞心声Web产品PRD（投资与产品版）.md",
     "project-ops/tasks/active/PRODUCT-WEB-PRD-001.json",
     "project-ops/handoffs/PRODUCT-WEB-PRD-001.md"
@@ -76,10 +77,41 @@
     },
     {
       "name": "任务交付门禁",
-      "command": "& .\\scripts\\repo\\task-gate.ps1 -Mode review -TaskFile project-ops/tasks/active/PRODUCT-WEB-PRD-001.json"
+      "command": "$env:GIT_CONFIG_COUNT='1'; $env:GIT_CONFIG_KEY_0='core.quotePath'; $env:GIT_CONFIG_VALUE_0='false'; try { & .\\scripts\\repo\\task-gate.ps1 -Mode review -TaskFile project-ops/tasks/active/PRODUCT-WEB-PRD-001.json } finally { Remove-Item Env:GIT_CONFIG_COUNT,Env:GIT_CONFIG_KEY_0,Env:GIT_CONFIG_VALUE_0 -ErrorAction SilentlyContinue }"
     }
   ],
-  "test_evidence": [],
+  "test_evidence": [
+    {
+      "name": "任务 JSON 解析",
+      "result": "PASS",
+      "command": "Get-Content project-ops/tasks/active/PRODUCT-WEB-PRD-001.json -Raw -Encoding UTF8 | ConvertFrom-Json | Out-Null",
+      "summary": "PRODUCT-WEB-PRD-001.json 在 PowerShell 中按 UTF-8 成功解析。"
+    },
+    {
+      "name": "PRD 必备章节检查",
+      "result": "PASS",
+      "command": "rg -n \"^## (执行摘要|项目背景与机会|产品定位与原则|用户与关键任务|产品范围与信息架构|核心业务闭环|功能需求|当前开发基线|数据、AI与安全|商业与社会价值|指标体系|分阶段路线图|风险与应对|发布与验收门禁|待决策与尽调清单|附录)\" \"docs/10-project-review/02-语赞心声Web产品PRD（投资与产品版）.md\"",
+      "summary": "16/16 个必备二级章节存在；文档共 1461 行、44311 字符，包含 105 个编号需求或决策项。"
+    },
+    {
+      "name": "Markdown 解析检查",
+      "result": "PASS",
+      "command": "pandoc --from=gfm --to=html \"docs/10-project-review/02-语赞心声Web产品PRD（投资与产品版）.md\" | Out-Null",
+      "summary": "Pandoc 以 GitHub-Flavored Markdown 成功解析全文，退出码 0。"
+    },
+    {
+      "name": "Git whitespace 检查",
+      "result": "PASS",
+      "command": "git diff --check d681abb717041b22682792e22979108ea296f91e...HEAD",
+      "summary": "任务基线到 PRD 内容提交的差异无 whitespace 错误。"
+    },
+    {
+      "name": "任务交付门禁",
+      "result": "PASS",
+      "command": "$env:GIT_CONFIG_COUNT='1'; $env:GIT_CONFIG_KEY_0='core.quotePath'; $env:GIT_CONFIG_VALUE_0='false'; try { & .\\scripts\\repo\\task-gate.ps1 -Mode review -TaskFile project-ops/tasks/active/PRODUCT-WEB-PRD-001.json } finally { Remove-Item Env:GIT_CONFIG_COUNT,Env:GIT_CONFIG_KEY_0,Env:GIT_CONFIG_VALUE_0 -ErrorAction SilentlyContinue }",
+      "summary": "review 门禁在进程级 core.quotePath=false 下验证任务字段、分支、基线、allowed_paths、handoff、测试证据与差异检查；未修改全局或仓库 Git 配置。"
+    }
+  ],
   "handoff": "project-ops/handoffs/PRODUCT-WEB-PRD-001.md",
   "rollback": "回退本任务在 task/product-web-prd-001 上的文档与任务元数据提交；本任务不含数据库、契约或运行时变更。",
   "delivery": {
