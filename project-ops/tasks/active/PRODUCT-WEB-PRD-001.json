@@ -67,6 +67,10 @@
       "command": "rg -n \"^## (执行摘要|项目背景与机会|产品定位与原则|用户与关键任务|产品范围与信息架构|核心业务闭环|功能需求|当前开发基线|数据、AI与安全|商业与社会价值|指标体系|分阶段路线图|风险与应对|发布与验收门禁|待决策与尽调清单|附录)\" \"docs/10-project-review/02-语赞心声Web产品PRD（投资与产品版）.md\""
     },
     {
+      "name": "Markdown 解析检查",
+      "command": "pandoc --from=gfm --to=html \"docs/10-project-review/02-语赞心声Web产品PRD（投资与产品版）.md\" | Out-Null"
+    },
+    {
       "name": "Git whitespace 检查",
       "command": "git diff --check d681abb717041b22682792e22979108ea296f91e...HEAD"
     },
