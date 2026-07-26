@@ -1,0 +1,88 @@
+{
+  "id": "P0-SPEECH-ASSESSMENT-CLOSURE-002",
+  "status": "PLANNED",
+  "title": "真实录音自动评分、报告与历史记录闭环",
+  "owner": "Codex Task Owner",
+  "reviewer": "Integration Lead",
+  "branch": "task/p0-speech-assessment-closure-002",
+  "base_commit": "25b774a413bedb446c010be7a9918555ec697237",
+  "user_outcome": "学生完成真实录音后能看到真实评分或待复核结果，并在报告和历史记录中再次查看",
+  "current_facts": [
+    "主目录最新测评有两条 COMPLETE 录音且已绑定口语题，但对应 SpeechJob 为 0",
+    "真实题目使用 prompt.targetText，上传完成逻辑只读取 prompt.text 和 prompt.sentence",
+    "统一主启动未启动 8100 speech-scoring，当前数据库 AssessmentReport 为 0",
+    "Python/FunASR/FFmpeg 本机依赖已存在，现有 worker 和报告回写链路可复用"
+  ],
+  "product_alignment": {
+    "p0": "古诗文朗读与理解训练的可审计黄金闭环",
+    "contribution": "闭合录音证据到评分、报告和历史档案之间的阻塞",
+    "non_goals": [
+      "不使用 mock 分数或固定结果",
+      "不修改评分权重或自动替代教师复核",
+      "不在本任务改造教案生成或藏汉翻译"
+    ]
+  },
+  "context": {
+    "required": [
+      "project-ops/FRONTEND-QUALITY-BAR.md",
+      "project-ops/runbooks/LOCAL-RUNTIME.md",
+      "backend/api/src/modules/recordings/recordings.service.ts",
+      "backend/api/src/modules/speech-job/speech-job.service.ts",
+      "backend/worker/src/speech/speech-job.consumer.ts",
+      "frontend/assessment/assets/app.js"
+    ],
+    "optional": []
+  },
+  "depends_on": [],
+  "integration_order": [
+    "评分任务幂等和标准文本解析",
+    "语音服务统一启动",
+    "前端恢复与状态展示",
+    "真实录音纵向验证"
+  ],
+  "allowed_paths": [
+    "project-ops/tasks/active/P0-SPEECH-ASSESSMENT-CLOSURE-002.json",
+    "project-ops/handoffs/P0-SPEECH-ASSESSMENT-CLOSURE-002.md",
+    "frontend/assessment/assets/app.js",
+    "frontend/scripts/verify-runtime.mjs",
+    "backend/api/src/modules/recordings/**",
+    "backend/api/src/modules/speech-job/**",
+    "backend/api/test/recordings/**",
+    "backend/api/test/speech-job/**",
+    "backend/worker/src/speech/**",
+    "backend/worker/test/speech-job.consumer.spec.ts",
+    "backend/speech-scoring/**",
+    "scripts/local-runtime/start-core.ps1",
+    "scripts/local-runtime/start-speech.ps1"
+  ],
+  "shared_owner_changes": [
+    "scripts/local-runtime/start-core.ps1: unified runtime startup owner"
+  ],
+  "contract_change_request": null,
+  "minimal_tests": [
+    {
+      "name": "API recording and speech focused tests",
+      "command": "pnpm --filter @yuzan/api test -- --run test/recordings test/speech-job"
+    },
+    {
+      "name": "Worker speech focused tests",
+      "command": "pnpm --filter @yuzan/worker test -- --run test/speech-job.consumer.spec.ts"
+    },
+    {
+      "name": "Speech scoring tests",
+      "command": "python -m pytest backend/speech-scoring/tests -q"
+    },
+    {
+      "name": "Runtime browser and persistence closure",
+      "command": "Playwright real recording recovery -> SpeechJob -> result/report/history with API and database cross-check"
+    }
+  ],
+  "test_evidence": [],
+  "handoff": "project-ops/handoffs/P0-SPEECH-ASSESSMENT-CLOSURE-002.md",
+  "rollback": "Revert the task commit; existing recordings and prior reports remain persisted and no mock result is introduced.",
+  "delivery": {
+    "push_task_branch": true,
+    "remote": "origin",
+    "merge_target": "integration/p0-multitrack-001"
+  }
+}
