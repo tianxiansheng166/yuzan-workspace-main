@@ -1,0 +1,71 @@
+{
+  "id": "P0-DYNAMIC-ID-ROUTING-CLEANUP",
+  "status": "PLANNED",
+  "title": "教师活动、任务与复核入口使用动态业务 ID",
+  "owner": "codex-routing-builder",
+  "reviewer": "independent verifier",
+  "branch": "task/p0-dynamic-id-routing-cleanup",
+  "base_commit": "41a0ff3656af7888d4c2e46eb180eeffc3414115",
+  "user_outcome": "教师从活动或任务入口只能进入真实队列返回的提交详情；没有真实提交时看见明确空状态，不能被固定 submission-1 导航误导。",
+  "current_facts": [
+    "FeatureChain 明确记录教师导航和任务页仍含 submission-1。",
+    "详情页已有按 pathname 解析 submissionId 的能力，但入口链是否把真实 submissionId 传入仍需源码和浏览器证伪。"
+  ],
+  "product_alignment": {
+    "p0": "古诗文朗读与理解训练的可审计黄金闭环",
+    "contribution": "解除教师动态复核链前端固定 ID 阻塞。",
+    "non_goals": [
+      "不实现新的后端复核模型或 API。",
+      "不伪造提交、录音或审核成功。",
+      "不扩大到 AI 教案、翻译、社区或志愿者功能。"
+    ]
+  },
+  "context": {
+    "required": [
+      "project-ops/control-plane/feature-chains/FC-TEACHER-REVIEW-SUBMISSION.json",
+      "frontend/server.mjs",
+      "frontend/shared/teacher-shell.js",
+      "frontend/teacher/assignments/app.js",
+      "frontend/teacher/assessments/tasks/index.html",
+      "frontend/teacher/assessments/detail/app.js"
+    ],
+    "optional": []
+  },
+  "depends_on": [],
+  "integration_order": [
+    "动态入口和 unavailable 状态",
+    "源码与浏览器导航证伪",
+    "独立 verifier 复验"
+  ],
+  "allowed_paths": [
+    "frontend/server.mjs",
+    "frontend/shared/teacher-shell.js",
+    "frontend/teacher/**",
+    "project-ops/handoffs/P0-DYNAMIC-ID-ROUTING-CLEANUP.md",
+    "project-ops/tasks/active/P0-DYNAMIC-ID-ROUTING-CLEANUP.json"
+  ],
+  "shared_owner_changes": [],
+  "contract_change_request": null,
+  "minimal_tests": [
+    {
+      "name": "固定业务 ID 源码证伪",
+      "command": "rg -n --glob '!**/node_modules/**' \"submission-1|course-1|assignment-1\" frontend/server.mjs frontend/shared/teacher-shell.js frontend/teacher"
+    },
+    {
+      "name": "前端相关测试或语法检查",
+      "command": "node --check frontend/server.mjs"
+    },
+    {
+      "name": "教师入口浏览器导航证据",
+      "command": "python <task-local-playwright-script>"
+    }
+  ],
+  "test_evidence": [],
+  "handoff": "project-ops/handoffs/P0-DYNAMIC-ID-ROUTING-CLEANUP.md",
+  "rollback": "回退本任务提交，恢复原入口实现；不得恢复固定 submission-1 导航作为成功路径。",
+  "delivery": {
+    "push_task_branch": true,
+    "remote": "origin",
+    "merge_target": "integration/p0-multitrack-001"
+  }
+}
