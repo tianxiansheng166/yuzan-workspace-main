@@ -82,15 +82,21 @@
         <div id="writtenAnswer" class="answer-content">—</div>
       </section>
 
+      <section class="card evidence-state" id="evidenceState" aria-live="polite">
+        <h2>复核证据</h2>
+        <p id="evidenceMessage">正在核对当前提交的答案与录音证据…</p>
+      </section>
+
       <!-- 录音播放 -->
       <section class="card" id="recordingSection" style="display:none">
         <h2>录音</h2>
         <div class="recording-player">
-          <button class="play-btn" id="playBtn">▶</button>
+          <button class="play-btn" id="playBtn" type="button" disabled aria-label="播放录音">▶</button>
           <div class="recording-info">
             <strong id="recordingTitle">朗读录音</strong>
             <span id="recordingDuration">—</span>
           </div>
+          <audio id="recordingAudio" preload="metadata"></audio>
         </div>
       </section>
 
@@ -115,13 +121,26 @@
 
       <!-- 操作按钮 -->
       <section class="card actions-card">
-        <button class="action-btn primary" id="btnGrade">批改</button>
-        <button class="action-btn success" id="btnAccept">通过</button>
-        <button class="action-btn warning" id="btnReturn">退回</button>
+        <button class="action-btn primary" id="btnGrade" disabled>批改</button>
+        <button class="action-btn success" id="btnAccept" disabled>通过</button>
+        <button class="action-btn warning" id="btnReturn" disabled>退回</button>
       </section>
     </div>
   </section>
 </div>
+<dialog id="returnDialog" class="return-dialog">
+  <form id="returnForm" method="dialog">
+    <h2>退回并要求重做</h2>
+    <p>请写明需要修改的具体内容。反馈成功保存后，页面会重新读取服务端状态。</p>
+    <label for="returnComment">具体反馈</label>
+    <textarea id="returnComment" rows="5" maxlength="2000" placeholder="例如：第二句停顿位置不准确，请对照示范重新朗读。" required></textarea>
+    <p id="returnValidation" class="validation-message" aria-live="polite"></p>
+    <div class="dialog-actions">
+      <button type="button" id="cancelReturn">取消</button>
+      <button type="submit" class="action-btn warning" id="confirmReturn">确认退回</button>
+    </div>
+  </form>
+</dialog>
 <div class="toast" id="toast"></div>
 <script src="/assets/app-core.js"></script>
 <script src="/assets/api-client.js"></script>
