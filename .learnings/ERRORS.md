@@ -437,6 +437,27 @@
 - Resolution: materialize loop output before piping, delimit interpolated variables with `$()`, search directories with `rg --glob`, and resolve helper names with `rg --files` before opening them.
 - Reproducible: yes
 - Related Files: `.learnings/ERRORS.md`
+
+## [ERR-20260723-034] powershell-foreach-pipeline-parser
+
+- Logged: 2026-07-23T00:00:00+08:00
+- Priority: low
+- Status: resolved
+- Area: repository review diagnostics
+- Command: emit read-only port and environment-key inventories from `foreach` directly into `Format-Table`
+- Result: PowerShell rejected the direct loop-to-pipeline form as an empty pipe element; neither command changed repository or runtime state.
+- Resolution: materialize loop results in an array before piping to formatting commands, matching the established fix in `ERR-20260722-007`.
+- See Also: ERR-20260722-007
+
+## [ERR-20260723-035] stale-api-client-search-path
+
+- Logged: 2026-07-23T01:00:00+08:00
+- Priority: low
+- Status: resolved
+- Area: repository review diagnostics
+- Command: search contract convergence references in `frontend/shared/api-client.js`
+- Result: `rg` returned exit 1 because the active API client is `frontend/assets/api-client.js`; the other search targets still produced results and no files were changed by the failed command.
+- Resolution: locate the file with a recursive filename search, then rerun the targeted search against `frontend/assets/api-client.js`.
 - See Also: ERR-20260722-007, ERR-20260714-014
 
 ## [ERR-20260723-003] powershell-cmdlet-boolean-parentheses
