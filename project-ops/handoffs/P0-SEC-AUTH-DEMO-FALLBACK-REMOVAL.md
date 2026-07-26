@@ -51,4 +51,4 @@
 
 - 依赖与合并顺序：本任务无前置依赖；需先于移动登录视觉任务和教师学生闭环合入。
 - Integration Lead 需要复验：真实页面 API 不可用、错误凭据、新浏览器上下文无会话。
-- 推送分支/commit：提交后补充。
+- 推送分支/commit：`task/p0-sec-auth-demo-fallback-removal` 已推送；功能实现提交 `037237c095afa60a7a6502330a6df74cbdd9eabe`。
