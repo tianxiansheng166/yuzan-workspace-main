@@ -1739,8 +1739,17 @@ paths:
         - { in: query, name: search, schema: { type: string } }
         - { in: query, name: taskGroup, schema: { type: string } }
         - { in: query, name: culturalElement, schema: { type: string } }
-        - { in: query, name: sortBy, schema: { type: string, enum: [createdAt, publishedAt, popularity] } }
-        - { in: query, name: sortOrder, schema: { type: string, enum: [asc, desc] } }
+        - {
+            in: query,
+            name: sortBy,
+            schema:
+              { type: string, enum: [createdAt, publishedAt, popularity] },
+          }
+        - {
+            in: query,
+            name: sortOrder,
+            schema: { type: string, enum: [asc, desc] },
+          }
         - $ref: "#/components/parameters/Cursor"
         - $ref: "#/components/parameters/Limit"
       responses:
@@ -2206,7 +2215,12 @@ paths:
       parameters:
         - $ref: "#/components/parameters/SchoolId"
         - $ref: "#/components/parameters/ActivityId"
-        - { in: path, name: noteId, required: true, schema: { type: string, format: uuid } }
+        - {
+            in: path,
+            name: noteId,
+            required: true,
+            schema: { type: string, format: uuid },
+          }
       requestBody:
         required: true
         content:
@@ -2230,7 +2244,12 @@ paths:
       parameters:
         - $ref: "#/components/parameters/SchoolId"
         - $ref: "#/components/parameters/ActivityId"
-        - { in: path, name: noteId, required: true, schema: { type: string, format: uuid } }
+        - {
+            in: path,
+            name: noteId,
+            required: true,
+            schema: { type: string, format: uuid },
+          }
       responses:
         "200": { description: Note deleted }
         "403": { $ref: "#/components/responses/Forbidden" }
@@ -2251,7 +2270,11 @@ paths:
               required: [fileName, kind]
               properties:
                 fileName: { type: string, maxLength: 255 }
-                kind: { type: string, enum: [IMAGE, AUDIO, VIDEO, DOCUMENT, SUBTITLE, OTHER] }
+                kind:
+                  {
+                    type: string,
+                    enum: [IMAGE, AUDIO, VIDEO, DOCUMENT, SUBTITLE, OTHER],
+                  }
                 contentType: { type: string }
                 byteSize: { type: integer, minimum: 1, maximum: 5368709120 }
       responses:
@@ -2264,7 +2287,12 @@ paths:
       operationId: confirmResourceUpload
       parameters:
         - $ref: "#/components/parameters/SchoolId"
-        - { in: path, name: resourceId, required: true, schema: { type: string, format: uuid } }
+        - {
+            in: path,
+            name: resourceId,
+            required: true,
+            schema: { type: string, format: uuid },
+          }
       requestBody:
         required: true
         content:
@@ -2287,7 +2315,12 @@ paths:
       operationId: getResourcePlaybackUrl
       parameters:
         - $ref: "#/components/parameters/SchoolId"
-        - { in: path, name: resourceId, required: true, schema: { type: string, format: uuid } }
+        - {
+            in: path,
+            name: resourceId,
+            required: true,
+            schema: { type: string, format: uuid },
+          }
       responses:
         "200": { description: Short-lived download URL }
         "403": { $ref: "#/components/responses/Forbidden" }
@@ -2299,7 +2332,12 @@ paths:
       operationId: getResourceInfo
       parameters:
         - $ref: "#/components/parameters/SchoolId"
-        - { in: path, name: resourceId, required: true, schema: { type: string, format: uuid } }
+        - {
+            in: path,
+            name: resourceId,
+            required: true,
+            schema: { type: string, format: uuid },
+          }
       responses:
         "200": { description: Resource metadata }
         "403": { $ref: "#/components/responses/Forbidden" }
@@ -2337,7 +2375,12 @@ paths:
       operationId: getLessonPlanJob
       parameters:
         - $ref: "#/components/parameters/SchoolId"
-        - { in: path, name: jobId, required: true, schema: { type: string, format: uuid } }
+        - {
+            in: path,
+            name: jobId,
+            required: true,
+            schema: { type: string, format: uuid },
+          }
       responses:
         "200":
           description: Job status
@@ -2356,7 +2399,12 @@ paths:
       operationId: cancelLessonPlanJob
       parameters:
         - $ref: "#/components/parameters/SchoolId"
-        - { in: path, name: jobId, required: true, schema: { type: string, format: uuid } }
+        - {
+            in: path,
+            name: jobId,
+            required: true,
+            schema: { type: string, format: uuid },
+          }
       responses:
         "200":
           description: Job cancelled
@@ -2377,7 +2425,11 @@ paths:
       operationId: listLessonPlanDrafts
       parameters:
         - $ref: "#/components/parameters/SchoolId"
-        - { in: query, name: limit, schema: { type: integer, minimum: 1, maximum: 100, default: 20 } }
+        - {
+            in: query,
+            name: limit,
+            schema: { type: integer, minimum: 1, maximum: 100, default: 20 },
+          }
       responses:
         "200":
           description: Draft list
@@ -2396,7 +2448,12 @@ paths:
       operationId: getLessonPlanDraft
       parameters:
         - $ref: "#/components/parameters/SchoolId"
-        - { in: path, name: draftId, required: true, schema: { type: string, format: uuid } }
+        - {
+            in: path,
+            name: draftId,
+            required: true,
+            schema: { type: string, format: uuid },
+          }
       responses:
         "200":
           description: Draft detail
@@ -2414,7 +2471,12 @@ paths:
       operationId: replaceLessonPlanDraft
       parameters:
         - $ref: "#/components/parameters/SchoolId"
-        - { in: path, name: draftId, required: true, schema: { type: string, format: uuid } }
+        - {
+            in: path,
+            name: draftId,
+            required: true,
+            schema: { type: string, format: uuid },
+          }
       requestBody:
         required: true
         content:
@@ -2440,7 +2502,12 @@ paths:
       operationId: updateLessonPlanDraft
       parameters:
         - $ref: "#/components/parameters/SchoolId"
-        - { in: path, name: draftId, required: true, schema: { type: string, format: uuid } }
+        - {
+            in: path,
+            name: draftId,
+            required: true,
+            schema: { type: string, format: uuid },
+          }
       requestBody:
         required: true
         content:
@@ -2467,7 +2534,12 @@ paths:
       operationId: approveLessonPlanDraft
       parameters:
         - $ref: "#/components/parameters/SchoolId"
-        - { in: path, name: draftId, required: true, schema: { type: string, format: uuid } }
+        - {
+            in: path,
+            name: draftId,
+            required: true,
+            schema: { type: string, format: uuid },
+          }
       responses:
         "200":
           description: Draft approved
@@ -2546,9 +2618,17 @@ paths:
       operationId: listMyTranslationJobs
       parameters:
         - $ref: "#/components/parameters/SchoolId"
-        - { in: query, name: limit, schema: { type: integer, minimum: 1, maximum: 100, default: 20 } }
+        - {
+            in: query,
+            name: limit,
+            schema: { type: integer, minimum: 1, maximum: 100, default: 20 },
+          }
         - { in: query, name: cursor, schema: { type: string } }
-        - { in: query, name: status, schema: { $ref: "#/components/schemas/TranslationStatus" } }
+        - {
+            in: query,
+            name: status,
+            schema: { $ref: "#/components/schemas/TranslationStatus" },
+          }
       responses:
         "200":
           description: My translation jobs
@@ -2567,9 +2647,17 @@ paths:
       operationId: listAllTranslationJobs
       parameters:
         - $ref: "#/components/parameters/SchoolId"
-        - { in: query, name: limit, schema: { type: integer, minimum: 1, maximum: 100, default: 20 } }
+        - {
+            in: query,
+            name: limit,
+            schema: { type: integer, minimum: 1, maximum: 100, default: 20 },
+          }
         - { in: query, name: cursor, schema: { type: string } }
-        - { in: query, name: status, schema: { $ref: "#/components/schemas/TranslationStatus" } }
+        - {
+            in: query,
+            name: status,
+            schema: { $ref: "#/components/schemas/TranslationStatus" },
+          }
       responses:
         "200":
           description: All school translation jobs
@@ -2588,7 +2676,12 @@ paths:
       operationId: getTranslationJob
       parameters:
         - $ref: "#/components/parameters/SchoolId"
-        - { in: path, name: jobId, required: true, schema: { type: string, format: uuid } }
+        - {
+            in: path,
+            name: jobId,
+            required: true,
+            schema: { type: string, format: uuid },
+          }
       responses:
         "200":
           description: Translation job detail
@@ -4690,15 +4783,46 @@ components:
         idempotencyKey: { type: [string, "null"] }
     LessonPlanJobResponse:
       type: object
-      required: [id, jobId, schoolId, teacherId, status, idempotencyKey, inputSnapshot, outputSnapshot, errorCode, latencyMs, createdAt, startedAt, completedAt, lessonPlanDraftId]
+      required:
+        [
+          id,
+          jobId,
+          schoolId,
+          teacherId,
+          status,
+          idempotencyKey,
+          inputSnapshot,
+          outputSnapshot,
+          errorCode,
+          latencyMs,
+          createdAt,
+          startedAt,
+          completedAt,
+          lessonPlanDraftId,
+        ]
       properties:
         id: { type: string, format: uuid }
-        jobId: { type: string, format: uuid, description: "Alias for id — frontend reads jobId" }
+        jobId:
+          {
+            type: string,
+            format: uuid,
+            description: "Alias for id — frontend reads jobId",
+          }
         schoolId: { type: string, format: uuid }
         teacherId: { type: string, format: uuid }
         status:
           type: string
-          enum: [QUEUED, RUNNING, SUCCEEDED, FAILED, CANCELLED, TIMED_OUT, SCHEMA_INVALID, PROVIDER_UNAVAILABLE]
+          enum:
+            [
+              QUEUED,
+              RUNNING,
+              SUCCEEDED,
+              FAILED,
+              CANCELLED,
+              TIMED_OUT,
+              SCHEMA_INVALID,
+              PROVIDER_UNAVAILABLE,
+            ]
         idempotencyKey: { type: [string, "null"] }
         inputSnapshot: { type: [object, "null"], additionalProperties: true }
         outputSnapshot: { type: [object, "null"], additionalProperties: true }
@@ -4707,17 +4831,44 @@ components:
         createdAt: { type: string, format: date-time }
         startedAt: { type: [string, "null"], format: date-time }
         completedAt: { type: [string, "null"], format: date-time }
-        lessonPlanDraftId: { type: [string, "null"], format: uuid, description: "ID of the lesson plan draft created on success" }
+        lessonPlanDraftId:
+          {
+            type: [string, "null"],
+            format: uuid,
+            description: "ID of the lesson plan draft created on success",
+          }
     UpdateLessonPlanDraftRequest:
       type: object
       required: [content, expectedRevision]
       properties:
         title: { type: [string, "null"] }
-        content: { type: object, additionalProperties: true, description: "Full replacement of draft content" }
-        expectedRevision: { type: integer, minimum: 0, description: "Must match server revision for optimistic concurrency" }
+        content:
+          {
+            type: object,
+            additionalProperties: true,
+            description: "Full replacement of draft content",
+          }
+        expectedRevision:
+          {
+            type: integer,
+            minimum: 0,
+            description: "Must match server revision for optimistic concurrency",
+          }
     LessonPlanDraftResponse:
       type: object
-      required: [id, schoolId, teacherId, generationJobId, title, content, revision, status, createdAt, updatedAt]
+      required:
+        [
+          id,
+          schoolId,
+          teacherId,
+          generationJobId,
+          title,
+          content,
+          revision,
+          status,
+          createdAt,
+          updatedAt,
+        ]
       properties:
         id: { type: string, format: uuid }
         schoolId: { type: string, format: uuid }
@@ -4736,7 +4887,18 @@ components:
         updatedAt: { type: string, format: date-time }
     LessonPlanWorkflowStatusResponse:
       type: object
-      required: [workflowKey, status, version, provider, externalFlowId, flowiseAvailable, workflowAvailable, providerConfigured, workerAvailable]
+      required:
+        [
+          workflowKey,
+          status,
+          version,
+          provider,
+          externalFlowId,
+          flowiseAvailable,
+          workflowAvailable,
+          providerConfigured,
+          workerAvailable,
+        ]
       properties:
         workflowKey: { type: string }
         status: { type: string }
@@ -4750,7 +4912,8 @@ components:
         message: { type: [string, "null"] }
     TranslationStatus:
       type: string
-      enum: [CREATED, QUEUED, PROCESSING, COMPLETED, PROVIDER_UNAVAILABLE, FAILED]
+      enum:
+        [CREATED, QUEUED, PROCESSING, COMPLETED, PROVIDER_UNAVAILABLE, FAILED]
     CreateTranslationJobRequest:
       type: object
       required: [sourceLanguage, targetLanguage, sourceText]
@@ -4761,28 +4924,78 @@ components:
         targetLanguage:
           type: string
           enum: [BO, ZH]
-        sourceText: { type: string, minLength: 1, maxLength: 5000, description: "Plaintext to translate; encrypted payload never exposed to client" }
+        sourceText:
+          {
+            type: string,
+            minLength: 1,
+            maxLength: 5000,
+            description: "Plaintext to translate; encrypted payload never exposed to client",
+          }
     TranslationJobResponse:
       type: object
-      required: [id, schoolId, sourceLanguage, targetLanguage, sourceTextHash, status, glossaryVersion, createdAt, updatedAt]
+      required:
+        [
+          id,
+          schoolId,
+          sourceLanguage,
+          targetLanguage,
+          sourceTextHash,
+          status,
+          glossaryVersion,
+          createdAt,
+          updatedAt,
+        ]
       properties:
         id: { type: string, format: uuid }
         schoolId: { type: string, format: uuid }
         sourceLanguage: { type: string, enum: [BO, ZH] }
         targetLanguage: { type: string, enum: [BO, ZH] }
-        sourceTextHash: { type: string, description: "SHA-256 hash of source text for cache/matching" }
+        sourceTextHash:
+          {
+            type: string,
+            description: "SHA-256 hash of source text for cache/matching",
+          }
         status: { $ref: "#/components/schemas/TranslationStatus" }
-        machineResult: { type: [string, "null"], description: "Machine translation output; absent until COMPLETED" }
-        revisedResult: { type: [string, "null"], description: "Human-revised translation; set during NEEDS_REVIEW" }
-        reviewStatus: { type: [string, "null"], enum: [NEEDS_REVIEW, APPROVED, REJECTED] }
+        machineResult:
+          {
+            type: [string, "null"],
+            description: "Machine translation output; absent until COMPLETED",
+          }
+        revisedResult:
+          {
+            type: [string, "null"],
+            description: "Human-revised translation; set during NEEDS_REVIEW",
+          }
+        reviewStatus:
+          { type: [string, "null"], enum: [NEEDS_REVIEW, APPROVED, REJECTED] }
         revision: { type: [integer, "null"], minimum: 0 }
         glossaryVersion: { type: integer, minimum: 0 }
-        errorCode: { type: [string, "null"], enum: [PROVIDER_UNAVAILABLE, QUOTA_EXCEEDED, INVALID_INPUT, INTERNAL_ERROR] }
+        errorCode:
+          {
+            type: [string, "null"],
+            enum:
+              [
+                PROVIDER_UNAVAILABLE,
+                QUOTA_EXCEEDED,
+                INVALID_INPUT,
+                INTERNAL_ERROR,
+              ],
+          }
         createdAt: { type: string, format: date-time }
         updatedAt: { type: string, format: date-time }
     GlossaryEntryResponse:
       type: object
-      required: [id, term, sourceLanguage, targetLanguage, translation, category, version, createdAt]
+      required:
+        [
+          id,
+          term,
+          sourceLanguage,
+          targetLanguage,
+          translation,
+          category,
+          version,
+          createdAt,
+        ]
       properties:
         id: { type: string, format: uuid }
         term: { type: string }
