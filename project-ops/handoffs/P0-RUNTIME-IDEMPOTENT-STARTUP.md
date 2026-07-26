@@ -21,6 +21,9 @@
   端口冲突、wrong commit 或 argv 冒充则带结构化诊断失败，不执行杀进程和换端口。
 - `managed-process.py` 为每个服务持有独占 lock，并原子发布 wrapper/child PID、nonce、root、
   commit 和实际 argv 哈希；状态端按角色重建允许的完整 argv，不能由命令行子串冒充。
+- review round 2 额外从 `Win32_Process.CommandLine` 读取 wrapper 与 child 的实时完整 argv，
+  用 Windows 原生命令行解析规则重建参数数组；实时值、manifest 记录、attestation 与角色契约
+  四者必须一致。即使伪造记录中的两个 argv 哈希，也不能替代操作系统中的真实参数。
 - `test-repeatable-start.ps1` 在隔离动态端口执行两次真实 `start-core -ReuseOnly`，并将证据写到
   `runtime-local/local-runtime/repeat-start-result.json`。
 - 共享事实：修改 canonical runtime startup owner；没有 OpenAPI、Prisma、根依赖或业务契约变化。
@@ -32,12 +35,14 @@
 | PowerShell/Python 语法 | `powershell -NoProfile -File scripts/local-runtime/test-repeatable-start.ps1 -Mode Syntax` | `PASS`，5 PS + 3 Python |
 | fixture 初次校准 | runtime 命令同下 | `FAIL`，生产 argv 契约正确拒绝 generic fixture；已将 fixture 限制到 OS temp 前缀与非生产动态端口 |
 | 隔离重复与负向套件 | `powershell -NoProfile -File scripts/local-runtime/test-repeatable-start.ps1 -Mode Runtime -RepositoryRoot .` | `PASS` |
+| review round 2 实时 argv 强化 | runtime 命令同上 | `PASS`，正确解释器 + 伪造记录哈希仍被实时 argv 拒绝 |
 
 通过结果：`PASS_EXACT_COMMIT_ATTESTED`；两次启动入口 `PASS_IDENTICAL_PIDS_AND_COMMIT`；
 foreign partial occupancy `PASS_FAILED_CLOSED_NO_KILL_NO_PORT_CHANGE`；包含仓库根、
 `backend\worker`、`src/main.ts` 的 PowerShell sleep 为受管 wrapper 提供完整伪造记录后仍以
-`COMMAND_ARGV_MISMATCH` 拒绝；wrong candidate commit 拒绝。通过轮 PID 指纹
-`api=32932;frontend_proxy=38068;speech=39472;worker=36452`，`finally` 后四个 PID 均不存在。
+`COMMAND_ARGV_MISMATCH` 拒绝；使用正确 `python.exe` 的 sleeper 即使把 manifest/attestation
+中的 child/wrapper 哈希改成期望值，也因实时 argv 不匹配而拒绝；wrong candidate commit 拒绝。
+所有隔离进程均在 `finally` 清理。
 
 ## 自审
 

@@ -61,11 +61,13 @@ function Start-TestRole(
     $wrapperScript = Join-Path $PSScriptRoot 'managed-process.py'
     $wrapperArgs = @($wrapperScript, '--role', $Role, '--attestation-dir', $attestationDir, '--nonce', $Nonce,
         '--repository-root', $rootDir, '--commit', $commit, '--command-base64', $commandBase64)
+    $wrapperArgvSha256 = Get-CommandArgvSha256 (@($python.Source) + $wrapperArgs)
     $process = Start-Process -FilePath $python.Source -ArgumentList $wrapperArgs -WorkingDirectory $rootDir -WindowStyle Hidden -PassThru
     $processes.Add($process)
     $record = New-ManagedProcessRecord -Name $Role -WrapperProcess $process `
         -AttestationPath (Join-Path $attestationDir "$Role.json") -LockPath (Join-Path $attestationDir "$Role.lock") `
-        -WrapperScript $wrapperScript -CommandArgvSha256 (Get-TextSha256 $commandJson) -Port $Port
+        -WrapperScript $wrapperScript -WrapperArgvSha256 $wrapperArgvSha256 `
+        -CommandArgvSha256 (Get-TextSha256 $commandJson) -Port $Port
     $processes.Add((Get-Process -Id ([int]$record.child_pid) -ErrorAction Stop))
     [pscustomobject]@{ process = $process; record = $record }
 }
@@ -149,6 +151,51 @@ try {
         throw "A command-line spoof was not rejected by the argv contract: $($spoofStatus.services.worker | ConvertTo-Json -Compress)"
     }
 
+    $sameExecutableSpoofCommand = @(
+        $python.Source, '-c', 'import time; time.sleep(60)',
+        $rootDir, 'backend\worker', 'src/main.ts'
+    )
+    $sameExecutableSpoof = Start-TestRole -Role 'worker' -Port $null -Nonce $nonce `
+        -ChildCommand $sameExecutableSpoofCommand -AttestationDirectory (Join-Path $testDir 'same-executable-spoof-attestations')
+    $expectedWorkerArgs = @(
+        (Join-Path $PSScriptRoot 'runtime-test-service.py'), '--role', 'worker',
+        "--yuzan-runtime-nonce=$nonce", "--yuzan-runtime-root=$rootDir", "--yuzan-runtime-commit=$commit"
+    )
+    $expectedWorkerCommand = @($python.Source) + $expectedWorkerArgs
+    $expectedWorkerJson = ConvertTo-Json -InputObject $expectedWorkerCommand -Compress
+    $expectedWorkerHash = Get-TextSha256 $expectedWorkerJson
+    $expectedWorkerBase64 = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($expectedWorkerJson))
+    $sameExecutableAttestationDir = Split-Path -Parent ([string]$sameExecutableSpoof.record.attestation_path)
+    $expectedWrapperArgs = @(
+        ([string]$sameExecutableSpoof.record.wrapper_script),
+        '--role', 'worker',
+        '--attestation-dir', $sameExecutableAttestationDir,
+        '--nonce', $nonce,
+        '--repository-root', $rootDir,
+        '--commit', $commit,
+        '--command-base64', $expectedWorkerBase64
+    )
+    $expectedWrapperHash = Get-CommandArgvSha256 (@([string]$sameExecutableSpoof.record.wrapper_executable_path) + $expectedWrapperArgs)
+    $sameExecutableSpoof.record['command_argv_sha256'] = $expectedWorkerHash
+    $sameExecutableSpoof.record['wrapper_argv_sha256'] = $expectedWrapperHash
+    $sameExecutableAttestation = Get-Content -LiteralPath ([string]$sameExecutableSpoof.record.attestation_path) -Raw -Encoding UTF8 | ConvertFrom-Json
+    $sameExecutableAttestation.command_argv_sha256 = $expectedWorkerHash
+    $sameExecutableAttestation.wrapper_argv_sha256 = $expectedWrapperHash
+    Write-JsonAtomic ([string]$sameExecutableSpoof.record.attestation_path) $sameExecutableAttestation
+    $sameExecutableManifest = [ordered]@{
+        schema_version = 2; test_fixture = $true; nonce = $nonce; repository_root = $rootDir; commit = $commit; started_at = [DateTime]::UtcNow.ToString('o')
+        ports = $manifest.ports
+        services = [ordered]@{ api = $api.record; frontend_proxy = $frontend.record; speech = $speech.record; worker = $sameExecutableSpoof.record }
+    }
+    $sameExecutablePath = Join-Path $testDir 'same-executable-spoof-manifest.json'
+    Write-JsonAtomic $sameExecutablePath $sameExecutableManifest
+    $sameExecutableStatus = & $statusScript -RepositoryRoot $rootDir -ExpectedCommit $commit -StatePath $sameExecutablePath `
+        -ApiPort $apiPort -FrontendPort $frontendPort -SpeechPort $speechPort
+    if ($sameExecutableStatus.all_ready -or $sameExecutableStatus.services.worker.ownership_valid -or
+        $sameExecutableStatus.services.worker.ownership_reason -ne 'COMMAND_ARGV_MISMATCH') {
+        throw "A same-executable live argv spoof passed after its manifest hashes were forged: $($sameExecutableStatus.services.worker | ConvertTo-Json -Compress)"
+    }
+
     $wrongCommit = ('f' * 40)
     $commitStatus = & $statusScript -RepositoryRoot $rootDir -ExpectedCommit $wrongCommit -StatePath $manifestPath -ApiPort $apiPort -FrontendPort $frontendPort -SpeechPort $speechPort
     if ($commitStatus.all_ready -or $commitStatus.commit_attested -or $commitStatus.provenance -eq 'EXACT_COMMIT_ATTESTED') {
@@ -164,6 +211,7 @@ try {
         two_idempotent_starts = 'PASS_IDENTICAL_PIDS_AND_COMMIT'
         foreign_partial_occupancy = 'PASS_FAILED_CLOSED_NO_KILL_NO_PORT_CHANGE'
         command_line_spoof = 'PASS_POWERSHELL_SLEEP_REJECTED_COMMAND_ARGV_MISMATCH'
+        same_executable_live_argv_spoof = 'PASS_FORGED_RECORD_HASH_REJECTED_BY_LIVE_ARGV'
         wrong_candidate_commit = 'PASS_REJECTED'
         pid_fingerprint = Get-Fingerprint $positive
         ports = $positive.fixed_ports

@@ -35,6 +35,9 @@ Docker 容器。
 启动脚本先检查固定端口、真实健康端点和 `runtime-local/local-runtime/process-manifest.json`
 中的受管进程证明。每个服务必须同时匹配启动 nonce、canonical 根目录、exact commit、wrapper
 与 child 的 PID/可执行文件/启动时间、仍持有的 lock，以及该角色唯一允许的完整 argv 结构。
+状态检查还会从 Windows 进程表读取 wrapper 与 child 当前真实的完整 argv；manifest 或
+attestation 中仅声称正确的哈希不构成所有权证明，实时 argv 与记录/角色契约任一不一致都会
+fail closed。
 只有 API、前端代理、语音服务与 worker 全部满足这些条件时才报告 `Reusing`，不会再次构建或
 拉起进程。如果只存在部分服务、健康检查失败、固定端口被占用、证明缺失、argv 冒充或 commit
 不同，脚本会输出结构化诊断并失败；不会终止未知进程，也不会自动改到其他端口。可单独查看：

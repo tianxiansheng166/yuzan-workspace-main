@@ -73,6 +73,7 @@ foreach ($name in @('api', 'frontend_proxy', 'speech', 'worker')) {
     $record = $null
     if ($manifest -and $manifest.services -and $manifest.services.PSObject.Properties[$name]) { $record = $manifest.services.PSObject.Properties[$name].Value }
     $expectedCommandHash = $null
+    $expectedWrapperHash = $null
     if ($record -and $manifest) {
         $attestationArgs = @(
             "--yuzan-runtime-nonce=$([string]$manifest.nonce)",
@@ -80,8 +81,10 @@ foreach ($name in @('api', 'frontend_proxy', 'speech', 'worker')) {
             "--yuzan-runtime-commit=$ExpectedCommit"
         )
         $executable = [IO.Path]::GetFullPath([string]$record.child_executable_path)
+        $wrapperExecutable = [IO.Path]::GetFullPath([string]$record.wrapper_executable_path)
         $expectedExecutableName = if ($testFixture -or $name -eq 'speech') { 'python.exe' } else { 'node.exe' }
-        if ([IO.Path]::GetFileName($executable).Equals($expectedExecutableName, [StringComparison]::OrdinalIgnoreCase)) {
+        if ([IO.Path]::GetFileName($executable).Equals($expectedExecutableName, [StringComparison]::OrdinalIgnoreCase) -and
+            [IO.Path]::GetFileName($wrapperExecutable).Equals('python.exe', [StringComparison]::OrdinalIgnoreCase)) {
             if ($testFixture) {
                 $expectedArgs = @((Join-Path $PSScriptRoot 'runtime-test-service.py'), '--role', $name)
                 if ($name -ne 'worker') {
@@ -97,12 +100,26 @@ foreach ($name in @('api', 'frontend_proxy', 'speech', 'worker')) {
                     'worker' { @((Join-Path $rootDir 'backend\worker\dist\main.js')) + $attestationArgs }
                 }
             }
-            $expectedCommandHash = Get-TextSha256 ((@($executable) + $expectedArgs) | ConvertTo-Json -Compress)
+            $expectedCommand = @($executable) + $expectedArgs
+            $expectedCommandJson = ConvertTo-Json -InputObject $expectedCommand -Compress
+            $expectedCommandHash = Get-TextSha256 $expectedCommandJson
+            $commandBase64 = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($expectedCommandJson))
+            $wrapperArgs = @(
+                ([IO.Path]::GetFullPath([string]$record.wrapper_script)),
+                '--role', $name,
+                '--attestation-dir', (Split-Path -Parent ([string]$record.attestation_path)),
+                '--nonce', ([string]$manifest.nonce),
+                '--repository-root', $rootDir,
+                '--commit', $ExpectedCommit,
+                '--command-base64', $commandBase64
+            )
+            $expectedWrapperHash = Get-CommandArgvSha256 (@($wrapperExecutable) + $wrapperArgs)
         }
     }
     $ownership = if ($commitAttested) {
         Test-ManagedProcessRecord -Record $record -ManifestNonce ([string]$manifest.nonce) -RepositoryRoot $rootDir `
-            -ExpectedCommit $ExpectedCommit -ExpectedCommandArgvSha256 $expectedCommandHash
+            -ExpectedCommit $ExpectedCommit -ExpectedWrapperArgvSha256 $expectedWrapperHash `
+            -ExpectedCommandArgvSha256 $expectedCommandHash
     } else {
         [pscustomobject]@{ valid = $false; reason = 'COMMIT_OR_MANIFEST_UNATTESTED'; pid = $(if ($record) { [int]$record.pid } else { $null }) }
     }

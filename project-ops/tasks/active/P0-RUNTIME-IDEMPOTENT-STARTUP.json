@@ -10,7 +10,8 @@
   "current_facts": [
     "共享演示端口固定为 API 4000、frontend 4175、speech 8100",
     "attempt 2 的命令行包含判断可被 PowerShell sleep 伪造，且运行态不能证明 exact candidate commit",
-    "attempt 3 使用 nonce/PID/可执行文件/启动时间/根目录/commit/角色精确 argv/lock 的联合证明，复用只接受 exact candidate"
+    "attempt 3 使用 nonce/PID/可执行文件/启动时间/根目录/commit/角色精确 argv/lock 的联合证明，复用只接受 exact candidate",
+    "attempt 5 review round 2 将 wrapper 与 child 的 Windows 实时完整 argv 纳入联合证明，记录内伪造的 argv 哈希不能替代真实进程参数"
   ],
   "product_alignment": {
     "p0": "真实学习证据与教师干预闭环",
@@ -73,6 +74,12 @@
       "command": "powershell -NoProfile -File scripts/local-runtime/test-repeatable-start.ps1 -Mode Runtime -RepositoryRoot .",
       "result": "PASS",
       "summary": "Exact-commit clean startup passed; two start-core reuse calls kept identical PIDs/commit; foreign partial occupancy failed closed without kill/port change; verifier-style PowerShell sleep spoof was rejected with COMMAND_ARGV_MISMATCH; wrong commit was rejected; all launched PIDs exited in finally."
+    },
+    {
+      "name": "review round 2 实时 argv 与伪造记录负向复验",
+      "command": "powershell -NoProfile -File scripts/local-runtime/test-repeatable-start.ps1 -Mode Runtime -RepositoryRoot .",
+      "result": "PASS",
+      "summary": "Clean exact-HEAD provenance and repeated reuse passed; PowerShell sleeper failed exact executable/argv validation; a python sleeper with forged manifest and attestation hashes still failed against the live wrapper/child argv; partial foreign occupancy and wrong candidate commit remained fail closed."
     }
   ],
   "handoff": "project-ops/handoffs/P0-RUNTIME-IDEMPOTENT-STARTUP.md",

@@ -45,12 +45,14 @@ function Start-AttestedProcess {
     $commandBase64 = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($commandJson))
     $wrapperArguments = @($wrapperScript, '--role', $Name, '--attestation-dir', $attestationDir, '--nonce', $Nonce,
         '--repository-root', $rootDir, '--commit', $Commit, '--command-base64', $commandBase64)
+    $wrapperArgvSha256 = Get-CommandArgvSha256 (@($python.Source) + $wrapperArguments)
     $process = Start-Process -FilePath $python.Source -ArgumentList $wrapperArguments -WorkingDirectory $WorkingDirectory `
         -WindowStyle Hidden -RedirectStandardOutput $stdout -RedirectStandardError $stderr -PassThru
     $started.Add($process)
     $record = New-ManagedProcessRecord -Name $Name -WrapperProcess $process `
         -AttestationPath (Join-Path $attestationDir "$Name.json") -LockPath (Join-Path $attestationDir "$Name.lock") `
-        -WrapperScript $wrapperScript -CommandArgvSha256 (Get-TextSha256 $commandJson) -Port $Port
+        -WrapperScript $wrapperScript -WrapperArgvSha256 $wrapperArgvSha256 `
+        -CommandArgvSha256 (Get-TextSha256 $commandJson) -Port $Port
     [pscustomobject]@{ process = $process; record = $record }
 }
 

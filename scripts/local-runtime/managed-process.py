@@ -28,6 +28,9 @@ def main() -> int:
     command_json = base64.b64decode(args.command_base64).decode("utf-8")
     command = json.loads(command_json)
     command_hash = hashlib.sha256(command_json.encode("utf-8")).hexdigest()
+    wrapper_hash = hashlib.sha256(
+        json.dumps([sys.executable, *sys.argv], ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
     directory = Path(args.attestation_dir)
     directory.mkdir(parents=True, exist_ok=True)
     lock_path = directory / f"{args.role}.lock"
@@ -40,6 +43,7 @@ def main() -> int:
         "schema_version": 1, "role": args.role, "nonce": args.nonce,
         "repository_root": args.repository_root, "commit": args.commit,
         "wrapper_pid": os.getpid(), "child_pid": child.pid,
+        "wrapper_argv_sha256": wrapper_hash,
         "command_argv_sha256": command_hash,
     })
 
