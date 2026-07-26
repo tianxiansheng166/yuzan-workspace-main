@@ -23,6 +23,13 @@ function Import-EnvFile([string]$Path) {
     }
 }
 
+Push-Location $rootDir
+try {
+    fnm env --shell powershell | Invoke-Expression
+} finally {
+    Pop-Location
+}
+
 Import-EnvFile $envFile
 
 $nodeMajor = [int]((node --version).TrimStart('v').Split('.')[0])

@@ -7,7 +7,7 @@ param(
 $ErrorActionPreference = 'Stop'
 $rootDir = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $envFile = Join-Path $rootDir '.env'
-$serviceDir = Join-Path $rootDir 'services\speech-scoring'
+$serviceDir = Join-Path $rootDir 'backend\speech-scoring'
 
 if (-not (Test-Path -LiteralPath $envFile)) {
     throw "Missing environment file: $envFile"

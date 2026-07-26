@@ -1,46 +1,29 @@
 # CURRENT: 中心恢复点
 
-更新时间：2026-07-22
+更新时间：2026-07-26
 
-## 当前主项目
+## 唯一运行目标
 
-- 路径：`D:/program/test_program/yuzanxinsheng/three/yuzan-next`
-- 治理分支：`task/gov-root-002`
-- 本轮基线：`e42a67010092e6875394f1969292d1d751c2c7fe`
-- 当前已审计提交：`077ec4274b49ef88ab085669908d9d075fe14aa6`
-- GitHub：`git@github.com:tianxiansheng166/yuzan-workspace-main.git`
-- 旧项目总归档：`../legacy-archive/`
+- canonical 主目录：`D:/program/test_program/yuzanxinsheng/three/yuzan-next`；
+- 默认运行分支：`main`；并发目录 `../worktrees/` 只用于隔离开发和 integration 验证；
+- 活动集成线：`integration/p0-multitrack-001`；本次候选为当前 integration HEAD；
+- 启动命令：在 canonical 主目录运行 `./scripts/local-runtime/start-main.ps1`；脚本拒绝
+  worktree、脏树和落后于 `origin/main` 的运行目标。
 
-## 当前目录与运行事实
+## 本次已进入 integration 的检查点
 
-- `frontend/` 是当前唯一产品前端，端口 `4175`；旧 Nuxt 前端已移出源码发现范围；
-- `backend/api/`、`backend/worker/`、`backend/speech-scoring/` 是后端服务；
-- `packages/contracts/`、`packages/domain/` 是仍参与构建的共享包；
-- `infra/database/` 是 Prisma workspace，Docker 与环境模板仍位于主项目根和 `infra/`；
-- pnpm 当前只有 7 个 workspace，所有包的 `node_modules` 都链接到根虚拟存储，不是独立依赖副本；
-- 旧 Nuxt、前端 QA/参考图、未使用共享包和根级临时报告均在 `../legacy-archive/root-cleanup-20260722/`；
-- `apps/`、`services/`、`web-runtime/` 已退出当前目录，不得重新创建；
-- GitHub `main` 尚未更新，本轮交付先保留在 `task/gov-root-002`。
+- 学生课程练习：真实录音、书面答案、课程回写和新会话恢复，已验证；
+- 学生课程活动提交：integration 重跑 frontend 8、API 26、contract validation；待硬化浏览器验收；
+- 教师 AI 教案：API 23、worker 25、API/worker typecheck 已通过；真实 Flowise provider 仍未闭环；
+- 藏汉翻译：45 单元测试、Prisma validate、API/worker typecheck 已通过；provider/合规/前端闭环仍 BLOCKED，必须显式不可用；
+- 产品 Web PRD 与项目研究文档：已保留在 integration。
 
-## 已验证基线
-
-- Node 24 / pnpm 10 安装、数据库 generate/validate、全 workspace typecheck/build 均通过；
-- frontend lint/test/build 通过；API 49 files / 903 tests 通过，另 55 tests 按既有配置 skipped；
-- worker 2 files / 33 tests 通过，旧错误导入已修复；
-- API readiness、登录页和 frontend -> API readiness proxy 均返回 HTTP 200；
-- `.env`、依赖树、构建目录未进入 Git；同分支并发产生的两个提交已做路径与新增行密钥审计；
-- 迁移详情、回滚位置和数量见 `project-ops/ROOT-CLEANUP-MANIFEST-20260722.md`。
-
-## 已知风险
-
-- 归档中的旧 worker 分支只作为恢复证据，仍未做逐提交业务等价性审查；
-- 语音评分服务虽已通过健康检查，后续功能迭代仍应补正式代码审查；
-- 当前 PostgreSQL 容器不由主 Compose 管理，任何接管或 volume 操作前必须先备份；
-- 空的 `../workers/p0-integration` 可能被本次桌面会话句柄占用；退出会话后才能删除，不能再作为开发入口。
+检查点不是“产品全部完成”的声明。只有故障态真实、跨任务验证通过且记录风险后才提升 main；
+正式试点/生产另依完整 release 验收。
 
 ## 下一恢复动作
 
-1. 从 `README-FIRST.md` 开始，只在任务 JSON 指定的 sibling worktree 开发；
-2. 新功能先声明前后端/API 依赖及集成顺序，耦合切片不得无序并发；
-3. 集成负责人复核 `GOV-ROOT-002` handoff 后再决定 GitHub `main` 快进时间；
-4. 会话退出后删除空的 `../workers/p0-integration` 和空 `workers/`，使 `three` 只保留主项目、worktrees 与归档。
+1. 在 integration 运行 hardening：全仓 typecheck/build/test，API 与前端启动/健康检查，记录既有 lint 基线；
+2. 通过后 push integration，在 canonical `main` 运行 `promote-integration.ps1` dry run，再用 `-Apply` 快进；
+3. 从 canonical 主目录运行 `start-main.ps1`，访问登录页与 readiness；
+4. 更新本文件为 main commit，并把 task worktree 的未提交本地诊断保留原处，不混入主目录。

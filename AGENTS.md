@@ -33,6 +33,10 @@ worktree 提交元数据后再运行自动入口。脚本拒绝仓库外路径�
 - 不得重建 `apps/apps-web`、`web-runtime`、`apps/api`、`apps/worker` 或
   `services/speech-scoring`。
 
+`worktrees/` 的代码永远不是默认运行目标。需要给用户、产品或集成测试查看最新成果时，
+先将已验收 checkpoint 合入 `integration/p0-multitrack-001`，经硬化后提升到 `main`，
+再仅从 canonical `yuzan-next` 运行 `scripts/local-runtime/start-main.ps1`。
+
 pnpm 管理整个 workspace。依赖只在仓库根安装，不在子包运行 `npm install`。
 兼容 Windows PowerShell 5.1 的脚本读取 UTF-8 文本/JSON 时必须显式指定
 `-Encoding UTF8`。
@@ -54,3 +58,12 @@ pnpm 管理整个 workspace。依赖只在仓库根安装，不在子包运行 `
 完成前更新测试证据和 handoff，运行 `task-gate.ps1 -Mode review`；提交后运行
 `task-gate.ps1 -Mode finish`。只有 finish 通过、`git status --porcelain` 为空，
 才能报告任务完成或推送分支。
+
+## Checkpoint 合并门禁
+
+任务不必等待完整产品闭环才可合并。达到检查点可合入时，应提交、推送并交给
+Integration Lead：一个用户可观察结果可运行，或明确返回 `UNAVAILABLE` /
+`NEEDS_REVIEW` / `PROVIDER_UNAVAILABLE`；局部测试、类型检查、task-gate 与 handoff
+有真实证据；共享变更有 CCR/owner；未完成部分不破坏既有流程。Integration Lead 重跑
+定向验证后合入 integration 并更新看板。只有 integration 硬化完成才可执行
+`scripts/repo/promote-integration.ps1 -Apply` 提升到 `main`。

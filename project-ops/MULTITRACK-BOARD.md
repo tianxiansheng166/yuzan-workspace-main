@@ -1,6 +1,6 @@
 # P0 多路线跟踪看板
 
-> 更新时间：2026-07-25 11:00 +08:00
+> 更新时间：2026-07-26 18:00 +08:00
 > 机器任务图：`project-ops/multitrack-tasks.json`
 > 已接受基线：`project-ops/accepted-baselines.json`
 > 权威来源：`origin/integration/p0-multitrack-001` 的同一远端 commit
@@ -20,13 +20,13 @@
 
 | 路线 | 任务 | Dispatch | Execution | Evidence | Integration | 下一门禁 |
 |---|---|---|---|---|---|---|
-| 治理 | `P0-MULTITRACK-CLOSURE-PLAN-001` | `CLOSED` | `COMPLETED` | `VERIFIED` | `NOT_INTEGRATED` | 控制面已建立；保留规划 commit 为初始 checkpoint |
-| 学生课程 | `P0-STUDENT-COURSE-PRACTICE-001` | `N/A` | `COMPLETED` | `VERIFIED` | `NOT_INTEGRATED` | 等待 integration |
-| 学生课程 | `P0-STUDENT-COURSE-SUBMIT-001` | `READY_TO_RESUME` | `IN_PROGRESS` | `EVIDENCE_REPAIR` | `NOT_INTEGRATED` | 真实录音、提交脚本、三尺寸、动态 DB、handoff/remote 一致 |
+| 治理 | `P0-MULTITRACK-CLOSURE-PLAN-001` | `CLOSED` | `COMPLETED` | `VERIFIED` | `INTEGRATED` | 控制面已在 integration 基线；等待本次硬化 |
+| 学生课程 | `P0-STUDENT-COURSE-PRACTICE-001` | `N/A` | `COMPLETED` | `VERIFIED` | `INTEGRATED` | 已验证真实录音/书面答案/课程回写；等待 main 提升 |
+| 学生课程 | `P0-STUDENT-COURSE-SUBMIT-001` | `READY_TO_RESUME` | `READY_FOR_REVIEW` | `CHECKPOINT_VERIFIED` | `INTEGRATED_CHECKPOINT` | 已重跑 8 前端 + 26 API + contract；待跨任务硬化与主目录浏览器验收 |
 | 共享契约 | `P0-AI-TOOL-CONTRACTS-001` | `CLOSED` | `COMPLETED` | `VERIFIED` | `INTEGRATED` | 已合入 integration/p0-multitrack-001 (e1505b3)；OPENAPI 锁已释放 |
 | 学生练习 | `P0-STUDENT-INDEPENDENT-PRACTICE-001` | `CLOSED` | `COMPLETED` | `VERIFIED` | `INTEGRATED` | 已合入 integration/p0-multitrack-001 (bd3c40f)；ASSESSMENT_CORE 锁已释放 |
-| 教师教案 | `P0-TEACHER-AI-LESSON-PLAN-001` | `READY_TO_RESUME` | `IN_PROGRESS` | `PARTIAL` | `NOT_INTEGRATED` | 8 硬缺口已修复(880ccc6)；API 23/23 + Worker 33/33；待 Flowise 闭环证据 + task-gate |
-| 藏汉翻译 | `P0-TIBETAN-TRANSLATION-TOOL-001` | `BLOCKED` | `IN_PROGRESS` | `PARTIAL` | `NOT_INTEGRATED` | 后端核心 1-10 完成(e8f2d8c)；45 测试 PASS；BLOCKED: provider 凭据缺失 |
+| 教师教案 | `P0-TEACHER-AI-LESSON-PLAN-001` | `READY_TO_RESUME` | `READY_FOR_REVIEW` | `PARTIAL` | `INTEGRATED_CHECKPOINT` | API 23/23、worker 25/25、类型检查通过；Flowise 未配置时必须显式不可用，待真实 provider + 浏览器闭环 |
+| 藏汉翻译 | `P0-TIBETAN-TRANSLATION-TOOL-001` | `BLOCKED` | `BLOCKED` | `PARTIAL` | `INTEGRATED_CHECKPOINT` | 45 翻译测试、Prisma validate、API/worker typecheck 通过；BLOCKED: provider 凭据、合规与前端闭环 |
 | 学生课程 | `P0-STUDENT-COURSE-VIDEO-PROGRESS-001` | `WAITING_DEPENDENCY` | `NOT_CREATED` | `PARTIAL` | `NOT_INTEGRATED` | 等课程提交、共享契约和共同 integration checkpoint |
 | 学生课程 | `P0-STUDENT-COURSE-VIDEO-NOTE-001` | `WAITING_DEPENDENCY` | `NOT_CREATED` | `PARTIAL` | `NOT_INTEGRATED` | 等视频进度 |
 | 网页双语 | `P1-TIBETAN-BILINGUAL-COURSE-001` | `WAITING_DEPENDENCY` | `NOT_CREATED` | `NOT_STARTED` | `NOT_INTEGRATED` | 等翻译工具、视频笔记和共同 integration checkpoint |
@@ -41,8 +41,8 @@
 |---|---|---|
 | `accepted-baselines.json`、integration checkpoint | Integration Lead | 更新后运行 validator、提交并推送 integration |
 | `packages/contracts/openapi/openapi.yaml` | 已释放 | `P0-AI-TOOL-CONTRACTS-001` 已 INTEGRATED；后续 consumer 可写 |
-| 翻译 Prisma schema 与本任务 migration | `P0-TIBETAN-TRANSLATION-TOOL-001` | 迁移/回滚与任务 finish 通过 |
-| `backend/worker/src/main.ts` | `P0-TIBETAN-TRANSLATION-TOOL-001` | translation consumer 启停测试通过 |
+| 翻译 Prisma schema 与本任务 migration | Integration Lead | 已在 checkpoint；主目录验证后转交后续 consumer |
+| `backend/worker/src/main.ts` | Integration Lead | AI 与 translation consumer 共存 typecheck 已通过；运行时启停留待硬化 |
 | 学生课程核心文件 | 当前 `P0-STUDENT-COURSE-SUBMIT-001` | 证据修复接受后，依次转给 video-progress、video-note |
 | 双语课程 consumer 与翻译读取接口 | `P1-TIBETAN-BILINGUAL-COURSE-001` | 视频笔记和翻译工具均接受后才接管 |
 | `project-ops/CURRENT.md` | Integration Lead | integration 实时验证后更新 |

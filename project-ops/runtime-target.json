@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "canonical_root": "D:/program/test_program/yuzanxinsheng/three/yuzan-next",
+  "runtime_branch": "main",
+  "integration_branch": "integration/p0-multitrack-001",
+  "policy": "主目录仅运行已推送的 main；worktree 仅用于隔离开发和集成验证。"
+}

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-07-24T22:30:00+08:00",
+  "updated_at": "2026-07-26T18:00:00+08:00",
   "entries": [
     {
       "task_id": "GOV-DEV-FRAMEWORK-001",
@@ -49,6 +49,30 @@
       "commit": "45fefdf361f7df4d0026c31b3e1d338f537acb47",
       "accepted_at": "2026-07-24T19:30:00+08:00",
       "note": "学生独立专项练习闭环：Playwright E2E 12类检查通过，后端15/15测试通过，task-gate review/finish通过"
+    },
+    {
+      "task_id": "P0-STUDENT-COURSE-SUBMIT-001",
+      "acceptance_status": "INTEGRATED_CHECKPOINT",
+      "branch": "task/p0-student-course-submit-001",
+      "commit": "4f86b0f319907b29c073dd9438b0459fb3b85c43",
+      "accepted_at": "2026-07-26T18:00:00+08:00",
+      "note": "integration 重跑 frontend 8、API 26、contract validation；仍需跨任务硬化和主目录浏览器验收"
+    },
+    {
+      "task_id": "P0-TEACHER-AI-LESSON-PLAN-001",
+      "acceptance_status": "INTEGRATED_CHECKPOINT",
+      "branch": "task/p0-teacher-ai-lesson-plan-001",
+      "commit": "6d1d70e426ec35e079535011daff62780fe07031",
+      "accepted_at": "2026-07-26T18:00:00+08:00",
+      "note": "API 23、worker 25、API/worker typecheck 在 integration 通过；真实 Flowise provider 仍未验收"
+    },
+    {
+      "task_id": "P0-TIBETAN-TRANSLATION-TOOL-001",
+      "acceptance_status": "INTEGRATED_CHECKPOINT",
+      "branch": "task/p0-tibetan-translation-tool-001",
+      "commit": "e8f2d8c5c0049a320fe45c7bd2e9e499ccd722cc",
+      "accepted_at": "2026-07-26T18:00:00+08:00",
+      "note": "45 翻译测试、Prisma validate、API/worker typecheck 在 integration 通过；provider 凭据与合规未完成，必须 fail closed"
     }
   ]
 }

@@ -30,7 +30,25 @@ D:/program/test_program/yuzanxinsheng/three/yuzan-next
 建任务，用 `project-ops/CONTEXT-ROUTER.md` 选择 2–6 个按需资料，先在独立
 worktree 提交任务元数据，再运行上面的自动入口。
 
-## 本地启动
+## 唯一演示/联调启动入口
+
+演示、联调和给产品查看的运行环境只从主目录的 `main` 启动：
+
+```powershell
+Set-Location D:\program\test_program\yuzanxinsheng\three\yuzan-next
+.\scripts\local-runtime\start-main.ps1
+```
+
+脚本自动加载 Node 24、根 `.env`、Docker Redis/MinIO 和 Prisma Client，并拒绝
+worktree、脏主目录或落后于 `origin/main` 的代码。服务地址为
+`http://127.0.0.1:4175/login/`，API readiness 为
+`http://127.0.0.1:4000/api/v1/health/ready`。worktree 只可作隔离验证，不能被称为
+默认最新版本。
+
+提升主目录先检查：`.\scripts\repo\promote-integration.ps1`；硬化证据齐全后才执行
+`-Apply`。
+
+## 其他入口
 
 - 环境与 Docker：`project-ops/runbooks/LOCAL-RUNTIME.md`
 - 并发 worktree：`project-ops/runbooks/WORKTREES.md`

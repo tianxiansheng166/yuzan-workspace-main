@@ -93,9 +93,9 @@ git push -u origin $task.branch
 - 分支至少领先基线一个提交；
 - `git status --porcelain` 为空。
 
-## 5. 分支与集成职责
+## 5. 分支、检查点与集成职责
 
-- `main`：已验证、可部署基线，不直接开发；
+- `main`：最新可启动、可查看的验证基线，不直接开发；正式可部署版本另以 release/tag 的完整验收为准；
 - `integration/<mvp>`：同一时间只保留一条活动集成线；
 - `task/<id>-<slug>`：单个纵向任务；
 - `hotfix/<id>`：生产紧急修复。
@@ -104,8 +104,34 @@ OpenAPI、Prisma、根依赖、CI、全局路由和 UI token 采用单写者。�
 共享文件时，先建共享前置任务。
 
 Integration Lead 按“共享事实 → 后端提供者 → 前端消费者 → E2E”合并。失败时用
-新修复提交，不重写共享历史。验收后更新 `CURRENT.md`，把任务移入
-`tasks/completed/`，再删除干净 worktree。
+新修复提交，不重写共享历史。
+
+### 检查点可合入（不等待全功能完成）
+
+满足以下条件就可进入 integration，目的是让中间层可启动、查看和跨任务复验：
+
+1. task 分支已 push，`task-gate review/finish` 通过，task JSON 与 handoff 如实记录；
+2. 至少一个用户可观察动作有真实最小验证；未接通 provider/人工环节明确返回
+   `PROVIDER_UNAVAILABLE`、`UNAVAILABLE` 或 `NEEDS_REVIEW`，不得假成功；
+3. 共享事实有 CCR/owner，数据库迁移有回滚说明，未完成部分不会静默破坏既有流程；
+4. Integration Lead 在 integration worktree 重跑定向测试、类型检查和差异检查。
+
+合入后更新 `MULTITRACK-BOARD.md`、`accepted-baselines.json`、handoff 与 `CURRENT.md`。
+`INTEGRATED_CHECKPOINT` 不等于完整功能或正式上线。
+
+### 提升至主目录
+
+每合入 2–3 个 checkpoint 或需要产品验看时，冻结 integration 进入硬化窗口：修复回归、
+刷新 Prisma/契约生成物、执行跨任务验证、`pnpm typecheck`、`pnpm build` 与相关测试，
+并记录既有基线问题。通过后仅在 canonical `yuzan-next` 的干净 `main` 执行：
+
+```powershell
+.\scripts\repo\promote-integration.ps1
+.\scripts\repo\promote-integration.ps1 -Apply
+```
+
+随后只用 `scripts/local-runtime/start-main.ps1` 启动；它验证 canonical 路径、`main`、
+干净状态和 `origin/main` 一致性。
 
 ## 6. 多泳道并行
 
