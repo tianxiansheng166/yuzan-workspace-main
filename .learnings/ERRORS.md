@@ -1296,3 +1296,35 @@ Collect objects in an array inside the loop, then pipe the completed array to `F
 - **Resolved**: 2026-07-26T20:50:00+08:00
 - **Commit/PR**: diagnostic only
 - **Notes**: Rewrote the audit using an explicit result array.
+
+## [ERR-20260726-013] ripgrep-pattern-escaped-through-powershell
+
+**Logged**: 2026-07-26T20:53:00+08:00
+**Priority**: low
+**Status**: resolved
+**Area**: docs
+
+### Summary
+
+A source line lookup used an unnecessarily escaped regular expression that became invalid through PowerShell parsing.
+
+### Error
+
+```text
+regex parse error: unclosed group
+```
+
+### Suggested Fix
+
+Use `rg -F` for exact source fragments when regular-expression matching is unnecessary.
+
+### Metadata
+
+- Reproducible: yes
+- Related Files: `backend/api/src/modules/assessment/assessment.service.ts`
+
+### Resolution
+
+- **Resolved**: 2026-07-26T20:53:00+08:00
+- **Commit/PR**: diagnostic only
+- **Notes**: Switched the final source lookup to fixed-string matching.
