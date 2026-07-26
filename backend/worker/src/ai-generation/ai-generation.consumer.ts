@@ -31,6 +31,8 @@ export interface AiGenerationJobPayload {
   lessonTitle?: string;
   lessonContentSummary?: string;
   classAggregateSummary?: string;
+  /** externalFlowId from AiWorkflowDefinition — single source of truth (gap 5 fix) */
+  externalFlowId?: string;
 }
 
 interface FlowisePredictionResponse {
@@ -137,11 +139,16 @@ export class AiGenerationConsumer {
       lessonTitle,
       lessonContentSummary,
       classAggregateSummary,
+      externalFlowId,
     } = job.data;
     const startTime = Date.now();
 
+    // Gap 5 fix: Use externalFlowId from payload (single source of truth from DB)
+    // Fallback to env var only if payload doesn't carry it (backward compat)
+    const resolvedFlowId = externalFlowId ?? this.flowiseFlowId;
+
     // Check if Flowise is configured
-    if (!this.flowiseFlowId) {
+    if (!resolvedFlowId) {
       await this.reportResult(jobId, {
         status: "PROVIDER_NOT_CONFIGURED",
         errorCode: "FLOWISE_NOT_CONFIGURED",
@@ -150,13 +157,16 @@ export class AiGenerationConsumer {
       return;
     }
 
+    logger.info(
+      { jobId, resolvedFlowId, source: externalFlowId ? "payload" : "env" },
+      "Resolved Flowise flow ID",
+    );
+
     // Step 1: Mark job as RUNNING
     await this.reportResult(jobId, { status: "RUNNING" });
 
     try {
       // Step 2: Build form data for Flowise Agentflow V2 Form Input node
-      // All fields come from the BullMQ job payload (populated by the API
-      // service from the teacher's request and course context).
       const formPayload: Record<string, unknown> = {
         requestId: `ai-job-${jobId}`,
         schoolContextId: schoolId,
@@ -177,7 +187,7 @@ export class AiGenerationConsumer {
         classAggregateSummary: classAggregateSummary ?? "",
       };
 
-      const predictionResult = await this.callFlowise(formPayload);
+      const predictionResult = await this.callFlowise(formPayload, resolvedFlowId);
       const latencyMs = Date.now() - startTime;
 
       // Step 3: Validate output against schema
@@ -273,8 +283,9 @@ export class AiGenerationConsumer {
    */
   private async callFlowise(
     form: Record<string, unknown>,
+    flowId: string,
   ): Promise<FlowisePredictionResponse> {
-    const url = `${this.flowiseBaseUrl}/api/v1/prediction/${this.flowiseFlowId}`;
+    const url = `${this.flowiseBaseUrl}/api/v1/prediction/${flowId}`;
 
     const controller = new AbortController();
     const timeoutMs = parseInt(process.env.AI_TIMEOUT_MS ?? "120000", 10);
@@ -285,6 +296,8 @@ export class AiGenerationConsumer {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          // Flowise 3.1.1 requires x-request-from: internal for server-to-server API access
+          "x-request-from": "internal",
           ...(this.flowiseApiKey ? { Authorization: `Bearer ${this.flowiseApiKey}` } : {}),
         },
         body: JSON.stringify({
@@ -357,6 +370,10 @@ export class AiGenerationConsumer {
 
   /**
    * Report job result back to the API server via internal endpoint.
+   *
+   * Gap 7 fix: If the report fails (non-2xx or network error), we throw
+   * so that BullMQ retries the entire job. Silently swallowing failures
+   * causes Jobs to permanently appear as RUNNING/QUEUED.
    */
   private async reportResult(
     jobId: string,
@@ -383,16 +400,22 @@ export class AiGenerationConsumer {
       );
       if (!response.ok) {
         const errorBody = await response.text().catch(() => "");
+        const errMsg = `Report failed: API returned ${response.status} for job ${jobId}`;
         logger.error(
           { jobId, status: response.status, errorBody: errorBody.slice(0, 200) },
-          "Failed to report AI generation job result",
+          errMsg,
         );
+        // Throw to let BullMQ retry — prevents permanent RUNNING/QUEUED
+        throw new Error(errMsg);
       }
     } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : String(err);
       logger.error(
-        { jobId, error: err instanceof Error ? err.message : String(err) },
-        "Failed to report AI generation job result (network error)",
+        { jobId, error: errorMessage },
+        "Failed to report AI generation job result",
       );
+      // Re-throw: if we swallow this, the Job stays permanently stuck
+      throw err;
     }
   }
 

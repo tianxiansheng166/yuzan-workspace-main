@@ -17,7 +17,7 @@ export interface LessonPlanJobResponse {
   startedAt: string | null;
   completedAt: string | null;
   /** ID of the lesson plan draft created on success, if any. */
-  lessonPlanDraftId: string | null;
+  draftId: string | null;
 }
 
 /**
