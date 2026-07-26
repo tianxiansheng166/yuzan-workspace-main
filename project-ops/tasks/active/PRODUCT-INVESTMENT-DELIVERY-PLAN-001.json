@@ -1,6 +1,6 @@
 {
   "id": "PRODUCT-INVESTMENT-DELIVERY-PLAN-001",
-  "status": "PLANNED",
+  "status": "IN_PROGRESS",
   "title": "建立投资级产品定义与可执行闭环开发包",
   "owner": "Codex",
   "reviewer": "Product Owner / Integration Lead",
@@ -66,7 +66,7 @@
     },
     {
       "name": "文档包结构与关键门禁检查",
-      "command": "rg -n \"^## (当前结论|唯一 P0|当前事实基线|业务闭环|对象模型|状态机|开发波次|完成定义|投资门禁|待项目方决策)\" docs/11-product-delivery/*.md"
+      "command": "rg -n --glob '*.md' \"^## (当前结论|唯一 P0|当前事实基线|业务闭环|对象模型|状态机|开发波次|完成定义|投资门禁|待项目方决策)\" docs/11-product-delivery"
     },
     {
       "name": "Markdown 解析检查",
@@ -74,7 +74,7 @@
     },
     {
       "name": "敏感信息形态扫描",
-      "command": "$hits = rg -n \"(?<![A-Za-z0-9])(?:sk-[A-Za-z0-9_-]{20,}|ghp_[A-Za-z0-9]{30,}|-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----)\" docs/11-product-delivery project-ops/handoffs/PRODUCT-INVESTMENT-DELIVERY-PLAN-001.md; if ($LASTEXITCODE -eq 0) { throw \"Secret-like token found\" }; if ($LASTEXITCODE -gt 1) { throw \"Secret scan failed\" }"
+      "command": "$hits = rg --pcre2 -n \"(?<![A-Za-z0-9])(?:sk-[A-Za-z0-9_-]{20,}|ghp_[A-Za-z0-9]{30,}|-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----)\" docs/11-product-delivery project-ops/handoffs/PRODUCT-INVESTMENT-DELIVERY-PLAN-001.md; if ($LASTEXITCODE -eq 0) { throw \"Secret-like token found\" }; if ($LASTEXITCODE -gt 1) { throw \"Secret scan failed\" }"
     },
     {
       "name": "Git whitespace 检查",

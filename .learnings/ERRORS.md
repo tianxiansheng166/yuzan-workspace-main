@@ -1094,3 +1094,69 @@ Python when the bundled environment does not expose the package.
 - **Resolved**: 2026-07-26T18:52:00+08:00
 - **Commit/PR**: pending task delivery commit
 - **Notes**: The same headless Chromium check passed with the system Python 3.12 Playwright installation.
+
+## [ERR-20260726-007] ripgrep-windows-directory-glob
+
+**Logged**: 2026-07-26T19:05:00+08:00
+**Priority**: low
+**Status**: resolved
+**Area**: tests
+
+### Summary
+
+A task-gate command passed `docs/11-product-delivery/*.md` directly to ripgrep. On Windows, ripgrep treated
+the wildcard as an invalid literal path instead of expanding it.
+
+### Error
+
+```text
+IO error for operation on docs/11-product-delivery/*.md: 文件名、目录名或卷标语法不正确。 (os error 123)
+```
+
+### Suggested Fix
+
+Pass the directory as the search path and use ripgrep's own glob option: `rg --glob '*.md' PATTERN DIR`.
+
+### Metadata
+
+- Reproducible: yes
+- Related Files: `project-ops/tasks/active/PRODUCT-INVESTMENT-DELIVERY-PLAN-001.json`
+
+### Resolution
+
+- **Resolved**: 2026-07-26T19:06:00+08:00
+- **Commit/PR**: pending task delivery commit
+- **Notes**: The task command now uses `--glob '*.md'` with the directory path.
+
+## [ERR-20260726-008] ripgrep-secret-scan-needs-pcre2
+
+**Logged**: 2026-07-26T19:05:00+08:00
+**Priority**: low
+**Status**: resolved
+**Area**: tests
+
+### Summary
+
+The secret-scan expression used a negative lookbehind, which the default ripgrep regex engine does not
+support.
+
+### Error
+
+```text
+regex parse error: look-around, including look-ahead and look-behind, is not supported
+```
+
+### Suggested Fix
+
+Run the existing expression with `rg --pcre2` or remove the lookbehind.
+
+### Metadata
+
+- Reproducible: yes
+- Related Files: `project-ops/tasks/active/PRODUCT-INVESTMENT-DELIVERY-PLAN-001.json`
+
+### Resolution
+
+- **Resolved**: 2026-07-26T19:06:00+08:00
+- **Commit/PR**: pending task delivery commit
+- **Notes**: The task command now enables PCRE2 explicitly.
