@@ -1,9 +1,12 @@
 'use strict';
 
 window.CoursePlayerState = (function () {
+  var SUBMITTED_STATUSES = ['SUBMITTED', 'PROCESSING', 'NEEDS_REVIEW', 'REVIEWED', 'ACCEPTED'];
+
   var state = {
     assignmentId: '',
     course: null,
+    enrollmentId: '',
     submissionId: '',
     submissionStatus: '',
     submissionRevision: null,
@@ -20,7 +23,10 @@ window.CoursePlayerState = (function () {
     videoPlaying: false,
     videoSpeed: 1,
     activeSubtitle: 'zh',
-    practiceCompleted: {}
+    practiceCompleted: {},
+    activityProgressMap: {},
+    activityAttemptMap: {},
+    saving: false
   };
 
   var listeners = [];
@@ -57,32 +63,68 @@ window.CoursePlayerState = (function () {
     return null;
   }
 
-  function _recalculateProgress() {
+  function _isSubmitted() {
+    return SUBMITTED_STATUSES.indexOf(state.submissionStatus) !== -1;
+  }
+
+  function _getActivityRevision(activityId) {
+    var p = state.activityProgressMap[activityId];
+    return p && p.revision != null ? p.revision : 0;
+  }
+
+  function _updateProgressFromServer(courseCompletion) {
+    if (!courseCompletion) return;
+    if (!state.course) return;
+
+    if (courseCompletion.progressPercent != null) {
+      state.course.progress = state.course.progress || {};
+      state.course.progress.percent = courseCompletion.progressPercent;
+      state.course.progress.completedActivities = courseCompletion.completedRequiredCount != null ? courseCompletion.completedRequiredCount : state.course.progress.completedActivities;
+      state.course.progress.totalActivities = courseCompletion.requiredActivityCount != null ? courseCompletion.requiredActivityCount : state.course.progress.totalActivities;
+      state.course.progress.attainmentStatus = courseCompletion.attainmentStatus || state.course.progress.attainmentStatus;
+      state.course.progress.completedActivityIds = courseCompletion.completedActivityIds || state.course.progress.completedActivityIds;
+    }
+  }
+
+  function _syncActivityIsCompletedFromProgress() {
     if (!state.course || !state.course.units) return;
-    var total = 0;
-    var completed = 0;
+    var completedIds = (state.course.progress && state.course.progress.completedActivityIds) || [];
     for (var u = 0; u < state.course.units.length; u++) {
       var unit = state.course.units[u];
-      var unitTotal = 0;
-      var unitCompleted = 0;
       for (var l = 0; l < unit.lessons.length; l++) {
         var lesson = unit.lessons[l];
-        var lessonTotal = lesson.activities.length;
-        var lessonCompleted = 0;
         for (var a = 0; a < lesson.activities.length; a++) {
-          total++;
-          unitTotal++;
-          if (lesson.activities[a].isCompleted) {
-            completed++;
-            unitCompleted++;
-            lessonCompleted++;
+          var act = lesson.activities[a];
+          if (completedIds.indexOf(act.activityId) !== -1) {
+            act.isCompleted = true;
           }
         }
-        lesson.progress = lessonTotal > 0 ? Math.round((lessonCompleted / lessonTotal) * 100) : 0;
       }
-      unit.progress = unitTotal > 0 ? Math.round((unitCompleted / unitTotal) * 100) : 0;
     }
-    state.course.progress = total > 0 ? Math.round((completed / total) * 100) : 0;
+  }
+
+  function _buildActivityProgressMap(course) {
+    state.activityProgressMap = {};
+    if (!course || !course.units) return;
+    for (var u = 0; u < course.units.length; u++) {
+      var unit = course.units[u];
+      for (var l = 0; l < unit.lessons.length; l++) {
+        var lesson = unit.lessons[l];
+        for (var a = 0; a < lesson.activities.length; a++) {
+          var act = lesson.activities[a];
+          if (act.progress) {
+            state.activityProgressMap[act.activityId] = {
+              revision: act.progress.revision != null ? act.progress.revision : 0,
+              completed: !!act.progress.completed,
+              position: act.progress.position != null ? act.progress.position : 0
+            };
+          }
+          if (act.attempt) {
+            state.activityAttemptMap[act.activityId] = act.attempt;
+          }
+        }
+      }
+    }
   }
 
   function init(assignmentId) {
@@ -96,6 +138,7 @@ window.CoursePlayerState = (function () {
           throw new Error('课程详情响应缺少 assignmentId');
         }
         state.course = course;
+        _buildActivityProgressMap(course);
         _setInitialActivity();
         return CourseApiAdapter.createSubmission(assignmentId);
       })
@@ -103,6 +146,7 @@ window.CoursePlayerState = (function () {
         state.submissionId = submission.id || submission.submissionId || '';
         state.submissionStatus = submission.status || '';
         state.submissionRevision = submission.revision != null ? submission.revision : null;
+        state.enrollmentId = submission.enrollmentId || '';
         if (!state.submissionId) {
           throw new Error('课程 Submission 响应缺少 id');
         }
@@ -118,7 +162,7 @@ window.CoursePlayerState = (function () {
       .then(function (dashboard) {
         state.dashboard = dashboard;
         state.loading = false;
-        _notify(['assignmentId', 'course', 'submissionId', 'submissionStatus', 'submissionRevision', 'notes', 'recommendations', 'dashboard', 'currentActivityId', 'currentActivity', 'loading']);
+        _notify(['assignmentId', 'course', 'enrollmentId', 'submissionId', 'submissionStatus', 'submissionRevision', 'notes', 'recommendations', 'dashboard', 'currentActivityId', 'currentActivity', 'loading']);
         return _shallowCopy(state);
       })
       .catch(function (err) {
@@ -157,6 +201,17 @@ window.CoursePlayerState = (function () {
     return CourseApiAdapter.loadNotes(state.assignmentId, state.currentActivityId)
       .then(function (notes) {
         state.notes = notes || [];
+      });
+  }
+
+  function _refreshCourseFromServer() {
+    return CourseApiAdapter.loadCourse(state.assignmentId)
+      .then(function (course) {
+        if (course && course.assignmentId) {
+          state.course = course;
+          _buildActivityProgressMap(course);
+          _syncActivityIsCompletedFromProgress();
+        }
       });
   }
 
@@ -240,23 +295,106 @@ window.CoursePlayerState = (function () {
   }
 
   function setActivityCompleted(activityId) {
-    if (!state.course || !state.course.units) return;
+    var activity = _findActivity(activityId);
+    if (activity) {
+      activity.isCompleted = true;
+    }
+    state.practiceCompleted[activityId] = true;
+    _notify(['course', 'practiceCompleted']);
+  }
 
-    for (var u = 0; u < state.course.units.length; u++) {
-      var unit = state.course.units[u];
-      for (var l = 0; l < unit.lessons.length; l++) {
-        var lesson = unit.lessons[l];
-        for (var a = 0; a < lesson.activities.length; a++) {
-          if (lesson.activities[a].activityId === activityId) {
-            lesson.activities[a].isCompleted = true;
-          }
-        }
-      }
+  function saveActivityAttempt(activityId, kind, value, completed) {
+    if (_isSubmitted()) {
+      return Promise.reject(new Error('课程已提交，不能修改活动进度'));
+    }
+    if (!state.submissionId) {
+      return Promise.reject(new Error('课程 Submission 尚未创建'));
     }
 
-    state.practiceCompleted[activityId] = true;
-    _recalculateProgress();
-    _notify(['course', 'practiceCompleted']);
+    var expectedRevision = _getActivityRevision(activityId);
+    var payload = {
+      kind: kind,
+      value: value || {},
+      completed: !!completed,
+      expectedProgressRevision: expectedRevision
+    };
+
+    if (kind === 'AUDIO' && state.videoProgress > 0) {
+      payload.videoPosition = state.videoProgress;
+    }
+
+    state.saving = true;
+    _notify(['saving']);
+
+    return CourseApiAdapter.saveActivityAttempt(state.assignmentId, state.submissionId, activityId, payload)
+      .then(function (result) {
+        state.saving = false;
+
+        if (result.attempt) {
+          state.activityAttemptMap[activityId] = result.attempt;
+        }
+        if (result.progress) {
+          state.activityProgressMap[activityId] = {
+            revision: result.progress.revision != null ? result.progress.revision : (expectedRevision + 1),
+            completed: !!result.progress.completed,
+            position: result.progress.position != null ? result.progress.position : 0
+          };
+        }
+        if (result.courseCompletion) {
+          _updateProgressFromServer(result.courseCompletion);
+          _syncActivityIsCompletedFromProgress();
+        }
+
+        if (completed) {
+          var activity = _findActivity(activityId);
+          if (activity) activity.isCompleted = true;
+        }
+
+        _notify(['saving', 'course', 'activityProgressMap', 'activityAttemptMap']);
+        return result;
+      })
+      .catch(function (err) {
+        state.saving = false;
+        if (err && err.code === 'REVISION_CONFLICT') {
+          return _refreshCourseFromServer().then(function () {
+            _notify(['saving', 'course', 'activityProgressMap']);
+            var refreshed = new Error('进度版本冲突，已刷新最新数据，请重试');
+            refreshed.code = 'REVISION_CONFLICT';
+            refreshed.status = 409;
+            throw refreshed;
+          });
+        }
+        _notify(['saving']);
+        throw err;
+      });
+  }
+
+  function submitCourse() {
+    if (_isSubmitted()) {
+      return Promise.resolve({ status: state.submissionStatus });
+    }
+    if (state.submissionRevision == null) {
+      return Promise.reject(new Error('课程 revision 未知，无法提交'));
+    }
+    if (!state.submissionId) {
+      return Promise.reject(new Error('课程 Submission 尚未创建'));
+    }
+
+    state.saving = true;
+    _notify(['saving']);
+
+    return CourseApiAdapter.submitCourse(state.assignmentId, state.submissionId, state.submissionRevision)
+      .then(function (result) {
+        state.saving = false;
+        state.submissionStatus = result.status || 'SUBMITTED';
+        _notify(['saving', 'submissionStatus']);
+        return result;
+      })
+      .catch(function (err) {
+        state.saving = false;
+        _notify(['saving']);
+        throw err;
+      });
   }
 
   function setError(message) {
@@ -331,11 +469,14 @@ window.CoursePlayerState = (function () {
     updateNote: updateNote,
     removeNote: removeNote,
     setActivityCompleted: setActivityCompleted,
+    saveActivityAttempt: saveActivityAttempt,
+    submitCourse: submitCourse,
     setError: setError,
     setLoading: setLoading,
     getActivityList: getActivityList,
     getNextActivity: getNextActivity,
     getPrevActivity: getPrevActivity,
-    restoreFromUrl: restoreFromUrl
+    restoreFromUrl: restoreFromUrl,
+    isSubmitted: _isSubmitted
   };
 })();

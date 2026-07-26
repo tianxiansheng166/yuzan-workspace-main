@@ -187,6 +187,7 @@
         return {
           id: submissionId,
           submissionId: submissionId,
+          enrollmentId: submission.enrollmentId || resp.enrollmentId || '',
           status: submission.status || '',
           revision: submission.revision != null ? submission.revision : 0,
           resumed: !!(resp && resp.resumed)
@@ -247,9 +248,18 @@
         return {
           attemptId: resp.attemptId || resp.id || '',
           isCorrect: resp.isCorrect || false,
-          feedback: resp.feedback || ''
+          feedback: resp.feedback || '',
+          attempt: resp.attempt || null,
+          progress: resp.progress || null,
+          courseCompletion: resp.courseCompletion || null
         };
       } catch (err) {
+        if (err && err.status === 409) {
+          var conflict = err instanceof Error ? err : new Error(err.message || '进度版本冲突');
+          conflict.status = 409;
+          conflict.code = 'REVISION_CONFLICT';
+          throw conflict;
+        }
         return _handleError(err);
       }
     },
@@ -344,12 +354,15 @@
       }
     },
 
-    initRecording: async function (blob) {
+    initRecording: async function (blob, context) {
       try {
-        var resp = await Api.initSimpleRecording({
+        var req = {
           mimeType: blob.type || 'audio/webm',
           idempotencyKey: 'oral-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8)
-        });
+        };
+        if (context && context.enrollmentId) req.enrollmentId = context.enrollmentId;
+        if (context && context.submissionId) req.submissionId = context.submissionId;
+        var resp = await Api.initSimpleRecording(req);
         return {
           recordingId: resp.recordingId || resp.id || '',
           uploadUrl: resp.uploadUrl || ''

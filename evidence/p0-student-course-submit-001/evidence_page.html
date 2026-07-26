@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>P0-STUDENT-COURSE-SUBMIT-001 Evidence</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 20px; background: #f5f5f5; }
+.card { background: white; border-radius: 8px; padding: 16px 20px; margin: 12px 0; box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
+h1 { color: #1a1a2e; font-size: 20px; margin: 0 0 4px 0; }
+h2 { color: #16213e; font-size: 16px; margin: 0 0 8px 0; border-bottom: 2px solid #0f3460; padding-bottom: 4px; }
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+th, td { border: 1px solid #ddd; padding: 6px 8px; text-align: left; }
+th { background: #0f3460; color: white; }
+.pass { color: #2e7d32; font-weight: bold; }
+.fail { color: #c62828; font-weight: bold; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; }
+.badge-pass { background: #e8f5e9; color: #2e7d32; }
+.badge-fail { background: #ffebee; color: #c62828; }
+.summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin: 8px 0; }
+.summary-item { background: #f8f9fa; border-radius: 6px; padding: 10px; text-align: center; }
+.summary-item .value { font-size: 24px; font-weight: bold; color: #0f3460; }
+.summary-item .label { font-size: 11px; color: #666; text-transform: uppercase; }
+</style>
+</head>
+<body>
+<div class="card">
+<h1>P0-STUDENT-COURSE-SUBMIT-001 Evidence Report</h1>
+<p style="color:#666;font-size:12px">Generated: 2026-07-24 11:18:49 UTC</p>
+<div class="summary-grid">
+  <div class="summary-item"><div class="value">SUBMITTED</div><div class="label">Submission Status</div></div>
+  <div class="summary-item"><div class="value">100%</div><div class="label">Completion</div></div>
+  <div class="summary-item"><div class="value">1</div><div class="label">Revision</div></div>
+  <div class="summary-item"><div class="value">5/5</div><div class="label">Activities</div></div>
+</div>
+</div>
+
+<div class="card">
+<h2>Course Submission Details</h2>
+<table>
+<tr><th>Field</th><th>Value</th></tr>
+<tr><td>Submission ID</td><td style="font-family:monospace;font-size:11px">26d21c01-d514-4eee-afb6-4e50a7eb7d40</td></tr>
+<tr><td>Enrollment ID</td><td style="font-family:monospace;font-size:11px">f1111111-1111-4111-8111-111111111111</td></tr>
+<tr><td>Assignment ID</td><td style="font-family:monospace;font-size:11px">85000000-0000-4000-8000-000000000004</td></tr>
+<tr><td>School ID</td><td style="font-family:monospace;font-size:11px">11111111-1111-4111-8111-111111111111</td></tr>
+<tr><td>Post-submit Status</td><td><span class="badge badge-pass">SUBMITTED</span></td></tr>
+<tr><td>Post-submit Revision</td><td>1</td></tr>
+</table>
+</div>
+
+<div class="card">
+<h2>Activity Completion Evidence</h2>
+<table>
+<tr><th>Type</th><th>Activity ID</th><th>Status</th><th>Recording</th></tr>
+<tr><td>AUDIO</td><td style='font-family:monospace;font-size:11px'>84000000-0000-4000-8...</td><td>HTTP 200</td><td></td></tr><tr><td>CHOICE</td><td style='font-family:monospace;font-size:11px'>84000000-0000-4000-8...</td><td>HTTP 200</td><td></td></tr><tr><td>FILL_BLANK</td><td style='font-family:monospace;font-size:11px'>84000000-0000-4000-8...</td><td>HTTP 200</td><td></td></tr><tr><td>SPEECH</td><td style='font-family:monospace;font-size:11px'>84000000-0000-4000-8...</td><td>Recording: 7e91a398...</td><td>✓</td></tr><tr><td>CHOICE</td><td style='font-family:monospace;font-size:11px'>84000000-0000-4000-8...</td><td>HTTP N/A</td><td></td></tr>
+</table>
+</div>
+
+<div class="card">
+<h2>Database Cross-Verification</h2>
+<span class="badge badge-pass">PASS</span>
+<table>
+<tr><th>Check</th><th>Result</th></tr>
+<tr><td>A_submission</td><td style='color:green'>PASS</td></tr><tr><td>B_activityAttempts</td><td style='color:green'>PASS</td></tr><tr><td>C_activityProgress</td><td style='color:green'>PASS</td></tr><tr><td>D_recordings</td><td style='color:green'>PASS</td></tr><tr><td>E_assessmentSessions</td><td style='color:green'>PASS</td></tr><tr><td>F_enrollmentConsistency</td><td style='color:green'>PASS</td></tr>
+</table>
+</div>
+
+<div class="card">
+<h2>Fault Injection Verification</h2>
+<span class="badge badge-pass">PASS</span>
+<table>
+<tr><th>Scenario</th><th>Result</th></tr>
+<tr><td>A_old_revision_409</td><td style='color:green'>PASS</td></tr><tr><td>B_invalid_recording_link</td><td style='color:green'>PASS</td></tr><tr><td>C_submit_idempotent</td><td style='color:green'>PASS</td></tr><tr><td>D_cross_account</td><td style='color:green'>PASS</td></tr><tr><td>E_error_stats</td><td style='color:green'>PASS</td></tr>
+</table>
+</div>
+</body>
+</html>

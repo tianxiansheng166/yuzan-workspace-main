@@ -1,0 +1,26 @@
+{
+  "taskId": "P0-STUDENT-COURSE-SUBMIT-001",
+  "script": "screenshot_generator",
+  "timestamp": "2026-07-24T11:18:49Z",
+  "screenshots": [
+    {
+      "viewport": "1440",
+      "width": 1440,
+      "height": 900,
+      "path": "screenshot_1440.png"
+    },
+    {
+      "viewport": "1024",
+      "width": 1024,
+      "height": 768,
+      "path": "screenshot_1024.png"
+    },
+    {
+      "viewport": "390",
+      "width": 390,
+      "height": 844,
+      "path": "screenshot_390.png"
+    }
+  ],
+  "errors": []
+}

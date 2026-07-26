@@ -228,6 +228,48 @@ export class StudentCoursesService {
 
   async saveActivityAttempt(auth: AuthContext, schoolId: string, assignmentId: string, submissionId: string, activityId: string, body: SaveActivityAttemptDto) {
     const context = await this.activityContext(auth, schoolId, assignmentId, submissionId, activityId);
+
+    // 1. kind must match activity.type
+    if (body.kind !== context.activity.type) throw new UnprocessableEntityException("活动类型不匹配");
+
+    // 2. SPEECH cannot be completed via generic save
+    if (context.activity.type === "SPEECH" && body.completed === true) throw new UnprocessableEntityException("口语活动只能通过录音关联完成");
+
+    // 3. PRACTICE cannot be completed via generic save
+    if (context.activity.coursePractice && body.completed === true) throw new UnprocessableEntityException("课程练习只能通过练习完成接口完成");
+
+    // 4. Reject saves on submitted submissions
+    const submittedStatuses = ["SUBMITTED", "PROCESSING", "REVIEWED", "ACCEPTED"];
+    if (submittedStatuses.includes(context.submission.status)) throw new ConflictException("课程已提交，不能修改活动进度");
+
+    // 5. TEXT must be explicitly acknowledged to be marked completed
+    if (context.activity.type === "TEXT" && body.completed === true) {
+      const val = body.value;
+      if (!val || val.acknowledged !== true) throw new UnprocessableEntityException("文本活动需要确认后才能标记完成");
+    }
+
+    // 6. FILL_BLANK must have non-empty answer
+    if (context.activity.type === "FILL_BLANK" && body.completed === true) {
+      const val = body.value;
+      if (!val) throw new UnprocessableEntityException("填空活动需要提供答案");
+      const answers = val.answers;
+      if (!Array.isArray(answers) || answers.length === 0 || !answers.some((a: unknown) => typeof a === "string" && a.trim().length > 0)) throw new UnprocessableEntityException("填空活动答案不能为空");
+    }
+
+    // 7. CHOICE must have valid answer index
+    if (context.activity.type === "CHOICE" && body.completed === true) {
+      const val = body.value;
+      if (!val) throw new UnprocessableEntityException("选择活动需要提供答案");
+      const index = val.answerIndex ?? val.selectedIndex;
+      if (typeof index !== "number" || index < 0) throw new UnprocessableEntityException("选择活动答案索引无效");
+    }
+
+    // 8. Revision=0 but progress already exists
+    if (body.expectedProgressRevision === 0) {
+      const existing = await this.prisma.activityProgress.findUnique({ where: { activityId_enrollmentId: { activityId, enrollmentId: context.enrollment.id } } });
+      if (existing) throw new ConflictException("学习进度已存在，请刷新后重试");
+    }
+
     const result = await this.prisma.$transaction(async (tx) => {
       const attempt = await tx.activityAttempt.upsert({
         where: { submissionId_activityId: { submissionId, activityId } },
@@ -516,10 +558,10 @@ export class StudentCoursesService {
   private async activityContext(auth: AuthContext, schoolId: string, assignmentId: string, submissionId: string, activityId: string) {
     const enrollment = await this.studentEnrollment(auth, schoolId);
     const assignment = await this.visibleAssignment(schoolId, assignmentId, enrollment);
-    await this.ownedSubmission(schoolId, assignmentId, submissionId, enrollment.id);
+    const submission = await this.ownedSubmission(schoolId, assignmentId, submissionId, enrollment.id);
     const activity = assignment.courseVersion.units.flatMap((unit) => unit.lessons.flatMap((lesson) => lesson.activities)).find((candidate) => candidate.id === activityId);
     if (!activity) throw new NotFoundException("活动不属于当前课程");
-    return { enrollment, assignment, activity };
+    return { enrollment, assignment, activity, submission };
   }
 
   private async ownedSubmission(schoolId: string, assignmentId: string, submissionId: string, enrollmentId: string) {

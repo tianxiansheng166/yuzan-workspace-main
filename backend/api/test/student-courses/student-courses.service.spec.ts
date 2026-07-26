@@ -1,4 +1,4 @@
-import { ForbiddenException, NotFoundException } from "@nestjs/common";
+import { ConflictException, ForbiddenException, NotFoundException, UnprocessableEntityException } from "@nestjs/common";
 import { describe, expect, it, vi } from "vitest";
 import { MembershipRole } from "../../src/common/security/membership-role.js";
 import { MembershipStatus, type AuthContext } from "../../src/common/security/auth.types.js";
@@ -240,5 +240,157 @@ describe("StudentCoursesService security and completion", () => {
       "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
       "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
     )).rejects.toBeInstanceOf(NotFoundException);
+  });
+});
+
+describe("saveActivityAttempt validation rules", () => {
+  const assignmentId = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
+  const activityId = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb";
+  const submissionId = "cccccccc-cccc-4ccc-8ccc-cccccccccccc";
+
+  function makePrismaMock(overrides: { activityType?: string; submissionStatus?: string; coursePractice?: any } = {}) {
+    const activity: any = { id: activityId, type: overrides.activityType ?? "TEXT" };
+    if (overrides.coursePractice) activity.coursePractice = overrides.coursePractice;
+    return {
+      enrollment: { findFirst: vi.fn().mockResolvedValue({ id: enrollmentId, classId: "17171717-1717-4717-8717-171717171717" }) },
+      assignment: {
+        findFirstOrThrow: vi.fn().mockResolvedValue({
+          id: assignmentId,
+          schoolId,
+          courseVersionId: "12121212-1212-4212-8212-121212121212",
+          courseVersion: { id: "12121212-1212-4212-8212-121212121212", units: [{ lessons: [{ activities: [activity] }] }] },
+        }),
+      },
+      submission: { findFirst: vi.fn().mockResolvedValue({ id: submissionId, enrollmentId, status: overrides.submissionStatus ?? "IN_PROGRESS" }) },
+      activityProgress: { findUnique: vi.fn().mockResolvedValue(null) },
+    };
+  }
+
+  function invoke(prisma: any, body: any) {
+    const service = new StudentCoursesService(prisma as any);
+    return service.saveActivityAttempt(auth(), schoolId, assignmentId, submissionId, activityId, body);
+  }
+
+  it("rejects when body.kind does not match activity.type", async () => {
+    const prisma = makePrismaMock({ activityType: "TEXT" });
+    await expect(invoke(prisma, { kind: "CHOICE", completed: false })).rejects.toMatchObject({
+      message: "活动类型不匹配",
+    });
+    await expect(invoke(prisma, { kind: "CHOICE", completed: false })).rejects.toBeInstanceOf(UnprocessableEntityException);
+  });
+
+  it("rejects completing a SPEECH activity via generic save", async () => {
+    const prisma = makePrismaMock({ activityType: "SPEECH" });
+    await expect(invoke(prisma, { kind: "SPEECH", completed: true })).rejects.toMatchObject({
+      message: "口语活动只能通过录音关联完成",
+    });
+    await expect(invoke(prisma, { kind: "SPEECH", completed: true })).rejects.toBeInstanceOf(UnprocessableEntityException);
+  });
+
+  it("rejects completing a PRACTICE activity via generic save", async () => {
+    const prisma = makePrismaMock({ activityType: "PRACTICE", coursePractice: { practiceDefinitionId: "def-id", required: true } });
+    await expect(invoke(prisma, { kind: "PRACTICE", completed: true })).rejects.toMatchObject({
+      message: "课程练习只能通过练习完成接口完成",
+    });
+    await expect(invoke(prisma, { kind: "PRACTICE", completed: true })).rejects.toBeInstanceOf(UnprocessableEntityException);
+  });
+
+  it("rejects completing an activity with coursePractice via generic save", async () => {
+    const prisma = makePrismaMock({ activityType: "TEXT", coursePractice: { practiceDefinitionId: "def-id", required: true } });
+    await expect(invoke(prisma, { kind: "TEXT", completed: true, value: { acknowledged: true } })).rejects.toMatchObject({
+      message: "课程练习只能通过练习完成接口完成",
+    });
+    await expect(invoke(prisma, { kind: "TEXT", completed: true, value: { acknowledged: true } })).rejects.toBeInstanceOf(UnprocessableEntityException);
+  });
+
+  it("rejects saving when submission status is already SUBMITTED", async () => {
+    const prisma = makePrismaMock({ submissionStatus: "SUBMITTED" });
+    await expect(invoke(prisma, { kind: "TEXT", completed: false })).rejects.toMatchObject({
+      message: "课程已提交，不能修改活动进度",
+    });
+    await expect(invoke(prisma, { kind: "TEXT", completed: false })).rejects.toBeInstanceOf(ConflictException);
+  });
+
+  it("rejects saving when submission status is PROCESSING", async () => {
+    const prisma = makePrismaMock({ submissionStatus: "PROCESSING" });
+    await expect(invoke(prisma, { kind: "TEXT", completed: false })).rejects.toBeInstanceOf(ConflictException);
+  });
+
+  it("rejects saving when submission status is REVIEWED", async () => {
+    const prisma = makePrismaMock({ submissionStatus: "REVIEWED" });
+    await expect(invoke(prisma, { kind: "TEXT", completed: false })).rejects.toBeInstanceOf(ConflictException);
+  });
+
+  it("rejects saving when submission status is ACCEPTED", async () => {
+    const prisma = makePrismaMock({ submissionStatus: "ACCEPTED" });
+    await expect(invoke(prisma, { kind: "TEXT", completed: false })).rejects.toBeInstanceOf(ConflictException);
+  });
+
+  it("rejects completing TEXT activity without acknowledgement", async () => {
+    const prisma = makePrismaMock({ activityType: "TEXT" });
+    await expect(invoke(prisma, { kind: "TEXT", completed: true })).rejects.toMatchObject({
+      message: "文本活动需要确认后才能标记完成",
+    });
+    await expect(invoke(prisma, { kind: "TEXT", completed: true })).rejects.toBeInstanceOf(UnprocessableEntityException);
+  });
+
+  it("rejects completing TEXT activity when acknowledged is not true", async () => {
+    const prisma = makePrismaMock({ activityType: "TEXT" });
+    await expect(invoke(prisma, { kind: "TEXT", completed: true, value: { acknowledged: false } })).rejects.toMatchObject({
+      message: "文本活动需要确认后才能标记完成",
+    });
+  });
+
+  it("rejects completing FILL_BLANK activity without value", async () => {
+    const prisma = makePrismaMock({ activityType: "FILL_BLANK" });
+    await expect(invoke(prisma, { kind: "FILL_BLANK", completed: true })).rejects.toMatchObject({
+      message: "填空活动需要提供答案",
+    });
+    await expect(invoke(prisma, { kind: "FILL_BLANK", completed: true })).rejects.toBeInstanceOf(UnprocessableEntityException);
+  });
+
+  it("rejects completing FILL_BLANK activity with empty answers array", async () => {
+    const prisma = makePrismaMock({ activityType: "FILL_BLANK" });
+    await expect(invoke(prisma, { kind: "FILL_BLANK", completed: true, value: { answers: [] } })).rejects.toMatchObject({
+      message: "填空活动答案不能为空",
+    });
+  });
+
+  it("rejects completing FILL_BLANK activity with non-array answers", async () => {
+    const prisma = makePrismaMock({ activityType: "FILL_BLANK" });
+    await expect(invoke(prisma, { kind: "FILL_BLANK", completed: true, value: { answers: "not-array" } })).rejects.toMatchObject({
+      message: "填空活动答案不能为空",
+    });
+  });
+
+  it("rejects completing CHOICE activity without value", async () => {
+    const prisma = makePrismaMock({ activityType: "CHOICE" });
+    await expect(invoke(prisma, { kind: "CHOICE", completed: true })).rejects.toMatchObject({
+      message: "选择活动需要提供答案",
+    });
+    await expect(invoke(prisma, { kind: "CHOICE", completed: true })).rejects.toBeInstanceOf(UnprocessableEntityException);
+  });
+
+  it("rejects completing CHOICE activity with null answerIndex and null selectedIndex", async () => {
+    const prisma = makePrismaMock({ activityType: "CHOICE" });
+    await expect(invoke(prisma, { kind: "CHOICE", completed: true, value: { answerIndex: null, selectedIndex: null } })).rejects.toMatchObject({
+      message: "选择活动答案索引无效",
+    });
+  });
+
+  it("rejects completing CHOICE activity with negative answerIndex", async () => {
+    const prisma = makePrismaMock({ activityType: "CHOICE" });
+    await expect(invoke(prisma, { kind: "CHOICE", completed: true, value: { answerIndex: -1 } })).rejects.toMatchObject({
+      message: "选择活动答案索引无效",
+    });
+  });
+
+  it("rejects when expectedProgressRevision is 0 but progress already exists", async () => {
+    const prisma = makePrismaMock({ activityType: "TEXT" });
+    prisma.activityProgress.findUnique = vi.fn().mockResolvedValue({ id: "progress-id", activityId, enrollmentId, revision: 1 });
+    await expect(invoke(prisma, { kind: "TEXT", completed: false, expectedProgressRevision: 0 })).rejects.toMatchObject({
+      message: "学习进度已存在，请刷新后重试",
+    });
+    await expect(invoke(prisma, { kind: "TEXT", completed: false, expectedProgressRevision: 0 })).rejects.toBeInstanceOf(ConflictException);
   });
 });

@@ -109,7 +109,7 @@ export class PrismaService
 
   async onModuleInit(): Promise<void> {
     try {
-      await this.$queryRaw`SELECT 1`;
+      await this.pool.query("SELECT 1");
       this.logger.log("Database connectivity verified");
     } catch (err) {
       const safe = sanitizeDriverError(err);
@@ -135,12 +135,6 @@ export class PrismaService
     this._destroyed = true;
 
     this.logger.log("Shutting down database runtime");
-
-    try {
-      await this.$disconnect();
-    } catch (err) {
-      this.logger.warn(`Prisma disconnect error: ${(err as Error).message}`);
-    }
 
     try {
       await this.pool.end();
