@@ -1,6 +1,6 @@
 # P0 多路线跟踪看板
 
-> 更新时间：2026-07-26 18:00 +08:00
+> 更新时间：2026-07-26 18:15 +08:00
 > 机器任务图：`project-ops/multitrack-tasks.json`
 > 已接受基线：`project-ops/accepted-baselines.json`
 > 权威来源：`origin/integration/p0-multitrack-001` 的同一远端 commit
@@ -21,8 +21,9 @@
 | 路线 | 任务 | Dispatch | Execution | Evidence | Integration | 下一门禁 |
 |---|---|---|---|---|---|---|
 | 治理 | `P0-MULTITRACK-CLOSURE-PLAN-001` | `CLOSED` | `COMPLETED` | `VERIFIED` | `INTEGRATED` | 控制面已在 integration 基线；等待本次硬化 |
-| 学生课程 | `P0-STUDENT-COURSE-PRACTICE-001` | `N/A` | `COMPLETED` | `VERIFIED` | `INTEGRATED` | 已验证真实录音/书面答案/课程回写；等待 main 提升 |
-| 学生课程 | `P0-STUDENT-COURSE-SUBMIT-001` | `READY_TO_RESUME` | `READY_FOR_REVIEW` | `CHECKPOINT_VERIFIED` | `INTEGRATED_CHECKPOINT` | 已重跑 8 前端 + 26 API + contract；待跨任务硬化与主目录浏览器验收 |
+| 学生课程 | `P0-STUDENT-COURSE-PRACTICE-001` | `READY_TO_RESUME` | `COMPLETED` | `RUNTIME_REVERIFY_REQUIRED` | `INTEGRATED` | MinIO URL compatibility 已修复；需新浏览器真实录音上传、回读和课程回写复验 |
+| 学生课程 | `P0-STUDENT-COURSE-SUBMIT-001` | `READY_TO_RESUME` | `READY_FOR_REVIEW` | `RUNTIME_REVERIFY_REQUIRED` | `INTEGRATED_CHECKPOINT` | 代码/定向测试已通过；需动态教师任务→学生提交→教师查看的主目录浏览器证据 |
+| 跨角色任务 | `P0-TEACHER-STUDENT-ASSIGNMENT-CLOSURE-001` | `READY_TO_DISPATCH` | `NOT_CREATED` | `NOT_STARTED` | `NOT_INTEGRATED` | 动态教师创建→学生新会话收到→完成→教师动态 submission/review；移除 `submission-1` 固定路由 |
 | 共享契约 | `P0-AI-TOOL-CONTRACTS-001` | `CLOSED` | `COMPLETED` | `VERIFIED` | `INTEGRATED` | 已合入 integration/p0-multitrack-001 (e1505b3)；OPENAPI 锁已释放 |
 | 学生练习 | `P0-STUDENT-INDEPENDENT-PRACTICE-001` | `CLOSED` | `COMPLETED` | `VERIFIED` | `INTEGRATED` | 已合入 integration/p0-multitrack-001 (bd3c40f)；ASSESSMENT_CORE 锁已释放 |
 | 教师教案 | `P0-TEACHER-AI-LESSON-PLAN-001` | `READY_TO_RESUME` | `READY_FOR_REVIEW` | `PARTIAL` | `INTEGRATED_CHECKPOINT` | API 23/23、worker 25/25、类型检查通过；Flowise 未配置时必须显式不可用，待真实 provider + 浏览器闭环 |
