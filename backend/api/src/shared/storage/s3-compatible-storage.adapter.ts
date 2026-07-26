@@ -31,6 +31,11 @@ export class S3CompatibleStorageAdapter implements StoragePort {
       region,
       credentials: { accessKeyId, secretAccessKey },
       forcePathStyle,
+      // MinIO's S3-compatible PutObject path does not implement the optional
+      // flexible-checksum query parameters emitted by newer AWS SDK defaults.
+      // Only calculate checksums where S3 requires them, so browser PUT URLs
+      // remain compatible and errors are not masked as CORS failures.
+      requestChecksumCalculation: "WHEN_REQUIRED",
     });
 
     this.logger.log(
