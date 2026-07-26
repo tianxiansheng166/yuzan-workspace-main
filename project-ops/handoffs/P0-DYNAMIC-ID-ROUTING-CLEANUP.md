@@ -1,6 +1,6 @@
 # P0-DYNAMIC-ID-ROUTING-CLEANUP Handoff
 
-- Owner: `codex-account-c-dynamic-builder`（attempt 3 IMPLEMENT）
+- Owner: `codex-account-c-dynamic-builder`（attempt 4，review round 1）
 - Reviewer: independent verifier
 - Branch: `task/p0-dynamic-id-routing-cleanup`
 - Base commit: `41a0ff3656af7888d4c2e46eb180eeffc3414115`
@@ -33,16 +33,22 @@
 
 ## 实际验证
 
+2026-07-27 00:47 +08:00 在候选提交 `7f2e758c274ce3aebab4fd99cd7a826f65d6fc61`
+上完成续租复核。先使用 Node 24.18.0 和现有离线 pnpm store 重建 worktree 中被旧绝对路径
+破坏的 ignored `node_modules` 链接；未下载依赖、未修改 lockfile 或任务源码。随后重新运行
+全部最小测试，结果如下。
+
 | 检查                                   | 命令                                                                                                                                                                     | 结果                                                                                                                                                                                      |
 | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 固定业务 ID 源码证伪                   | `rg -n --glob '!**/node_modules/**' --glob '!**/assets/**' "submission-1\|course-1\|assignment-1" frontend/server.mjs frontend/shared/teacher-shell.js frontend/teacher` | `PASS`：退出码 1，零匹配                                                                                                                                                                  |
-| 语法与差异检查                         | 对本任务 JS 逐个 `node --check`；`python -m py_compile frontend/teacher/reviews/verify-routing.py`；`git diff --check`                                                   | `PASS`                                                                                                                                                                                    |
+| 固定业务 ID 源码证伪                   | `rg -n --glob '!**/node_modules/**' --glob '!**/assets/**' "submission-1\|course-1\|assignment-1" frontend/server.mjs frontend/shared/teacher-shell.js frontend/teacher` | `PASS`：attempt 4 退出码 1，零匹配                                                                                                                                                        |
+| 语法与差异检查                         | 对本任务 8 个变更 JS 逐个 `node --check`；`python -m py_compile frontend/teacher/reviews/verify-routing.py`；`git diff --check 41a0ff3..HEAD`                            | `PASS`：attempt 4 全部通过                                                                                                                                                                |
 | attempt 1 真实浏览器负向导航           | `with_server.py --server "node frontend/server.mjs" --port 4176 -- python frontend/teacher/reviews/verify-routing.py`                                                    | `PASS`：这是被正式 L5 拒绝前的历史局部证据，不再用于声称动态详情服务端权限通过                                                                                                            |
 | attempt 2 证据门控与 Return UI 回归    | `PORT=4176 API_BASE_URL=http://127.0.0.1:4000 node frontend/server.mjs` + `python frontend/teacher/reviews/verify-routing.py`                                            | `PASS`：未知角色不发 submission GET；无证据时四个控件全禁用；有书面证据时发送 `RETURN` 与具体反馈，重新 GET 后显示 `RETURNED`。聚焦 route fixture 只证明前端契约，不证明服务器授权/持久化 |
 | attempt 2 静态检查                     | `node --check frontend/teacher/submissions/detail/app.js`; `python -m py_compile frontend/teacher/reviews/verify-routing.py`; `git diff --check`                         | `PASS`                                                                                                                                                                                    |
-| submission 授权、真实证据与 fresh-read | `pnpm --filter @yuzan/api exec vitest run --config test/modules/submissions/vitest.config.ts`                                                                            | `PASS`：3 files，61 tests；含其他学生/跨班教师 403、同班教师正向、真实答案/录音与 RETURNED/revision/feedback fresh-read                                                                   |
-| feedback 授权与 RETURN 持久化并发      | `pnpm --filter @yuzan/api exec vitest run --config test/modules/feedback/vitest.config.ts`                                                                               | `PASS`：2 files，22 tests；含 STUDENT/跨班教师拒绝、RETURNED、revision 1→2 且 update 一次                                                                                                 |
-| OpenAPI 与生成契约                     | `pnpm --filter @yuzan/contracts test`                                                                                                                                    | `PASS`：OpenAPI valid；generator 6/6                                                                                                                                                      |
+| attempt 4 浏览器路由复核               | `with_server.py --server "node frontend/server.mjs" --port 4176 -- python frontend/teacher/reviews/verify-routing.py`                                                    | `PASS`：4/4 checks；未知角色不发 submission GET；无证据动作禁用；`RETURN` 后 fresh GET 显示 `RETURNED`；`page_errors=0`                                                                   |
+| submission 授权、真实证据与 fresh-read | `pnpm --filter @yuzan/api exec vitest run --config test/modules/submissions/vitest.config.ts`                                                                            | `PASS`：attempt 4，3 files、61 tests；含其他学生/跨班教师 403、同班教师正向、真实答案/录音与 RETURNED/revision/feedback fresh-read                                                        |
+| feedback 授权与 RETURN 持久化并发      | `pnpm --filter @yuzan/api exec vitest run --config test/modules/feedback/vitest.config.ts`                                                                               | `PASS`：attempt 4，2 files、22 tests；含 STUDENT/跨班教师拒绝、RETURNED、revision 1→2 且 update 一次                                                                                      |
+| OpenAPI 与生成契约                     | `pnpm --filter @yuzan/contracts test`                                                                                                                                    | `PASS`：attempt 4，OpenAPI valid；generator 6/6                                                                                                                                           |
 
 浏览器运行证据位于 ignored runtime 目录：
 
