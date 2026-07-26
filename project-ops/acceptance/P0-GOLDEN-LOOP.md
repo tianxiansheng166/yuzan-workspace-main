@@ -77,4 +77,3 @@ COMPLETE_CANDIDATE
 ```
 
 只有 `INTEGRATED_VERIFIED` 能满足 Goal acceptance item。
-

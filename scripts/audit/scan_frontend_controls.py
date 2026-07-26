@@ -248,7 +248,7 @@ def write_markdown(report: dict[str, Any], output: Path) -> None:
             f"{len(page['page_api_references'])} | {', '.join(page['risk_flags']) or '-'} |"
         )
     output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    output.write_bytes(("\n".join(lines) + "\n").encode("utf-8"))
 
 
 def main() -> None:
@@ -260,7 +260,7 @@ def main() -> None:
 
     report = scan(args.repo.resolve())
     args.json.parent.mkdir(parents=True, exist_ok=True)
-    args.json.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.json.write_bytes((json.dumps(report, ensure_ascii=False, indent=2) + "\n").encode("utf-8"))
     if args.markdown:
         write_markdown(report, args.markdown)
     print(json.dumps(report["totals"], ensure_ascii=False))
@@ -268,4 +268,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

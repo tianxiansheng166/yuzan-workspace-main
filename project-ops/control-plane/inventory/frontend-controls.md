@@ -1,6 +1,6 @@
 # 前端控件静态盘点
 
-- Source commit: `a62ee166363f1bcaff1be81d017d5d46d36f7583`
+- Source commit: `9cea44d226ae363d96c7e0269675671828eecbce`
 - Pages: 79
 - Controls: 1882
 - Unresolved controls: 962

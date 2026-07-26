@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-26T13:19:44.815307+00:00",
-  "source_commit": "a62ee166363f1bcaff1be81d017d5d46d36f7583",
+  "generated_at": "2026-07-26T13:33:26.857693+00:00",
+  "source_commit": "9cea44d226ae363d96c7e0269675671828eecbce",
   "frontend_root": "frontend",
   "totals": {
     "pages": 79,

@@ -13,4 +13,3 @@
 9. 对 `GOAL_COMPLETE`：核对全部验收证据哈希和当前 commit 后停止 heartbeat。
 
 不要每分钟重写稳定 Goal 或任务提示词。没有状态变化时只记录 `NOOP`。API、构建或截图不能替代真实页面用户旅程。
-

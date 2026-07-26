@@ -68,4 +68,3 @@ FeatureChain 必须生成后端/契约子任务并保持整体未完成。Contro
 - Controller 以 `domain_action + object + state_transition` 计算幂等键，重复 FeatureChain 合并；
 - 前端要用的数据必须能指出来源对象和权限范围；没有消费者的数据字段不为“以后可能用”加入 P0；
 - 卡片展示值、列表数量和进度都必须有数据口径，未接数据时显示明确 unavailable/empty，不写固定数。
-
