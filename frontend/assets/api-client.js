@@ -4,6 +4,8 @@
   const TOKEN_KEY = 'yuzan-access-token';
   const USER_KEY = 'yuzan-current-user';
   const SCHOOL_KEY = 'yuzan-active-school-id';
+  const PROTECTED_ROLE_PATH = /^\/(?:teacher(?:\/|$)|teacher-home(?:\/|$)|student(?:\/|$)|admin(?:\/|$)|volunteer(?:\/|$)|research(?:\/|$)|assessment(?:\/|$)|select-school(?:\/|$))/;
+  let protectedEntryValidationPromise = null;
 
   function getToken() {
     return localStorage.getItem(TOKEN_KEY) || '';
@@ -56,18 +58,28 @@
   }
 
   async function request(path, options = {}) {
+    const { skipSessionValidation = false, ...fetchOptions } = options;
+    if (!skipSessionValidation && protectedEntryValidationPromise) {
+      const valid = await protectedEntryValidationPromise;
+      if (!valid) {
+        const error = new Error('登录已过期，请重新登录');
+        error.status = 401;
+        error.code = 'UNAUTHORIZED';
+        throw error;
+      }
+    }
     const url = path.startsWith('http') ? path : normalizeApiPath(path);
     const headers = {
       Accept: 'application/json',
       'Content-Type': 'application/json',
-      ...options.headers,
+      ...fetchOptions.headers,
     };
     const token = getToken();
     if (token) headers.Authorization = `Bearer ${token}`;
 
     const response = await fetch(url, {
       credentials: 'include',
-      ...options,
+      ...fetchOptions,
       headers,
     });
 
@@ -92,7 +104,7 @@
     }
 
     if (response.status === 204) return null;
-    if (options.responseType === 'text') return response.text();
+    if (fetchOptions.responseType === 'text') return response.text();
     const payload = await response.json();
     return payload && payload.data !== undefined ? payload.data : payload;
   }
@@ -157,8 +169,8 @@
     return '/select-school';
   }
 
-  async function me() {
-    const result = await request('/me', { method: 'GET' });
+  async function me(options = {}) {
+    const result = await request('/me', { method: 'GET', ...options });
     const data = result.data || result;
     if (data.user) setStoredUser(data.user);
     setActiveSchoolId(data.activeSchoolId || '');
@@ -208,12 +220,52 @@
     localStorage.removeItem('yuzan-demo-session');
   }
 
+  function navigateToLogin(fallback = '/login') {
+    if (typeof location.replace === 'function') location.replace(fallback);
+    else location.href = fallback;
+  }
+
+  function concealProtectedPage() {
+    if (typeof document !== 'undefined' && document.documentElement) {
+      document.documentElement.style.visibility = 'hidden';
+    }
+  }
+
+  function revealProtectedPage() {
+    if (typeof document !== 'undefined' && document.documentElement) {
+      document.documentElement.style.visibility = '';
+    }
+  }
+
+  async function validateProtectedEntry(fallback = '/login') {
+    if (!getToken() || !getStoredUser()) {
+      clearSession();
+      navigateToLogin(fallback);
+      return false;
+    }
+    try {
+      await me({ skipSessionValidation: true });
+      revealProtectedPage();
+      return true;
+    } catch (error) {
+      if (error?.status === 401 || error?.code === 'UNAUTHORIZED') clearSession();
+      navigateToLogin(fallback);
+      return false;
+    }
+  }
+
   function requireAuth(fallback = '/login') {
     if (!getToken()) {
-      location.href = fallback;
+      clearSession();
+      navigateToLogin(fallback);
       return false;
     }
     return true;
+  }
+
+  if (PROTECTED_ROLE_PATH.test(location.pathname || '')) {
+    concealProtectedPage();
+    protectedEntryValidationPromise = validateProtectedEntry();
   }
 
   /* ── Teacher Dashboard ── */
@@ -1161,6 +1213,7 @@
     getActiveSchoolId,
     setActiveSchoolId,
     requireAuth,
+    whenSessionReady: () => protectedEntryValidationPromise || Promise.resolve(true),
     /* Teacher */
     getDashboard,
     getAdminDashboard,

@@ -55,6 +55,7 @@ function Invoke-BrowserCase {
 }
 
 Invoke-BrowserCase -Mode 'api-unavailable' -ApiBaseUrl "http://127.0.0.1:$UnavailableApiPort"
+Invoke-BrowserCase -Mode 'revoked-session' -ApiBaseUrl "http://127.0.0.1:$UnavailableApiPort"
 
 $realApi = Get-NetTCPConnection -LocalPort $RealApiPort -State Listen -ErrorAction SilentlyContinue
 if (-not $realApi) { throw "real API is not listening on port $RealApiPort" }

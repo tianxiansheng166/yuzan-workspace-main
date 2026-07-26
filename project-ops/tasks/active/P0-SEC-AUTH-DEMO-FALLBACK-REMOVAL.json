@@ -70,22 +70,28 @@
       "name": "登录假成功静态回归",
       "command": "node frontend/login/truthful-login.test.mjs",
       "result": "PASS",
-      "summary": "源文件不再写入 demo-token 或离线假会话；共享客户端对缺少 token/user 的 200 响应和网络异常均拒绝并清空旧认证状态。"
+      "summary": "源文件不再写入 demo-token 或离线假会话；共享客户端直接覆盖畸形登录、网络异常、受保护 teacher 入口的撤销 401、fresh context 和有效 /me，会话撤销后 token/user/school 全部清空并跳转 /login。"
     },
     {
       "name": "API 不可用与错误凭据的真实页面、新上下文负向预检",
       "command": "pwsh -NoProfile -File frontend/login/run-truthful-login-preflight.ps1",
       "result": "PASS",
-      "summary": "390x844 Chromium 从真实登录按钮分别发出 POST /api/v1/auth/login；API 断开返回 502、canonical API 错误凭据返回 401，页面均留在 /login 并显示明确错误；两个 fresh context 均无 token/user/school/demo session，page error 与非预期 console error 均为 0。",
-      "limitation": "这是 Builder 预检而非独立 VERIFIED；浏览器控制台记录了两次预期的 502/401 failed-resource 消息。"
+      "summary": "390x844 Chromium 覆盖 API 断开 502、canonical API 错误凭据 401，以及 /teacher 入口向 /api/v1/me 发出请求并收到撤销夹具 401；撤销与 fresh context 均进入 /login 且 token/user/school/demo 全为空，page error 为 0。",
+      "limitation": "这是 Builder 预检而非独立 VERIFIED；撤销场景由浏览器网络层返回 401，Verifier 仍需执行真实登录后 out-of-band logout 的完整旅程。"
     },
     {
       "name": "登录页面与认证 API 构建检查",
-      "command": "fnm use 24; pnpm --filter @yuzan/api build",
+      "command": "fnm env --shell powershell | Out-String | Invoke-Expression; fnm use 24; pnpm --filter @yuzan/api build",
       "result": "PASS",
-      "summary": "Node 24.18.0、pnpm 10.13.1 下 Nest build 返回 0。首次尝试因新 worktree 未挂载 package node_modules 失败，连接 canonical 已安装依赖后原命令通过；未安装或修改依赖。"
+      "summary": "Node 24.18.0、pnpm 10.13.1 下 Nest build 返回 0；未安装或修改依赖。"
     }
   ],
+  "rework": {
+    "attempt": 2,
+    "rejected_candidate": "048c71858b98cb0e4b9146ddaf5c1bb12ce04ee5",
+    "failure_class": "REVOKED_SESSION_CLIENT_FAIL_OPEN",
+    "repair": "所有受保护角色页入口先调用 /api/v1/me；401/UNAUTHORIZED 清除 token、user、active-school 并跳转 /login，fresh context 不创建 demo 状态。"
+  },
   "ready_for_review_at": "2026-07-26T21:57:11+08:00",
   "handoff": "project-ops/handoffs/P0-SEC-AUTH-DEMO-FALLBACK-REMOVAL.md",
   "rollback": "回退本任务提交；不得恢复 demo-token、离线登录或异常时的假成功跳转。",
