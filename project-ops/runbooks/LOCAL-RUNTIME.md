@@ -32,6 +32,10 @@ Set-Location D:\program\test_program\yuzanxinsheng\three\yuzan-next
 Prisma Client 并启动前端/API/worker。`Ctrl+C` 只停止本次前台开发进程，不停止共享
 Docker 容器。
 
+MinIO 的 `MINIO_API_CORS_ALLOW_ORIGIN` 必须包含 `http://127.0.0.1:4175`；浏览器录音
+直传需要该来源。修改它后执行 `docker compose up -d --force-recreate minio`，仅重建容器，
+不会删除既有 MinIO 数据卷。
+
 ## 启动顺序（脚本内部执行）
 
 1. 使用 Node 24 和 pnpm 10。
