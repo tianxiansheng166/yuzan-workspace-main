@@ -1,0 +1,97 @@
+{
+  "id": "P0-SEC-AUTH-DEMO-FALLBACK-REMOVAL",
+  "status": "READY_FOR_REVIEW",
+  "title": "移除登录 demo 与离线假成功并让认证失败闭合",
+  "owner": "codex-auth-builder",
+  "reviewer": "independent verifier",
+  "branch": "task/p0-sec-auth-demo-fallback-removal",
+  "base_commit": "41a0ff3656af7888d4c2e46eb180eeffc3414115",
+  "user_outcome": "教师或学生只有在服务端签发有效会话后才能进入角色首页；服务不可用或凭据错误时留在登录页并看到明确失败。",
+  "current_facts": [
+    "frontend/login/index.html 实际加载 frontend/login/app.js 与 frontend/assets/api-client.js",
+    "frontend/login/app.js 在 API 客户端缺失、浏览器离线和登录请求异常时可写入 demo-token 或离线会话并跳转",
+    "frontend/assets/api-client.js 未拒绝缺少 accessToken 或 user 的登录成功响应",
+    "真实登录 API 为 POST /api/v1/auth/login，服务端错误凭据已返回失败且不会创建会话"
+  ],
+  "product_alignment": {
+    "p0": "古诗文朗读与理解训练的可审计黄金闭环",
+    "contribution": "解除教师与学生跨页面黄金链路的虚假身份前置阻塞",
+    "non_goals": [
+      "不新增登录方式、找回密码或生产账号",
+      "不修改 Identity/OpenAPI/Prisma 契约",
+      "不把 Builder 预检写成独立 VERIFIED"
+    ]
+  },
+  "context": {
+    "required": [
+      "project-ops/control-plane/feature-chains/FC-TRUTHFUL-LOGIN.json",
+      "frontend/login/index.html",
+      "frontend/login/app.js",
+      "frontend/assets/api-client.js"
+    ],
+    "optional": [
+      "frontend/login/login.js",
+      "backend/api/src/modules/identity/identity.controller.ts",
+      "backend/api/src/modules/identity/identity.service.ts"
+    ]
+  },
+  "depends_on": [],
+  "integration_order": [
+    "前端认证消费者 fail closed",
+    "真实 API 不可用与错误凭据负向验证",
+    "独立 Verifier 新浏览器上下文复验",
+    "Integration Lead 合入后复验"
+  ],
+  "allowed_paths": [
+    "frontend/login/**",
+    "frontend/assets/api-client.js",
+    "backend/api/src/modules/auth/**",
+    "project-ops/handoffs/P0-SEC-AUTH-DEMO-FALLBACK-REMOVAL.md",
+    "project-ops/tasks/active/P0-SEC-AUTH-DEMO-FALLBACK-REMOVAL.json"
+  ],
+  "shared_owner_changes": [],
+  "contract_change_request": null,
+  "minimal_tests": [
+    {
+      "name": "登录假成功静态回归",
+      "command": "node frontend/login/truthful-login.test.mjs"
+    },
+    {
+      "name": "API 不可用与错误凭据的真实页面、新上下文负向预检",
+      "command": "pwsh -NoProfile -File frontend/login/run-truthful-login-preflight.ps1"
+    },
+    {
+      "name": "登录页面与认证 API 构建检查",
+      "command": "pnpm --filter @yuzan/api build"
+    }
+  ],
+  "test_evidence": [
+    {
+      "name": "登录假成功静态回归",
+      "command": "node frontend/login/truthful-login.test.mjs",
+      "result": "PASS",
+      "summary": "源文件不再写入 demo-token 或离线假会话；共享客户端对缺少 token/user 的 200 响应和网络异常均拒绝并清空旧认证状态。"
+    },
+    {
+      "name": "API 不可用与错误凭据的真实页面、新上下文负向预检",
+      "command": "pwsh -NoProfile -File frontend/login/run-truthful-login-preflight.ps1",
+      "result": "PASS",
+      "summary": "390x844 Chromium 从真实登录按钮分别发出 POST /api/v1/auth/login；API 断开返回 502、canonical API 错误凭据返回 401，页面均留在 /login 并显示明确错误；两个 fresh context 均无 token/user/school/demo session，page error 与非预期 console error 均为 0。",
+      "limitation": "这是 Builder 预检而非独立 VERIFIED；浏览器控制台记录了两次预期的 502/401 failed-resource 消息。"
+    },
+    {
+      "name": "登录页面与认证 API 构建检查",
+      "command": "fnm use 24; pnpm --filter @yuzan/api build",
+      "result": "PASS",
+      "summary": "Node 24.18.0、pnpm 10.13.1 下 Nest build 返回 0。首次尝试因新 worktree 未挂载 package node_modules 失败，连接 canonical 已安装依赖后原命令通过；未安装或修改依赖。"
+    }
+  ],
+  "ready_for_review_at": "2026-07-26T21:57:11+08:00",
+  "handoff": "project-ops/handoffs/P0-SEC-AUTH-DEMO-FALLBACK-REMOVAL.md",
+  "rollback": "回退本任务提交；不得恢复 demo-token、离线登录或异常时的假成功跳转。",
+  "delivery": {
+    "push_task_branch": true,
+    "remote": "origin",
+    "merge_target": "由 Integration Lead 指定"
+  }
+}

@@ -98,25 +98,42 @@
   }
 
   async function login(identifier, password) {
-    const result = await request('/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({ identifier, password }),
-    });
-    const data = result.data || result;
-    if (data.accessToken) setToken(data.accessToken);
-    if (data.user) setStoredUser(data.user);
-    setActiveSchoolId(data.activeSchoolId || '');
-    return data;
+    clearSession();
+    try {
+      const result = await request('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ identifier, password }),
+      });
+      return installAuthenticatedSession(result);
+    } catch (error) {
+      clearSession();
+      throw error;
+    }
   }
 
   async function register(identifier, password, role) {
-    const result = await request('/auth/register', {
-      method: 'POST',
-      body: JSON.stringify({ identifier, password, role }),
-    });
-    const data = result.data || result;
-    if (data.accessToken) setToken(data.accessToken);
-    if (data.user) setStoredUser(data.user);
+    clearSession();
+    try {
+      const result = await request('/auth/register', {
+        method: 'POST',
+        body: JSON.stringify({ identifier, password, role }),
+      });
+      return installAuthenticatedSession(result);
+    } catch (error) {
+      clearSession();
+      throw error;
+    }
+  }
+
+  function installAuthenticatedSession(result) {
+    const data = result?.data || result;
+    if (!data || typeof data.accessToken !== 'string' || !data.accessToken.trim() || !data.user || typeof data.user !== 'object') {
+      const error = new Error('认证服务未返回有效会话');
+      error.code = 'AUTH_SESSION_INVALID';
+      throw error;
+    }
+    setToken(data.accessToken);
+    setStoredUser(data.user);
     setActiveSchoolId(data.activeSchoolId || '');
     return data;
   }
