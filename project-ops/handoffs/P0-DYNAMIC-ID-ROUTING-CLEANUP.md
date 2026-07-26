@@ -61,4 +61,4 @@
 
 - 依赖与合并顺序：可独立合入；后续 `P0-TEACHER-STUDENT-ASSIGNMENT-CLOSURE-001` 应复用本任务动态入口。
 - Integration Lead 需要复验：真实教师新会话下队列展示服务端动态 submission ID；点击进入同 ID 详情；无提交为空；跨学校/无班级权限请求失败；反馈刷新保持。
-- 推送分支/commit：提交后回填。
+- 推送分支/commit：`task/p0-dynamic-id-routing-cleanup`；实现提交 `c4bbb74`，最终候选 tip 以该分支 `git rev-parse HEAD` 为准。
