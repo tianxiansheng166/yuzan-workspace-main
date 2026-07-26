@@ -6,6 +6,8 @@ param(
 $ErrorActionPreference = 'Stop'
 $rootDir = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $envFile = Join-Path $rootDir '.env'
+$speechProcess = $null
+$ownsSpeechProcess = $false
 
 function Import-EnvFile([string]$Path) {
     if (-not (Test-Path -LiteralPath $Path)) {
@@ -60,7 +62,46 @@ try {
     # Prisma source but leaves that package's declaration output stale after schema changes.
     pnpm --filter @yuzan/database build
 
+    $speechHealthUrl = 'http://127.0.0.1:8100/health'
+    $speechListener = Get-NetTCPConnection -State Listen -LocalPort 8100 -ErrorAction SilentlyContinue
+    if ($speechListener) {
+        try {
+            $null = Invoke-WebRequest -Uri $speechHealthUrl -UseBasicParsing -TimeoutSec 5 -ErrorAction Stop
+            Write-Host '[OK] Reusing healthy speech scoring service on 127.0.0.1:8100' -ForegroundColor Green
+        } catch {
+            throw 'Port 8100 is occupied but the speech scoring health check failed.'
+        }
+    } else {
+        $pythonCommand = Get-Command python -ErrorAction Stop
+        $speechDir = Join-Path $rootDir 'backend\speech-scoring'
+        $speechProcess = Start-Process -FilePath $pythonCommand.Source `
+            -ArgumentList @('-m', 'uvicorn', 'app.main:app', '--host', '127.0.0.1', '--port', '8100') `
+            -WorkingDirectory $speechDir -WindowStyle Hidden -PassThru
+        $ownsSpeechProcess = $true
+
+        $speechReady = $false
+        for ($attempt = 1; $attempt -le 40; $attempt++) {
+            if ($speechProcess.HasExited) {
+                throw "Speech scoring exited during startup with code $($speechProcess.ExitCode)."
+            }
+            try {
+                $null = Invoke-WebRequest -Uri $speechHealthUrl -UseBasicParsing -TimeoutSec 2 -ErrorAction Stop
+                $speechReady = $true
+                break
+            } catch {
+                Start-Sleep -Milliseconds 500
+            }
+        }
+        if (-not $speechReady) {
+            throw 'Speech scoring did not become healthy on 127.0.0.1:8100.'
+        }
+        Write-Host '[OK] Speech scoring started on 127.0.0.1:8100' -ForegroundColor Green
+    }
+
     pnpm dev
 } finally {
+    if ($ownsSpeechProcess -and $speechProcess -and -not $speechProcess.HasExited) {
+        Stop-Process -Id $speechProcess.Id -Force -ErrorAction SilentlyContinue
+    }
     Pop-Location
 }

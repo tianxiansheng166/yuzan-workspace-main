@@ -160,40 +160,48 @@ export class SpeechJobService {
   ) {
     const speechProvider = this.config.get<string>("SPEECH_PROVIDER", "disabled");
 
-    // 1. Create the SpeechJob
-    const job = await this.prisma.speechJob.create({
-      data: {
+    // Repeated completion/recovery calls must reuse the active result chain.
+    // Failed jobs are intentionally excluded so an explicit retry can create a
+    // new auditable attempt without overwriting the prior failure.
+    let job = await this.prisma.speechJob.findFirst({
+      where: {
         recordingId,
-        ...(assessmentItemId ? { assessmentItemId } : {}),
+        assessmentItemId: assessmentItemId ?? null,
         schoolId,
-        targetText,
-        status: "CREATED",
-        ...(options?.scorerVersion
-          ? { scorerVersion: options.scorerVersion }
-          : {}),
-        ...(options?.provider ? { provider: options.provider } : {}),
+        status: { not: "FAILED" },
       },
+      orderBy: { createdAt: "desc" },
     });
 
-    this.logger.log(
-      `SpeechJob created for processing: id=${job.id} recordingId=${recordingId} provider=${speechProvider}`,
-    );
-
-    // 2. Update the Recording status to PROCESSING
-    await this.prisma.recording
-      .update({
-        where: { id: recordingId },
-        data: { status: "PROCESSING" },
-      })
-      .catch((err: Error) => {
-        // Recording may not exist or may already be in a terminal state;
-        // log but do not block job creation.
-        this.logger.warn(
-          `Failed to update Recording ${recordingId} status to PROCESSING: ${err.message}`,
-        );
+    if (!job) {
+      job = await this.prisma.speechJob.create({
+        data: {
+          recordingId,
+          ...(assessmentItemId ? { assessmentItemId } : {}),
+          schoolId,
+          targetText,
+          status: "CREATED",
+          ...(options?.scorerVersion
+            ? { scorerVersion: options.scorerVersion }
+            : {}),
+          ...(options?.provider ? { provider: options.provider } : {}),
+        },
       });
 
-    // 3. Dispatch to queue if speech provider is configured
+      this.logger.log(
+        `SpeechJob created for processing: id=${job.id} recordingId=${recordingId} provider=${speechProvider}`,
+      );
+    } else {
+      this.logger.log(
+        `SpeechJob reused for idempotent processing: id=${job.id} recordingId=${recordingId} status=${job.status}`,
+      );
+    }
+
+    const isTerminal = ["AUTO_RESULT", "NEEDS_REVIEW", "FINALIZED"].includes(job.status);
+    if (isTerminal) return toSpeechJobResponse(job);
+
+    // Dispatch (or safely re-dispatch CREATED recovery) with a deterministic
+    // BullMQ id. BullMQ de-duplicates the same persisted SpeechJob.
     if (speechProvider !== "disabled" && this.speechQueue) {
       // Get the recording's objectKey for the worker to download
       const recording = await this.prisma.recording.findUnique({
@@ -213,6 +221,7 @@ export class SpeechJobService {
           objectKey: recording?.objectKey ?? "",
         },
         {
+          jobId: `speech-${job.id}`,
           attempts: 3,
           backoff: { type: "exponential", delay: 5000 },
           removeOnComplete: 100,
@@ -220,8 +229,13 @@ export class SpeechJobService {
         },
       );
 
-      await this.prisma.speechJob.update({
+      job = await this.prisma.speechJob.update({
         where: { id: job.id },
+        data: { status: "PROCESSING" },
+      });
+
+      await this.prisma.recording.update({
+        where: { id: recordingId },
         data: { status: "PROCESSING" },
       });
 
@@ -239,10 +253,6 @@ export class SpeechJobService {
       );
     }
 
-    // Re-fetch to get the final state
-    const finalJob = await this.prisma.speechJob.findUnique({
-      where: { id: job.id },
-    });
-    return toSpeechJobResponse(finalJob!);
+    return toSpeechJobResponse(job);
   }
 }

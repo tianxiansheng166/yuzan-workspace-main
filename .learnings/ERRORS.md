@@ -1328,3 +1328,345 @@ Use `rg -F` for exact source fragments when regular-expression matching is unnec
 - **Resolved**: 2026-07-26T20:53:00+08:00
 - **Commit/PR**: diagnostic only
 - **Notes**: Switched the final source lookup to fixed-string matching.
+
+## [ERR-20260726-014] frontend-patch-assumed-function-declaration
+
+**Logged**: 2026-07-26T21:05:00+08:00
+**Priority**: low
+**Status**: resolved
+**Area**: frontend
+
+### Summary
+
+An assessment frontend patch assumed `isOralItem` was a function declaration, but the current source defines it as an arrow-function constant.
+
+### Error
+
+```text
+apply_patch verification failed: Failed to find expected lines for function isOralItem
+```
+
+### Suggested Fix
+
+Locate exact source anchors with `rg` before applying a multi-hunk patch to a frequently edited frontend file.
+
+### Metadata
+
+- Reproducible: yes
+- Related Files: `frontend/assessment/assets/app.js`
+
+### Resolution
+
+- **Resolved**: 2026-07-26T21:05:00+08:00
+- **Commit/PR**: pending task delivery commit
+- **Notes**: Replaced the failed patch with smaller patches using exact current-source anchors.
+
+## [ERR-20260726-015] new-worktree-dependencies-not-materialized
+
+**Logged**: 2026-07-26T21:10:00+08:00
+**Priority**: low
+**Status**: resolved
+**Area**: tests
+
+### Summary
+
+Focused API checks could not find `tsc` or `vitest` because the newly created worktree had no root `node_modules`.
+
+### Error
+
+```text
+'tsc' is not recognized; local package.json exists, but node_modules is missing
+```
+
+### Suggested Fix
+
+Materialize dependencies once from the worktree repository root with the pinned pnpm lockfile before running package scripts.
+
+### Metadata
+
+- Reproducible: yes
+- Related Files: `pnpm-lock.yaml`, `pnpm-workspace.yaml`
+
+### Resolution
+
+- **Resolved**: 2026-07-26T21:10:00+08:00
+- **Commit/PR**: pending task delivery commit
+- **Notes**: Installed from the repository root with frozen lockfile and then reran the focused checks.
+
+## [ERR-20260726-016] database-package-not-generated-in-new-worktree
+
+**Logged**: 2026-07-26T21:14:00+08:00
+**Priority**: low
+**Status**: resolved
+**Area**: tests
+
+### Summary
+
+API typecheck and focused tests could not resolve `@yuzan/database` after dependency installation because the worktree-local generated Prisma client and database package build artifacts had not been materialized.
+
+### Error
+
+```text
+TS2307: Cannot find module '@yuzan/database'
+Vitest failed to resolve @yuzan/database
+```
+
+### Suggested Fix
+
+Generate Prisma artifacts and build `@yuzan/database` in every new worktree before running API checks.
+
+### Metadata
+
+- Reproducible: yes
+- Related Files: `infra/database/package.json`, `infra/database/prisma.config.ts`
+
+### Resolution
+
+- **Resolved**: 2026-07-26T21:14:00+08:00
+- **Commit/PR**: pending task delivery commit
+- **Notes**: Added the missing worktree initialization step to the current validation sequence.
+
+## [ERR-20260726-017] focused-test-missing-vi-import
+
+**Logged**: 2026-07-26T21:18:00+08:00
+**Priority**: low
+**Status**: resolved
+**Area**: tests
+
+### Summary
+
+The new recording recovery test used `vi.fn` without importing `vi` from Vitest.
+
+### Error
+
+```text
+ReferenceError: vi is not defined
+```
+
+### Suggested Fix
+
+Import every explicitly used Vitest helper in test modules that do not enable globals.
+
+### Resolution
+
+- **Resolved**: 2026-07-26T21:18:00+08:00
+- **Commit/PR**: pending task delivery commit
+- **Notes**: Added the missing named import and reran the focused suite.
+
+## [ERR-20260726-018] speech-test-runner-not-installed
+
+**Logged**: 2026-07-26T21:18:00+08:00
+**Priority**: low
+**Status**: resolved
+**Area**: tests
+
+### Summary
+
+The machine Python runtime had all speech service production dependencies but not the optional development test runner.
+
+### Error
+
+```text
+python: No module named pytest
+```
+
+### Suggested Fix
+
+Install the speech service `dev` optional dependencies before executing its pytest suite.
+
+### Resolution
+
+- **Resolved**: 2026-07-26T21:18:00+08:00
+- **Commit/PR**: pending task delivery commit
+- **Notes**: Installed the declared test-only dependencies without changing the repository lock or runtime source.
+
+## [ERR-20260726-019] declared-speech-test-directory-missing
+
+**Logged**: 2026-07-26T21:22:00+08:00
+**Priority**: medium
+**Status**: resolved
+**Area**: tests
+
+### Summary
+
+The task manifest declared `backend/speech-scoring/tests`, but the repository contained no speech service tests or test directory.
+
+### Error
+
+```text
+ERROR: file or directory not found: backend/speech-scoring/tests
+no tests ran
+```
+
+### Suggested Fix
+
+Keep a minimal service contract suite covering health and truthful provider-unavailable behavior.
+
+### Resolution
+
+- **Resolved**: 2026-07-26T21:22:00+08:00
+- **Commit/PR**: pending task delivery commit
+- **Notes**: Added focused async endpoint tests and preserved FastAPI HTTP status errors instead of wrapping them as generic 500 responses.
+
+## [ERR-20260726-020] speech-tests-root-import-path
+
+**Logged**: 2026-07-26T21:24:00+08:00
+**Priority**: low
+**Status**: resolved
+**Area**: tests
+
+### Summary
+
+Running the manifest's pytest command from the repository root did not place the nested speech service directory on Python's import path.
+
+### Error
+
+```text
+ModuleNotFoundError: No module named 'app'
+```
+
+### Suggested Fix
+
+Make the nested service test suite establish its own deterministic import root.
+
+### Resolution
+
+- **Resolved**: 2026-07-26T21:24:00+08:00
+- **Commit/PR**: pending task delivery commit
+- **Notes**: Added a test-only `conftest.py` path bootstrap so the documented root-level command works.
+
+## [ERR-20260726-021] api-package-has-no-tsx-runtime
+
+**Logged**: 2026-07-26T21:31:00+08:00
+**Priority**: low
+**Status**: resolved
+**Area**: runtime verification
+
+### Summary
+
+The first in-process recovery probe invoked `pnpm exec tsx` from the API package, but that package does not declare the `tsx` executable.
+
+### Error
+
+```text
+'tsx' is not recognized
+ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL
+```
+
+### Suggested Fix
+
+Use the API's already compiled ESM output for one-off application-context probes instead of assuming a package-local TypeScript runner.
+
+### Resolution
+
+- **Resolved**: 2026-07-26T21:31:00+08:00
+- **Commit/PR**: pending task delivery commit
+- **Notes**: Switched the probe to Node ESM against the watch build output.
+
+## [ERR-20260726-022] assessment-report-field-name-drift
+
+**Logged**: 2026-07-26T21:34:00+08:00
+**Priority**: low
+**Status**: resolved
+**Area**: runtime verification
+
+### Summary
+
+The first database proof query used stale report field names (`totalScore`, `generatedAt`, `payload`) that do not exist in the current Prisma model.
+
+### Error
+
+```text
+Unknown field `totalScore` for select statement on model `AssessmentReport`
+```
+
+### Suggested Fix
+
+Query the current fields `overallScore`, `readingScore`, `writtenScore`, `summary`, `recommendations`, and `createdAt`.
+
+### Resolution
+
+- **Resolved**: 2026-07-26T21:34:00+08:00
+- **Commit/PR**: pending task delivery commit
+- **Notes**: Updated the read-only evidence query to the current schema without changing persisted data.
+
+## [ERR-20260726-023] auth-probe-wrong-package-working-directory
+
+**Logged**: 2026-07-26T21:40:00+08:00
+**Priority**: low
+**Status**: resolved
+**Area**: browser verification
+
+### Summary
+
+The browser auth bootstrap probe was launched from the repository root, where pnpm's isolated layout does not expose the API package's Nest dependency.
+
+### Error
+
+```text
+ERR_MODULE_NOT_FOUND: Cannot find package '@nestjs/core'
+```
+
+### Suggested Fix
+
+Run compiled API application-context probes from `backend/api`, then return to the repository root for Playwright.
+
+### Resolution
+
+- **Resolved**: 2026-07-26T21:40:00+08:00
+- **Commit/PR**: pending task delivery commit
+- **Notes**: Corrected the probe working directory without changing application code.
+
+## [ERR-20260726-024] python-playwright-init-script-signature
+
+**Logged**: 2026-07-26T21:45:00+08:00
+**Priority**: low
+**Status**: resolved
+**Area**: browser verification
+
+### Summary
+
+The first browser verifier used the JavaScript Playwright `addInitScript(script, arg)` signature with Python Playwright, which accepts only a script/path.
+
+### Error
+
+```text
+TypeError: BrowserContext.add_init_script() takes from 1 to 2 positional arguments but 3 were given
+```
+
+### Suggested Fix
+
+Serialize runtime values into the Python-generated initialization script and never persist the access token in evidence.
+
+### Resolution
+
+- **Resolved**: 2026-07-26T21:45:00+08:00
+- **Commit/PR**: pending task delivery commit
+- **Notes**: Corrected the Python API usage; the token remains process-only and is omitted from result files.
+
+## [ERR-20260726-025] browser-result-windows-line-endings
+
+**Logged**: 2026-07-26T21:49:00+08:00
+**Priority**: low
+**Status**: resolved
+**Area**: evidence
+
+### Summary
+
+The generated browser JSON used platform-default CRLF endings, which the repository's staged whitespace check treated as trailing whitespace.
+
+### Error
+
+```text
+browser-result.json: trailing whitespace
+```
+
+### Suggested Fix
+
+Generate committed JSON evidence with explicit LF newlines.
+
+### Resolution
+
+- **Resolved**: 2026-07-26T21:49:00+08:00
+- **Commit/PR**: pending task delivery commit
+- **Notes**: Made the evidence writer deterministic and normalized the current result without altering its values.
