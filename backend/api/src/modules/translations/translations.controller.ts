@@ -2,11 +2,16 @@ import {
   Body,
   Controller,
   Get,
+  Headers,
+  HttpCode,
   Inject,
   Param,
   ParseUUIDPipe,
+  Patch,
   Post,
+  Put,
   Query,
+  UnauthorizedException,
 } from "@nestjs/common";
 import {
   createAuthContext,
@@ -17,7 +22,13 @@ import {
   type Principal,
   type TenantContext,
 } from "../../common/security/index.js";
-import { CreateTranslationDto } from "./dto/translation.dto.js";
+import {
+  ApproveTranslationDto,
+  CreateTranslationDto,
+  RejectTranslationDto,
+  ReviseTranslationDto,
+  UpdateJobResultDto,
+} from "./dto/translation.dto.js";
 import { ListJobsQueryDto } from "./dto/list-jobs-query.dto.js";
 import { TranslationsService } from "./translations.service.js";
 
@@ -116,6 +127,58 @@ export class TranslationsController {
     );
   }
 
+  @Patch("jobs/:jobId/revise")
+  @RequireRoles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
+  async reviseJob(
+    @Param("schoolId", ParseUUIDPipe) schoolId: string,
+    @Param("jobId", ParseUUIDPipe) jobId: string,
+    @Body() dto: ReviseTranslationDto,
+    @CurrentTenant() tenant: TenantContext,
+    @CurrentPrincipal() principal: Principal,
+  ) {
+    return this.service.reviseJob(
+      createAuthContext("request-id", principal, tenant),
+      schoolId,
+      jobId,
+      dto.revisedResult,
+      dto.expectedRevision,
+    );
+  }
+
+  @Patch("jobs/:jobId/approve")
+  @RequireRoles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
+  async approveJob(
+    @Param("schoolId", ParseUUIDPipe) schoolId: string,
+    @Param("jobId", ParseUUIDPipe) jobId: string,
+    @Body() dto: ApproveTranslationDto,
+    @CurrentTenant() tenant: TenantContext,
+    @CurrentPrincipal() principal: Principal,
+  ) {
+    return this.service.approveJob(
+      createAuthContext("request-id", principal, tenant),
+      schoolId,
+      jobId,
+      dto.expectedRevision,
+    );
+  }
+
+  @Patch("jobs/:jobId/reject")
+  @RequireRoles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
+  async rejectJob(
+    @Param("schoolId", ParseUUIDPipe) schoolId: string,
+    @Param("jobId", ParseUUIDPipe) jobId: string,
+    @Body() dto: RejectTranslationDto,
+    @CurrentTenant() tenant: TenantContext,
+    @CurrentPrincipal() principal: Principal,
+  ) {
+    return this.service.rejectJob(
+      createAuthContext("request-id", principal, tenant),
+      schoolId,
+      jobId,
+      dto.expectedRevision,
+    );
+  }
+
   @Get("glossary")
   @RequireRoles(
     MembershipRole.STUDENT,
@@ -131,5 +194,33 @@ export class TranslationsController {
       createAuthContext("request-id", principal, tenant),
       schoolId,
     );
+  }
+}
+
+/**
+ * Internal controller for worker-to-API communication.
+ * Protected by X-Internal-Key header validation.
+ */
+@Controller("internal/translation-jobs")
+export class InternalTranslationsController {
+  constructor(
+    @Inject(TranslationsService)
+    private readonly service: TranslationsService,
+  ) {}
+
+  @Put(":jobId/result")
+  @HttpCode(200)
+  async updateJobResult(
+    @Param("jobId", ParseUUIDPipe) jobId: string,
+    @Body() dto: UpdateJobResultDto,
+    @Headers("x-internal-key") internalKey: string,
+  ) {
+    // Validate internal key
+    const expectedKey = process.env.API_INTERNAL_KEY ?? "";
+    if (!expectedKey || internalKey !== expectedKey) {
+      throw new UnauthorizedException("Invalid internal key");
+    }
+
+    return this.service.updateJobResultFromWorker(jobId, dto);
   }
 }

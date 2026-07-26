@@ -3,6 +3,7 @@ import type {
   TranslationJob,
 } from "../../../../src/modules/translations/domain/translation.types.js";
 import {
+  ReviewStatus,
   SupportedLanguage,
   TranslationStatus,
 } from "../../../../src/modules/translations/domain/translation.types.js";
@@ -23,13 +24,25 @@ export function translationJob(
   const now = new Date();
   return {
     id: jobId(),
+    createdByUserId: "teacher-1",
     sourceLanguage: SupportedLanguage.BO,
     targetLanguage: SupportedLanguage.ZH,
     sourceTextHash:
       "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2",
     sourceTextEncrypted: "encrypted-placeholder",
     status: TranslationStatus.CREATED,
+    machineResult: null,
+    revisedResult: null,
+    reviewStatus: null,
+    revision: 0,
+    reviewedByUserId: null,
+    reviewedAt: null,
     glossaryVersion: 1,
+    provider: null,
+    providerRequestId: null,
+    providerModel: null,
+    providerLatencyMs: null,
+    errorCode: null,
     createdAt: now,
     updatedAt: now,
     ...overrides,
@@ -41,7 +54,8 @@ export function completedJob(
 ): TranslationJob {
   return translationJob({
     status: TranslationStatus.COMPLETED,
-    resultText: "翻译结果文本",
+    machineResult: "翻译结果文本",
+    reviewStatus: ReviewStatus.NEEDS_REVIEW,
     ...overrides,
   });
 }
@@ -72,6 +86,7 @@ export function glossaryEntry(
   const now = new Date();
   return {
     id: glossaryId(),
+    schoolId: "school-1",
     term: "བཀྲ་ཤིས་བདེ་ལེགས།",
     sourceLanguage: SupportedLanguage.BO,
     targetLanguage: SupportedLanguage.ZH,

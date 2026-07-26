@@ -6,7 +6,8 @@
   <title>藏汉智能翻译工作台</title>
   <link rel="stylesheet" href="styles.css" />
 <link rel="stylesheet" href="/shared/teacher-shell.css" />
-  
+<script src="/assets/api-client.js"></script>
+</head>
 <body>
   <div class="app-shell">
     <aside class="sidebar">
@@ -22,27 +23,27 @@
 
       <div class="nav-section">
         <div class="nav-title">AI 与语言工具</div>
-        <a class="nav-item" data-unsupported="智能教学助手功能暂未开通">智能教学助手</a>
-        <a class="nav-item" data-unsupported="作文批改功能暂未开通">作文批改与润色</a>
+        <a class="nav-item">智能教学助手</a>
+        <a class="nav-item">作文批改与润色</a>
         <a class="nav-item active" aria-current="page">藏汉智能翻译</a>
-        <a class="nav-item" data-unsupported="语音识别工具功能暂未开通">语音识别工具</a>
-        <a class="nav-item" data-unsupported="声场朗读工具功能暂未开通">声场朗读工具</a>
-        <a class="nav-item" data-unsupported="术语词典功能暂未开通">术语词典</a>
+        <a class="nav-item">语音识别工具</a>
+        <a class="nav-item">声场朗读工具</a>
+        <a class="nav-item">术语词典</a>
       </div>
 
       <div class="nav-section">
         <div class="nav-title">教学资源</div>
-        <a class="nav-item" data-unsupported="课程资源库功能暂未开通">课程资源库</a>
-        <a class="nav-item" data-unsupported="教学案例库功能暂未开通">教学案例库</a>
-        <a class="nav-item" data-unsupported="微课与讲解功能暂未开通">微课与讲解</a>
-        <a class="nav-item" data-unsupported="试题库功能暂未开通">试题库</a>
+        <a class="nav-item">课程资源库</a>
+        <a class="nav-item">教学案例库</a>
+        <a class="nav-item">微课与讲解</a>
+        <a class="nav-item">试题库</a>
       </div>
 
       <div class="nav-section compact">
         <div class="nav-title">我的空间</div>
-        <a class="nav-item" data-unsupported="我的收藏功能暂未开通">我的收藏</a>
-        <a class="nav-item" data-unsupported="我的历史功能暂未开通">我的历史</a>
-        <a class="nav-item" data-unsupported="最近使用功能暂未开通">最近使用</a>
+        <a class="nav-item">我的收藏</a>
+        <a class="nav-item">我的历史</a>
+        <a class="nav-item">最近使用</a>
       </div>
 
       <div class="sidebar-bottom-help">
@@ -57,13 +58,11 @@
           <a href="/teacher/ai-tools">AI 与语言工具</a>
           <span>›</span>
           <strong>藏汉智能翻译工作台</strong>
-          <span class="info-dot" data-unsupported="详细信息功能暂未开通">i</span>
         </div>
         <div class="topbar-right">
-          <div class="status ok">● 服务正常</div>
-          <div class="status">⟳ 离线可用</div>
-          <button class="icon-btn" data-unsupported="消息通知功能暂未开通">🔔</button>
-          <div class="user-chip" data-unsupported="账户功能暂未开通">
+          <div class="status" id="service-status">● 检测中...</div>
+          <button class="icon-btn">🔔</button>
+          <div class="user-chip">
             <div class="avatar"></div>
             <span>教师</span>
             <span class="caret">▾</span>
@@ -84,7 +83,7 @@
         <section class="lang-switch-row">
           <div class="wave-line"></div>
           <div class="lang-box left"><span class="lang-script">༄༅།</span> 藏文 <span class="caret">▾</span></div>
-          <button class="swap-btn">⇄</button>
+          <button class="swap-btn" id="swap-btn">⇄</button>
           <div class="lang-box right"><span class="lang-script red">汉</span> 中文 <span class="caret">▾</span></div>
           <div class="direction-text">藏文 → 中文</div>
         </section>
@@ -117,16 +116,16 @@
           </div>
 
           <div class="source-panel card">
-            <div class="panel-head"><strong>源语言（藏文）</strong><span>0/2000</span></div>
+            <div class="panel-head"><strong>源语言（藏文）</strong><span class="char-count">0/5000</span></div>
             <textarea placeholder="请输入要翻译的内容，支持藏文输入"></textarea>
             <div class="panel-actions">
               <button>🎤 语音输入</button>
-              <button>🗑 清空</button>
-              <span class="muted">0/2000</span>
+              <button class="clear-btn">🗑 清空</button>
+              <span class="muted">0/5000</span>
             </div>
             <ul class="tips-list">
               <li>支持键盘输入或粘贴（Ctrl / ⌘ + V）</li>
-              <li>不自动保存敏感内容，翻译仅在当前会话中处理</li>
+              <li>源文加密存储，翻译结果仅您和审核教师可见</li>
               <li>专业术语建议在术语词典中维护以获得更准确的翻译</li>
             </ul>
           </div>
@@ -135,34 +134,37 @@
             <div class="progress-card">
               <div class="progress-title">翻译进度</div>
               <ul class="progress-list">
-                <li class="done">识别语言</li>
-                <li class="done">理解语义</li>
-                <li class="done">转换表达</li>
+                <li>识别语言</li>
+                <li>理解语义</li>
+                <li>转换表达</li>
                 <li>优化校对</li>
                 <li>生成结果</li>
               </ul>
-              <button class="primary-btn">✈ 翻译</button>
+              <button class="primary-btn" id="translate-btn">✈ 翻译</button>
               <button class="secondary-btn">⟳ 重新翻译</button>
-              <div class="service-block">
-                <div class="service-title">服务状态</div>
-                <div class="service-ok">● 服务正常</div>
-                <a data-unsupported="服务详情功能暂未开通">查看详情</a>
-              </div>
             </div>
           </div>
 
           <div class="target-panel card">
-            <div class="panel-head"><strong>目标语言（中文）</strong><span>0/2000</span></div>
+            <div class="panel-head">
+              <strong>目标语言（中文）</strong>
+              <span class="char-count">0/5000</span>
+              <div id="review-badge" class="review-badge" style="display:none"></div>
+            </div>
             <textarea placeholder="翻译结果将显示在这里"></textarea>
             <div class="panel-actions">
               <button>🔊 结果朗读</button>
               <button>⧉ 复制</button>
               <button>🗑 清空</button>
-              <span class="muted">0/2000</span>
+              <span class="muted">0/5000</span>
             </div>
             <div class="term-annotation">
               <div class="term-head"><strong>术语标注</strong><span>ⓘ</span><div class="switch"><input type="checkbox" id="sw"><label for="sw"></label></div></div>
               <div class="term-box">专业术语将自动识别并在此处标注释义</div>
+            </div>
+            <div class="action-btns">
+              <button id="save-revision-btn" class="secondary-btn" style="display:none">保存修订</button>
+              <button id="approve-btn" class="primary-btn" style="display:none">审批通过</button>
             </div>
           </div>
 
@@ -170,25 +172,26 @@
             <div class="history-head"><strong>翻译历史</strong><span>◔</span></div>
             <input class="search-input" placeholder="搜索历史记录" />
             <div class="select-box">全部方向 <span>▾</span></div>
-            <div class="history-empty">
-              <div class="doc-icon">🗎</div>
-              <h3>暂无翻译历史</h3>
-              <p>您的翻译记录将显示在这里，便于快速回顾与复用。</p>
-              <button class="secondary-btn">⟳ 清空历史记录</button>
+            <div class="history-list">
+              <div class="history-empty">
+                <div class="doc-icon">🗎</div>
+                <h3>暂无翻译历史</h3>
+                <p>您的翻译记录将显示在这里，便于快速回顾与复用。</p>
+              </div>
             </div>
           </div>
         </section>
       </main>
 
       <footer class="footer-bar">
-        <div class="footer-links"><a data-unsupported="联系我们功能暂未开通">联系我们</a><a data-unsupported="反馈建议功能暂未开通">反馈建议</a></div>
+        <div class="footer-links"><a>联系我们</a><a>反馈建议</a></div>
         <div class="footer-center">
           <div>语赞心声援藏教育公益平台</div>
           <div>让语言沟通更美好，让知识传递更温暖</div>
         </div>
         <div class="footer-right">
           <div>当前版本 v2.1.0</div>
-          <div><a data-unsupported="隐私政策页面暂未开通">隐私政策</a> ｜ <a data-unsupported="服务条款页面暂未开通">服务条款</a></div>
+          <div><a>隐私政策</a> ｜ <a>服务条款</a></div>
         </div>
       </footer>
     </div>
@@ -196,4 +199,5 @@
   <script src="script.js"></script>
   <script src="/shared/teacher-shell.js" defer></script>
 
+</body>
 </html>

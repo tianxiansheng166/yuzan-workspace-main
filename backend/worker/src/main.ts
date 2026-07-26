@@ -3,11 +3,13 @@ import pino from "pino";
 import { SpeechJobConsumer } from "./speech/speech-job.consumer.js";
 import { SpeechScoringClient } from "./speech/speech-scoring.client.js";
 import { AiGenerationConsumer } from "./ai-generation/ai-generation.consumer.js";
+import { TranslationConsumer } from "./translation/translation.consumer.js";
 
 const logger = pino({ level: process.env.LOG_LEVEL ?? "info" });
 
 const SPEECH_QUEUE_NAME = "speech-jobs";
 const AI_GENERATION_QUEUE_NAME = "ai-generation-jobs";
+const TRANSLATION_QUEUE_NAME = "translation-jobs";
 
 interface RedisConfig {
   host: string;
@@ -95,6 +97,26 @@ async function main(): Promise<void> {
     }
   }
 
+  // Start translation consumer if enabled
+  let translationConsumer: TranslationConsumer | null = null;
+  const translationEnabled = process.env.TRANSLATION_ENABLED !== "false";
+
+  if (translationEnabled) {
+    translationConsumer = new TranslationConsumer(TRANSLATION_QUEUE_NAME, redisConfig);
+    translationConsumer.start();
+    logger.info({ queue: TRANSLATION_QUEUE_NAME }, "Translation consumer started");
+  } else {
+    logger.info("Translation is disabled (TRANSLATION_ENABLED=false). Skipping consumer startup.");
+
+    // Still create the queue so API can enqueue jobs
+    try {
+      const translationQueue = new Queue(TRANSLATION_QUEUE_NAME, { connection: redisConfig });
+      logger.info({ queue: TRANSLATION_QUEUE_NAME }, "Translation queue created (consumer not started)");
+    } catch (error: unknown) {
+      logger.warn({ error }, "Could not connect to Redis. Translation queue creation skipped.");
+    }
+  }
+
   const shutdown = async (signal: string): Promise<void> => {
     logger.info({ signal }, "Worker stopping");
     if (speechConsumer) {
@@ -102,6 +124,9 @@ async function main(): Promise<void> {
     }
     if (aiConsumer) {
       await aiConsumer.stop();
+    }
+    if (translationConsumer) {
+      await translationConsumer.stop();
     }
     process.exit(0);
   };

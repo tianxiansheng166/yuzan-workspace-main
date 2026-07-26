@@ -2084,3 +2084,49 @@ model LessonPlanRevision {
   @@unique([draftId, revision])
   @@index([draftId, createdAt])
 }
+
+// ─── Translation ─────────────────────────────────────────
+
+model TranslationJob {
+  id                  String   @id @default(uuid())
+  schoolId            String   @map("school_id")
+  createdByUserId     String   @map("created_by_user_id")
+  sourceLanguage      String   @map("source_language") // BO | ZH
+  targetLanguage      String   @map("target_language") // BO | ZH
+  sourceTextHash      String   @map("source_text_hash")
+  sourceTextEncrypted String   @map("source_text_encrypted")
+  status              String   @default("CREATED") // CREATED|QUEUED|PROCESSING|COMPLETED|PROVIDER_UNAVAILABLE|FAILED
+  machineResult       String?  @map("machine_result")
+  revisedResult       String?  @map("revised_result")
+  reviewStatus        String?  @map("review_status") // NEEDS_REVIEW|APPROVED|REJECTED
+  revision            Int      @default(0)
+  reviewedByUserId    String?  @map("reviewed_by_user_id")
+  reviewedAt          DateTime? @map("reviewed_at")
+  glossaryVersion     Int      @default(1) @map("glossary_version")
+  provider            String?
+  providerRequestId   String?  @map("provider_request_id")
+  providerModel       String?  @map("provider_model")
+  providerLatencyMs   Int?     @map("provider_latency_ms")
+  errorCode           String?  @map("error_code")
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+
+  @@index([schoolId, createdByUserId])
+  @@index([schoolId, status])
+  @@map("translation_jobs")
+}
+
+model TranslationGlossary {
+  id             String   @id @default(uuid())
+  schoolId       String   @map("school_id")
+  term           String
+  sourceLanguage String   @map("source_language")
+  targetLanguage String   @map("target_language")
+  translation    String
+  category       String
+  version        Int      @default(1)
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  @@index([schoolId, version])
+  @@map("translation_glossary")
+}

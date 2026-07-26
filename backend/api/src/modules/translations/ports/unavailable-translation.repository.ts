@@ -26,6 +26,10 @@ export class UnavailableTranslationRepository implements TranslationRepositoryPo
     throw new TranslationUnavailableException();
   }
 
+  async findJobByIdOnly(_jobId: string): Promise<TranslationJob | null> {
+    throw new TranslationUnavailableException();
+  }
+
   async listJobsBySchool(
     _schoolId: string,
     _options: ListJobsOptions,
@@ -33,12 +37,32 @@ export class UnavailableTranslationRepository implements TranslationRepositoryPo
     throw new TranslationUnavailableException();
   }
 
-  async updateJobStatus(
+  async updateJobResult(
     _schoolId: string,
     _jobId: string,
-    _status: TranslationStatus,
-    _resultText?: string,
-    _errorCode?: string,
+    _data: {
+      status: TranslationStatus;
+      machineResult?: string | null;
+      provider?: string;
+      providerRequestId?: string;
+      providerModel?: string;
+      providerLatencyMs?: number;
+      errorCode?: string;
+    },
+  ): Promise<TranslationJob | null> {
+    throw new TranslationUnavailableException();
+  }
+
+  async updateJobRevision(
+    _schoolId: string,
+    _jobId: string,
+    _data: {
+      revisedResult: string;
+      reviewStatus: string;
+      reviewedByUserId: string;
+      reviewedAt: Date;
+      revision: number;
+    },
   ): Promise<TranslationJob | null> {
     throw new TranslationUnavailableException();
   }

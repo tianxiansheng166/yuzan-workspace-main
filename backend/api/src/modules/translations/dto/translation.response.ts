@@ -1,5 +1,6 @@
 import type {
   GlossaryEntry,
+  ReviewStatus,
   TranslationJob,
   TranslationStatus,
 } from "../domain/translation.types.js";
@@ -11,9 +12,12 @@ export interface TranslationJobResponse {
   readonly targetLanguage: string;
   readonly sourceTextHash: string;
   readonly status: TranslationStatus;
-  readonly resultText: string | undefined;
+  readonly machineResult: string | null;
+  readonly revisedResult: string | null;
+  readonly reviewStatus: ReviewStatus | null;
+  readonly revision: number;
   readonly glossaryVersion: number;
-  readonly errorCode: string | undefined;
+  readonly errorCode: string | null;
   readonly createdAt: string;
   readonly updatedAt: string;
 }
@@ -22,8 +26,8 @@ export interface TranslationJobResponse {
  * Sanitize provider raw errors before returning to client.
  * Replaces any potentially sensitive internal error details with a generic message.
  */
-function sanitizeErrorCode(errorCode?: string): string | undefined {
-  if (!errorCode) return undefined;
+function sanitizeErrorCode(errorCode?: string | null): string | null {
+  if (!errorCode) return null;
   // Only allow known safe error codes; strip anything that could leak provider details
   const SAFE_CODES = new Set([
     "PROVIDER_UNAVAILABLE",
@@ -37,7 +41,7 @@ function sanitizeErrorCode(errorCode?: string): string | undefined {
 export function toTranslationJobResponse(
   job: TranslationJob,
 ): TranslationJobResponse {
-  // CRITICAL: do NOT include sourceTextEncrypted or provider keys
+  // CRITICAL: do NOT include sourceTextEncrypted, provider keys, or any PII
   return {
     id: job.id,
     schoolId: job.schoolId,
@@ -45,7 +49,10 @@ export function toTranslationJobResponse(
     targetLanguage: job.targetLanguage,
     sourceTextHash: job.sourceTextHash,
     status: job.status,
-    resultText: job.resultText,
+    machineResult: job.machineResult,
+    revisedResult: job.revisedResult,
+    reviewStatus: job.reviewStatus,
+    revision: job.revision,
     glossaryVersion: job.glossaryVersion,
     errorCode: sanitizeErrorCode(job.errorCode),
     createdAt: job.createdAt.toISOString(),

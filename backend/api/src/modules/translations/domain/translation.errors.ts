@@ -38,3 +38,18 @@ export class TranslationRateLimitedException extends HttpException {
     );
   }
 }
+
+export class TranslationConflictException extends HttpException {
+  constructor(message = "翻译任务已被他人修改，请刷新后重试") {
+    super({ code: "TRANSLATION_CONFLICT", message }, HttpStatus.CONFLICT);
+  }
+}
+
+export class TranslationSameLanguageException extends HttpException {
+  constructor(message = "源语言和目标语言不能相同") {
+    super(
+      { code: "TRANSLATION_SAME_LANGUAGE", message },
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+}

@@ -1,0 +1,150 @@
+{
+  "id": "P0-TIBETAN-TRANSLATION-TOOL-001",
+  "status": "BLOCKED",
+  "title": "实现藏汉翻译工具真实持久化后端与修复前端页面",
+  "owner": "Claude",
+  "reviewer": "Integration Lead",
+  "branch": "task/p0-tibetan-translation-tool-001",
+  "base_commit": "1d0cd1bb0898ad47a6f9faebba42d3d18b84260d",
+  "user_outcome": "真实教师登录后，BO→ZH 和 ZH→BO 各创建一个真实持久化 Job；worker 调用合法配置的真实 translation provider，得到非空 machineResult，页面明确标记 NEEDS_REVIEW；教师修改 revisedResult 并保存 revision，随后 APPROVED；刷新和新浏览器上下文仍能看到自己的历史、修订和批准状态。",
+  "current_facts": [
+    "Prisma schema 包含 TranslationJob + TranslationGlossary 模型和 migration",
+    "Domain types 已更新: createdByUserId, machineResult, revisedResult, reviewStatus, revision, reviewedByUserId, reviewedAt",
+    "PrismaTranslationRepository 已实现 (替换 UnavailableTranslationRepository)",
+    "AES-GCM 加密已实现 (替换 Base64), 使用 TRANSLATION_CRYPTO_KEY 环境管理密钥",
+    "Redis/内存限流已实现 (替换 no-op)",
+    "ConfigurableTranslationProvider 已实现 (超时/认证/quota/重试/unavailable)",
+    "TranslationsService 已更新: createdByUserId + listMyJobs 用户过滤 + revision 乐观并发 + machineResult 与 revisedResult 分离",
+    "DTO 和 Response 已匹配 OpenAPI 契约",
+    "PATCH jobs/:jobId/revise 和 PATCH jobs/:jobId/approve 端点已添加",
+    "Worker TranslationConsumer 已创建",
+    "45 个单元测试全部通过 (createTranslation, getJobStatus, listMyJobs, listJobs, reviseJob, approveJob, rejectJob, fail-closed, cross-tenant, PLATFORM_ADMIN, rate limiting, error sanitization, provider retry protection)",
+    "API typecheck 通过, Worker typecheck 通过, Prisma validate/generate 通过",
+    "BLOCKED: 真实 translation provider 凭据缺失 (TRANSLATION_PROVIDER_ENDPOINT + TRANSLATION_PROVIDER_API_KEY 未配置)",
+    "BLOCKED: 合同/数据出境未明确; 需确认 provider 是否支持藏文 (BO)",
+    "前端 script.js 尚未重写; index.html 仍为损坏的视觉稿"
+  ],
+  "blocking_reason": "真实 translation provider 凭据缺失: .env 中未配置 TRANSLATION_PROVIDER_ENDPOINT 和 TRANSLATION_PROVIDER_API_KEY; 合同/数据出境审批状态不明; 需确认 provider 对藏文(BO)的支持能力。mock provider 只能证明失败和契约路径，不能把任务标 READY_FOR_REVIEW。",
+  "product_alignment": {
+    "p0": "翻译工具是 P0 教师端核心 AI 工具，必须从 fail-closed 骨架变为真实可用",
+    "contribution": "实现真实持久化存储、AES-GCM 加密、Redis 限流、provider adapter、revision 工作流和前端真实数据绑定",
+    "non_goals": [
+      "不修改 OpenAPI 或公共 API client (冻结契约)",
+      "不修改课程页面或其他 worker consumer",
+      "不实现 admin 端持久化 (P2)",
+      "不用 mock provider 把任务标 READY_FOR_REVIEW"
+    ]
+  },
+  "context": {
+    "required": [
+      "project-ops/AI-DEVELOPMENT-CONTRACT.md",
+      "project-ops/plans/P0-MULTITRACK-CLOSED-LOOPS.md",
+      "packages/contracts/openapi/openapi.yaml",
+      "backend/api/src/modules/translations/translations.service.ts",
+      "backend/api/src/modules/translations/translations.module.ts",
+      "frontend/teacher/translation/index.html"
+    ],
+    "optional": [
+      "backend/api/src/modules/translations/ports/translation-repository.port.ts",
+      "backend/api/src/modules/translations/domain/translation.types.ts",
+      "backend/api/src/modules/translations/domain/translation.errors.ts",
+      "backend/api/src/modules/translations/translations.policy.ts",
+      "backend/worker/src/main.ts",
+      "infra/database/prisma/schema.prisma"
+    ]
+  },
+  "depends_on": [
+    "P0-AI-TOOL-CONTRACTS-001"
+  ],
+  "integration_order": [
+    "1. 添加 Prisma TranslationJob + TranslationGlossary 模型和 migration",
+    "2. 更新 domain types: 添加 createdByUserId, machineResult, revisedResult, reviewStatus, revision, reviewedByUserId, reviewedAt",
+    "3. 实现 PrismaTranslationRepository (替换 UnavailableTranslationRepository)",
+    "4. 实现 AES-GCM 加密替换 Base64, 使用环境管理密钥",
+    "5. 实现 Redis 限流替换 no-op",
+    "6. 实现 TranslationProviderAdapter (超时/认证/quota/重试/unavailable)",
+    "7. 更新 TranslationsService: createdByUserId + listMyJobs 用户过滤 + revision 乐观并发 + machineResult 与 revisedResult 分离",
+    "8. 更新 DTO 和 Response 匹配 OpenAPI 契约",
+    "9. 添加 PATCH jobs/:jobId/revise 和 PATCH jobs/:jobId/approve 端点",
+    "10. 创建 Worker translation consumer",
+    "11. 重写前端 script.js: 真实 API 绑定、移除写死状态、字符上限、隐私文案",
+    "12. 收集证据 + task-gate review/finish"
+  ],
+  "allowed_paths": [
+    "backend/api/src/modules/translations/**",
+    "backend/api/test/modules/translations/**",
+    "backend/worker/src/translation/**",
+    "backend/worker/test/translation/**",
+    "backend/worker/src/main.ts",
+    "frontend/teacher/translation/**",
+    "infra/ai/translation/**",
+    "infra/database/prisma/schema.prisma",
+    "infra/database/prisma/migrations/*_add_translation_review/**",
+    "project-ops/requests/CCR-P0-TIBETAN-TRANSLATION-TOOL-001.md",
+    "project-ops/tasks/active/P0-TIBETAN-TRANSLATION-TOOL-001.json",
+    "project-ops/handoffs/P0-TIBETAN-TRANSLATION-TOOL-001.md",
+    "evidence/p0-tibetan-translation-tool-001/**"
+  ],
+  "shared_owner_changes": [],
+  "contract_change_request": "project-ops/requests/CCR-P0-TIBETAN-TRANSLATION-TOOL-001.md",
+  "minimal_tests": [
+    {
+      "name": "Prisma generate/validate/migration smoke",
+      "command": "cd infra/database && pnpm prisma generate && pnpm prisma validate && pnpm prisma migrate diff --from-migrations prisma/migrations --to-schema-datamodel prisma/schema.prisma --script"
+    },
+    {
+      "name": "后端 typecheck",
+      "command": "cd backend/api && pnpm tsc --noEmit"
+    },
+    {
+      "name": "翻译模块单元测试",
+      "command": "cd backend/api && pnpm jest --testPathPattern=translations"
+    },
+    {
+      "name": "Worker typecheck",
+      "command": "cd backend/worker && pnpm tsc --noEmit"
+    },
+    {
+      "name": "contract validate (OpenAPI 未漂移)",
+      "command": "cd packages/contracts && npx redocly lint openapi/openapi.yaml --config redocly.yaml"
+    },
+    {
+      "name": "task-gate review",
+      "command": "& ./project-ops/scripts/task-gate.ps1 -Mode review -TaskFile project-ops/tasks/active/P0-TIBETAN-TRANSLATION-TOOL-001.json"
+    }
+  ],
+  "test_evidence": [
+    {
+      "name": "Prisma generate/validate",
+      "result": "PASS",
+      "detail": "schema valid, client generated (7.8.0), 1 warning about onDelete SetNull on required field"
+    },
+    {
+      "name": "翻译模块单元测试 (45 tests)",
+      "result": "PASS",
+      "detail": "createTranslation(9), getJobStatus(9), listMyJobs(3), listJobs(4), reviseJob(3), approveJob(2), rejectJob(1), fail-closed(5), cross-tenant(1), PLATFORM_ADMIN(1), rate limiting(2), error sanitization(4), provider retry protection(1)"
+    },
+    {
+      "name": "API typecheck",
+      "result": "PASS",
+      "detail": "tsc --noEmit exited 0"
+    },
+    {
+      "name": "Worker typecheck",
+      "result": "PASS",
+      "detail": "tsc --noEmit exited 0"
+    },
+    {
+      "name": "真实 provider 凭据",
+      "result": "MISSING",
+      "detail": "TRANSLATION_PROVIDER_ENDPOINT 和 TRANSLATION_PROVIDER_API_KEY 未在 .env 中配置"
+    }
+  ],
+  "handoff": "project-ops/handoffs/P0-TIBETAN-TRANSLATION-TOOL-001.md",
+  "rollback": "Revert task branch commits; restore UnavailableTranslationRepository as default provider.",
+  "delivery": {
+    "push_task_branch": true,
+    "remote": "origin",
+    "merge_target": "integration/p0-multitrack-001"
+  }
+}

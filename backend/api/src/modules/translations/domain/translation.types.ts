@@ -12,25 +12,41 @@ export enum SupportedLanguage {
   ZH = "ZH",
 }
 
+export enum ReviewStatus {
+  NEEDS_REVIEW = "NEEDS_REVIEW",
+  APPROVED = "APPROVED",
+  REJECTED = "REJECTED",
+}
+
 export interface TranslationJob {
   readonly id: string;
   readonly schoolId: string;
+  readonly createdByUserId: string;
   readonly sourceLanguage: SupportedLanguage;
   readonly targetLanguage: SupportedLanguage;
   readonly sourceTextHash: string;
-  /** @internal Controlled — never expose to frontend */
+  /** @internal AES-GCM encrypted — never expose to frontend */
   readonly sourceTextEncrypted: string;
   readonly status: TranslationStatus;
-  readonly provider?: string;
-  readonly resultText?: string;
+  readonly machineResult: string | null;
+  readonly revisedResult: string | null;
+  readonly reviewStatus: ReviewStatus | null;
+  readonly revision: number;
+  readonly reviewedByUserId: string | null;
+  readonly reviewedAt: Date | null;
   readonly glossaryVersion: number;
-  readonly errorCode?: string;
+  readonly provider: string | null;
+  readonly providerRequestId: string | null;
+  readonly providerModel: string | null;
+  readonly providerLatencyMs: number | null;
+  readonly errorCode: string | null;
   readonly createdAt: Date;
   readonly updatedAt: Date;
 }
 
 export interface GlossaryEntry {
   readonly id: string;
+  readonly schoolId: string;
   readonly term: string;
   readonly sourceLanguage: SupportedLanguage;
   readonly targetLanguage: SupportedLanguage;
