@@ -32,6 +32,19 @@ Set-Location D:\program\test_program\yuzanxinsheng\three\yuzan-next
 Prisma Client 并启动前端/API/worker。`Ctrl+C` 只停止本次前台开发进程，不停止共享
 Docker 容器。
 
+启动脚本先检查固定端口和真实健康端点。如果 API、前端代理、语音服务与 canonical worker
+都已存在且健康，它只报告 `Reusing` 并退出，不会再次执行 `pnpm dev`。如果只存在部分服务、
+健康检查失败或固定端口被占用，它会输出结构化诊断并失败；脚本不会终止未知进程，也不会
+自动改到其他端口。可单独查看当前状态：
+
+```powershell
+.\scripts\local-runtime\get-runtime-status.ps1 | ConvertTo-Json -Depth 8
+```
+
+状态中的 `OBSERVED_RUNTIME_NOT_COMMIT_ATTESTED` 表示健康端点和进程已现场观察，但旧进程
+加载的构建产物尚不能仅凭端口反推为当前 commit；最终黄金闭环仍必须在集成后的 exact commit
+重新启动和验收。若出现 `duplicate_worker_warning`，脚本只报警，不会擅自清理既有终端的进程。
+
 MinIO 的 `MINIO_API_CORS_ALLOW_ORIGIN` 必须包含 `http://127.0.0.1:4175`；浏览器录音
 直传需要该来源。修改它后执行 `docker compose up -d --force-recreate minio`，仅重建容器，
 不会删除既有 MinIO 数据卷。
