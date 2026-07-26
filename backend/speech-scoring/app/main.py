@@ -147,6 +147,8 @@ async def score_reading_endpoint(req: ScoreReadingRequest):
 
         return result
 
+    except HTTPException:
+        raise
     except httpx.HTTPError as e:
         logger.error(f"Failed to download audio: {e}")
         raise HTTPException(status_code=400, detail=f"Failed to download audio: {e}")

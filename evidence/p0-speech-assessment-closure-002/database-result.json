@@ -1,0 +1,46 @@
+{
+  "taskId": "P0-SPEECH-ASSESSMENT-CLOSURE-002",
+  "capturedAt": "2026-07-26T13:34:00.000Z",
+  "session": {
+    "id": "2da3021d-871a-4ce1-82f9-af3765ea6168",
+    "status": "COMPLETED",
+    "completedAt": "2026-07-26T13:22:11.053Z"
+  },
+  "speechJobs": [
+    {
+      "id": "39b96233-13d5-4cc7-9cdd-f2636aeac00c",
+      "assessmentItemId": "041b36a6-2724-45f3-b89c-726b50d07a1e",
+      "status": "NEEDS_REVIEW",
+      "confidence": 0.8,
+      "transcript": "一七。",
+      "overallScore": 6,
+      "reason": "TONE_ANALYSIS_FAILED"
+    },
+    {
+      "id": "32680fef-76b9-42a7-94d3-0467de514d57",
+      "assessmentItemId": "fc6cace9-ed4d-4f03-a33d-8a49cd9af7dc",
+      "status": "NEEDS_REVIEW",
+      "confidence": 0,
+      "transcript": "",
+      "overallScore": 0,
+      "reason": "NO_SPEECH_DETECTED"
+    }
+  ],
+  "report": {
+    "id": "45e6b1e8-5c24-43c4-a6b2-8f74fb4b09f5",
+    "overallScore": 3,
+    "readingScore": 3,
+    "dataCompleteness": 40,
+    "scoringState": "NEEDS_REVIEW",
+    "requiresTeacherReview": true
+  },
+  "assertions": {
+    "realModelUsed": true,
+    "mockModeUsed": false,
+    "allOralItemsHaveSpeechJob": true,
+    "allSpeechJobsTerminal": true,
+    "itemAutoResultsPersisted": true,
+    "reportPersisted": true,
+    "historyEligible": true
+  }
+}

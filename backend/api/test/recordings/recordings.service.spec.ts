@@ -13,9 +13,10 @@
  * No database required — all repository ports, StoragePort, and PrismaService are faked.
  */
 
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { Test } from "@nestjs/testing";
 import { ConfigService } from "@nestjs/config";
+import { SpeechJobService } from "../../src/modules/speech-job/speech-job.service.js";
 import { RecordingsService } from "../../src/modules/recordings/recordings.service.js";
 import { RECORDING_REPOSITORY } from "../../src/modules/recordings/ports/recording-repository.port.js";
 import { STORAGE_PORT } from "../../src/shared/storage/storage.port.js";
@@ -37,6 +38,7 @@ const SCHOOL_B = "school-b-0000-0000-000000000000";
 const STUDENT_ID = "student-000-0000-0000-000000000001";
 const ENROLLMENT_ID = "enroll-000-0000-0000-000000000001";
 const RECORDING_ID = "rec-00000-0000-0000-000000000001";
+const ASSESSMENT_ITEM_ID = "item-0000-0000-0000-000000000001";
 
 function makeAuth(userId: string, roles: MembershipRole[], schoolId: string): AuthContext {
   const principal: Principal = {
@@ -133,6 +135,7 @@ interface BuildOptions {
   recordingRepo?: ReturnType<typeof createFakeRecordingRepo>;
   storage?: ReturnType<typeof createFakeStorage>;
   headObjectResult?: { exists: boolean; contentLength?: number };
+  speechJobService?: Pick<SpeechJobService, "triggerSpeechProcessing">;
 }
 
 async function buildService(opts: BuildOptions = {}) {
@@ -153,6 +156,9 @@ async function buildService(opts: BuildOptions = {}) {
       findUnique: async () => recordingRepo["_setRecording"] ? makeRecording() : null,
       update: async () => ({}),
     },
+    assessmentItem: {
+      findFirst: async () => ({ prompt: { targetText: "万里赴戎机" } }),
+    },
     speechJob: {
       create: async () => ({ id: "job-001", status: "CREATED" }),
       findUnique: async () => ({ id: "job-001", status: "CREATED" }),
@@ -172,7 +178,9 @@ async function buildService(opts: BuildOptions = {}) {
       { provide: ConfigService, useValue: fakeConfig },
       { provide: RECORDING_REPOSITORY, useValue: recordingRepo },
       { provide: STORAGE_PORT, useValue: storage },
-      // SpeechJobService is @Optional in RecordingsService — omit it
+      ...(opts.speechJobService
+        ? [{ provide: SpeechJobService, useValue: opts.speechJobService }]
+        : []),
       RecordingsService,
     ],
   }).compile();
@@ -329,15 +337,46 @@ describe("RecordingsService", () => {
       ).rejects.toThrow(RecordingStatusException);
     });
 
-    it("rejects completion from wrong state (COMPLETE → COMPLETE)", async () => {
+    it("returns an already complete recording idempotently", async () => {
       const recording = makeRecording({ status: "COMPLETE" });
       const fakeRepo = createFakeRecordingRepo(recording);
 
       const { service } = await buildService({ recordingRepo: fakeRepo });
 
-      await expect(
-        service.completeRecording(studentAuthA, SCHOOL_A, RECORDING_ID, {}),
-      ).rejects.toThrow(RecordingStatusException);
+      const result = await service.completeRecording(
+        studentAuthA,
+        SCHOOL_A,
+        RECORDING_ID,
+        {},
+      );
+
+      expect(result.status).toBe("COMPLETE");
+    });
+
+    it("recovers a missing SpeechJob using the canonical AssessmentItem target text", async () => {
+      const recording = makeRecording({ status: "COMPLETE" });
+      const fakeRepo = createFakeRecordingRepo(recording);
+      const triggerSpeechProcessing = vi.fn(async () => ({ id: "job-recovered" }));
+
+      const { service } = await buildService({
+        recordingRepo: fakeRepo,
+        speechJobService: { triggerSpeechProcessing } as Pick<
+          SpeechJobService,
+          "triggerSpeechProcessing"
+        >,
+      });
+
+      await service.completeRecording(studentAuthA, SCHOOL_A, RECORDING_ID, {
+        assessmentItemId: ASSESSMENT_ITEM_ID,
+        targetText: "被客户端篡改的文本",
+      });
+
+      expect(triggerSpeechProcessing).toHaveBeenCalledWith(
+        RECORDING_ID,
+        ASSESSMENT_ITEM_ID,
+        "万里赴戎机",
+        SCHOOL_A,
+      );
     });
 
     it("rejects when student does not own the recording's enrollment", async () => {

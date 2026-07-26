@@ -233,7 +233,15 @@ export class RecordingsService {
     // Verify ownership
     await this.verifyEnrollmentOwnership(auth, schoolId, recording.enrollmentId);
 
-    // Validate state: can only complete when UPLOADING
+    // A completed upload may be retried to recover a missing SpeechJob. This is
+    // deliberately idempotent: the persisted object is not completed twice,
+    // while SpeechJobService reuses an existing non-failed job if one exists.
+    if (["COMPLETE", "PROCESSING", "READY"].includes(recording.status)) {
+      await this.ensureSpeechProcessing(recording, schoolId, input);
+      return toRecordingStatusResponse(recording);
+    }
+
+    // Validate state: a new completion can only start from an upload state.
     if (recording.status !== "UPLOADING" && recording.status !== "INITIALIZED") {
       throw new RecordingStatusException(
         `当前状态 ${recording.status} 不允许完成录音`,
@@ -296,32 +304,65 @@ export class RecordingsService {
       );
     }
 
-    // ─── Auto-trigger SpeechJob if targetText is provided ───
-    if (
-      input.targetText &&
-      this.speechJobService
-    ) {
-      try {
-        const speechJob = await this.speechJobService.triggerSpeechProcessing(
-          recordingId,
-          input.assessmentItemId,
-          input.targetText,
-          schoolId,
-        );
-        this.logger.log(
-          `SpeechJob auto-triggered after recording completion: jobId=${speechJob.id} recordingId=${recordingId}`,
-        );
-      } catch (err: unknown) {
-        // Speech processing failure should NOT block recording completion.
-        // The recording is already COMPLETE; the job will need manual retry.
-        const message = err instanceof Error ? err.message : String(err);
-        this.logger.warn(
-          `Failed to auto-trigger SpeechJob for recording ${recordingId}: ${message}`,
-        );
+    await this.ensureSpeechProcessing(completedRecording, schoolId, input);
+
+    return toRecordingStatusResponse(completedRecording);
+  }
+
+  private async ensureSpeechProcessing(
+    recording: Recording,
+    schoolId: string,
+    input: CompleteRecordingInput,
+  ): Promise<void> {
+    if (!this.speechJobService) return;
+
+    let targetText = input.targetText?.trim() ?? "";
+    if (input.assessmentItemId) {
+      const item = await this.prisma.assessmentItem.findFirst({
+        where: {
+          id: input.assessmentItemId,
+          session: {
+            schoolId,
+            enrollmentId: recording.enrollmentId,
+          },
+        },
+        select: { prompt: true },
+      });
+      if (!item) {
+        throw new RecordingStatusException("评分题目不存在或不属于当前学生");
+      }
+
+      const prompt = item.prompt;
+      if (typeof prompt === "string") {
+        targetText = prompt.trim();
+      } else if (prompt && typeof prompt === "object" && !Array.isArray(prompt)) {
+        const fields = prompt as Record<string, unknown>;
+        targetText =
+          [fields.targetText, fields.text, fields.sentence, fields.stimulus]
+            .find(
+              (value): value is string =>
+                typeof value === "string" && value.trim().length > 0,
+            )
+            ?.trim() ?? "";
       }
     }
 
-    return toRecordingStatusResponse(completedRecording);
+    if (!targetText) {
+      if (input.assessmentItemId) {
+        throw new RecordingStatusException("评分题目缺少标准朗读文本");
+      }
+      return;
+    }
+
+    const speechJob = await this.speechJobService.triggerSpeechProcessing(
+      recording.id,
+      input.assessmentItemId,
+      targetText,
+      schoolId,
+    );
+    this.logger.log(
+      `SpeechJob ensured after recording completion: jobId=${speechJob.id} recordingId=${recording.id}`,
+    );
   }
 
   async getRecordingStatus(

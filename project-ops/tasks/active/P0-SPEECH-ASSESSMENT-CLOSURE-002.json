@@ -1,6 +1,6 @@
 {
   "id": "P0-SPEECH-ASSESSMENT-CLOSURE-002",
-  "status": "PLANNED",
+  "status": "READY_FOR_REVIEW",
   "title": "真实录音自动评分、报告与历史记录闭环",
   "owner": "Codex Task Owner",
   "reviewer": "Integration Lead",
@@ -41,6 +41,7 @@
     "真实录音纵向验证"
   ],
   "allowed_paths": [
+    ".learnings/ERRORS.md",
     "project-ops/tasks/active/P0-SPEECH-ASSESSMENT-CLOSURE-002.json",
     "project-ops/handoffs/P0-SPEECH-ASSESSMENT-CLOSURE-002.md",
     "frontend/assessment/assets/app.js",
@@ -52,6 +53,7 @@
     "backend/worker/src/speech/**",
     "backend/worker/test/speech-job.consumer.spec.ts",
     "backend/speech-scoring/**",
+    "evidence/p0-speech-assessment-closure-002/**",
     "scripts/local-runtime/start-core.ps1",
     "scripts/local-runtime/start-speech.ps1"
   ],
@@ -77,7 +79,32 @@
       "command": "Playwright real recording recovery -> SpeechJob -> result/report/history with API and database cross-check"
     }
   ],
-  "test_evidence": [],
+  "test_evidence": [
+    {
+      "name": "API recording and speech focused tests",
+      "command": "pnpm --filter @yuzan/api test -- --run test/recordings test/speech-job",
+      "result": "PASS",
+      "summary": "28/28; canonical target text, idempotent completed-recording recovery, duplicate SpeechJob prevention, and status behavior passed."
+    },
+    {
+      "name": "Worker speech focused tests",
+      "command": "pnpm --filter @yuzan/worker test -- --run test/speech-job.consumer.spec.ts",
+      "result": "PASS",
+      "summary": "8/8; scoring result, item writeback, recording readiness, and failure behavior passed."
+    },
+    {
+      "name": "Speech scoring tests",
+      "command": "python -m pytest backend/speech-scoring/tests -q",
+      "result": "PASS",
+      "summary": "2/2; health exposes scorer version and provider-unavailable remains an explicit 503 rather than a fake result."
+    },
+    {
+      "name": "Runtime browser and persistence closure",
+      "command": "python evidence/p0-speech-assessment-closure-002/browser_verify.py plus Prisma cross-check",
+      "result": "PASS",
+      "summary": "Real FunASR processed two existing MinIO recordings into two NEEDS_REVIEW jobs; item scores 6 and 0, report overall 3, session COMPLETED; Playwright showed history and report with zero console/page/request errors."
+    }
+  ],
   "handoff": "project-ops/handoffs/P0-SPEECH-ASSESSMENT-CLOSURE-002.md",
   "rollback": "Revert the task commit; existing recordings and prior reports remain persisted and no mock result is introduced.",
   "delivery": {

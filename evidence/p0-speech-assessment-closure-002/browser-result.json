@@ -1,0 +1,12 @@
+{
+  "status": "PASSED",
+  "baseUrl": "http://127.0.0.1:4176",
+  "sessionId": "2da3021d-871a-4ce1-82f9-af3765ea6168",
+  "historyVisible": true,
+  "reportVisible": true,
+  "needsTeacherReviewVisible": true,
+  "overallScore": 3,
+  "consoleErrors": [],
+  "pageErrors": [],
+  "failedRequests": []
+}

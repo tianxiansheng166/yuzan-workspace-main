@@ -35,6 +35,13 @@
 
   const isListeningItem = (item) => item?.itemType === 'LISTEN_ONLY';
   const isOralItem = (item) => ['READING','SPEECH','LISTEN_REPEAT','READ_ALOUD'].includes(item?.itemType);
+  const getOralTargetText = (item) => {
+    const prompt = item?.prompt;
+    if (typeof prompt === 'string') return prompt.trim();
+    if (!prompt || typeof prompt !== 'object') return '';
+    return [prompt.targetText, prompt.text, prompt.sentence, prompt.stimulus]
+      .find(value => typeof value === 'string' && value.trim())?.trim() || '';
+  };
   const isWrittenItem = (item) => ['WRITTEN','CHOICE','FILL_BLANK','SINGLE_CHOICE','MULTIPLE_CHOICE','SHORT_ANSWER','LISTEN_RETELL'].includes(item?.itemType);
 
   // ── 演示模式：仅显式 ?demo=1 时启用，并始终显示"演示模式"标识 ──
@@ -881,10 +888,7 @@
       appState.uploadProgress = 100;
       saveState();
       const item = appState.apiReadingItem;
-      let targetText = '';
-      if (item?.prompt?.text) targetText = item.prompt.text;
-      else if (item?.prompt?.sentence) targetText = item.prompt.sentence;
-      else if (typeof item?.prompt === 'string') targetText = item.prompt;
+      const targetText = getOralTargetText(item);
 
       const completeResp = await Api.completeSimpleRecording(recordingId, {
         durationMs: appState.readingElapsed * 1000,
@@ -902,7 +906,7 @@
         appState.apiSpeechJobId = jobId;
         saveState();
         // 轮询 SpeechJob
-        pollSpeechJob(jobId);
+        pollSpeechJobs([jobId]);
       } else {
         // completeRecording 可能不会自动创建 SpeechJob，尝试通过 by-item 查询
         try {
@@ -911,7 +915,7 @@
           if (latestJob?.id) {
             appState.apiSpeechJobId = latestJob.id;
             saveState();
-            pollSpeechJob(latestJob.id);
+            pollSpeechJobs([latestJob.id]);
           }
         } catch (err) {
           console.warn('[assessment] 查询 SpeechJob 失败:', err);
@@ -935,19 +939,22 @@
 
   // ── SpeechJob 轮询：真实状态，禁止定时器自动切换 ──
   let speechJobPollTimer = null;
-  function pollSpeechJob(jobId) {
+  function pollSpeechJobs(jobIds) {
     if (speechJobPollTimer) clearInterval(speechJobPollTimer);
     const poll = async () => {
       try {
-        const job = await Api.getSpeechJob(jobId);
-        appState.apiSpeechJob = job;
+        const jobs = await Promise.all(jobIds.map(jobId => Api.getSpeechJob(jobId)));
+        appState.apiSpeechJobs = jobs;
+        appState.apiSpeechJob = jobs[0] || null;
         saveState();
         // 如果当前在处理页，重新渲染
         const page = document.body.dataset.page;
         if (page === 'processing') renderCurrent();
         // 终态停止轮询
-        if (['FINALIZED', 'FAILED'].includes(job.status)) {
+        const terminal = ['AUTO_RESULT', 'NEEDS_REVIEW', 'FINALIZED', 'FAILED'];
+        if (jobs.every(job => terminal.includes(job.status))) {
           if (speechJobPollTimer) { clearInterval(speechJobPollTimer); speechJobPollTimer = null; }
+          if (page === 'processing') await loadProcessingData();
         }
       } catch (err) {
         console.warn('[assessment] SpeechJob 轮询失败:', err);
@@ -1336,12 +1343,29 @@
       }
       // 每个真实口语题都可能有自己的评分任务；不能只读取旧题型的第一条任务。
       const oralItems = appState.apiItems.filter(isOralItem).filter(item => item.recordingId);
-      const jobLists = await Promise.all(oralItems.map(item => Api.getSpeechJobByItem(item.id).catch(() => [])));
+      let jobLists = await Promise.all(oralItems.map(item => Api.getSpeechJobByItem(item.id).catch(() => [])));
+      // Recover recordings persisted before SpeechJob creation was fixed. The
+      // completion endpoint is idempotent and resolves the canonical target
+      // text from AssessmentItem on the server.
+      const missingJobs = oralItems.filter((_, index) => {
+        const jobs = jobLists[index];
+        return !(Array.isArray(jobs) ? jobs.length : jobs);
+      });
+      if (missingJobs.length) {
+        await Promise.all(missingJobs.map(item => Api.completeSimpleRecording(item.recordingId, {
+          assessmentItemId: item.id,
+          targetText: getOralTargetText(item)
+        })));
+        jobLists = await Promise.all(oralItems.map(item => Api.getSpeechJobByItem(item.id)));
+      }
       appState.apiSpeechJobs = jobLists.flatMap((jobs) => Array.isArray(jobs) ? (jobs[0] ? [jobs[0]] : []) : (jobs ? [jobs] : []));
       appState.apiSpeechJob = appState.apiSpeechJobs[0] || null;
       appState.apiSpeechJobId = appState.apiSpeechJob?.id || null;
-      if (appState.apiSpeechJobId && !['AUTO_RESULT', 'NEEDS_REVIEW', 'FINALIZED', 'FAILED'].includes(appState.apiSpeechJob.status)) {
-        pollSpeechJob(appState.apiSpeechJobId);
+      const activeJobIds = appState.apiSpeechJobs
+        .filter(job => !['AUTO_RESULT', 'NEEDS_REVIEW', 'FINALIZED', 'FAILED'].includes(job.status))
+        .map(job => job.id);
+      if (activeJobIds.length) {
+        pollSpeechJobs(appState.apiSpeechJobs.map(job => job.id));
       }
     } catch (err) {
       console.error('[assessment] 加载处理状态失败:', err);

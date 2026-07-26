@@ -54,6 +54,7 @@ function makeJob(overrides: Record<string, any> = {}) {
 
 interface BuildOptions {
   prismaOverrides?: Record<string, any>;
+  existingSpeechJob?: ReturnType<typeof makeJob> | null;
 }
 
 async function buildService(opts: BuildOptions = {}) {
@@ -61,10 +62,11 @@ async function buildService(opts: BuildOptions = {}) {
 
   const fakePrisma = createFakePrismaService({
     speechJob: {
-      create: async (args: any) => {
+      findFirst: async () => opts.existingSpeechJob ?? null,
+      create: vi.fn(async (args: any) => {
         createdJob = makeJob({ ...args.data, id: JOB_ID });
         return createdJob;
-      },
+      }),
       findUnique: async (args: any) => {
         if (args.where.id === JOB_ID) return createdJob;
         return null;
@@ -234,6 +236,24 @@ describe("SpeechJobService", () => {
       // With SPEECH_QUEUE=null and ConfigService default, provider=disabled
       // Job should remain in CREATED status
       expect(result.status).toBe("CREATED");
+    });
+
+    it("reuses an existing non-failed job without creating a duplicate", async () => {
+      const existingJob = makeJob({ status: "PROCESSING" });
+      const { service, fakePrisma } = await buildService({
+        existingSpeechJob: existingJob,
+      });
+
+      const result = await service.triggerSpeechProcessing(
+        RECORDING_ID,
+        ASSESSMENT_ITEM_ID,
+        "春眠不觉晓",
+        SCHOOL_ID,
+      );
+
+      expect(result.id).toBe(JOB_ID);
+      expect(result.status).toBe("PROCESSING");
+      expect(fakePrisma.speechJob.create).not.toHaveBeenCalled();
     });
   });
 
