@@ -31,6 +31,9 @@ try {
     }
 
     git fetch origin $target.runtime_branch --quiet
+    if ($LASTEXITCODE -ne 0) {
+        throw "Cannot verify origin/$($target.runtime_branch). Check network/SSH access before starting the claimed latest runtime."
+    }
     $localHead = (git rev-parse HEAD).Trim()
     $remoteHead = (git rev-parse "origin/$($target.runtime_branch)").Trim()
     if ($localHead -ne $remoteHead) {

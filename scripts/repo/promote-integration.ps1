@@ -19,6 +19,7 @@ try {
     if (git status --porcelain) { throw 'Canonical root is dirty; promotion is intentionally refused.' }
 
     git fetch origin $target.runtime_branch $target.integration_branch --quiet
+    if ($LASTEXITCODE -ne 0) { throw 'Cannot verify origin refs. Check network/SSH access; promotion is refused.' }
     $mainRef = "origin/$($target.runtime_branch)"
     $candidate = "origin/$($target.integration_branch)"
     git merge-base --is-ancestor $mainRef $candidate

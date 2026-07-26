@@ -56,6 +56,10 @@ try {
         pnpm db:generate
     }
 
+    # The API imports the compiled database workspace package. Generate alone updates
+    # Prisma source but leaves that package's declaration output stale after schema changes.
+    pnpm --filter @yuzan/database build
+
     pnpm dev
 } finally {
     Pop-Location
