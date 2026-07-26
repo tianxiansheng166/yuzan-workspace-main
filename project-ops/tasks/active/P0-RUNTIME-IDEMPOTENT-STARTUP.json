@@ -13,7 +13,8 @@
     "attempt 3 使用 nonce/PID/可执行文件/启动时间/根目录/commit/角色精确 argv/lock 的联合证明，复用只接受 exact candidate",
     "attempt 5 review round 2 将 wrapper 与 child 的 Windows 实时完整 argv 纳入联合证明，记录内伪造的 argv 哈希不能替代真实进程参数",
     "attempt 7 在候选 e2350f3cc336c212778232ed2753930e0e1b213d 重新执行隔离套件，clean exact-candidate、连续复用、foreign partial occupancy、PowerShell/same-executable argv spoof 和 wrong commit 全部按契约通过",
-    "attempt 8 在候选 9bb02084b6d662e44e29cd5ff8c81504a1fa52c3 再次通过语法与隔离运行时套件，证明 handoff 更新后的 exact candidate 仍满足全部正向和负向契约"
+    "attempt 8 在候选 9bb02084b6d662e44e29cd5ff8c81504a1fa52c3 再次通过语法与隔离运行时套件，证明 handoff 更新后的 exact candidate 仍满足全部正向和负向契约",
+    "attempt 9 在候选 956839d32450e371d666817bf30f801c89d36c28 再次通过语法与隔离运行时套件，证明最新 handoff 候选仍满足全部正向和负向契约"
   ],
   "product_alignment": {
     "p0": "真实学习证据与教师干预闭环",
@@ -94,6 +95,12 @@
       "command": "powershell -NoProfile -File scripts/local-runtime/test-repeatable-start.ps1 -Mode Syntax; powershell -NoProfile -File scripts/local-runtime/test-repeatable-start.ps1 -Mode Runtime -RepositoryRoot .",
       "result": "PASS",
       "summary": "2026-07-26T18:52Z 在 9bb02084b6d662e44e29cd5ff8c81504a1fa52c3 上通过 5 个 PowerShell/3 个 Python 语法检查；clean exact-commit attestation、相同 PID/commit 两次复用、foreign partial fail closed、PowerShell argv spoof、伪造记录哈希的 same-executable live argv spoof 与 wrong candidate commit 均通过，隔离端口为 56966/56967/56968，fixture 进程由 finally 清理。"
+    },
+    {
+      "name": "attempt 9 exact-candidate 重跑",
+      "command": "powershell -NoProfile -File scripts/local-runtime/test-repeatable-start.ps1 -Mode Syntax; powershell -NoProfile -File scripts/local-runtime/test-repeatable-start.ps1 -Mode Runtime -RepositoryRoot .",
+      "result": "PASS",
+      "summary": "2026-07-26T19:20Z 在 956839d32450e371d666817bf30f801c89d36c28 上通过 5 个 PowerShell/3 个 Python 语法检查；clean exact-commit attestation、相同 PID/commit 两次复用、foreign partial fail closed、PowerShell argv spoof、伪造记录哈希的 same-executable live argv spoof 与 wrong candidate commit 均通过，隔离端口为 58559/58560/58561，fixture 进程由 finally 清理。"
     }
   ],
   "handoff": "project-ops/handoffs/P0-RUNTIME-IDEMPOTENT-STARTUP.md",
