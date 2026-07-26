@@ -1,6 +1,6 @@
 # P0-DYNAMIC-ID-ROUTING-CLEANUP Handoff
 
-- Owner: `codex-account-c-dynamic-builder`（attempt 4，review round 1）
+- Owner: `codex-account-c-dynamic-builder`（attempt 5，review round 1）
 - Reviewer: independent verifier
 - Branch: `task/p0-dynamic-id-routing-cleanup`
 - Base commit: `41a0ff3656af7888d4c2e46eb180eeffc3414115`
@@ -38,6 +38,12 @@
 破坏的 ignored `node_modules` 链接；未下载依赖、未修改 lockfile 或任务源码。随后重新运行
 全部最小测试，结果如下。
 
+2026-07-27 01:24–01:28 +08:00 在 attempt 5 起始候选
+`56537c4b3be4feef3e9ffd959f3d3ac9f7c2ba8e` 上使用当前 lease
+`4a8aafee-d25f-4ecd-a280-908377385deb` 和 fencing epoch `24` 再次完成全部最小测试。
+本轮 shell 使用 Node 22.19.0，pnpm 如实提示仓库期望 Node `>=24 <27`；聚焦测试均实际
+执行并通过，没有安装依赖或修改 lockfile。
+
 | 检查                                   | 命令                                                                                                                                                                     | 结果                                                                                                                                                                                      |
 | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 固定业务 ID 源码证伪                   | `rg -n --glob '!**/node_modules/**' --glob '!**/assets/**' "submission-1\|course-1\|assignment-1" frontend/server.mjs frontend/shared/teacher-shell.js frontend/teacher` | `PASS`：attempt 4 退出码 1，零匹配                                                                                                                                                        |
@@ -49,6 +55,16 @@
 | submission 授权、真实证据与 fresh-read | `pnpm --filter @yuzan/api exec vitest run --config test/modules/submissions/vitest.config.ts`                                                                            | `PASS`：attempt 4，3 files、61 tests；含其他学生/跨班教师 403、同班教师正向、真实答案/录音与 RETURNED/revision/feedback fresh-read                                                        |
 | feedback 授权与 RETURN 持久化并发      | `pnpm --filter @yuzan/api exec vitest run --config test/modules/feedback/vitest.config.ts`                                                                               | `PASS`：attempt 4，2 files、22 tests；含 STUDENT/跨班教师拒绝、RETURNED、revision 1→2 且 update 一次                                                                                      |
 | OpenAPI 与生成契约                     | `pnpm --filter @yuzan/contracts test`                                                                                                                                    | `PASS`：attempt 4，OpenAPI valid；generator 6/6                                                                                                                                           |
+
+Attempt 5 复核结果：
+
+| 检查 | 结果 |
+| --- | --- |
+| 固定业务 ID、JS/Python 语法与 whitespace | `PASS`：固定 ID 零匹配；8 个变更 JS、Python 编译、`git diff --check` 全通过 |
+| 教师入口浏览器导航 | `PASS`：4/4 checks；真实 unavailable、未知角色 fail closed、无证据禁用操作、`RETURN` 后 fresh GET 显示 `RETURNED`；`page_errors=0` |
+| submission 聚焦测试 | `PASS`：3 files、61 tests |
+| feedback 聚焦测试 | `PASS`：2 files、22 tests |
+| OpenAPI 与生成契约 | `PASS`：OpenAPI valid；generator 6/6 |
 
 浏览器运行证据位于 ignored runtime 目录：
 
