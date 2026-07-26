@@ -410,3 +410,24 @@
 - Command: run final audit from `workers/p0-integration` and read `../README-FIRST.md`
 - Result: the former directory is now an empty, unregistered non-repository and its old parent-relative governance files no longer exist. A policy check also blocked deleting that directory during the active desktop session.
 - Resolution: switched all commands to the canonical `three/yuzan-next` root, used repository-local `README-FIRST.md` and `AGENTS.md`, and retained an explicit session-exit cleanup note for the empty legacy path.
+
+## [ERR-20260723-001] powershell-foreach-pipeline-parser
+
+- Logged: 2026-07-23T00:00:00+08:00
+- Priority: low
+- Status: resolved
+- Area: repository review diagnostics
+- Command: emit read-only port and environment-key inventories from `foreach` directly into `Format-Table`
+- Result: PowerShell rejected the direct loop-to-pipeline form as an empty pipe element; neither command changed repository or runtime state.
+- Resolution: materialize loop results in an array before piping to formatting commands, matching the established fix in `ERR-20260722-007`.
+- See Also: ERR-20260722-007
+
+## [ERR-20260723-002] stale-api-client-search-path
+
+- Logged: 2026-07-23T01:00:00+08:00
+- Priority: low
+- Status: resolved
+- Area: repository review diagnostics
+- Command: search contract convergence references in `frontend/shared/api-client.js`
+- Result: `rg` returned exit 1 because the active API client is `frontend/assets/api-client.js`; the other search targets still produced results and no files were changed by the failed command.
+- Resolution: locate the file with a recursive filename search, then rerun the targeted search against `frontend/assets/api-client.js`.
