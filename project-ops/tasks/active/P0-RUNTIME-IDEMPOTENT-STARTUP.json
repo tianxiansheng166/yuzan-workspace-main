@@ -1,6 +1,6 @@
 {
   "id": "P0-RUNTIME-IDEMPOTENT-STARTUP",
-  "status": "READY_FOR_REVIEW",
+  "status": "BLOCKED",
   "title": "Canonical 本地运行时幂等启动与真实健康诊断",
   "owner": "codex-runtime-builder",
   "reviewer": "independent runtime verifier",
@@ -14,7 +14,8 @@
     "attempt 5 review round 2 将 wrapper 与 child 的 Windows 实时完整 argv 纳入联合证明，记录内伪造的 argv 哈希不能替代真实进程参数",
     "attempt 7 在候选 e2350f3cc336c212778232ed2753930e0e1b213d 重新执行隔离套件，clean exact-candidate、连续复用、foreign partial occupancy、PowerShell/same-executable argv spoof 和 wrong commit 全部按契约通过",
     "attempt 8 在候选 9bb02084b6d662e44e29cd5ff8c81504a1fa52c3 再次通过语法与隔离运行时套件，证明 handoff 更新后的 exact candidate 仍满足全部正向和负向契约",
-    "attempt 9 在候选 956839d32450e371d666817bf30f801c89d36c28 再次通过语法与隔离运行时套件，证明最新 handoff 候选仍满足全部正向和负向契约"
+    "attempt 9 在候选 956839d32450e371d666817bf30f801c89d36c28 再次通过语法与隔离运行时套件，证明最新 handoff 候选仍满足全部正向和负向契约",
+    "attempt 10 review round 3 的失败直接来自 frontend/login/app.js 中 API/network 失败后的 demo authentication fallback；该路径不在本租约 write_set/allowed_paths，且 verifier 直接启动 frontend/server.mjs，无法由 scripts/local-runtime 内的合法修改修复"
   ],
   "product_alignment": {
     "p0": "真实学习证据与教师干预闭环",
@@ -101,6 +102,12 @@
       "command": "powershell -NoProfile -File scripts/local-runtime/test-repeatable-start.ps1 -Mode Syntax; powershell -NoProfile -File scripts/local-runtime/test-repeatable-start.ps1 -Mode Runtime -RepositoryRoot .",
       "result": "PASS",
       "summary": "2026-07-26T19:20Z 在 956839d32450e371d666817bf30f801c89d36c28 上通过 5 个 PowerShell/3 个 Python 语法检查；clean exact-commit attestation、相同 PID/commit 两次复用、foreign partial fail closed、PowerShell argv spoof、伪造记录哈希的 same-executable live argv spoof 与 wrong candidate commit 均通过，隔离端口为 58559/58560/58561，fixture 进程由 finally 清理。"
+    },
+    {
+      "name": "attempt 10 review round 3 scope diagnosis",
+      "command": "rg -n \"demo-token|11111111-1111-4111-8111-111111111111|Demo fallback\" frontend/login frontend/server.mjs; rg -n \"<script|app.js\" frontend/login/index.html",
+      "result": "BLOCKED",
+      "summary": "frontend/login/index.html loads frontend/login/app.js; its API/network error path installs demo-token-*, the fixed school ID, and yuzan-demo-session before role redirect. The verifier reproduction starts frontend/server.mjs directly. Both frontend paths are outside this lease's write_set/allowed_paths, so no truthful repair can be made under P0-RUNTIME-IDEMPOTENT-STARTUP."
     }
   ],
   "handoff": "project-ops/handoffs/P0-RUNTIME-IDEMPOTENT-STARTUP.md",

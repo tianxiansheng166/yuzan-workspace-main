@@ -4,7 +4,27 @@
 - Reviewer: independent runtime verifier
 - Branch: `task/p0-runtime-idempotent-startup`
 - Base commit: `41a0ff3656af7888d4c2e46eb180eeffc3414115`
-- Status: `READY_FOR_REVIEW`
+- Status: `BLOCKED`
+
+## Attempt 10 / review round 3 control-plane blocker
+
+- Independent rejection `DEMO_FALLBACK_API_FAILURE_FAKE_SUCCESS` reproduces through
+  `frontend/server.mjs`, which serves `/login/`; `frontend/login/index.html` directly loads
+  `frontend/login/app.js`.
+- `frontend/login/app.js` catches API/network failure and calls `installDemoSession`, writing
+  `demo-token-*`, fixed school ID `11111111-1111-4111-8111-111111111111`, and
+  `yuzan-demo-session`, then redirects to a role workspace.
+- The required repair must modify at least `frontend/login/app.js` (and should separately audit the
+  same fallback in `frontend/login/login.js`). Neither path is in this lease's `write_set` or the
+  task's `allowed_paths`; the leased set only permits `scripts/local-runtime/**` and task
+  metadata/runbook files.
+- A runtime wrapper or response rewrite under `scripts/local-runtime/**` is not a valid repair:
+  the verifier starts `frontend/server.mjs` directly, and such a wrapper would leave the production
+  login source capable of fake success.
+- Required control-plane action: assign the frontend auth owner a lease containing
+  `frontend/login/app.js` (and, if the unused duplicate is in scope, `frontend/login/login.js`) plus
+  focused browser-negative test paths, or explicitly expand this task's write set under the proper
+  owner/lock. Until then, this builder cannot emit `COMPLETE_CANDIDATE`.
 
 ## 用户结果与方向
 
