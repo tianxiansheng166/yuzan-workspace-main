@@ -840,3 +840,141 @@
 - Resolution: compute the clean status in a separate variable and keep the result object expression simple.
 - Reproducible: yes
 - Related Files: `.learnings/ERRORS.md`
+
+## [ERR-20260725-001] task-gate-git-quoted-unicode-path
+
+**Logged**: 2026-07-25T00:00:00+08:00
+**Priority**: medium
+**Status**: resolved
+**Area**: Git delivery
+
+### Summary
+
+`task-gate.ps1` misclassified an allowed Chinese Markdown path because Git's default quoted path output was parsed as a literal changed path.
+
+### Error
+
+```text
+[FAIL] Changed path is outside allowed_paths:
+"docs/10-project-review/02-/350/257/.../357/274/211.md"
+Task gate 'review' failed with 1 issue(s).
+```
+
+### Context
+
+- Command: `task-gate.ps1 -Mode review` for `PRODUCT-WEB-PRD-001`.
+- Environment: Windows PowerShell, Git path contains Chinese characters.
+- `git diff --name-only` used the default `core.quotePath=true`, returned a quoted octal-escaped path, and the gate normalized backslashes before matching `allowed_paths`.
+- The real changed path was inside the exact task whitelist.
+
+### Suggested Fix
+
+Run the gate with process-scoped Git config environment values:
+
+```powershell
+$env:GIT_CONFIG_COUNT = '1'
+$env:GIT_CONFIG_KEY_0 = 'core.quotePath'
+$env:GIT_CONFIG_VALUE_0 = 'false'
+try {
+  & .\scripts\repo\task-gate.ps1 -Mode review -TaskFile <task-file>
+} finally {
+  Remove-Item Env:GIT_CONFIG_COUNT, Env:GIT_CONFIG_KEY_0, Env:GIT_CONFIG_VALUE_0
+}
+```
+
+Do not change global or repository Git config only to pass one task. A future shared-script fix can call Git with Unicode-safe path output before whitelist matching.
+
+### Metadata
+
+- Reproducible: yes
+- Related Files: `scripts/repo/task-gate.ps1`, `project-ops/tasks/active/PRODUCT-WEB-PRD-001.json`
+
+### Resolution
+
+- **Resolved**: 2026-07-25T00:00:00+08:00
+- **Commit/PR**: pending task delivery commit
+- **Notes**: The process-scoped Git configuration exposed the Unicode path without changing repository or global config; task-gate review then passed with four changed paths.
+
+## [ERR-20260725-002] overly-broad-secret-fixed-string-scan
+
+**Logged**: 2026-07-25T22:45:45+08:00
+**Priority**: low
+**Status**: resolved
+**Area**: Delivery validation
+
+### Summary
+
+A fixed-string credential scan treated the short fragment `sk-` as a complete secret signature and falsely matched ordinary task names such as `task-branch`.
+
+### Error
+
+```text
+secret-like fixed string found
+```
+
+### Context
+
+- The scan covered the task PRD, task manifest, handoff and learning log.
+- The pattern list included an unbounded `sk-` fragment.
+- Ordinary prose containing `task-...` therefore produced matches even though no token-shaped credential was present.
+
+### Suggested Fix
+
+Use token-shaped regular expressions with both a left token boundary and a minimum payload length, and keep private-key header checks exact. Treat a match as a review signal rather than proof of a leaked credential. Length alone is insufficient because `task-gate-git-quoted-unicode-path` contains a long `sk-...` substring.
+
+Examples:
+
+```text
+(?<![A-Za-z0-9])ghp_[A-Za-z0-9]{30,}
+(?<![A-Za-z0-9])sk-[A-Za-z0-9_-]{20,}
+-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----
+```
+
+### Metadata
+
+- Reproducible: yes
+- Related Files: `.learnings/ERRORS.md`, `project-ops/tasks/active/PRODUCT-WEB-PRD-001.json`
+
+### Resolution
+
+- **Resolved**: 2026-07-25T22:45:45+08:00
+- **Commit/PR**: pending task delivery commit
+- **Notes**: Replaced the fragment-based check with left-bounded, token-shaped patterns; this also removed the second false positive from the long `task-gate-...` phrase, and the corrected delivery scan passed.
+
+## [ERR-20260725-003] prd-id-validator-assumed-fr-prefix
+
+**Logged**: 2026-07-25T22:47:41+08:00
+**Priority**: low
+**Status**: resolved
+**Area**: Documentation validation
+
+### Summary
+
+The first PRD ID uniqueness check expected every functional requirement to use an `FR-*` prefix, while the document intentionally uses domain prefixes such as `STU-*`, `PRA-*`, `AILP-*` and `TRN-*`.
+
+### Error
+
+```text
+Expected 105 unique requirement/decision IDs, got 10
+```
+
+### Context
+
+- The validator only detected the ten `DEC-*` entries.
+- The document's requirement tables use a stable `<DOMAIN>-<NN>` convention, not `FR-<DOMAIN>-<NN>`.
+- This was a validator assumption mismatch; no PRD ID was missing.
+
+### Suggested Fix
+
+Validate the actual table definition form `| <DOMAIN>-<NN> |`, then assert both total count and uniqueness. Avoid inventing an ID schema that the artifact does not define.
+
+### Metadata
+
+- Reproducible: yes
+- Related Files: `docs/10-project-review/02-语赞心声Web产品PRD（投资与产品版）.md`
+
+### Resolution
+
+- **Resolved**: 2026-07-25T22:47:41+08:00
+- **Commit/PR**: pending task delivery commit
+- **Notes**: The corrected table-row validator found 105 IDs and 105 unique values across functional requirements and decisions.

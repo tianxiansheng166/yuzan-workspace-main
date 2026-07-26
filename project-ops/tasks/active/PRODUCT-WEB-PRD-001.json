@@ -1,0 +1,122 @@
+{
+  "id": "PRODUCT-WEB-PRD-001",
+  "status": "READY_FOR_REVIEW",
+  "title": "编写语赞心声 Web 产品 PRD（投资与产品执行版）",
+  "owner": "Codex",
+  "reviewer": "Product Owner / Integration Lead",
+  "branch": "task/product-web-prd-001",
+  "base_commit": "d681abb717041b22682792e22979108ea296f91e",
+  "user_outcome": "投资人、合作学校、产品与研发团队能够通过同一份 Web PRD 理解语赞心声解决的问题、产品定位、项目演进、当前可信基线、目标功能、商业逻辑、阶段路线图、指标和上线门禁，并能据此开展尽调、试点决策和后续开发。",
+  "current_facts": [
+    "当前源码采用 frontend/ 与 backend/api、backend/worker、backend/speech-scoring 的模块化单体结构",
+    "学生课程关联练习已形成真实录音、书面作答、提交、课程进度与新上下文恢复证据",
+    "独立专项练习与 AI 工具共享契约已进入多路线集成基线",
+    "普通课程整课提交处于证据修复与独立复验阶段，不能视为已集成",
+    "教师 AI 教案分支已修复核心技术缺口，但真实 AI provider 闭环和浏览器验收尚未完成",
+    "藏汉翻译已完成持久化、安全、限流、修订审批等后端骨架，但受真实 provider、合规审批和前端闭环阻塞",
+    "商业计划书中的覆盖人数、教学成效、媒体报道等口径存在冲突，对外使用前需要数据尽调与统一定义"
+  ],
+  "product_alignment": {
+    "p0": "以真实学习证据为核心的国通语学习—练习—复核—报告—干预闭环",
+    "contribution": "把历史愿景、当前事实、目标产品、商业价值和分阶段交付标准统一为一份可投资沟通、可试点决策、可研发执行的 Web 产品单一事实源。",
+    "non_goals": [
+      "不修改任何业务代码、OpenAPI、Prisma、根依赖或运行配置",
+      "不把商业计划书中的未经尽调数据写成已验证事实",
+      "不把任务分支的自报完成等同于集成基线或生产可用",
+      "不提供正式财务预测、估值结论、法律意见或政府采购承诺",
+      "不在本任务中合并 main 或多路线 integration 分支"
+    ]
+  },
+  "context": {
+    "required": [
+      "docs/10-project-review/01-项目全景分析报告.md",
+      "docs/项目指导/01-语赞心声产品总章程-v3.0.md",
+      "docs/项目指导/05-P0黄金闭环产品规格.md",
+      "project-ops/plans/P0-MULTITRACK-CLOSED-LOOPS.md",
+      "project-ops/MULTITRACK-BOARD.md"
+    ],
+    "optional": [
+      "docs/项目指导/06-P0页面地图与状态流.md",
+      "docs/项目指导/09-P0产品决策记录.md",
+      "project-ops/accepted-baselines.json"
+    ]
+  },
+  "depends_on": [],
+  "integration_order": [
+    "统一事实口径和证据等级，明确历史材料与当前源码的漂移",
+    "提炼用户问题、价值主张、一体三翼与证据闭环产品内核",
+    "定义 Web 信息架构、角色旅程、功能需求、非功能要求和验收标准",
+    "建立当前基线矩阵、阶段路线图、商业与社会影响指标、风险和尽调清单",
+    "执行结构检查、事实一致性自审与陌生读者测试",
+    "提交、推送并保持任务 worktree 干净"
+  ],
+  "allowed_paths": [
+    ".learnings/ERRORS.md",
+    "docs/10-project-review/02-语赞心声Web产品PRD（投资与产品版）.md",
+    "project-ops/tasks/active/PRODUCT-WEB-PRD-001.json",
+    "project-ops/handoffs/PRODUCT-WEB-PRD-001.md"
+  ],
+  "shared_owner_changes": [],
+  "contract_change_request": null,
+  "minimal_tests": [
+    {
+      "name": "任务 JSON 解析",
+      "command": "Get-Content project-ops/tasks/active/PRODUCT-WEB-PRD-001.json -Raw -Encoding UTF8 | ConvertFrom-Json | Out-Null"
+    },
+    {
+      "name": "PRD 必备章节检查",
+      "command": "rg -n \"^## (执行摘要|项目背景与机会|产品定位与原则|用户与关键任务|产品范围与信息架构|核心业务闭环|功能需求|当前开发基线|数据、AI与安全|商业与社会价值|指标体系|分阶段路线图|风险与应对|发布与验收门禁|待决策与尽调清单|附录)\" \"docs/10-project-review/02-语赞心声Web产品PRD（投资与产品版）.md\""
+    },
+    {
+      "name": "Markdown 解析检查",
+      "command": "pandoc --from=gfm --to=html \"docs/10-project-review/02-语赞心声Web产品PRD（投资与产品版）.md\" | Out-Null"
+    },
+    {
+      "name": "Git whitespace 检查",
+      "command": "git diff --check d681abb717041b22682792e22979108ea296f91e...HEAD"
+    },
+    {
+      "name": "任务交付门禁",
+      "command": "$env:GIT_CONFIG_COUNT='1'; $env:GIT_CONFIG_KEY_0='core.quotePath'; $env:GIT_CONFIG_VALUE_0='false'; try { & .\\scripts\\repo\\task-gate.ps1 -Mode review -TaskFile project-ops/tasks/active/PRODUCT-WEB-PRD-001.json } finally { Remove-Item Env:GIT_CONFIG_COUNT,Env:GIT_CONFIG_KEY_0,Env:GIT_CONFIG_VALUE_0 -ErrorAction SilentlyContinue }"
+    }
+  ],
+  "test_evidence": [
+    {
+      "name": "任务 JSON 解析",
+      "result": "PASS",
+      "command": "Get-Content project-ops/tasks/active/PRODUCT-WEB-PRD-001.json -Raw -Encoding UTF8 | ConvertFrom-Json | Out-Null",
+      "summary": "PRODUCT-WEB-PRD-001.json 在 PowerShell 中按 UTF-8 成功解析。"
+    },
+    {
+      "name": "PRD 必备章节检查",
+      "result": "PASS",
+      "command": "rg -n \"^## (执行摘要|项目背景与机会|产品定位与原则|用户与关键任务|产品范围与信息架构|核心业务闭环|功能需求|当前开发基线|数据、AI与安全|商业与社会价值|指标体系|分阶段路线图|风险与应对|发布与验收门禁|待决策与尽调清单|附录)\" \"docs/10-project-review/02-语赞心声Web产品PRD（投资与产品版）.md\"",
+      "summary": "16/16 个必备二级章节存在；文档共 1461 行、44311 字符，包含 105 个编号需求或决策项。"
+    },
+    {
+      "name": "Markdown 解析检查",
+      "result": "PASS",
+      "command": "pandoc --from=gfm --to=html \"docs/10-project-review/02-语赞心声Web产品PRD（投资与产品版）.md\" | Out-Null",
+      "summary": "Pandoc 以 GitHub-Flavored Markdown 成功解析全文，退出码 0。"
+    },
+    {
+      "name": "Git whitespace 检查",
+      "result": "PASS",
+      "command": "git diff --check d681abb717041b22682792e22979108ea296f91e...HEAD",
+      "summary": "任务基线到 PRD 内容提交的差异无 whitespace 错误。"
+    },
+    {
+      "name": "任务交付门禁",
+      "result": "PASS",
+      "command": "$env:GIT_CONFIG_COUNT='1'; $env:GIT_CONFIG_KEY_0='core.quotePath'; $env:GIT_CONFIG_VALUE_0='false'; try { & .\\scripts\\repo\\task-gate.ps1 -Mode review -TaskFile project-ops/tasks/active/PRODUCT-WEB-PRD-001.json } finally { Remove-Item Env:GIT_CONFIG_COUNT,Env:GIT_CONFIG_KEY_0,Env:GIT_CONFIG_VALUE_0 -ErrorAction SilentlyContinue }",
+      "summary": "review 门禁在进程级 core.quotePath=false 下验证任务字段、分支、基线、allowed_paths、handoff、测试证据与差异检查；未修改全局或仓库 Git 配置。"
+    }
+  ],
+  "handoff": "project-ops/handoffs/PRODUCT-WEB-PRD-001.md",
+  "rollback": "回退本任务在 task/product-web-prd-001 上的文档与任务元数据提交；本任务不含数据库、契约或运行时变更。",
+  "delivery": {
+    "push_task_branch": true,
+    "remote": "origin",
+    "merge_target": "integration/p0-multitrack-001"
+  }
+}
