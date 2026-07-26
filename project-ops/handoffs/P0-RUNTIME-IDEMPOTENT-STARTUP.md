@@ -37,6 +37,7 @@
 | 隔离重复与负向套件 | `powershell -NoProfile -File scripts/local-runtime/test-repeatable-start.ps1 -Mode Runtime -RepositoryRoot .` | `PASS` |
 | review round 2 实时 argv 强化 | runtime 命令同上 | `PASS`，正确解释器 + 伪造记录哈希仍被实时 argv 拒绝 |
 | attempt 7 exact-candidate 重跑 | syntax + runtime 命令同上 | `PASS`，候选 `e2350f3cc336c212778232ed2753930e0e1b213d`，运行时间 `2026-07-26T18:18Z` |
+| attempt 8 exact-candidate 重跑 | syntax + runtime 命令同上 | `PASS`，候选 `9bb02084b6d662e44e29cd5ff8c81504a1fa52c3`，运行时间 `2026-07-26T18:52Z` |
 
 通过结果：`PASS_EXACT_COMMIT_ATTESTED`；两次启动入口 `PASS_IDENTICAL_PIDS_AND_COMMIT`；
 foreign partial occupancy `PASS_FAILED_CLOSED_NO_KILL_NO_PORT_CHANGE`；包含仓库根、
@@ -48,6 +49,10 @@ foreign partial occupancy `PASS_FAILED_CLOSED_NO_KILL_NO_PORT_CHANGE`；包含�
 attempt 7 输出的隔离端口为 `61531/61532/61533`，PID 指纹为
 `api=40664;frontend_proxy=36360;speech=38852;worker=40032`。这些 PID 仅是本轮短生命周期
 fixture 的复验事实，不是 canonical 共享运行态声明；验证脚本完成后已清理。
+
+attempt 8 输出的隔离端口为 `56966/56967/56968`，PID 指纹为
+`api=24092;frontend_proxy=39004;speech=17896;worker=39536`。这些 PID 同样只属于短生命周期
+fixture；套件在 `finally` 中完成清理。
 
 ## 自审
 
