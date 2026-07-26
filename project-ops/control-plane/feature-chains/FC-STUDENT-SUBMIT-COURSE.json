@@ -1,0 +1,19 @@
+{
+  "feature_chain_id": "FC-STUDENT-SUBMIT-COURSE",
+  "goal_id": "MVP-LEARNING-EVIDENCE-001",
+  "goal_revision": 1,
+  "acceptance_id": "STUDENT_REAL_SUBMIT",
+  "actor": "student",
+  "page": {"route": "/student/courses/course-detail/?id={assignmentId}", "source": "frontend/student/courses/course-detail/index.html"},
+  "control": {"selector": "#cpRecordBtn and course practice submit control", "label": "录音 / 提交", "action": "record, save written answer, link recording and submit the dynamic course submission"},
+  "expected_ui_result": "显示录音上传、答案保存和提交处理状态；成功后显示服务端 submissionId/status，刷新不可退回未提交。",
+  "request": {"method": "POST/PUT", "path": "/api/v1/schools/{schoolId}/student/courses/{assignmentId}/submissions/{submissionId}/...", "failure_states": ["microphone denied", "upload failed", "weak network pending", "409 revision conflict", "assignment closed"]},
+  "domain": {"action": "create/resume submission, persist attempts and recording, then submit", "objects": ["Submission", "ActivityAttempt", "Recording", "AssessmentSession"], "state_transition": "IN_PROGRESS -> SUBMITTED/PROCESSING/NEEDS_REVIEW"},
+  "persistence": "答案、录音对象引用、attempt/revision 和提交时间使用同一动态 submissionId；对象存储与数据库引用一致。",
+  "downstream_observation": "教师在独立新会话的任务提交列表通过同一 assignmentId/submissionId 看见这次证据。",
+  "recovery": "弱网可恢复未完成进度；成功提交后重试幂等且不覆盖原 Attempt。",
+  "negative_path": "非目标学生、其他学校、关闭任务、伪造 recordingId 或旧 revision 均被拒绝。",
+  "status": "HANDLER_PRESENT",
+  "known_gap": "源码有录音和 course API client，但未证明页面能连续完成录音、书面答案、提交、刷新及教师端观察。",
+  "required_evidence": ["L3_BROWSER", "L4_PERSISTENCE", "L5_FRESH_CONTEXT_NEGATIVE"]
+}

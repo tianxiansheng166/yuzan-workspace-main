@@ -2,25 +2,27 @@
 
 ## 最小开工上下文
 
-已有 active task 的分支每次开始、继续、上下文压缩或机器重启后，第一条命令统一为：
+控制面已初始化时，每次开始、继续、上下文压缩或机器重启后的唯一入口是：
 
 ```powershell
-& .\scripts\repo\task-context.ps1 -Mode auto
+& .\scripts\repo\mvp-control.ps1 -Action context -AgentId <worker-id>
 ```
 
-脚本从当前 branch 自动匹配唯一任务，执行 start/preflight 或 resume 门禁，并只
-输出：
+它先校验 Goal revision、租约、围栏 epoch 和动态工作单。没有有效租约时，不加载旧任务、
+不写功能代码；有租约时，只读取工作单 `context_manifest` 中列出的文件并校验 SHA256，
+然后再按工作单指示运行 `task-context.ps1 -Mode auto` 做 Git/白名单门禁。
 
-1. `project-ops/AI-DEVELOPMENT-CONTRACT.md`；
-2. 当前任务 JSON；
-3. 任务 `context.required` 中的 2–6 个文件；
-4. 已有 handoff（仅续作）；
-5. 当前 Git status、最近提交和相对 base 的 changed paths。
+每轮启动 capsule 推荐不超过 32 KiB、硬上限 48 KiB，只包含短契约、动态工作单、当前
+任务/功能链、最新失败和 Git 事实。目标源码及 direct import/caller 在执行过程中按需读取，
+不塞入启动上下文。上下文压缩后重跑同一入口，不凭压缩摘要猜 Goal 或继续旧指令。
 
-不要要求用户重复上传这些文件，不要默认通读 `docs/`、`PROJECT-CHARTER.md` 或
-`CURRENT.md`。没有任务 JSON 时先用模板和 `CONTEXT-ROUTER.md` 创建任务，在独立
-worktree 提交元数据后再运行自动入口。脚本拒绝仓库外路径、二进制和超预算上下文，
-且不会生成临时文件或改变 Git 状态。
+`docs/**`、旧 prompt、看板和 `CURRENT.md` 默认是 `REFERENCE_NO_AUTOLOAD`，不能覆盖
+当前 Goal、验收旅程、FeatureChain、Git/契约或真实运行证据。只有动态工作单以精确路径和
+用途授权时才能增量读取。文档生命周期和冲突优先级以
+`project-ops/control-plane/document-registry.json` 为准；未登记的 `docs/**` 一律不自动加载。
+
+尚未初始化控制面或执行治理迁移任务时，才直接运行 `task-context.ps1 -Mode auto`。不要要求
+用户重复上传仓库内文件，也不要默认通读整个 `docs/`、`PROJECT-CHARTER.md` 或历史报告。
 
 ## 仓库边界
 

@@ -5,30 +5,25 @@
 
 ## 1. 当前方向
 
-当前 P0 仍以“真实学习证据闭环”为主轴，但允许在资源充足时按受控泳道并行：
+当前唯一 P0 是“真实学习证据与教师干预闭环”：
 
 ```text
-学生课程/练习证据 ──────────────┐
-教师教案草稿（必须人工复核） ─────┼→ 单一集成线复验 → 学校试点
-藏汉翻译工具（必须人工确认） ─────┘
+教师从页面发布动态任务
+→ 学生新会话收到任务并提交真实录音与答案
+→ 系统保存和处理证据
+→ 教师新会话通过动态 ID 复核并投递巩固
+→ 学生查看报告并产生新 Attempt 复测
+→ 同一集成 commit 的浏览器/API/DB/权限负向复验
 ```
 
-三条产品泳道的边界是：
+AI 教案、藏汉翻译、长视频、视频笔记、社区、志愿者、区域大屏和原生 App 均为 P1/P2，
+不参与本 Goal 的派发或完成判定。旧 `multitrack-tasks.json`、看板、CURRENT 和历史 prompt
+只是 `MIGRATION_REFERENCE`；活动任务图和目标分别以 `project-ops/control-plane/goal.json`、
+`bootstrap-work-items.json` 及 runtime-local 的租约状态为准。
 
-1. **学生学习泳道**：课程练习、普通课程提交、真实视频进度、时间点笔记、独立
-   专项练习；始终复用同一课程模型、Submission、AssessmentSession 和练习执行器。
-2. **教师教案泳道**：只闭合“选择真实课程 → 真实 AI 生成草稿 → 教师修改 →
-   教师确认”的辅助链；AI 输出默认 `NEEDS_REVIEW`，不得自动发布或代替教师决策。
-3. **藏汉翻译泳道**：先闭合独立翻译工具的 provider、持久化、归属和人工修订；
-   网页双语只能消费 `APPROVED` 译文，不能在课程页面现场伪造机器翻译。
-
-并行不等于共享文件并发写。OpenAPI、Prisma、根依赖、CI、全局路由、worker 启动
-入口和 UI token 仍采用单写者；同一产品泳道内修改相同核心文件的任务必须串行。
-当前任务图、依赖和共享锁以 `project-ops/multitrack-tasks.json` 为准。
-某项依赖只有在 `project-ops/accepted-baselines.json` 中具有
-`VERIFIED/INTEGRATED` 状态、完整 commit 且远端 HEAD 一致时才算满足。
-这两个文件及看板只认 `origin/integration/p0-multitrack-001` 远端控制面同一 commit
-中的版本；task branch 内的副本只描述该任务创建时的快照。
+并发量不按 Agent 数量写死，只等于：依赖已满足的任务、在线能力、无冲突写集/锁和可用
+运行资源的交集。OpenAPI、Prisma、根依赖、CI、全局路由、共享数据库、canonical runtime
+和最终黄金 E2E 始终单写者/单资源租约。
 
 新任务必须闭合一个可观察用户动作、解除该动作的必要阻塞，或提供共享契约/集成
 能力。当前仍不以铺更多页面、增加社区/内容商城、重造通用平台、自动给最终成绩或
@@ -36,24 +31,23 @@
 
 ## 2. 默认上下文预算
 
-已有任务每次开工或续作先运行：
+控制面运行时，每次开工或续作先运行：
 
 ```powershell
-& .\scripts\repo\task-context.ps1 -Mode auto
+& .\scripts\repo\mvp-control.ps1 -Action context -AgentId <worker-id>
 ```
 
-入口只输出三类稳定内容和实时 Git 现场：
-
-1. 本短契约；
-2. 自己的任务 JSON；
-3. 任务 `context.required`。
-
-续作时若 handoff 已存在则一并读取。脚本按当前 branch 自动发现任务，单文件和总量
-都有字节预算，且不写临时文件。不要让用户每次重新附加项目规范或任务文件。
+无有效租约不得继续旧任务。有租约时，工作单给出 Goal digest、当前 acceptance gap、
+FeatureChain/验收旅程、允许路径、最新失败和唯一 next action；随后按工作单运行
+`task-context.ps1 -Mode auto` 验证 branch/base/worktree。启动 capsule 推荐不超过 32 KiB、
+硬上限 48 KiB；稳定短契约不超过 10 KiB，工作单不超过 8 KiB，任务与 FeatureChain 合计
+不超过 18 KiB，最新 handoff delta 不超过 8 KiB。
 
 不要习惯性通读 `docs/`、历史报告、全部源码、`PROJECT-CHARTER.md` 或
 `CURRENT.md`。需要补事实时按 `CONTEXT-ROUTER.md` 增量读取直接相关文件。
-聊天、旧报告和截图不能覆盖当前源码、契约、数据与实际运行证据。
+聊天、旧报告和截图不能覆盖当前 Goal revision、验收旅程、源码契约、数据与实际运行证据。
+Verifier 的失败只修改当前 ticket 的 `latest_failure/next_action/attempt`，不能改写 Goal 或降低
+验收；若规范或目标本身需要变化，发出 `AUTHORITY_REQUIRED` 并创建新 Goal revision。
 
 ## 3. 任务可开工条件
 
@@ -73,9 +67,9 @@
 PLANNED 且干净时它运行 preflight；已有执行现场时它运行 resume。分支、基线、
 工作区、上下文或白名单不匹配时，不开始写代码。
 
-多路线 registry 的 `dispatch_status`、任务 JSON 的 `status`、`evidence_status` 和
-`integration_status` 是四个不同维度，不得用其中一个冒充另一个。任务分支只维护
-自己的执行状态和证据；Integration Lead 维护调度、接受基线和集成状态。
+runtime state 的任务状态、`evidence_status` 和 `integration_status` 是不同维度，不得用
+其中一个冒充另一个。Builder 只能提交 `COMPLETE_CANDIDATE`；独立 Verifier 给出
+`VERIFIED/REJECTED`；Integration Lead 才能在合入后签发 `INTEGRATED_VERIFIED`。
 
 状态转换固定为：
 
@@ -106,7 +100,7 @@ accepted entry；task 进入 review 时调度为 `WAITING_REVIEW`；被接受后
 - school/resource/user scope 在服务端 fail closed；
 - AI 结果是可追踪、可复核的建议，不冒充确定评分；
 - OpenAPI、Prisma、根依赖、CI、全局路由和 UI token 是共享事实；
-- `project-ops/multitrack-tasks.json` 声明的依赖未满足或共享锁未释放时，不得开始
+- 动态工作单声明的依赖未满足、租约无效或共享锁未释放时，不得开始
   对应写入阶段；允许先做只读核查，但不能绕过依赖；
 - 超出白名单的必要改动先拆前置任务；OpenAPI/Prisma 变更必须有 CCR；
 - 稳定决策写入 `project-ops/decisions/`，不能只留在对话中。

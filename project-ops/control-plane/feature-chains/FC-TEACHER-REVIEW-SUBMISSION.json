@@ -1,0 +1,19 @@
+{
+  "feature_chain_id": "FC-TEACHER-REVIEW-SUBMISSION",
+  "goal_id": "MVP-LEARNING-EVIDENCE-001",
+  "goal_revision": 1,
+  "acceptance_id": "TEACHER_DYNAMIC_REVIEW",
+  "actor": "teacher",
+  "page": {"route": "/teacher/submissions/{submissionId}", "source": "frontend/teacher/submissions/detail/index.html"},
+  "control": {"selector": "#btnAccept or #btnReturn", "label": "通过 / 退回", "action": "review the dynamically selected submission"},
+  "expected_ui_result": "页面先加载当前 submissionId 的学生答案和可播放录音；教师决定成功后显示服务端复核状态，刷新保持。",
+  "request": {"method": "POST", "path": "/api/v1/schools/{schoolId}/submissions/{submissionId}/feedback", "failure_states": ["missing evidence", "403 class scope", "409 revision conflict", "already reviewed", "API unavailable"]},
+  "domain": {"action": "accept or request redo while retaining machine and teacher evidence", "objects": ["Submission", "Recording", "TeacherReview/Feedback", "Attempt"], "state_transition": "NEEDS_REVIEW -> REVIEWED/ACCEPTED/REDO_REQUIRED"},
+  "persistence": "reviewerId、decision、comment、score/reason、revision 和 reviewedAt 以动态 submissionId 保存；原证据只读。",
+  "downstream_observation": "学生新会话看到对应反馈或重做任务；重做创建新 Attempt，不覆盖原 Attempt。",
+  "recovery": "刷新后决定保持；旧 revision 返回冲突并要求重新加载，不做本地假成功。",
+  "negative_path": "无该班级权限的教师、其他学校或固定 submission-1 路径均不能复核。",
+  "status": "HANDLER_PRESENT",
+  "known_gap": "详情页存在动态 path 解析与 feedback handler，但教师导航/任务页仍含 submission-1，录音按钮只切换 UI，尚无 L3/L4/L5。",
+  "required_evidence": ["L3_BROWSER", "L4_PERSISTENCE", "L5_FRESH_CONTEXT_NEGATIVE"]
+}

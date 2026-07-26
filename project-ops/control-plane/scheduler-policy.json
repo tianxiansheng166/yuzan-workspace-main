@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "tick_seconds": 60,
+  "lease_minutes": 20,
+  "quarantine_minutes": 5,
+  "worker_pool": {
+    "max_active_workers": 0,
+    "meaning_of_zero": "不设置人工并发上限；仍受在线 worker、DAG、写集、锁和资源容量约束",
+    "max_claims_per_worker": 1
+  },
+  "resources": {
+    "INTEGRATION_WRITER": 1,
+    "CANONICAL_RUNTIME": 1,
+    "SHARED_DEV_DATABASE": 1,
+    "GOLDEN_E2E": 1,
+    "BROWSER_PROFILE": 1,
+    "PORT_SET": 1
+  },
+  "scheduling_order": [
+    "acceptance_gap_distance",
+    "downstream_unlock_count",
+    "rework_priority",
+    "waiting_age",
+    "task_id"
+  ],
+  "rules": {
+    "all_resources_acquired_atomically": true,
+    "global_lock_order": "ordinal_by_name",
+    "unknown_glob_conflicts": true,
+    "implementer_may_accept_own_candidate": false,
+    "browser_verifier_must_be_independent": true,
+    "goal_revision_mismatch": "REPLAN_REQUIRED",
+    "expired_lease": "ORPHANED_QUARANTINE",
+    "old_fencing_epoch_event": "REJECT"
+  }
+}

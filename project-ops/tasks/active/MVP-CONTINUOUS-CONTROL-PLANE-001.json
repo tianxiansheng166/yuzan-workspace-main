@@ -1,0 +1,148 @@
+{
+  "id": "MVP-CONTINUOUS-CONTROL-PLANE-001",
+  "status": "READY_FOR_REVIEW",
+  "title": "建立弹性多 Codex 持续闭环研发控制面",
+  "owner": "Codex / Control Lead",
+  "reviewer": "Product Owner / Integration Lead",
+  "branch": "task/mvp-continuous-control-plane-001",
+  "base_commit": "cb00e0d59936dbcbdcb6cd62285fa7b4a402368d",
+  "user_outcome": "任意数量的 Codex 能围绕同一个 MVP Goal 按任务 DAG、共享写锁和验收资源动态并发，在互不重叠的 worktree 中持续工作，通过共享但单写者控制的运行黑板交换状态，在上下文中断后自动恢复，并且只有真实用户浏览器、API、数据和负向证据共同通过后才关闭任务；控制线程可按固定心跳重评估、重写下一步工作单并继续，直到 MVP 验收或出现必须由用户裁决的阻塞。",
+  "current_facts": [
+    "现有 project-ops 已有任务 JSON、worktree、allowed_paths、shared_locks、task-gate、handoff、accepted baseline 与 integration 控制线",
+    "现有 multitrack-tasks.json、accepted-baselines.json、CURRENT.md 和看板依赖 Integration Lead 手工同步，当前已出现状态与 main 实际集成结果漂移",
+    "现有任务完成定义允许局部可观察 checkpoint，任务关闭后没有机器状态自动重新评估唯一 MVP 是否已完成",
+    "现有证据规范要求浏览器和动态 ID，但 task-gate 只验证自报 test_evidence 的存在与 PASS 字段，不能验证证据内容或真实用户旅程",
+    "现有 Goal 提示词仍要求人工复制、选择任务和启动多个 Goal，没有共享运行黑板、心跳租约、消息收件箱、自动拒收或重规划状态机",
+    "runtime-local 已被 Git 忽略，可作为 canonical 主目录下的本机共享运行状态与证据目录"
+  ],
+  "product_alignment": {
+    "p0": "教师发布一个古诗文朗读与理解任务，学生产生真实录音与答案，系统处理，教师复核并投递巩固，学生查看报告并复测",
+    "contribution": "把静态多泳道计划升级为可恢复、可持续、按依赖与冲突弹性扩缩、以真实用户闭环为终止条件的多 Codex 控制面。",
+    "non_goals": [
+      "本任务不修改学生、教师、管理端业务代码、OpenAPI、Prisma 或运行服务",
+      "本任务不在没有证据时自动合并 main、删除 worktree、终止未知进程或修改生产状态",
+      "本任务不按人数写死并发，也不让多个 Agent 同时写同一共享文件或依赖聊天上下文作为唯一状态",
+      "本任务不承诺仓库脚本可以直接控制 Codex App 私有线程 API；App 心跳负责读取控制面并调用当前可用线程工具",
+      "本任务不把 API 200、静态截图或自报 PASS 作为用户闭环完成"
+    ]
+  },
+  "context": {
+    "required": [
+      "AGENTS.md",
+      "project-ops/AI-DEVELOPMENT-CONTRACT.md",
+      "project-ops/CONTEXT-ROUTER.md",
+      "project-ops/multitrack-tasks.json",
+      "project-ops/prompts/P0-MULTITRACK-GOAL-MODE-PROMPT.md",
+      "docs/11-product-delivery/05-开发路线任务图与验收门禁.md"
+    ],
+    "optional": [
+      "project-ops/accepted-baselines.json",
+      "project-ops/FRONTEND-QUALITY-BAR.md",
+      "scripts/repo/task-gate.ps1"
+    ]
+  },
+  "depends_on": [],
+  "integration_order": [
+    "冻结唯一 MVP Goal 与证据等级",
+    "定义单写者控制状态、弹性工作池、租约、消息和文件权属",
+    "实现 PowerShell 控制器与上下文恢复入口",
+    "用临时运行目录模拟派发、拒收、返工、接受和下一缺口",
+    "配置 Codex 项目角色与持久提示词",
+    "在 App 中以一分钟线程心跳连接控制器和可用 Codex 工作池"
+  ],
+  "allowed_paths": [
+    ".codex/config.toml",
+    ".codex/agents/**",
+    ".learnings/ERRORS.md",
+    "AGENTS.md",
+    "project-ops/README.md",
+    "project-ops/AI-DEVELOPMENT-CONTRACT.md",
+    "project-ops/CONTEXT-ROUTER.md",
+    "project-ops/acceptance/**",
+    "project-ops/control-plane/**",
+    "project-ops/tasks/active/MVP-CONTINUOUS-CONTROL-PLANE-001.json",
+    "project-ops/handoffs/MVP-CONTINUOUS-CONTROL-PLANE-001.md",
+    "scripts/repo/mvp-control.ps1",
+    "scripts/repo/test-mvp-control.ps1",
+    "scripts/acceptance/**",
+    "scripts/audit/**"
+  ],
+  "shared_owner_changes": [
+    "AGENTS.md",
+    "project-ops/AI-DEVELOPMENT-CONTRACT.md",
+    "project-ops/CONTEXT-ROUTER.md",
+    ".codex/config.toml"
+  ],
+  "contract_change_request": null,
+  "minimal_tests": [
+    {
+      "name": "控制面 JSON 与 TOML 结构",
+      "command": "& .\\scripts\\repo\\test-mvp-control.ps1 -Mode schema"
+    },
+    {
+      "name": "控制状态机模拟",
+      "command": "& .\\scripts\\repo\\test-mvp-control.ps1 -Mode simulation"
+    },
+    {
+      "name": "上下文恢复与文件权属检查",
+      "command": "& .\\scripts\\repo\\test-mvp-control.ps1 -Mode context"
+    },
+    {
+      "name": "前端功能链盘点",
+      "command": "& .\\scripts\\repo\\test-mvp-control.ps1 -Mode inventory"
+    },
+    {
+      "name": "治理文档解析与敏感信息扫描",
+      "command": "& .\\scripts\\repo\\test-mvp-control.ps1 -Mode docs"
+    },
+    {
+      "name": "Git whitespace 检查",
+      "command": "git diff --check"
+    }
+  ],
+  "test_evidence": [
+    {
+      "name": "控制面 JSON 与 TOML 结构",
+      "command": "& .\\scripts\\repo\\test-mvp-control.ps1 -Mode schema",
+      "result": "PASS",
+      "summary": "Goal、policy、DAG、document registry、journey/schema 与 5 条 FeatureChain 均可解析；contract_paths 存在；未配置固定 Worker 上限。"
+    },
+    {
+      "name": "控制状态机模拟",
+      "command": "& .\\scripts\\repo\\test-mvp-control.ps1 -Mode simulation",
+      "result": "PASS",
+      "summary": "临时 runtime 中验证弹性安全派发、依赖阻止、独立 verifier、结构化拒绝、自动返工、围栏拒收、集成后接受且单任务不关闭 Goal。"
+    },
+    {
+      "name": "上下文恢复与文件权属检查",
+      "command": "& .\\scripts\\repo\\test-mvp-control.ps1 -Mode context",
+      "result": "PASS",
+      "summary": "恢复输出包含 Goal revision/digest、lease、唯一 next action、稳定 prompt 和带 hash 的 context manifest，并产生 CONTEXT_ACK。"
+    },
+    {
+      "name": "前端功能链盘点",
+      "command": "& .\\scripts\\repo\\test-mvp-control.ps1 -Mode inventory",
+      "result": "PASS",
+      "summary": "静态扫描实际发现 79 页面、1882 控件、962 unresolved、862 handler references、58 static navigation，并明确静态证据不能证明功能。"
+    },
+    {
+      "name": "治理文档解析与敏感信息扫描",
+      "command": "& .\\scripts\\repo\\test-mvp-control.ps1 -Mode docs",
+      "result": "PASS",
+      "summary": "活动控制文档存在、单文件低于上下文上限，控制文档未包含 token 形态密钥。"
+    },
+    {
+      "name": "Git whitespace 检查",
+      "command": "git diff --check",
+      "result": "PASS",
+      "summary": "2026-07-26 当前未提交差异无 whitespace error。"
+    }
+  ],
+  "handoff": "project-ops/handoffs/MVP-CONTINUOUS-CONTROL-PLANE-001.md",
+  "rollback": "回退本任务在 task/mvp-continuous-control-plane-001 上的治理、控制脚本、Codex 项目配置和任务元数据；runtime-local/control-plane 为忽略的运行状态，可先备份后单独移除，不影响业务数据。",
+  "delivery": {
+    "push_task_branch": true,
+    "remote": "origin",
+    "merge_target": "integration/p0-multitrack-001"
+  }
+}
