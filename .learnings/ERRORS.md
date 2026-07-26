@@ -1194,3 +1194,105 @@ executing the commit.
 - **Resolved**: 2026-07-26T19:13:00+08:00
 - **Commit/PR**: pending task delivery commit
 - **Notes**: Markdown whitespace was removed with an explicit patch; subsequent validation and commits are run separately.
+
+## [ERR-20260726-010] recording-runtime-audit-assumed-completed-at
+
+**Logged**: 2026-07-26T20:44:57+08:00
+**Priority**: low
+**Status**: resolved
+**Area**: backend
+
+### Summary
+
+A read-only runtime audit queried a nonexistent `Recording.completedAt` column instead of checking the Prisma schema first.
+
+### Error
+
+```text
+Raw query failed. Code: 42703. Message: column r.completedAt does not exist
+```
+
+### Context
+
+- The query was inspecting recordings attached to the latest assessment session.
+- No database writes were performed.
+
+### Suggested Fix
+
+Inspect the current Prisma model before writing ad hoc SQL and query the actual `createdAt` and `updatedAt` fields.
+
+### Metadata
+
+- Reproducible: yes
+- Related Files: `infra/database/prisma/schema.prisma`
+
+### Resolution
+
+- **Resolved**: 2026-07-26T20:44:57+08:00
+- **Commit/PR**: diagnostic only
+- **Notes**: Corrected the follow-up query to use schema-backed field names.
+
+## [ERR-20260726-011] powershell-colon-after-variable-in-env-scan
+
+**Logged**: 2026-07-26T20:48:00+08:00
+**Priority**: low
+**Status**: resolved
+**Area**: config
+
+### Summary
+
+A secret-safe environment scan used `"$key:$state"`, which PowerShell parsed as an invalid scoped variable reference.
+
+### Error
+
+```text
+Variable reference is not valid. ':' was not followed by a valid variable name character.
+```
+
+### Suggested Fix
+
+Use the format operator (`'{0}:{1}' -f $key,$state`) or `${key}:$state` when punctuation immediately follows a variable name.
+
+### Metadata
+
+- Reproducible: yes
+- Related Files: `.env`, `runtime-local/secrets/ai-provider.env.example`
+
+### Resolution
+
+- **Resolved**: 2026-07-26T20:48:00+08:00
+- **Commit/PR**: diagnostic only
+- **Notes**: Re-ran the scan using the PowerShell format operator without printing secret values.
+
+## [ERR-20260726-012] powershell-foreach-output-piped-inline
+
+**Logged**: 2026-07-26T20:50:00+08:00
+**Priority**: low
+**Status**: resolved
+**Area**: config
+
+### Summary
+
+A compact PowerShell environment audit piped directly after a `foreach` statement and failed with an empty pipe element parser error.
+
+### Error
+
+```text
+ParserError: An empty pipe element is not allowed.
+```
+
+### Suggested Fix
+
+Collect objects in an array inside the loop, then pipe the completed array to `Format-List`.
+
+### Metadata
+
+- Reproducible: yes
+- Related Files: `.env`, `runtime-local/secrets/ai-provider.env`
+- See Also: `ERR-20260726-011`
+
+### Resolution
+
+- **Resolved**: 2026-07-26T20:50:00+08:00
+- **Commit/PR**: diagnostic only
+- **Notes**: Rewrote the audit using an explicit result array.
