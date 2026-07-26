@@ -40,7 +40,7 @@ try {
         throw "Canonical main is not the pushed latest baseline. Run: git pull --ff-only origin $($target.runtime_branch)"
     }
 
-    & (Join-Path $rootDir 'scripts\local-runtime\start-core.ps1') -SkipDocker:$SkipDocker -SkipGenerate:$SkipGenerate
+    & (Join-Path $rootDir 'scripts\local-runtime\start-core.ps1') -SkipDocker:$SkipDocker -SkipGenerate:$SkipGenerate -ExpectedCommit $localHead
 } finally {
     Pop-Location
 }

@@ -8,9 +8,9 @@
   "base_commit": "41a0ff3656af7888d4c2e46eb180eeffc3414115",
   "user_outcome": "同一 canonical runtime 重复执行启动不会重复拉起服务、误杀未知进程或漂移端口，并能看到真实 API/代理/语音/worker 状态",
   "current_facts": [
-    "start-core.ps1 会无条件执行 pnpm dev，已有 4000/4175 监听时仍可能产生重复 worker 或端口冲突",
-    "现有脚本只对 8100 做复用判断，没有统一诊断 4000、4175 与 worker",
-    "共享演示端口固定为 API 4000、frontend 4175、speech 8100"
+    "共享演示端口固定为 API 4000、frontend 4175、speech 8100",
+    "attempt 2 的命令行包含判断可被 PowerShell sleep 伪造，且运行态不能证明 exact candidate commit",
+    "attempt 3 使用 nonce/PID/可执行文件/启动时间/根目录/commit/角色精确 argv/lock 的联合证明，复用只接受 exact candidate"
   ],
   "product_alignment": {
     "p0": "真实学习证据与教师干预闭环",
@@ -52,7 +52,7 @@
     },
     {
       "name": "canonical 运行态连续两次启动复用",
-      "command": "powershell -NoProfile -File scripts/local-runtime/test-repeatable-start.ps1 -Mode Runtime -RepositoryRoot D:\\program\\test_program\\yuzanxinsheng\\three\\yuzan-next"
+      "command": "powershell -NoProfile -File scripts/local-runtime/test-repeatable-start.ps1 -Mode Runtime -RepositoryRoot ."
     }
   ],
   "test_evidence": [
@@ -60,25 +60,19 @@
       "name": "PowerShell 语法解析",
       "command": "powershell -NoProfile -File scripts/local-runtime/test-repeatable-start.ps1 -Mode Syntax",
       "result": "PASS",
-      "summary": "4/4 runtime scripts parsed without PowerShell syntax errors."
+      "summary": "5 PowerShell scripts parsed and 3 Python helpers compiled."
     },
     {
-      "name": "canonical 运行态连续两次启动复用（首轮测试器误判）",
-      "command": "powershell -NoProfile -File scripts/local-runtime/test-repeatable-start.ps1 -Mode Runtime -RepositoryRoot D:\\program\\test_program\\yuzanxinsheng\\three\\yuzan-next",
+      "name": "attempt 3 隔离套件初次校准",
+      "command": "powershell -NoProfile -File scripts/local-runtime/test-repeatable-start.ps1 -Mode Runtime -RepositoryRoot .",
       "result": "FAIL",
-      "summary": "Runtime was reused twice, but the test incorrectly expected Write-Host output in the success pipeline; assertion was corrected to use health and PID stability."
+      "summary": "Exact argv validation correctly rejected the original generic positive fixture; fixture contract was restricted to temp yuzan-runtime-test directories and non-production dynamic ports."
     },
     {
       "name": "canonical 运行态连续两次启动复用",
-      "command": "powershell -NoProfile -File scripts/local-runtime/test-repeatable-start.ps1 -Mode Runtime -RepositoryRoot D:\\program\\test_program\\yuzanxinsheng\\three\\yuzan-next",
+      "command": "powershell -NoProfile -File scripts/local-runtime/test-repeatable-start.ps1 -Mode Runtime -RepositoryRoot .",
       "result": "PASS",
-      "summary": "Two consecutive starts reused API PID 2960, frontend PID 10796, speech PID 32820 and worker PIDs 23900/30388; all three HTTP checks returned 200 on fixed ports. Existing duplicate worker warning was preserved and no process was stopped. Runtime build provenance remains explicitly unverified."
-    },
-    {
-      "name": "Patch whitespace check",
-      "command": "git diff --check",
-      "result": "PASS",
-      "summary": "No whitespace errors."
+      "summary": "Exact-commit clean startup passed; two start-core reuse calls kept identical PIDs/commit; foreign partial occupancy failed closed without kill/port change; verifier-style PowerShell sleep spoof was rejected with COMMAND_ARGV_MISMATCH; wrong commit was rejected; all launched PIDs exited in finally."
     }
   ],
   "handoff": "project-ops/handoffs/P0-RUNTIME-IDEMPOTENT-STARTUP.md",

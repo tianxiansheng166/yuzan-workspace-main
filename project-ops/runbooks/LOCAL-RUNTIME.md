@@ -32,18 +32,20 @@ Set-Location D:\program\test_program\yuzanxinsheng\three\yuzan-next
 Prisma Client 并启动前端/API/worker。`Ctrl+C` 只停止本次前台开发进程，不停止共享
 Docker 容器。
 
-启动脚本先检查固定端口和真实健康端点。如果 API、前端代理、语音服务与 canonical worker
-都已存在且健康，它只报告 `Reusing` 并退出，不会再次执行 `pnpm dev`。如果只存在部分服务、
-健康检查失败或固定端口被占用，它会输出结构化诊断并失败；脚本不会终止未知进程，也不会
-自动改到其他端口。可单独查看当前状态：
+启动脚本先检查固定端口、真实健康端点和 `runtime-local/local-runtime/process-manifest.json`
+中的受管进程证明。每个服务必须同时匹配启动 nonce、canonical 根目录、exact commit、wrapper
+与 child 的 PID/可执行文件/启动时间、仍持有的 lock，以及该角色唯一允许的完整 argv 结构。
+只有 API、前端代理、语音服务与 worker 全部满足这些条件时才报告 `Reusing`，不会再次构建或
+拉起进程。如果只存在部分服务、健康检查失败、固定端口被占用、证明缺失、argv 冒充或 commit
+不同，脚本会输出结构化诊断并失败；不会终止未知进程，也不会自动改到其他端口。可单独查看：
 
 ```powershell
 .\scripts\local-runtime\get-runtime-status.ps1 | ConvertTo-Json -Depth 8
 ```
 
-状态中的 `OBSERVED_RUNTIME_NOT_COMMIT_ATTESTED` 表示健康端点和进程已现场观察，但旧进程
-加载的构建产物尚不能仅凭端口反推为当前 commit；最终黄金闭环仍必须在集成后的 exact commit
-重新启动和验收。若出现 `duplicate_worker_warning`，脚本只报警，不会擅自清理既有终端的进程。
+状态只有在全部 ownership 与 commit 检查通过时才给出 `EXACT_COMMIT_ATTESTED` 和
+`all_ready=true`。旧运行态、未知监听器或仅在命令行中包含仓库/worker 路径的进程都只能得到
+`UNATTESTED_OR_UNOWNED`，不能触发复用；由原进程所有者自行清理后再启动 exact candidate。
 
 MinIO 的 `MINIO_API_CORS_ALLOW_ORIGIN` 必须包含 `http://127.0.0.1:4175`；浏览器录音
 直传需要该来源。修改它后执行 `docker compose up -d --force-recreate minio`，仅重建容器，
