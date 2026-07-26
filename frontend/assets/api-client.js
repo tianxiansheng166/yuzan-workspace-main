@@ -5,6 +5,14 @@
   const USER_KEY = 'yuzan-current-user';
   const SCHOOL_KEY = 'yuzan-active-school-id';
   const PROTECTED_ROLE_PATH = /^\/(?:teacher(?:\/|$)|teacher-home(?:\/|$)|student(?:\/|$)|admin(?:\/|$)|volunteer(?:\/|$)|research(?:\/|$)|assessment(?:\/|$)|select-school(?:\/|$))/;
+  const REQUIRED_ROLES_BY_PATH = [
+    [/^\/(?:teacher|teacher-home)(?:\/|$)/, ['TEACHER']],
+    [/^\/student(?:\/|$)/, ['STUDENT']],
+    [/^\/assessment(?:\/|$)/, ['STUDENT']],
+    [/^\/admin(?:\/|$)/, ['SCHOOL_ADMIN', 'PLATFORM_ADMIN']],
+    [/^\/volunteer(?:\/|$)/, ['VOLUNTEER']],
+    [/^\/research(?:\/|$)/, ['RESEARCHER']],
+  ];
   let protectedEntryValidationPromise = null;
 
   function getToken() {
@@ -156,17 +164,27 @@
   /**
    * 根据用户角色返回默认跳转页面
    */
-  function getHomeUrlByRole(user) {
+  function getActiveMembership(user, activeSchoolId = getActiveSchoolId()) {
     const memberships = user?.memberships || [];
-    if (memberships.length > 0) {
-      const role = memberships[0].role;
-      if (role === 'STUDENT') return '/student/today';
-      if (role === 'TEACHER') return '/teacher';
-      if (role === 'SCHOOL_ADMIN' || role === 'PLATFORM_ADMIN') return '/admin';
-      if (role === 'VOLUNTEER') return '/volunteer';
-      if (role === 'RESEARCHER') return '/research';
-    }
+    if (!activeSchoolId) return null;
+    return memberships.find((membership) => membership?.schoolId === activeSchoolId) || null;
+  }
+
+  function getHomeUrlByRole(user, activeSchoolId = getActiveSchoolId()) {
+    const role = getActiveMembership(user, activeSchoolId)?.role;
+    if (role === 'STUDENT') return '/student/today';
+    if (role === 'TEACHER') return '/teacher';
+    if (role === 'SCHOOL_ADMIN' || role === 'PLATFORM_ADMIN') return '/admin';
+    if (role === 'VOLUNTEER') return '/volunteer';
+    if (role === 'RESEARCHER') return '/research';
     return '/select-school';
+  }
+
+  function isAuthorizedForProtectedPath(pathname, user, activeSchoolId) {
+    const routeRequirement = REQUIRED_ROLES_BY_PATH.find(([pattern]) => pattern.test(pathname));
+    if (!routeRequirement) return true;
+    const activeRole = getActiveMembership(user, activeSchoolId)?.role;
+    return routeRequirement[1].includes(activeRole);
   }
 
   async function me(options = {}) {
@@ -244,7 +262,12 @@
       return false;
     }
     try {
-      await me({ skipSessionValidation: true });
+      const session = await me({ skipSessionValidation: true });
+      const pathname = location.pathname || '';
+      if (!isAuthorizedForProtectedPath(pathname, session.user, session.activeSchoolId)) {
+        navigateToLogin(getHomeUrlByRole(session.user, session.activeSchoolId));
+        return false;
+      }
       revealProtectedPage();
       return true;
     } catch (error) {

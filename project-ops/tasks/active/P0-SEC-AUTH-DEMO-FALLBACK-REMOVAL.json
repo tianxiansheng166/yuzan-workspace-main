@@ -70,7 +70,7 @@
       "name": "登录假成功静态回归",
       "command": "node frontend/login/truthful-login.test.mjs",
       "result": "PASS",
-      "summary": "源文件不再写入 demo-token 或离线假会话；共享客户端直接覆盖畸形登录、网络异常、受保护 teacher 入口的撤销 401、fresh context 和有效 /me，会话撤销后 token/user/school 全部清空并跳转 /login。"
+      "summary": "attempt 3 定向回归覆盖 STUDENT -> /teacher、TEACHER -> /student、TEACHER 同角色入口和撤销 401。跨角色时 document 始终 hidden，按服务端 /me 的 activeSchoolId 对应 membership 跳转授权首页并保留有效会话；撤销时仍原子清空会话。"
     },
     {
       "name": "API 不可用与错误凭据的真实页面、新上下文负向预检",
@@ -87,12 +87,13 @@
     }
   ],
   "rework": {
-    "attempt": 2,
-    "rejected_candidate": "048c71858b98cb0e4b9146ddaf5c1bb12ce04ee5",
-    "failure_class": "REVOKED_SESSION_CLIENT_FAIL_OPEN",
-    "repair": "所有受保护角色页入口先调用 /api/v1/me；401/UNAUTHORIZED 清除 token、user、active-school 并跳转 /login，fresh context 不创建 demo 状态。"
+    "attempt": 3,
+    "review_round": 1,
+    "rejected_candidate": "71962892dbde003fd3630eb98732dabe535d97da",
+    "failure_class": "AUTHORIZATION_CROSS_ROLE_FAIL_OPEN",
+    "repair": "受保护角色页在 reveal 前使用 /api/v1/me 返回的 activeSchoolId 定位服务端确认的当前 membership，并与路由角色匹配；不匹配时保持 hidden 并跳转该会话的授权首页，不清除仍有效的会话。"
   },
-  "ready_for_review_at": "2026-07-26T21:57:11+08:00",
+  "ready_for_review_at": "2026-07-26T23:41:51+08:00",
   "handoff": "project-ops/handoffs/P0-SEC-AUTH-DEMO-FALLBACK-REMOVAL.md",
   "rollback": "回退本任务提交；不得恢复 demo-token、离线登录或异常时的假成功跳转。",
   "delivery": {

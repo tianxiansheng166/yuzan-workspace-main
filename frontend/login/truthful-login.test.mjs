@@ -61,6 +61,19 @@ function assertNoSession(values) {
   assert.equal(values.has('yuzan-active-school-id'), false);
 }
 
+function successfulMe(role, schoolId) {
+  return {
+    ok: true,
+    status: 200,
+    json: async () => ({
+      data: {
+        user: { id: `${role.toLowerCase()}-1`, memberships: [{ role, schoolId }] },
+        activeSchoolId: schoolId,
+      },
+    }),
+  };
+}
+
 {
   const { api, values } = createClient(async () => ({
     ok: true,
@@ -109,16 +122,10 @@ function assertNoSession(values) {
 }
 
 {
-  const { api, values, location, documentElement } = createClient(async () => ({
-    ok: true,
-    status: 200,
-    json: async () => ({
-      data: {
-        user: { id: 'teacher-1', memberships: [{ role: 'TEACHER', schoolId: 'school-1' }] },
-        activeSchoolId: 'school-1',
-      },
-    }),
-  }), { pathname: '/teacher/' });
+  const { api, values, location, documentElement } = createClient(
+    async () => successfulMe('TEACHER', 'school-1'),
+    { pathname: '/teacher/' },
+  );
   assert.equal(await api.whenSessionReady(), true);
   assert.equal(location.href, '');
   assert.equal(documentElement.style.visibility, '');
@@ -126,4 +133,21 @@ function assertNoSession(values) {
   assert.equal(values.get('yuzan-active-school-id'), 'school-1');
 }
 
-console.log('[PASS] login and protected entry fail closed for malformed, unavailable, revoked, and fresh sessions');
+for (const scenario of [
+  { pathname: '/teacher', role: 'STUDENT', schoolId: 'student-school', destination: '/student/today' },
+  { pathname: '/student/today', role: 'TEACHER', schoolId: 'teacher-school', destination: '/teacher' },
+]) {
+  const { api, values, location, documentElement } = createClient(
+    async () => successfulMe(scenario.role, scenario.schoolId),
+    { pathname: scenario.pathname },
+  );
+  assert.equal(documentElement.style.visibility, 'hidden');
+  assert.equal(await api.whenSessionReady(), false);
+  assert.equal(location.href, scenario.destination);
+  assert.equal(documentElement.style.visibility, 'hidden');
+  assert.equal(values.get('yuzan-access-token'), 'stale-token');
+  assert.equal(JSON.parse(values.get('yuzan-current-user')).memberships[0].role, scenario.role);
+  assert.equal(values.get('yuzan-active-school-id'), scenario.schoolId);
+}
+
+console.log('[PASS] login and protected entry enforce server-confirmed active roles and revoked sessions');
