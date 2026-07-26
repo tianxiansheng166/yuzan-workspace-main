@@ -105,4 +105,3 @@ Relative Markdown links resolve and all eight files parse as GFM through Pandoc.
 
 Revert this task branch's documentation, task metadata, handoff and learning-log commits after the base. No
 database, contract, dependency or runtime rollback is required.
-

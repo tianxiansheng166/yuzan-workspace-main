@@ -1160,3 +1160,37 @@ Run the existing expression with `rg --pcre2` or remove the lookbehind.
 - **Resolved**: 2026-07-26T19:06:00+08:00
 - **Commit/PR**: pending task delivery commit
 - **Notes**: The task command now enables PCRE2 explicitly.
+
+## [ERR-20260726-009] non-short-circuit-validation-chain
+
+**Logged**: 2026-07-26T19:12:00+08:00
+**Priority**: medium
+**Status**: resolved
+**Area**: workflow
+
+### Summary
+
+A PowerShell command separated `git diff --cached --check` and `git commit` with semicolons, so the commit
+still executed after the whitespace check reported Markdown trailing-space and blank-EOF findings.
+
+### Error
+
+```text
+git diff --cached --check reported whitespace errors, followed by a successful git commit.
+```
+
+### Suggested Fix
+
+Run validation and commit as separate tool calls, or explicitly throw when `$LASTEXITCODE -ne 0` before
+executing the commit.
+
+### Metadata
+
+- Reproducible: yes
+- Related Files: `docs/11-product-delivery/*.md`, `project-ops/handoffs/PRODUCT-INVESTMENT-DELIVERY-PLAN-001.md`
+
+### Resolution
+
+- **Resolved**: 2026-07-26T19:13:00+08:00
+- **Commit/PR**: pending task delivery commit
+- **Notes**: Markdown whitespace was removed with an explicit patch; subsequent validation and commits are run separately.
