@@ -250,6 +250,14 @@ function Get-TaskRequiredResources {
     return @($Task.resources)
 }
 
+function Get-TaskWriteSet {
+    param([object]$Task)
+    return @(@($Task.write_set) + @(
+        "project-ops/tasks/active/$($Task.id).json",
+        "project-ops/handoffs/$($Task.id).md"
+    ) | Sort-Object -Unique)
+}
+
 function Test-WorkerCapabilityMatch {
     param([object]$Worker, [object]$Task)
     $caps = @($Worker.capabilities | ForEach-Object { ([string]$_).ToLowerInvariant() })
@@ -301,7 +309,9 @@ function Write-WorkOrder {
     $contextPaths = @(
         'project-ops/AI-DEVELOPMENT-CONTRACT.md',
         'project-ops/control-plane/goal.json',
-        'project-ops/control-plane/bootstrap-work-items.json'
+        'project-ops/control-plane/bootstrap-work-items.json',
+        'project-ops/templates/task.template.json',
+        'project-ops/templates/HANDOFF.template.md'
     ) + @($Task.contract_paths)
     $contextManifest = @()
     foreach ($relative in @($contextPaths | Sort-Object -Unique)) {
@@ -316,6 +326,7 @@ function Write-WorkOrder {
         $purpose = if ($relative -eq 'project-ops/control-plane/goal.json') { 'immutable_goal_revision' }
             elseif ($relative -eq 'project-ops/AI-DEVELOPMENT-CONTRACT.md') { 'stable_engineering_rules' }
             elseif ($relative -eq 'project-ops/control-plane/bootstrap-work-items.json') { 'current_task_definition_and_dag' }
+            elseif ($relative -like 'project-ops/templates/*') { 'task_materialization_template' }
             else { 'acceptance_or_feature_contract' }
         $contextManifest += [pscustomobject][ordered]@{
             path = ([string]$relative).Replace('\', '/')
@@ -397,7 +408,7 @@ function Assign-Task {
         expires_at = $issued.AddMinutes([int]$State.policy_snapshot.lease_minutes).ToString('o')
         locks = if ($isVerification) { @() } else { @($Task.locks | Sort-Object) }
         resources = @(Get-TaskRequiredResources $Task | Sort-Object)
-        write_set = if ($isVerification) { @("runtime-local/control-plane/evidence/$($Task.id)/**") } else { @($Task.write_set) }
+        write_set = if ($isVerification) { @("runtime-local/control-plane/evidence/$($Task.id)/**") } else { @(Get-TaskWriteSet $Task) }
     }
     $Task.context_ack = $null
     $Task.state = if ($isVerification) { 'VERIFYING' } else { 'IMPLEMENTING' }

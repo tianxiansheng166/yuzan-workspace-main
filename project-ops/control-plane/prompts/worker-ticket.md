@@ -12,3 +12,7 @@
 
 用户可见任务必须引用 FeatureChain。完成候选必须说明控件点击后的 UI、真实 API、对象状态、
 持久化、下游页面、新会话和权限负向；其中任何一段缺失，保持未完成或真实 unavailable。
+
+若 ticket 来自 bootstrap 且任务 JSON 尚不存在，先在 ticket 指定的 task branch/worktree 中按
+模板创建 `project-ops/tasks/active/<task-id>.json` 和 handoff；这两个路径已包含在租约 write_set。
+任务 JSON 的业务 `allowed_paths` 必须等于 ticket 的业务写集加本任务元数据路径，不能自行扩张。
