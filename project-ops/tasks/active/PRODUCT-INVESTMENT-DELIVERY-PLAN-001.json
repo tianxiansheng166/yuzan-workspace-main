@@ -1,0 +1,133 @@
+{
+  "id": "PRODUCT-INVESTMENT-DELIVERY-PLAN-001",
+  "status": "READY_FOR_REVIEW",
+  "title": "建立投资级产品定义与可执行闭环开发包",
+  "owner": "Codex",
+  "reviewer": "Product Owner / Integration Lead",
+  "branch": "task/product-investment-delivery-plan-001",
+  "base_commit": "d09c4433339cc18018cacab1838818883578913c",
+  "user_outcome": "团队能够基于当前 main 的真实源码和运行证据，按一套个性化、分阶段、可验收的产品与工程文件推进学生小程序、教师管理 Web、服务端闭环、比赛演示、首校试点和投资尽调，而不再依赖宏观 PRD、600 个无优先级问题或聊天记忆决定下一步。",
+  "current_facts": [
+    "canonical main 与 origin/main 均为 d09c4433339cc18018cacab1838818883578913c，工作区在任务创建时干净",
+    "Node 24 下全仓 typecheck 和 build 通过；全仓 test 中 API 937 通过 55 跳过、worker 33 通过，契约、数据库与领域测试通过",
+    "当前登录页与 API readiness 可访问，Flowise Web 入口可访问，语音评分 8100 未启动",
+    "唯一启动脚本在 4175 已占用时失败，未先识别既有服务所有权，运行编排仍需幂等和清理策略",
+    "登录前端存在硬编码演示账号路径、假 token 和 API 失败后的演示兜底；教师复核仍存在固定 submission-1 导航",
+    "当前已集成练习、课程提交、AI 教案与翻译检查点，但跨角色教师投递到学生提交再回教师复核的浏览器闭环尚未验证",
+    "旧 Strategic PRD 混合投资、试点、目标产品与工程快照，600 问 HTML 是决策题库而非施工 PRD"
+  ],
+  "product_alignment": {
+    "p0": "教师 Web 发布古诗文朗读与理解练习，学生移动端产生真实录音与答案证据，服务端处理，教师复核并投递巩固，学生查看报告并复测",
+    "contribution": "将战略母文档、当前事实、业务对象与状态、端形态、复用边界、任务顺序、投资门禁和 600 问处置方式统一成可直接派发的开发包。",
+    "non_goals": [
+      "不修改业务代码、OpenAPI、Prisma、依赖、运行配置或真实数据",
+      "不使用或保存用户在聊天中暴露的第三方 API 密钥",
+      "不编造首校、负责人、预算、合同、教学效果或供应商可用性",
+      "不把单元测试、路由可达、静态高保真或 mock 当作端到端完成",
+      "不要求在开发前逐题长答 600 问，也不同时启动 App、社区、志愿者、区域大屏和复杂推荐"
+    ]
+  },
+  "context": {
+    "required": [
+      "docs/10-project-review/02-语赞心声Web产品PRD（投资与产品版）.md",
+      "docs/项目指导/05-P0黄金闭环产品规格.md",
+      "docs/项目指导/09-P0产品决策记录.md",
+      "project-ops/MULTITRACK-BOARD.md",
+      "project-ops/handoffs/INTEGRATION-CHECKPOINT-20260726-RUNTIME-REVALIDATION.md",
+      "PROJECT-CHARTER.md"
+    ],
+    "optional": [
+      "docs/项目指导/06-P0页面地图与状态流.md",
+      "project-ops/accepted-baselines.json",
+      "project-ops/plans/P0-MULTITRACK-CLOSED-LOOPS.md"
+    ]
+  },
+  "depends_on": [],
+  "integration_order": [
+    "核对 main 的源码、运行、测试、浏览器和已接受检查点事实",
+    "把 600 问按比赛、可用 MVP、首校、商业化和不适用五个决策时域重新分级",
+    "冻结服务平台加教师 Web 加学生小程序的目标形态和唯一 P0 用户闭环",
+    "定义角色、业务泳道、核心对象、状态机、异常、接口责任和验收证据",
+    "形成按依赖排序的 0 到 90 天开发波次、团队任务包和投资/试点门禁",
+    "执行结构校验、事实一致性检查、敏感信息扫描和陌生读者测试"
+  ],
+  "allowed_paths": [
+    ".learnings/ERRORS.md",
+    "docs/11-product-delivery/**",
+    "project-ops/tasks/active/PRODUCT-INVESTMENT-DELIVERY-PLAN-001.json",
+    "project-ops/handoffs/PRODUCT-INVESTMENT-DELIVERY-PLAN-001.md"
+  ],
+  "shared_owner_changes": [],
+  "contract_change_request": null,
+  "minimal_tests": [
+    {
+      "name": "任务 JSON 解析",
+      "command": "Get-Content project-ops/tasks/active/PRODUCT-INVESTMENT-DELIVERY-PLAN-001.json -Raw -Encoding UTF8 | ConvertFrom-Json | Out-Null"
+    },
+    {
+      "name": "文档包结构与关键门禁检查",
+      "command": "rg -n --glob '*.md' \"^## (当前结论|唯一 P0|当前事实基线|业务闭环|对象模型|状态机|开发波次|完成定义|投资门禁|待项目方决策)\" docs/11-product-delivery"
+    },
+    {
+      "name": "Markdown 解析检查",
+      "command": "Get-ChildItem docs/11-product-delivery/*.md | ForEach-Object { pandoc --from=gfm --to=html $_.FullName | Out-Null; if ($LASTEXITCODE -ne 0) { throw \"Pandoc failed: $($_.FullName)\" } }"
+    },
+    {
+      "name": "敏感信息形态扫描",
+      "command": "$hits = rg --pcre2 -n \"(?<![A-Za-z0-9])(?:sk-[A-Za-z0-9_-]{20,}|ghp_[A-Za-z0-9]{30,}|-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----)\" docs/11-product-delivery project-ops/handoffs/PRODUCT-INVESTMENT-DELIVERY-PLAN-001.md; if ($LASTEXITCODE -eq 0) { throw \"Secret-like token found\" }; if ($LASTEXITCODE -gt 1) { throw \"Secret scan failed\" }"
+    },
+    {
+      "name": "Git whitespace 检查",
+      "command": "git diff --check d09c4433339cc18018cacab1838818883578913c...HEAD"
+    },
+    {
+      "name": "任务交付门禁",
+      "command": "$env:GIT_CONFIG_COUNT='1'; $env:GIT_CONFIG_KEY_0='core.quotePath'; $env:GIT_CONFIG_VALUE_0='false'; try { & .\\scripts\\repo\\task-gate.ps1 -Mode review -TaskFile project-ops/tasks/active/PRODUCT-INVESTMENT-DELIVERY-PLAN-001.json } finally { Remove-Item Env:GIT_CONFIG_COUNT,Env:GIT_CONFIG_KEY_0,Env:GIT_CONFIG_VALUE_0 -ErrorAction SilentlyContinue }"
+    }
+  ],
+  "test_evidence": [
+    {
+      "name": "任务 JSON 解析",
+      "result": "PASS",
+      "command": "Get-Content project-ops/tasks/active/PRODUCT-INVESTMENT-DELIVERY-PLAN-001.json -Raw -Encoding UTF8 | ConvertFrom-Json | Out-Null",
+      "summary": "任务 JSON 在 PowerShell 中按 UTF-8 成功解析。"
+    },
+    {
+      "name": "文档包结构与关键门禁检查",
+      "result": "PASS",
+      "command": "rg -n --glob '*.md' \"^## (当前结论|唯一 P0|当前事实基线|业务闭环|对象模型|状态机|开发波次|完成定义|投资门禁|待项目方决策)\" docs/11-product-delivery",
+      "summary": "八份文档检出 14 个关键二级章节，产品定义、P0、基线、业务、模型、状态、路线、DoD、投资和待决策入口均存在。"
+    },
+    {
+      "name": "Markdown 解析检查",
+      "result": "PASS",
+      "command": "Get-ChildItem docs/11-product-delivery/*.md | ForEach-Object { pandoc --from=gfm --to=html $_.FullName | Out-Null; if ($LASTEXITCODE -ne 0) { throw \"Pandoc failed: $($_.FullName)\" } }",
+      "summary": "README 加七份专题文档共八个文件全部通过 Pandoc GFM 解析。"
+    },
+    {
+      "name": "敏感信息形态扫描",
+      "result": "PASS",
+      "command": "$hits = rg --pcre2 -n \"(?<![A-Za-z0-9])(?:sk-[A-Za-z0-9_-]{20,}|ghp_[A-Za-z0-9]{30,}|-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----)\" docs/11-product-delivery project-ops/handoffs/PRODUCT-INVESTMENT-DELIVERY-PLAN-001.md; if ($LASTEXITCODE -eq 0) { throw \"Secret-like token found\" }; if ($LASTEXITCODE -gt 1) { throw \"Secret scan failed\" }",
+      "summary": "文档包和交接文件未检出常见 API key、GitHub token 或私钥形态；聊天中暴露的凭据未使用、未复制。"
+    },
+    {
+      "name": "Git whitespace 检查",
+      "result": "PASS",
+      "command": "git diff --check d09c4433339cc18018cacab1838818883578913c...HEAD",
+      "summary": "修复首次门禁发现的 Markdown 行尾问题后，任务基线到当前内容提交的差异无 whitespace 错误。"
+    },
+    {
+      "name": "任务交付门禁",
+      "result": "PASS",
+      "command": "$env:GIT_CONFIG_COUNT='1'; $env:GIT_CONFIG_KEY_0='core.quotePath'; $env:GIT_CONFIG_VALUE_0='false'; try { & .\\scripts\\repo\\task-gate.ps1 -Mode review -TaskFile project-ops/tasks/active/PRODUCT-INVESTMENT-DELIVERY-PLAN-001.json } finally { Remove-Item Env:GIT_CONFIG_COUNT,Env:GIT_CONFIG_KEY_0,Env:GIT_CONFIG_VALUE_0 -ErrorAction SilentlyContinue }",
+      "summary": "review 门禁验证任务状态、分支、基线、allowed_paths、handoff、测试证据与差异检查通过。"
+    }
+  ],
+  "handoff": "project-ops/handoffs/PRODUCT-INVESTMENT-DELIVERY-PLAN-001.md",
+  "rollback": "回退本任务在 task/product-investment-delivery-plan-001 上的文档、任务元数据和学习记录提交；本任务不含业务代码、数据库、契约或运行配置变更。",
+  "delivery": {
+    "push_task_branch": true,
+    "remote": "origin",
+    "merge_target": "integration/p0-multitrack-001"
+  }
+}

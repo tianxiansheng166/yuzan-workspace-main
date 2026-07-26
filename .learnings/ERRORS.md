@@ -978,3 +978,219 @@ Validate the actual table definition form `| <DOMAIN>-<NN> |`, then assert both 
 - **Resolved**: 2026-07-25T22:47:41+08:00
 - **Commit/PR**: pending task delivery commit
 - **Notes**: The corrected table-row validator found 105 IDs and 105 unique values across functional requirements and decisions.
+
+## [ERR-20260726-004] unified-exec-windowsapps-pwsh-access-denied
+
+**Logged**: 2026-07-26T18:47:00+08:00
+**Priority**: medium
+**Status**: resolved
+**Area**: infra
+
+### Summary
+
+A PTY launch used the WindowsApps `pwsh.exe` alias and failed before the repository script started.
+
+### Error
+
+```text
+CreateProcessW ... WindowsApps\\pwsh.exe ... failed: access denied
+```
+
+### Context
+
+- Operation: launch `scripts/local-runtime/start-main.ps1` in a unified exec PTY.
+- The failure happened while creating the shell process, not inside the project script.
+- Non-PTY PowerShell commands in the same environment continued to work.
+
+### Suggested Fix
+
+For long-running Windows runtime commands, explicitly select
+`C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe` with login disabled when the
+WindowsApps PowerShell alias cannot be executed.
+
+### Metadata
+
+- Reproducible: unknown
+- Related Files: `scripts/local-runtime/start-main.ps1`
+
+### Resolution
+
+- **Resolved**: 2026-07-26T18:48:00+08:00
+- **Commit/PR**: pending task delivery commit
+- **Notes**: The same repository command entered the project script when launched with explicit Windows PowerShell.
+
+## [ERR-20260726-005] start-main-existing-port-partial-launch
+
+**Logged**: 2026-07-26T18:50:00+08:00
+**Priority**: high
+**Status**: pending
+**Area**: infra
+
+### Summary
+
+`start-main.ps1` did not detect an existing frontend listener before starting the parallel runtime, so the
+frontend failed with `EADDRINUSE` after Docker and database generation work had already run.
+
+### Error
+
+```text
+Error: listen EADDRINUSE: address already in use 0.0.0.0:4175
+ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL
+```
+
+### Context
+
+- The existing frontend, API and worker were already launched from the canonical project around 18:27.
+- The script recreated no data volumes, but it performed setup before discovering the listener conflict.
+- After the failure, the login page and API readiness remained available, making ownership and lifecycle
+  ambiguous for an operator preparing a competition demo.
+
+### Suggested Fix
+
+Add a preflight ownership check for frontend/API/worker listeners. If the exact canonical runtime is healthy,
+report and reuse it; if ownership is foreign or stale, fail before setup and print the exact safe cleanup path.
+Track child processes so a failed parallel launch cannot leave newly created orphan processes.
+
+### Metadata
+
+- Reproducible: yes
+- Related Files: `scripts/local-runtime/start-main.ps1`, `scripts/local-runtime/start-core.ps1`
+
+## [ERR-20260726-006] bundled-python-missing-playwright-package
+
+**Logged**: 2026-07-26T18:51:00+08:00
+**Priority**: low
+**Status**: resolved
+**Area**: tests
+
+### Summary
+
+The bundled workspace Python executable did not import Playwright even though browser automation dependencies
+were reported as available.
+
+### Error
+
+```text
+ModuleNotFoundError: No module named 'playwright'
+```
+
+### Context
+
+- The Python executable under the bundled dependency runtime was used first.
+- The system Python 3.12 installation already contained Playwright and its browser runtime.
+
+### Suggested Fix
+
+Probe the selected Python with `import playwright` before a browser run and fall back to the verified system
+Python when the bundled environment does not expose the package.
+
+### Metadata
+
+- Reproducible: yes
+- Related Files: `frontend/`
+
+### Resolution
+
+- **Resolved**: 2026-07-26T18:52:00+08:00
+- **Commit/PR**: pending task delivery commit
+- **Notes**: The same headless Chromium check passed with the system Python 3.12 Playwright installation.
+
+## [ERR-20260726-007] ripgrep-windows-directory-glob
+
+**Logged**: 2026-07-26T19:05:00+08:00
+**Priority**: low
+**Status**: resolved
+**Area**: tests
+
+### Summary
+
+A task-gate command passed `docs/11-product-delivery/*.md` directly to ripgrep. On Windows, ripgrep treated
+the wildcard as an invalid literal path instead of expanding it.
+
+### Error
+
+```text
+IO error for operation on docs/11-product-delivery/*.md: 文件名、目录名或卷标语法不正确。 (os error 123)
+```
+
+### Suggested Fix
+
+Pass the directory as the search path and use ripgrep's own glob option: `rg --glob '*.md' PATTERN DIR`.
+
+### Metadata
+
+- Reproducible: yes
+- Related Files: `project-ops/tasks/active/PRODUCT-INVESTMENT-DELIVERY-PLAN-001.json`
+
+### Resolution
+
+- **Resolved**: 2026-07-26T19:06:00+08:00
+- **Commit/PR**: pending task delivery commit
+- **Notes**: The task command now uses `--glob '*.md'` with the directory path.
+
+## [ERR-20260726-008] ripgrep-secret-scan-needs-pcre2
+
+**Logged**: 2026-07-26T19:05:00+08:00
+**Priority**: low
+**Status**: resolved
+**Area**: tests
+
+### Summary
+
+The secret-scan expression used a negative lookbehind, which the default ripgrep regex engine does not
+support.
+
+### Error
+
+```text
+regex parse error: look-around, including look-ahead and look-behind, is not supported
+```
+
+### Suggested Fix
+
+Run the existing expression with `rg --pcre2` or remove the lookbehind.
+
+### Metadata
+
+- Reproducible: yes
+- Related Files: `project-ops/tasks/active/PRODUCT-INVESTMENT-DELIVERY-PLAN-001.json`
+
+### Resolution
+
+- **Resolved**: 2026-07-26T19:06:00+08:00
+- **Commit/PR**: pending task delivery commit
+- **Notes**: The task command now enables PCRE2 explicitly.
+
+## [ERR-20260726-009] non-short-circuit-validation-chain
+
+**Logged**: 2026-07-26T19:12:00+08:00
+**Priority**: medium
+**Status**: resolved
+**Area**: workflow
+
+### Summary
+
+A PowerShell command separated `git diff --cached --check` and `git commit` with semicolons, so the commit
+still executed after the whitespace check reported Markdown trailing-space and blank-EOF findings.
+
+### Error
+
+```text
+git diff --cached --check reported whitespace errors, followed by a successful git commit.
+```
+
+### Suggested Fix
+
+Run validation and commit as separate tool calls, or explicitly throw when `$LASTEXITCODE -ne 0` before
+executing the commit.
+
+### Metadata
+
+- Reproducible: yes
+- Related Files: `docs/11-product-delivery/*.md`, `project-ops/handoffs/PRODUCT-INVESTMENT-DELIVERY-PLAN-001.md`
+
+### Resolution
+
+- **Resolved**: 2026-07-26T19:13:00+08:00
+- **Commit/PR**: pending task delivery commit
+- **Notes**: Markdown whitespace was removed with an explicit patch; subsequent validation and commits are run separately.
