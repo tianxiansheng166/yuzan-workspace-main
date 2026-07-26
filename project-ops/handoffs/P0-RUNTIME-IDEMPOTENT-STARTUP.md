@@ -36,6 +36,7 @@
 | fixture 初次校准 | runtime 命令同下 | `FAIL`，生产 argv 契约正确拒绝 generic fixture；已将 fixture 限制到 OS temp 前缀与非生产动态端口 |
 | 隔离重复与负向套件 | `powershell -NoProfile -File scripts/local-runtime/test-repeatable-start.ps1 -Mode Runtime -RepositoryRoot .` | `PASS` |
 | review round 2 实时 argv 强化 | runtime 命令同上 | `PASS`，正确解释器 + 伪造记录哈希仍被实时 argv 拒绝 |
+| attempt 7 exact-candidate 重跑 | syntax + runtime 命令同上 | `PASS`，候选 `e2350f3cc336c212778232ed2753930e0e1b213d`，运行时间 `2026-07-26T18:18Z` |
 
 通过结果：`PASS_EXACT_COMMIT_ATTESTED`；两次启动入口 `PASS_IDENTICAL_PIDS_AND_COMMIT`；
 foreign partial occupancy `PASS_FAILED_CLOSED_NO_KILL_NO_PORT_CHANGE`；包含仓库根、
@@ -44,12 +45,16 @@ foreign partial occupancy `PASS_FAILED_CLOSED_NO_KILL_NO_PORT_CHANGE`；包含�
 中的 child/wrapper 哈希改成期望值，也因实时 argv 不匹配而拒绝；wrong candidate commit 拒绝。
 所有隔离进程均在 `finally` 清理。
 
+attempt 7 输出的隔离端口为 `61531/61532/61533`，PID 指纹为
+`api=40664;frontend_proxy=36360;speech=38852;worker=40032`。这些 PID 仅是本轮短生命周期
+fixture 的复验事实，不是 canonical 共享运行态声明；验证脚本完成后已清理。
+
 ## 自审
 
 - [x] 差异只服务任务结果且均在 `allowed_paths`
 - [x] 无固定业务 ID、静态业务数据、假成功或 demo fallback
 - [x] 部分/异常运行态显式失败，不伪装成可用
-- [x] 最高风险由真实 canonical runtime 两次启动和 PID 稳定性直接测试
+- [x] 最高风险由隔离 managed-runtime 的 clean exact-candidate、两次 `ReuseOnly` PID 稳定性及负向状态直接测试
 - [x] 无密钥、真实学生数据或来源不明资产
 - [ ] 独立 reviewer 复验并签发 `VERIFIED`
 
@@ -66,4 +71,6 @@ foreign partial occupancy `PASS_FAILED_CLOSED_NO_KILL_NO_PORT_CHANGE`；包含�
 - 依赖与合并顺序：本任务无业务依赖，可先于教师/学生纵向功能集成。
 - Integration Lead 需要在 exact candidate/integration commit 独立复验 clean startup、两次复用、
   foreign partial port、PowerShell command-line spoof 与 wrong-commit 五种状态。
-- 推送分支/commit：提交后补充。
+- 实现提交：`b95f666`（nonce/PID manifest 与 exact commit/argv/lock 联合证明）、
+  `e2350f3`（Windows live wrapper/child argv 校验与伪造哈希负向覆盖）。
+- 最终候选提交由本 handoff/evidence 更新提交产生，并通过控制面 `COMPLETE_CANDIDATE` 精确上报。
