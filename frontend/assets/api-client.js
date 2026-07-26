@@ -190,9 +190,22 @@
   async function me(options = {}) {
     const result = await request('/me', { method: 'GET', ...options });
     const data = result.data || result;
-    if (data.user) setStoredUser(data.user);
-    setActiveSchoolId(data.activeSchoolId || '');
-    return data;
+    // The canonical /me response is a flattened CurrentUser with
+    // activeSchoolId alongside id/memberships. Keep accepting the wrapped
+    // shape used by older consumers, but normalize both before authorizing a
+    // protected route.
+    const user = data?.user && typeof data.user === 'object'
+      ? data.user
+      : (data && typeof data === 'object' && Array.isArray(data.memberships) ? data : null);
+    if (!user) {
+      const error = new Error('认证服务未返回有效用户');
+      error.code = 'AUTH_SESSION_INVALID';
+      throw error;
+    }
+    const activeSchoolId = typeof data.activeSchoolId === 'string' ? data.activeSchoolId : '';
+    setStoredUser(user);
+    setActiveSchoolId(activeSchoolId);
+    return { ...data, user, activeSchoolId };
   }
 
   async function selectSchool(schoolId) {
@@ -271,7 +284,7 @@
       revealProtectedPage();
       return true;
     } catch (error) {
-      if (error?.status === 401 || error?.code === 'UNAUTHORIZED') clearSession();
+      if (error?.status === 401 || error?.code === 'UNAUTHORIZED' || error?.code === 'AUTH_SESSION_INVALID') clearSession();
       navigateToLogin(fallback);
       return false;
     }

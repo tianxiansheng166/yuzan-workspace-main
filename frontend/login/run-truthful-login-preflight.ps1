@@ -60,5 +60,6 @@ Invoke-BrowserCase -Mode 'revoked-session' -ApiBaseUrl "http://127.0.0.1:$Unavai
 $realApi = Get-NetTCPConnection -LocalPort $RealApiPort -State Listen -ErrorAction SilentlyContinue
 if (-not $realApi) { throw "real API is not listening on port $RealApiPort" }
 Invoke-BrowserCase -Mode 'invalid-credentials' -ApiBaseUrl "http://127.0.0.1:$RealApiPort"
+Invoke-BrowserCase -Mode 'authenticated-student' -ApiBaseUrl "http://127.0.0.1:$RealApiPort"
 
 Write-Host '[PASS] truthful login browser preflight completed without leaving a frontend listener'

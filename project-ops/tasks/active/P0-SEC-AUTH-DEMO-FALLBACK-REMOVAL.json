@@ -70,14 +70,14 @@
       "name": "登录假成功静态回归",
       "command": "node frontend/login/truthful-login.test.mjs",
       "result": "PASS",
-      "summary": "attempt 3 定向回归覆盖 STUDENT -> /teacher、TEACHER -> /student、TEACHER 同角色入口和撤销 401。跨角色时 document 始终 hidden，按服务端 /me 的 activeSchoolId 对应 membership 跳转授权首页并保留有效会话；撤销时仍原子清空会话。"
+      "summary": "attempt 4 使用真实 GET /me 扁平 CurrentUser 响应形状覆盖 STUDENT 与 TEACHER 同角色入口、STUDENT -> /teacher、TEACHER -> /student、撤销 401 和畸形会话。扁平响应会规范化后按服务端 activeSchoolId 对应 membership 授权；跨角色保持 hidden 并保留有效会话，撤销或畸形会话仍原子清空。"
     },
     {
       "name": "API 不可用与错误凭据的真实页面、新上下文负向预检",
       "command": "pwsh -NoProfile -File frontend/login/run-truthful-login-preflight.ps1",
       "result": "PASS",
-      "summary": "390x844 Chromium 覆盖 API 断开 502、canonical API 错误凭据 401，以及 /teacher 入口向 /api/v1/me 发出请求并收到撤销夹具 401；撤销与 fresh context 均进入 /login 且 token/user/school/demo 全为空，page error 为 0。",
-      "limitation": "这是 Builder 预检而非独立 VERIFIED；撤销场景由浏览器网络层返回 401，Verifier 仍需执行真实登录后 out-of-band logout 的完整旅程。"
+      "summary": "390x844 Chromium 覆盖 API 断开 502、canonical API 错误凭据 401、撤销夹具 401，以及动态 STUDENT 真实注册 201。正向旅程三次 GET /api/v1/me 均为 200，稳定进入 /student/today/；直接访问 /teacher/ 后回到 /student/today/，有效 token 与 server-issued activeSchoolId 保留且无 demo session，console/page error 为 0。",
+      "limitation": "这是 Builder 预检而非独立 VERIFIED；撤销场景由浏览器网络层返回 401，Verifier 仍需在独立环境复验真实 out-of-band logout。"
     },
     {
       "name": "登录页面与认证 API 构建检查",
@@ -87,13 +87,13 @@
     }
   ],
   "rework": {
-    "attempt": 3,
-    "review_round": 1,
-    "rejected_candidate": "71962892dbde003fd3630eb98732dabe535d97da",
-    "failure_class": "AUTHORIZATION_CROSS_ROLE_FAIL_OPEN",
-    "repair": "受保护角色页在 reveal 前使用 /api/v1/me 返回的 activeSchoolId 定位服务端确认的当前 membership，并与路由角色匹配；不匹配时保持 hidden 并跳转该会话的授权首页，不清除仍有效的会话。"
+    "attempt": 4,
+    "review_round": 2,
+    "rejected_candidate": "458d4ed937be88afffa9c76bf8de9f8772ad3396",
+    "failure_class": "AUTHENTICATED_ROLE_HOME_REDIRECT_LOOP",
+    "repair": "共享客户端同时接受 canonical GET /me 的扁平 CurrentUser 与既有 wrapped 形状，并统一规范化为 user + activeSchoolId 后再做路由角色校验；真实 STUDENT 会话因此可在 /student/today 稳定显示，跨角色仍保持 hidden 并跳回授权学生首页。"
   },
-  "ready_for_review_at": "2026-07-26T23:41:51+08:00",
+  "ready_for_review_at": "2026-07-27T00:25:36+08:00",
   "handoff": "project-ops/handoffs/P0-SEC-AUTH-DEMO-FALLBACK-REMOVAL.md",
   "rollback": "回退本任务提交；不得恢复 demo-token、离线登录或异常时的假成功跳转。",
   "delivery": {

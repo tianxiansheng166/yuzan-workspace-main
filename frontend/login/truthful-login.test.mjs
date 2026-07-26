@@ -67,7 +67,10 @@ function successfulMe(role, schoolId) {
     status: 200,
     json: async () => ({
       data: {
-        user: { id: `${role.toLowerCase()}-1`, memberships: [{ role, schoolId }] },
+        id: `${role.toLowerCase()}-1`,
+        displayName: `${role.toLowerCase()} user`,
+        preferredLocale: 'zh-CN',
+        memberships: [{ role, schoolId }],
         activeSchoolId: schoolId,
       },
     }),
@@ -131,6 +134,18 @@ function successfulMe(role, schoolId) {
   assert.equal(documentElement.style.visibility, '');
   assert.equal(JSON.parse(values.get('yuzan-current-user')).id, 'teacher-1');
   assert.equal(values.get('yuzan-active-school-id'), 'school-1');
+}
+
+{
+  const { api, values, location, documentElement } = createClient(
+    async () => successfulMe('STUDENT', 'student-school'),
+    { pathname: '/student/today' },
+  );
+  assert.equal(await api.whenSessionReady(), true);
+  assert.equal(location.href, '');
+  assert.equal(documentElement.style.visibility, '');
+  assert.equal(JSON.parse(values.get('yuzan-current-user')).id, 'student-1');
+  assert.equal(values.get('yuzan-active-school-id'), 'student-school');
 }
 
 for (const scenario of [

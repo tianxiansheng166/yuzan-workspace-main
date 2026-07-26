@@ -12,7 +12,7 @@ def main() -> None:
     parser.add_argument("--base-url", default="http://127.0.0.1:44175")
     parser.add_argument(
         "--mode",
-        choices=("api-unavailable", "invalid-credentials", "revoked-session"),
+        choices=("api-unavailable", "invalid-credentials", "revoked-session", "authenticated-student"),
         default="api-unavailable",
     )
     parser.add_argument("--screenshot")
@@ -23,6 +23,8 @@ def main() -> None:
     page_errors = []
     auth_responses = []
     me_requests = []
+    me_responses = []
+    main_frame_navigations = []
 
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(headless=True)
@@ -56,8 +58,14 @@ def main() -> None:
         page.on(
             "response",
             lambda response: auth_responses.append({"url": response.url, "status": response.status})
-            if "/api/v1/auth/login" in response.url else None,
+            if "/api/v1/auth/login" in response.url or "/api/v1/auth/register" in response.url else None,
         )
+        page.on(
+            "response",
+            lambda response: me_responses.append({"url": response.url, "status": response.status})
+            if "/api/v1/me" in response.url else None,
+        )
+        page.on("framenavigated", lambda frame: main_frame_navigations.append(frame.url) if frame == page.main_frame else None)
 
         if args.mode == "revoked-session":
             page.goto(f"{args.base_url}/teacher", wait_until="domcontentloaded")
@@ -107,6 +115,64 @@ def main() -> None:
             return
 
         page.goto(f"{args.base_url}/login", wait_until="networkidle")
+        if args.mode == "authenticated-student":
+            account = f"student-{uuid.uuid4().hex}"
+            page.locator("#registerTab").click()
+            page.locator("#registerPhone").fill(account)
+            page.locator("#registerPassword").fill("Evidence-Student-2026!")
+            page.locator('#registerPanel button[data-action="register"]').click()
+            page.wait_for_url("**/student/today**", timeout=20000)
+            page.wait_for_timeout(1500)
+            assert page.url.rstrip("/").endswith("/student/today"), page.url
+            assert page.evaluate("getComputedStyle(document.documentElement).visibility") == "visible"
+            storage = page.evaluate(
+                """() => ({
+                  token: localStorage.getItem('yuzan-access-token'),
+                  user: JSON.parse(localStorage.getItem('yuzan-current-user') || 'null'),
+                  school: localStorage.getItem('yuzan-active-school-id'),
+                  demo: localStorage.getItem('yuzan-demo-session')
+                })"""
+            )
+            assert storage["token"], storage
+            assert storage["school"], storage
+            assert storage["demo"] is None, storage
+            memberships = storage["user"]["memberships"]
+            assert any(
+                item["role"] == "STUDENT" and item["schoolId"] == storage["school"]
+                for item in memberships
+            ), storage
+            assert auth_responses and auth_responses[-1]["status"] == 201, auth_responses
+            assert me_responses and me_responses[-1]["status"] == 200, me_responses
+
+            page.goto(f"{args.base_url}/teacher", wait_until="domcontentloaded")
+            page.wait_for_url("**/student/today**", timeout=10000)
+            assert page.url.rstrip("/").endswith("/student/today"), page.url
+            assert not page.locator("body").inner_text().strip().startswith("教师工作台")
+            page.screenshot(path=screenshot, full_page=True)
+            assert not page_errors, page_errors
+            final_url = page.url
+            browser.close()
+            print(json.dumps({
+                "result": "PASS",
+                "level": "BUILDER_PREFLIGHT_ONLY",
+                "mode": args.mode,
+                "viewport": "390x844",
+                "auth_response": auth_responses[-1],
+                "me_responses": me_responses,
+                "final_url": final_url,
+                "main_frame_navigations": main_frame_navigations,
+                "session": {
+                    "has_token": bool(storage["token"]),
+                    "active_school_id": storage["school"],
+                    "roles": [item["role"] for item in memberships],
+                    "demo_session": storage["demo"],
+                },
+                "console_errors": console_errors,
+                "page_errors": page_errors,
+                "screenshot": screenshot,
+            }, ensure_ascii=False, indent=2))
+            return
+
         account = "teacher.test" if args.mode == "api-unavailable" else f"negative-{uuid.uuid4()}"
         page.locator("#loginAccount").fill(account)
         page.locator("#loginPassword").fill("not-a-real-password")
