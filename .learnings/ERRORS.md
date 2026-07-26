@@ -978,3 +978,119 @@ Validate the actual table definition form `| <DOMAIN>-<NN> |`, then assert both 
 - **Resolved**: 2026-07-25T22:47:41+08:00
 - **Commit/PR**: pending task delivery commit
 - **Notes**: The corrected table-row validator found 105 IDs and 105 unique values across functional requirements and decisions.
+
+## [ERR-20260726-004] unified-exec-windowsapps-pwsh-access-denied
+
+**Logged**: 2026-07-26T18:47:00+08:00
+**Priority**: medium
+**Status**: resolved
+**Area**: infra
+
+### Summary
+
+A PTY launch used the WindowsApps `pwsh.exe` alias and failed before the repository script started.
+
+### Error
+
+```text
+CreateProcessW ... WindowsApps\\pwsh.exe ... failed: access denied
+```
+
+### Context
+
+- Operation: launch `scripts/local-runtime/start-main.ps1` in a unified exec PTY.
+- The failure happened while creating the shell process, not inside the project script.
+- Non-PTY PowerShell commands in the same environment continued to work.
+
+### Suggested Fix
+
+For long-running Windows runtime commands, explicitly select
+`C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe` with login disabled when the
+WindowsApps PowerShell alias cannot be executed.
+
+### Metadata
+
+- Reproducible: unknown
+- Related Files: `scripts/local-runtime/start-main.ps1`
+
+### Resolution
+
+- **Resolved**: 2026-07-26T18:48:00+08:00
+- **Commit/PR**: pending task delivery commit
+- **Notes**: The same repository command entered the project script when launched with explicit Windows PowerShell.
+
+## [ERR-20260726-005] start-main-existing-port-partial-launch
+
+**Logged**: 2026-07-26T18:50:00+08:00
+**Priority**: high
+**Status**: pending
+**Area**: infra
+
+### Summary
+
+`start-main.ps1` did not detect an existing frontend listener before starting the parallel runtime, so the
+frontend failed with `EADDRINUSE` after Docker and database generation work had already run.
+
+### Error
+
+```text
+Error: listen EADDRINUSE: address already in use 0.0.0.0:4175
+ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL
+```
+
+### Context
+
+- The existing frontend, API and worker were already launched from the canonical project around 18:27.
+- The script recreated no data volumes, but it performed setup before discovering the listener conflict.
+- After the failure, the login page and API readiness remained available, making ownership and lifecycle
+  ambiguous for an operator preparing a competition demo.
+
+### Suggested Fix
+
+Add a preflight ownership check for frontend/API/worker listeners. If the exact canonical runtime is healthy,
+report and reuse it; if ownership is foreign or stale, fail before setup and print the exact safe cleanup path.
+Track child processes so a failed parallel launch cannot leave newly created orphan processes.
+
+### Metadata
+
+- Reproducible: yes
+- Related Files: `scripts/local-runtime/start-main.ps1`, `scripts/local-runtime/start-core.ps1`
+
+## [ERR-20260726-006] bundled-python-missing-playwright-package
+
+**Logged**: 2026-07-26T18:51:00+08:00
+**Priority**: low
+**Status**: resolved
+**Area**: tests
+
+### Summary
+
+The bundled workspace Python executable did not import Playwright even though browser automation dependencies
+were reported as available.
+
+### Error
+
+```text
+ModuleNotFoundError: No module named 'playwright'
+```
+
+### Context
+
+- The Python executable under the bundled dependency runtime was used first.
+- The system Python 3.12 installation already contained Playwright and its browser runtime.
+
+### Suggested Fix
+
+Probe the selected Python with `import playwright` before a browser run and fall back to the verified system
+Python when the bundled environment does not expose the package.
+
+### Metadata
+
+- Reproducible: yes
+- Related Files: `frontend/`
+
+### Resolution
+
+- **Resolved**: 2026-07-26T18:52:00+08:00
+- **Commit/PR**: pending task delivery commit
+- **Notes**: The same headless Chromium check passed with the system Python 3.12 Playwright installation.
