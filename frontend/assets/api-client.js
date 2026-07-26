@@ -744,7 +744,12 @@
   function uploadBlobToPresignedUrl(uploadUrl, blob, { mimeType, onProgress, signal } = {}) {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
-      xhr.open('PUT', uploadUrl, true);
+      const target = new URL(uploadUrl, window.location.origin);
+      const localMinio = target.hostname === '127.0.0.1' && target.port === '59000';
+      const requestUrl = localMinio
+        ? `/storage-upload?url=${encodeURIComponent(target.href)}`
+        : target.href;
+      xhr.open('PUT', requestUrl, true);
       if (mimeType) xhr.setRequestHeader('Content-Type', mimeType);
       xhr.upload.onprogress = (e) => {
         if (e.lengthComputable && typeof onProgress === 'function') {

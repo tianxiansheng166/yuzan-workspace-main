@@ -6,6 +6,8 @@ import { fileURLToPath } from 'node:url';
 const root = fileURLToPath(new URL('.', import.meta.url));
 const port = Number(process.env.PORT || 4175);
 const apiBaseUrl = process.env.API_BASE_URL || 'http://127.0.0.1:4000';
+const storageEndpoint = new URL(process.env.S3_ENDPOINT || 'http://127.0.0.1:59000');
+const storageBucket = process.env.S3_BUCKET || 'yuzan-dev';
 const types = {
   '.html': 'text/html; charset=utf-8',
   '.css': 'text/css; charset=utf-8',
@@ -148,12 +150,70 @@ function proxyToApi(req, res) {
   req.pipe(proxyReq);
 }
 
+function proxyPresignedUpload(req, res, requestUrl) {
+  if (req.method !== 'PUT') {
+    res.writeHead(405, { Allow: 'PUT', 'Content-Type': 'application/json; charset=utf-8' });
+    res.end(JSON.stringify({ error: 'METHOD_NOT_ALLOWED' }));
+    return;
+  }
+
+  const rawTarget = requestUrl.searchParams.get('url');
+  let target;
+  try {
+    target = new URL(rawTarget || '');
+  } catch {
+    res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+    res.end(JSON.stringify({ error: 'INVALID_UPLOAD_URL' }));
+    return;
+  }
+
+  const recordingPrefix = `/${storageBucket}/recordings/`;
+  const isAllowed = target.origin === storageEndpoint.origin
+    && target.pathname.startsWith(recordingPrefix)
+    && target.searchParams.get('X-Amz-Algorithm') === 'AWS4-HMAC-SHA256'
+    && target.searchParams.has('X-Amz-Signature');
+  if (!isAllowed) {
+    res.writeHead(403, { 'Content-Type': 'application/json; charset=utf-8' });
+    res.end(JSON.stringify({ error: 'UPLOAD_TARGET_FORBIDDEN' }));
+    return;
+  }
+
+  const headers = { host: target.host };
+  if (req.headers['content-type']) headers['content-type'] = req.headers['content-type'];
+  if (req.headers['content-length']) headers['content-length'] = req.headers['content-length'];
+
+  const proxyReq = httpRequest({
+    hostname: target.hostname,
+    port: target.port,
+    path: target.pathname + target.search,
+    method: 'PUT',
+    headers,
+  }, (proxyRes) => {
+    res.writeHead(proxyRes.statusCode, {
+      'Content-Type': proxyRes.headers['content-type'] || 'application/octet-stream',
+      ...(proxyRes.headers.etag ? { ETag: proxyRes.headers.etag } : {}),
+    });
+    proxyRes.pipe(res);
+  });
+  proxyReq.on('error', (err) => {
+    console.error('录音上传代理失败:', err.message);
+    res.writeHead(502, { 'Content-Type': 'application/json; charset=utf-8' });
+    res.end(JSON.stringify({ error: 'STORAGE_UPLOAD_UNAVAILABLE' }));
+  });
+  req.pipe(proxyReq);
+}
+
 const server = createServer((req, res) => {
   const url = new URL(req.url || '/', `http://${req.headers.host || 'localhost'}`);
   let pathname = url.pathname;
 
   if (pathname.startsWith('/api/')) {
     proxyToApi(req, res);
+    return;
+  }
+
+  if (pathname === '/storage-upload') {
+    proxyPresignedUpload(req, res, url);
     return;
   }
 

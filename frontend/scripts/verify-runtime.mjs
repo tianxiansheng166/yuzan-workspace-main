@@ -20,9 +20,16 @@ if (missing.length > 0) {
 }
 
 const serverSource = readFileSync(new URL("../server.mjs", import.meta.url), "utf8");
-for (const requiredBehavior of ["proxyToApi", "routeToSpa", "pathname.startsWith('/api/')"]) {
+for (const requiredBehavior of ["proxyToApi", "proxyPresignedUpload", "routeToSpa", "pathname.startsWith('/api/')", "pathname === '/storage-upload'"]) {
   if (!serverSource.includes(requiredBehavior)) {
     throw new Error(`Frontend server is missing required behavior: ${requiredBehavior}`);
+  }
+}
+
+const apiClientSource = readFileSync(new URL("../assets/api-client.js", import.meta.url), "utf8");
+for (const requiredBehavior of ["target.hostname === '127.0.0.1'", "`/storage-upload?url=${encodeURIComponent(target.href)}`"]) {
+  if (!apiClientSource.includes(requiredBehavior)) {
+    throw new Error(`API client is missing required behavior: ${requiredBehavior}`);
   }
 }
 
