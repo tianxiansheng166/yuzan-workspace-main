@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yuzan.local/schemas/feature-chain.schema.json",
+  "title": "Yuzan feature chain",
+  "type": "object",
+  "required": [
+    "feature_chain_id", "goal_id", "goal_revision", "acceptance_id", "actor", "page",
+    "control", "expected_ui_result", "request", "domain", "persistence", "downstream_observation",
+    "recovery", "negative_path", "status", "required_evidence"
+  ],
+  "properties": {
+    "feature_chain_id": {"type": "string", "pattern": "^FC-[A-Z0-9-]+$"},
+    "goal_id": {"type": "string", "minLength": 3},
+    "goal_revision": {"type": "integer", "minimum": 1},
+    "acceptance_id": {"type": "string", "minLength": 3},
+    "actor": {"type": "string", "minLength": 2},
+    "page": {
+      "type": "object",
+      "required": ["route", "source"],
+      "properties": {"route": {"type": "string"}, "source": {"type": "string"}}
+    },
+    "control": {
+      "type": "object",
+      "required": ["selector", "label", "action"],
+      "properties": {"selector": {"type": "string"}, "label": {"type": "string"}, "action": {"type": "string"}}
+    },
+    "expected_ui_result": {"type": "string", "minLength": 3},
+    "request": {
+      "type": "object",
+      "required": ["method", "path", "failure_states"],
+      "properties": {"method": {"type": "string"}, "path": {"type": "string"}, "failure_states": {"type": "array"}}
+    },
+    "domain": {
+      "type": "object",
+      "required": ["action", "objects", "state_transition"],
+      "properties": {"action": {"type": "string"}, "objects": {"type": "array"}, "state_transition": {"type": "string"}}
+    },
+    "persistence": {"type": "string", "minLength": 3},
+    "downstream_observation": {"type": "string", "minLength": 3},
+    "recovery": {"type": "string", "minLength": 3},
+    "negative_path": {"type": "string", "minLength": 3},
+    "status": {"enum": ["DISCOVERED", "DEAD_CONTROL", "UI_ONLY", "HANDLER_PRESENT", "API_BOUND", "PERSISTED", "CROSS_ROLE_VERIFIED", "REMOVED"]},
+    "required_evidence": {"type": "array", "contains": {"const": "L3_BROWSER"}}
+  },
+  "additionalProperties": true
+}
+

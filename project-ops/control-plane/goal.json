@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "goal_id": "MVP-LEARNING-EVIDENCE-001",
+  "revision": 1,
+  "title": "语赞心声真实学习证据与教师干预闭环",
+  "outcome": "教师通过 Web 发布一个冻结版本的古诗文朗读与理解练习；学生在移动端新会话收到任务并产生真实录音与答案；系统保存和处理证据；教师在新会话通过动态 ID 复核并投递巩固；学生查看真实报告并完成复测。",
+  "non_goals": [
+    "AI 教案、藏汉翻译、长视频、视频笔记、社区、志愿者、区域大屏和原生 App 不参与本 Goal 的完成判定",
+    "静态高保真、API 200、单元测试、固定数据和截图数量不单独构成 Goal 完成",
+    "控制面不改变未成年人数据、评分最终责任或生产发布权限"
+  ],
+  "acceptance_items": [
+    {
+      "id": "TRUTHFUL_AUTH_AND_RUNTIME",
+      "description": "真实登录、租户与运行环境可重复；API 不可用时不生成假成功",
+      "required_levels": ["L3_BROWSER", "L5_FRESH_CONTEXT_NEGATIVE"]
+    },
+    {
+      "id": "TEACHER_DYNAMIC_PUBLISH",
+      "description": "教师从页面创建并发布带本轮 runId 的动态任务",
+      "required_levels": ["L3_BROWSER", "L4_PERSISTENCE"]
+    },
+    {
+      "id": "STUDENT_REAL_SUBMIT",
+      "description": "目标学生在独立新会话看到任务并通过页面提交真实录音与书面答案",
+      "required_levels": ["L3_BROWSER", "L4_PERSISTENCE", "L5_FRESH_CONTEXT_NEGATIVE"]
+    },
+    {
+      "id": "TEACHER_DYNAMIC_REVIEW",
+      "description": "教师在独立新会话通过动态提交 ID 听取证据并确认、修改或要求重做",
+      "required_levels": ["L3_BROWSER", "L4_PERSISTENCE", "L5_FRESH_CONTEXT_NEGATIVE"]
+    },
+    {
+      "id": "REPORT_INTERVENTION_RETEST",
+      "description": "报告、巩固投递和新 Attempt 复测均可追溯且不覆盖原证据",
+      "required_levels": ["L3_BROWSER", "L4_PERSISTENCE"]
+    },
+    {
+      "id": "INTEGRATED_GOLDEN_RUN",
+      "description": "以上链路在同一个干净 integration/main commit 上连续通过且包含越权负向验证",
+      "required_levels": ["L3_BROWSER", "L4_PERSISTENCE", "L5_FRESH_CONTEXT_NEGATIVE"]
+    }
+  ],
+  "terminal_gate": "全部 acceptance_items 均有来自当前集成 commit、同一动态 runId、独立 verifier 签发的 VERIFIED 证据；否则 Goal 保持 ACTIVE。",
+  "authority_blockers": [
+    "产品方向或首校范围变化",
+    "OpenAPI/Prisma/权限或数据解释冲突且无已批准 owner",
+    "真实学生数据、未成年人授权、生产发布或外部付费动作",
+    "同一外部阻塞连续三轮无法产生任何可验证进展"
+  ]
+}
+

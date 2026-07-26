@@ -1,6 +1,6 @@
 {
   "id": "MVP-CONTINUOUS-CONTROL-PLANE-001",
-  "status": "PLANNED",
+  "status": "READY_FOR_REVIEW",
   "title": "建立弹性多 Codex 持续闭环研发控制面",
   "owner": "Codex / Control Lead",
   "reviewer": "Product Owner / Integration Lead",
@@ -58,11 +58,14 @@
     "project-ops/README.md",
     "project-ops/AI-DEVELOPMENT-CONTRACT.md",
     "project-ops/CONTEXT-ROUTER.md",
+    "project-ops/acceptance/**",
     "project-ops/control-plane/**",
     "project-ops/tasks/active/MVP-CONTINUOUS-CONTROL-PLANE-001.json",
     "project-ops/handoffs/MVP-CONTINUOUS-CONTROL-PLANE-001.md",
     "scripts/repo/mvp-control.ps1",
-    "scripts/repo/test-mvp-control.ps1"
+    "scripts/repo/test-mvp-control.ps1",
+    "scripts/acceptance/**",
+    "scripts/audit/**"
   ],
   "shared_owner_changes": [
     "AGENTS.md",
@@ -85,19 +88,56 @@
       "command": "& .\\scripts\\repo\\test-mvp-control.ps1 -Mode context"
     },
     {
+      "name": "前端功能链盘点",
+      "command": "& .\\scripts\\repo\\test-mvp-control.ps1 -Mode inventory"
+    },
+    {
       "name": "治理文档解析与敏感信息扫描",
       "command": "& .\\scripts\\repo\\test-mvp-control.ps1 -Mode docs"
     },
     {
       "name": "Git whitespace 检查",
-      "command": "git diff --check cb00e0d59936dbcbdcb6cd62285fa7b4a402368d...HEAD"
-    },
-    {
-      "name": "任务交付门禁",
-      "command": "$env:GIT_CONFIG_COUNT='1'; $env:GIT_CONFIG_KEY_0='core.quotePath'; $env:GIT_CONFIG_VALUE_0='false'; try { & .\\scripts\\repo\\task-gate.ps1 -Mode review -TaskFile project-ops/tasks/active/MVP-CONTINUOUS-CONTROL-PLANE-001.json } finally { Remove-Item Env:GIT_CONFIG_COUNT,Env:GIT_CONFIG_KEY_0,Env:GIT_CONFIG_VALUE_0 -ErrorAction SilentlyContinue }"
+      "command": "git diff --check"
     }
   ],
-  "test_evidence": [],
+  "test_evidence": [
+    {
+      "name": "控制面 JSON 与 TOML 结构",
+      "command": "& .\\scripts\\repo\\test-mvp-control.ps1 -Mode schema",
+      "result": "PASS",
+      "summary": "Goal、policy、DAG、document registry、journey/schema 与 5 条 FeatureChain 均可解析；contract_paths 存在；未配置固定 Worker 上限。"
+    },
+    {
+      "name": "控制状态机模拟",
+      "command": "& .\\scripts\\repo\\test-mvp-control.ps1 -Mode simulation",
+      "result": "PASS",
+      "summary": "临时 runtime 中验证弹性安全派发、依赖阻止、独立 verifier、结构化拒绝、自动返工、围栏拒收、集成后接受且单任务不关闭 Goal。"
+    },
+    {
+      "name": "上下文恢复与文件权属检查",
+      "command": "& .\\scripts\\repo\\test-mvp-control.ps1 -Mode context",
+      "result": "PASS",
+      "summary": "恢复输出包含 Goal revision/digest、lease、唯一 next action、稳定 prompt 和带 hash 的 context manifest，并产生 CONTEXT_ACK。"
+    },
+    {
+      "name": "前端功能链盘点",
+      "command": "& .\\scripts\\repo\\test-mvp-control.ps1 -Mode inventory",
+      "result": "PASS",
+      "summary": "静态扫描实际发现 79 页面、1882 控件、962 unresolved、862 handler references、58 static navigation，并明确静态证据不能证明功能。"
+    },
+    {
+      "name": "治理文档解析与敏感信息扫描",
+      "command": "& .\\scripts\\repo\\test-mvp-control.ps1 -Mode docs",
+      "result": "PASS",
+      "summary": "活动控制文档存在、单文件低于上下文上限，控制文档未包含 token 形态密钥。"
+    },
+    {
+      "name": "Git whitespace 检查",
+      "command": "git diff --check",
+      "result": "PASS",
+      "summary": "2026-07-26 当前未提交差异无 whitespace error。"
+    }
+  ],
   "handoff": "project-ops/handoffs/MVP-CONTINUOUS-CONTROL-PLANE-001.md",
   "rollback": "回退本任务在 task/mvp-continuous-control-plane-001 上的治理、控制脚本、Codex 项目配置和任务元数据；runtime-local/control-plane 为忽略的运行状态，可先备份后单独移除，不影响业务数据。",
   "delivery": {

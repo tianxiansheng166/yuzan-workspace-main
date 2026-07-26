@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "default_rules": {
+    "docs/**": "REFERENCE_NO_AUTOLOAD",
+    "project-ops/prompts/**": "REFERENCE_NO_AUTOLOAD",
+    "project-ops/CURRENT.md": "REFERENCE_NO_AUTOLOAD",
+    "project-ops/MULTITRACK-BOARD.md": "MIGRATION_REFERENCE",
+    "project-ops/multitrack-tasks.json": "MIGRATION_REFERENCE",
+    "project-ops/NEXT-DEVELOPMENT-QUEUE.md": "MIGRATION_REFERENCE"
+  },
+  "intent_precedence": [
+    "project-ops/control-plane/goal.json@revision",
+    "project-ops/acceptance/journeys/**",
+    "project-ops/decisions/**",
+    "project-ops/control-plane/feature-chains/**",
+    "runtime-local/control-plane/work-orders/**",
+    "project-ops/AI-DEVELOPMENT-CONTRACT.md",
+    "REFERENCE"
+  ],
+  "fact_precedence": [
+    "exact_git_and_current_contracts",
+    "live_runtime_evidence",
+    "independent_evidence_manifest",
+    "handoff_or_current_view",
+    "historical_report"
+  ],
+  "entries": [
+    {
+      "path": "AGENTS.md",
+      "status": "ACTIVE",
+      "authority": "repository_boundary",
+      "scope": "all_agents",
+      "owner": "Integration Lead",
+      "review_on": "control_plane_revision"
+    },
+    {
+      "path": "project-ops/control-plane/goal.json",
+      "status": "ACTIVE",
+      "authority": "product_goal",
+      "scope": "MVP-LEARNING-EVIDENCE-001",
+      "owner": "Product Owner",
+      "review_on": "authority_decision"
+    },
+    {
+      "path": "project-ops/AI-DEVELOPMENT-CONTRACT.md",
+      "status": "ACTIVE",
+      "authority": "stable_engineering_contract",
+      "scope": "active_control_plane_tasks",
+      "owner": "Integration Lead",
+      "review_on": "goal_or_runtime_change"
+    },
+    {
+      "path": "project-ops/control-plane/bootstrap-work-items.json",
+      "status": "ACTIVE",
+      "authority": "static_task_dag",
+      "scope": "goal_revision_1",
+      "owner": "Controller",
+      "review_on": "goal_revision"
+    },
+    {
+      "path": "project-ops/control-plane/FEATURE-CHAIN-CONTRACT.md",
+      "status": "ACTIVE",
+      "authority": "feature_definition",
+      "scope": "user_visible_tasks",
+      "owner": "Product and Engineering",
+      "review_on": "acceptance_failure"
+    },
+    {
+      "path": "project-ops/multitrack-tasks.json",
+      "status": "SUPERSEDED",
+      "authority": "none_for_active_dispatch",
+      "scope": "migration_only",
+      "owner": "Integration Lead",
+      "superseded_by": "project-ops/control-plane/bootstrap-work-items.json"
+    },
+    {
+      "path": "project-ops/prompts/P0-MULTITRACK-GOAL-MODE-PROMPT.md",
+      "status": "SUPERSEDED",
+      "authority": "none_for_active_dispatch",
+      "scope": "historical_prompt",
+      "owner": "Integration Lead",
+      "superseded_by": "project-ops/control-plane/prompts/controller-heartbeat.md"
+    }
+  ],
+  "change_rule": "Feedback may update the current ticket delta. Changing Goal, journey meaning, permission meaning, schema ownership or a non-goal requires AUTHORITY_REQUIRED and a new approved revision."
+}

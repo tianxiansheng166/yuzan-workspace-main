@@ -1,0 +1,19 @@
+{
+  "feature_chain_id": "FC-TRUTHFUL-LOGIN",
+  "goal_id": "MVP-LEARNING-EVIDENCE-001",
+  "goal_revision": 1,
+  "acceptance_id": "TRUTHFUL_AUTH_AND_RUNTIME",
+  "actor": "teacher_or_student",
+  "page": {"route": "/login", "source": "frontend/login/index.html"},
+  "control": {"selector": "#loginPanel button[data-action=login]", "label": "登录", "action": "submit credentials"},
+  "expected_ui_result": "真实身份登录成功后进入该角色首页；服务不可用或凭据错误时留在登录页并显示明确失败。",
+  "request": {"method": "POST", "path": "/api/v1/auth/login", "failure_states": ["401 invalid credentials", "API unavailable", "missing tenant context"]},
+  "domain": {"action": "authenticate principal", "objects": ["User", "Role", "School membership", "Session"], "state_transition": "ANONYMOUS -> AUTHENTICATED"},
+  "persistence": "只保存服务端签发的有效会话；不得生成 demo-token 或离线假登录。",
+  "downstream_observation": "新 browser context 重新登录后，教师和学生分别只能看到授权学校与角色页面。",
+  "recovery": "刷新保留有效会话；过期/撤销会话返回登录页，不降级为 demo session。",
+  "negative_path": "错误密码、跨角色、跨学校和 API 断开均 fail closed。",
+  "status": "HANDLER_PRESENT",
+  "known_gap": "frontend/login/app.js 与 login.js 仍包含 demo token/fallback，未有 L3/L5 独立证据。",
+  "required_evidence": ["L3_BROWSER", "L5_FRESH_CONTEXT_NEGATIVE"]
+}

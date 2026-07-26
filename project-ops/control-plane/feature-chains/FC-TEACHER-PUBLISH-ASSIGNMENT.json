@@ -1,0 +1,19 @@
+{
+  "feature_chain_id": "FC-TEACHER-PUBLISH-ASSIGNMENT",
+  "goal_id": "MVP-LEARNING-EVIDENCE-001",
+  "goal_revision": 1,
+  "acceptance_id": "TEACHER_DYNAMIC_PUBLISH",
+  "actor": "teacher",
+  "page": {"route": "/teacher/assignments", "source": "frontend/teacher/assignments/index.html"},
+  "control": {"selector": "#taskForm button.save", "label": "保存任务", "action": "create and publish a class assignment with the current runId"},
+  "expected_ui_result": "弹窗关闭，列表出现服务端返回的动态任务；标题含本轮 runId，状态和截止时间来自真实响应。",
+  "request": {"method": "POST", "path": "/api/v1/schools/{schoolId}/assignments", "failure_states": ["invalid class/course version", "403 tenant scope", "409 revision/state conflict", "API unavailable"]},
+  "domain": {"action": "create assignment for a frozen course version and target class", "objects": ["Assignment", "AssignmentTarget", "CourseVersion", "Class"], "state_transition": "NONE -> DRAFT/SCHEDULED/OPEN"},
+  "persistence": "Assignment 与 targets 使用服务端动态 UUID 持久化；刷新列表仍存在且 revision 一致。",
+  "downstream_observation": "目标班级学生在独立新会话的今日学习/任务入口看到同一 assignmentId 和 runId。",
+  "recovery": "重复点击以幂等键或显式重复结果处理；失败不向列表插入本地假任务。",
+  "negative_path": "非任课教师、其他学校或未目标班级学生不可读取该任务。",
+  "status": "HANDLER_PRESENT",
+  "known_gap": "源码存在 POST handler，但列表中的查看提交仍固定到 submission-1，尚无浏览器到 DB/学生端的同 runId 证据。",
+  "required_evidence": ["L3_BROWSER", "L4_PERSISTENCE", "L5_FRESH_CONTEXT_NEGATIVE"]
+}

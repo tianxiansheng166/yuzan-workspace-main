@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "goal_id": "MVP-LEARNING-EVIDENCE-001",
+  "goal_revision": 1,
+  "items": [
+    {
+      "id": "P0-SEC-AUTH-DEMO-FALLBACK-REMOVAL",
+      "kind": "IMPLEMENT",
+      "priority": 100,
+      "contract_paths": ["project-ops/control-plane/feature-chains/FC-TRUTHFUL-LOGIN.json"],
+      "acceptance_ids": ["TRUTHFUL_AUTH_AND_RUNTIME"],
+      "depends_on": [],
+      "required_capabilities": ["frontend", "api", "auth"],
+      "locks": ["AUTH_SESSION"],
+      "resources": [],
+      "write_set": ["frontend/login/**", "frontend/assets/api-client.js", "backend/api/src/modules/auth/**"],
+      "verification": "INDEPENDENT_BROWSER_NEGATIVE"
+    },
+    {
+      "id": "P0-DYNAMIC-ID-ROUTING-CLEANUP",
+      "kind": "IMPLEMENT",
+      "priority": 95,
+      "contract_paths": ["project-ops/control-plane/feature-chains/FC-TEACHER-REVIEW-SUBMISSION.json"],
+      "acceptance_ids": ["TEACHER_DYNAMIC_REVIEW"],
+      "depends_on": [],
+      "required_capabilities": ["frontend", "routing"],
+      "locks": ["GLOBAL_ROUTING", "TEACHER_REVIEW_UI"],
+      "resources": [],
+      "write_set": ["frontend/server.mjs", "frontend/shared/teacher-shell.js", "frontend/teacher/**"],
+      "verification": "INDEPENDENT_BROWSER_DYNAMIC_ID"
+    },
+    {
+      "id": "P0-RUNTIME-IDEMPOTENT-STARTUP",
+      "kind": "IMPLEMENT",
+      "priority": 90,
+      "contract_paths": ["project-ops/acceptance/P0-GOLDEN-LOOP.md"],
+      "acceptance_ids": ["TRUTHFUL_AUTH_AND_RUNTIME"],
+      "depends_on": [],
+      "required_capabilities": ["windows", "runtime", "powershell"],
+      "locks": ["RUNTIME_CONTROL"],
+      "resources": ["PORT_SET"],
+      "write_set": ["scripts/local-runtime/**", "project-ops/runbooks/LOCAL-RUNTIME.md"],
+      "verification": "RUNTIME_REPEATABILITY"
+    },
+    {
+      "id": "P0-MOBILE-VISUAL-BLOCKERS",
+      "kind": "IMPLEMENT",
+      "priority": 80,
+      "contract_paths": ["project-ops/control-plane/feature-chains/FC-TRUTHFUL-LOGIN.json"],
+      "acceptance_ids": ["TRUTHFUL_AUTH_AND_RUNTIME"],
+      "depends_on": ["P0-SEC-AUTH-DEMO-FALLBACK-REMOVAL"],
+      "required_capabilities": ["frontend", "browser", "visual"],
+      "locks": ["LOGIN_UI"],
+      "resources": [],
+      "write_set": ["frontend/login/**"],
+      "verification": "INDEPENDENT_BROWSER_VISUAL"
+    },
+    {
+      "id": "P0-TEACHER-STUDENT-ASSIGNMENT-CLOSURE-001",
+      "kind": "IMPLEMENT",
+      "priority": 110,
+      "contract_paths": [
+        "project-ops/control-plane/feature-chains/FC-TEACHER-PUBLISH-ASSIGNMENT.json",
+        "project-ops/control-plane/feature-chains/FC-STUDENT-SUBMIT-COURSE.json",
+        "project-ops/control-plane/feature-chains/FC-TEACHER-REVIEW-SUBMISSION.json"
+      ],
+      "acceptance_ids": ["TEACHER_DYNAMIC_PUBLISH", "STUDENT_REAL_SUBMIT", "TEACHER_DYNAMIC_REVIEW"],
+      "depends_on": ["P0-SEC-AUTH-DEMO-FALLBACK-REMOVAL", "P0-DYNAMIC-ID-ROUTING-CLEANUP", "P0-RUNTIME-IDEMPOTENT-STARTUP"],
+      "required_capabilities": ["frontend", "api", "database", "browser"],
+      "locks": ["ASSIGNMENT_CORE", "ASSESSMENT_CORE"],
+      "resources": ["SHARED_DEV_DATABASE"],
+      "write_set": ["frontend/teacher/assignments/**", "frontend/student/**", "backend/api/src/modules/assignments/**", "backend/api/src/modules/assessment/**"],
+      "verification": "P0-TEACHER-STUDENT-ASSIGNMENT"
+    },
+    {
+      "id": "P0-RECORDING-PROCESSING-REVIEW-CLOSURE",
+      "kind": "IMPLEMENT",
+      "priority": 105,
+      "contract_paths": [
+        "project-ops/control-plane/feature-chains/FC-STUDENT-SUBMIT-COURSE.json",
+        "project-ops/control-plane/feature-chains/FC-TEACHER-REVIEW-SUBMISSION.json"
+      ],
+      "acceptance_ids": ["STUDENT_REAL_SUBMIT", "TEACHER_DYNAMIC_REVIEW"],
+      "depends_on": ["P0-TEACHER-STUDENT-ASSIGNMENT-CLOSURE-001"],
+      "required_capabilities": ["recording", "worker", "browser", "database"],
+      "locks": ["RECORDING_CORE", "SPEECH_JOB", "TEACHER_REVIEW_UI"],
+      "resources": ["SHARED_DEV_DATABASE"],
+      "write_set": ["frontend/student/**", "frontend/teacher/reviews/**", "backend/api/src/modules/recordings/**", "backend/worker/**", "backend/speech-scoring/**"],
+      "verification": "P0-RECORDING-REVIEW"
+    },
+    {
+      "id": "P0-REPORT-INTERVENTION-RETEST",
+      "kind": "IMPLEMENT",
+      "priority": 100,
+      "contract_paths": ["project-ops/control-plane/feature-chains/FC-REPORT-INTERVENTION-RETEST.json"],
+      "acceptance_ids": ["REPORT_INTERVENTION_RETEST"],
+      "depends_on": ["P0-RECORDING-PROCESSING-REVIEW-CLOSURE"],
+      "required_capabilities": ["frontend", "api", "database", "browser"],
+      "locks": ["REPORT_CORE", "ASSESSMENT_CORE"],
+      "resources": ["SHARED_DEV_DATABASE"],
+      "write_set": ["frontend/student/**", "frontend/teacher/**", "backend/api/src/modules/assessment/**"],
+      "verification": "P0-REPORT-RETEST"
+    },
+    {
+      "id": "P0-INTEGRATED-GOLDEN-LOOP-VERIFY",
+      "kind": "VERIFY",
+      "priority": 120,
+      "contract_paths": [
+        "project-ops/acceptance/P0-GOLDEN-LOOP.md",
+        "project-ops/acceptance/journeys/P0-TEACHER-STUDENT-ASSIGNMENT.journey.json"
+      ],
+      "acceptance_ids": ["INTEGRATED_GOLDEN_RUN"],
+      "depends_on": ["P0-REPORT-INTERVENTION-RETEST", "P0-MOBILE-VISUAL-BLOCKERS"],
+      "required_capabilities": ["browser", "api", "database", "security", "visual"],
+      "locks": [],
+      "resources": ["CANONICAL_RUNTIME", "SHARED_DEV_DATABASE", "GOLDEN_E2E", "BROWSER_PROFILE", "PORT_SET"],
+      "write_set": ["runtime-local/control-plane/evidence/**"],
+      "verification": "P0-GOLDEN-LOOP"
+    }
+  ]
+}

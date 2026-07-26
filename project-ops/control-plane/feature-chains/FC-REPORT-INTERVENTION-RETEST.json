@@ -1,0 +1,19 @@
+{
+  "feature_chain_id": "FC-REPORT-INTERVENTION-RETEST",
+  "goal_id": "MVP-LEARNING-EVIDENCE-001",
+  "goal_revision": 1,
+  "acceptance_id": "REPORT_INTERVENTION_RETEST",
+  "actor": "teacher_then_student",
+  "page": {"route": "/teacher/assessments/detail then /student/growth", "source": "frontend/teacher/assessments/detail/index.html"},
+  "control": {"selector": "[data-modal=report] then student retest action", "label": "生成测评报告 / 开始复测", "action": "finalize report, deliver intervention and create a linked retest"},
+  "expected_ui_result": "教师看到真实报告状态并投递巩固；学生新会话看到同一报告和任务，开始复测后生成带 retestOfSessionId 的新 session。",
+  "request": {"method": "POST/GET", "path": "/api/v1/schools/{schoolId}/assessments/sessions/{sessionId}/report/generate and /retest", "failure_states": ["NEEDS_REVIEW", "missing evidence", "report unavailable", "403 scope", "409 revision conflict"]},
+  "domain": {"action": "finalize report and create intervention/retest", "objects": ["AssessmentReport", "Intervention", "AssessmentSession", "Attempt"], "state_transition": "REVIEWED -> REPORT_READY -> INTERVENTION_DELIVERED -> RETEST_IN_PROGRESS"},
+  "persistence": "报告与巩固来源指向原 session；复测创建新 session/Attempt，并用 retestOfSessionId 追溯原证据。",
+  "downstream_observation": "学生刷新和重新登录后看到报告、教师反馈、巩固任务及新复测；教师可看见新 Attempt。",
+  "recovery": "报告或 provider 未就绪时显示 NEEDS_REVIEW/UNAVAILABLE；重试幂等且不复制报告或复测。",
+  "negative_path": "未复核、缺证据、无权限或试图覆盖原 session 时拒绝。",
+  "status": "DISCOVERED",
+  "known_gap": "后端存在 report/retest 能力和页面入口，但当前前端报告包含大量静态展示，未形成同一动态 session 的跨端闭环。",
+  "required_evidence": ["L3_BROWSER", "L4_PERSISTENCE", "L5_FRESH_CONTEXT_NEGATIVE"]
+}

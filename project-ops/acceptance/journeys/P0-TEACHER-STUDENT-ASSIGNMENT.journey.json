@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "journey_id": "P0-TEACHER-STUDENT-ASSIGNMENT",
+  "title": "教师发布到学生提交再回教师动态查看",
+  "required_levels": ["L3_BROWSER", "L4_PERSISTENCE", "L5_FRESH_CONTEXT_NEGATIVE"],
+  "run_id_pattern": "^E2E-[0-9]{8}-[A-Za-z0-9-]{6,}$",
+  "contexts": [
+    {"id": "teacher-create", "role": "TEACHER", "fresh": true},
+    {"id": "student-submit", "role": "STUDENT", "fresh": true},
+    {"id": "teacher-review", "role": "TEACHER", "fresh": true},
+    {"id": "unauthorized", "role": "STUDENT_OR_TEACHER_OUTSIDE_SCOPE", "fresh": true}
+  ],
+  "steps": [
+    {"id": "teacher_login", "actor": "teacher-create", "origin": "BROWSER", "expected": "真实登录并显示教师与班级上下文"},
+    {"id": "teacher_publish", "actor": "teacher-create", "origin": "BROWSER", "expected": "通过页面创建 OPEN 任务并在标题或受控字段包含 runId"},
+    {"id": "student_login", "actor": "student-submit", "origin": "BROWSER", "expected": "独立新会话登录目标学生"},
+    {"id": "student_discover", "actor": "student-submit", "origin": "BROWSER", "expected": "今日学习显示本轮动态任务"},
+    {"id": "student_record_answer", "actor": "student-submit", "origin": "BROWSER", "expected": "真实录音上传、回放与书面作答保存"},
+    {"id": "student_submit", "actor": "student-submit", "origin": "BROWSER", "expected": "页面提交并显示真实处理状态"},
+    {"id": "teacher_fresh_login", "actor": "teacher-review", "origin": "BROWSER", "expected": "第二个教师新会话登录"},
+    {"id": "teacher_dynamic_open", "actor": "teacher-review", "origin": "BROWSER", "expected": "使用页面返回的 assignment/submission 动态 ID 打开本轮提交"},
+    {"id": "teacher_review", "actor": "teacher-review", "origin": "BROWSER", "expected": "播放本轮录音并执行确认、修改或要求重做"},
+    {"id": "persistence_crosscheck", "actor": "verifier", "origin": "READ_ONLY_API_DB_OBJECT", "expected": "runId、assignment、attempt/submission、recording、review 属于同一 school/user 链"},
+    {"id": "unauthorized_reject", "actor": "unauthorized", "origin": "BROWSER_AND_READ_ONLY_CHECK", "expected": "跨学生、跨班或跨校访问被拒绝且不泄露资源存在性"}
+  ],
+  "forbidden": [
+    "DIRECT_API_BUSINESS_MUTATION",
+    "PLAYWRIGHT_ROUTE_FULFILL",
+    "FIXTURE_RESPONSE",
+    "STATIC_EVIDENCE_HTML",
+    "FIXED_BUSINESS_ID",
+    "DEMO_TOKEN",
+    "SHARED_AUTH_CONTEXT",
+    "HTTP_200_ONLY"
+  ]
+}
+
