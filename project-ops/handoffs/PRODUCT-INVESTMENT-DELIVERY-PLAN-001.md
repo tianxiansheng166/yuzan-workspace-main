@@ -2,14 +2,14 @@
 
 ## Status
 
-`IN_PROGRESS` pending final repository gate.
+`READY_FOR_REVIEW`
 
 ## Branch and baseline
 
 - Branch: `task/product-investment-delivery-plan-001`
 - Base: `d09c4433339cc18018cacab1838818883578913c`
 - Metadata commit: `e969539`
-- Content commit: pending
+- Content commits: `1a19081`, `fd10a13`
 - Merge target: `integration/p0-multitrack-001`
 
 ## User outcome

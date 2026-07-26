@@ -1,6 +1,6 @@
 {
   "id": "PRODUCT-INVESTMENT-DELIVERY-PLAN-001",
-  "status": "IN_PROGRESS",
+  "status": "READY_FOR_REVIEW",
   "title": "建立投资级产品定义与可执行闭环开发包",
   "owner": "Codex",
   "reviewer": "Product Owner / Integration Lead",
@@ -85,7 +85,44 @@
       "command": "$env:GIT_CONFIG_COUNT='1'; $env:GIT_CONFIG_KEY_0='core.quotePath'; $env:GIT_CONFIG_VALUE_0='false'; try { & .\\scripts\\repo\\task-gate.ps1 -Mode review -TaskFile project-ops/tasks/active/PRODUCT-INVESTMENT-DELIVERY-PLAN-001.json } finally { Remove-Item Env:GIT_CONFIG_COUNT,Env:GIT_CONFIG_KEY_0,Env:GIT_CONFIG_VALUE_0 -ErrorAction SilentlyContinue }"
     }
   ],
-  "test_evidence": [],
+  "test_evidence": [
+    {
+      "name": "任务 JSON 解析",
+      "result": "PASS",
+      "command": "Get-Content project-ops/tasks/active/PRODUCT-INVESTMENT-DELIVERY-PLAN-001.json -Raw -Encoding UTF8 | ConvertFrom-Json | Out-Null",
+      "summary": "任务 JSON 在 PowerShell 中按 UTF-8 成功解析。"
+    },
+    {
+      "name": "文档包结构与关键门禁检查",
+      "result": "PASS",
+      "command": "rg -n --glob '*.md' \"^## (当前结论|唯一 P0|当前事实基线|业务闭环|对象模型|状态机|开发波次|完成定义|投资门禁|待项目方决策)\" docs/11-product-delivery",
+      "summary": "八份文档检出 14 个关键二级章节，产品定义、P0、基线、业务、模型、状态、路线、DoD、投资和待决策入口均存在。"
+    },
+    {
+      "name": "Markdown 解析检查",
+      "result": "PASS",
+      "command": "Get-ChildItem docs/11-product-delivery/*.md | ForEach-Object { pandoc --from=gfm --to=html $_.FullName | Out-Null; if ($LASTEXITCODE -ne 0) { throw \"Pandoc failed: $($_.FullName)\" } }",
+      "summary": "README 加七份专题文档共八个文件全部通过 Pandoc GFM 解析。"
+    },
+    {
+      "name": "敏感信息形态扫描",
+      "result": "PASS",
+      "command": "$hits = rg --pcre2 -n \"(?<![A-Za-z0-9])(?:sk-[A-Za-z0-9_-]{20,}|ghp_[A-Za-z0-9]{30,}|-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----)\" docs/11-product-delivery project-ops/handoffs/PRODUCT-INVESTMENT-DELIVERY-PLAN-001.md; if ($LASTEXITCODE -eq 0) { throw \"Secret-like token found\" }; if ($LASTEXITCODE -gt 1) { throw \"Secret scan failed\" }",
+      "summary": "文档包和交接文件未检出常见 API key、GitHub token 或私钥形态；聊天中暴露的凭据未使用、未复制。"
+    },
+    {
+      "name": "Git whitespace 检查",
+      "result": "PASS",
+      "command": "git diff --check d09c4433339cc18018cacab1838818883578913c...HEAD",
+      "summary": "修复首次门禁发现的 Markdown 行尾问题后，任务基线到当前内容提交的差异无 whitespace 错误。"
+    },
+    {
+      "name": "任务交付门禁",
+      "result": "PASS",
+      "command": "$env:GIT_CONFIG_COUNT='1'; $env:GIT_CONFIG_KEY_0='core.quotePath'; $env:GIT_CONFIG_VALUE_0='false'; try { & .\\scripts\\repo\\task-gate.ps1 -Mode review -TaskFile project-ops/tasks/active/PRODUCT-INVESTMENT-DELIVERY-PLAN-001.json } finally { Remove-Item Env:GIT_CONFIG_COUNT,Env:GIT_CONFIG_KEY_0,Env:GIT_CONFIG_VALUE_0 -ErrorAction SilentlyContinue }",
+      "summary": "review 门禁验证任务状态、分支、基线、allowed_paths、handoff、测试证据与差异检查通过。"
+    }
+  ],
   "handoff": "project-ops/handoffs/PRODUCT-INVESTMENT-DELIVERY-PLAN-001.md",
   "rollback": "回退本任务在 task/product-investment-delivery-plan-001 上的文档、任务元数据和学习记录提交；本任务不含业务代码、数据库、契约或运行配置变更。",
   "delivery": {
