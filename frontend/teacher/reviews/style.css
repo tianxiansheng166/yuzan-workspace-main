@@ -1,0 +1,24 @@
+:root{--queue-red:#a52224;--queue-ink:#292622;--queue-muted:#716b63;--queue-line:#e5ddd2;--queue-paper:#fffdf9;--queue-green:#2f7650}
+*{box-sizing:border-box}
+body{margin:0;background:#f6f2eb;color:var(--queue-ink);font-family:"Microsoft YaHei",system-ui,sans-serif}
+.content{min-height:100vh;padding:36px}
+.review-queue{max-width:1120px;margin:0 auto}
+.queue-header{display:flex;align-items:flex-start;justify-content:space-between;gap:28px;margin-bottom:24px}
+.eyebrow{margin:0 0 8px;color:var(--queue-red);font-size:13px;font-weight:700;letter-spacing:.12em}
+.queue-header h1{margin:0;font-family:serif;font-size:34px}
+.queue-header p:last-child{max-width:700px;margin:10px 0 0;color:var(--queue-muted);line-height:1.7}
+.queue-header button,.submission-card button{border:0;border-radius:8px;background:var(--queue-red);color:#fff;cursor:pointer;font-weight:700}
+.queue-header button{min-width:112px;padding:12px 18px}
+.queue-header button:disabled,.submission-card button:disabled{cursor:wait;opacity:.55}
+.queue-status{border:1px solid var(--queue-line);border-radius:10px;background:var(--queue-paper);padding:16px 18px;color:var(--queue-muted)}
+.queue-status[data-tone="error"]{border-color:#e3b3ae;background:#fff4f2;color:#9b2924}
+.queue-status[data-tone="empty"]{border-style:dashed;text-align:center;padding:42px 18px}
+.queue-status[data-tone="partial"]{border-color:#e3c98f;background:#fff9e9;color:#815f18}
+.queue-list{display:grid;gap:14px;margin-top:16px}
+.submission-card{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:22px;border:1px solid var(--queue-line);border-left:4px solid var(--queue-green);border-radius:10px;background:var(--queue-paper);padding:18px 20px;box-shadow:0 6px 22px rgba(73,55,36,.05)}
+.submission-card h2{margin:0 0 7px;font-size:18px}
+.submission-card p{margin:3px 0;color:var(--queue-muted);font-size:14px;line-height:1.55}
+.submission-card code{font-family:ui-monospace,Consolas,monospace;font-size:12px;word-break:break-all}
+.submission-card button{padding:11px 18px;white-space:nowrap}
+.status-pill{display:inline-block;margin-left:8px;border-radius:999px;background:#fff1d8;color:#8a5b08;padding:3px 9px;font-size:12px;vertical-align:2px}
+@media(max-width:760px){.ts-app-shell{min-width:0!important}.ts-topbar{padding:0 10px;overflow:hidden}.ts-context{max-width:100%;min-width:0}.ts-context-btn{flex:0 0 auto}.ts-sync-pill,.ts-top-actions{display:none!important}.content{width:100%;min-width:0;padding:20px 14px}.queue-header{display:block}.queue-header h1{font-size:28px}.queue-header p:last-child{overflow-wrap:anywhere}.queue-header button{width:100%;margin-top:18px}.submission-card{grid-template-columns:1fr;min-width:0}.submission-card button{width:100%}}

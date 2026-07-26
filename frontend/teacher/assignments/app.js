@@ -67,6 +67,41 @@
     return `<em class="${s.cls}">${s.label}</em>`;
   }
 
+  function submissionPriority(submission) {
+    if (submission.status === 'NEEDS_REVIEW') return 0;
+    if (submission.status === 'SUBMITTED') return 1;
+    return 2;
+  }
+
+  async function openFirstSubmission(assignmentId, button) {
+    const originalText = button.textContent;
+    button.disabled = true;
+    button.textContent = '加载提交中…';
+    try {
+      const data = await YuzanApi.request(
+        `/schools/${schoolId}/assignments/${encodeURIComponent(assignmentId)}/submissions?limit=100`,
+        { method: 'GET' },
+      );
+      const items = (Array.isArray(data) ? data : (data?.items || []))
+        .filter((item) => item && item.id)
+        .sort((left, right) => {
+          const priority = submissionPriority(left) - submissionPriority(right);
+          if (priority !== 0) return priority;
+          return String(right.submittedAt || '').localeCompare(String(left.submittedAt || ''));
+        });
+      if (items.length === 0) {
+        YuzanDemo.toast('该任务暂无真实学生提交', 'warning');
+        return;
+      }
+      location.href = `/teacher/submissions/${encodeURIComponent(items[0].id)}`;
+    } catch (err) {
+      YuzanDemo.toast(err.message || '加载学生提交失败', 'error');
+    } finally {
+      button.disabled = false;
+      button.textContent = originalText;
+    }
+  }
+
   function ensureAuth() {
     if (!YuzanApi.getToken()) {
       YuzanDemo.toast('请先登录', 'warning');
@@ -175,9 +210,14 @@
           <p>${assignment.title}</p>
           <h3>操作</h3>
           <p>可查看学生提交、发送提醒或进入反馈页面。</p>
-          <button data-nav="/teacher/reviews/submission-1/">查看提交</button>
+          <button type="button" data-open-submissions>查看提交</button>
         </div>`;
       row.after(detail);
+      const openButton = detail.querySelector('[data-open-submissions]');
+      openButton.addEventListener('click', (event) => {
+        event.stopPropagation();
+        openFirstSubmission(assignment.id, openButton);
+      });
     });
   }
 

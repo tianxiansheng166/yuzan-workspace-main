@@ -21,7 +21,7 @@
     course: '/teacher/courses/',
     task: '/teacher/assignments',
     assessment: '/teacher/assessments',
-    review: '/teacher/reviews/submission-1/',
+    review: '/teacher/reviews/',
     report: '/teacher/assessments/detail/',
   };
 
@@ -187,7 +187,7 @@
 
     if (txt === '去复核') {
       // LIVE_ROUTE: 跳转人工复核页
-      b.addEventListener('click', () => { location.href = '/teacher/reviews/submission-1/'; });
+      b.addEventListener('click', () => { location.href = '/teacher/reviews/'; });
     } else if (kind === 'record') {
       // UNSUPPORTED: 录音重试
       b.disabled = true;

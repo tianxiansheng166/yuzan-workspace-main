@@ -73,7 +73,7 @@
     '课程': '/teacher/courses/',
     '任务': '/teacher/assignments',
     '测评': '/teacher/assessments',
-    '复核': '/teacher/reviews/submission-1/',
+    '复核': '/teacher/reviews/',
     '报告': '/teacher/assessments/detail/',
   };
   document.querySelectorAll('.nav .nav-item').forEach(link => {

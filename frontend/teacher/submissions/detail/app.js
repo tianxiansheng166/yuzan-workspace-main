@@ -144,6 +144,11 @@
     document.getElementById('assignmentType').textContent = '—';
     document.getElementById('submitStatus').textContent = '—';
     document.getElementById('writtenAnswer').textContent = '数据不足';
+    ['btnGrade', 'btnAccept', 'btnReturn'].forEach((id) => {
+      const button = document.getElementById(id);
+      button.disabled = true;
+      button.title = '没有可复核的提交证据';
+    });
   }
 
   function mapAssignmentType(type) {

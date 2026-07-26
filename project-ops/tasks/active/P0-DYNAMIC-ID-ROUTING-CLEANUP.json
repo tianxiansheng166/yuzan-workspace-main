@@ -1,6 +1,6 @@
 {
   "id": "P0-DYNAMIC-ID-ROUTING-CLEANUP",
-  "status": "PLANNED",
+  "status": "READY_FOR_REVIEW",
   "title": "教师活动、任务与复核入口使用动态业务 ID",
   "owner": "codex-routing-builder",
   "reviewer": "independent verifier",
@@ -49,18 +49,37 @@
   "minimal_tests": [
     {
       "name": "固定业务 ID 源码证伪",
-      "command": "rg -n --glob '!**/node_modules/**' \"submission-1|course-1|assignment-1\" frontend/server.mjs frontend/shared/teacher-shell.js frontend/teacher"
+      "command": "rg -n --glob '!**/node_modules/**' --glob '!**/assets/**' \"submission-1|course-1|assignment-1\" frontend/server.mjs frontend/shared/teacher-shell.js frontend/teacher；预期退出码 1（零匹配）"
     },
     {
       "name": "前端相关测试或语法检查",
-      "command": "node --check frontend/server.mjs"
+      "command": "node --check frontend/server.mjs；对本任务修改的 JS 逐个 node --check；python -m py_compile frontend/teacher/reviews/verify-routing.py；git diff --check"
     },
     {
       "name": "教师入口浏览器导航证据",
-      "command": "python <task-local-playwright-script>"
+      "command": "PORT=4176、API_BASE_URL=http://127.0.0.1:4000；with_server.py --server \"node frontend/server.mjs\" --port 4176 -- python frontend/teacher/reviews/verify-routing.py"
     }
   ],
-  "test_evidence": [],
+  "test_evidence": [
+    {
+      "name": "固定业务 ID 源码证伪",
+      "result": "PASS",
+      "command": "rg -n --glob '!**/node_modules/**' --glob '!**/assets/**' \"submission-1|course-1|assignment-1\" frontend/server.mjs frontend/shared/teacher-shell.js frontend/teacher",
+      "summary": "退出码 1、零匹配；旧固定目录已迁移为 assignment 模板，所有教师入口改为真实队列或动态 submission 路由。"
+    },
+    {
+      "name": "前端相关测试或语法检查",
+      "result": "PASS",
+      "command": "node --check scoped JavaScript；python -m py_compile frontend/teacher/reviews/verify-routing.py；git diff --check",
+      "summary": "server、teacher shell、assignments、reviews queue、assignment review、submission detail、assessment detail、student demo 均通过语法检查；Python 编译和 whitespace 检查通过。"
+    },
+    {
+      "name": "教师入口浏览器导航证据",
+      "result": "PASS",
+      "command": "with_server.py --server \"node frontend/server.mjs\" --port 4176 -- python frontend/teacher/reviews/verify-routing.py",
+      "summary": "390x844 Chromium：匿名访问重定向登录；失效会话真实请求 assignments 后显示未认证且不展示演示提交；动态 UUID submission 路由真实请求对应 API、失败时显示数据不足并禁用复核动作；横向溢出为 0，page errors 为 0。401 console 错误是本负向用例的预期证据。"
+    }
+  ],
   "handoff": "project-ops/handoffs/P0-DYNAMIC-ID-ROUTING-CLEANUP.md",
   "rollback": "回退本任务提交，恢复原入口实现；不得恢复固定 submission-1 导航作为成功路径。",
   "delivery": {
