@@ -1,0 +1,104 @@
+{
+  "id": "P0-SEC-AUTH-DEMO-FALLBACK-REMOVAL",
+  "status": "READY_FOR_REVIEW",
+  "title": "移除登录 demo 与离线假成功并让认证失败闭合",
+  "owner": "codex-auth-builder",
+  "reviewer": "independent verifier",
+  "branch": "task/p0-sec-auth-demo-fallback-removal",
+  "base_commit": "41a0ff3656af7888d4c2e46eb180eeffc3414115",
+  "user_outcome": "教师或学生只有在服务端签发有效会话后才能进入角色首页；服务不可用或凭据错误时留在登录页并看到明确失败。",
+  "current_facts": [
+    "frontend/login/index.html 实际加载 frontend/login/app.js 与 frontend/assets/api-client.js",
+    "frontend/login/app.js 在 API 客户端缺失、浏览器离线和登录请求异常时可写入 demo-token 或离线会话并跳转",
+    "frontend/assets/api-client.js 未拒绝缺少 accessToken 或 user 的登录成功响应",
+    "真实登录 API 为 POST /api/v1/auth/login，服务端错误凭据已返回失败且不会创建会话"
+  ],
+  "product_alignment": {
+    "p0": "古诗文朗读与理解训练的可审计黄金闭环",
+    "contribution": "解除教师与学生跨页面黄金链路的虚假身份前置阻塞",
+    "non_goals": [
+      "不新增登录方式、找回密码或生产账号",
+      "不修改 Identity/OpenAPI/Prisma 契约",
+      "不把 Builder 预检写成独立 VERIFIED"
+    ]
+  },
+  "context": {
+    "required": [
+      "project-ops/control-plane/feature-chains/FC-TRUTHFUL-LOGIN.json",
+      "frontend/login/index.html",
+      "frontend/login/app.js",
+      "frontend/assets/api-client.js"
+    ],
+    "optional": [
+      "frontend/login/login.js",
+      "backend/api/src/modules/identity/identity.controller.ts",
+      "backend/api/src/modules/identity/identity.service.ts"
+    ]
+  },
+  "depends_on": [],
+  "integration_order": [
+    "前端认证消费者 fail closed",
+    "真实 API 不可用与错误凭据负向验证",
+    "独立 Verifier 新浏览器上下文复验",
+    "Integration Lead 合入后复验"
+  ],
+  "allowed_paths": [
+    "frontend/login/**",
+    "frontend/assets/api-client.js",
+    "backend/api/src/modules/auth/**",
+    "project-ops/handoffs/P0-SEC-AUTH-DEMO-FALLBACK-REMOVAL.md",
+    "project-ops/tasks/active/P0-SEC-AUTH-DEMO-FALLBACK-REMOVAL.json"
+  ],
+  "shared_owner_changes": [],
+  "contract_change_request": null,
+  "minimal_tests": [
+    {
+      "name": "登录假成功静态回归",
+      "command": "node frontend/login/truthful-login.test.mjs"
+    },
+    {
+      "name": "API 不可用与错误凭据的真实页面、新上下文负向预检",
+      "command": "pwsh -NoProfile -File frontend/login/run-truthful-login-preflight.ps1"
+    },
+    {
+      "name": "登录页面与认证 API 构建检查",
+      "command": "pnpm --filter @yuzan/api build"
+    }
+  ],
+  "test_evidence": [
+    {
+      "name": "登录假成功静态回归",
+      "command": "node frontend/login/truthful-login.test.mjs",
+      "result": "PASS",
+      "summary": "attempt 4 使用真实 GET /me 扁平 CurrentUser 响应形状覆盖 STUDENT 与 TEACHER 同角色入口、STUDENT -> /teacher、TEACHER -> /student、撤销 401 和畸形会话。扁平响应会规范化后按服务端 activeSchoolId 对应 membership 授权；跨角色保持 hidden 并保留有效会话，撤销或畸形会话仍原子清空。"
+    },
+    {
+      "name": "API 不可用与错误凭据的真实页面、新上下文负向预检",
+      "command": "pwsh -NoProfile -File frontend/login/run-truthful-login-preflight.ps1",
+      "result": "PASS",
+      "summary": "390x844 Chromium 覆盖 API 断开 502、canonical API 错误凭据 401、撤销夹具 401，以及动态 STUDENT 真实注册 201。正向旅程三次 GET /api/v1/me 均为 200，稳定进入 /student/today/；直接访问 /teacher/ 后回到 /student/today/，有效 token 与 server-issued activeSchoolId 保留且无 demo session，console/page error 为 0。",
+      "limitation": "这是 Builder 预检而非独立 VERIFIED；撤销场景由浏览器网络层返回 401，Verifier 仍需在独立环境复验真实 out-of-band logout。"
+    },
+    {
+      "name": "登录页面与认证 API 构建检查",
+      "command": "fnm env --shell powershell | Out-String | Invoke-Expression; fnm use 24; pnpm --filter @yuzan/api build",
+      "result": "PASS",
+      "summary": "Node 24.18.0、pnpm 10.13.1 下 Nest build 返回 0；未安装或修改依赖。"
+    }
+  ],
+  "rework": {
+    "attempt": 4,
+    "review_round": 2,
+    "rejected_candidate": "458d4ed937be88afffa9c76bf8de9f8772ad3396",
+    "failure_class": "AUTHENTICATED_ROLE_HOME_REDIRECT_LOOP",
+    "repair": "共享客户端同时接受 canonical GET /me 的扁平 CurrentUser 与既有 wrapped 形状，并统一规范化为 user + activeSchoolId 后再做路由角色校验；真实 STUDENT 会话因此可在 /student/today 稳定显示，跨角色仍保持 hidden 并跳回授权学生首页。"
+  },
+  "ready_for_review_at": "2026-07-27T00:25:36+08:00",
+  "handoff": "project-ops/handoffs/P0-SEC-AUTH-DEMO-FALLBACK-REMOVAL.md",
+  "rollback": "回退本任务提交；不得恢复 demo-token、离线登录或异常时的假成功跳转。",
+  "delivery": {
+    "push_task_branch": true,
+    "remote": "origin",
+    "merge_target": "由 Integration Lead 指定"
+  }
+}

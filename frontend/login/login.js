@@ -68,35 +68,23 @@
     }
 
     loginSubmit.disabled = true;
-    loginSubmit.textContent = navigator.onLine ? '正在验证…' : '正在验证本机凭据…';
+    loginSubmit.textContent = '正在验证…';
 
     if (!navigator.onLine) {
-      localStorage.setItem('yuzan-demo-session', JSON.stringify({ account: identifier, loggedInAt: Date.now(), offline: true }));
-      YuzanDemo.toast('已使用本机凭据登录', 'warning');
-      setTimeout(() => location.href = '/select-school', 260);
+      YuzanApi.clearSession();
+      loginSubmit.disabled = false;
+      loginSubmit.textContent = '登录';
+      setMessage(loginError, '当前设备未联网，登录需要连接认证服务。');
       return;
     }
 
     try {
       const data = await YuzanApi.login(identifier, password);
-      localStorage.setItem('yuzan-demo-session', JSON.stringify({ account: identifier, loggedInAt: Date.now(), offline: false }));
       YuzanDemo.toast('登录成功', 'success');
       const homeUrl = selectedRole === 'STUDENT' ? '/student/profile/' : YuzanApi.getHomeUrlByRole(data.user);
       setTimeout(() => location.href = homeUrl, 260);
     } catch (err) {
-      // 演示环境兜底
-      const demoAccounts = ['student.test', 'teacher.test', 'volunteer.test', 'admin.test', 'researcher.test'];
-      const demoPassword = 'YuzanTest!2026';
-      if (demoAccounts.includes(identifier) && password === demoPassword) {
-        localStorage.setItem('yuzan-access-token', 'demo-token-' + identifier);
-        localStorage.setItem('yuzan-active-school-id', '11111111-1111-4111-8111-111111111111');
-        localStorage.setItem('yuzan-demo-session', JSON.stringify({ account: identifier, loggedInAt: Date.now(), offline: true }));
-        YuzanDemo.toast('演示模式登录成功', 'warning');
-        const roleMap = { 'student.test': 'STUDENT', 'teacher.test': 'TEACHER', 'volunteer.test': 'VOLUNTEER', 'admin.test': 'SCHOOL_ADMIN', 'researcher.test': 'RESEARCHER' };
-        const homeUrl = YuzanApi.getHomeUrlByRole({ memberships: [{ role: roleMap[identifier] || 'STUDENT' }] });
-        setTimeout(() => location.href = homeUrl, 260);
-        return;
-      }
+      YuzanApi.clearSession();
       loginSubmit.disabled = false;
       loginSubmit.textContent = '登录';
       pass.classList.add('invalid');
@@ -180,7 +168,6 @@
 
     try {
       const data = await YuzanApi.register(phone, password, selectedRole);
-      localStorage.setItem('yuzan-demo-session', JSON.stringify({ account: phone, loggedInAt: Date.now(), newlyRegistered: true }));
       YuzanDemo.toast('注册成功，正在进入工作台', 'success');
       const homeUrl = YuzanApi.getHomeUrlByRole(data.user);
       setTimeout(() => location.href = homeUrl, 260);
