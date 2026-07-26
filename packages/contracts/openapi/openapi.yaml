@@ -3640,6 +3640,23 @@ components:
         submittedAt:
           type: [string, "null"]
           format: date-time
+        writtenAnswer:
+          type: string
+          description: Real persisted written evidence linked to this submission, when present.
+        recordingId:
+          type: string
+          format: uuid
+          description: Real persisted recording linked to this submission, when present.
+        recordingUrl:
+          type: string
+          format: uri
+          description: Short-lived download URL for the linked recording evidence.
+        recordingDuration:
+          type: integer
+          minimum: 0
+          description: Linked recording duration in seconds.
+        feedback:
+          $ref: "#/components/schemas/Feedback"
     SubmissionResponse:
       type: object
       required: [data, meta]

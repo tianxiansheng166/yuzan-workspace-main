@@ -2038,6 +2038,21 @@ export interface components {
       revision: number;
       /** Format: date-time */
       submittedAt: string | null;
+      /** @description Real persisted written evidence linked to this submission, when present. */
+      writtenAnswer?: string;
+      /**
+       * Format: uuid
+       * @description Real persisted recording linked to this submission, when present.
+       */
+      recordingId?: string;
+      /**
+       * Format: uri
+       * @description Short-lived download URL for the linked recording evidence.
+       */
+      recordingUrl?: string;
+      /** @description Linked recording duration in seconds. */
+      recordingDuration?: number;
+      feedback?: components["schemas"]["Feedback"];
     };
     SubmissionResponse: {
       data: components["schemas"]["Submission"];

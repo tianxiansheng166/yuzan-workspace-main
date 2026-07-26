@@ -21,6 +21,18 @@ export class SubmissionsPolicy {
     return hasRole(auth, MembershipRole.STUDENT);
   }
 
+  canReadSubmission(auth: AuthContext, schoolId: string): boolean {
+    if (!this.isMemberOfSchool(auth, schoolId)) {
+      return false;
+    }
+    return hasAnyRole(auth, [
+      MembershipRole.STUDENT,
+      MembershipRole.TEACHER,
+      MembershipRole.SCHOOL_ADMIN,
+      MembershipRole.PLATFORM_ADMIN,
+    ]);
+  }
+
   canReadAssignmentSubmissions(auth: AuthContext, schoolId: string): boolean {
     if (!this.isMemberOfSchool(auth, schoolId)) {
       return false;

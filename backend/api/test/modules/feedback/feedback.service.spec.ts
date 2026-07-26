@@ -15,30 +15,79 @@ import { submissionSummary } from "../submissions/fixtures/submissions.js";
 import { feedback } from "./fixtures/feedback.js";
 
 function auth(userId: string, schoolId: string, roles: MembershipRole[]) {
-  return createAuthContext("req-1", {
-    userId,
-    roles,
-    membershipStatus: MembershipStatus.ACTIVE,
-    source: "test",
-  }, { schoolId });
+  return createAuthContext(
+    "req-1",
+    {
+      userId,
+      roles,
+      membershipStatus: MembershipStatus.ACTIVE,
+      source: "test",
+    },
+    { schoolId },
+  );
 }
+
+let persistedSubmission = {
+  status: "NEEDS_REVIEW",
+  revision: 1,
+};
+let persistedFeedback: Record<string, unknown> | null = null;
+let statusUpdateCount = 0;
 
 const mockPrismaService = {
   enrollment: {
-    findFirst: async () => ({ userId: "student-1" }),
+    findFirst: async (args: { where: Record<string, unknown> }) => {
+      if (args.where.id) {
+        return { userId: "student-1", classId: "class-a" };
+      }
+      if (
+        args.where.role === "TEACHER" &&
+        args.where.userId === "teacher-1" &&
+        args.where.classId === "class-a"
+      ) {
+        return { id: "teacher-enrollment-a" };
+      }
+      return null;
+    },
   },
   $transaction: async (fn: (tx: unknown) => Promise<unknown>) => {
     const mockTx = {
       feedback: {
-        create: async ({ data }: { data: Record<string, unknown> }) => ({
-          id: "fb-tx-1",
-          ...data,
-          revision: 1,
-          releasedAt: new Date(),
-        }),
+        create: async ({ data }: { data: Record<string, unknown> }) => {
+          const row = {
+            id: "fb-tx-1",
+            ...data,
+            revision: 1,
+            releasedAt: new Date(),
+          };
+          persistedFeedback = row;
+          return row;
+        },
       },
       submission: {
-        updateMany: async () => ({ count: 1 }),
+        updateMany: async ({
+          where,
+          data,
+        }: {
+          where: Record<string, unknown>;
+          data: {
+            status: string;
+            revision: { increment: number };
+          };
+        }) => {
+          if (
+            where.status !== persistedSubmission.status ||
+            where.revision !== persistedSubmission.revision
+          ) {
+            return { count: 0 };
+          }
+          statusUpdateCount += 1;
+          persistedSubmission = {
+            status: data.status,
+            revision: persistedSubmission.revision + data.revision.increment,
+          };
+          return { count: 1 };
+        },
       },
     };
     return fn(mockTx);
@@ -53,6 +102,9 @@ describe("FeedbackService", () => {
   beforeEach(async () => {
     feedbackRepo = new FakeFeedbackRepository();
     submissionLookup = new FakeSubmissionLookupRepository();
+    persistedSubmission = { status: "NEEDS_REVIEW", revision: 1 };
+    persistedFeedback = null;
+    statusUpdateCount = 0;
 
     const moduleRef = await Test.createTestingModule({
       providers: [
@@ -68,6 +120,9 @@ describe("FeedbackService", () => {
 
   const schoolId = "school-a";
   const teacherAuth = auth("teacher-1", schoolId, [MembershipRole.TEACHER]);
+  const otherTeacherAuth = auth("teacher-2", schoolId, [
+    MembershipRole.TEACHER,
+  ]);
   const studentAuth = auth("student-1", schoolId, [MembershipRole.STUDENT]);
 
   describe("createFeedback", () => {
@@ -77,11 +132,14 @@ describe("FeedbackService", () => {
         schoolId,
         enrollmentId: "enrollment-1",
         status: "NEEDS_REVIEW",
+        revision: 1,
       });
       submissionLookup.add(s);
 
       const result = await service.createFeedback(
-        teacherAuth, schoolId, "sub-1",
+        teacherAuth,
+        schoolId,
+        "sub-1",
         { decision: "ACCEPT", comment: "Great work!" },
       );
       expect(result.decision).toBe("ACCEPT");
@@ -121,6 +179,54 @@ describe("FeedbackService", () => {
         }),
       ).rejects.toThrow();
     });
+
+    it("rejects a teacher outside the student's class", async () => {
+      const s = submissionSummary({
+        id: "sub-cross-scope",
+        schoolId,
+        enrollmentId: "enrollment-1",
+        status: "NEEDS_REVIEW",
+      });
+      submissionLookup.add(s);
+
+      await expect(
+        service.createFeedback(otherTeacherAuth, schoolId, s.id, {
+          decision: "RETURN",
+          comment: "Try again",
+        }),
+      ).rejects.toMatchObject({ status: 403 });
+    });
+
+    it("persists RETURN as RETURNED and advances submission revision once", async () => {
+      const s = submissionSummary({
+        id: "sub-return",
+        schoolId,
+        enrollmentId: "enrollment-1",
+        status: "NEEDS_REVIEW",
+        revision: 1,
+      });
+      submissionLookup.add(s);
+
+      const result = await service.createFeedback(teacherAuth, schoolId, s.id, {
+        decision: "RETURN",
+        comment: "请重读第二句并补充停顿。",
+      });
+
+      expect(result).toMatchObject({
+        decision: "RETURN",
+        comment: "请重读第二句并补充停顿。",
+      });
+      expect(persistedSubmission).toEqual({
+        status: "RETURNED",
+        revision: 2,
+      });
+      expect(persistedFeedback).toMatchObject({
+        submissionId: s.id,
+        decision: "RETURN",
+        comment: "请重读第二句并补充停顿。",
+      });
+      expect(statusUpdateCount).toBe(1);
+    });
   });
 
   describe("getFeedbackBySubmission", () => {
@@ -137,7 +243,9 @@ describe("FeedbackService", () => {
       feedbackRepo.add(f);
 
       const result = await service.getFeedbackBySubmission(
-        teacherAuth, schoolId, "sub-4",
+        teacherAuth,
+        schoolId,
+        "sub-4",
       );
       expect(result.length).toBe(1);
     });
@@ -163,7 +271,9 @@ describe("FeedbackService", () => {
 
     it("returns empty array for non-existent submission", async () => {
       const result = await service.getFeedbackBySubmission(
-        teacherAuth, schoolId, "nonexistent",
+        teacherAuth,
+        schoolId,
+        "nonexistent",
       );
       expect(result).toEqual([]);
     });
@@ -174,9 +284,9 @@ describe("FeedbackService", () => {
       const f = feedback({ schoolId });
       feedbackRepo.add(f);
 
-      const result = await service.listPendingFeedback(
-        teacherAuth, schoolId, { limit: 20 },
-      );
+      const result = await service.listPendingFeedback(teacherAuth, schoolId, {
+        limit: 20,
+      });
       expect(result.items.length).toBeGreaterThan(0);
     });
 

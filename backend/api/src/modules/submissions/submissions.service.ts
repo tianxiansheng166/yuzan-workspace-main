@@ -1,5 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
 import type { AuthContext } from "../../common/security/auth.types.js";
+import { hasRole, MembershipRole } from "../../common/security/index.js";
 import {
   SubmissionConflictException,
   SubmissionForbiddenException,
@@ -56,10 +57,11 @@ export class SubmissionsService {
 
     // Idempotent: if a submission with this idempotencyKey already exists,
     // return the existing one.
-    const existing = await this.submissionRepo.findByEnrollmentAndIdempotencyKey(
-      input.enrollmentId,
-      input.idempotencyKey,
-    );
+    const existing =
+      await this.submissionRepo.findByEnrollmentAndIdempotencyKey(
+        input.enrollmentId,
+        input.idempotencyKey,
+      );
     if (existing) {
       return toSubmissionResponse(existing);
     }
@@ -81,7 +83,10 @@ export class SubmissionsService {
       throw new SubmissionForbiddenException();
     }
 
-    const submission = await this.submissionRepo.findById(schoolId, submissionId);
+    const submission = await this.submissionRepo.findById(
+      schoolId,
+      submissionId,
+    );
     if (!submission) {
       throw new SubmissionNotFoundException();
     }
@@ -128,7 +133,7 @@ export class SubmissionsService {
         schoolId,
         enrollmentId,
       );
-      allSubmissions.push(...subs as Submission[]);
+      allSubmissions.push(...(subs as Submission[]));
     }
 
     return allSubmissions.map(toSubmissionSummaryResponse);
@@ -177,14 +182,131 @@ export class SubmissionsService {
     schoolId: string,
     submissionId: string,
   ) {
-    const submission = await this.submissionRepo.findById(schoolId, submissionId);
+    if (!this.policy.canReadSubmission(auth, schoolId)) {
+      throw new SubmissionForbiddenException();
+    }
+
+    const submission = await this.submissionRepo.findById(
+      schoolId,
+      submissionId,
+    );
     if (!submission) {
       throw new SubmissionNotFoundException();
     }
 
-    // Students can only see their own submissions
-    // (enrollmentId ownership verified at a higher level if needed)
-    return toSubmissionResponse(submission);
+    await this.assertSubmissionAccess(auth, schoolId, submission.enrollmentId);
+
+    const [attempts, practiceSessions, directRecordings, latestFeedback] =
+      await Promise.all([
+        this.prisma.activityAttempt.findMany({
+          where: { schoolId, submissionId },
+          orderBy: { createdAt: "asc" },
+          select: { value: true },
+        }),
+        this.prisma.assessmentSession.findMany({
+          where: { schoolId, courseSubmissionId: submissionId },
+          orderBy: { createdAt: "asc" },
+          select: {
+            items: {
+              orderBy: { sortOrder: "asc" },
+              select: {
+                writtenAnswer: {
+                  select: { content: true, finalSubmittedAt: true },
+                },
+                recording: {
+                  select: {
+                    id: true,
+                    status: true,
+                    objectKey: true,
+                    durationMs: true,
+                  },
+                },
+              },
+            },
+          },
+        }),
+        this.prisma.recording.findMany({
+          where: {
+            schoolId,
+            submissionId,
+            status: { in: ["COMPLETE", "PROCESSING", "READY"] },
+            objectKey: { not: null },
+          },
+          orderBy: { createdAt: "asc" },
+          select: {
+            id: true,
+            status: true,
+            objectKey: true,
+            durationMs: true,
+          },
+        }),
+        this.prisma.feedback.findFirst({
+          where: { schoolId, submissionId, deletedAt: null },
+          orderBy: { releasedAt: "desc" },
+          select: {
+            id: true,
+            decision: true,
+            comment: true,
+            score: true,
+            revision: true,
+            releasedAt: true,
+          },
+        }),
+      ]);
+
+    const writtenAnswer =
+      attempts
+        .map((attempt) => extractWrittenText(attempt.value))
+        .find(Boolean) ??
+      practiceSessions
+        .flatMap((session) => session.items)
+        .map((item) =>
+          item.writtenAnswer?.finalSubmittedAt
+            ? extractWrittenText(item.writtenAnswer.content)
+            : undefined,
+        )
+        .find(Boolean);
+
+    const practiceRecordings = practiceSessions
+      .flatMap((session) => session.items)
+      .flatMap((item) => (item.recording ? [item.recording] : []));
+    const recording = [...directRecordings, ...practiceRecordings].find(
+      (item) =>
+        item.objectKey &&
+        ["COMPLETE", "PROCESSING", "READY"].includes(item.status),
+    );
+    const download = recording?.objectKey
+      ? await this.storage.generateDownloadUrl(recording.objectKey)
+      : null;
+
+    return {
+      ...toSubmissionResponse(submission),
+      ...(writtenAnswer ? { writtenAnswer } : {}),
+      ...(recording && download
+        ? {
+            recordingId: recording.id,
+            recordingUrl: download.url,
+            ...(recording.durationMs != null
+              ? { recordingDuration: Math.round(recording.durationMs / 1000) }
+              : {}),
+          }
+        : {}),
+      ...(latestFeedback
+        ? {
+            feedback: {
+              id: latestFeedback.id,
+              submissionId,
+              decision: latestFeedback.decision,
+              comment: latestFeedback.comment,
+              ...(latestFeedback.score != null
+                ? { score: latestFeedback.score }
+                : {}),
+              revision: latestFeedback.revision,
+              releasedAt: latestFeedback.releasedAt.toISOString(),
+            },
+          }
+        : {}),
+    };
   }
 
   async getUploadUrls(
@@ -196,7 +318,10 @@ export class SubmissionsService {
       throw new SubmissionForbiddenException();
     }
 
-    const submission = await this.submissionRepo.findById(schoolId, submissionId);
+    const submission = await this.submissionRepo.findById(
+      schoolId,
+      submissionId,
+    );
     if (!submission) {
       throw new SubmissionNotFoundException();
     }
@@ -216,7 +341,10 @@ export class SubmissionsService {
       throw new SubmissionForbiddenException();
     }
 
-    if (submission.status !== "IN_PROGRESS" && submission.status !== "PENDING_SYNC") {
+    if (
+      submission.status !== "IN_PROGRESS" &&
+      submission.status !== "PENDING_SYNC"
+    ) {
       throw new SubmissionStatusException("当前状态不允许上传");
     }
 
@@ -251,4 +379,76 @@ export class SubmissionsService {
     );
     return toSubmissionSummaryResponse(summary);
   }
+
+  private async assertSubmissionAccess(
+    auth: AuthContext,
+    schoolId: string,
+    enrollmentId: string,
+  ): Promise<void> {
+    if (
+      hasRole(auth, MembershipRole.SCHOOL_ADMIN) ||
+      hasRole(auth, MembershipRole.PLATFORM_ADMIN)
+    ) {
+      return;
+    }
+
+    const ownerEnrollment = await this.prisma.enrollment.findFirst({
+      where: {
+        id: enrollmentId,
+        schoolId,
+        role: "STUDENT",
+        status: "ACTIVE",
+      },
+      select: { userId: true, classId: true },
+    });
+    if (!ownerEnrollment) {
+      throw new SubmissionForbiddenException();
+    }
+
+    if (
+      hasRole(auth, MembershipRole.STUDENT) &&
+      ownerEnrollment.userId === auth.principal.userId
+    ) {
+      return;
+    }
+
+    if (hasRole(auth, MembershipRole.TEACHER)) {
+      const teacherEnrollment = await this.prisma.enrollment.findFirst({
+        where: {
+          schoolId,
+          classId: ownerEnrollment.classId,
+          userId: auth.principal.userId,
+          role: "TEACHER",
+          status: "ACTIVE",
+        },
+        select: { id: true },
+      });
+      if (teacherEnrollment) {
+        return;
+      }
+    }
+
+    throw new SubmissionForbiddenException();
+  }
+}
+
+function extractWrittenText(value: unknown): string | undefined {
+  if (typeof value === "string") {
+    const text = value.trim();
+    return text || undefined;
+  }
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return undefined;
+  }
+
+  const record = value as Record<string, unknown>;
+  for (const key of ["answer", "text", "content", "value"]) {
+    if (typeof record[key] === "string") {
+      const text = record[key].trim();
+      if (text) {
+        return text;
+      }
+    }
+  }
+  return undefined;
 }

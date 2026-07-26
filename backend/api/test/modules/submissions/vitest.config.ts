@@ -13,6 +13,10 @@ export default defineConfig({
       "@nestjs/common": path.resolve(apiNodeModules, "@nestjs/common"),
       "@nestjs/core": path.resolve(apiNodeModules, "@nestjs/core"),
       "@nestjs/testing": path.resolve(apiNodeModules, "@nestjs/testing"),
+      "@yuzan/database": path.resolve(
+        __dirname,
+        "fakes/fake-database-package.ts",
+      ),
     },
   },
   test: {

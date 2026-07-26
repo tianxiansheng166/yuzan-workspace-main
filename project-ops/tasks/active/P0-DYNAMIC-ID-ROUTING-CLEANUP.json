@@ -1,12 +1,10 @@
 {
   "id": "P0-DYNAMIC-ID-ROUTING-CLEANUP",
-  "status": "BLOCKED",
-  "authority_required": true,
+  "status": "READY_FOR_REVIEW",
+  "authority_required": false,
   "independent_run_id": "dynroute-20260726T143913Z-1e34f7e",
-  "unresolved_server_behavior": "同校 STUDENT 对真实教师复核 submission 的 GET 返回 HTTP 200；响应不含答案/录音；RETURN 保存为 RETURNED 且 submission revision 不递增。",
-  "question": "请把 backend/api/src/modules/submissions/** 与 backend/api/src/modules/feedback/**（含聚焦测试）加入本工单 write_set，并由契约 owner 明确 REDO_REQUIRED 是否映射现有 RETURNED；若必须新增公开状态，是否同时授权对应 OpenAPI/contracts 路径与 CCR？",
   "title": "教师活动、任务与复核入口使用动态业务 ID",
-  "owner": "codex-dynamic-routing-verifier",
+  "owner": "codex-account-c-dynamic-builder",
   "reviewer": "independent verifier",
   "branch": "task/p0-dynamic-id-routing-cleanup",
   "base_commit": "41a0ff3656af7888d4c2e46eb180eeffc3414115",
@@ -14,8 +12,8 @@
   "current_facts": [
     "FeatureChain 明确记录教师导航和任务页仍含 submission-1。",
     "动态入口已能把真实 submissionId 传入详情请求。",
-    "独立运行 dynroute-20260726T143913Z-1e34f7e 证明学生上下文 GET 同一教师复核 submission 返回 HTTP 200；backend/api/src/modules/submissions/submissions.service.ts 的 getSubmission 当前没有角色或 enrollment ownership 策略检查。",
-    "当前 SubmissionResponse 不返回答案或录音证据，feedback DTO 只接受 ACCEPT/RETURN，service 将退回保存为 RETURNED 且不递增 submission revision。"
+    "attempt 3 在服务端按 active enrollment owner / same-class teacher / school admin 强制 submission GET 与 feedback POST 的资源范围，学生或跨班教师收到 403。",
+    "SubmissionResponse 只读取持久化 ActivityAttempt / WrittenAnswer / Recording 证据与最新 Feedback；RETURN 原子保存为 RETURNED，并以 NEEDS_REVIEW + revision 谓词恰好递增 submission revision 一次。"
   ],
   "product_alignment": {
     "p0": "古诗文朗读与理解训练的可审计黄金闭环",
@@ -47,11 +45,28 @@
     "frontend/server.mjs",
     "frontend/shared/teacher-shell.js",
     "frontend/teacher/**",
+    "backend/api/src/modules/submissions/**",
+    "backend/api/src/modules/feedback/**",
+    "backend/api/test/modules/submissions/**",
+    "backend/api/test/modules/feedback/**",
+    "packages/contracts/openapi/**",
+    "packages/contracts/scripts/**",
+    "packages/contracts/src/**",
     "project-ops/handoffs/P0-DYNAMIC-ID-ROUTING-CLEANUP.md",
+    "project-ops/requests/CCR-P0-DYNAMIC-ID-ROUTING-CLEANUP.md",
     "project-ops/tasks/active/P0-DYNAMIC-ID-ROUTING-CLEANUP.json"
   ],
-  "shared_owner_changes": [],
-  "contract_change_request": null,
+  "shared_owner_changes": [
+    {
+      "owner": "API contract owner",
+      "paths": [
+        "packages/contracts/openapi/openapi.yaml",
+        "packages/contracts/src/generated.ts"
+      ],
+      "change": "Submission adds optional persisted evidence and latest feedback fields; no status enum change."
+    }
+  ],
+  "contract_change_request": "project-ops/requests/CCR-P0-DYNAMIC-ID-ROUTING-CLEANUP.md",
   "minimal_tests": [
     {
       "name": "固定业务 ID 源码证伪",
@@ -64,6 +79,18 @@
     {
       "name": "教师入口浏览器导航证据",
       "command": "PORT=4176、API_BASE_URL=http://127.0.0.1:4000；with_server.py --server \"node frontend/server.mjs\" --port 4176 -- python frontend/teacher/reviews/verify-routing.py"
+    },
+    {
+      "name": "submission 授权、真实证据与 fresh-read",
+      "command": "pnpm --filter @yuzan/api exec vitest run --config test/modules/submissions/vitest.config.ts"
+    },
+    {
+      "name": "feedback 授权与 RETURN 持久化并发",
+      "command": "pnpm --filter @yuzan/api exec vitest run --config test/modules/feedback/vitest.config.ts"
+    },
+    {
+      "name": "OpenAPI 契约与生成一致性",
+      "command": "pnpm --filter @yuzan/contracts test"
     }
   ],
   "test_evidence": [
@@ -80,21 +107,31 @@
       "summary": "server、teacher shell、assignments、reviews queue、assignment review、submission detail、assessment detail、student demo 均通过语法检查；Python 编译和 whitespace 检查通过。"
     },
     {
-      "name": "教师入口与详情 fail-closed 浏览器回归",
+      "name": "教师入口浏览器导航证据",
       "result": "PASS",
       "command": "PORT=4176 API_BASE_URL=http://127.0.0.1:4000 node frontend/server.mjs；另一个终端运行 python frontend/teacher/reviews/verify-routing.py",
       "summary": "390x844 真实 unavailable 路径与 1024x768 聚焦 UI fixture 均通过：未知角色不发 submission GET；无答案/录音时 Play/Grade/Accept/Return 全禁用；有书面证据时发送 decision=RETURN 和具体反馈，随后重新 GET 并显示 RETURNED。fixture 明确不构成服务端授权或持久化证据；page errors 为 0。"
-    }
-  ],
-  "blockers": [
+    },
     {
-      "id": "AUTHORITY_REQUIRED_SERVER_REVIEW_SCOPE",
-      "authority_required": true,
-      "independent_run_id": "dynroute-20260726T143913Z-1e34f7e",
-      "unresolved_server_behavior": "同校 STUDENT 可 GET /schools/{schoolId}/submissions/{submissionId} 并收到其他学生/教师复核 submission 的 HTTP 200；SubmissionResponse 不含答案或录音，因此前端无法从真实响应证明 evidence-backed review；feedback 退回持久化为 RETURNED 且 submission revision 不递增，而正式要求为可刷新保持的 REDO_REQUIRED/revision 状态。",
-      "authority_request": "请把 backend/api/src/modules/submissions/** 与 backend/api/src/modules/feedback/**（含聚焦测试）加入本工单 write_set，并由契约 owner 明确 REDO_REQUIRED 是否映射现有 RETURNED；若必须新增公开状态，再同时授权对应 OpenAPI/contracts 路径与 CCR。"
+      "name": "submission 授权、真实证据与 fresh-read",
+      "result": "PASS",
+      "command": "pnpm --filter @yuzan/api exec vitest run --config test/modules/submissions/vitest.config.ts",
+      "summary": "3 files、61 tests 全部通过；覆盖 owner 学生正向、其他学生 403、同班教师正向、跨班教师 403，以及真实书面/录音证据和 RETURNED + revision + feedback 的新上下文读取。"
+    },
+    {
+      "name": "feedback 授权与 RETURN 持久化并发",
+      "result": "PASS",
+      "command": "pnpm --filter @yuzan/api exec vitest run --config test/modules/feedback/vitest.config.ts",
+      "summary": "2 files、22 tests 全部通过；覆盖 STUDENT/跨班教师 POST 拒绝、同班教师成功，以及 RETURN 原子保存为 RETURNED、revision 从 1 到 2 且只更新一次。"
+    },
+    {
+      "name": "OpenAPI 契约与生成一致性",
+      "result": "PASS",
+      "command": "pnpm --filter @yuzan/contracts test",
+      "summary": "OpenAPI lint 通过，生成器 6/6 tests 通过，generated.ts 与 openapi.yaml 一致。"
     }
   ],
+  "blockers": [],
   "handoff": "project-ops/handoffs/P0-DYNAMIC-ID-ROUTING-CLEANUP.md",
   "rollback": "回退本任务提交，恢复原入口实现；不得恢复固定 submission-1 导航作为成功路径。",
   "delivery": {

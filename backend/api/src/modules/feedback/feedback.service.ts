@@ -3,6 +3,7 @@ import type { AuthContext } from "../../common/security/auth.types.js";
 import { MembershipRole } from "../../common/security/index.js";
 import { PrismaService } from "../../shared/database/prisma.service.js";
 import {
+  FeedbackConflictException,
   FeedbackForbiddenException,
   SubmissionNotReviewableException,
 } from "./domain/feedback.errors.js";
@@ -35,13 +36,19 @@ export class FeedbackService {
     auth: AuthContext,
     schoolId: string,
     submissionId: string,
-    input: Omit<CreateFeedbackInput, "schoolId" | "submissionId" | "authorUserId">,
+    input: Omit<
+      CreateFeedbackInput,
+      "schoolId" | "submissionId" | "authorUserId"
+    >,
   ) {
     if (!this.policy.canCreateFeedback(auth, schoolId)) {
       throw new FeedbackForbiddenException();
     }
 
-    const submission = await this.submissionLookup.findSummaryById(schoolId, submissionId);
+    const submission = await this.submissionLookup.findSummaryById(
+      schoolId,
+      submissionId,
+    );
     if (!submission) {
       throw new SubmissionNotReviewableException("提交不存在");
     }
@@ -54,9 +61,28 @@ export class FeedbackService {
       throw new SubmissionNotReviewableException();
     }
 
+    await this.assertReviewScope(auth, schoolId, submission.enrollmentId);
+
     const newStatus = input.decision === "ACCEPT" ? "ACCEPTED" : "RETURNED";
 
     const feedback = await this.prisma.$transaction(async (tx) => {
+      const statusUpdate = await tx.submission.updateMany({
+        where: {
+          id: submissionId,
+          schoolId,
+          status: "NEEDS_REVIEW",
+          revision: submission.revision,
+          deletedAt: null,
+        },
+        data: {
+          status: newStatus,
+          revision: { increment: 1 },
+        },
+      });
+      if (statusUpdate.count !== 1) {
+        throw new FeedbackConflictException();
+      }
+
       const row = await tx.feedback.create({
         data: {
           schoolId,
@@ -70,11 +96,6 @@ export class FeedbackService {
         },
       });
 
-      await tx.submission.updateMany({
-        where: { id: submissionId, schoolId },
-        data: { status: newStatus },
-      });
-
       return {
         id: row.id,
         schoolId: row.schoolId,
@@ -82,7 +103,9 @@ export class FeedbackService {
         authorUserId: row.authorUserId,
         decision: row.decision as "ACCEPT" | "RETURN",
         comment: row.comment,
-        ...(row.score !== null && row.score !== undefined ? { score: row.score } : {}),
+        ...(row.score !== null && row.score !== undefined
+          ? { score: row.score }
+          : {}),
         revision: row.revision,
         releasedAt: row.releasedAt,
         ...(row.deletedAt ? { deletedAt: row.deletedAt } : {}),
@@ -97,7 +120,10 @@ export class FeedbackService {
     schoolId: string,
     submissionId: string,
   ) {
-    const submission = await this.submissionLookup.findSummaryById(schoolId, submissionId);
+    const submission = await this.submissionLookup.findSummaryById(
+      schoolId,
+      submissionId,
+    );
     if (!submission) {
       return [];
     }
@@ -112,11 +138,7 @@ export class FeedbackService {
     });
 
     if (
-      !this.policy.canReadOwnFeedback(
-        auth,
-        schoolId,
-        enrollment?.userId ?? "",
-      )
+      !this.policy.canReadOwnFeedback(auth, schoolId, enrollment?.userId ?? "")
     ) {
       throw new FeedbackForbiddenException();
     }
@@ -147,5 +169,45 @@ export class FeedbackService {
       nextCursor: result.nextCursor,
       hasMore: result.hasMore,
     };
+  }
+
+  private async assertReviewScope(
+    auth: AuthContext,
+    schoolId: string,
+    studentEnrollmentId: string,
+  ): Promise<void> {
+    if (
+      auth.principal.roles.includes(MembershipRole.SCHOOL_ADMIN) ||
+      auth.principal.roles.includes(MembershipRole.PLATFORM_ADMIN)
+    ) {
+      return;
+    }
+
+    const studentEnrollment = await this.prisma.enrollment.findFirst({
+      where: {
+        id: studentEnrollmentId,
+        schoolId,
+        role: "STUDENT",
+        status: "ACTIVE",
+      },
+      select: { classId: true },
+    });
+    if (!studentEnrollment) {
+      throw new FeedbackForbiddenException();
+    }
+
+    const teacherEnrollment = await this.prisma.enrollment.findFirst({
+      where: {
+        schoolId,
+        classId: studentEnrollment.classId,
+        userId: auth.principal.userId,
+        role: "TEACHER",
+        status: "ACTIVE",
+      },
+      select: { id: true },
+    });
+    if (!teacherEnrollment) {
+      throw new FeedbackForbiddenException();
+    }
   }
 }
