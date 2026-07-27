@@ -7,6 +7,55 @@ import uuid
 from playwright.sync_api import sync_playwright
 
 
+def assert_layout(page, expected_width: int) -> dict:
+    page.locator("#intro").wait_for(state="hidden")
+    metrics = page.evaluate(
+        """() => {
+          const rect = (selector) => {
+            const box = document.querySelector(selector)?.getBoundingClientRect();
+            return box ? {
+              x: box.x, y: box.y, width: box.width, height: box.height,
+              bottom: box.bottom, right: box.right
+            } : null;
+          };
+          const targetSelectors = [
+            "#loginTab",
+            "#registerTab",
+            "#loginPanel .field__action",
+            "#forgotButton",
+            '#loginPanel button[data-action="login"]'
+          ];
+          const statusContainer = document.querySelector("#loginStatus")?.closest(".connection-status");
+          return {
+            viewportWidth: window.innerWidth,
+            documentWidth: document.documentElement.scrollWidth,
+            bodyWidth: document.body.scrollWidth,
+            logo: rect(".brand img"),
+            story: rect(".story"),
+            gate: rect(".gate"),
+            loginPanel: rect("#loginPanel"),
+            status: rect("#loginStatus"),
+            statusScrollHeight: statusContainer?.scrollHeight ?? null,
+            statusClientHeight: statusContainer?.clientHeight ?? null,
+            targets: Object.fromEntries(targetSelectors.map((selector) => [selector, rect(selector)]))
+          };
+        }"""
+    )
+    assert metrics["viewportWidth"] == expected_width, metrics
+    assert metrics["documentWidth"] <= metrics["viewportWidth"], metrics
+    assert metrics["bodyWidth"] <= metrics["viewportWidth"], metrics
+    if expected_width <= 620:
+        assert metrics["logo"]["bottom"] + 16 <= metrics["story"]["y"], metrics
+    assert metrics["gate"]["x"] >= 0 and metrics["gate"]["right"] <= metrics["viewportWidth"], metrics
+    assert metrics["loginPanel"]["width"] > 0, metrics
+    for selector, box in metrics["targets"].items():
+        assert box, (selector, metrics)
+        assert box["width"] >= 44 and box["height"] >= 44, (selector, box)
+        assert box["x"] >= 0 and box["right"] <= metrics["viewportWidth"], (selector, box)
+    assert metrics["statusScrollHeight"] <= metrics["statusClientHeight"], metrics
+    return metrics
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Builder preflight for truthful login failure behavior")
     parser.add_argument("--base-url", default="http://127.0.0.1:44175")
@@ -16,6 +65,8 @@ def main() -> None:
         default="api-unavailable",
     )
     parser.add_argument("--screenshot")
+    parser.add_argument("--viewport-width", type=int, default=390)
+    parser.add_argument("--viewport-height", type=int, default=844)
     args = parser.parse_args()
     screenshot = args.screenshot or os.path.join(tempfile.gettempdir(), f"yuzan-login-{args.mode}.png")
 
@@ -28,7 +79,7 @@ def main() -> None:
 
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(headless=True)
-        context = browser.new_context(viewport={"width": 390, "height": 844})
+        context = browser.new_context(viewport={"width": args.viewport_width, "height": args.viewport_height})
         if args.mode == "revoked-session":
             context.add_init_script(
                 """if (location.pathname.startsWith('/teacher')) {
@@ -84,7 +135,9 @@ def main() -> None:
             assert not page_errors, page_errors
             context.close()
 
-            fresh_context = browser.new_context(viewport={"width": 390, "height": 844})
+            fresh_context = browser.new_context(
+                viewport={"width": args.viewport_width, "height": args.viewport_height}
+            )
             fresh_page = fresh_context.new_page()
             fresh_page.goto(f"{args.base_url}/teacher", wait_until="domcontentloaded")
             fresh_page.wait_for_url("**/login**")
@@ -103,7 +156,7 @@ def main() -> None:
                 "result": "PASS",
                 "level": "BUILDER_PREFLIGHT_ONLY",
                 "mode": args.mode,
-                "viewport": "390x844",
+                "viewport": f"{args.viewport_width}x{args.viewport_height}",
                 "me_request": me_requests[-1],
                 "me_response_status": 401,
                 "revoked_context_auth_storage": storage,
@@ -115,6 +168,11 @@ def main() -> None:
             return
 
         page.goto(f"{args.base_url}/login", wait_until="networkidle")
+        page.locator("#registerTab").click()
+        assert page.locator("#registerPanel").is_visible()
+        page.locator("#loginTab").click()
+        assert page.locator("#loginPanel").is_visible()
+        layout = assert_layout(page, args.viewport_width)
         if args.mode == "authenticated-student":
             account = f"student-{uuid.uuid4().hex}"
             page.locator("#registerTab").click()
@@ -156,7 +214,7 @@ def main() -> None:
                 "result": "PASS",
                 "level": "BUILDER_PREFLIGHT_ONLY",
                 "mode": args.mode,
-                "viewport": "390x844",
+                "viewport": f"{args.viewport_width}x{args.viewport_height}",
                 "auth_response": auth_responses[-1],
                 "me_responses": me_responses,
                 "final_url": final_url,
@@ -169,6 +227,7 @@ def main() -> None:
                 },
                 "console_errors": console_errors,
                 "page_errors": page_errors,
+                "mobile_layout": layout,
                 "screenshot": screenshot,
             }, ensure_ascii=False, indent=2))
             return
@@ -179,6 +238,7 @@ def main() -> None:
         page.locator('#loginPanel button[data-action="login"]').click()
         page.locator("#loginStatus[role=alert]").wait_for(state="visible")
         message = page.locator("#loginStatus").inner_text()
+        error_layout = assert_layout(page, args.viewport_width)
         page.screenshot(path=screenshot, full_page=True)
 
         storage = page.evaluate(
@@ -201,7 +261,9 @@ def main() -> None:
         assert not page_errors, page_errors
         context.close()
 
-        fresh_context = browser.new_context(viewport={"width": 390, "height": 844})
+        fresh_context = browser.new_context(
+            viewport={"width": args.viewport_width, "height": args.viewport_height}
+        )
         fresh_page = fresh_context.new_page()
         fresh_page.goto(f"{args.base_url}/login", wait_until="networkidle")
         fresh_storage = fresh_page.evaluate(
@@ -221,13 +283,14 @@ def main() -> None:
         "result": "PASS",
         "level": "BUILDER_PREFLIGHT_ONLY",
         "mode": args.mode,
-        "viewport": "390x844",
+        "viewport": f"{args.viewport_width}x{args.viewport_height}",
         "auth_response": auth_responses[-1],
         "ui_message": message,
         "fresh_context_auth_storage": fresh_storage,
         "console_errors": console_errors,
         "unexpected_console_errors": unexpected_console_errors,
         "page_errors": page_errors,
+        "mobile_layout": error_layout,
         "screenshot": screenshot,
     }, ensure_ascii=False, indent=2))
 

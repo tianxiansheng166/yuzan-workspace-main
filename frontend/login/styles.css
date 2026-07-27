@@ -107,3 +107,34 @@ body.sound-active .wave-line{stroke:#ffe18d;stroke-width:2.8;animation-duration:
 @media(max-width:1180px){.portal{grid-template-columns:minmax(0,1fr) 470px}.story{width:49vw}.story__signal svg{display:none}.world__halo{right:8%}.gate{margin-right:18px}.identity__grid{grid-template-columns:1fr 1fr}.identity-card{height:135px;display:grid;grid-template-columns:52px 1fr;text-align:left;padding:13px 12px}.identity-card__seal{grid-row:1/3;margin:0 10px 0 0}.identity-card small{margin:0}.identity-card__node{left:auto;right:9px;bottom:9px}.field-row{grid-template-columns:1fr}}
 @media(max-width:920px){body{overflow:auto}.portal{height:auto;min-height:100vh;display:block;background:#eee3d3}.world{min-height:62vh}.world__landscape{inset:-2% -10% -12% -18%}.story{top:53%;width:72vw}.world__route{width:82%;left:2%}.gate{width:min(660px,calc(100% - 28px));margin:-70px auto 22px;min-height:620px}.gate__header{padding-top:42px}.journey-note{display:none}.brand{top:24px}.sound-switch{display:none}}
 @media(max-width:620px){.world{min-height:72vh}.brand img{width:170px}.story{left:24px;right:24px;width:auto;top:52%}.story__eyebrow{font-size:11px;margin-bottom:16px}.story__red{font-size:28px}.story h1{font-size:39px}.story__lead{font-size:13px;line-height:1.75}.story__signal{grid-template-columns:auto 1fr;margin-top:18px}.world__halo{width:128px;height:128px;right:0;top:17%}.world__route{left:-8%;width:105%;height:82%}.gate{margin-top:-48px;width:calc(100% - 16px);border-radius:22px}.gate__header{padding:34px 28px 14px}.gate__header-wave{right:28px;width:130px}.tabs{margin:0 28px}.gate__body{padding:22px 28px 14px}.gate__footer{margin:0 25px}.identity__grid{grid-template-columns:1fr 1fr}.identity-card{height:148px;display:flex;text-align:center;padding:13px 8px}.identity-card__seal{margin:0 0 5px}.identity-card small{font-size:9px}.route-button{height:68px}.route-button strong{font-size:17px}.field-row{display:block}}
+
+/* Mobile login ergonomics: preserve the highland scene without letting the tall
+   wordmark collide with the story or making failure text/tap targets fragile. */
+.field{grid-template-columns:38px 1fr 44px}
+.field__action{width:44px;height:44px}
+.field--compact{grid-template-columns:34px 1fr 44px}
+.form-meta{margin-bottom:10px}
+.remember,.text-link{min-height:44px}
+.text-link{padding:8px 0}
+.connection-status{min-height:48px;height:auto;padding:8px 4px;line-height:1.55;text-align:center}
+.connection-status p{min-width:0;overflow-wrap:anywhere}
+.connection-status__wave,.connection-status__dot{flex:0 0 auto}
+.gate__footer button{min-height:44px}
+@media(max-width:620px){
+  .world{min-height:410px}
+  .brand{top:18px}
+  .brand img{width:88px}
+  .story{left:24px;right:24px;bottom:30px;top:auto;width:auto;transform:none}
+  .story__eyebrow,.story__signal{display:none}
+  .story__red{margin-bottom:5px;font-size:21px}
+  .story h1{max-width:330px;font-size:30px;line-height:1.18}
+  .story__lead{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;margin-top:11px;font-size:12px;line-height:1.7}
+  .world__halo{width:108px;height:108px;right:-10px}
+  .gate{margin-top:-28px}
+  .gate__header{padding:28px 28px 10px}
+  .gate__kicker{margin-bottom:10px}
+  .gate__header-wave{right:28px;bottom:18px;width:112px}
+  .tabs{height:54px}
+  .gate__body{padding:18px 28px 12px}
+  .connection-status{min-height:56px;font-size:12px}
+}
