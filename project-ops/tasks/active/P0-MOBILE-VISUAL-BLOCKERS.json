@@ -1,6 +1,8 @@
 {
   "id": "P0-MOBILE-VISUAL-BLOCKERS",
   "status": "READY_FOR_REVIEW",
+  "attempt": 2,
+  "fencing_epoch": 37,
   "title": "关闭 390px 移动端真实登录视觉阻塞",
   "owner": "codex-account-b-mobile-builder",
   "reviewer": "Independent Browser Visual Verifier",
@@ -66,21 +68,21 @@
       "command": "node --test frontend/login/truthful-login.test.mjs",
       "result": "PASS",
       "summary": "1/1 通过，0 fail、0 skipped",
-      "details": "node:test 1/1 通过，0 fail、0 skipped；继续拒绝无效会话、网络失败与撤销会话"
+      "details": "attempt 2 / epoch 37 重新执行：node:test 1/1 通过，0 fail、0 skipped；继续拒绝无效会话、网络失败与撤销会话"
     },
     {
       "name": "390px 浏览器可见旅程与跨尺寸回归",
       "command": "隔离端口 45231 + API 不可用端口 45999；verify_truthful_login.py 分别运行 390x844、1024x768、1440x900",
       "result": "PASS",
       "summary": "三种 viewport 动态旅程通过，390px 移动视觉与 fail-closed 断言通过",
-      "details": "三种 viewport 均无横向溢出；390px Logo 与故事无重叠，登录/注册可切换，关键 tap target 均至少 44px；502 错误完整显示，当前与 fresh context 认证存储均为空；unexpected console errors=[]，page errors=[]"
+      "details": "attempt 2 / epoch 37 使用隔离端口 45231 与不可用 API 端口 45999 重新执行；三种 viewport 均无横向溢出；390px Logo 与故事无重叠，登录/注册可切换，关键 tap target 均至少 44px；502 错误完整显示，当前与 fresh context 认证存储均为空；unexpected console errors=[]，page errors=[]；原始 390x844 截图人工复核通过"
     },
     {
       "name": "语法与差异检查",
       "command": "python -m py_compile frontend/login/verify_truthful_login.py; git diff --check",
       "result": "PASS",
       "summary": "verifier 编译通过且差异无空白错误",
-      "details": "Python verifier 编译通过，git diff --check 无输出"
+      "details": "attempt 2 / epoch 37 重新执行：Python verifier 编译通过，git diff --check 无输出"
     }
   ],
   "handoff": "project-ops/handoffs/P0-MOBILE-VISUAL-BLOCKERS.md",
