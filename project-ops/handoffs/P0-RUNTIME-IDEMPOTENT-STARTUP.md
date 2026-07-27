@@ -6,6 +6,21 @@
 - Base commit: `41a0ff3656af7888d4c2e46eb180eeffc3414115`
 - Status: `READY_FOR_REVIEW`
 
+## Attempt 12 / verifier-report revision metadata rematerialization
+
+- Authoritative rejected candidate:
+  `d5b43c781ae9469790edd77392b3f38bde930480`.
+- The pre-merge evidence gate confirmed the exact candidate, required integration base
+  `79c1711057ed4b6f353b3454afdc58cfee8d38b1`, exact remote task branch, manifest verdict
+  `VERIFIED`, manifest Goal revision `1`, verifier-report verdict `VERIFIED`, and all 17 artifact
+  SHA256 values.
+- The only rejection was that verifier-only `verifier-report.json` did not state Goal revision `1`.
+  That report and its evidence directory are outside this Builder lease and remain untouched.
+- No runtime or authentication implementation repair is indicated by this rejection. This bounded
+  handoff/task update rematerializes the candidate so an independent verifier can regenerate its
+  report with an explicit Goal revision `1`; acceptance remains solely with the independent
+  verifier and Integration Lead.
+
 ## Attempt 11 / auth-integrated runtime candidate
 
 - Exact accepted auth integration commit:
@@ -59,6 +74,8 @@
 | attempt 9 exact-candidate 重跑 | syntax + runtime 命令同上 | `PASS`，候选 `956839d32450e371d666817bf30f801c89d36c28`，运行时间 `2026-07-26T19:20Z` |
 | attempt 11 auth-integrated exact-combined 重跑 | syntax + runtime 命令同上 | `PASS`，合并提交 `e33e2144cbef277382ee3e7e615e1c5276cd93a5`，运行时间 `2026-07-27T01:02Z` |
 | attempt 11 两个 fresh-context API unavailable 登录负向 | API 指向无监听 `127.0.0.1:44999`，分别以 fresh Chromium context 提交 `student.test` 与 `teacher.test` | `PASS`，两者均 502、留在 `/login`、显式 unavailable；提交 context 与随后 fresh context 的 token/user/school/demo 全为空，无角色跳转 |
+| attempt 12 pre-merge evidence gate | 独立 gate 校验 exact candidate/base/remote/manifest/report/artifact hashes | `REJECTED`；运行时与 17 个 artifact hash 均已验证，唯一缺口为 verifier-only report 未显式记录 Goal revision `1` |
+| attempt 12 runtime rematerialization 重跑 | syntax + runtime 命令同上 | `PASS`，被拒候选 `d5b43c781ae9469790edd77392b3f38bde930480`，运行时间 `2026-07-27T02:10Z` |
 
 通过结果：`PASS_EXACT_COMMIT_ATTESTED`；两次启动入口 `PASS_IDENTICAL_PIDS_AND_COMMIT`；
 foreign partial occupancy `PASS_FAILED_CLOSED_NO_KILL_NO_PORT_CHANGE`；包含仓库根、
@@ -83,6 +100,10 @@ attempt 11 输出的隔离端口为 `59693/59694/59695`，PID 指纹为
 `api=27756;frontend_proxy=27432;speech=40600;worker=35340`。这些 PID 同样只属于短生命周期
 fixture；套件在 `finally` 中完成清理。
 
+attempt 12 输出的隔离端口为 `54490/54491/54492`，PID 指纹为
+`api=33368;frontend_proxy=42352;speech=42428;worker=42524`。这些 PID 同样只属于短生命周期
+fixture；套件在 `finally` 中完成清理。
+
 ## 自审
 
 - [x] 差异只服务任务结果且均在 `allowed_paths`
@@ -90,6 +111,7 @@ fixture；套件在 `finally` 中完成清理。
 - [x] 部分/异常运行态显式失败，不伪装成可用
 - [x] 最高风险由隔离 managed-runtime 的 clean exact-candidate、两次 `ReuseOnly` PID 稳定性及负向状态直接测试
 - [x] 无密钥、真实学生数据或来源不明资产
+- [x] 未修改 verifier-only evidence；下一轮必须由独立 verifier 在报告中显式声明 Goal revision `1`
 - [ ] 独立 reviewer 复验并签发 `VERIFIED`
 
 ## 风险、限制与回滚
