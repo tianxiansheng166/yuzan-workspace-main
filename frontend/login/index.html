@@ -155,9 +155,9 @@
             <span class="route-button__arrow" aria-hidden="true"><i></i></span>
           </button>
 
-          <div class="connection-status">
+          <div class="connection-status" aria-live="polite">
             <span class="connection-status__wave"><i></i><i></i><i></i><i></i><i></i></span>
-            <p>正在连接声音旅程</p>
+            <p id="loginStatus" role="status">等待连接认证服务</p>
             <span class="connection-status__dot"></span>
           </div>
         </form>
@@ -244,14 +244,6 @@
       <small id="transitionDetail">声音坐标正在与学习网络建立连接</small>
     </div>
   </div>
-
-  <dialog class="dialog" id="dialog">
-    <button class="dialog__close" type="button" aria-label="关闭">×</button>
-    <span class="dialog__mark"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 4 42 12v13c0 10-6 17-18 23C12 42 6 35 6 25V12L24 4Z"/><path d="m15 25 6 6 13-15"/></svg></span>
-    <h3>演示转场已完成</h3>
-    <p>当前压缩包为独立前端视觉版本。接入项目时，可在 <code>app.js</code> 的 <code>AUTH_ENDPOINTS</code> 中配置真实登录与注册接口，并在成功回调里跳转对应工作台。</p>
-    <button class="dialog__primary" type="button">返回入口</button>
-  </dialog>
 
   <script src="/assets/app-core.js"></script>
   <script src="/assets/api-client.js"></script>

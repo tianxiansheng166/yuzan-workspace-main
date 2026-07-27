@@ -1,11 +1,6 @@
 (() => {
   'use strict';
 
-  const AUTH_ENDPOINTS = {
-    login: '',
-    register: ''
-  };
-
   const body = document.body;
   const intro = document.getElementById('intro');
   const world = document.getElementById('world');
@@ -25,8 +20,8 @@
   const transitionDetail = document.getElementById('transitionDetail');
   const soundSwitch = document.getElementById('soundSwitch');
   const motionToggle = document.getElementById('motionToggle');
-  const dialog = document.getElementById('dialog');
   const roleStatus = document.getElementById('roleStatus');
+  const loginStatus = document.getElementById('loginStatus');
 
   const storySets = [
     ['进入语赞心声', '继续你的高原学习旅程', '从声音出发，连接课程、教师支持、练习反馈与持续复测，让每一次发声都在雪山与山谷之间被认真听见。', '今天，第 <strong>12,842</strong> 次发声正在穿越雪山。'],
@@ -140,9 +135,6 @@
     admin: 'SCHOOL_ADMIN'
   };
 
-  const DEMO_ACCOUNTS = ['student.test', 'teacher.test', 'volunteer.test', 'admin.test', 'researcher.test'];
-  const DEMO_PASSWORD = 'YuzanTest!2026';
-
   function hasApiClient() {
     return typeof window !== 'undefined' && window.YuzanApi && typeof window.YuzanApi.login === 'function';
   }
@@ -156,36 +148,40 @@
     }, 2350);
   }
 
-  function finishError(message) {
+  function setAuthStatus(form, message, state = '') {
+    const status = form === loginPanel ? loginStatus : roleStatus;
+    if (!status) return;
+    status.textContent = message;
+    status.closest('.connection-status')?.classList.toggle('is-error', state === 'error');
+    status.setAttribute('role', state === 'error' ? 'alert' : 'status');
+  }
+
+  function describeAuthError(error) {
+    if (error?.status === 401) return '账号或密码不正确，请核对后重试。';
+    if (error?.status === 403) return '当前账号没有可用的学校或角色权限，请联系学校管理员。';
+    if (error?.status >= 500) return '认证服务暂时不可用，本次登录未生效，请稍后重试。';
+    if (error?.code === 'AUTH_NETWORK_OFFLINE') return '当前设备未联网，登录需要连接认证服务。';
+    if (error?.code === 'AUTH_CLIENT_UNAVAILABLE') return '登录服务未正确加载，请刷新页面后重试。';
+    if (error?.code === 'AUTH_SESSION_INVALID') return '登录服务未返回有效会话，本次登录未生效。';
+    if (!error?.status) return '认证服务暂时不可用，本次登录未生效，请稍后重试。';
+    return error.message || '登录失败，本次操作未创建会话。';
+  }
+
+  function finishError(form, message) {
     window.setTimeout(() => {
       transition.classList.remove('is-active');
       transition.setAttribute('aria-hidden', 'true');
       body.classList.remove('is-transitioning');
-      window.alert(message || '连接失败，请稍后再试。');
-    }, 900);
-  }
-
-  function installDemoSession(account, role) {
-    localStorage.setItem('yuzan-access-token', 'demo-token-' + account);
-    localStorage.setItem('yuzan-active-school-id', '11111111-1111-4111-8111-111111111111');
-    localStorage.setItem('yuzan-demo-session', JSON.stringify({ account, loggedInAt: Date.now(), offline: true }));
-    return window.YuzanApi ? window.YuzanApi.getHomeUrlByRole({ memberships: [{ role }] }) : '/select-school';
+      form.querySelector('button[type="submit"]')?.removeAttribute('disabled');
+      setAuthStatus(form, message || '登录失败，本次操作未创建会话。', 'error');
+    }, 300);
   }
 
   async function callEndpoint(action, payload) {
-    const endpoint = AUTH_ENDPOINTS[action];
-    if (endpoint) {
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      if (!response.ok) throw new Error(`请求失败：${response.status}`);
-      return response.json();
-    }
-
     if (!hasApiClient()) {
-      return { demo: true };
+      const error = new Error('认证客户端不可用');
+      error.code = 'AUTH_CLIENT_UNAVAILABLE';
+      throw error;
     }
 
     const api = window.YuzanApi;
@@ -207,63 +203,20 @@
     transition.classList.add('is-active');
     transition.setAttribute('aria-hidden', 'false');
     body.classList.add('is-transitioning');
-
-    if (action === 'login' && !navigator.onLine) {
-      localStorage.setItem('yuzan-demo-session', JSON.stringify({ account: data.account, loggedInAt: Date.now(), offline: true }));
-      if (window.YuzanDemo) window.YuzanDemo.toast('已使用本机凭据登录', 'warning');
-      finishRedirect('/select-school');
-      return;
-    }
+    form.querySelector('button[type="submit"]')?.setAttribute('disabled', '');
+    setAuthStatus(form, action === 'login' ? '正在验证真实身份…' : '正在创建真实账号…');
 
     try {
+      if (!navigator.onLine) {
+        const error = new Error('当前设备未联网');
+        error.code = 'AUTH_NETWORK_OFFLINE';
+        throw error;
+      }
       const result = await callEndpoint(action, data);
-      if (result?.redirect) {
-        finishRedirect(result.redirect);
-        return;
-      }
-
-      // Demo fallback: if the API is not configured, allow test accounts to log in.
-      if (action === 'login' && result?.demo !== false) {
-        const account = data.account?.trim();
-        const password = data.password;
-        const roleMap = {
-          'student.test': 'STUDENT',
-          'teacher.test': 'TEACHER',
-          'volunteer.test': 'VOLUNTEER',
-          'admin.test': 'SCHOOL_ADMIN',
-          'researcher.test': 'RESEARCHER'
-        };
-        if (DEMO_ACCOUNTS.includes(account) && password === DEMO_PASSWORD) {
-          const homeUrl = installDemoSession(account, roleMap[account] || 'STUDENT');
-          if (window.YuzanDemo) window.YuzanDemo.toast('演示模式登录成功', 'warning');
-          finishRedirect(homeUrl);
-          return;
-        }
-      }
-
-      window.setTimeout(() => {
-        transition.classList.remove('is-active');
-        transition.setAttribute('aria-hidden', 'true');
-        body.classList.remove('is-transitioning');
-        dialog.showModal();
-      }, 2350);
+      finishRedirect(result.redirect);
     } catch (error) {
-      const account = data.account?.trim?.() || data.phone?.trim?.();
-      const password = data.password;
-      if (action === 'login' && DEMO_ACCOUNTS.includes(account) && password === DEMO_PASSWORD) {
-        const roleMap = {
-          'student.test': 'STUDENT',
-          'teacher.test': 'TEACHER',
-          'volunteer.test': 'VOLUNTEER',
-          'admin.test': 'SCHOOL_ADMIN',
-          'researcher.test': 'RESEARCHER'
-        };
-        const homeUrl = installDemoSession(account, roleMap[account] || 'STUDENT');
-        if (window.YuzanDemo) window.YuzanDemo.toast('演示模式登录成功', 'warning');
-        finishRedirect(homeUrl);
-        return;
-      }
-      finishError(error.message || '连接失败，请稍后再试。');
+      window.YuzanApi?.clearSession?.();
+      finishError(form, describeAuthError(error));
     }
   }
 
@@ -324,11 +277,12 @@
   registerPanel.addEventListener('submit', event => { event.preventDefault(); submitAuth(registerPanel, 'register'); });
   soundSwitch.addEventListener('click', startSoundField);
   motionToggle.addEventListener('click', toggleMotion);
-  document.getElementById('forgotButton').addEventListener('click', () => window.alert('请接入现有项目的找回密码流程。'));
-  dialog.querySelector('.dialog__close').addEventListener('click', () => dialog.close());
-  dialog.querySelector('.dialog__primary').addEventListener('click', () => dialog.close());
-  dialog.addEventListener('click', event => { if (event.target === dialog) dialog.close(); });
-  document.querySelectorAll('.field input').forEach(input => input.addEventListener('input', () => input.closest('.field')?.classList.remove('is-invalid')));
+  document.getElementById('forgotButton').addEventListener('click', () => window.alert('找回密钥暂未开放，请联系学校管理员重置。'));
+  document.querySelectorAll('.field input').forEach(input => input.addEventListener('input', () => {
+    input.closest('.field')?.classList.remove('is-invalid');
+    const form = input.closest('form');
+    if (form === loginPanel) setAuthStatus(loginPanel, '等待连接认证服务');
+  }));
 
   if (localStorage.getItem('yuzan-reduced-motion') === 'true' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     body.classList.add('reduced-motion');
