@@ -1,0 +1,71 @@
+{
+  "id": "P0-MOBILE-VISUAL-BLOCKERS",
+  "status": "PLANNED",
+  "title": "关闭 390px 移动端真实登录视觉阻塞",
+  "owner": "codex-account-b-mobile-builder",
+  "reviewer": "Independent Browser Visual Verifier",
+  "branch": "task/p0-mobile-visual-blockers",
+  "base_commit": "79c1711057ed4b6f353b3454afdc58cfee8d38b1",
+  "user_outcome": "教师或学生可在 390px 移动端清晰完成真实登录，并在失败时看到明确且不溢出的错误状态",
+  "current_facts": [
+    "已接受的真实认证集成提交为 79c1711057ed4b6f353b3454afdc58cfee8d38b1",
+    "本任务只修复 frontend/login/** 内的移动端可见阻塞，不改变认证契约",
+    "错误凭据、角色或学校不匹配及 API 不可用必须继续 fail closed"
+  ],
+  "product_alignment": {
+    "p0": "语赞心声真实学习证据与教师干预闭环",
+    "contribution": "解除 390px 移动端进入真实身份链路的视觉与交互阻塞",
+    "non_goals": [
+      "不修改认证 API、会话逻辑、全局路由或其他页面",
+      "不引入 demo token、离线假登录或静态业务数据",
+      "不执行独立验收或集成"
+    ]
+  },
+  "context": {
+    "required": [
+      "frontend/login/index.html",
+      "frontend/login/app.js",
+      "frontend/login/login.js"
+    ],
+    "optional": [
+      "frontend/login/**"
+    ]
+  },
+  "depends_on": [
+    "P0-SEC-AUTH-DEMO-FALLBACK-REMOVAL"
+  ],
+  "integration_order": [
+    "P0-SEC-AUTH-DEMO-FALLBACK-REMOVAL",
+    "P0-MOBILE-VISUAL-BLOCKERS",
+    "P0-INTEGRATED-GOLDEN-LOOP-VERIFY"
+  ],
+  "allowed_paths": [
+    "frontend/login/**",
+    "project-ops/handoffs/P0-MOBILE-VISUAL-BLOCKERS.md",
+    "project-ops/tasks/active/P0-MOBILE-VISUAL-BLOCKERS.json"
+  ],
+  "shared_owner_changes": [],
+  "contract_change_request": null,
+  "minimal_tests": [
+    {
+      "name": "登录页聚焦静态检查",
+      "command": "按 frontend/login 现有脚本执行"
+    },
+    {
+      "name": "390px 浏览器可见旅程与失败路径",
+      "command": "使用隔离端口和独立 Chromium context 执行 Playwright"
+    },
+    {
+      "name": "任务审查门禁",
+      "command": "& .\\scripts\\repo\\task-gate.ps1 -Mode review"
+    }
+  ],
+  "test_evidence": [],
+  "handoff": "project-ops/handoffs/P0-MOBILE-VISUAL-BLOCKERS.md",
+  "rollback": "由 Integration Lead 回退本任务单一提交",
+  "delivery": {
+    "push_task_branch": true,
+    "remote": "origin",
+    "merge_target": "integration/p0-multitrack-001"
+  }
+}
