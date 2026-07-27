@@ -98,37 +98,37 @@
       "name": "固定业务 ID 源码证伪",
       "result": "PASS",
       "command": "rg -n --glob '!**/node_modules/**' --glob '!**/assets/**' \"submission-1|course-1|assignment-1\" frontend/server.mjs frontend/shared/teacher-shell.js frontend/teacher",
-      "summary": "attempt 5 退出码 1、零匹配；旧固定目录已迁移为 assignment 模板，所有教师入口改为真实队列或动态 submission 路由。"
+      "summary": "attempt 6 退出码 1、零匹配；旧固定目录已迁移为 assignment 模板，所有教师入口改为真实队列或动态 submission 路由。"
     },
     {
       "name": "前端相关测试或语法检查",
       "result": "PASS",
       "command": "node --check scoped JavaScript；python -m py_compile frontend/teacher/reviews/verify-routing.py；git diff --check",
-      "summary": "attempt 5 的 8 个变更 JS 均通过语法检查；Python 编译和 whitespace 检查通过。"
+      "summary": "attempt 6 的 8 个变更 JS 均通过语法检查；Python 编译和 whitespace 检查通过。"
     },
     {
       "name": "教师入口浏览器导航证据",
       "result": "PASS",
       "command": "PORT=4176 API_BASE_URL=http://127.0.0.1:4000 node frontend/server.mjs；另一个终端运行 python frontend/teacher/reviews/verify-routing.py",
-      "summary": "attempt 5 的 390x844 真实 unavailable 路径与 1024x768 聚焦 UI fixture 均通过：未知角色不发 submission GET；无答案/录音时 Play/Grade/Accept/Return 全禁用；有书面证据时发送 decision=RETURN 和具体反馈，随后重新 GET 并显示 RETURNED。fixture 明确不构成服务端授权或持久化证据；page errors 为 0。"
+      "summary": "attempt 6 的 390x844 真实 unavailable 路径与 1024x768 聚焦 UI fixture 均通过：未知角色不发 submission GET；无答案/录音时 Play/Grade/Accept/Return 全禁用；有书面证据时发送 decision=RETURN 和具体反馈，随后重新 GET 并显示 RETURNED。fixture 明确不构成服务端授权或持久化证据；page errors 为 0。"
     },
     {
       "name": "submission 授权、真实证据与 fresh-read",
       "result": "PASS",
       "command": "pnpm --filter @yuzan/api exec vitest run --config test/modules/submissions/vitest.config.ts",
-      "summary": "attempt 5：3 files、61 tests 全部通过；覆盖 owner 学生正向、其他学生 403、同班教师正向、跨班教师 403，以及真实书面/录音证据和 RETURNED + revision + feedback 的新上下文读取。"
+      "summary": "attempt 6：3 files、61 tests 全部通过；覆盖 owner 学生正向、其他学生 403、同班教师正向、跨班教师 403，以及真实书面/录音证据和 RETURNED + revision + feedback 的新上下文读取。"
     },
     {
       "name": "feedback 授权与 RETURN 持久化并发",
       "result": "PASS",
       "command": "pnpm --filter @yuzan/api exec vitest run --config test/modules/feedback/vitest.config.ts",
-      "summary": "attempt 5：2 files、22 tests 全部通过；覆盖 STUDENT/跨班教师 POST 拒绝、同班教师成功，以及 RETURN 原子保存为 RETURNED、revision 从 1 到 2 且只更新一次。"
+      "summary": "attempt 6：2 files、22 tests 全部通过；覆盖 STUDENT/跨班教师 POST 拒绝、同班教师成功，以及 RETURN 原子保存为 RETURNED、revision 从 1 到 2 且只更新一次。"
     },
     {
       "name": "OpenAPI 契约与生成一致性",
       "result": "PASS",
       "command": "pnpm --filter @yuzan/contracts test",
-      "summary": "attempt 5：OpenAPI lint 通过，生成器 6/6 tests 通过，generated.ts 与 openapi.yaml 一致。"
+      "summary": "attempt 6：OpenAPI lint 通过，生成器 6/6 tests 通过，generated.ts 与 openapi.yaml 一致。"
     }
   ],
   "blockers": [],

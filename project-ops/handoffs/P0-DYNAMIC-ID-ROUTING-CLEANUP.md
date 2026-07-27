@@ -1,6 +1,6 @@
 # P0-DYNAMIC-ID-ROUTING-CLEANUP Handoff
 
-- Owner: `codex-account-c-dynamic-builder`（attempt 5，review round 1）
+- Owner: `codex-account-c-dynamic-builder`（attempt 6，review round 2）
 - Reviewer: independent verifier
 - Branch: `task/p0-dynamic-id-routing-cleanup`
 - Base commit: `41a0ff3656af7888d4c2e46eb180eeffc3414115`
@@ -59,6 +59,21 @@
 Attempt 5 复核结果：
 
 | 检查 | 结果 |
+| --- | --- |
+| 固定业务 ID、JS/Python 语法与 whitespace | `PASS`：固定 ID 零匹配；8 个变更 JS、Python 编译、`git diff --check` 全通过 |
+| 教师入口浏览器导航 | `PASS`：4/4 checks；真实 unavailable、未知角色 fail closed、无证据禁用操作、`RETURN` 后 fresh GET 显示 `RETURNED`；`page_errors=0` |
+| submission 聚焦测试 | `PASS`：3 files、61 tests |
+| feedback 聚焦测试 | `PASS`：2 files、22 tests |
+| OpenAPI 与生成契约 | `PASS`：OpenAPI valid；generator 6/6 |
+
+2026-07-27 09:50–09:52 +08:00，在当前候选提交
+`e0bc42112264771376915d93299102b1bfb894ff` 上使用 lease
+`2470cb5a-ef78-4172-b8e7-f6b6f93561e9` 和 fencing epoch `39` 完成 attempt 6
+恢复复核。控制面给出的最新失败仅为旧 lease 过期，没有新的实现缺口；本轮重新执行全部
+最小测试，不沿用旧租约结果。shell 使用 Node 22.19.0，pnpm 如实提示仓库期望
+Node `>=24 <27`；所有聚焦测试仍实际执行并通过，未安装依赖或修改 lockfile。
+
+| attempt 6 检查 | 结果 |
 | --- | --- |
 | 固定业务 ID、JS/Python 语法与 whitespace | `PASS`：固定 ID 零匹配；8 个变更 JS、Python 编译、`git diff --check` 全通过 |
 | 教师入口浏览器导航 | `PASS`：4/4 checks；真实 unavailable、未知角色 fail closed、无证据禁用操作、`RETURN` 后 fresh GET 显示 `RETURNED`；`page_errors=0` |
