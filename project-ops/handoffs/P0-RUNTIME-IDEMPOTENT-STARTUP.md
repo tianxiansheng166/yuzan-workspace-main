@@ -4,27 +4,25 @@
 - Reviewer: independent runtime verifier
 - Branch: `task/p0-runtime-idempotent-startup`
 - Base commit: `41a0ff3656af7888d4c2e46eb180eeffc3414115`
-- Status: `BLOCKED`
+- Status: `READY_FOR_REVIEW`
 
-## Attempt 10 / review round 3 control-plane blocker
+## Attempt 11 / auth-integrated runtime candidate
 
-- Independent rejection `DEMO_FALLBACK_API_FAILURE_FAKE_SUCCESS` reproduces through
-  `frontend/server.mjs`, which serves `/login/`; `frontend/login/index.html` directly loads
-  `frontend/login/app.js`.
-- `frontend/login/app.js` catches API/network failure and calls `installDemoSession`, writing
-  `demo-token-*`, fixed school ID `11111111-1111-4111-8111-111111111111`, and
-  `yuzan-demo-session`, then redirects to a role workspace.
-- The required repair must modify at least `frontend/login/app.js` (and should separately audit the
-  same fallback in `frontend/login/login.js`). Neither path is in this lease's `write_set` or the
-  task's `allowed_paths`; the leased set only permits `scripts/local-runtime/**` and task
-  metadata/runbook files.
-- A runtime wrapper or response rewrite under `scripts/local-runtime/**` is not a valid repair:
-  the verifier starts `frontend/server.mjs` directly, and such a wrapper would leave the production
-  login source capable of fake success.
-- Required control-plane action: assign the frontend auth owner a lease containing
-  `frontend/login/app.js` (and, if the unused duplicate is in scope, `frontend/login/login.js`) plus
-  focused browser-negative test paths, or explicitly expand this task's write set under the proper
-  owner/lock. Until then, this builder cannot emit `COMPLETE_CANDIDATE`.
+- Exact accepted auth integration commit:
+  `79c1711057ed4b6f353b3454afdc58cfee8d38b1`
+  (`origin/integration/p0-multitrack-001` at fetch time).
+- Exact combined merge commit tested:
+  `e33e2144cbef277382ee3e7e615e1c5276cd93a5`.
+- The merge was clean. No authentication source was edited or reimplemented by this task.
+- Because `task-gate.ps1` evaluates every changed path since the original runtime base and has no
+  accepted-import field, the task record lists the ten exact paths introduced by the authorized
+  integration commit. This is a gate declaration for that immutable merge, not runtime-task
+  ownership or permission to edit authentication implementation.
+- Runtime syntax/repeatability remained green, so no new runtime implementation repair was needed.
+- Fresh 390x844 Chromium contexts for `student.test` and `teacher.test`, with the API target on an
+  unbound localhost port, each received 502, remained on `/login`, displayed an explicit unavailable
+  error, wrote no token/user/school/demo session, and performed no role redirect. A second fresh
+  context after each submission also had all four authentication storage values absent.
 
 ## 用户结果与方向
 
@@ -59,6 +57,8 @@
 | attempt 7 exact-candidate 重跑 | syntax + runtime 命令同上 | `PASS`，候选 `e2350f3cc336c212778232ed2753930e0e1b213d`，运行时间 `2026-07-26T18:18Z` |
 | attempt 8 exact-candidate 重跑 | syntax + runtime 命令同上 | `PASS`，候选 `9bb02084b6d662e44e29cd5ff8c81504a1fa52c3`，运行时间 `2026-07-26T18:52Z` |
 | attempt 9 exact-candidate 重跑 | syntax + runtime 命令同上 | `PASS`，候选 `956839d32450e371d666817bf30f801c89d36c28`，运行时间 `2026-07-26T19:20Z` |
+| attempt 11 auth-integrated exact-combined 重跑 | syntax + runtime 命令同上 | `PASS`，合并提交 `e33e2144cbef277382ee3e7e615e1c5276cd93a5`，运行时间 `2026-07-27T01:02Z` |
+| attempt 11 两个 fresh-context API unavailable 登录负向 | API 指向无监听 `127.0.0.1:44999`，分别以 fresh Chromium context 提交 `student.test` 与 `teacher.test` | `PASS`，两者均 502、留在 `/login`、显式 unavailable；提交 context 与随后 fresh context 的 token/user/school/demo 全为空，无角色跳转 |
 
 通过结果：`PASS_EXACT_COMMIT_ATTESTED`；两次启动入口 `PASS_IDENTICAL_PIDS_AND_COMMIT`；
 foreign partial occupancy `PASS_FAILED_CLOSED_NO_KILL_NO_PORT_CHANGE`；包含仓库根、
@@ -77,6 +77,10 @@ fixture；套件在 `finally` 中完成清理。
 
 attempt 9 输出的隔离端口为 `58559/58560/58561`，PID 指纹为
 `api=37028;frontend_proxy=40704;speech=38076;worker=32548`。这些 PID 同样只属于短生命周期
+fixture；套件在 `finally` 中完成清理。
+
+attempt 11 输出的隔离端口为 `59693/59694/59695`，PID 指纹为
+`api=27756;frontend_proxy=27432;speech=40600;worker=35340`。这些 PID 同样只属于短生命周期
 fixture；套件在 `finally` 中完成清理。
 
 ## 自审
