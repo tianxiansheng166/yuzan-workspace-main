@@ -4,7 +4,7 @@
 - Reviewer: Independent Browser Visual Verifier
 - Branch: task/p0-mobile-visual-blockers
 - Base commit: 79c1711057ed4b6f353b3454afdc58cfee8d38b1
-- Attempt / fence: `2` / `37`
+- Attempt / fence: `3` / `41`
 - Status: `READY_FOR_REVIEW`
 
 ## 用户结果与方向
@@ -30,12 +30,23 @@
 | verifier 语法 | `python -m py_compile frontend/login/verify_truthful_login.py` | `PASS` |
 | 390px 动态失败旅程 | 隔离前端端口 `45231`、不可用 API 端口 `45999`，运行 `verify_truthful_login.py --mode api-unavailable --viewport-width 390 --viewport-height 844` | `PASS`：无横向溢出；Logo/故事分离；关键 tap target ≥44px；502 错误完整；fresh context 无会话；unexpected console/page errors 均为空 |
 | 跨尺寸动态回归 | 同一隔离服务运行 `1024x768` 与 `1440x900` | `PASS`：无横向溢出、错误裁切或非预期 console/page error |
-| Attempt 2 截图复核 | 查看 `yuzan-login-attempt2-390x844.png` 原始尺寸截图 | `PASS`：品牌、故事与登录卡片层级清晰，表单可操作，502 错误文案完整可读 |
+| Attempt 3 截图复核 | 查看 `yuzan-login-attempt3-390x844.png` 原始尺寸截图 | `PASS`：品牌、故事与登录卡片层级清晰，表单可操作，502 错误文案完整可读 |
 | 差异检查 | `git diff --check` | `PASS` |
 | Review gate | `task-gate.ps1 -Mode review -TaskFile .\project-ops\tasks\active\P0-MOBILE-VISUAL-BLOCKERS.json` | `PASS`：4 个 changed paths 均在白名单内 |
 
-以上聚焦单测、三档浏览器旅程、语法与差异检查均于 attempt 2、fencing epoch 37 重新执行，
-不是沿用 attempt 1 的测试结论。浏览器输出标记为 `BUILDER_PREFLIGHT_ONLY`，不冒充独立验收。
+以上聚焦单测、三档浏览器旅程、语法与差异检查均于 attempt 3、fencing epoch 41 重新执行，
+不是沿用旧 attempt 的测试结论。浏览器输出标记为 `BUILDER_PREFLIGHT_ONLY`，不冒充独立验收；
+一次性隔离前端在执行后已回收，端口 `45231` 无残留 listener。
+
+## Review history
+
+- Review round 1 保留原候选 `4a3ce1f2ab5f8030490048e8dd3ecdbd7f24454b` 的 `REJECTED` 记录。
+- 失败分类：`AUTHORITATIVE_DISPATCH_IDENTITY_MISMATCH`，发生于 `control-plane-preflight`；
+  detached verifier worktree 与六项 context hash 均正确，但权威 verifier work order 错指 canonical
+  repository 且缺少 `candidate_commit`，因此独立浏览器旅程未执行。
+- 该拒绝不指向实现缺陷。后续独立验收仍需 sole-writer controller 派发新的 verifier work order，
+  明确 detached verifier worktree 与本轮完整 candidate commit；Builder 不改写稳定 Goal/prompt，
+  也不自验收。
 
 ## 自审
 
