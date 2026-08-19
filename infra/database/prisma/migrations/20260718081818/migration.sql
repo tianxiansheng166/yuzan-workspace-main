@@ -1,8 +1,8 @@
 -- AlterEnum
-ALTER TYPE "NotificationType" ADD VALUE 'ASSESSMENT_ASSIGNED';
+ALTER TYPE "NotificationType" ADD VALUE IF NOT EXISTS 'ASSESSMENT_ASSIGNED';
 
 -- DropIndex
-DROP INDEX "PrivacyRequest_revokedByUserId_idx";
+DROP INDEX IF EXISTS "PrivacyRequest_revokedByUserId_idx";
 
 -- AlterTable
 ALTER TABLE "SpeechJob" ALTER COLUMN "targetTextVersion" SET DEFAULT '';
