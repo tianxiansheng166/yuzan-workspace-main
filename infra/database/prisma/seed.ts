@@ -105,7 +105,7 @@ async function seedQuestionBankSamples() {
       questionType: "TEXT",
       abilityCategory: "听辨训练",
       deliverySpec: {
-        stimulus: { type: "AUDIO", resourceId: null },
+        stimulus: { type: "AUDIO", resourceId: null, url: "/student/growth/assets/practice-sample.wav" },
         response: { type: "TEXT", placeholder: "请输入你听到的内容" },
       },
       scoringSpec: { strategy: "TEXT_MATCH", maxScore: 4, acceptedAnswers: ["示例答案"] },
@@ -133,7 +133,7 @@ async function seedQuestionBankSamples() {
     });
     await prisma.questionBankItemVersion.upsert({
       where: { itemId_version: { itemId: item.id, version: 1 } },
-      update: {},
+      update: { deliverySpec: sample.deliverySpec },
       create: { id: sample.versionId, itemId: item.id, version: 1, status: "PUBLISHED", deliverySpec: sample.deliverySpec, scoringSpec: sample.scoringSpec, publishedAt: new Date("2026-07-21T00:00:00.000Z") },
     });
   }
