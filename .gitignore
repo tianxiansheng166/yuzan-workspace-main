@@ -27,3 +27,4 @@ runtime-local/
 !runtime-local/secrets/
 !runtime-local/secrets/ai-provider.env.example
 _tmp/
+local_sources/question-bank/.generated/

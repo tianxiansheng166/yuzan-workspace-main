@@ -22,11 +22,14 @@
     "db:validate": "pnpm --filter @yuzan/database validate",
     "contract:validate": "pnpm --filter @yuzan/contracts validate",
     "contract:types": "pnpm --filter @yuzan/contracts generate",
+    "qb:source:validate": "node tools/question-bank-importer/index.mjs",
+    "test:question-import": "node --test tools/question-bank-importer/index.test.mjs",
     "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",
     "prettier": "^3.5.3",
+    "sharp": "^0.35.3",
     "typescript": "^5.8.3"
   }
 }
