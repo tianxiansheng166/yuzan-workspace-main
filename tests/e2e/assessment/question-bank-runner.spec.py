@@ -79,6 +79,13 @@ try:
     page.reload()
     page.locator(".runner-option.selected").wait_for(timeout=10_000)
     page.locator('[data-go="1"]').click()
+    audio = page.locator("audio[src='/assessment/assets/question-bank/audio/level-1-dictation-1.mp3']")
+    assert audio.count() == 1
+    audio_response = page.request.get(f"{BASE}/assessment/assets/question-bank/audio/level-1-dictation-1.mp3")
+    assert audio_response.ok, audio_response.text()
+    assert audio_response.headers.get("content-type", "").startswith("audio/mpeg")
+    page.locator('[data-go="0"]').click()
+    page.locator('[data-go="1"]').click()
     page.locator("[data-text]").fill("Runner 自动保存验证")
     page.wait_for_timeout(1000)
     page.reload()
@@ -96,6 +103,9 @@ try:
     page.locator("[data-stop-recording]").click()
     page.locator("[data-upload-recording]").wait_for(timeout=5_000)
     assert errors == [], errors
+    page.locator('[data-go="1"]').click()
+    assert page.locator("[data-start-recording]").count() == 0
+    assert page.locator(".runner-speech audio").count() == 0
     browser.close()
 finally:
   if definition_id:

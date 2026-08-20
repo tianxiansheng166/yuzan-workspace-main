@@ -61,6 +61,9 @@ const ids = {
   questionBankAudioTextVersion: "75000000-0000-4000-8000-000000000002",
   questionBankSpeech: "74000000-0000-4000-8000-000000000003",
   questionBankSpeechVersion: "75000000-0000-4000-8000-000000000003",
+  questionBankAudioPractice: "76000000-0000-4000-8000-000000000001",
+  questionBankAudioPracticeVersion: "77000000-0000-4000-8000-000000000001",
+  questionBankAudioPracticeDelivery: "78000000-0000-4000-8000-000000000001",
 } as const;
 
 async function passwordHash(password: string) {
@@ -105,10 +108,10 @@ async function seedQuestionBankSamples() {
       questionType: "TEXT",
       abilityCategory: "听辨训练",
       deliverySpec: {
-        stimulus: { type: "AUDIO", resourceId: null, url: "/student/growth/assets/practice-sample.wav" },
+        stimulus: { type: "AUDIO", resourceId: null, title: "水平一级·听写句子第1题", url: "/assessment/assets/question-bank/audio/level-1-dictation-1.mp3" },
         response: { type: "TEXT", placeholder: "请输入你听到的内容" },
       },
-      scoringSpec: { strategy: "TEXT_MATCH", maxScore: 4, acceptedAnswers: ["示例答案"] },
+      scoringSpec: { strategy: "TEXT_MATCH", maxScore: 5, acceptedAnswers: ["春风吹，花儿开。"] },
     },
     {
       id: ids.questionBankSpeech,
@@ -137,6 +140,82 @@ async function seedQuestionBankSamples() {
       create: { id: sample.versionId, itemId: item.id, version: 1, status: "PUBLISHED", deliverySpec: sample.deliverySpec, scoringSpec: sample.scoringSpec, publishedAt: new Date("2026-07-21T00:00:00.000Z") },
     });
   }
+}
+
+type QuestionBankAudioQuestion = {
+  level: string;
+  number: number;
+  sentence: string;
+  sourceFile: string;
+  url: string;
+};
+
+const questionBankAudioQuestions: QuestionBankAudioQuestion[] = [
+  { level: "水平一级", number: 1, sentence: "春风吹，花儿开。", sourceFile: "水平一级/听写句子/1.春风吹，花儿开.mp3", url: "/assessment/assets/question-bank/audio/level-1-dictation-1.mp3" },
+  { level: "水平一级", number: 2, sentence: "弯弯的月亮像小小的船。", sourceFile: "水平一级/听写句子/2.弯弯的月亮像小小的船。.mp3", url: "/assessment/assets/question-bank/audio/level-1-dictation-2.mp3" },
+  { level: "水平一级", number: 3, sentence: "一片片叶子从树上落下来。", sourceFile: "水平一级/听写句子/3.一片片叶子从树上落下来。.mp3", url: "/assessment/assets/question-bank/audio/level-1-dictation-3.mp3" },
+  { level: "水平二级", number: 1, sentence: "大家一听，都来劲了，争先恐后赶到运粮地点。", sourceFile: "水平二级/听写句子/1.大家一听，都来劲了，争先恐后赶到运粮地点。.mp3", url: "/assessment/assets/question-bank/audio/level-2-dictation-1.mp3" },
+  { level: "水平二级", number: 2, sentence: "站在山顶望去，山间的巨石模样千姿百态。", sourceFile: "水平二级/听写句子/2.站在山顶望去，山间的巨石模样千姿百态.mp3", url: "/assessment/assets/question-bank/audio/level-2-dictation-2.mp3" },
+  { level: "水平二级", number: 3, sentence: "我们脱掉棉袄，奔向田野，去寻找可爱的春天。", sourceFile: "水平二级/听写句子/3.我们脱掉棉袄，奔向田野，去寻找可爱的春天。.mp3", url: "/assessment/assets/question-bank/audio/level-2-dictation-3.mp3" },
+  { level: "水平三级", number: 1, sentence: "粉刷墙面时他动作娴熟，整套工序一丝不苟，黑衣之上没沾染半点石灰浆。", sourceFile: "水平三级/听写句子/1.粉刷墙面时他动作娴熟，整套工序一丝不苟，黑衣之上没沾染半点石灰浆。.mp3", url: "/assessment/assets/question-bank/audio/level-3-dictation-1.mp3" },
+  { level: "水平三级", number: 2, sentence: "秦王假意用城池换取和氏璧，存心欺诈，蔺相如冷静周旋，守住了赵国的宝物与尊严。", sourceFile: "水平三级/听写句子/2.秦王假意用城池换取和氏璧，存心欺诈，蔺相如冷静周旋，守住了赵国的宝物与尊严。.mp3", url: "/assessment/assets/question-bank/audio/level-3-dictation-2.mp3" },
+  { level: "水平三级", number: 3, sentence: "园内陈列着历代瑰宝，园林宏伟精致，却被无情损毁，实在令人无比惋惜。", sourceFile: "水平三级/听写句子/3.园内陈列着历代瑰宝，园林宏伟精致，却被无情损毁，实在令人无比惋惜。.mp3", url: "/assessment/assets/question-bank/audio/level-3-dictation-3.mp3" },
+  { level: "水平四级", number: 1, sentence: "缓延的小丘上缀满野花，柔美的线条像水墨画一般被淡淡渲染开来。", sourceFile: "水平四级/听写句子/1缓延的小丘上缀满野花，柔美的线条像水墨画一般被淡淡渲染开来.mp3", url: "/assessment/assets/question-bank/audio/level-4-dictation-1.mp3" },
+  { level: "水平四级", number: 2, sentence: "红军从容跨过千山万水，险峻高山与湍急江河都显得平淡寻常。", sourceFile: "水平四级/听写句子/2红军从容跨过千山万水，险峻高山与湍急江河都显得平淡寻常。.mp3", url: "/assessment/assets/question-bank/audio/level-4-dictation-2.mp3" },
+  { level: "水平四级", number: 3, sentence: "善于见微知著、坚持发问探索，我们才有机会发掘世间真理。", sourceFile: "水平四级/听写句子/3.善于见微知著、坚持发问探索，我们才有机会发掘世间真理。.mp3", url: "/assessment/assets/question-bank/audio/level-4-dictation-3.mp3" },
+  { level: "水平五级", number: 1, sentence: "牧羊人默默耕耘荒芜山地，黏土坡地栽种幼苗，长久坚持使贫瘠荒原蜕变为繁茂富饶的沃土。", sourceFile: "水平五级/听写句子/1.牧羊人默默耕耘荒芜山地，黏土坡地栽种幼苗，长久坚持使贫瘠荒原蜕变为繁茂富饶的沃土。.mp3", url: "/assessment/assets/question-bank/audio/level-5-dictation-1.mp3" },
+  { level: "水平五级", number: 2, sentence: "君子治学需要淡泊宁静，懈怠浮躁会消磨志向，长久静心沉淀，方可拓宽胸襟、增长才学。", sourceFile: "水平五级/听写句子/2.君子治学需要淡泊宁静，懈怠浮躁会消磨志向，长久静心沉淀，方可拓宽胸襟、增长才学。.mp3", url: "/assessment/assets/question-bank/audio/level-5-dictation-2.mp3" },
+  { level: "水平五级", number: 3, sentence: "除夕街巷飘满饭菜香气，家家户户张贴对联，灯火彻夜通明，阖家团圆共度佳节。", sourceFile: "水平五级/听写句子/3.除夕街巷飘满饭菜香气，家家户户张贴对联，灯火彻夜通明，阖家团圆共度佳节。.mp3", url: "/assessment/assets/question-bank/audio/level-5-dictation-3.mp3" },
+  { level: "水平六级", number: 1, sentence: "这名官吏处事趋炎附势，面对权贵百般讨好，对待普通人却蛮横又傲慢。", sourceFile: "水平六级/听写句子/1这名官吏处事趋炎附势，面对权贵百般讨好，对待普通人却蛮横又傲慢。.mp3", url: "/assessment/assets/question-bank/audio/level-6-dictation-1.mp3" },
+  { level: "水平六级", number: 2, sentence: "穷困落魄的孔乙己固守读书人的虚荣，好喝懒做饱受旁人嗤笑，最终消失在冷清酒馆街巷。", sourceFile: "水平六级/听写句子/2.穷困落魄的孔乙己固守读书人的虚荣，好喝懒做饱受旁人嗤笑，最终消失在冷清酒馆街巷。.mp3", url: "/assessment/assets/question-bank/audio/level-6-dictation-2.mp3" },
+  { level: "水平六级", number: 3, sentence: "真正有教养的人当众懂得克制情绪，不会肆意张扬脾气，时刻顾及身边所有人的感受与体面。", sourceFile: "水平六级/听写句子/3真正有教养的人当众懂得克制情绪，不会肆意张扬脾气，时刻顾及身边所有人的感受与体面。.mp3", url: "/assessment/assets/question-bank/audio/level-6-dictation-3.mp3" },
+];
+
+async function seedQuestionBankAudioPractice() {
+  const questionVersions = [];
+  for (const question of questionBankAudioQuestions) {
+    const stableKey = `QB-V1-${question.level}-LISTEN-WRITE-${String(question.number).padStart(3, "0")}`;
+    const item = await prisma.questionBankItem.upsert({
+      where: { stableKey },
+      update: { level: question.level, abilityCategory: "听写句子", itemType: "TEXT", questionType: "LISTEN_WRITE" },
+      create: { schoolId: ids.school, stableKey, domain: "语赞心声", level: question.level, abilityCategory: "听写句子", itemType: "TEXT", questionType: "LISTEN_WRITE", gradeBand: question.level, difficulty: question.level },
+    });
+    const version = await prisma.questionBankItemVersion.upsert({
+      where: { itemId_version: { itemId: item.id, version: 1 } },
+      update: {
+        status: "PUBLISHED",
+        deliverySpec: { stimulus: { type: "AUDIO", title: `${question.level}·听写句子第${question.number}题`, instruction: "请播放你提供的原始音频，听完后完整写出句子。", url: question.url }, response: { type: "TEXT", multiline: true, placeholder: "请输入你听到的句子" } },
+        scoringSpec: { strategy: "TEXT_MATCH", maxScore: 5, acceptedAnswers: [question.sentence] },
+        publishedAt: new Date("2026-08-20T00:00:00.000Z"),
+      },
+      create: {
+        itemId: item.id,
+        version: 1,
+        status: "PUBLISHED",
+        deliverySpec: { stimulus: { type: "AUDIO", title: `${question.level}·听写句子第${question.number}题`, instruction: "请播放你提供的原始音频，听完后完整写出句子。", url: question.url }, response: { type: "TEXT", multiline: true, placeholder: "请输入你听到的句子" } },
+        scoringSpec: { strategy: "TEXT_MATCH", maxScore: 5, acceptedAnswers: [question.sentence] },
+        publishedAt: new Date("2026-08-20T00:00:00.000Z"),
+      },
+    });
+    questionVersions.push({ question, version });
+  }
+
+  await prisma.practiceDefinition.upsert({
+    where: { id: ids.questionBankAudioPractice },
+    update: { title: "语赞心声 Question Bank v1 · 听写音频验证", summary: "使用题库原始音频，按水平等级完成逐题听写。", status: "PUBLISHED", requiresRecording: false, instantFeedback: false },
+    create: { id: ids.questionBankAudioPractice, schoolId: ids.school, visibility: "SCHOOL", title: "语赞心声 Question Bank v1 · 听写音频验证", summary: "使用题库原始音频，按水平等级完成逐题听写。", coverAsset: "/assessment/assets/practice-catalog/morning-valley.png", difficulty: "分级", estimatedMinutes: 30, gradeBand: "水平一级至六级", abilityCategories: ["听写句子"], cultureTags: ["语赞心声", "Question Bank v1"], catalogType: "SPECIALIZED", requiresRecording: false, instantFeedback: false, status: "PUBLISHED" },
+  });
+
+  const existingVersion = await prisma.practiceVersion.findUnique({ where: { id: ids.questionBankAudioPracticeVersion }, select: { id: true } });
+  if (!existingVersion) {
+    await prisma.practiceVersion.create({ data: { id: ids.questionBankAudioPracticeVersion, definitionId: ids.questionBankAudioPractice, version: 1, status: "PUBLISHED", contentHash: "question-bank-v1-audio-dictation-20260820", publishedAt: new Date("2026-08-20T00:00:00.000Z"), sections: { create: [1, 2, 3, 4, 5, 6].map((levelNumber) => ({ title: `水平${["一", "二", "三", "四", "五", "六"][levelNumber - 1]}级·听写句子`, description: "音频与题目按等级、题号一一对应。", sortOrder: levelNumber, estimatedMinutes: 5, items: { create: questionVersions.filter(({ question }) => question.level === `水平${["一", "二", "三", "四", "五", "六"][levelNumber - 1]}级`).map(({ question, version }) => ({ questionVersionId: version.id, itemType: "TEXT", sortOrder: question.number, config: {} })) } })) } } });
+  }
+
+  await prisma.practiceDelivery.upsert({
+    where: { id: ids.questionBankAudioPracticeDelivery },
+    update: { status: "OPEN", practiceVersionId: ids.questionBankAudioPracticeVersion, classId: ids.class, mode: "SELF_PRACTICE" },
+    create: { id: ids.questionBankAudioPracticeDelivery, practiceVersionId: ids.questionBankAudioPracticeVersion, schoolId: ids.school, classId: ids.class, mode: "SELF_PRACTICE", reRecordPolicy: { maxAttempts: 1 }, mobilePolicy: { allowed: true }, status: "OPEN" },
+  });
 }
 
 async function seedReusablePractices() {
@@ -507,6 +586,7 @@ async function main() {
   // it never creates completed recordings, scores, or reports.
   if (process.env.P0_BOOTSTRAP_ONLY === "true") {
     await seedQuestionBankSamples();
+    await seedQuestionBankAudioPractice();
     await seedReusablePractices();
     console.log("Seeded six fictional reusable practices and active student deliveries.");
     return;
@@ -741,6 +821,7 @@ async function main() {
   });
 
   await seedQuestionBankSamples();
+  await seedQuestionBankAudioPractice();
   await seedReusablePractices();
   await seedStudentCourses();
 }
