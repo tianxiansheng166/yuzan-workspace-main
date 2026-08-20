@@ -1,5 +1,11 @@
 # P0 多泳道开发队列
 
+> **LEGACY GOVERNANCE REFERENCE.** Historical multi-agent control-plane document; not
+> an active startup gate for functionality-first development. Current authority is
+> `/AGENTS.md`, `/CURRENT_HANDOFF.md`, `/PROJECT_CONTEXT.md`, and
+> `/DEVELOPMENT_STATUS.md`. Use this file only when the user explicitly requests legacy
+> control-plane work.
+
 > 事实快照：2026-07-24
 > 机器可读任务图：`project-ops/multitrack-tasks.json`
 

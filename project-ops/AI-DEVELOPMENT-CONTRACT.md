@@ -1,5 +1,11 @@
 # AI 开发短契约
 
+> **LEGACY GOVERNANCE REFERENCE.** Historical multi-agent control-plane document; not
+> an active startup gate for functionality-first development. Current authority is
+> `/AGENTS.md`, `/CURRENT_HANDOFF.md`, `/PROJECT_CONTEXT.md`, and
+> `/DEVELOPMENT_STATUS.md`. Use this file only when the user explicitly requests legacy
+> control-plane work.
+
 这是所有开发任务的稳定默认规则。任务 JSON 只补充本次目标、事实、范围和证据；
 不要在每个任务里重复整套项目知识。
 

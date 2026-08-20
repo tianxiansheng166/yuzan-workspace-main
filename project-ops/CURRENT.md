@@ -1,5 +1,11 @@
 # CURRENT: 中心恢复点
 
+> **LEGACY GOVERNANCE REFERENCE.** Historical multi-agent control-plane document; not
+> an active startup gate for functionality-first development. Current authority is
+> `/AGENTS.md`, `/CURRENT_HANDOFF.md`, `/PROJECT_CONTEXT.md`, and
+> `/DEVELOPMENT_STATUS.md`. Use this file only when the user explicitly requests legacy
+> control-plane work.
+
 更新时间：2026-07-26
 
 ## 唯一运行目标

@@ -1,71 +1,60 @@
-# AGENTS.md
+# Codex development rules
 
-## 最小开工上下文
+## Cold start
 
-控制面已初始化时，每次开始、继续、上下文压缩或机器重启后的唯一入口是：
+At the start of a new conversation, run `git status`, `git branch --show-current`,
+and `git log -1 --oneline`, then read `CURRENT_HANDOFF.md`.
 
-```powershell
-& .\scripts\repo\mvp-control.ps1 -Action context -AgentId <worker-id>
-```
+- A clear user request is this turn's goal.
+- If the user says “continue”, “continue the project”, or “continue development”,
+  execute the single **NEXT TASK** in `CURRENT_HANDOFF.md` directly.
+- Do not ask the user to re-explain repository context.
 
-它先校验 Goal revision、租约、围栏 epoch 和动态工作单。没有有效租约时，不加载旧任务、
-不写功能代码；有租约时，只读取工作单 `context_manifest` 中列出的文件并校验 SHA256，
-然后再按工作单指示运行 `task-context.ps1 -Mode auto` 做 Git/白名单门禁。
+## Context and authority
 
-每轮启动 capsule 推荐不超过 32 KiB、硬上限 48 KiB，只包含短契约、动态工作单、当前
-任务/功能链、最新失败和 Git 事实。目标源码及 direct import/caller 在执行过程中按需读取，
-不塞入启动上下文。上下文压缩后重跑同一入口，不凭压缩摘要猜 Goal 或继续旧指令。
+Load only what is needed, in this order: this file, `CURRENT_HANDOFF.md`, then
+`PROJECT_CONTEXT.md`, `DEVELOPMENT_STATUS.md`, and task-related source/tests.
+Git, source, runtime, and tests are the facts. If the handoff conflicts with them,
+follow the facts and correct the handoff. `project-ops/**`, `docs/**`, old reports,
+prompts, and the old control plane are historical references, loaded only when useful.
 
-`docs/**`、旧 prompt、看板和 `CURRENT.md` 默认是 `REFERENCE_NO_AUTOLOAD`，不能覆盖
-当前 Goal、验收旅程、FeatureChain、Git/契约或真实运行证据。只有动态工作单以精确路径和
-用途授权时才能增量读取。文档生命周期和冲突优先级以
-`project-ops/control-plane/document-registry.json` 为准；未登记的 `docs/**` 一律不自动加载。
+## Functionality first
 
-尚未初始化控制面或执行治理迁移任务时，才直接运行 `task-context.ps1 -Mode auto`。不要要求
-用户重复上传仓库内文件，也不要默认通读整个 `docs/`、`PROJECT-CHARTER.md` 或历史报告。
+Deliver one clear user outcome per task. Prefer existing code, small focused changes,
+real runtime behavior, and targeted tests. Avoid speculative refactors, unrelated
+cleanup, and governance work. Core behavior must be real; known non-critical bugs may
+remain documented.
 
-## 仓库边界
+Ordinary feature work does **not** require PowerShell, `mvp-control.ps1`,
+`task-context.ps1`, `task-gate.ps1`, a lease, fencing epoch, task JSON, CCR,
+Integration Lead, or a worktree. Use those legacy mechanisms only when the user
+explicitly requests legacy control-plane work. Lack of PowerShell must not block Linux
+development.
 
-- 唯一主项目是 `D:/program/test_program/yuzanxinsheng/three/yuzan-next`；
-- 每个任务使用 sibling `../worktrees/<task-id>`，不要在主项目内创建完整克隆；
-- `frontend/` 是唯一当前前端；
-- 后端只在 `backend/api/`、`backend/worker/`、`backend/speech-scoring/`；
-- 共享源码在 `packages/`，数据库与基础设施在 `infra/`；
-- `../legacy-archive/` 只作恢复证据，不作开发输入；
-- 不得重建 `apps/apps-web`、`web-runtime`、`apps/api`、`apps/worker` 或
-  `services/speech-scoring`。
+## Repository safety
 
-`worktrees/` 的代码永远不是默认运行目标。需要给用户、产品或集成测试查看最新成果时，
-先将已验收 checkpoint 合入 `integration/p0-multitrack-001`，经硬化后提升到 `main`，
-再仅从 canonical `yuzan-next` 运行 `scripts/local-runtime/start-main.ps1`。
+- Use pnpm from the repository root; do not run `npm install` in subpackages.
+- Reuse existing models and contracts. Enforce server-side school/resource/user scope;
+  never substitute fixed IDs, static business data, fake success, or silent fallbacks.
+- Do not commit secrets, real student data, or unknown assets. Do not overwrite others'
+  work, force-push, rewrite pushed history, or develop directly on `main` without
+  explicit authorization.
+- `local_sources/` is readable import input only: never commit, push, move, delete, or
+  modify its original files without an explicit request. Word and ZIP files are import
+  sources, not runtime storage.
 
-pnpm 管理整个 workspace。依赖只在仓库根安装，不在子包运行 `npm install`。
-兼容 Windows PowerShell 5.1 的脚本读取 UTF-8 文本/JSON 时必须显式指定
-`-Encoding UTF8`。
+## Git and verification
 
-## 不可协商规则
+Make small meaningful commits and push the current feature branch every 1–3 commits or
+at a clear checkpoint. Run the targeted tests that best prove the change; add stronger
+checks for schema, security, authentication, or data-isolation work. Never claim an
+unrun test passed; record unrelated existing failures.
 
-- 只在任务分支/worktree 和 `allowed_paths` 内工作；
-- 先复用现有模型、契约和执行器，再考虑新增抽象；
-- 禁止用固定 ID、静态业务数据、假成功或 demo fallback 冒充真实闭环；
-- 服务端强制 school/resource/user scope，失败必须显式；
-- OpenAPI、Prisma、根依赖、CI、全局路由和 UI token 是共享事实；
-- 共享事实变更必须声明 owner；OpenAPI/Prisma 变更还必须有 CCR；
-- 不执行破坏性 Git 清理，不覆盖其他人的脏工作区；
-- 不提交密钥、真实学生数据或来源不明资产；
-- 未实际运行的测试不得写成通过。
+On completion: run targeted tests, inspect `git diff`, commit, push, update
+`CURRENT_HANDOFF.md`, and update `DEVELOPMENT_STATUS.md` if a milestone changed.
+Update `PROJECT_CONTEXT.md` only for durable product or architecture decisions. Report
+implementation, tests, commit SHA, known issues, and the recommended next task.
 
-## 完成门禁
-
-完成前更新测试证据和 handoff，运行 `task-gate.ps1 -Mode review`；提交后运行
-`task-gate.ps1 -Mode finish`。只有 finish 通过、`git status --porcelain` 为空，
-才能报告任务完成或推送分支。
-
-## Checkpoint 合并门禁
-
-任务不必等待完整产品闭环才可合并。达到检查点可合入时，应提交、推送并交给
-Integration Lead：一个用户可观察结果可运行，或明确返回 `UNAVAILABLE` /
-`NEEDS_REVIEW` / `PROVIDER_UNAVAILABLE`；局部测试、类型检查、task-gate 与 handoff
-有真实证据；共享变更有 CCR/owner；未完成部分不破坏既有流程。Integration Lead 重跑
-定向验证后合入 integration 并更新看板。只有 integration 硬化完成才可执行
-`scripts/repo/promote-integration.ps1 -Apply` 提升到 `main`。
+Ask the user only for secrets, interactive sudo, destructive user-data actions,
+destructive Git-history actions, paid/production third-party operations, or a core
+product decision with materially different meanings.

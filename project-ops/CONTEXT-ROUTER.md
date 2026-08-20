@@ -1,5 +1,11 @@
 # 最小上下文路由
 
+> **LEGACY GOVERNANCE REFERENCE.** Historical multi-agent control-plane document; not
+> an active startup gate for functionality-first development. Current authority is
+> `/AGENTS.md`, `/CURRENT_HANDOFF.md`, `/PROJECT_CONTEXT.md`, and
+> `/DEVELOPMENT_STATUS.md`. Use this file only when the user explicitly requests legacy
+> control-plane work.
+
 活动控制面任务默认只读动态工作单 `context_manifest` 中列出的文件。唯一入口是：
 
 ```powershell
