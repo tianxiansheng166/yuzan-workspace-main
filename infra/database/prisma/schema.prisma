@@ -315,6 +315,7 @@ model School {
   assessmentLinkAccesses  AssessmentLinkAccess[]
   practiceDefinitions     PracticeDefinition[]
   practiceDeliveries      PracticeDelivery[]
+  questionBankItems       QuestionBankItem[]
   teacherInvitations      TeacherInvitation[]
   studentActivityNotes    StudentActivityNote[]
   courseActivityPractices CourseActivityPractice[]
@@ -776,6 +777,58 @@ model Question {
   assessmentItems AssessmentItem[]
 
   @@unique([activityId, sortOrder])
+}
+
+/// A reusable question identity. Content belongs to QuestionBankItemVersion so
+/// the same item can be referenced by multiple practices without changing an
+/// already published attempt.
+model QuestionBankItem {
+  id               String   @id @default(uuid()) @db.Uuid
+  schoolId         String?  @db.Uuid
+  stableKey        String   @unique
+  domain           String?
+  questionType     String?
+  level            String?
+  abilityCategory  String?
+  gradeBand        String?
+  difficulty       String?
+  itemType         String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  school           School?                    @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  versions        QuestionBankItemVersion[]
+
+  @@index([schoolId, domain, questionType])
+  @@index([gradeBand, difficulty, itemType])
+}
+
+enum QuestionBankItemVersionStatus {
+  DRAFT
+  PUBLISHED
+  RETIRED
+}
+
+/// Immutable authored content for one reusable question version. scoringSpec
+/// is intentionally separate from deliverySpec and is never selected by a
+/// student-facing query.
+model QuestionBankItemVersion {
+  id           String                        @id @default(uuid()) @db.Uuid
+  itemId       String                        @db.Uuid
+  version      Int
+  deliverySpec Json
+  scoringSpec  Json
+  status       QuestionBankItemVersionStatus @default(DRAFT)
+  publishedAt  DateTime?
+  createdAt    DateTime                      @default(now())
+  updatedAt    DateTime                      @updatedAt
+
+  item             QuestionBankItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  practiceItemRefs PracticeItemRef[]
+  assessmentItems  AssessmentItem[]
+
+  @@unique([itemId, version])
+  @@index([status, publishedAt])
 }
 
 model ActivityAttempt {
@@ -1751,17 +1804,20 @@ model PracticeSection {
 }
 
 model PracticeItemRef {
-  id         String  @id @default(uuid()) @db.Uuid
-  sectionId  String  @db.Uuid
-  questionId String? @db.Uuid
-  itemType   String
-  sortOrder  Int
-  config     Json
+  id               String  @id @default(uuid()) @db.Uuid
+  sectionId        String  @db.Uuid
+  questionId       String? @db.Uuid
+  questionVersionId String? @db.Uuid
+  itemType         String
+  sortOrder        Int
+  config           Json
 
-  section PracticeSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  section         PracticeSection          @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  questionVersion QuestionBankItemVersion? @relation(fields: [questionVersionId], references: [id], onDelete: Restrict)
 
   @@unique([sectionId, sortOrder])
   @@index([questionId])
+  @@index([questionVersionId])
 }
 
 model PracticeDelivery {
@@ -1863,32 +1919,34 @@ model CourseActivityPractice {
 }
 
 model AssessmentItem {
-  id              String               @id @default(uuid()) @db.Uuid
-  sessionId       String               @db.Uuid
-  questionId      String?              @db.Uuid
-  recordingId     String?              @db.Uuid
-  prompt          Json
-  itemType        String
-  sectionTitle    String?
-  sectionOrder    Int?
-  itemConfig      Json?
-  status          AssessmentItemStatus @default(PENDING)
-  sortOrder       Int
-  maxScore        Float?
-  scoredScore     Float?
-  autoResult      Json?
-  reviewerUserId  String?              @db.Uuid
-  reviewerComment String?
-  reviewedAt      DateTime?
-  revision        Int                  @default(1)
-  createdAt       DateTime             @default(now())
-  updatedAt       DateTime             @updatedAt
+  id                String                       @id @default(uuid()) @db.Uuid
+  sessionId         String                       @db.Uuid
+  questionId        String?                      @db.Uuid
+  questionVersionId String?                      @db.Uuid
+  recordingId       String?                      @db.Uuid
+  prompt            Json
+  itemType          String
+  sectionTitle      String?
+  sectionOrder      Int?
+  itemConfig        Json?
+  status            AssessmentItemStatus         @default(PENDING)
+  sortOrder         Int
+  maxScore          Float?
+  scoredScore       Float?
+  autoResult        Json?
+  reviewerUserId    String?                      @db.Uuid
+  reviewerComment   String?
+  reviewedAt        DateTime?
+  revision          Int                          @default(1)
+  createdAt         DateTime                     @default(now())
+  updatedAt         DateTime                     @updatedAt
 
-  session       AssessmentSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  question      Question?         @relation(fields: [questionId], references: [id], onDelete: SetNull)
-  recording     Recording?        @relation(fields: [recordingId], references: [id], onDelete: SetNull)
-  writtenAnswer WrittenAnswer?
-  speechJobs    SpeechJob[]
+  session         AssessmentSession          @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  question        Question?                  @relation(fields: [questionId], references: [id], onDelete: SetNull)
+  questionVersion QuestionBankItemVersion?   @relation(fields: [questionVersionId], references: [id], onDelete: Restrict)
+  recording       Recording?                 @relation(fields: [recordingId], references: [id], onDelete: SetNull)
+  writtenAnswer   WrittenAnswer?
+  speechJobs      SpeechJob[]
 
   @@unique([sessionId, sortOrder])
   @@index([sessionId, status])

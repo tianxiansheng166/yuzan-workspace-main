@@ -55,6 +55,12 @@ const ids = {
   deliveryInitials: "72000000-0000-4000-8000-000000000004",
   deliveryTones: "72000000-0000-4000-8000-000000000005",
   deliveryRetell: "72000000-0000-4000-8000-000000000006",
+  questionBankChoice: "74000000-0000-4000-8000-000000000001",
+  questionBankChoiceVersion: "75000000-0000-4000-8000-000000000001",
+  questionBankAudioText: "74000000-0000-4000-8000-000000000002",
+  questionBankAudioTextVersion: "75000000-0000-4000-8000-000000000002",
+  questionBankSpeech: "74000000-0000-4000-8000-000000000003",
+  questionBankSpeechVersion: "75000000-0000-4000-8000-000000000003",
 } as const;
 
 async function passwordHash(password: string) {
@@ -75,6 +81,63 @@ type SeedPractice = {
   requiresRecording: boolean; instantFeedback: boolean; coverAsset: string;
   sections: Array<{ title: string; description: string; minutes: number; items: Array<{ type: string; config: Record<string, unknown> }> }>;
 };
+
+async function seedQuestionBankSamples() {
+  const samples = [
+    {
+      id: ids.questionBankChoice,
+      versionId: ids.questionBankChoiceVersion,
+      stableKey: "QB-DEV-TEXT-CHOICE-001",
+      itemType: "CHOICE",
+      questionType: "CHOICE",
+      abilityCategory: "阅读理解",
+      deliverySpec: {
+        stimulus: { type: "TEXT", promptText: "请选择正确答案" },
+        response: { type: "CHOICE", options: [{ key: "A", text: "A" }, { key: "B", text: "B" }, { key: "C", text: "C" }, { key: "D", text: "D" }] },
+      },
+      scoringSpec: { strategy: "EXACT_CHOICE", maxScore: 3, correctAnswer: "B" },
+    },
+    {
+      id: ids.questionBankAudioText,
+      versionId: ids.questionBankAudioTextVersion,
+      stableKey: "QB-DEV-AUDIO-TEXT-001",
+      itemType: "TEXT",
+      questionType: "TEXT",
+      abilityCategory: "听辨训练",
+      deliverySpec: {
+        stimulus: { type: "AUDIO", resourceId: null },
+        response: { type: "TEXT", placeholder: "请输入你听到的内容" },
+      },
+      scoringSpec: { strategy: "TEXT_MATCH", maxScore: 4, acceptedAnswers: ["示例答案"] },
+    },
+    {
+      id: ids.questionBankSpeech,
+      versionId: ids.questionBankSpeechVersion,
+      stableKey: "QB-DEV-TEXT-SPEECH-001",
+      itemType: "SPEECH",
+      questionType: "SPEECH",
+      abilityCategory: "独立朗读",
+      deliverySpec: {
+        stimulus: { type: "TEXT", promptText: "请朗读下面的句子" },
+        response: { type: "SPEECH" },
+      },
+      scoringSpec: { strategy: "SPEECH_READING", maxScore: 4, targetText: "春风又绿江南岸" },
+    },
+  ];
+
+  for (const sample of samples) {
+    const item = await prisma.questionBankItem.upsert({
+      where: { stableKey: sample.stableKey },
+      update: { itemType: sample.itemType, questionType: sample.questionType, abilityCategory: sample.abilityCategory },
+      create: { id: sample.id, schoolId: ids.school, stableKey: sample.stableKey, itemType: sample.itemType, questionType: sample.questionType, abilityCategory: sample.abilityCategory, gradeBand: "七年级", difficulty: "基础" },
+    });
+    await prisma.questionBankItemVersion.upsert({
+      where: { itemId_version: { itemId: item.id, version: 1 } },
+      update: {},
+      create: { id: sample.versionId, itemId: item.id, version: 1, status: "PUBLISHED", deliverySpec: sample.deliverySpec, scoringSpec: sample.scoringSpec, publishedAt: new Date("2026-07-21T00:00:00.000Z") },
+    });
+  }
+}
 
 async function seedReusablePractices() {
   const environment = process.env.NODE_ENV ?? "development";
@@ -676,6 +739,7 @@ async function main() {
     },
   });
 
+  await seedQuestionBankSamples();
   await seedReusablePractices();
   await seedStudentCourses();
 }
