@@ -8,6 +8,7 @@ import {
 import type { Prisma } from "@yuzan/database";
 import { PrismaService } from "../../shared/database/index.js";
 import type { AuthContext } from "../../common/security/auth.types.js";
+import { assertSafeQuestionDeliverySpec } from "./question-bank-delivery.js";
 
 type CoursePracticeContext = { assignmentId?: string; submissionId?: string; activityId?: string };
 export type PracticeCatalogQuery = {
@@ -124,7 +125,23 @@ export class PracticeService {
           AND: [{ OR: [{ deadline: null }, { deadline: { gte: new Date() } }] }],
         },
         include: {
-          practiceVersion: { include: { sections: { include: { items: { orderBy: { sortOrder: "asc" } } }, orderBy: { sortOrder: "asc" } } } },
+          practiceVersion: {
+            include: {
+              sections: {
+                include: {
+                  items: {
+                    orderBy: { sortOrder: "asc" },
+                    include: {
+                      questionVersion: {
+                        select: { id: true, status: true, deliverySpec: true, scoringSpec: true, item: { select: { schoolId: true } } },
+                      },
+                    },
+                  },
+                  orderBy: { sortOrder: "asc" },
+                },
+              },
+            },
+          },
         },
       });
       if (!delivery) throw new NotFoundException("没有可用的练习投放");
@@ -163,21 +180,40 @@ export class PracticeService {
         },
       });
       await tx.assessmentItem.createMany({
-        data: snapshot.map(({ section, item }, index) => ({
-          sessionId: attempt.id,
-          // PracticeItemRef preserves the authored question reference, while
-          // AssessmentItem is a self-contained execution snapshot. Do not
-          // attach an unscoped legacy Question FK here: the copied config is
-          // the immutable runtime source and remains valid after content moves.
-          questionId: null,
-          prompt: item.config as Prisma.InputJsonValue,
-          itemConfig: item.config as Prisma.InputJsonValue,
-          itemType: item.itemType,
-          sectionTitle: section.title,
-          sectionOrder: section.sortOrder,
-          sortOrder: index + 1,
-          maxScore: typeof (item.config as Record<string, unknown>).maxScore === "number" ? Number((item.config as Record<string, unknown>).maxScore) : null,
-        })),
+        data: snapshot.map(({ section, item }, index) => {
+          const questionVersion = item.questionVersion;
+          if (item.questionVersionId && (!questionVersion || questionVersion.status !== "PUBLISHED")) {
+            throw new BadRequestException("练习引用的题库题目版本不可用");
+          }
+          if (questionVersion?.item?.schoolId && questionVersion.item.schoolId !== schoolId) {
+            throw new ForbiddenException("练习引用的题库题目不属于当前学校");
+          }
+
+          const deliverySpec = questionVersion
+            ? assertSafeQuestionDeliverySpec(questionVersion.deliverySpec)
+            : (item.config as Record<string, unknown>);
+          const scoringSpec = questionVersion?.scoringSpec;
+          const maxScore = questionVersion
+            ? this.numericMaxScore(scoringSpec)
+            : this.numericMaxScore(item.config);
+
+          return {
+            sessionId: attempt.id,
+            // PracticeItemRef preserves the authored question reference, while
+            // AssessmentItem is a self-contained execution snapshot. For a
+            // question-bank item, only deliverySpec is copied; scoringSpec is
+            // retained behind the backend-only version relation.
+            questionId: null,
+            ...(questionVersion ? { questionVersionId: questionVersion.id } : {}),
+            prompt: deliverySpec as Prisma.InputJsonValue,
+            itemConfig: deliverySpec as Prisma.InputJsonValue,
+            itemType: item.itemType,
+            sectionTitle: section.title,
+            sectionOrder: section.sortOrder,
+            sortOrder: index + 1,
+            maxScore,
+          };
+        }),
       });
       return { attempt, resumed: false };
     });
@@ -217,11 +253,22 @@ export class PracticeService {
 
   async getAttemptItems(auth: AuthContext, schoolId: string, attemptId: string) {
     await this.getAttempt(auth, schoolId, attemptId);
-    return this.prisma.assessmentItem.findMany({
+    const items = await this.prisma.assessmentItem.findMany({
       where: { sessionId: attemptId },
       select: { id: true, itemType: true, prompt: true, itemConfig: true, sectionTitle: true, sectionOrder: true, sortOrder: true, status: true, recordingId: true },
       orderBy: { sortOrder: "asc" },
     });
+    return items.map((item) => ({
+      ...item,
+      prompt: assertSafeQuestionDeliverySpec(item.prompt),
+      itemConfig: item.itemConfig == null ? null : assertSafeQuestionDeliverySpec(item.itemConfig),
+    }));
+  }
+
+  private numericMaxScore(value: unknown) {
+    if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+    const maxScore = (value as Record<string, unknown>).maxScore;
+    return typeof maxScore === "number" && Number.isFinite(maxScore) ? maxScore : null;
   }
 
   private async activeEnrollment(auth: AuthContext, schoolId: string) {
