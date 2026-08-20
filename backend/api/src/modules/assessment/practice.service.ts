@@ -255,13 +255,22 @@ export class PracticeService {
     await this.getAttempt(auth, schoolId, attemptId);
     const items = await this.prisma.assessmentItem.findMany({
       where: { sessionId: attemptId },
-      select: { id: true, itemType: true, prompt: true, itemConfig: true, sectionTitle: true, sectionOrder: true, sortOrder: true, status: true, recordingId: true },
+      select: {
+        id: true, itemType: true, prompt: true, itemConfig: true, sectionTitle: true,
+        sectionOrder: true, sortOrder: true, status: true, recordingId: true,
+        writtenAnswer: { select: { content: true, autoSavedAt: true, finalSubmittedAt: true } },
+      },
       orderBy: { sortOrder: "asc" },
     });
     return items.map((item) => ({
       ...item,
       prompt: assertSafeQuestionDeliverySpec(item.prompt),
       itemConfig: item.itemConfig == null ? null : assertSafeQuestionDeliverySpec(item.itemConfig),
+      studentAnswer: item.writtenAnswer ? {
+        content: item.writtenAnswer.content,
+        autoSavedAt: item.writtenAnswer.autoSavedAt?.toISOString() ?? null,
+        finalSubmittedAt: item.writtenAnswer.finalSubmittedAt?.toISOString() ?? null,
+      } : null,
     }));
   }
 

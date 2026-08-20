@@ -86,8 +86,9 @@ function routeToSpa(pathname) {
   const practiceAttemptMatch = pathname.match(/^\/student\/practices\/attempts\/([^/]+)(?:\/(.*)|\/?)?$/);
   if (practiceAttemptMatch) {
     const rest = (practiceAttemptMatch[2] || '').replace(/\/+$/, '');
+    if (rest === 'runner' || rest === '') return { file: join(root, 'assessment', 'runner.html'), page: 'runner' };
     let page = 'prep';
-    if (rest === 'prepare' || rest === '') page = 'prep';
+    if (rest === 'prepare') page = 'prep';
     else if (rest.startsWith('reading/')) page = 'reading';
     else if (rest.startsWith('written/')) page = 'written';
     else if (rest === 'submit') page = 'submit';
