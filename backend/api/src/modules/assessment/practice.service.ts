@@ -128,6 +128,7 @@ export class PracticeService {
           practiceVersion: {
             include: {
               sections: {
+                orderBy: { sortOrder: "asc" },
                 include: {
                   items: {
                     orderBy: { sortOrder: "asc" },
@@ -137,7 +138,6 @@ export class PracticeService {
                       },
                     },
                   },
-                  orderBy: { sortOrder: "asc" },
                 },
               },
             },
