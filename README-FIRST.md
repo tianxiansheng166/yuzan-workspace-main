@@ -1,8 +1,9 @@
 # Start a new Codex conversation
 
-For a clear task, read `AGENTS.md` and `CURRENT_HANDOFF.md`, check Git, then implement
-the task. If the user says only “continue development”, take the one **NEXT TASK** from
-`CURRENT_HANDOFF.md` and start it.
+For a clear task, read `AGENTS.md`, run `git status`, `git branch --show-current`, and
+`git log -1 --oneline`, then read `CURRENT_HANDOFF.md` and implement the task. If the
+user says only “continue development”, take the one **NEXT TASK** from the handoff and
+start it. Exact branch and HEAD come from Git, not from `CURRENT_HANDOFF.md`.
 
 Use these files in order:
 

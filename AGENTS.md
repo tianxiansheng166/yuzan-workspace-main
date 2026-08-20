@@ -14,9 +14,12 @@ and `git log -1 --oneline`, then read `CURRENT_HANDOFF.md`.
 
 Load only what is needed, in this order: this file, `CURRENT_HANDOFF.md`, then
 `PROJECT_CONTEXT.md`, `DEVELOPMENT_STATUS.md`, and task-related source/tests.
-Git, source, runtime, and tests are the facts. If the handoff conflicts with them,
-follow the facts and correct the handoff. `project-ops/**`, `docs/**`, old reports,
-prompts, and the old control plane are historical references, loaded only when useful.
+Git branch and HEAD are runtime facts. Never require `CURRENT_HANDOFF.md` to contain
+the commit SHA of the commit that contains the handoff itself. A handoff's latest
+functional checkpoint is business recovery context, not live Git state. If Git, source,
+or runtime conflicts with the handoff, follow those facts and correct the handoff.
+`project-ops/**`, `docs/**`, old reports, prompts, and the old control plane are
+historical references, loaded only when useful.
 
 ## Functionality first
 
@@ -50,10 +53,12 @@ at a clear checkpoint. Run the targeted tests that best prove the change; add st
 checks for schema, security, authentication, or data-isolation work. Never claim an
 unrun test passed; record unrelated existing failures.
 
-On completion: run targeted tests, inspect `git diff`, commit, push, update
-`CURRENT_HANDOFF.md`, and update `DEVELOPMENT_STATUS.md` if a milestone changed.
-Update `PROJECT_CONTEXT.md` only for durable product or architecture decisions. Report
-implementation, tests, commit SHA, known issues, and the recommended next task.
+On completion: run targeted tests; update `CURRENT_HANDOFF.md` and, when a milestone
+changes, `DEVELOPMENT_STATUS.md`; inspect `git diff`; commit; and push. The final
+checkpoint commit includes its handoff/status update. Never create a follow-up commit
+only to write that commit's SHA back into the handoff. Update `PROJECT_CONTEXT.md` only
+for durable product or architecture decisions. Report implementation, tests, final
+commit SHA, known issues, and the recommended next task.
 
 Ask the user only for secrets, interactive sudo, destructive user-data actions,
 destructive Git-history actions, paid/production third-party operations, or a core

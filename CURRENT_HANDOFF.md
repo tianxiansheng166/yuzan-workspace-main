@@ -2,8 +2,17 @@
 
 Last updated: 2026-08-20
 Repository: `yuzanxinsheng_test`
-Current branch: `feat/question-bank-v1`
-Current HEAD: `caa9111 fix(runner): resolve assets outside http server`
+
+## Git truth
+
+Run `git branch --show-current` and `git log -1 --oneline`. Their live results are
+authoritative.
+
+Expected active development branch: `feat/question-bank-v1`
+
+Latest functional checkpoint: `caa9111 fix(runner): resolve assets outside http server`
+
+Recent operations checkpoint: `6d6a6d1 docs(ops): simplify codex cold-start handoff`
 
 ## Resume in 60 seconds
 
