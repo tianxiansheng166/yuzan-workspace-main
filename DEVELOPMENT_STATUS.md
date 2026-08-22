@@ -6,9 +6,9 @@
 | QB-001 | DONE | Versioned independent question bank; delivery/scoring separation. Commits `917e4c5`–`896c565`; runtime and security tests added. |
 | QB-002 | DONE | Unified student runner. Commit `7e52d30`, followed by asset fix `caa9111`; runner E2E covers stimuli, responses, persistence, and restoration. |
 | QB-003 | DONE | QB-003A-F strict source importer finalization. Generic block grammar, answer/rubric binding, media fail-closed matching, and behavioral importer tests are complete. |
-| QB-003B | TODO | Next source-to-manifest checkpoint; not started. |
-| QB-004 | TODO | Level 1 real assessment. |
-| QB-005 | TODO | Deterministic scoring. |
+| QB-003B | DONE | Level 1 canonical manifest now imports idempotently into global Resource/MinIO, immutable Question Bank versions, a published SYSTEM practice/delivery, and the real student runner. |
+| QB-004 | DONE via QB-003B | The Level 1 real 20-item assessment, media playback, refresh restoration, and submit journey were proved as part of QB-003B. |
+| QB-005 | TODO | Deterministic non-speech scoring. |
 | QB-006 | TODO | Read-aloud speech scoring. |
 | QB-007 | TODO | Picture-speaking scoring. |
 | QB-008 | TODO | Levels 2–6 bulk import. |
