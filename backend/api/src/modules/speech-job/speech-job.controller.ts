@@ -90,7 +90,10 @@ export class SpeechJobController {
     @CurrentTenant() _tenant: TenantContext,
     @CurrentPrincipal() principal: Principal,
   ) {
-    const job = await this.service.getSpeechJob(jobId);
+    const isStudent = principal.roles.includes(MembershipRole.STUDENT);
+    const job = await this.service.getSpeechJob(jobId, {
+      includeResult: !isStudent,
+    });
 
     // Cross-school access: job must belong to the requested school scope.
     if (job.schoolId !== schoolId) {
@@ -127,7 +130,11 @@ export class SpeechJobController {
    * their own attempt; teachers remain limited to their assigned class.
    */
   @Get("by-item/:assessmentItemId")
-  @RequireRoles(MembershipRole.STUDENT, MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
+  @RequireRoles(
+    MembershipRole.STUDENT,
+    MembershipRole.TEACHER,
+    MembershipRole.SCHOOL_ADMIN,
+  )
   async listSpeechJobsByItem(
     @Param("schoolId", ParseUUIDPipe) schoolId: string,
     @Param("assessmentItemId", ParseUUIDPipe) assessmentItemId: string,
@@ -137,7 +144,11 @@ export class SpeechJobController {
     // Verify the assessmentItem belongs to a session in this school.
     const item = await this.prisma.assessmentItem.findFirst({
       where: { id: assessmentItemId, session: { schoolId } },
-      select: { session: { select: { classId: true, enrollment: { select: { userId: true } } } } },
+      select: {
+        session: {
+          select: { classId: true, enrollment: { select: { userId: true } } },
+        },
+      },
     });
     if (!item) {
       throw new SpeechJobNotFoundException("测评题目不存在或不属于当前学校");
@@ -147,12 +158,16 @@ export class SpeechJobController {
       if (item.session.enrollment?.userId !== principal.userId) {
         throw new SpeechJobNotFoundException();
       }
-      return this.service.listSpeechJobsByItem(assessmentItemId);
+      return this.service.listSpeechJobsByItem(assessmentItemId, {
+        includeResult: false,
+      });
     }
 
     // Teacher must be assigned to the class (admin bypasses).
     const isAdmin = principal.roles.some(
-      (r) => r === MembershipRole.SCHOOL_ADMIN || r === MembershipRole.PLATFORM_ADMIN,
+      (r) =>
+        r === MembershipRole.SCHOOL_ADMIN ||
+        r === MembershipRole.PLATFORM_ADMIN,
     );
     if (!isAdmin) {
       const teacherEnrollment = await this.prisma.enrollment.findFirst({
@@ -170,7 +185,9 @@ export class SpeechJobController {
       }
     }
 
-    return this.service.listSpeechJobsByItem(assessmentItemId);
+    return this.service.listSpeechJobsByItem(assessmentItemId, {
+      includeResult: true,
+    });
   }
 
   /**
@@ -196,7 +213,9 @@ export class SpeechJobController {
       providerModel?: string;
     },
   ) {
-    const expectedKey = this.config.get<string>("INTERNAL_WORKER_API_KEY");
+    const expectedKey =
+      this.config.get<string>("INTERNAL_WORKER_API_KEY") ??
+      this.config.get<string>("API_INTERNAL_KEY");
     if (!expectedKey || !apiKey || apiKey !== expectedKey) {
       throw new SpeechJobCallbackUnauthorizedException();
     }
@@ -210,10 +229,6 @@ export class SpeechJobController {
       throw new SpeechJobNotFoundException();
     }
 
-    return this.service.updateSpeechJobResult(jobId, body.result, {
-      ...(body.confidence !== undefined ? { confidence: body.confidence } : {}),
-      ...(body.processingMs !== undefined ? { processingMs: body.processingMs } : {}),
-      ...(body.providerModel !== undefined ? { providerModel: body.providerModel } : {}),
-    });
+    return this.service.applySpeechProviderResult(jobId, body.result);
   }
 }

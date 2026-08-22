@@ -1,5 +1,8 @@
 import pino from "pino";
-import type { SpeechScoringResult } from "./speech-job.consumer.js";
+import {
+  parseLocalSpeechResponse,
+  type SpeechProviderResult,
+} from "./speech-provider.js";
 
 const logger = pino({ level: process.env.LOG_LEVEL ?? "info" });
 
@@ -33,10 +36,11 @@ export class SpeechScoringClient {
     targetText: string,
     scorerVersion: string,
     language: string = "zh-CN",
-  ): Promise<SpeechScoringResult> {
+  ): Promise<SpeechProviderResult> {
     let lastError: Error | null = null;
 
     for (let attempt = 0; attempt <= this.maxRetries; attempt++) {
+      let timeoutId: ReturnType<typeof setTimeout> | undefined;
       try {
         logger.info(
           { attempt, scorerVersion, targetTextLength: targetText.length },
@@ -44,7 +48,7 @@ export class SpeechScoringClient {
         );
 
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), this.timeoutMs);
+        timeoutId = setTimeout(() => controller.abort(), this.timeoutMs);
 
         const response = await fetch(`${this.baseUrl}/v1/score/reading`, {
           method: "POST",
@@ -58,14 +62,14 @@ export class SpeechScoringClient {
           signal: controller.signal,
         });
 
-        clearTimeout(timeoutId);
-
         if (!response.ok) {
           const errorBody = await response.text();
-          throw new Error(`Speech scoring service returned ${response.status}: ${errorBody}`);
+          throw new Error(
+            `Speech scoring service returned ${response.status}: ${errorBody}`,
+          );
         }
 
-        const result = (await response.json()) as SpeechScoringResult;
+        const result = parseLocalSpeechResponse(await response.json());
         logger.info(
           {
             scorerVersion: result.scorerVersion,
@@ -88,10 +92,14 @@ export class SpeechScoringClient {
           const backoffMs = Math.min(1000 * Math.pow(2, attempt), 10000);
           await new Promise((resolve) => setTimeout(resolve, backoffMs));
         }
+      } finally {
+        if (timeoutId !== undefined) clearTimeout(timeoutId);
       }
     }
 
-    throw lastError ?? new Error("Speech scoring failed with no error captured");
+    throw (
+      lastError ?? new Error("Speech scoring failed with no error captured")
+    );
   }
 
   /**

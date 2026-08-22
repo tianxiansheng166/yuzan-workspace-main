@@ -17,7 +17,10 @@ import { Test } from "@nestjs/testing";
 import { ConfigService } from "@nestjs/config";
 import { SpeechJobService } from "../../src/modules/speech-job/speech-job.service.js";
 import { SPEECH_QUEUE } from "../../src/modules/speech-job/speech-job.tokens.js";
-import { createFakePrismaService, createFakeDatabaseModule } from "../helpers/fake-prisma.service.js";
+import {
+  createFakePrismaService,
+  createFakeDatabaseModule,
+} from "../helpers/fake-prisma.service.js";
 
 // ─── Fixtures ───────────────────────────────────────────
 
@@ -55,6 +58,7 @@ function makeJob(overrides: Record<string, any> = {}) {
 interface BuildOptions {
   prismaOverrides?: Record<string, any>;
   existingSpeechJob?: ReturnType<typeof makeJob> | null;
+  speechProvider?: string;
 }
 
 async function buildService(opts: BuildOptions = {}) {
@@ -81,23 +85,40 @@ async function buildService(opts: BuildOptions = {}) {
         } else if (retryCount !== undefined) {
           nextRetryCount = retryCount;
         }
-        createdJob = { ...createdJob, ...restData, retryCount: nextRetryCount, updatedAt: new Date() };
+        createdJob = {
+          ...createdJob,
+          ...restData,
+          retryCount: nextRetryCount,
+          updatedAt: new Date(),
+        };
         return createdJob;
       },
     },
     recording: {
-      findUnique: async () => ({ id: RECORDING_ID, objectKey: "recordings/rec/full" }),
+      findUnique: async () => ({
+        id: RECORDING_ID,
+        objectKey: "recordings/rec/full",
+      }),
       update: async () => ({}),
+    },
+    assessmentItem: {
+      findFirst: async () => ({
+        recordingId: null,
+        prompt: {},
+        questionVersion: null,
+      }),
     },
     ...opts.prismaOverrides,
   });
 
   const fakeConfig = {
     get: vi.fn((key: string, defaultValue?: any) => {
-      if (key === "SPEECH_PROVIDER") return "disabled";
+      if (key === "SPEECH_PROVIDER") return opts.speechProvider ?? "disabled";
       return defaultValue;
     }),
-    getOrThrow: vi.fn((key: string) => { throw new Error(`Config ${key} not set`); }),
+    getOrThrow: vi.fn((key: string) => {
+      throw new Error(`Config ${key} not set`);
+    }),
   };
 
   const moduleRef = await Test.createTestingModule({
@@ -174,12 +195,16 @@ describe("SpeechJobService", () => {
         schoolId: SCHOOL_ID,
       });
 
-      const result = await service.updateSpeechJobStatus(JOB_ID, "FAILED", "TIMEOUT");
+      const result = await service.updateSpeechJobStatus(
+        JOB_ID,
+        "FAILED",
+        "TIMEOUT",
+      );
       expect(result.status).toBe("FAILED");
       expect(result.retryCount).toBe(1);
     });
 
-    it("transitions status to AUTO_RESULT via updateSpeechJobResult", async () => {
+    it("rejects an arbitrary result when the persisted item policy context is absent", async () => {
       const { service } = await buildService();
       await service.createSpeechJob({
         recordingId: RECORDING_ID,
@@ -188,13 +213,9 @@ describe("SpeechJobService", () => {
         schoolId: SCHOOL_ID,
       });
 
-      const result = await service.updateSpeechJobResult(JOB_ID, { overall: 85 }, {
-        confidence: 0.92,
-        processingMs: 1200,
-        providerModel: "mandarin-v2",
-      });
-
-      expect(result.status).toBe("AUTO_RESULT");
+      await expect(
+        service.updateSpeechJobResult(JOB_ID, { overall: 85 }),
+      ).rejects.toThrow();
     });
   });
 
@@ -235,6 +256,89 @@ describe("SpeechJobService", () => {
       expect(result).toBeDefined();
       // With SPEECH_QUEUE=null and ConfigService default, provider=disabled
       // Job should remain in CREATED status
+      expect(result.status).toBe("CREATED");
+    });
+
+    it("fails closed for an unsupported provider", async () => {
+      const { service } = await buildService({ speechProvider: "azure" });
+
+      await expect(
+        service.triggerSpeechProcessing(
+          RECORDING_ID,
+          ASSESSMENT_ITEM_ID,
+          "春眠不觉晓",
+          SCHOOL_ID,
+        ),
+      ).rejects.toThrow(/不支持的 SPEECH_PROVIDER/);
+    });
+
+    it("uses the published Question Bank target and rejects a picture-speaking strategy", async () => {
+      const questionBankItem = {
+        recordingId: null,
+        prompt: { targetText: "浏览器篡改文本" },
+        questionVersion: {
+          status: "PUBLISHED",
+          scoringSpec: {
+            strategy: "SPEECH_READING",
+            targetText: "服务端朗读文本",
+            maxScore: 4,
+          },
+        },
+      };
+      const { service } = await buildService({
+        speechProvider: "disabled",
+        prismaOverrides: {
+          assessmentItem: { findFirst: async () => questionBankItem },
+        },
+      });
+
+      const result = await service.triggerSpeechProcessing(
+        RECORDING_ID,
+        ASSESSMENT_ITEM_ID,
+        "浏览器篡改文本",
+        SCHOOL_ID,
+      );
+      expect(result.targetText).toBe("服务端朗读文本");
+
+      const { service: pictureService } = await buildService({
+        speechProvider: "local",
+        prismaOverrides: {
+          assessmentItem: {
+            findFirst: async () => ({
+              ...questionBankItem,
+              questionVersion: {
+                status: "PUBLISHED",
+                scoringSpec: {
+                  strategy: "SPEECH_OPEN_RESPONSE",
+                  maxScore: 4,
+                },
+              },
+            }),
+          },
+        },
+      });
+
+      await expect(
+        pictureService.triggerSpeechProcessing(
+          RECORDING_ID,
+          ASSESSMENT_ITEM_ID,
+          "浏览器篡改文本",
+          SCHOOL_ID,
+        ),
+      ).rejects.toThrow(/不是 READ_ALOUD/);
+    });
+
+    it("keeps a local-provider job auditable when the queue is unavailable", async () => {
+      const { service } = await buildService({ speechProvider: "local" });
+
+      const result = await service.triggerSpeechProcessing(
+        RECORDING_ID,
+        ASSESSMENT_ITEM_ID,
+        "春眠不觉晓",
+        SCHOOL_ID,
+      );
+
+      expect(result.provider).toBe("local");
       expect(result.status).toBe("CREATED");
     });
 

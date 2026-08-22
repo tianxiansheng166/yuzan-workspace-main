@@ -10,21 +10,24 @@ authoritative.
 
 Expected active development branch: `feat/question-bank-v1`
 
-Latest functional checkpoint: QB-005 deterministic non-speech scoring (this
-closing checkpoint; inspect live Git HEAD on resume).
+Latest functional checkpoint: QB-006 Level 1 read-aloud diagnostic scoring
+(this closing checkpoint; inspect live Git HEAD on resume).
 
 Recent operations checkpoint: validated Level 1 source-to-runtime apply, the
 20-item real student Runner E2E, deterministic scoring against the real
-published versions, and retry-idempotent persistence.
+published versions, and the local read-aloud MinIO → BullMQ → Worker → Python
+→ API callback path with bounded, non-finalizable diagnostics.
 
 ## Resume in 60 seconds
 
 QB-001, QB-002, **QB-003A-F — Strict source importer finalization**,
-**QB-003B — Level 1 runtime import**, and **QB-005 — deterministic non-speech
-scoring** are complete. Recovery state for the next task is in
+**QB-003B — Level 1 runtime import**, **QB-005 — deterministic non-speech
+scoring**, and **QB-006 — Level 1 read-aloud diagnostic scoring** are complete.
+Recovery state for the next task is in
 [`CURRENT_TASK.md`](CURRENT_TASK.md).
 
-Next action: begin QB-006 only when explicitly requested.
+Next action: begin QB-007 only when explicitly requested; do not start it as
+part of QB-006 recovery.
 
 ## Environment
 
@@ -61,10 +64,36 @@ it is non-blocking for the validated development checkpoint. Local path:
   and 4 speech items while the session remains `PROCESSING`. Question Bank
   reports use point aggregation and are withheld until every required item is
   resolved; legacy reports retain their existing average aggregation.
+- **QB-006 done** — audited the three published Level 1 `SPEECH_READING`
+  versions (four points each; twelve read-aloud points total) and routed them
+  through the provider-neutral local baseline. The picture-speaking version is
+  excluded from the read-aloud route. The API validates provider bounds,
+  server-side target/strategy/max-score links, and callback idempotency; it
+  stores a bounded safe diagnostic with `candidatePoints`, keeps
+  `AssessmentItem.scoredScore` null, persists `SpeechJob=NEEDS_REVIEW`, and
+  marks successful read recordings `READY`. The canonical Level 1 E2E observed
+  three read-aloud jobs/diagnostics, zero picture read-aloud jobs, unchanged
+  deterministic scores, two rubric items pending, one picture item pending,
+  session `PROCESSING`, and no final report. The pipeline smoke used explicit
+  `MOCK_SPEECH_SCORING=true` because FunASR/torchaudio model dependencies are
+  unavailable in the local Python environment; this validates control flow,
+  not recognition quality. The local provider remains experimental and
+  uncalibrated, and the authored four-point rubric is not fully implemented.
+
+### QB-006 verification snapshot
+
+- API: full suite `970 passed, 58 skipped`; Worker: `37 passed`; Python scorer:
+  `7 passed`; protected question-bank runner and canonical Level 1 E2E: passed.
+- Frontend runtime syntax/test, API/Worker typechecks, and API/Worker builds:
+  passed.
+- Security regression: `26 passed, 5 failed`. The five failures are the
+  pre-existing researcher-role guard expectation and four auth-module test
+  setup failures where `PrismaService` is not provided to `IdentityService`;
+  the QB question-bank security tests pass within the full API suite.
 
 ## Current active task
 
-**QB-006 — read-aloud speech scoring** (`TODO`). Do not start it unless
+**QB-007 — picture-speaking scoring** (`TODO`). Do not start it unless
 explicitly requested.
 
 ## Current question-bank source
@@ -86,7 +115,7 @@ question with AI.
 ## Major blockers
 
 - Project blocker: none.
-- Task blocker: none for QB-005.
+- Task blocker: none for QB-006.
 - Source blocker carried forward: L2 `READ_ALOUD` structure expects 3 questions but
   the authored body contains 2. The importer fails explicitly; it never invents a
   question with AI. This blocks Level 2 completeness, not trusted Level 1 work.
@@ -98,5 +127,5 @@ question with AI.
 
 ## DO NOT START YET
 
-Do not begin QB-006, Level 2–6 bulk import, picture-speaking scoring, or
+Do not begin QB-007, Level 2–6 bulk import, picture-speaking scoring, or
 unrelated large refactors in this handoff.

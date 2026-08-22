@@ -15,7 +15,10 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import type { SpeechJobPayload, SpeechScoringResult } from "../src/speech/speech-job.consumer.js";
+import type {
+  SpeechJobPayload,
+  SpeechScoringResult,
+} from "../src/speech/speech-job.consumer.js";
 import { SpeechJobConsumer } from "../src/speech/speech-job.consumer.js";
 
 // ─── Test fixtures ──────────────────────────────────────
@@ -39,12 +42,21 @@ const BASE_PAYLOAD: SpeechJobPayload = {
 };
 
 const SUCCESSFUL_SCORING_RESULT: SpeechScoringResult = {
+  provider: "local",
   scorerVersion: SCORER_VERSION,
   transcript: "春眠不觉晓",
   confidence: 0.92,
-  scores: { accuracy: 90, completeness: 85, fluency: 88, tone: 80, overall: 86 },
+  scores: {
+    accuracy: 90,
+    completeness: 85,
+    fluency: 88,
+    tone: 80,
+    overall: 86,
+  },
   errors: [],
   requiresReview: false,
+  experimental: true,
+  toneMeta: { experimental: true, method: "f0_cv_heuristic", reason: null },
   processingMs: 1200,
 };
 
@@ -58,26 +70,41 @@ function mockFetchUrl(url: string | URL): string {
 }
 
 function okResponse(body: any): Response {
-  return new Response(JSON.stringify(body), { status: 200, headers: { "Content-Type": "application/json" } });
+  return new Response(JSON.stringify(body), {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  });
 }
 
 function errorResponse(status: number, body: string): Response {
-  return new Response(body, { status, headers: { "Content-Type": "application/json" } });
+  return new Response(body, {
+    status,
+    headers: { "Content-Type": "application/json" },
+  });
 }
 
 // ─── Helper: create consumer and process a job ──────────
 
-function createConsumer(): SpeechJobConsumer {
-  const consumer = new SpeechJobConsumer("speech-jobs", { host: "127.0.0.1", port: 6379 });
+function createConsumer(
+  options: { apiInternalKey?: string } = {},
+): SpeechJobConsumer {
   // Override env for test
   process.env.API_INTERNAL_URL = "http://api.test:4000";
   process.env.SPEECH_API_URL = "http://speech.test:8100";
-  process.env.API_INTERNAL_KEY = "test-internal-key";
-  return consumer;
+  process.env.API_INTERNAL_KEY = options.apiInternalKey ?? "test-internal-key";
+  process.env.SPEECH_PROVIDER = "local";
+  process.env.SPEECH_API_MAX_RETRIES = "0";
+  return new SpeechJobConsumer("speech-jobs", {
+    host: "127.0.0.1",
+    port: 6379,
+  });
 }
 
 // Access private processJob via (consumer as any)
-async function processJob(consumer: SpeechJobConsumer, payload: SpeechJobPayload = BASE_PAYLOAD) {
+async function processJob(
+  consumer: SpeechJobConsumer,
+  payload: SpeechJobPayload = BASE_PAYLOAD,
+) {
   const job = { id: "bullmq-job-1", data: payload, attemptsMade: 0 } as any;
   return (consumer as any).processJob(job);
 }
@@ -117,28 +144,46 @@ describe("SpeechJobConsumer", () => {
 
       await processJob(consumer);
 
-      // Verify all 5 API calls were made
-      expect(fetchMock).toHaveBeenCalledTimes(5);
+      // Download URL, provider call, and one server-side result callback.
+      expect(fetchMock).toHaveBeenCalledTimes(3);
 
       // Verify X-Internal-Key header on internal API calls
-      const internalCalls = fetchMock.mock.calls.filter(
-        (call: any[]) => call[0]?.toString()?.includes("api.test"),
+      const internalCalls = fetchMock.mock.calls.filter((call: any[]) =>
+        call[0]?.toString()?.includes("api.test"),
       );
       for (const call of internalCalls) {
         expect(call[1]?.headers?.["X-Internal-Key"]).toBe("test-internal-key");
       }
 
       // Verify scoring call has correct body
-      const scoringCall = fetchMock.mock.calls.find(
-        (call: any[]) => {
-          const url = typeof call[0] === "string" ? call[0] : call[0]?.toString?.() ?? "";
-          return url.includes("speech.test") || url.includes("8100") || url.includes("/v1/score/reading");
-        },
-      );
+      const scoringCall = fetchMock.mock.calls.find((call: any[]) => {
+        const url =
+          typeof call[0] === "string" ? call[0] : (call[0]?.toString?.() ?? "");
+        return (
+          url.includes("speech.test") ||
+          url.includes("8100") ||
+          url.includes("/v1/score/reading")
+        );
+      });
       expect(scoringCall).toBeDefined();
       const scoringBody = JSON.parse(scoringCall![1].body);
       expect(scoringBody.targetText).toBe(TARGET_TEXT);
       expect(scoringBody.scorerVersion).toBe(SCORER_VERSION);
+
+      const callbackCall = fetchMock.mock.calls.find(
+        (call: any[]) =>
+          call[0]?.toString()?.includes("/speech-jobs/") &&
+          call[1]?.method === "PUT",
+      );
+      expect(callbackCall).toBeDefined();
+      const callbackBody = JSON.parse(callbackCall![1].body);
+      expect(callbackBody.result.provider).toBe("local");
+      expect(callbackBody.scoredScore).toBeUndefined();
+      expect(
+        fetchMock.mock.calls.some((call: any[]) =>
+          call[0]?.toString()?.includes("/assessment-items/"),
+        ),
+      ).toBe(false);
     });
   });
 
@@ -161,7 +206,9 @@ describe("SpeechJobConsumer", () => {
 
       // Verify that markSpeechJobFailed was called
       const failedCall = fetchMock.mock.calls.find(
-        (call: any[]) => call[0]?.toString()?.includes("/speech-jobs/") && call[0]?.toString()?.includes("/result"),
+        (call: any[]) =>
+          call[0]?.toString()?.includes("/speech-jobs/") &&
+          call[0]?.toString()?.includes("/result"),
       );
       expect(failedCall).toBeDefined();
     });
@@ -186,7 +233,9 @@ describe("SpeechJobConsumer", () => {
 
       // Verify markFailed was called
       const failedCall = fetchMock.mock.calls.find(
-        (call: any[]) => call[0]?.toString()?.includes("/speech-jobs/") && call[1]?.method === "PUT",
+        (call: any[]) =>
+          call[0]?.toString()?.includes("/speech-jobs/") &&
+          call[1]?.method === "PUT",
       );
       expect(failedCall).toBeDefined();
       const failBody = JSON.parse(failedCall![1].body);
@@ -237,7 +286,7 @@ describe("SpeechJobConsumer", () => {
   describe("internal key", () => {
     it("sends X-Internal-Key header when API_INTERNAL_KEY is set", async () => {
       process.env.API_INTERNAL_KEY = "my-secret-key";
-      consumer = createConsumer();
+      consumer = createConsumer({ apiInternalKey: "my-secret-key" });
 
       // All internal calls should include the key
       fetchMock.mockImplementationOnce(() =>
@@ -252,8 +301,8 @@ describe("SpeechJobConsumer", () => {
 
       await processJob(consumer);
 
-      const internalCalls = fetchMock.mock.calls.filter(
-        (call: any[]) => call[0]?.toString()?.includes("api.test"),
+      const internalCalls = fetchMock.mock.calls.filter((call: any[]) =>
+        call[0]?.toString()?.includes("api.test"),
       );
       for (const call of internalCalls) {
         expect(call[1]?.headers?.["X-Internal-Key"]).toBe("my-secret-key");
@@ -262,7 +311,7 @@ describe("SpeechJobConsumer", () => {
 
     it("does not send X-Internal-Key header when key is empty", async () => {
       process.env.API_INTERNAL_KEY = "";
-      consumer = createConsumer();
+      consumer = createConsumer({ apiInternalKey: "" });
 
       fetchMock.mockImplementationOnce(() =>
         okResponse({ data: { url: "https://storage.test/download" } }),
@@ -276,8 +325,8 @@ describe("SpeechJobConsumer", () => {
 
       await processJob(consumer);
 
-      const internalCalls = fetchMock.mock.calls.filter(
-        (call: any[]) => call[0]?.toString()?.includes("api.test"),
+      const internalCalls = fetchMock.mock.calls.filter((call: any[]) =>
+        call[0]?.toString()?.includes("api.test"),
       );
       for (const call of internalCalls) {
         expect(call[1]?.headers?.["X-Internal-Key"]).toBeUndefined();
@@ -304,7 +353,9 @@ describe("SpeechJobConsumer", () => {
 
       // Verify the failed call includes PROCESSING_FAILED error code
       const failedCall = fetchMock.mock.calls.find(
-        (call: any[]) => call[0]?.toString()?.includes("/speech-jobs/") && call[1]?.method === "PUT",
+        (call: any[]) =>
+          call[0]?.toString()?.includes("/speech-jobs/") &&
+          call[1]?.method === "PUT",
       );
       expect(failedCall).toBeDefined();
       const body = JSON.parse(failedCall![1].body);

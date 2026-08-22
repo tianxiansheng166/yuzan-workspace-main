@@ -1,12 +1,17 @@
 import { Worker, type Job } from "bullmq";
 import pino from "pino";
+import { SpeechScoringClient } from "./speech-scoring.client.js";
+import {
+  configuredSpeechProvider,
+  type SpeechProviderResult,
+} from "./speech-provider.js";
 
 const logger = pino({ level: process.env.LOG_LEVEL ?? "info" });
 
 export interface SpeechJobPayload {
   speechJobId: string;
   recordingId: string;
-  assessmentItemId: string;
+  assessmentItemId?: string;
   schoolId: string;
   targetText: string;
   scorerVersion: string;
@@ -19,23 +24,23 @@ export interface SpeechJobPayload {
  * Flow:
  * 1. Download recording from MinIO
  * 2. Call Python speech scoring service
- * 3. Update SpeechJob result via API
- * 4. Update AssessmentItem autoResult and scoredScore
- * 5. Update Recording status to READY
- * 6. On failure, update error and retry count
+ * 3. Update the SpeechJob result through the server-side result policy
+ * 4. The API writes the safe AssessmentItem diagnostic and Recording status
+ * 5. On failure, update error and retry count
  */
 export class SpeechJobConsumer {
   private worker: Worker<SpeechJobPayload> | null = null;
-  private readonly speechApiUrl: string;
   private readonly apiBaseUrl: string;
   private readonly apiInternalKey: string;
 
   constructor(
     private readonly queueName: string,
     private readonly connection: { host: string; port: number },
+    private readonly speechProvider = new SpeechScoringClient(),
   ) {
-    this.speechApiUrl = process.env.SPEECH_API_URL ?? "http://127.0.0.1:8100";
-    this.apiBaseUrl = process.env.API_INTERNAL_URL ?? "http://127.0.0.1:4000";
+    const configuredApiBase =
+      process.env.API_INTERNAL_URL ?? "http://127.0.0.1:4000";
+    this.apiBaseUrl = configuredApiBase.replace(/\/api\/v1\/internal\/?$/, "");
     this.apiInternalKey = process.env.API_INTERNAL_KEY ?? "";
   }
 
@@ -43,7 +48,10 @@ export class SpeechJobConsumer {
     this.worker = new Worker<SpeechJobPayload>(
       this.queueName,
       async (job: Job<SpeechJobPayload>) => {
-        logger.info({ jobId: job.id, speechJobId: job.data.speechJobId }, "Processing speech job");
+        logger.info(
+          { jobId: job.id, speechJobId: job.data.speechJobId },
+          "Processing speech job",
+        );
         await this.processJob(job);
       },
       {
@@ -54,15 +62,25 @@ export class SpeechJobConsumer {
     );
 
     this.worker.on("completed", (job: Job<SpeechJobPayload>) => {
-      logger.info({ jobId: job.id, speechJobId: job.data.speechJobId }, "Speech job completed");
-    });
-
-    this.worker.on("failed", (job: Job<SpeechJobPayload> | undefined, err: Error) => {
-      logger.error(
-        { jobId: job?.id, speechJobId: job?.data.speechJobId, error: err.message },
-        "Speech job failed",
+      logger.info(
+        { jobId: job.id, speechJobId: job.data.speechJobId },
+        "Speech job completed",
       );
     });
+
+    this.worker.on(
+      "failed",
+      (job: Job<SpeechJobPayload> | undefined, err: Error) => {
+        logger.error(
+          {
+            jobId: job?.id,
+            speechJobId: job?.data.speechJobId,
+            error: err.message,
+          },
+          "Speech job failed",
+        );
+      },
+    );
 
     logger.info({ queue: this.queueName }, "SpeechJobConsumer started");
   }
@@ -76,45 +94,71 @@ export class SpeechJobConsumer {
   }
 
   private async processJob(job: Job<SpeechJobPayload>): Promise<void> {
-    const { speechJobId, recordingId, assessmentItemId, schoolId, targetText, scorerVersion, objectKey } = job.data;
+    const {
+      speechJobId,
+      recordingId,
+      assessmentItemId,
+      targetText,
+      scorerVersion,
+      objectKey,
+    } = job.data;
 
     try {
+      const provider = configuredSpeechProvider();
+      if (provider !== "local") {
+        throw new Error(
+          "PROVIDER_NOT_CONFIGURED: speech worker requires SPEECH_PROVIDER=local",
+        );
+      }
+
       // Step 1: Generate download URL for recording
       const downloadUrl = await this.getRecordingDownloadUrl(objectKey);
 
-      // Step 2: Call Python speech scoring service
-      const scoringResult = await this.callSpeechScoring(downloadUrl, targetText, scorerVersion);
+      // Step 2: Call the configured local provider through the shared client.
+      const scoringResult = await this.speechProvider.scoreReading(
+        downloadUrl,
+        targetText,
+        scorerVersion,
+      );
 
-      // Step 3: Update results via API (must succeed — throws on failure)
+      // Step 3: The API validates the provider result, item strategy, target,
+      // max score, and writes the safe diagnostic. The worker never sends a
+      // scoredScore and cannot turn a 0–100 metric into a four-point score.
       await this.updateSpeechJobResult(speechJobId, {
-        status: scoringResult.requiresReview ? "NEEDS_REVIEW" : "AUTO_RESULT",
         result: scoringResult,
         confidence: scoringResult.confidence,
-        ...(scoringResult.processingMs !== undefined ? { processingMs: scoringResult.processingMs } : {}),
+        ...(scoringResult.processingMs !== undefined
+          ? { processingMs: scoringResult.processingMs }
+          : {}),
       });
 
-      // Step 4: Update AssessmentItem with auto result and score (if linked)
-      if (assessmentItemId) {
-        await this.updateAssessmentItem(assessmentItemId, {
-          autoResult: scoringResult,
-          scoredScore: scoringResult.scores.overall,
-        });
-      }
-
-      // Step 5: Update Recording status to READY
-      await this.updateRecordingStatus(recordingId, "READY");
-
       logger.info(
-        { speechJobId, overall: scoringResult.scores.overall, requiresReview: scoringResult.requiresReview },
+        {
+          speechJobId,
+          recordingId,
+          assessmentItemId,
+          provider: scoringResult.provider,
+          overall: scoringResult.scores.overall,
+          requiresReview: scoringResult.requiresReview,
+        },
         "Speech scoring completed",
       );
     } catch (err) {
       // Attempt to mark the SpeechJob as FAILED so it doesn't appear as completed
       try {
-        await this.markSpeechJobFailed(speechJobId, err instanceof Error ? err.message : String(err));
+        await this.markSpeechJobFailed(
+          speechJobId,
+          err instanceof Error ? err.message : String(err),
+        );
       } catch (markFailedErr) {
         logger.error(
-          { speechJobId, markFailedErr: markFailedErr instanceof Error ? markFailedErr.message : String(markFailedErr) },
+          {
+            speechJobId,
+            markFailedErr:
+              markFailedErr instanceof Error
+                ? markFailedErr.message
+                : String(markFailedErr),
+          },
           "Failed to mark speech job as FAILED after processing error",
         );
       }
@@ -131,44 +175,31 @@ export class SpeechJobConsumer {
       },
     );
     if (!response.ok) {
-      throw new Error(`Failed to get download URL: ${response.status} ${await response.text()}`);
+      throw new Error(
+        `Failed to get download URL: ${response.status} ${await response.text()}`,
+      );
     }
     // API responses are wrapped in { data: { ... }, meta: { ... } }
-    const json = await response.json() as { data?: { url: string }; url?: string };
+    const json = (await response.json()) as {
+      data?: { url: string };
+      url?: string;
+    };
     const url = json.data?.url ?? json.url;
     if (!url) {
-      throw new Error(`Download URL not found in response: ${JSON.stringify(json)}`);
+      throw new Error(
+        `Download URL not found in response: ${JSON.stringify(json)}`,
+      );
     }
     return url;
   }
 
-  private async callSpeechScoring(
-    audioUrl: string,
-    targetText: string,
-    scorerVersion: string,
-  ): Promise<SpeechScoringResult> {
-    const response = await fetch(`${this.speechApiUrl}/v1/score/reading`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        audioUrl,
-        targetText,
-        language: "zh-CN",
-        scorerVersion,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorBody = await response.text();
-      throw new Error(`Speech scoring service error: ${response.status} ${errorBody}`);
-    }
-
-    return response.json() as Promise<SpeechScoringResult>;
-  }
-
   private async updateSpeechJobResult(
     speechJobId: string,
-    data: { status: string; result: SpeechScoringResult; confidence: number; processingMs?: number },
+    data: {
+      result: SpeechProviderResult;
+      confidence: number;
+      processingMs?: number;
+    },
   ): Promise<void> {
     const response = await fetch(
       `${this.apiBaseUrl}/api/v1/internal/speech-jobs/${speechJobId}/result`,
@@ -189,54 +220,14 @@ export class SpeechJobConsumer {
     }
   }
 
-  private async updateAssessmentItem(
-    assessmentItemId: string,
-    data: { autoResult: SpeechScoringResult; scoredScore: number },
-  ): Promise<void> {
-    const response = await fetch(
-      `${this.apiBaseUrl}/api/v1/internal/assessment-items/${assessmentItemId}/auto-result`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          ...this.getInternalHeaders(),
-        },
-        body: JSON.stringify(data),
-      },
-    );
-    if (!response.ok) {
-      const errorBody = await response.text().catch(() => "");
-      throw new Error(
-        `Failed to update assessment item: status=${response.status} body=${errorBody}`,
-      );
-    }
-  }
-
-  private async updateRecordingStatus(recordingId: string, status: string): Promise<void> {
-    const response = await fetch(
-      `${this.apiBaseUrl}/api/v1/internal/recordings/${recordingId}/status`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          ...this.getInternalHeaders(),
-        },
-        body: JSON.stringify({ status }),
-      },
-    );
-    if (!response.ok) {
-      const errorBody = await response.text().catch(() => "");
-      throw new Error(
-        `Failed to update recording status: status=${response.status} body=${errorBody}`,
-      );
-    }
-  }
-
   /**
    * Attempt to mark a SpeechJob as FAILED after all retries are exhausted.
    * This prevents the job from appearing as "completed" when it actually failed.
    */
-  private async markSpeechJobFailed(speechJobId: string, errorMessage: string): Promise<void> {
+  private async markSpeechJobFailed(
+    speechJobId: string,
+    errorMessage: string,
+  ): Promise<void> {
     const response = await fetch(
       `${this.apiBaseUrl}/api/v1/internal/speech-jobs/${speechJobId}/result`,
       {
@@ -269,30 +260,6 @@ export class SpeechJobConsumer {
   }
 }
 
-export interface SpeechScoringResult {
-  scorerVersion: string;
-  transcript: string;
-  confidence: number;
-  scores: {
-    accuracy: number;
-    completeness: number;
-    fluency: number;
-    tone: number | null;
-    overall: number;
-  };
-  errors: Array<{
-    text: string;
-    pinyin: string;
-    startMs: number;
-    endMs: number;
-    type: string;
-    score: number;
-  }>;
-  requiresReview: boolean;
-  processingMs?: number;
-  toneMeta?: {
-    experimental: boolean;
-    method: string | null;
-    reason: string | null;
-  };
-}
+// Kept as a compatibility type alias for existing worker tests/importers while
+// the provider-neutral contract lives in its own module.
+export type { SpeechProviderResult as SpeechScoringResult } from "./speech-provider.js";

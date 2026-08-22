@@ -35,7 +35,10 @@ export class SpeechJobCallbackUnauthorizedException extends HttpException {
  */
 export class SpeechProviderNotConfiguredException extends HttpException {
   constructor(message = "语音评分服务未配置，任务已创建但暂不会处理") {
-    super({ code: "PROVIDER_NOT_CONFIGURED", message }, HttpStatus.SERVICE_UNAVAILABLE);
+    super(
+      { code: "PROVIDER_NOT_CONFIGURED", message },
+      HttpStatus.SERVICE_UNAVAILABLE,
+    );
   }
 }
 
@@ -44,6 +47,26 @@ export class SpeechProviderNotConfiguredException extends HttpException {
  */
 export class SpeechProviderUnavailableException extends HttpException {
   constructor(message = "语音评分服务暂时不可用，请稍后重试") {
-    super({ code: "PROVIDER_UNAVAILABLE", message }, HttpStatus.SERVICE_UNAVAILABLE);
+    super(
+      { code: "PROVIDER_UNAVAILABLE", message },
+      HttpStatus.SERVICE_UNAVAILABLE,
+    );
+  }
+}
+
+/** 题库题型没有被当前 speech pipeline 支持时必须拒绝，不能猜测评分方式。 */
+export class SpeechJobStrategyMismatchException extends HttpException {
+  constructor(message = "当前题型不支持朗读语音评分") {
+    super(
+      { code: "SPEECH_STRATEGY_MISMATCH", message },
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+}
+
+/** Result callbacks are immutable once a terminal job state has been reached. */
+export class SpeechJobResultConflictException extends HttpException {
+  constructor(message = "语音评分任务已经结束，不能覆盖既有结果") {
+    super({ code: "SPEECH_RESULT_CONFLICT", message }, HttpStatus.CONFLICT);
   }
 }

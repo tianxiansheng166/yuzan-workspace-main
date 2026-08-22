@@ -1,5 +1,6 @@
 import {
   Body,
+  BadRequestException,
   Controller,
   Get,
   Headers,
@@ -21,6 +22,7 @@ import type { StoragePort } from "../../shared/storage/storage.port.js";
 import { STORAGE_PORT } from "../../shared/storage/storage.port.js";
 import { AssessmentService } from "../assessment/assessment.service.js";
 import { AiLessonPlanningService } from "../ai-lesson-planning/ai-lesson-planning.service.js";
+import { SpeechJobService } from "../speech-job/speech-job.service.js";
 
 /**
  * Internal API controller for Worker callbacks.
@@ -42,6 +44,7 @@ export class InternalController {
     private readonly storage: StoragePort,
     private readonly assessmentService: AssessmentService,
     private readonly aiLessonPlanningService: AiLessonPlanningService,
+    private readonly speechJobService: SpeechJobService,
     config: ConfigService,
   ) {
     this.internalKey = config.get<string>("API_INTERNAL_KEY") ?? "";
@@ -56,33 +59,35 @@ export class InternalController {
     authorization: string | undefined,
   ): void {
     if (!this.internalKey) {
-      throw Object.assign(
-        new Error("Internal API key not configured"),
-        { code: "PROVIDER_NOT_CONFIGURED" },
-      );
+      throw Object.assign(new Error("Internal API key not configured"), {
+        code: "PROVIDER_NOT_CONFIGURED",
+      });
     }
 
     // Extract key: prefer X-Internal-Key, fall back to Authorization: Bearer
     const key = xInternalKey ?? this.extractBearerToken(authorization);
     if (!key) {
-      throw Object.assign(
-        new Error("Missing internal API key"),
-        { code: "FORBIDDEN" },
-      );
+      throw Object.assign(new Error("Missing internal API key"), {
+        code: "FORBIDDEN",
+      });
     }
 
     // Constant-time comparison to prevent timing attacks
     const keyBuf = Buffer.from(key, "utf-8");
     const expectedBuf = Buffer.from(this.internalKey, "utf-8");
-    if (keyBuf.length !== expectedBuf.length || !timingSafeEqual(keyBuf, expectedBuf)) {
-      throw Object.assign(
-        new Error("Invalid internal API key"),
-        { code: "FORBIDDEN" },
-      );
+    if (
+      keyBuf.length !== expectedBuf.length ||
+      !timingSafeEqual(keyBuf, expectedBuf)
+    ) {
+      throw Object.assign(new Error("Invalid internal API key"), {
+        code: "FORBIDDEN",
+      });
     }
   }
 
-  private extractBearerToken(authorization: string | undefined): string | undefined {
+  private extractBearerToken(
+    authorization: string | undefined,
+  ): string | undefined {
     if (!authorization) return undefined;
     const parts = authorization.split(" ");
     if (parts.length === 2 && parts[0] === "Bearer") return parts[1];
@@ -107,28 +112,54 @@ export class InternalController {
   @Put("speech-jobs/:jobId/result")
   async updateSpeechJobResult(
     @Param("jobId", ParseUUIDPipe) jobId: string,
-    @Body() body: {
-      status: string;
-      result: Record<string, unknown>;
-      confidence?: number;
-      processingMs?: number;
+    @Body()
+    body: {
+      result?: unknown;
+      status?: string;
       errorCode?: string;
+      errorMessage?: string;
     },
     @Headers("X-Internal-Key") xInternalKey: string | undefined,
     @Headers("Authorization") authorization: string | undefined,
   ) {
     this.validateKey(xInternalKey, authorization);
 
-    const updated = await this.prisma.speechJob.update({
+    if (body.status === "FAILED") {
+      const failed = await this.speechJobService.markSpeechJobFailed(
+        jobId,
+        body.errorCode ?? "PROCESSING_FAILED",
+        body.errorMessage,
+      );
+      return { id: failed.id, status: failed.status };
+    }
+    if (body.result === undefined) {
+      throw new BadRequestException({
+        code: "PROVIDER_RESULT_MALFORMED",
+        message: "语音结果回调缺少 result",
+      });
+    }
+
+    const updated = await this.speechJobService.applySpeechProviderResult(
+      jobId,
+      body.result,
+    );
+
+    // Question Bank report finalization remains centralized in AssessmentService.
+    // The local provider result is NEEDS_REVIEW and has no scoredScore, so this
+    // call deliberately keeps a Question Bank session in PROCESSING.
+    const context = await this.prisma.speechJob.findUnique({
       where: { id: jobId },
-      data: {
-        status: body.status as "CREATED" | "QUALITY_CHECKED" | "REJECTED_AUDIO" | "PROCESSING" | "AUTO_RESULT" | "NEEDS_REVIEW" | "FINALIZED" | "FAILED",
-        result: body.result as any,
-        ...(body.confidence !== undefined ? { confidence: body.confidence } : {}),
-        ...(body.processingMs !== undefined ? { processingMs: body.processingMs } : {}),
-        ...(body.errorCode !== undefined ? { errorCode: body.errorCode } : {}),
+      select: {
+        schoolId: true,
+        assessmentItem: { select: { sessionId: true } },
       },
     });
+    if (context?.schoolId && context.assessmentItem?.sessionId) {
+      await this.assessmentService.finalizeAutomaticReportFromSpeechJob(
+        context.schoolId,
+        context.assessmentItem.sessionId,
+      );
+    }
 
     return { id: updated.id, status: updated.status };
   }
@@ -138,7 +169,8 @@ export class InternalController {
   @Put("assessment-items/:itemId/auto-result")
   async updateAssessmentItemAutoResult(
     @Param("itemId", ParseUUIDPipe) itemId: string,
-    @Body() body: {
+    @Body()
+    body: {
       autoResult: Record<string, unknown>;
       scoredScore: number;
     },
@@ -146,6 +178,38 @@ export class InternalController {
     @Headers("Authorization") authorization: string | undefined,
   ) {
     this.validateKey(xInternalKey, authorization);
+
+    const item = await this.prisma.assessmentItem.findUnique({
+      where: { id: itemId },
+      select: {
+        maxScore: true,
+        questionVersionId: true,
+        questionVersion: { select: { scoringSpec: true } },
+      },
+    });
+    if (!item)
+      throw new BadRequestException({
+        code: "ASSESSMENT_ITEM_NOT_FOUND",
+        message: "测评题目不存在",
+      });
+    if (item.questionVersionId !== null) {
+      throw new BadRequestException({
+        code: "QUESTION_BANK_SCORE_POLICY_REQUIRED",
+        message:
+          "题库题目必须通过受信任的 speech/deterministic scoring policy 写入结果",
+      });
+    }
+    if (
+      typeof body.scoredScore !== "number" ||
+      !Number.isFinite(body.scoredScore) ||
+      body.scoredScore < 0 ||
+      (item.maxScore !== null && body.scoredScore > item.maxScore)
+    ) {
+      throw new BadRequestException({
+        code: "SCORED_SCORE_OUT_OF_RANGE",
+        message: "测评得分超出允许范围",
+      });
+    }
 
     const updated = await this.prisma.assessmentItem.update({
       where: { id: itemId },
@@ -181,7 +245,13 @@ export class InternalController {
     const updated = await this.prisma.recording.update({
       where: { id: recordingId },
       data: {
-        status: body.status as "INITIALIZED" | "UPLOADING" | "COMPLETE" | "PROCESSING" | "READY" | "FAILED",
+        status: body.status as
+          | "INITIALIZED"
+          | "UPLOADING"
+          | "COMPLETE"
+          | "PROCESSING"
+          | "READY"
+          | "FAILED",
       },
     });
 
@@ -193,7 +263,8 @@ export class InternalController {
   @Put("ai-generation-jobs/:jobId/result")
   async updateAiGenerationJobResult(
     @Param("jobId", ParseUUIDPipe) jobId: string,
-    @Body() body: {
+    @Body()
+    body: {
       status: string;
       outputSnapshot?: Record<string, unknown>;
       errorCode?: string;
@@ -299,8 +370,7 @@ export class InternalController {
       );
     } catch (err: unknown) {
       const latencyMs = Date.now() - startTime;
-      const errorMessage =
-        err instanceof Error ? err.message : "Unknown error";
+      const errorMessage = err instanceof Error ? err.message : "Unknown error";
 
       console.error(
         JSON.stringify({

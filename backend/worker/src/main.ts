@@ -2,6 +2,7 @@ import { Queue } from "bullmq";
 import pino from "pino";
 import { SpeechJobConsumer } from "./speech/speech-job.consumer.js";
 import { SpeechScoringClient } from "./speech/speech-scoring.client.js";
+import { configuredSpeechProvider } from "./speech/speech-provider.js";
 import { AiGenerationConsumer } from "./ai-generation/ai-generation.consumer.js";
 import { TranslationConsumer } from "./translation/translation.consumer.js";
 
@@ -30,21 +31,36 @@ function getRedisConfig(): RedisConfig {
   return {
     host: process.env.REDIS_HOST ?? "127.0.0.1",
     port: parseInt(process.env.REDIS_PORT ?? "6379", 10),
-    ...(process.env.REDIS_PASSWORD ? { password: process.env.REDIS_PASSWORD } : {}),
+    ...(process.env.REDIS_PASSWORD
+      ? { password: process.env.REDIS_PASSWORD }
+      : {}),
   };
 }
 
 async function main(): Promise<void> {
-  const speechProvider = process.env.SPEECH_PROVIDER ?? "disabled";
+  let speechProvider: "disabled" | "local";
+  try {
+    speechProvider = configuredSpeechProvider();
+  } catch (error: unknown) {
+    logger.error(
+      { error: error instanceof Error ? error.message : String(error) },
+      "Unsupported speech provider; speech processing is disabled",
+    );
+    speechProvider = "disabled";
+  }
   const redisConfig = getRedisConfig();
 
   logger.info(
-    { worker: "yuzan-worker", speechProvider, redis: `${redisConfig.host}:${redisConfig.port}` },
+    {
+      worker: "yuzan-worker",
+      speechProvider,
+      redis: `${redisConfig.host}:${redisConfig.port}`,
+    },
     "Worker starting",
   );
 
   // Health check for speech scoring service
-  if (speechProvider !== "disabled") {
+  if (speechProvider === "local") {
     const scoringClient = new SpeechScoringClient();
     const healthy = await scoringClient.isHealthy();
     if (!healthy) {
@@ -60,19 +76,29 @@ async function main(): Promise<void> {
   // Start speech job consumer if enabled
   let speechConsumer: SpeechJobConsumer | null = null;
 
-  if (speechProvider !== "disabled") {
+  if (speechProvider === "local") {
     speechConsumer = new SpeechJobConsumer(SPEECH_QUEUE_NAME, redisConfig);
     speechConsumer.start();
     logger.info({ queue: SPEECH_QUEUE_NAME }, "Speech job consumer started");
   } else {
-    logger.info("Speech processing is disabled (SPEECH_PROVIDER=disabled). Skipping consumer startup.");
+    logger.info(
+      "Speech processing is disabled (SPEECH_PROVIDER=disabled). Skipping consumer startup.",
+    );
 
     // Still create the queue so jobs can be enqueued
     try {
-      const speechQueue = new Queue(SPEECH_QUEUE_NAME, { connection: redisConfig });
-      logger.info({ queue: SPEECH_QUEUE_NAME }, "Speech queue created (consumer not started)");
+      const speechQueue = new Queue(SPEECH_QUEUE_NAME, {
+        connection: redisConfig,
+      });
+      logger.info(
+        { queue: SPEECH_QUEUE_NAME },
+        "Speech queue created (consumer not started)",
+      );
     } catch (error: unknown) {
-      logger.warn({ error }, "Could not connect to Redis. Queue creation skipped.");
+      logger.warn(
+        { error },
+        "Could not connect to Redis. Queue creation skipped.",
+      );
     }
   }
 
@@ -82,18 +108,34 @@ async function main(): Promise<void> {
   const flowiseApiKey = process.env.FLOWISE_API_KEY ?? "";
 
   if (flowiseFlowId && flowiseApiKey) {
-    aiConsumer = new AiGenerationConsumer(AI_GENERATION_QUEUE_NAME, redisConfig);
+    aiConsumer = new AiGenerationConsumer(
+      AI_GENERATION_QUEUE_NAME,
+      redisConfig,
+    );
     aiConsumer.start();
-    logger.info({ queue: AI_GENERATION_QUEUE_NAME }, "AI generation consumer started");
+    logger.info(
+      { queue: AI_GENERATION_QUEUE_NAME },
+      "AI generation consumer started",
+    );
   } else {
-    logger.info("AI generation is disabled (FLOWISE_FLOW_ID or FLOWISE_API_KEY not set). Skipping consumer startup.");
+    logger.info(
+      "AI generation is disabled (FLOWISE_FLOW_ID or FLOWISE_API_KEY not set). Skipping consumer startup.",
+    );
 
     // Still create the queue so API can enqueue jobs
     try {
-      const aiQueue = new Queue(AI_GENERATION_QUEUE_NAME, { connection: redisConfig });
-      logger.info({ queue: AI_GENERATION_QUEUE_NAME }, "AI generation queue created (consumer not started)");
+      const aiQueue = new Queue(AI_GENERATION_QUEUE_NAME, {
+        connection: redisConfig,
+      });
+      logger.info(
+        { queue: AI_GENERATION_QUEUE_NAME },
+        "AI generation queue created (consumer not started)",
+      );
     } catch (error: unknown) {
-      logger.warn({ error }, "Could not connect to Redis. AI queue creation skipped.");
+      logger.warn(
+        { error },
+        "Could not connect to Redis. AI queue creation skipped.",
+      );
     }
   }
 
@@ -102,18 +144,34 @@ async function main(): Promise<void> {
   const translationEnabled = process.env.TRANSLATION_ENABLED !== "false";
 
   if (translationEnabled) {
-    translationConsumer = new TranslationConsumer(TRANSLATION_QUEUE_NAME, redisConfig);
+    translationConsumer = new TranslationConsumer(
+      TRANSLATION_QUEUE_NAME,
+      redisConfig,
+    );
     translationConsumer.start();
-    logger.info({ queue: TRANSLATION_QUEUE_NAME }, "Translation consumer started");
+    logger.info(
+      { queue: TRANSLATION_QUEUE_NAME },
+      "Translation consumer started",
+    );
   } else {
-    logger.info("Translation is disabled (TRANSLATION_ENABLED=false). Skipping consumer startup.");
+    logger.info(
+      "Translation is disabled (TRANSLATION_ENABLED=false). Skipping consumer startup.",
+    );
 
     // Still create the queue so API can enqueue jobs
     try {
-      const translationQueue = new Queue(TRANSLATION_QUEUE_NAME, { connection: redisConfig });
-      logger.info({ queue: TRANSLATION_QUEUE_NAME }, "Translation queue created (consumer not started)");
+      const translationQueue = new Queue(TRANSLATION_QUEUE_NAME, {
+        connection: redisConfig,
+      });
+      logger.info(
+        { queue: TRANSLATION_QUEUE_NAME },
+        "Translation queue created (consumer not started)",
+      );
     } catch (error: unknown) {
-      logger.warn({ error }, "Could not connect to Redis. Translation queue creation skipped.");
+      logger.warn(
+        { error },
+        "Could not connect to Redis. Translation queue creation skipped.",
+      );
     }
   }
 

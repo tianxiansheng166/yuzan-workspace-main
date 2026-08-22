@@ -5,13 +5,32 @@ the fictional development student, creates one real attempt, and removes only
 that attempt and its mock recordings after verification.
 """
 
+import base64
+import io
+import struct
 import subprocess
+import time
+import wave
 
+from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
 from playwright.sync_api import sync_playwright
 
 
 BASE = "http://127.0.0.1:4175"
 PRACTICE_TITLE = "国家通用语言文字能力｜水平一级综合测评"
+
+
+def test_wav_base64():
+    buffer = io.BytesIO()
+    with wave.open(buffer, "wb") as writer:
+        writer.setnchannels(1)
+        writer.setsampwidth(2)
+        writer.setframerate(16000)
+        writer.writeframes(struct.pack("<h", 0) * 16000)
+    return base64.b64encode(buffer.getvalue()).decode()
+
+
+TEST_WAV_BASE64 = test_wav_base64()
 
 
 def sql(statement):
@@ -124,20 +143,22 @@ try:
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(headless=True, executable_path="/usr/bin/google-chrome")
         context = browser.new_context()
-        context.add_init_script("""(() => {
-          class FakeRecorder {
-            static isTypeSupported() { return true; }
-            constructor(_stream, options) { this.state = 'inactive'; this.mimeType = options?.mimeType || 'audio/webm'; }
-            start() { this.state = 'recording'; }
-            stop() {
+        context.add_init_script(f"""(() => {{
+          const encoded = "{TEST_WAV_BASE64}";
+          const bytes = Uint8Array.from(atob(encoded), char => char.charCodeAt(0));
+          class FakeRecorder {{
+            static isTypeSupported() {{ return true; }}
+            constructor(_stream, _options) {{ this.state = 'inactive'; this.mimeType = 'audio/wav'; }}
+            start() {{ this.state = 'recording'; }}
+            stop() {{
               this.state = 'inactive';
-              this.ondataavailable?.({ data: new Blob(['Level 1 mock audio'], { type: this.mimeType }) });
+              this.ondataavailable?.({{ data: new Blob([bytes], {{ type: this.mimeType }}) }});
               this.onstop?.();
-            }
-          }
-          Object.defineProperty(window, 'MediaRecorder', { configurable: true, value: FakeRecorder });
-          window.__yuzanRunnerGetUserMedia = async () => ({ getTracks: () => [] });
-        })()""")
+            }}
+          }}
+          Object.defineProperty(window, 'MediaRecorder', {{ configurable: true, value: FakeRecorder }});
+          window.__yuzanRunnerGetUserMedia = async () => ({{ getTracks: () => [] }});
+        }})()""")
         page = context.new_page()
         page_errors = []
         item_payloads = []
@@ -199,7 +220,12 @@ try:
             fill_text(page, f"句子补全 {index}")
 
         page.locator("[data-submit]").click()
-        page.wait_for_url("**/processing/", timeout=20_000)
+        try:
+            page.wait_for_url("**/processing**", timeout=60_000)
+        except PlaywrightTimeoutError as error:
+            raise AssertionError(
+                f"提交未进入 processing：url={page.url} body={page.locator('body').inner_text()}"
+            ) from error
         assert page_errors == [], page_errors
         assert item_payloads, "Runner did not request its attempt-item payload"
         serialized = str(item_payloads)
@@ -209,29 +235,78 @@ try:
         school_id = page.evaluate("localStorage.getItem('yuzan-active-school-id')")
         token = page.evaluate("localStorage.getItem('yuzan-access-token')")
         headers = {"Authorization": f"Bearer {token}"}
-        session_response = page.request.get(
-            f"{BASE}/api/v1/schools/{school_id}/assessments/sessions/{attempt_id}",
-            headers=headers,
-        )
-        assert session_response.ok, session_response.text()
-        session_payload = session_response.json().get("data", session_response.json())
-        assert session_payload["status"] == "PROCESSING", session_payload
+        deadline = time.time() + 60
+        session_payload = None
+        scored_items_payload = None
+        while time.time() < deadline:
+            session_response = page.request.get(
+                f"{BASE}/api/v1/schools/{school_id}/assessments/sessions/{attempt_id}",
+                headers=headers,
+            )
+            assert session_response.ok, session_response.text()
+            session_payload = session_response.json().get("data", session_response.json())
+            scored_items_response = page.request.get(
+                f"{BASE}/api/v1/schools/{school_id}/assessments/sessions/{attempt_id}/items",
+                headers=headers,
+            )
+            assert scored_items_response.ok, scored_items_response.text()
+            scored_items_payload = scored_items_response.json().get("data", scored_items_response.json())
+            local_diagnostics = [
+                item for item in scored_items_payload
+                if (item.get("autoResult") or {}).get("provider") == "local"
+            ]
+            if session_payload["status"] == "PROCESSING" and len(local_diagnostics) == 3:
+                break
+            time.sleep(1)
 
-        scored_items_response = page.request.get(
-            f"{BASE}/api/v1/schools/{school_id}/assessments/sessions/{attempt_id}/items",
-            headers=headers,
-        )
-        assert scored_items_response.ok, scored_items_response.text()
-        scored_items_payload = scored_items_response.json().get("data", scored_items_response.json())
+        assert session_payload["status"] == "PROCESSING", session_payload
         assert len(scored_items_payload) == 20
         scored_items = [item for item in scored_items_payload if item.get("scoredScore") is not None]
         assert len(scored_items) == 14
         pending_items = [item for item in scored_items_payload if item.get("scoredScore") is None]
-        assert len([item for item in pending_items if (item.get("autoResult") or {}).get("state") == "NEEDS_REVIEW"]) == 2
-        assert len([item for item in pending_items if item.get("autoResult") is None]) == 4
+        local_diagnostics = [
+            item for item in pending_items
+            if (item.get("autoResult") or {}).get("provider") == "local"
+        ]
+        assert len(local_diagnostics) == 3
+        assert all(
+            item["autoResult"]["state"] == "NEEDS_REVIEW"
+            and item["autoResult"]["finalizable"] is False
+            and item["autoResult"]["candidatePoints"] <= item["autoResult"]["maxScore"]
+            and "transcript" not in item["autoResult"]
+            and "errors" not in item["autoResult"]
+            for item in local_diagnostics
+        )
+        assert len([item for item in pending_items if (item.get("autoResult") or {}).get("state") == "NEEDS_REVIEW"]) == 5
+        assert len([item for item in pending_items if item.get("autoResult") is None]) == 1
         for item in scored_items:
             assert 0 <= item["scoredScore"] <= item["maxScore"]
             assert item["autoResult"]["scorerVersion"] == "qb-deterministic-v1"
+
+        for index in [6, 7, 8]:
+            jobs_response = page.request.get(
+                f"{BASE}/api/v1/schools/{school_id}/speech-jobs/by-item/{scored_items_payload[index]['id']}",
+                headers=headers,
+            )
+            assert jobs_response.ok, jobs_response.text()
+            jobs = jobs_response.json().get("data", jobs_response.json())
+            assert len(jobs) == 1
+            assert jobs[0]["status"] == "NEEDS_REVIEW"
+        picture_jobs_response = page.request.get(
+            f"{BASE}/api/v1/schools/{school_id}/speech-jobs/by-item/{scored_items_payload[9]['id']}",
+            headers=headers,
+        )
+        assert picture_jobs_response.ok, picture_jobs_response.text()
+        assert picture_jobs_response.json().get("data", picture_jobs_response.json()) == []
+
+        report_response = page.request.get(
+            f"{BASE}/api/v1/schools/{school_id}/assessments/sessions/{attempt_id}/report",
+            headers=headers,
+        )
+        if report_response.status == 200:
+            assert report_response.json().get("data") is None, report_response.text()
+        else:
+            assert report_response.status in (404, 409), report_response.text()
         serialized_scored = str(scored_items_payload)
         for protected in ["scoringSpec", "correctAnswer", "acceptedAnswers", "referenceAnswer", "rubric", "deductionRules"]:
             assert protected not in serialized_scored

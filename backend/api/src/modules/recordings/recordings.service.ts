@@ -13,9 +13,7 @@ import {
   RecordingNotFoundException,
   RecordingStatusException,
 } from "./domain/recording.errors.js";
-import type {
-  RecordingRepositoryPort,
-} from "./ports/recording-repository.port.js";
+import type { RecordingRepositoryPort } from "./ports/recording-repository.port.js";
 import { RECORDING_REPOSITORY } from "./ports/recording-repository.port.js";
 import {
   toInitRecordingResponse,
@@ -38,7 +36,8 @@ export class RecordingsService {
     private readonly storage: StoragePort,
     @Inject(PrismaService)
     private readonly prisma: PrismaService,
-    @Optional() @Inject(SpeechJobService)
+    @Optional()
+    @Inject(SpeechJobService)
     private readonly speechJobService: SpeechJobService | null,
   ) {}
 
@@ -96,7 +95,6 @@ export class RecordingsService {
 
     return toInitRecordingResponse(recording, uploadUrls);
   }
-
 
   async initSimpleRecording(
     auth: AuthContext,
@@ -172,7 +170,11 @@ export class RecordingsService {
     }
 
     // Verify ownership
-    await this.verifyEnrollmentOwnership(auth, schoolId, recording.enrollmentId);
+    await this.verifyEnrollmentOwnership(
+      auth,
+      schoolId,
+      recording.enrollmentId,
+    );
 
     // Validate state: can only upload parts when INITIALIZED or UPLOADING
     if (
@@ -231,7 +233,11 @@ export class RecordingsService {
     }
 
     // Verify ownership
-    await this.verifyEnrollmentOwnership(auth, schoolId, recording.enrollmentId);
+    await this.verifyEnrollmentOwnership(
+      auth,
+      schoolId,
+      recording.enrollmentId,
+    );
 
     // A completed upload may be retried to recover a missing SpeechJob. This is
     // deliberately idempotent: the persisted object is not completed twice,
@@ -242,7 +248,10 @@ export class RecordingsService {
     }
 
     // Validate state: a new completion can only start from an upload state.
-    if (recording.status !== "UPLOADING" && recording.status !== "INITIALIZED") {
+    if (
+      recording.status !== "UPLOADING" &&
+      recording.status !== "INITIALIZED"
+    ) {
       throw new RecordingStatusException(
         `当前状态 ${recording.status} 不允许完成录音`,
       );
@@ -257,14 +266,10 @@ export class RecordingsService {
       const headResult = await this.storage.headObject(objectKey);
 
       if (!headResult.exists) {
-        throw new RecordingStatusException(
-          "上传文件不存在，无法完成录音",
-        );
+        throw new RecordingStatusException("上传文件不存在，无法完成录音");
       }
       if (headResult.contentLength != null && headResult.contentLength === 0) {
-        throw new RecordingStatusException(
-          "上传文件大小为0，无法完成录音",
-        );
+        throw new RecordingStatusException("上传文件大小为0，无法完成录音");
       }
 
       // Set objectKey for the simple recording so it can be downloaded later
@@ -326,19 +331,42 @@ export class RecordingsService {
             enrollmentId: recording.enrollmentId,
           },
         },
-        select: { prompt: true },
+        select: {
+          prompt: true,
+          questionVersion: { select: { status: true, scoringSpec: true } },
+        },
       });
       if (!item) {
         throw new RecordingStatusException("评分题目不存在或不属于当前学生");
       }
 
       const prompt = item.prompt;
-      const canonicalTargetText = this.targetTextFromPrompt(prompt);
-      // The persisted AssessmentItem prompt is the server-side execution
-      // snapshot. Prefer it over client input when it carries a canonical
-      // read-aloud text, but retain the supplied target for prompt shapes that
-      // do not encode a textual stimulus.
-      if (canonicalTargetText) targetText = canonicalTargetText;
+      const questionVersion = item.questionVersion;
+      if (questionVersion) {
+        const scoringSpec = questionVersion.scoringSpec;
+        const strategy = this.strategyFromScoringSpec(scoringSpec);
+        // Question Bank speech families are deliberately separated. A picture
+        // prompt may record normally, but it must never enter /score/reading.
+        if (strategy !== "SPEECH_READING") {
+          this.logger.log(
+            `Speech scoring skipped for assessmentItemId=${input.assessmentItemId} strategy=${strategy ?? "UNKNOWN"}`,
+          );
+          return;
+        }
+        if (questionVersion.status !== "PUBLISHED") {
+          throw new RecordingStatusException("语音题库版本未发布，无法评分");
+        }
+        targetText =
+          this.targetTextFromScoringSpec(scoringSpec) ??
+          this.targetTextFromPrompt(prompt) ??
+          "";
+      } else {
+        // Legacy assessment items retain the existing server-side prompt
+        // fallback. The browser value is never authoritative when a Question
+        // Bank version exists.
+        const canonicalTargetText = this.targetTextFromPrompt(prompt);
+        if (canonicalTargetText) targetText = canonicalTargetText;
+      }
     }
 
     if (!targetText) {
@@ -361,12 +389,14 @@ export class RecordingsService {
 
   private targetTextFromPrompt(prompt: unknown): string | undefined {
     if (typeof prompt === "string" && prompt.trim()) return prompt.trim();
-    if (!prompt || typeof prompt !== "object" || Array.isArray(prompt)) return undefined;
+    if (!prompt || typeof prompt !== "object" || Array.isArray(prompt))
+      return undefined;
     const fields = prompt as Record<string, unknown>;
     const stimulus = fields.stimulus;
-    const stimulusFields = stimulus && typeof stimulus === "object" && !Array.isArray(stimulus)
-      ? stimulus as Record<string, unknown>
-      : undefined;
+    const stimulusFields =
+      stimulus && typeof stimulus === "object" && !Array.isArray(stimulus)
+        ? (stimulus as Record<string, unknown>)
+        : undefined;
     return [
       fields.targetText,
       fields.promptText,
@@ -377,9 +407,36 @@ export class RecordingsService {
       stimulusFields?.promptText,
       stimulusFields?.text,
       stimulusFields?.sentence,
-    ].find(
-      (value): value is string => typeof value === "string" && value.trim().length > 0,
-    )?.trim();
+    ]
+      .find(
+        (value): value is string =>
+          typeof value === "string" && value.trim().length > 0,
+      )
+      ?.trim();
+  }
+
+  private strategyFromScoringSpec(scoringSpec: unknown): string | undefined {
+    if (
+      !scoringSpec ||
+      typeof scoringSpec !== "object" ||
+      Array.isArray(scoringSpec)
+    )
+      return undefined;
+    const strategy = (scoringSpec as Record<string, unknown>).strategy;
+    return typeof strategy === "string" ? strategy : undefined;
+  }
+
+  private targetTextFromScoringSpec(scoringSpec: unknown): string | undefined {
+    if (
+      !scoringSpec ||
+      typeof scoringSpec !== "object" ||
+      Array.isArray(scoringSpec)
+    )
+      return undefined;
+    const targetText = (scoringSpec as Record<string, unknown>).targetText;
+    return typeof targetText === "string" && targetText.trim()
+      ? targetText.trim()
+      : undefined;
   }
 
   async getRecordingStatus(
@@ -397,7 +454,11 @@ export class RecordingsService {
     }
 
     // Students can only see their own recordings
-    await this.verifyEnrollmentOwnership(auth, schoolId, recording.enrollmentId);
+    await this.verifyEnrollmentOwnership(
+      auth,
+      schoolId,
+      recording.enrollmentId,
+    );
 
     return toRecordingStatusResponse(recording);
   }
@@ -410,7 +471,12 @@ export class RecordingsService {
     }
 
     const enrollment = await this.prisma.enrollment.findFirst({
-      where: { schoolId, userId: auth.principal.userId, role: "STUDENT", status: "ACTIVE" },
+      where: {
+        schoolId,
+        userId: auth.principal.userId,
+        role: "STUDENT",
+        status: "ACTIVE",
+      },
       select: { id: true },
     });
     if (!enrollment) throw new RecordingForbiddenException();
@@ -421,29 +487,56 @@ export class RecordingsService {
         session: { schoolId, enrollmentId: enrollment.id },
       },
       include: {
-        recording: { select: { id: true, status: true, durationMs: true, mimeType: true, createdAt: true } },
-        session: { select: { id: true, status: true, completedAt: true, practiceDefinitionId: true } },
-        speechJobs: { orderBy: { createdAt: "desc" }, take: 1, select: { status: true, errorCode: true } },
+        recording: {
+          select: {
+            id: true,
+            status: true,
+            durationMs: true,
+            mimeType: true,
+            createdAt: true,
+          },
+        },
+        session: {
+          select: {
+            id: true,
+            status: true,
+            completedAt: true,
+            practiceDefinitionId: true,
+          },
+        },
+        speechJobs: {
+          orderBy: { createdAt: "desc" },
+          take: 1,
+          select: { status: true, errorCode: true },
+        },
       },
       orderBy: { createdAt: "desc" },
     });
 
     return items.flatMap((item) => {
       if (!item.recording) return [];
-      const prompt = item.prompt && typeof item.prompt === "object" ? item.prompt as Record<string, unknown> : {};
-      return [{
-        recordingId: item.recording.id,
-        sessionId: item.session.id,
-        label: typeof prompt.title === "string" ? prompt.title : `第 ${item.sortOrder + 1} 段练习录音`,
-        itemType: item.itemType,
-        recordingStatus: item.recording.status,
-        durationMs: item.recording.durationMs,
-        createdAt: item.recording.createdAt.toISOString(),
-        attemptStatus: item.session.status,
-        completedAt: item.session.completedAt?.toISOString() ?? null,
-        speechStatus: item.speechJobs[0]?.status ?? null,
-        speechErrorCode: item.speechJobs[0]?.errorCode ?? null,
-      }];
+      const prompt =
+        item.prompt && typeof item.prompt === "object"
+          ? (item.prompt as Record<string, unknown>)
+          : {};
+      return [
+        {
+          recordingId: item.recording.id,
+          sessionId: item.session.id,
+          label:
+            typeof prompt.title === "string"
+              ? prompt.title
+              : `第 ${item.sortOrder + 1} 段练习录音`,
+          itemType: item.itemType,
+          recordingStatus: item.recording.status,
+          durationMs: item.recording.durationMs,
+          createdAt: item.recording.createdAt.toISOString(),
+          attemptStatus: item.session.status,
+          completedAt: item.session.completedAt?.toISOString() ?? null,
+          speechStatus: item.speechJobs[0]?.status ?? null,
+          speechErrorCode: item.speechJobs[0]?.errorCode ?? null,
+        },
+      ];
     });
   }
 
@@ -462,7 +555,11 @@ export class RecordingsService {
     }
 
     // Only generate download URL if recording is in a ready state
-    if (recording.status !== "COMPLETE" && recording.status !== "PROCESSING" && recording.status !== "READY") {
+    if (
+      recording.status !== "COMPLETE" &&
+      recording.status !== "PROCESSING" &&
+      recording.status !== "READY"
+    ) {
       throw new RecordingStatusException(
         `当前状态 ${recording.status} 不允许下载`,
       );
