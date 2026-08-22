@@ -10,17 +10,17 @@ authoritative.
 
 Expected active development branch: `feat/question-bank-v1`
 
-Latest functional checkpoint: `caa9111 fix(runner): resolve assets outside http server`
+Latest functional checkpoint: `8793f2c feat(question-import): finalize strict source manifest binding`
 
 Recent operations checkpoint: `6d6a6d1 docs(ops): simplify codex cold-start handoff`
 
 ## Resume in 60 seconds
 
-QB-001 and QB-002 are complete. The current active task is **QB-003A-F — Strict
-source importer finalization**. Its detailed execution state, remaining work, and
-acceptance criteria are in [`CURRENT_TASK.md`](CURRENT_TASK.md).
+QB-001, QB-002, and **QB-003A-F — Strict source importer finalization** are complete.
+The current active task is **QB-003B**. Its recovery state is in
+[`CURRENT_TASK.md`](CURRENT_TASK.md).
 
-Next action: continue `CURRENT_TASK.md`.
+Next action: begin QB-003B only when explicitly requested.
 
 ## Environment
 
@@ -40,8 +40,7 @@ with NestJS API, frontend, and worker in this repository. Local path:
 
 ## Current active task
 
-**QB-003A-F — Strict source importer finalization** (`IN_PROGRESS`).
-Detailed execution state: `CURRENT_TASK.md`.
+**QB-003B** (`TODO`). QB-003A-F is complete; no QB-003B implementation has started.
 
 ## Current question-bank source
 
@@ -62,14 +61,14 @@ question with AI.
 ## Major blockers
 
 - Project blocker: none.
-- Task blocker: none.
-- Source blocker: L2 `READ_ALOUD` structure expects 3 questions but the authored
-  body contains 2. The importer must fail explicitly and must not invent content;
-  this blocks Level 2 completeness, not trusted Level 1 work.
+- Task blocker: none for QB-003A-F.
+- Source blocker carried forward: L2 `READ_ALOUD` structure expects 3 questions but
+  the authored body contains 2. The importer fails explicitly; it never invents a
+  question with AI. This blocks Level 2 completeness, not trusted Level 1 work.
 - Non-blocking issue: the existing `@eslint/js` configuration issue is outside the
   current task.
 
 ## DO NOT START YET
 
-Level 2–6 bulk import, speech-provider integration, picture-speaking scoring, and large
-refactors.
+QB-003B has not started. Do not begin Level 2–6 bulk import, speech-provider
+integration, picture-speaking scoring, or unrelated large refactors in this handoff.
