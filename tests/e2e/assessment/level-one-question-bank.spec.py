@@ -1,0 +1,193 @@
+"""Real browser journey for the canonical Level 1 Question Bank practice.
+
+Requires the local API, frontend, PostgreSQL, and MinIO services. The test uses
+the fictional development student, creates one real attempt, and removes only
+that attempt and its mock recordings after verification.
+"""
+
+import subprocess
+
+from playwright.sync_api import sync_playwright
+
+
+BASE = "http://127.0.0.1:4175"
+PRACTICE_TITLE = "国家通用语言文字能力｜水平一级综合测评"
+
+
+def sql(statement):
+    subprocess.run([
+        "docker", "exec", "p0-integration-postgres-1", "psql", "-U", "yuzan", "-d", "yuzan_dev",
+        "-v", "ON_ERROR_STOP=1", "-q", "-c", statement,
+    ], check=True, text=True)
+
+
+def authenticate(page):
+    response = page.request.post(
+        f"{BASE}/api/v1/auth/login",
+        data={"identifier": "student.test", "password": "YuzanTest!2026"},
+    )
+    assert response.ok, response.text()
+    payload = response.json().get("data", response.json())
+    page.goto(f"{BASE}/login/")
+    page.evaluate("""payload => {
+      localStorage.setItem('yuzan-access-token', payload.accessToken);
+      localStorage.setItem('yuzan-current-user', JSON.stringify(payload.user));
+      localStorage.setItem('yuzan-active-school-id', payload.activeSchoolId);
+    }""", payload)
+
+
+def create_or_resume_attempt(page):
+    return page.evaluate("""async title => {
+      const schoolId = localStorage.getItem('yuzan-active-school-id');
+      const headers = { Authorization: `Bearer ${localStorage.getItem('yuzan-access-token')}`, 'Content-Type': 'application/json' };
+      const catalogResponse = await fetch(`/api/v1/schools/${schoolId}/practices`, { headers });
+      const catalogPayload = await catalogResponse.json();
+      const catalog = catalogPayload.data || catalogPayload;
+      if (catalog.total !== 7) throw new Error(`Expected 7 visible practices, got ${catalog.total}`);
+      const practice = catalog.items.find(item => item.title === title);
+      if (!practice) throw new Error('Canonical Level 1 practice is not visible in the student catalog');
+      const attemptResponse = await fetch(`/api/v1/schools/${schoolId}/practices/${practice.id}/attempts`, {
+        method: 'POST', headers, body: '{}',
+      });
+      const attemptPayload = await attemptResponse.json();
+      if (!attemptResponse.ok) throw new Error(JSON.stringify(attemptPayload));
+      return attemptPayload.data || attemptPayload;
+    }""", PRACTICE_TITLE)
+
+
+def select_choice(page):
+    page.locator("[data-choice]").first.click()
+    page.locator(".runner-option.selected").wait_for(timeout=10_000)
+
+
+def fill_text(page, value):
+    page.locator("[data-text]").fill(value)
+    page.locator("[data-save-state]").get_by_text("已保存").wait_for(timeout=10_000)
+
+
+def record_speech(page):
+    page.locator("[data-start-recording]").click()
+    try:
+        page.locator("[data-stop-recording]").wait_for(timeout=8_000)
+    except Exception as error:
+        raise AssertionError(
+            f"录音未进入 RECORDING：{page.locator('.question-shell').inner_text()}"
+        ) from error
+    page.locator("[data-stop-recording]").click()
+    page.locator("[data-upload-recording]").wait_for(timeout=8_000)
+    page.locator("[data-upload-recording]").click()
+    try:
+        page.locator(".runner-speech.saved").wait_for(timeout=15_000)
+    except Exception as error:
+        raise AssertionError(
+            f"录音未保存：{page.locator('main').inner_text()}"
+        ) from error
+
+
+def goto_item(page, index):
+    page.locator(f'[data-go="{index}"]').click()
+    page.locator(f'[data-go="{index}"].current').wait_for(timeout=10_000)
+
+
+def wait_for_audio(page):
+    audio = page.locator(".audio-stimulus audio")
+    audio.wait_for(timeout=15_000)
+    assert audio.count() == 1
+
+
+def wait_for_choice_images(page):
+    images = page.locator(".runner-option img")
+    images.nth(3).wait_for(timeout=15_000)
+    assert images.count() == 4
+
+
+attempt_id = None
+try:
+    with sync_playwright() as playwright:
+        browser = playwright.chromium.launch(headless=True, executable_path="/usr/bin/google-chrome")
+        context = browser.new_context()
+        context.add_init_script("""(() => {
+          class FakeRecorder {
+            static isTypeSupported() { return true; }
+            constructor(_stream, options) { this.state = 'inactive'; this.mimeType = options?.mimeType || 'audio/webm'; }
+            start() { this.state = 'recording'; }
+            stop() {
+              this.state = 'inactive';
+              this.ondataavailable?.({ data: new Blob(['Level 1 mock audio'], { type: this.mimeType }) });
+              this.onstop?.();
+            }
+          }
+          Object.defineProperty(window, 'MediaRecorder', { configurable: true, value: FakeRecorder });
+          window.__yuzanRunnerGetUserMedia = async () => ({ getTracks: () => [] });
+        })()""")
+        page = context.new_page()
+        page_errors = []
+        item_payloads = []
+        page.on("pageerror", lambda error: page_errors.append(str(error)))
+
+        authenticate(page)
+        created = create_or_resume_attempt(page)
+        attempt_id = created["attemptId"]
+        page.on("response", lambda response: item_payloads.append(response.json()) if f"/attempts/{attempt_id}/items" in response.url and response.ok else None)
+        page.goto(f"{BASE}/student/practices/attempts/{attempt_id}/runner/")
+        page.locator(".question-shell").wait_for(timeout=15_000)
+
+        # 1. 听：audio + four image choices, authored A/B/C/D order.
+        wait_for_audio(page)
+        wait_for_choice_images(page)
+        assert page.locator(".runner-option b").all_inner_texts() == ["A", "B", "C", "D"]
+        select_choice(page)
+        page.reload()
+        page.locator(".runner-option.selected").wait_for(timeout=15_000)
+
+        # Complete the remaining two listen-picture choices and three dictation inputs.
+        for index in [1, 2]:
+            goto_item(page, index)
+            wait_for_audio(page)
+            wait_for_choice_images(page)
+            select_choice(page)
+        for index in [3, 4, 5]:
+            goto_item(page, index)
+            wait_for_audio(page)
+            fill_text(page, f"Level 1 听写答案 {index}")
+
+        # 2. 说：three read-aloud text prompts, then picture speaking.
+        for index in [6, 7, 8]:
+            goto_item(page, index)
+            assert page.locator(".text-stimulus").count() == 1
+            assert page.locator("[data-start-recording]").count() == 1
+            record_speech(page)
+        goto_item(page, 9)
+        page.locator(".image-stimulus img").wait_for(timeout=15_000)
+        assert page.locator("[data-start-recording]").count() == 1
+        record_speech(page)
+
+        # 3. 读：word recognition and sentence comprehension choices.
+        for index in range(10, 16):
+            goto_item(page, index)
+            assert page.locator(".text-stimulus").count() == 1
+            assert page.locator("[data-choice]").count() >= 3
+            select_choice(page)
+
+        # 4. 写：two picture-to-word items followed by sentence completion.
+        for index in [16, 17]:
+            goto_item(page, index)
+            page.locator(".image-stimulus img").wait_for(timeout=15_000)
+            fill_text(page, f"看图写词 {index}")
+        for index in [18, 19]:
+            goto_item(page, index)
+            assert page.locator(".text-stimulus").count() == 1
+            fill_text(page, f"句子补全 {index}")
+
+        page.locator("[data-submit]").click()
+        page.wait_for_url("**/processing/", timeout=20_000)
+        assert page_errors == [], page_errors
+        assert item_payloads, "Runner did not request its attempt-item payload"
+        serialized = str(item_payloads)
+        for protected in ["scoringSpec", "correctAnswer", "acceptedAnswers", "referenceAnswer", "rubric", "deductionRules"]:
+            assert protected not in serialized
+        browser.close()
+finally:
+    if attempt_id:
+        sql(f'''DELETE FROM "Recording" WHERE "idempotencyKey" LIKE 'runner-{attempt_id}-%';
+DELETE FROM "AssessmentSession" WHERE "id" = '{attempt_id}';''')

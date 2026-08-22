@@ -55,17 +55,22 @@ def create_attempt(page, title):
     }""", title)
 
 
+def goto_item(page, index):
+    page.locator(f'[data-go="{index}"]').click()
+    page.locator(f'[data-go="{index}"].current').wait_for(timeout=10_000)
+
+
 definition_id = None
 try:
   definition_id, title = create_fixture()
   with sync_playwright() as pw:
     browser = pw.chromium.launch(headless=True, executable_path="/usr/bin/google-chrome")
     context = browser.new_context()
-    context.add_init_script("""() => {
+    context.add_init_script("""(() => {
       class FakeRecorder { static isTypeSupported() { return true; } constructor() { this.state = 'inactive'; } start() { this.state = 'recording'; } stop() { this.state = 'inactive'; this.ondataavailable?.({data:new Blob(['audio'], {type:'audio/webm'})}); this.onstop?.(); } }
       Object.defineProperty(window, 'MediaRecorder', { configurable: true, value: FakeRecorder });
       window.__yuzanRunnerGetUserMedia = async () => ({ getTracks: () => [] });
-    }""")
+    })()""")
     page = context.new_page()
     errors = []
     page.on("pageerror", lambda error: errors.append(str(error)))
@@ -78,20 +83,20 @@ try:
     page.locator("[data-save-state]").get_by_text("已保存").wait_for(timeout=10_000)
     page.reload()
     page.locator(".runner-option.selected").wait_for(timeout=10_000)
-    page.locator('[data-go="1"]').click()
+    goto_item(page, 1)
     audio = page.locator("audio[src='/assessment/assets/question-bank/audio/level-1-dictation-1.mp3']")
     assert audio.count() == 1
     audio_response = page.request.get(f"{BASE}/assessment/assets/question-bank/audio/level-1-dictation-1.mp3")
     assert audio_response.ok, audio_response.text()
     assert audio_response.headers.get("content-type", "").startswith("audio/mpeg")
-    page.locator('[data-go="0"]').click()
-    page.locator('[data-go="1"]').click()
+    goto_item(page, 0)
+    goto_item(page, 1)
     page.locator("[data-text]").fill("Runner 自动保存验证")
-    page.wait_for_timeout(1000)
+    page.locator("[data-save-state]").get_by_text("已保存").wait_for(timeout=10_000)
     page.reload()
-    page.locator('[data-go="1"]').click()
+    goto_item(page, 1)
     assert page.locator("[data-text]").input_value() == "Runner 自动保存验证"
-    page.locator('[data-go="2"]').click()
+    goto_item(page, 2)
     page.evaluate("""() => {
       class FakeRecorder { static isTypeSupported() { return true; } constructor() { this.state = 'inactive'; } start() { this.state = 'recording'; } stop() { this.state = 'inactive'; this.ondataavailable?.({data:new Blob(['audio'], {type:'audio/webm'})}); this.onstop?.(); } }
       window.MediaRecorder = FakeRecorder;
@@ -103,7 +108,7 @@ try:
     page.locator("[data-stop-recording]").click()
     page.locator("[data-upload-recording]").wait_for(timeout=5_000)
     assert errors == [], errors
-    page.locator('[data-go="1"]').click()
+    goto_item(page, 1)
     assert page.locator("[data-start-recording]").count() == 0
     assert page.locator(".runner-speech audio").count() == 0
     browser.close()

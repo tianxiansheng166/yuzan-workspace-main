@@ -379,6 +379,45 @@ describe("RecordingsService", () => {
       );
     });
 
+    it("uses the nested canonical delivery stimulus for a question-bank read-aloud item", async () => {
+      const recording = makeRecording({ status: "COMPLETE" });
+      const fakeRepo = createFakeRecordingRepo(recording);
+      const triggerSpeechProcessing = vi.fn(async () => ({ id: "job-from-delivery-spec" }));
+
+      const { service } = await buildService({
+        recordingRepo: fakeRepo,
+        prismaOverrides: {
+          assessmentItem: {
+            findFirst: async () => ({
+              prompt: {
+                stimulus: {
+                  type: "TEXT",
+                  promptText: "每天周一的清晨我们都要参加升旗仪式。",
+                },
+                response: { type: "SPEECH" },
+              },
+            }),
+          },
+        },
+        speechJobService: { triggerSpeechProcessing } as Pick<
+          SpeechJobService,
+          "triggerSpeechProcessing"
+        >,
+      });
+
+      await service.completeRecording(studentAuthA, SCHOOL_A, RECORDING_ID, {
+        assessmentItemId: ASSESSMENT_ITEM_ID,
+        targetText: "被客户端篡改的文本",
+      });
+
+      expect(triggerSpeechProcessing).toHaveBeenCalledWith(
+        RECORDING_ID,
+        ASSESSMENT_ITEM_ID,
+        "每天周一的清晨我们都要参加升旗仪式。",
+        SCHOOL_A,
+      );
+    });
+
     it("rejects when student does not own the recording's enrollment", async () => {
       const recording = makeRecording({ status: "UPLOADING" });
       const fakeRepo = createFakeRecordingRepo(recording);

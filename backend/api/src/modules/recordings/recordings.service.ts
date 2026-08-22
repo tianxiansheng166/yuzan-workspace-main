@@ -333,18 +333,12 @@ export class RecordingsService {
       }
 
       const prompt = item.prompt;
-      if (typeof prompt === "string") {
-        targetText = prompt.trim();
-      } else if (prompt && typeof prompt === "object" && !Array.isArray(prompt)) {
-        const fields = prompt as Record<string, unknown>;
-        targetText =
-          [fields.targetText, fields.text, fields.sentence, fields.stimulus]
-            .find(
-              (value): value is string =>
-                typeof value === "string" && value.trim().length > 0,
-            )
-            ?.trim() ?? "";
-      }
+      const canonicalTargetText = this.targetTextFromPrompt(prompt);
+      // The persisted AssessmentItem prompt is the server-side execution
+      // snapshot. Prefer it over client input when it carries a canonical
+      // read-aloud text, but retain the supplied target for prompt shapes that
+      // do not encode a textual stimulus.
+      if (canonicalTargetText) targetText = canonicalTargetText;
     }
 
     if (!targetText) {
@@ -363,6 +357,29 @@ export class RecordingsService {
     this.logger.log(
       `SpeechJob ensured after recording completion: jobId=${speechJob.id} recordingId=${recording.id}`,
     );
+  }
+
+  private targetTextFromPrompt(prompt: unknown): string | undefined {
+    if (typeof prompt === "string" && prompt.trim()) return prompt.trim();
+    if (!prompt || typeof prompt !== "object" || Array.isArray(prompt)) return undefined;
+    const fields = prompt as Record<string, unknown>;
+    const stimulus = fields.stimulus;
+    const stimulusFields = stimulus && typeof stimulus === "object" && !Array.isArray(stimulus)
+      ? stimulus as Record<string, unknown>
+      : undefined;
+    return [
+      fields.targetText,
+      fields.promptText,
+      fields.text,
+      fields.sentence,
+      typeof stimulus === "string" ? stimulus : undefined,
+      stimulusFields?.targetText,
+      stimulusFields?.promptText,
+      stimulusFields?.text,
+      stimulusFields?.sentence,
+    ].find(
+      (value): value is string => typeof value === "string" && value.trim().length > 0,
+    )?.trim();
   }
 
   async getRecordingStatus(
