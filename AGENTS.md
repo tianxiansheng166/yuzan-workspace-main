@@ -2,12 +2,20 @@
 
 ## Cold start
 
-At the start of a new conversation, run `git status`, `git branch --show-current`,
-and `git log -1 --oneline`, then read `CURRENT_HANDOFF.md`.
+At the start of a new conversation, run these commands and read these files in
+order:
+
+1. `git status`
+2. `git branch --show-current`
+3. `git log -1 --oneline`
+4. `CURRENT_HANDOFF.md`
+5. `CURRENT_TASK.md`
 
 - A clear user request is this turn's goal.
-- If the user says “continue”, “continue the project”, or “continue development”,
-  execute the single **NEXT TASK** in `CURRENT_HANDOFF.md` directly.
+- If the user says “continue”, “continue the project”, “continue development”,
+  “继续”, “继续项目”, or “继续当前任务”, execute `CURRENT_TASK.md` directly.
+- If the user gives a clear task, that user task takes priority over the current
+  task file.
 - Do not ask the user to re-explain repository context.
 
 ## Context and authority
