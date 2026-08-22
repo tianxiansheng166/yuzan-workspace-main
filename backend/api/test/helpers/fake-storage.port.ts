@@ -12,6 +12,7 @@ import type {
  */
 export class FakeStoragePort implements StoragePort {
   readonly uploads: Array<{ objectKey: string; contentType?: string }> = [];
+  readonly puts: Array<{ objectKey: string; contentType: string; byteSize: number; metadata?: Record<string, string> }> = [];
   readonly downloads: string[] = [];
   readonly deletes: string[] = [];
   private heads = new Map<string, HeadObjectResult>();
@@ -26,6 +27,21 @@ export class FakeStoragePort implements StoragePort {
       objectKey,
       expiresInSeconds: 300,
     };
+  }
+
+  async putObject(
+    objectKey: string,
+    body: Uint8Array,
+    contentType: string,
+    metadata?: Record<string, string>,
+  ): Promise<void> {
+    this.puts.push({ objectKey, contentType, byteSize: body.byteLength, ...(metadata ? { metadata } : {}) });
+    this.heads.set(objectKey, {
+      exists: true,
+      contentLength: body.byteLength,
+      contentType,
+      ...(metadata ? { metadata } : {}),
+    });
   }
 
   async generateDownloadUrl(objectKey: string): Promise<PresignedUrlResult> {

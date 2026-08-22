@@ -9,12 +9,12 @@ import sharp from "sharp";
 
 const exec = promisify(execFile);
 const root = path.resolve(import.meta.dirname, "../..");
-const defaults = {
+export const defaultOptions = Object.freeze({
   questions: path.join(root, "local_sources/question-bank/题库【三改】.docx"),
   answers: path.join(root, "local_sources/question-bank/答案及评分细则.docx"),
   media: path.join(root, "local_sources/question-bank/题库音频及图片.zip"),
   output: path.join(root, "local_sources/question-bank/.generated"),
-};
+});
 
 const chineseLevels = { 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6 };
 const familyDefinitions = [
@@ -70,10 +70,17 @@ async function zipNames(file) {
   return stdout.split(/\r?\n/).filter(Boolean);
 }
 
-async function zipRead(file, name) {
+/**
+ * Read one trusted entry from an authoring archive. Runtime apply reuses this
+ * narrow source-pipeline primitive instead of introducing another ZIP/Word
+ * reader; archive paths never become part of deliverySpec.
+ */
+export async function readZipEntry(file, name) {
   const { stdout } = await exec("unzip", ["-p", file, name], { encoding: "buffer", maxBuffer: 128e6 });
   return stdout;
 }
+
+const zipRead = readZipEntry;
 
 export async function readDocx(file) {
   const [xml, relationships] = await Promise.all([
@@ -715,7 +722,7 @@ export async function bindMedia(levelsToBind, questionDoc, options, media, issue
 }
 
 function args(values) {
-  const result = { ...defaults };
+  const result = { ...defaultOptions };
   for (let index = 0; index < values.length; index += 1) {
     if (values[index] === "--all") result.all = true;
     else if (values[index] === "--level") result.level = Number(values[++index]);

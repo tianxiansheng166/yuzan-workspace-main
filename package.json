@@ -23,6 +23,7 @@
     "contract:validate": "pnpm --filter @yuzan/contracts validate",
     "contract:types": "pnpm --filter @yuzan/contracts generate",
     "qb:source:validate": "node tools/question-bank-importer/index.mjs",
+    "qb:source:apply": "pnpm --filter @yuzan/api exec tsc -p tsconfig.json && node backend/api/dist/scripts/question-bank-apply.js",
     "test:question-import": "node --test tools/question-bank-importer/index.test.mjs",
     "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build"
   },

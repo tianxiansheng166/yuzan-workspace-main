@@ -66,6 +66,23 @@ export class S3CompatibleStorageAdapter implements StoragePort {
     };
   }
 
+  async putObject(
+    objectKey: string,
+    body: Uint8Array,
+    contentType: string,
+    metadata?: Record<string, string>,
+  ): Promise<void> {
+    const command = new PutObjectCommand({
+      Bucket: this.bucket,
+      Key: objectKey,
+      Body: body,
+      ContentType: contentType,
+      ...(metadata ? { Metadata: metadata } : {}),
+    });
+    await this.client.send(command);
+    this.logger.debug(`Put trusted server-side object ${objectKey}`);
+  }
+
   async generateDownloadUrl(objectKey: string): Promise<PresignedUrlResult> {
     const command = new GetObjectCommand({
       Bucket: this.bucket,

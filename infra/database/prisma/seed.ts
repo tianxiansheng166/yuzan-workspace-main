@@ -586,7 +586,6 @@ async function main() {
   // it never creates completed recordings, scores, or reports.
   if (process.env.P0_BOOTSTRAP_ONLY === "true") {
     await seedQuestionBankSamples();
-    await seedQuestionBankAudioPractice();
     await seedReusablePractices();
     console.log("Seeded six fictional reusable practices and active student deliveries.");
     return;
@@ -821,7 +820,6 @@ async function main() {
   });
 
   await seedQuestionBankSamples();
-  await seedQuestionBankAudioPractice();
   await seedReusablePractices();
   await seedStudentCourses();
 }

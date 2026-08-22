@@ -818,6 +818,10 @@ model QuestionBankItemVersion {
   version      Int
   deliverySpec Json
   scoringSpec  Json
+  /// Server-only provenance for the canonical authoring pipeline. It is kept
+  /// separate from deliverySpec so local import coordinates can never reach a
+  /// student attempt payload.
+  sourceTrace  Json?
   status       QuestionBankItemVersionStatus @default(DRAFT)
   publishedAt  DateTime?
   createdAt    DateTime                      @default(now())
