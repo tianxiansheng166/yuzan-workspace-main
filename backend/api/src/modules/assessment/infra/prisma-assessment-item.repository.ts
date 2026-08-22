@@ -74,6 +74,7 @@ export class PrismaAssessmentItemRepository implements AssessmentItemRepositoryP
       id: row.id as string,
       sessionId: row.sessionId as string,
       questionId: (row.questionId as string) ?? null,
+      questionVersionId: (row.questionVersionId as string) ?? null,
       recordingId: (row.recordingId as string) ?? null,
       prompt: (row.prompt as Record<string, unknown>) ?? {},
       itemType: row.itemType as string,

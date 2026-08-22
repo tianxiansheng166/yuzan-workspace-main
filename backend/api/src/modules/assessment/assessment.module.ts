@@ -11,12 +11,14 @@ import { PrismaAssessmentSessionRepository } from "./infra/prisma-assessment-ses
 import { PrismaAssessmentItemRepository } from "./infra/prisma-assessment-item.repository.js";
 import { PrismaWrittenAnswerRepository } from "./infra/prisma-written-answer.repository.js";
 import { PrismaAssessmentReportRepository } from "./infra/prisma-assessment-report.repository.js";
+import { QuestionBankDeterministicScoringService } from "./question-bank-deterministic-scoring.service.js";
 
 @Module({
   controllers: [AssessmentSessionController, AssessmentDeviceController, PracticeController],
   providers: [
     AssessmentService,
     PracticeService,
+    QuestionBankDeterministicScoringService,
     {
       provide: ASSESSMENT_SESSION_REPOSITORY,
       useClass: PrismaAssessmentSessionRepository,

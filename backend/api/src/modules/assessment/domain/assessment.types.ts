@@ -23,6 +23,7 @@ export interface AssessmentItem {
   readonly id: string;
   readonly sessionId: string;
   readonly questionId: string | null;
+  readonly questionVersionId: string | null;
   readonly recordingId: string | null;
   readonly prompt: Record<string, unknown>;
   readonly itemType: string;

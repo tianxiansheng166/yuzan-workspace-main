@@ -21,6 +21,24 @@ def sql(statement):
     ], check=True, text=True)
 
 
+def load_dictation_answers():
+    result = subprocess.run([
+        "docker", "exec", "p0-integration-postgres-1", "psql", "-U", "yuzan", "-d", "yuzan_dev",
+        "-At", "-F", "\t", "-v", "ON_ERROR_STOP=1", "-c",
+        '''SELECT i."stableKey", v."scoringSpec"->>'referenceAnswer'
+FROM "QuestionBankItemVersion" v
+JOIN "QuestionBankItem" i ON i."id" = v."itemId"
+WHERE v."status" = 'PUBLISHED'
+  AND i."level" = '水平一级'
+  AND i."stableKey" LIKE 'L1-%'
+  AND v."scoringSpec"->>'strategy' = 'DICTATION_ALIGNMENT'
+ORDER BY i."stableKey";''',
+    ], check=True, capture_output=True, text=True)
+    answers = [line.split("\t", 1)[1] for line in result.stdout.splitlines() if "\t" in line]
+    assert len(answers) == 3
+    return answers
+
+
 def authenticate(page):
     response = page.request.post(
         f"{BASE}/api/v1/auth/login",
@@ -128,6 +146,7 @@ try:
         authenticate(page)
         created = create_or_resume_attempt(page)
         attempt_id = created["attemptId"]
+        dictation_answers = load_dictation_answers()
         page.on("response", lambda response: item_payloads.append(response.json()) if f"/attempts/{attempt_id}/items" in response.url and response.ok else None)
         page.goto(f"{BASE}/student/practices/attempts/{attempt_id}/runner/")
         page.locator(".question-shell").wait_for(timeout=15_000)
@@ -149,7 +168,7 @@ try:
         for index in [3, 4, 5]:
             goto_item(page, index)
             wait_for_audio(page)
-            fill_text(page, f"Level 1 听写答案 {index}")
+            fill_text(page, dictation_answers[index - 3])
 
         # 2. 说：three read-aloud text prompts, then picture speaking.
         for index in [6, 7, 8]:
@@ -184,8 +203,38 @@ try:
         assert page_errors == [], page_errors
         assert item_payloads, "Runner did not request its attempt-item payload"
         serialized = str(item_payloads)
-        for protected in ["scoringSpec", "correctAnswer", "acceptedAnswers", "referenceAnswer", "rubric", "deductionRules"]:
+        for protected in ["scoringSpec", "correctAnswer", "acceptedAnswers", "referenceAnswer", "rubric", "deductionRules", "scoredScore", "autoResult"]:
             assert protected not in serialized
+
+        school_id = page.evaluate("localStorage.getItem('yuzan-active-school-id')")
+        token = page.evaluate("localStorage.getItem('yuzan-access-token')")
+        headers = {"Authorization": f"Bearer {token}"}
+        session_response = page.request.get(
+            f"{BASE}/api/v1/schools/{school_id}/assessments/sessions/{attempt_id}",
+            headers=headers,
+        )
+        assert session_response.ok, session_response.text()
+        session_payload = session_response.json().get("data", session_response.json())
+        assert session_payload["status"] == "PROCESSING", session_payload
+
+        scored_items_response = page.request.get(
+            f"{BASE}/api/v1/schools/{school_id}/assessments/sessions/{attempt_id}/items",
+            headers=headers,
+        )
+        assert scored_items_response.ok, scored_items_response.text()
+        scored_items_payload = scored_items_response.json().get("data", scored_items_response.json())
+        assert len(scored_items_payload) == 20
+        scored_items = [item for item in scored_items_payload if item.get("scoredScore") is not None]
+        assert len(scored_items) == 14
+        pending_items = [item for item in scored_items_payload if item.get("scoredScore") is None]
+        assert len([item for item in pending_items if (item.get("autoResult") or {}).get("state") == "NEEDS_REVIEW"]) == 2
+        assert len([item for item in pending_items if item.get("autoResult") is None]) == 4
+        for item in scored_items:
+            assert 0 <= item["scoredScore"] <= item["maxScore"]
+            assert item["autoResult"]["scorerVersion"] == "qb-deterministic-v1"
+        serialized_scored = str(scored_items_payload)
+        for protected in ["scoringSpec", "correctAnswer", "acceptedAnswers", "referenceAnswer", "rubric", "deductionRules"]:
+            assert protected not in serialized_scored
         browser.close()
 finally:
     if attempt_id:

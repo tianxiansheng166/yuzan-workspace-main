@@ -8,7 +8,7 @@
 | QB-003 | DONE | QB-003A-F strict source importer finalization. Generic block grammar, answer/rubric binding, media fail-closed matching, and behavioral importer tests are complete. |
 | QB-003B | DONE | Level 1 canonical manifest now imports idempotently into global Resource/MinIO, immutable Question Bank versions, a published SYSTEM practice/delivery, and the real student runner. |
 | QB-004 | DONE via QB-003B | The Level 1 real 20-item assessment, media playback, refresh restoration, and submit journey were proved as part of QB-003B. |
-| QB-005 | TODO | Deterministic non-speech scoring. |
+| QB-005 | DONE | `qb-deterministic-v1` scores finalized Level 1 `EXACT_CHOICE`, `DICTATION_ALIGNMENT`, and `ACCEPTED_TEXT` answers; 14/20 items and 58/100 points are deterministically covered, while rubric/speech items keep the session in `PROCESSING`. |
 | QB-006 | TODO | Read-aloud speech scoring. |
 | QB-007 | TODO | Picture-speaking scoring. |
 | QB-008 | TODO | Levels 2–6 bulk import. |
@@ -17,7 +17,10 @@
 
 Question identities are stable and versions immutable. Practices compose versioned
 items; assessment items snapshot execution. Browser delivery excludes answers and
-rubrics. The unified runner uses stimulus + response combinations.
+rubrics. The unified runner uses stimulus + response combinations. Question Bank
+automatic results are persisted on `AssessmentItem` only after submit, use
+point-based aggregation when complete, and do not create an incomplete final
+report.
 
 ## Known content blockers
 

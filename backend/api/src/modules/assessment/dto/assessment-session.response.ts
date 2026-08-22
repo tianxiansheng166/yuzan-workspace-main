@@ -19,7 +19,8 @@ export function toAssessmentSessionResponse(session: AssessmentSession) {
   };
 }
 
-export function toAssessmentItemResponse(item: AssessmentItem) {
+export function toAssessmentItemResponse(item: AssessmentItem, options: { includeScoring?: boolean } = {}) {
+  const includeScoring = options.includeScoring ?? true;
   return {
     id: item.id,
     sessionId: item.sessionId,
@@ -30,8 +31,8 @@ export function toAssessmentItemResponse(item: AssessmentItem) {
     status: item.status,
     sortOrder: item.sortOrder,
     maxScore: item.maxScore,
-    scoredScore: item.scoredScore,
-    autoResult: item.autoResult,
+    scoredScore: includeScoring ? item.scoredScore : null,
+    autoResult: includeScoring ? item.autoResult : null,
     reviewerUserId: item.reviewerUserId,
     reviewedAt: item.reviewedAt?.toISOString() ?? null,
   };

@@ -84,6 +84,7 @@ function makeItem(overrides: Partial<AssessmentItem> = {}): AssessmentItem {
     id: ITEM_ID,
     sessionId: SESSION_ID,
     questionId: null,
+    questionVersionId: null,
     recordingId: null,
     prompt: { text: "Read the passage" },
     itemType: "READING",

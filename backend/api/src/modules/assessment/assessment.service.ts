@@ -15,6 +15,7 @@ import type { WrittenAnswerRepositoryPort, SaveWrittenAnswerData } from "./ports
 import { WRITTEN_ANSWER_REPOSITORY } from "./ports/written-answer-repository.port.js";
 import type { AssessmentReportRepositoryPort, CreateAssessmentReportData } from "./ports/assessment-report-repository.port.js";
 import { ASSESSMENT_REPORT_REPOSITORY } from "./ports/assessment-report-repository.port.js";
+import { QuestionBankDeterministicScoringService } from "./question-bank-deterministic-scoring.service.js";
 import { toAssessmentSessionResponse, toAssessmentItemResponse, toReadingItemResponse, toWrittenItemResponse, toWrittenAnswerResponse, toAssessmentReportResponse } from "./dto/assessment-session.response.js";
 
 @Injectable()
@@ -32,6 +33,8 @@ export class AssessmentService {
     private readonly reportRepo: AssessmentReportRepositoryPort,
     @Inject(PrismaService)
     private readonly prisma: PrismaService,
+    @Inject(QuestionBankDeterministicScoringService)
+    private readonly questionBankScoring: QuestionBankDeterministicScoringService,
   ) {}
 
   // ─── Session CRUD ─────────────────────────────────────
@@ -237,7 +240,8 @@ export class AssessmentService {
     await this.verifyAccess(auth, schoolId, session);
 
     const items = await this.itemRepo.findBySessionId(sessionId);
-    return items.map(toAssessmentItemResponse);
+    const includeScoring = ["SUBMITTED", "PROCESSING", "COMPLETED"].includes(session.status);
+    return items.map((item) => toAssessmentItemResponse(item, { includeScoring }));
   }
 
   async attachRecording(auth: AuthContext, schoolId: string, sessionId: string, itemId: string, recordingId: string) {
@@ -264,7 +268,7 @@ export class AssessmentService {
     if (!recording) throw new AssessmentForbiddenException("录音不属于当前学生");
 
     const updated = await this.itemRepo.updateRecordingId(itemId, recordingId);
-    return toAssessmentItemResponse(updated);
+    return toAssessmentItemResponse(updated, { includeScoring: ["SUBMITTED", "PROCESSING", "COMPLETED"].includes(session.status) });
   }
 
   // ─── Written Assessment ────────────────────────────────
@@ -368,6 +372,14 @@ export class AssessmentService {
       throw new AssessmentConflictException("测评尚未提交，无法生成报告");
     }
 
+    await this.questionBankScoring.scoreSession(sessionId);
+
+    const items = await this.itemRepo.findBySessionId(sessionId);
+    if (this.hasIncompleteQuestionBankScoring(items)) {
+      if (session.status === "SUBMITTED") await this.sessionRepo.updateStatus(sessionId, "PROCESSING");
+      return null;
+    }
+
     const existingReport = await this.reportRepo.findBySessionId(sessionId);
     if (existingReport) {
       return toAssessmentReportResponse(existingReport);
@@ -377,8 +389,6 @@ export class AssessmentService {
     if (session.status === "SUBMITTED") {
       await this.sessionRepo.updateStatus(sessionId, "PROCESSING");
     }
-
-    const items = await this.itemRepo.findBySessionId(sessionId);
     return this.createReportFromScoredItems({
       schoolId,
       sessionId,
@@ -398,16 +408,27 @@ export class AssessmentService {
     if (!session || session.status === "COMPLETED" || session.status === "CANCELLED") return null;
     if (session.status !== "SUBMITTED" && session.status !== "PROCESSING") return null;
 
-    const existingReport = await this.reportRepo.findBySessionId(sessionId);
-    if (existingReport) return toAssessmentReportResponse(existingReport);
+    await this.questionBankScoring.scoreSession(sessionId);
 
     const items = await this.prisma.assessmentItem.findMany({
       where: { sessionId },
       include: { speechJobs: { orderBy: { createdAt: "desc" } } },
       orderBy: { sortOrder: "asc" },
     });
+    const questionBankItems = items.filter((item) => item.questionVersionId !== null);
+    if (questionBankItems.length && this.hasIncompleteQuestionBankScoring(questionBankItems)) {
+      if (session.status === "SUBMITTED") await this.sessionRepo.updateStatus(sessionId, "PROCESSING");
+      return null;
+    }
+
+    const existingReport = await this.reportRepo.findBySessionId(sessionId);
+    if (existingReport) return toAssessmentReportResponse(existingReport);
+
     const oralItems = items.filter((item) => ["READING", "SPEECH", "LISTEN_REPEAT", "READ_ALOUD"].includes(item.itemType));
-    if (!oralItems.length) return null;
+    if (!oralItems.length) {
+      if (questionBankItems.length && session.status === "SUBMITTED") await this.sessionRepo.updateStatus(sessionId, "PROCESSING");
+      return null;
+    }
 
     const currentJobs = oralItems.map((item) =>
       item.speechJobs.find((job) => job.recordingId === item.recordingId) ?? null,
@@ -419,6 +440,11 @@ export class AssessmentService {
     }
 
     const requiresTeacherReview = currentJobs.some((job) => job?.status === "NEEDS_REVIEW");
+
+    if (questionBankItems.length && requiresTeacherReview) {
+      if (session.status === "SUBMITTED") await this.sessionRepo.updateStatus(sessionId, "PROCESSING");
+      return null;
+    }
 
     if (session.status === "SUBMITTED") await this.sessionRepo.updateStatus(sessionId, "PROCESSING");
     return this.createReportFromScoredItems({
@@ -433,26 +459,39 @@ export class AssessmentService {
     schoolId: string;
     sessionId: string;
     items: Array<{
+      questionVersionId?: string | null;
       itemType: string;
+      maxScore?: number | null;
       scoredScore: number | null;
     }>;
     generatedByUserId?: string;
     requiresTeacherReview?: boolean;
   }) {
     const { schoolId, sessionId, items, generatedByUserId, requiresTeacherReview = false } = input;
+    const questionBankItems = items.filter((item) => item.questionVersionId != null);
+    const isQuestionBank = questionBankItems.length > 0;
+    if (isQuestionBank && this.hasIncompleteQuestionBankScoring(items)) return null;
     const scoredItems = items.filter((i) => i.scoredScore != null);
 
     const readingItems = scoredItems.filter((i) => ["READING", "SPEECH", "LISTEN_REPEAT", "READ_ALOUD"].includes(i.itemType));
-    const writtenItems = scoredItems.filter((i) => ["WRITTEN", "CHOICE", "FILL_BLANK", "SINGLE_CHOICE", "MULTIPLE_CHOICE", "SHORT_ANSWER", "LISTEN_RETELL"].includes(i.itemType));
+    const writtenItems = scoredItems.filter((i) => isQuestionBank
+      ? !["READING", "SPEECH", "LISTEN_REPEAT", "READ_ALOUD"].includes(i.itemType)
+      : ["WRITTEN", "CHOICE", "FILL_BLANK", "SINGLE_CHOICE", "MULTIPLE_CHOICE", "SHORT_ANSWER", "LISTEN_RETELL"].includes(i.itemType));
 
     const readingScore = readingItems.length > 0
-      ? Math.round((readingItems.reduce((s, i) => s + (i.scoredScore ?? 0), 0) / readingItems.length) * 10) / 10
+      ? isQuestionBank
+        ? readingItems.reduce((s, i) => s + (i.scoredScore ?? 0), 0)
+        : Math.round((readingItems.reduce((s, i) => s + (i.scoredScore ?? 0), 0) / readingItems.length) * 10) / 10
       : null;
     const writtenScore = writtenItems.length > 0
-      ? Math.round((writtenItems.reduce((s, i) => s + (i.scoredScore ?? 0), 0) / writtenItems.length) * 10) / 10
+      ? isQuestionBank
+        ? writtenItems.reduce((s, i) => s + (i.scoredScore ?? 0), 0)
+        : Math.round((writtenItems.reduce((s, i) => s + (i.scoredScore ?? 0), 0) / writtenItems.length) * 10) / 10
       : null;
     const overallScore = scoredItems.length > 0
-      ? Math.round((scoredItems.reduce((s, i) => s + (i.scoredScore ?? 0), 0) / scoredItems.length) * 10) / 10
+      ? isQuestionBank
+        ? scoredItems.reduce((s, i) => s + (i.scoredScore ?? 0), 0)
+        : Math.round((scoredItems.reduce((s, i) => s + (i.scoredScore ?? 0), 0) / scoredItems.length) * 10) / 10
       : null;
 
     const dataCompleteness = items.length > 0 ? (scoredItems.length / items.length) * 100 : 0;
@@ -470,6 +509,11 @@ export class AssessmentService {
         answeredItems: scoredItems.length,
         scoringState: requiresTeacherReview ? "NEEDS_REVIEW" : "AUTO_RESULT",
         requiresTeacherReview,
+        ...(isQuestionBank ? {
+          aggregation: "POINTS",
+          awardedPoints: scoredItems.reduce((sum, item) => sum + (item.scoredScore ?? 0), 0),
+          totalMaxPoints: questionBankItems.reduce((sum, item) => sum + (item.maxScore ?? 0), 0),
+        } : {}),
         generatedAt: new Date().toISOString(),
       },
     };
@@ -479,6 +523,15 @@ export class AssessmentService {
     await this.sessionRepo.updateStatus(sessionId, "COMPLETED", { completedAt: new Date() } as Partial<AssessmentSession>);
 
     return toAssessmentReportResponse(report);
+  }
+
+  private hasIncompleteQuestionBankScoring(items: Array<{
+    questionVersionId?: string | null;
+    maxScore?: number | null;
+    scoredScore: number | null;
+  }>) {
+    const questionBankItems = items.filter((item) => item.questionVersionId != null);
+    return questionBankItems.length > 0 && questionBankItems.some((item) => item.maxScore == null || item.scoredScore == null);
   }
 
   // ─── Teacher Review ──────────────────────────────────────
