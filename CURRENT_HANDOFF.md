@@ -260,6 +260,10 @@ Authorized repairs are recorded in
 - QB-012 student-progress Chromium regression passed again (`1 passed in
   8.20s`). The QB-007 browser fixture now self-provisions missing active
   student/teacher membership rows for an isolated local test database.
+- QB-007 Level 1 browser regression passed again (`1 passed, 5 deselected in
+  134.49s`) through the explicit mock-scorer runner. A processing-page scope
+  error for `isRemediation` was corrected; the runner restored the default
+  local scorer with `MOCK_SPEECH_SCORING` unset.
 
 ## Known limitations and next task
 

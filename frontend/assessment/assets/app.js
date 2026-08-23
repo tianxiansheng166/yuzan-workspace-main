@@ -529,6 +529,7 @@
     const speechJob = speechJobs[0] || null;
     const items = appState.apiItems || [];
     const readingItems = items.filter(isOralItem);
+    const isRemediation = session?.purpose === 'REMEDIATION';
 
     // 真实 SpeechJob 状态映射
     const jobStatus = speechJobs.some(job => job.status === 'FAILED') ? 'FAILED' : speechJobs.some(job => job.status === 'NEEDS_REVIEW') ? 'NEEDS_REVIEW' : speechJob?.status;
