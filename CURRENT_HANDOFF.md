@@ -14,7 +14,8 @@ Do not infer a commit SHA from this document. The task-start dirty change in
 ## Current outcome
 
 QB-008R and the Levels 1–6 rollout are implemented on the current feature
-branch. The next task is QB-009 in [`CURRENT_TASK.md`](CURRENT_TASK.md).
+branch. QB-009A is now complete; the next task is QB-009B in
+[`CURRENT_TASK.md`](CURRENT_TASK.md), pending external benchmark inputs.
 
 The original DOCX/ZIP files under `local_sources/` were inspected as read-only
 inputs and were not modified, moved, deleted, or staged.
@@ -45,6 +46,36 @@ Authorized repairs are recorded in
 - An isolated Level 4 two-label omission was recovered structurally using the
   same generic rule; it is represented as `STRUCTURAL_RECOVERY` provenance.
 
+## QB-009A speech provider boundary
+
+- iFlytek uses the official ISE streaming WebSocket adapter with backend-only
+  AppID/APIKey/APISecret configuration and HMAC request signing.
+- Tencent uses the official new SOE WebSocket adapter with backend-only
+  AppID/SecretID/SecretKey configuration, signed query parameters, 16 kHz
+  40 ms binary frames, and an explicit end frame.
+- Both adapters accept only server-prepared 16 kHz / 16-bit / mono WAV bytes,
+  preserve nullable vendor dimensions, and keep raw vendor responses in
+  server-side audit data only. Auth, malformed response, timeout, and provider
+  configuration failures fail closed; non-transient failures are not retried.
+- Cloud providers handle `SPEECH_READING` only. Open response/picture speaking
+  remains on the local diagnostic route.
+- Every provider result is `experimental: true`, `calibrationStatus:
+  UNCALIBRATED`, `finalizable: false`, and `requiresReview: true`. The API
+  policy rejects calibrated/finalizable cloud evidence and never writes a
+  formal `scoredScore` from it.
+
+## QB-009A benchmark and privacy status
+
+- `pnpm speech:benchmark` supports manifest-driven synthetic or explicitly
+  approved live runs and reports validity/failure, MAE/RMSE, Pearson/Spearman,
+  tolerance bands, p50/p95 latency, and review-required rate.
+- The checked-in example is synthetic only: 2 samples, 0 real samples. Cloud
+  smoke was skipped as `SKIPPED_NOT_CONFIGURED`; no credentials were printed,
+  committed, or used to call a provider.
+- With fewer than 30 real labelled samples the report is
+  `INSUFFICIENT_CALIBRATION_DATA`; formal runtime activation remains
+  `DISABLED` and teacher review remains the authority.
+
 ## Runtime state
 
 - Canonical validation: 120 items / 600 points, six levels, zero errors and
@@ -68,10 +99,14 @@ Authorized repairs are recorded in
 - Importer tests: `16 passed`.
 - API verification: full Vitest run `975 passed` with no failures; the real-DB
   deterministic/runtime integration run passed `3/3` tests.
-- Worker tests: `38 passed`; worker typecheck/build passed.
+- Worker tests: `51 passed`; provider contract, audio preparation, benchmark,
+  routing-safety, and existing worker tests pass. Worker typecheck/build pass.
 - Frontend tests passed.
 - Speech-scoring tests: `9 passed`.
 - API typecheck/build passed.
+- API speech policy/service tests: `30 passed`.
+- Contracts validation/test/typecheck and frontend test/build passed.
+- Benchmark CLI completed with synthetic data and safe cloud skips.
 - Source validation passed for `--level 1` and `--all`.
 - Dry-run apply passed for `--level 1` and `--all`.
 - Parameterized browser coverage exercises Levels 1–6 end to end and passed
@@ -81,10 +116,16 @@ Authorized repairs are recorded in
 
 ## Known limitations and next task
 
-Local speech diagnostics remain experimental and uncalibrated; they do not
-produce formal automatic rubric scores. QB-009 should benchmark a production
-speech provider and calibrate scoring while preserving the server-side review
-boundary and student-safe payload contract.
+Local and cloud speech diagnostics remain experimental and uncalibrated; they
+do not produce formal automatic rubric scores. The direct Level 1 browser script
+failed in the default runtime because `MOCK_SPEECH_SCORING` was absent. A
+controlled mock-scoring rerun reached the three local diagnostic payloads, but
+the protected script still exited non-zero at its assertion; keep browser
+verification unresolved rather than treating it as green.
+
+The next task is QB-009B: obtain approved consented recordings and teacher
+labels, run live benchmark/calibration analysis, and make an explicit product
+decision. Do not infer activation from the synthetic report.
 
 ## Protected paths
 

@@ -24,6 +24,7 @@
     "contract:types": "pnpm --filter @yuzan/contracts generate",
     "qb:source:validate": "node tools/question-bank-importer/index.mjs",
     "qb:source:apply": "pnpm --filter @yuzan/api exec tsc -p tsconfig.json && node backend/api/dist/scripts/question-bank-apply.js",
+    "speech:benchmark": "pnpm --filter @yuzan/worker exec tsx ../../tools/speech-benchmark/index.ts",
     "test:question-import": "node --test tools/question-bank-importer/index.test.mjs",
     "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build"
   },

@@ -100,9 +100,11 @@ describe("SpeechScoringClient local provider boundary", () => {
     ).rejects.toThrow(/overall|between/i);
   });
 
-  it("only accepts disabled and local provider names", () => {
+  it("accepts disabled, local, and production-capable provider names", () => {
     expect(configuredSpeechProvider("disabled")).toBe("disabled");
     expect(configuredSpeechProvider("LOCAL")).toBe("local");
+    expect(configuredSpeechProvider("IFLYTEK")).toBe("iflytek");
+    expect(configuredSpeechProvider("tencent")).toBe("tencent");
     expect(() => configuredSpeechProvider("unsupported-provider")).toThrow(
       /disabled or local/i,
     );

@@ -148,4 +148,41 @@ describe("read-aloud speech result policy", () => {
     expect(serialized).not.toContain("rubric");
     expect(serialized).not.toContain("deductionRules");
   });
+
+  it("accepts uncalibrated cloud evidence without creating a formal-score path", () => {
+    const result = policy({
+      provider: "iflytek",
+      productionCapable: true,
+      calibrationStatus: "UNCALIBRATED",
+      finalizable: false,
+      scores: {
+        accuracy: 86,
+        completeness: null,
+        fluency: 91,
+        tone: null,
+        overall: 84,
+      },
+      reasonCodes: ["IFLYTEK_UNCALIBRATED", "COMPLETENESS_NOT_PROVIDED"],
+      providerAudit: {
+        requestId: "job-audit-only",
+        responseCount: 2,
+        rawResponse: "<vendor-private-response />",
+      },
+    });
+    expect(result.providerResult.provider).toBe("iflytek");
+    expect(result.providerResult.scores.completeness).toBeNull();
+    expect(result.diagnostic).toMatchObject({
+      provider: "iflytek",
+      candidatePoints: 3.4,
+      calibrationStatus: "UNCALIBRATED",
+      finalizable: false,
+      state: "NEEDS_REVIEW",
+    });
+    expect(JSON.stringify(result.diagnostic)).not.toContain("vendor-private-response");
+  });
+
+  it("rejects a calibrated or finalizable callback until a later explicit decision", () => {
+    expect(() => policy({ provider: "tencent", calibrationStatus: "CALIBRATED" })).toThrow(/calibrated|QB-009A/i);
+    expect(() => policy({ provider: "tencent", finalizable: true })).toThrow(/finalizable|QB-009A/i);
+  });
 });

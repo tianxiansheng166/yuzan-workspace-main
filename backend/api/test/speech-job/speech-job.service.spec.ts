@@ -342,6 +342,21 @@ describe("SpeechJobService", () => {
       expect(result.status).toBe("CREATED");
     });
 
+    it.each(["iflytek", "tencent"] as const)(
+      "recognizes %s as a provider-neutral queue target",
+      async (speechProvider) => {
+        const { service } = await buildService({ speechProvider });
+        const result = await service.triggerSpeechProcessing(
+          RECORDING_ID,
+          ASSESSMENT_ITEM_ID,
+          "春眠不觉晓",
+          SCHOOL_ID,
+        );
+        expect(result.provider).toBe(speechProvider);
+        expect(result.status).toBe("CREATED");
+      },
+    );
+
     it("reuses an existing non-failed job without creating a duplicate", async () => {
       const existingJob = makeJob({ status: "PROCESSING" });
       const { service, fakePrisma } = await buildService({

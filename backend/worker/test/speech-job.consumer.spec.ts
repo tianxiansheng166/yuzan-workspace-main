@@ -363,4 +363,35 @@ describe("SpeechJobConsumer", () => {
       expect(body.errorCode).toBe("PROCESSING_FAILED");
     });
   });
+
+  describe("provider routing safety", () => {
+    it("fails closed when a cloud provider has no credentials", async () => {
+      process.env.SPEECH_PROVIDER = "iflytek";
+      delete process.env.IFLYTEK_ISE_APP_ID;
+      delete process.env.IFLYTEK_ISE_API_KEY;
+      delete process.env.IFLYTEK_ISE_API_SECRET;
+      consumer = new SpeechJobConsumer("speech-jobs", { host: "127.0.0.1", port: 6379 });
+      fetchMock.mockImplementationOnce(() => okResponse({ data: { url: "https://storage.test/download/rec-001" } }));
+      fetchMock.mockImplementationOnce(() => okResponse({}));
+
+      await processJob(consumer);
+      const failedBody = JSON.parse(fetchMock.mock.calls.at(-1)![1].body);
+      expect(failedBody.status).toBe("FAILED");
+    });
+
+    it("does not route SPEECH_OPEN_RESPONSE to a cloud reading provider", async () => {
+      process.env.SPEECH_PROVIDER = "tencent";
+      delete process.env.TENCENT_SOE_APP_ID;
+      delete process.env.TENCENT_SOE_SECRET_ID;
+      delete process.env.TENCENT_SOE_SECRET_KEY;
+      consumer = new SpeechJobConsumer("speech-jobs", { host: "127.0.0.1", port: 6379 });
+      fetchMock.mockImplementationOnce(() => okResponse({ data: { url: "https://storage.test/download/rec-001" } }));
+      fetchMock.mockImplementationOnce(() => okResponse({}));
+
+      const openPayload = { ...BASE_PAYLOAD, strategy: "SPEECH_OPEN_RESPONSE" as const, targetText: undefined };
+      await processJob(consumer, openPayload);
+      const failedBody = JSON.parse(fetchMock.mock.calls.at(-1)![1].body);
+      expect(failedBody.status).toBe("FAILED");
+    });
+  });
 });

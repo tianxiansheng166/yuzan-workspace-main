@@ -1,0 +1,23 @@
+{
+  "samples": [
+    {
+      "sampleId": "synthetic-reading-001",
+      "audioPath": "synthetic://mandarin-reading-001",
+      "targetText": "春眠不觉晓",
+      "maxScore": 4,
+      "teacherScore": 3.2,
+      "teacherPronunciation": 82,
+      "teacherFluency": 84,
+      "teacherCompleteness": 100,
+      "notes": "Fictional synthetic fixture; not a student recording."
+    },
+    {
+      "sampleId": "synthetic-reading-002",
+      "audioPath": "synthetic://mandarin-reading-002",
+      "targetText": "处处闻啼鸟",
+      "maxScore": 4,
+      "teacherScore": 2.8,
+      "notes": "Fictional synthetic fixture; not a student recording."
+    }
+  ]
+}
