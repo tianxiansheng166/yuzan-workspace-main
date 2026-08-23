@@ -579,6 +579,41 @@ export function scoringSummary(levelsToSummarize) {
   };
 }
 
+function exactChoiceOptionKeys(question) {
+  const deliverySpec = question.deliverySpec;
+  const response = deliverySpec && typeof deliverySpec === "object" && !Array.isArray(deliverySpec)
+    ? deliverySpec.response
+    : null;
+  const options = response && typeof response === "object" && !Array.isArray(response)
+    ? response.options
+    : null;
+  if (!Array.isArray(options) || options.length === 0) return null;
+  const keys = options.map((option) => (
+    option && typeof option === "object" && !Array.isArray(option) && typeof option.key === "string"
+      ? option.key.trim().toUpperCase()
+      : ""
+  ));
+  if (keys.some((key) => !key) || new Set(keys).size !== keys.length) return null;
+  return keys;
+}
+
+function validateExactChoice(question, issues) {
+  const optionKeys = exactChoiceOptionKeys(question);
+  const detail = { level: question.level, family: question.family, sourceOrder: question.sourceOrder, stableKey: question.stableKey };
+  if (!optionKeys) {
+    addIssue(issues, "ERROR", "OPTION_KEYS_INVALID", detail);
+    return;
+  }
+  const referenceAnswer = question.scoringSpec && typeof question.scoringSpec === "object" && !Array.isArray(question.scoringSpec)
+    && typeof question.scoringSpec.referenceAnswer === "string"
+    ? question.scoringSpec.referenceAnswer.trim().toUpperCase()
+    : "";
+  if (!referenceAnswer || !optionKeys.includes(referenceAnswer)) {
+    addIssue(issues, "ERROR", "ANSWER_OPTION_INVALID", detail);
+    addIssue(issues, "ERROR", "BLOCKED_CONTENT_MISMATCH", detail);
+  }
+}
+
 export function selectLevels(allLevels, level) {
   return level ? allLevels.filter((entry) => entry.level === level) : allLevels;
 }
@@ -595,6 +630,7 @@ export function validateQuestions(levelsToValidate, issues = []) {
       if (/correctanswer|acceptedanswers|referenceanswer|rubric|deductionrules|scoringspec/i.test(JSON.stringify(question.deliverySpec))) {
         addIssue(issues, "ERROR", "DELIVERY_SCORING_LEAK", { level: question.level, family: question.family, sourceOrder: question.sourceOrder });
       }
+      if (question.scoringSpec?.strategy === "EXACT_CHOICE") validateExactChoice(question, issues);
     }
   }
   return issues;

@@ -5,6 +5,12 @@ import {
 } from "../../src/modules/assessment/question-bank-deterministic-scoring.service.js";
 
 const exactSpec = { strategy: "EXACT_CHOICE", maxScore: 3, referenceAnswer: "B" };
+const exactDelivery = {
+  response: {
+    type: "CHOICE",
+    options: [{ key: "A" }, { key: "B" }, { key: "C" }, { key: "D" }],
+  },
+};
 const textSpec = { strategy: "ACCEPTED_TEXT", maxScore: 5, acceptedAnswers: ["春风吹，花儿开。"] };
 const dictationSpec = {
   strategy: "DICTATION_ALIGNMENT",
@@ -16,8 +22,8 @@ const dictationSpec = {
   ],
 };
 
-function score(scoringSpec: unknown, answer: unknown, maxScore = 5) {
-  return scoreQuestionBankResponse({ scoringSpec, answer, maxScore });
+function score(scoringSpec: unknown, answer: unknown, maxScore = 5, deliverySpec: unknown = exactDelivery) {
+  return scoreQuestionBankResponse({ scoringSpec, deliverySpec, answer, maxScore });
 }
 
 describe("Question Bank deterministic scorer", () => {
@@ -58,6 +64,23 @@ describe("Question Bank deterministic scorer", () => {
     expect(score({ ...dictationSpec, deductionRules: ["每错一字扣两分"] }, { value: "甲乙丙丁" })).toMatchObject({ state: "NEEDS_REVIEW", score: null, reasonCode: "SCORING_RULE_UNSUPPORTED" });
     expect(score({ strategy: "DICTATION_ALIGNMENT", maxScore: 5, referenceAnswer: "甲乙丙丁" }, { value: "甲乙丙丁" })).toMatchObject({ state: "NEEDS_REVIEW", score: null, reasonCode: "SCORING_RULE_UNSUPPORTED" });
     expect(score({ ...exactSpec, maxScore: 4 }, { value: "B" }, 3)).toMatchObject({ state: "NEEDS_REVIEW", score: null, reasonCode: "SCORING_CONFIG_INVALID" });
+  });
+
+  it("fails closed when an exact-choice answer is absent from the published delivery options", () => {
+    const result = score(
+      { ...exactSpec, referenceAnswer: "A" },
+      { value: "B" },
+      3,
+      { response: { type: "CHOICE", options: [{ key: "B" }, { key: "C" }, { key: "D" }] } },
+    );
+    expect(result).toMatchObject({
+      state: "NEEDS_REVIEW",
+      strategy: "EXACT_CHOICE",
+      score: null,
+      reasonCode: "SCORING_CONFIG_INVALID",
+      scorerVersion: QUESTION_BANK_DETERMINISTIC_SCORER_VERSION,
+    });
+    expect(JSON.stringify(result)).not.toMatch(/answer|option|reference|scoringSpec/i);
   });
 
   it("never auto-scores rubric text or speech", () => {

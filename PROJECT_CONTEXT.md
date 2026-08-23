@@ -44,6 +44,13 @@ maximum, repeat submissions are idempotent, and a Question Bank session is
 finalized only when every required item has a formal score. Completed reports
 aggregate authored points rather than legacy item averages.
 
+For `EXACT_CHOICE`, canonical validation requires a non-empty, unique authored
+option-key set and requires the bound reference key to be present in that set.
+Runtime scoring rechecks the published delivery snapshot before awarding points;
+an invalid configuration stays unscored and review-blocked rather than becoming
+a student error. Student responses expose only a generic configuration-review
+message for this state.
+
 ## Student delivery and runner
 
 `deliverySpec` is browser-safe. `scoringSpec`, standard answers, rubrics, and

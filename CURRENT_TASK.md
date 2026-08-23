@@ -1,7 +1,7 @@
 # CURRENT TASK
 
 Task: QB-008 — Level 2–6 bulk import and rollout
-Status: TODO
+Status: TODO / BLOCKED
 
 ## Goal
 

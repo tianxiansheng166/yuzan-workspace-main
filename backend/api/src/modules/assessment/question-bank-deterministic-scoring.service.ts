@@ -21,6 +21,7 @@ export interface DeterministicScoreResult {
 
 export interface DeterministicScoreInput {
   readonly scoringSpec: unknown;
+  readonly deliverySpec: unknown;
   readonly answer: unknown;
   readonly maxScore: unknown;
 }
@@ -55,7 +56,7 @@ interface AssessmentItemForScoring {
   readonly reviewerUserId: string | null;
   readonly reviewedAt: Date | null;
   readonly questionVersionId: string | null;
-  readonly questionVersion: { status: string; scoringSpec: unknown } | null;
+  readonly questionVersion: { status: string; deliverySpec: unknown; scoringSpec: unknown } | null;
   readonly writtenAnswer: { content: unknown; finalSubmittedAt: Date | null } | null;
 }
 
@@ -148,6 +149,17 @@ function configuredMaxScore(spec: ScoringSpecRecord, maxScore: unknown): number 
 
 function normalizedChoice(value: unknown): string {
   return typeof value === "string" ? value.trim().toUpperCase() : "";
+}
+
+function configuredChoiceKeys(deliverySpec: unknown): string[] | null {
+  if (!isRecord(deliverySpec) || !isRecord(deliverySpec.response) || deliverySpec.response.type !== "CHOICE") return null;
+  const options = deliverySpec.response.options;
+  if (!Array.isArray(options) || options.length === 0) return null;
+  const keys = options.map((option) => (
+    isRecord(option) && typeof option.key === "string" ? normalizedChoice(option.key) : ""
+  ));
+  if (keys.some((key) => !key) || new Set(keys).size !== keys.length) return null;
+  return keys;
 }
 
 function normalizedAcceptedText(value: string): string {
@@ -276,12 +288,14 @@ function sameCharacterMultiset(left: string, right: string): boolean {
   return true;
 }
 
-function scoreExactChoice(spec: ScoringSpecRecord, answer: unknown, maxScore: number): DeterministicScoreResult {
+function scoreExactChoice(spec: ScoringSpecRecord, deliverySpec: unknown, answer: unknown, maxScore: number): DeterministicScoreResult {
   if (typeof spec.referenceAnswer !== "string") return needsReview("EXACT_CHOICE", maxScore, "SCORING_CONFIG_INVALID");
+  const optionKeys = configuredChoiceKeys(deliverySpec);
+  if (!optionKeys) return needsReview("EXACT_CHOICE", maxScore, "SCORING_CONFIG_INVALID");
   const expected = spec.referenceAnswer.trim().toUpperCase();
-  if (!CHOICE_KEYS.has(expected)) return needsReview("EXACT_CHOICE", maxScore, "SCORING_CONFIG_INVALID");
+  if (!CHOICE_KEYS.has(expected) || !optionKeys.includes(expected)) return needsReview("EXACT_CHOICE", maxScore, "SCORING_CONFIG_INVALID");
   const actual = normalizedChoice(answerValue(answer));
-  const matched = actual === expected && CHOICE_KEYS.has(actual);
+  const matched = actual === expected && optionKeys.includes(actual);
   return autoScore("EXACT_CHOICE", maxScore, matched ? maxScore : 0, { matched });
 }
 
@@ -342,7 +356,7 @@ export function scoreQuestionBankResponse(input: DeterministicScoreInput): Deter
 
   switch (strategy) {
     case "EXACT_CHOICE":
-      return scoreExactChoice(spec, input.answer, maxScore);
+      return scoreExactChoice(spec, input.deliverySpec, input.answer, maxScore);
     case "ACCEPTED_TEXT":
       return scoreAcceptedText(spec, input.answer, maxScore);
     case "DICTATION_ALIGNMENT":
@@ -380,7 +394,7 @@ export class QuestionBankDeterministicScoringService {
         autoResult: true,
         reviewerUserId: true,
         reviewedAt: true,
-        questionVersion: { select: { status: true, scoringSpec: true } },
+        questionVersion: { select: { status: true, deliverySpec: true, scoringSpec: true } },
         writtenAnswer: { select: { content: true, finalSubmittedAt: true } },
       },
       orderBy: { sortOrder: "asc" },
@@ -420,6 +434,7 @@ export class QuestionBankDeterministicScoringService {
       const result = item.questionVersion?.status === "PUBLISHED"
         ? this.score({
           scoringSpec: item.questionVersion.scoringSpec,
+          deliverySpec: item.questionVersion.deliverySpec,
           answer: item.writtenAnswer.content,
           maxScore: item.maxScore,
         })

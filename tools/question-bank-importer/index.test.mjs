@@ -252,6 +252,25 @@ test("structural validation catches counts, points, and delivery scoring leaks",
   assert.ok(issues.some((issue) => issue.code === "DELIVERY_SCORING_LEAK"));
 });
 
+test("EXACT_CHOICE validation rejects an answer key absent from authored options", () => {
+  const issues = [];
+  validateQuestions([{
+    level: 1,
+    questions: [{
+      ...question(1, "WORD_RECOGNITION", 3, 4),
+      stableKey: "L1-READ-WORD_RECOGNITION-003",
+      deliverySpec: {
+        stimulus: { type: "TEXT", promptText: "source" },
+        response: { type: "CHOICE", options: [{ key: "B" }, { key: "C" }, { key: "D" }] },
+      },
+      scoringSpec: { strategy: "EXACT_CHOICE", maxScore: 4, referenceAnswer: "A" },
+    }],
+  }], issues);
+  assert.ok(issues.some((issue) => issue.code === "ANSWER_OPTION_INVALID"));
+  assert.ok(issues.some((issue) => issue.code === "BLOCKED_CONTENT_MISMATCH"));
+  assert.equal(issues.find((issue) => issue.code === "ANSWER_OPTION_INVALID")?.stableKey, "L1-READ-WORD_RECOGNITION-003");
+});
+
 test("level filtering isolates the selected manifest", () => {
   const all = [{ level: 1, questions: [] }, { level: 2, questions: [] }];
   assert.deepEqual(selectLevels(all, 1), [all[0]]);

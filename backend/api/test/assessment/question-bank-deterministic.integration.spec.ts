@@ -102,22 +102,43 @@ describe.skipIf(!databaseUrl)("Question Bank deterministic scoring — canonical
     const second = await scorer.scoreSession(session.id);
     expect(first).toEqual({
       totalItems: 20,
-      autoScoredItems: 14,
-      needsReviewItems: 2,
+      autoScoredItems: 13,
+      needsReviewItems: 3,
       skippedItems: 4,
-      awardedPoints: 58,
-      scoredMaxPoints: 58,
+      awardedPoints: 54,
+      scoredMaxPoints: 54,
       totalMaxPoints: 100,
     });
     expect(second).toEqual(first);
 
     const persisted = await prisma.assessmentItem.findMany({
       where: { sessionId: session.id },
-      select: { scoredScore: true, maxScore: true, autoResult: true, questionVersion: { select: { scoringSpec: true } } },
+      select: {
+        scoredScore: true,
+        maxScore: true,
+        autoResult: true,
+        questionVersion: {
+          select: {
+            scoringSpec: true,
+            deliverySpec: true,
+            item: { select: { stableKey: true } },
+          },
+        },
+      },
       orderBy: { sortOrder: "asc" },
     });
-    expect(persisted.filter((item) => item.scoredScore !== null)).toHaveLength(14);
-    expect(persisted.filter((item) => item.scoredScore === null)).toHaveLength(6);
+    expect(persisted.filter((item) => item.scoredScore !== null)).toHaveLength(13);
+    expect(persisted.filter((item) => item.scoredScore === null)).toHaveLength(7);
+    const invalidChoice = persisted.find((item) => item.questionVersion?.item.stableKey === "L1-READ-WORD_RECOGNITION-003");
+    expect(invalidChoice).toMatchObject({
+      scoredScore: null,
+      autoResult: {
+        state: "NEEDS_REVIEW",
+        strategy: "EXACT_CHOICE",
+        reasonCode: "SCORING_CONFIG_INVALID",
+        scorerVersion: "qb-deterministic-v1",
+      },
+    });
     for (const item of persisted) {
       if (item.scoredScore !== null) {
         expect(item.scoredScore).toBeGreaterThanOrEqual(0);

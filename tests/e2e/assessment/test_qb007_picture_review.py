@@ -138,15 +138,10 @@ def goto_item(page, index):
 def select_choice(page, key):
     try:
         expected = page.locator(f'[data-choice="{key}"]')
-        if expected.count():
-            expected.click(timeout=10_000)
-            page.locator(f'[data-choice="{key}"].selected').wait_for(timeout=10_000)
-        else:
-            # Keep the browser journey runnable when an authored option set
-            # has a stale reference key; the deterministic score remains 0.
-            fallback = page.locator('[data-choice]').first
-            fallback.click(timeout=10_000)
-            page.locator('[data-choice].selected').wait_for(timeout=10_000)
+        if expected.count() != 1:
+            raise AssertionError(f"reference option {key} is not present exactly once")
+        expected.click(timeout=10_000)
+        page.locator(f'[data-choice="{key}"].selected').wait_for(timeout=10_000)
     except Exception as error:
         raise AssertionError(
             f"选项 {key} 不存在：{page.locator('.runner-progress').inner_text()} "

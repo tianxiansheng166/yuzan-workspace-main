@@ -103,6 +103,37 @@ describe("Question Bank assessment scoring integration", () => {
     expect(response.autoResult).toBeNull();
   });
 
+  it("reduces an invalid scoring configuration to a student-safe review message", () => {
+    const response = toAssessmentItemResponse({
+      id: "item-qb-invalid-choice",
+      sessionId: "session-qb-005",
+      questionId: null,
+      questionVersionId: "version-qb-invalid-choice",
+      recordingId: null,
+      prompt: { text: "student-safe" },
+      itemType: "CHOICE",
+      status: "PENDING",
+      sortOrder: 1,
+      maxScore: 4,
+      scoredScore: null,
+      autoResult: {
+        state: "NEEDS_REVIEW",
+        strategy: "EXACT_CHOICE",
+        reasonCode: "SCORING_CONFIG_INVALID",
+        scorerVersion: "qb-deterministic-v1",
+      },
+      reviewerUserId: null,
+      reviewerComment: null,
+      reviewedAt: null,
+      revision: 1,
+      createdAt: now,
+      updatedAt: now,
+    }, { includeScoring: true, viewer: "student" });
+
+    expect(response.autoResult).toEqual({ state: "NEEDS_REVIEW", message: "该题评分配置需复核" });
+    expect(JSON.stringify(response)).not.toMatch(/referenceAnswer|answerKey|options|scoringSpec|SCORING_CONFIG_INVALID/);
+  });
+
   it("keeps a partial Question Bank session processing and creates no report", async () => {
     const { service, sessionRepo, reportRepo, scorer } = makeService([
       qbItem({ itemType: "CHOICE", maxScore: 3, scoredScore: 3 }),

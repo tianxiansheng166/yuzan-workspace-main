@@ -19,8 +19,21 @@ export function toAssessmentSessionResponse(session: AssessmentSession) {
   };
 }
 
-export function toAssessmentItemResponse(item: AssessmentItem, options: { includeScoring?: boolean } = {}) {
+function studentSafeAutoResult(value: Record<string, unknown> | null) {
+  if (value?.reasonCode === "SCORING_CONFIG_INVALID") {
+    return {
+      state: "NEEDS_REVIEW",
+      message: "该题评分配置需复核",
+    };
+  }
+  return value;
+}
+
+export function toAssessmentItemResponse(item: AssessmentItem, options: { includeScoring?: boolean; viewer?: "student" | "staff" } = {}) {
   const includeScoring = options.includeScoring ?? true;
+  const autoResult = includeScoring
+    ? options.viewer === "student" ? studentSafeAutoResult(item.autoResult) : item.autoResult
+    : null;
   return {
     id: item.id,
     sessionId: item.sessionId,
@@ -32,7 +45,7 @@ export function toAssessmentItemResponse(item: AssessmentItem, options: { includ
     sortOrder: item.sortOrder,
     maxScore: item.maxScore,
     scoredScore: includeScoring ? item.scoredScore : null,
-    autoResult: includeScoring ? item.autoResult : null,
+    autoResult,
     reviewerUserId: item.reviewerUserId,
     reviewedAt: item.reviewedAt?.toISOString() ?? null,
   };

@@ -241,7 +241,8 @@ export class AssessmentService {
 
     const items = await this.itemRepo.findBySessionId(sessionId);
     const includeScoring = ["SUBMITTED", "PROCESSING", "COMPLETED"].includes(session.status);
-    return items.map((item) => toAssessmentItemResponse(item, { includeScoring }));
+    const staffViewer = auth.principal.roles.some((role) => [MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN, MembershipRole.PLATFORM_ADMIN].includes(role));
+    return items.map((item) => toAssessmentItemResponse(item, { includeScoring, viewer: staffViewer ? "staff" : "student" }));
   }
 
   async attachRecording(auth: AuthContext, schoolId: string, sessionId: string, itemId: string, recordingId: string) {
@@ -268,7 +269,7 @@ export class AssessmentService {
     if (!recording) throw new AssessmentForbiddenException("录音不属于当前学生");
 
     const updated = await this.itemRepo.updateRecordingId(itemId, recordingId);
-    return toAssessmentItemResponse(updated, { includeScoring: ["SUBMITTED", "PROCESSING", "COMPLETED"].includes(session.status) });
+    return toAssessmentItemResponse(updated, { includeScoring: ["SUBMITTED", "PROCESSING", "COMPLETED"].includes(session.status), viewer: "student" });
   }
 
   // ─── Written Assessment ────────────────────────────────

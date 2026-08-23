@@ -201,6 +201,28 @@ function collectRuntimeMedia(questions: readonly CanonicalQuestion[]): RuntimeMe
   return [...entries.values()].sort((left, right) => left.objectKey.localeCompare(right.objectKey));
 }
 
+function exactChoiceOptionKeys(deliverySpec: JsonRecord): string[] | null {
+  const response = deliverySpec.response;
+  if (!isRecord(response) || response.type !== "CHOICE" || !Array.isArray(response.options) || response.options.length === 0) {
+    return null;
+  }
+  const keys = response.options.map((option) => (
+    isRecord(option) && typeof option.key === "string" ? option.key.trim().toUpperCase() : ""
+  ));
+  if (keys.some((key) => !key) || new Set(keys).size !== keys.length) return null;
+  return keys;
+}
+
+function assertExactChoiceConfiguration(question: CanonicalQuestion): void {
+  const keys = exactChoiceOptionKeys(question.deliverySpec);
+  const referenceAnswer = typeof question.scoringSpec.referenceAnswer === "string"
+    ? question.scoringSpec.referenceAnswer.trim().toUpperCase()
+    : "";
+  if (!keys || !referenceAnswer || !keys.includes(referenceAnswer)) {
+    fail(`${question.stableKey} has an invalid EXACT_CHOICE answer configuration`);
+  }
+}
+
 function assertCanonicalLevel(manifest: CanonicalManifest): CanonicalQuestion[] {
   if (manifest.issues.some((issue) => issue.severity === "ERROR")) {
     fail("canonical source validation reported errors");
@@ -223,6 +245,7 @@ function assertCanonicalLevel(manifest: CanonicalManifest): CanonicalQuestion[] 
     if (!isRecord(question.scoringSpec) || typeof question.scoringSpec.strategy !== "string") {
       fail(`${question.stableKey} has no scoring strategy`);
     }
+    if (question.scoringSpec.strategy === "EXACT_CHOICE") assertExactChoiceConfiguration(question);
   }
   const media = collectRuntimeMedia(questions);
   const images = media.filter((entry) => entry.kind === "IMAGE").length;
