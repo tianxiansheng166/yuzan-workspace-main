@@ -1,22 +1,23 @@
 # CURRENT TASK
 
-Task: QB-013 — Teacher diagnostic dashboard
+Task: QB-014 — Teacher targeted remediation assignment
 Status: TODO
 
 ## Starting point
 
-- QB-012 is complete. `qb-progress-v1` is a read-only student progress view:
-  formal trends compare only completed `STANDARD` Question Bank reports within
-  the same `practiceDefinitionId`, while remediation compares only exact
-  `questionVersionId` matches to its source formal session.
+- QB-013 is complete. Teachers can inspect a class-scoped, read-only Question
+  Bank diagnostic dashboard for one `practiceDefinitionId`, including the
+  latest formal result per active student, safe same-level self deltas, scoped
+  remediation summaries, and existing review-queue handoff.
 - QB-009B remains `PARKED / EXTERNAL_INPUT`. Do not call speech providers or
   start calibration work.
 
 ## Constraints
 
-- Keep server-side school, resource, and student scope checks.
-- Do not change formal report/diagnosis data or use provider candidate points
-  as formal authority.
+- Preserve QB-013's `AssessmentReviewService` class-scope authorization,
+  no-ranking rule, aggregate privacy boundary, and formal/remediation isolation.
+- Do not modify formal reports, persisted diagnoses, or historical assessment
+  scores. Any assignment must be explicitly teacher-authorized and scoped.
 - Do not modify or stage `pnpm-workspace.yaml`,
   `infra/database/prisma/seed.ts`,
   `tests/e2e/assessment/question-bank-runner.spec.py`, or

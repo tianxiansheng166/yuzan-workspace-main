@@ -14,8 +14,8 @@ Do not infer a commit SHA from this document. The task-start dirty change in
 ## Current outcome
 
 QB-008R and the Levels 1–6 rollout are implemented on the current feature
-branch. QB-009A, QB-010, QB-011, and QB-012 are complete. QB-009B remains
-`PARKED / EXTERNAL_INPUT`; the next implementation task is QB-013 in
+branch. QB-009A, QB-010, QB-011, QB-012, and QB-013 are complete. QB-009B
+remains `PARKED / EXTERNAL_INPUT`; the next implementation task is QB-014 in
 [`CURRENT_TASK.md`](CURRENT_TASK.md).
 
 The original DOCX/ZIP files under `local_sources/` were inspected as read-only
@@ -164,6 +164,32 @@ Authorized repairs are recorded in
   rounds, and a milestone timeline. Formal reports and remediation results now
   include a “查看学习进步” entry; existing repeat/back actions remain intact.
 
+## QB-013 teacher diagnostic dashboard
+
+- The read-only teacher dashboard reuses `AssessmentReviewService`'s exact
+  review scope: an ordinary teacher sees only classes with an ACTIVE TEACHER
+  enrollment; school/platform admins retain the existing in-school admin scope.
+  Cross-class and cross-school requests are denied server-side.
+- It lists only formal Question Bank practices identified from published
+  `PracticeDefinition → PracticeVersion → PracticeItemRef → QuestionBankItemVersion`
+  runtime relations. The selection authority is `classId + practiceDefinitionId`.
+- The cohort denominator is every ACTIVE STUDENT enrollment in the selected
+  class. Each student contributes at most their latest completed STANDARD
+  report with a persisted `qb-diagnosis-v1`; invalid history is excluded safely
+  and counted as a data-quality issue, never treated as zero.
+- Domain/family cards aggregate persisted percentages only. Common difficulties
+  use average percentage ascending, priority-student count descending, then the
+  canonical family order; strengths use the inverse score order. Remediation is
+  projected only as “专项巩固” and is never included in the formal class average.
+- Student rows are display-name ordered, never score ordered. They expose only
+  same-practice self deltas, safe priority/remediation summaries, and pending
+  review counts. There is no rank, position, percentile, cross-level delta,
+  answer, rubric, transcript, provider result, or candidate-point projection.
+- `GET /schools/:schoolId/teacher/question-bank-diagnostics` returns the
+  authorized selection catalog. Class and detail endpoints use batched Prisma
+  reads and QB-012's `deriveQuestionBankProgress` helper; the teacher UI is
+  `/teacher/diagnostics/` and links to the existing review queue.
+
 ## Verification snapshot
 
 - Importer tests: `16 passed`.
@@ -220,6 +246,20 @@ Authorized repairs are recorded in
 - Final API regression without broad integration-DB opt-in: `1006 passed`,
   `60 skipped`; API typecheck/build, contracts validation/test/typecheck, and
   frontend test/build passed.
+- QB-013 service/security coverage passed (`4` focused cases): own versus other
+  class and cross-school scope, catalog admin scope, five-student cohort
+  denominator (`3` assessed / `1` processing / `1` unassessed), latest-only
+  `84 → 91` self delta, remediation isolation, mixed versions, four domains,
+  eight families, deterministic ordering, review counts, no ranking, no
+  sensitive-field leakage, and no dashboard N+1 loops.
+- QB-013 Chromium E2E passed through
+  `tests/e2e/assessment/test_qb013_teacher_diagnostics.py`: isolated Class A
+  showed 5 eligible, 3 assessed, 1 processing, 1 unassessed, 60% coverage,
+  81-point average, four domains/eight families, one pending review, Student 1
+  `+7`, remediation summary, detail view, and a 403 request for Class B.
+- QB-012 student-progress Chromium regression passed again (`1 passed in
+  8.20s`). The QB-007 browser fixture now self-provisions missing active
+  student/teacher membership rows for an isolated local test database.
 
 ## Known limitations and next task
 
@@ -231,9 +271,9 @@ runtime. The default scorer is restored with `MOCK_SPEECH_SCORING` unset.
 
 QB-009B remains `PARKED / EXTERNAL_INPUT`: it needs approved consented
 recordings, teacher labels, credentials if live smoke is approved, and a
-separate product decision. The next implementation task is QB-013: teacher
-diagnostic dashboard. It must not loosen QB-012's student privacy boundary or
-mix formal trends with scoped remediation results.
+separate product decision. The next implementation task is QB-014: teacher
+targeted remediation assignment. It must keep QB-013's class scope, no-ranking
+boundary, formal/remediation isolation, and student privacy controls intact.
 
 ## Protected paths
 

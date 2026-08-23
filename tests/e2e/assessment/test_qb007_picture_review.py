@@ -10,6 +10,7 @@ import io
 import struct
 import subprocess
 import time
+import uuid
 import wave
 
 import pytest
@@ -19,6 +20,9 @@ from playwright.sync_api import sync_playwright
 
 BASE = "http://127.0.0.1:4175"
 PASSWORD = "YuzanTest!2026"
+SCHOOL_ID = "11111111-1111-4111-8111-111111111111"
+STUDENT_ID = "22222222-2222-4222-8222-222222222222"
+TEACHER_ID = "33333333-3333-4333-8333-333333333333"
 LEVEL_LABELS = {1: "一", 2: "二", 3: "三", 4: "四", 5: "五", 6: "六"}
 
 
@@ -55,6 +59,27 @@ def run_sql(statement):
         check=True,
         text=True,
     )
+
+
+def ensure_active_membership(user_id, role):
+    result = subprocess.run(
+        [
+            "docker", "exec", "p0-integration-postgres-1", "psql", "-U", "yuzan", "-d", "yuzan_dev", "-At",
+            "-v", "ON_ERROR_STOP=1", "-c",
+            f'''SELECT "id" FROM "Membership" WHERE "schoolId" = '{SCHOOL_ID}' AND "userId" = '{user_id}' AND "role" = '{role}' AND "status" = 'ACTIVE' LIMIT 1;''',
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    if result.stdout.strip():
+        return None
+    membership_id = str(uuid.uuid4())
+    run_sql(
+        f'''INSERT INTO "Membership" ("id", "schoolId", "userId", "role", "status", "joinedAt")
+            VALUES ('{membership_id}', '{SCHOOL_ID}', '{user_id}', '{role}', 'ACTIVE', NOW());'''
+    )
+    return membership_id
 
 
 def published_references(level):
@@ -261,6 +286,14 @@ def wait_for_submission(page, attempt_id):
 @pytest.mark.parametrize("level", [1, 2, 3, 4, 5, 6])
 def test_question_bank_student_teacher_report(level):
     attempt_id = None
+    temporary_memberships = [
+        membership_id
+        for membership_id in [
+            ensure_active_membership(STUDENT_ID, "STUDENT"),
+            ensure_active_membership(TEACHER_ID, "TEACHER"),
+        ]
+        if membership_id
+    ]
     practice_title = f"国家通用语言文字能力｜水平{LEVEL_LABELS[level]}级综合测评"
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(headless=True, executable_path="/usr/bin/google-chrome")
@@ -471,3 +504,5 @@ def test_question_bank_student_teacher_report(level):
                     f'''DELETE FROM "Recording" WHERE "idempotencyKey" LIKE 'runner-{attempt_id}-%';
 DELETE FROM "AssessmentSession" WHERE "id" = '{attempt_id}';'''
                 )
+            for membership_id in temporary_memberships:
+                run_sql(f'''DELETE FROM "Membership" WHERE "id" = '{membership_id}';''')
