@@ -49,10 +49,10 @@ describe.skipIf(!databaseUrl)("Question Bank runtime delivery — PostgreSQL int
     await pool.end();
   });
 
-  it("keeps the six seeded legacy practices runnable", async () => {
+  it("keeps the six seeded legacy practices and six published level practices runnable", async () => {
     const service = new PracticeService(prisma as any);
     const catalog = await service.listForStudent(auth, schoolId);
-    expect(catalog.total).toBe(6);
+    expect(catalog.total).toBe(12);
 
     const legacy = catalog.items[0];
     expect(legacy).toBeDefined();

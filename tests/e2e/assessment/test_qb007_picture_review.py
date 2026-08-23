@@ -12,13 +12,14 @@ import subprocess
 import time
 import wave
 
+import pytest
 from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
 from playwright.sync_api import sync_playwright
 
 
 BASE = "http://127.0.0.1:4175"
-PRACTICE_TITLE = "国家通用语言文字能力｜水平一级综合测评"
 PASSWORD = "YuzanTest!2026"
+LEVEL_LABELS = {1: "一", 2: "二", 3: "三", 4: "四", 5: "五", 6: "六"}
 
 
 def wav_base64():
@@ -56,7 +57,8 @@ def run_sql(statement):
     )
 
 
-def published_references():
+def published_references(level):
+    level_label = LEVEL_LABELS[level]
     result = subprocess.run(
         [
             "docker",
@@ -73,12 +75,13 @@ def published_references():
             "-v",
             "ON_ERROR_STOP=1",
             "-c",
-            """SELECT i."stableKey", v."scoringSpec"->>'strategy',
+            f"""SELECT i."stableKey", v."scoringSpec"->>'strategy',
                       v."scoringSpec"->>'referenceAnswer'
                FROM "QuestionBankItemVersion" v
                JOIN "QuestionBankItem" i ON i."id" = v."itemId"
               WHERE v."status" = 'PUBLISHED'
-                AND i."level" = '水平一级';""",
+                AND i."level" = '水平{level_label}级'
+             ORDER BY i."stableKey", v."version" DESC;""",
         ],
         check=True,
         capture_output=True,
@@ -87,7 +90,7 @@ def published_references():
     references = {}
     for line in result.stdout.splitlines():
         stable_key, strategy, reference = line.split("\t", 2)
-        references[stable_key] = (strategy, reference)
+        references.setdefault(stable_key, (strategy, reference))
     return references
 
 
@@ -109,7 +112,7 @@ def authenticate(page, identifier):
     )
 
 
-def create_attempt(page):
+def create_attempt(page, practice_title):
     return page.evaluate(
         """async title => {
           const schoolId = localStorage.getItem('yuzan-active-school-id');
@@ -118,7 +121,7 @@ def create_attempt(page):
           const catalogPayload = await catalogResponse.json();
           const catalog = catalogPayload.data || catalogPayload;
           const practice = catalog.items.find(item => item.title === title);
-          if (!practice) throw new Error('Canonical Level 1 practice is not visible in the student catalog');
+          if (!practice) throw new Error('Canonical question-bank practice is not visible in the student catalog');
           const attemptResponse = await fetch(`/api/v1/schools/${schoolId}/practices/${practice.id}/attempts`, {
             method: 'POST', headers, body: '{}',
           });
@@ -126,7 +129,7 @@ def create_attempt(page):
           if (!attemptResponse.ok) throw new Error(JSON.stringify(attemptPayload));
           return attemptPayload.data || attemptPayload;
         }""",
-        PRACTICE_TITLE,
+        practice_title,
     )
 
 
@@ -214,8 +217,11 @@ def wait_for_submission(page, attempt_id):
     return school_id, headers, latest_items
 
 
-def test_qb007_picture_speaking_and_human_review():
+@pytest.mark.parametrize("level", [1, 2, 3, 4, 5, 6])
+def test_question_bank_student_teacher_report(level):
     attempt_id = None
+    practice_title = f"国家通用语言文字能力｜水平{LEVEL_LABELS[level]}级综合测评"
+    prefix = f"L{level}"
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(headless=True, executable_path="/usr/bin/google-chrome")
         context = browser.new_context()
@@ -242,17 +248,17 @@ def test_qb007_picture_speaking_and_human_review():
         page.on("pageerror", lambda error: page_errors.append(str(error)))
 
         try:
-            references = published_references()
+            references = published_references(level)
             authenticate(page, "student.test")
-            created = create_attempt(page)
+            created = create_attempt(page, practice_title)
             attempt_id = created["attemptId"]
             page.goto(f"{BASE}/student/practices/attempts/{attempt_id}/runner/")
             page.locator(".question-shell").wait_for(timeout=15_000)
 
             listen_choices = [
-                "L1-LISTEN-LISTEN_IMAGE_CHOICE-001",
-                "L1-LISTEN-LISTEN_IMAGE_CHOICE-002",
-                "L1-LISTEN-LISTEN_IMAGE_CHOICE-003",
+                f"{prefix}-LISTEN-LISTEN_IMAGE_CHOICE-001",
+                f"{prefix}-LISTEN-LISTEN_IMAGE_CHOICE-002",
+                f"{prefix}-LISTEN-LISTEN_IMAGE_CHOICE-003",
             ]
             for index, stable_key in enumerate(listen_choices):
                 goto_item(page, index) if index else None
@@ -261,9 +267,9 @@ def test_qb007_picture_speaking_and_human_review():
                 select_choice(page, references[stable_key][1])
 
             dictation_keys = [
-                "L1-LISTEN-DICTATION-001",
-                "L1-LISTEN-DICTATION-002",
-                "L1-LISTEN-DICTATION-003",
+                f"{prefix}-LISTEN-DICTATION-001",
+                f"{prefix}-LISTEN-DICTATION-002",
+                f"{prefix}-LISTEN-DICTATION-003",
             ]
             for index, stable_key in enumerate(dictation_keys, start=3):
                 goto_item(page, index)
@@ -280,20 +286,20 @@ def test_qb007_picture_speaking_and_human_review():
             record_speech(page)
 
             read_choices = [
-                "L1-READ-WORD_RECOGNITION-001",
-                "L1-READ-WORD_RECOGNITION-002",
-                "L1-READ-WORD_RECOGNITION-003",
-                "L1-READ-SENTENCE_COMPREHENSION-001",
-                "L1-READ-SENTENCE_COMPREHENSION-002",
-                "L1-READ-SENTENCE_COMPREHENSION-003",
+                f"{prefix}-READ-WORD_RECOGNITION-001",
+                f"{prefix}-READ-WORD_RECOGNITION-002",
+                f"{prefix}-READ-WORD_RECOGNITION-003",
+                f"{prefix}-READ-SENTENCE_COMPREHENSION-001",
+                f"{prefix}-READ-SENTENCE_COMPREHENSION-002",
+                f"{prefix}-READ-SENTENCE_COMPREHENSION-003",
             ]
             for index, stable_key in enumerate(read_choices, start=10):
                 goto_item(page, index)
                 select_choice(page, references[stable_key][1])
 
             picture_word_keys = [
-                "L1-WRITE-PICTURE_WORD-001",
-                "L1-WRITE-PICTURE_WORD-002",
+                f"{prefix}-WRITE-PICTURE_WORD-001",
+                f"{prefix}-WRITE-PICTURE_WORD-002",
             ]
             for index, stable_key in enumerate(picture_word_keys, start=16):
                 goto_item(page, index)

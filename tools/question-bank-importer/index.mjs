@@ -2,7 +2,7 @@
 
 import { createHash } from "node:crypto";
 import { execFile } from "node:child_process";
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
 import sharp from "sharp";
@@ -13,6 +13,7 @@ export const defaultOptions = Object.freeze({
   questions: path.join(root, "local_sources/question-bank/题库【三改】.docx"),
   answers: path.join(root, "local_sources/question-bank/答案及评分细则.docx"),
   media: path.join(root, "local_sources/question-bank/题库音频及图片.zip"),
+  contentRepairs: path.join(import.meta.dirname, "content-repairs.json"),
   output: path.join(root, "local_sources/question-bank/.generated"),
 });
 
@@ -199,17 +200,75 @@ function optionParts(text) {
   return { prompt, options };
 }
 
-function parseChoiceItems(paragraphs, block) {
+function recoveredChoiceProvenance(candidates, pattern) {
+  const paragraphStart = Math.min(...candidates.map((candidate) => candidate.index));
+  const paragraphEnd = Math.max(...candidates.map((candidate) => candidate.index));
+  return {
+    kind: "STRUCTURAL_RECOVERY",
+    reasonCode: "MISSING_OPTION_LABEL_RECOVERED",
+    sourceEvidence: {
+      document: "Question Word",
+      paragraphStart,
+      paragraphEnd,
+      pattern,
+    },
+    userAuthorized: true,
+  };
+}
+
+function recoverChoiceOptions(current, issues) {
+  const keys = current.options.map((option) => option.key);
+  const hasMissingASequence = keys.join("/") === "B/C/D";
+  const hasMissingABSequence = keys.join("/") === "C/D";
+  if (current.unlabeledCandidates.length === 0) return current;
+  const detail = {
+    sourceOrder: current.ordinal,
+    paragraphStart: current.start,
+    paragraphEnd: current.end,
+  };
+  if (hasMissingABSequence && current.unlabeledCandidates.length === 2) {
+    return {
+      ...current,
+      options: [
+        { key: "A", text: current.unlabeledCandidates[0].text },
+        { key: "B", text: current.unlabeledCandidates[1].text },
+        ...current.options,
+      ],
+      provenance: recoveredChoiceProvenance(current.unlabeledCandidates, "two unlabeled candidates followed by C/D"),
+    };
+  }
+  if (!hasMissingASequence) {
+    if (keys[0] === "C" || keys[0] === "D") addIssue(issues, "ERROR", "CHOICE_RECOVERY_UNSAFE", detail);
+    return current;
+  }
+  if (current.unlabeledCandidates.length !== 1) {
+    addIssue(issues, "ERROR", "CHOICE_RECOVERY_AMBIGUOUS", {
+      ...detail,
+      candidateCount: current.unlabeledCandidates.length,
+    });
+    return current;
+  }
+  const candidate = current.unlabeledCandidates[0];
+  return {
+    ...current,
+    options: [{ key: "A", text: candidate.text }, ...current.options],
+    provenance: recoveredChoiceProvenance([candidate], "one unlabeled candidate followed by B/C/D"),
+  };
+}
+
+function parseChoiceItems(paragraphs, block, issues = []) {
   const items = [];
   let current = null;
   const flush = () => {
     if (!current) return;
+    current = recoverChoiceOptions(current, issues);
     if (current.prompt || current.options.length) {
       items.push({
         ordinal: current.ordinal ?? items.length + 1,
         prompt: current.prompt.trim(),
         options: current.options,
         source: trace(current.start, current.end),
+        ...(current.provenance ? { provenance: current.provenance } : {}),
       });
     }
     current = null;
@@ -221,7 +280,14 @@ function parseChoiceItems(paragraphs, block) {
     const numbered = numberedStart(text);
     if (numbered) {
       flush();
-      current = { ordinal: numbered.ordinal, prompt: "", options: [], start: paragraph.index, end: paragraph.index };
+      current = {
+        ordinal: numbered.ordinal,
+        prompt: "",
+        options: [],
+        unlabeledCandidates: [],
+        start: paragraph.index,
+        end: paragraph.index,
+      };
       const parts = optionParts(numbered.text);
       if (parts) {
         current.prompt = parts.prompt;
@@ -233,15 +299,34 @@ function parseChoiceItems(paragraphs, block) {
     }
     const parts = optionParts(text);
     if (parts) {
-      if (!current) current = { ordinal: items.length + 1, prompt: "", options: [], start: paragraph.index, end: paragraph.index };
+      if (!current) {
+        current = {
+          ordinal: items.length + 1,
+          prompt: "",
+          options: [],
+          unlabeledCandidates: [],
+          start: paragraph.index,
+          end: paragraph.index,
+        };
+      }
       if (parts.prompt) current.prompt = `${current.prompt} ${parts.prompt}`.trim();
       current.options.push(...parts.options);
       current.end = paragraph.index;
       continue;
     }
     if (current?.options.length) flush();
-    if (!current) current = { ordinal: items.length + 1, prompt: "", options: [], start: paragraph.index, end: paragraph.index };
-    current.prompt = `${current.prompt} ${text}`.trim();
+    if (!current) {
+      current = {
+        ordinal: items.length + 1,
+        prompt: "",
+        options: [],
+        unlabeledCandidates: [],
+        start: paragraph.index,
+        end: paragraph.index,
+      };
+    }
+    if (current.prompt) current.unlabeledCandidates.push({ text, index: paragraph.index });
+    else current.prompt = text;
     current.end = paragraph.index;
   }
   flush();
@@ -314,7 +399,7 @@ function parsePictureWordItems(paragraphs, block) {
   return items;
 }
 
-function parseBlockItems(paragraphs, block) {
+function parseBlockItems(paragraphs, block, issues = []) {
   const body = paragraphs.slice(block.start + 1, block.end);
   const { family } = block.family;
   if (family === "LISTEN_IMAGE_CHOICE") {
@@ -352,7 +437,7 @@ function parseBlockItems(paragraphs, block) {
     }];
   }
   if (family === "WORD_RECOGNITION" || family === "SENTENCE_COMPREHENSION") {
-    return parseChoiceItems(paragraphs, block);
+    return parseChoiceItems(paragraphs, block, issues);
   }
   if (family === "PICTURE_WORD") return parsePictureWordItems(paragraphs, block);
   if (family === "SENTENCE_COMPLETION") return parseNumberedOrBlockItems(paragraphs, block, { completion: true });
@@ -390,14 +475,17 @@ function makeItem(level, block, parsed) {
     deliverySpec,
     scoringSpec: { strategy: strategy(block.family.family), maxScore },
     mediaBindings: { imageRids: sourceImageRids, images: [] },
-    sourceTrace: { questionDocx: { familyLabel: block.family.label, ...parsed.source } },
+    sourceTrace: {
+      questionDocx: { familyLabel: block.family.label, ...parsed.source },
+      ...(parsed.provenance ? { provenance: parsed.provenance } : {}),
+    },
   };
 }
 
-export function parseQuestionDocument(doc) {
+export function parseQuestionDocument(doc, issues = []) {
   return levelRanges(doc.paragraphs).map((range) => {
     const questions = familyBlocks(doc.paragraphs, range).flatMap((block) => (
-      parseBlockItems(doc.paragraphs, { ...block, family: block.family }).map((parsed) => makeItem(range.level, block, parsed))
+      parseBlockItems(doc.paragraphs, { ...block, family: block.family }, issues).map((parsed) => makeItem(range.level, block, parsed))
     ));
     return {
       level: range.level,
@@ -408,6 +496,85 @@ export function parseQuestionDocument(doc) {
       questions,
     };
   });
+}
+
+function familyDefinition(family) {
+  return familyDefinitions.find((entry) => entry.family === family) ?? null;
+}
+
+function repairProvenance(repair) {
+  return {
+    kind: repair.provenance?.kind,
+    reasonCode: repair.provenance?.reasonCode,
+    sourceEvidence: repair.provenance?.sourceEvidence,
+    userAuthorized: repair.provenance?.userAuthorized,
+    derivedFrom: repair.derivedFrom,
+  };
+}
+
+function repairItem(level, repair) {
+  const definition = familyDefinition(repair.family);
+  if (!definition) return null;
+  const provenance = repairProvenance(repair);
+  const question = makeItem(level, { family: definition }, {
+    ordinal: repair.sourceOrder,
+    text: repair.text,
+    source: { document: "DERIVED / CONTENT_REPAIR", repairId: repair.repairId ?? repair.stableKey },
+  });
+  question.sourceTrace = {
+    questionDocx: {
+      document: "DERIVED / CONTENT_REPAIR",
+      repairId: repair.repairId ?? repair.stableKey,
+      familyLabel: definition.label,
+    },
+    provenance,
+  };
+  question.scoringSpec = {
+    ...question.scoringSpec,
+    maxScore: repair.maxScore,
+  };
+  question.maxScore = repair.maxScore;
+  return question;
+}
+
+function rebuildSections(level) {
+  level.sections = ["LISTEN", "SPEAK", "READ", "WRITE"].map((domain) => ({
+    domain,
+    families: level.questions.filter((question) => question.domain === domain),
+  }));
+}
+
+export function applyContentRepairs(allLevels, ledger, issues = []) {
+  const repairs = Array.isArray(ledger?.repairs) ? ledger.repairs : [];
+  for (const repair of repairs) {
+    const level = allLevels.find((entry) => entry.level === repair.level);
+    const detail = { level: repair.level, family: repair.family, sourceOrder: repair.sourceOrder, stableKey: repair.stableKey };
+    if (!level) {
+      addIssue(issues, "ERROR", "REPAIR_LEVEL_MISSING", detail);
+      continue;
+    }
+    if (!repair.provenance?.userAuthorized || !["STRUCTURAL_RECOVERY", "AI_INFERRED", "AI_AUTHORED_GAP_FILL"].includes(repair.provenance.kind)) {
+      addIssue(issues, "ERROR", "REPAIR_PROVENANCE_INVALID", detail);
+      continue;
+    }
+    if (level.questions.some((question) => question.stableKey === repair.stableKey || question.sourceOrder === repair.sourceOrder && question.family === repair.family)) {
+      addIssue(issues, "ERROR", "REPAIR_DUPLICATE_ITEM", detail);
+      continue;
+    }
+    const question = repairItem(level.level, repair);
+    if (!question) {
+      addIssue(issues, "ERROR", "REPAIR_FAMILY_INVALID", detail);
+      continue;
+    }
+    level.questions.push(question);
+    level.questions.sort((left, right) => left.domain.localeCompare(right.domain) || left.family.localeCompare(right.family) || left.sourceOrder - right.sourceOrder);
+    rebuildSections(level);
+  }
+  return allLevels;
+}
+
+export async function readContentRepairLedger(file = defaultOptions.contentRepairs) {
+  return JSON.parse(await readFile(file, "utf8"));
 }
 
 function cleanAnswerText(text) {
@@ -576,6 +743,41 @@ export function scoringSummary(levelsToSummarize) {
     bound: questions.filter((question) => question.scoringBinding?.status === "BOUND").length,
     missing: questions.filter((question) => !question.scoringBinding || question.scoringBinding.status === "MISSING").length,
     ambiguous: questions.filter((question) => question.scoringBinding?.status === "AMBIGUOUS").length,
+  };
+}
+
+function validationLevelSummary(level, issues) {
+  const questions = level.questions;
+  const domainSummary = Object.fromEntries(["LISTEN", "SPEAK", "READ", "WRITE"].map((domain) => {
+    const entries = questions.filter((question) => question.domain === domain);
+    return [domain, {
+      items: entries.length,
+      points: entries.reduce((total, question) => total + question.maxScore, 0),
+    }];
+  }));
+  const familySummary = Object.fromEntries([...new Set(questions.map((question) => question.family))].sort().map((family) => {
+    const entries = questions.filter((question) => question.family === family);
+    return [family, {
+      items: entries.length,
+      points: entries.reduce((total, question) => total + question.maxScore, 0),
+    }];
+  }));
+  const levelIssues = issues.filter((issue) => issue.level === level.level);
+  return {
+    level: level.level,
+    items: questions.length,
+    points: questions.reduce((total, question) => total + question.maxScore, 0),
+    domains: domainSummary,
+    families: familySummary,
+    media: {
+      images: new Set(questions.flatMap((question) => question.mediaBindings.images.map((image) => image.sha256))).size,
+      audio: new Set(questions.flatMap((question) => question.mediaBindings.audio ? [question.mediaBindings.audio.sha256] : [])).size,
+    },
+    scoringBound: questions.filter((question) => question.scoringBinding?.status === "BOUND").length,
+    recoveredItems: questions.filter((question) => question.sourceTrace.provenance?.kind === "STRUCTURAL_RECOVERY").length,
+    aiAuthoredItems: questions.filter((question) => question.sourceTrace.provenance?.kind === "AI_AUTHORED_GAP_FILL").length,
+    warnings: levelIssues.filter((issue) => issue.severity === "WARNING").length,
+    errors: levelIssues.filter((issue) => issue.severity === "ERROR").length,
   };
 }
 
@@ -770,14 +972,17 @@ function filteredIssues(issues, level) {
   return issues.filter((issue) => !level || issue.level === level);
 }
 
-export async function run(options = args(process.argv.slice(2))) {
+export async function run(values = process.argv.slice(2)) {
+  const options = Array.isArray(values) ? args(values) : values;
   const issues = [];
-  const [questionDoc, answerDoc, media] = await Promise.all([
+  const [questionDoc, answerDoc, media, repairLedger] = await Promise.all([
     readDocx(options.questions),
     readDocx(options.answers),
     inventory(options.media),
+    readContentRepairLedger(options.contentRepairs),
   ]);
-  const allLevels = parseQuestionDocument(questionDoc);
+  const allLevels = parseQuestionDocument(questionDoc, issues);
+  applyContentRepairs(allLevels, repairLedger, issues);
   const parsedAnswers = parseAnswerDocument(answerDoc);
   bindAnswerGroups(allLevels, parsedAnswers, issues);
   await bindMedia(allLevels, questionDoc, options, media, issues);
@@ -791,6 +996,7 @@ export async function run(options = args(process.argv.slice(2))) {
       levels: allLevels.length,
       embeddedImages: questionDoc.occurrences.length,
       parsedItems: allLevels.reduce((sum, level) => sum + level.questions.length, 0),
+      contentRepairs: repairLedger.repairs?.length ?? 0,
     },
     answerDocx: {
       levels: parsedAnswers.levels.length,
@@ -810,6 +1016,7 @@ export async function run(options = args(process.argv.slice(2))) {
     validation: {
       errors: relevant.filter((issue) => issue.severity === "ERROR").length,
       warnings: relevant.filter((issue) => issue.severity === "WARNING").length,
+      levels: chosenLevels.map((level) => validationLevelSummary(level, issues)),
     },
     issues: relevant,
   };
@@ -817,7 +1024,7 @@ export async function run(options = args(process.argv.slice(2))) {
   await Promise.all([
     writeFile(path.join(options.output, "manifest.json"), JSON.stringify({
       schemaVersion: 1,
-      source: { questions: options.questions, answers: options.answers, media: options.media },
+      source: { questions: options.questions, answers: options.answers, media: options.media, contentRepairs: options.contentRepairs },
       levels: chosenLevels,
       issues: relevant,
     }, null, 2)),

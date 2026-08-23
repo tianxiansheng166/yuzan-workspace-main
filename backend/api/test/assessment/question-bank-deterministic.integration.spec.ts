@@ -26,11 +26,22 @@ describe.skipIf(!databaseUrl)("Question Bank deterministic scoring — canonical
   });
 
   it("audits and scores the real published Level 1 versions without logging answer data", async () => {
-    const versions = await prisma.questionBankItemVersion.findMany({
+    const publishedVersions = await prisma.questionBankItemVersion.findMany({
       where: { status: "PUBLISHED", item: { level: "水平一级", stableKey: { startsWith: "L1-" } } },
-      select: { id: true, scoringSpec: true, deliverySpec: true, item: { select: { stableKey: true, questionType: true } } },
+      select: { id: true, version: true, scoringSpec: true, deliverySpec: true, item: { select: { stableKey: true, questionType: true } } },
       orderBy: { item: { stableKey: "asc" } },
     });
+    // Immutable repair leaves the former published version addressable for
+    // historical attempts. The active practice references the newest version;
+    // this integration exercises that current version while separately proving
+    // that old versions were not mutated below.
+    const versions = [...publishedVersions.reduce((latest, version) => {
+      const current = latest.get(version.item.stableKey);
+      const versionNumber = Number((version as { version?: number }).version ?? 0);
+      const currentNumber = Number((current as { version?: number } | undefined)?.version ?? 0);
+      if (!current || versionNumber >= currentNumber) latest.set(version.item.stableKey, version);
+      return latest;
+    }, new Map<string, typeof publishedVersions[number]>()).values()];
     expect(versions).toHaveLength(20);
 
     const distribution = versions.reduce<Record<string, { items: number; maxPoints: number }>>((result, version) => {
@@ -102,11 +113,11 @@ describe.skipIf(!databaseUrl)("Question Bank deterministic scoring — canonical
     const second = await scorer.scoreSession(session.id);
     expect(first).toEqual({
       totalItems: 20,
-      autoScoredItems: 13,
-      needsReviewItems: 3,
+      autoScoredItems: 14,
+      needsReviewItems: 2,
       skippedItems: 4,
-      awardedPoints: 54,
-      scoredMaxPoints: 54,
+      awardedPoints: 58,
+      scoredMaxPoints: 58,
       totalMaxPoints: 100,
     });
     expect(second).toEqual(first);
@@ -127,15 +138,14 @@ describe.skipIf(!databaseUrl)("Question Bank deterministic scoring — canonical
       },
       orderBy: { sortOrder: "asc" },
     });
-    expect(persisted.filter((item) => item.scoredScore !== null)).toHaveLength(13);
-    expect(persisted.filter((item) => item.scoredScore === null)).toHaveLength(7);
-    const invalidChoice = persisted.find((item) => item.questionVersion?.item.stableKey === "L1-READ-WORD_RECOGNITION-003");
-    expect(invalidChoice).toMatchObject({
-      scoredScore: null,
+    expect(persisted.filter((item) => item.scoredScore !== null)).toHaveLength(14);
+    expect(persisted.filter((item) => item.scoredScore === null)).toHaveLength(6);
+    const recoveredChoice = persisted.find((item) => item.questionVersion?.item.stableKey === "L1-READ-WORD_RECOGNITION-003");
+    expect(recoveredChoice).toMatchObject({
+      scoredScore: 4,
       autoResult: {
-        state: "NEEDS_REVIEW",
+        state: "AUTO_SCORED",
         strategy: "EXACT_CHOICE",
-        reasonCode: "SCORING_CONFIG_INVALID",
         scorerVersion: "qb-deterministic-v1",
       },
     });

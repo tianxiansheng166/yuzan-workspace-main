@@ -13,6 +13,7 @@ import { QuestionBankApplyModule } from "./question-bank-apply.module.js";
 type CommandArguments = {
   apply: boolean;
   level?: number;
+  all: boolean;
   schoolId?: string;
   classId?: string;
 };
@@ -20,23 +21,27 @@ type CommandArguments = {
 type SourceImporterModule = {
   defaultOptions: { questions: string; answers: string; media: string };
   readZipEntry(file: string, entry: string): Promise<Uint8Array>;
-  run(): Promise<{
+  run(values?: readonly string[]): Promise<{
     report: { selectedLevel: number | null; summary: { items: number; points: number; bound: number; missing: number; ambiguous: number }; validation: { errors: number } };
     manifest: CanonicalManifest;
   }>;
 };
 
 function fail(message: string): never {
-  throw new Error(`QB-003B Level 1 apply failed: ${message}`);
+  throw new Error(`Question Bank apply failed: ${message}`);
 }
 
 function parseArguments(values: readonly string[]): CommandArguments {
-  const result: CommandArguments = { apply: false };
+  const result: CommandArguments = { apply: false, all: false };
   for (let index = 0; index < values.length; index += 1) {
     const value = values[index];
     if (value === "--") continue;
     if (value === "--apply") {
       result.apply = true;
+      continue;
+    }
+    if (value === "--all") {
+      result.all = true;
       continue;
     }
     if (value === "--level") {
@@ -56,6 +61,11 @@ function parseArguments(values: readonly string[]): CommandArguments {
       continue;
     }
     fail(`unknown command argument ${value}`);
+  }
+  if (result.all && result.level !== undefined) fail("use either --all or --level, not both");
+  if (!result.all && result.level === undefined) fail("pass --level 1–6 or --all");
+  if (result.level !== undefined && (!Number.isInteger(result.level) || result.level < 1 || result.level > 6)) {
+    fail("--level must be an integer from 1 through 6");
   }
   return result;
 }
@@ -114,28 +124,30 @@ async function resolveTarget(
 
 async function main(): Promise<void> {
   const arguments_ = parseArguments(process.argv.slice(2));
-  if (arguments_.level !== 1) fail("this command only accepts --level 1");
 
   const importerPath = pathToFileURL(path.join(process.cwd(), "tools/question-bank-importer/index.mjs")).href;
   const sourceImporter = await import(importerPath) as SourceImporterModule;
   // This re-runs the canonical parser + validator before any Nest context,
   // database connection, MinIO call, or source-to-runtime conversion exists.
-  const preflight = await sourceImporter.run();
+  const preflight = await sourceImporter.run(arguments_.all ? ["--all"] : ["--level", String(arguments_.level)]);
+  const expectedLevels = arguments_.all ? 6 : 1;
+  const expectedItems = expectedLevels * 20;
+  const expectedPoints = expectedLevels * 100;
   if (
-    preflight.report.selectedLevel !== 1
-    || preflight.report.summary.items !== 20
-    || preflight.report.summary.points !== 100
-    || preflight.report.summary.bound !== 20
+    (arguments_.all ? preflight.report.selectedLevel !== null : preflight.report.selectedLevel !== arguments_.level)
+    || preflight.report.summary.items !== expectedItems
+    || preflight.report.summary.points !== expectedPoints
+    || preflight.report.summary.bound !== expectedItems
     || preflight.report.summary.missing !== 0
     || preflight.report.summary.ambiguous !== 0
     || preflight.report.validation.errors !== 0
   ) {
-    fail("canonical Level 1 preflight did not satisfy the required 20-item, 100-point, zero-error gate");
+    fail(`canonical preflight did not satisfy the required ${expectedItems}-item, ${expectedPoints}-point, zero-error gate`);
   }
   if (!arguments_.apply) {
     console.log(JSON.stringify({
       mode: "DRY RUN — NO DATABASE WRITE — NO MINIO WRITE",
-      level: 1,
+      level: arguments_.all ? "all" : arguments_.level,
       preflight: preflight.report.summary,
     }, null, 2));
     return;
@@ -159,7 +171,7 @@ async function main(): Promise<void> {
     });
     console.log(JSON.stringify({
       mode: "APPLY",
-      level: 1,
+      level: arguments_.all ? "all" : arguments_.level,
       target,
       preflight: preflight.report.summary,
       result,

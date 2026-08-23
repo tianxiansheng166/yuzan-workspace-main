@@ -80,7 +80,7 @@ def create_or_resume_attempt(page):
       const catalogResponse = await fetch(`/api/v1/schools/${schoolId}/practices`, { headers });
       const catalogPayload = await catalogResponse.json();
       const catalog = catalogPayload.data || catalogPayload;
-      if (catalog.total !== 7) throw new Error(`Expected 7 visible practices, got ${catalog.total}`);
+      if (catalog.total !== 12) throw new Error(`Expected 12 visible practices, got ${catalog.total}`);
       const practice = catalog.items.find(item => item.title === title);
       if (!practice) throw new Error('Canonical Level 1 practice is not visible in the student catalog');
       const attemptResponse = await fetch(`/api/v1/schools/${schoolId}/practices/${practice.id}/attempts`, {

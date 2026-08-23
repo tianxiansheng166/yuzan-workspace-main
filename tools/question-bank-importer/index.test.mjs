@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import {
   bindAnswerGroups,
   bindAudio,
+  applyContentRepairs,
   matchImageOccurrence,
   parseAnswerDocument,
   parseQuestionDocument,
@@ -269,6 +270,131 @@ test("EXACT_CHOICE validation rejects an answer key absent from authored options
   assert.ok(issues.some((issue) => issue.code === "ANSWER_OPTION_INVALID"));
   assert.ok(issues.some((issue) => issue.code === "BLOCKED_CONTENT_MISMATCH"));
   assert.equal(issues.find((issue) => issue.code === "ANSWER_OPTION_INVALID")?.stableKey, "L1-READ-WORD_RECOGNITION-003");
+});
+
+test("generic structural recovery promotes one unlabeled candidate before B/C/D to A", () => {
+  const parsed = parseQuestionDocument(doc(
+    "【水平一级】",
+    "读（24分）",
+    "单词认读",
+    "1.文具的意思是（ ）",
+    "笔墨纸砚等供学习用的器具",
+    "B.课余玩耍的各类玩具",
+    "C.日常穿戴的衣物配饰",
+    "D.用来充饥的零食点心",
+  ));
+  const item = parsed[0].questions[0];
+  assert.deepEqual(item.deliverySpec.response.options.map((option) => option.key), ["A", "B", "C", "D"]);
+  assert.deepEqual(item.sourceTrace.provenance, {
+    kind: "STRUCTURAL_RECOVERY",
+    reasonCode: "MISSING_OPTION_LABEL_RECOVERED",
+    sourceEvidence: {
+      document: "Question Word",
+      paragraphStart: 4,
+      paragraphEnd: 4,
+      pattern: "one unlabeled candidate followed by B/C/D",
+    },
+    userAuthorized: true,
+  });
+  assert.equal(item.sourceTrace.questionDocx.paragraphStart, 3);
+});
+
+test("structural recovery fails closed when two unlabeled candidates are ambiguous", () => {
+  const issues = [];
+  const parsed = parseQuestionDocument(doc(
+    "【水平一级】",
+    "读（24分）",
+    "单词认读",
+    "1.题干",
+    "候选一",
+    "候选二",
+    "B.选项二",
+    "C.选项三",
+    "D.选项四",
+  ), issues);
+  assert.equal(parsed[0].questions[0].deliverySpec.response.options.map((option) => option.key).join("/"), "B/C/D");
+  assert.equal(issues[0].code, "CHOICE_RECOVERY_AMBIGUOUS");
+});
+
+test("generic structural recovery promotes two unlabeled candidates before C/D to A/B", () => {
+  const issues = [];
+  const parsed = parseQuestionDocument(doc(
+    "【水平四级】",
+    "读（24分）",
+    "句子理解",
+    "1.题干",
+    "候选一",
+    "候选二",
+    "C.选项三",
+    "D.选项四",
+  ), issues);
+  const item = parsed[0].questions[0];
+  assert.deepEqual(item.deliverySpec.response.options.map((option) => option.key), ["A", "B", "C", "D"]);
+  assert.equal(item.sourceTrace.provenance.sourceEvidence.pattern, "two unlabeled candidates followed by C/D");
+  assert.deepEqual(issues, []);
+});
+
+test("structural recovery does not infer A from an incomplete C/D suffix", () => {
+  const issues = [];
+  const parsed = parseQuestionDocument(doc(
+    "【水平一级】",
+    "读（24分）",
+    "单词认读",
+    "1.题干",
+    "候选一",
+    "C.选项三",
+    "D.选项四",
+  ), issues);
+  assert.equal(parsed[0].questions[0].deliverySpec.response.options.map((option) => option.key).join("/"), "C/D");
+  assert.equal(issues[0].code, "CHOICE_RECOVERY_UNSAFE");
+});
+
+test("existing A/B/C/D choices are never rewritten by recovery", () => {
+  const issues = [];
+  const parsed = parseQuestionDocument(doc(
+    "【水平一级】",
+    "读（24分）",
+    "单词认读",
+    "1.题干",
+    "A.选项一",
+    "B.选项二",
+    "C.选项三",
+    "D.选项四",
+  ), issues);
+  assert.deepEqual(parsed[0].questions[0].deliverySpec.response.options.map((option) => option.key), ["A", "B", "C", "D"]);
+  assert.deepEqual(issues, []);
+  assert.equal(parsed[0].questions[0].sourceTrace.provenance, undefined);
+});
+
+test("content repair ledger adds a derived item without a fake Word paragraph trace", () => {
+  const levels = parseQuestionDocument(doc(
+    "【水平二级】",
+    "说（26分）",
+    "朗读句子",
+    "已有朗读句子一",
+    "已有朗读句子二",
+  ));
+  applyContentRepairs(levels, {
+    repairs: [{
+      repairId: "test-repair",
+      level: 2,
+      family: "READ_ALOUD",
+      sourceOrder: 3,
+      stableKey: "L2-SPEAK-READ_ALOUD-003",
+      text: "新增朗读句子。",
+      maxScore: 4,
+      provenance: {
+        kind: "AI_AUTHORED_GAP_FILL",
+        reasonCode: "MISSING_AUTHORED_ITEM",
+        sourceEvidence: "neighboring level evidence",
+        userAuthorized: true,
+      },
+    }],
+  });
+  const item = levels[0].questions.find((question) => question.sourceOrder === 3);
+  assert.equal(item.sourceTrace.questionDocx.document, "DERIVED / CONTENT_REPAIR");
+  assert.equal("paragraphStart" in item.sourceTrace.questionDocx, false);
+  assert.equal(item.sourceTrace.provenance.kind, "AI_AUTHORED_GAP_FILL");
 });
 
 test("level filtering isolates the selected manifest", () => {

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "repairs": [
+    {
+      "repairId": "QB-008R-L2-READ-003",
+      "level": 2,
+      "family": "READ_ALOUD",
+      "sourceOrder": 3,
+      "stableKey": "L2-SPEAK-READ_ALOUD-003",
+      "text": "清晨的校园里，同学们背着书包走进教室，窗外的鸟儿在枝头欢快地歌唱。",
+      "maxScore": 4,
+      "provenance": {
+        "kind": "AI_AUTHORED_GAP_FILL",
+        "reasonCode": "MISSING_AUTHORED_ITEM",
+        "sourceEvidence": "Level 2 READ_ALOUD family style and neighboring Level 1/3 difficulty evidence",
+        "userAuthorized": true
+      },
+      "derivedFrom": {
+        "family": "READ_ALOUD",
+        "strategy": "SPEECH_READING",
+        "evidence": "Level 1 and Level 3 READ_ALOUD structure plus Level 2 sentence length, vocabulary, and syntax",
+        "sourceTrace": {
+          "document": "DERIVED / CONTENT_REPAIR"
+        }
+      }
+    }
+  ]
+}

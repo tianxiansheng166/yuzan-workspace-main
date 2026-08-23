@@ -9,9 +9,8 @@ import {
   type StoragePort,
 } from "../../shared/storage/storage.port.js";
 
-const LEVEL_ONE = 1;
-const PRACTICE_TITLE = "国家通用语言文字能力｜水平一级综合测评";
-const PRACTICE_SUMMARY = "围绕听、说、读、写四项能力进行的水平一级综合练习。";
+const LEVELS = [1, 2, 3, 4, 5, 6] as const;
+const LEVEL_NAMES = ["", "一", "二", "三", "四", "五", "六"] as const;
 const LEGACY_AUDIO_VERIFICATION_TITLE = "语赞心声 Question Bank v1 · 听写音频验证";
 
 const SECTION_DEFINITIONS = [
@@ -55,6 +54,7 @@ export type CanonicalQuestion = {
   scoringBinding?: { status?: string };
   mediaBindings: { images: CanonicalMediaBinding[]; audio?: CanonicalMediaBinding };
   sourceTrace: JsonRecord;
+  provenance?: JsonRecord;
 };
 
 export type CanonicalManifest = {
@@ -83,11 +83,11 @@ export type QuestionBankRuntimeApplyResult = {
   resources: { created: number; reused: number; total: number; images: number; audio: number };
   questionBankItems: { created: number; reused: number };
   questionBankItemVersions: { created: number; reused: number };
-  practiceDefinition: { created: number; reused: number; id: string };
-  practiceVersion: { created: number; reused: number; id: string; contentHash: string };
+  practiceDefinitions: { created: number; reused: number; total: number; ids: string[] };
+  practiceVersions: { created: number; reused: number; total: number; ids: string[] };
   practiceSections: { created: number; reused: number };
   practiceItemRefs: { created: number; reused: number };
-  practiceDelivery: { created: number; reused: number; id: string };
+  practiceDeliveries: { created: number; reused: number; total: number; ids: string[] };
   legacyAudioVerificationDeliveriesClosed: number;
 };
 
@@ -111,6 +111,37 @@ type AppliedQuestionVersion = ResolvedQuestion & {
 };
 
 type ResourceResult = { id: string; created: boolean };
+
+type PracticeApplyResult = {
+  practiceDefinition: { created: number; reused: number; id: string };
+  practiceVersion: { created: number; reused: number; id: string; contentHash: string };
+  practiceSections: { created: number; reused: number };
+  practiceItemRefs: { created: number; reused: number };
+  practiceDelivery: { created: number; reused: number; id: string };
+};
+
+function levelLabel(level: number): string {
+  return `水平${LEVEL_NAMES[level] ?? fail(`unsupported level ${level}`)}级`;
+}
+
+function practiceMetadata(level: number) {
+  const label = levelLabel(level);
+  const coverAssets = [
+    "/assessment/assets/practice-catalog/morning-valley.png",
+    "/assessment/assets/practice-catalog/spring-highland.png",
+    "/assessment/assets/practice-catalog/barley-year.png",
+    "/assessment/assets/practice-catalog/snow-peak-success.png",
+  ];
+  return {
+    title: `国家通用语言文字能力｜${label}综合测评`,
+    summary: `围绕听、说、读、写四项能力进行的${label}综合练习。`,
+    coverAsset: coverAssets[(level - 1) % coverAssets.length]!,
+    difficulty: label,
+    gradeBand: label,
+    abilityCategories: ["听辨训练", "独立朗读", "阅读理解", "书面表达"],
+    cultureTags: ["国家通用语言文字能力", label],
+  };
+}
 
 function fail(message: string): never {
   throw new Error(`QB-003B Level 1 apply failed: ${message}`);
@@ -144,7 +175,7 @@ function mediaKey(kind: MediaKind, checksum: string): string {
   return `${kind}:${checksum}`;
 }
 
-function mediaInfo(binding: CanonicalMediaBinding): RuntimeMedia {
+function mediaInfo(binding: CanonicalMediaBinding, level: number): RuntimeMedia {
   const extension = path.posix.extname(binding.zipPath).slice(1).toLowerCase();
   const mediaType = ({
     jpg: "image/jpeg",
@@ -168,7 +199,7 @@ function mediaInfo(binding: CanonicalMediaBinding): RuntimeMedia {
   return {
     ...binding,
     originalName: path.posix.basename(binding.zipPath),
-    objectKey: `question-bank/level-1/${binding.kind.toLowerCase()}/${binding.sha256}.${extension}`,
+    objectKey: `question-bank/level-${level}/${binding.kind.toLowerCase()}/${binding.sha256}.${extension}`,
     mediaType,
   };
 }
@@ -178,23 +209,17 @@ function collectRuntimeMedia(questions: readonly CanonicalQuestion[]): RuntimeMe
   for (const question of questions) {
     for (const image of question.mediaBindings.images) {
       if (image.kind !== "IMAGE") fail(`${question.stableKey} has an invalid image binding`);
-      const candidate = mediaInfo(image);
+      const candidate = mediaInfo(image, question.level);
       const key = mediaKey(candidate.kind, candidate.sha256);
       const existing = entries.get(key);
-      if (existing && existing.objectKey !== candidate.objectKey) {
-        fail(`${question.stableKey} resolves one image checksum to conflicting object keys`);
-      }
       entries.set(key, existing ?? candidate);
     }
     if (question.mediaBindings.audio) {
       const audio = question.mediaBindings.audio;
       if (audio.kind !== "AUDIO") fail(`${question.stableKey} has an invalid audio binding`);
-      const candidate = mediaInfo(audio);
+      const candidate = mediaInfo(audio, question.level);
       const key = mediaKey(candidate.kind, candidate.sha256);
       const existing = entries.get(key);
-      if (existing && existing.objectKey !== candidate.objectKey) {
-        fail(`${question.stableKey} resolves one audio checksum to conflicting object keys`);
-      }
       entries.set(key, existing ?? candidate);
     }
   }
@@ -223,22 +248,37 @@ function assertExactChoiceConfiguration(question: CanonicalQuestion): void {
   }
 }
 
-function assertCanonicalLevel(manifest: CanonicalManifest): CanonicalQuestion[] {
+export function assertCanonicalManifest(manifest: CanonicalManifest): CanonicalQuestion[] {
   if (manifest.issues.some((issue) => issue.severity === "ERROR")) {
     fail("canonical source validation reported errors");
   }
-  if (manifest.levels.length !== 1 || manifest.levels[0]?.level !== LEVEL_ONE) {
-    fail("apply accepts exactly one validated Level 1 manifest");
+  if (manifest.levels.length === 0 || (manifest.levels.length !== 1 && manifest.levels.length !== LEVELS.length)) {
+    fail("apply accepts one validated level or the complete Level 1–6 manifest");
   }
-  const questions = manifest.levels[0].questions;
-  if (questions.length !== 20) fail(`expected 20 Level 1 questions, received ${questions.length}`);
+  const requestedLevels = manifest.levels.map((entry) => entry.level).sort((left, right) => left - right);
+  if (requestedLevels.some((level) => !LEVELS.includes(level as (typeof LEVELS)[number]))) {
+    fail("manifest contains an unsupported level");
+  }
+  if (new Set(requestedLevels).size !== requestedLevels.length) fail("manifest contains duplicate levels");
+  if (manifest.levels.length === LEVELS.length && requestedLevels.join(",") !== LEVELS.join(",")) {
+    fail("complete rollout manifest must contain Levels 1–6");
+  }
+  const questions = manifest.levels.flatMap((entry) => {
+    if (entry.questions.length !== 20) fail(`expected 20 Level ${entry.level} questions, received ${entry.questions.length}`);
+    const points = entry.questions.reduce((total, question) => total + question.maxScore, 0);
+    if (points !== 100) fail(`expected 100 Level ${entry.level} points, received ${points}`);
+    const levelImages = new Set(entry.questions.flatMap((question) => question.mediaBindings.images.map((image) => image.sha256)));
+    const levelAudio = new Set(entry.questions.flatMap((question) => question.mediaBindings.audio ? [question.mediaBindings.audio.sha256] : []));
+    if (levelImages.size !== 15 || levelAudio.size !== 6) {
+      fail(`expected 15 images and 6 audio bindings for Level ${entry.level}, received ${levelImages.size} images and ${levelAudio.size} audio`);
+    }
+    return entry.questions;
+  });
   if (new Set(questions.map((question) => question.stableKey)).size !== questions.length) {
     fail("canonical manifest contains duplicate stable keys");
   }
-  const points = questions.reduce((total, question) => total + question.maxScore, 0);
-  if (points !== 100) fail(`expected 100 Level 1 points, received ${points}`);
   for (const question of questions) {
-    if (question.level !== LEVEL_ONE) fail(`${question.stableKey} is not a Level 1 question`);
+    if (!LEVELS.includes(question.level as (typeof LEVELS)[number])) fail(`${question.stableKey} has an unsupported level`);
     if (question.scoringBinding?.status !== "BOUND") {
       fail(`${question.stableKey} does not have a bound scoring specification`);
     }
@@ -246,12 +286,6 @@ function assertCanonicalLevel(manifest: CanonicalManifest): CanonicalQuestion[] 
       fail(`${question.stableKey} has no scoring strategy`);
     }
     if (question.scoringSpec.strategy === "EXACT_CHOICE") assertExactChoiceConfiguration(question);
-  }
-  const media = collectRuntimeMedia(questions);
-  const images = media.filter((entry) => entry.kind === "IMAGE").length;
-  const audio = media.filter((entry) => entry.kind === "AUDIO").length;
-  if (images !== 15 || audio !== 6 || media.length !== 21) {
-    fail(`expected 15 images and 6 audio resources, received ${images} images and ${audio} audio`);
   }
   return questions;
 }
@@ -350,6 +384,7 @@ export function resolveQuestion(
         }
         : null,
     },
+    ...(question.sourceTrace.provenance ? { provenance: jsonClone(question.sourceTrace.provenance as JsonRecord) } : {}),
   };
   return { question, deliverySpec, scoringSpec: jsonClone(question.scoringSpec), sourceTrace };
 }
@@ -374,7 +409,7 @@ export class QuestionBankRuntimeImportService {
   ) {}
 
   async apply(input: QuestionBankRuntimeApplyInput): Promise<QuestionBankRuntimeApplyResult> {
-    const questions = assertCanonicalLevel(input.manifest);
+    const questions = assertCanonicalManifest(input.manifest);
     const media = collectRuntimeMedia(questions);
     const resourceIds = new Map<string, string>();
     let resourcesCreated = 0;
@@ -391,7 +426,16 @@ export class QuestionBankRuntimeImportService {
     return this.prisma.$transaction(async (tx) => {
       const applied = await this.ensureQuestionBankVersions(tx, resolved);
       const legacyAudioVerificationDeliveriesClosed = await this.retireLegacyAudioVerification(tx, input.schoolId);
-      const practice = await this.ensurePractice(tx, input.schoolId, input.classId, applied);
+      const practiceResults: PracticeApplyResult[] = [];
+      for (const level of [...new Set(questions.map((question) => question.level))].sort((left, right) => left - right)) {
+        practiceResults.push(await this.ensurePractice(
+          tx,
+          input.schoolId,
+          input.classId,
+          level,
+          { ...applied, versions: applied.versions.filter((entry) => entry.question.level === level) },
+        ));
+      }
       return {
         resources: {
           created: resourcesCreated,
@@ -401,7 +445,34 @@ export class QuestionBankRuntimeImportService {
           audio: media.filter((entry) => entry.kind === "AUDIO").length,
         },
         legacyAudioVerificationDeliveriesClosed,
-        ...practice,
+        questionBankItems: applied.questionBankItems,
+        questionBankItemVersions: applied.questionBankItemVersions,
+        practiceDefinitions: {
+          created: practiceResults.reduce((total, result) => total + result.practiceDefinition.created, 0),
+          reused: practiceResults.reduce((total, result) => total + result.practiceDefinition.reused, 0),
+          total: practiceResults.length,
+          ids: practiceResults.map((result) => result.practiceDefinition.id),
+        },
+        practiceVersions: {
+          created: practiceResults.reduce((total, result) => total + result.practiceVersion.created, 0),
+          reused: practiceResults.reduce((total, result) => total + result.practiceVersion.reused, 0),
+          total: practiceResults.length,
+          ids: practiceResults.map((result) => result.practiceVersion.id),
+        },
+        practiceSections: {
+          created: practiceResults.reduce((total, result) => total + result.practiceSections.created, 0),
+          reused: practiceResults.reduce((total, result) => total + result.practiceSections.reused, 0),
+        },
+        practiceItemRefs: {
+          created: practiceResults.reduce((total, result) => total + result.practiceItemRefs.created, 0),
+          reused: practiceResults.reduce((total, result) => total + result.practiceItemRefs.reused, 0),
+        },
+        practiceDeliveries: {
+          created: practiceResults.reduce((total, result) => total + result.practiceDelivery.created, 0),
+          reused: practiceResults.reduce((total, result) => total + result.practiceDelivery.reused, 0),
+          total: practiceResults.length,
+          ids: practiceResults.map((result) => result.practiceDelivery.id),
+        },
       };
     });
   }
@@ -451,7 +522,20 @@ export class QuestionBankRuntimeImportService {
       where: { kind: media.kind, checksumSha256: media.sha256, deletedAt: null },
     });
     if (sameContent) {
-      fail(`checksum ${media.sha256} already belongs to non-deterministic Resource ${sameContent.objectKey}`);
+      if (
+        sameContent.mediaType !== media.mediaType
+        || Number(sameContent.byteSize) !== body.byteLength
+        || sameContent.rightsStatus !== "UNKNOWN"
+      ) {
+        fail(`checksum ${media.sha256} conflicts with canonical Resource metadata`);
+      }
+      await this.ensureStoredObject({
+        ...media,
+        objectKey: sameContent.objectKey,
+        originalName: sameContent.originalName,
+        mediaType: sameContent.mediaType,
+      }, body);
+      return { id: sameContent.id, created: false };
     }
 
     await this.ensureStoredObject(media, body);
@@ -570,10 +654,10 @@ export class QuestionBankRuntimeImportService {
             stableKey: entry.question.stableKey,
             domain: entry.question.domain,
             questionType: entry.question.family,
-            level: "水平一级",
+            level: levelLabel(entry.question.level),
             abilityCategory: metadata.abilityCategory,
-            gradeBand: "水平一级",
-            difficulty: "水平一级",
+            gradeBand: levelLabel(entry.question.level),
+            difficulty: levelLabel(entry.question.level),
             itemType: metadata.itemType,
           },
           include: { versions: true },
@@ -638,10 +722,10 @@ export class QuestionBankRuntimeImportService {
     const desired = {
       domain: question.domain,
       questionType: question.family,
-      level: "水平一级",
+      level: levelLabel(question.level),
       abilityCategory: metadata.abilityCategory,
-      gradeBand: "水平一级",
-      difficulty: "水平一级",
+      gradeBand: levelLabel(question.level),
+      difficulty: levelLabel(question.level),
       itemType: metadata.itemType,
     };
     const unchanged = Object.entries(desired).every(([key, value]) => item[key as keyof typeof desired] === value);
@@ -653,30 +737,32 @@ export class QuestionBankRuntimeImportService {
     tx: Prisma.TransactionClient,
     schoolId: string,
     classId: string,
+    level: number,
     questionVersions: {
       versions: readonly AppliedQuestionVersion[];
       questionBankItems: { created: number; reused: number };
       questionBankItemVersions: { created: number; reused: number };
     },
-  ): Promise<Omit<QuestionBankRuntimeApplyResult, "resources" | "legacyAudioVerificationDeliveriesClosed">> {
+  ): Promise<PracticeApplyResult> {
+    const metadata = practiceMetadata(level);
     const definitions = await tx.practiceDefinition.findMany({
-      where: { title: PRACTICE_TITLE, schoolId: null, visibility: "SYSTEM" },
+      where: { title: metadata.title, schoolId: null, visibility: "SYSTEM" },
     });
-    if (definitions.length > 1) fail("multiple global Level 1 practice definitions exist");
+    if (definitions.length > 1) fail(`multiple global ${metadata.title} practice definitions exist`);
     let definition = definitions[0];
     let definitionCreated = 0;
     let definitionReused = 0;
     const definitionData = {
       schoolId: null,
       visibility: "SYSTEM" as const,
-      title: PRACTICE_TITLE,
-      summary: PRACTICE_SUMMARY,
-      coverAsset: "/assessment/assets/practice-catalog/morning-valley.png",
-      difficulty: "水平一级",
+      title: metadata.title,
+      summary: metadata.summary,
+      coverAsset: metadata.coverAsset,
+      difficulty: metadata.difficulty,
       estimatedMinutes: 30,
-      gradeBand: "水平一级",
-      abilityCategories: ["听辨训练", "独立朗读", "阅读理解", "书面表达"],
-      cultureTags: ["国家通用语言文字能力", "水平一级"],
+      gradeBand: metadata.gradeBand,
+      abilityCategories: metadata.abilityCategories,
+      cultureTags: metadata.cultureTags,
       catalogType: "COMPREHENSIVE",
       requiresRecording: true,
       instantFeedback: false,
@@ -688,7 +774,7 @@ export class QuestionBankRuntimeImportService {
     } else {
       definitionReused = 1;
       if (definition.schoolId !== null || definition.visibility !== "SYSTEM") {
-        fail("Level 1 practice definition has an invalid scope");
+        fail(`${metadata.title} practice definition has an invalid scope`);
       }
       const changed = definition.summary !== definitionData.summary
         || definition.coverAsset !== definitionData.coverAsset
@@ -709,7 +795,7 @@ export class QuestionBankRuntimeImportService {
       questions: questionVersions.versions.filter((entry) => entry.question.domain === section.domain),
     }));
     if (orderedSections.some((section) => section.questions.length === 0)) {
-      fail("canonical Level 1 practice has an empty required section");
+      fail(`canonical ${metadata.title} practice has an empty required section`);
     }
     const contentHash = sha256(canonicalJson(orderedSections.map((section, sectionIndex) => ({
       sortOrder: sectionIndex + 1,
@@ -726,7 +812,7 @@ export class QuestionBankRuntimeImportService {
     const matchingVersions = await tx.practiceVersion.findMany({
       where: { definitionId: definition.id, contentHash, status: "PUBLISHED" },
     });
-    if (matchingVersions.length > 1) fail("multiple published Level 1 practice versions share a content hash");
+    if (matchingVersions.length > 1) fail(`multiple published ${metadata.title} practice versions share a content hash`);
     let practiceVersion = matchingVersions[0];
     let practiceVersionCreated = 0;
     let practiceVersionReused = 0;
@@ -782,7 +868,7 @@ export class QuestionBankRuntimeImportService {
         practiceVersion: { definitionId: definition.id },
       },
     });
-    if (matchingDeliveries.length > 1) fail("multiple Level 1 self-practice deliveries exist for the target class");
+    if (matchingDeliveries.length > 1) fail(`multiple ${metadata.title} self-practice deliveries exist for the target class`);
     let delivery = matchingDeliveries[0];
     let deliveryCreated = 0;
     let deliveryReused = 0;
@@ -809,8 +895,6 @@ export class QuestionBankRuntimeImportService {
     }
 
     return {
-      questionBankItems: questionVersions.questionBankItems,
-      questionBankItemVersions: questionVersions.questionBankItemVersions,
       practiceDefinition: { created: definitionCreated, reused: definitionReused, id: definition.id },
       practiceVersion: { created: practiceVersionCreated, reused: practiceVersionReused, id: practiceVersion.id, contentHash },
       practiceSections: { created: sectionsCreated, reused: sectionsReused },
