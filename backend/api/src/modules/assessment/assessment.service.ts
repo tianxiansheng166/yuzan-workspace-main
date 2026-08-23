@@ -5,7 +5,7 @@ import { MembershipRole } from "../../common/security/index.js";
 import { PrismaService } from "../../shared/database/prisma.service.js";
 import { AssessmentPolicy } from "./assessment.policy.js";
 import { canTransition } from "./domain/assessment.state-machine.js";
-import { AssessmentNotFoundException, AssessmentForbiddenException, AssessmentConflictException, AssessmentItemNotFoundException } from "./domain/assessment.errors.js";
+import { AssessmentNotFoundException, AssessmentForbiddenException, AssessmentConflictException, AssessmentItemNotFoundException, AssessmentValidationFailedException } from "./domain/assessment.errors.js";
 import type { AssessmentSession, AssessmentSessionStatus } from "./domain/assessment.types.js";
 import type { AssessmentSessionRepositoryPort, CreateAssessmentSessionData, ListSessionsOptions } from "./ports/assessment-session-repository.port.js";
 import { ASSESSMENT_SESSION_REPOSITORY } from "./ports/assessment-session-repository.port.js";
@@ -412,7 +412,10 @@ export class AssessmentService {
 
     const items = await this.prisma.assessmentItem.findMany({
       where: { sessionId },
-      include: { speechJobs: { orderBy: { createdAt: "desc" } } },
+        include: {
+          speechJobs: { orderBy: { createdAt: "desc" } },
+          questionVersion: { select: { item: { select: { domain: true } } } },
+        },
       orderBy: { sortOrder: "asc" },
     });
     const questionBankItems = items.filter((item) => item.questionVersionId !== null);
@@ -450,7 +453,10 @@ export class AssessmentService {
     return this.createReportFromScoredItems({
       schoolId,
       sessionId,
-      items,
+      items: items.map((item) => ({
+        ...item,
+        domain: item.questionVersion?.item.domain ?? null,
+      })),
       requiresTeacherReview,
     });
   }
@@ -463,6 +469,7 @@ export class AssessmentService {
       itemType: string;
       maxScore?: number | null;
       scoredScore: number | null;
+      domain?: string | null;
     }>;
     generatedByUserId?: string;
     requiresTeacherReview?: boolean;
@@ -496,6 +503,18 @@ export class AssessmentService {
 
     const dataCompleteness = items.length > 0 ? (scoredItems.length / items.length) * 100 : 0;
 
+    const domainScores: Record<string, { awardedPoints: number; totalMaxPoints: number }> = {};
+    if (isQuestionBank) {
+      for (const item of questionBankItems) {
+        const domain = typeof item.domain === "string" ? item.domain.trim().toUpperCase() : "";
+        if (!domain) continue;
+        const current = domainScores[domain] ?? { awardedPoints: 0, totalMaxPoints: 0 };
+        current.totalMaxPoints += item.maxScore ?? 0;
+        if (item.scoredScore !== null) current.awardedPoints += item.scoredScore;
+        domainScores[domain] = current;
+      }
+    }
+
     const reportData: CreateAssessmentReportData = {
       sessionId,
       schoolId,
@@ -513,6 +532,7 @@ export class AssessmentService {
           aggregation: "POINTS",
           awardedPoints: scoredItems.reduce((sum, item) => sum + (item.scoredScore ?? 0), 0),
           totalMaxPoints: questionBankItems.reduce((sum, item) => sum + (item.maxScore ?? 0), 0),
+          domainScores,
         } : {}),
         generatedAt: new Date().toISOString(),
       },
@@ -546,46 +566,190 @@ export class AssessmentService {
     itemId: string,
     data: { scoredScore?: number; reviewerComment?: string },
   ) {
-    if (!this.policy.canGenerateReport(auth, schoolId)) {
-      throw new AssessmentForbiddenException();
+    if (data.scoredScore === undefined) {
+      throw new AssessmentValidationFailedException("教师复核必须提交正式分数");
     }
-
-    const session = await this.sessionRepo.findByIdAndSchool(sessionId, schoolId);
-    if (!session) throw new AssessmentNotFoundException();
-
-    // Verify teacher is assigned to this class
-    const teacherEnrollment = await this.prisma.enrollment.findFirst({
-      where: { userId: auth.principal.userId, schoolId, classId: session.classId, role: "TEACHER", status: "ACTIVE" },
+    const result = await this.reviewQuestionBankItem(auth, schoolId, sessionId, itemId, {
+      score: data.scoredScore,
+      ...(data.reviewerComment !== undefined ? { comment: data.reviewerComment } : {}),
     });
-    const isAdmin = auth.principal.roles.some((r) => r === "SCHOOL_ADMIN" || r === "PLATFORM_ADMIN");
-    if (!teacherEnrollment && !isAdmin) {
-      throw new AssessmentForbiddenException("您不是该班级的任课教师");
-    }
-
     const item = await this.itemRepo.findByIdAndSession(itemId, sessionId);
     if (!item) throw new AssessmentItemNotFoundException();
 
-    // Update item with teacher review
-    const updated = await this.prisma.assessmentItem.update({
-      where: { id: itemId },
-      data: {
-        ...(data.scoredScore !== undefined ? { scoredScore: data.scoredScore } : {}),
-        ...(data.reviewerComment !== undefined ? { reviewerComment: data.reviewerComment } : {}),
-        reviewerUserId: auth.principal.userId,
-        reviewedAt: new Date(),
-        status: "REVIEWED",
-      },
-    });
-
     return toAssessmentItemResponse({
       ...item,
-      scoredScore: updated.scoredScore ?? item.scoredScore,
-      reviewerUserId: updated.reviewerUserId,
-      reviewerComment: updated.reviewerComment,
-      reviewedAt: updated.reviewedAt,
-      status: updated.status as "PENDING" | "ANSWERED" | "REVIEWED",
-      revision: updated.revision,
+      scoredScore: result.item.scoredScore,
+      reviewerUserId: result.item.reviewerUserId,
+      reviewerComment: result.item.reviewerComment,
+      reviewedAt: result.item.reviewedAt,
+      status: result.item.status as "PENDING" | "ANSWERED" | "REVIEWED",
+      revision: result.item.revision,
     });
+  }
+
+  /**
+   * Persist one allowed human-review score with an optimistic conditional
+   * update. Question Bank scoringSpec and autoResult remain immutable here.
+   */
+  async reviewQuestionBankItem(
+    auth: AuthContext,
+    schoolId: string,
+    sessionId: string,
+    itemId: string,
+    data: { score?: number; comment?: string },
+  ) {
+    this.assertReviewActor(auth, schoolId);
+    if (data.score === undefined || !Number.isFinite(data.score)) {
+      throw new AssessmentValidationFailedException("复核分数必须是有限数字");
+    }
+    if (data.comment !== undefined && data.comment.length > 2000) {
+      throw new AssessmentValidationFailedException("复核意见不能超过 2000 个字符");
+    }
+
+    const item = await this.prisma.assessmentItem.findFirst({
+      where: { id: itemId, sessionId, session: { schoolId } },
+      select: {
+        id: true,
+        sessionId: true,
+        maxScore: true,
+        scoredScore: true,
+        reviewerUserId: true,
+        reviewerComment: true,
+        reviewedAt: true,
+        revision: true,
+        status: true,
+        autoResult: true,
+        session: { select: { id: true, schoolId: true, classId: true, status: true } },
+        questionVersion: {
+          select: { status: true, scoringSpec: true, item: { select: { domain: true } } },
+        },
+      },
+    });
+    if (!item) throw new AssessmentItemNotFoundException();
+    await this.assertReviewClass(auth, schoolId, item.session.classId);
+    if (item.session.status !== "SUBMITTED" && item.session.status !== "PROCESSING") {
+      throw new AssessmentConflictException("当前测评不在待复核状态");
+    }
+    if (!item.questionVersion || item.questionVersion.status !== "PUBLISHED") {
+      throw new AssessmentConflictException("复核题目没有可用的已发布题库版本");
+    }
+    const scoringSpec = this.asScoringSpecRecord(item.questionVersion.scoringSpec);
+    const strategy = typeof scoringSpec?.strategy === "string" ? scoringSpec.strategy : "";
+    if (!["RUBRIC_TEXT", "SPEECH_READING", "SPEECH_OPEN_RESPONSE"].includes(strategy)) {
+      throw new AssessmentConflictException("该题型不允许人工复核");
+    }
+    const maxScore = item.maxScore;
+    const specMaxScore = typeof scoringSpec?.maxScore === "number" ? scoringSpec.maxScore : null;
+    if (maxScore === null || specMaxScore === null || maxScore !== specMaxScore) {
+      throw new AssessmentValidationFailedException("题目分值配置无效");
+    }
+    if (data.score < 0 || data.score > maxScore) {
+      throw new AssessmentValidationFailedException(`复核分数必须在 0 到 ${maxScore} 分之间`);
+    }
+
+    if (item.scoredScore !== null) {
+      if (item.reviewerUserId === auth.principal.userId && item.scoredScore === data.score) {
+        return { item, report: await this.finalizeQuestionBankIfComplete(schoolId, sessionId, auth.principal.userId) };
+      }
+      throw new AssessmentConflictException("该题已被其他复核结果占用，不能静默覆盖");
+    }
+
+    const now = new Date();
+    const update = await this.prisma.assessmentItem.updateMany({
+      where: { id: itemId, revision: item.revision, scoredScore: null },
+      data: {
+        scoredScore: data.score,
+        reviewerUserId: auth.principal.userId,
+        ...(data.comment !== undefined ? { reviewerComment: data.comment } : {}),
+        reviewedAt: now,
+        status: "REVIEWED",
+        revision: { increment: 1 },
+      },
+    });
+    if (update.count !== 1) {
+      const current = await this.prisma.assessmentItem.findUnique({
+        where: { id: itemId },
+        select: { id: true, sessionId: true, maxScore: true, scoredScore: true, reviewerUserId: true, reviewerComment: true, reviewedAt: true, revision: true, status: true, autoResult: true },
+      });
+      if (current?.reviewerUserId === auth.principal.userId && current.scoredScore === data.score) {
+        return { item: current, report: await this.finalizeQuestionBankIfComplete(schoolId, sessionId, auth.principal.userId) };
+      }
+      throw new AssessmentConflictException("该题已被并发复核，请刷新后重试");
+    }
+
+    const updated = await this.prisma.assessmentItem.findUniqueOrThrow({
+      where: { id: itemId },
+      select: { id: true, sessionId: true, maxScore: true, scoredScore: true, reviewerUserId: true, reviewerComment: true, reviewedAt: true, revision: true, status: true, autoResult: true },
+    });
+    const report = await this.finalizeQuestionBankIfComplete(schoolId, sessionId, auth.principal.userId);
+    return { item: updated, report };
+  }
+
+  /** Finalize the Level 1 point report only after every QB item has a score. */
+  async finalizeQuestionBankIfComplete(schoolId: string, sessionId: string, generatedByUserId?: string) {
+    const session = await this.sessionRepo.findByIdAndSchool(sessionId, schoolId);
+    if (!session || session.status === "CANCELLED" || session.status === "COMPLETED") {
+      return this.reportRepo.findBySessionId(sessionId).then((report) => report ? toAssessmentReportResponse(report) : null);
+    }
+    if (session.status !== "SUBMITTED" && session.status !== "PROCESSING") return null;
+
+    await this.questionBankScoring.scoreSession(sessionId);
+    const items = await this.prisma.assessmentItem.findMany({
+      where: { sessionId, questionVersionId: { not: null } },
+      select: {
+        questionVersionId: true,
+        itemType: true,
+        maxScore: true,
+        scoredScore: true,
+        questionVersion: { select: { item: { select: { domain: true } } } },
+      },
+      orderBy: { sortOrder: "asc" },
+    });
+    if (this.hasIncompleteQuestionBankScoring(items)) {
+      if (session.status === "SUBMITTED") await this.sessionRepo.updateStatus(sessionId, "PROCESSING");
+      return null;
+    }
+    const existing = await this.reportRepo.findBySessionId(sessionId);
+    if (existing) return toAssessmentReportResponse(existing);
+    if (session.status === "SUBMITTED") await this.sessionRepo.updateStatus(sessionId, "PROCESSING");
+
+    try {
+      return await this.createReportFromScoredItems({
+        schoolId,
+        sessionId,
+        items: items.map((item) => ({
+          ...item,
+          domain: item.questionVersion?.item.domain ?? null,
+        })),
+        ...(generatedByUserId ? { generatedByUserId } : {}),
+      });
+    } catch (error) {
+      const concurrent = await this.reportRepo.findBySessionId(sessionId);
+      if (concurrent) return toAssessmentReportResponse(concurrent);
+      throw error;
+    }
+  }
+
+  private asScoringSpecRecord(value: unknown): Record<string, unknown> | null {
+    return value && typeof value === "object" && !Array.isArray(value)
+      ? (value as Record<string, unknown>)
+      : null;
+  }
+
+  private assertReviewActor(auth: AuthContext, schoolId: string) {
+    if (auth.tenant.schoolId !== schoolId || !auth.principal.roles.some((role) => [MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN, MembershipRole.PLATFORM_ADMIN].includes(role))) {
+      throw new AssessmentForbiddenException();
+    }
+  }
+
+  private async assertReviewClass(auth: AuthContext, schoolId: string, classId: string) {
+    const isAdmin = auth.principal.roles.some((role) => [MembershipRole.SCHOOL_ADMIN, MembershipRole.PLATFORM_ADMIN].includes(role));
+    if (isAdmin) return;
+    const teacherEnrollment = await this.prisma.enrollment.findFirst({
+      where: { userId: auth.principal.userId, schoolId, classId, role: "TEACHER", status: "ACTIVE" },
+      select: { id: true },
+    });
+    if (!teacherEnrollment) throw new AssessmentForbiddenException("您不是该测评所属班级的任课教师");
   }
 
   /**

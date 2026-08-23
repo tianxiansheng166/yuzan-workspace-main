@@ -34,6 +34,27 @@ const providerResult = {
   processingMs: 12,
 };
 
+const openProviderResult = {
+  provider: "local",
+  strategy: "SPEECH_OPEN_RESPONSE",
+  scorerVersion: "mandarin-open-response-v0.1.0",
+  confidence: 0.86,
+  diagnostics: {
+    durationMs: 5000,
+    speechDurationMs: 4200,
+    speechRate: 3.2,
+    silenceRatio: 0.16,
+    fluency: 82,
+    audioQuality: { acceptable: true, status: "ACCEPTABLE" },
+  },
+  requiresReview: true,
+  experimental: true,
+  transcript: "孩子在公园里玩耍",
+  reasonCodes: ["SEMANTIC_REVIEW_REQUIRED"],
+  errors: [],
+  processingMs: 15,
+};
+
 function buildState(overrides: Record<string, unknown> = {}) {
   const defaultJob = {
     id: JOB_ID,
@@ -208,5 +229,29 @@ describe("SpeechJobService read-aloud result policy", () => {
       service.applySpeechProviderResult(JOB_ID, providerResult),
     ).rejects.toThrow();
     expect(prisma.assessmentItem.update).not.toHaveBeenCalled();
+  });
+
+  it("stores picture-speaking evidence without candidate points or target text", async () => {
+    const state = buildState({ job: { targetText: null }, item: { maxScore: 14 } });
+    state.item.questionVersion.scoringSpec = {
+      strategy: "SPEECH_OPEN_RESPONSE",
+      maxScore: 14,
+      rubric: ["内容完整", "语句通顺"],
+    };
+    const { service, prisma } = await buildService(state);
+
+    const result = await service.applySpeechProviderResult(JOB_ID, openProviderResult);
+
+    expect(result.status).toBe("NEEDS_REVIEW");
+    expect(state.item.autoResult).toMatchObject({
+      strategy: "SPEECH_OPEN_RESPONSE",
+      state: "NEEDS_REVIEW",
+      finalizable: false,
+      diagnostics: { durationMs: 5000, speechRate: 3.2 },
+    });
+    expect(state.item.autoResult).not.toHaveProperty("transcript");
+    expect(state.item.autoResult).not.toHaveProperty("candidatePoints");
+    expect(state.job.result).toMatchObject({ strategy: "SPEECH_OPEN_RESPONSE", transcript: "孩子在公园里玩耍" });
+    expect(prisma.assessmentItem.update).toHaveBeenCalledTimes(1);
   });
 });

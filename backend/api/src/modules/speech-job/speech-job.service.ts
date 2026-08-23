@@ -11,9 +11,18 @@ import {
   SpeechJobStrategyMismatchException,
   SpeechProviderNotConfiguredException,
 } from "./domain/speech-job.errors.js";
-import { buildReadAloudPolicyResult } from "./speech-result.policy.js";
+import {
+  buildOpenResponsePolicyResult,
+  buildReadAloudPolicyResult,
+  OPEN_RESPONSE_STRATEGY,
+  READ_ALOUD_STRATEGY,
+} from "./speech-result.policy.js";
 
 type JsonRecord = Record<string, unknown>;
+type SpeechTask = {
+  strategy: typeof READ_ALOUD_STRATEGY | typeof OPEN_RESPONSE_STRATEGY;
+  targetText?: string;
+};
 
 function isRecord(value: unknown): value is JsonRecord {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -88,7 +97,7 @@ export class SpeechJobService {
   async createSpeechJob(data: {
     recordingId: string;
     assessmentItemId: string;
-    targetText: string;
+    targetText?: string;
     schoolId: string;
     scorerVersion?: string;
     provider?: string;
@@ -98,7 +107,7 @@ export class SpeechJobService {
         recordingId: data.recordingId,
         assessmentItemId: data.assessmentItemId,
         schoolId: data.schoolId,
-        targetText: data.targetText,
+        targetText: data.targetText ?? null,
         status: "CREATED",
         ...(data.scorerVersion ? { scorerVersion: data.scorerVersion } : {}),
         ...(data.provider ? { provider: data.provider } : {}),
@@ -201,14 +210,38 @@ export class SpeechJobService {
     }
 
     const scoringSpec = item.questionVersion.scoringSpec;
-    const policy = buildReadAloudPolicyResult({
-      providerResult,
-      strategy: strategyOf(scoringSpec),
-      itemMaxScore: item.maxScore,
-      specMaxScore: isRecord(scoringSpec) ? scoringSpec.maxScore : undefined,
-    });
+    const strategy = strategyOf(scoringSpec);
+    const specMaxScore = isRecord(scoringSpec)
+      ? scoringSpec.maxScore
+      : undefined;
+    const policy =
+      strategy === OPEN_RESPONSE_STRATEGY
+        ? buildOpenResponsePolicyResult({
+            providerResult,
+            strategy,
+            itemMaxScore: item.maxScore,
+            specMaxScore,
+          })
+        : strategy === READ_ALOUD_STRATEGY
+          ? buildReadAloudPolicyResult({
+              providerResult,
+              strategy,
+              itemMaxScore: item.maxScore,
+              specMaxScore,
+            })
+          : (() => {
+              throw new SpeechJobStrategyMismatchException(
+                "当前题型不是受支持的语音评分策略",
+              );
+            })();
     const expectedTarget = targetTextOf(scoringSpec);
-    if (
+    if (strategy === OPEN_RESPONSE_STRATEGY) {
+      if (job.targetText?.trim()) {
+        throw new SpeechJobStrategyMismatchException(
+          "开放表达语音任务不得携带朗读目标文本",
+        );
+      }
+    } else if (
       !expectedTarget ||
       !job.targetText ||
       job.targetText.trim() !== expectedTarget
@@ -238,7 +271,8 @@ export class SpeechJobService {
         data: {
           status: policy.status,
           provider: policy.providerResult.provider,
-          ...(policy.providerResult.providerModel
+          ...("providerModel" in policy.providerResult &&
+          policy.providerResult.providerModel
             ? { providerModel: policy.providerResult.providerModel }
             : {}),
           result: policy.providerResult as any,
@@ -355,17 +389,17 @@ export class SpeechJobService {
     );
   }
 
-  private async resolveQuestionBankTarget(
+  private async resolveQuestionBankTask(
     recordingId: string,
     assessmentItemId: string | undefined,
     schoolId: string,
-    suppliedTargetText: string,
-  ): Promise<string> {
+    suppliedTargetText: string | undefined,
+  ): Promise<SpeechTask> {
     if (!assessmentItemId) {
-      const target = suppliedTargetText.trim();
+      const target = suppliedTargetText?.trim();
       if (!target)
         throw new SpeechJobStrategyMismatchException("缺少朗读目标文本");
-      return target;
+      return { strategy: READ_ALOUD_STRATEGY, targetText: target };
     }
 
     const item = await this.prisma.assessmentItem.findFirst({
@@ -385,10 +419,10 @@ export class SpeechJobService {
     // Legacy assessment items may still supply a server-validated target. A
     // Question Bank item, however, must use its immutable scoring snapshot.
     if (!item.questionVersion) {
-      const target = suppliedTargetText.trim();
+      const target = suppliedTargetText?.trim();
       if (!target)
         throw new SpeechJobStrategyMismatchException("缺少朗读目标文本");
-      return target;
+      return { strategy: READ_ALOUD_STRATEGY, targetText: target };
     }
     if (item.questionVersion.status !== "PUBLISHED") {
       throw new SpeechJobStrategyMismatchException(
@@ -396,9 +430,18 @@ export class SpeechJobService {
       );
     }
     const scoringSpec = item.questionVersion.scoringSpec;
-    if (strategyOf(scoringSpec) !== "SPEECH_READING") {
+    const strategy = strategyOf(scoringSpec);
+    if (strategy === OPEN_RESPONSE_STRATEGY) {
+      if (suppliedTargetText?.trim()) {
+        throw new SpeechJobStrategyMismatchException(
+          "当前题型不是 READ_ALOUD，开放表达语音任务不得携带朗读目标文本",
+        );
+      }
+      return { strategy: OPEN_RESPONSE_STRATEGY };
+    }
+    if (strategy !== READ_ALOUD_STRATEGY) {
       throw new SpeechJobStrategyMismatchException(
-        "当前题型不是 READ_ALOUD，不得送入朗读评分器",
+        "当前题型不是受支持的语音评分策略",
       );
     }
     const target =
@@ -407,7 +450,7 @@ export class SpeechJobService {
       throw new SpeechJobStrategyMismatchException(
         "题库题目缺少服务端朗读目标文本",
       );
-    return target;
+    return { strategy: READ_ALOUD_STRATEGY, targetText: target };
   }
 
   /**
@@ -424,7 +467,7 @@ export class SpeechJobService {
   async triggerSpeechProcessing(
     recordingId: string,
     assessmentItemId: string | undefined,
-    targetText: string,
+    targetText: string | undefined,
     schoolId: string,
     options?: {
       scorerVersion?: string;
@@ -440,7 +483,7 @@ export class SpeechJobService {
         );
       }
     }
-    const canonicalTargetText = await this.resolveQuestionBankTarget(
+    const task = await this.resolveQuestionBankTask(
       recordingId,
       assessmentItemId,
       schoolId,
@@ -466,12 +509,14 @@ export class SpeechJobService {
           recordingId,
           ...(assessmentItemId ? { assessmentItemId } : {}),
           schoolId,
-          targetText: canonicalTargetText,
+          targetText: task.targetText ?? null,
           status: "CREATED",
           provider: speechProvider,
-          ...(options?.scorerVersion
-            ? { scorerVersion: options.scorerVersion }
-            : {}),
+          scorerVersion:
+            options?.scorerVersion ??
+            (task.strategy === OPEN_RESPONSE_STRATEGY
+              ? "mandarin-open-response-v0.1.0"
+              : "mandarin-reading-v0.1.0"),
           ...(options?.provider ? { provider: options.provider } : {}),
         },
       });
@@ -480,7 +525,8 @@ export class SpeechJobService {
         `SpeechJob created for processing: id=${job.id} recordingId=${recordingId} provider=${speechProvider}`,
       );
     } else {
-      if (job.targetText?.trim() !== canonicalTargetText) {
+      const persistedTarget = job.targetText?.trim() || undefined;
+      if (persistedTarget !== task.targetText) {
         throw new SpeechJobStrategyMismatchException(
           "已存在的语音任务目标文本与服务端题目快照不一致",
         );
@@ -511,8 +557,13 @@ export class SpeechJobService {
           recordingId,
           ...(assessmentItemId ? { assessmentItemId } : {}),
           schoolId,
-          targetText: canonicalTargetText,
-          scorerVersion: options?.scorerVersion ?? "mandarin-reading-v0.1.0",
+          strategy: task.strategy,
+          ...(task.targetText ? { targetText: task.targetText } : {}),
+          scorerVersion:
+            options?.scorerVersion ??
+            (task.strategy === OPEN_RESPONSE_STRATEGY
+              ? "mandarin-open-response-v0.1.0"
+              : "mandarin-reading-v0.1.0"),
           objectKey: recording?.objectKey ?? "",
         },
         {

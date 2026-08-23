@@ -8,8 +8,9 @@ export class CreateSpeechJobDto {
   @IsUUID()
   assessmentItemId?: string;
 
+  @IsOptional()
   @IsString()
-  targetText: string;
+  targetText?: string;
 
   @IsOptional()
   @IsString()

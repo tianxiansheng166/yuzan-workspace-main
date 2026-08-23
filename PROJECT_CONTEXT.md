@@ -28,6 +28,22 @@ AssessmentSession → AssessmentItem → Answer / Recording → Scoring → Repo
 Items have stable identities and immutable versions. A practice is composition; an
 `AssessmentItem` is an execution snapshot.
 
+## Speech diagnostics and human review
+
+Speech task strategy is authoritative in the published question-version
+`scoringSpec`. `SPEECH_READING` may use the experimental local read-aloud
+diagnostic, while `SPEECH_OPEN_RESPONSE` (picture speaking) must use a separate
+open-response diagnostic with no target text and no target-relative semantic
+score. Both paths retain only bounded student-safe evidence and leave the
+formal `AssessmentItem.scoredScore` null until review.
+
+The generic teacher review workflow is limited to `RUBRIC_TEXT`,
+`SPEECH_READING`, and `SPEECH_OPEN_RESPONSE`. Review authorization is
+same-school and class-scoped; formal scores are bounded by the persisted item
+maximum, repeat submissions are idempotent, and a Question Bank session is
+finalized only when every required item has a formal score. Completed reports
+aggregate authored points rather than legacy item averages.
+
 ## Student delivery and runner
 
 `deliverySpec` is browser-safe. `scoringSpec`, standard answers, rubrics, and

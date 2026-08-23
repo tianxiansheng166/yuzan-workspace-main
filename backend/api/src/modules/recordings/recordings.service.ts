@@ -322,6 +322,7 @@ export class RecordingsService {
     if (!this.speechJobService) return;
 
     let targetText = input.targetText?.trim() ?? "";
+    let speechStrategy: "SPEECH_READING" | "SPEECH_OPEN_RESPONSE" | undefined;
     if (input.assessmentItemId) {
       const item = await this.prisma.assessmentItem.findFirst({
         where: {
@@ -346,8 +347,9 @@ export class RecordingsService {
         const scoringSpec = questionVersion.scoringSpec;
         const strategy = this.strategyFromScoringSpec(scoringSpec);
         // Question Bank speech families are deliberately separated. A picture
-        // prompt may record normally, but it must never enter /score/reading.
-        if (strategy !== "SPEECH_READING") {
+        // response has no target text and must use the open-response diagnostic
+        // route; deterministic and other families do not create SpeechJobs.
+        if (strategy !== "SPEECH_READING" && strategy !== "SPEECH_OPEN_RESPONSE") {
           this.logger.log(
             `Speech scoring skipped for assessmentItemId=${input.assessmentItemId} strategy=${strategy ?? "UNKNOWN"}`,
           );
@@ -356,10 +358,18 @@ export class RecordingsService {
         if (questionVersion.status !== "PUBLISHED") {
           throw new RecordingStatusException("语音题库版本未发布，无法评分");
         }
-        targetText =
-          this.targetTextFromScoringSpec(scoringSpec) ??
-          this.targetTextFromPrompt(prompt) ??
-          "";
+        speechStrategy =
+          strategy === "SPEECH_READING" || strategy === "SPEECH_OPEN_RESPONSE"
+            ? strategy
+            : undefined;
+        if (strategy === "SPEECH_READING") {
+          targetText =
+            this.targetTextFromScoringSpec(scoringSpec) ??
+            this.targetTextFromPrompt(prompt) ??
+            "";
+        } else {
+          targetText = "";
+        }
       } else {
         // Legacy assessment items retain the existing server-side prompt
         // fallback. The browser value is never authoritative when a Question
@@ -367,6 +377,19 @@ export class RecordingsService {
         const canonicalTargetText = this.targetTextFromPrompt(prompt);
         if (canonicalTargetText) targetText = canonicalTargetText;
       }
+    }
+
+    if (speechStrategy === "SPEECH_OPEN_RESPONSE") {
+      const speechJob = await this.speechJobService.triggerSpeechProcessing(
+        recording.id,
+        input.assessmentItemId,
+        undefined,
+        schoolId,
+      );
+      this.logger.log(
+        `Open-response SpeechJob ensured after recording completion: jobId=${speechJob.id} recordingId=${recording.id}`,
+      );
+      return;
     }
 
     if (!targetText) {
@@ -415,7 +438,9 @@ export class RecordingsService {
       ?.trim();
   }
 
-  private strategyFromScoringSpec(scoringSpec: unknown): string | undefined {
+  private strategyFromScoringSpec(
+    scoringSpec: unknown,
+  ): "SPEECH_READING" | "SPEECH_OPEN_RESPONSE" | string | undefined {
     if (
       !scoringSpec ||
       typeof scoringSpec !== "object" ||

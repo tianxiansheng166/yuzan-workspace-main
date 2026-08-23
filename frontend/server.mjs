@@ -100,7 +100,9 @@ function routeToSpa(pathname) {
   if (pathname === '/teacher' || pathname.startsWith('/teacher/')) {
     if (pathname.startsWith('/teacher/courses/')) return join(root, 'teacher', 'courses', 'spring', 'studio', 'index.html');
     if (pathname.startsWith('/teacher/assignments')) return join(root, 'teacher', 'assignments', 'index.html');
-    if (pathname.startsWith('/teacher/reviews/')) return join(root, 'teacher', 'reviews', 'submission-1', 'index.html');
+    if (pathname === '/teacher/reviews' || pathname === '/teacher/reviews/') return join(root, 'teacher', 'reviews', 'index.html');
+    if (pathname === '/teacher/reviews/submission-1') return join(root, 'teacher', 'reviews', 'submission-1', 'index.html');
+    if (pathname.startsWith('/teacher/reviews/')) return join(root, 'teacher', 'reviews', 'detail', 'index.html');
     if (pathname.startsWith('/teacher/assessments/create')) return join(root, 'teacher', 'assessments', 'create', 'index.html');
     if (pathname.startsWith('/teacher/assessments/detail')) return join(root, 'teacher', 'assessments', 'detail', 'index.html');
     if (pathname.startsWith('/teacher/assessments/tasks')) return join(root, 'teacher', 'assessments', 'tasks', 'index.html');

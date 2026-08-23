@@ -1006,6 +1006,18 @@
   async function getItemRecordingEvidence(sessionId, itemId) {
     return request(`/schools/${getActiveSchoolId()}/assessments/sessions/${sessionId}/items/${itemId}/recording`);
   }
+  async function getAssessmentReviewQueue() {
+    return request(`/schools/${getActiveSchoolId()}/assessment-reviews`);
+  }
+  async function getAssessmentReviewDetail(itemId) {
+    return request(`/schools/${getActiveSchoolId()}/assessment-reviews/${encodeURIComponent(itemId)}`);
+  }
+  async function submitAssessmentReview(itemId, payload) {
+    return request(`/schools/${getActiveSchoolId()}/assessment-reviews/${encodeURIComponent(itemId)}`, {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+    });
+  }
   async function exportAssessmentReport(sessionId, purpose) {
     return request(`/schools/${getActiveSchoolId()}/assessments/sessions/${sessionId}/export`, {
       method: 'POST',
@@ -1303,6 +1315,9 @@
     /* Assessment Review & Retest */
     reviewAssessmentItem,
     getItemRecordingEvidence,
+    getAssessmentReviewQueue,
+    getAssessmentReviewDetail,
+    submitAssessmentReview,
     exportAssessmentReport,
     scheduleRetest,
     getAssessmentHistory,

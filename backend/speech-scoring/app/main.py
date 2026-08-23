@@ -10,9 +10,20 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException
 
 from .asr import check_audio_quality, convert_to_wav, download_audio, run_asr
-from .config import SCORER_VERSION
-from .models import HealthResponse, ScoreReadingRequest, ScoreReadingResponse, Scores, ToneMeta
+from .config import OPEN_RESPONSE_SCORER_VERSION, SCORER_VERSION
+from .models import (
+    AnalyzeOpenResponseRequest,
+    AnalyzeOpenResponseResponse,
+    HealthResponse,
+    OpenResponseAudioQuality,
+    OpenResponseDiagnostics,
+    ScoreReadingRequest,
+    ScoreReadingResponse,
+    Scores,
+    ToneMeta,
+)
 from .scorer import score_reading
+from .scorer import compute_fluency
 
 logging.basicConfig(
     level=logging.INFO,
@@ -157,6 +168,101 @@ async def score_reading_endpoint(req: ScoreReadingRequest):
         raise HTTPException(status_code=500, detail=f"Scoring failed: {str(e)}")
     finally:
         # Cleanup temp files
+        for tmp_file in tmp_files:
+            try:
+                os.unlink(tmp_file)
+            except OSError:
+                pass
+
+
+@app.post("/v1/analyze/open-response", response_model=AnalyzeOpenResponseResponse)
+async def analyze_open_response_endpoint(req: AnalyzeOpenResponseRequest):
+    """Return audio/ASR evidence for an open speaking response.
+
+    This endpoint deliberately does not accept target text and never computes
+    semantic completeness, keyword coverage, or an examination score. Any
+    formal points are assigned later by an authorized teacher.
+    """
+
+    tmp_files: list[str] = []
+    started_at = __import__("time").time()
+
+    try:
+        raw_path = await download_audio(req.audioUrl)
+        tmp_files.append(str(raw_path))
+
+        wav_path = convert_to_wav(raw_path)
+        tmp_files.append(str(wav_path))
+
+        audio_quality = check_audio_quality(wav_path)
+        asr_result = run_asr(wav_path)
+        recognized_text = asr_result["text"]
+        asr_confidence = float(asr_result.get("confidence", 0.0))
+        asr_error = asr_result.get("error")
+
+        if not recognized_text and asr_error == "PROVIDER_NOT_CONFIGURED":
+            raise HTTPException(
+                status_code=503,
+                detail="ASR provider not configured. Open-response diagnostics are unavailable.",
+            )
+        if not recognized_text and asr_error == "ASR_INFERENCE_FAILED":
+            raise HTTPException(
+                status_code=500,
+                detail="ASR inference failed. The audio could not be processed.",
+            )
+
+        duration_ms = int(float(audio_quality.get("duration_s", 0.0)) * 1000)
+        speech_duration_ms = int(float(audio_quality.get("speech_duration_s", 0.0)) * 1000)
+        speech_rate = None
+        fluency = None
+        if recognized_text and speech_duration_ms > 0:
+            # This is a rate/pausing signal only. It is not a semantic score.
+            speech_rate = round(len(recognized_text) / (speech_duration_ms / 1000.0), 3)
+            fluency = compute_fluency(
+                recognized_text,
+                duration_ms,
+                float(audio_quality.get("silent_ratio", 0.0)),
+            )
+
+        issues = [str(issue) for issue in audio_quality.get("issues", [])]
+        if asr_error == "MOCK_MODE":
+            issues.append("MOCK_MODE")
+        reason_codes = ["SEMANTIC_REVIEW_REQUIRED", "LOCAL_BASELINE_UNCALIBRATED"]
+        if asr_error == "MOCK_MODE":
+            reason_codes.append("MOCK_MODE")
+        if asr_error == "NO_SPEECH_DETECTED" or not recognized_text:
+            reason_codes.append("NO_SPEECH_DETECTED")
+        if asr_confidence < 0.75:
+            reason_codes.append("LOW_CONFIDENCE")
+
+        return AnalyzeOpenResponseResponse(
+            scorerVersion=req.scorerVersion or OPEN_RESPONSE_SCORER_VERSION,
+            transcript=recognized_text,
+            confidence=asr_confidence,
+            diagnostics=OpenResponseDiagnostics(
+                durationMs=duration_ms,
+                speechDurationMs=speech_duration_ms if speech_duration_ms > 0 else None,
+                speechRate=speech_rate,
+                fluency=fluency,
+                silenceRatio=float(audio_quality.get("silent_ratio", 0.0)),
+                audioQuality=OpenResponseAudioQuality(
+                    acceptable=bool(audio_quality.get("is_acceptable", False)),
+                    status="ACCEPTABLE" if audio_quality.get("is_acceptable", False) else "REVIEW_REQUIRED",
+                    issues=issues,
+                ),
+            ),
+            reasonCodes=reason_codes,
+            processingMs=int((__import__("time").time() - started_at) * 1000),
+        )
+    except HTTPException:
+        raise
+    except httpx.HTTPError as e:
+        logger.error(f"Failed to download audio: {e}")
+        raise HTTPException(status_code=400, detail=f"Failed to download audio: {e}")
+    except Exception as e:
+        logger.error(f"Open-response diagnostic failed: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Open-response diagnostic failed: {e}")
+    finally:
         for tmp_file in tmp_files:
             try:
                 os.unlink(tmp_file)

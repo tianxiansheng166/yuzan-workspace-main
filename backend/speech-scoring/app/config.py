@@ -4,6 +4,7 @@ from __future__ import annotations
 
 # ─── Version ──────────────────────────────────────────────
 SCORER_VERSION = "mandarin-reading-v0.1.0"
+OPEN_RESPONSE_SCORER_VERSION = "mandarin-open-response-v0.1.0"
 
 # ─── Weights (must sum to 1.0) ────────────────────────────
 SCORE_WEIGHTS = {

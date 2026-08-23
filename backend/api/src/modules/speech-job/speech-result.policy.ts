@@ -1,11 +1,13 @@
 import { BadRequestException } from "@nestjs/common";
 
 export const READ_ALOUD_STRATEGY = "SPEECH_READING" as const;
+export const OPEN_RESPONSE_STRATEGY = "SPEECH_OPEN_RESPONSE" as const;
 export const LOCAL_SPEECH_PROVIDER = "local" as const;
 export const LOCAL_SPEECH_REASON = "LOCAL_BASELINE_UNCALIBRATED" as const;
 
 export interface StoredSpeechProviderResult {
   provider: typeof LOCAL_SPEECH_PROVIDER;
+  strategy?: typeof READ_ALOUD_STRATEGY | typeof OPEN_RESPONSE_STRATEGY;
   providerModel?: string;
   scorerVersion: string;
   confidence: number;
@@ -35,6 +37,29 @@ export interface StoredSpeechProviderResult {
   processingMs?: number;
 }
 
+export interface StoredOpenResponseProviderResult {
+  provider: typeof LOCAL_SPEECH_PROVIDER;
+  strategy: typeof OPEN_RESPONSE_STRATEGY;
+  scorerVersion: string;
+  confidence: number;
+  requiresReview: true;
+  experimental: true;
+  transcript?: string;
+  diagnostics: {
+    durationMs: number;
+    speechDurationMs: number | null;
+    speechRate: number | null;
+    silenceRatio: number | null;
+    fluency: number | null;
+    audioQuality: {
+      acceptable: boolean;
+      status: "ACCEPTABLE" | "REVIEW_REQUIRED";
+    };
+  };
+  reasonCodes?: string[];
+  processingMs?: number;
+}
+
 export interface SafeReadAloudDiagnostic {
   state: "NEEDS_REVIEW";
   strategy: typeof READ_ALOUD_STRATEGY;
@@ -57,6 +82,23 @@ export interface SafeReadAloudDiagnostic {
 export interface ReadAloudPolicyResult {
   providerResult: StoredSpeechProviderResult;
   diagnostic: SafeReadAloudDiagnostic;
+  status: "NEEDS_REVIEW";
+}
+
+export interface SafeOpenResponseDiagnostic {
+  state: "NEEDS_REVIEW";
+  strategy: typeof OPEN_RESPONSE_STRATEGY;
+  provider: typeof LOCAL_SPEECH_PROVIDER;
+  scorerVersion: string;
+  diagnostics: StoredOpenResponseProviderResult["diagnostics"];
+  confidence: number;
+  finalizable: false;
+  reasonCodes: string[];
+}
+
+export interface OpenResponsePolicyResult {
+  providerResult: StoredOpenResponseProviderResult;
+  diagnostic: SafeOpenResponseDiagnostic;
   status: "NEEDS_REVIEW";
 }
 
@@ -248,6 +290,16 @@ export function validateSpeechProviderResult(
 
   return {
     provider: LOCAL_SPEECH_PROVIDER,
+    ...(value.strategy === undefined
+      ? {}
+      : value.strategy === READ_ALOUD_STRATEGY || value.strategy === OPEN_RESPONSE_STRATEGY
+        ? { strategy: value.strategy }
+        : (() => {
+            throw new SpeechResultPolicyException(
+              "PROVIDER_RESULT_MALFORMED",
+              "strategy is invalid",
+            );
+          })()),
     ...(providerModel !== undefined ? { providerModel } : {}),
     scorerVersion: requiredString(value.scorerVersion, "scorerVersion"),
     confidence: boundedNumber(value.confidence, "confidence", 0, 1),
@@ -300,6 +352,16 @@ export function buildReadAloudPolicyResult(input: {
       "speech callback is not for a read-aloud item",
     );
   }
+  if (
+    isRecord(input.providerResult) &&
+    input.providerResult.strategy !== undefined &&
+    input.providerResult.strategy !== READ_ALOUD_STRATEGY
+  ) {
+    throw new SpeechResultPolicyException(
+      "SPEECH_STRATEGY_MISMATCH",
+      "provider task is not a read-aloud task",
+    );
+  }
   const itemMaxScore = configuredMaxScore(
     input.itemMaxScore,
     "assessmentItem.maxScore",
@@ -323,7 +385,7 @@ export function buildReadAloudPolicyResult(input: {
       roundTenths((providerResult.scores.overall / 100) * itemMaxScore),
     ),
   );
-  const reasonCodes = [LOCAL_SPEECH_REASON];
+  const reasonCodes: string[] = [LOCAL_SPEECH_REASON];
   if (providerResult.requiresReview)
     reasonCodes.push("PROVIDER_REQUIRES_REVIEW");
   if (providerResult.confidence < 0.75) reasonCodes.push("LOW_CONFIDENCE");
@@ -340,6 +402,204 @@ export function buildReadAloudPolicyResult(input: {
     confidence: providerResult.confidence,
     finalizable: false,
     reasonCodes,
+  };
+
+  return { providerResult, diagnostic, status: "NEEDS_REVIEW" };
+}
+
+function validateOpenResponseProviderResult(
+  value: unknown,
+): StoredOpenResponseProviderResult {
+  if (!isRecord(value)) {
+    throw new SpeechResultPolicyException(
+      "PROVIDER_RESULT_MALFORMED",
+      "provider result must be an object",
+    );
+  }
+  if (value.provider !== LOCAL_SPEECH_PROVIDER) {
+    throw new SpeechResultPolicyException(
+      "PROVIDER_NOT_CONFIGURED",
+      "speech provider is not configured for this callback",
+    );
+  }
+  if (
+    value.strategy !== undefined &&
+    value.strategy !== OPEN_RESPONSE_STRATEGY
+  ) {
+    throw new SpeechResultPolicyException(
+      "SPEECH_STRATEGY_MISMATCH",
+      "provider task is not an open-response task",
+    );
+  }
+  if (value.experimental !== true) {
+    throw new SpeechResultPolicyException(
+      "PROVIDER_RESULT_POLICY_REJECTED",
+      "local speech results must be experimental",
+    );
+  }
+  if (value.requiresReview !== true) {
+    throw new SpeechResultPolicyException(
+      "PROVIDER_RESULT_POLICY_REJECTED",
+      "open-response diagnostics must remain reviewable",
+    );
+  }
+  if (!isRecord(value.diagnostics)) {
+    throw new SpeechResultPolicyException(
+      "PROVIDER_RESULT_MALFORMED",
+      "open-response diagnostics are invalid",
+    );
+  }
+  const diagnostics = value.diagnostics;
+  const audioQuality = diagnostics.audioQuality;
+  if (!isRecord(audioQuality)) {
+    throw new SpeechResultPolicyException(
+      "PROVIDER_RESULT_MALFORMED",
+      "open-response audio quality is invalid",
+    );
+  }
+  if (typeof audioQuality.acceptable !== "boolean") {
+    throw new SpeechResultPolicyException(
+      "PROVIDER_RESULT_MALFORMED",
+      "open-response audio quality status is invalid",
+    );
+  }
+  if (
+    audioQuality.status !== "ACCEPTABLE" &&
+    audioQuality.status !== "REVIEW_REQUIRED"
+  ) {
+    throw new SpeechResultPolicyException(
+      "PROVIDER_RESULT_MALFORMED",
+      "open-response audio quality status is invalid",
+    );
+  }
+
+  const transcript =
+    value.transcript === undefined
+      ? undefined
+      : typeof value.transcript === "string" && value.transcript.length <= 20000
+        ? value.transcript
+        : (() => {
+            throw new SpeechResultPolicyException(
+              "PROVIDER_RESULT_MALFORMED",
+              "transcript is invalid",
+            );
+          })();
+  const reasonCodes =
+    value.reasonCodes === undefined
+      ? undefined
+      : Array.isArray(value.reasonCodes) &&
+          value.reasonCodes.every(
+            (reason) => typeof reason === "string" && reason.length <= 100,
+          )
+        ? value.reasonCodes
+        : (() => {
+            throw new SpeechResultPolicyException(
+              "PROVIDER_RESULT_MALFORMED",
+              "reasonCodes are invalid",
+            );
+          })();
+  const optionalBounded = (
+    field: string,
+    min: number,
+    max: number,
+  ): number | null => {
+    const fieldValue = diagnostics[field];
+    if (fieldValue === undefined || fieldValue === null) return null;
+    return boundedNumber(fieldValue, `diagnostics.${field}`, min, max);
+  };
+  const speechDurationMs =
+    diagnostics.speechDurationMs === undefined ||
+    diagnostics.speechDurationMs === null
+      ? null
+      : nonNegativeInteger(
+          diagnostics.speechDurationMs,
+          "diagnostics.speechDurationMs",
+        );
+  const processingMs =
+    value.processingMs === undefined
+      ? undefined
+      : nonNegativeInteger(value.processingMs, "processingMs");
+
+  return {
+    provider: LOCAL_SPEECH_PROVIDER,
+    strategy: OPEN_RESPONSE_STRATEGY,
+    scorerVersion: requiredString(value.scorerVersion, "scorerVersion"),
+    confidence: boundedNumber(value.confidence, "confidence", 0, 1),
+    requiresReview: true,
+    experimental: true,
+    ...(transcript !== undefined ? { transcript } : {}),
+    diagnostics: {
+      durationMs: nonNegativeInteger(diagnostics.durationMs, "diagnostics.durationMs"),
+      speechDurationMs,
+      speechRate: optionalBounded("speechRate", 0, 20),
+      silenceRatio: optionalBounded("silenceRatio", 0, 1),
+      fluency: optionalBounded("fluency", 0, 100),
+      audioQuality: {
+        acceptable: audioQuality.acceptable,
+        status: audioQuality.status,
+      },
+    },
+    ...(reasonCodes !== undefined ? { reasonCodes } : {}),
+    ...(processingMs !== undefined ? { processingMs } : {}),
+  };
+}
+
+/**
+ * Apply the local-provider policy to an open response. No candidate semantic
+ * points are calculated: the diagnostic is evidence for a teacher only.
+ */
+export function buildOpenResponsePolicyResult(input: {
+  providerResult: unknown;
+  strategy: unknown;
+  itemMaxScore: unknown;
+  specMaxScore: unknown;
+}): OpenResponsePolicyResult {
+  if (input.strategy !== OPEN_RESPONSE_STRATEGY) {
+    throw new SpeechResultPolicyException(
+      "SPEECH_STRATEGY_MISMATCH",
+      "speech callback is not an open-response item",
+    );
+  }
+  const itemMaxScore = configuredMaxScore(
+    input.itemMaxScore,
+    "assessmentItem.maxScore",
+  );
+  const specMaxScore = configuredMaxScore(
+    input.specMaxScore,
+    "scoringSpec.maxScore",
+  );
+  if (itemMaxScore !== specMaxScore) {
+    throw new SpeechResultPolicyException(
+      "SCORING_CONFIG_INVALID",
+      "assessment item and scoring specification max scores differ",
+    );
+  }
+
+  const providerResult = validateOpenResponseProviderResult(input.providerResult);
+  const reasonCodes = [
+    "SEMANTIC_REVIEW_REQUIRED",
+    "LOCAL_BASELINE_UNCALIBRATED",
+    ...(providerResult.reasonCodes ?? []),
+  ];
+  if (providerResult.confidence < 0.75 && !reasonCodes.includes("LOW_CONFIDENCE")) {
+    reasonCodes.push("LOW_CONFIDENCE");
+  }
+  if (
+    providerResult.diagnostics.audioQuality.status === "REVIEW_REQUIRED" &&
+    !reasonCodes.includes("AUDIO_QUALITY_REVIEW_REQUIRED")
+  ) {
+    reasonCodes.push("AUDIO_QUALITY_REVIEW_REQUIRED");
+  }
+
+  const diagnostic: SafeOpenResponseDiagnostic = {
+    state: "NEEDS_REVIEW",
+    strategy: OPEN_RESPONSE_STRATEGY,
+    provider: LOCAL_SPEECH_PROVIDER,
+    scorerVersion: providerResult.scorerVersion,
+    diagnostics: providerResult.diagnostics,
+    confidence: providerResult.confidence,
+    finalizable: false,
+    reasonCodes: [...new Set(reasonCodes)],
   };
 
   return { providerResult, diagnostic, status: "NEEDS_REVIEW" };

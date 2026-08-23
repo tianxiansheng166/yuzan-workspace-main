@@ -3,6 +3,9 @@ import pino from "pino";
 import { SpeechScoringClient } from "./speech-scoring.client.js";
 import {
   configuredSpeechProvider,
+  SPEECH_OPEN_RESPONSE_STRATEGY,
+  SPEECH_READING_STRATEGY,
+  type SpeechTaskStrategy,
   type SpeechProviderResult,
 } from "./speech-provider.js";
 
@@ -13,7 +16,10 @@ export interface SpeechJobPayload {
   recordingId: string;
   assessmentItemId?: string;
   schoolId: string;
-  targetText: string;
+  /** Required only for the server-authorized SPEECH_READING task. */
+  targetText?: string;
+  /** Derived by the API from QuestionBankItemVersion.scoringSpec. */
+  strategy?: SpeechTaskStrategy;
   scorerVersion: string;
   objectKey: string;
 }
@@ -99,6 +105,7 @@ export class SpeechJobConsumer {
       recordingId,
       assessmentItemId,
       targetText,
+      strategy,
       scorerVersion,
       objectKey,
     } = job.data;
@@ -114,18 +121,44 @@ export class SpeechJobConsumer {
       // Step 1: Generate download URL for recording
       const downloadUrl = await this.getRecordingDownloadUrl(objectKey);
 
-      // Step 2: Call the configured local provider through the shared client.
-      const scoringResult = await this.speechProvider.scoreReading(
-        downloadUrl,
-        targetText,
-        scorerVersion,
-      );
+      // Step 2: Route by the API-supplied task strategy. The API remains the
+      // authority and checks this route against the immutable scoringSpec on
+      // callback; the browser never selects it.
+      const taskStrategy = strategy ?? SPEECH_READING_STRATEGY;
+      let scoringResult: SpeechProviderResult;
+      if (taskStrategy === SPEECH_OPEN_RESPONSE_STRATEGY) {
+        if (targetText?.trim()) {
+          throw new Error(
+            "SPEECH_OPEN_RESPONSE must not carry targetText",
+          );
+        }
+        scoringResult = await this.speechProvider.analyzeOpenResponse(
+          downloadUrl,
+          scorerVersion,
+        );
+      } else if (taskStrategy === SPEECH_READING_STRATEGY) {
+        if (!targetText?.trim()) {
+          throw new Error("SPEECH_READING requires targetText");
+        }
+        scoringResult = await this.speechProvider.scoreReading(
+          downloadUrl,
+          targetText,
+          scorerVersion,
+        );
+      } else {
+        throw new Error(`Unsupported speech task strategy: ${String(taskStrategy)}`);
+      }
+
+      const callbackResult = {
+        ...scoringResult,
+        strategy: taskStrategy,
+      };
 
       // Step 3: The API validates the provider result, item strategy, target,
       // max score, and writes the safe diagnostic. The worker never sends a
       // scoredScore and cannot turn a 0–100 metric into a four-point score.
       await this.updateSpeechJobResult(speechJobId, {
-        result: scoringResult,
+        result: callbackResult,
         confidence: scoringResult.confidence,
         ...(scoringResult.processingMs !== undefined
           ? { processingMs: scoringResult.processingMs }
@@ -137,8 +170,9 @@ export class SpeechJobConsumer {
           speechJobId,
           recordingId,
           assessmentItemId,
+          strategy: taskStrategy,
           provider: scoringResult.provider,
-          overall: scoringResult.scores.overall,
+          overall: scoringResult.scores?.overall,
           requiresReview: scoringResult.requiresReview,
         },
         "Speech scoring completed",

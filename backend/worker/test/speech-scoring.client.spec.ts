@@ -107,4 +107,38 @@ describe("SpeechScoringClient local provider boundary", () => {
       /disabled or local/i,
     );
   });
+
+  it("uses the separate open-response endpoint without target text", async () => {
+    const fetchMock = vi.fn(async (_url: string, init: RequestInit) => {
+      const body = JSON.parse(String(init.body));
+      expect(body.targetText).toBeUndefined();
+      expect(body.scorerVersion).toBe("open-v1");
+      return new Response(JSON.stringify({
+        strategy: "SPEECH_OPEN_RESPONSE",
+        scorerVersion: "open-v1",
+        transcript: "孩子在公园里玩耍",
+        confidence: 0.86,
+        diagnostics: {
+          durationMs: 5000,
+          speechDurationMs: 4200,
+          speechRate: 3.3,
+          silenceRatio: 0.16,
+          fluency: 82,
+          audioQuality: { acceptable: true, status: "ACCEPTABLE" },
+        },
+        requiresReview: true,
+        experimental: true,
+        reasonCodes: ["SEMANTIC_REVIEW_REQUIRED"],
+      }), { status: 200 });
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = await new SpeechScoringClient().analyzeOpenResponse(
+      "https://storage/audio",
+      "open-v1",
+    );
+    expect(result.strategy).toBe("SPEECH_OPEN_RESPONSE");
+    expect(result.scores).toBeUndefined();
+    expect(result.diagnostics?.speechRate).toBe(3.3);
+  });
 });

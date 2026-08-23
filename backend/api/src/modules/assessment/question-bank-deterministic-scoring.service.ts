@@ -52,6 +52,8 @@ interface AssessmentItemForScoring {
   readonly maxScore: number | null;
   readonly scoredScore: number | null;
   readonly autoResult: unknown;
+  readonly reviewerUserId: string | null;
+  readonly reviewedAt: Date | null;
   readonly questionVersionId: string | null;
   readonly questionVersion: { status: string; scoringSpec: unknown } | null;
   readonly writtenAnswer: { content: unknown; finalSubmittedAt: Date | null } | null;
@@ -376,6 +378,8 @@ export class QuestionBankDeterministicScoringService {
         maxScore: true,
         scoredScore: true,
         autoResult: true,
+        reviewerUserId: true,
+        reviewedAt: true,
         questionVersion: { select: { status: true, scoringSpec: true } },
         writtenAnswer: { select: { content: true, finalSubmittedAt: true } },
       },
@@ -399,6 +403,13 @@ export class QuestionBankDeterministicScoringService {
       // never replace its autoResult or score with a deterministic placeholder.
       if (SPEECH_STRATEGIES.has(strategy)) {
         skippedItems += 1;
+        continue;
+      }
+      // A teacher score is authoritative for a review-only family. Re-running
+      // the deterministic pass must never erase it back to null.
+      if (item.scoredScore !== null && item.reviewedAt !== null) {
+        awardedPoints += item.scoredScore;
+        scoredMaxPoints += itemMaxScore ?? 0;
         continue;
       }
       if (!item.writtenAnswer?.finalSubmittedAt) {

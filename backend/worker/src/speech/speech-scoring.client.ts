@@ -1,5 +1,6 @@
 import pino from "pino";
 import {
+  parseLocalOpenResponse,
   parseLocalSpeechResponse,
   type SpeechProviderResult,
 } from "./speech-provider.js";
@@ -73,7 +74,7 @@ export class SpeechScoringClient {
         logger.info(
           {
             scorerVersion: result.scorerVersion,
-            overall: result.scores.overall,
+            overall: result.scores?.overall,
             confidence: result.confidence,
             requiresReview: result.requiresReview,
           },
@@ -99,6 +100,72 @@ export class SpeechScoringClient {
 
     throw (
       lastError ?? new Error("Speech scoring failed with no error captured")
+    );
+  }
+
+  /**
+   * Analyze an open speaking response without target text. This endpoint is
+   * intentionally separate from the read-aloud scorer because an open answer
+   * has no target-relative accuracy or completeness metric.
+   */
+  async analyzeOpenResponse(
+    audioUrl: string,
+    scorerVersion: string,
+    language: string = "zh-CN",
+  ): Promise<SpeechProviderResult> {
+    let lastError: Error | null = null;
+
+    for (let attempt = 0; attempt <= this.maxRetries; attempt++) {
+      let timeoutId: ReturnType<typeof setTimeout> | undefined;
+      try {
+        logger.info(
+          { attempt, scorerVersion },
+          "Calling open-response speech diagnostic service",
+        );
+
+        const controller = new AbortController();
+        timeoutId = setTimeout(() => controller.abort(), this.timeoutMs);
+        const response = await fetch(`${this.baseUrl}/v1/analyze/open-response`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ audioUrl, language, scorerVersion }),
+          signal: controller.signal,
+        });
+
+        if (!response.ok) {
+          const errorBody = await response.text();
+          throw new Error(
+            `Open-response speech service returned ${response.status}: ${errorBody}`,
+          );
+        }
+
+        const result = parseLocalOpenResponse(await response.json());
+        logger.info(
+          {
+            scorerVersion: result.scorerVersion,
+            confidence: result.confidence,
+            requiresReview: result.requiresReview,
+          },
+          "Open-response speech diagnostic completed",
+        );
+        return result;
+      } catch (error: unknown) {
+        lastError = error instanceof Error ? error : new Error(String(error));
+        logger.warn(
+          { attempt, error: lastError.message, maxRetries: this.maxRetries },
+          "Open-response speech diagnostic attempt failed",
+        );
+        if (attempt < this.maxRetries) {
+          const backoffMs = Math.min(1000 * Math.pow(2, attempt), 10000);
+          await new Promise((resolve) => setTimeout(resolve, backoffMs));
+        }
+      } finally {
+        if (timeoutId !== undefined) clearTimeout(timeoutId);
+      }
+    }
+
+    throw (
+      lastError ?? new Error("Open-response speech diagnostic failed with no error captured")
     );
   }
 

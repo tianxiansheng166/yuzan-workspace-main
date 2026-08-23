@@ -1,101 +1,70 @@
 # CURRENT TASK
 
-Task: QB-006 — Read-aloud speech diagnostic scoring
-Status: DONE
+Task: QB-008 — Level 2–6 bulk import and rollout
+Status: TODO
 
 ## Goal
 
-Establish the real Level 1 `READ_ALOUD` diagnostic loop:
+After the Level 2 source is corrected and re-audited, import Levels 2–6 through
+the strict question-bank pipeline and publish only source-complete runtime
+content.
 
-`Recording → SpeechJob → BullMQ Worker → local speech provider → Python scorer →
-server-side policy → safe student diagnostic`.
+## Verified prior checkpoint
 
-The local provider is an R&D / learning diagnostic baseline. It is not an
-exam-grade, official, or formal Mandarin examination score.
+QB-007 is complete on `feat/question-bank-v1`:
 
-## Verified state
+- Level 1 picture speaking uses `SPEECH_OPEN_RESPONSE`, not the read-aloud
+  target-text scorer.
+- The local open-response service supplies bounded audio/ASR evidence only;
+  formal semantic points are assigned by teacher review.
+- A generic, class-scoped teacher review queue/detail/submit flow resolves
+  `RUBRIC_TEXT`, `SPEECH_READING`, and `SPEECH_OPEN_RESPONSE` items.
+- The Level 1 completion gate requires all 20 `scoredScore` values and creates
+  one point-based report with `totalMaxPoints = 100`.
 
-- The published Level 1 bank contains three `SPEECH_READING` versions; each has
-  a four-point scoring configuration, for twelve read-aloud points in total.
-- The authored read-aloud source includes rubric and deduction fields that the
-  current local scorer cannot fully implement as a formal four-point rubric.
-- The worker now uses a provider-neutral local contract and sends one validated
-  result callback; it no longer writes `AssessmentItem.scoredScore`.
-- The API owns strategy/target/max-score validation, computes a bounded
-  `candidatePoints`, persists a safe diagnostic, keeps `scoredScore = null`,
-  marks the job `NEEDS_REVIEW`, and moves the recording to `READY`.
-- Level 1 `PICTURE_SPEAKING` is `SPEECH_OPEN_RESPONSE` and must remain outside
-  the read-aloud scorer.
+## Start condition / blocker
 
-## Completed implementation
-
-- Added the provider-neutral local adapter and fail-closed provider
-  configuration (`disabled` or `local`).
-- Routed only published Question Bank `SPEECH_READING` items with
-  server-authoritative target text; picture speaking records normally but does
-  not create a read-aloud job.
-- Added server-side result validation, bounded diagnostics, idempotent callback
-  handling, failure preservation, and student-safe response shaping.
-- Added worker/API/Python coverage and ran the database-backed MinIO → BullMQ →
-  Worker → Python → API callback smoke plus the canonical Level 1 E2E.
+Do not start QB-008 until the Level 2 source is corrected or an explicit
+product decision resolves the mismatch: the authored structure declares three
+read-aloud questions while the authored body currently contains two. The
+importer must continue to fail closed; it must not invent a question.
 
 ## Acceptance criteria
 
-- Three Level 1 read-aloud items route to the local reading scorer; the one
-  picture-speaking item does not create a read-aloud SpeechJob. PASS.
-- Provider responses are validated for shape and 0–100 metric bounds. PASS.
-- `candidatePoints` is deterministic and bounded to the item max score (4),
-  while local baseline processing never writes `AssessmentItem.scoredScore`.
-  PASS.
-- Successful local results are persisted as `SpeechJob=NEEDS_REVIEW` with a
-  safe student diagnostic and the Recording is `READY`. PASS.
-- SpeechJob/Recording/AssessmentItem/question-version/strategy/max-score links
-  are checked server-side; malformed, mismatched, unsupported, or stale input
-  fails closed. PASS.
-- QB-005 deterministic scores remain unchanged; rubric and picture-speaking
-  items remain pending, the session remains `PROCESSING`, and no false final
-  report is created. PASS.
-- Python scorer, worker speech, API targeted speech/assessment, security
-  regression, and the available Level 1 E2E/smoke checks were run; the
-  security suite retains five unrelated pre-existing failures documented in
-  the final handoff.
+- Re-audit the corrected Level 2–6 source before any runtime write.
+- Import through the canonical strict parser with stable identities and
+  immutable versions.
+- Preserve delivery/scoring separation and fail closed on missing media,
+  answer/rubric binding, or count mismatches.
+- Verify idempotence, tenant/resource scope, published practice composition,
+  and student-safe payloads before marking the rollout complete.
 
 ## Protected paths
 
 Do not modify or stage the task-start dirty `pnpm-workspace.yaml`,
-`infra/database/prisma/seed.ts`,
-`tests/e2e/assessment/question-bank-runner.spec.py`, or
-`frontend/assessment/assets/question-bank/`. Never modify original files under
-`local_sources/`.
+`infra/database/prisma/seed.ts`, `tests/e2e/assessment/question-bank-runner.spec.py`,
+or `frontend/assessment/assets/question-bank/`. Never modify original files
+under `local_sources/`.
 
 ## Commands
 
-- `corepack pnpm --filter @yuzan/worker test`
-- `corepack pnpm --filter @yuzan/worker typecheck`
-- `corepack pnpm --filter @yuzan/api test`
-- `corepack pnpm --filter @yuzan/api typecheck`
+- `pnpm --filter @yuzan/api typecheck`
+- `pnpm --filter @yuzan/api exec vitest run --pool=forks --poolOptions.forks.singleFork`
+- `pnpm --filter @yuzan/worker test`
+- `pnpm --filter @yuzan/worker typecheck`
+- `pnpm --filter @yuzan/frontend test`
 - `python -m pytest backend/speech-scoring/tests`
-- `python -m uvicorn app.main:app --host 127.0.0.1 --port 8100` from
-  `backend/speech-scoring/` for local health/pipeline smoke.
-- The repository's Level 1 browser E2E and database-backed smoke commands when
-  their required services are available.
 
 ## Known limitations
 
-- The local scorer's ASR and tone analysis remain experimental and uncalibrated;
-  tone metadata must remain truthful.
-- The available smoke/E2E environment used an explicit `MOCK_SPEECH_SCORING=true`
-  Python response with legal silent WAV input because FunASR/torchaudio model
-  dependencies are not installed; this proves pipeline control flow, not ASR
-  recognition quality.
-- The authored read-aloud rubric is not fully reproduced by this provider.
-- The local diagnostic is never an official or exam-grade score and cannot
-  finalize a formal result.
-- Level 2 source inconsistency and QB-007 picture-speaking scoring remain out of
-  scope.
+- Local speech diagnostics are experimental and uncalibrated; they are not
+  formal Mandarin examination scoring.
+- The Level 1 authored delivery for `L1-READ-WORD_RECOGNITION-003` exposes
+  options B/C/D while its authored reference key is A. QB-007 preserved the
+  source and records the resulting runtime score honestly; it was not silently
+  repaired.
 
 ## Stop conditions
 
-QB-006 is complete. Do not import Levels 2–6, implement `PICTURE_SPEAKING`
-scoring, add 讯飞/腾讯/LLM providers, perform formal calibration, or begin
-QB-007 in this task.
+Do not begin Level 2–6 import, add semantic LLM/third-party scoring, or make
+unrelated refactors until the Level 2 source blocker is resolved.

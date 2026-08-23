@@ -10,6 +10,11 @@ export const SUPPORTED_SPEECH_PROVIDERS = ["disabled", "local"] as const;
 export type SpeechProviderName = (typeof SUPPORTED_SPEECH_PROVIDERS)[number];
 
 export const LOCAL_SPEECH_PROVIDER = "local" as const;
+export const SPEECH_READING_STRATEGY = "SPEECH_READING" as const;
+export const SPEECH_OPEN_RESPONSE_STRATEGY = "SPEECH_OPEN_RESPONSE" as const;
+export type SpeechTaskStrategy =
+  | typeof SPEECH_READING_STRATEGY
+  | typeof SPEECH_OPEN_RESPONSE_STRATEGY;
 
 export interface SpeechProviderError {
   text: string;
@@ -34,17 +39,32 @@ export interface SpeechProviderToneMeta {
   reason: string | null;
 }
 
+export interface SpeechProviderOpenDiagnostics {
+  durationMs: number;
+  speechDurationMs: number | null;
+  speechRate: number | null;
+  silenceRatio: number | null;
+  fluency: number | null;
+  audioQuality: {
+    acceptable: boolean;
+    status: "ACCEPTABLE" | "REVIEW_REQUIRED";
+  };
+}
+
 export interface SpeechProviderResult {
   provider: typeof LOCAL_SPEECH_PROVIDER;
+  strategy?: SpeechTaskStrategy;
   providerModel?: string;
   scorerVersion: string;
   confidence: number;
-  scores: SpeechProviderScores;
+  scores?: SpeechProviderScores;
+  diagnostics?: SpeechProviderOpenDiagnostics;
   requiresReview: boolean;
   experimental: true;
   toneMeta?: SpeechProviderToneMeta;
   transcript?: string;
   errors: SpeechProviderError[];
+  reasonCodes?: string[];
   processingMs?: number;
 }
 
@@ -112,6 +132,16 @@ function nullableString(value: unknown, field: string): string | null {
     throw new SpeechProviderResponseError(`${field} must be a string or null`);
   }
   return value;
+}
+
+function nullableBoundedNumber(
+  value: unknown,
+  field: string,
+  min: number,
+  max: number,
+): number | null {
+  if (value === null || value === undefined) return null;
+  return boundedNumber(value, field, min, max);
 }
 
 function parseErrors(value: unknown): SpeechProviderError[] {
@@ -200,6 +230,7 @@ export function parseLocalSpeechResponse(value: unknown): SpeechProviderResult {
 
   return {
     provider: LOCAL_SPEECH_PROVIDER,
+    strategy: SPEECH_READING_STRATEGY,
     ...(providerModel !== undefined ? { providerModel } : {}),
     scorerVersion: requiredString(value.scorerVersion, "scorerVersion"),
     confidence: boundedNumber(value.confidence, "confidence", 0, 1),
@@ -224,6 +255,93 @@ export function parseLocalSpeechResponse(value: unknown): SpeechProviderResult {
     ...(transcript !== undefined ? { transcript } : {}),
     errors: parseErrors(value.errors),
     ...(processingMs !== undefined ? { processingMs } : {}),
+  };
+}
+
+/**
+ * Parse the open-response diagnostic contract. The shape intentionally has no
+ * target-relative accuracy/completeness/tone fields.
+ */
+export function parseLocalOpenResponse(value: unknown): SpeechProviderResult {
+  if (!isRecord(value)) {
+    throw new SpeechProviderResponseError(
+      "provider response must be an object",
+    );
+  }
+  if (value.strategy !== undefined && value.strategy !== SPEECH_OPEN_RESPONSE_STRATEGY) {
+    throw new SpeechProviderResponseError(
+      "open-response provider strategy must be SPEECH_OPEN_RESPONSE",
+    );
+  }
+  if (value.requiresReview !== true) {
+    throw new SpeechProviderResponseError(
+      "open-response diagnostics must require teacher review",
+    );
+  }
+  if (value.experimental !== undefined && value.experimental !== true) {
+    throw new SpeechProviderResponseError(
+      "local provider results must remain experimental",
+    );
+  }
+  if (!isRecord(value.diagnostics)) {
+    throw new SpeechProviderResponseError("diagnostics must be an object");
+  }
+  const audioQuality = value.diagnostics.audioQuality;
+  if (!isRecord(audioQuality)) {
+    throw new SpeechProviderResponseError("diagnostics.audioQuality must be an object");
+  }
+  if (typeof audioQuality.acceptable !== "boolean") {
+    throw new SpeechProviderResponseError("diagnostics.audioQuality.acceptable must be boolean");
+  }
+  if (audioQuality.status !== "ACCEPTABLE" && audioQuality.status !== "REVIEW_REQUIRED") {
+    throw new SpeechProviderResponseError("diagnostics.audioQuality.status is invalid");
+  }
+  const transcript =
+    value.transcript === undefined
+      ? undefined
+      : typeof value.transcript === "string" && value.transcript.length <= 20000
+        ? value.transcript
+        : (() => {
+            throw new SpeechProviderResponseError(
+              "transcript must be a string",
+            );
+          })();
+  const processingMs =
+    value.processingMs === undefined
+      ? undefined
+      : nonNegativeInteger(value.processingMs, "processingMs");
+  const reasonCodes = value.reasonCodes === undefined
+    ? undefined
+    : Array.isArray(value.reasonCodes) && value.reasonCodes.every((reason) => typeof reason === "string" && reason.length <= 100)
+      ? value.reasonCodes
+      : (() => {
+          throw new SpeechProviderResponseError("reasonCodes must be an array of strings");
+        })();
+
+  return {
+    provider: LOCAL_SPEECH_PROVIDER,
+    strategy: SPEECH_OPEN_RESPONSE_STRATEGY,
+    scorerVersion: requiredString(value.scorerVersion, "scorerVersion"),
+    confidence: boundedNumber(value.confidence, "confidence", 0, 1),
+    diagnostics: {
+      durationMs: nonNegativeInteger(value.diagnostics.durationMs, "diagnostics.durationMs"),
+      speechDurationMs: value.diagnostics.speechDurationMs === null || value.diagnostics.speechDurationMs === undefined
+        ? null
+        : nonNegativeInteger(value.diagnostics.speechDurationMs, "diagnostics.speechDurationMs"),
+      speechRate: nullableBoundedNumber(value.diagnostics.speechRate, "diagnostics.speechRate", 0, 20),
+      silenceRatio: nullableBoundedNumber(value.diagnostics.silenceRatio, "diagnostics.silenceRatio", 0, 1),
+      fluency: nullableBoundedNumber(value.diagnostics.fluency, "diagnostics.fluency", 0, 100),
+      audioQuality: {
+        acceptable: audioQuality.acceptable,
+        status: audioQuality.status,
+      },
+    },
+    requiresReview: true,
+    experimental: true,
+    ...(transcript !== undefined ? { transcript } : {}),
+    ...(reasonCodes !== undefined ? { reasonCodes } : {}),
+    ...(processingMs !== undefined ? { processingMs } : {}),
+    errors: [],
   };
 }
 

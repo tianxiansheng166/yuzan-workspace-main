@@ -155,7 +155,8 @@ def check_audio_quality(wav_path: Path) -> dict:
 
     # Check silence ratio
     silence_threshold = 0.01
-    silent_frames = np.sum(np.abs(y) < silence_threshold) / len(y)
+    silent_frames = np.sum(np.abs(y) < silence_threshold) / len(y) if len(y) else 1.0
+    speech_duration_s = float(np.sum(np.abs(y) >= silence_threshold) / sr) if len(y) else 0.0
     if silent_frames > 0.6:
         issues.append("mostly_silent")
 
@@ -164,6 +165,7 @@ def check_audio_quality(wav_path: Path) -> dict:
         "rms": float(rms),
         "max_amplitude": float(np.max(np.abs(y))),
         "silent_ratio": float(silent_frames),
+        "speech_duration_s": speech_duration_s,
         "issues": issues,
         "is_acceptable": len(issues) == 0,
     }
