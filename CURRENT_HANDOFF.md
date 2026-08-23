@@ -14,9 +14,9 @@ Do not infer a commit SHA from this document. The task-start dirty change in
 ## Current outcome
 
 QB-008R and the Levels 1–6 rollout are implemented on the current feature
-branch. QB-009A, QB-010, QB-011, QB-012, and QB-013 are complete. QB-009B
-remains `PARKED / EXTERNAL_INPUT`; the next implementation task is QB-014 in
-[`CURRENT_TASK.md`](CURRENT_TASK.md).
+branch. QB-009A, QB-010, QB-011, QB-012, QB-013, and QB-014 are complete.
+QB-009B remains `PARKED / EXTERNAL_INPUT`; the next implementation task is
+QB-015 in [`CURRENT_TASK.md`](CURRENT_TASK.md).
 
 The original DOCX/ZIP files under `local_sources/` were inspected as read-only
 inputs and were not modified, moved, deleted, or staged.
@@ -97,6 +97,31 @@ Authorized repairs are recorded in
 - The student report shows domain capability cards, strengths, priorities, next
   steps, and a safe Practice Center handoff. It does not create remediation
   content; that is QB-011.
+
+## QB-014 teacher targeted remediation assignment
+
+- `AssessmentSession` now records nullable `remediationOrigin` and safe JSON
+  `remediationFocus`; legacy nullable remediation rows are treated as
+  `SELF_INITIATED`. New sessions are explicitly `SELF_INITIATED` or
+  `TEACHER_ASSIGNED`, while STANDARD remains null.
+- Teacher assignment is `POST /schools/:schoolId/teacher/question-bank-diagnostics/classes/:classId/remediation-assignments` and reuses `AssessmentReviewService.assertAuthorizedClass`. Every selected enrollment must be an ACTIVE STUDENT in the authorized class or the request fails closed.
+- The server—not the client—selects each target's latest completed STANDARD
+  session for the chosen `practiceDefinitionId`, validates its persisted
+  `qb-diagnosis-v1` retry candidates against the immutable source item
+  snapshot, and applies an ALL_RETRY or canonical FAMILY filter. No source or
+  matching candidates yields a safe per-target skip; no empty attempt is
+  created.
+- The shared remediation builder makes clean subset snapshots with the exact
+  source question versions. It preserves no answers, scores, recordings,
+  reviewer data, speech jobs, or provider evidence. Exact active duplicates
+  resume under a PostgreSQL transaction-scoped advisory lock; different focus
+  values may coexist. Self-remediation searches only SELF_INITIATED/legacy
+  rows, so it cannot be redirected to a teacher assignment.
+- Students discover only their own teacher-assigned remediation tasks through
+  `GET /schools/:schoolId/assessments/sessions/assigned-remediations`; the
+  Practice Center links active tasks to the existing Runner. The dashboard
+  projects only safe latest assignment state/count/focus metadata.
+- Migration: `20260824110000_add_assessment_remediation_origin`.
 
 ## Runtime state
 
@@ -192,6 +217,13 @@ Authorized repairs are recorded in
 
 ## Verification snapshot
 
+- QB-014: Prisma generate/validate, database build, API typecheck/build, and
+  full API Vitest pass (`1011 passed`, `60 skipped`). The focused remediation
+  coverage proves clean subset snapshots, exact duplicate resume, different
+  focus coexistence, and explicit teacher-assigned origin. Frontend runtime
+  build and contracts validate/test/typecheck pass. PostgreSQL/browser QB-014
+  integration remains the recommended release-hardening proof in QB-015.
+
 - Importer tests: `16 passed`.
 - API verification: final full Vitest run `995 passed`, `58 skipped`, no
   failures; the real-DB deterministic/runtime integration run passed `3/3`
@@ -275,7 +307,7 @@ runtime. The default scorer is restored with `MOCK_SPEECH_SCORING` unset.
 
 QB-009B remains `PARKED / EXTERNAL_INPUT`: it needs approved consented
 recordings, teacher labels, credentials if live smoke is approved, and a
-separate product decision. The next implementation task is QB-014: teacher
+separate product decision. The next implementation task is QB-015: release
 targeted remediation assignment. It must keep QB-013's class scope, no-ranking
 boundary, formal/remediation isolation, and student privacy controls intact.
 

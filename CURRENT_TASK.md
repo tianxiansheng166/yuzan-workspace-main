@@ -1,9 +1,16 @@
 # CURRENT TASK
 
-Task: QB-014 — Teacher targeted remediation assignment
+Task: QB-015 — Question Bank release hardening and launch readiness
 Status: TODO
 
 ## Starting point
+
+QB-014 is complete on `feat/question-bank-v1`: teacher-selected students can
+receive a server-authoritative `REMEDIATION` subset from their own latest
+completed Question Bank diagnosis. The next task is release hardening; do not
+start speech calibration or call cloud speech providers.
+
+## Existing context
 
 - QB-013 is complete. Teachers can inspect a class-scoped, read-only Question
   Bank diagnostic dashboard for one `practiceDefinitionId`, including the
