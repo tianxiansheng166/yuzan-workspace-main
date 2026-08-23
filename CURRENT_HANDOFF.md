@@ -113,15 +113,22 @@ Authorized repairs are recorded in
   `6 passed in 984.34s`, including media loading, answer persistence,
   submission, teacher review, and the point-based report gate. The run used
   the repository's explicit mock speech scorer for diagnostics only.
+- The Level 1 browser regression now passes through
+  `tests/e2e/assessment/run-level-one-mock.sh`: four ready recordings, three
+  `SPEECH_READING` and one `SPEECH_OPEN_RESPONSE` local `NEEDS_REVIEW` jobs,
+  four bounded student-safe diagnostics, 14 deterministic scores, six formal
+  scores pending, `PROCESSING`, and no premature report. The runner starts an
+  explicit test-only mock scorer and restores a default scorer with mock unset.
+- QB-007's Level 1 student-to-teacher review flow passed: `1 passed, 5
+  deselected in 141.82s`.
 
 ## Known limitations and next task
 
 Local and cloud speech diagnostics remain experimental and uncalibrated; they
-do not produce formal automatic rubric scores. The direct Level 1 browser script
-failed in the default runtime because `MOCK_SPEECH_SCORING` was absent. A
-controlled mock-scoring rerun reached the three local diagnostic payloads, but
-the protected script still exited non-zero at its assertion; keep browser
-verification unresolved rather than treating it as green.
+do not produce formal automatic rubric scores. The former stale Level 1 browser
+assertions have been replaced with the current `SPEECH_READING` plus
+`SPEECH_OPEN_RESPONSE` semantics and pass under the explicit controlled mock
+runtime. The default scorer is restored with `MOCK_SPEECH_SCORING` unset.
 
 The next task is QB-009B: obtain approved consented recordings and teacher
 labels, run live benchmark/calibration analysis, and make an explicit product

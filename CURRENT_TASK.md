@@ -18,11 +18,12 @@ non-finalizable.
   fixture tests, and the DB-free benchmark harness are implemented.
 - Cloud credentials are not present/verified and the example benchmark contains
   only synthetic references; no real recordings or labels were inspected.
-- The direct Level 1 script failed in the default runtime because
-  `MOCK_SPEECH_SCORING` was absent. A controlled mock-scoring rerun reached the
-  three local diagnostic payloads but the protected script still exited
-  non-zero at its assertion; browser verification therefore remains unresolved.
-  This does not authorize enabling formal scoring.
+- The Level 1 browser regression runs through
+  `tests/e2e/assessment/run-level-one-mock.sh`, which starts only a test-local
+  `MOCK_SPEECH_SCORING=true` scorer and restores a default scorer with mock
+  unset. The browser proof is current for three `SPEECH_READING` and one
+  `SPEECH_OPEN_RESPONSE` diagnostic; this does not authorize enabling formal
+  scoring.
 
 ## Remaining work
 

@@ -58,6 +58,32 @@ ORDER BY i."stableKey";''',
     return answers
 
 
+def load_recording_statuses(session_id):
+    result = subprocess.run([
+        "docker", "exec", "p0-integration-postgres-1", "psql", "-U", "yuzan", "-d", "yuzan_dev",
+        "-At", "-v", "ON_ERROR_STOP=1", "-c",
+        f'''SELECT r."status"
+FROM "Recording" r
+JOIN "AssessmentItem" i ON i."recordingId" = r."id"
+WHERE i."sessionId" = '{session_id}'
+ORDER BY i."sortOrder";''',
+    ], check=True, capture_output=True, text=True)
+    return result.stdout.splitlines()
+
+
+def load_speech_jobs(session_id):
+    result = subprocess.run([
+        "docker", "exec", "p0-integration-postgres-1", "psql", "-U", "yuzan", "-d", "yuzan_dev",
+        "-At", "-F", "\t", "-v", "ON_ERROR_STOP=1", "-c",
+        f'''SELECT j."assessmentItemId", j."status", j."provider", j."result"->>'strategy'
+FROM "SpeechJob" j
+JOIN "AssessmentItem" i ON i."id" = j."assessmentItemId"
+WHERE i."sessionId" = '{session_id}'
+ORDER BY i."sortOrder", j."createdAt";''',
+    ], check=True, capture_output=True, text=True)
+    return [line.split("\t") for line in result.stdout.splitlines()]
+
+
 def authenticate(page):
     response = page.request.post(
         f"{BASE}/api/v1/auth/login",
@@ -255,7 +281,7 @@ try:
                 item for item in scored_items_payload
                 if (item.get("autoResult") or {}).get("provider") == "local"
             ]
-            if session_payload["status"] == "PROCESSING" and len(local_diagnostics) == 3:
+            if session_payload["status"] == "PROCESSING" and len(local_diagnostics) == 4:
                 break
             time.sleep(1)
 
@@ -264,26 +290,51 @@ try:
         scored_items = [item for item in scored_items_payload if item.get("scoredScore") is not None]
         assert len(scored_items) == 14
         pending_items = [item for item in scored_items_payload if item.get("scoredScore") is None]
-        local_diagnostics = [
+        reading_diagnostics = [
             item for item in pending_items
-            if (item.get("autoResult") or {}).get("provider") == "local"
+            if (item.get("autoResult") or {}).get("strategy") == "SPEECH_READING"
         ]
-        assert len(local_diagnostics) == 3
+        open_response_diagnostics = [
+            item for item in pending_items
+            if (item.get("autoResult") or {}).get("strategy") == "SPEECH_OPEN_RESPONSE"
+        ]
+        rubric_items = [
+            item for item in pending_items
+            if (item.get("autoResult") or {}).get("strategy") == "RUBRIC_TEXT"
+        ]
+        assert len(reading_diagnostics) == 3
+        assert len(open_response_diagnostics) == 1
+        assert len(rubric_items) == 2
         assert all(
             item["autoResult"]["state"] == "NEEDS_REVIEW"
+            and item["autoResult"]["strategy"] == "SPEECH_READING"
+            and item["autoResult"]["provider"] == "local"
+            and item["autoResult"]["calibrationStatus"] == "UNCALIBRATED"
             and item["autoResult"]["finalizable"] is False
             and item["autoResult"]["candidatePoints"] <= item["autoResult"]["maxScore"]
-            and "transcript" not in item["autoResult"]
-            and "errors" not in item["autoResult"]
-            for item in local_diagnostics
+            and all(key not in item["autoResult"] for key in [
+                "transcript", "errors", "providerAudit", "rawResponse", "scoringSpec", "rubric",
+            ])
+            for item in reading_diagnostics
         )
-        assert len([item for item in pending_items if (item.get("autoResult") or {}).get("state") == "NEEDS_REVIEW"]) == 5
-        assert len([item for item in pending_items if item.get("autoResult") is None]) == 1
+        open_diagnostic = open_response_diagnostics[0]["autoResult"]
+        assert open_diagnostic["state"] == "NEEDS_REVIEW"
+        assert open_diagnostic["provider"] == "local"
+        assert open_diagnostic["finalizable"] is False
+        assert "candidatePoints" not in open_diagnostic
+        assert {"durationMs", "speechRate", "fluency", "audioQuality"} <= set(open_diagnostic["diagnostics"])
+        assert all(key not in open_diagnostic for key in [
+            "transcript", "errors", "providerAudit", "rawResponse", "scoringSpec", "rubric",
+        ])
+        assert all(
+            (item.get("autoResult") or {}).get("state") == "NEEDS_REVIEW"
+            for item in rubric_items
+        )
         for item in scored_items:
             assert 0 <= item["scoredScore"] <= item["maxScore"]
             assert item["autoResult"]["scorerVersion"] == "qb-deterministic-v1"
 
-        for index in [6, 7, 8]:
+        for index in [6, 7, 8, 9]:
             jobs_response = page.request.get(
                 f"{BASE}/api/v1/schools/{school_id}/speech-jobs/by-item/{scored_items_payload[index]['id']}",
                 headers=headers,
@@ -292,12 +343,17 @@ try:
             jobs = jobs_response.json().get("data", jobs_response.json())
             assert len(jobs) == 1
             assert jobs[0]["status"] == "NEEDS_REVIEW"
-        picture_jobs_response = page.request.get(
-            f"{BASE}/api/v1/schools/{school_id}/speech-jobs/by-item/{scored_items_payload[9]['id']}",
-            headers=headers,
-        )
-        assert picture_jobs_response.ok, picture_jobs_response.text()
-        assert picture_jobs_response.json().get("data", picture_jobs_response.json()) == []
+            assert jobs[0]["provider"] == "local"
+
+        assert load_recording_statuses(attempt_id) == ["READY"] * 4
+        speech_jobs = load_speech_jobs(attempt_id)
+        assert len(speech_jobs) == 4
+        assert speech_jobs == [
+            [scored_items_payload[6]["id"], "NEEDS_REVIEW", "local", "SPEECH_READING"],
+            [scored_items_payload[7]["id"], "NEEDS_REVIEW", "local", "SPEECH_READING"],
+            [scored_items_payload[8]["id"], "NEEDS_REVIEW", "local", "SPEECH_READING"],
+            [scored_items_payload[9]["id"], "NEEDS_REVIEW", "local", "SPEECH_OPEN_RESPONSE"],
+        ]
 
         report_response = page.request.get(
             f"{BASE}/api/v1/schools/{school_id}/assessments/sessions/{attempt_id}/report",
@@ -308,7 +364,7 @@ try:
         else:
             assert report_response.status in (404, 409), report_response.text()
         serialized_scored = str(scored_items_payload)
-        for protected in ["scoringSpec", "correctAnswer", "acceptedAnswers", "referenceAnswer", "rubric", "deductionRules"]:
+        for protected in ["scoringSpec", "correctAnswer", "acceptedAnswers", "referenceAnswer", "rubric", "deductionRules", "transcript", "providerAudit", "rawResponse"]:
             assert protected not in serialized_scored
         browser.close()
 finally:
