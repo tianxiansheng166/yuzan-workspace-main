@@ -355,7 +355,8 @@ def test_question_bank_student_teacher_report(level):
                 (item, (item.get("autoResult") or {}).get("strategy"))
                 for item in scored_items
             ]
-            open_item = next(item for item, strategy in strategy_items if strategy == "SPEECH_OPEN_RESPONSE")
+            open_item = next((item for item, strategy in strategy_items if strategy == "SPEECH_OPEN_RESPONSE"), None)
+            assert open_item is not None, strategy_items
             speech_items = [item for item, strategy in strategy_items if strategy == "SPEECH_READING"]
             rubric_items = [item for item, strategy in strategy_items if strategy == "RUBRIC_TEXT"]
             assert len(speech_items) == 3
@@ -400,8 +401,17 @@ def test_question_bank_student_teacher_report(level):
                     assert page.locator("[data-picture]").get_attribute("src")
                     assert "图片与表达证据" in detail_body
                     assert "教师可见转写" in detail_body
-                max_score = page.locator("[data-review-score]").get_attribute("max")
-                page.locator("[data-review-score]").fill(max_score)
+                max_score = float(page.locator("[data-review-score]").get_attribute("max"))
+                # Level 1 intentionally has two lower teacher-reviewed
+                # families. The browser still reads strategy/max authority from
+                # the server; it never hardcodes a canonical answer or uses a
+                # provider candidate score as the formal result.
+                review_score = max_score
+                if level == 1 and item["strategy"] == "SPEECH_READING":
+                    review_score = 1
+                elif level == 1 and item["strategy"] == "SPEECH_OPEN_RESPONSE":
+                    review_score = 7
+                page.locator("[data-review-score]").fill(str(review_score))
                 page.locator("[data-review-comment]").fill("QB-007 浏览器复核：依据题目量表提交正式分数")
                 page.locator("[data-review-submit]").click()
                 page.locator("[data-review-message]").get_by_text("已保存").wait_for(timeout=20_000)
@@ -416,10 +426,35 @@ def test_question_bank_student_teacher_report(level):
             assert report["summary"]["totalMaxPoints"] == 100
             assert report["summary"]["answeredItems"] == 20
             assert report["overallScore"] is not None
+            diagnosis = report.get("diagnosis")
+            assert diagnosis and diagnosis["version"] == "qb-diagnosis-v1"
+            assert diagnosis["overall"]["earnedPoints"] == report["overallScore"]
+            assert diagnosis["overall"]["maxPoints"] == 100
+            assert len(diagnosis["domains"]) == 4
+            assert len(diagnosis["families"]) == 8
+            serialized_diagnosis = str(diagnosis)
+            for protected in [
+                "correctAnswer", "referenceAnswer", "acceptedAnswers", "scoringSpec",
+                "rubric", "deductionRules", "sourceTrace", "providerAudit", "rawResponse",
+                "transcript", "candidatePoints",
+            ]:
+                assert protected not in serialized_diagnosis
+            if level == 1:
+                assert report["overallScore"] == 84
+                assert [item["family"] for item in diagnosis["priorities"]] == ["READ_ALOUD", "PICTURE_SPEAKING"]
+                assert [item["family"] for item in diagnosis["nextSteps"]] == ["READ_ALOUD", "PICTURE_SPEAKING"]
+                assert all(item["family"] in {"READ_ALOUD", "PICTURE_SPEAKING"} for item in diagnosis["retryCandidates"])
+            else:
+                assert diagnosis["priorities"] == []
             page.goto(f"{BASE}/student/practices/attempts/{attempt_id}/report/")
             page.locator(".score-number").wait_for(timeout=20_000)
             assert str(report["overallScore"]) in page.locator(".score-number").inner_text()
-            assert "已完成" in page.locator("body").inner_text()
+            report_body = page.locator("body").inner_text()
+            assert "已完成" in report_body
+            assert "能力诊断" in report_body
+            assert "掌握较好的能力" in report_body
+            assert "优先提升" in report_body
+            assert "下一步建议" in report_body
             print(
                 {
                     "attemptId": attempt_id,

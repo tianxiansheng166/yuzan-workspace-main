@@ -28,6 +28,17 @@ AssessmentSession → AssessmentItem → Answer / Recording → Scoring → Repo
 Items have stable identities and immutable versions. A practice is composition; an
 `AssessmentItem` is an execution snapshot.
 
+## Deterministic Question Bank diagnosis
+
+Only a completed, fully scored 20-item Question Bank session may create a
+`qb-diagnosis-v1` snapshot. It aggregates formal `AssessmentItem.scoredScore`
+and `maxScore` with immutable Question Bank domain/family/level metadata into
+four domains and eight canonical families. The snapshot is versioned and reused
+on report reads; it contains only student-safe totals, rankings, retry item
+identifiers, and fixed Chinese guidance. Provider candidate points, raw output,
+answers, rubrics, and source traces are never diagnosis inputs or student
+payload fields.
+
 ## Speech diagnostics and human review
 
 Speech task strategy is authoritative in the published question-version

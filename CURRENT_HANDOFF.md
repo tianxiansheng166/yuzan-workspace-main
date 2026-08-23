@@ -14,8 +14,9 @@ Do not infer a commit SHA from this document. The task-start dirty change in
 ## Current outcome
 
 QB-008R and the Levels 1–6 rollout are implemented on the current feature
-branch. QB-009A is now complete; the next task is QB-009B in
-[`CURRENT_TASK.md`](CURRENT_TASK.md), pending external benchmark inputs.
+branch. QB-009A and QB-010 are complete. QB-009B remains
+`PARKED / EXTERNAL_INPUT`; the next implementation task is QB-011 in
+[`CURRENT_TASK.md`](CURRENT_TASK.md).
 
 The original DOCX/ZIP files under `local_sources/` were inspected as read-only
 inputs and were not modified, moved, deleted, or staged.
@@ -76,6 +77,27 @@ Authorized repairs are recorded in
   `INSUFFICIENT_CALIBRATION_DATA`; formal runtime activation remains
   `DISABLED` and teacher review remains the authority.
 
+## QB-010 deterministic diagnosis
+
+- Only a completed standard Question Bank session with all 20 formal scores
+  can persist `summary.diagnosis` with version `qb-diagnosis-v1`; partial,
+  missing-metadata, or zero-max-score sessions fail closed without a diagnosis.
+- The builder uses only formal `scoredScore`, `maxScore`, and immutable
+  Question Bank domain, family, and level. It aggregates actual points into
+  `LISTEN`, `SPEAK`, `READ`, and `WRITE`, plus the eight canonical families;
+  no denominator, level rule, or provider candidate point is hard-coded.
+- Bands are `STRONG` (>=85), `DEVELOPING` (>=70), and `PRIORITY`; priorities
+  are deterministic (percentage asc, lost points desc, canonical family order)
+  and strengths use the inverse deterministic ordering. Display names and
+  guidance are fixed Chinese mappings in the backend.
+- The student report DTO projects an explicit allowlist and never returns
+  answers, scoring specs, rubrics, source traces, provider raw/audit data,
+  transcripts, or candidate points. Existing/legacy reports return
+  `diagnosis: null`.
+- The student report shows domain capability cards, strengths, priorities, next
+  steps, and a safe Practice Center handoff. It does not create remediation
+  content; that is QB-011.
+
 ## Runtime state
 
 - Canonical validation: 120 items / 600 points, six levels, zero errors and
@@ -93,12 +115,15 @@ Authorized repairs are recorded in
   published version.
 - Security audit of active canonical deliveries: 20 refs per practice, four
   sections, zero student-visible source-trace leaks.
+- Completed QB reports persist the diagnosis snapshot in their existing JSON
+  summary and reuse it for repeated finalization/report reads.
 
 ## Verification snapshot
 
 - Importer tests: `16 passed`.
-- API verification: full Vitest run `975 passed` with no failures; the real-DB
-  deterministic/runtime integration run passed `3/3` tests.
+- API verification: final full Vitest run `995 passed`, `58 skipped`, no
+  failures; the real-DB deterministic/runtime integration run passed `3/3`
+  tests.
 - Worker tests: `51 passed`; provider contract, audio preparation, benchmark,
   routing-safety, and existing worker tests pass. Worker typecheck/build pass.
 - Frontend tests passed.
@@ -121,6 +146,14 @@ Authorized repairs are recorded in
   explicit test-only mock scorer and restores a default scorer with mock unset.
 - QB-007's Level 1 student-to-teacher review flow passed: `1 passed, 5
   deselected in 141.82s`.
+- QB-010 Level 1 student-to-teacher completed-report flow passed: `1 passed in
+  133.81s`. It verified 20/20 items, 100 max points, four domains/eight
+  families, no diagnosis leakage, a formal 84/100 result, `READ_ALOUD` then
+  `PICTURE_SPEAKING` priorities, and the rendered student capability cards.
+- QB-010 diagnosis unit/security/scoring coverage passed, including perfect and
+  weak cases, tie ordering, zero score, zero max/missing metadata rejection,
+  teacher-final speech authority, deep deterministic equality, levels 1/3/6,
+  partial and 19-of-20 sessions.
 
 ## Known limitations and next task
 
@@ -130,9 +163,10 @@ assertions have been replaced with the current `SPEECH_READING` plus
 `SPEECH_OPEN_RESPONSE` semantics and pass under the explicit controlled mock
 runtime. The default scorer is restored with `MOCK_SPEECH_SCORING` unset.
 
-The next task is QB-009B: obtain approved consented recordings and teacher
-labels, run live benchmark/calibration analysis, and make an explicit product
-decision. Do not infer activation from the synthetic report.
+QB-009B remains `PARKED / EXTERNAL_INPUT`: it needs approved consented
+recordings, teacher labels, credentials if live smoke is approved, and a
+separate product decision. The next implementation task is QB-011: turn the
+persisted QB-010 retry candidates into a scoped remediation-practice loop.
 
 ## Protected paths
 

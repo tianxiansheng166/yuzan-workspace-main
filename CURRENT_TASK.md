@@ -1,71 +1,30 @@
 # CURRENT TASK
 
-Task: QB-009B — Real speech benchmark and calibration decision
-Status: TODO / EXTERNAL_INPUT
+Task: QB-011 — Retry and remediation practice loop
+Status: TODO
 
 ## Goal
 
-Use an approved, consented benchmark to decide whether any production speech
-provider can be calibrated for formal scoring. QB-009A is complete, but all
-providers remain diagnostic-only, `UNCALIBRATED`, `NEEDS_REVIEW`, and
-non-finalizable.
+Use the completed QB-010 diagnosis snapshot to guide a student from safe retry
+candidates into targeted remediation practice, without changing formal results
+or exposing answers, rubrics, or provider evidence.
 
-## Verified state
+## Starting point
 
-- `disabled`, `local`, `iflytek`, and `tencent` are supported by the
-  provider-neutral server boundary.
-- iFlytek streaming and Tencent new SOE adapters, immutable audio preparation,
-  fixture tests, and the DB-free benchmark harness are implemented.
-- Cloud credentials are not present/verified and the example benchmark contains
-  only synthetic references; no real recordings or labels were inspected.
-- The Level 1 browser regression runs through
-  `tests/e2e/assessment/run-level-one-mock.sh`, which starts only a test-local
-  `MOCK_SPEECH_SCORING=true` scorer and restores a default scorer with mock
-  unset. The browser proof is current for three `SPEECH_READING` and one
-  `SPEECH_OPEN_RESPONSE` diagnostic; this does not authorize enabling formal
-  scoring.
+- QB-010 is complete: completed 20-item Question Bank sessions persist and
+  return the deterministic `qb-diagnosis-v1` snapshot.
+- The report currently links to Practice Center with the highest-priority family
+  label only; it does not create or filter a remediation practice.
+- QB-009B remains `PARKED / EXTERNAL_INPUT`. Do not call speech providers or
+  start calibration work.
 
-## Remaining work
+## Constraints
 
-- Obtain approval and 30–50 consented, de-identified recordings with teacher
-  labels and dimension definitions.
-- Run the benchmark with approved credentials/audio, review MAE/RMSE,
-  correlation, tolerance bands, latency, and review-required rates.
-- Make an explicit product decision; only then could a separate task define a
-  calibration artifact, versioning, rollout, and rollback plan.
-
-## Acceptance criteria
-
-- No formal provider activation without approved real data, teacher review, and
-  an explicit calibration decision.
-- `AssessmentItem.scoredScore` remains null for provider evidence until the
-  formal authority changes the policy.
-- Benchmark output is reproducible, privacy-safe, and reports insufficient or
-  skipped inputs without fabricating calibration results.
-
-## Protected paths
-
-Do not modify or stage `pnpm-workspace.yaml`,
-`infra/database/prisma/seed.ts`, `tests/e2e/assessment/question-bank-runner.spec.py`,
-or `frontend/assessment/assets/question-bank/`. Never modify original files
-under `local_sources/`.
-
-## Commands
-
-- `pnpm speech:benchmark -- --manifest <approved-manifest> --providers local,iflytek,tencent --live`
-- Targeted Worker/API/Python tests and the configured Level 1 browser regression
-- Review `docs/speech-providers.md` before any live provider operation
-
-## External-input status
-
-- iFlytek credentials: not supplied.
-- Tencent credentials: not supplied.
-- Consented 30–50 recordings and teacher labels: not supplied.
-- Calibration/product approval: not supplied.
-
-## Stop conditions
-
-- Do not call cloud providers with real student audio or export recordings.
-- Do not print or commit credentials, provider raw payloads, or PII.
-- Do not enable formal automatic speech scoring based on synthetic data or
-  provider self-scores.
+- Keep server-side school, resource, and student scope checks.
+- Reuse the immutable Question Bank metadata and formal diagnosis snapshot;
+  never use provider candidate points as formal authority.
+- Do not modify or stage `pnpm-workspace.yaml`,
+  `infra/database/prisma/seed.ts`,
+  `tests/e2e/assessment/question-bank-runner.spec.py`, or
+  `frontend/assessment/assets/question-bank/`. Never modify original files
+  under `local_sources/`.
