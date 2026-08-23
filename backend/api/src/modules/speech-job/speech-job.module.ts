@@ -8,7 +8,7 @@ import { SPEECH_QUEUE } from "./speech-job.tokens.js";
 /**
  * SpeechJobModule provides speech processing job management and BullMQ queue dispatch.
  *
- * When REDIS_HOST is configured and SPEECH_PROVIDER=local,
+ * When REDIS_HOST is configured and a non-disabled SPEECH_PROVIDER is selected,
  * a BullMQ Queue is created for dispatching speech processing jobs to the Worker.
  * Otherwise, the queue provider is not registered and jobs remain in CREATED status.
  */
@@ -27,7 +27,7 @@ import { SPEECH_QUEUE } from "./speech-job.tokens.js";
         const redisPort = config.get<number>("REDIS_PORT", 6379);
 
         // Only create queue if both Redis and speech provider are configured
-        if (speechProvider !== "local" || !redisHost) {
+        if (speechProvider === "disabled" || !redisHost) {
           return null;
         }
 

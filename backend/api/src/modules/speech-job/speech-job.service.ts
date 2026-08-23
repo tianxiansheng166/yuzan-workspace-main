@@ -152,7 +152,8 @@ export class SpeechJobService {
    * The callback carries no scoredScore. This method validates the persisted
    * SpeechJob → Recording → AssessmentItem → QuestionBankItemVersion chain,
    * computes a bounded learning diagnostic, and keeps the formal score null
-   * for the uncalibrated local provider.
+   * for every uncalibrated provider; provider-specific raw evidence remains
+   * server-side and the formal scoredScore stays null.
    */
   async applySpeechProviderResult(id: string, providerResult: unknown) {
     const job = await this.prisma.speechJob.findUnique({
@@ -377,15 +378,20 @@ export class SpeechJobService {
     return toSpeechJobResponse(updated);
   }
 
-  private configuredSpeechProvider(): "disabled" | "local" {
+  private configuredSpeechProvider(): "disabled" | "local" | "iflytek" | "tencent" {
     const value = (
       this.config.get<string>("SPEECH_PROVIDER", "disabled") ?? "disabled"
     )
       .trim()
       .toLowerCase();
-    if (value === "disabled" || value === "local") return value;
+    if (
+      value === "disabled" ||
+      value === "local" ||
+      value === "iflytek" ||
+      value === "tencent"
+    ) return value;
     throw new SpeechProviderNotConfiguredException(
-      `不支持的 SPEECH_PROVIDER=${value || "<empty>"}，仅支持 disabled 或 local`,
+      `不支持的 SPEECH_PROVIDER=${value || "<empty>"}，仅支持 disabled、local、iflytek 或 tencent`,
     );
   }
 
@@ -517,7 +523,6 @@ export class SpeechJobService {
             (task.strategy === OPEN_RESPONSE_STRATEGY
               ? "mandarin-open-response-v0.1.0"
               : "mandarin-reading-v0.1.0"),
-          ...(options?.provider ? { provider: options.provider } : {}),
         },
       });
 
@@ -543,7 +548,7 @@ export class SpeechJobService {
 
     // Dispatch (or safely re-dispatch CREATED recovery) with a deterministic
     // BullMQ id. BullMQ de-duplicates the same persisted SpeechJob.
-    if (speechProvider === "local" && this.speechQueue) {
+    if (speechProvider !== "disabled" && this.speechQueue) {
       // Get the recording's objectKey for the worker to download
       const recording = await this.prisma.recording.findUnique({
         where: { id: recordingId },
@@ -586,7 +591,7 @@ export class SpeechJobService {
       });
 
       this.logger.log(`SpeechJob dispatched to BullMQ queue: id=${job.id}`);
-    } else if (speechProvider === "local") {
+    } else if (speechProvider !== "disabled") {
       // Provider is enabled but queue is not available (Redis not connected)
       this.logger.warn(
         `SPEECH_PROVIDER=${speechProvider} but BullMQ queue not available; SpeechJob ${job.id} remains in CREATED status`,

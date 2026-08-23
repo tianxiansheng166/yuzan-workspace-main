@@ -1,10 +1,17 @@
 import { Worker, type Job } from "bullmq";
 import pino from "pino";
+import { prepareSpeechAudio } from "./audio-preparation.js";
 import { SpeechScoringClient } from "./speech-scoring.client.js";
+import {
+  createSpeechReadingProvider,
+  type SpeechReadingProviderFactory,
+} from "./speech-provider.factory.js";
 import {
   configuredSpeechProvider,
   SPEECH_OPEN_RESPONSE_STRATEGY,
   SPEECH_READING_STRATEGY,
+  SpeechProviderConfigurationError,
+  SpeechProviderTaskError,
   type SpeechTaskStrategy,
   type SpeechProviderResult,
 } from "./speech-provider.js";
@@ -29,7 +36,7 @@ export interface SpeechJobPayload {
  *
  * Flow:
  * 1. Download recording from MinIO
- * 2. Call Python speech scoring service
+ * 2. Normalize audio and call the selected reading provider adapter
  * 3. Update the SpeechJob result through the server-side result policy
  * 4. The API writes the safe AssessmentItem diagnostic and Recording status
  * 5. On failure, update error and retry count
@@ -43,6 +50,7 @@ export class SpeechJobConsumer {
     private readonly queueName: string,
     private readonly connection: { host: string; port: number },
     private readonly speechProvider = new SpeechScoringClient(),
+    private readonly providerFactory: SpeechReadingProviderFactory = createSpeechReadingProvider,
   ) {
     const configuredApiBase =
       process.env.API_INTERNAL_URL ?? "http://127.0.0.1:4000";
@@ -112,9 +120,9 @@ export class SpeechJobConsumer {
 
     try {
       const provider = configuredSpeechProvider();
-      if (provider !== "local") {
-        throw new Error(
-          "PROVIDER_NOT_CONFIGURED: speech worker requires SPEECH_PROVIDER=local",
+      if (provider === "disabled") {
+        throw new SpeechProviderConfigurationError(
+          "PROVIDER_NOT_CONFIGURED: SPEECH_PROVIDER=disabled",
         );
       }
 
@@ -127,8 +135,13 @@ export class SpeechJobConsumer {
       const taskStrategy = strategy ?? SPEECH_READING_STRATEGY;
       let scoringResult: SpeechProviderResult;
       if (taskStrategy === SPEECH_OPEN_RESPONSE_STRATEGY) {
+        if (provider !== "local") {
+          throw new SpeechProviderTaskError(
+            `PROVIDER_STRATEGY_UNSUPPORTED: ${provider} providers only support SPEECH_READING`,
+          );
+        }
         if (targetText?.trim()) {
-          throw new Error(
+          throw new SpeechProviderTaskError(
             "SPEECH_OPEN_RESPONSE must not carry targetText",
           );
         }
@@ -138,15 +151,34 @@ export class SpeechJobConsumer {
         );
       } else if (taskStrategy === SPEECH_READING_STRATEGY) {
         if (!targetText?.trim()) {
-          throw new Error("SPEECH_READING requires targetText");
+          throw new SpeechProviderTaskError("SPEECH_READING requires targetText");
         }
-        scoringResult = await this.speechProvider.scoreReading(
-          downloadUrl,
-          targetText,
-          scorerVersion,
-        );
+        if (provider === "local") {
+          scoringResult = await this.speechProvider.scoreReading(
+            downloadUrl,
+            targetText,
+            scorerVersion,
+          );
+        } else {
+          const cloudProvider = this.providerFactory(provider);
+          if (!cloudProvider.configured()) {
+            throw new SpeechProviderConfigurationError(
+              `PROVIDER_NOT_CONFIGURED: ${provider} credentials are not present`,
+            );
+          }
+          const prepared = await prepareSpeechAudio(downloadUrl);
+          scoringResult = await cloudProvider.scoreReading({
+            audio: prepared.data,
+            audioUrl: downloadUrl,
+            targetText,
+            language: "zh-CN",
+            requestId: speechJobId,
+          });
+        }
       } else {
-        throw new Error(`Unsupported speech task strategy: ${String(taskStrategy)}`);
+        throw new SpeechProviderTaskError(
+          `Unsupported speech task strategy: ${String(taskStrategy)}`,
+        );
       }
 
       const callbackResult = {
@@ -177,7 +209,7 @@ export class SpeechJobConsumer {
         },
         "Speech scoring completed",
       );
-    } catch (err) {
+      } catch (err) {
       // Attempt to mark the SpeechJob as FAILED so it doesn't appear as completed
       try {
         await this.markSpeechJobFailed(
@@ -196,6 +228,16 @@ export class SpeechJobConsumer {
           "Failed to mark speech job as FAILED after processing error",
         );
       }
+      // Cloud adapters classify auth, invalid reference, bad audio, quota, and
+      // unsupported strategy failures as non-transient. Do not spend BullMQ
+      // attempts (or provider quota) retrying those failures.
+      const nonRetryable =
+        err instanceof SpeechProviderConfigurationError ||
+        (typeof err === "object" &&
+          err !== null &&
+          "retryable" in err &&
+          (err as { retryable?: unknown }).retryable === false);
+      if (nonRetryable) return;
       // Re-throw to let BullMQ handle retry
       throw err;
     }

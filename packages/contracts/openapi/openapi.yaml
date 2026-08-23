@@ -4272,6 +4272,7 @@ components:
           type: [string, "null"]
         provider:
           type: [string, "null"]
+          enum: [disabled, local, iflytek, tencent, null]
     SpeechJob:
       type: object
       required: [id, recordingId, status, createdAt]
@@ -4289,6 +4290,9 @@ components:
           type: string
           enum:
             [CREATED, PROCESSING, AUTO_RESULT, NEEDS_REVIEW, FINALIZED, FAILED]
+        provider:
+          type: [string, "null"]
+          enum: [disabled, local, iflytek, tencent, null]
         result:
           type: [object, "null"]
         confidence:

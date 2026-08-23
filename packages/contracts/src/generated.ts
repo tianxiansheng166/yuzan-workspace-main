@@ -2370,7 +2370,8 @@ export interface components {
       assessmentItemId: string;
       targetText: string;
       scorerVersion?: string | null;
-      provider?: string | null;
+      /** @enum {string|null} */
+      provider?: "disabled" | "local" | "iflytek" | "tencent" | null;
     };
     SpeechJob: {
       /** Format: uuid */
@@ -2387,6 +2388,8 @@ export interface components {
         | "NEEDS_REVIEW"
         | "FINALIZED"
         | "FAILED";
+      /** @enum {string|null} */
+      provider?: "disabled" | "local" | "iflytek" | "tencent" | null;
       result?: Record<string, never> | null;
       confidence?: number | null;
       providerModel?: string | null;

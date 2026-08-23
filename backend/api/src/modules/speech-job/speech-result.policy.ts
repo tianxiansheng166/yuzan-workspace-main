@@ -4,22 +4,28 @@ export const READ_ALOUD_STRATEGY = "SPEECH_READING" as const;
 export const OPEN_RESPONSE_STRATEGY = "SPEECH_OPEN_RESPONSE" as const;
 export const LOCAL_SPEECH_PROVIDER = "local" as const;
 export const LOCAL_SPEECH_REASON = "LOCAL_BASELINE_UNCALIBRATED" as const;
+export const SUPPORTED_SPEECH_PROVIDERS = ["local", "iflytek", "tencent"] as const;
+export type SpeechProviderName = (typeof SUPPORTED_SPEECH_PROVIDERS)[number];
+export type SpeechCalibrationStatus = "UNCALIBRATED" | "CALIBRATED";
 
 export interface StoredSpeechProviderResult {
-  provider: typeof LOCAL_SPEECH_PROVIDER;
+  provider: SpeechProviderName;
   strategy?: typeof READ_ALOUD_STRATEGY | typeof OPEN_RESPONSE_STRATEGY;
   providerModel?: string;
   scorerVersion: string;
   confidence: number;
   scores: {
-    accuracy: number;
-    completeness: number;
-    fluency: number;
+    accuracy: number | null;
+    completeness: number | null;
+    fluency: number | null;
     tone: number | null;
-    overall: number;
+    overall: number | null;
   };
   requiresReview: boolean;
   experimental: true;
+  productionCapable?: boolean;
+  calibrationStatus: SpeechCalibrationStatus;
+  finalizable: false;
   toneMeta?: {
     experimental: boolean;
     method: string | null;
@@ -35,6 +41,13 @@ export interface StoredSpeechProviderResult {
     score: number;
   }>;
   processingMs?: number;
+  reasonCodes: string[];
+  providerRawScale?: Record<string, unknown>;
+  providerAudit?: {
+    requestId: string;
+    responseCount: number;
+    rawResponse: string;
+  };
 }
 
 export interface StoredOpenResponseProviderResult {
@@ -63,18 +76,19 @@ export interface StoredOpenResponseProviderResult {
 export interface SafeReadAloudDiagnostic {
   state: "NEEDS_REVIEW";
   strategy: typeof READ_ALOUD_STRATEGY;
-  provider: typeof LOCAL_SPEECH_PROVIDER;
+  provider: SpeechProviderName;
   scorerVersion: string;
-  candidatePoints: number;
+  candidatePoints: number | null;
   maxScore: number;
   metrics: {
-    accuracy: number;
-    completeness: number;
-    fluency: number;
+    accuracy: number | null;
+    completeness: number | null;
+    fluency: number | null;
     tone: number | null;
   };
   toneExperimental: true;
   confidence: number;
+  calibrationStatus: SpeechCalibrationStatus;
   finalizable: false;
   reasonCodes: string[];
 }
@@ -245,22 +259,32 @@ export function validateSpeechProviderResult(
       "provider result must be an object",
     );
   }
-  if (value.provider !== LOCAL_SPEECH_PROVIDER) {
+  if (
+    value.provider !== LOCAL_SPEECH_PROVIDER &&
+    value.provider !== "iflytek" &&
+    value.provider !== "tencent"
+  ) {
     throw new SpeechResultPolicyException(
       "PROVIDER_NOT_CONFIGURED",
-      "speech provider is not configured for this callback",
+      "speech provider is not supported for this callback",
     );
   }
   if (value.experimental !== true) {
     throw new SpeechResultPolicyException(
       "PROVIDER_RESULT_POLICY_REJECTED",
-      "local speech results must be experimental",
+      "speech provider results must remain experimental until calibration",
     );
   }
   if (typeof value.requiresReview !== "boolean") {
     throw new SpeechResultPolicyException(
       "PROVIDER_RESULT_MALFORMED",
       "requiresReview is invalid",
+    );
+  }
+  if (value.finalizable !== undefined && value.finalizable !== false) {
+    throw new SpeechResultPolicyException(
+      "PROVIDER_RESULT_POLICY_REJECTED",
+      "speech provider results are not finalizable in QB-009A",
     );
   }
   if (!isRecord(value.scores)) {
@@ -283,13 +307,75 @@ export function validateSpeechProviderResult(
             );
           })();
   const toneMeta = parseToneMeta(value.toneMeta);
+  const calibrationStatus =
+    value.calibrationStatus === undefined
+      ? (value.provider === LOCAL_SPEECH_PROVIDER ? "UNCALIBRATED" : undefined)
+      : value.calibrationStatus;
+  if (calibrationStatus !== "UNCALIBRATED" && calibrationStatus !== "CALIBRATED") {
+    throw new SpeechResultPolicyException(
+      "PROVIDER_RESULT_MALFORMED",
+      "calibrationStatus is invalid",
+    );
+  }
+  if (calibrationStatus !== "UNCALIBRATED") {
+    throw new SpeechResultPolicyException(
+      "PROVIDER_RESULT_POLICY_REJECTED",
+      "calibrated provider results are not enabled in QB-009A",
+    );
+  }
+  const reasonCodes =
+    value.reasonCodes === undefined
+      ? []
+      : Array.isArray(value.reasonCodes) &&
+          value.reasonCodes.every(
+            (reason) => typeof reason === "string" && reason.length <= 100,
+          )
+        ? value.reasonCodes
+        : (() => {
+            throw new SpeechResultPolicyException(
+              "PROVIDER_RESULT_MALFORMED",
+              "reasonCodes are invalid",
+            );
+          })();
+  const providerAudit =
+    value.providerAudit === undefined
+      ? undefined
+      : isRecord(value.providerAudit) &&
+          typeof value.providerAudit.requestId === "string" &&
+          typeof value.providerAudit.responseCount === "number" &&
+          Number.isInteger(value.providerAudit.responseCount) &&
+          value.providerAudit.responseCount >= 0 &&
+          typeof value.providerAudit.rawResponse === "string" &&
+          value.providerAudit.rawResponse.length <= 1_000_000
+        ? {
+            requestId: value.providerAudit.requestId,
+            responseCount: value.providerAudit.responseCount,
+            rawResponse: value.providerAudit.rawResponse,
+          }
+        : (() => {
+            throw new SpeechResultPolicyException(
+              "PROVIDER_RESULT_MALFORMED",
+              "providerAudit is invalid",
+            );
+          })();
+  const providerRawScale =
+    value.providerRawScale === undefined
+      ? undefined
+      : isRecord(value.providerRawScale)
+        ? value.providerRawScale
+        : (() => {
+            throw new SpeechResultPolicyException(
+              "PROVIDER_RESULT_MALFORMED",
+              "providerRawScale is invalid",
+            );
+          })();
   const processingMs =
     value.processingMs === undefined
       ? undefined
       : nonNegativeInteger(value.processingMs, "processingMs");
 
   return {
-    provider: LOCAL_SPEECH_PROVIDER,
+    provider: value.provider,
     ...(value.strategy === undefined
       ? {}
       : value.strategy === READ_ALOUD_STRATEGY || value.strategy === OPEN_RESPONSE_STRATEGY
@@ -304,25 +390,35 @@ export function validateSpeechProviderResult(
     scorerVersion: requiredString(value.scorerVersion, "scorerVersion"),
     confidence: boundedNumber(value.confidence, "confidence", 0, 1),
     scores: {
-      accuracy: boundedNumber(value.scores.accuracy, "scores.accuracy", 0, 100),
-      completeness: boundedNumber(
-        value.scores.completeness,
-        "scores.completeness",
-        0,
-        100,
-      ),
-      fluency: boundedNumber(value.scores.fluency, "scores.fluency", 0, 100),
-      tone:
-        value.scores.tone === null
-          ? null
-          : boundedNumber(value.scores.tone, "scores.tone", 0, 100),
-      overall: boundedNumber(value.scores.overall, "scores.overall", 0, 100),
+      accuracy: value.scores.accuracy === null
+        ? null
+        : boundedNumber(value.scores.accuracy, "scores.accuracy", 0, 100),
+      completeness: value.scores.completeness === null
+        ? null
+        : boundedNumber(value.scores.completeness, "scores.completeness", 0, 100),
+      fluency: value.scores.fluency === null
+        ? null
+        : boundedNumber(value.scores.fluency, "scores.fluency", 0, 100),
+      tone: value.scores.tone === null
+        ? null
+        : boundedNumber(value.scores.tone, "scores.tone", 0, 100),
+      overall: value.scores.overall === null
+        ? null
+        : boundedNumber(value.scores.overall, "scores.overall", 0, 100),
     },
     requiresReview: value.requiresReview,
     experimental: true,
+    ...(typeof value.productionCapable === "boolean"
+      ? { productionCapable: value.productionCapable }
+      : {}),
+    calibrationStatus,
+    finalizable: false,
     ...(toneMeta ? { toneMeta } : {}),
     ...(transcript !== undefined ? { transcript } : {}),
     errors: parseErrors(value.errors),
+    reasonCodes,
+    ...(providerRawScale ? { providerRawScale } : {}),
+    ...(providerAudit ? { providerAudit } : {}),
     ...(processingMs !== undefined ? { processingMs } : {}),
   };
 }
@@ -336,7 +432,7 @@ function roundTenths(value: number): number {
 }
 
 /**
- * Apply the current local-provider policy to one published Question Bank item.
+ * Apply the uncalibrated provider policy to one published Question Bank item.
  * The returned diagnostic is safe for students; the provider result is kept
  * server-side for SpeechJob audit history.
  */
@@ -378,14 +474,21 @@ export function buildReadAloudPolicyResult(input: {
   }
 
   const providerResult = validateSpeechProviderResult(input.providerResult);
-  const candidatePoints = Math.min(
-    itemMaxScore,
-    Math.max(
-      0,
-      roundTenths((providerResult.scores.overall / 100) * itemMaxScore),
-    ),
-  );
-  const reasonCodes: string[] = [LOCAL_SPEECH_REASON];
+  const candidatePoints = providerResult.scores.overall === null
+    ? null
+    : Math.min(
+        itemMaxScore,
+        Math.max(
+          0,
+          roundTenths((providerResult.scores.overall / 100) * itemMaxScore),
+        ),
+      );
+  const reasonCodes: string[] = [
+    providerResult.provider === LOCAL_SPEECH_PROVIDER
+      ? LOCAL_SPEECH_REASON
+      : "PROVIDER_UNCALIBRATED",
+    ...providerResult.reasonCodes,
+  ];
   if (providerResult.requiresReview)
     reasonCodes.push("PROVIDER_REQUIRES_REVIEW");
   if (providerResult.confidence < 0.75) reasonCodes.push("LOW_CONFIDENCE");
@@ -393,15 +496,16 @@ export function buildReadAloudPolicyResult(input: {
   const diagnostic: SafeReadAloudDiagnostic = {
     state: "NEEDS_REVIEW",
     strategy: READ_ALOUD_STRATEGY,
-    provider: LOCAL_SPEECH_PROVIDER,
+    provider: providerResult.provider,
     scorerVersion: providerResult.scorerVersion,
     candidatePoints,
     maxScore: itemMaxScore,
     metrics: providerResult.scores,
     toneExperimental: true,
     confidence: providerResult.confidence,
+    calibrationStatus: providerResult.calibrationStatus,
     finalizable: false,
-    reasonCodes,
+    reasonCodes: [...new Set(reasonCodes)],
   };
 
   return { providerResult, diagnostic, status: "NEEDS_REVIEW" };

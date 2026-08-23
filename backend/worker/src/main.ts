@@ -2,7 +2,10 @@ import { Queue } from "bullmq";
 import pino from "pino";
 import { SpeechJobConsumer } from "./speech/speech-job.consumer.js";
 import { SpeechScoringClient } from "./speech/speech-scoring.client.js";
-import { configuredSpeechProvider } from "./speech/speech-provider.js";
+import {
+  configuredSpeechProvider,
+  type SpeechProviderName,
+} from "./speech/speech-provider.js";
 import { AiGenerationConsumer } from "./ai-generation/ai-generation.consumer.js";
 import { TranslationConsumer } from "./translation/translation.consumer.js";
 
@@ -38,7 +41,7 @@ function getRedisConfig(): RedisConfig {
 }
 
 async function main(): Promise<void> {
-  let speechProvider: "disabled" | "local";
+  let speechProvider: SpeechProviderName;
   try {
     speechProvider = configuredSpeechProvider();
   } catch (error: unknown) {
@@ -76,7 +79,7 @@ async function main(): Promise<void> {
   // Start speech job consumer if enabled
   let speechConsumer: SpeechJobConsumer | null = null;
 
-  if (speechProvider === "local") {
+  if (speechProvider !== "disabled") {
     speechConsumer = new SpeechJobConsumer(SPEECH_QUEUE_NAME, redisConfig);
     speechConsumer.start();
     logger.info({ queue: SPEECH_QUEUE_NAME }, "Speech job consumer started");

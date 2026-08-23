@@ -28,3 +28,5 @@ runtime-local/
 !runtime-local/secrets/ai-provider.env.example
 _tmp/
 local_sources/question-bank/.generated/
+local_sources/speech-benchmark/
+local_sources/speech-benchmark/.generated/
