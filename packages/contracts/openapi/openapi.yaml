@@ -1253,6 +1253,24 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "404":
           $ref: "#/components/responses/NotFound"
+  /schools/{schoolId}/students/me/question-bank-progress:
+    get:
+      summary: 获取当前学生的题库学习进步（正式趋势与专项巩固分开）
+      tags: [Assessments]
+      operationId: getQuestionBankProgress
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+      responses:
+        "200":
+          description: 当前学生的安全学习进步视图
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuestionBankProgressResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/Conflict"
   /schools/{schoolId}/assessments/sessions/{sourceSessionId}/remediation:
     post:
       summary: 基于已完成正式题库诊断创建或恢复专项巩固练习
@@ -4459,7 +4477,8 @@ components:
           $ref: "#/components/schemas/EnvelopeMeta"
     RemediationCreationResponse:
       type: object
-      required: [outcome, sourceSessionId, attemptId, status, itemCount, resumed]
+      required:
+        [outcome, sourceSessionId, attemptId, status, itemCount, resumed]
       properties:
         outcome:
           type: string
@@ -4472,7 +4491,16 @@ components:
           format: uuid
         status:
           type: [string, "null"]
-          enum: [CREATED, IN_PROGRESS, SUBMITTED, PROCESSING, COMPLETED, CANCELLED, null]
+          enum:
+            [
+              CREATED,
+              IN_PROGRESS,
+              SUBMITTED,
+              PROCESSING,
+              COMPLETED,
+              CANCELLED,
+              null,
+            ]
         itemCount:
           type: integer
           minimum: 0
@@ -4480,7 +4508,8 @@ components:
           type: boolean
     RemediationResultItem:
       type: object
-      required: [itemId, itemType, sortOrder, earnedPoints, maxPoints, completed]
+      required:
+        [itemId, itemType, sortOrder, earnedPoints, maxPoints, completed]
       properties:
         itemId:
           type: string
@@ -4513,14 +4542,27 @@ components:
           type: number
     RemediationResultResponse:
       type: object
-      required: [sourceSessionId, status, itemCount, earnedPoints, maxPoints, percentage, completedItemCount, pendingItemCount, families, items]
+      required:
+        [
+          sourceSessionId,
+          status,
+          itemCount,
+          earnedPoints,
+          maxPoints,
+          percentage,
+          completedItemCount,
+          pendingItemCount,
+          families,
+          items,
+        ]
       properties:
         sourceSessionId:
           type: string
           format: uuid
         status:
           type: string
-          enum: [CREATED, IN_PROGRESS, SUBMITTED, PROCESSING, COMPLETED, CANCELLED]
+          enum:
+            [CREATED, IN_PROGRESS, SUBMITTED, PROCESSING, COMPLETED, CANCELLED]
         itemCount:
           type: integer
         earnedPoints:
@@ -4786,6 +4828,265 @@ components:
         guidance: { type: string }
         meta:
           $ref: "#/components/schemas/EnvelopeMeta"
+    QuestionBankProgressResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          $ref: "#/components/schemas/QuestionBankProgress"
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
+    QuestionBankProgress:
+      type: object
+      required: [version, state, formalLevels, remediation, milestones, latest]
+      properties:
+        version: { type: string, enum: [qb-progress-v1] }
+        state: { type: string, enum: [READY, EMPTY_STATE] }
+        formalLevels:
+          type: array
+          items:
+            { $ref: "#/components/schemas/QuestionBankFormalLevelProgress" }
+        remediation:
+          type: array
+          items:
+            { $ref: "#/components/schemas/QuestionBankRemediationProgress" }
+        milestones:
+          type: array
+          items: { $ref: "#/components/schemas/QuestionBankProgressMilestone" }
+        latest:
+          oneOf:
+            - $ref: "#/components/schemas/QuestionBankProgressLatest"
+            - type: "null"
+    QuestionBankFormalAttempt:
+      type: object
+      required: [sessionId, overallScore, practiceVersionId, completedAt]
+      properties:
+        sessionId: { type: string, format: uuid }
+        overallScore: { type: number }
+        practiceVersionId: { type: string, format: uuid }
+        completedAt: { type: string, format: date-time }
+    QuestionBankTrendChange:
+      type: object
+      required: [currentPercentage, previousPercentage, deltaPercentagePoints]
+      properties:
+        currentPercentage: { type: number, minimum: 0, maximum: 100 }
+        previousPercentage: { type: number, minimum: 0, maximum: 100 }
+        deltaPercentagePoints: { type: number }
+    QuestionBankDomainTrendChange:
+      allOf:
+        - $ref: "#/components/schemas/QuestionBankTrendChange"
+        - type: object
+          required: [domain, displayName]
+          properties:
+            domain: { type: string, enum: [LISTEN, SPEAK, READ, WRITE] }
+            displayName: { type: string }
+    QuestionBankFamilyTrendChange:
+      allOf:
+        - $ref: "#/components/schemas/QuestionBankTrendChange"
+        - type: object
+          required: [family, displayName, domain, domainDisplayName]
+          properties:
+            family: { type: string }
+            displayName: { type: string }
+            domain: { type: string, enum: [LISTEN, SPEAK, READ, WRITE] }
+            domainDisplayName: { type: string }
+    QuestionBankDomainTrend:
+      type: object
+      required: [improvedDomains, stableDomains, needsAttentionDomains]
+      properties:
+        improvedDomains:
+          type: array
+          items: { $ref: "#/components/schemas/QuestionBankDomainTrendChange" }
+        stableDomains:
+          type: array
+          items: { $ref: "#/components/schemas/QuestionBankDomainTrendChange" }
+        needsAttentionDomains:
+          type: array
+          items: { $ref: "#/components/schemas/QuestionBankDomainTrendChange" }
+    QuestionBankFamilyTrend:
+      type: object
+      required: [improvedFamilies, stableFamilies, needsAttentionFamilies]
+      properties:
+        improvedFamilies:
+          type: array
+          items: { $ref: "#/components/schemas/QuestionBankFamilyTrendChange" }
+        stableFamilies:
+          type: array
+          items: { $ref: "#/components/schemas/QuestionBankFamilyTrendChange" }
+        needsAttentionFamilies:
+          type: array
+          items: { $ref: "#/components/schemas/QuestionBankFamilyTrendChange" }
+    QuestionBankFormalLevelProgress:
+      type: object
+      required:
+        [
+          level,
+          practiceDefinitionId,
+          practiceVersionId,
+          attemptCount,
+          firstScore,
+          latestScore,
+          bestScore,
+          latestVsPrevious,
+          firstVsLatest,
+          latestCompletedAt,
+          comparisonState,
+          practiceVersionChanged,
+          attempts,
+          domainTrend,
+          familyTrend,
+        ]
+      properties:
+        level: { type: string }
+        practiceDefinitionId: { type: string, format: uuid }
+        practiceVersionId: { type: string, format: uuid }
+        attemptCount: { type: integer, minimum: 1 }
+        firstScore: { type: number }
+        latestScore: { type: number }
+        bestScore: { type: number }
+        latestVsPrevious: { type: [number, "null"] }
+        firstVsLatest: { type: [number, "null"] }
+        latestCompletedAt: { type: string, format: date-time }
+        comparisonState: { type: string, enum: [BASELINE_ONLY, COMPARABLE] }
+        practiceVersionChanged: { type: boolean }
+        attempts:
+          type: array
+          items: { $ref: "#/components/schemas/QuestionBankFormalAttempt" }
+        domainTrend:
+          oneOf:
+            - $ref: "#/components/schemas/QuestionBankDomainTrend"
+            - type: "null"
+        familyTrend:
+          oneOf:
+            - $ref: "#/components/schemas/QuestionBankFamilyTrend"
+            - type: "null"
+    QuestionBankRemediationItemComparison:
+      type: object
+      required:
+        [questionVersionId, sourceEarnedPoints, earnedPoints, maxPoints, state]
+      properties:
+        questionVersionId: { type: string, format: uuid }
+        sourceEarnedPoints: { type: number }
+        earnedPoints: { type: number }
+        maxPoints: { type: number, exclusiveMinimum: 0 }
+        state: { type: string, enum: [MASTERED, IMPROVED, UNCHANGED, LOWER] }
+    QuestionBankRemediationRound:
+      type: object
+      required:
+        [
+          round,
+          sessionId,
+          createdAt,
+          completedAt,
+          itemCount,
+          earnedPoints,
+          maxPoints,
+          percentage,
+          masteredCount,
+          improvedCount,
+          unchangedCount,
+          lowerCount,
+          recoveredPoints,
+          items,
+        ]
+      properties:
+        round: { type: integer, minimum: 1 }
+        sessionId: { type: string, format: uuid }
+        createdAt: { type: string, format: date-time }
+        completedAt: { type: [string, "null"], format: date-time }
+        itemCount: { type: integer, minimum: 1 }
+        earnedPoints: { type: number }
+        maxPoints: { type: number, exclusiveMinimum: 0 }
+        percentage: { type: number, minimum: 0, maximum: 100 }
+        masteredCount: { type: integer, minimum: 0 }
+        improvedCount: { type: integer, minimum: 0 }
+        unchangedCount: { type: integer, minimum: 0 }
+        lowerCount: { type: integer, minimum: 0 }
+        recoveredPoints: { type: number, minimum: 0 }
+        items:
+          type: array
+          items:
+            {
+              $ref: "#/components/schemas/QuestionBankRemediationItemComparison",
+            }
+    QuestionBankRemediationProgress:
+      type: object
+      required:
+        [
+          sourceSessionId,
+          level,
+          practiceDefinitionId,
+          totalRounds,
+          latestRound,
+          bestRound,
+          baselineLostPoints,
+          latestRecoveredPoints,
+          rounds,
+        ]
+      properties:
+        sourceSessionId: { type: string, format: uuid }
+        level: { type: string }
+        practiceDefinitionId: { type: string, format: uuid }
+        totalRounds: { type: integer, minimum: 1 }
+        latestRound:
+          { $ref: "#/components/schemas/QuestionBankRemediationRound" }
+        bestRound: { $ref: "#/components/schemas/QuestionBankRemediationRound" }
+        baselineLostPoints: { type: number, minimum: 0 }
+        latestRecoveredPoints: { type: number, minimum: 0 }
+        rounds:
+          type: array
+          items: { $ref: "#/components/schemas/QuestionBankRemediationRound" }
+    QuestionBankProgressMilestone:
+      type: object
+      required: [kind, occurredAt, level, sessionId, label]
+      properties:
+        kind: { type: string, enum: [FORMAL_ASSESSMENT, REMEDIATION] }
+        occurredAt: { type: string, format: date-time }
+        level: { type: string }
+        sessionId: { type: string, format: uuid }
+        sourceSessionId: { type: string, format: uuid }
+        label: { type: string }
+    QuestionBankProgressLatest:
+      type: object
+      required: [level, formal, remediation]
+      properties:
+        level: { type: string }
+        formal:
+          type: object
+          required:
+            [
+              sessionId,
+              overallScore,
+              completedAt,
+              comparisonState,
+              latestVsPrevious,
+            ]
+          properties:
+            sessionId: { type: string, format: uuid }
+            overallScore: { type: number }
+            completedAt: { type: string, format: date-time }
+            comparisonState: { type: string, enum: [BASELINE_ONLY, COMPARABLE] }
+            latestVsPrevious: { type: [number, "null"] }
+        remediation:
+          oneOf:
+            - type: object
+              required:
+                [
+                  sourceSessionId,
+                  sessionId,
+                  round,
+                  itemCount,
+                  masteredCount,
+                  recoveredPoints,
+                ]
+              properties:
+                sourceSessionId: { type: string, format: uuid }
+                sessionId: { type: string, format: uuid }
+                round: { type: integer, minimum: 1 }
+                itemCount: { type: integer, minimum: 1 }
+                masteredCount: { type: integer, minimum: 0 }
+                recoveredPoints: { type: number, minimum: 0 }
+            - type: "null"
     ExportReportRequest:
       type: object
       properties:

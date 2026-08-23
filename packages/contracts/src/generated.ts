@@ -706,6 +706,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/schools/{schoolId}/students/me/question-bank-progress": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 获取当前学生的题库学习进步（正式趋势与专项巩固分开） */
+    get: operations["getQuestionBankProgress"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/schools/{schoolId}/assessments/sessions/{sourceSessionId}/remediation": {
     parameters: {
       query?: never;
@@ -2671,6 +2688,153 @@ export interface components {
       levels: string[];
       guidance: string;
       meta?: components["schemas"]["EnvelopeMeta"];
+    };
+    QuestionBankProgressResponse: {
+      data: components["schemas"]["QuestionBankProgress"];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    QuestionBankProgress: {
+      /** @enum {string} */
+      version: "qb-progress-v1";
+      /** @enum {string} */
+      state: "READY" | "EMPTY_STATE";
+      formalLevels: components["schemas"]["QuestionBankFormalLevelProgress"][];
+      remediation: components["schemas"]["QuestionBankRemediationProgress"][];
+      milestones: components["schemas"]["QuestionBankProgressMilestone"][];
+      latest: components["schemas"]["QuestionBankProgressLatest"] | null;
+    };
+    QuestionBankFormalAttempt: {
+      /** Format: uuid */
+      sessionId: string;
+      overallScore: number;
+      /** Format: uuid */
+      practiceVersionId: string;
+      /** Format: date-time */
+      completedAt: string;
+    };
+    QuestionBankTrendChange: {
+      currentPercentage: number;
+      previousPercentage: number;
+      deltaPercentagePoints: number;
+    };
+    QuestionBankDomainTrendChange: components["schemas"]["QuestionBankTrendChange"] & {
+      /** @enum {string} */
+      domain: "LISTEN" | "SPEAK" | "READ" | "WRITE";
+      displayName: string;
+    };
+    QuestionBankFamilyTrendChange: components["schemas"]["QuestionBankTrendChange"] & {
+      family: string;
+      displayName: string;
+      /** @enum {string} */
+      domain: "LISTEN" | "SPEAK" | "READ" | "WRITE";
+      domainDisplayName: string;
+    };
+    QuestionBankDomainTrend: {
+      improvedDomains: components["schemas"]["QuestionBankDomainTrendChange"][];
+      stableDomains: components["schemas"]["QuestionBankDomainTrendChange"][];
+      needsAttentionDomains: components["schemas"]["QuestionBankDomainTrendChange"][];
+    };
+    QuestionBankFamilyTrend: {
+      improvedFamilies: components["schemas"]["QuestionBankFamilyTrendChange"][];
+      stableFamilies: components["schemas"]["QuestionBankFamilyTrendChange"][];
+      needsAttentionFamilies: components["schemas"]["QuestionBankFamilyTrendChange"][];
+    };
+    QuestionBankFormalLevelProgress: {
+      level: string;
+      /** Format: uuid */
+      practiceDefinitionId: string;
+      /** Format: uuid */
+      practiceVersionId: string;
+      attemptCount: number;
+      firstScore: number;
+      latestScore: number;
+      bestScore: number;
+      latestVsPrevious: number | null;
+      firstVsLatest: number | null;
+      /** Format: date-time */
+      latestCompletedAt: string;
+      /** @enum {string} */
+      comparisonState: "BASELINE_ONLY" | "COMPARABLE";
+      practiceVersionChanged: boolean;
+      attempts: components["schemas"]["QuestionBankFormalAttempt"][];
+      domainTrend: components["schemas"]["QuestionBankDomainTrend"] | null;
+      familyTrend: components["schemas"]["QuestionBankFamilyTrend"] | null;
+    };
+    QuestionBankRemediationItemComparison: {
+      /** Format: uuid */
+      questionVersionId: string;
+      sourceEarnedPoints: number;
+      earnedPoints: number;
+      maxPoints: number;
+      /** @enum {string} */
+      state: "MASTERED" | "IMPROVED" | "UNCHANGED" | "LOWER";
+    };
+    QuestionBankRemediationRound: {
+      round: number;
+      /** Format: uuid */
+      sessionId: string;
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: date-time */
+      completedAt: string | null;
+      itemCount: number;
+      earnedPoints: number;
+      maxPoints: number;
+      percentage: number;
+      masteredCount: number;
+      improvedCount: number;
+      unchangedCount: number;
+      lowerCount: number;
+      recoveredPoints: number;
+      items: components["schemas"]["QuestionBankRemediationItemComparison"][];
+    };
+    QuestionBankRemediationProgress: {
+      /** Format: uuid */
+      sourceSessionId: string;
+      level: string;
+      /** Format: uuid */
+      practiceDefinitionId: string;
+      totalRounds: number;
+      latestRound: components["schemas"]["QuestionBankRemediationRound"];
+      bestRound: components["schemas"]["QuestionBankRemediationRound"];
+      baselineLostPoints: number;
+      latestRecoveredPoints: number;
+      rounds: components["schemas"]["QuestionBankRemediationRound"][];
+    };
+    QuestionBankProgressMilestone: {
+      /** @enum {string} */
+      kind: "FORMAL_ASSESSMENT" | "REMEDIATION";
+      /** Format: date-time */
+      occurredAt: string;
+      level: string;
+      /** Format: uuid */
+      sessionId: string;
+      /** Format: uuid */
+      sourceSessionId?: string;
+      label: string;
+    };
+    QuestionBankProgressLatest: {
+      level: string;
+      formal: {
+        /** Format: uuid */
+        sessionId: string;
+        overallScore: number;
+        /** Format: date-time */
+        completedAt: string;
+        /** @enum {string} */
+        comparisonState: "BASELINE_ONLY" | "COMPARABLE";
+        latestVsPrevious: number | null;
+      };
+      remediation: {
+        /** Format: uuid */
+        sourceSessionId: string;
+        /** Format: uuid */
+        sessionId: string;
+        round: number;
+        itemCount: number;
+        masteredCount: number;
+        recoveredPoints: number;
+      } | null;
     };
     ExportReportRequest: {
       purpose?: string | null;
@@ -4721,6 +4885,31 @@ export interface operations {
       };
       403: components["responses"]["Forbidden"];
       404: components["responses"]["NotFound"];
+    };
+  };
+  getQuestionBankProgress: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 当前学生的安全学习进步视图 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["QuestionBankProgressResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+      409: components["responses"]["Conflict"];
     };
   };
   createAssessmentRemediation: {

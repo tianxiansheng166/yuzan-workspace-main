@@ -69,3 +69,14 @@ export class AssessmentProcessingPendingException extends HttpException {
     super({ code: "PROCESSING_PENDING", message }, HttpStatus.ACCEPTED);
   }
 }
+
+/**
+ * A completed Question Bank history row is internally inconsistent.  Progress
+ * is a read-only interpretation of immutable results, so it must never guess
+ * missing formal evidence or silently normalize an invalid comparison.
+ */
+export class QuestionBankProgressIntegrityException extends HttpException {
+  constructor(message = "学习进步记录缺少可验证的正式测评数据") {
+    super({ code: "PROGRESS_COMPARISON_INVALID", message }, HttpStatus.CONFLICT);
+  }
+}
