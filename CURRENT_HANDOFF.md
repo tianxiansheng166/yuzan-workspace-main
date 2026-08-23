@@ -1,6 +1,6 @@
 # CURRENT HANDOFF
 
-Last updated: 2026-08-23
+Last updated: 2026-08-24
 Repository: `yuzanxinsheng_test`
 
 ## Git truth
@@ -14,8 +14,8 @@ Do not infer a commit SHA from this document. The task-start dirty change in
 ## Current outcome
 
 QB-008R and the Levels 1–6 rollout are implemented on the current feature
-branch. QB-009A, QB-010, and QB-011 are complete. QB-009B remains
-`PARKED / EXTERNAL_INPUT`; the next implementation task is QB-012 in
+branch. QB-009A, QB-010, QB-011, and QB-012 are complete. QB-009B remains
+`PARKED / EXTERNAL_INPUT`; the next implementation task is QB-013 in
 [`CURRENT_TASK.md`](CURRENT_TASK.md).
 
 The original DOCX/ZIP files under `local_sources/` were inspected as read-only
@@ -129,6 +129,41 @@ Authorized repairs are recorded in
   result projection contains only completion and score aggregates, never
   answers, rubrics, delivery/scoring specs, or provider audit data.
 
+## QB-012 student progress tracking
+
+- `qb-progress-v1` is a deterministic, read-only derived view. It does not add
+  a `ProgressSnapshot` table, migration, cache, or any mutation to historical
+  reports, diagnoses, or item scores.
+- The student endpoint is
+  `GET /schools/:schoolId/students/me/question-bank-progress`. Its identity is
+  derived exclusively from the active student auth context and school scope;
+  no client-supplied student or session identifier can select another student.
+- Formal trend includes only `STANDARD` + `COMPLETED` Question Bank sessions
+  with a formal report and persisted `qb-diagnosis-v1`. It reuses the stored
+  `overallScore` and diagnosis percentages; it never regenerates diagnosis or
+  reads provider candidate points. Trends are grouped strictly by
+  `practiceDefinitionId`. A practice-version change remains comparable within
+  the level and is flagged, while cross-level results are chronological
+  milestones only and never have a score delta.
+- Baseline-only levels return null deltas and student wording that a second
+  same-level assessment is needed. Latest same-level comparisons expose
+  deterministic domain/family percentage changes (improved, stable, attention)
+  from the two persisted diagnosis snapshots.
+- Completed `REMEDIATION` history is grouped by its original
+  `retestOfSessionId`, then sorted by `createdAt`/id into rounds. Every item is
+  matched only by identical `questionVersionId`; ambiguous/missing versions,
+  full-score source items, invalid scores, and max-score mismatches fail
+  closed with `PROGRESS_COMPARISON_INVALID`. `MASTERED`, `IMPROVED`,
+  `UNCHANGED`, and `LOWER` are scoped to that original question only.
+- The student payload allowlists aggregate scores, percentages, item version
+  IDs, and safe comparison states only. It never includes answers, scoring
+  specs, rubrics, source traces, transcripts, provider raw/audit output, or
+  provider candidate points.
+- The student “学习进步” page presents separate same-level formal cards,
+  listening/speaking/reading/writing and family changes, scoped remediation
+  rounds, and a milestone timeline. Formal reports and remediation results now
+  include a “查看学习进步” entry; existing repeat/back actions remain intact.
+
 ## Verification snapshot
 
 - Importer tests: `16 passed`.
@@ -170,6 +205,21 @@ Authorized repairs are recorded in
   the source report, runs exactly four selected questions, persists that subset
   across refresh, and verifies the “本次巩固” result does not expose answer or
   scoring configuration fields.
+- QB-012 progress unit/service coverage passed (`6` tests), including baseline
+  handling, same-level delta, version change, domain/family changes, processing
+  exclusion, provider-data exclusion, exact-match remediation states, multiple
+  rounds, ownership, and fail-closed mismatches.
+- QB-012 real PostgreSQL integration passed: Level 1 `84 → 91`, one four-item
+  remediation with three mastered items, and an independent Level 2 baseline.
+  The source formal item scores remained unchanged.
+- QB-012 Chromium E2E passed through
+  `tests/e2e/assessment/test_qb012_progress.py`: the real student page showed
+  Level 1 `比上次提高 7 分`, domain changes, `4 道题，3 道已掌握`, scoped
+  recovered points, a separate Level 2 baseline, and links back to both the
+  formal report and remediation result.
+- Final API regression without broad integration-DB opt-in: `1006 passed`,
+  `60 skipped`; API typecheck/build, contracts validation/test/typecheck, and
+  frontend test/build passed.
 
 ## Known limitations and next task
 
@@ -181,9 +231,9 @@ runtime. The default scorer is restored with `MOCK_SPEECH_SCORING` unset.
 
 QB-009B remains `PARKED / EXTERNAL_INPUT`: it needs approved consented
 recordings, teacher labels, credentials if live smoke is approved, and a
-separate product decision. The next implementation task is QB-012: define
-learning progress and improvement tracking while preserving the boundary
-between formal assessment results and scoped remediation results.
+separate product decision. The next implementation task is QB-013: teacher
+diagnostic dashboard. It must not loosen QB-012's student privacy boundary or
+mix formal trends with scoped remediation results.
 
 ## Protected paths
 

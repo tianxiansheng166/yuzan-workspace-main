@@ -62,6 +62,7 @@ function routeToSpa(pathname) {
     // Compatibility entry: the legacy assessment center now opens the reusable
     // practice catalog without a redirect, so existing navigation keeps working.
     if (pathname === '/assessment' || pathname === '/assessment/') return { file: join(root, 'assessment', 'practice-shell.html'), page: 'catalog' };
+    if (pathname === '/assessment/progress' || pathname.startsWith('/assessment/progress/')) return { file: join(root, 'assessment', '_shell.html'), page: 'progress' };
     if (pathname === '/assessment/history' || pathname.startsWith('/assessment/history/')) return { file: join(root, 'assessment', '_shell.html'), page: 'history' };
     if (pathname === '/assessment/recordings' || pathname.startsWith('/assessment/recordings/')) return { file: join(root, 'assessment', '_shell.html'), page: 'recordings' };
     // 动态 session 路由：/assessment/sessions/:sessionId/[reading|written|submit|processing|report]
@@ -81,6 +82,7 @@ function routeToSpa(pathname) {
   }
   // `/assessment` stays a compatibility route; new entry uses the existing V4 visual language.
   if (pathname === '/student/practices' || pathname === '/student/practices/') return { file: join(root, 'assessment', 'practice-shell.html'), page: 'catalog' };
+  if (pathname === '/student/progress' || pathname.startsWith('/student/progress/')) return { file: join(root, 'assessment', '_shell.html'), page: 'progress' };
   if (pathname === '/student/practices/history' || pathname.startsWith('/student/practices/history/')) return { file: join(root, 'assessment', '_shell.html'), page: 'history' };
   if (pathname === '/student/practices/recordings' || pathname.startsWith('/student/practices/recordings/')) return { file: join(root, 'assessment', '_shell.html'), page: 'recordings' };
   const practiceAttemptMatch = pathname.match(/^\/student\/practices\/attempts\/([^/]+)(?:\/(.*)|\/?)?$/);
@@ -252,12 +254,15 @@ const server = createServer((req, res) => {
   // it is the non-redirecting compatibility entry for the practice catalog.
   const isAssessmentApplicationRoute = pathname === '/assessment'
     || pathname === '/assessment/'
+    || pathname.startsWith('/assessment/progress')
     || pathname.startsWith('/assessment/history')
     || pathname.startsWith('/assessment/recordings')
     || pathname.startsWith('/assessment/sessions/');
   const isPracticeApplicationRoute = pathname === '/student/practices'
     || pathname.startsWith('/student/practices/');
-  if (isAssessmentApplicationRoute || isPracticeApplicationRoute) {
+  const isStudentProgressApplicationRoute = pathname === '/student/progress'
+    || pathname.startsWith('/student/progress/');
+  if (isAssessmentApplicationRoute || isPracticeApplicationRoute || isStudentProgressApplicationRoute) {
     const spaResult = routeToSpa(pathname);
     const spaFile = typeof spaResult === 'string' ? spaResult : spaResult?.file;
     const spaPage = typeof spaResult === 'string' ? null : spaResult?.page;

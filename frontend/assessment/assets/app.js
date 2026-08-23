@@ -9,6 +9,7 @@
   // 路由约定（由 server.mjs 提供 shell）：
   //   /assessment                                    → center
   //   /assessment/history                            → history
+  //   /student/progress                              → progress
   //   /assessment/recordings                         → recordings
   //   /assessment/sessions/:sessionId                → prep
   //   /assessment/sessions/:sessionId/reading/:itemId → reading
@@ -62,7 +63,8 @@
     processing: SESSION_ID ? `${attemptBase}/processing/` : `${base}/`,
     report: SESSION_ID ? `${attemptBase}/report/` : `${base}/`,
     recordings: isPracticeRoute ? '/student/practices/recordings/' : `${base}/recordings/`,
-    history: isPracticeRoute ? '/student/practices/history/' : `${base}/history/`
+    history: isPracticeRoute ? '/student/practices/history/' : `${base}/history/`,
+    progress: '/student/progress/'
   };
 
   // ── 本地草稿存储（仅用于断网草稿，不用于伪造成功） ──
@@ -90,6 +92,7 @@
     apiWrittenItems: [],
     apiReport: null,
     apiRemediationResult: null,
+    apiProgress: null,
     apiSpeechJob: null,
     apiSpeechJobs: [],
     apiRecordings: [],
@@ -573,7 +576,7 @@
     }
 
     const needsReview = report.summary?.requiresTeacherReview === true || report.summary?.scoringState === 'NEEDS_REVIEW';
-    const content=`<main class="page"><div class="hero-landscape" style="height:220px"></div><section class="report-head"><a class="muted small" href="${routes.center}">‹ 返回练习中心</a><h1 class="page-title" style="margin-top:16px">${session?.type === 'READING' ? '朗读练习' : '综合练习'} ${statusChip(needsReview ? '待教师复核' : '已完成',needsReview ? 'gold' : 'green')}</h1><p class="page-subtitle">科学测评，精准反馈，见证每一次进步</p></section>${needsReview ? `<article class="card notice" style="margin-bottom:13px">${icon('info')} 本报告已展示本次真实模型评分；其中至少一段录音建议由教师复核，复核意见会另行保存。</article>` : ''}<article class="card report-info"><div class="icon red">${icon('mic')}</div><div class="info-cell">数据完整度<b>${report.dataCompleteness != null ? Math.round(report.dataCompleteness) + '%' : '—'}</b></div><div class="info-cell">生成时间<b>${report.generatedAt ? new Date(report.generatedAt).toLocaleString() : '—'}</b></div><div class="info-cell">结果状态<b>${needsReview ? '待教师复核' : '已保存'}</b></div></article><section class="report-grid"><article class="card score-card"><h3 class="card-title" style="color:var(--red)">总体得分</h3><div class="score-number">${report.overallScore != null ? report.overallScore : '—'} <small style="font-size:17px;color:#777">/100</small></div>${statusChip(report.overallScore != null ? (report.overallScore >= 80 ? '良好' : report.overallScore >= 60 ? '中等' : '需提升') : '等待复核', 'green')}<p class="muted small">${report.summary?.text || (report.recommendations?.text || '基于本次已完成评分的真实结果。')}</p></article>${report.readingScore != null ? metricCard('wave','朗读得分',report.readingScore,'基于本次朗读录音的实际评分','green') : ''}${report.writtenScore != null ? metricCard('book','书面得分',report.writtenScore,'基于已完成评分的书面作答','green') : ''}</section>${report.recommendations ? `<section class="report-bottom"><article class="card"><h2 class="card-title">推荐练习</h2>${Array.isArray(report.recommendations) ? report.recommendations.map(r => `<div class="recommend-item"><div><strong>${typeof r === 'string' ? r : (r.title || r.text || JSON.stringify(r))}</strong><p class="muted small">基于本次报告的个性化建议</p></div></div>`).join('') : `<p class="muted">${typeof report.recommendations === 'string' ? report.recommendations : JSON.stringify(report.recommendations)}</p>`}</article></section>` : ''}<section class="report-bottom"><article class="card"><h2 class="card-title">练习档案</h2><p class="muted">录音、报告与历史记录已按本次练习保存。</p><div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="${routes.recordings}">${icon('wave')} 我的录音</a><a class="btn primary" href="${routes.history}">${icon('chart')} 历史记录</a></div></article></section></main>`;
+    const content=`<main class="page"><div class="hero-landscape" style="height:220px"></div><section class="report-head"><a class="muted small" href="${routes.center}">‹ 返回练习中心</a><h1 class="page-title" style="margin-top:16px">${session?.type === 'READING' ? '朗读练习' : '综合练习'} ${statusChip(needsReview ? '待教师复核' : '已完成',needsReview ? 'gold' : 'green')}</h1><p class="page-subtitle">科学测评，精准反馈，见证每一次进步</p></section>${needsReview ? `<article class="card notice" style="margin-bottom:13px">${icon('info')} 本报告已展示本次真实模型评分；其中至少一段录音建议由教师复核，复核意见会另行保存。</article>` : ''}<article class="card report-info"><div class="icon red">${icon('mic')}</div><div class="info-cell">数据完整度<b>${report.dataCompleteness != null ? Math.round(report.dataCompleteness) + '%' : '—'}</b></div><div class="info-cell">生成时间<b>${report.generatedAt ? new Date(report.generatedAt).toLocaleString() : '—'}</b></div><div class="info-cell">结果状态<b>${needsReview ? '待教师复核' : '已保存'}</b></div></article><section class="report-grid"><article class="card score-card"><h3 class="card-title" style="color:var(--red)">总体得分</h3><div class="score-number">${report.overallScore != null ? report.overallScore : '—'} <small style="font-size:17px;color:#777">/100</small></div>${statusChip(report.overallScore != null ? (report.overallScore >= 80 ? '良好' : report.overallScore >= 60 ? '中等' : '需提升') : '等待复核', 'green')}<p class="muted small">${report.summary?.text || (report.recommendations?.text || '基于本次已完成评分的真实结果。')}</p></article>${report.readingScore != null ? metricCard('wave','朗读得分',report.readingScore,'基于本次朗读录音的实际评分','green') : ''}${report.writtenScore != null ? metricCard('book','书面得分',report.writtenScore,'基于已完成评分的书面作答','green') : ''}</section>${report.recommendations ? `<section class="report-bottom"><article class="card"><h2 class="card-title">推荐练习</h2>${Array.isArray(report.recommendations) ? report.recommendations.map(r => `<div class="recommend-item"><div><strong>${typeof r === 'string' ? r : (r.title || r.text || JSON.stringify(r))}</strong><p class="muted small">基于本次报告的个性化建议</p></div></div>`).join('') : `<p class="muted">${typeof report.recommendations === 'string' ? report.recommendations : JSON.stringify(report.recommendations)}</p>`}</article></section>` : ''}<section class="report-bottom"><article class="card"><h2 class="card-title">练习档案</h2><p class="muted">录音、报告与历史记录已按本次练习保存。</p><div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="${routes.recordings}">${icon('wave')} 我的录音</a><a class="btn" href="${routes.history}">${icon('chart')} 历史记录</a><a class="btn primary" href="${routes.progress}">${icon('trend')} 查看学习进步</a></div></article></section></main>`;
     return shell(content.replace('</main>', `${diagnosisPanel(report.diagnosis)}</main>`));
   }
   function renderRemediationResult(session, result){
@@ -585,7 +588,7 @@
     const familyRows = (result.families || []).map(family => `<div class="recommend-item"><div><strong>${safe(family.family)}</strong><p class="muted small">${safe(family.earnedPoints)} / ${safe(family.maxPoints)} · ${percentValue(family.percentage)} · ${safe(family.itemCount)} 题</p></div></div>`).join('') || '<p class="muted">暂无可显示的题型汇总。</p>';
     const itemRows = (result.items || []).map((item, index) => `<div class="item-card"><h4>第 ${index + 1} 题 · ${safe(item.itemType)}</h4><p>${item.completed ? `本题得分 ${safe(item.earnedPoints)} / ${safe(item.maxPoints)}` : `等待评分 · 满分 ${safe(item.maxPoints)}`}</p></div>`).join('');
     const actions = completed
-      ? `<button class="btn primary" data-repeat-remediation data-source-session-id="${safe(result.sourceSessionId)}">${icon('refresh')} 再练一次</button><a class="btn" href="/student/practices/attempts/${encodeURIComponent(result.sourceSessionId)}/report/">${icon('left')} 返回测评报告</a>`
+      ? `<button class="btn primary" data-repeat-remediation data-source-session-id="${safe(result.sourceSessionId)}">${icon('refresh')} 再练一次</button><a class="btn" href="/student/practices/attempts/${encodeURIComponent(result.sourceSessionId)}/report/">${icon('left')} 返回测评报告</a><a class="btn" href="${routes.progress}">${icon('trend')} 查看学习进步</a>`
       : `<a class="btn primary" href="${routes.processing}">${icon('clock')} 查看处理状态</a><button class="btn" data-retry>${icon('refresh')} 刷新结果</button>`;
     return shell(`<main class="page"><div class="hero-landscape" style="height:220px"></div><section class="report-head"><a class="muted small" href="${routes.center}">‹ 返回练习中心</a><h1 class="page-title" style="margin-top:16px">本次巩固 ${statusChip(completed ? '已完成' : result.status || '处理中', completed ? 'green' : 'gold')}</h1><p class="page-subtitle">这是本次重练的完成情况，不是正式测评总分。</p></section><section class="report-grid"><article class="card score-card"><h3 class="card-title" style="color:var(--red)">本次巩固</h3><div class="score-number">${safe(result.earnedPoints)} <small style="font-size:17px;color:#777">/ ${safe(result.maxPoints)}</small></div>${statusChip(percent, completed ? 'green' : 'gold')}<p class="muted small">已完成评分 ${safe(result.completedItemCount)} / ${safe(result.itemCount)} 题；待评分 ${safe(result.pendingItemCount)} 题。</p></article><article class="card metric-card"><h3>专项题型</h3>${familyRows}</article></section><section class="report-bottom"><article class="card"><h2 class="card-title">题目完成情况</h2><p class="muted small">仅展示本题得分与评分状态，不展示标准答案或评分规则。</p><div class="item-grid" style="margin-top:14px">${itemRows}</div></article></section><section class="report-bottom"><article class="card"><h2 class="card-title">继续学习</h2><p class="muted">${completed ? '可以再次巩固同一批需要优先重练的题目，正式测评结果保持不变。' : '完成教师复核后会在这里显示本次巩固结果。'}</p><div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px">${actions}</div></article></section></main>`);
   }
@@ -630,6 +633,43 @@
 
     const content=`<main class="page"><div class="hero-landscape" style="height:220px"></div><section class="hero-head" style="min-height:130px"><h1 class="page-title">历史测评</h1><p class="page-subtitle">回顾成长轨迹，发现进步亮点，持续精进表达能力</p></section><section class="history-layout"><div><div class="history-summary"><article class="card"><div class="icon red">${icon('assessment')}</div><small>总测评次数</small><b style="display:block;font-size:32px">${history.totalSessions || sessions.length}</b><span class="muted small">${sessions.length > 0 ? `最近一次：${new Date(sessions[0].completedAt).toLocaleDateString()}` : '暂无记录'}</span></article><article class="card"><div class="icon">${icon('refresh')}</div><small>最近一次成绩</small><b style="display:block;font-size:32px">${sessions[0]?.metrics?.overall ?? '—'}</b><span class="muted small">${sessions[0]?.completedAt ? new Date(sessions[0].completedAt).toLocaleDateString() : ''}</span></article></div>${sessions.length === 0 ? `<article class="card" style="padding:40px;text-align:center"><div class="icon" style="margin:0 auto 16px;width:48px;height:48px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#eef0ec">${icon('info')}</div><p class="muted">暂无已完成的测评。完成测评后这里会显示历史记录与成长趋势。</p></article>` : `<article class="card table-card history-list"><div class="card-pad"><h2 class="card-title">测评历史记录</h2></div><table class="data-table"><thead><tr><th>完成日期</th><th>测评类型</th><th>朗读分</th><th>书面分</th><th>总分</th><th>操作</th></tr></thead><tbody>${sessions.map(s => `<tr><td>${s.completedAt ? new Date(s.completedAt).toLocaleDateString() : '—'}</td><td><b>${s.type === 'READING' ? '朗读测评' : s.type === 'WRITTEN' ? '书面测评' : '综合测评'}</b></td><td>${s.metrics?.reading ?? '—'}</td><td>${s.metrics?.written ?? '—'}</td><td><b>${s.metrics?.overall ?? '—'}</b></td><td><a class="btn ghost" href="${isPracticeRoute ? `/student/practices/attempts/${s.sessionId}/report/` : `${base}/sessions/${s.sessionId}/report/`}">查看报告</a></td></tr>`).join('')}</tbody></table></article>`}</div><aside class="history-side"><article class="card retest"><div class="section-title"><h2>安排复测</h2><div class="icon">${icon('calendar')}</div></div><p class="muted">复测由教师在学校端发起，学生端仅可查看安排结果。</p><p class="muted small">如需复测，请联系教师。</p></article></aside></section></main>`;
     return shell(content);
+  }
+
+  function progressDeltaWording(delta) {
+    if (typeof delta !== 'number' || !Number.isFinite(delta)) return '这是当前学习基线，再完成一次同水平测评后可以看到变化。';
+    if (delta > 0) return `比上次提高 ${Math.abs(delta)} 分`;
+    if (delta < 0) return `本次比上次少 ${Math.abs(delta)} 分`;
+    return '与上次保持一致';
+  }
+  function progressReportHref(sessionId) { return `/student/practices/attempts/${encodeURIComponent(sessionId)}/report/`; }
+  function progressDomainRows(trend) {
+    if (!trend) return '<p class="muted small">完成第二次同水平测评后，这里会显示听、说、读、写的变化。</p>';
+    const entries = [...(trend.improvedDomains || []), ...(trend.stableDomains || []), ...(trend.needsAttentionDomains || [])];
+    return entries.length ? `<div class="progress-change-list">${entries.map(entry => `<div><strong>${safe(entry.displayName)}</strong><span>${percentValue(entry.previousPercentage)} → ${percentValue(entry.currentPercentage)}</span><b class="${entry.deltaPercentagePoints > 0 ? 'positive' : entry.deltaPercentagePoints < 0 ? 'attention' : 'stable'}">${entry.deltaPercentagePoints > 0 ? '+' : ''}${safe(entry.deltaPercentagePoints)} 个百分点</b></div>`).join('')}</div>` : '<p class="muted small">两次测评没有可比较的领域数据。</p>';
+  }
+  function progressFamilyRows(trend) {
+    if (!trend) return '';
+    const entries = [...(trend.improvedFamilies || []), ...(trend.stableFamilies || []), ...(trend.needsAttentionFamilies || [])];
+    return entries.length ? `<div class="progress-family-list">${entries.map(entry => `<span>${safe(entry.displayName)} ${entry.deltaPercentagePoints > 0 ? '+' : ''}${safe(entry.deltaPercentagePoints)} 个百分点</span>`).join('')}</div>` : '';
+  }
+  function renderProgress(){
+    if (!apiEnabled && !demoMode) return renderApiDisabled('学习进步需要登录后端服务。');
+    if (appState._loadingProgress) return renderLoading('正在整理学习进步…');
+    if (appState._progressError) return renderError('加载学习进步失败', { detail: appState._progressError, retry: true, back: routes.center });
+    const progress = appState.apiProgress;
+    if (!progress || progress.state === 'EMPTY_STATE') {
+      return shell(`<main class="page"><div class="hero-landscape" style="height:220px"></div><section class="hero-head" style="min-height:150px"><h1 class="page-title">学习进步</h1><p class="page-subtitle">正式测评趋势和专项巩固记录会在这里分别展示。</p></section><article class="card progress-empty"><div class="icon" style="margin:0 auto 16px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#eef0ec">${icon('trend')}</div><h2>还没有可展示的学习进步</h2><p class="muted">完成一次题库正式测评后，这里会保存你的学习基线；完成同一水平的下一次测评后，才能看到同水平变化。</p><a class="btn primary" href="${routes.center}">前往练习中心 ${icon('arrow')}</a></article></main>`);
+    }
+    const latest = progress.latest;
+    const formalCards = (progress.formalLevels || []).map(level => {
+      const attempts = level.attempts || [];
+      const attemptLinks = attempts.map((attempt, index) => `<a class="progress-attempt" data-progress-formal-session="${safe(attempt.sessionId)}" href="${progressReportHref(attempt.sessionId)}"><span>第 ${index + 1} 次</span><b>${safe(attempt.overallScore)} 分</b><small>${attempt.completedAt ? new Date(attempt.completedAt).toLocaleDateString() : ''}</small></a>`).join('');
+      const baselineAction = level.comparisonState === 'BASELINE_ONLY' ? `<a class="btn" href="/student/practices/${encodeURIComponent(level.practiceDefinitionId)}/">再次测评 ${icon('arrow')}</a>` : '';
+      return `<article class="card progress-level"><div class="section-title"><div><h2>${safe(level.level)}正式测评趋势</h2><p class="muted small">只比较同一水平的正式测评；不同水平只作为学习里程碑。</p></div>${statusChip(`${safe(level.attemptCount)} 次正式测评`, 'green')}</div><div class="progress-score-row"><div><small>首次</small><b>${safe(level.firstScore)} 分</b></div><div><small>最近</small><b>${safe(level.latestScore)} 分</b></div><div><small>最好</small><b>${safe(level.bestScore)} 分</b></div><div class="progress-delta ${typeof level.latestVsPrevious === 'number' && level.latestVsPrevious > 0 ? 'positive' : ''}">${progressDeltaWording(level.latestVsPrevious)}</div></div>${level.practiceVersionChanged ? `<div class="notice" style="margin-top:12px">${icon('info')} 测评内容版本已更新；本卡仍展示同一水平的正式测评趋势，不把它解释为同一套题逐题提升。</div>` : ''}<div class="progress-attempts">${attemptLinks}</div><section class="progress-skill-grid"><div><h3>听说读写变化</h3>${progressDomainRows(level.domainTrend)}</div><div><h3>题型变化</h3>${progressFamilyRows(level.familyTrend) || '<p class="muted small">完成第二次同水平测评后，会显示可比较题型的百分比变化。</p>'}</div></section><div style="margin-top:16px">${baselineAction}</div></article>`;
+    }).join('');
+    const remediationCards = (progress.remediation || []).map(entry => `<article class="card progress-remediation"><div class="section-title"><div><h2>${safe(entry.level)}专项巩固</h2><p class="muted small">只比较与原正式测评中相同 questionVersion 的题目，不代表总体语言能力分数。</p></div>${statusChip(`共 ${safe(entry.totalRounds)} 轮`, 'gold')}</div><div class="progress-remediation-summary"><div><small>本次专项巩固</small><b>${safe(entry.latestRound.itemCount)} 道题，${safe(entry.latestRound.masteredCount)} 道已掌握</b></div><div><small>比原测评</small><b>追回 ${safe(entry.latestRecoveredPoints)} 分</b></div><div><small>原测评待补分</small><b>${safe(entry.baselineLostPoints)} 分</b></div></div><div class="progress-rounds">${(entry.rounds || []).map(round => `<a data-progress-remediation-round="${safe(round.sessionId)}" href="${progressReportHref(round.sessionId)}"><strong>第 ${safe(round.round)} 轮</strong><span>${safe(round.itemCount)} 道题，${safe(round.masteredCount)} 道已掌握</span><b>追回 ${safe(round.recoveredPoints)} 分</b></a>`).join('')}</div></article>`).join('') || '<article class="card progress-empty"><h2>还没有专项巩固记录</h2><p class="muted">完成正式测评后的专项巩固，会在这里按原题逐轮展示。</p></article>';
+    const milestones = (progress.milestones || []).map(milestone => `<div class="progress-milestone"><i></i><div><strong>${safe(milestone.label)}</strong><p class="muted small">${milestone.occurredAt ? new Date(milestone.occurredAt).toLocaleString() : ''}</p></div></div>`).join('');
+    return shell(`<main class="page"><div class="hero-landscape" style="height:220px"></div><section class="hero-head" style="min-height:150px"><h1 class="page-title">学习进步</h1><p class="page-subtitle">把正式测评趋势和专项巩固记录分开看，了解每一步真实变化。</p></section><section class="progress-overview"><article class="card"><small>当前最近完成水平</small><h2>${safe(latest?.level || '—')}</h2><p class="muted">最近正式成绩 ${safe(latest?.formal?.overallScore ?? '—')} 分 · ${progressDeltaWording(latest?.formal?.latestVsPrevious)}</p>${latest?.remediation ? `<p class="muted">最近专项巩固：${safe(latest.remediation.itemCount)} 道题，${safe(latest.remediation.masteredCount)} 道已掌握，追回 ${safe(latest.remediation.recoveredPoints)} 分。</p>` : ''}</article></section><section class="progress-stack">${formalCards}</section><section class="progress-stack"><h2 class="card-title">专项巩固记录</h2>${remediationCards}</section><section class="progress-stack"><article class="card progress-milestones"><h2 class="card-title">学习里程碑</h2><p class="muted small">不同水平按完成时间记录，不生成跨水平分数变化。</p>${milestones}</article></section></main>`);
   }
 
   function bindCommon(){
@@ -1248,6 +1288,10 @@
 
   function bindHistory(){}
 
+  function bindProgress(){
+    document.querySelector('[data-retry]')?.addEventListener('click', loadProgress);
+  }
+
   function bindRecordings(){
     document.querySelector('[data-retry]')?.addEventListener('click', loadRecordings);
     document.querySelectorAll('[data-play-recording]').forEach((button) => button.addEventListener('click', async () => {
@@ -1493,6 +1537,23 @@
     }
   }
 
+  async function loadProgress() {
+    if (!apiEnabled) return;
+    appState._loadingProgress = true;
+    appState._progressError = null;
+    renderCurrent();
+    try {
+      appState.apiProgress = await Api.getQuestionBankProgress();
+    } catch (err) {
+      console.error('[assessment] 加载学习进步失败:', err);
+      appState._progressError = err.message || String(err);
+    } finally {
+      appState._loadingProgress = false;
+      saveState();
+      renderCurrent();
+    }
+  }
+
   async function loadRecordings() {
     if (!apiEnabled) return;
     appState._loadingRecordings = true;
@@ -1519,7 +1580,8 @@
     processing:renderProcessing,
     report:renderReport,
     recordings:renderRecordings,
-    history:renderHistory
+    history:renderHistory,
+    progress:renderProgress
   };
   function renderCurrent(){
     if(waveAnim)cancelAnimationFrame(waveAnim);
@@ -1528,7 +1590,7 @@
     const renderer=renderers[page]||renderCenter;
     document.getElementById('app').innerHTML=renderer();
     bindCommon();
-    ({prep:bindPrep,reading:bindReading,written:bindWritten,submit:bindSubmit,report:bindReport,recordings:bindRecordings,history:bindHistory}[page]||(()=>{}))();
+    ({prep:bindPrep,reading:bindReading,written:bindWritten,submit:bindSubmit,report:bindReport,recordings:bindRecordings,history:bindHistory,progress:bindProgress}[page]||(()=>{}))();
   }
 
   // ── 入口：首次渲染 + 触发对应数据加载 ──
@@ -1544,5 +1606,6 @@
     else if (page === 'report') loadReport();
     else if (page === 'recordings') loadRecordings();
     else if (page === 'history') loadHistory();
+    else if (page === 'progress') loadProgress();
   }
 })();

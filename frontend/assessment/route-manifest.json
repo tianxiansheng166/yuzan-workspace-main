@@ -10,6 +10,7 @@
     {"name":"提交前检查","path":"/assessment/sessions/:sessionId/submit/","page":"submit"},
     {"name":"处理中","path":"/assessment/sessions/:sessionId/processing/","page":"processing"},
     {"name":"正式报告","path":"/assessment/sessions/:sessionId/report/","page":"report"},
+    {"name":"学习进步","path":"/student/progress/","page":"progress"},
     {"name":"我的录音","path":"/assessment/recordings/","page":"recordings"},
     {"name":"历史测评","path":"/assessment/history/","page":"history"}
   ],

@@ -888,6 +888,9 @@
   async function getAssessmentRemediationResult(sessionId) {
     return request(`/schools/${getActiveSchoolId()}/assessments/sessions/${encodeURIComponent(sessionId)}/remediation-result`);
   }
+  async function getQuestionBankProgress() {
+    return request(`/schools/${getActiveSchoolId()}/students/me/question-bank-progress`);
+  }
   async function createAssessmentSession(payload) {
     return request(`/schools/${getActiveSchoolId()}/assessments/sessions`, {
       method: 'POST',
@@ -1306,6 +1309,7 @@
     getAssessmentSession,
     createAssessmentRemediation,
     getAssessmentRemediationResult,
+    getQuestionBankProgress,
     createAssessmentSession,
     startAssessmentSession,
     submitAssessmentSession,
