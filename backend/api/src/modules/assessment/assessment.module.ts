@@ -16,15 +16,18 @@ import { AssessmentReviewController } from "./assessment-review.controller.js";
 import { AssessmentReviewService } from "./assessment-review.service.js";
 import { QuestionBankProgressController } from "./question-bank-progress.controller.js";
 import { QuestionBankProgressService } from "./question-bank-progress.service.js";
+import { TeacherQuestionBankDiagnosticController } from "./teacher-question-bank-diagnostic.controller.js";
+import { TeacherQuestionBankDiagnosticService } from "./teacher-question-bank-diagnostic.service.js";
 
 @Module({
-  controllers: [AssessmentSessionController, AssessmentDeviceController, PracticeController, AssessmentReviewController, QuestionBankProgressController],
+  controllers: [AssessmentSessionController, AssessmentDeviceController, PracticeController, AssessmentReviewController, QuestionBankProgressController, TeacherQuestionBankDiagnosticController],
   providers: [
     AssessmentService,
     PracticeService,
     QuestionBankDeterministicScoringService,
     AssessmentReviewService,
     QuestionBankProgressService,
+    TeacherQuestionBankDiagnosticService,
     {
       provide: ASSESSMENT_SESSION_REPOSITORY,
       useClass: PrismaAssessmentSessionRepository,

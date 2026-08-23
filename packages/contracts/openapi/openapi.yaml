@@ -1271,6 +1271,73 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "409":
           $ref: "#/components/responses/Conflict"
+  /schools/{schoolId}/teacher/question-bank-diagnostics:
+    get:
+      summary: 获取当前教师可访问班级与正式题库测评
+      tags: [Assessments]
+      operationId: getTeacherQuestionBankDiagnosticCatalog
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+      responses:
+        "200":
+          description: 教师诊断看板可选择的班级和正式题库测评
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TeacherQuestionBankDiagnosticCatalogResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+  /schools/{schoolId}/teacher/question-bank-diagnostics/classes/{classId}:
+    get:
+      summary: 获取一个班级、一个正式题库水平的诊断看板
+      tags: [Assessments]
+      operationId: getTeacherQuestionBankDiagnosticDashboard
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/ClassId"
+        - in: query
+          name: practiceDefinitionId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: 班级正式测评诊断；不含学生间排名或作答证据
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TeacherQuestionBankDiagnosticDashboardResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+  /schools/{schoolId}/teacher/question-bank-diagnostics/classes/{classId}/students/{enrollmentId}:
+    get:
+      summary: 获取当前教师受权班级内学生的题库诊断详情
+      tags: [Assessments]
+      operationId: getTeacherQuestionBankDiagnosticStudentDetail
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/ClassId"
+        - $ref: "#/components/parameters/EnrollmentId"
+        - in: query
+          name: practiceDefinitionId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: 安全的教师学生诊断详情，不含答案、量表或语音原始证据
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TeacherQuestionBankDiagnosticStudentDetailResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "400":
+          $ref: "#/components/responses/BadRequest"
   /schools/{schoolId}/assessments/sessions/{sourceSessionId}/remediation:
     post:
       summary: 基于已完成正式题库诊断创建或恢复专项巩固练习
@@ -4828,6 +4895,321 @@ components:
         guidance: { type: string }
         meta:
           $ref: "#/components/schemas/EnvelopeMeta"
+    TeacherQuestionBankDiagnosticCatalogResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          $ref: "#/components/schemas/TeacherQuestionBankDiagnosticCatalog"
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
+    TeacherQuestionBankDiagnosticCatalog:
+      type: object
+      required: [availableClasses, availablePractices]
+      properties:
+        availableClasses:
+          type: array
+          items:
+            $ref: "#/components/schemas/TeacherDiagnosticClass"
+        availablePractices:
+          type: array
+          items:
+            $ref: "#/components/schemas/TeacherDiagnosticPractice"
+    TeacherDiagnosticClass:
+      type: object
+      required: [classId, className, grade, activeStudentCount]
+      properties:
+        classId: { type: string, format: uuid }
+        className: { type: string }
+        grade: { type: string }
+        activeStudentCount: { type: integer, minimum: 0 }
+    TeacherDiagnosticPractice:
+      type: object
+      required:
+        [practiceDefinitionId, title, difficulty, latestPublishedVersionId]
+      properties:
+        practiceDefinitionId: { type: string, format: uuid }
+        title: { type: string }
+        difficulty: { type: string }
+        latestPublishedVersionId: { type: string, format: uuid }
+    TeacherQuestionBankDiagnosticDashboardResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          $ref: "#/components/schemas/TeacherQuestionBankDiagnosticDashboard"
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
+    TeacherQuestionBankDiagnosticDashboard:
+      type: object
+      required:
+        [
+          class,
+          practice,
+          summary,
+          domains,
+          families,
+          commonDifficulties,
+          strengths,
+          students,
+        ]
+      properties:
+        class:
+          $ref: "#/components/schemas/TeacherDiagnosticClassIdentity"
+        practice:
+          $ref: "#/components/schemas/TeacherDiagnosticPractice"
+        summary:
+          $ref: "#/components/schemas/TeacherDiagnosticSummary"
+        domains:
+          type: array
+          items: { $ref: "#/components/schemas/TeacherDiagnosticDomain" }
+        families:
+          type: array
+          items: { $ref: "#/components/schemas/TeacherDiagnosticFamily" }
+        commonDifficulties:
+          type: array
+          maxItems: 3
+          items: { $ref: "#/components/schemas/TeacherDiagnosticFamily" }
+        strengths:
+          type: array
+          maxItems: 2
+          items: { $ref: "#/components/schemas/TeacherDiagnosticFamily" }
+        students:
+          type: array
+          items: { $ref: "#/components/schemas/TeacherDiagnosticStudent" }
+    TeacherDiagnosticClassIdentity:
+      type: object
+      required: [classId, className, grade]
+      properties:
+        classId: { type: string, format: uuid }
+        className: { type: string }
+        grade: { type: string }
+    TeacherDiagnosticSummary:
+      type: object
+      required:
+        [
+          eligibleStudents,
+          assessedStudents,
+          inProgressStudents,
+          notAssessedStudents,
+          coveragePercentage,
+          averageScore,
+          improvedStudentCount,
+          needsAttentionStudentCount,
+          pendingReviewItemCount,
+          pendingReviewStudentCount,
+          dataQualityIssueCount,
+          versionMixed,
+        ]
+      properties:
+        eligibleStudents: { type: integer, minimum: 0 }
+        assessedStudents: { type: integer, minimum: 0 }
+        inProgressStudents: { type: integer, minimum: 0 }
+        notAssessedStudents: { type: integer, minimum: 0 }
+        coveragePercentage: { type: number, minimum: 0, maximum: 100 }
+        averageScore: { type: [number, "null"], minimum: 0, maximum: 100 }
+        improvedStudentCount: { type: integer, minimum: 0 }
+        needsAttentionStudentCount: { type: integer, minimum: 0 }
+        pendingReviewItemCount: { type: integer, minimum: 0 }
+        pendingReviewStudentCount: { type: integer, minimum: 0 }
+        dataQualityIssueCount: { type: integer, minimum: 0 }
+        versionMixed: { type: boolean }
+    TeacherDiagnosticDomain:
+      type: object
+      required: [domain, displayName, studentCount, averagePercentage]
+      properties:
+        domain: { type: string, enum: [LISTEN, SPEAK, READ, WRITE] }
+        displayName: { type: string }
+        studentCount: { type: integer, minimum: 0 }
+        averagePercentage: { type: [number, "null"], minimum: 0, maximum: 100 }
+    TeacherDiagnosticFamily:
+      type: object
+      required:
+        [
+          family,
+          displayName,
+          domain,
+          domainDisplayName,
+          studentCount,
+          averagePercentage,
+          priorityStudentCount,
+        ]
+      properties:
+        family:
+          {
+            type: string,
+            enum:
+              [
+                LISTEN_IMAGE_CHOICE,
+                DICTATION,
+                READ_ALOUD,
+                PICTURE_SPEAKING,
+                WORD_RECOGNITION,
+                SENTENCE_COMPREHENSION,
+                PICTURE_WORD,
+                SENTENCE_COMPLETION,
+              ],
+          }
+        displayName: { type: string }
+        domain:
+          { type: [string, "null"], enum: [LISTEN, SPEAK, READ, WRITE, null] }
+        domainDisplayName: { type: [string, "null"] }
+        studentCount: { type: integer, minimum: 0 }
+        averagePercentage: { type: [number, "null"], minimum: 0, maximum: 100 }
+        priorityStudentCount: { type: integer, minimum: 0 }
+    TeacherDiagnosticPriority:
+      type: object
+      required: [family, displayName, domain, domainDisplayName, percentage]
+      properties:
+        family:
+          {
+            type: string,
+            enum:
+              [
+                LISTEN_IMAGE_CHOICE,
+                DICTATION,
+                READ_ALOUD,
+                PICTURE_SPEAKING,
+                WORD_RECOGNITION,
+                SENTENCE_COMPREHENSION,
+                PICTURE_WORD,
+                SENTENCE_COMPLETION,
+              ],
+          }
+        displayName: { type: string }
+        domain: { type: string, enum: [LISTEN, SPEAK, READ, WRITE] }
+        domainDisplayName: { type: string }
+        percentage: { type: number, minimum: 0, maximum: 100 }
+    TeacherDiagnosticRemediationSummary:
+      type: object
+      required:
+        [
+          completedRounds,
+          latestRoundItemCount,
+          latestMasteredCount,
+          latestPercentage,
+        ]
+      properties:
+        completedRounds: { type: integer, minimum: 1 }
+        latestRoundItemCount: { type: integer, minimum: 1 }
+        latestMasteredCount: { type: integer, minimum: 0 }
+        latestPercentage: { type: number, minimum: 0, maximum: 100 }
+    TeacherDiagnosticStudent:
+      type: object
+      required:
+        [
+          enrollmentId,
+          displayName,
+          latestSessionId,
+          latestScore,
+          completedAt,
+          comparisonState,
+          latestVsPrevious,
+          topPriority,
+          remediationSummary,
+          pendingReviewCount,
+          needsAttention,
+          state,
+        ]
+      properties:
+        enrollmentId: { type: string, format: uuid }
+        displayName: { type: string }
+        latestSessionId: { type: [string, "null"], format: uuid }
+        latestScore: { type: [number, "null"], minimum: 0, maximum: 100 }
+        completedAt: { type: [string, "null"], format: date-time }
+        comparisonState:
+          { type: string, enum: [NOT_ASSESSED, BASELINE_ONLY, COMPARABLE] }
+        latestVsPrevious: { type: [number, "null"] }
+        topPriority:
+          oneOf:
+            - type: object
+              required: [family, displayName]
+              properties:
+                family: { type: string }
+                displayName: { type: string }
+            - type: "null"
+        remediationSummary:
+          oneOf:
+            - $ref: "#/components/schemas/TeacherDiagnosticRemediationSummary"
+            - type: "null"
+        pendingReviewCount: { type: integer, minimum: 0 }
+        needsAttention: { type: boolean }
+        state:
+          {
+            type: string,
+            enum: [NOT_ASSESSED, IN_PROGRESS, COMPLETED, NEEDS_ATTENTION],
+          }
+    TeacherQuestionBankDiagnosticStudentDetailResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          $ref: "#/components/schemas/TeacherQuestionBankDiagnosticStudentDetail"
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
+    TeacherQuestionBankDiagnosticStudentDetail:
+      allOf:
+        - $ref: "#/components/schemas/TeacherDiagnosticStudent"
+        - type: object
+          required:
+            [
+              formalHistory,
+              latestDiagnosis,
+              domainTrend,
+              familyPriorities,
+              remediationRounds,
+            ]
+          properties:
+            formalHistory:
+              type: array
+              items: { $ref: "#/components/schemas/QuestionBankFormalAttempt" }
+            latestDiagnosis:
+              oneOf:
+                - type: object
+                  required: [domains, priorities]
+                  properties:
+                    domains:
+                      type: array
+                      items:
+                        {
+                          $ref: "#/components/schemas/TeacherDiagnosticSafeDomain",
+                        }
+                    priorities:
+                      type: array
+                      items:
+                        {
+                          $ref: "#/components/schemas/TeacherDiagnosticPriority",
+                        }
+                - type: "null"
+            domainTrend:
+              oneOf:
+                - $ref: "#/components/schemas/QuestionBankDomainTrend"
+                - type: "null"
+            familyPriorities:
+              type: array
+              items: { $ref: "#/components/schemas/TeacherDiagnosticPriority" }
+            remediationRounds:
+              type: array
+              items:
+                {
+                  $ref: "#/components/schemas/TeacherDiagnosticRemediationRound",
+                }
+    TeacherDiagnosticSafeDomain:
+      type: object
+      required: [domain, displayName, percentage]
+      properties:
+        domain: { type: string, enum: [LISTEN, SPEAK, READ, WRITE] }
+        displayName: { type: string }
+        percentage: { type: number, minimum: 0, maximum: 100 }
+    TeacherDiagnosticRemediationRound:
+      type: object
+      required: [sessionId, completedAt, itemCount, masteredCount, percentage]
+      properties:
+        sessionId: { type: string, format: uuid }
+        completedAt: { type: [string, "null"], format: date-time }
+        itemCount: { type: integer, minimum: 1 }
+        masteredCount: { type: integer, minimum: 0 }
+        percentage: { type: number, minimum: 0, maximum: 100 }
     QuestionBankProgressResponse:
       type: object
       required: [data, meta]

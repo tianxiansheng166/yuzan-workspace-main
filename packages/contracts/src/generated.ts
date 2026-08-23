@@ -723,6 +723,57 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/schools/{schoolId}/teacher/question-bank-diagnostics": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 获取当前教师可访问班级与正式题库测评 */
+    get: operations["getTeacherQuestionBankDiagnosticCatalog"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/teacher/question-bank-diagnostics/classes/{classId}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 获取一个班级、一个正式题库水平的诊断看板 */
+    get: operations["getTeacherQuestionBankDiagnosticDashboard"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/teacher/question-bank-diagnostics/classes/{classId}/students/{enrollmentId}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 获取当前教师受权班级内学生的题库诊断详情 */
+    get: operations["getTeacherQuestionBankDiagnosticStudentDetail"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/schools/{schoolId}/assessments/sessions/{sourceSessionId}/remediation": {
     parameters: {
       query?: never;
@@ -2688,6 +2739,164 @@ export interface components {
       levels: string[];
       guidance: string;
       meta?: components["schemas"]["EnvelopeMeta"];
+    };
+    TeacherQuestionBankDiagnosticCatalogResponse: {
+      data: components["schemas"]["TeacherQuestionBankDiagnosticCatalog"];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    TeacherQuestionBankDiagnosticCatalog: {
+      availableClasses: components["schemas"]["TeacherDiagnosticClass"][];
+      availablePractices: components["schemas"]["TeacherDiagnosticPractice"][];
+    };
+    TeacherDiagnosticClass: {
+      /** Format: uuid */
+      classId: string;
+      className: string;
+      grade: string;
+      activeStudentCount: number;
+    };
+    TeacherDiagnosticPractice: {
+      /** Format: uuid */
+      practiceDefinitionId: string;
+      title: string;
+      difficulty: string;
+      /** Format: uuid */
+      latestPublishedVersionId: string;
+    };
+    TeacherQuestionBankDiagnosticDashboardResponse: {
+      data: components["schemas"]["TeacherQuestionBankDiagnosticDashboard"];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    TeacherQuestionBankDiagnosticDashboard: {
+      class: components["schemas"]["TeacherDiagnosticClassIdentity"];
+      practice: components["schemas"]["TeacherDiagnosticPractice"];
+      summary: components["schemas"]["TeacherDiagnosticSummary"];
+      domains: components["schemas"]["TeacherDiagnosticDomain"][];
+      families: components["schemas"]["TeacherDiagnosticFamily"][];
+      commonDifficulties: components["schemas"]["TeacherDiagnosticFamily"][];
+      strengths: components["schemas"]["TeacherDiagnosticFamily"][];
+      students: components["schemas"]["TeacherDiagnosticStudent"][];
+    };
+    TeacherDiagnosticClassIdentity: {
+      /** Format: uuid */
+      classId: string;
+      className: string;
+      grade: string;
+    };
+    TeacherDiagnosticSummary: {
+      eligibleStudents: number;
+      assessedStudents: number;
+      inProgressStudents: number;
+      notAssessedStudents: number;
+      coveragePercentage: number;
+      averageScore: number | null;
+      improvedStudentCount: number;
+      needsAttentionStudentCount: number;
+      pendingReviewItemCount: number;
+      pendingReviewStudentCount: number;
+      dataQualityIssueCount: number;
+      versionMixed: boolean;
+    };
+    TeacherDiagnosticDomain: {
+      /** @enum {string} */
+      domain: "LISTEN" | "SPEAK" | "READ" | "WRITE";
+      displayName: string;
+      studentCount: number;
+      averagePercentage: number | null;
+    };
+    TeacherDiagnosticFamily: {
+      /** @enum {string} */
+      family:
+        | "LISTEN_IMAGE_CHOICE"
+        | "DICTATION"
+        | "READ_ALOUD"
+        | "PICTURE_SPEAKING"
+        | "WORD_RECOGNITION"
+        | "SENTENCE_COMPREHENSION"
+        | "PICTURE_WORD"
+        | "SENTENCE_COMPLETION";
+      displayName: string;
+      /** @enum {string|null} */
+      domain: "LISTEN" | "SPEAK" | "READ" | "WRITE" | null;
+      domainDisplayName: string | null;
+      studentCount: number;
+      averagePercentage: number | null;
+      priorityStudentCount: number;
+    };
+    TeacherDiagnosticPriority: {
+      /** @enum {string} */
+      family:
+        | "LISTEN_IMAGE_CHOICE"
+        | "DICTATION"
+        | "READ_ALOUD"
+        | "PICTURE_SPEAKING"
+        | "WORD_RECOGNITION"
+        | "SENTENCE_COMPREHENSION"
+        | "PICTURE_WORD"
+        | "SENTENCE_COMPLETION";
+      displayName: string;
+      /** @enum {string} */
+      domain: "LISTEN" | "SPEAK" | "READ" | "WRITE";
+      domainDisplayName: string;
+      percentage: number;
+    };
+    TeacherDiagnosticRemediationSummary: {
+      completedRounds: number;
+      latestRoundItemCount: number;
+      latestMasteredCount: number;
+      latestPercentage: number;
+    };
+    TeacherDiagnosticStudent: {
+      /** Format: uuid */
+      enrollmentId: string;
+      displayName: string;
+      /** Format: uuid */
+      latestSessionId: string | null;
+      latestScore: number | null;
+      /** Format: date-time */
+      completedAt: string | null;
+      /** @enum {string} */
+      comparisonState: "NOT_ASSESSED" | "BASELINE_ONLY" | "COMPARABLE";
+      latestVsPrevious: number | null;
+      topPriority: {
+        family: string;
+        displayName: string;
+      } | null;
+      remediationSummary:
+        components["schemas"]["TeacherDiagnosticRemediationSummary"] | null;
+      pendingReviewCount: number;
+      needsAttention: boolean;
+      /** @enum {string} */
+      state: "NOT_ASSESSED" | "IN_PROGRESS" | "COMPLETED" | "NEEDS_ATTENTION";
+    };
+    TeacherQuestionBankDiagnosticStudentDetailResponse: {
+      data: components["schemas"]["TeacherQuestionBankDiagnosticStudentDetail"];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    TeacherQuestionBankDiagnosticStudentDetail: components["schemas"]["TeacherDiagnosticStudent"] & {
+      formalHistory: components["schemas"]["QuestionBankFormalAttempt"][];
+      latestDiagnosis: {
+        domains: components["schemas"]["TeacherDiagnosticSafeDomain"][];
+        priorities: components["schemas"]["TeacherDiagnosticPriority"][];
+      } | null;
+      domainTrend: components["schemas"]["QuestionBankDomainTrend"] | null;
+      familyPriorities: components["schemas"]["TeacherDiagnosticPriority"][];
+      remediationRounds: components["schemas"]["TeacherDiagnosticRemediationRound"][];
+    };
+    TeacherDiagnosticSafeDomain: {
+      /** @enum {string} */
+      domain: "LISTEN" | "SPEAK" | "READ" | "WRITE";
+      displayName: string;
+      percentage: number;
+    };
+    TeacherDiagnosticRemediationRound: {
+      /** Format: uuid */
+      sessionId: string;
+      /** Format: date-time */
+      completedAt: string | null;
+      itemCount: number;
+      masteredCount: number;
+      percentage: number;
     };
     QuestionBankProgressResponse: {
       data: components["schemas"]["QuestionBankProgress"];
@@ -4910,6 +5119,90 @@ export interface operations {
       };
       403: components["responses"]["Forbidden"];
       409: components["responses"]["Conflict"];
+    };
+  };
+  getTeacherQuestionBankDiagnosticCatalog: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 教师诊断看板可选择的班级和正式题库测评 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["TeacherQuestionBankDiagnosticCatalogResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+    };
+  };
+  getTeacherQuestionBankDiagnosticDashboard: {
+    parameters: {
+      query: {
+        practiceDefinitionId: string;
+      };
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 班级 ID */
+        classId: components["parameters"]["ClassId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 班级正式测评诊断；不含学生间排名或作答证据 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["TeacherQuestionBankDiagnosticDashboardResponse"];
+        };
+      };
+      400: components["responses"]["BadRequest"];
+      403: components["responses"]["Forbidden"];
+    };
+  };
+  getTeacherQuestionBankDiagnosticStudentDetail: {
+    parameters: {
+      query: {
+        practiceDefinitionId: string;
+      };
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 班级 ID */
+        classId: components["parameters"]["ClassId"];
+        /** @description 注册 ID */
+        enrollmentId: components["parameters"]["EnrollmentId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 安全的教师学生诊断详情，不含答案、量表或语音原始证据 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["TeacherQuestionBankDiagnosticStudentDetailResponse"];
+        };
+      };
+      400: components["responses"]["BadRequest"];
+      403: components["responses"]["Forbidden"];
     };
   };
   createAssessmentRemediation: {

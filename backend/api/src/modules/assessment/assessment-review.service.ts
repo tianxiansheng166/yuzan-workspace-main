@@ -11,7 +11,7 @@ import {
 } from "./domain/assessment.errors.js";
 import { AssessmentService } from "./assessment.service.js";
 
-const REVIEWABLE_STRATEGIES = new Set([
+export const REVIEWABLE_ASSESSMENT_STRATEGIES = new Set([
   "RUBRIC_TEXT",
   "SPEECH_READING",
   "SPEECH_OPEN_RESPONSE",
@@ -27,9 +27,10 @@ function scoringSpec(value: unknown): Record<string, unknown> {
   return isRecord(value) ? value : {};
 }
 
-function strategyOf(value: unknown): ReviewableStrategy | null {
+/** Shared reviewability boundary for queues and teacher diagnostics. */
+export function reviewableAssessmentStrategy(value: unknown): ReviewableStrategy | null {
   const strategy = scoringSpec(value).strategy;
-  return typeof strategy === "string" && REVIEWABLE_STRATEGIES.has(strategy)
+  return typeof strategy === "string" && REVIEWABLE_ASSESSMENT_STRATEGIES.has(strategy)
     ? strategy as ReviewableStrategy
     : null;
 }
@@ -104,7 +105,7 @@ export class AssessmentReviewService {
     const titleMap = await this.practiceTitles(schoolId, rows.map((row) => row.session.practiceDefinitionId));
 
     const items = rows.flatMap((row) => {
-      const strategy = strategyOf(row.questionVersion?.scoringSpec);
+      const strategy = reviewableAssessmentStrategy(row.questionVersion?.scoringSpec);
       if (!strategy) return [];
       return [{
         itemId: row.id,
@@ -172,7 +173,7 @@ export class AssessmentReviewService {
     if (!row.questionVersion || row.questionVersion.status !== "PUBLISHED") {
       throw new AssessmentConflictException("复核题目没有可用的已发布题库版本");
     }
-    const strategy = strategyOf(row.questionVersion.scoringSpec);
+    const strategy = reviewableAssessmentStrategy(row.questionVersion.scoringSpec);
     if (!strategy) throw new AssessmentConflictException("该题型不允许人工复核");
     if (row.session.status === "COMPLETED" || row.session.status === "CANCELLED") {
       throw new AssessmentConflictException("当前测评已经结束，不能打开待复核题目");
@@ -247,6 +248,17 @@ export class AssessmentReviewService {
 
   private isAdmin(auth: AuthContext) {
     return auth.principal.roles.some((role) => [MembershipRole.SCHOOL_ADMIN, MembershipRole.PLATFORM_ADMIN].includes(role));
+  }
+
+  /** Reused class-scope authority for teacher-owned assessment views. */
+  async authorizedClassIds(auth: AuthContext, schoolId: string): Promise<string[] | null> {
+    await this.assertTeacherScope(auth, schoolId);
+    return this.isAdmin(auth) ? null : this.reviewableClassIds(auth, schoolId);
+  }
+
+  async assertAuthorizedClass(auth: AuthContext, schoolId: string, classId: string) {
+    await this.assertTeacherScope(auth, schoolId);
+    await this.assertReviewClass(auth, schoolId, classId);
   }
 
   private async assertTeacherScope(auth: AuthContext, schoolId: string) {
