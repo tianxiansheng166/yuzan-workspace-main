@@ -880,6 +880,14 @@
   async function getAssessmentSession(sessionId) {
     return request(`/schools/${getActiveSchoolId()}/assessments/sessions/${sessionId}`);
   }
+  async function createAssessmentRemediation(sourceSessionId) {
+    return request(`/schools/${getActiveSchoolId()}/assessments/sessions/${encodeURIComponent(sourceSessionId)}/remediation`, {
+      method: 'POST',
+    });
+  }
+  async function getAssessmentRemediationResult(sessionId) {
+    return request(`/schools/${getActiveSchoolId()}/assessments/sessions/${encodeURIComponent(sessionId)}/remediation-result`);
+  }
   async function createAssessmentSession(payload) {
     return request(`/schools/${getActiveSchoolId()}/assessments/sessions`, {
       method: 'POST',
@@ -1296,6 +1304,8 @@
     /* Assessment Sessions */
     listAssessmentSessions,
     getAssessmentSession,
+    createAssessmentRemediation,
+    getAssessmentRemediationResult,
     createAssessmentSession,
     startAssessmentSession,
     submitAssessmentSession,

@@ -1,5 +1,6 @@
 export type AssessmentType = "READING" | "WRITTEN" | "MIXED";
 export type AssessmentSessionStatus = "CREATED" | "IN_PROGRESS" | "SUBMITTED" | "PROCESSING" | "COMPLETED" | "CANCELLED";
+export type AssessmentSessionPurpose = "STANDARD" | "REMEDIATION";
 export type AssessmentItemStatus = "PENDING" | "ANSWERED" | "REVIEWED" | "FLAGGED";
 
 export interface AssessmentSession {
@@ -9,6 +10,7 @@ export interface AssessmentSession {
   readonly classId: string;
   readonly initiatorUserId: string;
   readonly type: AssessmentType;
+  readonly purpose: AssessmentSessionPurpose;
   readonly status: AssessmentSessionStatus;
   readonly startedAt: Date | null;
   readonly submittedAt: Date | null;

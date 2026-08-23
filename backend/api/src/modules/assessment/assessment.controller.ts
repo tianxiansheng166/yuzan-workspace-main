@@ -45,6 +45,21 @@ export class AssessmentSessionController {
     );
   }
 
+  @Post(":sourceSessionId/remediation")
+  @RequireRoles(MembershipRole.STUDENT)
+  async createRemediation(
+    @Param("schoolId", ParseUUIDPipe) schoolId: string,
+    @Param("sourceSessionId", ParseUUIDPipe) sourceSessionId: string,
+    @CurrentTenant() tenant: TenantContext,
+    @CurrentPrincipal() principal: Principal,
+  ) {
+    return this.service.createOrResumeRemediation(
+      createAuthContext("request-id", principal, tenant),
+      schoolId,
+      sourceSessionId,
+    );
+  }
+
   @Get()
   @RequireRoles(MembershipRole.STUDENT, MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
   async listSessions(
@@ -63,6 +78,21 @@ export class AssessmentSessionController {
         ...(query.status ? { status: query.status as "CREATED" | "IN_PROGRESS" | "SUBMITTED" | "PROCESSING" | "COMPLETED" | "CANCELLED" } : {}),
         ...(query.cursor ? { cursor: query.cursor } : {}),
       },
+    );
+  }
+
+  @Get(":sessionId/remediation-result")
+  @RequireRoles(MembershipRole.STUDENT, MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
+  async getRemediationResult(
+    @Param("schoolId", ParseUUIDPipe) schoolId: string,
+    @Param("sessionId", ParseUUIDPipe) sessionId: string,
+    @CurrentTenant() tenant: TenantContext,
+    @CurrentPrincipal() principal: Principal,
+  ) {
+    return this.service.getRemediationResult(
+      createAuthContext("request-id", principal, tenant),
+      schoolId,
+      sessionId,
     );
   }
 

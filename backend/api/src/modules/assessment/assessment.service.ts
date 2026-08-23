@@ -16,7 +16,8 @@ import { WRITTEN_ANSWER_REPOSITORY } from "./ports/written-answer-repository.por
 import type { AssessmentReportRepositoryPort, CreateAssessmentReportData } from "./ports/assessment-report-repository.port.js";
 import { ASSESSMENT_REPORT_REPOSITORY } from "./ports/assessment-report-repository.port.js";
 import { QuestionBankDeterministicScoringService } from "./question-bank-deterministic-scoring.service.js";
-import { buildQuestionBankDiagnosis, QuestionBankDiagnosisError, type QuestionBankDiagnosis } from "./question-bank-diagnosis.js";
+import { buildQuestionBankDiagnosis, isQuestionBankDiagnosis, QuestionBankDiagnosisError, type QuestionBankDiagnosis, type QuestionBankRetryCandidate } from "./question-bank-diagnosis.js";
+import { assertSafeQuestionDeliverySpec } from "./question-bank-delivery.js";
 import { toAssessmentSessionResponse, toAssessmentItemResponse, toReadingItemResponse, toWrittenItemResponse, toWrittenAnswerResponse, toAssessmentReportResponse } from "./dto/assessment-session.response.js";
 
 @Injectable()
@@ -65,6 +66,183 @@ export class AssessmentService {
 
     const session = await this.sessionRepo.create(data);
     return toAssessmentSessionResponse(session);
+  }
+
+  /**
+   * Create one student-owned retry attempt from the immutable diagnosis stored
+   * on a completed formal Question Bank session. The client deliberately
+   * supplies no item ids, family filters, or answers.
+   */
+  async createOrResumeRemediation(auth: AuthContext, schoolId: string, sourceSessionId: string) {
+    if (!this.policy.canSubmitSession(auth, schoolId)) {
+      throw new AssessmentForbiddenException();
+    }
+
+    const enrollment = await this.prisma.enrollment.findFirst({
+      where: {
+        schoolId,
+        userId: auth.principal.userId,
+        role: "STUDENT",
+        status: "ACTIVE",
+      },
+      select: { id: true, classId: true },
+    });
+    if (!enrollment) throw new AssessmentForbiddenException("当前用户没有有效的学生班级关系");
+
+    return this.prisma.$transaction(async (tx) => {
+      const source = await tx.assessmentSession.findFirst({
+        where: {
+          id: sourceSessionId,
+          schoolId,
+        },
+        select: {
+          id: true,
+          enrollmentId: true,
+          classId: true,
+          type: true,
+          status: true,
+          purpose: true,
+          practiceDefinitionId: true,
+          practiceVersionId: true,
+          deliveryId: true,
+          report: { select: { summary: true } },
+          items: {
+            orderBy: { sortOrder: "asc" },
+            select: {
+              id: true,
+              questionVersionId: true,
+              prompt: true,
+              itemConfig: true,
+              itemType: true,
+              sectionTitle: true,
+              sectionOrder: true,
+              sortOrder: true,
+              maxScore: true,
+              scoredScore: true,
+              questionVersion: {
+                select: {
+                  id: true,
+                  status: true,
+                  deliverySpec: true,
+                  item: { select: { domain: true, questionType: true } },
+                },
+              },
+            },
+          },
+        },
+      });
+
+      if (!source) throw new AssessmentNotFoundException();
+      if (source.enrollmentId !== enrollment.id || source.classId !== enrollment.classId) {
+        throw new AssessmentForbiddenException("无权为其他学生创建专项巩固练习");
+      }
+      if (
+        source.purpose !== "STANDARD" ||
+        source.status !== "COMPLETED" ||
+        !source.practiceDefinitionId ||
+        !source.practiceVersionId ||
+        !source.deliveryId
+      ) {
+        throw new AssessmentConflictException("只有已完成的正式题库测评可以创建专项巩固练习");
+      }
+
+      const diagnosis = this.persistedDiagnosis(source.report?.summary);
+      if (!diagnosis || source.items.length !== 20 || source.items.some((item) => !item.questionVersionId)) {
+        throw new AssessmentConflictException("该测评没有可用于巩固练习的正式题库诊断");
+      }
+
+      const candidates = this.validatedRetryCandidates(diagnosis.retryCandidates, source.items);
+      if (candidates.length === 0) {
+        return {
+          outcome: "NO_REMEDIATION_NEEDED" as const,
+          sourceSessionId: source.id,
+          attemptId: null,
+          status: null,
+          itemCount: 0,
+          resumed: false,
+        };
+      }
+
+      const existing = await tx.assessmentSession.findFirst({
+        where: {
+          schoolId,
+          enrollmentId: enrollment.id,
+          purpose: "REMEDIATION",
+          retestOfSessionId: source.id,
+          status: { in: ["CREATED", "IN_PROGRESS", "SUBMITTED", "PROCESSING"] },
+        },
+        orderBy: { updatedAt: "desc" },
+        select: { id: true, status: true },
+      });
+      if (existing) {
+        return {
+          outcome: "RESUMED" as const,
+          sourceSessionId: source.id,
+          attemptId: existing.id,
+          status: existing.status,
+          itemCount: candidates.length,
+          resumed: true,
+        };
+      }
+
+      const candidateIds = new Set(candidates.map((candidate) => candidate.assessmentItemId));
+      const selected = source.items.filter((item) => candidateIds.has(item.id));
+      if (selected.length !== candidates.length) {
+        throw new AssessmentConflictException("巩固题目引用与正式诊断不一致");
+      }
+
+      const attempt = await tx.assessmentSession.create({
+        data: {
+          schoolId,
+          enrollmentId: enrollment.id,
+          classId: enrollment.classId,
+          initiatorUserId: auth.principal.userId,
+          type: source.type,
+          purpose: "REMEDIATION",
+          retestOfSessionId: source.id,
+          practiceDefinitionId: source.practiceDefinitionId,
+          practiceVersionId: source.practiceVersionId,
+          deliveryId: source.deliveryId,
+        },
+        select: { id: true, status: true },
+      });
+
+      await tx.assessmentItem.createMany({
+        data: selected.map((item) => {
+          if (
+            !item.questionVersionId ||
+            !item.questionVersion ||
+            item.questionVersion.status !== "PUBLISHED" ||
+            item.maxScore == null ||
+            !Number.isFinite(item.maxScore)
+          ) {
+            throw new AssessmentConflictException("巩固题目没有可用的已发布题库版本");
+          }
+          const deliverySpec = assertSafeQuestionDeliverySpec(item.questionVersion.deliverySpec);
+          return {
+            sessionId: attempt.id,
+            questionVersionId: item.questionVersionId,
+            prompt: deliverySpec as Prisma.InputJsonValue,
+            itemConfig: deliverySpec as Prisma.InputJsonValue,
+            itemType: item.itemType,
+            sectionTitle: item.sectionTitle,
+            sectionOrder: item.sectionOrder,
+            // Preserve the source ordering instead of the diagnosis JSON order.
+            sortOrder: item.sortOrder,
+            maxScore: item.maxScore,
+          };
+        }),
+      });
+
+      return {
+        outcome: "CREATED" as const,
+        sourceSessionId: source.id,
+        attemptId: attempt.id,
+        status: attempt.status,
+        itemCount: selected.length,
+        resumed: false,
+      };
+    });
   }
 
   async listSessions(auth: AuthContext, schoolId: string, options: ListSessionsOptions) {
@@ -355,6 +533,11 @@ export class AssessmentService {
 
     await this.verifyAccess(auth, schoolId, session);
 
+    if (this.purposeOf(session) === "REMEDIATION") {
+      // A subset retry attempt has a result, never a formal AssessmentReport.
+      return null;
+    }
+
     const report = await this.reportRepo.findBySessionId(sessionId);
     if (!report) {
       return null;
@@ -369,6 +552,10 @@ export class AssessmentService {
 
     const session = await this.sessionRepo.findByIdAndSchool(sessionId, schoolId);
     if (!session) throw new AssessmentNotFoundException();
+
+    if (this.purposeOf(session) === "REMEDIATION") {
+      throw new AssessmentConflictException("专项巩固练习不生成正式测评报告");
+    }
 
     if (session.status !== "SUBMITTED" && session.status !== "PROCESSING") {
       throw new AssessmentConflictException("测评尚未提交，无法生成报告");
@@ -399,6 +586,75 @@ export class AssessmentService {
     });
   }
 
+  async getRemediationResult(auth: AuthContext, schoolId: string, sessionId: string) {
+    if (!this.policy.canReadSession(auth, schoolId)) {
+      throw new AssessmentForbiddenException();
+    }
+    const session = await this.sessionRepo.findByIdAndSchool(sessionId, schoolId);
+    if (!session) throw new AssessmentNotFoundException();
+    await this.verifyAccess(auth, schoolId, session);
+    if (this.purposeOf(session) !== "REMEDIATION" || !session.retestOfSessionId) {
+      throw new AssessmentConflictException("当前会话不是专项巩固练习");
+    }
+
+    const items = await this.prisma.assessmentItem.findMany({
+      where: { sessionId },
+      select: {
+        id: true,
+        itemType: true,
+        sortOrder: true,
+        maxScore: true,
+        scoredScore: true,
+        questionVersion: { select: { item: { select: { domain: true, questionType: true } } } },
+      },
+      orderBy: { sortOrder: "asc" },
+    });
+    if (!items.length || items.some((item) => item.maxScore == null || !Number.isFinite(item.maxScore))) {
+      throw new AssessmentConflictException("专项巩固练习题目配置无效");
+    }
+
+    const completedItemCount = items.filter((item) => item.scoredScore != null).length;
+    const pendingItemCount = items.length - completedItemCount;
+    const earnedPoints = items.reduce((total, item) => total + (item.scoredScore ?? 0), 0);
+    const maxPoints = items.reduce((total, item) => total + (item.maxScore ?? 0), 0);
+    const familyMap = new Map<string, { family: string; domain: string; earnedPoints: number; maxPoints: number; itemCount: number }>();
+    for (const item of items) {
+      const family = item.questionVersion?.item.questionType;
+      const domain = item.questionVersion?.item.domain;
+      if (!family || !domain) {
+        throw new AssessmentConflictException("专项巩固练习缺少题库元数据");
+      }
+      const current = familyMap.get(family) ?? { family, domain, earnedPoints: 0, maxPoints: 0, itemCount: 0 };
+      current.earnedPoints += item.scoredScore ?? 0;
+      current.maxPoints += item.maxScore ?? 0;
+      current.itemCount += 1;
+      familyMap.set(family, current);
+    }
+
+    return {
+      sourceSessionId: session.retestOfSessionId,
+      status: session.status,
+      itemCount: items.length,
+      earnedPoints,
+      maxPoints,
+      percentage: maxPoints > 0 ? Math.round(((earnedPoints / maxPoints) * 100 + Number.EPSILON) * 100) / 100 : 0,
+      completedItemCount,
+      pendingItemCount,
+      families: [...familyMap.values()].map((family) => ({
+        ...family,
+        percentage: family.maxPoints > 0 ? Math.round(((family.earnedPoints / family.maxPoints) * 100 + Number.EPSILON) * 100) / 100 : 0,
+      })),
+      items: items.map((item) => ({
+        itemId: item.id,
+        itemType: item.itemType,
+        sortOrder: item.sortOrder,
+        earnedPoints: item.scoredScore,
+        maxPoints: item.maxScore,
+        completed: item.scoredScore != null,
+      })),
+    };
+  }
+
   /**
    * Finalize a report only when every current oral recording has an automatic
    * result. This is called from the trusted worker callback path, never from a
@@ -409,6 +665,10 @@ export class AssessmentService {
     const session = await this.sessionRepo.findByIdAndSchool(sessionId, schoolId);
     if (!session || session.status === "COMPLETED" || session.status === "CANCELLED") return null;
     if (session.status !== "SUBMITTED" && session.status !== "PROCESSING") return null;
+
+    if (this.purposeOf(session) === "REMEDIATION") {
+      return this.finalizeRemediationIfComplete(schoolId, sessionId);
+    }
 
     await this.questionBankScoring.scoreSession(sessionId);
 
@@ -599,6 +859,23 @@ export class AssessmentService {
     );
   }
 
+  private hasIncompleteRemediationScoring(items: Array<{
+    questionVersionId?: string | null;
+    maxScore?: number | null;
+    scoredScore: number | null;
+  }>) {
+    return items.length === 0 || items.some((item) => (
+      item.questionVersionId == null ||
+      item.maxScore == null ||
+      !Number.isFinite(item.maxScore) ||
+      item.maxScore <= 0 ||
+      item.scoredScore == null ||
+      !Number.isFinite(item.scoredScore) ||
+      item.scoredScore < 0 ||
+      item.scoredScore > item.maxScore
+    ));
+  }
+
   // ─── Teacher Review ──────────────────────────────────────
 
   /**
@@ -733,6 +1010,9 @@ export class AssessmentService {
   /** Finalize the Level 1 point report only after every QB item has a score. */
   async finalizeQuestionBankIfComplete(schoolId: string, sessionId: string, generatedByUserId?: string) {
     const session = await this.sessionRepo.findByIdAndSchool(sessionId, schoolId);
+    if (session && this.purposeOf(session) === "REMEDIATION") {
+      return this.finalizeRemediationIfComplete(schoolId, sessionId);
+    }
     if (!session || session.status === "CANCELLED" || session.status === "COMPLETED") {
       return this.reportRepo.findBySessionId(sessionId).then((report) => report ? toAssessmentReportResponse(report, { includeDiagnosis: session?.status === "COMPLETED" }) : null);
     }
@@ -777,6 +1057,98 @@ export class AssessmentService {
       if (concurrent) return toAssessmentReportResponse(concurrent, { includeDiagnosis: true });
       throw error;
     }
+  }
+
+  /** Complete a fully scored remediation subset without creating a report. */
+  async finalizeRemediationIfComplete(schoolId: string, sessionId: string) {
+    const session = await this.sessionRepo.findByIdAndSchool(sessionId, schoolId);
+    if (
+      !session ||
+      this.purposeOf(session) !== "REMEDIATION" ||
+      session.status === "CANCELLED" ||
+      session.status === "COMPLETED"
+    ) {
+      return null;
+    }
+    if (session.status !== "SUBMITTED" && session.status !== "PROCESSING") return null;
+
+    await this.questionBankScoring.scoreSession(sessionId);
+    const items = await this.prisma.assessmentItem.findMany({
+      where: { sessionId },
+      select: { questionVersionId: true, maxScore: true, scoredScore: true },
+      orderBy: { sortOrder: "asc" },
+    });
+    if (this.hasIncompleteRemediationScoring(items)) {
+      if (session.status === "SUBMITTED") await this.sessionRepo.updateStatus(sessionId, "PROCESSING");
+      return null;
+    }
+
+    await this.sessionRepo.updateStatus(sessionId, "COMPLETED", { completedAt: new Date() } as Partial<AssessmentSession>);
+    return null;
+  }
+
+  private persistedDiagnosis(summary: unknown): QuestionBankDiagnosis | null {
+    if (!summary || typeof summary !== "object" || Array.isArray(summary)) return null;
+    const diagnosis = (summary as Record<string, unknown>).diagnosis;
+    return isQuestionBankDiagnosis(diagnosis) ? diagnosis : null;
+  }
+
+  /**
+   * The persisted diagnosis identifies what to retry, but every database
+   * reference and score is rechecked against the completed source snapshot.
+   * This prevents a stale or tampered JSON blob from selecting arbitrary work.
+   */
+  private validatedRetryCandidates(
+    candidates: readonly QuestionBankRetryCandidate[],
+    sourceItems: Array<{
+      id: string;
+      questionVersionId: string | null;
+      maxScore: number | null;
+      scoredScore: number | null;
+      questionVersion: { item: { domain: string | null; questionType: string | null } } | null;
+    }>,
+  ) {
+    const byId = new Map(sourceItems.map((item) => [item.id, item]));
+    const seen = new Set<string>();
+    for (const candidate of candidates) {
+      if (
+        !candidate ||
+        typeof candidate.assessmentItemId !== "string" ||
+        typeof candidate.questionVersionId !== "string" ||
+        typeof candidate.family !== "string" ||
+        typeof candidate.domain !== "string" ||
+        !Number.isFinite(candidate.earned) ||
+        !Number.isFinite(candidate.max) ||
+        candidate.max <= 0 ||
+        candidate.earned < 0 ||
+        candidate.earned >= candidate.max ||
+        seen.has(candidate.assessmentItemId)
+      ) {
+        throw new AssessmentConflictException("巩固题目引用与正式诊断不一致");
+      }
+      seen.add(candidate.assessmentItemId);
+      const item = byId.get(candidate.assessmentItemId);
+      if (
+        !item ||
+        item.questionVersionId !== candidate.questionVersionId ||
+        item.scoredScore == null ||
+        item.maxScore == null ||
+        !Number.isFinite(item.scoredScore) ||
+        !Number.isFinite(item.maxScore) ||
+        item.scoredScore >= item.maxScore ||
+        item.scoredScore !== candidate.earned ||
+        item.maxScore !== candidate.max ||
+        item.questionVersion?.item.questionType !== candidate.family ||
+        item.questionVersion?.item.domain !== candidate.domain
+      ) {
+        throw new AssessmentConflictException("巩固题目引用与正式诊断不一致");
+      }
+    }
+    return candidates;
+  }
+
+  private purposeOf(session: Pick<AssessmentSession, "purpose"> | { purpose?: string | null }) {
+    return session.purpose === "REMEDIATION" ? "REMEDIATION" : "STANDARD";
   }
 
   private asScoringSpecRecord(value: unknown): Record<string, unknown> | null {

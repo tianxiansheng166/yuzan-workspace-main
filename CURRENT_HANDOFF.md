@@ -14,8 +14,8 @@ Do not infer a commit SHA from this document. The task-start dirty change in
 ## Current outcome
 
 QB-008R and the Levels 1–6 rollout are implemented on the current feature
-branch. QB-009A and QB-010 are complete. QB-009B remains
-`PARKED / EXTERNAL_INPUT`; the next implementation task is QB-011 in
+branch. QB-009A, QB-010, and QB-011 are complete. QB-009B remains
+`PARKED / EXTERNAL_INPUT`; the next implementation task is QB-012 in
 [`CURRENT_TASK.md`](CURRENT_TASK.md).
 
 The original DOCX/ZIP files under `local_sources/` were inspected as read-only
@@ -117,6 +117,17 @@ Authorized repairs are recorded in
   sections, zero student-visible source-trace leaks.
 - Completed QB reports persist the diagnosis snapshot in their existing JSON
   summary and reuse it for repeated finalization/report reads.
+- QB-011 adds `AssessmentSessionPurpose` with `STANDARD` as the migration-safe
+  default. A `REMEDIATION` session is created only from the student's completed
+  20-item standard session and its persisted, revalidated diagnosis retry
+  candidates. It reuses source practice IDs and question versions but snapshots
+  only fresh, safe delivery data. Active attempts resume; a completed attempt
+  allows a new round.
+- Remediation uses existing response, deterministic scoring, and teacher-review
+  paths. Once its subset is scored it completes without an `AssessmentReport`
+  or diagnosis and keeps the source formal result immutable. Its dedicated
+  result projection contains only completion and score aggregates, never
+  answers, rubrics, delivery/scoring specs, or provider audit data.
 
 ## Verification snapshot
 
@@ -154,6 +165,11 @@ Authorized repairs are recorded in
   weak cases, tie ordering, zero score, zero max/missing metadata rejection,
   teacher-final speech authority, deep deterministic equality, levels 1/3/6,
   partial and 19-of-20 sessions.
+- QB-011 remediation unit/security coverage, real-DB runtime integration, and
+  a Chromium browser journey passed. The browser proof creates the retry from
+  the source report, runs exactly four selected questions, persists that subset
+  across refresh, and verifies the “本次巩固” result does not expose answer or
+  scoring configuration fields.
 
 ## Known limitations and next task
 
@@ -165,8 +181,9 @@ runtime. The default scorer is restored with `MOCK_SPEECH_SCORING` unset.
 
 QB-009B remains `PARKED / EXTERNAL_INPUT`: it needs approved consented
 recordings, teacher labels, credentials if live smoke is approved, and a
-separate product decision. The next implementation task is QB-011: turn the
-persisted QB-010 retry candidates into a scoped remediation-practice loop.
+separate product decision. The next implementation task is QB-012: define
+learning progress and improvement tracking while preserving the boundary
+between formal assessment results and scoped remediation results.
 
 ## Protected paths
 

@@ -89,6 +89,7 @@
     apiReadingItem: null,
     apiWrittenItems: [],
     apiReport: null,
+    apiRemediationResult: null,
     apiSpeechJob: null,
     apiSpeechJobs: [],
     apiRecordings: [],
@@ -298,6 +299,7 @@
 
     const items = appState.apiItems || [];
     const readingItems = items.filter(isOralItem);
+    const isRemediation = session?.purpose === 'REMEDIATION';
     const writtenItems = items.filter(isWrittenItem);
 
     // 开始按钮：根据 session 状态决定行为
@@ -552,7 +554,7 @@
     const diagnosticMetric = value => typeof value === 'number' && Number.isFinite(value) ? `${Math.round(value)} /100` : '—';
     const diagnosticContent = diagnosticItems.length ? `<section class="processing-diagnostics"><article class="card"><div class="section-title"><div><h2>朗读自动学习诊断</h2><p class="muted small">自动学习诊断结果，仅供练习参考；不是正式考试分数。</p></div>${statusChip('未校准诊断','gold')}</div><div class="notice" style="margin-top:14px">结果仍需教师复核；生产 provider 证据在完成真实标注校准前不会成为正式分数。</div><div class="item-grid" style="margin-top:14px">${diagnosticItems.map((item,index) => { const diagnostic = item.autoResult || {}; const metrics = diagnostic.metrics || {}; const tone = typeof metrics.tone === 'number' ? diagnosticMetric(metrics.tone) : '暂不可用'; return `<div class="item-card"><h4>朗读题 ${index + 1} · ${safe(diagnostic.provider || '—')} · 参考值 ${safe(diagnostic.candidatePoints ?? '—')} / ${safe(diagnostic.maxScore ?? item.maxScore ?? '—')}</h4><p>准确度　${diagnosticMetric(metrics.accuracy)}</p><p>完整度　${diagnosticMetric(metrics.completeness)}</p><p>流利度　${diagnosticMetric(metrics.fluency)}</p><p>声调（实验）　${tone}</p><p class="muted small">状态：需要教师复核</p></div>`; }).join('')}</div></article></section>` : '';
 
-    const content=`<main class="page"><div class="hero-landscape" style="height:300px"></div><section class="processing-head"><h1 class="page-title">${reportReady ? '测评报告已生成' : '语音评分处理中'}</h1><p class="page-subtitle">${reportReady ? '本次结果已保存到你的练习档案。' : '系统正在对录音进行真实分析与评分，请耐心等待。'}</p><div class="processing-meta">${metaCell('练习状态', session?.status || '—')}${metaCell('评分状态', jobStatus || '等待创建')}${metaCell('提交时间', session?.submittedAt ? new Date(session.submittedAt).toLocaleString() : '—')}</div></section><article class="card leave-banner"><div><strong class="serif" style="font-size:20px">${reportReady ? '报告已生成，可随时回看。' : '你可以离开页面，评分完成后结果会保存在练习档案中。'}</strong><p class="muted">不会因为离开页面而重复提交或丢失录音。</p></div><a class="btn" href="${routes.history}">查看历史记录 ${icon('arrow')}</a></article><article class="card pipeline"><div class="pipeline-row">${stages.map(s=>`<div class="pipe-stage ${reportReady && s[0] === '报告生成' ? 'done' : s[2]}"><div class="pipe-icon">${(reportReady && s[0] === '报告生成') || s[2]==='done'?icon('check'):icon(s[3])}</div><div><strong>${s[0]}</strong><small>${s[1]}</small></div></div>`).join('')}</div><div class="notice" style="margin-top:20px">${jobStatus === 'FAILED' ? `${icon('alert')} 评分服务当前不可用，录音已保存，未生成虚假分数。请稍后重试或联系教师。` : reportReady ? (jobStatus === 'NEEDS_REVIEW' ? '真实模型结果已汇总为报告，等待教师复核。' : '评分结果已汇总为真实报告。') : jobStatus === 'NEEDS_REVIEW' ? '当前阶段：等待教师复核后生成报告。' : jobStatus === 'PROCESSING' ? '当前阶段：系统正在从准确性、流利度、完整性、声调等维度进行评分。' : '正在等待评分任务进入处理。'}</div>${jobStatus === 'FAILED' ? `<div style="margin-top:16px"><a class="btn" href="${routes.recordings}">${icon('wave')} 查看已保存录音</a></div>` : ''}${reportReady ? `<div style="margin-top:16px"><a class="btn primary" href="${routes.report}">${icon('arrow')} 查看报告</a></div>` : ''}</article>${diagnosticContent}<section class="processing-lower"><article class="card record-list"><div class="section-title"><h2>已上传录音</h2>${statusChip(`${readingItems.filter(i=>i.recordingId).length} 段录音`,'gray')}</div>${readingItems.length === 0 ? '<p class="muted">本次测评无朗读题。</p>' : readingItems.map((it,i)=>`<div class="record-row"><div class="play-circle">${icon('mic')}</div><div><strong>口语练习 ${i+1}</strong><p class="muted small">录音已${it.recordingId ? '保存到练习档案' : '等待上传'}</p></div><div><small>作答状态</small><b>${it.status || '—'}</b></div><div>${statusChip(it.recordingId ? (speechJobs.find(job => job.assessmentItemId === it.id)?.status || '已上传') : '未上传', it.recordingId ? 'green' : 'red')}</div></div>`).join('')}</article><aside class="card tips"><h2 class="card-title">温馨提示</h2><div class="rule"><div class="icon">${icon('clock')}</div><div><strong>预计完成时间</strong><p class="muted small">取决于评分服务与队列状态。</p></div></div><div class="rule"><div class="icon green">${icon('shield')}</div><div><strong>数据安全</strong><p class="muted small">录音与结果按学生和学校权限边界保存。</p></div></div><a class="btn" href="${routes.recordings}" style="width:100%;margin-top:16px">我的录音 ${icon('arrow')}</a></aside></section></main>`;
+    const content=`<main class="page"><div class="hero-landscape" style="height:300px"></div><section class="processing-head"><h1 class="page-title">${reportReady ? (isRemediation ? '本次巩固已完成' : '测评报告已生成') : '语音评分处理中'}</h1><p class="page-subtitle">${reportReady ? (isRemediation ? '本次巩固结果已保存；这不会改变正式测评结果。' : '本次结果已保存到你的练习档案。') : '系统正在对录音进行真实分析与评分，请耐心等待。'}</p><div class="processing-meta">${metaCell('练习状态', session?.status || '—')}${metaCell('评分状态', jobStatus || '等待创建')}${metaCell('提交时间', session?.submittedAt ? new Date(session.submittedAt).toLocaleString() : '—')}</div></section><article class="card leave-banner"><div><strong class="serif" style="font-size:20px">${reportReady ? (isRemediation ? '巩固结果已生成，可随时回看。' : '报告已生成，可随时回看。') : '你可以离开页面，评分完成后结果会保存在练习档案中。'}</strong><p class="muted">不会因为离开页面而重复提交或丢失录音。</p></div><a class="btn" href="${routes.history}">查看历史记录 ${icon('arrow')}</a></article><article class="card pipeline"><div class="pipeline-row">${stages.map(s=>`<div class="pipe-stage ${reportReady && s[0] === '报告生成' ? 'done' : s[2]}"><div class="pipe-icon">${(reportReady && s[0] === '报告生成') || s[2]==='done'?icon('check'):icon(s[3])}</div><div><strong>${s[0] === '报告生成' && isRemediation ? '巩固结果' : s[0]}</strong><small>${s[1]}</small></div></div>`).join('')}</div><div class="notice" style="margin-top:20px">${jobStatus === 'FAILED' ? `${icon('alert')} 评分服务当前不可用，录音已保存，未生成虚假分数。请稍后重试或联系教师。` : reportReady ? (isRemediation ? '本次巩固已完成，可查看专项巩固结果。' : (jobStatus === 'NEEDS_REVIEW' ? '真实模型结果已汇总为报告，等待教师复核。' : '评分结果已汇总为真实报告。')) : jobStatus === 'NEEDS_REVIEW' ? '当前阶段：等待教师复核后生成结果。' : jobStatus === 'PROCESSING' ? '当前阶段：系统正在从准确性、流利度、完整性、声调等维度进行评分。' : '正在等待评分任务进入处理。'}</div>${jobStatus === 'FAILED' ? `<div style="margin-top:16px"><a class="btn" href="${routes.recordings}">${icon('wave')} 查看已保存录音</a></div>` : ''}${reportReady ? `<div style="margin-top:16px"><a class="btn primary" href="${routes.report}">${icon('arrow')} ${isRemediation ? '查看本次巩固' : '查看报告'}</a></div>` : ''}</article>${diagnosticContent}<section class="processing-lower"><article class="card record-list"><div class="section-title"><h2>已上传录音</h2>${statusChip(`${readingItems.filter(i=>i.recordingId).length} 段录音`,'gray')}</div>${readingItems.length === 0 ? '<p class="muted">本次练习无朗读题。</p>' : readingItems.map((it,i)=>`<div class="record-row"><div class="play-circle">${icon('mic')}</div><div><strong>口语练习 ${i+1}</strong><p class="muted small">录音已${it.recordingId ? '保存到练习档案' : '等待上传'}</p></div><div><small>作答状态</small><b>${it.status || '—'}</b></div><div>${statusChip(it.recordingId ? (speechJobs.find(job => job.assessmentItemId === it.id)?.status || '已上传') : '未上传', it.recordingId ? 'green' : 'red')}</div></div>`).join('')}</article><aside class="card tips"><h2 class="card-title">温馨提示</h2><div class="rule"><div class="icon">${icon('clock')}</div><div><strong>预计完成时间</strong><p class="muted small">取决于评分服务与队列状态。</p></div></div><div class="rule"><div class="icon green">${icon('shield')}</div><div><strong>数据安全</strong><p class="muted small">录音与结果按学生和学校权限边界保存。</p></div></div><a class="btn" href="${routes.recordings}" style="width:100%;margin-top:16px">我的录音 ${icon('arrow')}</a></aside></section></main>`;
     return shell(content);
   }
 
@@ -564,6 +566,7 @@
 
     const report = appState.apiReport;
     const session = appState.apiSession;
+    if (session?.purpose === 'REMEDIATION') return renderRemediationResult(session, appState.apiRemediationResult);
     if (!report) {
       const content = `<main class="page"><div class="hero-landscape" style="height:220px"></div><section class="report-head"><a class="muted small" href="${routes.center}">‹ 返回测评列表</a><h1 class="page-title" style="margin-top:16px">${session ? (session.type === 'READING' ? '朗读测评' : '综合测评') : '测评'} ${statusChip(session?.status || '—', session?.status === 'COMPLETED' ? 'green' : 'gold')}</h1><p class="page-subtitle">报告尚未生成</p></section><article class="card" style="padding:40px;text-align:center"><div class="icon" style="margin:0 auto 16px;width:56px;height:56px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#eef0ec">${icon('file')}</div><h2>当前测评尚未生成报告</h2><p class="muted">报告在教师复核或系统自动评分完成后生成。请稍后刷新查看。</p>${session && (session.status === 'SUBMITTED' || session.status === 'PROCESSING') ? `<div style="margin-top:24px"><a class="btn primary" href="${routes.processing}">${icon('arrow')} 查看处理状态</a></div>` : ''}<div style="margin-top:12px"><button class="btn" data-retry>${icon('refresh')} 刷新报告</button></div></article></main>`;
       return shell(content);
@@ -573,12 +576,27 @@
     const content=`<main class="page"><div class="hero-landscape" style="height:220px"></div><section class="report-head"><a class="muted small" href="${routes.center}">‹ 返回练习中心</a><h1 class="page-title" style="margin-top:16px">${session?.type === 'READING' ? '朗读练习' : '综合练习'} ${statusChip(needsReview ? '待教师复核' : '已完成',needsReview ? 'gold' : 'green')}</h1><p class="page-subtitle">科学测评，精准反馈，见证每一次进步</p></section>${needsReview ? `<article class="card notice" style="margin-bottom:13px">${icon('info')} 本报告已展示本次真实模型评分；其中至少一段录音建议由教师复核，复核意见会另行保存。</article>` : ''}<article class="card report-info"><div class="icon red">${icon('mic')}</div><div class="info-cell">数据完整度<b>${report.dataCompleteness != null ? Math.round(report.dataCompleteness) + '%' : '—'}</b></div><div class="info-cell">生成时间<b>${report.generatedAt ? new Date(report.generatedAt).toLocaleString() : '—'}</b></div><div class="info-cell">结果状态<b>${needsReview ? '待教师复核' : '已保存'}</b></div></article><section class="report-grid"><article class="card score-card"><h3 class="card-title" style="color:var(--red)">总体得分</h3><div class="score-number">${report.overallScore != null ? report.overallScore : '—'} <small style="font-size:17px;color:#777">/100</small></div>${statusChip(report.overallScore != null ? (report.overallScore >= 80 ? '良好' : report.overallScore >= 60 ? '中等' : '需提升') : '等待复核', 'green')}<p class="muted small">${report.summary?.text || (report.recommendations?.text || '基于本次已完成评分的真实结果。')}</p></article>${report.readingScore != null ? metricCard('wave','朗读得分',report.readingScore,'基于本次朗读录音的实际评分','green') : ''}${report.writtenScore != null ? metricCard('book','书面得分',report.writtenScore,'基于已完成评分的书面作答','green') : ''}</section>${report.recommendations ? `<section class="report-bottom"><article class="card"><h2 class="card-title">推荐练习</h2>${Array.isArray(report.recommendations) ? report.recommendations.map(r => `<div class="recommend-item"><div><strong>${typeof r === 'string' ? r : (r.title || r.text || JSON.stringify(r))}</strong><p class="muted small">基于本次报告的个性化建议</p></div></div>`).join('') : `<p class="muted">${typeof report.recommendations === 'string' ? report.recommendations : JSON.stringify(report.recommendations)}</p>`}</article></section>` : ''}<section class="report-bottom"><article class="card"><h2 class="card-title">练习档案</h2><p class="muted">录音、报告与历史记录已按本次练习保存。</p><div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="${routes.recordings}">${icon('wave')} 我的录音</a><a class="btn primary" href="${routes.history}">${icon('chart')} 历史记录</a></div></article></section></main>`;
     return shell(content.replace('</main>', `${diagnosisPanel(report.diagnosis)}</main>`));
   }
+  function renderRemediationResult(session, result){
+    if (!result) {
+      return shell(`<main class="page"><div class="hero-landscape" style="height:220px"></div><section class="report-head"><a class="muted small" href="${routes.center}">‹ 返回练习中心</a><h1 class="page-title" style="margin-top:16px">本次巩固</h1><p class="page-subtitle">专项巩固结果正在整理，不会生成正式测评报告。</p></section><article class="card" style="padding:40px;text-align:center"><h2>${session.status === 'COMPLETED' ? '结果暂不可用' : '等待完成评分'}</h2><p class="muted">本次巩固只展示这次重练的完成情况，不代表正式测评总分。</p><div style="margin-top:16px"><button class="btn" data-retry>${icon('refresh')} 刷新结果</button></div></article></main>`);
+    }
+    const completed = result.status === 'COMPLETED' && result.pendingItemCount === 0;
+    const percent = typeof result.percentage === 'number' && Number.isFinite(result.percentage) ? `${result.percentage % 1 ? result.percentage.toFixed(1).replace(/\.0$/, '') : result.percentage}%` : '—';
+    const familyRows = (result.families || []).map(family => `<div class="recommend-item"><div><strong>${safe(family.family)}</strong><p class="muted small">${safe(family.earnedPoints)} / ${safe(family.maxPoints)} · ${percentValue(family.percentage)} · ${safe(family.itemCount)} 题</p></div></div>`).join('') || '<p class="muted">暂无可显示的题型汇总。</p>';
+    const itemRows = (result.items || []).map((item, index) => `<div class="item-card"><h4>第 ${index + 1} 题 · ${safe(item.itemType)}</h4><p>${item.completed ? `本题得分 ${safe(item.earnedPoints)} / ${safe(item.maxPoints)}` : `等待评分 · 满分 ${safe(item.maxPoints)}`}</p></div>`).join('');
+    const actions = completed
+      ? `<button class="btn primary" data-repeat-remediation data-source-session-id="${safe(result.sourceSessionId)}">${icon('refresh')} 再练一次</button><a class="btn" href="/student/practices/attempts/${encodeURIComponent(result.sourceSessionId)}/report/">${icon('left')} 返回测评报告</a>`
+      : `<a class="btn primary" href="${routes.processing}">${icon('clock')} 查看处理状态</a><button class="btn" data-retry>${icon('refresh')} 刷新结果</button>`;
+    return shell(`<main class="page"><div class="hero-landscape" style="height:220px"></div><section class="report-head"><a class="muted small" href="${routes.center}">‹ 返回练习中心</a><h1 class="page-title" style="margin-top:16px">本次巩固 ${statusChip(completed ? '已完成' : result.status || '处理中', completed ? 'green' : 'gold')}</h1><p class="page-subtitle">这是本次重练的完成情况，不是正式测评总分。</p></section><section class="report-grid"><article class="card score-card"><h3 class="card-title" style="color:var(--red)">本次巩固</h3><div class="score-number">${safe(result.earnedPoints)} <small style="font-size:17px;color:#777">/ ${safe(result.maxPoints)}</small></div>${statusChip(percent, completed ? 'green' : 'gold')}<p class="muted small">已完成评分 ${safe(result.completedItemCount)} / ${safe(result.itemCount)} 题；待评分 ${safe(result.pendingItemCount)} 题。</p></article><article class="card metric-card"><h3>专项题型</h3>${familyRows}</article></section><section class="report-bottom"><article class="card"><h2 class="card-title">题目完成情况</h2><p class="muted small">仅展示本题得分与评分状态，不展示标准答案或评分规则。</p><div class="item-grid" style="margin-top:14px">${itemRows}</div></article></section><section class="report-bottom"><article class="card"><h2 class="card-title">继续学习</h2><p class="muted">${completed ? '可以再次巩固同一批需要优先重练的题目，正式测评结果保持不变。' : '完成教师复核后会在这里显示本次巩固结果。'}</p><div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px">${actions}</div></article></section></main>`);
+  }
+  function percentValue(value){ return typeof value === 'number' && Number.isFinite(value) ? `${value % 1 ? value.toFixed(1).replace(/\.0$/, '') : value}%` : '—'; }
   function metricCard(ic,title,value,detail,color='green'){return `<article class="card metric-card"><div style="display:flex;gap:10px;align-items:center"><div class="icon ${color}">${icon(ic)}</div><h3>${title}</h3></div><div class="metric-value" style="color:${color==='red'?'var(--red)':'var(--green)'}">${value}<small style="font-size:14px;color:#777"> /100</small></div><div class="metric-rail"><i style="width:${value}%;background:${color==='red'?'var(--red)':'var(--green)'}"></i><b style="left:${value}%;background:${color==='red'?'var(--red)':'var(--green)'}"></b></div><p class="muted small">${detail}</p></article>`}
   function diagnosisPanel(diagnosis){
     if (!diagnosis || diagnosis.version !== 'qb-diagnosis-v1') return '';
     const domains = Array.isArray(diagnosis.domains) ? diagnosis.domains : [];
     const strengths = Array.isArray(diagnosis.strengths) ? diagnosis.strengths : [];
     const priorities = Array.isArray(diagnosis.priorities) ? diagnosis.priorities : [];
+    const retryCandidates = Array.isArray(diagnosis.retryCandidates) ? diagnosis.retryCandidates : [];
     const nextSteps = Array.isArray(diagnosis.nextSteps) ? diagnosis.nextSteps : [];
     const percent = value => typeof value === 'number' && Number.isFinite(value) ? `${value % 1 ? value.toFixed(1).replace(/\.0$/, '') : value}%` : '—';
     const progress = value => typeof value === 'number' && Number.isFinite(value) ? Math.max(0, Math.min(100, value)) : 0;
@@ -588,7 +606,10 @@
     const stepsContent = nextSteps.length ? nextSteps.map(step => `<div class="recommend-item"><div><strong>建议优先练习：${safe(step.displayName)}</strong><p class="muted small">${safe(step.guidance)}</p></div></div>`).join('') : '<p class="muted">完成更多练习，继续积累进步。</p>';
     const firstPriority = priorities[0];
     const practiceHref = firstPriority ? `/student/practices/?recommendedLabel=${encodeURIComponent(firstPriority.displayName || '')}` : '/student/practices/';
-    return `<section class="report-bottom"><article class="card"><div class="section-title"><div><h2 class="card-title">能力诊断</h2><p class="muted small">根据本次已经完成的正式评分整理。</p></div><span class="muted small">总分 ${safe(diagnosis.overall?.earnedPoints)} / ${safe(diagnosis.overall?.maxPoints)}</span></div><div class="report-grid" style="margin-top:14px">${domainCards}</div></article></section><section class="report-bottom" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px"><article class="card"><h2 class="card-title">掌握较好的能力</h2>${strengthsContent}</article><article class="card"><h2 class="card-title">优先提升</h2>${prioritiesContent}</article><article class="card"><h2 class="card-title">下一步建议</h2>${stepsContent}<div style="margin-top:16px"><a class="btn primary" href="${practiceHref}">${icon('arrow')} 开始巩固练习</a></div></article></section>`;
+    const remediationAction = retryCandidates.length
+      ? `<div style="margin-top:16px"><button class="btn primary" data-start-remediation>${icon('arrow')} 开始巩固练习</button><p class="muted small" style="margin:10px 0 0">将从本次正式测评中选择 ${retryCandidates.length} 道需要优先重练的题目。</p></div>`
+      : `<div style="margin-top:16px"><p class="muted">本次测评没有需要优先重练的题目。</p><a class="btn primary" href="${practiceHref}">${icon('arrow')} 继续练习</a></div>`;
+    return `<section class="report-bottom"><article class="card"><div class="section-title"><div><h2 class="card-title">能力诊断</h2><p class="muted small">根据本次已经完成的正式评分整理。</p></div><span class="muted small">总分 ${safe(diagnosis.overall?.earnedPoints)} / ${safe(diagnosis.overall?.maxPoints)}</span></div><div class="report-grid" style="margin-top:14px">${domainCards}</div></article></section><section class="report-bottom" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px"><article class="card"><h2 class="card-title">掌握较好的能力</h2>${strengthsContent}</article><article class="card"><h2 class="card-title">优先提升</h2>${prioritiesContent}</article><article class="card"><h2 class="card-title">下一步建议</h2>${stepsContent}${remediationAction}</article></section>`;
   }
 
   function renderRecordings(){
@@ -1170,6 +1191,40 @@
   }
 
   function bindReport(){
+    document.querySelector('[data-start-remediation]')?.addEventListener('click', async (e) => {
+      const btn = e.currentTarget;
+      if (btn.disabled) return;
+      btn.disabled = true;
+      btn.innerHTML = `${icon('spinner')} 正在准备巩固练习…`;
+      try {
+        const result = await Api.createAssessmentRemediation(SESSION_ID);
+        if (result?.outcome === 'NO_REMEDIATION_NEEDED') {
+          location.href = '/student/practices/';
+          return;
+        }
+        if (!result?.attemptId) throw new Error('未能创建巩固练习');
+        location.href = `/student/practices/attempts/${encodeURIComponent(result.attemptId)}/runner/`;
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = `${icon('arrow')} 开始巩固练习`;
+        alert(`创建巩固练习失败：${err.message || err}`);
+      }
+    });
+    document.querySelector('[data-repeat-remediation]')?.addEventListener('click', async (e) => {
+      const btn = e.currentTarget;
+      if (btn.disabled) return;
+      btn.disabled = true;
+      btn.innerHTML = `${icon('spinner')} 正在准备…`;
+      try {
+        const result = await Api.createAssessmentRemediation(btn.dataset.sourceSessionId);
+        if (!result?.attemptId) throw new Error('当前没有需要重练的题目');
+        location.href = `/student/practices/attempts/${encodeURIComponent(result.attemptId)}/runner/`;
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = `${icon('refresh')} 再练一次`;
+        alert(`创建下一轮巩固练习失败：${err.message || err}`);
+      }
+    });
     document.querySelector('[data-schedule-retest]')?.addEventListener('click', async (e) => {
       const btn = e.currentTarget;
       if (btn.disabled) return;
@@ -1402,12 +1457,15 @@
     appState._reportError = null;
     renderCurrent();
     try {
-      const [session, report] = await Promise.all([
-        Api.getAssessmentSession(SESSION_ID),
-        Api.getAssessmentReport(SESSION_ID)
-      ]);
+      const session = await (isPracticeAttempt ? Api.getPracticeAttempt(SESSION_ID) : Api.getAssessmentSession(SESSION_ID));
       appState.apiSession = session;
-      appState.apiReport = report;
+      if (session?.purpose === 'REMEDIATION') {
+        appState.apiReport = null;
+        appState.apiRemediationResult = await Api.getAssessmentRemediationResult(SESSION_ID);
+      } else {
+        appState.apiRemediationResult = null;
+        appState.apiReport = await Api.getAssessmentReport(SESSION_ID);
+      }
     } catch (err) {
       console.error('[assessment] 加载报告失败:', err);
       appState._reportError = err.message || String(err);

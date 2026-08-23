@@ -1253,6 +1253,53 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "404":
           $ref: "#/components/responses/NotFound"
+  /schools/{schoolId}/assessments/sessions/{sourceSessionId}/remediation:
+    post:
+      summary: 基于已完成正式题库诊断创建或恢复专项巩固练习
+      tags: [Assessments]
+      operationId: createAssessmentRemediation
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - in: path
+          name: sourceSessionId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "201":
+          description: 已创建或恢复专项巩固练习
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RemediationCreationResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+  /schools/{schoolId}/assessments/sessions/{sessionId}/remediation-result:
+    get:
+      summary: 获取专项巩固练习结果（非正式测评报告）
+      tags: [Assessments]
+      operationId: getAssessmentRemediationResult
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/SessionId"
+      responses:
+        "200":
+          description: 专项巩固结果
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RemediationResultResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
   /schools/{schoolId}/assessments/sessions/{sessionId}/start:
     post:
       summary: 开始测评会话
@@ -4357,7 +4404,7 @@ components:
           format: uuid
     AssessmentSession:
       type: object
-      required: [id, type, status, createdAt]
+      required: [id, type, purpose, status, createdAt]
       properties:
         id:
           type: string
@@ -4371,6 +4418,9 @@ components:
         type:
           type: string
           enum: [READING, WRITTEN, MIXED]
+        purpose:
+          type: string
+          enum: [STANDARD, REMEDIATION]
         status:
           type: string
           enum:
@@ -4407,6 +4457,90 @@ components:
               type: [string, "null"]
         meta:
           $ref: "#/components/schemas/EnvelopeMeta"
+    RemediationCreationResponse:
+      type: object
+      required: [outcome, sourceSessionId, attemptId, status, itemCount, resumed]
+      properties:
+        outcome:
+          type: string
+          enum: [CREATED, RESUMED, NO_REMEDIATION_NEEDED]
+        sourceSessionId:
+          type: string
+          format: uuid
+        attemptId:
+          type: [string, "null"]
+          format: uuid
+        status:
+          type: [string, "null"]
+          enum: [CREATED, IN_PROGRESS, SUBMITTED, PROCESSING, COMPLETED, CANCELLED, null]
+        itemCount:
+          type: integer
+          minimum: 0
+        resumed:
+          type: boolean
+    RemediationResultItem:
+      type: object
+      required: [itemId, itemType, sortOrder, earnedPoints, maxPoints, completed]
+      properties:
+        itemId:
+          type: string
+          format: uuid
+        itemType:
+          type: string
+        sortOrder:
+          type: integer
+        earnedPoints:
+          type: [number, "null"]
+        maxPoints:
+          type: number
+        completed:
+          type: boolean
+    RemediationResultFamily:
+      type: object
+      required: [family, domain, earnedPoints, maxPoints, itemCount, percentage]
+      properties:
+        family:
+          type: string
+        domain:
+          type: string
+        earnedPoints:
+          type: number
+        maxPoints:
+          type: number
+        itemCount:
+          type: integer
+        percentage:
+          type: number
+    RemediationResultResponse:
+      type: object
+      required: [sourceSessionId, status, itemCount, earnedPoints, maxPoints, percentage, completedItemCount, pendingItemCount, families, items]
+      properties:
+        sourceSessionId:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [CREATED, IN_PROGRESS, SUBMITTED, PROCESSING, COMPLETED, CANCELLED]
+        itemCount:
+          type: integer
+        earnedPoints:
+          type: number
+        maxPoints:
+          type: number
+        percentage:
+          type: number
+        completedItemCount:
+          type: integer
+        pendingItemCount:
+          type: integer
+        families:
+          type: array
+          items:
+            $ref: "#/components/schemas/RemediationResultFamily"
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/RemediationResultItem"
     AssessmentItem:
       type: object
       required: [id, sessionId, kind, status]

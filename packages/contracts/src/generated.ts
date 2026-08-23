@@ -706,6 +706,40 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/schools/{schoolId}/assessments/sessions/{sourceSessionId}/remediation": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** 基于已完成正式题库诊断创建或恢复专项巩固练习 */
+    post: operations["createAssessmentRemediation"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/assessments/sessions/{sessionId}/remediation-result": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 获取专项巩固练习结果（非正式测评报告） */
+    get: operations["getAssessmentRemediationResult"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/schools/{schoolId}/assessments/sessions/{sessionId}/start": {
     parameters: {
       query?: never;
@@ -2434,6 +2468,8 @@ export interface components {
       /** @enum {string} */
       type: "READING" | "WRITTEN" | "MIXED";
       /** @enum {string} */
+      purpose: "STANDARD" | "REMEDIATION";
+      /** @enum {string} */
       status:
         | "CREATED"
         | "IN_PROGRESS"
@@ -2457,6 +2493,62 @@ export interface components {
         nextCursor?: string | null;
       };
       meta: components["schemas"]["EnvelopeMeta"];
+    };
+    RemediationCreationResponse: {
+      /** @enum {string} */
+      outcome: "CREATED" | "RESUMED" | "NO_REMEDIATION_NEEDED";
+      /** Format: uuid */
+      sourceSessionId: string;
+      /** Format: uuid */
+      attemptId: string | null;
+      /** @enum {string|null} */
+      status:
+        | "CREATED"
+        | "IN_PROGRESS"
+        | "SUBMITTED"
+        | "PROCESSING"
+        | "COMPLETED"
+        | "CANCELLED"
+        | null;
+      itemCount: number;
+      resumed: boolean;
+    };
+    RemediationResultItem: {
+      /** Format: uuid */
+      itemId: string;
+      itemType: string;
+      sortOrder: number;
+      earnedPoints: number | null;
+      maxPoints: number;
+      completed: boolean;
+    };
+    RemediationResultFamily: {
+      family: string;
+      domain: string;
+      earnedPoints: number;
+      maxPoints: number;
+      itemCount: number;
+      percentage: number;
+    };
+    RemediationResultResponse: {
+      /** Format: uuid */
+      sourceSessionId: string;
+      /** @enum {string} */
+      status:
+        | "CREATED"
+        | "IN_PROGRESS"
+        | "SUBMITTED"
+        | "PROCESSING"
+        | "COMPLETED"
+        | "CANCELLED";
+      itemCount: number;
+      earnedPoints: number;
+      maxPoints: number;
+      percentage: number;
+      completedItemCount: number;
+      pendingItemCount: number;
+      families: components["schemas"]["RemediationResultFamily"][];
+      items: components["schemas"]["RemediationResultItem"][];
     };
     AssessmentItem: {
       /** Format: uuid */
@@ -4629,6 +4721,61 @@ export interface operations {
       };
       403: components["responses"]["Forbidden"];
       404: components["responses"]["NotFound"];
+    };
+  };
+  createAssessmentRemediation: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        sourceSessionId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 已创建或恢复专项巩固练习 */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["RemediationCreationResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+      409: components["responses"]["Conflict"];
+    };
+  };
+  getAssessmentRemediationResult: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 测评会话 ID */
+        sessionId: components["parameters"]["SessionId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 专项巩固结果 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["RemediationResultResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+      409: components["responses"]["Conflict"];
     };
   };
   startAssessmentSession: {

@@ -1701,6 +1701,13 @@ enum AssessmentSessionStatus {
   CANCELLED
 }
 
+/// STANDARD sessions are the complete, formal assessment path. REMEDIATION
+/// sessions are subset retry attempts and must never generate formal reports.
+enum AssessmentSessionPurpose {
+  STANDARD
+  REMEDIATION
+}
+
 enum AssessmentItemStatus {
   PENDING
   ANSWERED
@@ -1853,6 +1860,7 @@ model AssessmentSession {
   classId              String                  @db.Uuid
   initiatorUserId      String                  @db.Uuid
   type                 AssessmentType
+  purpose              AssessmentSessionPurpose @default(STANDARD)
   status               AssessmentSessionStatus @default(CREATED)
   startedAt            DateTime?
   submittedAt          DateTime?
@@ -1880,6 +1888,7 @@ model AssessmentSession {
   @@index([enrollmentId, createdAt])
   @@index([classId])
   @@index([practiceDefinitionId, enrollmentId, status])
+  @@index([schoolId, enrollmentId, retestOfSessionId, purpose, status])
   @@index([deliveryId, status])
   @@index([courseActivityId, courseSubmissionId, status])
 }

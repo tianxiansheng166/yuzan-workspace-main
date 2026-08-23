@@ -9,6 +9,7 @@ export function toAssessmentSessionResponse(session: AssessmentSession) {
     classId: session.classId,
     initiatorUserId: session.initiatorUserId,
     type: session.type,
+    purpose: session.purpose ?? "STANDARD",
     status: session.status,
     startedAt: session.startedAt?.toISOString() ?? null,
     submittedAt: session.submittedAt?.toISOString() ?? null,
