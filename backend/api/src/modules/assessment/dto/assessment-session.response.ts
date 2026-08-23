@@ -1,4 +1,5 @@
 import type { AssessmentSession, AssessmentItem, AssessmentReport, WrittenAnswer } from "../domain/assessment.types.js";
+import { isQuestionBankDiagnosis, type QuestionBankDiagnosis } from "../question-bank-diagnosis.js";
 
 export function toAssessmentSessionResponse(session: AssessmentSession) {
   return {
@@ -90,7 +91,29 @@ export function toWrittenAnswerResponse(answer: WrittenAnswer) {
   };
 }
 
-export function toAssessmentReportResponse(report: AssessmentReport) {
+function finiteNumber(value: unknown) { return typeof value === "number" && Number.isFinite(value) ? value : null; }
+function text(value: unknown) { return typeof value === "string" ? value : null; }
+
+/** Project a strict allowlist from the persisted JSON snapshot for student safety. */
+function studentSafeDiagnosis(value: unknown) {
+  if (!isQuestionBankDiagnosis(value)) return null;
+  const diagnosis = value as QuestionBankDiagnosis;
+  const score = (entry: any) => ({ earnedPoints: finiteNumber(entry?.earnedPoints), maxPoints: finiteNumber(entry?.maxPoints), percentage: finiteNumber(entry?.percentage), proficiency: text(entry?.proficiency) });
+  const domain = (entry: any) => ({ domain: text(entry?.domain), displayName: text(entry?.displayName), ...score(entry), itemCount: finiteNumber(entry?.itemCount), lostPoints: finiteNumber(entry?.lostPoints) });
+  const family = (entry: any) => ({ family: text(entry?.family), displayName: text(entry?.displayName), domain: text(entry?.domain), domainDisplayName: text(entry?.domainDisplayName), levels: Array.isArray(entry?.levels) ? entry.levels.filter((level: unknown) => typeof level === "string") : [], ...score(entry), itemCount: finiteNumber(entry?.itemCount), lostPoints: finiteNumber(entry?.lostPoints) });
+  return {
+    version: diagnosis.version,
+    overall: score(diagnosis.overall),
+    domains: diagnosis.domains.map(domain), families: diagnosis.families.map(family), strengths: diagnosis.strengths.map(family), priorities: diagnosis.priorities.map(family),
+    retryCandidates: diagnosis.retryCandidates.map((entry) => ({ assessmentItemId: text(entry.assessmentItemId), questionVersionId: text(entry.questionVersionId), family: text(entry.family), displayName: text(entry.displayName), domain: text(entry.domain), domainDisplayName: text(entry.domainDisplayName), earned: finiteNumber(entry.earned), max: finiteNumber(entry.max) })),
+    nextSteps: diagnosis.nextSteps.map((entry) => ({ family: text(entry.family), displayName: text(entry.displayName), domain: text(entry.domain), domainDisplayName: text(entry.domainDisplayName), levels: Array.isArray(entry.levels) ? entry.levels.filter((level) => typeof level === "string") : [], guidance: text(entry.guidance) })),
+  };
+}
+
+export function toAssessmentReportResponse(report: AssessmentReport, options: { includeDiagnosis?: boolean } = {}) {
+  const summary = report.summary && typeof report.summary === "object" && !Array.isArray(report.summary)
+    ? Object.fromEntries(Object.entries(report.summary).filter(([key]) => key !== "diagnosis")) : report.summary;
+  const persistedDiagnosis = report.summary && typeof report.summary === "object" && !Array.isArray(report.summary) ? report.summary.diagnosis : null;
   return {
     id: report.id,
     sessionId: report.sessionId,
@@ -98,8 +121,9 @@ export function toAssessmentReportResponse(report: AssessmentReport) {
     overallScore: report.overallScore,
     readingScore: report.readingScore,
     writtenScore: report.writtenScore,
-    summary: report.summary,
+    summary,
     recommendations: report.recommendations,
+    diagnosis: options.includeDiagnosis ? studentSafeDiagnosis(persistedDiagnosis) : null,
     dataCompleteness: report.dataCompleteness,
     generatedAt: report.generatedAt?.toISOString() ?? null,
     createdAt: report.createdAt.toISOString(),

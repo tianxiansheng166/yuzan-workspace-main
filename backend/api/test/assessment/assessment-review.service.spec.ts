@@ -44,6 +44,13 @@ function makeRows() {
     "ACCEPTED_TEXT", "ACCEPTED_TEXT", "EXACT_CHOICE", "EXACT_CHOICE", "EXACT_CHOICE", "EXACT_CHOICE", "EXACT_CHOICE", "EXACT_CHOICE",
   ];
   const deterministicMax = [3, 3, 3, 5, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4];
+  const deterministicMetadata = [
+    ["LISTEN_IMAGE_CHOICE", "LISTEN"], ["LISTEN_IMAGE_CHOICE", "LISTEN"], ["LISTEN_IMAGE_CHOICE", "LISTEN"],
+    ["DICTATION", "LISTEN"], ["DICTATION", "LISTEN"], ["DICTATION", "LISTEN"],
+    ["PICTURE_WORD", "WRITE"], ["PICTURE_WORD", "WRITE"],
+    ["WORD_RECOGNITION", "READ"], ["WORD_RECOGNITION", "READ"], ["WORD_RECOGNITION", "READ"],
+    ["SENTENCE_COMPREHENSION", "READ"], ["SENTENCE_COMPREHENSION", "READ"], ["SENTENCE_COMPREHENSION", "READ"],
+  ] as const;
   const review = [
     ["rubric-1", "RUBRIC_TEXT", 8, "WRITE"],
     ["rubric-2", "RUBRIC_TEXT", 8, "WRITE"],
@@ -57,6 +64,7 @@ function makeRows() {
       id: `det-${index}`,
       sessionId: SESSION_ID,
       questionVersionId: `version-det-${index}`,
+      sortOrder: index + 1,
       maxScore: deterministicMax[index],
       scoredScore: deterministicMax[index],
       reviewerUserId: null,
@@ -66,12 +74,13 @@ function makeRows() {
       status: "REVIEWED",
       autoResult: { state: "AUTO_SCORED" },
       session: { id: SESSION_ID, schoolId: SCHOOL_ID, classId: CLASS_ID, status: "PROCESSING" },
-      questionVersion: { status: "PUBLISHED", scoringSpec: { strategy, maxScore: deterministicMax[index] }, item: { domain: index < 6 ? "LISTEN" : "READ" } },
+      questionVersion: { status: "PUBLISHED", scoringSpec: { strategy, maxScore: deterministicMax[index] }, item: { domain: deterministicMetadata[index]![1], questionType: deterministicMetadata[index]![0], level: "水平一级" } },
     })),
-    ...review.map(([id, strategy, maxScore, domain]) => ({
+    ...review.map(([id, strategy, maxScore, domain], index) => ({
       id,
       sessionId: SESSION_ID,
       questionVersionId: `version-${id}`,
+      sortOrder: deterministicStrategies.length + index + 1,
       maxScore,
       scoredScore: null as number | null,
       reviewerUserId: null as string | null,
@@ -81,7 +90,7 @@ function makeRows() {
       status: "PENDING",
       autoResult: { state: "NEEDS_REVIEW", strategy },
       session: { id: SESSION_ID, schoolId: SCHOOL_ID, classId: CLASS_ID, status: "PROCESSING" },
-      questionVersion: { status: "PUBLISHED", scoringSpec: { strategy, maxScore }, item: { domain } },
+      questionVersion: { status: "PUBLISHED", scoringSpec: { strategy, maxScore }, item: { domain, questionType: strategy === "SPEECH_READING" ? "READ_ALOUD" : strategy === "SPEECH_OPEN_RESPONSE" ? "PICTURE_SPEAKING" : "SENTENCE_COMPLETION", level: "水平一级" } },
     })),
   ];
 }
@@ -161,7 +170,7 @@ describe("AssessmentService Question Bank human review", () => {
     }
 
     expect(sessionRepo.updateStatus).toHaveBeenCalledWith(SESSION_ID, "COMPLETED", expect.objectContaining({ completedAt: expect.any(Date) }));
-    expect(getReport()).toMatchObject({ overallScore: 100, summary: { totalItems: 20, answeredItems: 20, aggregation: "POINTS", awardedPoints: 100, totalMaxPoints: 100 } });
+    expect(getReport()).toMatchObject({ overallScore: 100, summary: { totalItems: 20, answeredItems: 20, aggregation: "POINTS", awardedPoints: 100, totalMaxPoints: 100, diagnosis: { version: "qb-diagnosis-v1", domains: expect.any(Array) } } });
     expect(reportRepo.create).toHaveBeenCalledTimes(1);
 
     const repeated = await service.finalizeQuestionBankIfComplete(SCHOOL_ID, SESSION_ID, TEACHER_ID);

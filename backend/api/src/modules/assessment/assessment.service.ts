@@ -16,6 +16,7 @@ import { WRITTEN_ANSWER_REPOSITORY } from "./ports/written-answer-repository.por
 import type { AssessmentReportRepositoryPort, CreateAssessmentReportData } from "./ports/assessment-report-repository.port.js";
 import { ASSESSMENT_REPORT_REPOSITORY } from "./ports/assessment-report-repository.port.js";
 import { QuestionBankDeterministicScoringService } from "./question-bank-deterministic-scoring.service.js";
+import { buildQuestionBankDiagnosis, QuestionBankDiagnosisError, type QuestionBankDiagnosis } from "./question-bank-diagnosis.js";
 import { toAssessmentSessionResponse, toAssessmentItemResponse, toReadingItemResponse, toWrittenItemResponse, toWrittenAnswerResponse, toAssessmentReportResponse } from "./dto/assessment-session.response.js";
 
 @Injectable()
@@ -358,7 +359,7 @@ export class AssessmentService {
     if (!report) {
       return null;
     }
-    return toAssessmentReportResponse(report);
+    return toAssessmentReportResponse(report, { includeDiagnosis: session.status === "COMPLETED" });
   }
 
   async generateReport(auth: AuthContext, schoolId: string, sessionId: string) {
@@ -375,7 +376,7 @@ export class AssessmentService {
 
     await this.questionBankScoring.scoreSession(sessionId);
 
-    const items = await this.itemRepo.findBySessionId(sessionId);
+    const items = await this.reportItemsForSession(sessionId);
     if (this.hasIncompleteQuestionBankScoring(items)) {
       if (session.status === "SUBMITTED") await this.sessionRepo.updateStatus(sessionId, "PROCESSING");
       return null;
@@ -415,18 +416,18 @@ export class AssessmentService {
       where: { sessionId },
         include: {
           speechJobs: { orderBy: { createdAt: "desc" } },
-          questionVersion: { select: { item: { select: { domain: true } } } },
+          questionVersion: { select: { item: { select: { domain: true, questionType: true, level: true } } } },
         },
       orderBy: { sortOrder: "asc" },
     });
     const questionBankItems = items.filter((item) => item.questionVersionId !== null);
-    if (questionBankItems.length && this.hasIncompleteQuestionBankScoring(questionBankItems)) {
+    if (questionBankItems.length && this.hasIncompleteQuestionBankScoring(items)) {
       if (session.status === "SUBMITTED") await this.sessionRepo.updateStatus(sessionId, "PROCESSING");
       return null;
     }
 
     const existingReport = await this.reportRepo.findBySessionId(sessionId);
-    if (existingReport) return toAssessmentReportResponse(existingReport);
+    if (existingReport) return toAssessmentReportResponse(existingReport, { includeDiagnosis: true });
 
     const oralItems = items.filter((item) => ["READING", "SPEECH", "LISTEN_REPEAT", "READ_ALOUD"].includes(item.itemType));
     if (!oralItems.length) {
@@ -457,6 +458,8 @@ export class AssessmentService {
       items: items.map((item) => ({
         ...item,
         domain: item.questionVersion?.item.domain ?? null,
+        family: item.questionVersion?.item.questionType ?? null,
+        level: item.questionVersion?.item.level ?? null,
       })),
       requiresTeacherReview,
     });
@@ -467,10 +470,14 @@ export class AssessmentService {
     sessionId: string;
     items: Array<{
       questionVersionId?: string | null;
+      id?: string;
       itemType: string;
+      sortOrder?: number;
       maxScore?: number | null;
       scoredScore: number | null;
       domain?: string | null;
+      family?: string | null;
+      level?: string | null;
     }>;
     generatedByUserId?: string;
     requiresTeacherReview?: boolean;
@@ -478,6 +485,7 @@ export class AssessmentService {
     const { schoolId, sessionId, items, generatedByUserId, requiresTeacherReview = false } = input;
     const questionBankItems = items.filter((item) => item.questionVersionId != null);
     const isQuestionBank = questionBankItems.length > 0;
+    const isPureQuestionBank = isQuestionBank && questionBankItems.length === items.length;
     if (isQuestionBank && this.hasIncompleteQuestionBankScoring(items)) return null;
     const scoredItems = items.filter((i) => i.scoredScore != null);
 
@@ -503,6 +511,27 @@ export class AssessmentService {
       : null;
 
     const dataCompleteness = items.length > 0 ? (scoredItems.length / items.length) * 100 : 0;
+
+    let diagnosis: QuestionBankDiagnosis | null = null;
+    if (isPureQuestionBank) {
+      try {
+        diagnosis = buildQuestionBankDiagnosis(questionBankItems.map((item) => ({
+          assessmentItemId: item.id ?? "",
+          questionVersionId: item.questionVersionId ?? "",
+          sortOrder: item.sortOrder ?? Number.NaN,
+          domain: item.domain ?? null,
+          family: item.family ?? null,
+          level: item.level ?? null,
+          earned: item.scoredScore,
+          max: item.maxScore ?? null,
+        })));
+      } catch (error) {
+        if (error instanceof QuestionBankDiagnosisError) {
+          throw new AssessmentValidationFailedException(`无法生成题库能力诊断：${error.message}`);
+        }
+        throw error;
+      }
+    }
 
     const domainScores: Record<string, { awardedPoints: number; totalMaxPoints: number }> = {};
     if (isQuestionBank) {
@@ -534,6 +563,7 @@ export class AssessmentService {
           awardedPoints: scoredItems.reduce((sum, item) => sum + (item.scoredScore ?? 0), 0),
           totalMaxPoints: questionBankItems.reduce((sum, item) => sum + (item.maxScore ?? 0), 0),
           domainScores,
+          ...(diagnosis ? { diagnosis } : {}),
         } : {}),
         generatedAt: new Date().toISOString(),
       },
@@ -543,7 +573,17 @@ export class AssessmentService {
     // Update session to COMPLETED
     await this.sessionRepo.updateStatus(sessionId, "COMPLETED", { completedAt: new Date() } as Partial<AssessmentSession>);
 
-    return toAssessmentReportResponse(report);
+    return toAssessmentReportResponse(report, { includeDiagnosis: Boolean(diagnosis) });
+  }
+
+  /** Select immutable public metadata only; diagnosis never reads scoringSpec or provider evidence. */
+  private async reportItemsForSession(sessionId: string) {
+    const items = await this.prisma.assessmentItem.findMany({
+      where: { sessionId },
+      select: { id: true, questionVersionId: true, itemType: true, sortOrder: true, maxScore: true, scoredScore: true, questionVersion: { select: { item: { select: { domain: true, questionType: true, level: true } } } } },
+      orderBy: { sortOrder: "asc" },
+    });
+    return items.map((item) => ({ ...item, domain: item.questionVersion?.item.domain ?? null, family: item.questionVersion?.item.questionType ?? null, level: item.questionVersion?.item.level ?? null }));
   }
 
   private hasIncompleteQuestionBankScoring(items: Array<{
@@ -552,7 +592,11 @@ export class AssessmentService {
     scoredScore: number | null;
   }>) {
     const questionBankItems = items.filter((item) => item.questionVersionId != null);
-    return questionBankItems.length > 0 && questionBankItems.some((item) => item.maxScore == null || item.scoredScore == null);
+    return questionBankItems.length > 0 && (
+      questionBankItems.length !== items.length
+      || questionBankItems.length !== 20
+      || questionBankItems.some((item) => item.maxScore == null || item.scoredScore == null)
+    );
   }
 
   // ─── Teacher Review ──────────────────────────────────────
@@ -690,19 +734,21 @@ export class AssessmentService {
   async finalizeQuestionBankIfComplete(schoolId: string, sessionId: string, generatedByUserId?: string) {
     const session = await this.sessionRepo.findByIdAndSchool(sessionId, schoolId);
     if (!session || session.status === "CANCELLED" || session.status === "COMPLETED") {
-      return this.reportRepo.findBySessionId(sessionId).then((report) => report ? toAssessmentReportResponse(report) : null);
+      return this.reportRepo.findBySessionId(sessionId).then((report) => report ? toAssessmentReportResponse(report, { includeDiagnosis: session?.status === "COMPLETED" }) : null);
     }
     if (session.status !== "SUBMITTED" && session.status !== "PROCESSING") return null;
 
     await this.questionBankScoring.scoreSession(sessionId);
     const items = await this.prisma.assessmentItem.findMany({
-      where: { sessionId, questionVersionId: { not: null } },
+      where: { sessionId },
       select: {
+        id: true,
         questionVersionId: true,
         itemType: true,
+        sortOrder: true,
         maxScore: true,
         scoredScore: true,
-        questionVersion: { select: { item: { select: { domain: true } } } },
+        questionVersion: { select: { item: { select: { domain: true, questionType: true, level: true } } } },
       },
       orderBy: { sortOrder: "asc" },
     });
@@ -711,7 +757,7 @@ export class AssessmentService {
       return null;
     }
     const existing = await this.reportRepo.findBySessionId(sessionId);
-    if (existing) return toAssessmentReportResponse(existing);
+    if (existing) return toAssessmentReportResponse(existing, { includeDiagnosis: true });
     if (session.status === "SUBMITTED") await this.sessionRepo.updateStatus(sessionId, "PROCESSING");
 
     try {
@@ -719,14 +765,16 @@ export class AssessmentService {
         schoolId,
         sessionId,
         items: items.map((item) => ({
-          ...item,
-          domain: item.questionVersion?.item.domain ?? null,
+        ...item,
+        domain: item.questionVersion?.item.domain ?? null,
+        family: item.questionVersion?.item.questionType ?? null,
+        level: item.questionVersion?.item.level ?? null,
         })),
         ...(generatedByUserId ? { generatedByUserId } : {}),
       });
     } catch (error) {
       const concurrent = await this.reportRepo.findBySessionId(sessionId);
-      if (concurrent) return toAssessmentReportResponse(concurrent);
+      if (concurrent) return toAssessmentReportResponse(concurrent, { includeDiagnosis: true });
       throw error;
     }
   }

@@ -2518,9 +2518,67 @@ export interface components {
         items?: Record<string, never>[];
         /** Format: date-time */
         generatedAt: string;
-        summary?: string | null;
+        summary?: Record<string, never> | null;
+        diagnosis?: components["schemas"]["QuestionBankDiagnosis"] | null;
       };
-      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    QuestionBankDiagnosis: {
+      /** @enum {string} */
+      version: "qb-diagnosis-v1";
+      overall: components["schemas"]["QuestionBankDiagnosisScore"];
+      domains: components["schemas"]["QuestionBankDomainDiagnosis"][];
+      families: components["schemas"]["QuestionBankFamilyDiagnosis"][];
+      strengths: components["schemas"]["QuestionBankFamilyDiagnosis"][];
+      priorities: components["schemas"]["QuestionBankFamilyDiagnosis"][];
+      retryCandidates: components["schemas"]["QuestionBankRetryCandidate"][];
+      nextSteps: components["schemas"]["QuestionBankNextStep"][];
+    };
+    QuestionBankDiagnosisScore: {
+      earnedPoints: number;
+      maxPoints: number;
+      percentage: number;
+      /** @enum {string} */
+      proficiency: "STRONG" | "DEVELOPING" | "PRIORITY";
+    };
+    QuestionBankDomainDiagnosis: components["schemas"]["QuestionBankDiagnosisScore"] & {
+      /** @enum {string} */
+      domain: "LISTEN" | "SPEAK" | "READ" | "WRITE";
+      displayName: string;
+      itemCount: number;
+      lostPoints: number;
+    };
+    QuestionBankFamilyDiagnosis: components["schemas"]["QuestionBankDiagnosisScore"] & {
+      family: string;
+      displayName: string;
+      /** @enum {string} */
+      domain: "LISTEN" | "SPEAK" | "READ" | "WRITE";
+      domainDisplayName: string;
+      levels: string[];
+      itemCount: number;
+      lostPoints: number;
+    };
+    QuestionBankRetryCandidate: {
+      /** Format: uuid */
+      assessmentItemId: string;
+      /** Format: uuid */
+      questionVersionId: string;
+      family: string;
+      displayName: string;
+      /** @enum {string} */
+      domain: "LISTEN" | "SPEAK" | "READ" | "WRITE";
+      domainDisplayName: string;
+      earned: number;
+      max: number;
+    };
+    QuestionBankNextStep: {
+      family: string;
+      displayName: string;
+      /** @enum {string} */
+      domain: "LISTEN" | "SPEAK" | "READ" | "WRITE";
+      domainDisplayName: string;
+      levels: string[];
+      guidance: string;
+      meta?: components["schemas"]["EnvelopeMeta"];
     };
     ExportReportRequest: {
       purpose?: string | null;

@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { AssessmentService } from "../../src/modules/assessment/assessment.service.js";
 import type { AssessmentSession } from "../../src/modules/assessment/domain/assessment.types.js";
 import { toAssessmentItemResponse } from "../../src/modules/assessment/dto/assessment-session.response.js";
+import { buildQuestionBankDiagnosis } from "../../src/modules/assessment/question-bank-diagnosis.js";
 
 const now = new Date("2026-08-23T00:00:00.000Z");
 
@@ -64,16 +65,32 @@ function makeService(rawItems: unknown[]) {
 }
 
 function qbItem(overrides: Record<string, unknown> = {}) {
+  const itemType = (overrides.itemType as string | undefined) ?? "TEXT";
+  const family = (overrides.family as string | undefined) ?? (itemType === "SPEECH" ? "READ_ALOUD" : "DICTATION");
+  const domain = family === "READ_ALOUD" ? "SPEAK" : "LISTEN";
   return {
     id: "item-qb-005",
     questionVersionId: "version-qb-005",
-    itemType: "TEXT",
+    itemType,
+    sortOrder: 1,
     maxScore: 5,
     scoredScore: null,
     recordingId: null,
     speechJobs: [],
+    questionVersion: { item: { domain, questionType: family, level: "水平一级" } },
     ...overrides,
   };
+}
+
+function completeQuestionBankItems() {
+  return Array.from({ length: 20 }, (_unused, index) => qbItem({
+    id: `item-qb-${index + 1}`,
+    questionVersionId: `version-qb-${index + 1}`,
+    sortOrder: index + 1,
+    maxScore: 5,
+    scoredScore: index === 0 ? 2 : 5,
+    ...(index === 1 ? { itemType: "SPEECH", scoredScore: 3, recordingId: "recording-qb", speechJobs: [{ recordingId: "recording-qb", status: "AUTO_RESULT" }] } : {}),
+  }));
 }
 
 describe("Question Bank assessment scoring integration", () => {
@@ -147,19 +164,58 @@ describe("Question Bank assessment scoring integration", () => {
     expect(reportRepo.create).not.toHaveBeenCalled();
   });
 
+  it("requires all 20 Question Bank items even when every present item is scored", async () => {
+    const { service, sessionRepo, reportRepo } = makeService(completeQuestionBankItems().slice(0, 19));
+
+    await expect(service.finalizeAutomaticReportFromSpeechJob("school-qb-005", "session-qb-005")).resolves.toBeNull();
+
+    expect(sessionRepo.updateStatus).toHaveBeenCalledWith("session-qb-005", "PROCESSING");
+    expect(reportRepo.create).not.toHaveBeenCalled();
+  });
+
   it("uses point aggregation for a complete Question Bank report", async () => {
-    const { service, sessionRepo, reportRepo } = makeService([
-      qbItem({ id: "item-choice", itemType: "CHOICE", maxScore: 3, scoredScore: 2 }),
-      qbItem({ id: "item-speech", itemType: "SPEECH", maxScore: 4, scoredScore: 3, recordingId: "recording-qb", speechJobs: [{ recordingId: "recording-qb", status: "AUTO_RESULT" }] }),
-    ]);
+    const { service, sessionRepo, reportRepo } = makeService(completeQuestionBankItems());
 
     const response = await service.finalizeAutomaticReportFromSpeechJob("school-qb-005", "session-qb-005");
-    expect(response).toMatchObject({ overallScore: 5, readingScore: 3, writtenScore: 2 });
+    expect(response).toMatchObject({ overallScore: 95, readingScore: 3, writtenScore: 92 });
     expect(reportRepo.create).toHaveBeenCalledWith(expect.objectContaining({
-      overallScore: 5,
-      summary: expect.objectContaining({ aggregation: "POINTS", awardedPoints: 5, totalMaxPoints: 7 }),
+      overallScore: 95,
+      summary: expect.objectContaining({ aggregation: "POINTS", awardedPoints: 95, totalMaxPoints: 100 }),
     }));
+    const reportData = reportRepo.create.mock.calls[0]?.[0] as Record<string, any>;
+    expect(reportData.summary.diagnosis).toMatchObject({ version: "qb-diagnosis-v1", overall: { earnedPoints: 95, maxPoints: 100 } });
     expect(sessionRepo.updateStatus).toHaveBeenCalledWith("session-qb-005", "COMPLETED", expect.objectContaining({ completedAt: expect.any(Date) }));
+  });
+
+  it("reuses the persisted diagnosis when Question Bank finalization is repeated", async () => {
+    const items = completeQuestionBankItems();
+    const { service, reportRepo } = makeService(items);
+    const diagnosis = buildQuestionBankDiagnosis(items.map((item) => ({
+      assessmentItemId: item.id,
+      questionVersionId: item.questionVersionId,
+      sortOrder: item.sortOrder,
+      domain: item.questionVersion.item.domain,
+      family: item.questionVersion.item.questionType,
+      level: item.questionVersion.item.level,
+      earned: item.scoredScore,
+      max: item.maxScore,
+    })));
+    const existingReport = await reportRepo.create({
+      sessionId: "session-qb-005",
+      schoolId: "school-qb-005",
+      overallScore: 95,
+      readingScore: 3,
+      writtenScore: 92,
+      summary: { diagnosis },
+      dataCompleteness: 100,
+    });
+    reportRepo.create.mockClear();
+    reportRepo.findBySessionId.mockResolvedValue(existingReport);
+
+    await expect(service.finalizeQuestionBankIfComplete("school-qb-005", "session-qb-005")).resolves.toMatchObject({
+      diagnosis: { version: "qb-diagnosis-v1", overall: { earnedPoints: 95, maxPoints: 100 } },
+    });
+    expect(reportRepo.create).not.toHaveBeenCalled();
   });
 
   it("keeps legacy report aggregation behavior when no question version is present", async () => {

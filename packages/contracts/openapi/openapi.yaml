@@ -4523,7 +4523,133 @@ components:
               type: string
               format: date-time
             summary:
-              type: [string, "null"]
+              type: [object, "null"]
+            diagnosis:
+              oneOf:
+                - $ref: "#/components/schemas/QuestionBankDiagnosis"
+                - type: "null"
+    QuestionBankDiagnosis:
+      type: object
+      required:
+        [
+          version,
+          overall,
+          domains,
+          families,
+          strengths,
+          priorities,
+          retryCandidates,
+          nextSteps,
+        ]
+      properties:
+        version:
+          type: string
+          enum: [qb-diagnosis-v1]
+        overall:
+          $ref: "#/components/schemas/QuestionBankDiagnosisScore"
+        domains:
+          type: array
+          items:
+            $ref: "#/components/schemas/QuestionBankDomainDiagnosis"
+        families:
+          type: array
+          items:
+            $ref: "#/components/schemas/QuestionBankFamilyDiagnosis"
+        strengths:
+          type: array
+          maxItems: 2
+          items:
+            $ref: "#/components/schemas/QuestionBankFamilyDiagnosis"
+        priorities:
+          type: array
+          maxItems: 3
+          items:
+            $ref: "#/components/schemas/QuestionBankFamilyDiagnosis"
+        retryCandidates:
+          type: array
+          items:
+            $ref: "#/components/schemas/QuestionBankRetryCandidate"
+        nextSteps:
+          type: array
+          items:
+            $ref: "#/components/schemas/QuestionBankNextStep"
+    QuestionBankDiagnosisScore:
+      type: object
+      required: [earnedPoints, maxPoints, percentage, proficiency]
+      properties:
+        earnedPoints: { type: number }
+        maxPoints: { type: number }
+        percentage: { type: number, minimum: 0, maximum: 100 }
+        proficiency: { type: string, enum: [STRONG, DEVELOPING, PRIORITY] }
+    QuestionBankDomainDiagnosis:
+      allOf:
+        - $ref: "#/components/schemas/QuestionBankDiagnosisScore"
+        - type: object
+          required: [domain, displayName, itemCount, lostPoints]
+          properties:
+            domain: { type: string, enum: [LISTEN, SPEAK, READ, WRITE] }
+            displayName: { type: string }
+            itemCount: { type: integer, minimum: 1 }
+            lostPoints: { type: number, minimum: 0 }
+    QuestionBankFamilyDiagnosis:
+      allOf:
+        - $ref: "#/components/schemas/QuestionBankDiagnosisScore"
+        - type: object
+          required:
+            [
+              family,
+              displayName,
+              domain,
+              domainDisplayName,
+              levels,
+              itemCount,
+              lostPoints,
+            ]
+          properties:
+            family: { type: string }
+            displayName: { type: string }
+            domain: { type: string, enum: [LISTEN, SPEAK, READ, WRITE] }
+            domainDisplayName: { type: string }
+            levels:
+              type: array
+              items: { type: string }
+            itemCount: { type: integer, minimum: 1 }
+            lostPoints: { type: number, minimum: 0 }
+    QuestionBankRetryCandidate:
+      type: object
+      required:
+        [
+          assessmentItemId,
+          questionVersionId,
+          family,
+          displayName,
+          domain,
+          domainDisplayName,
+          earned,
+          max,
+        ]
+      properties:
+        assessmentItemId: { type: string, format: uuid }
+        questionVersionId: { type: string, format: uuid }
+        family: { type: string }
+        displayName: { type: string }
+        domain: { type: string, enum: [LISTEN, SPEAK, READ, WRITE] }
+        domainDisplayName: { type: string }
+        earned: { type: number, minimum: 0 }
+        max: { type: number, exclusiveMinimum: 0 }
+    QuestionBankNextStep:
+      type: object
+      required:
+        [family, displayName, domain, domainDisplayName, levels, guidance]
+      properties:
+        family: { type: string }
+        displayName: { type: string }
+        domain: { type: string, enum: [LISTEN, SPEAK, READ, WRITE] }
+        domainDisplayName: { type: string }
+        levels:
+          type: array
+          items: { type: string }
+        guidance: { type: string }
         meta:
           $ref: "#/components/schemas/EnvelopeMeta"
     ExportReportRequest:
