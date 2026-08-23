@@ -81,6 +81,19 @@ export class AssessmentSessionController {
     );
   }
 
+  @Get("assigned-remediations")
+  @RequireRoles(MembershipRole.STUDENT)
+  async listAssignedRemediations(
+    @Param("schoolId", ParseUUIDPipe) schoolId: string,
+    @CurrentTenant() tenant: TenantContext,
+    @CurrentPrincipal() principal: Principal,
+  ) {
+    return this.service.listAssignedRemediations(
+      createAuthContext("request-id", principal, tenant),
+      schoolId,
+    );
+  }
+
   @Get(":sessionId/remediation-result")
   @RequireRoles(MembershipRole.STUDENT, MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
   async getRemediationResult(

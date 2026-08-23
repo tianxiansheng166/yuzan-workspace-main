@@ -1,7 +1,9 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Inject, Injectable, Optional } from "@nestjs/common";
 import type { AuthContext } from "../../common/security/auth.types.js";
 import { PrismaService } from "../../shared/database/prisma.service.js";
-import { AssessmentForbiddenException } from "./domain/assessment.errors.js";
+import { AssessmentForbiddenException, AssessmentValidationFailedException } from "./domain/assessment.errors.js";
+import { AssessmentService } from "./assessment.service.js";
+import type { CreateTeacherRemediationAssignmentDto } from "./dto/teacher-remediation-assignment.dto.js";
 import {
   AssessmentReviewService,
   reviewableAssessmentStrategy,
@@ -31,6 +33,8 @@ type FormalLevel = DerivedProgress["formalLevels"][number];
 
 type DashboardSession = QuestionBankProgressSession & {
   enrollmentId: string;
+  remediationOrigin?: string | null;
+  remediationFocus?: unknown;
 };
 
 type SafeDiagnosis = {
@@ -187,13 +191,87 @@ function remediationSummary(
   };
 }
 
+function assignedRemediationSummary(sessions: Array<{ remediationOrigin?: string | null; status: string; createdAt: Date; remediationFocus?: unknown }>) {
+  const assigned = sessions.filter((session) => session.remediationOrigin === "TEACHER_ASSIGNED");
+  if (!assigned.length) return null;
+  const active = assigned.filter((session) => ["CREATED", "IN_PROGRESS", "SUBMITTED", "PROCESSING"].includes(session.status));
+  const latest = [...assigned].sort((left, right) => right.createdAt.getTime() - left.createdAt.getTime())[0]!;
+  const focus = latest.remediationFocus && typeof latest.remediationFocus === "object" && !Array.isArray(latest.remediationFocus)
+    ? latest.remediationFocus as Record<string, unknown>
+    : {};
+  return {
+    activeCount: active.length,
+    latestStatus: latest.status,
+    latestFocus: focus.mode === "FAMILY" && typeof focus.family === "string" && QUESTION_BANK_FAMILY_ORDER.includes(focus.family as QuestionBankFamily)
+      ? focus.family
+      : "ALL_RETRY",
+    latestAssignedAt: latest.createdAt.toISOString(),
+  };
+}
+
 @Injectable()
 export class TeacherQuestionBankDiagnosticService {
   constructor(
     @Inject(PrismaService) private readonly prisma: PrismaService,
     @Inject(AssessmentReviewService)
     private readonly reviewService: AssessmentReviewService,
+    @Optional() @Inject(AssessmentService)
+    private readonly assessmentService?: AssessmentService,
   ) {}
+
+  async createRemediationAssignments(
+    auth: AuthContext,
+    schoolId: string,
+    classId: string,
+    dto: CreateTeacherRemediationAssignmentDto,
+  ) {
+    await this.reviewService.assertAuthorizedClass(auth, schoolId, classId);
+    if (!dto.focus || (dto.focus.mode !== "ALL_RETRY" && dto.focus.mode !== "FAMILY")) {
+      throw new AssessmentValidationFailedException("专项巩固范围无效");
+    }
+    if (dto.focus.mode === "FAMILY" && (!dto.focus.family || !QUESTION_BANK_FAMILY_ORDER.includes(dto.focus.family as QuestionBankFamily))) {
+      throw new AssessmentValidationFailedException("专项巩固题型无效");
+    }
+    const enrollmentIds = [...new Set(dto.enrollmentIds)];
+    if (enrollmentIds.length !== dto.enrollmentIds.length) {
+      throw new AssessmentValidationFailedException("学生名单不能重复");
+    }
+    const targets = await this.prisma.enrollment.findMany({
+      where: { id: { in: enrollmentIds }, schoolId, classId, role: "STUDENT", status: "ACTIVE" },
+      select: { id: true, classId: true, user: { select: { displayName: true } } },
+      orderBy: [{ user: { displayName: "asc" } }, { id: "asc" }],
+    });
+    // A target mismatch is an authorization/scope problem, not a partial
+    // business skip: never silently drop another class or inactive enrollment.
+    if (targets.length !== enrollmentIds.length) throw new AssessmentForbiddenException("学生不属于当前班级的有效学生名单");
+    if (!this.assessmentService) throw new AssessmentForbiddenException();
+    const focus = dto.focus.mode === "FAMILY"
+      ? { mode: "FAMILY" as const, family: dto.focus.family! }
+      : { mode: "ALL_RETRY" as const };
+    const outcomes = await Promise.all(targets.map(async (target) => {
+      const result = await this.assessmentService!.createTeacherAssignedRemediation({
+        schoolId,
+        enrollment: { id: target.id, classId: target.classId },
+        actorUserId: auth.principal.userId,
+        practiceDefinitionId: dto.practiceDefinitionId,
+        focus,
+      });
+      return {
+        enrollmentId: target.id,
+        displayName: target.user.displayName,
+        outcome: result.outcome,
+        attemptId: result.attemptId,
+        itemCount: result.itemCount,
+      };
+    }));
+    return {
+      requested: enrollmentIds.length,
+      assigned: outcomes.filter((entry) => entry.outcome === "CREATED").length,
+      resumed: outcomes.filter((entry) => entry.outcome === "RESUMED").length,
+      skipped: outcomes.filter((entry) => entry.outcome === "NO_COMPLETED_ASSESSMENT" || entry.outcome === "NO_MATCHING_RETRY_CANDIDATES").length,
+      targets: outcomes,
+    };
+  }
 
   async getCatalog(auth: AuthContext, schoolId: string) {
     const classIds = await this.reviewService.authorizedClassIds(
@@ -280,6 +358,8 @@ export class TeacherQuestionBankDiagnosticService {
             id: true,
             enrollmentId: true,
             purpose: true,
+            remediationOrigin: true,
+            remediationFocus: true,
             status: true,
             completedAt: true,
             createdAt: true,
@@ -428,6 +508,7 @@ export class TeacherQuestionBankDiagnosticService {
             }
           : null,
         remediationSummary: remediation,
+        assignedRemediation: assignedRemediationSummary(studentSessions),
         pendingReviewCount: pendingByEnrollment.get(student.id) ?? 0,
         needsAttention,
         state: stateFor({ formal, hasActiveStandard, needsAttention }),
@@ -596,6 +677,8 @@ export class TeacherQuestionBankDiagnosticService {
         id: true,
         enrollmentId: true,
         purpose: true,
+        remediationOrigin: true,
+        remediationFocus: true,
         status: true,
         completedAt: true,
         createdAt: true,

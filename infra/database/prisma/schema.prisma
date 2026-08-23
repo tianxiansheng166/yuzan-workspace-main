@@ -1708,6 +1708,14 @@ enum AssessmentSessionPurpose {
   REMEDIATION
 }
 
+/// Identifies whether a remediation attempt was started by the student or
+/// explicitly assigned by a teacher. Existing rows remain nullable and are
+/// treated as SELF_INITIATED by runtime compatibility code.
+enum AssessmentRemediationOrigin {
+  SELF_INITIATED
+  TEACHER_ASSIGNED
+}
+
 enum AssessmentItemStatus {
   PENDING
   ANSWERED
@@ -1861,6 +1869,8 @@ model AssessmentSession {
   initiatorUserId      String                  @db.Uuid
   type                 AssessmentType
   purpose              AssessmentSessionPurpose @default(STANDARD)
+  remediationOrigin    AssessmentRemediationOrigin?
+  remediationFocus     Json?
   status               AssessmentSessionStatus @default(CREATED)
   startedAt            DateTime?
   submittedAt          DateTime?
@@ -1889,6 +1899,7 @@ model AssessmentSession {
   @@index([classId])
   @@index([practiceDefinitionId, enrollmentId, status])
   @@index([schoolId, enrollmentId, retestOfSessionId, purpose, status])
+  @@index([schoolId, enrollmentId, retestOfSessionId, remediationOrigin, status])
   @@index([deliveryId, status])
   @@index([courseActivityId, courseSubmissionId, status])
 }

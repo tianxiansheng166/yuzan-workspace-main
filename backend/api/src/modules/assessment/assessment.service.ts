@@ -16,7 +16,7 @@ import { WRITTEN_ANSWER_REPOSITORY } from "./ports/written-answer-repository.por
 import type { AssessmentReportRepositoryPort, CreateAssessmentReportData } from "./ports/assessment-report-repository.port.js";
 import { ASSESSMENT_REPORT_REPOSITORY } from "./ports/assessment-report-repository.port.js";
 import { QuestionBankDeterministicScoringService } from "./question-bank-deterministic-scoring.service.js";
-import { buildQuestionBankDiagnosis, isQuestionBankDiagnosis, QuestionBankDiagnosisError, type QuestionBankDiagnosis, type QuestionBankRetryCandidate } from "./question-bank-diagnosis.js";
+import { buildQuestionBankDiagnosis, isQuestionBankDiagnosis, QuestionBankDiagnosisError, QUESTION_BANK_FAMILY_ORDER, type QuestionBankDiagnosis, type QuestionBankRetryCandidate } from "./question-bank-diagnosis.js";
 import { assertSafeQuestionDeliverySpec } from "./question-bank-delivery.js";
 import { toAssessmentSessionResponse, toAssessmentItemResponse, toReadingItemResponse, toWrittenItemResponse, toWrittenAnswerResponse, toAssessmentReportResponse } from "./dto/assessment-session.response.js";
 
@@ -90,158 +90,71 @@ export class AssessmentService {
     if (!enrollment) throw new AssessmentForbiddenException("当前用户没有有效的学生班级关系");
 
     return this.prisma.$transaction(async (tx) => {
-      const source = await tx.assessmentSession.findFirst({
-        where: {
-          id: sourceSessionId,
-          schoolId,
-        },
-        select: {
-          id: true,
-          enrollmentId: true,
-          classId: true,
-          type: true,
-          status: true,
-          purpose: true,
-          practiceDefinitionId: true,
-          practiceVersionId: true,
-          deliveryId: true,
-          report: { select: { summary: true } },
-          items: {
-            orderBy: { sortOrder: "asc" },
-            select: {
-              id: true,
-              questionVersionId: true,
-              prompt: true,
-              itemConfig: true,
-              itemType: true,
-              sectionTitle: true,
-              sectionOrder: true,
-              sortOrder: true,
-              maxScore: true,
-              scoredScore: true,
-              questionVersion: {
-                select: {
-                  id: true,
-                  status: true,
-                  deliverySpec: true,
-                  item: { select: { domain: true, questionType: true } },
-                },
-              },
-            },
-          },
-        },
-      });
+      const source = await this.remediationSource(tx, { id: sourceSessionId, schoolId });
 
       if (!source) throw new AssessmentNotFoundException();
       if (source.enrollmentId !== enrollment.id || source.classId !== enrollment.classId) {
         throw new AssessmentForbiddenException("无权为其他学生创建专项巩固练习");
       }
-      if (
-        source.purpose !== "STANDARD" ||
-        source.status !== "COMPLETED" ||
-        !source.practiceDefinitionId ||
-        !source.practiceVersionId ||
-        !source.deliveryId
-      ) {
-        throw new AssessmentConflictException("只有已完成的正式题库测评可以创建专项巩固练习");
-      }
-
       const diagnosis = this.persistedDiagnosis(source.report?.summary);
-      if (!diagnosis || source.items.length !== 20 || source.items.some((item) => !item.questionVersionId)) {
+      if (!diagnosis || source.items.length !== 20 || source.items.some((item: { questionVersionId: string | null }) => !item.questionVersionId)) {
         throw new AssessmentConflictException("该测评没有可用于巩固练习的正式题库诊断");
       }
-
       const candidates = this.validatedRetryCandidates(diagnosis.retryCandidates, source.items);
-      if (candidates.length === 0) {
-        return {
-          outcome: "NO_REMEDIATION_NEEDED" as const,
-          sourceSessionId: source.id,
-          attemptId: null,
-          status: null,
-          itemCount: 0,
-          resumed: false,
-        };
-      }
-
-      const existing = await tx.assessmentSession.findFirst({
-        where: {
-          schoolId,
-          enrollmentId: enrollment.id,
-          purpose: "REMEDIATION",
-          retestOfSessionId: source.id,
-          status: { in: ["CREATED", "IN_PROGRESS", "SUBMITTED", "PROCESSING"] },
-        },
-        orderBy: { updatedAt: "desc" },
-        select: { id: true, status: true },
+      const result = await this.createOrResumeRemediationFromCandidates(tx, {
+        schoolId,
+        enrollment,
+        actorUserId: auth.principal.userId,
+        source,
+        origin: "SELF_INITIATED",
+        focus: { mode: "ALL_RETRY" },
+        candidates,
       });
-      if (existing) {
-        return {
-          outcome: "RESUMED" as const,
-          sourceSessionId: source.id,
-          attemptId: existing.id,
-          status: existing.status,
-          itemCount: candidates.length,
-          resumed: true,
-        };
-      }
-
-      const candidateIds = new Set(candidates.map((candidate) => candidate.assessmentItemId));
-      const selected = source.items.filter((item) => candidateIds.has(item.id));
-      if (selected.length !== candidates.length) {
-        throw new AssessmentConflictException("巩固题目引用与正式诊断不一致");
-      }
-
-      const attempt = await tx.assessmentSession.create({
-        data: {
-          schoolId,
-          enrollmentId: enrollment.id,
-          classId: enrollment.classId,
-          initiatorUserId: auth.principal.userId,
-          type: source.type,
-          purpose: "REMEDIATION",
-          retestOfSessionId: source.id,
-          practiceDefinitionId: source.practiceDefinitionId,
-          practiceVersionId: source.practiceVersionId,
-          deliveryId: source.deliveryId,
-        },
-        select: { id: true, status: true },
-      });
-
-      await tx.assessmentItem.createMany({
-        data: selected.map((item) => {
-          if (
-            !item.questionVersionId ||
-            !item.questionVersion ||
-            item.questionVersion.status !== "PUBLISHED" ||
-            item.maxScore == null ||
-            !Number.isFinite(item.maxScore)
-          ) {
-            throw new AssessmentConflictException("巩固题目没有可用的已发布题库版本");
-          }
-          const deliverySpec = assertSafeQuestionDeliverySpec(item.questionVersion.deliverySpec);
-          return {
-            sessionId: attempt.id,
-            questionVersionId: item.questionVersionId,
-            prompt: deliverySpec as Prisma.InputJsonValue,
-            itemConfig: deliverySpec as Prisma.InputJsonValue,
-            itemType: item.itemType,
-            sectionTitle: item.sectionTitle,
-            sectionOrder: item.sectionOrder,
-            // Preserve the source ordering instead of the diagnosis JSON order.
-            sortOrder: item.sortOrder,
-            maxScore: item.maxScore,
-          };
-        }),
-      });
-
-      return {
-        outcome: "CREATED" as const,
+      return result ?? {
+        outcome: "NO_REMEDIATION_NEEDED" as const,
         sourceSessionId: source.id,
-        attemptId: attempt.id,
-        status: attempt.status,
-        itemCount: selected.length,
+        attemptId: null,
+        status: null,
+        itemCount: 0,
         resumed: false,
       };
+    });
+  }
+
+  /** Teacher callers provide only a validated class enrollment and focus; the
+   * source session and exact question versions remain server-authoritative. */
+  async createTeacherAssignedRemediation(input: {
+    schoolId: string;
+    enrollment: { id: string; classId: string };
+    actorUserId: string;
+    practiceDefinitionId: string;
+    focus: { mode: "ALL_RETRY" } | { mode: "FAMILY"; family: string };
+  }) {
+    return this.prisma.$transaction(async (tx) => {
+      const source = await this.remediationSource(tx, {
+        schoolId: input.schoolId,
+        enrollmentId: input.enrollment.id,
+        classId: input.enrollment.classId,
+        practiceDefinitionId: input.practiceDefinitionId,
+        purpose: "STANDARD",
+        status: "COMPLETED",
+      }, { completedAt: "desc" });
+      if (!source || !this.persistedDiagnosis(source.report?.summary) || source.items.length !== 20) {
+        return { outcome: "NO_COMPLETED_ASSESSMENT" as const, attemptId: null, status: null, itemCount: 0, resumed: false };
+      }
+      const diagnosis = this.persistedDiagnosis(source.report.summary)!;
+      const candidates = this.validatedRetryCandidates(diagnosis.retryCandidates, source.items)
+        .filter((candidate) => input.focus.mode === "ALL_RETRY" || candidate.family === input.focus.family);
+      const result = await this.createOrResumeRemediationFromCandidates(tx, {
+        schoolId: input.schoolId,
+        enrollment: input.enrollment,
+        actorUserId: input.actorUserId,
+        source,
+        origin: "TEACHER_ASSIGNED",
+        focus: input.focus,
+        candidates,
+      });
+      return result ?? { outcome: "NO_MATCHING_RETRY_CANDIDATES" as const, attemptId: null, status: null, itemCount: 0, resumed: false };
     });
   }
 
@@ -273,6 +186,72 @@ export class AssessmentService {
       items: result.items.map(toAssessmentSessionResponse),
       nextCursor: result.nextCursor,
       hasMore: result.hasMore,
+    };
+  }
+
+  /** Student-safe discovery surface for teacher-authorized remediation only. */
+  async listAssignedRemediations(auth: AuthContext, schoolId: string) {
+    if (!this.policy.canReadSession(auth, schoolId) || !auth.principal.roles.includes(MembershipRole.STUDENT)) {
+      throw new AssessmentForbiddenException();
+    }
+    const enrollment = await this.prisma.enrollment.findFirst({
+      where: { schoolId, userId: auth.principal.userId, role: "STUDENT", status: "ACTIVE" },
+      select: { id: true },
+    });
+    if (!enrollment) throw new AssessmentForbiddenException("当前用户没有有效的学生班级关系");
+    const sessions = await this.prisma.assessmentSession.findMany({
+      where: {
+        schoolId,
+        enrollmentId: enrollment.id,
+        purpose: "REMEDIATION",
+        remediationOrigin: "TEACHER_ASSIGNED",
+      },
+      select: {
+        id: true,
+        status: true,
+        createdAt: true,
+        completedAt: true,
+        initiatorUserId: true,
+        remediationFocus: true,
+        practiceDefinitionId: true,
+        items: { select: { maxScore: true, scoredScore: true } },
+      },
+    });
+    const userIds = [...new Set(sessions.map((session) => session.initiatorUserId))];
+    const teachers = userIds.length
+      ? await this.prisma.user.findMany({ where: { id: { in: userIds } }, select: { id: true, displayName: true } })
+      : [];
+    const definitionIds = [...new Set(sessions.map((session) => session.practiceDefinitionId).filter((id): id is string => Boolean(id)))];
+    const definitions = definitionIds.length
+      ? await this.prisma.practiceDefinition.findMany({ where: { id: { in: definitionIds } }, select: { id: true, title: true, difficulty: true } })
+      : [];
+    const teacherNames = new Map(teachers.map((teacher) => [teacher.id, teacher.displayName]));
+    const definitionById = new Map(definitions.map((definition) => [definition.id, definition]));
+    const active = new Set(["CREATED", "IN_PROGRESS", "SUBMITTED", "PROCESSING"]);
+    return {
+      items: sessions
+        .sort((left, right) => Number(active.has(right.status)) - Number(active.has(left.status)) || right.createdAt.getTime() - left.createdAt.getTime() || right.id.localeCompare(left.id))
+        .map((session) => {
+          const definition = session.practiceDefinitionId ? definitionById.get(session.practiceDefinitionId) : null;
+          const maxPoints = session.items.reduce((total, item) => total + (item.maxScore ?? 0), 0);
+          const earnedPoints = session.items.reduce((total, item) => total + (item.scoredScore ?? 0), 0);
+          return {
+            attemptId: session.id,
+            practiceTitle: definition?.title ?? "专项巩固",
+            level: definition?.difficulty ?? null,
+            focus: this.safeRemediationFocus(session.remediationFocus),
+            itemCount: session.items.length,
+            status: session.status,
+            createdAt: session.createdAt.toISOString(),
+            completedAt: session.completedAt?.toISOString() ?? null,
+            teacherDisplayName: teacherNames.get(session.initiatorUserId) ?? null,
+            result: session.status === "COMPLETED" ? {
+              earnedPoints,
+              maxPoints,
+              percentage: maxPoints > 0 ? Math.round(((earnedPoints / maxPoints) * 100 + Number.EPSILON) * 100) / 100 : 0,
+            } : null,
+          };
+        }),
     };
   }
 
@@ -1087,10 +1066,200 @@ export class AssessmentService {
     return null;
   }
 
+  private async remediationSource(tx: any, where: Record<string, unknown>, orderBy?: Record<string, "asc" | "desc">) {
+    return tx.assessmentSession.findFirst({
+      where,
+      ...(orderBy ? { orderBy } : {}),
+      select: {
+        id: true,
+        enrollmentId: true,
+        classId: true,
+        type: true,
+        status: true,
+        purpose: true,
+        practiceDefinitionId: true,
+        practiceVersionId: true,
+        deliveryId: true,
+        report: { select: { summary: true } },
+        items: {
+          orderBy: { sortOrder: "asc" },
+          select: {
+            id: true,
+            questionVersionId: true,
+            itemType: true,
+            sectionTitle: true,
+            sectionOrder: true,
+            sortOrder: true,
+            maxScore: true,
+            scoredScore: true,
+            questionVersion: {
+              select: {
+                id: true,
+                status: true,
+                deliverySpec: true,
+                item: { select: { domain: true, questionType: true } },
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
+  /**
+   * One authoritative construction path for student and teacher remediation.
+   * It is intentionally given only source assessment items and validated
+   * diagnosis candidates, never client question ids or answer-bearing data.
+   */
+  private async createOrResumeRemediationFromCandidates(tx: any, input: {
+    schoolId: string;
+    enrollment: { id: string; classId: string };
+    actorUserId: string;
+    source: any;
+    origin: "SELF_INITIATED" | "TEACHER_ASSIGNED";
+    focus: { mode: "ALL_RETRY" } | { mode: "FAMILY"; family: string };
+    candidates: readonly QuestionBankRetryCandidate[];
+  }) {
+    const { schoolId, enrollment, actorUserId, source, origin, focus, candidates } = input;
+    if (
+      source.purpose !== "STANDARD" ||
+      source.status !== "COMPLETED" ||
+      !source.practiceDefinitionId ||
+      !source.practiceVersionId ||
+      !source.deliveryId ||
+      source.enrollmentId !== enrollment.id ||
+      source.classId !== enrollment.classId
+    ) {
+      throw new AssessmentConflictException("只有已完成的正式题库测评可以创建专项巩固练习");
+    }
+    if (!candidates.length) return null;
+
+    const candidateVersionIds = candidates.map((candidate) => candidate.questionVersionId).sort();
+    // PostgreSQL transaction-scoped lock makes a double-click/concurrent
+    // request for this exact teacher/student/source/focus/subset serialize
+    // before the active-attempt recheck. It does not lock different focuses.
+    const assignmentKey = `${schoolId}:${enrollment.id}:${source.id}:${actorUserId}:${JSON.stringify(focus)}:${candidateVersionIds.join(",")}`;
+    if (typeof tx.$executeRaw === "function") {
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${assignmentKey}))`;
+    }
+    const active = await tx.assessmentSession.findMany({
+      where: {
+        schoolId,
+        enrollmentId: enrollment.id,
+        purpose: "REMEDIATION",
+        retestOfSessionId: source.id,
+        initiatorUserId: actorUserId,
+        remediationOrigin: origin === "SELF_INITIATED"
+          ? { in: ["SELF_INITIATED", null] }
+          : "TEACHER_ASSIGNED",
+        status: { in: ["CREATED", "IN_PROGRESS", "SUBMITTED", "PROCESSING"] },
+      },
+      orderBy: { updatedAt: "desc" },
+      select: {
+        id: true,
+        status: true,
+        remediationFocus: true,
+        items: { select: { questionVersionId: true } },
+      },
+    });
+    const focusKey = JSON.stringify(focus);
+    const existing = active.find((attempt: any) => {
+      const versions = attempt.items
+        .map((item: { questionVersionId: string | null }) => item.questionVersionId)
+        .filter((id: string | null): id is string => Boolean(id))
+        .sort();
+      return JSON.stringify(attempt.remediationFocus ?? { mode: "ALL_RETRY" }) === focusKey && versions.length === candidateVersionIds.length && versions.every((id: string, index: number) => id === candidateVersionIds[index]);
+    });
+    if (existing) {
+      return {
+        outcome: "RESUMED" as const,
+        sourceSessionId: source.id,
+        attemptId: existing.id,
+        status: existing.status,
+        itemCount: candidates.length,
+        resumed: true,
+      };
+    }
+
+    const candidateIds = new Set(candidates.map((candidate) => candidate.assessmentItemId));
+    const selected = source.items.filter((item: any) => candidateIds.has(item.id));
+    if (selected.length !== candidates.length) {
+      throw new AssessmentConflictException("巩固题目引用与正式诊断不一致");
+    }
+    const attempt = await tx.assessmentSession.create({
+      data: {
+        schoolId,
+        enrollmentId: enrollment.id,
+        classId: enrollment.classId,
+        initiatorUserId: actorUserId,
+        type: source.type,
+        purpose: "REMEDIATION",
+        remediationOrigin: origin,
+        remediationFocus: focus as Prisma.InputJsonValue,
+        retestOfSessionId: source.id,
+        practiceDefinitionId: source.practiceDefinitionId,
+        practiceVersionId: source.practiceVersionId,
+        deliveryId: source.deliveryId,
+      },
+      select: { id: true, status: true },
+    });
+    await tx.assessmentItem.createMany({
+      data: selected.map((item: any) => {
+        if (
+          !item.questionVersionId ||
+          !item.questionVersion ||
+          item.questionVersion.status !== "PUBLISHED" ||
+          item.maxScore == null ||
+          !Number.isFinite(item.maxScore)
+        ) {
+          throw new AssessmentConflictException("巩固题目没有可用的已发布题库版本");
+        }
+        const deliverySpec = assertSafeQuestionDeliverySpec(item.questionVersion.deliverySpec);
+        return {
+          sessionId: attempt.id,
+          questionVersionId: item.questionVersionId,
+          prompt: deliverySpec as Prisma.InputJsonValue,
+          itemConfig: deliverySpec as Prisma.InputJsonValue,
+          itemType: item.itemType,
+          sectionTitle: item.sectionTitle,
+          sectionOrder: item.sectionOrder,
+          sortOrder: item.sortOrder,
+          maxScore: item.maxScore,
+        };
+      }),
+    });
+    return {
+      outcome: "CREATED" as const,
+      sourceSessionId: source.id,
+      attemptId: attempt.id,
+      status: attempt.status,
+      itemCount: selected.length,
+      resumed: false,
+    };
+  }
+
   private persistedDiagnosis(summary: unknown): QuestionBankDiagnosis | null {
     if (!summary || typeof summary !== "object" || Array.isArray(summary)) return null;
     const diagnosis = (summary as Record<string, unknown>).diagnosis;
     return isQuestionBankDiagnosis(diagnosis) ? diagnosis : null;
+  }
+
+  private safeRemediationFocus(value: unknown) {
+    if (!value || typeof value !== "object" || Array.isArray(value)) return { mode: "ALL_RETRY" as const, displayName: "全部待巩固题目" };
+    const record = value as Record<string, unknown>;
+    if (record.mode === "FAMILY" && typeof record.family === "string") {
+      const candidate = QUESTION_BANK_FAMILY_ORDER.includes(record.family as never) ? record.family : null;
+      if (candidate) {
+        const displayName = QUESTION_BANK_FAMILY_ORDER.includes(candidate as never)
+          ? ({
+              LISTEN_IMAGE_CHOICE: "听音选图", DICTATION: "听写句子", READ_ALOUD: "朗读句子", PICTURE_SPEAKING: "看图说话",
+              WORD_RECOGNITION: "单词认读", SENTENCE_COMPREHENSION: "句子理解", PICTURE_WORD: "看图写词", SENTENCE_COMPLETION: "句子补全",
+            } as Record<string, string>)[candidate]!
+          : "专项巩固";
+        return { mode: "FAMILY" as const, family: candidate, displayName };
+      }
+    }
+    return { mode: "ALL_RETRY" as const, displayName: "全部待巩固题目" };
   }
 
   /**

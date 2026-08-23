@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../../../shared/database/index.js";
 import type { Prisma } from "@yuzan/database";
-import type { AssessmentSession, AssessmentSessionStatus, AssessmentType, AssessmentSessionPurpose } from "../domain/assessment.types.js";
+import type { AssessmentSession, AssessmentSessionStatus, AssessmentType, AssessmentSessionPurpose, AssessmentRemediationOrigin } from "../domain/assessment.types.js";
 import type { AssessmentSessionRepositoryPort, CreateAssessmentSessionData, ListSessionsOptions, PaginatedResult } from "../ports/assessment-session-repository.port.js";
 
 @Injectable()
@@ -86,6 +86,8 @@ export class PrismaAssessmentSessionRepository implements AssessmentSessionRepos
       initiatorUserId: row.initiatorUserId as string,
       type: row.type as AssessmentType,
       purpose: (row.purpose as AssessmentSessionPurpose | undefined) ?? "STANDARD",
+      remediationOrigin: (row.remediationOrigin as AssessmentRemediationOrigin | null | undefined) ?? null,
+      remediationFocus: (row.remediationFocus as Record<string, unknown> | null | undefined) ?? null,
       status: row.status as AssessmentSessionStatus,
       startedAt: (row.startedAt as Date) ?? null,
       submittedAt: (row.submittedAt as Date) ?? null,

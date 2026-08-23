@@ -404,6 +404,12 @@
   text-align: center;
   color: #7b858b !important;
 }
+.assignment-bar { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin:16px 0; padding:12px; border:1px solid #dfd4c2; border-radius:10px; background:#fffaf1; }
+.assignment-bar span { font-weight:700; color:#4a554c; }
+.assignment-bar label { display:flex; align-items:center; gap:7px; margin-left:auto; color:#657168; font-size:13px; }
+.assignment-bar select { border:1px solid #d8cbb8; border-radius:7px; background:#fff; padding:8px; color:#435348; }
+.assign-remediation { border:0; border-radius:7px; background:#315b4d; color:#fff; padding:9px 14px; font:inherit; cursor:pointer; }
+.assign-remediation:disabled { opacity:.5; cursor:not-allowed; }
 @media (max-width: 900px) {
   .diagnostic-page {
     padding: 24px 17px;

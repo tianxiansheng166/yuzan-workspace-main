@@ -10,6 +10,9 @@ export function toAssessmentSessionResponse(session: AssessmentSession) {
     initiatorUserId: session.initiatorUserId,
     type: session.type,
     purpose: session.purpose ?? "STANDARD",
+    remediationOrigin: session.purpose === "REMEDIATION"
+      ? (session.remediationOrigin ?? "SELF_INITIATED")
+      : null,
     status: session.status,
     startedAt: session.startedAt?.toISOString() ?? null,
     submittedAt: session.submittedAt?.toISOString() ?? null,

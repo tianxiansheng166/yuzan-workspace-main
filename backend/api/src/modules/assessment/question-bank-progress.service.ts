@@ -29,6 +29,7 @@ type PersistedFamily = PersistedScore & {
 export type QuestionBankProgressSession = {
   id: string;
   purpose: "STANDARD" | "REMEDIATION" | string;
+  remediationOrigin?: "SELF_INITIATED" | "TEACHER_ASSIGNED" | string | null;
   status: string;
   completedAt: Date | null;
   createdAt: Date;
@@ -91,6 +92,7 @@ type RemediationRound = {
   unchangedCount: number;
   lowerCount: number;
   recoveredPoints: number;
+  origin: "SELF_INITIATED" | "TEACHER_ASSIGNED";
   items: Array<{
     questionVersionId: string;
     sourceEarnedPoints: number;
@@ -279,6 +281,7 @@ function remediationRound(session: QuestionBankProgressSession, source: FormalAt
     unchangedCount: items.filter((item) => item.state === "UNCHANGED").length,
     lowerCount: items.filter((item) => item.state === "LOWER").length,
     recoveredPoints: round(items.reduce((total, item) => total + Math.max(0, item.earnedPoints - item.sourceEarnedPoints), 0)),
+    origin: session.remediationOrigin === "TEACHER_ASSIGNED" ? "TEACHER_ASSIGNED" : "SELF_INITIATED",
     items,
   };
 }
@@ -457,6 +460,7 @@ export class QuestionBankProgressService {
       select: {
         id: true,
         purpose: true,
+        remediationOrigin: true,
         status: true,
         completedAt: true,
         createdAt: true,

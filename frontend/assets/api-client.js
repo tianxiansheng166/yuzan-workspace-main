@@ -888,6 +888,9 @@
   async function getAssessmentRemediationResult(sessionId) {
     return request(`/schools/${getActiveSchoolId()}/assessments/sessions/${encodeURIComponent(sessionId)}/remediation-result`);
   }
+  async function listAssignedRemediations() {
+    return request(`/schools/${getActiveSchoolId()}/assessments/sessions/assigned-remediations`);
+  }
   async function getQuestionBankProgress() {
     return request(`/schools/${getActiveSchoolId()}/students/me/question-bank-progress`);
   }
@@ -901,6 +904,12 @@
   async function getTeacherQuestionBankDiagnosticStudentDetail(classId, enrollmentId, practiceDefinitionId) {
     const params = new URLSearchParams({ practiceDefinitionId });
     return request(`/schools/${getActiveSchoolId()}/teacher/question-bank-diagnostics/classes/${encodeURIComponent(classId)}/students/${encodeURIComponent(enrollmentId)}?${params.toString()}`);
+  }
+  async function createTeacherQuestionBankRemediationAssignments(classId, payload) {
+    return request(`/schools/${getActiveSchoolId()}/teacher/question-bank-diagnostics/classes/${encodeURIComponent(classId)}/remediation-assignments`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
   }
   async function createAssessmentSession(payload) {
     return request(`/schools/${getActiveSchoolId()}/assessments/sessions`, {
@@ -1320,10 +1329,12 @@
     getAssessmentSession,
     createAssessmentRemediation,
     getAssessmentRemediationResult,
+    listAssignedRemediations,
     getQuestionBankProgress,
     getTeacherQuestionBankDiagnosticCatalog,
     getTeacherQuestionBankDiagnosticDashboard,
     getTeacherQuestionBankDiagnosticStudentDetail,
+    createTeacherQuestionBankRemediationAssignments,
     createAssessmentSession,
     startAssessmentSession,
     submitAssessmentSession,

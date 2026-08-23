@@ -36,6 +36,7 @@
     })[state] || "未测评";
   let catalog = null;
   let dashboard = null;
+  let selectedEnrollmentIds = new Set();
 
   function empty(message) {
     root.innerHTML = `<div class="diagnostic-empty"><h1>学情诊断</h1><p>${esc(message)}</p></div>`;
@@ -87,10 +88,12 @@
         <article class="panel"><div class="panel-head"><h2>班级建议重点巩固</h2><span>按题型聚合，不是学生排序</span></div><ol class="family-list">${dashboard.commonDifficulties.map((entry) => `<li><div><strong>${esc(entry.displayName)}</strong><small>${entry.priorityStudentCount} 名学生列为优先巩固</small></div><b>${percentage(entry.averagePercentage)}</b></li>`).join("") || '<li class="empty-row">暂无可用正式测评数据</li>'}</ol><div class="strengths"><span>掌握较好：</span>${dashboard.strengths.map((entry) => `<i>${esc(entry.displayName)} ${percentage(entry.averagePercentage)}</i>`).join("") || "—"}</div></article>
       </section>
       <section class="panel student-panel"><div class="panel-head"><div><h2>学生正式测评状态</h2><span>${attention} 名学生建议进一步关注；比较仅限学生本人同一水平的前一次正式测评。</span></div><button class="attention-filter" id="attention-filter" type="button">仅看建议关注</button></div>
-        <div class="student-table-wrap"><table><thead><tr><th>姓名</th><th>状态</th><th>最近正式分</th><th>与本人上次比较</th><th>优先巩固</th><th>专项巩固</th><th>待复核</th><th></th></tr></thead><tbody id="diagnostic-students"></tbody></table></div>
+        <div class="assignment-bar"><span id="selected-count">已选择 0 名学生</span><label>巩固范围<select id="remediation-focus"><option value="ALL_RETRY">各自待巩固题目</option>${dashboard.commonDifficulties.map((entry) => `<option value="${esc(entry.family)}">${esc(entry.displayName)}专项</option>`).join('')}${dashboard.families.filter((entry) => !dashboard.commonDifficulties.some((common) => common.family === entry.family)).map((entry) => `<option value="${esc(entry.family)}">${esc(entry.displayName)}专项</option>`).join('')}</select></label><button type="button" class="assign-remediation" id="assign-remediation" disabled>布置专项巩固</button></div>
+        <div class="student-table-wrap"><table><thead><tr><th><input id="select-all-students" type="checkbox" aria-label="选择当前学生"></th><th>姓名</th><th>状态</th><th>最近正式分</th><th>与本人上次比较</th><th>优先巩固</th><th>专项巩固</th><th>待复核</th><th></th></tr></thead><tbody id="diagnostic-students"></tbody></table></div>
       </section>
       <section id="student-detail" class="student-detail" hidden></section>`;
     renderStudents(false);
+    bindAssignmentControls();
     root
       .querySelector("#attention-filter")
       ?.addEventListener("click", (event) => {
@@ -111,14 +114,19 @@
       students
         .map(
           (student) => `<tr>
-      <td><strong>${esc(student.displayName)}</strong></td><td><span class="state state-${esc(student.state)}">${stateLabel(student.state)}</span></td>
+      <td><input type="checkbox" data-select-enrollment="${esc(student.enrollmentId)}" ${selectedEnrollmentIds.has(student.enrollmentId) ? "checked" : ""} aria-label="选择 ${esc(student.displayName)}"></td><td><strong>${esc(student.displayName)}</strong></td><td><span class="state state-${esc(student.state)}">${stateLabel(student.state)}</span></td>
       <td>${score(student.latestScore)}</td><td class="self-delta">${esc(delta(student.latestVsPrevious, student.comparisonState))}</td>
-      <td>${esc(student.topPriority?.displayName || "—")}</td><td>${student.remediationSummary ? `专项巩固 ${student.remediationSummary.completedRounds} 轮 · ${percentage(student.remediationSummary.latestPercentage)}` : "—"}</td>
+      <td>${esc(student.topPriority?.displayName || "—")}</td><td>${student.assignedRemediation ? `老师布置 · ${esc(student.assignedRemediation.latestStatus)}${student.assignedRemediation.activeCount ? `（${student.assignedRemediation.activeCount} 项进行中）` : ""}` : (student.remediationSummary ? `专项巩固 ${student.remediationSummary.completedRounds} 轮 · ${percentage(student.remediationSummary.latestPercentage)}` : "—")}</td>
       <td>${student.pendingReviewCount ? `${student.pendingReviewCount} 题` : "—"}</td><td><button type="button" class="student-open" data-enrollment="${esc(student.enrollmentId)}">查看</button></td>
     </tr>`,
         )
         .join("") ||
-      '<tr><td class="empty-row" colspan="8">没有符合当前筛选的学生。</td></tr>';
+      '<tr><td class="empty-row" colspan="9">没有符合当前筛选的学生。</td></tr>';
+    body.querySelectorAll('[data-select-enrollment]').forEach((input) => input.addEventListener("change", () => {
+      if (input.checked) selectedEnrollmentIds.add(input.dataset.selectEnrollment);
+      else selectedEnrollmentIds.delete(input.dataset.selectEnrollment);
+      updateAssignmentControls();
+    }));
     body
       .querySelectorAll(".student-open")
       .forEach((button) =>
@@ -126,6 +134,48 @@
           loadStudentDetail(button.dataset.enrollment),
         ),
       );
+  }
+
+  function updateAssignmentControls() {
+    const count = selectedEnrollmentIds.size;
+    const button = root.querySelector("#assign-remediation");
+    const label = root.querySelector("#selected-count");
+    if (button) button.disabled = count === 0;
+    if (label) label.textContent = `已选择 ${count} 名学生`;
+  }
+
+  function bindAssignmentControls() {
+    root.querySelector("#select-all-students")?.addEventListener("change", (event) => {
+      if (event.currentTarget.checked) dashboard.students.forEach((student) => selectedEnrollmentIds.add(student.enrollmentId));
+      else selectedEnrollmentIds.clear();
+      renderStudents(false);
+      updateAssignmentControls();
+    });
+    root.querySelector("#assign-remediation")?.addEventListener("click", async (event) => {
+      const classId = root.querySelector("#diagnostic-class")?.value;
+      const practiceDefinitionId = root.querySelector("#diagnostic-practice")?.value;
+      const focusValue = root.querySelector("#remediation-focus")?.value;
+      if (!classId || !practiceDefinitionId || !focusValue || !selectedEnrollmentIds.size) return;
+      const button = event.currentTarget;
+      button.disabled = true;
+      button.textContent = "正在布置…";
+      try {
+        const result = await YuzanApi.createTeacherQuestionBankRemediationAssignments(classId, {
+          practiceDefinitionId,
+          enrollmentIds: [...selectedEnrollmentIds],
+          focus: focusValue === "ALL_RETRY" ? { mode: "ALL_RETRY" } : { mode: "FAMILY", family: focusValue },
+        });
+        const skipped = result.skipped ? `，${result.skipped} 人暂无匹配的正式待巩固题目` : "";
+        alert(`已布置 ${result.assigned} 项，恢复 ${result.resumed} 项${skipped}。`);
+        selectedEnrollmentIds.clear();
+        await loadDashboard();
+      } catch (error) {
+        alert(error.message || "布置失败，请稍后重试");
+        button.disabled = false;
+        button.textContent = "布置专项巩固";
+      }
+    });
+    updateAssignmentControls();
   }
 
   function renderStudentDetail(detail) {
@@ -150,6 +200,7 @@
         classId,
         practiceDefinitionId,
       );
+      selectedEnrollmentIds = new Set([...selectedEnrollmentIds].filter((id) => dashboard.students.some((student) => student.enrollmentId === id)));
       renderDashboard();
     } catch (error) {
       host.innerHTML = `<div class="diagnostic-error">加载失败：${esc(error.message || "请稍后重试")}<br><button type="button" id="diagnostic-retry">重试</button></div>`;

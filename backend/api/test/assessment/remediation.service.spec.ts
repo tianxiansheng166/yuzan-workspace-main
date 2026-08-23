@@ -85,7 +85,7 @@ function harness(options: { retryCount?: number; sourceEnrollmentId?: string } =
     },
     assessmentSession: {
       findFirst: vi.fn(async ({ where }: any) => {
-        if (where.id === SOURCE_ID && where.schoolId === SCHOOL_ID) return source;
+        if ((where.id === SOURCE_ID || (where.enrollmentId === ENROLLMENT_ID && where.practiceDefinitionId === "practice-definition")) && where.schoolId === SCHOOL_ID && (!where.purpose || where.purpose === "STANDARD")) return source;
         if (where.purpose === "REMEDIATION") return remediation.find((attempt) => where.status.in.includes(attempt.status)) ?? null;
         return null;
       }),
@@ -94,9 +94,22 @@ function harness(options: { retryCount?: number; sourceEnrollmentId?: string } =
         remediation.push(attempt);
         return { id: attempt.id, status: attempt.status };
       }),
+      findMany: vi.fn(async ({ where }: any) => remediation.filter((attempt) =>
+        where.status.in.includes(attempt.status) &&
+        attempt.retestOfSessionId === where.retestOfSessionId &&
+        attempt.initiatorUserId === where.initiatorUserId &&
+        (where.remediationOrigin === "TEACHER_ASSIGNED"
+          ? attempt.remediationOrigin === "TEACHER_ASSIGNED"
+          : ["SELF_INITIATED", null, undefined].includes(attempt.remediationOrigin)),
+      )),
     },
     assessmentItem: {
-      createMany: vi.fn(async ({ data }: any) => { createdItems.push(data); return { count: data.length }; }),
+      createMany: vi.fn(async ({ data }: any) => {
+        createdItems.push(data);
+        const attempt = remediation.find((entry) => entry.id === data[0]?.sessionId);
+        if (attempt) attempt.items = data.map((item: any) => ({ questionVersionId: item.questionVersionId }));
+        return { count: data.length };
+      }),
     },
     $transaction: async (callback: any) => callback(prisma),
   };
@@ -144,6 +157,29 @@ describe("Diagnosis remediation attempts", () => {
 
     const otherStudent = harness({ sourceEnrollmentId: "other-enrollment" });
     await expect(otherStudent.service.createOrResumeRemediation(studentAuth(), SCHOOL_ID, SOURCE_ID)).rejects.toThrow(/其他学生/);
+  });
+
+  it("keeps teacher-assigned origin/focus distinct while duplicate assignment resumes the exact subset", async () => {
+    const { service, remediation, createdItems } = harness();
+    const input = {
+      schoolId: SCHOOL_ID,
+      enrollment: { id: ENROLLMENT_ID, classId: CLASS_ID },
+      actorUserId: "teacher-1",
+      practiceDefinitionId: "practice-definition",
+      focus: { mode: "FAMILY" as const, family: "LISTEN_IMAGE_CHOICE" },
+    };
+    const first = await service.createTeacherAssignedRemediation(input);
+    const duplicate = await service.createTeacherAssignedRemediation(input);
+    const otherFocus = await service.createTeacherAssignedRemediation({ ...input, focus: { mode: "ALL_RETRY" } });
+    expect(first).toMatchObject({ outcome: "CREATED", itemCount: 4 });
+    expect(duplicate).toMatchObject({ outcome: "RESUMED", attemptId: first.attemptId });
+    expect(otherFocus).toMatchObject({ outcome: "CREATED", itemCount: 4 });
+    expect(remediation).toHaveLength(2);
+    expect(remediation.map((attempt) => attempt.remediationOrigin)).toEqual(["TEACHER_ASSIGNED", "TEACHER_ASSIGNED"]);
+    expect(remediation.map((attempt) => attempt.remediationFocus)).toEqual([
+      { mode: "FAMILY", family: "LISTEN_IMAGE_CHOICE" }, { mode: "ALL_RETRY" },
+    ]);
+    expect(createdItems).toHaveLength(2);
   });
 
   it("completes a fully scored subset without creating an AssessmentReport", async () => {
