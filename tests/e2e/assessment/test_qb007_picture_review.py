@@ -94,6 +94,47 @@ def published_references(level):
     return references
 
 
+def active_practice_items(level):
+    level_label = LEVEL_LABELS[level]
+    result = subprocess.run(
+        [
+            "docker",
+            "exec",
+            "p0-integration-postgres-1",
+            "psql",
+            "-U",
+            "yuzan",
+            "-d",
+            "yuzan_dev",
+            "-At",
+            "-v",
+            "ON_ERROR_STOP=1",
+            "-c",
+            f"""SELECT i."stableKey"
+                   FROM "PracticeDelivery" pd
+                   JOIN "PracticeVersion" pv ON pv."id" = pd."practiceVersionId"
+                   JOIN "PracticeDefinition" d ON d."id" = pv."definitionId"
+                   JOIN "PracticeSection" s ON s."versionId" = pv."id"
+                   JOIN "PracticeItemRef" r ON r."sectionId" = s."id"
+                   JOIN "QuestionBankItemVersion" v ON v."id" = r."questionVersionId"
+                   JOIN "QuestionBankItem" i ON i."id" = v."itemId"
+                  WHERE pd."schoolId" = '11111111-1111-4111-8111-111111111111'
+                    AND pd."classId" = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee'
+                    AND pd."mode" = 'SELF_PRACTICE'
+                    AND pd."status" = 'OPEN'
+                    AND d."title" = '国家通用语言文字能力｜水平{level_label}级综合测评'
+               ORDER BY s."sortOrder", r."sortOrder";""",
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    stable_keys = [line.strip() for line in result.stdout.splitlines() if line.strip()]
+    assert len(stable_keys) == 20
+    assert len(set(stable_keys)) == 20
+    return stable_keys
+
+
 def authenticate(page, identifier):
     response = page.request.post(
         f"{BASE}/api/v1/auth/login",
@@ -221,7 +262,6 @@ def wait_for_submission(page, attempt_id):
 def test_question_bank_student_teacher_report(level):
     attempt_id = None
     practice_title = f"国家通用语言文字能力｜水平{LEVEL_LABELS[level]}级综合测评"
-    prefix = f"L{level}"
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(headless=True, executable_path="/usr/bin/google-chrome")
         context = browser.new_context()
@@ -249,65 +289,58 @@ def test_question_bank_student_teacher_report(level):
 
         try:
             references = published_references(level)
+            ordered_keys = active_practice_items(level)
             authenticate(page, "student.test")
             created = create_attempt(page, practice_title)
             attempt_id = created["attemptId"]
             page.goto(f"{BASE}/student/practices/attempts/{attempt_id}/runner/")
             page.locator(".question-shell").wait_for(timeout=15_000)
 
-            listen_choices = [
-                f"{prefix}-LISTEN-LISTEN_IMAGE_CHOICE-001",
-                f"{prefix}-LISTEN-LISTEN_IMAGE_CHOICE-002",
-                f"{prefix}-LISTEN-LISTEN_IMAGE_CHOICE-003",
-            ]
-            for index, stable_key in enumerate(listen_choices):
-                goto_item(page, index) if index else None
+            listen_choices = [key for key in ordered_keys if "-LISTEN-LISTEN_IMAGE_CHOICE-" in key]
+            assert len(listen_choices) == 3
+            for stable_key in listen_choices:
+                goto_item(page, ordered_keys.index(stable_key))
                 page.locator(".audio-stimulus audio").wait_for(timeout=15_000)
-                page.locator(".runner-option img").nth(3).wait_for(timeout=15_000)
+                page.locator(".runner-option img").first.wait_for(timeout=15_000)
+                assert page.locator(".runner-option img").count() >= 3
                 select_choice(page, references[stable_key][1])
 
-            dictation_keys = [
-                f"{prefix}-LISTEN-DICTATION-001",
-                f"{prefix}-LISTEN-DICTATION-002",
-                f"{prefix}-LISTEN-DICTATION-003",
-            ]
-            for index, stable_key in enumerate(dictation_keys, start=3):
-                goto_item(page, index)
+            dictation_keys = [key for key in ordered_keys if "-LISTEN-DICTATION-" in key]
+            assert len(dictation_keys) == 3
+            for stable_key in dictation_keys:
+                goto_item(page, ordered_keys.index(stable_key))
                 page.locator(".audio-stimulus audio").wait_for(timeout=15_000)
                 fill_text(page, references[stable_key][1])
 
-            for index in [6, 7, 8]:
-                goto_item(page, index)
+            read_aloud_keys = [key for key in ordered_keys if "-SPEAK-READ_ALOUD-" in key]
+            assert len(read_aloud_keys) == 3
+            for stable_key in read_aloud_keys:
+                goto_item(page, ordered_keys.index(stable_key))
                 assert page.locator(".text-stimulus").count() == 1
                 record_speech(page)
 
-            goto_item(page, 9)
+            picture_speaking_key = next(key for key in ordered_keys if "-SPEAK-PICTURE_SPEAKING-" in key)
+            goto_item(page, ordered_keys.index(picture_speaking_key))
             page.locator(".image-stimulus img").wait_for(timeout=15_000)
             record_speech(page)
 
-            read_choices = [
-                f"{prefix}-READ-WORD_RECOGNITION-001",
-                f"{prefix}-READ-WORD_RECOGNITION-002",
-                f"{prefix}-READ-WORD_RECOGNITION-003",
-                f"{prefix}-READ-SENTENCE_COMPREHENSION-001",
-                f"{prefix}-READ-SENTENCE_COMPREHENSION-002",
-                f"{prefix}-READ-SENTENCE_COMPREHENSION-003",
-            ]
-            for index, stable_key in enumerate(read_choices, start=10):
-                goto_item(page, index)
+            read_choices = [key for key in ordered_keys if "-READ-WORD_RECOGNITION-" in key or "-READ-SENTENCE_COMPREHENSION-" in key]
+            assert len(read_choices) == 6
+            for stable_key in read_choices:
+                goto_item(page, ordered_keys.index(stable_key))
                 select_choice(page, references[stable_key][1])
 
-            picture_word_keys = [
-                f"{prefix}-WRITE-PICTURE_WORD-001",
-                f"{prefix}-WRITE-PICTURE_WORD-002",
-            ]
-            for index, stable_key in enumerate(picture_word_keys, start=16):
-                goto_item(page, index)
+            picture_word_keys = [key for key in ordered_keys if "-WRITE-PICTURE_WORD-" in key]
+            assert len(picture_word_keys) == 2
+            for stable_key in picture_word_keys:
+                goto_item(page, ordered_keys.index(stable_key))
                 page.locator(".image-stimulus img").wait_for(timeout=15_000)
                 fill_text(page, references[stable_key][1].split("/", 1)[0])
 
-            for index in [18, 19]:
-                goto_item(page, index)
+            sentence_completion_keys = [key for key in ordered_keys if "-WRITE-SENTENCE_COMPLETION-" in key]
+            assert len(sentence_completion_keys) == 2
+            for stable_key in sentence_completion_keys:
+                goto_item(page, ordered_keys.index(stable_key))
                 fill_text(page, "我会认真完成这道题")
 
             page.locator("[data-submit]").click()

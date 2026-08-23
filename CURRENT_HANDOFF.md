@@ -55,31 +55,29 @@ Authorized repairs are recorded in
   20 references each, one open delivery each. Catalog total is 12 including
   the six legacy practices.
 - Media: 90 unique images and 36 unique audio resources.
-- First `--apply --all`: created 100 question items, 100 question versions,
-  five practices, five practice versions, 20 sections, 100 refs, five
-  deliveries, and 105 resources; existing Level 1 records were reused where
-  appropriate.
-- Second `--apply --all`: all apply counters were zero-created and fully
-  reused, confirming idempotence.
+- Repeated `--apply --all` runs were fully reused: resources, question items,
+  question versions, practices, practice versions, sections, refs, and
+  deliveries all reported zero new records on the verification reruns.
+  Existing Level 1 v1 remains present and the corrected v2 is the active
+  published version.
 - Security audit of active canonical deliveries: 20 refs per practice, four
   sections, zero student-visible source-trace leaks.
 
 ## Verification snapshot
 
 - Importer tests: `16 passed`.
-- Assessment targeted suite: `63 passed, 2 skipped`.
+- API verification: full Vitest run `975 passed` with no failures; the real-DB
+  deterministic/runtime integration run passed `3/3` tests.
 - Worker tests: `38 passed`; worker typecheck/build passed.
 - Frontend tests passed.
+- Speech-scoring tests: `9 passed`.
 - API typecheck/build passed.
 - Source validation passed for `--level 1` and `--all`.
 - Dry-run apply passed for `--level 1` and `--all`.
-- Parameterized browser coverage now exercises Levels 1–6, but the run is
-  environment-blocked: the local speech scorer on `127.0.0.1:8100` is not
-  available, so read-aloud jobs repeatedly fail with `fetch failed`. This is
-  an infrastructure limitation, not a content-validation failure.
-- Full API-suite exploratory run was `56 passed, 14 failed, 32 skipped`; the
-  failures are existing test-environment isolation/fixture issues (dev DB FK
-  cleanup, test DB naming, and a pre-existing app-composition dependency).
+- Parameterized browser coverage exercises Levels 1–6 end to end and passed
+  `6 passed in 984.34s`, including media loading, answer persistence,
+  submission, teacher review, and the point-based report gate. The run used
+  the repository's explicit mock speech scorer for diagnostics only.
 
 ## Known limitations and next task
 

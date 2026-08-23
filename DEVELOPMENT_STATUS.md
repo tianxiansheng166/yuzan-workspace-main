@@ -13,7 +13,7 @@
 | QB-007  | DONE             | Picture-speaking diagnostic is a separate open-response route; generic teacher review resolves all six pending Level 1 items and the 20/20 point-based finalization gate creates one 100-point report. |
 | QB-007S | DONE / RECOVERED | Authorized structural recovery restored the missing Level 1 A label and revalidated all nine `EXACT_CHOICE` items; no browser fallback or scoring-config penalty remains. |
 | QB-008R | DONE / RUNTIME VERIFIED | Authorized content recovery is canonical and provenance-preserving: Level 1 has one structural repair, Level 2 has one reproducible `AI_AUTHORED_GAP_FILL` READ_ALOUD item, and an isolated Level 4 A/B label omission was structurally recovered. |
-| QB-008  | DONE / BROWSER BLOCKED | Levels 1–6 are published through the immutable runtime pipeline: 120 canonical items, six 20-item/100-point practices, 90 images, 36 audio resources, student-safe delivery, and idempotent re-apply. Parameterized browser verification remains blocked by the unavailable local speech scorer. |
+| QB-008  | DONE / BROWSER VERIFIED | Levels 1–6 are published through the immutable runtime pipeline: 120 canonical items, six 20-item/100-point practices, 90 images, 36 audio resources, student-safe delivery, idempotent re-apply, and six passing parameterized browser journeys. |
 | QB-009  | TODO | Production speech provider benchmark and scoring calibration. |
 
 ## Architecture checkpoints
