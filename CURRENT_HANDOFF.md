@@ -16,7 +16,8 @@ Do not infer a commit SHA from this document. The task-start dirty change in
 QB-008R and the Levels 1–6 rollout are implemented on the current feature
 branch. QB-009A, QB-010, QB-011, QB-012, QB-013, and QB-014 are complete.
 QB-015F release evidence closure is **DONE / READY_FOR_PILOT**. QB-016 pilot
-observability and the feedback loop are **DONE / PILOT_OBSERVABLE**. QB-009B
+observability and the feedback loop are **DONE / PILOT_OBSERVABLE / BROWSER
+VERIFIED**. QB-009B
 remains `PARKED / EXTERNAL_INPUT`; see [`CURRENT_TASK.md`](CURRENT_TASK.md),
 [`RELEASE_READINESS.md`](RELEASE_READINESS.md), and
 [`PILOT_RUNBOOK.md`](PILOT_RUNBOOK.md).
@@ -276,15 +277,39 @@ Authorized repairs are recorded in
 
 ## QB-016 verification
 
-- API full Vitest: `1021 passed, 63 skipped`.
-- Pilot focused tests: `10 passed, 1 skipped`; existing course Feedback
-  regression: `20 passed`.
+- Isolated runtime: Compose project `qb016f-pilot-20260824a`, database
+  `qb016f_pilot`, API `4020`, frontend `4181`, Redis `6394`, MinIO `59022`,
+  and the fresh runtime was torn down after verification. Shared
+  `p0-integration` and the old `qb015-release` project were not used or
+  modified.
+- Latest migration `20260824130000_add_pilot_feedback` was applied to the
+  empty isolated database; Prisma generate/validate, seed, API/Worker build,
+  and the existing six-level Question Bank bootstrap passed.
+- Real PostgreSQL integration
+  `backend/api/test/pilot/pilot.runtime.integration.spec.ts`: `1 passed`,
+  `0 skipped`. It exercised real STANDARD/REMEDIATION aggregation, feedback
+  create/mine/admin resolution, speech failure warning, and scoped service
+  behavior.
+- Real Chromium `tests/e2e/assessment/test_qb016_pilot_feedback.py`: `1
+  passed`, `0 skipped`, with `QB_RELEASE_BASE_URL=http://127.0.0.1:4181`.
+  The browser created the Level 1 attempt, submitted feedback, acknowledged
+  and resolved it in `/admin/pilot`, then reloaded the student Runner and saw
+  `已解决` plus `已核实并安排修正`.
+- Runtime smoke: `/health/live` and `/health/ready` returned `200`; admin
+  overview returned `200` with worker `UP`; admin page returned `200`;
+  anonymous, student, and cross-school overview requests were denied. The
+  real PilotFeedback row had only the allowlisted business fields; no answer,
+  rubric, source/provider, transcript/audio, IP, or device-fingerprint fields
+  were present.
+- Pilot module tests: `10 passed`; existing Course Submission Feedback
+  regression: `20 passed`. API full Vitest: `1021 passed, 63 skipped` (the
+  separate runtime integration above was the only QB-016 runtime proof and
+  was not skipped). API typecheck/build and frontend test/build passed.
 - Worker full Vitest: `54 passed`; heartbeat unit coverage included.
 - Contracts validation/test/typecheck, database validate/migration contract,
   frontend test/build, API/Worker typecheck, and Python E2E collection passed.
-- The QB-016 PostgreSQL integration and Chromium feedback test are runtime-gated
-  and were skipped in this worktree because no isolated pilot runtime was
-  configured; QB-015 release evidence remains the baseline pilot approval.
+- Concise non-secret evidence is recorded in
+  [`evidence/qb016f-pilot/RESULTS.md`](evidence/qb016f-pilot/RESULTS.md).
 
 ## Verification snapshot
 
