@@ -6,6 +6,7 @@ only the fixture data afterwards. No speech provider is started or called.
 """
 
 import json
+import os
 import subprocess
 import uuid
 
@@ -23,11 +24,14 @@ from test_qb012_progress import (
 )
 
 TEACHER_ID = "33333333-3333-4333-8333-333333333333"
+DB_CONTAINER = os.environ.get("QB_RELEASE_DB_CONTAINER", "p0-integration-postgres-1")
+DB_USER = os.environ.get("QB_RELEASE_DB_USER", "yuzan")
+DB_NAME = os.environ.get("QB_RELEASE_DB_NAME", "yuzan_dev")
 
 
 def sql(statement, *, capture=False):
     result = subprocess.run(
-        ["docker", "exec", "-i", "p0-integration-postgres-1", "psql", "-U", "yuzan", "-d", "yuzan_dev", "-At", "-F", "\t", "-v", "ON_ERROR_STOP=1"],
+        ["docker", "exec", "-i", DB_CONTAINER, "psql", "-U", DB_USER, "-d", DB_NAME, "-At", "-F", "\t", "-v", "ON_ERROR_STOP=1"],
         input=statement,
         check=True,
         capture_output=capture,
@@ -193,6 +197,7 @@ def test_qb013_teacher_class_diagnostic_dashboard():
                 page.locator("#diagnostic-class").select_option(class_a)
                 page.locator("#diagnostic-practice").select_option(delivery["definitionId"])
                 page.get_by_text("已测人数 / 总人数").wait_for(timeout=20_000)
+                page.get_by_text("3 / 5", exact=True).wait_for(timeout=20_000)
                 body = page.locator("body").inner_text()
                 assert "3 / 5" in body and "60%" in body and "班级建议重点巩固" in body and "专项巩固" in body
                 page.locator("tr", has_text="诊断学生1").get_by_role("button", name="查看").click()

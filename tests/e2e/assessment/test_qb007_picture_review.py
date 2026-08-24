@@ -7,6 +7,7 @@ teacher UI, verifies the generated report, and removes only that fresh attempt.
 
 import base64
 import io
+import os
 import struct
 import subprocess
 import time
@@ -18,7 +19,10 @@ from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
 from playwright.sync_api import sync_playwright
 
 
-BASE = "http://127.0.0.1:4175"
+BASE = os.environ.get("QB_RELEASE_BASE_URL", "http://127.0.0.1:4175")
+DB_CONTAINER = os.environ.get("QB_RELEASE_DB_CONTAINER", "p0-integration-postgres-1")
+DB_USER = os.environ.get("QB_RELEASE_DB_USER", "yuzan")
+DB_NAME = os.environ.get("QB_RELEASE_DB_NAME", "yuzan_dev")
 PASSWORD = "YuzanTest!2026"
 SCHOOL_ID = "11111111-1111-4111-8111-111111111111"
 STUDENT_ID = "22222222-2222-4222-8222-222222222222"
@@ -44,12 +48,10 @@ def run_sql(statement):
         [
             "docker",
             "exec",
-            "p0-integration-postgres-1",
+            DB_CONTAINER,
             "psql",
-            "-U",
-            "yuzan",
-            "-d",
-            "yuzan_dev",
+            "-U", DB_USER,
+            "-d", DB_NAME,
             "-v",
             "ON_ERROR_STOP=1",
             "-q",
@@ -64,7 +66,7 @@ def run_sql(statement):
 def ensure_active_membership(user_id, role):
     result = subprocess.run(
         [
-            "docker", "exec", "p0-integration-postgres-1", "psql", "-U", "yuzan", "-d", "yuzan_dev", "-At",
+            "docker", "exec", DB_CONTAINER, "psql", "-U", DB_USER, "-d", DB_NAME, "-At",
             "-v", "ON_ERROR_STOP=1", "-c",
             f'''SELECT "id" FROM "Membership" WHERE "schoolId" = '{SCHOOL_ID}' AND "userId" = '{user_id}' AND "role" = '{role}' AND "status" = 'ACTIVE' LIMIT 1;''',
         ],
@@ -88,12 +90,11 @@ def published_references(level):
         [
             "docker",
             "exec",
-            "p0-integration-postgres-1",
+            DB_CONTAINER,
             "psql",
             "-U",
-            "yuzan",
-            "-d",
-            "yuzan_dev",
+            DB_USER,
+            "-d", DB_NAME,
             "-At",
             "-F",
             "\t",
@@ -125,12 +126,11 @@ def active_practice_items(level):
         [
             "docker",
             "exec",
-            "p0-integration-postgres-1",
+            DB_CONTAINER,
             "psql",
             "-U",
-            "yuzan",
-            "-d",
-            "yuzan_dev",
+            DB_USER,
+            "-d", DB_NAME,
             "-At",
             "-v",
             "ON_ERROR_STOP=1",

@@ -1,4 +1,5 @@
-import { ArrayMinSize, IsArray, IsIn, IsString, IsUUID, ValidateIf } from "class-validator";
+import { ArrayMinSize, IsArray, IsIn, IsString, IsUUID, ValidateIf, ValidateNested } from "class-validator";
+import { Type } from "class-transformer";
 
 export class TeacherRemediationFocusDto {
   @IsIn(["ALL_RETRY", "FAMILY"])
@@ -18,5 +19,7 @@ export class CreateTeacherRemediationAssignmentDto {
   @IsUUID("4", { each: true })
   enrollmentIds: string[];
 
+  @ValidateNested()
+  @Type(() => TeacherRemediationFocusDto)
   focus: TeacherRemediationFocusDto;
 }

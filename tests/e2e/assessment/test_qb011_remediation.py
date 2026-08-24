@@ -6,13 +6,17 @@ removes both fixture sessions afterwards. It never calls a speech provider.
 """
 
 import json
+import os
 import subprocess
 import uuid
 
 from playwright.sync_api import sync_playwright
 
 
-BASE = "http://127.0.0.1:4175"
+BASE = os.environ.get("QB_RELEASE_BASE_URL", "http://127.0.0.1:4175")
+DB_CONTAINER = os.environ.get("QB_RELEASE_DB_CONTAINER", "p0-integration-postgres-1")
+DB_USER = os.environ.get("QB_RELEASE_DB_USER", "yuzan")
+DB_NAME = os.environ.get("QB_RELEASE_DB_NAME", "yuzan_dev")
 SCHOOL_ID = "11111111-1111-4111-8111-111111111111"
 STUDENT_ID = "22222222-2222-4222-8222-222222222222"
 CLASS_ID = "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee"
@@ -22,8 +26,8 @@ PASSWORD = "YuzanTest!2026"
 def sql(statement, *, capture=False):
     result = subprocess.run(
         [
-            "docker", "exec", "-i", "p0-integration-postgres-1", "psql",
-            "-U", "yuzan", "-d", "yuzan_dev", "-At", "-F", "\t",
+            "docker", "exec", "-i", DB_CONTAINER, "psql",
+            "-U", DB_USER, "-d", DB_NAME, "-At", "-F", "\t",
             "-v", "ON_ERROR_STOP=1",
         ],
         input=statement,

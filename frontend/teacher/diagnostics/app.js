@@ -36,6 +36,7 @@
     })[state] || "未测评";
   let catalog = null;
   let dashboard = null;
+  let dashboardRequestId = 0;
   let selectedEnrollmentIds = new Set();
 
   function empty(message) {
@@ -194,15 +195,19 @@
     )?.value;
     const host = root.querySelector("#diagnostic-content");
     if (!classId || !practiceDefinitionId || !host) return;
+    const requestId = ++dashboardRequestId;
     host.innerHTML = '<div class="diagnostic-loading">正在加载所选班级…</div>';
     try {
-      dashboard = await YuzanApi.getTeacherQuestionBankDiagnosticDashboard(
+      const nextDashboard = await YuzanApi.getTeacherQuestionBankDiagnosticDashboard(
         classId,
         practiceDefinitionId,
       );
+      if (requestId !== dashboardRequestId) return;
+      dashboard = nextDashboard;
       selectedEnrollmentIds = new Set([...selectedEnrollmentIds].filter((id) => dashboard.students.some((student) => student.enrollmentId === id)));
       renderDashboard();
     } catch (error) {
+      if (requestId !== dashboardRequestId) return;
       host.innerHTML = `<div class="diagnostic-error">加载失败：${esc(error.message || "请稍后重试")}<br><button type="button" id="diagnostic-retry">重试</button></div>`;
       host
         .querySelector("#diagnostic-retry")

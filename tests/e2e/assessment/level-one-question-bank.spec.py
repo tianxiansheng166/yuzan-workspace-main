@@ -7,6 +7,7 @@ that attempt and its mock recordings after verification.
 
 import base64
 import io
+import os
 import struct
 import subprocess
 import time
@@ -16,7 +17,10 @@ from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
 from playwright.sync_api import sync_playwright
 
 
-BASE = "http://127.0.0.1:4175"
+BASE = os.environ.get("QB_RELEASE_BASE_URL", "http://127.0.0.1:4175")
+DB_CONTAINER = os.environ.get("QB_RELEASE_DB_CONTAINER", "p0-integration-postgres-1")
+DB_USER = os.environ.get("QB_RELEASE_DB_USER", "yuzan")
+DB_NAME = os.environ.get("QB_RELEASE_DB_NAME", "yuzan_dev")
 PRACTICE_TITLE = "国家通用语言文字能力｜水平一级综合测评"
 
 
@@ -35,14 +39,14 @@ TEST_WAV_BASE64 = test_wav_base64()
 
 def sql(statement):
     subprocess.run([
-        "docker", "exec", "p0-integration-postgres-1", "psql", "-U", "yuzan", "-d", "yuzan_dev",
+        "docker", "exec", DB_CONTAINER, "psql", "-U", DB_USER, "-d", DB_NAME,
         "-v", "ON_ERROR_STOP=1", "-q", "-c", statement,
     ], check=True, text=True)
 
 
 def load_dictation_answers():
     result = subprocess.run([
-        "docker", "exec", "p0-integration-postgres-1", "psql", "-U", "yuzan", "-d", "yuzan_dev",
+        "docker", "exec", DB_CONTAINER, "psql", "-U", DB_USER, "-d", DB_NAME,
         "-At", "-F", "\t", "-v", "ON_ERROR_STOP=1", "-c",
         '''SELECT i."stableKey", v."scoringSpec"->>'referenceAnswer'
 FROM "QuestionBankItemVersion" v
@@ -60,7 +64,7 @@ ORDER BY i."stableKey";''',
 
 def load_recording_statuses(session_id):
     result = subprocess.run([
-        "docker", "exec", "p0-integration-postgres-1", "psql", "-U", "yuzan", "-d", "yuzan_dev",
+        "docker", "exec", DB_CONTAINER, "psql", "-U", DB_USER, "-d", DB_NAME,
         "-At", "-v", "ON_ERROR_STOP=1", "-c",
         f'''SELECT r."status"
 FROM "Recording" r
@@ -73,7 +77,7 @@ ORDER BY i."sortOrder";''',
 
 def load_speech_jobs(session_id):
     result = subprocess.run([
-        "docker", "exec", "p0-integration-postgres-1", "psql", "-U", "yuzan", "-d", "yuzan_dev",
+        "docker", "exec", DB_CONTAINER, "psql", "-U", DB_USER, "-d", DB_NAME,
         "-At", "-F", "\t", "-v", "ON_ERROR_STOP=1", "-c",
         f'''SELECT j."assessmentItemId", j."status", j."provider", j."result"->>'strategy'
 FROM "SpeechJob" j
