@@ -1,5 +1,6 @@
 (() => {
   'use strict';
+  if (location.pathname === '/admin/pilot' || location.pathname === '/admin/pilot/') return;
   const app = document.getElementById('admin-app');
   const toastRoot = document.getElementById('admin-toast');
   function toast(message, type='info') {

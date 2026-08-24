@@ -48,6 +48,8 @@ tags:
     description: AI 教师生成教案 Job、草稿管理、修订审批与工作流状态
   - name: Translations
     description: 藏汉翻译任务创建、归属查询、机器结果、人工修订与术语表
+  - name: Pilot
+    description: 试点运行可观测性与产品反馈闭环
 paths:
   /health/live:
     get:
@@ -89,6 +91,140 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "503":
           $ref: "#/components/responses/ServiceUnavailable"
+  /schools/{schoolId}/pilot/overview:
+    get:
+      summary: 获取试点运行概览
+      tags: [Pilot]
+      operationId: getPilotOverview
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - name: window
+          in: query
+          schema:
+            type: string
+            enum: [24h, 7d]
+            default: 24h
+      responses:
+        "200":
+          description: 试点运行概览
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PilotOverviewResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+  /schools/{schoolId}/pilot/feedback:
+    post:
+      summary: 提交试点产品反馈
+      tags: [Pilot]
+      operationId: createPilotFeedback
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePilotFeedbackRequest"
+      responses:
+        "201":
+          description: 反馈已创建
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PilotFeedbackCreateResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+    get:
+      summary: 管理员查看试点反馈
+      tags: [Pilot]
+      operationId: listPilotFeedback
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Cursor"
+        - name: status
+          in: query
+          schema: { type: string, enum: [OPEN, ACKNOWLEDGED, RESOLVED] }
+        - name: category
+          in: query
+          schema:
+            {
+              type: string,
+              enum:
+                [
+                  CONTENT,
+                  MEDIA,
+                  RECORDING,
+                  SCORING,
+                  USABILITY,
+                  TECHNICAL,
+                  OTHER,
+                ],
+            }
+      responses:
+        "200":
+          description: 反馈列表
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PilotFeedbackListResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+  /schools/{schoolId}/pilot/feedback/mine:
+    get:
+      summary: 查看自己的试点反馈
+      tags: [Pilot]
+      operationId: listMyPilotFeedback
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+      responses:
+        "200":
+          description: 自己提交的反馈
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PilotFeedbackListResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+  /schools/{schoolId}/pilot/feedback/{feedbackId}/status:
+    patch:
+      summary: 更新试点反馈处理状态
+      tags: [Pilot]
+      operationId: updatePilotFeedbackStatus
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - name: feedbackId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdatePilotFeedbackStatusRequest"
+      responses:
+        "200":
+          description: 状态已更新
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PilotFeedbackStatusResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
   /auth/login:
     post:
       summary: 用户登录
@@ -3162,6 +3298,103 @@ components:
               details: {}
               requestId: "00000000-0000-0000-0000-000000000017"
   schemas:
+    CreatePilotFeedbackRequest:
+      type: object
+      required: [category, message]
+      additionalProperties: false
+      properties:
+        category:
+          {
+            type: string,
+            enum:
+              [CONTENT, MEDIA, RECORDING, SCORING, USABILITY, TECHNICAL, OTHER],
+          }
+        message: { type: string, minLength: 5, maxLength: 1000 }
+        sessionId: { type: [string, "null"], format: uuid }
+        assessmentItemId: { type: [string, "null"], format: uuid }
+        currentPath: { type: [string, "null"], maxLength: 500 }
+    UpdatePilotFeedbackStatusRequest:
+      type: object
+      required: [status]
+      additionalProperties: false
+      properties:
+        status: { type: string, enum: [ACKNOWLEDGED, RESOLVED] }
+        resolutionNote:
+          { type: [string, "null"], minLength: 1, maxLength: 1000 }
+    PilotFeedbackCreateResponse:
+      type: object
+      required: [feedbackId, status, createdAt]
+      properties:
+        feedbackId: { type: string, format: uuid }
+        status: { type: string, enum: [OPEN, ACKNOWLEDGED, RESOLVED] }
+        createdAt: { type: string, format: date-time }
+    PilotFeedbackListResponse:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/PilotFeedbackItem"
+        nextCursor: { type: [string, "null"] }
+    PilotFeedbackItem:
+      type: object
+      required: [id, category, status, message, createdAt]
+      properties:
+        id: { type: string, format: uuid }
+        category:
+          {
+            type: string,
+            enum:
+              [CONTENT, MEDIA, RECORDING, SCORING, USABILITY, TECHNICAL, OTHER],
+          }
+        status: { type: string, enum: [OPEN, ACKNOWLEDGED, RESOLVED] }
+        message: { type: string }
+        pageContext: { type: [string, "null"] }
+        context: { type: [object, "null"], additionalProperties: true }
+        reporter: { type: [object, "null"], additionalProperties: true }
+        resolutionNote: { type: [string, "null"] }
+        resolvedAt: { type: [string, "null"], format: date-time }
+        createdAt: { type: string, format: date-time }
+    PilotFeedbackStatusResponse:
+      type: object
+      required: [id, status, updatedAt]
+      properties:
+        id: { type: string, format: uuid }
+        status: { type: string, enum: [ACKNOWLEDGED, RESOLVED] }
+        resolutionNote: { type: [string, "null"] }
+        resolvedAt: { type: [string, "null"], format: date-time }
+        updatedAt: { type: string, format: date-time }
+    PilotOverviewResponse:
+      type: object
+      required:
+        [
+          window,
+          generatedAt,
+          overallState,
+          dependencies,
+          formalSessions,
+          standardSessions,
+          processingBacklog,
+          teacherReviewBacklog,
+          remediation,
+          speech,
+          feedback,
+          warnings,
+        ]
+      properties:
+        window: { type: string, enum: [24h, 7d] }
+        generatedAt: { type: string, format: date-time }
+        overallState: { type: string, enum: [HEALTHY, ATTENTION, DEGRADED] }
+        dependencies: { type: object, additionalProperties: true }
+        formalSessions: { type: object, additionalProperties: true }
+        standardSessions: { type: object, additionalProperties: true }
+        processingBacklog: { type: object, additionalProperties: true }
+        teacherReviewBacklog: { type: object, additionalProperties: true }
+        remediation: { type: object, additionalProperties: true }
+        speech: { type: object, additionalProperties: true }
+        feedback: { type: object, additionalProperties: true }
+        warnings: { type: array, items: { type: string } }
     CreateTeacherInvitationRequest:
       type: object
       required: [classId]

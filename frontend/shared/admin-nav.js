@@ -13,6 +13,7 @@
     { label:'套餐管理', route:'/admin/product-plans', icon:'▣', match:/^\/admin\/product-plans/ },
     { label:'隐私与合规', route:'/admin/privacy', icon:'🛡', match:/^\/admin\/privacy/ },
     { label:'系统运维', route:'/admin/system-providers', icon:'⚙', match:/^\/admin\/system-providers/ },
+    { label:'试点运行', route:'/admin/pilot', icon:'◉', match:/^\/admin\/pilot/ },
     { label:'学校运营详情', route:'/admin/school-operation', icon:'◫', match:/^\/admin\/school-operation/ }
   ];
   const active = routes.findIndex(item => item.match.test(path));

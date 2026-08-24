@@ -163,6 +163,24 @@ enum FeedbackDecision {
   RETURN
 }
 
+/// Product-quality feedback collected during a controlled pilot. This is
+/// separate from Feedback, which is teacher course-submission feedback.
+enum PilotFeedbackCategory {
+  CONTENT
+  MEDIA
+  RECORDING
+  SCORING
+  USABILITY
+  TECHNICAL
+  OTHER
+}
+
+enum PilotFeedbackStatus {
+  OPEN
+  ACKNOWLEDGED
+  RESOLVED
+}
+
 enum SpeechJobStatus {
   CREATED
   QUALITY_CHECKED
@@ -322,6 +340,7 @@ model School {
   courseFavorites         CourseFavorite[]
   aiGenerationJobs        AiGenerationJob[]
   lessonPlanDrafts        LessonPlanDraft[]
+  pilotFeedback           PilotFeedback[]
 
   @@index([isActive])
   @@index([deletedAt])
@@ -377,6 +396,8 @@ model User {
   trainingEnrollments      TrainingEnrollment[]
   aiGenerationJobs         AiGenerationJob[]
   lessonPlanDrafts         LessonPlanDraft[]
+  pilotFeedbackReported    PilotFeedback[]       @relation("PilotFeedbackReporter")
+  pilotFeedbackHandled     PilotFeedback[]       @relation("PilotFeedbackHandler")
 
   @@index([status])
 }
@@ -830,6 +851,7 @@ model QuestionBankItemVersion {
   item             QuestionBankItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
   practiceItemRefs PracticeItemRef[]
   assessmentItems  AssessmentItem[]
+  pilotFeedback    PilotFeedback[]
 
   @@unique([itemId, version])
   @@index([status, publishedAt])
@@ -1892,6 +1914,7 @@ model AssessmentSession {
   delivery         PracticeDelivery? @relation(fields: [deliveryId], references: [id], onDelete: SetNull)
   courseActivity   LearningActivity? @relation("CoursePracticeActivity", fields: [courseActivityId], references: [id], onDelete: SetNull)
   courseSubmission Submission?       @relation("CoursePracticeSubmission", fields: [courseSubmissionId], references: [id], onDelete: Cascade)
+  pilotFeedback    PilotFeedback[]
 
   @@unique([schoolId, id])
   @@index([schoolId, status])
@@ -1971,9 +1994,42 @@ model AssessmentItem {
   recording       Recording?                 @relation(fields: [recordingId], references: [id], onDelete: SetNull)
   writtenAnswer   WrittenAnswer?
   speechJobs      SpeechJob[]
+  pilotFeedback   PilotFeedback[]
 
   @@unique([sessionId, sortOrder])
   @@index([sessionId, status])
+}
+
+/// Minimal, privacy-safe feedback loop for a pilot. It stores IDs and
+/// reporter text only, never answers, rubrics, audio, or provider output.
+model PilotFeedback {
+  id                String                 @id @default(uuid()) @db.Uuid
+  schoolId          String                 @db.Uuid
+  reporterUserId    String                 @db.Uuid
+  reporterRole      MembershipRole
+  category          PilotFeedbackCategory
+  status            PilotFeedbackStatus    @default(OPEN)
+  message           String                 @db.VarChar(1000)
+  pageContext       String?                @db.VarChar(500)
+  sessionId         String?                @db.Uuid
+  assessmentItemId  String?                @db.Uuid
+  questionVersionId String?                @db.Uuid
+  handledByUserId   String?                @db.Uuid
+  resolutionNote    String?                @db.VarChar(1000)
+  resolvedAt        DateTime?
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
+
+  school          School                   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  reporter        User                     @relation("PilotFeedbackReporter", fields: [reporterUserId], references: [id], onDelete: Restrict)
+  handledBy       User?                    @relation("PilotFeedbackHandler", fields: [handledByUserId], references: [id], onDelete: SetNull)
+  session         AssessmentSession?       @relation(fields: [sessionId], references: [id], onDelete: SetNull)
+  assessmentItem  AssessmentItem?          @relation(fields: [assessmentItemId], references: [id], onDelete: SetNull)
+  questionVersion QuestionBankItemVersion? @relation(fields: [questionVersionId], references: [id], onDelete: SetNull)
+
+  @@index([schoolId, status, createdAt])
+  @@index([schoolId, reporterUserId, createdAt])
+  @@index([schoolId, category, createdAt])
 }
 
 model WrittenAnswer {

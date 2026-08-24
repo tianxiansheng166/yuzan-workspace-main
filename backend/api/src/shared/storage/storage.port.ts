@@ -15,6 +15,8 @@ export interface HeadObjectResult {
 }
 
 export interface StoragePort {
+  /** Read-only configured-bucket existence and permission check for readiness. */
+  checkBucket?(): Promise<void>;
   /**
    * Ensures the configured import bucket is available. Normal request paths do
    * not need this, but a clean Question Bank bootstrap must not depend on a

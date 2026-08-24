@@ -47,6 +47,8 @@
   font-weight: 800;
   text-decoration: none;
 }
+.diagnostic-actions{display:flex;gap:9px;align-items:center}.diagnostic-actions button{font:inherit;cursor:pointer}
+.diagnostic-feedback-modal{position:fixed;inset:0;z-index:30;display:grid;place-items:center;padding:16px;background:#17201880}.diagnostic-feedback-card{position:relative;width:min(540px,100%);max-height:90vh;overflow:auto;padding:24px;border-radius:14px;background:#fff;box-shadow:0 20px 50px #0004}.diagnostic-feedback-card h2{margin:0 0 8px}.diagnostic-feedback-card p{color:#5f6964;font-size:13px}.diagnostic-feedback-card label{display:grid;gap:6px;margin-top:14px;font-size:13px;font-weight:700}.diagnostic-feedback-card select,.diagnostic-feedback-card textarea{width:100%;box-sizing:border-box;border:1px solid #cad6ce;border-radius:8px;padding:9px;font:inherit}.diagnostic-feedback-card textarea{height:105px;margin:12px 0;resize:vertical}.diagnostic-feedback-close{position:absolute;right:12px;top:10px;border:0;background:transparent;font-size:25px;cursor:pointer}.diagnostic-feedback-history{margin-top:18px;padding-top:12px;border-top:1px solid #e7ece8}.diagnostic-feedback-history p{margin:7px 0}
 .diagnostic-selectors {
   display: flex;
   gap: 14px;

@@ -1,15 +1,16 @@
 # CURRENT TASK
 
-Task: QB-016 — Pilot observability and feedback loop
+Task: QB-017 — Pilot cohort onboarding and staging rehearsal
 Status: TODO
 
-QB-015F Release Evidence Closure is DONE / READY_FOR_PILOT. Its four release
-blockers passed in the isolated runtime and are recorded in
+QB-016 Pilot Observability & Feedback Loop is DONE / PILOT_OBSERVABLE.
+QB-015F Release Evidence Closure remains DONE / READY_FOR_PILOT. Its four
+release blockers passed in the isolated runtime and are recorded in
 [`RELEASE_READINESS.md`](RELEASE_READINESS.md).
 
-Do not start QB-016 in the completed QB-015F task turn. QB-009B remains
-`PARKED / EXTERNAL_INPUT`; do not call real iFlytek/Tencent APIs or begin
-calibration without the required external inputs and product decision.
+QB-009B remains `PARKED / EXTERNAL_INPUT`; do not call real iFlytek/Tencent
+APIs or begin calibration without the required external inputs and product
+decision.
 
 ## Protected paths
 

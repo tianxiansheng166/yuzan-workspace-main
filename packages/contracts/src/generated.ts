@@ -38,6 +38,75 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/schools/{schoolId}/pilot/overview": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 获取试点运行概览 */
+    get: operations["getPilotOverview"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/pilot/feedback": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 管理员查看试点反馈 */
+    get: operations["listPilotFeedback"];
+    put?: never;
+    /** 提交试点产品反馈 */
+    post: operations["createPilotFeedback"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/pilot/feedback/mine": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 查看自己的试点反馈 */
+    get: operations["listMyPilotFeedback"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/pilot/feedback/{feedbackId}/status": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /** 更新试点反馈处理状态 */
+    patch: operations["updatePilotFeedbackStatus"];
+    trace?: never;
+  };
   "/auth/login": {
     parameters: {
       query?: never;
@@ -1787,6 +1856,112 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
+    CreatePilotFeedbackRequest: {
+      /** @enum {string} */
+      category:
+        | "CONTENT"
+        | "MEDIA"
+        | "RECORDING"
+        | "SCORING"
+        | "USABILITY"
+        | "TECHNICAL"
+        | "OTHER";
+      message: string;
+      /** Format: uuid */
+      sessionId?: string | null;
+      /** Format: uuid */
+      assessmentItemId?: string | null;
+      currentPath?: string | null;
+    };
+    UpdatePilotFeedbackStatusRequest: {
+      /** @enum {string} */
+      status: "ACKNOWLEDGED" | "RESOLVED";
+      resolutionNote?: string | null;
+    };
+    PilotFeedbackCreateResponse: {
+      /** Format: uuid */
+      feedbackId: string;
+      /** @enum {string} */
+      status: "OPEN" | "ACKNOWLEDGED" | "RESOLVED";
+      /** Format: date-time */
+      createdAt: string;
+    };
+    PilotFeedbackListResponse: {
+      items: components["schemas"]["PilotFeedbackItem"][];
+      nextCursor?: string | null;
+    };
+    PilotFeedbackItem: {
+      /** Format: uuid */
+      id: string;
+      /** @enum {string} */
+      category:
+        | "CONTENT"
+        | "MEDIA"
+        | "RECORDING"
+        | "SCORING"
+        | "USABILITY"
+        | "TECHNICAL"
+        | "OTHER";
+      /** @enum {string} */
+      status: "OPEN" | "ACKNOWLEDGED" | "RESOLVED";
+      message: string;
+      pageContext?: string | null;
+      context?: {
+        [key: string]: unknown;
+      } | null;
+      reporter?: {
+        [key: string]: unknown;
+      } | null;
+      resolutionNote?: string | null;
+      /** Format: date-time */
+      resolvedAt?: string | null;
+      /** Format: date-time */
+      createdAt: string;
+    };
+    PilotFeedbackStatusResponse: {
+      /** Format: uuid */
+      id: string;
+      /** @enum {string} */
+      status: "ACKNOWLEDGED" | "RESOLVED";
+      resolutionNote?: string | null;
+      /** Format: date-time */
+      resolvedAt?: string | null;
+      /** Format: date-time */
+      updatedAt: string;
+    };
+    PilotOverviewResponse: {
+      /** @enum {string} */
+      window: "24h" | "7d";
+      /** Format: date-time */
+      generatedAt: string;
+      /** @enum {string} */
+      overallState: "HEALTHY" | "ATTENTION" | "DEGRADED";
+      dependencies: {
+        [key: string]: unknown;
+      };
+      formalSessions: {
+        [key: string]: unknown;
+      };
+      standardSessions: {
+        [key: string]: unknown;
+      };
+      processingBacklog: {
+        [key: string]: unknown;
+      };
+      teacherReviewBacklog: {
+        [key: string]: unknown;
+      };
+      remediation: {
+        [key: string]: unknown;
+      };
+      speech: {
+        [key: string]: unknown;
+      };
+      feedback: {
+        [key: string]: unknown;
+      };
+      warnings: string[];
+    };
     CreateTeacherInvitationRequest: {
       /** Format: uuid */
       classId: string;
@@ -3689,6 +3864,157 @@ export interface operations {
       };
       400: components["responses"]["BadRequest"];
       503: components["responses"]["ServiceUnavailable"];
+    };
+  };
+  getPilotOverview: {
+    parameters: {
+      query?: {
+        window?: "24h" | "7d";
+      };
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 试点运行概览 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PilotOverviewResponse"];
+        };
+      };
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+    };
+  };
+  listPilotFeedback: {
+    parameters: {
+      query?: {
+        /** @description 分页返回数量上限 */
+        limit?: components["parameters"]["Limit"];
+        /** @description 游标， opaque 字符串 */
+        cursor?: components["parameters"]["Cursor"];
+        status?: "OPEN" | "ACKNOWLEDGED" | "RESOLVED";
+        category?:
+          | "CONTENT"
+          | "MEDIA"
+          | "RECORDING"
+          | "SCORING"
+          | "USABILITY"
+          | "TECHNICAL"
+          | "OTHER";
+      };
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 反馈列表 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PilotFeedbackListResponse"];
+        };
+      };
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+    };
+  };
+  createPilotFeedback: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CreatePilotFeedbackRequest"];
+      };
+    };
+    responses: {
+      /** @description 反馈已创建 */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PilotFeedbackCreateResponse"];
+        };
+      };
+      400: components["responses"]["BadRequest"];
+      403: components["responses"]["Forbidden"];
+    };
+  };
+  listMyPilotFeedback: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 自己提交的反馈 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PilotFeedbackListResponse"];
+        };
+      };
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+    };
+  };
+  updatePilotFeedbackStatus: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        feedbackId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["UpdatePilotFeedbackStatusRequest"];
+      };
+    };
+    responses: {
+      /** @description 状态已更新 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PilotFeedbackStatusResponse"];
+        };
+      };
+      400: components["responses"]["BadRequest"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
     };
   };
   login: {

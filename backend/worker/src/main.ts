@@ -1,4 +1,5 @@
 import { Queue } from "bullmq";
+import { Redis } from "ioredis";
 import pino from "pino";
 import { SpeechJobConsumer } from "./speech/speech-job.consumer.js";
 import { SpeechScoringClient } from "./speech/speech-scoring.client.js";
@@ -8,12 +9,16 @@ import {
 } from "./speech/speech-provider.js";
 import { AiGenerationConsumer } from "./ai-generation/ai-generation.consumer.js";
 import { TranslationConsumer } from "./translation/translation.consumer.js";
+import { WorkerHeartbeat } from "./worker-heartbeat.js";
 
 const logger = pino({ level: process.env.LOG_LEVEL ?? "info" });
 
 const SPEECH_QUEUE_NAME = "speech-jobs";
 const AI_GENERATION_QUEUE_NAME = "ai-generation-jobs";
 const TRANSLATION_QUEUE_NAME = "translation-jobs";
+const WORKER_HEARTBEAT_KEY = process.env.WORKER_HEARTBEAT_KEY ?? "yuzan:worker:heartbeat";
+const WORKER_HEARTBEAT_TTL_SECONDS = Number.parseInt(process.env.WORKER_HEARTBEAT_TTL_SECONDS ?? "60", 10);
+const WORKER_HEARTBEAT_INTERVAL_MS = Number.parseInt(process.env.WORKER_HEARTBEAT_INTERVAL_MS ?? "15000", 10);
 
 interface RedisConfig {
   host: string;
@@ -52,6 +57,16 @@ async function main(): Promise<void> {
     speechProvider = "disabled";
   }
   const redisConfig = getRedisConfig();
+  const heartbeatRedis = new Redis({ ...redisConfig, lazyConnect: true, maxRetriesPerRequest: 0 });
+  heartbeatRedis.on("error", (error: Error) => logger.warn({ error }, "Worker heartbeat Redis connection error"));
+  const heartbeat = new WorkerHeartbeat(
+    heartbeatRedis,
+    WORKER_HEARTBEAT_KEY,
+    WORKER_HEARTBEAT_TTL_SECONDS,
+    WORKER_HEARTBEAT_INTERVAL_MS,
+    (error) => logger.warn({ error }, "Worker heartbeat update failed"),
+  );
+  heartbeat.start();
 
   logger.info(
     {
@@ -180,6 +195,7 @@ async function main(): Promise<void> {
 
   const shutdown = async (signal: string): Promise<void> => {
     logger.info({ signal }, "Worker stopping");
+    heartbeat.stop();
     if (speechConsumer) {
       await speechConsumer.stop();
     }

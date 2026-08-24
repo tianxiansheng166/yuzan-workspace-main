@@ -104,6 +104,14 @@ export class S3CompatibleStorageAdapter implements StoragePort {
     await this.client.send(new HeadBucketCommand({ Bucket: this.bucket }));
   }
 
+  /**
+   * Readiness must never create infrastructure. HeadBucket checks only the
+   * configured bucket's existence and the caller's permission to access it.
+   */
+  async checkBucket(): Promise<void> {
+    await this.client.send(new HeadBucketCommand({ Bucket: this.bucket }));
+  }
+
   async generateDownloadUrl(objectKey: string): Promise<PresignedUrlResult> {
     const command = new GetObjectCommand({
       Bucket: this.bucket,

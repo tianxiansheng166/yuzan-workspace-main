@@ -15,9 +15,11 @@ Do not infer a commit SHA from this document. The task-start dirty change in
 
 QB-008R and the Levels 1–6 rollout are implemented on the current feature
 branch. QB-009A, QB-010, QB-011, QB-012, QB-013, and QB-014 are complete.
-QB-015F release evidence closure is **DONE / READY_FOR_PILOT**. QB-009B remains
-`PARKED / EXTERNAL_INPUT`; see [`CURRENT_TASK.md`](CURRENT_TASK.md) and
-[`RELEASE_READINESS.md`](RELEASE_READINESS.md).
+QB-015F release evidence closure is **DONE / READY_FOR_PILOT**. QB-016 pilot
+observability and the feedback loop are **DONE / PILOT_OBSERVABLE**. QB-009B
+remains `PARKED / EXTERNAL_INPUT`; see [`CURRENT_TASK.md`](CURRENT_TASK.md),
+[`RELEASE_READINESS.md`](RELEASE_READINESS.md), and
+[`PILOT_RUNBOOK.md`](PILOT_RUNBOOK.md).
 
 ## QB-015F closure evidence (2026-08-24)
 
@@ -243,6 +245,47 @@ Authorized repairs are recorded in
   reads and QB-012's `deriveQuestionBankProgress` helper; the teacher UI is
   `/teacher/diagnostics/` and links to the existing review queue.
 
+## QB-016 pilot observability and feedback loop
+
+- `GET /health/live` remains process liveness only. `GET /health/ready` now
+  checks PostgreSQL with `SELECT 1`, Redis with `PING`, and the configured S3 /
+  MinIO bucket with a read-only `HEAD`; any failed core check returns public
+  `503` without configuration, credentials, stack traces, or internal endpoints.
+  Readiness never calls the bootstrap bucket-creation path.
+- Worker writes `WORKER_HEARTBEAT_KEY` every 15 seconds with a 60-second TTL by
+  default. API pilot overview reports `UP`, `STALE`, or `UNKNOWN`; heartbeat is
+  process liveness evidence only and is not speech calibration or formal-score
+  authority.
+- `GET /schools/:schoolId/pilot/overview?window=24h|7d` is school/platform-admin
+  scoped and derives formal Question Bank funnel, stale processing, existing
+  reviewable backlog, remediation origin split, speech/recording status counts,
+  open feedback, dependency state, deterministic warnings, and overall state.
+  It does not rank students or return student score rows.
+- `PilotFeedback` is a new domain, separate from course-submission `Feedback`.
+  Students, teachers, and school admins submit plain text; server authorization
+  validates session/item ownership or teacher class scope and derives the
+  question version. Answers, rubrics, transcripts, recordings, provider raw
+  output, IPs, and device fingerprints are not stored. Admins acknowledge or
+  resolve, and reporters can read status/resolution through `feedback/mine`.
+- The Student Question Bank Runner has the prioritized feedback entry and
+  history; Teacher 学情诊断 has a page-level feedback modal/history; School
+  Admin `/admin/pilot` shows system state, 24h/7d metrics, warnings, and recent
+  feedback actions. API paths are documented in the OpenAPI contract.
+- Added migration `20260824130000_add_pilot_feedback` and `PILOT_RUNBOOK.md`.
+  QB-009B remains parked; no cloud speech APIs or calibration were started.
+
+## QB-016 verification
+
+- API full Vitest: `1021 passed, 63 skipped`.
+- Pilot focused tests: `10 passed, 1 skipped`; existing course Feedback
+  regression: `20 passed`.
+- Worker full Vitest: `54 passed`; heartbeat unit coverage included.
+- Contracts validation/test/typecheck, database validate/migration contract,
+  frontend test/build, API/Worker typecheck, and Python E2E collection passed.
+- The QB-016 PostgreSQL integration and Chromium feedback test are runtime-gated
+  and were skipped in this worktree because no isolated pilot runtime was
+  configured; QB-015 release evidence remains the baseline pilot approval.
+
 ## Verification snapshot
 
 - Final QB-015F release runner (`tests/e2e/assessment/run-qb015f-release-gates.sh`)
@@ -344,9 +387,10 @@ runtime. The default scorer is restored with `MOCK_SPEECH_SCORING` unset.
 
 QB-009B remains `PARKED / EXTERNAL_INPUT`: it needs approved consented
 recordings, teacher labels, credentials if live smoke is approved, and a
-separate product decision. The next implementation task is QB-016: pilot
-observability and feedback loop. It must keep QB-013's class scope, no-ranking
-boundary, formal/remediation isolation, and student privacy controls intact.
+separate product decision. The next implementation task is QB-017: pilot cohort
+onboarding and staging rehearsal. QB-016 keeps QB-013's class scope,
+no-ranking boundary, formal/remediation isolation, and student privacy controls
+intact.
 
 ## Protected paths
 

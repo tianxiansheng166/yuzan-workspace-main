@@ -9,6 +9,12 @@ import type { StoragePort, PresignedUrlResult, HeadObjectResult } from "./storag
  */
 @Injectable()
 export class UnavailableStorageAdapter implements StoragePort {
+  async checkBucket(): Promise<void> {
+    throw Object.assign(
+      new Error("Storage provider is not configured — cannot check bucket"),
+      { code: "PROVIDER_NOT_CONFIGURED" },
+    );
+  }
   async putObject(
     _objectKey: string,
     _body: Uint8Array,

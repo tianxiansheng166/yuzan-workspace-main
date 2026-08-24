@@ -31,11 +31,12 @@
   function getActiveSchoolId() {
     const activeSchoolId = localStorage.getItem(SCHOOL_KEY) || '';
     if (activeSchoolId) return activeSchoolId;
-    const studentMemberships = (getStoredUser()?.memberships || [])
-      .filter((membership) => membership?.role === 'STUDENT' && membership?.schoolId)
+    const memberships = (getStoredUser()?.memberships || [])
+      .filter((membership) => membership?.schoolId)
       .sort((left, right) => String(left.schoolId).localeCompare(String(right.schoolId)));
-    if (studentMemberships.length > 0) {
-      const schoolId = studentMemberships[0].schoolId;
+    const preferredMembership = memberships.find((membership) => membership?.role === 'STUDENT') || memberships[0];
+    if (preferredMembership) {
+      const schoolId = preferredMembership.schoolId;
       localStorage.setItem(SCHOOL_KEY, schoolId);
       return schoolId;
     }
@@ -839,6 +840,29 @@
   async function listFeedback(submissionId) {
     return request(`/schools/${getActiveSchoolId()}/submissions/${submissionId}/feedback`);
   }
+  /* ── Pilot observability and product feedback ── */
+  async function createPilotFeedback(payload) {
+    const schoolId = await requireActiveSchoolId();
+    return request(`/schools/${schoolId}/pilot/feedback`, { method: 'POST', body: JSON.stringify(payload) });
+  }
+  async function listMyPilotFeedback() {
+    const schoolId = await requireActiveSchoolId();
+    return request(`/schools/${schoolId}/pilot/feedback/mine`);
+  }
+  async function getPilotOverview(window = '24h') {
+    const schoolId = await requireActiveSchoolId();
+    return request(`/schools/${schoolId}/pilot/overview?window=${encodeURIComponent(window)}`);
+  }
+  async function listPilotFeedback(filters = {}) {
+    const schoolId = await requireActiveSchoolId();
+    const params = new URLSearchParams();
+    ['status', 'category', 'cursor', 'limit'].forEach(key => { if (filters[key]) params.set(key, String(filters[key])); });
+    return request(`/schools/${schoolId}/pilot/feedback${params.toString() ? `?${params}` : ''}`);
+  }
+  async function updatePilotFeedbackStatus(feedbackId, payload) {
+    const schoolId = await requireActiveSchoolId();
+    return request(`/schools/${schoolId}/pilot/feedback/${encodeURIComponent(feedbackId)}/status`, { method: 'PATCH', body: JSON.stringify(payload) });
+  }
 
   /* ── Learning Progress ── */
   async function updateLearningProgress(activityId, payload) {
@@ -1318,6 +1342,11 @@
     /* Feedback */
     createFeedback,
     listFeedback,
+    createPilotFeedback,
+    listMyPilotFeedback,
+    getPilotOverview,
+    listPilotFeedback,
+    updatePilotFeedbackStatus,
     /* Learning Progress */
     updateLearningProgress,
     getLearningProgress,

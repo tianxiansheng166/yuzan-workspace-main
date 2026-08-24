@@ -36,6 +36,7 @@ import { StudentCoursesModule } from "./modules/student-courses/student-courses.
 import { ResourcesModule } from "./modules/resources/resources.module.js";
 import { AiLessonPlanningModule } from "./modules/ai-lesson-planning/ai-lesson-planning.module.js";
 import { InternalModule } from "./modules/internal/internal.module.js";
+import { PilotModule } from "./modules/pilot/pilot.module.js";
 import { DatabaseModule } from "./shared/database/index.js";
 
 markRootHealthRoutesPublic();
@@ -79,6 +80,7 @@ applyRootRouteCompatibility();
     ResourcesModule,
     AiLessonPlanningModule,
     InternalModule,
+    PilotModule,
     // P2 stub modules expose routes but return PERSISTENCE_PENDING /
     // UNAVAILABLE / PROVIDER_NOT_CONFIGURED so they cannot block MVP.
     MvpGapsModule,

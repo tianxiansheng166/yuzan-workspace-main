@@ -49,7 +49,7 @@
     if (!classes.length) return empty("当前账号没有可访问的任课班级。");
     if (!practices.length) return empty("当前学校还没有可用的正式题库测评。");
     root.innerHTML = `<div class="diagnostic-wrap">
-      <header class="diagnostic-header"><div><span class="diagnostic-kicker">QUESTION BANK · CLASS VIEW</span><h1>学情诊断</h1><p>查看一个班级在同一水平正式测评中的学习状态；不进行学生间排名。</p></div><a class="review-link" href="/teacher/reviews/">进入待复核队列</a></header>
+      <header class="diagnostic-header"><div><span class="diagnostic-kicker">QUESTION BANK · CLASS VIEW</span><h1>学情诊断</h1><p>查看一个班级在同一水平正式测评中的学习状态；不进行学生间排名。</p></div><div class="diagnostic-actions"><button class="review-link" id="teacher-pilot-feedback" type="button">反馈问题</button><a class="review-link" href="/teacher/reviews/">进入待复核队列</a></div></header>
       <section class="diagnostic-selectors" aria-label="诊断筛选">
         <label>班级<select id="diagnostic-class">${classes.map((entry) => `<option value="${esc(entry.classId)}">${esc(entry.grade)} · ${esc(entry.className)}（${entry.activeStudentCount} 人）</option>`).join("")}</select></label>
         <label>正式测评水平<select id="diagnostic-practice">${practices.map((entry) => `<option value="${esc(entry.practiceDefinitionId)}">${esc(entry.difficulty)} · ${esc(entry.title)}</option>`).join("")}</select></label>
@@ -62,7 +62,25 @@
     root
       .querySelector("#diagnostic-practice")
       .addEventListener("change", loadDashboard);
+    root.querySelector("#teacher-pilot-feedback").addEventListener("click", openPilotFeedback);
     loadDashboard();
+  }
+
+  async function openPilotFeedback() {
+    let history = [];
+    try { history = (await window.YuzanApi.listMyPilotFeedback()).items || []; } catch (error) { return window.alert(error.message || "反馈记录暂不可用"); }
+    const modal = document.createElement("div");
+    modal.className = "diagnostic-feedback-modal";
+    modal.innerHTML = `<div class="diagnostic-feedback-card" role="dialog" aria-label="反馈问题"><button type="button" class="diagnostic-feedback-close" aria-label="关闭">×</button><h2>反馈问题</h2><p>请描述遇到的问题，不要填写手机号等敏感信息。不会提交学生答案或复核证据。</p><label>问题类型<select data-feedback-category><option value="USABILITY">使用体验</option><option value="TECHNICAL">系统问题</option><option value="CONTENT">题目内容</option><option value="OTHER">其他</option></select></label><textarea data-feedback-message minlength="5" maxlength="1000" placeholder="至少输入 5 个字"></textarea><button type="button" class="review-link" data-feedback-submit>提交反馈</button><section class="diagnostic-feedback-history"><b>我的反馈</b>${history.length ? history.map(entry => `<p>${esc(entry.message)} · ${esc({ OPEN: "待处理", ACKNOWLEDGED: "已知悉", RESOLVED: "已解决" }[entry.status] || entry.status)}${entry.resolutionNote ? `：${esc(entry.resolutionNote)}` : ""}</p>`).join("") : "<p>暂无反馈。</p>"}</section></div>`;
+    document.body.append(modal);
+    modal.querySelector(".diagnostic-feedback-close").addEventListener("click", () => modal.remove());
+    modal.querySelector("[data-feedback-submit]").addEventListener("click", async () => {
+      const message = modal.querySelector("[data-feedback-message]").value.trim();
+      if (message.length < 5) return window.alert("请至少描述 5 个字。");
+      const button = modal.querySelector("[data-feedback-submit]");
+      button.disabled = true;
+      try { await window.YuzanApi.createPilotFeedback({ category: modal.querySelector("[data-feedback-category]").value, message, currentPath: location.pathname }); modal.remove(); window.alert("反馈已提交，管理员处理后可在这里查看状态。"); } catch (error) { button.disabled = false; window.alert(`反馈提交失败：${error.message || "请稍后重试"}`); }
+    });
   }
 
   function card(value, label, hint = "") {
