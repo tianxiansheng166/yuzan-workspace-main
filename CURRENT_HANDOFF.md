@@ -15,8 +15,19 @@ Do not infer a commit SHA from this document. The task-start dirty change in
 
 QB-008R and the Levels 1–6 rollout are implemented on the current feature
 branch. QB-009A, QB-010, QB-011, QB-012, QB-013, and QB-014 are complete.
-QB-009B remains `PARKED / EXTERNAL_INPUT`; the next implementation task is
-QB-015 in [`CURRENT_TASK.md`](CURRENT_TASK.md).
+QB-015 release hardening is **BLOCKED / NOT_READY** pending executable release
+evidence. QB-009B remains `PARKED / EXTERNAL_INPUT`; see
+[`CURRENT_TASK.md`](CURRENT_TASK.md) and [`RELEASE_READINESS.md`](RELEASE_READINESS.md).
+
+QB-015 did prove clean frozen install, 28 isolated migrations, fresh 120-item
+runtime apply, zero-duplicate re-apply, 126/126 MinIO object HTTP integrity,
+and full non-browser quality gates. It fixed three release issues: Prisma now
+accepts a supplied `DATABASE_URL` without a root `.env`; fresh bootstrap creates
+or verifies its configured MinIO bucket; legacy self-remediation uses an
+explicit null-safe origin filter compatible with Prisma/PostgreSQL. Do not mark
+the release READY until QB-014 real-DB assignment, Chromium, and assigned
+speech-review coverage plus a clean-runtime six-level browser re-run exist and
+pass.
 
 The original DOCX/ZIP files under `local_sources/` were inspected as read-only
 inputs and were not modified, moved, deleted, or staged.

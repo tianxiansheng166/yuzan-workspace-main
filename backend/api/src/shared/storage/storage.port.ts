@@ -16,6 +16,12 @@ export interface HeadObjectResult {
 
 export interface StoragePort {
   /**
+   * Ensures the configured import bucket is available. Normal request paths do
+   * not need this, but a clean Question Bank bootstrap must not depend on a
+   * manually pre-created MinIO bucket.
+   */
+  ensureBucket?(): Promise<void>;
+  /**
    * Server-side upload for trusted platform imports. Browser uploads continue
    * to use generateUploadUrl; this avoids duplicating storage configuration in
    * import commands while keeping the object-store boundary explicit.

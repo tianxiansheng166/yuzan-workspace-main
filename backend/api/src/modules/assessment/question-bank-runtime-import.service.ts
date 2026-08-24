@@ -411,6 +411,7 @@ export class QuestionBankRuntimeImportService {
   async apply(input: QuestionBankRuntimeApplyInput): Promise<QuestionBankRuntimeApplyResult> {
     const questions = assertCanonicalManifest(input.manifest);
     const media = collectRuntimeMedia(questions);
+    await this.storage.ensureBucket?.();
     const resourceIds = new Map<string, string>();
     let resourcesCreated = 0;
     let resourcesReused = 0;

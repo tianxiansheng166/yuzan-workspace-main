@@ -3,6 +3,8 @@ import { ConfigService } from "@nestjs/config";
 import {
   S3Client,
   HeadObjectCommand,
+  HeadBucketCommand,
+  CreateBucketCommand,
   DeleteObjectCommand,
   PutObjectCommand,
   GetObjectCommand,
@@ -83,6 +85,25 @@ export class S3CompatibleStorageAdapter implements StoragePort {
     this.logger.debug(`Put trusted server-side object ${objectKey}`);
   }
 
+  async ensureBucket(): Promise<void> {
+    try {
+      await this.client.send(new HeadBucketCommand({ Bucket: this.bucket }));
+      return;
+    } catch (error: unknown) {
+      if (!this.isNotFoundError(error)) throw error;
+    }
+
+    try {
+      await this.client.send(new CreateBucketCommand({ Bucket: this.bucket }));
+    } catch (error: unknown) {
+      if (!this.isBucketAlreadyExists(error)) throw error;
+    }
+
+    // Verify the resulting bucket rather than treating a successful create as
+    // sufficient; this keeps permission and endpoint failures explicit.
+    await this.client.send(new HeadBucketCommand({ Bucket: this.bucket }));
+  }
+
   async generateDownloadUrl(objectKey: string): Promise<PresignedUrlResult> {
     const command = new GetObjectCommand({
       Bucket: this.bucket,
@@ -147,6 +168,15 @@ export class S3CompatibleStorageAdapter implements StoragePort {
       }
     }
     return false;
+  }
+
+  private isBucketAlreadyExists(error: unknown): boolean {
+    if (!error || typeof error !== "object") return false;
+    const name = "name" in error ? String(error.name) : "";
+    const status = "$metadata" in error
+      ? (error.$metadata as { httpStatusCode?: number } | undefined)?.httpStatusCode
+      : undefined;
+    return name === "BucketAlreadyExists" || name === "BucketAlreadyOwnedByYou" || status === 409;
   }
 
   private extractErrorMessage(error: unknown): string {

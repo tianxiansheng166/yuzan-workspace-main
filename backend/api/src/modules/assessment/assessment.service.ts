@@ -1142,6 +1142,9 @@ export class AssessmentService {
     if (typeof tx.$executeRaw === "function") {
       await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${assignmentKey}))`;
     }
+    const remediationOriginScope = origin === "SELF_INITIATED"
+      ? { OR: [{ remediationOrigin: "SELF_INITIATED" }, { remediationOrigin: null }] }
+      : { remediationOrigin: "TEACHER_ASSIGNED" };
     const active = await tx.assessmentSession.findMany({
       where: {
         schoolId,
@@ -1149,9 +1152,7 @@ export class AssessmentService {
         purpose: "REMEDIATION",
         retestOfSessionId: source.id,
         initiatorUserId: actorUserId,
-        remediationOrigin: origin === "SELF_INITIATED"
-          ? { in: ["SELF_INITIATED", null] }
-          : "TEACHER_ASSIGNED",
+        ...remediationOriginScope,
         status: { in: ["CREATED", "IN_PROGRESS", "SUBMITTED", "PROCESSING"] },
       },
       orderBy: { updatedAt: "desc" },

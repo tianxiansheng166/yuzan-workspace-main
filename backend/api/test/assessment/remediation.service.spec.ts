@@ -100,7 +100,9 @@ function harness(options: { retryCount?: number; sourceEnrollmentId?: string } =
         attempt.initiatorUserId === where.initiatorUserId &&
         (where.remediationOrigin === "TEACHER_ASSIGNED"
           ? attempt.remediationOrigin === "TEACHER_ASSIGNED"
-          : ["SELF_INITIATED", null, undefined].includes(attempt.remediationOrigin)),
+          : where.OR
+            ? ["SELF_INITIATED", null, undefined].includes(attempt.remediationOrigin)
+            : false),
       )),
     },
     assessmentItem: {

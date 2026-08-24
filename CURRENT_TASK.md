@@ -1,7 +1,21 @@
 # CURRENT TASK
 
 Task: QB-015 — Question Bank release hardening and launch readiness
-Status: TODO
+Status: BLOCKED / NOT_READY
+
+## QB-015 checkpoint (2026-08-24)
+
+Fresh install, isolated migration, source validation, fresh runtime apply,
+media integrity, and the API/worker/frontend/Python gates passed. Two runtime
+blockers were fixed: Prisma clean-worktree configuration now accepts a supplied
+`DATABASE_URL` without a local `.env`, and a fresh MinIO Question Bank bootstrap
+creates/verifies its configured bucket. A real PostgreSQL remediation query was
+also corrected to handle legacy null origin rows safely.
+
+Pilot approval remains blocked on the unimplemented executable evidence listed
+in [`RELEASE_READINESS.md`](RELEASE_READINESS.md): QB-014 real-DB assignment,
+QB-014 Chromium closure, teacher-assigned speech-review integration, and a
+clean-runtime re-run of the six-level browser suite. Do not start QB-009B.
 
 ## Starting point
 
