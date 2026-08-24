@@ -1,19 +1,55 @@
 # Question Bank release readiness — QB-015
 
 Date: 2026-08-24
-Evidence base HEAD: `04af580` (`feat/question-bank-v1`)
+Evidence base HEAD: `cea0d99` (`feat/question-bank-v1`, functional closure checkpoint)
 
 ## Decision
 
-**NOT_READY**. The verified runtime/import/migration gates below pass, and two
-release blockers discovered during this audit were fixed. However, the required
-QB-014 Chromium assignment journey and its real PostgreSQL teacher-assigned
-speech-review integration have not yet been implemented as executable tests.
-They must pass before a pilot launch can be approved.
+**READY_FOR_PILOT**. The four QB-015F release blockers are closed by executable
+evidence in an isolated runtime. This approves a controlled pilot/staging run
+only; it is not production certification, an official examination, or a claim
+of calibrated speech accuracy.
 
 This product remains a national common-language ability learning, simulated
 assessment, and learning-diagnosis product. It is not an official Putonghua
 examination, national-level certification, or certificate issuer.
+
+## QB-015F executable closure evidence
+
+- Runtime identity: Compose project `qb015f-release-20260824d`, PostgreSQL
+  database `qb015f_fresh`, API `http://127.0.0.1:4019`, frontend
+  `http://127.0.0.1:4180`, Redis port `6393`, MinIO port `59028`, bucket
+  `qb015f-question-bank`. Database/container/project isolation was asserted;
+  shared `p0-integration` was not used. The isolated runtime was torn down
+  after the final run.
+- QB-014 real PostgreSQL integration:
+  `backend/api/test/assessment/qb015f.teacher-assignment.runtime.integration.spec.ts` —
+  `2 passed`. It proves two students, exact per-source question-version
+  snapshots, duplicate `RESUMED`, different-focus coexistence,
+  `SELF_INITIATED` separation, class/school/role scope denial, and assigned
+  READ_ALOUD review closure.
+- QB-014 deterministic Chromium:
+  `tests/e2e/assessment/test_qb015f_teacher_assignment.py` — `1 passed in
+  36.35s`. Teacher assignment, student-only assigned task, existing Runner
+  subset, refresh restoration, deterministic completion, safe result, and
+  teacher dashboard `COMPLETED` state all passed.
+- Assigned READ_ALOUD: the same Chromium evidence created new recordings,
+  drove local controlled speech through Worker/API, produced three
+  `SpeechJob=NEEDS_REVIEW` records with `provider=local` and
+  `SPEECH_READING`, kept candidate points out of formal scores, completed only
+  after teacher review, created zero remediation `AssessmentReport` rows, and
+  left the source formal report/scores/diagnosis unchanged.
+- Isolated Level 1 release loop:
+  `tests/e2e/assessment/test_qb007_picture_review.py -k '1'` — `1 passed`;
+  QB011, QB012, and QB013 each passed in the same runner.
+- Isolated parameterized Levels 1–6:
+  `tests/e2e/assessment/test_qb007_picture_review.py` — `6 passed in
+  786.09s`. The controlled mock scorer was enabled only in the release speech
+  process; the production shell had `MOCK_SPEECH_SCORING` unset.
+- Tracked runner: `tests/e2e/assessment/run-qb015f-release-gates.sh` refuses
+  the shared project, applies the real six-level runtime, runs all closure
+  gates, and records non-secret runtime identity. A concise result record is
+  in `evidence/qb015f-release/RESULTS.md`.
 
 ## Cold-start and toolchain evidence
 
@@ -66,7 +102,7 @@ examination, national-level certification, or certificate issuer.
 ## Verified quality and safety gates
 
 - Contracts validate/test/typecheck: **PASS** (6 generator tests).
-- API typecheck/build: **PASS**. Full unit suite: **1011 passed, 60 skipped**.
+- API typecheck/build: **PASS**. Full unit suite: **1011 passed, 62 skipped**.
 - Focused real PostgreSQL QB tests: deterministic scoring, progress, runtime
   delivery, and remediation: **5 passed** after the remediation fix.
 - Worker test/typecheck/build: **51 passed**.
@@ -89,22 +125,12 @@ examination, national-level certification, or certificate issuer.
 These are validated, server-side provenance records and are not exposed in
 student delivery payloads. They are not release blockers.
 
-## Required closure before READY_FOR_PILOT
+## Closure status
 
-1. Add and pass a real PostgreSQL QB-014 integration covering an authorised
-   teacher's family assignment to two students, exact-version clean snapshots,
-   duplicate resume, different-focus coexistence, and self-remediation
-   separation.
-2. Add and pass the specified deterministic Chromium journey: teacher assigns
-   Class A, the student sees the assigned task, refreshes/submits the subset,
-   and the teacher sees its completed state.
-3. Add and pass real-DB controlled-local-speech coverage for teacher-assigned
-   READ_ALOUD through NEEDS_REVIEW, teacher review, remediation completion, no
-   AssessmentReport, and an unchanged formal source result.
-4. Re-run the Level 1 full learning loop and the parameterized Levels 1–6
-   Chromium suite against an explicitly isolated runtime. The currently tracked
-   browser harness is hard-coded to the shared `p0-integration` container and
-   has no QB-014 assignment journey; it is not clean-runtime release evidence.
+1. Real PostgreSQL QB-014 assignment: **PASS**.
+2. Deterministic QB-014 Chromium assignment: **PASS**.
+3. Teacher-assigned READ_ALOUD review closure: **PASS**.
+4. Isolated Level 1 and Levels 1–6 Chromium release run: **PASS** (`6/6`).
 
 ## Operator checklist for a later pilot approval
 

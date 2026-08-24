@@ -15,19 +15,36 @@ Do not infer a commit SHA from this document. The task-start dirty change in
 
 QB-008R and the Levels 1–6 rollout are implemented on the current feature
 branch. QB-009A, QB-010, QB-011, QB-012, QB-013, and QB-014 are complete.
-QB-015 release hardening is **BLOCKED / NOT_READY** pending executable release
-evidence. QB-009B remains `PARKED / EXTERNAL_INPUT`; see
-[`CURRENT_TASK.md`](CURRENT_TASK.md) and [`RELEASE_READINESS.md`](RELEASE_READINESS.md).
+QB-015F release evidence closure is **DONE / READY_FOR_PILOT**. QB-009B remains
+`PARKED / EXTERNAL_INPUT`; see [`CURRENT_TASK.md`](CURRENT_TASK.md) and
+[`RELEASE_READINESS.md`](RELEASE_READINESS.md).
+
+## QB-015F closure evidence (2026-08-24)
+
+- Isolated runtime: Compose project `qb015f-release-20260824d`, database
+  `qb015f_fresh`, API `4019`, frontend `4180`, MinIO `59028`, Redis `6393`;
+  shared `p0-integration` was not used. The runtime was torn down after the
+  final run.
+- Real PostgreSQL: QB-015F integration `2 passed`; two teacher-assigned
+  students, exact question-version snapshots, duplicate `RESUMED`, different
+  focus coexistence, self-remediation separation, scope denial, and assigned
+  READ_ALOUD review closure all passed.
+- Chromium: teacher assignment `1 passed`; Level 1 release loop `1 passed`;
+  QB011/QB012/QB013 each `1 passed`; parameterized Levels 1–6 `6 passed in
+  786.09s`. The controlled mock scorer was enabled only in the isolated speech
+  process and was unset in the production shell.
+- Final functional evidence was executed from the checkpoint commit recorded
+  by Git after `test(release): verify teacher assigned remediation runtime`;
+  this handoff intentionally does not infer or embed a commit SHA.
 
 QB-015 did prove clean frozen install, 28 isolated migrations, fresh 120-item
 runtime apply, zero-duplicate re-apply, 126/126 MinIO object HTTP integrity,
 and full non-browser quality gates. It fixed three release issues: Prisma now
 accepts a supplied `DATABASE_URL` without a root `.env`; fresh bootstrap creates
 or verifies its configured MinIO bucket; legacy self-remediation uses an
-explicit null-safe origin filter compatible with Prisma/PostgreSQL. Do not mark
-the release READY until QB-014 real-DB assignment, Chromium, and assigned
-speech-review coverage plus a clean-runtime six-level browser re-run exist and
-pass.
+explicit null-safe origin filter compatible with Prisma/PostgreSQL. The
+remaining limitations are documented in `RELEASE_READINESS.md`; none block a
+controlled pilot.
 
 The original DOCX/ZIP files under `local_sources/` were inspected as read-only
 inputs and were not modified, moved, deleted, or staged.
@@ -228,12 +245,21 @@ Authorized repairs are recorded in
 
 ## Verification snapshot
 
+- Final QB-015F release runner (`tests/e2e/assessment/run-qb015f-release-gates.sh`)
+  passed in isolated project `qb015f-release-20260824d`: PostgreSQL `2 passed`,
+  assignment Chromium `1 passed`, Level 1 `1 passed`, QB011/QB012/QB013 each
+  `1 passed`, Levels 1–6 `6 passed in 786.09s`, contracts/frontend smoke PASS.
+  See `evidence/qb015f-release/RESULTS.md`.
+- Final API full suite: `1011 passed, 62 skipped`; Worker full suite: `51
+  passed`; Contracts: `6 passed`; Python release suite: `11 passed` plus
+  `py_compile` and shell syntax checks. Course-assignment and student-course
+  regressions are included in the API full suite.
+
 - QB-014: Prisma generate/validate, database build, API typecheck/build, and
-  full API Vitest pass (`1011 passed`, `60 skipped`). The focused remediation
+  full API Vitest pass (`1011 passed`, `62 skipped`). The focused remediation
   coverage proves clean subset snapshots, exact duplicate resume, different
   focus coexistence, and explicit teacher-assigned origin. Frontend runtime
-  build and contracts validate/test/typecheck pass. PostgreSQL/browser QB-014
-  integration remains the recommended release-hardening proof in QB-015.
+  build and contracts validate/test/typecheck pass.
 
 - Importer tests: `16 passed`.
 - API verification: final full Vitest run `995 passed`, `58 skipped`, no
@@ -250,7 +276,7 @@ Authorized repairs are recorded in
 - Source validation passed for `--level 1` and `--all`.
 - Dry-run apply passed for `--level 1` and `--all`.
 - Parameterized browser coverage exercises Levels 1–6 end to end and passed
-  `6 passed in 984.34s`, including media loading, answer persistence,
+  `6 passed in 786.09s`, including media loading, answer persistence,
   submission, teacher review, and the point-based report gate. The run used
   the repository's explicit mock speech scorer for diagnostics only.
 - The Level 1 browser regression now passes through
@@ -286,8 +312,8 @@ Authorized repairs are recorded in
   Level 1 `比上次提高 7 分`, domain changes, `4 道题，3 道已掌握`, scoped
   recovered points, a separate Level 2 baseline, and links back to both the
   formal report and remediation result.
-- Final API regression without broad integration-DB opt-in: `1006 passed`,
-  `60 skipped`; API typecheck/build, contracts validation/test/typecheck, and
+- Final API regression without broad integration-DB opt-in: `1011 passed`,
+  `62 skipped`; API typecheck/build, contracts validation/test/typecheck, and
   frontend test/build passed.
 - QB-013 service/security coverage passed (`4` focused cases): own versus other
   class and cross-school scope, catalog admin scope, five-student cohort
@@ -318,8 +344,8 @@ runtime. The default scorer is restored with `MOCK_SPEECH_SCORING` unset.
 
 QB-009B remains `PARKED / EXTERNAL_INPUT`: it needs approved consented
 recordings, teacher labels, credentials if live smoke is approved, and a
-separate product decision. The next implementation task is QB-015: release
-targeted remediation assignment. It must keep QB-013's class scope, no-ranking
+separate product decision. The next implementation task is QB-016: pilot
+observability and feedback loop. It must keep QB-013's class scope, no-ranking
 boundary, formal/remediation isolation, and student privacy controls intact.
 
 ## Protected paths
