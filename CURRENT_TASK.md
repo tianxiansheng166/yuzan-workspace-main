@@ -1,7 +1,11 @@
 # CURRENT TASK
 
-Task: QB-017 — Pilot cohort onboarding and staging rehearsal
+Task: QB-017B — Pilot learning validation
 Status: TODO
+
+QB-017A Student Today — Next Best Learning Action MVP is DONE / BROWSER VERIFIED.
+The next task is to validate the real pilot cohort's learning path, action
+clarity, and teacher review loop using the deployed pilot runbook.
 
 QB-016 Pilot Observability & Feedback Loop is DONE / PILOT_OBSERVABLE.
 QB-015F Release Evidence Closure remains DONE / READY_FOR_PILOT. Its four

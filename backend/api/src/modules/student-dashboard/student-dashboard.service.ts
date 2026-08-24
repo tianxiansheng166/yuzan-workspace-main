@@ -8,10 +8,18 @@ import { FEEDBACK_REPOSITORY } from "../feedback/ports/feedback-repository.port.
 import type { Feedback } from "../feedback/domain/feedback.types.js";
 import type {
   CourseDashboardItem,
-  TodayTask,
   TeacherAdviceItem,
   StudentProfileData,
 } from "./domain/student-dashboard.types.js";
+import {
+  buildStudentTodayDecision,
+  type StudentTodayAttempt,
+  type StudentTodayLegacyTask,
+} from "./student-today-decision.js";
+import {
+  isQuestionBankDiagnosis,
+  questionBankFamilyDisplayName,
+} from "../assessment/question-bank-diagnosis.js";
 
 @Injectable()
 export class StudentDashboardService {
@@ -189,71 +197,222 @@ export class StudentDashboardService {
 
     const now = new Date();
     const threeDaysLater = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
-
-    // 1. Get student enrollments
     const enrollments = await this.prisma.enrollment.findMany({
       where: { userId: auth.principal.userId, schoolId, status: "ACTIVE", role: "STUDENT" },
       select: { id: true, classId: true },
     });
     const enrollmentIds = enrollments.map((e) => e.id);
     const classIds = enrollments.map((e) => e.classId);
+    const enrollmentId = enrollmentIds[0];
 
-    if (enrollmentIds.length === 0) {
-      return { date: now.toISOString().split("T")[0], tasks: [] };
+    if (!enrollmentId) {
+      return buildStudentTodayDecision({
+        teacherActionable: [],
+        teacherWaiting: [],
+        selfActionable: [],
+        standardActionable: [],
+        latestFormal: null,
+        baselinePractice: null,
+        legacyTasks: [],
+      });
     }
 
-    // 2. Find assignments due soon
-    const assignments = await this.prisma.assignment.findMany({
-      where: {
-        schoolId,
-        status: "OPEN",
-        deletedAt: null,
-        dueAt: { gte: now, lte: threeDaysLater },
-        targets: {
-          some: {
-            OR: [
-              { classId: { in: classIds } },
-              { enrollmentId: { in: enrollmentIds } },
+    const [sessions, assignments, baselineDeliveries] = await Promise.all([
+      this.prisma.assessmentSession.findMany({
+        where: {
+          schoolId,
+          enrollmentId,
+          purpose: { in: ["STANDARD", "REMEDIATION"] },
+          status: {
+            in: [
+              "CREATED",
+              "IN_PROGRESS",
+              "SUBMITTED",
+              "PROCESSING",
+              "COMPLETED",
             ],
           },
         },
-      },
-      select: {
-        id: true,
-        title: true,
-        dueAt: true,
-        status: true,
-        courseVersionId: true,
-        courseVersion: { select: { title: true } },
-      },
-      orderBy: { dueAt: "asc" },
+        select: {
+          id: true,
+          purpose: true,
+          remediationOrigin: true,
+          remediationFocus: true,
+          status: true,
+          createdAt: true,
+          updatedAt: true,
+          completedAt: true,
+          practiceDefinitionId: true,
+          report: { select: { overallScore: true, summary: true } },
+          items: { select: { id: true } },
+        },
+        orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+      }),
+      this.prisma.assignment.findMany({
+        where: {
+          schoolId,
+          status: "OPEN",
+          deletedAt: null,
+          dueAt: { gte: now, lte: threeDaysLater },
+          targets: {
+            some: {
+              OR: [
+                { classId: { in: classIds } },
+                { enrollmentId: { in: enrollmentIds } },
+              ],
+            },
+          },
+        },
+        select: {
+          id: true,
+          title: true,
+          dueAt: true,
+          status: true,
+          courseVersionId: true,
+          courseVersion: { select: { title: true } },
+        },
+        orderBy: [{ dueAt: "asc" }, { id: "asc" }],
+      }),
+      this.prisma.practiceDelivery.findMany({
+        where: {
+          schoolId,
+          status: "OPEN",
+          OR: [
+            { studentId: auth.principal.userId },
+            { studentId: null, classId: enrollments[0]!.classId },
+          ],
+          AND: [{ OR: [{ deadline: null }, { deadline: { gte: now } }] }],
+          practiceVersion: {
+            status: "PUBLISHED",
+            definition: {
+              status: "PUBLISHED",
+              difficulty: "水平一级",
+              OR: [{ schoolId }, { schoolId: null }],
+            },
+          },
+        },
+        select: {
+          createdAt: true,
+          practiceVersion: {
+            select: {
+              definitionId: true,
+              definition: { select: { title: true } },
+            },
+          },
+        },
+        orderBy: [{ createdAt: "asc" }, { id: "asc" }],
+        take: 1,
+      }),
+    ]);
+
+    const definitionIds = [
+      ...new Set(
+        sessions
+          .map((session) => session.practiceDefinitionId)
+          .filter((id): id is string => Boolean(id)),
+      ),
+    ];
+    const definitions = definitionIds.length
+      ? await this.prisma.practiceDefinition.findMany({
+          where: {
+            id: { in: definitionIds },
+            status: "PUBLISHED",
+            OR: [{ schoolId }, { schoolId: null }],
+          },
+          select: { id: true, title: true, difficulty: true },
+        })
+      : [];
+    const definitionById = new Map(
+      definitions.map((definition) => [definition.id, definition]),
+    );
+    const activeStatuses = new Set([
+      "CREATED",
+      "IN_PROGRESS",
+      "SUBMITTED",
+      "PROCESSING",
+    ]);
+    const activeRemediations = sessions.filter(
+      (session) =>
+        session.purpose === "REMEDIATION" && activeStatuses.has(session.status),
+    );
+    const activeStandards = sessions.filter(
+      (session) =>
+        session.purpose === "STANDARD" &&
+        (session.status === "CREATED" || session.status === "IN_PROGRESS"),
+    );
+    const asAttempt = (
+      session: (typeof sessions)[number],
+    ): StudentTodayAttempt => ({
+      id: session.id,
+      status: session.status as StudentTodayAttempt["status"],
+      createdAt: session.createdAt.toISOString(),
+      updatedAt: session.updatedAt.toISOString(),
+      itemCount: session.items.length,
+      practiceTitle: session.practiceDefinitionId
+        ? (definitionById.get(session.practiceDefinitionId)?.title ?? null)
+        : null,
+      focusDisplayName: this.studentTodayFocusName(session.remediationFocus),
     });
 
-    // 3. Build task items with progress
-    const tasks: TodayTask[] = [];
+    const formalSessions = sessions
+      .filter(
+        (session) =>
+          session.purpose === "STANDARD" &&
+          session.status === "COMPLETED" &&
+          session.completedAt &&
+          session.practiceDefinitionId,
+      )
+      .flatMap((session) => {
+        const diagnosis =
+          session.report?.summary &&
+          typeof session.report.summary === "object" &&
+          !Array.isArray(session.report.summary)
+            ? (session.report.summary as Record<string, unknown>).diagnosis
+            : null;
+        if (!isQuestionBankDiagnosis(diagnosis)) return [];
+        const retryCandidates = diagnosis.retryCandidates.filter(
+          (candidate) =>
+            typeof candidate?.assessmentItemId === "string" &&
+            typeof candidate?.questionVersionId === "string" &&
+            typeof candidate?.displayName === "string",
+        );
+        const priority = diagnosis.priorities[0];
+        return [
+          {
+            sessionId: session.id,
+            completedAt: session.completedAt!.toISOString(),
+            level:
+              definitionById.get(session.practiceDefinitionId!)?.difficulty ??
+              null,
+            score:
+              typeof session.report?.overallScore === "number" &&
+              Number.isFinite(session.report.overallScore)
+                ? session.report.overallScore
+                : null,
+            priorityDisplayName:
+              typeof priority?.displayName === "string"
+                ? priority.displayName
+                : null,
+            retryCandidateCount: retryCandidates.length,
+          },
+        ];
+      })
+      .sort(
+        (left, right) =>
+          right.completedAt.localeCompare(left.completedAt) ||
+          right.sessionId.localeCompare(left.sessionId),
+      );
 
+    const legacyTasks: StudentTodayLegacyTask[] = [];
     for (const assignment of assignments) {
       const [totalProgress, completedProgress] = await Promise.all([
-        this.prisma.activityProgress.count({
-          where: {
-            enrollmentId: { in: enrollmentIds },
-            activity: { lesson: { unit: { courseVersionId: assignment.courseVersionId } } },
-          },
-        }),
-        this.prisma.activityProgress.count({
-          where: {
-            enrollmentId: { in: enrollmentIds },
-            completed: true,
-            activity: { lesson: { unit: { courseVersionId: assignment.courseVersionId } } },
-          },
-        }),
+        this.prisma.activityProgress.count({ where: { enrollmentId: { in: enrollmentIds }, activity: { lesson: { unit: { courseVersionId: assignment.courseVersionId } } } } }),
+        this.prisma.activityProgress.count({ where: { enrollmentId: { in: enrollmentIds }, completed: true, activity: { lesson: { unit: { courseVersionId: assignment.courseVersionId } } } } }),
       ]);
-
       const offlineCount = await this.prisma.offlineContentPackage.count({
         where: { schoolId, courseVersionId: assignment.courseVersionId ?? "" },
       });
-
-      tasks.push({
+      legacyTasks.push({
         assignmentId: assignment.id,
         title: assignment.title,
         courseTitle: assignment.courseVersion?.title ?? "",
@@ -264,7 +423,49 @@ export class StudentDashboardService {
       });
     }
 
-    return { date: now.toISOString().split("T")[0], tasks };
+    return buildStudentTodayDecision({
+      teacherActionable: activeRemediations
+        .filter(
+          (session) =>
+            session.remediationOrigin === "TEACHER_ASSIGNED" &&
+            (session.status === "CREATED" || session.status === "IN_PROGRESS"),
+        )
+        .map(asAttempt),
+      teacherWaiting: activeRemediations
+        .filter(
+          (session) =>
+            session.remediationOrigin === "TEACHER_ASSIGNED" &&
+            (session.status === "SUBMITTED" || session.status === "PROCESSING"),
+        )
+        .map(asAttempt),
+      selfActionable: activeRemediations
+        .filter(
+          (session) =>
+            (session.remediationOrigin === "SELF_INITIATED" ||
+              session.remediationOrigin === null) &&
+            (session.status === "CREATED" || session.status === "IN_PROGRESS"),
+        )
+        .map(asAttempt),
+      standardActionable: activeStandards.map(asAttempt),
+      latestFormal: formalSessions[0] ?? null,
+      baselinePractice: baselineDeliveries[0]
+        ? {
+            practiceDefinitionId:
+              baselineDeliveries[0].practiceVersion.definitionId,
+            title: baselineDeliveries[0].practiceVersion.definition.title,
+          }
+        : null,
+      legacyTasks,
+    });
+  }
+
+  private studentTodayFocusName(value: unknown) {
+    if (!value || typeof value !== "object" || Array.isArray(value))
+      return null;
+    const record = value as Record<string, unknown>;
+    return record.mode === "FAMILY"
+      ? questionBankFamilyDisplayName(record.family)
+      : "全部待巩固题目";
   }
 
   async getProfile(auth: AuthContext, schoolId: string) {

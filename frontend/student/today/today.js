@@ -1,104 +1,130 @@
 (() => {
-  'use strict';
+  "use strict";
 
-  const dateEl = document.querySelector('#todayDate');
-  if (dateEl) {
+  const app = document.querySelector("#todayApp");
+  const weekdays = "日一二三四五六";
+  const safe = (value) =>
+    String(value ?? "").replace(
+      /[&<>"']/g,
+      (character) =>
+        ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;",
+        })[character],
+    );
+  const statusText = (status) =>
+    ({
+      CREATED: "未开始",
+      IN_PROGRESS: "进行中",
+      SUBMITTED: "已提交",
+      PROCESSING: "处理中",
+      COMPLETED: "已完成",
+      OPEN: "开放中",
+    })[status] || "有任务";
+  const scoreText = (value) =>
+    typeof value === "number" && Number.isFinite(value)
+      ? `${value} 分`
+      : "暂未形成可用成绩";
+
+  function dateText() {
     const now = new Date();
-    const weekdays = '日一二三四五六';
-    dateEl.textContent = `${now.getMonth()+1}月${now.getDate()}日　星期${weekdays[now.getDay()]}　▣`;
+    return `${now.getMonth() + 1}月${now.getDate()}日　星期${weekdays[now.getDay()]}`;
   }
 
-  const wave = document.querySelector('#todayWave');
-  if (wave) {
-    wave.innerHTML = Array.from({length:54},(_,i)=>`<i style="--i:${i};--h:${12 + Math.round(Math.abs(Math.sin(i*.41))*37 + Math.abs(Math.sin(i*.13))*14)}px"></i>`).join('');
+  function renderError(message) {
+    app.innerHTML = `<section class="today-error"><h1>今天的学习暂时打不开</h1><p>${safe(message || "请检查网络后重试。不会显示本地示例任务。")}</p><button class="today-retry" type="button" data-today-retry>重新加载</button></section>`;
+    app.querySelector("[data-today-retry]")?.addEventListener("click", init);
   }
 
-  const preview = document.querySelector('#previewAudio');
-  let previewPlaying = false;
-  preview?.addEventListener('click', () => {
-    previewPlaying = !previewPlaying;
-    preview.textContent = previewPlaying ? 'Ⅱ' : '▶';
-    preview.setAttribute('aria-label', previewPlaying ? '暂停范读' : '播放范读');
-    document.querySelector('.course-card')?.classList.toggle('playing', previewPlaying);
-    YuzanDemo.toast(previewPlaying ? '正在播放范读示例' : '范读已暂停');
-  });
+  function renderEmptyList(text) {
+    return `<p class="today-empty">${safe(text)}</p>`;
+  }
 
-  document.querySelectorAll('.resource-item').forEach(button => {
-    button.addEventListener('click', () => {
-      const cached = button.classList.toggle('cached');
-      const size = button.querySelector('span').textContent.replace(/[　✓↓]/g,'').trim();
-      button.querySelector('span').textContent = cached ? `${size}　✓` : `${size}　↓`;
-      YuzanDemo.toast(`${button.dataset.resource}${cached ? '已缓存到本机' : '已移出离线缓存'}`, cached ? 'success' : 'default');
-      const all = [...document.querySelectorAll('.resource-item')].every(x=>x.classList.contains('cached'));
-      document.querySelector('#cacheState').textContent = all ? '已缓存' : '部分缓存';
-    });
-    button.classList.add('cached');
-  });
+  function render(data) {
+    const primary = data?.primaryAction || null;
+    const waiting = Array.isArray(data?.waiting) ? data.waiting : [];
+    const secondary = Array.isArray(data?.secondaryActions)
+      ? data.secondaryActions
+      : [];
+    const legacy = Array.isArray(data?.legacyTasks) ? data.legacyTasks : [];
+    const formal = data?.summary?.latestFormalAssessment || null;
+    const primaryMarkup = primary
+      ? `<p class="today-eyebrow">建议先做</p><h2>${safe(primary.title)}</h2><p class="today-reason">${safe(primary.reason)}</p><button class="today-cta" type="button" data-primary-action>${safe(primary.cta)}　→</button>`
+      : `<p class="today-eyebrow">现在没有需要立刻完成的练习</p><h2>先看看老师的反馈</h2><p class="today-neutral">${waiting.length ? "你的练习正在等待老师复核，完成复核后会在这里继续安排下一步。" : "新的学习安排会在有真实任务后出现在这里。"}</p>`;
+    const waitingMarkup = waiting.length
+      ? `<section class="today-card today-list"><div class="today-list-head"><h2>等待老师复核</h2><span>${waiting.length} 项</span></div><div class="today-list-items">${waiting.map((item) => `<article class="today-list-item"><div><strong>${safe(item.title)}</strong><p>${safe(item.reason)}${item.itemCount > 0 ? ` 共 ${item.itemCount} 道题。` : ""}</p></div><span class="today-status">等待中</span></article>`).join("")}</div></section>`
+      : "";
+    const secondaryMarkup = secondary.length
+      ? `<section class="today-card today-list"><div class="today-list-head"><h2>其他可选任务</h2><span>按需完成</span></div><div class="today-list-items">${secondary.map((action) => `<article class="today-list-item"><div><strong>${safe(action.title)}</strong><p>${safe(action.reason)}</p></div><a href="${safe(action.target?.href || "/student/today")}">${safe(action.cta)}　→</a></article>`).join("")}</div></section>`
+      : "";
+    const legacyMarkup = legacy.length
+      ? `<section class="today-card today-list"><div class="today-list-head"><h2>课程任务</h2><span>来自老师的课程安排</span></div><div class="today-list-items">${legacy.map((task) => `<article class="today-list-item"><div><strong>${safe(task.title)}</strong><p>${safe(task.courseTitle || "课程任务")} · ${safe(statusText(task.status))} · 已完成 ${Number(task.progressPercent) || 0}%</p></div><a href="/student/learn/spring-2?assignmentId=${encodeURIComponent(task.assignmentId)}">进入课程　→</a></article>`).join("")}</div></section>`
+      : "";
 
-  document.querySelector('#networkStatus')?.addEventListener('click', () => {
-    const text = navigator.onLine ? '当前在线，学习记录会自动同步。' : '当前离线，所有学习记录会先保存在本机。';
-    YuzanDemo.toast(text, navigator.onLine ? 'success' : 'warning');
-  });
+    app.innerHTML = `<header class="today-header"><div><p class="today-kicker">学生学习入口</p><h1>今天的学习</h1><p>先完成一个最值得做的动作，其他安排稍后再看。</p></div><time class="today-date">${dateText()}</time></header><section class="today-grid"><article class="today-card today-primary" data-action-kind="${safe(primary?.kind || "WAITING")}">${primaryMarkup}</article><aside class="today-side"><article class="today-card today-summary"><p class="today-eyebrow">学习小结</p><h2>最近一次正式测评</h2>${formal ? `<div class="today-score"><small>${safe(formal.level || "已完成测评")}</small><strong>${scoreText(formal.score)}</strong><p>完成于 ${safe(String(formal.completedAt).slice(0, 10))}</p></div>` : renderEmptyList("还没有可展示的正式测评记录。")}</article><a class="today-card today-summary today-link-card" href="/student/practices/"><p class="today-eyebrow">需要自己选择时</p><h2>进入练习中心　→</h2><p>查看学校开放的真实练习和历史记录。</p></a></aside></section><section class="today-lists">${waitingMarkup}${secondaryMarkup}${legacyMarkup}</section>`;
+
+    app
+      .querySelector("[data-primary-action]")
+      ?.addEventListener("click", () => runPrimary(primary));
+  }
+
+  async function runPrimary(action) {
+    const button = app.querySelector("[data-primary-action]");
+    if (!action || !button) return;
+    button.disabled = true;
+    button.textContent = "正在准备…";
+    try {
+      if (action.kind === "START_REMEDIATION") {
+        if (!action.target?.sourceSessionId)
+          throw new Error("缺少正式测评来源，无法准备专项巩固");
+        const result = await YuzanApi.createAssessmentRemediation(
+          action.target.sourceSessionId,
+        );
+        if (!result?.attemptId) throw new Error("专项巩固练习未能准备完成");
+        location.href = `/student/practices/attempts/${encodeURIComponent(result.attemptId)}/runner/`;
+        return;
+      }
+      if (action.kind === "BASELINE") {
+        if (!action.target?.practiceDefinitionId)
+          throw new Error("缺少练习定义，无法准备第一次测评");
+        const result = await YuzanApi.createOrResumePractice(
+          action.target.practiceDefinitionId,
+        );
+        if (!result?.attemptId) throw new Error("第一次测评未能准备完成");
+        location.href = `/student/practices/attempts/${encodeURIComponent(result.attemptId)}/runner/`;
+        return;
+      }
+      location.href = action.target.href;
+    } catch (error) {
+      button.disabled = false;
+      button.textContent = `${action.cta}　→`;
+      renderError(error?.message || "进入学习任务失败");
+    }
+  }
 
   async function init() {
     if (!YuzanApi.getToken()) {
-      YuzanDemo.toast('请先登录', 'warning');
-      location.href = '/login';
+      location.href = "/login";
       return;
     }
-
-    const schoolId = YuzanApi.getActiveSchoolId();
-    if (!schoolId) {
-      YuzanDemo.toast('请先选择学校', 'warning');
-      location.href = '/select-school';
-      return;
-    }
-
     try {
-      // 优先使用新的 student/today API，回退到 learning/tasks
-      let taskList = [];
-      try {
-        const todayData = await YuzanApi.getStudentToday();
-        taskList = todayData?.tasks || [];
-      } catch {
-        const tasks = await YuzanApi.request(`/schools/${schoolId}/learning/tasks`);
-        taskList = Array.isArray(tasks) ? tasks : (tasks?.items || []);
+      const schoolId = YuzanApi.getActiveSchoolId();
+      if (!schoolId) {
+        location.href = "/select-school";
+        return;
       }
-      renderTasks(taskList);
-    } catch (err) {
-      YuzanDemo.toast(err.message || '加载学习任务失败', 'error');
+      const data = await YuzanApi.getStudentToday();
+      if (!data || data.version !== "student-today-v1")
+        throw new Error("今日学习数据版本不可用");
+      window.__studentTodayData = data;
+      render(data);
+    } catch (error) {
+      renderError(error?.message || "今日学习数据加载失败");
     }
   }
-
-  function renderTasks(tasks) {
-    const courseTitleEl = document.querySelector('.course-card b');
-    const taskTitleEl = document.querySelector('.task-content h2');
-    const enterBtn = document.querySelector('.task-card .enter');
-
-    if (tasks.length === 0) {
-      if (taskTitleEl) taskTitleEl.textContent = '今日暂无学习任务';
-      if (enterBtn) {
-        enterBtn.textContent = '◉　暂无任务';
-        enterBtn.disabled = true;
-      }
-      return;
-    }
-
-    const task = tasks[0];
-    if (courseTitleEl) courseTitleEl.textContent = task.courseTitle || '高原上的春天';
-    if (taskTitleEl) taskTitleEl.textContent = task.title || '朗读课文，注意语音语调和停顿';
-    if (enterBtn) {
-      enterBtn.disabled = false;
-      enterBtn.textContent = '◉　进入朗读任务　→';
-      enterBtn.setAttribute('data-nav', `/student/learn/spring-2?assignmentId=${encodeURIComponent(task.assignmentId)}`);
-      enterBtn.onclick = () => {
-        location.href = `/student/learn/spring-2?assignmentId=${encodeURIComponent(task.assignmentId)}`;
-      };
-    }
-  }
-
-  const progress = Number(YuzanApi.getStoredUser()?.progress || YuzanDemo.get('student.courseProgress') || 42);
-  document.documentElement.style.setProperty('--course-progress', `${progress}%`);
 
   init();
 })();

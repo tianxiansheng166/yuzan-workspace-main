@@ -313,6 +313,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/schools/{schoolId}/student/today": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 获取学生今日下一步学习动作 */
+    get: operations["getStudentTodayDecision"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/schools/{schoolId}/activities/{activityId}/progress": {
     parameters: {
       query?: never;
@@ -2228,6 +2245,54 @@ export interface components {
     TodayTasksResponse: {
       data: components["schemas"]["TodayTask"][];
       meta: components["schemas"]["EnvelopeMeta"];
+    };
+    StudentTodayTarget: {
+      href: string;
+      /** Format: uuid */
+      sourceSessionId?: string;
+      /** Format: uuid */
+      practiceDefinitionId?: string;
+    };
+    StudentTodayAction: {
+      kind: string;
+      title: string;
+      reason: string;
+      cta: string;
+      target: components["schemas"]["StudentTodayTarget"];
+    };
+    StudentTodayWaiting: {
+      kind: string;
+      title: string;
+      reason: string;
+      itemCount: number;
+    };
+    StudentTodayLegacyTask: {
+      /** Format: uuid */
+      assignmentId: string;
+      title: string;
+      courseTitle: string;
+      /** Format: date-time */
+      dueAt: string;
+      status: string;
+      progressPercent: number;
+      hasOfflinePackage: boolean;
+    };
+    StudentTodayDecisionResponse: {
+      /** @enum {string} */
+      version: "student-today-v1";
+      primaryAction: (components["schemas"]["StudentTodayAction"] | null) &
+        components["schemas"]["StudentTodayAction"];
+      secondaryActions: components["schemas"]["StudentTodayAction"][];
+      waiting: components["schemas"]["StudentTodayWaiting"][];
+      legacyTasks: components["schemas"]["StudentTodayLegacyTask"][];
+      summary: {
+        latestFormalAssessment: {
+          level?: string | null;
+          score?: number | null;
+          /** Format: date-time */
+          completedAt?: string;
+        } | null;
+      };
     };
     SaveProgressRequest: {
       position: number;
@@ -4432,6 +4497,33 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["TodayTasksResponse"];
+        };
+      };
+      400: components["responses"]["BadRequest"];
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  getStudentTodayDecision: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Server-authoritative Student Today decision view */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["StudentTodayDecisionResponse"];
         };
       };
       400: components["responses"]["BadRequest"];

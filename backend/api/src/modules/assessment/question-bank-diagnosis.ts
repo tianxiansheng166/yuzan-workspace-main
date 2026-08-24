@@ -79,6 +79,13 @@ const FAMILY_DEFINITIONS: Record<QuestionBankFamily, FamilyDefinition> = {
   },
 };
 
+export function questionBankFamilyDisplayName(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  return Object.prototype.hasOwnProperty.call(FAMILY_DEFINITIONS, value)
+    ? FAMILY_DEFINITIONS[value as QuestionBankFamily].displayName
+    : null;
+}
+
 export type QuestionBankDiagnosisItem = {
   assessmentItemId: string;
   questionVersionId: string;

@@ -566,6 +566,28 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "404":
           $ref: "#/components/responses/NotFound"
+  /schools/{schoolId}/student/today:
+    get:
+      summary: 获取学生今日下一步学习动作
+      tags: [Learning]
+      operationId: getStudentTodayDecision
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+      responses:
+        "200":
+          description: Server-authoritative Student Today decision view
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StudentTodayDecisionResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
   /schools/{schoolId}/activities/{activityId}/progress:
     put:
       summary: 保存活动进度
@@ -3884,6 +3906,121 @@ components:
             $ref: "#/components/schemas/TodayTask"
         meta:
           $ref: "#/components/schemas/EnvelopeMeta"
+    StudentTodayTarget:
+      type: object
+      required: [href]
+      properties:
+        href:
+          type: string
+        sourceSessionId:
+          type: string
+          format: uuid
+        practiceDefinitionId:
+          type: string
+          format: uuid
+    StudentTodayAction:
+      type: object
+      required: [kind, title, reason, cta, target]
+      properties:
+        kind:
+          type: string
+        title:
+          type: string
+        reason:
+          type: string
+        cta:
+          type: string
+        target:
+          $ref: "#/components/schemas/StudentTodayTarget"
+    StudentTodayWaiting:
+      type: object
+      required: [kind, title, reason, itemCount]
+      properties:
+        kind:
+          type: string
+        title:
+          type: string
+        reason:
+          type: string
+        itemCount:
+          type: integer
+          minimum: 0
+    StudentTodayLegacyTask:
+      type: object
+      required:
+        [
+          assignmentId,
+          title,
+          courseTitle,
+          dueAt,
+          status,
+          progressPercent,
+          hasOfflinePackage,
+        ]
+      properties:
+        assignmentId:
+          type: string
+          format: uuid
+        title:
+          type: string
+        courseTitle:
+          type: string
+        dueAt:
+          type: string
+          format: date-time
+        status:
+          type: string
+        progressPercent:
+          type: integer
+          minimum: 0
+          maximum: 100
+        hasOfflinePackage:
+          type: boolean
+    StudentTodayDecisionResponse:
+      type: object
+      required:
+        [
+          version,
+          primaryAction,
+          secondaryActions,
+          waiting,
+          legacyTasks,
+          summary,
+        ]
+      properties:
+        version:
+          type: string
+          enum: [student-today-v1]
+        primaryAction:
+          type: [object, "null"]
+          allOf:
+            - $ref: "#/components/schemas/StudentTodayAction"
+        secondaryActions:
+          type: array
+          items:
+            $ref: "#/components/schemas/StudentTodayAction"
+        waiting:
+          type: array
+          items:
+            $ref: "#/components/schemas/StudentTodayWaiting"
+        legacyTasks:
+          type: array
+          items:
+            $ref: "#/components/schemas/StudentTodayLegacyTask"
+        summary:
+          type: object
+          required: [latestFormalAssessment]
+          properties:
+            latestFormalAssessment:
+              type: [object, "null"]
+              properties:
+                level:
+                  type: [string, "null"]
+                score:
+                  type: [number, "null"]
+                completedAt:
+                  type: string
+                  format: date-time
     SaveProgressRequest:
       type: object
       required: [position, completed]

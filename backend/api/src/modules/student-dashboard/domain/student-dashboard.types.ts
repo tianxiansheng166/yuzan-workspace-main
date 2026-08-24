@@ -54,6 +54,14 @@ export interface TodayTasksResponse {
   readonly tasks: readonly TodayTask[];
 }
 
+export type {
+  StudentTodayAction,
+  StudentTodayActionKind,
+  StudentTodayDecision,
+  StudentTodayTarget,
+  StudentTodayWaiting,
+} from "../student-today-decision.js";
+
 export interface TeacherAdviceResponse {
   readonly items: readonly TeacherAdviceItem[];
   readonly nextCursor: string | null;

@@ -402,7 +402,7 @@ Authorized repairs are recorded in
   error for `isRemediation` was corrected; the runner restored the default
   local scorer with `MOCK_SPEECH_SCORING` unset.
 
-## Known limitations and next task
+## Existing platform limitations
 
 Local and cloud speech diagnostics remain experimental and uncalibrated; they
 do not produce formal automatic rubric scores. The former stale Level 1 browser
@@ -412,10 +412,53 @@ runtime. The default scorer is restored with `MOCK_SPEECH_SCORING` unset.
 
 QB-009B remains `PARKED / EXTERNAL_INPUT`: it needs approved consented
 recordings, teacher labels, credentials if live smoke is approved, and a
-separate product decision. The next implementation task is QB-017: pilot cohort
-onboarding and staging rehearsal. QB-016 keeps QB-013's class scope,
-no-ranking boundary, formal/remediation isolation, and student privacy controls
-intact.
+separate product decision.
+
+## QB-017A Student Today — Next Best Learning Action MVP (2026-08-24)
+
+- `GET /schools/{schoolId}/student/today` is now a server-authoritative
+  `student-today-v1` derived view. It adds no persistence table, accepts no
+  client student/session identity, and reads only the authenticated student's
+  school-scoped enrollments, published practice deliveries, assessment
+  sessions/reports, and real legacy assignments.
+- Priority is deterministic: actionable teacher remediation, actionable self
+  remediation, active standard session, diagnosis retry candidate, formal
+  continue-practice, published Level 1 baseline, then legacy course task.
+  Teacher-submitted/processing remediation is shown as waiting for review and
+  is never promoted to the primary CTA. The response contains one primary
+  action plus safe waiting/secondary/legacy projections.
+- `/student/today/` no longer contains demo course state, hardcoded progress,
+  fake feedback, or a `/learning/tasks` fallback. Its primary actions call the
+  existing remediation/practice creation paths or navigate to the existing
+  assessment/remediation Runner; no new runner or scoring path was added.
+- OpenAPI and generated contracts document the new route and safe response
+  schemas. Decision tests cover the eight required priority/security cases;
+  the recursive response audit rejects answer keys, scoring/rubric rules,
+  provider evidence, transcripts, and candidate points.
+- Browser proof in isolated Compose project `qb017a-release` passed all four
+  real states in `tests/e2e/assessment/test_qb017a_student_today.py`: fresh
+  baseline, diagnosis-to-remediation Runner, resume of the same attempt, and
+  teacher-assigned remediation Runner. The existing release gates also passed:
+  six-level Chromium `6 passed`, QB-015F runtime integration `2 passed`, and
+  the QB011/QB012/QB013 browser regressions each passed. The isolated runtime
+  was torn down after verification.
+- Final local checks: API Vitest `104 passed, 7 skipped`; API typecheck;
+  contracts `6 passed`; frontend typecheck, test, and build; release runner
+  source/API smoke all passed. The pre-existing dirty `pnpm-workspace.yaml`
+  remains untouched and unstaged.
+- Design principles recorded for pilot validation: Duolingo's mistakes-to-
+  targeted-practice loop, Microsoft Reading Coach's difficult-item-to-
+  immediate-next-practice handoff, and IXL's diagnostic-to-actionable-next-step
+  plan. QB-017A uses these as interaction principles only; it does not copy
+  their UI or add recommendation/gamification infrastructure.
+
+### Known limitations and next task
+
+Legacy Course Assignment tasks remain visible as secondary/reachable course
+tasks. The baseline fallback is intentionally limited to an actually published
+Level 1 delivery, and speech scoring remains experimental/teacher-review-only
+under the existing QB-009A boundary. The next implementation task is
+`QB-017B — Pilot learning validation`.
 
 ## Protected paths
 
