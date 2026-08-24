@@ -228,7 +228,7 @@ export function buildStudentTodayDecision(
       title: attempt.focusDisplayName
         ? `${attempt.focusDisplayName}专项巩固`
         : "专项巩固",
-      reason: "这项朗读练习正在等待老师复核。",
+      reason: "这项练习正在等待老师复核。",
       itemCount: Math.max(0, attempt.itemCount),
     }));
 

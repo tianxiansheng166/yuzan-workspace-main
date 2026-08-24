@@ -200,12 +200,12 @@ export class StudentDashboardService {
     const enrollments = await this.prisma.enrollment.findMany({
       where: { userId: auth.principal.userId, schoolId, status: "ACTIVE", role: "STUDENT" },
       select: { id: true, classId: true },
+      orderBy: [{ classId: "asc" }, { id: "asc" }],
     });
-    const enrollmentIds = enrollments.map((e) => e.id);
-    const classIds = enrollments.map((e) => e.classId);
-    const enrollmentId = enrollmentIds[0];
+    const enrollmentIds = enrollments.map((e) => e.id).sort();
+    const classIds = [...new Set(enrollments.map((e) => e.classId))].sort();
 
-    if (!enrollmentId) {
+    if (!enrollmentIds.length) {
       return buildStudentTodayDecision({
         teacherActionable: [],
         teacherWaiting: [],
@@ -221,7 +221,7 @@ export class StudentDashboardService {
       this.prisma.assessmentSession.findMany({
         where: {
           schoolId,
-          enrollmentId,
+          enrollmentId: { in: enrollmentIds },
           purpose: { in: ["STANDARD", "REMEDIATION"] },
           status: {
             in: [
@@ -279,7 +279,7 @@ export class StudentDashboardService {
           status: "OPEN",
           OR: [
             { studentId: auth.principal.userId },
-            { studentId: null, classId: enrollments[0]!.classId },
+            { studentId: null, classId: { in: classIds } },
           ],
           AND: [{ OR: [{ deadline: null }, { deadline: { gte: now } }] }],
           practiceVersion: {

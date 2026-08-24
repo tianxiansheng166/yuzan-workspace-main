@@ -75,8 +75,27 @@ describe("Student Today decision view", () => {
       target: { href: "/student/practices/attempts/self-1/runner/" },
     });
     expect(result.waiting).toMatchObject([
-      { kind: "TEACHER_REVIEW", reason: "这项朗读练习正在等待老师复核。" },
+      { kind: "TEACHER_REVIEW", reason: "这项练习正在等待老师复核。" },
     ]);
+  });
+
+  it("keeps waiting copy family-neutral for non-reading remediation", () => {
+    const result = buildStudentTodayDecision(
+      base({
+        teacherWaiting: [
+          attempt({
+            id: "picture-waiting",
+            focusDisplayName: "看图说话",
+            status: "PROCESSING",
+          }),
+        ],
+      }),
+    );
+    expect(result.waiting[0]).toMatchObject({
+      title: "看图说话专项巩固",
+      reason: "这项练习正在等待老师复核。",
+    });
+    expect(result.waiting[0]?.reason).not.toContain("朗读");
   });
 
   it("resumes an existing self remediation before creating a new one", () => {

@@ -452,6 +452,33 @@ separate product decision.
   plan. QB-017A uses these as interaction principles only; it does not copy
   their UI or add recommendation/gamification infrastructure.
 
+## QB-017A-F multi-enrollment & wording pre-pilot fix (2026-08-24)
+
+- Student Today now aggregates every `ACTIVE` `STUDENT` enrollment for the
+  authenticated user in the current school. Assessment sessions, class
+  deliveries, assignment targets, and legacy progress use the complete stable
+  enrollment/class sets; no client enrollment choice, schema migration, or
+  first-row authority remains in Today.
+- Decision ordering remains deterministic and unchanged: teacher remediation,
+  self remediation, standard session, diagnosis retry, continue practice,
+  baseline, then legacy task. Teacher remediation in a later class is primary;
+  the latest completed formal assessment is selected across enrollments with a
+  stable timestamp/session tie-breaker; a baseline delivered only to the later
+  class is discoverable.
+- Current-school and authenticated-student scope remains enforced. The existing
+  Runner attempt read now authorizes the attempt's own ACTIVE student
+  enrollment, which lets the second-class CTA open the existing Runner without
+  weakening school/student ownership checks.
+- Waiting copy is family-neutral: `这项练习正在等待老师复核。`; valid focus
+  names remain in titles, while unknown focus values fall back to `专项巩固`.
+- Coverage added: 17 focused Today decision/service tests and the isolated
+  Chromium proof in `tests/e2e/assessment/test_qb017a_student_today.py` passed
+  `2 passed`, including the second-class teacher assignment and existing Runner
+  render. The six-level suite was not rerun for this narrow fix.
+- Status: `QB-017A DONE / BROWSER VERIFIED / PILOT READY`.
+- Next task remains `QB-017B — Pilot learning validation` (`CURRENT_TASK.md` is
+  intentionally unchanged and still TODO).
+
 ### Known limitations and next task
 
 Legacy Course Assignment tasks remain visible as secondary/reachable course

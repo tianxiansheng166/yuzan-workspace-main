@@ -245,8 +245,13 @@ export class PracticeService {
 
   async getAttempt(auth: AuthContext, schoolId: string, attemptId: string) {
     this.assertStudentTenant(auth, schoolId);
-    const enrollment = await this.activeEnrollment(auth, schoolId);
-    const attempt = await this.prisma.assessmentSession.findFirst({ where: { id: attemptId, schoolId, enrollmentId: enrollment.id } });
+    const attempt = await this.prisma.assessmentSession.findFirst({
+      where: {
+        id: attemptId,
+        schoolId,
+        enrollment: { userId: auth.principal.userId, role: "STUDENT", status: "ACTIVE" },
+      },
+    });
     if (!attempt || !attempt.practiceDefinitionId) throw new NotFoundException("练习 Attempt 不存在");
     return attempt;
   }
