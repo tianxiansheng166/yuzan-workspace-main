@@ -1,7 +1,38 @@
 # CURRENT HANDOFF
 
-Last updated: 2026-09-07
+Last updated: 2026-09-08
 Repository: `yuzanxinsheng_test`
+
+## COMP-DEMO-05 checkpoint (2026-09-08)
+
+- Final baseline was verified on `feat/question-bank-v1` at remote HEAD
+  `5619bdf48638a455692389d352ba1dad1a62658b`. No backend, schema, speech
+  provider, calibration, assessment scoring, or completed runtime record was
+  changed.
+- Added the normal `MIND 结构` tab and deep link
+  `/teacher/courses/spring/studio/?courseVersionId=18d87c9c-b52b-414a-851e-c17b2defd6e0&tab=mind`.
+  The view is a deterministic, CourseVersion-data-backed structure view, not
+  an AI semantic-inference claim. The verified graph used the real course
+  title, 2 `CourseVersion.objectives`, unit `核心学习路径`, lesson
+  `《春》生字认读与易错音纠正`, 4 real activities, 2 real resource kinds
+  (`VIDEO/video/mp4`, `DOCUMENT/application/pdf`), and the real practice
+  reference exposed by `Activity.content.practiceLabel`.
+- Video-facing visual debt was limited to hiding absent teacher/activity-count
+  fields instead of showing `待定教师` or `0课时`, labeling real
+  `estimatedMinutes` as minutes, hiding empty teacher/AI summary content, and
+  falling back from the missing imported cover path to the checked-in local
+  course cover. No content or score was fabricated.
+- Chrome 1920×1080 verification: student today PASS; student courses PASS;
+  real course detail PASS; actual course runner `8e2d60a4-9ecf-4789-bc04-604c4c4256f6`
+  PASS with the real read-aloud item at 2/5; completed report
+  `b8e8492c-8dc7-4163-b326-52c883b14aea` PASS; remediation runner
+  `22b6a0ba-f4f0-42ff-9dc3-a5b2fe40835d` PASS at 1/15; MIND PASS with 12
+  visible nodes and clickable source details. The exact teacher-review deep
+  link reached the real guard “当前测评已经结束，不能打开待复核题目”; the
+  queue truthfully showed 0 pending items, so it was not bypassed or repaired.
+- Targeted frontend tests passed: 15 tests. `node --check` passed for all
+  touched JavaScript and `git diff --check` passed. The protected untracked
+  `习题课程资源/` input remains untouched.
 
 ## COMP-DEMO-04 checkpoint (2026-09-07)
 

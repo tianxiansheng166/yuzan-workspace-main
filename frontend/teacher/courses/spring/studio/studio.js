@@ -25,6 +25,13 @@
   const propBodyEl = $('[data-bind="prop-body"]');
   const tabsEl = $('.tabs');
   const stepsEl = $('[data-bind="steps"]');
+  const panelsEl = $('.panels');
+  const mindViewEl = $('[data-bind="mind-view"]');
+  const mindTitleEl = $('[data-bind="mind-title"]');
+  const mindEdgesEl = $('[data-bind="mind-edges"]');
+  const mindNodesEl = $('[data-bind="mind-nodes"]');
+  const mindEmptyEl = $('[data-bind="mind-empty"]');
+  const mindDetailEl = $('[data-bind="mind-detail"]');
 
   // ── 常量映射 ──
   const STATUS_LABEL = {
@@ -183,6 +190,242 @@
     renderProperties();
   }
 
+  // ── MIND 结构图：只从当前 CourseVersion 组装，不声明 AI 推理 ──
+  const MIND_TYPE_LABEL = {
+    root: '课程版本',
+    objective: '课程目标',
+    unit: '教学单元',
+    lesson: '课时',
+    activity: '教学活动',
+    practice: '练习闭环',
+    resource: '课程资源'
+  };
+
+  const RESOURCE_KIND_LABEL = {
+    VIDEO: '视频',
+    DOCUMENT: '课件',
+    AUDIO: '音频',
+    IMAGE: '图片',
+    OTHER: '资源'
+  };
+
+  function contentText(value) {
+    if (typeof value === 'string') return value.trim();
+    if (!value || typeof value !== 'object') return '';
+    return String(value.originalText || value.text || value.title || value.label || '').trim();
+  }
+
+  function shortMindText(value, max = 44) {
+    const text = contentText(value).replace(/\s+/g, ' ');
+    return text.length > max ? `${text.slice(0, max - 1)}…` : text;
+  }
+
+  function ordered(items) {
+    return (Array.isArray(items) ? items : []).slice().sort((a, b) =>
+      Number(a?.sortOrder ?? 0) - Number(b?.sortOrder ?? 0)
+    );
+  }
+
+  function practiceFor(activity) {
+    const content = activity?.content && typeof activity.content === 'object' ? activity.content : {};
+    const reference = activity?.practiceReference || content.practiceReference;
+    const label = contentText(
+      reference?.title || reference?.label || activity?.practiceTitle || content.practiceLabel
+    );
+    const type = String(activity?.type || '').toUpperCase();
+    if (!reference && !label && type !== 'PRACTICE') return null;
+    return {
+      label: label || contentText(activity?.title) || '本课能力练习',
+      reference,
+      source: reference ? 'Activity.practiceReference' : (label ? 'Activity.content.practiceLabel' : 'Activity.type'),
+    };
+  }
+
+  function activityPoints(activity) {
+    const points = [];
+    const instruction = contentText(activity?.instruction);
+    const studentNotes = contentText(activity?.studentNotes);
+    const content = activity?.content && typeof activity.content === 'object' ? activity.content : {};
+    [
+      ...(Array.isArray(activity?.keyPoints) ? activity.keyPoints : []),
+      ...(instruction ? [instruction] : []),
+      ...(contentText(activity?.coreQuestion) ? [contentText(activity.coreQuestion)] : []),
+      ...(studentNotes ? [studentNotes] : [])
+    ].forEach((value) => {
+      const text = shortMindText(value, 28);
+      if (text && !points.includes(text) && points.length < 3) points.push(text);
+    });
+    return points;
+  }
+
+  function buildMindGraph(version) {
+    const nodes = [];
+    const edges = [];
+    const units = ordered(version.units);
+    const objectives = ordered(version.objectives);
+    if (units.length === 0 && objectives.length === 0) return { nodes, edges };
+    const addNode = (node) => {
+      nodes.push({ ...node, typeLabel: MIND_TYPE_LABEL[node.kind] || '课程内容' });
+      return node.id;
+    };
+    const addEdge = (from, to) => {
+      if (from && to) edges.push({ from, to });
+    };
+
+    const root = {
+      id: 'course', kind: 'root', branch: 'root', x: 12, y: 46,
+      title: shortMindText(version.title || '未命名课程', 30),
+      subtitle: '真实 CourseVersion',
+      source: `CourseVersion · ${version.id || '当前课程版本'}`,
+      content: version.title || '未命名课程'
+    };
+    addNode(root);
+
+    objectives.slice(0, 2).forEach((objective, index) => {
+      const id = `objective-${index}`;
+      addNode({
+        id, kind: 'objective', branch: 'goal', x: 35, y: index ? 25 : 9,
+        title: shortMindText(objective, 30) || `目标 ${index + 1}`,
+        subtitle: '来自课程目标',
+        source: `CourseVersion.objectives[${index}]`,
+        content: contentText(objective)
+      });
+      addEdge(root.id, id);
+    });
+
+    const unit = units[0];
+    const lessons = ordered(unit?.lessons);
+    const lesson = lessons.find((item) => ordered(item?.activities).length > 0) || lessons[0];
+
+    if (unit) {
+      addNode({
+        id: 'unit', kind: 'unit', branch: 'goal', x: 35, y: 51,
+        title: shortMindText(unit.title, 30) || '未命名单元',
+        subtitle: units.length > 1 ? `真实单元 · 共 ${units.length} 个` : '真实教学单元',
+        source: `CourseVersion.units[${units.indexOf(unit)}]`,
+        content: unit.title || '未命名单元'
+      });
+      addEdge(root.id, 'unit');
+    }
+
+    if (lesson) {
+      addNode({
+        id: 'lesson', kind: 'lesson', branch: 'goal', x: 35, y: 76,
+        title: shortMindText(lesson.title, 30) || '未命名课时',
+        subtitle: '真实课时标题',
+        source: `CourseVersion.units[${units.indexOf(unit)}].lessons[${lessons.indexOf(lesson)}]`,
+        content: lesson.title || '未命名课时'
+      });
+      addEdge(unit ? 'unit' : root.id, 'lesson');
+    }
+
+    const activities = ordered(lesson?.activities);
+    const practiceActivity = activities.find((activity) => practiceFor(activity));
+    const selectedActivities = activities.slice(0, 3);
+    if (practiceActivity && !selectedActivities.includes(practiceActivity)) selectedActivities.push(practiceActivity);
+    for (const activity of activities) {
+      if (selectedActivities.length >= 4) break;
+      if (!selectedActivities.includes(activity)) selectedActivities.push(activity);
+    }
+
+    selectedActivities.forEach((activity, index) => {
+      const activityIndex = activities.indexOf(activity);
+      const id = `activity-${activityIndex}`;
+      addNode({
+        id, kind: 'activity', branch: 'activity', x: 61, y: 9 + index * 21,
+        title: shortMindText(activity.title, 31) || `活动 ${activityIndex + 1}`,
+        subtitle: `${activity.type || '活动'}${activity.required ? ' · 必做' : ''}`,
+        source: `...activities[${activityIndex}]`,
+        content: contentText(activity.title),
+        points: activityPoints(activity),
+        activity
+      });
+      addEdge(lesson ? 'lesson' : (unit ? 'unit' : root.id), id);
+    });
+
+    const resourceSeen = new Set();
+    const resourceCandidates = selectedActivities.flatMap((activity) => {
+      return (Array.isArray(activity?.resources) ? activity.resources : []).map((resource) => ({ resource, activity }));
+    });
+    resourceCandidates.forEach(({ resource, activity }) => {
+      const key = resource?.id || `${resource?.kind || 'OTHER'}:${resource?.mediaType || ''}`;
+      if (resourceSeen.has(key) || resourceSeen.size >= 2) return;
+      resourceSeen.add(key);
+      const sourceActivity = selectedActivities.find((item) => item === activity);
+      const resourceIndex = resourceCandidates.findIndex((item) => item.resource === resource);
+      const kind = RESOURCE_KIND_LABEL[resource?.kind] || resource?.kind || '资源';
+      const id = `resource-${resourceSeen.size}`;
+      addNode({
+        id, kind: 'resource', branch: 'activity', x: 84, y: 19 + (resourceSeen.size - 1) * 23,
+        title: kind,
+        subtitle: resource?.mediaType || '真实资源类型',
+        source: `activities[${activities.indexOf(activity)}].resources[${resourceIndex}]`,
+        content: `${kind}${resource?.altText ? ` · ${shortMindText(resource.altText, 20)}` : ''}`,
+        resource
+      });
+      addEdge(sourceActivity ? `activity-${activities.indexOf(activity)}` : null, id);
+    });
+
+    if (practiceActivity) {
+      const practice = practiceFor(practiceActivity);
+      const practiceIndex = activities.indexOf(practiceActivity);
+      addNode({
+        id: 'practice', kind: 'practice', branch: 'practice', x: 84, y: 76,
+        title: shortMindText(practice.label, 30),
+        subtitle: '真实练习引用',
+        source: `...activities[${practiceIndex}] · ${practice.source}`,
+        content: practice.label,
+        practice
+      });
+      addEdge(`activity-${practiceIndex}`, 'practice');
+    }
+
+    return { nodes: nodes.slice(0, 12), edges };
+  }
+
+  function renderMindDetail(node) {
+    if (!mindDetailEl || !node) return;
+    mindNodesEl?.querySelectorAll('.mind-node').forEach((element) => {
+      element.classList.toggle('is-selected', element.dataset.mindId === node.id);
+    });
+    const points = Array.isArray(node.points) ? node.points : [];
+    const pointMarkup = points.length ? `<div class="mind-detail-section"><span>教学要点</span><ul>${points.map((point) => `<li>${escapeHtml(point)}</li>`).join('')}</ul></div>` : '';
+    mindDetailEl.innerHTML = `
+      <span class="mind-detail-kicker">${escapeHtml(node.typeLabel)}</span>
+      <h3>${escapeHtml(node.title)}</h3>
+      <p class="mind-detail-subtitle">${escapeHtml(node.subtitle || '')}</p>
+      <div class="mind-detail-section"><span>来源</span><strong>${escapeHtml(node.source || '当前课程数据')}</strong></div>
+      <div class="mind-detail-section"><span>当前内容</span><p>${escapeHtml(node.content || '暂无可展示文本')}</p></div>
+      ${pointMarkup}
+    `;
+  }
+
+  function renderMindView() {
+    if (!mindViewEl || !courseVersion || !mindNodesEl || !mindEdgesEl) return;
+    if (mindTitleEl) mindTitleEl.textContent = courseVersion.title || '未命名课程';
+    const graph = buildMindGraph(courseVersion);
+    const nodeById = new Map(graph.nodes.map((node) => [node.id, node]));
+    const point = (node) => ({ x: (node.x / 100) * 760, y: (node.y / 100) * 520 });
+    mindEdgesEl.innerHTML = graph.edges.map(({ from, to }) => {
+      const a = nodeById.get(from); const b = nodeById.get(to);
+      if (!a || !b) return '';
+      const start = point(a); const end = point(b); const bend = Math.max(36, Math.abs(end.x - start.x) * 0.35);
+      return `<path d="M ${start.x} ${start.y} C ${start.x + bend} ${start.y}, ${end.x - bend} ${end.y}, ${end.x} ${end.y}" />`;
+    }).join('');
+    mindNodesEl.innerHTML = graph.nodes.map((node) => `
+      <button type="button" class="mind-node mind-node-${escapeHtml(node.kind)}" data-mind-id="${escapeHtml(node.id)}" style="left:${node.x}%;top:${node.y}%">
+        <span class="mind-node-type">${escapeHtml(node.typeLabel)}</span>
+        <strong>${escapeHtml(node.title)}</strong>
+        <small>${escapeHtml(node.subtitle || '')}</small>
+      </button>
+    `).join('');
+    mindEmptyEl.hidden = graph.nodes.length > 0;
+    mindNodesEl.querySelectorAll('[data-mind-id]').forEach((element) => {
+      element.addEventListener('click', () => renderMindDetail(nodeById.get(element.dataset.mindId)));
+    });
+    renderMindDetail(nodeById.get(graph.nodes.find((node) => node.kind === 'practice')?.id) || graph.nodes[0]);
+  }
+
   function renderEditorHead() {
     const unitTitle = selectedUnit?.title || '未选择章节';
     const lessonTitle = selectedLesson?.title || '';
@@ -200,6 +443,14 @@
       tabsEl.querySelectorAll('button').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.tab === tabName);
       });
+    }
+
+    const isMind = tabName === 'mind';
+    panelsEl?.classList.toggle('mind-mode', isMind);
+    if (mindViewEl) mindViewEl.hidden = !isMind;
+    if (isMind) {
+      renderMindView();
+      return;
     }
 
     if (!selectedActivity) {
@@ -777,6 +1028,7 @@
 
       renderSteps();
       renderStructure();
+      if (new URLSearchParams(location.search).get('tab') === 'mind') switchTab('mind');
     } catch (err) {
       console.error('[studio] 加载课程详情失败:', err);
       toast(err.message || '加载课程详情失败', 'error');

@@ -92,6 +92,7 @@
             <button data-tab="interaction">互动与练习</button>
             <button data-tab="support">教学支持</button>
             <button data-tab="offline">离线资源</button>
+            <button data-tab="mind">MIND 结构</button>
           </div>
           <div class="editor-body" data-bind="editor-body">
             <div class="editor-placeholder">请从左侧选择一个活动进行编辑</div>
@@ -103,6 +104,38 @@
           <header><b>活动属性</b><span>⌃</span></header>
           <div class="prop-body" data-bind="prop-body">
             <div class="prop-placeholder">请从左侧选择一个活动</div>
+          </div>
+        </section>
+
+        <!-- MIND view: deterministic course-data-backed structure, no AI inference. -->
+        <section class="mind-view panel" data-bind="mind-view" hidden>
+          <div class="mind-head">
+            <div>
+              <span class="mind-kicker">MIND 教研结构</span>
+              <h2 data-bind="mind-title">加载中…</h2>
+              <p>基于当前课程目标、活动与练习关系整理</p>
+            </div>
+            <span class="mind-data-badge">课程数据 · 确定性结构</span>
+          </div>
+          <div class="mind-branch-key" aria-label="MIND 主分支">
+            <span><i class="mind-dot dot-goal"></i>学习目标</span>
+            <span><i class="mind-dot dot-activity"></i>教学活动</span>
+            <span><i class="mind-dot dot-practice"></i>练习闭环</span>
+          </div>
+          <div class="mind-layout">
+            <div class="mind-canvas" data-bind="mind-canvas" aria-label="课程 MIND 关系图">
+              <svg class="mind-edges" data-bind="mind-edges" viewBox="0 0 760 520" preserveAspectRatio="none" aria-hidden="true"></svg>
+              <div class="mind-nodes" data-bind="mind-nodes"></div>
+              <div class="mind-empty" data-bind="mind-empty" hidden>
+                <strong>当前课程暂无可结构化内容</strong>
+                <span>请先在真实课程版本中补充目标、课时或活动。</span>
+              </div>
+            </div>
+            <aside class="mind-detail" data-bind="mind-detail" aria-live="polite">
+              <span class="mind-detail-kicker">节点详情</span>
+              <h3>选择一个节点</h3>
+              <p>点击关系图中的课程目标、活动或资源，查看其真实来源。</p>
+            </aside>
           </div>
         </section>
 

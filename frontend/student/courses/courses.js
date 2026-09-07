@@ -186,8 +186,10 @@
     const coverUrl = c.coverAsset || fallbackCover(c.assignmentId);
     const isNew = isNewCourse(c);
     const dashoffset = 100 - progress;
-    const teacherDisplay = c.teacherName || '待定教师';
-    const lessonCount = c.lessonCount || c.totalActivities || 0;
+    const teacherDisplay = c.teacherName || '';
+    const lessonCount = Number(c.lessonCount || c.totalActivities || 0);
+    const lessonMeta = lessonCount > 0 ? `<span class="cc-card-lessons">${lessonCount}课时</span>` : '';
+    const teacherMeta = teacherDisplay ? `<span class="cc-card-teacher">${ICONS.user} ${esc(teacherDisplay)}</span>` : '';
     const themeLabel = c.capabilityTheme || '综合';
     const gradeLabel = gradeLabelFor(c.gradeBand);
     const isFav = c.isFavorited || false;
@@ -195,7 +197,7 @@
     return `
       <div class="cc-card" data-assignment-id="${esc(c.assignmentId)}">
         <div class="cc-card-cover">
-          <img src="${esc(coverUrl)}" alt="${esc(c.title)}" loading="lazy" />
+          <img src="${esc(coverUrl)}" alt="${esc(c.title)}" loading="lazy" onerror="this.onerror=null;this.src='/assets/cover-spring.png'" />
           ${gradeLabel ? `<div class="cc-card-badge-grade">${esc(gradeLabel)}</div>` : ''}
           ${isNew ? '<div class="cc-card-badge-new">新课</div>' : ''}
           ${progress > 0 ? `
@@ -211,12 +213,12 @@
         <div class="cc-card-body">
           <div class="cc-card-meta">
             <span class="cc-card-theme">${esc(themeLabel)}</span>
-            <span class="cc-card-lessons">${lessonCount}课时</span>
+            ${lessonMeta}
           </div>
           <h3 class="cc-card-title">${esc(c.title)}</h3>
           <p class="cc-card-desc">${esc(c.description || '')}</p>
           <div class="cc-card-footer">
-            <span class="cc-card-teacher">${ICONS.user} ${esc(teacherDisplay)}</span>
+            ${teacherMeta}
             <div class="cc-card-actions">
               <button class="cc-card-action${isFav ? ' favorited' : ''}" data-fav="${esc(c.assignmentId)}" aria-label="${isFav ? '取消收藏' : '收藏'}">${isFav ? ICONS.starFill : ICONS.star}</button>
               <button class="cc-card-action" data-offline="${esc(c.assignmentId)}" aria-label="离线下载">${ICONS.download}</button>

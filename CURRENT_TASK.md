@@ -1,6 +1,6 @@
 # CURRENT TASK
 
-Task: COMP-DEMO-04 — 诊断到强化与教师复核
+Task: COMP-DEMO-05 — MIND 结构图 + 录像前视觉冻结
 Status: DONE / BROWSER VERIFIED
 
 COMP-DEMO-03 is complete: one real lesson (`《春》生字认读与易错音纠正`) is

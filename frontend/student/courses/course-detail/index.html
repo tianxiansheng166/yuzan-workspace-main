@@ -397,8 +397,22 @@
       var tagsEl = document.getElementById('cpInfoTags');
 
       if (titleEl) titleEl.textContent = course.title || '';
-      if (teacherEl) teacherEl.querySelector('span').textContent = course.teacher || '—';
-      if (durationEl) durationEl.querySelector('span').textContent = (course.duration || 0) + ' 课时';
+      if (teacherEl) {
+        var teacher = typeof course.teacher === 'string' ? course.teacher.trim() : '';
+        if (teacher === '待定教师' || teacher === '授课教师') teacher = '';
+        teacherEl.hidden = !teacher;
+        teacherEl.style.display = teacher ? '' : 'none';
+        if (teacher) teacherEl.querySelector('span').textContent = teacher;
+      }
+      if (durationEl) {
+        var durationMinutes = Number(course.durationMinutes);
+        var duration = Number(course.duration);
+        var hasMinutes = Number.isFinite(durationMinutes) && durationMinutes > 0;
+        var hasLegacyHours = Number.isFinite(duration) && duration > 0 && !hasMinutes;
+        durationEl.hidden = !hasMinutes && !hasLegacyHours;
+        durationEl.style.display = durationEl.hidden ? 'none' : '';
+        if (!durationEl.hidden) durationEl.querySelector('span').textContent = hasMinutes ? ('预计 ' + durationMinutes + ' 分钟') : (duration + ' 课时');
+      }
       if (descEl) descEl.textContent = course.description || '';
 
       if (tagsEl) {
@@ -573,7 +587,12 @@
         info.appendChild(title);
 
         var meta = document.createElement('p');
-        meta.textContent = (rec.teacher || '') + ' · ' + (rec.duration || 0) + '课时';
+        var metaParts = [];
+        if (typeof rec.teacher === 'string' && rec.teacher.trim()) metaParts.push(rec.teacher.trim());
+        var recDuration = Number(rec.duration);
+        if (Number.isFinite(recDuration) && recDuration > 0) metaParts.push(recDuration + '课时');
+        meta.textContent = metaParts.join(' · ');
+        meta.hidden = metaParts.length === 0;
         info.appendChild(meta);
 
         card.appendChild(cover);

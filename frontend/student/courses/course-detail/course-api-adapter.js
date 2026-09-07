@@ -137,6 +137,7 @@
       coverUrl: cover,
       teacher: assignment.teacher || raw.teacher || '',
       duration: courseVersion.estimatedMinutes || raw.duration || 0,
+      durationMinutes: Number.isFinite(Number(courseVersion.estimatedMinutes)) ? Number(courseVersion.estimatedMinutes) : null,
       gradeBand: courseVersion.gradeBand || raw.gradeBand || '',
       capabilityTheme: courseVersion.capabilityTheme || raw.capabilityTheme || '',
       taskGroup: courseVersion.taskGroup || raw.taskGroup || '',
