@@ -458,6 +458,30 @@ describe("AssessmentService", () => {
       expect(result.submittedAt).toBeTruthy();
     });
 
+    it("allows submit when uploaded evidence is not blocked by unsupported analysis", async () => {
+      const { service, sessionRepo } = await buildService({
+        itemRepo: createFakeItemRepo([makeItem({ recordingId: RECORDING_ID })]),
+        prismaOverrides: { recording: { count: async () => 0 } },
+      });
+      sessionRepo._setSession(makeSession({ status: "IN_PROGRESS" }));
+
+      await expect(
+        service.submitSession(studentAuthA, SCHOOL_A, SESSION_ID),
+      ).resolves.toMatchObject({ status: "SUBMITTED" });
+    });
+
+    it("still blocks submit when a recording has a genuine upload failure", async () => {
+      const { service, sessionRepo } = await buildService({
+        itemRepo: createFakeItemRepo([makeItem({ recordingId: RECORDING_ID })]),
+        prismaOverrides: { recording: { count: async () => 1 } },
+      });
+      sessionRepo._setSession(makeSession({ status: "IN_PROGRESS" }));
+
+      await expect(
+        service.submitSession(studentAuthA, SCHOOL_A, SESSION_ID),
+      ).rejects.toThrow("阻塞性的音频上传错误");
+    });
+
     it("rejects transition from CREATED → SUBMITTED (must start first)", async () => {
       const { service, sessionRepo } = await buildService();
       sessionRepo._setSession(makeSession({ status: "CREATED" }));

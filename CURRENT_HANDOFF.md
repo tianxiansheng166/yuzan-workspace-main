@@ -5,33 +5,41 @@ Repository: `yuzanxinsheng_test`
 
 ## COMP-DEMO-04 checkpoint (2026-09-07)
 
-- Implemented the three requested frontend closures on `feat/question-bank-v1`:
-  formal reports now take precedence over retained provisional speech
-  diagnostics; provisional ISE copy leads only to ordinary reading practice and
-  says that teacher review precedes remediation; teacher reading review now
-  shows provider, `NEEDS_REVIEW`, `UNCALIBRATED`, safe automatic-reference
-  wording, and the four nullable ISE dimensions. `SPEECH_OPEN_RESPONSE` keeps
-  its local diagnostics path. No review/remediation domain, schema, provider
-  adapter, or calibration policy was added or changed.
-- Frontend contract tests execute both report states and the teacher detail
-  renderer: 5 passed. API assessment/review/remediation targeted tests: 36
-  passed. Speech result policy tests: 10 passed. Frontend runtime verifier,
-  API typecheck, JavaScript syntax, and diff checks passed.
+- Completed the runtime closure on `feat/question-bank-v1`: worker now passes
+  `PROVIDER_TASK_UNSUPPORTED` as a stable failure code; the API keeps the
+  uploaded Recording `READY` for that code and still fails genuine audio or
+  storage errors closed. No review/remediation domain, schema, provider
+  adapter, calibration policy, or fake provider result was added.
+- The unified Runner exposes a normal re-record path only for a historical
+  `Recording=FAILED` item, using a fresh idempotency key while preserving the
+  old Recording/SpeechJob. Teacher detail says `自动语义分析未启用 · 请依据
+  原始录音人工复核` and does not construct diagnostic metrics.
+- Targeted evidence: worker 11 passed; API 71 passed; frontend 7 passed; API
+  and worker typechecks plus diff checks passed. The broader Prettier check
+  retains baseline warnings in the existing compressed/long-line files.
 - Browser evidence used the seeded student and teacher accounts. The canonical
-  20-item STANDARD session is
-  `b8e8492c-8dc7-4163-b326-52c883b14aea`; READ_ALOUD item
-  `9ca28f7d-8dce-4353-b06e-8b1d85e2ab67` uses recording
-  `06e0f8b2-0324-4f67-a869-c680604bc904` and real iFlytek status
-  `NEEDS_REVIEW`. The same session's teacher detail was browser-verified at
-  `/teacher/reviews/9ca28f7d-8dce-4353-b06e-8b1d85e2ab67`: the original audio
-  is playable and the ISE evidence is displayed without raw provider audit.
-- Full student submit was intentionally not forced. The same session's
-  `SPEECH_OPEN_RESPONSE` item has `Recording=FAILED` and `SpeechJob=FAILED`
-  because the current worker is configured for iFlytek and its existing policy
-  rejects open-response work for cloud providers. The backend correctly blocks
-  session submit, so no formal teacher score/comment, formal report, or
-  remediation attempt was created. This remains the explicit runtime blocker;
-  no database shortcut was used.
+  20-item STANDARD session
+  `b8e8492c-8dc7-4163-b326-52c883b14aea` reached `COMPLETED`; report
+  `5deb4acf-b3bd-4cf6-bc93-53571441c0e7` is `100%` complete with overall
+  formal score `17` and 15 real `retryCandidates`. Reviewed item IDs are
+  `9ca28f7d-8dce-4353-b06e-8b1d85e2ab67`,
+  `fdb4a0fe-08da-4156-a529-bb79ea45d82b`,
+  `36b73b88-aff4-4638-b0c3-30c812459090`,
+  `53c961ab-33db-4028-83c8-0b748a104bc9`,
+  `2a9f5f61-7b68-4656-b113-f061edda9503`, and
+  `23c9448a-2b12-4773-ab4e-d595818f9d28`; all have formal score/comment.
+- The old open-response Recording/SpeechJob remains historical
+  `FAILED/PROCESSING_FAILED`. A new Recording
+  `2b5824b4-2d8d-40a1-8f30-aab83cae37ae` is `READY`, bound to the same item;
+  its new SpeechJob is `FAILED/PROVIDER_TASK_UNSUPPORTED`, with no autoResult.
+  The teacher UI showed the original recording evidence and the unsupported
+  analysis message. Because this Chrome host had no physical microphone, the
+  re-record UI was exercised with the repository's temporary valid-WAV browser
+  harness; the final Runner page has no harness installed.
+- Student report → `开始巩固练习` created real remediation attempt
+  `22b6a0ba-f4f0-42ff-9dc3-a5b2fe40835d` (`REMEDIATION`, 15 items), and the
+  unified Runner visibly opened its first question. No database shortcut was
+  used.
 - The protected untracked `习题课程资源/` input was not modified or staged.
 
 ## COMP-DEMO-03 checkpoint (2026-09-07)

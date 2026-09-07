@@ -1,7 +1,7 @@
 # CURRENT TASK
 
 Task: COMP-DEMO-04 — 诊断到强化与教师复核
-Status: DONE / PARTIAL_BROWSER_VERIFIED
+Status: DONE / BROWSER VERIFIED
 
 COMP-DEMO-03 is complete: one real lesson (`《春》生字认读与易错音纠正`) is
 published and open to the seeded real student account. Do not import the other

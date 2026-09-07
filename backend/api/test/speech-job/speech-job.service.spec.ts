@@ -47,6 +47,7 @@ function makeJob(overrides: Record<string, any> = {}) {
     processingMs: null,
     retryCount: 0,
     errorCode: null,
+    recording: { id: RECORDING_ID },
     createdAt: now,
     updatedAt: now,
     ...overrides,
@@ -110,6 +111,8 @@ async function buildService(opts: BuildOptions = {}) {
     },
     ...opts.prismaOverrides,
   });
+  (fakePrisma as any).$transaction = async (callback: (tx: any) => unknown) =>
+    callback(fakePrisma);
 
   const fakeConfig = {
     get: vi.fn((key: string, defaultValue?: any) => {
@@ -202,6 +205,64 @@ describe("SpeechJobService", () => {
       );
       expect(result.status).toBe("FAILED");
       expect(result.retryCount).toBe(1);
+    });
+
+    it("keeps uploaded recording READY for unsupported provider task", async () => {
+      const recordingUpdate = vi.fn(async () => ({
+        id: RECORDING_ID,
+        status: "READY",
+      }));
+      const { service } = await buildService({
+        prismaOverrides: { recording: { update: recordingUpdate } },
+      });
+      await service.createSpeechJob({
+        recordingId: RECORDING_ID,
+        assessmentItemId: ASSESSMENT_ITEM_ID,
+        targetText: "春眠不觉晓",
+        schoolId: SCHOOL_ID,
+      });
+
+      const result = await service.markSpeechJobFailed(
+        JOB_ID,
+        "PROVIDER_TASK_UNSUPPORTED",
+        "iflytek providers only support SPEECH_READING",
+      );
+
+      expect(result.status).toBe("FAILED");
+      expect(result.errorCode).toBe("PROVIDER_TASK_UNSUPPORTED");
+      expect(recordingUpdate).toHaveBeenCalledWith({
+        where: { id: RECORDING_ID },
+        data: { status: "READY" },
+      });
+    });
+
+    it("keeps genuine processing failures fail closed on the recording", async () => {
+      const recordingUpdate = vi.fn(async () => ({
+        id: RECORDING_ID,
+        status: "FAILED",
+      }));
+      const { service } = await buildService({
+        prismaOverrides: { recording: { update: recordingUpdate } },
+      });
+      await service.createSpeechJob({
+        recordingId: RECORDING_ID,
+        assessmentItemId: ASSESSMENT_ITEM_ID,
+        targetText: "春眠不觉晓",
+        schoolId: SCHOOL_ID,
+      });
+
+      const result = await service.markSpeechJobFailed(
+        JOB_ID,
+        "PROCESSING_FAILED",
+        "audio object could not be read",
+      );
+
+      expect(result.status).toBe("FAILED");
+      expect(result.errorCode).toBe("PROCESSING_FAILED");
+      expect(recordingUpdate).toHaveBeenCalledWith({
+        where: { id: RECORDING_ID },
+        data: { status: "FAILED" },
+      });
     });
 
     it("rejects an arbitrary result when the persisted item policy context is absent", async () => {
@@ -326,6 +387,78 @@ describe("SpeechJobService", () => {
           SCHOOL_ID,
         ),
       ).rejects.toThrow(/不是 READ_ALOUD/);
+    });
+
+    it("allows a new recording to replace only a previous FAILED recording", async () => {
+      const previousRecordingId =
+        "rec-previous-failed-000000000000000000000001";
+      const newRecordingId = "rec-new-open-response-00000000000000000000001";
+      const questionBankItem = {
+        recordingId: previousRecordingId,
+        prompt: { stimulus: { type: "IMAGE", promptText: "请看图表达" } },
+        questionVersion: {
+          status: "PUBLISHED",
+          scoringSpec: { strategy: "SPEECH_OPEN_RESPONSE", maxScore: 14 },
+        },
+      };
+      const { service } = await buildService({
+        speechProvider: "iflytek",
+        prismaOverrides: {
+          assessmentItem: { findFirst: async () => questionBankItem },
+          recording: {
+            findUnique: async (args: any) => ({
+              id: args.where.id,
+              status:
+                args.where.id === previousRecordingId ? "FAILED" : "READY",
+              objectKey: "recordings/new-open-response/full",
+            }),
+          },
+        },
+      });
+
+      const result = await service.triggerSpeechProcessing(
+        newRecordingId,
+        ASSESSMENT_ITEM_ID,
+        undefined,
+        SCHOOL_ID,
+      );
+
+      expect(result.recordingId).toBe(newRecordingId);
+      expect(result.status).toBe("CREATED");
+    });
+
+    it("rejects replacing an active recording binding", async () => {
+      const previousRecordingId = "rec-previous-active-00000000000000000000001";
+      const questionBankItem = {
+        recordingId: previousRecordingId,
+        prompt: { stimulus: { type: "IMAGE", promptText: "请看图表达" } },
+        questionVersion: {
+          status: "PUBLISHED",
+          scoringSpec: { strategy: "SPEECH_OPEN_RESPONSE", maxScore: 14 },
+        },
+      };
+      const { service } = await buildService({
+        speechProvider: "iflytek",
+        prismaOverrides: {
+          assessmentItem: { findFirst: async () => questionBankItem },
+          recording: {
+            findUnique: async (args: any) => ({
+              id: args.where.id,
+              status: "READY",
+              objectKey: "recordings/new-open-response/full",
+            }),
+          },
+        },
+      });
+
+      await expect(
+        service.triggerSpeechProcessing(
+          "rec-new-open-response-00000000000000000000001",
+          ASSESSMENT_ITEM_ID,
+          undefined,
+          SCHOOL_ID,
+        ),
+      ).rejects.toThrow(/录音与测评题目绑定不一致/);
     });
 
     it("keeps a local-provider job auditable when the queue is unavailable", async () => {

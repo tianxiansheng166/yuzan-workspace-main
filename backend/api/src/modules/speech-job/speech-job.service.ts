@@ -19,6 +19,7 @@ import {
 } from "./speech-result.policy.js";
 
 type JsonRecord = Record<string, unknown>;
+const PROVIDER_TASK_UNSUPPORTED = "PROVIDER_TASK_UNSUPPORTED";
 type SpeechTask = {
   strategy: typeof READ_ALOUD_STRATEGY | typeof OPEN_RESPONSE_STRATEGY;
   targetText?: string;
@@ -370,7 +371,14 @@ export class SpeechJobService {
       if (job.recording?.id) {
         await tx.recording.update({
           where: { id: job.recording.id },
-          data: { status: "FAILED" },
+          // A provider that does not support the requested task did not make
+          // the uploaded audio unusable. Keep the recording as playable
+          // evidence for the teacher; only real storage/audio failures make
+          // the evidence fail closed.
+          data: {
+            status:
+              errorCode === PROVIDER_TASK_UNSUPPORTED ? "READY" : "FAILED",
+          },
         });
       }
       return next;
@@ -419,7 +427,13 @@ export class SpeechJobService {
     if (!item)
       throw new SpeechJobNotFoundException("测评题目不存在或不属于当前学校");
     if (item.recordingId && item.recordingId !== recordingId) {
-      throw new SpeechJobStrategyMismatchException("录音与测评题目绑定不一致");
+      const previousRecording = await this.prisma.recording.findUnique({
+        where: { id: item.recordingId },
+        select: { status: true },
+      });
+      if (previousRecording?.status !== "FAILED") {
+        throw new SpeechJobStrategyMismatchException("录音与测评题目绑定不一致");
+      }
     }
 
     // Legacy assessment items may still supply a server-validated target. A

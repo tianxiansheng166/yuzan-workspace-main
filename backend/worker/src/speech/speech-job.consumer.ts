@@ -209,11 +209,17 @@ export class SpeechJobConsumer {
         },
         "Speech scoring completed",
       );
-      } catch (err) {
-      // Attempt to mark the SpeechJob as FAILED so it doesn't appear as completed
+    } catch (err) {
+      // Unsupported task routing is a stable, non-audio failure: the API must
+      // keep the uploaded Recording available for teacher review.
       try {
+        const errorCode =
+          err instanceof SpeechProviderTaskError
+            ? err.code
+            : "PROCESSING_FAILED";
         await this.markSpeechJobFailed(
           speechJobId,
+          errorCode,
           err instanceof Error ? err.message : String(err),
         );
       } catch (markFailedErr) {
@@ -302,6 +308,7 @@ export class SpeechJobConsumer {
    */
   private async markSpeechJobFailed(
     speechJobId: string,
+    errorCode: string,
     errorMessage: string,
   ): Promise<void> {
     const response = await fetch(
@@ -314,7 +321,7 @@ export class SpeechJobConsumer {
         },
         body: JSON.stringify({
           status: "FAILED",
-          errorCode: "PROCESSING_FAILED",
+          errorCode,
           errorMessage,
         }),
       },

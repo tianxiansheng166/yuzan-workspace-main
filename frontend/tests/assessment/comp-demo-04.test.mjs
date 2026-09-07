@@ -4,6 +4,7 @@ import test from 'node:test';
 import vm from 'node:vm';
 
 const assessmentSource = await readFile(new URL('../../assessment/assets/app.js', import.meta.url), 'utf8');
+const runnerSource = await readFile(new URL('../../assessment/assets/runner.js', import.meta.url), 'utf8');
 const reviewSource = await readFile(new URL('../../teacher/reviews/detail.js', import.meta.url), 'utf8');
 
 const session = {
@@ -147,6 +148,33 @@ test('teacher open-response detail keeps its local diagnostics path', async () =
   assert.match(html, /1200 ms/);
 });
 
+test('teacher open-response detail explains unsupported automatic analysis without inventing diagnostics', async () => {
+  const html = await runReview({
+    student: { displayName: '王雨晴' },
+    practice: { title: '练习' },
+    item: { strategy: 'SPEECH_OPEN_RESPONSE', domain: 'SPEAK', maxScore: 14, state: 'PENDING', prompt: {} },
+    review: { rubric: ['依据真实录音评分'] },
+    evidence: {
+      playbackUrl: 'https://example.test/recording.wav',
+      speechJobStatus: 'FAILED',
+      errorCode: 'PROVIDER_TASK_UNSUPPORTED',
+      diagnostic: null,
+    },
+  });
+  assert.match(html, /自动语义分析未启用/);
+  assert.match(html, /请依据原始录音人工复核/);
+  assert.doesNotMatch(html, /本地语音诊断/);
+  assert.doesNotMatch(html, /1200 ms/);
+});
+
 test('browser-facing sources do not include provider raw audit fields', () => {
   assert.doesNotMatch(reviewSource, /providerAudit|rawResponse/);
+});
+
+test('unified runner exposes a normal re-record path for a failed historical recording', () => {
+  assert.match(runnerSource, /recordingStatus === 'FAILED'/);
+  assert.match(runnerSource, /历史录音不会被覆盖/);
+  assert.match(runnerSource, /recordingIdempotencyKey/);
+  assert.match(runnerSource, /crypto\.randomUUID\(\)/);
+  assert.match(runnerSource, /data-start-recording/);
 });

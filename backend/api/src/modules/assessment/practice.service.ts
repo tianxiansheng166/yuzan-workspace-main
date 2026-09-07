@@ -263,6 +263,7 @@ export class PracticeService {
       select: {
         id: true, itemType: true, prompt: true, itemConfig: true, sectionTitle: true,
         sectionOrder: true, sortOrder: true, status: true, recordingId: true,
+        recording: { select: { status: true } },
         writtenAnswer: { select: { content: true, autoSavedAt: true, finalSubmittedAt: true } },
       },
       orderBy: { sortOrder: "asc" },
@@ -271,6 +272,7 @@ export class PracticeService {
       ...item,
       prompt: assertSafeQuestionDeliverySpec(item.prompt),
       itemConfig: item.itemConfig == null ? null : assertSafeQuestionDeliverySpec(item.itemConfig),
+      recordingStatus: item.recording?.status ?? null,
       studentAnswer: item.writtenAnswer ? {
         content: item.writtenAnswer.content,
         autoSavedAt: item.writtenAnswer.autoSavedAt?.toISOString() ?? null,
