@@ -256,7 +256,10 @@ export class IflytekSpeechReadingProvider implements SpeechReadingProvider {
   } = {}) {
     this.credentials = options.credentials ?? envCredentials();
     this.endpoint = options.endpoint ?? "wss://ise-api.xfyun.cn/v2/open-ise";
-    this.timeoutMs = options.timeoutMs ?? Number(process.env.IFLYTEK_ISE_TIMEOUT_MS ?? 30_000);
+    // The ISE endpoint receives real-time 40 ms frames. A 30-second recording
+    // cannot complete under a 30-second end-to-end deadline once connection
+    // and final-result time are included.
+    this.timeoutMs = options.timeoutMs ?? Number(process.env.IFLYTEK_ISE_TIMEOUT_MS ?? 60_000);
     this.frameIntervalMs = options.frameIntervalMs ?? Number(process.env.IFLYTEK_ISE_FRAME_INTERVAL_MS ?? 40);
     this.maxRetries = options.maxRetries ?? Number(process.env.IFLYTEK_ISE_MAX_RETRIES ?? 1);
     this.webSocketFactory = options.webSocketFactory ?? defaultSpeechWebSocketFactory;

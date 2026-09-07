@@ -360,6 +360,49 @@
   const readingStateLabels = {
     LOADING_ITEM:'加载题目',PLAYING_PROMPT:'播放示范音频',PREPARING:'准备倒计时',RECORDING:'正式录音',PAUSED:'录音暂停',REVIEWING:'试听确认',UPLOADING:'上传录音',UPLOAD_FAILED:'上传失败',UPLOADED:'上传完成',PROCESSING:'进入评分',REJECTED_AUDIO:'音频不合格',READY:'准备就绪'
   };
+
+  function speechDiagnosticItems(items) {
+    return (items || []).filter((item) => {
+      const result = item?.autoResult;
+      return result?.strategy === 'SPEECH_READING' && ['iflytek', 'tencent', 'local'].includes(result?.provider);
+    });
+  }
+
+  function diagnosticValue(value) {
+    return typeof value === 'number' && Number.isFinite(value) ? `${Math.round(value)} / 100` : '本次未提供';
+  }
+
+  function reportImprovementFocus(metrics) {
+    const labels = [
+      ['accuracy', '准确度'], ['completeness', '完整度'], ['fluency', '流利度'], ['tone', '声调韵律']
+    ];
+    const available = labels
+      .map(([key, label]) => ({ key, label, value: metrics?.[key] }))
+      .filter((entry) => typeof entry.value === 'number' && Number.isFinite(entry.value))
+      .sort((left, right) => left.value - right.value)
+      .slice(0, 2);
+    return available.map((entry) => `建议优先回听并练习${entry.label}，结果仍建议由教师复核。`);
+  }
+
+  function renderSpeechDiagnosticReport(session, report, diagnosticItem) {
+    const diagnostic = diagnosticItem.autoResult || {};
+    const metrics = diagnostic.metrics || {};
+    const hasOverall = typeof metrics.overall === 'number' && Number.isFinite(metrics.overall);
+    const hasProviderResult = diagnostic.provider && hasOverall;
+    const focus = reportImprovementFocus(metrics);
+    const text = getOralTargetText(diagnosticItem) || '本次朗读文本暂不可显示。';
+    const recordingId = diagnosticItem.recordingId;
+    const dimensions = [
+      ['accuracy', '准确度'], ['completeness', '完整度'], ['fluency', '流利度'], ['tone', '声调韵律']
+    ];
+    const metricCards = dimensions.map(([key, label]) => `<div class="diagnostic-metric"><span>${label}</span><strong>${diagnosticValue(metrics[key])}</strong>${typeof metrics[key] === 'number' ? `<i style="width:${Math.max(0, Math.min(100, metrics[key]))}%"></i>` : '<i class="unavailable"></i>'}</div>`).join('');
+    const focusRows = focus.length
+      ? focus.map((item, index) => `<li><b>重点 ${index + 1}</b>${safe(item)}</li>`).join('')
+      : '<li><b>当前说明</b>本次没有足够的维度数据来形成专项建议。</li>';
+    const state = diagnostic.state === 'NEEDS_REVIEW' || diagnostic.requiresReview !== false ? '待教师复核' : '自动诊断';
+    const overall = hasProviderResult ? `${Math.round(metrics.overall)} <small>/ 100</small>` : '本次未提供';
+    return `<main class="page diagnostic-report-page"><header class="report-film-head"><a href="${routes.center}" class="back-link">${icon('left')} 返回练习中心</a><div><p class="eyebrow">朗读学习档案 · 自动诊断</p><h1>这一次的声音，已经被认真保存</h1><p>自动结果仅用于学习诊断；正式成绩与结论仍由教师复核。</p></div><span class="chip gold">${state}</span></header><section class="diagnostic-report-grid"><article class="diagnostic-evidence"><div class="evidence-kicker">本次朗读文本</div><blockquote>${safe(text)}</blockquote><div class="evidence-player"><button class="play-circle" data-report-play-recording="${safe(recordingId || '')}" ${recordingId ? '' : 'disabled'}>${icon('play')}</button><div class="report-wave" aria-label="本次原始录音波形">${waveBars(64)}</div><div><strong>原始录音</strong><small>${recordingId ? '点击播放，音频仅在当前授权范围内读取。' : '录音证据正在等待保存。'}</small></div></div><div class="diagnosis-narrative"><span>本次诊断</span><p>${hasProviderResult ? '已收到讯飞 ISE 的真实维度结果，以下内容是学习诊断，不是正式分数。' : '尚未收到可展示的 provider 维度结果；不会把缺失结果显示为零分。'}</p></div></article><aside class="diagnostic-summary"><div class="diagnostic-status"><span>自动诊断状态</span><strong>${state}</strong><small>建议教师复核</small></div><div class="diagnostic-overall"><span>总体结果</span><b>${overall}</b><small>${hasProviderResult ? '来自本次真实 provider 返回' : '等待真实 provider 返回'}</small></div><div class="diagnostic-dimensions">${metricCards}</div><div class="diagnostic-focus"><h2>本次重点改善</h2><ol>${focusRows}</ol></div><a class="btn primary" href="/student/practices/?recommendedLabel=${encodeURIComponent('独立朗读')}">${icon('arrow')} 进入针对性强化</a><button class="btn diagnostic-evidence-toggle" data-toggle-evidence>${icon('info')} 查看评测依据</button><section class="diagnostic-evidence-drawer" data-evidence-drawer hidden><h2>评测依据</h2><p><b>基础语音评测：</b>科大讯飞 ISE</p><p><b>当前结果：</b>自动诊断 / 建议教师复核</p><p><b>诊断标准版本：</b>当前试运行版本</p></section></aside></section></main>`;
+  }
   function renderReading() {
     if (!SESSION_ID || !READING_ITEM_ID) return renderError('无法确认当前朗读题', { detail: '请从测评准备页进入。' });
     if (!apiEnabled && !demoMode) return renderApiDisabled('朗读测评需要登录后端服务。');
@@ -571,10 +614,13 @@
     const report = appState.apiReport;
     const session = appState.apiSession;
     if (session?.purpose === 'REMEDIATION') return renderRemediationResult(session, appState.apiRemediationResult);
-    if (!report) {
+    if (!report && speechDiagnosticItems(appState.apiItems).length === 0) {
       const content = `<main class="page"><div class="hero-landscape" style="height:220px"></div><section class="report-head"><a class="muted small" href="${routes.center}">‹ 返回测评列表</a><h1 class="page-title" style="margin-top:16px">${session ? (session.type === 'READING' ? '朗读测评' : '综合测评') : '测评'} ${statusChip(session?.status || '—', session?.status === 'COMPLETED' ? 'green' : 'gold')}</h1><p class="page-subtitle">报告尚未生成</p></section><article class="card" style="padding:40px;text-align:center"><div class="icon" style="margin:0 auto 16px;width:56px;height:56px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#eef0ec">${icon('file')}</div><h2>当前测评尚未生成报告</h2><p class="muted">报告在教师复核或系统自动评分完成后生成。请稍后刷新查看。</p>${session && (session.status === 'SUBMITTED' || session.status === 'PROCESSING') ? `<div style="margin-top:24px"><a class="btn primary" href="${routes.processing}">${icon('arrow')} 查看处理状态</a></div>` : ''}<div style="margin-top:12px"><button class="btn" data-retry>${icon('refresh')} 刷新报告</button></div></article></main>`;
       return shell(content);
     }
+
+    const diagnosticItem = speechDiagnosticItems(appState.apiItems)[0];
+    if (diagnosticItem) return shell(renderSpeechDiagnosticReport(session, report, diagnosticItem));
 
     const needsReview = report.summary?.requiresTeacherReview === true || report.summary?.scoringState === 'NEEDS_REVIEW';
     const content=`<main class="page"><div class="hero-landscape" style="height:220px"></div><section class="report-head"><a class="muted small" href="${routes.center}">‹ 返回练习中心</a><h1 class="page-title" style="margin-top:16px">${session?.type === 'READING' ? '朗读练习' : '综合练习'} ${statusChip(needsReview ? '待教师复核' : '已完成',needsReview ? 'gold' : 'green')}</h1><p class="page-subtitle">科学测评，精准反馈，见证每一次进步</p></section>${needsReview ? `<article class="card notice" style="margin-bottom:13px">${icon('info')} 本报告已展示本次真实模型评分；其中至少一段录音建议由教师复核，复核意见会另行保存。</article>` : ''}<article class="card report-info"><div class="icon red">${icon('mic')}</div><div class="info-cell">数据完整度<b>${report.dataCompleteness != null ? Math.round(report.dataCompleteness) + '%' : '—'}</b></div><div class="info-cell">生成时间<b>${report.generatedAt ? new Date(report.generatedAt).toLocaleString() : '—'}</b></div><div class="info-cell">结果状态<b>${needsReview ? '待教师复核' : '已保存'}</b></div></article><section class="report-grid"><article class="card score-card"><h3 class="card-title" style="color:var(--red)">总体得分</h3><div class="score-number">${report.overallScore != null ? report.overallScore : '—'} <small style="font-size:17px;color:#777">/100</small></div>${statusChip(report.overallScore != null ? (report.overallScore >= 80 ? '良好' : report.overallScore >= 60 ? '中等' : '需提升') : '等待复核', 'green')}<p class="muted small">${report.summary?.text || (report.recommendations?.text || '基于本次已完成评分的真实结果。')}</p></article>${report.readingScore != null ? metricCard('wave','朗读得分',report.readingScore,'基于本次朗读录音的实际评分','green') : ''}${report.writtenScore != null ? metricCard('book','书面得分',report.writtenScore,'基于已完成评分的书面作答','green') : ''}</section>${report.recommendations ? `<section class="report-bottom"><article class="card"><h2 class="card-title">推荐练习</h2>${Array.isArray(report.recommendations) ? report.recommendations.map(r => `<div class="recommend-item"><div><strong>${typeof r === 'string' ? r : (r.title || r.text || JSON.stringify(r))}</strong><p class="muted small">基于本次报告的个性化建议</p></div></div>`).join('') : `<p class="muted">${typeof report.recommendations === 'string' ? report.recommendations : JSON.stringify(report.recommendations)}</p>`}</article></section>` : ''}<section class="report-bottom"><article class="card"><h2 class="card-title">练习档案</h2><p class="muted">录音、报告与历史记录已按本次练习保存。</p><div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="${routes.recordings}">${icon('wave')} 我的录音</a><a class="btn" href="${routes.history}">${icon('chart')} 历史记录</a><a class="btn primary" href="${routes.progress}">${icon('trend')} 查看学习进步</a></div></article></section></main>`;
@@ -1232,6 +1278,31 @@
   }
 
   function bindReport(){
+    document.querySelector('[data-toggle-evidence]')?.addEventListener('click', (event) => {
+      const drawer = document.querySelector('[data-evidence-drawer]');
+      if (!drawer) return;
+      const opening = drawer.hidden;
+      drawer.hidden = !opening;
+      event.currentTarget.innerHTML = `${icon('info')} ${opening ? '收起评测依据' : '查看评测依据'}`;
+    });
+    document.querySelector('[data-report-play-recording]')?.addEventListener('click', async (event) => {
+      const button = event.currentTarget;
+      const recordingId = button.dataset.reportPlayRecording;
+      if (!recordingId || button.dataset.loading === 'true') return;
+      button.dataset.loading = 'true';
+      button.innerHTML = icon('spinner');
+      try {
+        const evidence = await Api.getRecordingEvidence(recordingId);
+        const audio = new Audio(evidence.downloadUrl);
+        await audio.play();
+        button.innerHTML = icon('pause');
+        audio.addEventListener('ended', () => { button.innerHTML = icon('play'); button.dataset.loading = ''; }, { once: true });
+      } catch (error) {
+        button.innerHTML = icon('play');
+        button.dataset.loading = '';
+        alert(`暂时无法播放录音：${error.message || error}`);
+      }
+    });
     document.querySelector('[data-start-remediation]')?.addEventListener('click', async (e) => {
       const btn = e.currentTarget;
       if (btn.disabled) return;
@@ -1452,8 +1523,12 @@
     appState._loadingProcessing = true;
     renderCurrent();
     try {
-      const session = await (isPracticeAttempt ? Api.getPracticeAttempt(SESSION_ID) : Api.getAssessmentSession(SESSION_ID));
+      const [session, items] = await Promise.all([
+        isPracticeAttempt ? Api.getPracticeAttempt(SESSION_ID) : Api.getAssessmentSession(SESSION_ID),
+        (isPracticeAttempt ? Api.getPracticeAttemptItems(SESSION_ID) : Api.listAssessmentItems(SESSION_ID)).catch(() => appState.apiItems || [])
+      ]);
       appState.apiSession = session;
+      appState.apiItems = Array.isArray(items) ? items : (items?.items || []);
       // 加载 items 以便显示录音列表
       if (!appState.apiItems.length) {
         try {
@@ -1502,8 +1577,12 @@
     appState._reportError = null;
     renderCurrent();
     try {
-      const session = await (isPracticeAttempt ? Api.getPracticeAttempt(SESSION_ID) : Api.getAssessmentSession(SESSION_ID));
+      const [session, items] = await Promise.all([
+        isPracticeAttempt ? Api.getPracticeAttempt(SESSION_ID) : Api.getAssessmentSession(SESSION_ID),
+        (isPracticeAttempt ? Api.getPracticeAttemptItems(SESSION_ID) : Api.listAssessmentItems(SESSION_ID)).catch(() => appState.apiItems || [])
+      ]);
       appState.apiSession = session;
+      appState.apiItems = Array.isArray(items) ? items : (items?.items || []);
       if (session?.purpose === 'REMEDIATION') {
         appState.apiReport = null;
         appState.apiRemediationResult = await Api.getAssessmentRemediationResult(SESSION_ID);

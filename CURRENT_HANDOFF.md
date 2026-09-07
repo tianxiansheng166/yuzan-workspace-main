@@ -1,7 +1,36 @@
 # CURRENT HANDOFF
 
-Last updated: 2026-08-24
+Last updated: 2026-09-07
 Repository: `yuzanxinsheng_test`
+
+## COMP-DEMO-01+02 checkpoint (2026-09-07)
+
+- The existing `IflytekSpeechReadingProvider` made a real ISE WebSocket call
+  with local-only credentials and received real dimensions. The result stayed
+  `UNCALIBRATED`, `requiresReview: true`, and `finalizable: false`.
+- A concrete timing compatibility fix changed the ISE default end-to-end
+  deadline from 30 to 60 seconds: ISE sends 40 ms real-time frames, so a
+  30-second recording otherwise reaches its final frame after the old timeout.
+  No adapter architecture or scoring policy was changed.
+- `frontend/assessment/assets/app.js` and `app.css` now compose the existing
+  reading route as a 1920×1080 text/recording stage and render the safe
+  student-facing ISE diagnostic only from existing item `autoResult` data.
+  The report shows null dimensions as “本次未提供”, a review status, source
+  evidence drawer, and a user-authorized recording player; it never reads
+  provider audit/raw XML or promotes a diagnostic to a formal score.
+- Local Chrome and the in-app browser both reported no microphone device
+  (`NotFoundError`), so a real browser microphone Blob could not be produced.
+  A server-side storage/queue exercise using a local WAV reached Worker/ISE,
+  but the currently seeded legacy practice was correctly rejected at callback
+  with `SPEECH_STRATEGY_MISMATCH: 语音任务没有可用的已发布题库版本`.
+  This is a data-contract blocker for that legacy fixture, not an ISE credential
+  failure; no mock score was introduced.
+- The checked-out repository has no `local_sources/` DOCX/ZIP originals, so
+  those are not available for live import in this clone. It does retain 18
+  real per-level dictionary audio assets under
+  `frontend/assessment/assets/question-bank/audio/`; `level-1-dictation-1.mp3`
+  was normalized with ffmpeg and received a real ISE response. It is source
+  audio evidence, not a browser microphone recording and not a formal score.
 
 ## Git truth
 
