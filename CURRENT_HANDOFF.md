@@ -3,6 +3,37 @@
 Last updated: 2026-09-07
 Repository: `yuzanxinsheng_test`
 
+## COMP-DEMO-04 checkpoint (2026-09-07)
+
+- Implemented the three requested frontend closures on `feat/question-bank-v1`:
+  formal reports now take precedence over retained provisional speech
+  diagnostics; provisional ISE copy leads only to ordinary reading practice and
+  says that teacher review precedes remediation; teacher reading review now
+  shows provider, `NEEDS_REVIEW`, `UNCALIBRATED`, safe automatic-reference
+  wording, and the four nullable ISE dimensions. `SPEECH_OPEN_RESPONSE` keeps
+  its local diagnostics path. No review/remediation domain, schema, provider
+  adapter, or calibration policy was added or changed.
+- Frontend contract tests execute both report states and the teacher detail
+  renderer: 5 passed. API assessment/review/remediation targeted tests: 36
+  passed. Speech result policy tests: 10 passed. Frontend runtime verifier,
+  API typecheck, JavaScript syntax, and diff checks passed.
+- Browser evidence used the seeded student and teacher accounts. The canonical
+  20-item STANDARD session is
+  `b8e8492c-8dc7-4163-b326-52c883b14aea`; READ_ALOUD item
+  `9ca28f7d-8dce-4353-b06e-8b1d85e2ab67` uses recording
+  `06e0f8b2-0324-4f67-a869-c680604bc904` and real iFlytek status
+  `NEEDS_REVIEW`. The same session's teacher detail was browser-verified at
+  `/teacher/reviews/9ca28f7d-8dce-4353-b06e-8b1d85e2ab67`: the original audio
+  is playable and the ISE evidence is displayed without raw provider audit.
+- Full student submit was intentionally not forced. The same session's
+  `SPEECH_OPEN_RESPONSE` item has `Recording=FAILED` and `SpeechJob=FAILED`
+  because the current worker is configured for iFlytek and its existing policy
+  rejects open-response work for cloud providers. The backend correctly blocks
+  session submit, so no formal teacher score/comment, formal report, or
+  remediation attempt was created. This remains the explicit runtime blocker;
+  no database shortcut was used.
+- The protected untracked `习题课程资源/` input was not modified or staged.
+
 ## COMP-DEMO-03 checkpoint (2026-09-07)
 
 - Selected exactly one demonstration lesson: `《春》生字认读与易错音纠正`
