@@ -18,19 +18,24 @@ Repository: `yuzanxinsheng_test`
   The report shows null dimensions as “本次未提供”, a review status, source
   evidence drawer, and a user-authorized recording player; it never reads
   provider audit/raw XML or promotes a diagnostic to a formal score.
-- Local Chrome and the in-app browser both reported no microphone device
-  (`NotFoundError`), so a real browser microphone Blob could not be produced.
-  A server-side storage/queue exercise using a local WAV reached Worker/ISE,
-  but the currently seeded legacy practice was correctly rejected at callback
-  with `SPEECH_STRATEGY_MISMATCH: 语音任务没有可用的已发布题库版本`.
-  This is a data-contract blocker for that legacy fixture, not an ISE credential
-  failure; no mock score was introduced.
-- The checked-out repository has no `local_sources/` DOCX/ZIP originals, so
-  those are not available for live import in this clone. It does retain 18
-  real per-level dictionary audio assets under
-  `frontend/assessment/assets/question-bank/audio/`; `level-1-dictation-1.mp3`
-  was normalized with ffmpeg and received a real ISE response. It is source
-  audio evidence, not a browser microphone recording and not a formal score.
+- The user-provided `习题课程资源/` folder is now available as a read-only
+  authoring source. Its question DOCX, answer/rubric DOCX, and media ZIP passed
+  the canonical preflight: 6 levels, 120 items, 600 points, 120/120 bound,
+  90 images, 36 audio, zero errors and zero warnings. The runtime apply was
+  executed with `--source-dir 习题课程资源 --all --apply`; it created 126
+  checksum-addressed Resources/MinIO objects, 120 immutable Question Bank
+  item versions, six published level practices, 24 sections, and six open
+  class deliveries. The six old seed-authored practice deliveries were closed
+  while their historical definitions/attempts remain intact.
+- Each of the five folders in `示范课.zip` passed archive integrity and contains
+  one MP4, one PPTX, and two DOCX files (teaching design plus post-class
+  exercise). The course archive is verified as a complete source pack, but its
+  course-unit import remains the next COMP-DEMO-03 task; raw archives are not
+  committed to Git.
+- A canonical Question Bank READ_ALOUD attempt was created and a real source
+  audio file was uploaded to MinIO. Worker consumed the SpeechJob and the ISE
+  callback reached `NEEDS_REVIEW` with `provider=iflytek`; student-safe payloads
+  keep raw result data out of the browser and leave `scoredScore` null.
 
 ## Git truth
 

@@ -964,6 +964,14 @@ function args(values) {
   for (let index = 0; index < values.length; index += 1) {
     if (values[index] === "--all") result.all = true;
     else if (values[index] === "--level") result.level = Number(values[++index]);
+    else if (values[index] === "--source-dir") {
+      const sourceDir = path.resolve(values[++index] || "");
+      result.questions = path.join(sourceDir, "题库【三改】.docx");
+      result.answers = path.join(sourceDir, "答案及评分细则.docx");
+      result.media = path.join(sourceDir, "题库音频及图片.zip");
+    } else if (values[index] === "--output") {
+      result.output = path.resolve(values[++index] || "");
+    }
   }
   return result;
 }

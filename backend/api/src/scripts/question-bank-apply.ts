@@ -16,12 +16,13 @@ type CommandArguments = {
   all: boolean;
   schoolId?: string;
   classId?: string;
+  sourceDir?: string;
 };
 
 type SourceImporterModule = {
   defaultOptions: { questions: string; answers: string; media: string };
   readZipEntry(file: string, entry: string): Promise<Uint8Array>;
-  run(values?: readonly string[]): Promise<{
+  run(values?: readonly string[] | Record<string, unknown>): Promise<{
     report: { selectedLevel: number | null; summary: { items: number; points: number; bound: number; missing: number; ambiguous: number }; validation: { errors: number } };
     manifest: CanonicalManifest;
   }>;
@@ -58,6 +59,12 @@ function parseArguments(values: readonly string[]): CommandArguments {
       const classId = values[++index];
       if (!classId) fail("--class-id requires a UUID value");
       result.classId = classId;
+      continue;
+    }
+    if (value === "--source-dir") {
+      const sourceDir = values[++index];
+      if (!sourceDir) fail("--source-dir requires a directory path");
+      result.sourceDir = path.resolve(sourceDir);
       continue;
     }
     fail(`unknown command argument ${value}`);
@@ -127,9 +134,22 @@ async function main(): Promise<void> {
 
   const importerPath = pathToFileURL(path.join(process.cwd(), "tools/question-bank-importer/index.mjs")).href;
   const sourceImporter = await import(importerPath) as SourceImporterModule;
+  const sourceDir = arguments_.sourceDir
+    ?? (process.env.QUESTION_BANK_SOURCE_DIR ? path.resolve(process.env.QUESTION_BANK_SOURCE_DIR) : undefined)
+    ?? path.dirname(sourceImporter.defaultOptions.questions);
+  const sourceOptions = {
+    questions: path.join(sourceDir, "题库【三改】.docx"),
+    answers: path.join(sourceDir, "答案及评分细则.docx"),
+    media: path.join(sourceDir, "题库音频及图片.zip"),
+    contentRepairs: path.join(process.cwd(), "tools/question-bank-importer/content-repairs.json"),
+    output: path.join(process.env.TMPDIR ?? "/tmp", "yuzan-question-bank-generated"),
+  };
   // This re-runs the canonical parser + validator before any Nest context,
   // database connection, MinIO call, or source-to-runtime conversion exists.
-  const preflight = await sourceImporter.run(arguments_.all ? ["--all"] : ["--level", String(arguments_.level)]);
+  const preflight = await sourceImporter.run({
+    ...sourceOptions,
+    ...(arguments_.all ? { all: true } : { level: arguments_.level }),
+  });
   const expectedLevels = arguments_.all ? 6 : 1;
   const expectedItems = expectedLevels * 20;
   const expectedPoints = expectedLevels * 100;
@@ -154,9 +174,9 @@ async function main(): Promise<void> {
   }
 
   const sourceDocuments = {
-    questionDocx: await sourceIdentity(sourceImporter.defaultOptions.questions),
-    answerDocx: await sourceIdentity(sourceImporter.defaultOptions.answers),
-    mediaArchive: await sourceIdentity(sourceImporter.defaultOptions.media),
+    questionDocx: await sourceIdentity(sourceOptions.questions),
+    answerDocx: await sourceIdentity(sourceOptions.answers),
+    mediaArchive: await sourceIdentity(sourceOptions.media),
   };
   const app = await NestFactory.createApplicationContext(QuestionBankApplyModule, { logger: ["error", "warn"] });
   try {
@@ -167,7 +187,7 @@ async function main(): Promise<void> {
       ...target,
       manifest: preflight.manifest,
       sourceDocuments,
-      readMedia: (zipPath) => sourceImporter.readZipEntry(sourceImporter.defaultOptions.media, zipPath),
+      readMedia: (zipPath) => sourceImporter.readZipEntry(sourceOptions.media, zipPath),
     });
     console.log(JSON.stringify({
       mode: "APPLY",

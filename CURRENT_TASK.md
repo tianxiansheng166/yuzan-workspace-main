@@ -3,13 +3,11 @@
 Task: COMP-DEMO-03 — 导入一个真实课程单元
 Status: NEXT
 
-COMP-DEMO-01+02 completed the ISE adapter's live credential/transport check and
-the 1920×1080 reading/report presentation work. The live ISE call returned
-real nullable dimensions as uncalibrated, review-required diagnostic evidence;
-it did not write a formal score. A local-browser microphone was unavailable
-(`NotFoundError`), and the legacy seeded practice was correctly rejected on
-cloud-result callback because it has no published Question Bank version. Keep
-that fail-closed policy. The next competition task is one real course unit:
+COMP-DEMO-01+02 completed the ISE adapter's live credential/transport check,
+the real 6-level Question Bank runtime import, and the 1920×1080
+reading/report presentation work. The live ISE call returned real nullable
+dimensions as uncalibrated, review-required diagnostic evidence; it did not
+write a formal score. The next competition task is one real course unit:
 MP4 + PPT-to-PDF + 3–5 written exercises + an existing read-aloud entry.
 
 QB-017A Student Today — Next Best Learning Action MVP is DONE / BROWSER VERIFIED.

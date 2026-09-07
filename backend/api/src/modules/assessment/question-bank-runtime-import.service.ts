@@ -12,6 +12,14 @@ import {
 const LEVELS = [1, 2, 3, 4, 5, 6] as const;
 const LEVEL_NAMES = ["", "一", "二", "三", "四", "五", "六"] as const;
 const LEGACY_AUDIO_VERIFICATION_TITLE = "语赞心声 Question Bank v1 · 听写音频验证";
+const LEGACY_HARDCODED_PRACTICE_TITLES = [
+  "古诗文朗读与理解训练",
+  "现代文朗读与信息提取",
+  "停顿与节奏专项训练",
+  "声母发音专项训练",
+  "声调听辨与跟读",
+  "听后复述入门",
+] as const;
 
 const SECTION_DEFINITIONS = [
   { domain: "LISTEN", title: "听", description: "听音选图、听写句子", estimatedMinutes: 7 },
@@ -89,6 +97,7 @@ export type QuestionBankRuntimeApplyResult = {
   practiceItemRefs: { created: number; reused: number };
   practiceDeliveries: { created: number; reused: number; total: number; ids: string[] };
   legacyAudioVerificationDeliveriesClosed: number;
+  legacyHardcodedPracticeDeliveriesClosed: number;
 };
 
 type RuntimeMedia = CanonicalMediaBinding & {
@@ -427,6 +436,7 @@ export class QuestionBankRuntimeImportService {
     return this.prisma.$transaction(async (tx) => {
       const applied = await this.ensureQuestionBankVersions(tx, resolved);
       const legacyAudioVerificationDeliveriesClosed = await this.retireLegacyAudioVerification(tx, input.schoolId);
+      const legacyHardcodedPracticeDeliveriesClosed = await this.retireLegacyHardcodedPractices(tx, input.schoolId);
       const practiceResults: PracticeApplyResult[] = [];
       for (const level of [...new Set(questions.map((question) => question.level))].sort((left, right) => left - right)) {
         practiceResults.push(await this.ensurePractice(
@@ -446,6 +456,7 @@ export class QuestionBankRuntimeImportService {
           audio: media.filter((entry) => entry.kind === "AUDIO").length,
         },
         legacyAudioVerificationDeliveriesClosed,
+        legacyHardcodedPracticeDeliveriesClosed,
         questionBankItems: applied.questionBankItems,
         questionBankItemVersions: applied.questionBankItemVersions,
         practiceDefinitions: {
@@ -494,6 +505,30 @@ export class QuestionBankRuntimeImportService {
             schoolId,
             visibility: "SCHOOL",
             title: LEGACY_AUDIO_VERIFICATION_TITLE,
+          },
+        },
+      },
+      data: { status: "CLOSED" },
+    });
+    return result.count;
+  }
+
+  private async retireLegacyHardcodedPractices(
+    tx: Prisma.TransactionClient,
+    schoolId: string,
+  ): Promise<number> {
+    // These six development-only practices were authored directly in the seed
+    // file before the canonical Question Bank source was available. Preserve
+    // their historical definitions and attempts, but remove their open
+    // catalog deliveries once the real Level 1–6 practices are applied.
+    const result = await tx.practiceDelivery.updateMany({
+      where: {
+        schoolId,
+        status: "OPEN",
+        practiceVersion: {
+          definition: {
+            schoolId,
+            title: { in: [...LEGACY_HARDCODED_PRACTICE_TITLES] },
           },
         },
       },
