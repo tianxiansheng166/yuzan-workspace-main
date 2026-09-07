@@ -130,6 +130,13 @@
           </div>
         </div>
 
+        <!-- Imported lesson material is resolved through the resource playback API. -->
+        <section class="cp-card cp-section cp-section-materials" id="cpSectionMaterials" hidden>
+          <h2 class="cp-section-title">本节课件</h2>
+          <p class="cp-materials-status" id="cpMaterialsStatus">正在打开课件…</p>
+          <div class="cp-materials-preview" id="cpMaterialsPreview"></div>
+        </section>
+
         <!-- 3. Course info card -->
         <section class="cp-card cp-section cp-section-info" id="cpSectionInfo">
           <h2 class="cp-section-title">课程信息</h2>
@@ -409,14 +416,17 @@
     function renderObjectives(activity) {
       var objList = document.getElementById('cpObjectivesList');
       var kpList = document.getElementById('cpKeyPointsList');
+      var courseState = window.CoursePlayerState && window.CoursePlayerState.getState ? window.CoursePlayerState.getState() : {};
+      var courseObjectives = courseState.course && Array.isArray(courseState.course.objectives) ? courseState.course.objectives : [];
+      var objectives = (activity && activity.objectives && activity.objectives.length) ? activity.objectives : courseObjectives;
       if (objList) {
         objList.innerHTML = '';
-        (activity.objectives || []).forEach(function (o) {
+        objectives.forEach(function (o) {
           var li = document.createElement('li');
-          li.textContent = o;
+          li.textContent = typeof o === 'string' ? o : (o.originalText || '');
           objList.appendChild(li);
         });
-        if (!activity.objectives || !activity.objectives.length) {
+        if (!objectives.length) {
           objList.innerHTML = '<li>暂无</li>';
         }
       }
@@ -431,6 +441,26 @@
           kpList.innerHTML = '<li>暂无</li>';
         }
       }
+    }
+
+    function renderSummary(course) {
+      var section = document.getElementById('cpSectionSummary');
+      if (!section) return;
+      var hasTeacherSummary = !!(course && course.teacherSummary);
+      var hasAiSummary = !!(course && course.aiSummary);
+      section.hidden = !hasTeacherSummary && !hasAiSummary;
+    }
+
+    function renderPracticeEntry(activity) {
+      var section = document.getElementById('cpSectionPractice');
+      var title = document.getElementById('cpPracticeTitle');
+      var desc = document.getElementById('cpPracticeDesc');
+      var reference = activity && activity.practiceReference;
+      if (!section) return;
+      section.hidden = !reference;
+      if (!reference) return;
+      if (title) title.textContent = reference.title || (activity.content && activity.content.practiceLabel) || activity.title || '朗读训练';
+      if (desc) desc.textContent = activity.instruction || '进入现有统一练习执行器，完成朗读与能力测评。';
     }
 
     // --- renderDirectory: master template numbered badge + status pill ---
@@ -624,10 +654,52 @@
     }
 
     function loadVideoForActivity(activity) {
-      if (!activity) return;
-      if (window.MediaController && window.MediaController.loadSource) {
+      if (!activity || !window.MediaController || !window.MediaController.loadSource) return;
+      var videoResource = (activity.resources || []).map(function (link) { return link.resource || link; }).find(function (resource) {
+        return resource && resource.kind === 'VIDEO';
+      });
+      if (!videoResource) {
         window.MediaController.loadSource(activity.videoUrl, activity.posterUrl, activity.subtitleZhUrl, activity.subtitleBoUrl);
+        return;
       }
+      window.CourseApiAdapter.getResourcePlaybackUrl(videoResource.id).then(function (result) {
+        window.MediaController.loadSource(result.url, activity.posterUrl, activity.subtitleZhUrl, activity.subtitleBoUrl);
+      }).catch(function () {
+        showToast('视频资源暂时无法打开');
+      });
+    }
+
+    function loadMaterialsForActivity(activity) {
+      var section = document.getElementById('cpSectionMaterials');
+      var preview = document.getElementById('cpMaterialsPreview');
+      var status = document.getElementById('cpMaterialsStatus');
+      if (!section || !preview || !status) return;
+      var documentResource = (activity && activity.resources || []).map(function (link) { return link.resource || link; }).find(function (resource) {
+        return resource && resource.kind === 'DOCUMENT';
+      });
+      preview.innerHTML = '';
+      section.hidden = !documentResource;
+      if (!documentResource) return;
+      status.textContent = '正在打开课件…';
+      window.CourseApiAdapter.getResourcePlaybackUrl(documentResource.id).then(function (result) {
+        status.textContent = documentResource.originalName || '本节课件';
+        var link = document.createElement('a');
+        link.className = 'cp-btn cp-btn-outline cp-materials-open';
+        link.href = result.url;
+        link.target = '_blank';
+        link.rel = 'noopener';
+        link.textContent = '新窗口打开课件';
+        preview.appendChild(link);
+        if (result.mediaType === 'application/pdf' || /\.pdf(?:$|\?)/i.test(documentResource.originalName || '')) {
+          var frame = document.createElement('iframe');
+          frame.className = 'cp-materials-frame';
+          frame.src = result.url;
+          frame.title = documentResource.originalName || '本节课件';
+          preview.appendChild(frame);
+        }
+      }).catch(function () {
+        status.textContent = '课件暂时无法打开，请稍后重试';
+      });
     }
 
     function bindFavorite() {
@@ -821,6 +893,7 @@
         // Render all sections
         renderHero(course);
         renderInfo(course);
+        renderSummary(course);
         renderDirectory(course, state.currentActivityId);
         renderCompletion(course);
         renderRecommendations(state.recommendations);
@@ -828,13 +901,17 @@
 
         if (state.currentActivity) {
           renderObjectives(state.currentActivity);
-          loadVideoForActivity(state.currentActivity);
         }
 
         // Initialize sub-controllers
         if (window.MediaController) window.MediaController.init('cpVideo');
         if (window.NoteController) window.NoteController.init();
         if (window.ExerciseController) window.ExerciseController.init();
+        if (state.currentActivity) {
+          loadVideoForActivity(state.currentActivity);
+          loadMaterialsForActivity(state.currentActivity);
+          renderPracticeEntry(state.currentActivity);
+        }
 
         // Restore activityId from URL if present
         window.CoursePlayerState.restoreFromUrl();
@@ -850,12 +927,15 @@
         if (changedKeys.indexOf('currentActivity') !== -1 && state.currentActivity) {
           renderObjectives(state.currentActivity);
           loadVideoForActivity(state.currentActivity);
+          loadMaterialsForActivity(state.currentActivity);
+          renderPracticeEntry(state.currentActivity);
           renderDirectory(state.course, state.currentActivityId);
         }
         if (changedKeys.indexOf('notes') !== -1) {
           // NoteController handles its own rendering
         }
         if (changedKeys.indexOf('course') !== -1) {
+          renderSummary(state.course);
           renderCompletion(state.course);
           renderDirectory(state.course, state.currentActivityId);
         }

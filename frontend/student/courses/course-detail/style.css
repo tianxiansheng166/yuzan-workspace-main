@@ -254,6 +254,24 @@ body.tibetan-language .cp-section-title { line-height: 2; }
   transform: none;
 }
 
+.cp-materials-status {
+  color: var(--cp-ink-muted, #746e67);
+  margin: 0 0 12px;
+}
+.cp-materials-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.cp-materials-open { align-self: flex-start; }
+.cp-materials-frame {
+  width: 100%;
+  min-height: 520px;
+  border: 1px solid #e1dbd2;
+  border-radius: 8px;
+  background: #fff;
+}
+
 /* ============================================================
    Video Container & Controls
    ============================================================ */

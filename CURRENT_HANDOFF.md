@@ -3,6 +3,43 @@
 Last updated: 2026-09-07
 Repository: `yuzanxinsheng_test`
 
+## COMP-DEMO-03 checkpoint (2026-09-07)
+
+- Selected exactly one demonstration lesson: `《春》生字认读与易错音纠正`
+  (七年级, 王雨晴). The source MP4 is 450.182 s / about 7:30; the source
+  teaching-design and exercise DOCX were read without modification. The other
+  four lesson folders were not imported.
+- `PrismaCourseVersionRepository.save()` now round-trips
+  `capabilityTheme`, `difficulty`, `estimatedMinutes`, `coverAsset`,
+  `deviceRequirements`, `taskGroups`, and `culturalElements`; the targeted
+  repository integration suite has 15 passing tests.
+- Added a trusted local importer at `tools/course-importer/` plus the compiled
+  apply script. It extracts only the selected teaching title/objectives and two
+  short choice questions, converts the selected PPTX to a runtime PDF artifact,
+  uploads only the MP4/PDF to MinIO, and sets `APPROVED` with
+  `rightsNote=团队自有课程素材`. Stable source checksums/object keys make the
+  second apply reuse the same records.
+- Runtime IDs: `courseVersionId=18d87c9c-b52b-414a-851e-c17b2defd6e0`,
+  `assignmentId=6f4d6052-5469-404f-a41f-aea568b3a82c`,
+  `practiceDefinitionId=70000000-0000-4000-8000-000000000001`.
+  Imported resources: 2 (`VIDEO/video/mp4`, `DOCUMENT/application/pdf`), both
+  `APPROVED`; assignment is `OPEN` and targets the seeded active student class.
+- Browser verification with real student `student.test` covered
+  `/student/courses` → the real course card → course detail → real MP4 loaded
+  and played for 3.1 seconds → PDF first page visible in the course page →
+  real DOCX-derived choice submitted and still `已完成` after refresh →
+  `朗读训练 / 本课能力练习` → existing unified runner → actual read-aloud
+  item. The runner attempt was intentionally left in progress; no fake score
+  was created.
+- Runtime migration drift discovered during the real run was limited to schema
+  already present in `schema.prisma`: CourseVersion metadata JSON columns,
+  CourseFavorite, and StudentActivityNote.videoTimestamp. Three small alignment
+  migrations were added; no Prisma model/schema redesign was made.
+- Known issues: the seeded course catalog still labels its activity count as
+  `0课时` and shows `待定教师`; this is pre-existing presentation debt and did
+  not block the requested path. The original `习题课程资源/` directory remains
+  untracked and protected; no raw MP4/PPTX/DOCX is in Git.
+
 ## COMP-DEMO-01+02 checkpoint (2026-09-07)
 
 - The existing `IflytekSpeechReadingProvider` made a real ISE WebSocket call

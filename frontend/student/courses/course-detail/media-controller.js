@@ -178,6 +178,15 @@
     togglePlay();
   }
 
+  function togglePlay() {
+    if (!video) return;
+    if (video.paused) {
+      video.play().catch(function () {});
+    } else {
+      video.pause();
+    }
+  }
+
   window.MediaController = {
     init: function (videoElementId) {
       video = document.getElementById(videoElementId || 'cpVideo');

@@ -1,7 +1,11 @@
 # CURRENT TASK
 
-Task: COMP-DEMO-03 — 导入一个真实课程单元
+Task: COMP-DEMO-04 — 诊断到强化与教师复核
 Status: NEXT
+
+COMP-DEMO-03 is complete: one real lesson (`《春》生字认读与易错音纠正`) is
+published and open to the seeded real student account. Do not import the other
+four demonstration lessons.
 
 COMP-DEMO-01+02 completed the ISE adapter's live credential/transport check,
 the real 6-level Question Bank runtime import, and the 1920×1080

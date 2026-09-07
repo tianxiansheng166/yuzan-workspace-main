@@ -69,6 +69,12 @@
         return;
       }
 
+      // A course-practice activity is stored with a valid LearningActivity
+      // enum value and linked through CourseActivityPractice. Render the
+      // normal course entry instead of treating its placeholder content as a
+      // written choice activity.
+      if (activity.practiceReference) return;
+
       switch (activity.activityType) {
         case 'TEXT':
           ExerciseController.renderTextActivity(activity, section);

@@ -176,6 +176,15 @@
       }
     },
 
+    getResourcePlaybackUrl: async function (resourceId) {
+      try {
+        if (!resourceId) throw new Error('课件资源缺少 resourceId');
+        return await Api.getResourcePlaybackUrl(resourceId);
+      } catch (err) {
+        return _handleError(err);
+      }
+    },
+
     createSubmission: async function (assignmentId) {
       try {
         var resp = await Api.createOrResumeCourseSubmission(assignmentId);
@@ -247,7 +256,7 @@
         var resp = await Api.saveCourseActivityAttempt(assignmentId, submissionId, activityId, payload);
         return {
           attemptId: resp.attemptId || resp.id || '',
-          isCorrect: resp.isCorrect || false,
+          isCorrect: typeof resp.isCorrect === 'boolean' ? resp.isCorrect : null,
           feedback: resp.feedback || '',
           attempt: resp.attempt || null,
           progress: resp.progress || null,
