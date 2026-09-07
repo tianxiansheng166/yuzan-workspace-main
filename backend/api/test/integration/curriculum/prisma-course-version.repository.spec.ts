@@ -138,6 +138,48 @@ describe.skipIf(!hasDb)("PrismaCourseVersionRepository", () => {
       expect(result.description).toBe("Updated description");
     });
 
+    it("round-trips the student catalog metadata on create and update", async () => {
+      const courseId = randomUUID();
+      const version = makeVersion(schoolId, authorUserId, courseId, {
+        capabilityTheme: "阅读理解与朗读",
+        difficulty: "基础",
+        estimatedMinutes: 8,
+        coverAsset: "/assets/course-bg/spring-highland.png",
+        deviceRequirements: { audioPlayback: true, microphone: false },
+        taskGroups: ["阅读与表达"],
+        culturalElements: ["春日写景"],
+      });
+
+      const saved = await repo.save(version, { generateVersion: false });
+      expect(saved).toMatchObject({
+        capabilityTheme: "阅读理解与朗读",
+        difficulty: "基础",
+        estimatedMinutes: 8,
+        coverAsset: "/assets/course-bg/spring-highland.png",
+        deviceRequirements: { audioPlayback: true, microphone: false },
+        taskGroups: ["阅读与表达"],
+        culturalElements: ["春日写景"],
+      });
+
+      const updated: CourseVersion = {
+        ...saved,
+        capabilityTheme: "发音与朗读",
+        estimatedMinutes: 10,
+        taskGroups: ["朗读训练"],
+        updatedAt: new Date(),
+      };
+      const result = await repo.save(updated, {
+        generateVersion: false,
+        expectedUpdatedAt: saved.updatedAt,
+      });
+
+      expect(result.capabilityTheme).toBe("发音与朗读");
+      expect(result.estimatedMinutes).toBe(10);
+      expect(result.taskGroups).toEqual(["朗读训练"]);
+      expect(result.culturalElements).toEqual(["春日写景"]);
+      expect(result.deviceRequirements).toEqual({ audioPlayback: true, microphone: false });
+    });
+
     it("rejects concurrent updates with mismatched updatedAt", async () => {
       const courseId = randomUUID();
       const version = makeVersion(schoolId, authorUserId, courseId);
