@@ -95,6 +95,7 @@
     apiProgress: null,
     apiSpeechJob: null,
     apiSpeechJobs: [],
+    _processingSignature: '',
     apiRecordings: [],
     apiRecordingId: null,
     apiSpeechJobId: null,
@@ -1068,6 +1069,7 @@
 
   // ── SpeechJob 轮询：真实状态，禁止定时器自动切换 ──
   let speechJobPollTimer = null;
+  const speechJobsSignature = jobs => (jobs || []).map(job => [job.id, job.status, job.updatedAt || '', job.errorCode || ''].join(':')).sort().join('|');
   function pollSpeechJobs(jobIds) {
     if (speechJobPollTimer) clearInterval(speechJobPollTimer);
     const poll = async () => {
@@ -1075,10 +1077,13 @@
         const jobs = await Promise.all(jobIds.map(jobId => Api.getSpeechJob(jobId)));
         appState.apiSpeechJobs = jobs;
         appState.apiSpeechJob = jobs[0] || null;
+        const signature = speechJobsSignature(jobs);
+        const processingChanged = signature !== appState._processingSignature;
+        appState._processingSignature = signature;
         saveState();
-        // 如果当前在处理页，重新渲染
+        // 处理页只在真实状态变化时重绘，避免轮询导致整页闪跳。
         const page = document.body.dataset.page;
-        if (page === 'processing') renderCurrent();
+        if (page === 'processing' && processingChanged) renderCurrent();
         // 终态停止轮询
         const terminal = ['AUTO_RESULT', 'NEEDS_REVIEW', 'FINALIZED', 'FAILED'];
         if (jobs.every(job => terminal.includes(job.status))) {
@@ -1557,6 +1562,7 @@
       appState.apiSpeechJobs = jobLists.flatMap((jobs) => Array.isArray(jobs) ? (jobs[0] ? [jobs[0]] : []) : (jobs ? [jobs] : []));
       appState.apiSpeechJob = appState.apiSpeechJobs[0] || null;
       appState.apiSpeechJobId = appState.apiSpeechJob?.id || null;
+      appState._processingSignature = speechJobsSignature(appState.apiSpeechJobs);
       const activeJobIds = appState.apiSpeechJobs
         .filter(job => !['AUTO_RESULT', 'NEEDS_REVIEW', 'FINALIZED', 'FAILED'].includes(job.status))
         .map(job => job.id);
