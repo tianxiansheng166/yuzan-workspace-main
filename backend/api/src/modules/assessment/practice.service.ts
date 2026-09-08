@@ -262,16 +262,19 @@ export class PracticeService {
       where: { sessionId: attemptId },
       select: {
         id: true, itemType: true, prompt: true, itemConfig: true, sectionTitle: true,
-        sectionOrder: true, sortOrder: true, status: true, recordingId: true,
+        sectionOrder: true, sortOrder: true, status: true, maxScore: true, autoResult: true, recordingId: true,
         recording: { select: { status: true } },
         writtenAnswer: { select: { content: true, autoSavedAt: true, finalSubmittedAt: true } },
       },
       orderBy: { sortOrder: "asc" },
     });
-    return items.map((item) => ({
+    return items.map(({ autoResult, ...item }) => ({
       ...item,
       prompt: assertSafeQuestionDeliverySpec(item.prompt),
       itemConfig: item.itemConfig == null ? null : assertSafeQuestionDeliverySpec(item.itemConfig),
+      // Student processing may display a provider diagnostic for oral practice
+      // only.  Do not expose auto-evaluation payloads for written questions.
+      autoResult: ["READING", "SPEECH", "LISTEN_REPEAT", "READ_ALOUD"].includes(item.itemType) ? autoResult : null,
       recordingStatus: item.recording?.status ?? null,
       studentAnswer: item.writtenAnswer ? {
         content: item.writtenAnswer.content,
