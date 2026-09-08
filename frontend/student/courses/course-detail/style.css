@@ -220,8 +220,8 @@ body.tibetan-language .cp-section-title { line-height: 2; }
   min-width: 0;
   position: sticky;
   top: calc(var(--cp-nav-height) + 24px);
-  max-height: calc(100vh - var(--cp-nav-height) - 48px);
-  overflow-y: auto;
+  max-height: none;
+  overflow: visible;
   display: flex;
   flex-direction: column;
   gap: 16px;
