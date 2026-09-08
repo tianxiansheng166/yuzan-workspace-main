@@ -43,6 +43,39 @@
     return `<p class="today-empty">${safe(text)}</p>`;
   }
 
+  function renderCourseCard(course) {
+    const assignmentId = course?.assignmentId || '';
+    const title = course?.title || course?.course?.title || '未命名课程';
+    const description = course?.description || '打开真实课程内容，继续完成老师安排的学习路径。';
+    const progress = Number(course?.progressPercent);
+    const hasProgress = Number.isFinite(progress) && progress >= 0;
+    const minutes = Number(course?.estimatedMinutes);
+    const nextActivity = course?.nextActivity?.title;
+    const meta = [
+      Number.isFinite(minutes) && minutes > 0 ? `预计 ${minutes} 分钟` : '',
+      nextActivity ? `下一步：${nextActivity}` : '',
+    ].filter(Boolean);
+    return `<article class="today-course-item">
+      <div class="today-course-cover"><img src="${safe(course?.coverAsset || '/assets/cover-spring.png')}" alt="${safe(title)}" onerror="this.onerror=null;this.src='/assets/cover-spring.png'"></div>
+      <div class="today-course-body">
+        <span class="today-course-label">真实课程</span>
+        <h3>${safe(title)}</h3>
+        <p>${safe(description)}</p>
+        ${meta.length ? `<div class="today-course-meta">${meta.map((item) => `<span>${safe(item)}</span>`).join('')}</div>` : ''}
+        ${hasProgress ? `<div class="today-course-progress"><div><i style="width:${Math.min(100, progress)}%"></i></div><span>${Math.round(progress)}%</span></div>` : ''}
+        <a class="today-course-link" href="/student/courses/course-detail/?id=${encodeURIComponent(assignmentId)}">${progress > 0 ? '继续课程' : '进入课程'}　→</a>
+      </div>
+    </article>`;
+  }
+
+  function renderCourseSection(courses) {
+    const visibleCourses = (Array.isArray(courses) ? courses : []).slice(0, 2);
+    const body = visibleCourses.length
+      ? `<div class="today-course-grid">${visibleCourses.map(renderCourseCard).join('')}</div>`
+      : `<div class="today-course-empty"><div><strong>课程学习也在这里</strong><p>学校开放的真实课程会出现在课程中心，点击进入查看视频、课件与练习。</p></div><a class="today-course-link" href="/student/courses">打开课程中心　→</a></div>`;
+    return `<section class="today-card today-courses"><div class="today-course-head"><div><p class="today-eyebrow">课程路径</p><h2>继续你的课程学习</h2></div><a href="/student/courses">查看全部课程　→</a></div>${body}</section>`;
+  }
+
   function render(data) {
     const primary = data?.primaryAction || null;
     const waiting = Array.isArray(data?.waiting) ? data.waiting : [];
@@ -64,7 +97,7 @@
       ? `<section class="today-card today-list"><div class="today-list-head"><h2>课程任务</h2><span>来自老师的课程安排</span></div><div class="today-list-items">${legacy.map((task) => `<article class="today-list-item"><div><strong>${safe(task.title)}</strong><p>${safe(task.courseTitle || "课程任务")} · ${safe(statusText(task.status))} · 已完成 ${Number(task.progressPercent) || 0}%</p></div><a href="/student/learn/spring-2?assignmentId=${encodeURIComponent(task.assignmentId)}">进入课程　→</a></article>`).join("")}</div></section>`
       : "";
 
-    app.innerHTML = `<header class="today-header"><div><p class="today-kicker">学生学习入口</p><h1>今天的学习</h1><p>先完成一个最值得做的动作，其他安排稍后再看。</p></div><time class="today-date">${dateText()}</time></header><section class="today-grid"><article class="today-card today-primary" data-action-kind="${safe(primary?.kind || "WAITING")}">${primaryMarkup}</article><aside class="today-side"><article class="today-card today-summary"><p class="today-eyebrow">学习小结</p><h2>最近一次正式测评</h2>${formal ? `<div class="today-score"><small>${safe(formal.level || "已完成测评")}</small><strong>${scoreText(formal.score)}</strong><p>完成于 ${safe(String(formal.completedAt).slice(0, 10))}</p></div>` : renderEmptyList("还没有可展示的正式测评记录。")}</article><a class="today-card today-summary today-link-card" href="/student/practices/"><p class="today-eyebrow">需要自己选择时</p><h2>进入练习中心　→</h2><p>查看学校开放的真实练习和历史记录。</p></a></aside></section><section class="today-lists">${waitingMarkup}${secondaryMarkup}${legacyMarkup}</section>`;
+    app.innerHTML = `<header class="today-header"><div class="today-header-copy"><p class="today-kicker">学生学习入口</p><h1>今天的学习</h1><p>先完成一个最值得做的动作，再回到课程路径继续学习。</p><nav class="today-breadcrumb" aria-label="面包屑"><a href="/student/courses">课程中心</a><span>/</span><span>今日学习</span></nav></div><time class="today-date">${dateText()}</time></header><section class="today-grid"><article class="today-card today-primary" data-action-kind="${safe(primary?.kind || "WAITING")}">${primaryMarkup}</article><aside class="today-side"><article class="today-card today-summary"><p class="today-eyebrow">学习小结</p><h2>最近一次正式测评</h2>${formal ? `<div class="today-score"><small>${safe(formal.level || "已完成测评")}</small><strong>${scoreText(formal.score)}</strong><p>完成于 ${safe(String(formal.completedAt).slice(0, 10))}</p></div>` : renderEmptyList("还没有可展示的正式测评记录。")}</article><a class="today-card today-summary today-link-card" href="/student/practices/"><p class="today-eyebrow">需要自己选择时</p><h2>进入练习中心　→</h2><p>查看学校开放的真实练习和历史记录。</p></a></aside></section><div class="today-course-wrap">${renderCourseSection(data?.courseCatalog)}</div><section class="today-lists">${waitingMarkup}${secondaryMarkup}${legacyMarkup}</section>`;
 
     app
       .querySelector("[data-primary-action]")
@@ -116,7 +149,14 @@
         location.href = "/select-school";
         return;
       }
-      const data = await YuzanApi.getStudentToday();
+      const [todayData, courseData] = await Promise.all([
+        YuzanApi.getStudentToday(),
+        YuzanApi.listStudentCourses({ limit: 4 }).catch(() => ({ courses: [] })),
+      ]);
+      const data = {
+        ...todayData,
+        courseCatalog: Array.isArray(courseData?.courses) ? courseData.courses : [],
+      };
       if (!data || data.version !== "student-today-v1")
         throw new Error("今日学习数据版本不可用");
       window.__studentTodayData = data;
