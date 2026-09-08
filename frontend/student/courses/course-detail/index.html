@@ -225,7 +225,7 @@
         </section>
 
         <!-- 8. Simple oral interaction -->
-        <section class="cp-card cp-section cp-section-oral" id="cpSectionOral">
+        <section class="cp-card cp-section cp-section-oral" id="cpSectionOral" hidden>
           <h2 class="cp-section-title">口语跟读练习</h2>
           <div class="cp-oral-section">
             <div class="cp-oral-demo">
@@ -331,6 +331,7 @@
   <!-- Prerequisite scripts -->
   <script src="/assets/app-core.js"></script>
   <script src="/assets/api-client.js"></script>
+  <script src="/assets/visual-assets.js"></script>
   <script src="/shared/student-nav.js"></script>
 
   <!-- Course player modules (IIFE, load order matters) -->
@@ -379,11 +380,15 @@
     }
 
     function renderHero(course) {
+      var hero = document.getElementById('cpHero');
       var titleEl = document.getElementById('cpHeroTitle');
       var chapterEl = document.getElementById('cpHeroChapter');
       var bcCourse = document.getElementById('cpBreadcrumbCourse');
       var bcChapter = document.getElementById('cpBreadcrumbChapter');
       if (titleEl) titleEl.textContent = course.title || '';
+      if (hero && window.YuzanVisualAssets) {
+        hero.style.setProperty('--cp-course-cover', 'url("' + window.YuzanVisualAssets.courseCover(course) + '")');
+      }
       if (chapterEl) chapterEl.textContent = '';
       if (bcCourse) bcCourse.textContent = course.title || '';
       if (bcChapter) bcChapter.textContent = '';
@@ -463,6 +468,33 @@
       var hasTeacherSummary = !!(course && course.teacherSummary);
       var hasAiSummary = !!(course && course.aiSummary);
       section.hidden = !hasTeacherSummary && !hasAiSummary;
+    }
+
+    function renderOralSection(activity) {
+      var section = document.getElementById('cpSectionOral');
+      var audio = document.getElementById('cpOralDemo');
+      var text = document.getElementById('cpOralText');
+      if (!section || !audio || !text) return;
+      var content = activity && activity.content && typeof activity.content === 'object' ? activity.content : {};
+      var resources = (activity && activity.resources || []).map(function (link) { return link.resource || link; });
+      var audioResource = resources.find(function (resource) { return resource && (resource.kind === 'AUDIO' || String(resource.mediaType || '').startsWith('audio/')); });
+      var audioUrl = content.demoAudioUrl || content.supportAudioUrl || activity?.demoAudioUrl || '';
+      var demoText = content.demoText || content.targetText || activity?.demoText || '';
+      var hasRealDemo = Boolean(audioUrl || audioResource || demoText);
+      section.hidden = !hasRealDemo;
+      if (!hasRealDemo) return;
+      text.hidden = !demoText;
+      if (demoText) text.textContent = demoText;
+      audio.hidden = !audioUrl && !audioResource;
+      if (audioUrl) audio.src = audioUrl;
+      if (audioResource) {
+        window.CourseApiAdapter.getResourcePlaybackUrl(audioResource.id).then(function (result) {
+          audio.src = result.url;
+          audio.hidden = false;
+        }).catch(function () {
+          audio.hidden = true;
+        });
+      }
     }
 
     function renderPracticeEntry(activity) {
@@ -576,7 +608,7 @@
 
         var cover = document.createElement('div');
         cover.className = 'cp-rec-cover';
-        var coverUrl = rec.coverUrl || '/assets/course-bg/golden-peak.png';
+        var coverUrl = window.YuzanVisualAssets?.courseCover(rec) || rec.coverUrl || '/assets/generated-covers/course-spring-reading.png';
         cover.style.backgroundImage = 'url(' + coverUrl + ')';
 
         var info = document.createElement('div');
@@ -920,6 +952,7 @@
 
         if (state.currentActivity) {
           renderObjectives(state.currentActivity);
+          renderOralSection(state.currentActivity);
         }
 
         // Initialize sub-controllers
@@ -945,6 +978,7 @@
 
         if (changedKeys.indexOf('currentActivity') !== -1 && state.currentActivity) {
           renderObjectives(state.currentActivity);
+          renderOralSection(state.currentActivity);
           loadVideoForActivity(state.currentActivity);
           loadMaterialsForActivity(state.currentActivity);
           renderPracticeEntry(state.currentActivity);

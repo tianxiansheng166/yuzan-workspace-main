@@ -21,7 +21,6 @@
 .cc-page {
   min-height: 100vh;
   background: var(--cc-bg);
-  padding-top: var(--student-header, 90px);
 }
 
 /* ── Hero ── */

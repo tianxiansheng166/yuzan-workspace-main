@@ -243,8 +243,12 @@ window.CoursePlayerState = (function () {
     url.searchParams.set('activityId', activityId);
     window.history.replaceState(null, '', url.toString());
 
+    _notify(['currentActivityId', 'currentActivity']);
     _loadNotesForCurrentActivity().then(function () {
-      _notify(['currentActivityId', 'currentActivity', 'notes']);
+      _notify(['notes']);
+    }).catch(function () {
+      state.notes = [];
+      _notify(['notes']);
     });
   }
 

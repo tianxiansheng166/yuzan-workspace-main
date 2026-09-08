@@ -183,7 +183,7 @@
 
   function cardMarkup(c) {
     const progress = Number(c.progressPercent) || 0;
-    const coverUrl = c.coverAsset || fallbackCover(c.assignmentId);
+    const coverUrl = window.YuzanVisualAssets?.courseCover(c) || c.coverAsset || fallbackCover(c.assignmentId);
     const isNew = isNewCourse(c);
     const dashoffset = 100 - progress;
     const teacherDisplay = c.teacherName || '';

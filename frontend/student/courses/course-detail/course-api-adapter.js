@@ -336,10 +336,13 @@
         return list.map(function (r) {
           return {
             assignmentId: r.assignmentId || r.id || '',
-            title: r.title || '',
-            coverUrl: r.coverUrl || r.cover || '',
+            title: r.title || r.courseVersion?.title || '',
+            coverUrl: r.coverUrl || r.cover || r.courseVersion?.coverAsset || '',
             teacher: r.teacher || '',
-            duration: r.duration || 0
+            duration: r.duration || r.courseVersion?.estimatedMinutes || 0,
+            capabilityTheme: r.capabilityTheme || r.courseVersion?.capabilityTheme || '',
+            gradeBand: r.gradeBand || r.courseVersion?.gradeBand || '',
+            difficulty: r.difficulty || r.courseVersion?.difficulty || ''
           };
         });
       } catch (err) {

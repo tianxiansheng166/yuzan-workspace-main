@@ -158,7 +158,6 @@ body.tibetan-language .cp-section-title { line-height: 2; }
 .cp-page {
   min-height: calc(100vh - var(--cp-nav-height));
   background: #F6F9F5;
-  padding-top: var(--cp-nav-height);
 }
 
 /* ============================================================
@@ -166,13 +165,13 @@ body.tibetan-language .cp-section-title { line-height: 2; }
    ============================================================ */
 .cp-hero {
   position: relative;
-  min-height: 240px;
+  min-height: 210px;
   display: flex;
   align-items: flex-end;
-  padding: 48px 32px 32px;
+  padding: 38px 32px 28px;
   background:
     linear-gradient(135deg, rgba(157, 41, 51, 0.95) 0%, rgba(184, 69, 48, 0.9) 40%, rgba(91, 140, 90, 0.4) 100%),
-    url('/assets/course-bg/golden-river.png');
+    var(--cp-course-cover, url('/assets/generated-covers/course-spring-reading.png'));
   background-size: cover;
   background-position: center;
   background-blend-mode: overlay;
@@ -311,6 +310,7 @@ body.tibetan-language .cp-section-title { line-height: 2; }
   transition: transform var(--cp-transition), background var(--cp-transition);
 }
 .cp-play-big:hover { transform: scale(1.1); background: rgba(255,255,255,0.35); }
+.cp-play-big.hidden { display: none; }
 
 /* Timeline knowledge markers (master template .timeline-marker) */
 .cp-timeline-markers {
@@ -610,9 +610,9 @@ body.tibetan-language .cp-section-title { line-height: 2; }
 
 .cp-dir-item.cp-dir-locked {
   color: var(--cp-gray-medium);
-  cursor: default;
+  cursor: pointer;
 }
-.cp-dir-item.cp-dir-locked:hover { background: transparent; }
+.cp-dir-item.cp-dir-locked:hover { background: #f0ede8; }
 .cp-dir-item.cp-dir-locked .cp-dir-num {
   background: var(--cp-gray-light);
   color: var(--cp-gray-medium);

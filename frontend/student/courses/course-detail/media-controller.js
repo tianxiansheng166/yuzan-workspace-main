@@ -13,6 +13,7 @@
   var VALID_SPEEDS = [0.5, 0.75, 1.0, 1.25, 1.5, 2.0];
 
   var video = null;
+  var overlay = null;
   var playBtn = null;
   var controls = null;
   var playPauseBtn = null;
@@ -68,9 +69,11 @@
     if (video.paused) {
       if (playPauseBtn) playPauseBtn.innerHTML = SVG.play;
       if (playBtn) playBtn.classList.remove('hidden');
+      if (overlay) overlay.removeAttribute('hidden');
     } else {
       if (playPauseBtn) playPauseBtn.innerHTML = SVG.pause;
       if (playBtn) playBtn.classList.add('hidden');
+      if (overlay) overlay.setAttribute('hidden', 'hidden');
     }
   }
 
@@ -193,6 +196,7 @@
       if (!video) return;
 
       playBtn = document.getElementById('cpPlayBig');
+      overlay = document.getElementById('cpVideoOverlay');
       controls = document.getElementById('cpVideoControls');
       playPauseBtn = document.getElementById('cpPlayBtn');
       progressBar = document.getElementById('cpProgressInput');
@@ -341,9 +345,11 @@
       if (!container) return;
 
       if (document.fullscreenElement) {
-        document.exitFullscreen();
-      } else {
-        container.requestFullscreen();
+        if (document.exitFullscreen) document.exitFullscreen();
+      } else if (container.requestFullscreen) {
+        container.requestFullscreen().catch(function () {});
+      } else if (video.webkitEnterFullscreen) {
+        video.webkitEnterFullscreen();
       }
     },
 
@@ -394,6 +400,7 @@
       clearTimeout(controlsTimeout);
 
       video = null;
+      overlay = null;
       playBtn = null;
       controls = null;
       playPauseBtn = null;
