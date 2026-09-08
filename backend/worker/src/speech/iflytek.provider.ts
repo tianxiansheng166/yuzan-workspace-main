@@ -113,7 +113,12 @@ export function parseIflytekXml(
   const node = firstNode(xml);
   const overall = boundedOrNull(numberField(node, "total_score"));
   const phone = boundedOrNull(numberField(node, "phone_score"));
-  const accuracy = boundedOrNull(numberField(node, "accuracy_score")) ?? phone;
+  // For read_sentence responses, phone_score is the pronunciation-accuracy
+  // metric. Some otherwise valid ISE payloads carry accuracy_score=0 while
+  // supplying a non-zero phone_score and strong overall/fluency scores.
+  // Prefer the dedicated phoneme score rather than presenting that sentinel
+  // zero as the learner's pronunciation accuracy.
+  const accuracy = phone ?? boundedOrNull(numberField(node, "accuracy_score"));
   const completeness = boundedOrNull(numberField(node, "integrity_score"));
   const fluency = boundedOrNull(numberField(node, "fluency_score"));
   const tone = boundedOrNull(numberField(node, "tone_score"));
@@ -141,7 +146,7 @@ export function parseIflytekXml(
     providerRawScale: {
       scale: "0-100",
       sourceFields: {
-        accuracy: "accuracy_score or phone_score",
+        accuracy: "phone_score or accuracy_score",
         completeness: "integrity_score",
         fluency: "fluency_score",
         tone: "tone_score",

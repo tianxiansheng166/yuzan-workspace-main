@@ -584,6 +584,7 @@ export class AssessmentService {
         sortOrder: true,
         maxScore: true,
         scoredScore: true,
+        autoResult: true,
         questionVersion: { select: { item: { select: { domain: true, questionType: true } } } },
       },
       orderBy: { sortOrder: "asc" },
@@ -592,10 +593,24 @@ export class AssessmentService {
       throw new AssessmentConflictException("专项巩固练习题目配置无效");
     }
 
+    const referencePoints = (item: { maxScore: number | null; scoredScore: number | null; autoResult: unknown }) => {
+      if (item.scoredScore != null) return item.scoredScore;
+      const candidate = item.autoResult && typeof item.autoResult === "object" && !Array.isArray(item.autoResult)
+        ? (item.autoResult as Record<string, unknown>).candidatePoints
+        : null;
+      return typeof candidate === "number" && Number.isFinite(candidate) && candidate >= 0 && candidate <= (item.maxScore ?? -1)
+        ? candidate
+        : null;
+    };
     const completedItemCount = items.filter((item) => item.scoredScore != null).length;
     const pendingItemCount = items.length - completedItemCount;
     const earnedPoints = items.reduce((total, item) => total + (item.scoredScore ?? 0), 0);
     const maxPoints = items.reduce((total, item) => total + (item.maxScore ?? 0), 0);
+    const referenceItems = items.map((item) => ({ item, points: referencePoints(item) }));
+    const referenceScoredItems = referenceItems.filter((entry) => entry.points != null);
+    const referenceEarnedPoints = referenceScoredItems.reduce((total, entry) => total + (entry.points ?? 0), 0);
+    const referenceMaxPoints = referenceScoredItems.reduce((total, entry) => total + (entry.item.maxScore ?? 0), 0);
+    const humanReviewItemCount = items.length - referenceScoredItems.length;
     const familyMap = new Map<string, { family: string; domain: string; earnedPoints: number; maxPoints: number; itemCount: number }>();
     for (const item of items) {
       const family = item.questionVersion?.item.questionType;
@@ -619,6 +634,12 @@ export class AssessmentService {
       percentage: maxPoints > 0 ? Math.round(((earnedPoints / maxPoints) * 100 + Number.EPSILON) * 100) / 100 : 0,
       completedItemCount,
       pendingItemCount,
+      referenceReady: referenceScoredItems.length > 0,
+      referenceItemCount: referenceScoredItems.length,
+      humanReviewItemCount,
+      referenceEarnedPoints,
+      referenceMaxPoints,
+      referencePercentage: referenceMaxPoints > 0 ? Math.round(((referenceEarnedPoints / referenceMaxPoints) * 100 + Number.EPSILON) * 100) / 100 : null,
       families: [...familyMap.values()].map((family) => ({
         ...family,
         percentage: family.maxPoints > 0 ? Math.round(((family.earnedPoints / family.maxPoints) * 100 + Number.EPSILON) * 100) / 100 : 0,
@@ -628,6 +649,7 @@ export class AssessmentService {
         itemType: item.itemType,
         sortOrder: item.sortOrder,
         earnedPoints: item.scoredScore,
+        referencePoints: referencePoints(item),
         maxPoints: item.maxScore,
         completed: item.scoredScore != null,
       })),

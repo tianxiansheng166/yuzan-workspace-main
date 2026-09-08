@@ -74,6 +74,13 @@ describe("production speech provider contracts", () => {
     expect(() => parseIflytekXml("not xml")).toThrow();
   });
 
+  it("uses phone_score for pronunciation accuracy when ISE returns a zero accuracy_score", () => {
+    const result = parseIflytekXml(
+      '<xml><read_sentence accuracy_score="0" phone_score="77.5" fluency_score="82" total_score="80" /></xml>',
+    );
+    expect(result.scores.accuracy).toBe(77.5);
+  });
+
   it("runs the iFlytek WebSocket flow using a fixture server and never marks it finalizable", async () => {
     const socket = new FakeSocket();
     const xml = '<xml><read_sentence phone_score="80" fluency_score="82" total_score="81" /></xml>';
