@@ -16,9 +16,20 @@ import { WRITTEN_ANSWER_REPOSITORY } from "./ports/written-answer-repository.por
 import type { AssessmentReportRepositoryPort, CreateAssessmentReportData } from "./ports/assessment-report-repository.port.js";
 import { ASSESSMENT_REPORT_REPOSITORY } from "./ports/assessment-report-repository.port.js";
 import { QuestionBankDeterministicScoringService } from "./question-bank-deterministic-scoring.service.js";
-import { buildQuestionBankDiagnosis, isQuestionBankDiagnosis, QuestionBankDiagnosisError, QUESTION_BANK_FAMILY_ORDER, type QuestionBankDiagnosis, type QuestionBankRetryCandidate } from "./question-bank-diagnosis.js";
+import { buildQuestionBankDiagnosis, isQuestionBankDiagnosis, QuestionBankDiagnosisError, questionBankFamilyLearningDetail, QUESTION_BANK_FAMILY_ORDER, type QuestionBankDiagnosis, type QuestionBankRetryCandidate } from "./question-bank-diagnosis.js";
 import { assertSafeQuestionDeliverySpec } from "./question-bank-delivery.js";
 import { toAssessmentSessionResponse, toAssessmentItemResponse, toReadingItemResponse, toWrittenItemResponse, toWrittenAnswerResponse, toAssessmentReportResponse } from "./dto/assessment-session.response.js";
+
+const REMEDIATION_PRACTICE_TAGS: Record<string, readonly string[]> = {
+  LISTEN_IMAGE_CHOICE: ["听辨训练"],
+  DICTATION: ["听辨训练", "听后复述", "书面表达"],
+  READ_ALOUD: ["独立朗读", "跟读模仿", "发音基础"],
+  PICTURE_SPEAKING: ["口语交际", "听后复述"],
+  WORD_RECOGNITION: ["独立朗读", "发音基础"],
+  SENTENCE_COMPREHENSION: ["阅读理解"],
+  PICTURE_WORD: ["书面表达"],
+  SENTENCE_COMPLETION: ["书面表达"],
+};
 
 @Injectable()
 export class AssessmentService {
@@ -611,19 +622,91 @@ export class AssessmentService {
     const referenceEarnedPoints = referenceScoredItems.reduce((total, entry) => total + (entry.points ?? 0), 0);
     const referenceMaxPoints = referenceScoredItems.reduce((total, entry) => total + (entry.item.maxScore ?? 0), 0);
     const humanReviewItemCount = items.length - referenceScoredItems.length;
-    const familyMap = new Map<string, { family: string; domain: string; earnedPoints: number; maxPoints: number; itemCount: number }>();
+    const familyMap = new Map<string, {
+      family: string;
+      displayName: string;
+      guidance: string | null;
+      domain: string;
+      earnedPoints: number;
+      maxPoints: number;
+      itemCount: number;
+    }>();
     for (const item of items) {
       const family = item.questionVersion?.item.questionType;
       const domain = item.questionVersion?.item.domain;
       if (!family || !domain) {
         throw new AssessmentConflictException("专项巩固练习缺少题库元数据");
       }
-      const current = familyMap.get(family) ?? { family, domain, earnedPoints: 0, maxPoints: 0, itemCount: 0 };
+      const detail = questionBankFamilyLearningDetail(family);
+      const current = familyMap.get(family) ?? {
+        family,
+        displayName: detail?.displayName ?? family,
+        guidance: detail?.guidance ?? null,
+        domain,
+        earnedPoints: 0,
+        maxPoints: 0,
+        itemCount: 0,
+      };
       current.earnedPoints += item.scoredScore ?? 0;
       current.maxPoints += item.maxScore ?? 0;
       current.itemCount += 1;
       familyMap.set(family, current);
     }
+
+    const families = [...familyMap.values()].map((family) => ({
+      ...family,
+      percentage: family.maxPoints > 0
+        ? Math.round(((family.earnedPoints / family.maxPoints) * 100 + Number.EPSILON) * 100) / 100
+        : 0,
+    }));
+    const priorityFamilies = families
+      .filter((family) => family.earnedPoints < family.maxPoints)
+      .sort((left, right) =>
+        left.percentage - right.percentage ||
+        (right.maxPoints - right.earnedPoints) - (left.maxPoints - left.earnedPoints) ||
+        left.family.localeCompare(right.family),
+      );
+    const deliveries = await this.prisma.practiceDelivery.findMany({
+      where: {
+        schoolId,
+        status: "OPEN",
+        OR: [{ studentId: auth.principal.userId }, { studentId: null, classId: session.classId }],
+        AND: [{ OR: [{ deadline: null }, { deadline: { gte: new Date() } }] }],
+      },
+      select: {
+        practiceVersion: {
+          select: {
+            definition: {
+              select: { id: true, title: true, summary: true, difficulty: true, estimatedMinutes: true, abilityCategories: true },
+            },
+          },
+        },
+      },
+      orderBy: { createdAt: "asc" },
+    });
+    const usedPracticeIds = new Set<string>();
+    const recommendations = priorityFamilies.flatMap((family) => {
+      const tags = REMEDIATION_PRACTICE_TAGS[family.family] ?? [];
+      const delivery = deliveries.find(({ practiceVersion }) => {
+        const definition = practiceVersion.definition;
+        return !usedPracticeIds.has(definition.id) &&
+          definition.abilityCategories.some((category) => tags.includes(category));
+      });
+      if (!delivery) return [];
+      const definition = delivery.practiceVersion.definition;
+      usedPracticeIds.add(definition.id);
+      return [{
+        practiceDefinitionId: definition.id,
+        title: definition.title,
+        summary: definition.summary,
+        difficulty: definition.difficulty,
+        estimatedMinutes: definition.estimatedMinutes,
+        abilityCategories: definition.abilityCategories,
+        targetFamily: family.displayName,
+        guidance: family.guidance,
+        reason: `本次“${family.displayName}”得分 ${family.percentage}% ，建议优先练习。`,
+      }];
+    }).slice(0, 3);
 
     return {
       sourceSessionId: session.retestOfSessionId,
@@ -640,10 +723,8 @@ export class AssessmentService {
       referenceEarnedPoints,
       referenceMaxPoints,
       referencePercentage: referenceMaxPoints > 0 ? Math.round(((referenceEarnedPoints / referenceMaxPoints) * 100 + Number.EPSILON) * 100) / 100 : null,
-      families: [...familyMap.values()].map((family) => ({
-        ...family,
-        percentage: family.maxPoints > 0 ? Math.round(((family.earnedPoints / family.maxPoints) * 100 + Number.EPSILON) * 100) / 100 : 0,
-      })),
+      families,
+      recommendations,
       items: items.map((item) => ({
         itemId: item.id,
         itemType: item.itemType,
@@ -1545,7 +1626,10 @@ export class AssessmentService {
       select: {
         id: true,
         type: true,
+        purpose: true,
+        practiceDefinitionId: true,
         completedAt: true,
+        items: { select: { maxScore: true, scoredScore: true } },
         report: {
           select: {
             overallScore: true,
@@ -1560,11 +1644,24 @@ export class AssessmentService {
       orderBy: { completedAt: "desc" },
     });
 
+    const remediationDefinitionIds = [...new Set(
+      sessions
+        .filter((session) => session.purpose === "REMEDIATION" && session.practiceDefinitionId)
+        .map((session) => session.practiceDefinitionId as string),
+    )];
+    const remediationDefinitions = remediationDefinitionIds.length
+      ? await this.prisma.practiceDefinition.findMany({
+          where: { id: { in: remediationDefinitionIds } },
+          select: { id: true, title: true },
+        })
+      : [];
+    const remediationTitleById = new Map(remediationDefinitions.map((definition) => [definition.id, definition.title]));
+
     // Build history items with metric extraction
     const historyItems = sessions.map((s) => {
       const reportData = s.report;
       let metrics: Record<string, number> | null = null;
-      if (reportData) {
+      if (s.purpose !== "REMEDIATION" && reportData) {
         metrics = {};
         if (typeof reportData.overallScore === "number") metrics.overall = reportData.overallScore;
         if (typeof reportData.readingScore === "number") metrics.reading = reportData.readingScore;
@@ -1574,11 +1671,29 @@ export class AssessmentService {
         }
         if (!Object.keys(metrics).length) metrics = null;
       }
+      const completeRemediationScores = s.purpose === "REMEDIATION" && s.items.length > 0 && s.items.every((item) =>
+        typeof item.maxScore === "number" && Number.isFinite(item.maxScore) &&
+        typeof item.scoredScore === "number" && Number.isFinite(item.scoredScore),
+      );
+      const remediation = completeRemediationScores
+        ? (() => {
+            const earnedPoints = s.items.reduce((total, item) => total + (item.scoredScore ?? 0), 0);
+            const maxPoints = s.items.reduce((total, item) => total + (item.maxScore ?? 0), 0);
+            return {
+              title: s.practiceDefinitionId ? remediationTitleById.get(s.practiceDefinitionId) ?? "专项巩固" : "专项巩固",
+              earnedPoints,
+              maxPoints,
+              percentage: maxPoints > 0 ? Math.round(((earnedPoints / maxPoints) * 100 + Number.EPSILON) * 100) / 100 : null,
+            };
+          })()
+        : null;
       return {
         sessionId: s.id,
         type: s.type,
+        purpose: s.purpose,
         completedAt: s.completedAt?.toISOString() ?? null,
         metrics,
+        remediation,
         recommendations: reportData?.recommendations ?? null,
       };
     });

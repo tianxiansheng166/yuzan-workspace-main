@@ -247,6 +247,20 @@ describe("Diagnosis remediation attempts", () => {
     };
     const prisma: any = {
       enrollment: { findFirst: vi.fn(async () => ({ id: ENROLLMENT_ID })) },
+      practiceDelivery: {
+        findMany: vi.fn(async () => [{
+          practiceVersion: {
+            definition: {
+              id: "practice-listening",
+              title: "听辨专项训练",
+              summary: "真实开放练习",
+              difficulty: "基础",
+              estimatedMinutes: 10,
+              abilityCategories: ["听辨训练"],
+            },
+          },
+        }]),
+      },
       assessmentItem: {
         findMany: vi.fn(async () => [{
           id: "remediation-item",
@@ -264,6 +278,7 @@ describe("Diagnosis remediation attempts", () => {
     const result = await service.getRemediationResult(studentAuth(), SCHOOL_ID, session.id);
 
     expect(result).toMatchObject({ sourceSessionId: SOURCE_ID, earnedPoints: 2, maxPoints: 3, percentage: 66.67, pendingItemCount: 0 });
+    expect(result.recommendations).toMatchObject([{ practiceDefinitionId: "practice-listening", targetFamily: "听音选图" }]);
     const serialized = JSON.stringify(result);
     for (const forbidden of ["correctAnswer", "acceptedAnswers", "providerAudit", "SECRET", "scoringSpec", "prompt", "autoResult"]) {
       expect(serialized).not.toContain(forbidden);

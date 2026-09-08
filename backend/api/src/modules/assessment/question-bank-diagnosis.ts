@@ -86,6 +86,18 @@ export function questionBankFamilyDisplayName(value: unknown): string | null {
     : null;
 }
 
+/** Stable student-facing wording for an already-known Question Bank family. */
+export function questionBankFamilyLearningDetail(value: unknown): {
+  displayName: string;
+  guidance: string;
+} | null {
+  if (typeof value !== "string") return null;
+  const definition = FAMILY_DEFINITIONS[value as QuestionBankFamily];
+  return definition
+    ? { displayName: definition.displayName, guidance: definition.guidance }
+    : null;
+}
+
 export type QuestionBankDiagnosisItem = {
   assessmentItemId: string;
   questionVersionId: string;
