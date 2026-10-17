@@ -10,6 +10,40 @@
   const current = () => state.items[state.currentIndex];
   const answerValue = item => item?.studentAnswer?.content?.value ?? '';
 
+  // Audio drafts are device-local evidence only. Server items remain the sole
+  // authority for saved answers. Keys include the server-authorized enrollment.
+  async function draftStore(mode, value) {
+    const key = `${state.attempt.enrollmentId}:${attemptId}`;
+    const db = await new Promise((resolve, reject) => {
+      const request = indexedDB.open('yuzan-runner-audio-v1', 1);
+      request.onupgradeneeded = () => request.result.createObjectStore('drafts');
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    try {
+      return await new Promise((resolve, reject) => {
+        const tx = db.transaction('drafts', mode === 'get' ? 'readonly' : 'readwrite');
+        const store = tx.objectStore('drafts');
+        const request = mode === 'get' ? store.get(key) : mode === 'delete' ? store.delete(key) : store.put(value, key);
+        tx.oncomplete = () => resolve(request.result);
+        tx.onerror = () => reject(tx.error);
+      });
+    } finally { db.close(); }
+  }
+  async function restoreDraft() {
+    try {
+      const draft = await draftStore('get');
+      const index = state.items.findIndex(item => item.id === draft?.itemId);
+      if (index < 0 || !draft.blob?.size) return;
+      if (saved(state.items[index])) { await draftStore('delete'); return; }
+      state.currentIndex = index;
+      state.blob = draft.blob;
+      state.blobUrl = URL.createObjectURL(draft.blob);
+      state.elapsed = draft.elapsed;
+      state.recordingIdempotencyKey = draft.idempotencyKey;
+      state.media = { state: 'REVIEW', cached: true };
+    } catch { /* Storage can be unavailable; no server-saved claim is made. */ }
+  }
   function legacy(item) {
     const config = isObject(item.itemConfig) ? item.itemConfig : {};
     const type = item.itemType || '';
@@ -66,7 +100,7 @@
     }
     if (s.type === 'AUDIO') {
       const url = resolveResourceUrl(s.resourceId, s.url || s.audioUrl || s.demoAudioUrl);
-      return `<section class="runner-stimulus audio-stimulus">${title}${instruction}${url ? `<audio controls preload="metadata" src="${safe(url)}">浏览器不支持音频播放。</audio>` : resourceStatus(s.resourceId, '音频')}</section>`;
+      return `<section class="runner-stimulus audio-stimulus">${title}${instruction}${s.promptText ? `<p>${safe(s.promptText)}</p>` : ''}${url ? `<audio controls preload="metadata" src="${safe(url)}">浏览器不支持音频播放。</audio>` : resourceStatus(s.resourceId, '音频')}</section>`;
     }
     return `<p class="runner-error">不支持的刺激类型：${safe(s.type)}</p>`;
   }
@@ -93,6 +127,11 @@
   }
   function resetTransientMedia() {
     if (state.media?.clock) clearInterval(state.media.clock);
+    if (state.media?.countdown) clearInterval(state.media.countdown);
+    if (state.media?.recorder) {
+      state.media.recorder.onstop = null;
+      if (state.media.recorder.state !== 'inactive') state.media.recorder.stop();
+    }
     state.media?.stream?.getTracks?.().forEach(track => track.stop());
     if (state.blobUrl) URL.revokeObjectURL(state.blobUrl);
     state.media = null;
@@ -105,9 +144,11 @@
     const previousRecordingFailed = item.recordingId && item.recordingStatus === 'FAILED';
     if (item.recordingId && !previousRecordingFailed) return '<div class="runner-speech saved"><b>录音已保存</b><p>已成功绑定到本题。</p></div>';
     const phase = state.media?.state || 'IDLE';
+    if (phase === 'REQUESTING') return '<div class="runner-speech"><b>请允许使用麦克风…</b></div>';
     if (phase === 'COUNTDOWN') return `<div class="runner-speech"><b>准备录音</b><strong data-countdown>3</strong></div>`;
     if (phase === 'RECORDING') return `<div class="runner-speech"><b>正在录音</b><strong data-elapsed>${state.elapsed}s</strong><button class="btn" data-stop-recording>停止录音</button></div>`;
-    if (phase === 'REVIEW') return `<div class="runner-speech"><b>请试听录音</b><audio controls src="${safe(state.blobUrl)}"></audio><button class="btn" data-rerecord>重录</button><button class="btn primary" data-upload-recording>确认并上传</button></div>`;
+    if (phase === 'REVIEW') return `<div class="runner-speech"><b>请试听录音</b><p>${state.media?.cached ? '本机草稿已保留，可刷新恢复；服务器尚未确认保存。' : '尚未上传；离开或刷新可能丢失音频，请先完成上传。'}</p><audio controls src="${safe(state.blobUrl)}"></audio><button class="btn" data-rerecord>重录</button><button class="btn primary" data-upload-recording>确认并上传</button></div>`;
+    if (phase === 'STOPPING') return '<div class="runner-speech"><b>正在生成试听音频…</b></div>';
     if (phase === 'UPLOADING') return '<div class="runner-speech"><b>正在上传录音…</b></div>';
     return `<div class="runner-speech">${previousRecordingFailed ? '<b>之前录音处理失败</b><p>历史录音不会被覆盖，请重新录制并上传新的证据。</p>' : '<p>首次录音时将请求麦克风权限。</p>'}<button class="btn primary" data-start-recording>${previousRecordingFailed ? '重新录音' : '开始录音'}</button></div>`;
   }
@@ -116,7 +157,11 @@
     if (!item) { app.innerHTML = '<main class="runner-page"><p class="runner-error">此练习没有可执行题目。</p></main>'; return; }
     const spec = normalize(item); const count = state.items.length;
     const feedbackPanel = state.feedbackOpen ? `<div class="runner-feedback-modal" role="dialog" aria-label="反馈问题"><div class="runner-feedback-card"><button class="runner-feedback-close" data-feedback-close aria-label="关闭">×</button><h2>反馈问题</h2><p>请描述遇到的问题，不要填写手机号等敏感信息。不会提交你的答案、录音或评分细节。</p><label>问题类型<select data-feedback-category><option value="CONTENT">题目内容</option><option value="MEDIA">图片/音频</option><option value="RECORDING">录音</option><option value="SCORING">评分结果</option><option value="USABILITY">使用体验</option><option value="TECHNICAL">系统问题</option><option value="OTHER">其他</option></select></label><textarea data-feedback-message minlength="5" maxlength="1000" placeholder="至少输入 5 个字">${safe(state.feedbackMessage)}</textarea><button class="btn primary" data-feedback-submit>提交反馈</button><div class="runner-feedback-history"><b>我的反馈</b>${state.feedbackHistory.length ? state.feedbackHistory.map(entry => `<p>${safe(entry.category)} · ${safe({OPEN:'待处理',ACKNOWLEDGED:'已知悉',RESOLVED:'已解决'}[entry.status] || entry.status)}${entry.resolutionNote ? `：${safe(entry.resolutionNote)}` : ''}</p>`).join('') : '<p>暂无反馈。</p>'}</div></div></div>` : '';
-    app.innerHTML = `<main class="runner-page"><header class="runner-header"><a href="/student/practices/">返回练习中心</a><div><b>统一答题 Runner</b><span>${state.attempt?.status || 'IN_PROGRESS'}</span></div><button class="btn" data-feedback-open>反馈问题</button></header><section class="runner-progress"><span>第 ${state.currentIndex + 1} / ${count} 题</span><div><i style="width:${((state.currentIndex + 1) / count) * 100}%"></i></div></section><nav class="runner-map" aria-label="题目导航">${state.items.map((entry, index) => `<button data-go="${index}" class="${index === state.currentIndex ? 'current' : ''} ${saved(entry) ? 'answered' : ''}">${index + 1}</button>`).join('')}</nav><article class="question-shell"><p class="runner-section">${safe(item.sectionTitle || '练习题')}</p>${renderStimulus(spec.stimulus)}<section class="runner-response">${renderResponse(item, spec)}</section></article><footer class="runner-footer"><button class="btn" data-prev ${state.currentIndex ? '' : 'disabled'}>上一题</button><span data-save-state>${safe(statusText())}</span>${state.currentIndex === count - 1 ? '<button class="btn primary" data-submit>检查并提交</button>' : '<button class="btn primary" data-next>下一题</button>'}</footer></main>${feedbackPanel}`;
+    const courseContext = Api.getCoursePracticeContext?.(attemptId);
+    const returnTo = courseContext?.returnTo;
+    const courseReturn = typeof returnTo === 'string' && /^\/student\/courses\/course-detail\/(?:\?|$)/.test(returnTo) ? returnTo : null;
+    app.innerHTML = `<main class="runner-page"><header class="runner-header"><a href="${safe(courseReturn || '/student/practices/')}">${courseReturn ? '返回课程' : '返回练习中心'}</a><div><b>统一答题 Runner</b><span>${state.attempt?.status || 'IN_PROGRESS'}</span></div><button class="btn" data-feedback-open>反馈问题</button></header><section class="runner-progress"><span>第 ${state.currentIndex + 1} / ${count} 题</span><div><i style="width:${((state.currentIndex + 1) / count) * 100}%"></i></div></section><nav class="runner-map" aria-label="题目导航">${state.items.map((entry, index) => `<button data-go="${index}" class="${index === state.currentIndex ? 'current' : ''} ${saved(entry) ? 'answered' : ''}">${index + 1}</button>`).join('')}</nav><article class="question-shell"><p class="runner-section">${safe(item.sectionTitle || '练习题')}</p>${renderStimulus(spec.stimulus)}<section class="runner-response">${renderResponse(item, spec)}</section></article><footer class="runner-footer"><button class="btn" data-prev ${state.currentIndex ? '' : 'disabled'}>上一题</button><span data-save-state>${safe(statusText())}</span>${state.currentIndex === count - 1 ? '<button class="btn primary" data-submit>检查并提交</button>' : '<button class="btn primary" data-next>下一题</button>'}</footer></main>${feedbackPanel}`;
+    if (state.media && state.media.state !== 'REVIEW') document.querySelectorAll('[data-go], [data-prev], [data-next], [data-submit]').forEach(button => { button.disabled = true; });
     bind();
   }
   function save(item, value) {
@@ -127,12 +172,105 @@
     return pending;
   }
   function flush() { const item = current(); const textarea = document.querySelector('[data-text]'); const timer = state.timers.get(item?.id); if (timer) { clearTimeout(timer); state.timers.delete(item.id); } if (textarea && String(answerValue(item)) !== textarea.value) return save(item, textarea.value); return state.saves.get(item?.id) || Promise.resolve(); }
-  async function beginSpeech() { try { const item = current(); if (!state.recordingIdempotencyKey) state.recordingIdempotencyKey = `runner-${attemptId}-${item.id}-${crypto.randomUUID()}`; const getUserMedia = window.__yuzanRunnerGetUserMedia || navigator.mediaDevices?.getUserMedia?.bind(navigator.mediaDevices); if (!getUserMedia) throw new Error('浏览器不支持麦克风'); const stream = await getUserMedia({ audio: true }); const recorder = new MediaRecorder(stream, MediaRecorder.isTypeSupported('audio/webm') ? { mimeType: 'audio/webm' } : undefined); const chunks = []; recorder.ondataavailable = e => e.data.size && chunks.push(e.data); recorder.onstop = () => { state.blob = new Blob(chunks, { type: recorder.mimeType || 'audio/webm' }); state.blobUrl = URL.createObjectURL(state.blob); state.media = { state: 'REVIEW', stream }; render(); }; state.media = { state: 'COUNTDOWN', stream, recorder }; render(); let n = 3; const timer = setInterval(() => { const el = document.querySelector('[data-countdown]'); if (el) el.textContent = String(--n); if (n <= 0) { clearInterval(timer); recorder.start(); state.media.state = 'RECORDING'; state.elapsed = 0; state.media.clock = setInterval(() => { state.elapsed++; const e = document.querySelector('[data-elapsed]'); if (e) e.textContent = `${state.elapsed}s`; }, 1000); render(); } }, 800); } catch (error) { state.error = '麦克风不可用，请允许浏览器访问麦克风后重试。'; state.save = 'ERROR'; render(); } }
-  async function uploadSpeech() { const item = current(); state.media.state = 'UPLOADING'; render(); try { const initialized = await Api.initSimpleRecording({ enrollmentId: state.attempt.enrollmentId, mimeType: state.blob.type || 'audio/webm', idempotencyKey: state.recordingIdempotencyKey }); await Api.uploadBlobToPresignedUrl(initialized.uploadUrl.url, state.blob, { mimeType: state.blob.type || 'audio/webm' }); const stimulus = normalize(item).stimulus || {}; const completion = { durationMs: state.elapsed * 1000, objectKey: initialized.uploadUrl.objectKey, assessmentItemId: item.id }; if (stimulus.type !== 'IMAGE') completion.targetText = stimulus.promptText || ''; await Api.completeSimpleRecording(initialized.id, completion); await Api.attachAssessmentRecording(attemptId, item.id, initialized.id); item.recordingId = initialized.id; item.recordingStatus = 'PROCESSING'; state.media.stream?.getTracks().forEach(track => track.stop()); state.media = null; render(); } catch (error) { state.error = error.message || '录音上传失败'; state.save = 'ERROR'; state.media = { state: 'REVIEW' }; render(); } }
-  async function submit() { await flush(); const incomplete = state.items.filter(item => normalize(item).response?.type !== 'NONE' && !saved(item)); if (incomplete.length) { state.error = `还有 ${incomplete.length} 题未完成`; state.save = 'ERROR'; render(); return; } try { for (const item of state.items) if (normalize(item).response?.type === 'CHOICE' || normalize(item).response?.type === 'TEXT') await Api.finalizeWrittenAnswer(attemptId, item.id); await Api.submitAssessmentSession(attemptId); location.href = `/student/practices/attempts/${encodeURIComponent(attemptId)}/processing/`; } catch (error) { state.error = error.message || '提交失败'; state.save = 'ERROR'; render(); } }
+  async function beginSpeech() {
+    if (state.media) return;
+    const item = current();
+    const media = { state: 'REQUESTING' };
+    state.media = media;
+    state.save = 'IDLE';
+    render();
+    try {
+      const getUserMedia = window.__yuzanRunnerGetUserMedia || navigator.mediaDevices?.getUserMedia?.bind(navigator.mediaDevices);
+      if (!getUserMedia || !window.MediaRecorder) throw new Error('此浏览器不支持录音，请使用支持录音的浏览器。');
+      const stream = await getUserMedia({ audio: true });
+      if (state.media !== media) { stream.getTracks().forEach(track => track.stop()); return; }
+      media.stream = stream;
+      const mimeType = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg;codecs=opus'].find(type => MediaRecorder.isTypeSupported(type));
+      const recorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
+      media.recorder = recorder;
+      state.recordingIdempotencyKey = `runner-${attemptId}-${item.id}-${crypto.randomUUID()}`;
+      const chunks = [];
+      recorder.ondataavailable = event => { if (event.data.size) chunks.push(event.data); };
+      recorder.onerror = () => { resetTransientMedia(); state.error = '录音中断，尚未上传，请重新录制。'; state.save = 'ERROR'; render(); };
+      recorder.onstop = async () => {
+        stream.getTracks().forEach(track => track.stop());
+        if (state.media !== media) return;
+        const actualType = recorder.mimeType || chunks.find(chunk => chunk.type)?.type;
+        if (!actualType || !chunks.some(chunk => chunk.size)) { resetTransientMedia(); state.error = '没有生成有效音频，请重新录制。'; state.save = 'ERROR'; render(); return; }
+        state.blob = new Blob(chunks, { type: actualType });
+        state.blobUrl = URL.createObjectURL(state.blob);
+        try { await draftStore('put', { itemId: item.id, blob: state.blob, elapsed: state.elapsed, idempotencyKey: state.recordingIdempotencyKey }); media.cached = true; } catch { media.cached = false; }
+        if (state.media !== media) return;
+        media.state = 'REVIEW';
+        render();
+      };
+      media.state = 'COUNTDOWN';
+      render();
+      let n = 3;
+      media.countdown = setInterval(() => {
+        const el = document.querySelector('[data-countdown]');
+        if (el) el.textContent = String(--n);
+        if (n <= 0) {
+          clearInterval(media.countdown);
+          try { recorder.start(); } catch { recorder.onerror(); return; }
+          media.state = 'RECORDING';
+          state.elapsed = 0;
+          media.startedAt = performance.now();
+          media.clock = setInterval(() => {
+            state.elapsed = Math.floor((performance.now() - media.startedAt) / 1000);
+            const el = document.querySelector('[data-elapsed]');
+            if (el) el.textContent = `${state.elapsed}s`;
+          }, 200);
+          render();
+        }
+      }, 800);
+    } catch (error) {
+      if (state.media !== media) return;
+      resetTransientMedia();
+      state.error = error.name === 'NotAllowedError' ? '麦克风权限被拒绝。请在浏览器设置中允许麦克风后重试；尚未保存录音。' : error.message || '麦克风不可用，请检查设备后重试。';
+      state.save = 'ERROR';
+      render();
+    }
+  }
+  async function uploadSpeech() {
+    if (state.media?.state !== 'REVIEW' || !state.blob?.size) return;
+    const item = current();
+    const media = state.media;
+    media.state = 'UPLOADING';
+    state.save = 'SAVING';
+    render();
+    try {
+      // Init is idempotent and renews the signed URL on each retry. Once complete,
+      // retry only the binding; never overwrite an already completed object.
+      const initialized = await Api.initSimpleRecording({ enrollmentId: state.attempt.enrollmentId, mimeType: state.blob.type, idempotencyKey: state.recordingIdempotencyKey });
+      if (['INITIALIZED', 'UPLOADING'].includes(initialized.status)) {
+        await Api.uploadBlobToPresignedUrl(initialized.uploadUrl.url, state.blob, { mimeType: state.blob.type });
+      }
+      const stimulus = normalize(item).stimulus || {};
+      const completion = { durationMs: state.elapsed * 1000, objectKey: initialized.uploadUrl.objectKey, assessmentItemId: item.id };
+      if (stimulus.type !== 'IMAGE') completion.targetText = stimulus.promptText || '';
+      await Api.completeSimpleRecording(initialized.id, completion);
+      await Api.attachAssessmentRecording(attemptId, item.id, initialized.id);
+      const items = await Api.getPracticeAttemptItems(attemptId);
+      state.items = Array.isArray(items) ? items : items.items || [];
+      if (current()?.recordingId !== initialized.id) throw new Error('服务器尚未确认录音绑定，请重试');
+      await draftStore('delete').catch(() => {});
+      resetTransientMedia();
+      state.save = 'SAVED';
+      render();
+    } catch (error) {
+      state.error = `上传尚未确认：${error.message || '网络错误'}。${media.cached ? '本机草稿已保留，可刷新后重试。' : '录音仍在本页，可试听并重试；离开或刷新可能丢失音频。'}`;
+      state.save = 'ERROR';
+      media.state = 'REVIEW';
+      render();
+    }
+  }
+  async function submit() { await flush(); const incomplete = state.items.filter(item => normalize(item).response?.type !== 'NONE' && !saved(item)); if (incomplete.length) { state.error = `还有 ${incomplete.length} 题未完成`; state.save = 'ERROR'; render(); return; } try { for (const item of state.items) if (normalize(item).response?.type === 'CHOICE' || normalize(item).response?.type === 'TEXT') await Api.finalizeWrittenAnswer(attemptId, item.id); const result = await Api.submitAssessmentSession(attemptId); location.href = result.courseSync?.navigateTo || `/student/practices/attempts/${encodeURIComponent(attemptId)}/processing/`; } catch (error) { state.error = error.message || '提交失败'; state.save = 'ERROR'; render(); } }
   async function openFeedback() { try { state.feedbackHistory = (await Api.listMyPilotFeedback()).items || []; } catch (error) { state.error = error.message || '反馈记录暂不可用'; } state.feedbackOpen = true; render(); }
   async function submitFeedback() { const message = document.querySelector('[data-feedback-message]')?.value?.trim() || ''; if (message.length < 5) { state.feedbackMessage = message; state.error = '请至少描述 5 个字'; render(); return; } const category = document.querySelector('[data-feedback-category]')?.value || 'OTHER'; try { await Api.createPilotFeedback({ category, message, sessionId: attemptId, assessmentItemId: current()?.id, currentPath: location.pathname }); state.feedbackMessage = ''; state.feedbackHistory = (await Api.listMyPilotFeedback()).items || []; state.save = 'SAVED'; state.feedbackOpen = true; render(); } catch (error) { state.error = error.message || '反馈提交失败'; render(); } }
-  function bind() { document.querySelectorAll('[data-go]').forEach(button => button.onclick = async () => { await flush(); resetTransientMedia(); state.currentIndex = Number(button.dataset.go); render(); }); document.querySelector('[data-prev]')?.addEventListener('click', async () => { await flush(); resetTransientMedia(); state.currentIndex--; render(); }); document.querySelector('[data-next]')?.addEventListener('click', async () => { await flush(); resetTransientMedia(); state.currentIndex++; render(); }); document.querySelectorAll('[data-choice]').forEach(button => button.onclick = () => save(current(), button.dataset.choice)); const textarea = document.querySelector('[data-text]'); const scheduleTextSave = () => { const item = current(); if (!item || state.composing) return; const value = textarea.value; clearTimeout(state.timers.get(item.id)); state.timers.set(item.id, setTimeout(() => { state.timers.delete(item.id); void save(item, value); }, 700)); }; textarea?.addEventListener('compositionstart', () => { state.composing = true; clearTimeout(state.timers.get(current()?.id)); state.save = 'DIRTY'; updateSaveStatus(); }); textarea?.addEventListener('compositionend', () => { state.composing = false; scheduleTextSave(); }); textarea?.addEventListener('input', () => { state.save = 'DIRTY'; updateSaveStatus(); scheduleTextSave(); }); document.querySelector('[data-start-recording]')?.addEventListener('click', beginSpeech); document.querySelector('[data-stop-recording]')?.addEventListener('click', () => { clearInterval(state.media.clock); state.media.recorder.stop(); }); document.querySelector('[data-rerecord]')?.addEventListener('click', () => { resetTransientMedia(); render(); }); document.querySelector('[data-upload-recording]')?.addEventListener('click', uploadSpeech); document.querySelector('[data-submit]')?.addEventListener('click', submit); document.querySelector('[data-feedback-open]')?.addEventListener('click', () => void openFeedback()); document.querySelector('[data-feedback-close]')?.addEventListener('click', () => { state.feedbackOpen = false; render(); }); document.querySelector('[data-feedback-submit]')?.addEventListener('click', () => void submitFeedback()); }
-  async function boot() { if (!attemptId || !Api?.requireAuth || !Api.requireAuth()) return; try { const [attempt, items] = await Promise.all([Api.getPracticeAttempt(attemptId), Api.getPracticeAttemptItems(attemptId)]); state.attempt = attempt; state.items = Array.isArray(items) ? items : items.items || []; if (attempt.status === 'CREATED') { state.attempt = await Api.startAssessmentSession(attemptId); } render(); } catch (error) { app.innerHTML = `<main class="runner-page"><p class="runner-error">加载练习失败：${safe(error.message || '请稍后重试')}</p></main>`; } }
+  function bind() { document.querySelectorAll('[data-go]').forEach(button => button.onclick = async () => { await flush(); resetTransientMedia(); state.currentIndex = Number(button.dataset.go); render(); }); document.querySelector('[data-prev]')?.addEventListener('click', async () => { await flush(); resetTransientMedia(); state.currentIndex--; render(); }); document.querySelector('[data-next]')?.addEventListener('click', async () => { await flush(); resetTransientMedia(); state.currentIndex++; render(); }); document.querySelectorAll('[data-choice]').forEach(button => button.onclick = () => save(current(), button.dataset.choice)); const textarea = document.querySelector('[data-text]'); const scheduleTextSave = () => { const item = current(); if (!item || state.composing) return; const value = textarea.value; clearTimeout(state.timers.get(item.id)); state.timers.set(item.id, setTimeout(() => { state.timers.delete(item.id); void save(item, value); }, 700)); }; textarea?.addEventListener('compositionstart', () => { state.composing = true; clearTimeout(state.timers.get(current()?.id)); state.save = 'DIRTY'; updateSaveStatus(); }); textarea?.addEventListener('compositionend', () => { state.composing = false; scheduleTextSave(); }); textarea?.addEventListener('input', () => { state.save = 'DIRTY'; updateSaveStatus(); scheduleTextSave(); }); document.querySelector('[data-start-recording]')?.addEventListener('click', beginSpeech); document.querySelector('[data-stop-recording]')?.addEventListener('click', () => { if (state.media?.recorder?.state !== 'recording') return; clearInterval(state.media.clock); state.media.state = 'STOPPING'; state.media.recorder.stop(); render(); }); document.querySelector('[data-rerecord]')?.addEventListener('click', async () => { await draftStore('delete').catch(() => {}); resetTransientMedia(); render(); }); document.querySelector('[data-upload-recording]')?.addEventListener('click', uploadSpeech); document.querySelector('[data-submit]')?.addEventListener('click', submit); document.querySelector('[data-feedback-open]')?.addEventListener('click', () => void openFeedback()); document.querySelector('[data-feedback-close]')?.addEventListener('click', () => { state.feedbackOpen = false; render(); }); document.querySelector('[data-feedback-submit]')?.addEventListener('click', () => void submitFeedback()); }
+  async function boot() { if (!attemptId || !Api?.requireAuth || !Api.requireAuth()) return; try { const [attempt, items] = await Promise.all([Api.getPracticeAttempt(attemptId), Api.getPracticeAttemptItems(attemptId)]); state.attempt = attempt; state.items = Array.isArray(items) ? items : items.items || []; if (attempt.status === 'CREATED') { state.attempt = await Api.startAssessmentSession(attemptId); } await restoreDraft(); render(); } catch (error) { app.innerHTML = `<main class="runner-page"><p class="runner-error">加载练习失败：${safe(error.message || '请稍后重试')}</p></main>`; } }
+  addEventListener('pagehide', resetTransientMedia);
+  addEventListener('beforeunload', event => { if (state.media || state.blob) { event.preventDefault(); event.returnValue = ''; } });
   boot();
 })();

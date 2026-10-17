@@ -882,7 +882,7 @@
         const items = appState.apiItems && appState.apiItems.length ? appState.apiItems : (isPracticeAttempt ? await Api.getPracticeAttemptItems(SESSION_ID) : await Api.listAssessmentItems(SESSION_ID));
         appState.apiItems = Array.isArray(items) ? items : (items?.items || []);
         saveState();
-        location.href = firstPendingRoute(appState.apiItems);
+        location.href = isPracticeAttempt ? `${attemptBase}/runner/` : firstPendingRoute(appState.apiItems);
       } catch (err) {
         console.error('[assessment] 启动测评失败:', err);
         start.disabled = false;

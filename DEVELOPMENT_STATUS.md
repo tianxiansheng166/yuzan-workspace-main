@@ -1,5 +1,9 @@
 # Development status
 
+## YZ-RD-T004 — mobile browser learning and recording recovery (2026-10-18)
+
+DONE / H5_MOBILE_BROWSER_VERIFIED / REAL_DEVICE_NOT_RUN. Chromium 390/430/1440 real API course→unified Runner→native audio→MinIO upload→return/reload passed; 390 also submitted all four items and wrote course completion. SIMULATED_MIC only; WebM/Opus and native Chromium MP4/Opus verified by API/DB/object bytes and existing audio normalization. Local drafts never claim server completion; network/permission/capability and binding-failure retries are covered. SpeechJobs remain queued/processing without a scorer or formal report. Evidence, fixture boundaries and tests: [05 校准 v4](docs/11-product-delivery/05-开发路线任务图与验收门禁.md). Next gate is real Android/iOS with secure HTTPS, physical microphone, MIME/playback/upload and network switching; this milestone does not authorize mobile production release.
+
 ## YZ-RD-T003 — real teacher publication (2026-10-18)
 
 DONE / BROWSER + DB VERIFIED: teacher creates DRAFT→schedules→opens through public revision-checked APIs; target student re-logs in, sees the same Assignment in Today, confirms a course activity and restores progress after refresh. Draft/scheduled do not send published notifications; OPEN notification failure does not hide Today. School/class/student scope and concurrent duplicate publication are covered. Evidence and exact commands: [05 校准 v3](docs/11-product-delivery/05-开发路线任务图与验收门禁.md). Automatic timed publishing, reliable notification retry, recording/SpeechJob/formal-report retests remain outside this milestone; next is mobile H5 and real-device validation.

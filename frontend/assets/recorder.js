@@ -140,7 +140,7 @@
         this.audioUrl = URL.createObjectURL(blob);
         this.audio.src = this.audioUrl;
         this.setState('recorded');
-        this.setSync(meta.syncState || 'local');
+        this.setSync('local');
       } else {
         this.setState('idle');
       }
@@ -170,12 +170,10 @@
         this.setState('recording');
         this.notify('麦克风已连接，正在录音');
       } catch (error) {
-        // A complete demo remains usable when permissions are unavailable (e.g. static preview/http).
-        this.simulated = true;
-        this.beginClock();
-        this.setState('recording');
-        this.substateEl.textContent = '演示声场 · 点击暂停';
-        this.notify(error?.name === 'NotAllowedError' ? '未获麦克风权限，已进入交互演示模式' : '当前环境无法录音，已进入交互演示模式');
+        this.stopTracks();
+        clearInterval(this.timerHandle);
+        this.setState('error');
+        this.notify(error?.name === 'NotAllowedError' ? '麦克风权限被拒绝，请允许后重试；尚未录音' : '当前浏览器或设备无法录音，请检查后重试');
       }
     }
 
@@ -226,10 +224,6 @@
       }
       if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
         this.mediaRecorder.stop();
-      } else if (this.simulated) {
-        // A small valid WAV makes the demo state persist and allows playback semantics.
-        this.blob = this.makeSilentWav(Math.max(1, this.elapsedMs / 1000));
-        await this.persist();
       }
       this.stopTracks();
       this.setState('recorded');
@@ -240,7 +234,9 @@
 
     async finishBlob() {
       if (!this.chunks.length) return;
-      this.blob = new Blob(this.chunks, { type: this.mediaRecorder?.mimeType || 'audio/webm' });
+      const mimeType = this.mediaRecorder?.mimeType || this.chunks.find(chunk => chunk.type)?.type;
+      if (!mimeType) { this.setState('error'); this.notify('无法确定实际录音格式，请重新录制'); return; }
+      this.blob = new Blob(this.chunks, { type: mimeType });
       await this.persist();
     }
 
@@ -325,14 +321,9 @@
     }
 
     scheduleSync() {
-      if (!navigator.onLine) return this.setSync('local');
-      this.setSync('syncing');
-      setTimeout(() => {
-        this.setSync('synced');
-        const meta = JSON.parse(localStorage.getItem(this.key) || '{}');
-        localStorage.setItem(this.key, JSON.stringify({ ...meta, syncState: 'synced' }));
-        this.notify('录音已同步');
-      }, 900);
+      // This local recorder has no Recording API binding. Connectivity alone
+      // cannot prove a server upload; callers must complete the real API flow.
+      this.setSync('local');
     }
 
     updateTime() {
@@ -357,7 +348,6 @@
         for (let i = 2; i < Math.min(60, this.freqData.length); i++) sum += this.freqData[i];
         return Math.min(1, sum / 58 / 155);
       }
-      if (this.state === 'recording' && this.simulated) return .32 + .22 * Math.sin(now / 170) + .12 * Math.sin(now / 61);
       if (this.state === 'playing') return .28 + .18 * Math.sin(now / 150);
       return .09 + .025 * Math.sin(now / 500);
     }
@@ -410,16 +400,6 @@
 
     emit(name, detail = {}) {
       this.root.dispatchEvent(new CustomEvent(`recorder:${name}`, { bubbles: true, detail: { recorder: this, ...detail } }));
-    }
-
-    makeSilentWav(seconds) {
-      const rate = 8000, length = Math.min(20, Math.max(1, seconds)) * rate | 0;
-      const buffer = new ArrayBuffer(44 + length * 2), view = new DataView(buffer);
-      const write = (o, s) => [...s].forEach((c, i) => view.setUint8(o + i, c.charCodeAt(0)));
-      write(0, 'RIFF'); view.setUint32(4, 36 + length * 2, true); write(8, 'WAVE'); write(12, 'fmt ');
-      view.setUint32(16, 16, true); view.setUint16(20, 1, true); view.setUint16(22, 1, true); view.setUint32(24, rate, true);
-      view.setUint32(28, rate * 2, true); view.setUint16(32, 2, true); view.setUint16(34, 16, true); write(36, 'data'); view.setUint32(40, length * 2, true);
-      return new Blob([buffer], { type: 'audio/wav' });
     }
   }
 

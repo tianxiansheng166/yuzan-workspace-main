@@ -704,23 +704,30 @@
       container.appendChild(block4);
     }
 
+    var videoRequest = 0;
+    var materialsRequest = 0;
     function loadVideoForActivity(activity) {
+      var request = ++videoRequest;
       if (!activity || !window.MediaController || !window.MediaController.loadSource) return;
       var videoResource = (activity.resources || []).map(function (link) { return link.resource || link; }).find(function (resource) {
         return resource && resource.kind === 'VIDEO';
       });
+      var videoCard = document.querySelector('.cp-card-video');
+      if (videoCard) videoCard.hidden = !videoResource && !activity.videoUrl;
       if (!videoResource) {
         window.MediaController.loadSource(activity.videoUrl, activity.posterUrl, activity.subtitleZhUrl, activity.subtitleBoUrl);
         return;
       }
       window.CourseApiAdapter.getResourcePlaybackUrl(videoResource.id).then(function (result) {
+        if (request !== videoRequest) return;
         window.MediaController.loadSource(result.url, activity.posterUrl, activity.subtitleZhUrl, activity.subtitleBoUrl);
       }).catch(function () {
-        showToast('视频资源暂时无法打开');
+        if (request === videoRequest) showToast('视频资源暂时无法打开');
       });
     }
 
     function loadMaterialsForActivity(activity) {
+      var request = ++materialsRequest;
       var section = document.getElementById('cpSectionMaterials');
       var preview = document.getElementById('cpMaterialsPreview');
       var status = document.getElementById('cpMaterialsStatus');
@@ -733,6 +740,7 @@
       if (!documentResource) return;
       status.textContent = '正在打开课件…';
       window.CourseApiAdapter.getResourcePlaybackUrl(documentResource.id).then(function (result) {
+        if (request !== materialsRequest) return;
         status.textContent = documentResource.originalName || '本节课件';
         var link = document.createElement('a');
         link.className = 'cp-btn cp-btn-outline cp-materials-open';
@@ -749,7 +757,7 @@
           preview.appendChild(frame);
         }
       }).catch(function () {
-        status.textContent = '课件暂时无法打开，请稍后重试';
+        if (request === materialsRequest) status.textContent = '课件暂时无法打开，请稍后重试';
       });
     }
 

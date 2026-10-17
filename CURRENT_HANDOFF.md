@@ -3,6 +3,20 @@
 Last updated: 2026-10-18
 Repository: `yuzan-workspace-main`
 
+## YZ-RD-T004 checkpoint (2026-10-18)
+
+- DONE / H5_MOBILE_BROWSER_VERIFIED；REAL_DEVICE_NOT_RUN。Baseline `feat/question-bank-v1` / `7f8ea126b4da4f26a0ab8f59d20207c8808c5292`，fetch confirmed remote 0/0 before checkpoint. Final SHA is Git runtime truth.
+- 390×844、430×932、1440×1000：教师公共API创建课程/发布及 Assignment DRAFT→SCHEDULED→OPEN，学生UI重新登录→Today主行动→真实正文/MP4/PDF→统一Runner→原生MediaRecorder录音/试听/上传→课程返回/刷新复用同一Attempt/Submission。390完成4题提交与2项课程活动回写；430/1440为部分学习恢复。
+- 修复准备页进入旧逐题路径、Runner缺课程返回/提交返回被覆盖、跟读音频题未展示朗读文本、PDF重复与媒体过时回调、空视频框。录音实际MIME、重复点击/资源释放、本机IndexedDB草稿及刷新重试；幂等init更新签名、已完成对象不重复PUT、服务端读回绑定才报成功。通用recorder不再静音演示/定时假同步。未重建业务系统，未改后端/Schema/评分。
+- Final Chromium4 passed/0 skipped (53.42s)；API137、frontend15+runtime、course8、contracts6；API typecheck/build、frontend typecheck/build、JS/Python syntax/diff PASS。负向麦克风拒绝/不支持为浏览器注入；PUT失败/offline/403、完成后绑定失败、草稿刷新、双击、真实跨学生拒绝均通过；MinIO真实过期签名403。最终失败0；开发期失败与未运行项见 [05 校准 v4](docs/11-product-delivery/05-开发路线任务图与验收门禁.md)。
+- 所有麦克风证据为 SIMULATED_MIC。原生 Chromium WebM/Opus、MP4/Opus（430 MIME偏好受控，不是Safari），API/DB Recording PROCESSING、AssessmentItem绑定、每条1个SpeechJob，MinIO字节/Content-Type/SHA256一致；实际音频归一16kHz mono PCM16 PASS。未启动worker/scorer，报告0，不能声称评分通过。
+- 390px: Assignment `de63e1d3-cb4e-4451-8620-26a4ffddecb9` / Attempt `9f3cfadc-982e-4aee-9d72-b0e4ef87b814` / Recording `6bb4921b-814a-4738-94a3-f98484252b49`。完整Submission/Activity/Item/MIME/字节/摘要在05。
+- 430px: Assignment `525334c6-9b1e-414e-ab24-bf05654a9c69` / Attempt `95139a9b-bf6a-41a8-8e18-8c5d002539d0` / Recording `c1fa1c0b-ebf1-4fdb-9962-7b1e9567d329`。完整Submission/Activity/Item/MIME/字节/摘要在05。
+- 1440px: Assignment `629d90bd-db18-41e2-938f-1a92ebe149ad` / Attempt `d41eaea9-3826-4700-8bc0-697ece61b781` / Recording `f805b909-ef30-4f30-a530-5bb7bda7002e`。完整Submission/Activity/Item/MIME/字节/摘要在05。
+- Isolated project `yz-rd-t004-20261018`，DB55564/Redis6399/MinIO59066–59067/API4064/frontend4264，bucket yz-t004。32迁移/虚构seed；素材为测试自有生成MP4/PDF经真实上传，授权/课程关联/投放是明确隔离夹具；Assignment/Attempt/Recording/进度均走业务API。自有服务取证后停止，卷保留；无其他任务服务启停。日志/截图/音频/DB `/tmp/yz-rd-t004-runtime/`。原始资源与所有保护文件未动。
+- NOT_RUN：Android/iOS真机、真实权限/麦克风/网络切换、Safari AAC/WebKit、生产语音与正式报告、全库/六级回归。本机草稿可被浏览器清理，存储不可用时UI会提示；该故障分支未注入测试。CURRENT_TASK.md历史任务不覆盖本任务。
+- NEXT：安全HTTPS入口 + Android Chrome/iOS Safari真实设备验收，再处理真实反馈与正式移动发布门禁。QB-009B保持PARKED；本任务没有批准正式评分或上线。
+
 ## YZ-RD-T003 checkpoint (2026-10-18)
 
 - Outcome: teacher real browser login → create DRAFT1 → schedule SCHEDULED2 → open OPEN3 → student real re-login → Today → same real course → TEXT acknowledgment → refresh resumes same Submission. No SQL Assignment creation/state shortcuts. Start baseline `feat/question-bank-v1` / `388874b8251946726aed68c438a396836946f345`; fetch confirmed remote 0/0 before commit. Final SHA is Git runtime truth.
