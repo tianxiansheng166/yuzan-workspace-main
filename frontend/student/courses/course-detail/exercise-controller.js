@@ -48,6 +48,10 @@
 
   var ExerciseController = {
     init: function () {
+      // The course has already loaded before this controller is initialized.
+      // Render its first activity as well as later directory selections.
+      var initial = CoursePlayerState.getState();
+      if (initial.currentActivity) ExerciseController.renderExercises(initial.currentActivity);
       CoursePlayerState.subscribe(function (state, keys) {
         if (keys && keys.indexOf('currentActivity') !== -1 && state.currentActivity) {
           ExerciseController.renderExercises(state.currentActivity);

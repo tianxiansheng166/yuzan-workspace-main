@@ -65,7 +65,7 @@ function fakePrisma(overrides: Record<string, unknown> = {}) {
     assessmentItem,
   };
   return {
-    enrollment: { findFirst: vi.fn().mockResolvedValue(enrollment) },
+    enrollment: { findFirst: vi.fn().mockResolvedValue(enrollment), findMany: vi.fn().mockResolvedValue([enrollment]) },
     assessmentSession: { findFirst: vi.fn().mockResolvedValue({ id: attemptId, schoolId, enrollmentId: enrollment.id, practiceDefinitionId: definitionId }) },
     assessmentItem: {
       findMany: vi.fn().mockResolvedValue([{

@@ -114,16 +114,37 @@ export class PracticeService {
 
   async createOrResume(auth: AuthContext, schoolId: string, definitionId: string, context: CoursePracticeContext = {}) {
     this.assertStudentTenant(auth, schoolId);
-    const enrollment = await this.activeEnrollment(auth, schoolId);
+    const enrollments = await this.prisma.enrollment.findMany({
+      where: { schoolId, userId: auth.principal.userId, role: "STUDENT", status: "ACTIVE" },
+      select: { id: true, classId: true },
+      orderBy: { id: "asc" },
+    });
+    if (!enrollments.length) throw new ForbiddenException("当前用户没有有效的学生班级关系");
     const result = await this.prisma.$transaction(async (tx) => {
+      // Course attempts retain their own submission enrollment; standalone
+      // Today actions may come from any of this student's active classes.
+      const submission = context.assignmentId && context.submissionId && context.activityId
+        ? await tx.submission.findFirst({
+            where: { id: context.submissionId, schoolId, assignmentId: context.assignmentId,
+              enrollmentId: { in: enrollments.map((entry) => entry.id) }, deletedAt: null },
+            select: { enrollmentId: true },
+          })
+        : null;
+      const courseEnrollment = submission
+        ? enrollments.find((entry) => entry.id === submission.enrollmentId)
+        : null;
+      if (context.submissionId && context.assignmentId && context.activityId && !courseEnrollment)
+        throw new ForbiddenException("课程提交不存在或不属于当前学生");
+      const candidates = courseEnrollment ? [courseEnrollment] : enrollments;
       const delivery = await tx.practiceDelivery.findFirst({
         where: {
           schoolId,
           status: "OPEN",
           practiceVersion: { definitionId, status: "PUBLISHED", definition: { status: "PUBLISHED" } },
-          OR: [{ studentId: auth.principal.userId }, { studentId: null, classId: enrollment.classId }],
+          OR: [{ studentId: auth.principal.userId }, { studentId: null, classId: { in: candidates.map((entry) => entry.classId) } }],
           AND: [{ OR: [{ deadline: null }, { deadline: { gte: new Date() } }] }],
         },
+        orderBy: [{ createdAt: "asc" }, { id: "asc" }],
         include: {
           practiceVersion: {
             include: {
@@ -145,6 +166,9 @@ export class PracticeService {
         },
       });
       if (!delivery) throw new NotFoundException("没有可用的练习投放");
+      const enrollment = courseEnrollment
+        ?? candidates.find((entry) => entry.classId === delivery.classId)
+        ?? candidates[0]!;
 
       const courseContext = await this.validateCourseContext(tx, schoolId, enrollment.id, definitionId, context);
 

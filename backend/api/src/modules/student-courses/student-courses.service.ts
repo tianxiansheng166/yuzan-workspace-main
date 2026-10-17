@@ -12,14 +12,20 @@ export class StudentCoursesService {
   constructor(private readonly prisma: PrismaService) {}
 
   async list(auth: AuthContext, schoolId: string, filters: ListStudentCoursesQueryDto = {}) {
-    const enrollment = await this.studentEnrollment(auth, schoolId);
+    this.assertStudentScope(auth, schoolId);
+    const enrollments = await this.prisma.enrollment.findMany({
+      where: { schoolId, userId: auth.principal.userId, role: "STUDENT", status: "ACTIVE" },
+      select: { id: true, classId: true }, orderBy: { id: "asc" },
+    });
+    if (!enrollments.length) throw new ForbiddenException("当前用户没有有效的学生班级关系");
+    const enrollmentIds = enrollments.map((entry) => entry.id);
+    const classIds = enrollments.map((entry) => entry.classId);
     const limit = filters.limit ?? 20;
 
     const cvWhere: Prisma.CourseVersionWhereInput = {
       status: "PUBLISHED",
       publishedAt: { not: null },
       retiredAt: null,
-      capabilityTheme: { not: null },
       ...(filters.capabilityTheme ? { capabilityTheme: filters.capabilityTheme } : {}),
       ...(filters.gradeBand ? { gradeBand: filters.gradeBand } : {}),
       ...(filters.difficulty ? { difficulty: filters.difficulty } : {}),
@@ -34,7 +40,7 @@ export class StudentCoursesService {
       deletedAt: null,
       ...(filters.source ? { source: filters.source } : {}),
       courseVersion: cvWhere,
-      targets: { some: { OR: [{ enrollmentId: enrollment.id }, { classId: enrollment.classId }] } },
+      targets: { some: { OR: [{ enrollmentId: { in: enrollmentIds } }, { classId: { in: classIds } }] } },
     };
 
     if (filters.cursor) {
@@ -58,14 +64,15 @@ export class StudentCoursesService {
       this.prisma.assignment.findMany({
         where: assignmentWhere,
         include: {
+          targets: { select: { enrollmentId: true, classId: true } },
           courseVersion: {
             include: {
               course: { select: { id: true, title: true } },
               units: { include: { lessons: { include: { activities: { orderBy: { sortOrder: "asc" } } }, orderBy: { sortOrder: "asc" } } }, orderBy: { sortOrder: "asc" } },
-              favorites: { where: { enrollmentId: enrollment.id }, select: { id: true } },
+              favorites: { where: { enrollmentId: { in: enrollmentIds } }, select: { id: true } },
             },
           },
-          submissions: { where: { enrollmentId: enrollment.id, deletedAt: null }, orderBy: { createdAt: "desc" }, take: 1 },
+          submissions: { where: { enrollmentId: { in: enrollmentIds }, deletedAt: null }, orderBy: { createdAt: "desc" }, take: 1 },
         },
         orderBy,
         ...(filters.cursor ? { cursor: { id: filters.cursor }, skip: 1 } : {}),
@@ -79,9 +86,14 @@ export class StudentCoursesService {
 
     const items = [];
     for (const assignment of sliced) {
+      const eligible = enrollments.filter((entry) => assignment.targets.some((target) =>
+        target.enrollmentId === entry.id || target.classId === entry.classId));
+      const enrollment = eligible.find((entry) => entry.id === assignment.submissions[0]?.enrollmentId) ?? eligible[0];
+      if (!enrollment) throw new NotFoundException("课程没有有效的学生班级关系");
+      const submission = assignment.submissions.find((entry) => entry.enrollmentId === enrollment.id);
       const activities = assignment.courseVersion.units.flatMap((unit) => unit.lessons.flatMap((lesson) => lesson.activities));
-      const completion = await this.completionFor(enrollment.id, assignment.id, assignment.courseVersionId, assignment.submissions[0]?.id);
-      const status = this.catalogStatus(assignment.submissions[0]?.status, completion.progressPercent, completion.attainmentStatus);
+      const completion = await this.completionFor(enrollment.id, assignment.id, assignment.courseVersionId, submission?.id);
+      const status = this.catalogStatus(submission?.status, completion.progressPercent, completion.attainmentStatus);
       if (filters.status && status !== filters.status) continue;
       const nextActivity = activities.find((activity) => !completion.completedActivityIds.includes(activity.id)) ?? null;
       items.push({
@@ -101,8 +113,8 @@ export class StudentCoursesService {
         progressPercent: completion.progressPercent,
         isFavorite: assignment.courseVersion.favorites.length > 0,
         nextActivity: nextActivity ? { id: nextActivity.id, title: nextActivity.title, type: nextActivity.type } : null,
-        submission: assignment.submissions[0] ? this.submissionSummary(assignment.submissions[0]) : null,
-        completedAt: assignment.submissions[0]?.submittedAt?.toISOString() ?? null,
+        submission: submission ? this.submissionSummary(submission) : null,
+        completedAt: submission?.submittedAt?.toISOString() ?? null,
       });
     }
 
@@ -136,7 +148,7 @@ export class StudentCoursesService {
   }
 
   async detail(auth: AuthContext, schoolId: string, assignmentId: string) {
-    const enrollment = await this.studentEnrollment(auth, schoolId);
+    const enrollment = await this.studentEnrollment(auth, schoolId, { assignmentId });
     const assignment = await this.visibleAssignment(schoolId, assignmentId, enrollment);
     const submission = await this.prisma.submission.findFirst({ where: { schoolId, assignmentId, enrollmentId: enrollment.id, deletedAt: null }, orderBy: { createdAt: "desc" } });
     const completion = await this.completionFor(enrollment.id, assignmentId, assignment.courseVersionId, submission?.id);
@@ -210,7 +222,7 @@ export class StudentCoursesService {
   }
 
   async createOrResumeSubmission(auth: AuthContext, schoolId: string, assignmentId: string) {
-    const enrollment = await this.studentEnrollment(auth, schoolId);
+    const enrollment = await this.studentEnrollment(auth, schoolId, { assignmentId });
     await this.visibleAssignment(schoolId, assignmentId, enrollment);
     const existing = await this.prisma.submission.findFirst({
       where: { schoolId, assignmentId, enrollmentId: enrollment.id, deletedAt: null, status: { in: [...ACTIVE_SUBMISSION_STATUSES] } },
@@ -349,7 +361,7 @@ export class StudentCoursesService {
   }
 
   async submitCourse(auth: AuthContext, schoolId: string, assignmentId: string, submissionId: string, expectedRevision: number) {
-    const enrollment = await this.studentEnrollment(auth, schoolId);
+    const enrollment = await this.studentEnrollment(auth, schoolId, { assignmentId, submissionId });
     const assignment = await this.visibleAssignment(schoolId, assignmentId, enrollment);
     const submission = await this.ownedSubmission(schoolId, assignmentId, submissionId, enrollment.id);
     const completion = await this.completionFor(enrollment.id, assignmentId, assignment.courseVersionId, submissionId);
@@ -363,7 +375,7 @@ export class StudentCoursesService {
   }
 
   async listNotes(auth: AuthContext, schoolId: string, activityId: string) {
-    const enrollment = await this.studentEnrollment(auth, schoolId);
+    const enrollment = await this.studentEnrollment(auth, schoolId, { activityId });
     await this.assertActivityVisible(schoolId, activityId, enrollment);
     return this.prisma.studentActivityNote.findMany({
       where: { schoolId, enrollmentId: enrollment.id, activityId },
@@ -374,7 +386,7 @@ export class StudentCoursesService {
 
   /** Compatibility API for the existing single general-note player. */
   async getNote(auth: AuthContext, schoolId: string, activityId: string) {
-    const enrollment = await this.studentEnrollment(auth, schoolId);
+    const enrollment = await this.studentEnrollment(auth, schoolId, { activityId });
     await this.assertActivityVisible(schoolId, activityId, enrollment);
     const note = await this.prisma.studentActivityNote.findFirst({
       where: { schoolId, enrollmentId: enrollment.id, activityId, videoTimestamp: null },
@@ -384,7 +396,7 @@ export class StudentCoursesService {
   }
 
   async createNote(auth: AuthContext, schoolId: string, activityId: string, body: CreateStudentActivityNoteDto) {
-    const enrollment = await this.studentEnrollment(auth, schoolId);
+    const enrollment = await this.studentEnrollment(auth, schoolId, { activityId });
     await this.assertActivityVisible(schoolId, activityId, enrollment);
     return this.prisma.studentActivityNote.create({
       data: { schoolId, enrollmentId: enrollment.id, activityId, content: body.content, videoTimestamp: body.videoTimestamp ?? null, revision: 1 },
@@ -393,7 +405,7 @@ export class StudentCoursesService {
 
   /** Compatibility API for the existing single general-note player. */
   async saveNote(auth: AuthContext, schoolId: string, activityId: string, body: SaveStudentActivityNoteDto) {
-    const enrollment = await this.studentEnrollment(auth, schoolId);
+    const enrollment = await this.studentEnrollment(auth, schoolId, { activityId });
     await this.assertActivityVisible(schoolId, activityId, enrollment);
     const existing = await this.prisma.studentActivityNote.findFirst({
       where: { schoolId, enrollmentId: enrollment.id, activityId, videoTimestamp: null },
@@ -408,7 +420,7 @@ export class StudentCoursesService {
   }
 
   async updateNote(auth: AuthContext, schoolId: string, activityId: string, noteId: string, body: UpdateStudentActivityNoteDto) {
-    const enrollment = await this.studentEnrollment(auth, schoolId);
+    const enrollment = await this.studentEnrollment(auth, schoolId, { activityId });
     const existing = await this.prisma.studentActivityNote.findFirst({ where: { id: noteId, schoolId, enrollmentId: enrollment.id, activityId } });
     if (!existing) throw new NotFoundException("笔记不存在");
     if (existing.revision !== body.revision) throw new ConflictException("笔记版本冲突，请刷新后保留最新内容");
@@ -419,7 +431,7 @@ export class StudentCoursesService {
   }
 
   async deleteNote(auth: AuthContext, schoolId: string, activityId: string, noteId: string) {
-    const enrollment = await this.studentEnrollment(auth, schoolId);
+    const enrollment = await this.studentEnrollment(auth, schoolId, { activityId });
     const existing = await this.prisma.studentActivityNote.findFirst({ where: { id: noteId, schoolId, enrollmentId: enrollment.id, activityId } });
     if (!existing) throw new NotFoundException("笔记不存在");
     await this.prisma.studentActivityNote.delete({ where: { id: noteId } });
@@ -427,7 +439,7 @@ export class StudentCoursesService {
   }
 
   async toggleFavorite(auth: AuthContext, schoolId: string, assignmentId: string) {
-    const enrollment = await this.studentEnrollment(auth, schoolId);
+    const enrollment = await this.studentEnrollment(auth, schoolId, { assignmentId });
     const assignment = await this.visibleAssignment(schoolId, assignmentId, enrollment);
     const courseVersionId = assignment.courseVersionId;
 
@@ -447,7 +459,7 @@ export class StudentCoursesService {
   }
 
   async recommendations(auth: AuthContext, schoolId: string, assignmentId: string) {
-    const enrollment = await this.studentEnrollment(auth, schoolId);
+    const enrollment = await this.studentEnrollment(auth, schoolId, { assignmentId });
     const assignment = await this.visibleAssignment(schoolId, assignmentId, enrollment);
     const cv = assignment.courseVersion;
 
@@ -524,10 +536,28 @@ export class StudentCoursesService {
     };
   }
 
-  private async studentEnrollment(auth: AuthContext, schoolId: string) {
+  private assertStudentScope(auth: AuthContext, schoolId: string) {
     if (auth.tenant.schoolId !== schoolId || !auth.principal.roles.includes("STUDENT" as never)) throw new ForbiddenException("无权访问该学校的学生课程");
-    const enrollment = await this.prisma.enrollment.findFirst({ where: { schoolId, userId: auth.principal.userId, role: "STUDENT", status: "ACTIVE" }, select: { id: true, classId: true } });
-    if (!enrollment) throw new ForbiddenException("当前用户没有有效的学生班级关系");
+  }
+
+  private async studentEnrollment(auth: AuthContext, schoolId: string, resource: { assignmentId?: string; activityId?: string; submissionId?: string } = {}) {
+    this.assertStudentScope(auth, schoolId);
+    const target: Prisma.AssignmentTargetWhereInput | null = resource.assignmentId
+      ? { assignmentId: resource.assignmentId }
+      : resource.activityId
+        ? { assignment: { courseVersion: { units: { some: { lessons: { some: { activities: { some: { id: resource.activityId } } } } } } } } }
+        : null;
+    const enrollment = await this.prisma.enrollment.findFirst({
+      where: { schoolId, userId: auth.principal.userId, role: "STUDENT", status: "ACTIVE",
+        ...(target ? { OR: [{ targets: { some: target } }, { class: { targets: { some: target } } }] } : {}),
+        ...(resource.submissionId ? { submissions: { some: { id: resource.submissionId, schoolId, deletedAt: null } } } : {}),
+      },
+      select: { id: true, classId: true }, orderBy: { id: "asc" },
+    });
+    if (!enrollment) {
+      if (target) throw new NotFoundException("课程不存在或不可访问");
+      throw new ForbiddenException("当前用户没有有效的学生班级关系");
+    }
     return enrollment;
   }
 
@@ -556,7 +586,7 @@ export class StudentCoursesService {
   }
 
   private async activityContext(auth: AuthContext, schoolId: string, assignmentId: string, submissionId: string, activityId: string) {
-    const enrollment = await this.studentEnrollment(auth, schoolId);
+    const enrollment = await this.studentEnrollment(auth, schoolId, { assignmentId, submissionId });
     const assignment = await this.visibleAssignment(schoolId, assignmentId, enrollment);
     const submission = await this.ownedSubmission(schoolId, assignmentId, submissionId, enrollment.id);
     const activity = assignment.courseVersion.units.flatMap((unit) => unit.lessons.flatMap((lesson) => lesson.activities)).find((candidate) => candidate.id === activityId);

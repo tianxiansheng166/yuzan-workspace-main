@@ -1,7 +1,17 @@
 # CURRENT HANDOFF
 
-Last updated: 2026-09-08
+Last updated: 2026-10-17
 Repository: `yuzanxinsheng_test`
+
+## YZ-RD-T002 checkpoint (2026-10-17)
+
+- Task outcome: Today 主推荐、真实课程卡、legacyTasks 在第一/第二有效班级均能打开动态课程，正文/阅读确认/刷新/返回闭环通过。旧 `spring-2` 是有效兼容跳转，保留。任务起点 `feat/question-bank-v1` / `0a7b931a8dfd005eb7ba97aa0fe68e81169d61e8`；实际 fetch 后与该远端功能分支 `0/0`；比 `origin/main` 多 16 commits（起点事实，不是最终 SHA）。最终分支/SHA 以 Git 为准。
+- Fixed actual seams: course list failure no longer becomes empty; Today loading/empty/error/processing/ready stay distinct, slow catalog does not block main CTA, failures retain recoverable UI. ExerciseController now renders the already-loaded initial activity. API adapters map practice creation and course list/detail/writes/notes to the authenticated student's active school enrollments and actual resource scope; no client enrollment/identity parameter added. Optional missing course theme no longer hides a valid course. No Prisma/DTO/scoring/provider change.
+- Evidence: API focused 68 passed / 0 skipped; frontend 12 + course adapter/sync/shell 8 passed; API typecheck/build, contracts validate, JS/Python syntax, diff check PASS. Chromium real API/DB 4 passed in 8.68s, 0 skipped: both class scenarios × three sources, body/ack persisted, one Submission each, refresh/back, real cross-student404 and missing404, injected network/403/404 recovery, second-class canonical Level 1 Runner refresh/back with 20 persisted items. Detail IDs, full commands and evidence-level matrix are in [05 校准 v2](docs/11-product-delivery/05-开发路线任务图与验收门禁.md).
+- Real proof: second-class assignment `bc6235dc-78af-4ab7-a312-933dc2c39b5c`, submission `46e89abc-fe5e-4b36-a5c3-b10401ec16cb`, completed ActivityProgress; canonical attempt `5eacd303-aae7-4dcb-ab6a-401efa4d0849` IN_PROGRESS / 20 items. Source input was read only for isolated Level 1 import; generated output is in task `/tmp`. No original resources staged/changed; all identities are fictional fixtures. Already-OPEN course delivery is explicitly a DB fixture, not a successful teacher publishing claim.
+- Runtime: own project `yz-rd-t002-20261017`, DB55562/Redis6397/MinIO59062–59063/API4062/frontend4262. No foreign services used or stopped. Task processes/containers stopped after proof, own volumes retained. No worker/speech provider was started. Logs/screenshots: `/tmp/yz-rd-t002-runtime/`; database has 0 reports/recordings/SpeechJobs. Full suites, six-level completion, current speech/review/report/remediation, mobile device and real-user pilot are NOT_RUN; historical evidence below remains historical.
+- Remaining concrete gap / NEXT: ordinary teacher Assignment create returns DRAFT, direct open returns 409 `ASSIGNMENT_STATUS_INVALID`; state machine expects DRAFT→SCHEDULED→OPEN but no schedule API found. Next slice: teacher creates→schedules→opens→student Today sees task, under one backend API/OpenAPI owner; do not SQL-open to claim acceptance. Next after that: mobile H5 Today→course→Runner→return at 390/430 + real-device recording. Daily short learning feedback and bilingual support follow actual feedback/content authorization. Review/remediation-assignment OpenAPI omissions are recorded in 05. QB-009B stays PARKED / EXTERNAL_INPUT.
+- Initial tracked tree was clean; only protected untracked `习题课程资源/` existed. Old paragraphs mentioning pre-existing dirty workspace config describe history, not this task's Git state. `CURRENT_TASK.md` is historical DONE; this explicit T002 supersedes its default continuation. No broad milestone was reopened, so DEVELOPMENT_STATUS.md was not changed. Notion URL was inaccessible; local 05 is the versioned authority for this calibration.
 
 ## COMP-DEMO-05 checkpoint (2026-09-08)
 

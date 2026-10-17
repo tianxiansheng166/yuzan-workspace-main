@@ -19,21 +19,21 @@ function auth(userId = studentId, tenantSchoolId = schoolId): AuthContext {
 
 describe("StudentCoursesService security and completion", () => {
   it("rejects a cross-school catalog read before querying enrollment", async () => {
-    const prisma = { enrollment: { findFirst: vi.fn() } };
+    const prisma = { enrollment: { findFirst: vi.fn(), findMany: vi.fn() } };
     const service = new StudentCoursesService(prisma as any);
     await expect(service.list(auth(), otherSchoolId)).rejects.toBeInstanceOf(ForbiddenException);
     expect(prisma.enrollment.findFirst).not.toHaveBeenCalled();
   });
 
   it("rejects a different student without an active scoped enrollment", async () => {
-    const prisma = { enrollment: { findFirst: vi.fn().mockResolvedValue(null) } };
+    const prisma = { enrollment: { findFirst: vi.fn().mockResolvedValue(null), findMany: vi.fn().mockResolvedValue([]) } };
     const service = new StudentCoursesService(prisma as any);
     await expect(service.list(auth("33333333-3333-4333-8333-333333333333"), schoolId)).rejects.toBeInstanceOf(ForbiddenException);
   });
 
   it("keeps the catalog cursor out of the Prisma where filter", async () => {
     const prisma = {
-      enrollment: { findFirst: vi.fn().mockResolvedValue({ id: enrollmentId, classId: null }) },
+      enrollment: { findFirst: vi.fn().mockResolvedValue({ id: enrollmentId, classId: null }), findMany: vi.fn().mockResolvedValue([{ id: enrollmentId, classId: null }]) },
       assignment: {
         findFirst: vi.fn().mockResolvedValue({ id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa" }),
         findMany: vi.fn().mockResolvedValue([]),
@@ -392,5 +392,50 @@ describe("saveActivityAttempt validation rules", () => {
       message: "学习进度已存在，请刷新后重试",
     });
     await expect(invoke(prisma, { kind: "TEXT", completed: false, expectedProgressRevision: 0 })).rejects.toBeInstanceOf(ConflictException);
+  });
+});
+
+describe("Today course resource enrollment mapping", () => {
+  it("queries every active class and does not require optional course theme metadata", async () => {
+    const later = { id: "abababab-abab-4bab-8bab-abababababab", classId: "cdcdcdcd-cdcd-4dcd-8dcd-cdcdcdcdcdcd" };
+    const first = { id: enrollmentId, classId: "17171717-1717-4717-8717-171717171717" };
+    const prisma = {
+      enrollment: { findMany: vi.fn().mockResolvedValue([first, later]) },
+      assignment: { findMany: vi.fn().mockResolvedValue([]), count: vi.fn().mockResolvedValue(0) },
+      courseVersion: { findMany: vi.fn().mockResolvedValue([]) },
+    };
+    await new StudentCoursesService(prisma as any).list(auth(), schoolId);
+    expect(prisma.enrollment.findMany).toHaveBeenCalledWith(expect.objectContaining({
+      where: { schoolId, userId: studentId, role: "STUDENT", status: "ACTIVE" },
+    }));
+    const where = prisma.assignment.findMany.mock.calls[0]?.[0].where;
+    expect(where.targets.some.OR).toEqual([
+      { enrollmentId: { in: [first.id, later.id] } }, { classId: { in: [first.classId, later.classId] } },
+    ]);
+    expect(where.courseVersion).not.toHaveProperty("capabilityTheme");
+    expect(where.courseVersion).toMatchObject({ status: "PUBLISHED", retiredAt: null });
+  });
+
+  it("denies an inaccessible assignment before reading its content or creating a submission", async () => {
+    const prisma = {
+      enrollment: { findFirst: vi.fn().mockResolvedValue(null) },
+      assignment: { findFirstOrThrow: vi.fn() }, submission: { create: vi.fn() },
+    };
+    const service = new StudentCoursesService(prisma as any);
+    await expect(service.createOrResumeSubmission(auth(), schoolId, "foreign-assignment")).rejects.toBeInstanceOf(NotFoundException);
+    expect(prisma.enrollment.findFirst).toHaveBeenCalledWith(expect.objectContaining({ where: {
+      schoolId, userId: studentId, role: "STUDENT", status: "ACTIVE",
+      OR: [{ targets: { some: { assignmentId: "foreign-assignment" } } },
+        { class: { targets: { some: { assignmentId: "foreign-assignment" } } } }],
+    } }));
+    expect(prisma.assignment.findFirstOrThrow).not.toHaveBeenCalled();
+    expect(prisma.submission.create).not.toHaveBeenCalled();
+  });
+
+  it("denies another student's activity note without reading its contents", async () => {
+    const prisma = { enrollment: { findFirst: vi.fn().mockResolvedValue(null) }, studentActivityNote: { findFirst: vi.fn() } };
+    await expect(new StudentCoursesService(prisma as any).getNote(auth(), schoolId, "foreign-activity")).rejects.toBeInstanceOf(NotFoundException);
+    expect(prisma.enrollment.findFirst.mock.calls[0]?.[0].where).toMatchObject({ schoolId, userId: studentId, status: "ACTIVE", role: "STUDENT" });
+    expect(prisma.studentActivityNote.findFirst).not.toHaveBeenCalled();
   });
 });
