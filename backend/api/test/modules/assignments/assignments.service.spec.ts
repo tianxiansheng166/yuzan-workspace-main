@@ -17,12 +17,16 @@ import { FakeAssignmentRepository } from "./fakes/fake-assignment.repository.js"
 import { assignment } from "./fixtures/assignments.js";
 
 function auth(userId: string, schoolId: string, roles: MembershipRole[]) {
-  return createAuthContext("req-1", {
-    userId,
-    roles,
-    membershipStatus: MembershipStatus.ACTIVE,
-    source: "test",
-  }, { schoolId });
+  return createAuthContext(
+    "req-1",
+    {
+      userId,
+      roles,
+      membershipStatus: MembershipStatus.ACTIVE,
+      source: "test",
+    },
+    { schoolId },
+  );
 }
 
 describe("AssignmentsService", () => {
@@ -34,7 +38,18 @@ describe("AssignmentsService", () => {
 
     const moduleRef = await Test.createTestingModule({
       imports: [
-        createFakeDatabaseModule(createFakePrismaService()),
+        createFakeDatabaseModule(
+          createFakePrismaService({
+            courseVersion: { findFirst: async () => ({ id: "cv-1" }) },
+            class: { findFirst: async () => ({ id: "class-1" }) },
+            enrollment: {
+              findFirst: async () => ({
+                id: "teacher-enrollment",
+                classId: "class-1",
+              }),
+            },
+          }),
+        ),
         AssignmentsModule,
       ],
     })
@@ -95,7 +110,11 @@ describe("AssignmentsService", () => {
         targets: [{ targetType: "CLASS", classId: "class-1" }],
       });
 
-      const result = await service.getAssignment(teacherAuth, schoolId, created.id);
+      const result = await service.getAssignment(
+        teacherAuth,
+        schoolId,
+        created.id,
+      );
       expect(result.id).toBe(created.id);
     });
 
@@ -118,7 +137,9 @@ describe("AssignmentsService", () => {
       });
 
       const updated = await service.updateAssignment(
-        teacherAuth, schoolId, created.id,
+        teacherAuth,
+        schoolId,
+        created.id,
         { title: "Updated" },
         created.revision,
       );
@@ -130,7 +151,13 @@ describe("AssignmentsService", () => {
       repo.add(a);
 
       await expect(
-        service.updateAssignment(teacherAuth, schoolId, a.id, { title: "X" }, a.revision),
+        service.updateAssignment(
+          teacherAuth,
+          schoolId,
+          a.id,
+          { title: "X" },
+          a.revision,
+        ),
       ).rejects.toThrow();
     });
   });
@@ -141,7 +168,10 @@ describe("AssignmentsService", () => {
       repo.add(a);
 
       const result = await service.openAssignment(
-        adminAuth, schoolId, a.id, a.revision,
+        adminAuth,
+        schoolId,
+        a.id,
+        a.revision,
       );
       expect(result.status).toBe("OPEN");
     });
@@ -162,7 +192,10 @@ describe("AssignmentsService", () => {
       repo.add(a);
 
       const result = await service.closeAssignment(
-        adminAuth, schoolId, a.id, a.revision,
+        adminAuth,
+        schoolId,
+        a.id,
+        a.revision,
       );
       expect(result.status).toBe("CLOSED");
     });

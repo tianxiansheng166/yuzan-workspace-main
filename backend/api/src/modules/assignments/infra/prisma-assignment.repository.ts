@@ -25,9 +25,7 @@ type AssignmentRow = Prisma.AssignmentGetPayload<{
 }>;
 
 @Injectable()
-export class PrismaAssignmentRepository
-  implements AssignmentRepositoryPort
-{
+export class PrismaAssignmentRepository implements AssignmentRepositoryPort {
   constructor(private readonly prisma: PrismaService) {}
 
   async findById(
@@ -60,12 +58,41 @@ export class PrismaAssignmentRepository
       }
 
       if (options.studentUserId) {
+        const enrollmentScope = {
+          schoolId,
+          userId: options.studentUserId,
+          role: "STUDENT" as const,
+          status: "ACTIVE" as const,
+        };
+        where.status = {
+          in: options.status
+            ? [options.status].filter(
+                (status) => status === "OPEN" || status === "CLOSED",
+              )
+            : ["OPEN", "CLOSED"],
+        };
         where.targets = {
           some: {
-            enrollment: {
-              userId: options.studentUserId,
-              status: "ACTIVE",
-            },
+            OR: [
+              { enrollment: enrollmentScope },
+              { class: { enrollments: { some: enrollmentScope } } },
+            ],
+          },
+        };
+      }
+      if (options.teacherUserId) {
+        const scope = {
+          schoolId,
+          userId: options.teacherUserId,
+          role: "TEACHER" as const,
+          status: "ACTIVE" as const,
+        };
+        where.targets = {
+          some: {
+            OR: [
+              { class: { enrollments: { some: scope } } },
+              { enrollment: { class: { enrollments: { some: scope } } } },
+            ],
           },
         };
       }
@@ -83,9 +110,7 @@ export class PrismaAssignmentRepository
 
       const hasMore = rows.length > options.limit;
       const items = hasMore ? rows.slice(0, -1) : rows;
-      const nextCursor = hasMore
-        ? items[items.length - 1]?.id ?? null
-        : null;
+      const nextCursor = hasMore ? (items[items.length - 1]?.id ?? null) : null;
 
       return {
         items: items.map(toAssignmentSummary),
@@ -133,8 +158,11 @@ export class PrismaAssignmentRepository
             startsAt: input.startsAt,
             dueAt: input.dueAt,
             offlineRequired: input.offlineRequired ?? false,
-            ...(input.completionRule !== undefined && input.completionRule !== null
-              ? { completionRule: input.completionRule as Prisma.InputJsonValue }
+            ...(input.completionRule !== undefined &&
+            input.completionRule !== null
+              ? {
+                  completionRule: input.completionRule as Prisma.InputJsonValue,
+                }
               : {}),
             revision: 1,
           },
@@ -254,10 +282,7 @@ export class PrismaAssignmentRepository
     }
   }
 
-  async softDelete(
-    schoolId: string,
-    assignmentId: string,
-  ): Promise<void> {
+  async softDelete(schoolId: string, assignmentId: string): Promise<void> {
     try {
       await this.prisma.assignment.updateMany({
         where: { id: assignmentId, schoolId, deletedAt: null },
@@ -267,7 +292,6 @@ export class PrismaAssignmentRepository
       throw new AssignmentUnavailableException();
     }
   }
-
 }
 
 function toAssignment(row: AssignmentRow): Assignment {
@@ -281,7 +305,9 @@ function toAssignment(row: AssignmentRow): Assignment {
     startsAt: row.startsAt,
     dueAt: row.dueAt,
     offlineRequired: row.offlineRequired,
-    ...(row.completionRule !== undefined && row.completionRule !== null ? { completionRule: row.completionRule } : {}),
+    ...(row.completionRule !== undefined && row.completionRule !== null
+      ? { completionRule: row.completionRule }
+      : {}),
     revision: row.revision,
     ...(row.openedAt ? { openedAt: row.openedAt } : {}),
     ...(row.closedAt ? { closedAt: row.closedAt } : {}),

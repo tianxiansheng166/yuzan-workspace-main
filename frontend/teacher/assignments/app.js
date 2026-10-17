@@ -12,13 +12,15 @@
   let schoolId = '';
 
   const statusMap = {
-    DRAFT: { label: '待开始', cls: 'gold' },
-    SCHEDULED: { label: '待开始', cls: 'gold' },
-    OPEN: { label: '进行中', cls: 'green' },
+    DRAFT: { label: '已保存草稿', cls: 'gold' },
+    SCHEDULED: { label: '已排期（需手动开放）', cls: 'gold' },
+    OPEN: { label: '已发布', cls: 'green' },
     CLOSED: { label: '已结束', cls: 'gray' },
     CANCELLED: { label: '已取消', cls: 'red' },
     ARCHIVED: { label: '已归档', cls: 'gray' },
   };
+
+  const escape = (value) => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
   function pad2(n) {
     return String(n).padStart(2, '0');
@@ -90,7 +92,8 @@
 
   async function loadCourseVersions() {
     const data = await YuzanApi.request(`/schools/${schoolId}/course-versions?limit=100`, { method: 'GET' });
-    courseVersions = Array.isArray(data) ? data : (data.items || []);
+    courseVersions = (Array.isArray(data) ? data : (data.items || [])).filter(c => c.status === 'PUBLISHED');
+    form.courseVersionId.innerHTML = courseVersions.map(c => `<option value="${escape(c.id)}">${escape(c.title)} · v${c.version}</option>`).join('');
     if (courseVersions.length > 0) {
       form.courseVersionId.value = courseVersions[0].id;
     }
@@ -105,7 +108,7 @@
   function populateClassSelect() {
     const select = form.querySelector('select[name="classId"]');
     select.innerHTML = classes.length
-      ? classes.map((c) => `<option value="${c.id}">${c.grade}${c.name}</option>`).join('')
+      ? classes.map((c) => `<option value="${escape(c.id)}">${escape(c.grade)}${escape(c.name)}</option>`).join('')
       : '<option value="">暂无班级</option>';
   }
 
@@ -127,7 +130,7 @@
         row.dataset.id = a.id;
         row.dataset.status = a.status;
         row.dataset.class = classDisplay(a);
-        row.innerHTML = `<span>›　<b>${a.title}</b></span><span>${classDisplay(a)}</span><span>${formatDateTime(a.dueAt)}</span><span>${submissionDisplay(a)}</span><span>${statusDisplay(a.status)}</span><span><button class="row-menu" aria-label="更多操作">•••</button></span>`;
+        row.innerHTML = `<span>›　<b>${escape(a.title)}</b></span><span>${escape(classDisplay(a))}</span><span>${formatDateTime(a.dueAt)}</span><span>${submissionDisplay(a)}</span><span>${statusDisplay(a.status)}</span><span><button class="row-menu" aria-label="更多操作">•••</button></span>`;
         bindRow(row, a);
         table.appendChild(row);
       });
@@ -172,11 +175,31 @@
         </div>
         <div class="desc">
           <h3>任务描述</h3>
-          <p>${assignment.title}</p>
+          <p>${escape(assignment.title)}</p>
           <h3>操作</h3>
-          <p>可查看学生提交、发送提醒或进入反馈页面。</p>
-          <button data-nav="/teacher/reviews/submission-1/">查看提交</button>
+          <p>保存草稿后确认排期，再手动开放给目标学生。</p>
+          ${assignment.status === 'DRAFT' ? '<button data-transition="schedule">确认排期</button>' : assignment.status === 'SCHEDULED' ? '<button data-transition="open">立即开放</button>' : ''}<p role="status" class="transition-status"></p><p>排期后需手动立即开放；暂不支持未来自动发布。</p>
         </div>`;
+      detail.querySelector('[data-transition]')?.addEventListener('click', async (event) => {
+        const button = event.currentTarget;
+        if (button.disabled) return;
+        button.disabled = true;
+        const feedback = detail.querySelector('.transition-status');
+        try {
+          const updated = await YuzanApi.request(`/schools/${schoolId}/assignments/${assignment.id}/${button.dataset.transition}`, {
+            method: 'POST', body: JSON.stringify({ expectedRevision: assignment.revision }),
+          });
+          feedback.textContent = updated.status === 'OPEN' ? '已发布' : '已排期，需手动立即开放';
+          YuzanDemo.toast(feedback.textContent, 'success');
+          await loadAssignments();
+        } catch (err) {
+          feedback.textContent = `${err.message || '发布失败'}。请重新加载最新状态后再操作。`;
+          const retry = document.createElement('button');
+          retry.textContent = '重新加载';
+          retry.onclick = () => loadAssignments().catch(e => { feedback.textContent = e.message; });
+          feedback.append(retry);
+        }
+      });
       row.after(detail);
     });
   }
@@ -224,6 +247,9 @@
     const d = new Date(Date.now() + 7 * 864e5);
     d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
     form.deadline.value = d.toISOString().slice(0, 16);
+    const start = new Date();
+    start.setMinutes(start.getMinutes() - start.getTimezoneOffset());
+    form.startsAt.value = start.toISOString().slice(0, 16);
     dialogError.textContent = '';
     modal.showModal();
     form.title.focus();
@@ -254,6 +280,7 @@
     }
 
     const saveBtn = form.querySelector('.save');
+    if (saveBtn.disabled) return;
     saveBtn.disabled = true;
     saveBtn.textContent = '保存中…';
 
@@ -263,26 +290,26 @@
         body: JSON.stringify({
           title,
           courseVersionId,
-          startsAt: new Date().toISOString(),
+          startsAt: new Date(form.startsAt.value).toISOString(),
           dueAt: new Date(deadline).toISOString(),
           offlineRequired: false,
           targets: [{ targetType: 'CLASS', classId }],
         }),
       });
       modal.close();
-      YuzanDemo.toast('教学任务已创建', 'success');
+      YuzanDemo.toast('已保存草稿', 'success');
       await loadAssignments();
     } catch (err) {
       dialogError.textContent = err.message || '创建任务失败';
     } finally {
       saveBtn.disabled = false;
-      saveBtn.textContent = '保存任务';
+      saveBtn.textContent = '保存草稿';
     }
   });
 
   const choices = {
     class: ['全部班级', ...classes.map((c) => `${c.grade}${c.name}`)],
-    status: ['全部状态', '进行中', '待开始', '已结束', '已取消'],
+    status: ['全部状态', '已发布', '已保存草稿', '已排期（需手动开放）', '已结束', '已取消'],
   };
 
   // 时间筛选按钮标记为 data-unsupported，由下方统一 UNSUPPORTED 处理拦截点击
@@ -322,5 +349,6 @@
     });
   });
 
+  document.querySelector('#reloadAssignments').addEventListener('click', init);
   init();
 })();

@@ -1,7 +1,19 @@
 # CURRENT HANDOFF
 
-Last updated: 2026-10-17
-Repository: `yuzanxinsheng_test`
+Last updated: 2026-10-18
+Repository: `yuzan-workspace-main`
+
+## YZ-RD-T003 checkpoint (2026-10-18)
+
+- Outcome: teacher real browser login → create DRAFT1 → schedule SCHEDULED2 → open OPEN3 → student real re-login → Today → same real course → TEXT acknowledgment → refresh resumes same Submission. No SQL Assignment creation/state shortcuts. Start baseline `feat/question-bank-v1` / `388874b8251946726aed68c438a396836946f345`; fetch confirmed remote 0/0 before commit. Final SHA is Git runtime truth.
+- Added POST `/schools/:schoolId/assignments/:assignmentId/schedule`; schedule/open return200 with required integer `expectedRevision>=1`. OpenAPI `/open` replaces stale `:open`; generated types and teacher generic API calls agree. No state-machine bypass/schema change. Server checks PUBLISHED course, school/class/student target scope, teacher ACTIVE class enrollment, dates and optimistic revision (read revision must match before atomic write; future revisions fail closed). Teacher reads/mutations and student CLASS-target reads now enforce scope.
+- Teacher UI selects published course/authorized class and start/due times; labels DRAFT “已保存草稿”, SCHEDULED “已排期（需手动开放）”, only OPEN “已发布”. Duplicate-click guard, visible failure, reload and revision-conflict recovery included. Automatic future opening is unsupported and stated in UI.
+- Notifications only after successful OPEN; assignmentId in actionUrl, student recipients deduplicated. Notification outage cannot roll back OPEN or hide Today; no outbox/retry system added.
+- Evidence: API Assignment/Submission/Learning138 + Today/StudentCourses46 passed; contracts6; frontend12 + runtime verify; API typecheck/build, contract generation, JS/Python syntax and diff checks PASS. Chromium/PostgreSQL3 passed/0 skipped (13.08s): full UI flow, negative401/403/404/409/400, non-target student, unauthorized teacher/class/real foreign school, stale revision, network failure/reload, concurrent open200/409 with one notification, assignment-scoped DB notification failure still OPEN/Today visible. Exact commands and evidence matrix in [05 校准 v3](docs/11-product-delivery/05-开发路线任务图与验收门禁.md).
+- Main Assignment `27b18e8c-03f5-400e-93ba-79982c38a11f`; class `54788a55-29ef-4ef0-9aeb-8e1f393e20e0`; Submission `1f0708d7-15e8-464e-b8b9-97b0b51064f1`; activity `51eb0ad2-dd61-43ba-9baf-7448ef85973e` completed. Notification1 targets the same student/Assignment. Outage task `2717e25d-13a7-4857-95b2-73d1864f9f05` OPEN4/notification0/Today visible. Concurrent task `c6f6f8f0-8be7-4905-8531-812ad5c87517` OPEN3/notification1.
+- Isolated project `yz-rd-t003-20261017`, DB55563/Redis6398/MinIO59064–59065/API4063/frontend4263. Fresh migrations/fictional seed, dynamic tested business objects. No foreign service used/stopped. Own services stopped after proof; volumes retained; logs/screenshots `/tmp/yz-rd-t003-runtime/`. Temporary notification-failure trigger removed (0 remaining). Original `习题课程资源/` and `local_sources/` untouched/unstaged.
+- NOT_RUN: recording, SpeechJob, formal reports, six-level full flow, full suites, real devices/pilot. DB Recording/SpeechJob/AssessmentReport0. QB-009B stays PARKED. CURRENT_TASK.md historical scope does not supersede this task.
+- NEXT: 390/430 H5 Today→course→Runner→return and real-device recording validation. Automatic timed opening and reliable notification retries are separate follow-ups; no automatic publishing claim. DEVELOPMENT_STATUS updated for this publication milestone.
 
 ## YZ-RD-T002 checkpoint (2026-10-17)
 

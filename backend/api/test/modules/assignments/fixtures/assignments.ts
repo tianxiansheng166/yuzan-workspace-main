@@ -13,7 +13,15 @@ export function assignment(overrides: Partial<Assignment> = {}): Assignment {
     dueAt: new Date(now.getTime() + 86400000),
     offlineRequired: false,
     revision: 1,
-    targets: [],
+    targets: [
+      {
+        id: "target-1",
+        schoolId: "school-a",
+        assignmentId: "assignment-1",
+        targetType: "CLASS",
+        classId: "class-1",
+      },
+    ],
     createdAt: now,
     updatedAt: now,
     ...overrides,

@@ -17,15 +17,13 @@ export interface PaginatedResult<T> {
 export interface ListAssignmentsOptions {
   readonly status?: AssignmentStatus;
   readonly studentUserId?: string;
+  readonly teacherUserId?: string;
   readonly limit: number;
   readonly cursor?: string;
 }
 
 export interface AssignmentRepositoryPort {
-  findById(
-    schoolId: string,
-    assignmentId: string,
-  ): Promise<Assignment | null>;
+  findById(schoolId: string, assignmentId: string): Promise<Assignment | null>;
 
   list(
     schoolId: string,

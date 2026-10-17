@@ -21,6 +21,7 @@ import {
 } from "../../common/security/index.js";
 import { AssignmentsService } from "./assignments.service.js";
 import { CreateAssignmentDto } from "./dto/create-assignment.dto.js";
+import { TransitionAssignmentDto } from "./dto/transition-assignment.dto.js";
 import { UpdateAssignmentDto } from "./dto/update-assignment.dto.js";
 import { ListAssignmentsQueryDto } from "./dto/list-assignments-query.dto.js";
 
@@ -74,7 +75,9 @@ export class AssignmentsController {
         title: dto.title,
         startsAt: new Date(dto.startsAt),
         dueAt: new Date(dto.dueAt),
-        ...(dto.offlineRequired !== undefined ? { offlineRequired: dto.offlineRequired } : {}),
+        ...(dto.offlineRequired !== undefined
+          ? { offlineRequired: dto.offlineRequired }
+          : {}),
         targets: dto.targets.map((t) => ({
           targetType: t.targetType,
           ...(t.classId ? { classId: t.classId } : {}),
@@ -135,18 +138,39 @@ export class AssignmentsController {
         ...(dto.title ? { title: dto.title } : {}),
         ...(dto.startsAt ? { startsAt: new Date(dto.startsAt) } : {}),
         ...(dto.dueAt ? { dueAt: new Date(dto.dueAt) } : {}),
-        ...(dto.offlineRequired !== undefined ? { offlineRequired: dto.offlineRequired } : {}),
+        ...(dto.offlineRequired !== undefined
+          ? { offlineRequired: dto.offlineRequired }
+          : {}),
       },
       dto.expectedRevision,
     );
   }
 
+  @HttpCode(200)
+  @Post(":assignmentId/schedule")
+  @RequireRoles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
+  async scheduleAssignment(
+    @Param("schoolId", ParseUUIDPipe) schoolId: string,
+    @Param("assignmentId", ParseUUIDPipe) assignmentId: string,
+    @Body() body: TransitionAssignmentDto,
+    @CurrentTenant() tenant: TenantContext,
+    @CurrentPrincipal() principal: Principal,
+  ) {
+    return this.service.scheduleAssignment(
+      createAuthContext("request-id", principal, tenant),
+      schoolId,
+      assignmentId,
+      body.expectedRevision,
+    );
+  }
+
+  @HttpCode(200)
   @Post(":assignmentId/open")
   @RequireRoles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
   async openAssignment(
     @Param("schoolId", ParseUUIDPipe) schoolId: string,
     @Param("assignmentId", ParseUUIDPipe) assignmentId: string,
-    @Body() body: { expectedRevision: number },
+    @Body() body: TransitionAssignmentDto,
     @CurrentTenant() tenant: TenantContext,
     @CurrentPrincipal() principal: Principal,
   ) {
@@ -158,12 +182,13 @@ export class AssignmentsController {
     );
   }
 
+  @HttpCode(200)
   @Post(":assignmentId/close")
   @RequireRoles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
   async closeAssignment(
     @Param("schoolId", ParseUUIDPipe) schoolId: string,
     @Param("assignmentId", ParseUUIDPipe) assignmentId: string,
-    @Body() body: { expectedRevision: number },
+    @Body() body: TransitionAssignmentDto,
     @CurrentTenant() tenant: TenantContext,
     @CurrentPrincipal() principal: Principal,
   ) {
@@ -175,12 +200,13 @@ export class AssignmentsController {
     );
   }
 
+  @HttpCode(200)
   @Post(":assignmentId/cancel")
   @RequireRoles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
   async cancelAssignment(
     @Param("schoolId", ParseUUIDPipe) schoolId: string,
     @Param("assignmentId", ParseUUIDPipe) assignmentId: string,
-    @Body() body: { expectedRevision: number },
+    @Body() body: TransitionAssignmentDto,
     @CurrentTenant() tenant: TenantContext,
     @CurrentPrincipal() principal: Principal,
   ) {

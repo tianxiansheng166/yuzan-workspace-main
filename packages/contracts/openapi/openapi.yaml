@@ -519,7 +519,44 @@ paths:
           $ref: "#/components/responses/NotFound"
         "409":
           $ref: "#/components/responses/Conflict"
-  /schools/{schoolId}/assignments/{assignmentId}:open:
+  /schools/{schoolId}/assignments/{assignmentId}/schedule:
+    post:
+      summary: 排期任务（不自动开放）
+      tags: [Assignments]
+      operationId: scheduleAssignment
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/AssignmentId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [expectedRevision]
+              properties:
+                expectedRevision:
+                  type: integer
+                  minimum: 1
+      responses:
+        "200":
+          description: Assignment scheduled
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AssignmentResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+  /schools/{schoolId}/assignments/{assignmentId}/open:
     post:
       summary: 开放任务
       tags: [Assignments]
@@ -527,6 +564,18 @@ paths:
       parameters:
         - $ref: "#/components/parameters/SchoolId"
         - $ref: "#/components/parameters/AssignmentId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [expectedRevision]
+              properties:
+                expectedRevision:
+                  type: integer
+                  minimum: 1
       responses:
         "200":
           description: Assignment opened
@@ -3818,7 +3867,7 @@ components:
           format: uuid
     CreateAssignmentRequest:
       type: object
-      required: [courseVersionId, title, startsAt, dueAt]
+      required: [courseVersionId, title, startsAt, dueAt, targets]
       properties:
         courseVersionId:
           type: string
@@ -3838,6 +3887,7 @@ components:
           default: false
         targets:
           type: array
+          minItems: 1
           items:
             $ref: "#/components/schemas/AssignmentTarget"
     Assignment:

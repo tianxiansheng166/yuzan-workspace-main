@@ -1,8 +1,9 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 import type { AuthContext } from "../../common/security/auth.types.js";
 import { MembershipRole } from "../../common/security/index.js";
 import { PrismaService } from "../../shared/database/prisma.service.js";
 import {
+  AssignmentConflictException,
   AssignmentForbiddenException,
   AssignmentNotFoundException,
   AssignmentStatusException,
@@ -62,7 +63,12 @@ export class AssignmentsService {
       };
     }
 
-    const result = await this.assignmentRepo.list(schoolId, options);
+    const result = await this.assignmentRepo.list(schoolId, {
+      ...options,
+      ...(!auth.principal.roles.includes(MembershipRole.SCHOOL_ADMIN)
+        ? { teacherUserId: auth.principal.userId }
+        : {}),
+    });
     return {
       items: result.items.map(toAssignmentSummaryResponse),
       nextCursor: result.nextCursor,
@@ -93,6 +99,7 @@ export class AssignmentsService {
       auth.principal.roles.includes(MembershipRole.SCHOOL_ADMIN);
 
     if (isTeacherOrAdmin) {
+      await this.validateTargets(auth, schoolId, assignment.targets);
       return toAssignmentResponse(assignment);
     }
 
@@ -118,26 +125,23 @@ export class AssignmentsService {
       throw new AssignmentForbiddenException();
     }
 
+    await this.validatePublishInput(auth, schoolId, input);
+
     const assignment = await this.assignmentRepo.save(
       { ...input, schoolId },
       auth.principal.userId,
     );
 
-    // Create notifications for target students
-    this.createAssignmentNotifications(schoolId, assignment.id, input).catch(() => {
-      // Non-blocking: notification creation failure should not block assignment creation
-    });
-
     return toAssignmentResponse(assignment);
   }
 
   /**
-   * Fire-and-forget: create notifications for students targeted by this assignment.
+   * Best-effort notification fan-out after the OPEN revision has committed.
    */
   private async createAssignmentNotifications(
     schoolId: string,
     assignmentId: string,
-    input: CreateAssignmentInput,
+    input: Pick<CreateAssignmentInput, "targets">,
   ) {
     // Resolve target student userIds from targets
     const targetUserIds: string[] = [];
@@ -146,13 +150,23 @@ export class AssignmentsService {
       if (target.targetType === "CLASS" && target.classId) {
         // Get all students in the class
         const enrollments = await this.prisma.enrollment.findMany({
-          where: { schoolId, classId: target.classId, role: "STUDENT", status: "ACTIVE" },
+          where: {
+            schoolId,
+            classId: target.classId,
+            role: "STUDENT",
+            status: "ACTIVE",
+          },
           select: { userId: true },
         });
         targetUserIds.push(...enrollments.map((e) => e.userId));
       } else if (target.targetType === "STUDENT" && target.enrollmentId) {
         const enrollment = await this.prisma.enrollment.findFirst({
-          where: { id: target.enrollmentId, schoolId, status: "ACTIVE" },
+          where: {
+            id: target.enrollmentId,
+            schoolId,
+            role: "STUDENT",
+            status: "ACTIVE",
+          },
           select: { userId: true },
         });
         if (enrollment) targetUserIds.push(enrollment.userId);
@@ -172,9 +186,98 @@ export class AssignmentsService {
           priority: "NORMAL",
           title: "新任务已发布",
           body: `您有一项新的学习任务，请及时完成`,
-          actionUrl: `/student/today`,
+          actionUrl: `/student/today/?assignmentId=${assignmentId}`,
         })),
       });
+    }
+  }
+
+  private assertRevision(actual: number, expected: number) {
+    if (actual !== expected) throw new AssignmentConflictException();
+  }
+
+  private async validatePublishInput(
+    auth: AuthContext,
+    schoolId: string,
+    input: Pick<
+      CreateAssignmentInput,
+      "courseVersionId" | "startsAt" | "dueAt" | "targets"
+    >,
+  ) {
+    if (
+      !Number.isFinite(input.startsAt.getTime()) ||
+      !Number.isFinite(input.dueAt.getTime()) ||
+      input.startsAt >= input.dueAt ||
+      input.dueAt <= new Date()
+    ) {
+      throw new BadRequestException({
+        code: "ASSIGNMENT_TIME_INVALID",
+        message: "开始时间必须早于截止时间，截止时间必须在未来",
+      });
+    }
+    const course = await this.prisma.courseVersion.findFirst({
+      where: { id: input.courseVersionId, schoolId, status: "PUBLISHED" },
+      select: { id: true },
+    });
+    if (!course) throw new AssignmentNotFoundException("已发布课程版本不存在");
+    await this.validateTargets(auth, schoolId, input.targets);
+  }
+
+  private async validateTargets(
+    auth: AuthContext,
+    schoolId: string,
+    targets: CreateAssignmentInput["targets"],
+  ) {
+    if (!targets.length)
+      throw new BadRequestException({
+        code: "ASSIGNMENT_TARGET_INVALID",
+        message: "至少选择一个目标",
+      });
+    for (const target of targets) {
+      let classId = target.classId;
+      if (target.targetType === "CLASS" && classId && !target.enrollmentId) {
+        if (
+          !(await this.prisma.class.findFirst({
+            where: { id: classId, schoolId },
+            select: { id: true },
+          }))
+        )
+          throw new AssignmentNotFoundException("班级不存在");
+      } else if (
+        target.targetType === "STUDENT" &&
+        target.enrollmentId &&
+        !classId
+      ) {
+        const enrollment = await this.prisma.enrollment.findFirst({
+          where: {
+            id: target.enrollmentId,
+            schoolId,
+            role: "STUDENT",
+            status: "ACTIVE",
+          },
+          select: { classId: true },
+        });
+        if (!enrollment) throw new AssignmentNotFoundException("学生不存在");
+        classId = enrollment.classId;
+      } else
+        throw new BadRequestException({
+          code: "ASSIGNMENT_TARGET_INVALID",
+          message: "目标类型与标识不匹配",
+        });
+      if (
+        !auth.principal.roles.includes(MembershipRole.SCHOOL_ADMIN) &&
+        !(await this.prisma.enrollment.findFirst({
+          where: {
+            schoolId,
+            classId,
+            userId: auth.principal.userId,
+            role: "TEACHER",
+            status: "ACTIVE",
+          },
+          select: { id: true },
+        }))
+      )
+        throw new AssignmentForbiddenException("无权操作目标班级");
     }
   }
 
@@ -189,13 +292,13 @@ export class AssignmentsService {
       throw new AssignmentForbiddenException();
     }
 
-    const existing = await this.assignmentRepo.findById(
-      schoolId,
-      assignmentId,
-    );
+    const existing = await this.assignmentRepo.findById(schoolId, assignmentId);
     if (!existing) {
       throw new AssignmentNotFoundException();
     }
+
+    await this.validatePublishInput(auth, schoolId, { ...existing, ...data });
+    this.assertRevision(existing.revision, expectedRevision);
 
     if (existing.status !== "DRAFT") {
       throw new AssignmentStatusException("只能修改草稿状态的作业");
@@ -205,6 +308,34 @@ export class AssignmentsService {
       schoolId,
       assignmentId,
       data,
+      expectedRevision,
+    );
+    return toAssignmentResponse(updated);
+  }
+
+  async scheduleAssignment(
+    auth: AuthContext,
+    schoolId: string,
+    assignmentId: string,
+    expectedRevision: number,
+  ) {
+    if (!this.policy.canTransitionStatus(auth, schoolId)) {
+      throw new AssignmentForbiddenException();
+    }
+
+    const existing = await this.assignmentRepo.findById(schoolId, assignmentId);
+    if (!existing) {
+      throw new AssignmentNotFoundException();
+    }
+
+    await this.validatePublishInput(auth, schoolId, existing);
+    this.assertRevision(existing.revision, expectedRevision);
+    validateTransition(existing.status, "SCHEDULED");
+
+    const updated = await this.assignmentRepo.updateStatus(
+      schoolId,
+      assignmentId,
+      "SCHEDULED",
       expectedRevision,
     );
     return toAssignmentResponse(updated);
@@ -220,14 +351,13 @@ export class AssignmentsService {
       throw new AssignmentForbiddenException();
     }
 
-    const existing = await this.assignmentRepo.findById(
-      schoolId,
-      assignmentId,
-    );
+    const existing = await this.assignmentRepo.findById(schoolId, assignmentId);
     if (!existing) {
       throw new AssignmentNotFoundException();
     }
 
+    await this.validatePublishInput(auth, schoolId, existing);
+    this.assertRevision(existing.revision, expectedRevision);
     validateTransition(existing.status, "OPEN");
 
     const updated = await this.assignmentRepo.updateStatus(
@@ -236,6 +366,11 @@ export class AssignmentsService {
       "OPEN",
       expectedRevision,
     );
+    await this.createAssignmentNotifications(
+      schoolId,
+      assignmentId,
+      updated,
+    ).catch(() => {});
     return toAssignmentResponse(updated);
   }
 
@@ -249,14 +384,13 @@ export class AssignmentsService {
       throw new AssignmentForbiddenException();
     }
 
-    const existing = await this.assignmentRepo.findById(
-      schoolId,
-      assignmentId,
-    );
+    const existing = await this.assignmentRepo.findById(schoolId, assignmentId);
     if (!existing) {
       throw new AssignmentNotFoundException();
     }
 
+    await this.validateTargets(auth, schoolId, existing.targets);
+    this.assertRevision(existing.revision, expectedRevision);
     validateTransition(existing.status, "CLOSED");
 
     const updated = await this.assignmentRepo.updateStatus(
@@ -278,14 +412,13 @@ export class AssignmentsService {
       throw new AssignmentForbiddenException();
     }
 
-    const existing = await this.assignmentRepo.findById(
-      schoolId,
-      assignmentId,
-    );
+    const existing = await this.assignmentRepo.findById(schoolId, assignmentId);
     if (!existing) {
       throw new AssignmentNotFoundException();
     }
 
+    await this.validateTargets(auth, schoolId, existing.targets);
+    this.assertRevision(existing.revision, expectedRevision);
     validateTransition(existing.status, "CANCELLED");
 
     const updated = await this.assignmentRepo.updateStatus(
@@ -306,14 +439,12 @@ export class AssignmentsService {
       throw new AssignmentForbiddenException();
     }
 
-    const existing = await this.assignmentRepo.findById(
-      schoolId,
-      assignmentId,
-    );
+    const existing = await this.assignmentRepo.findById(schoolId, assignmentId);
     if (!existing) {
       throw new AssignmentNotFoundException();
     }
 
+    await this.validateTargets(auth, schoolId, existing.targets);
     await this.assignmentRepo.softDelete(schoolId, assignmentId);
   }
 
@@ -330,13 +461,25 @@ export class AssignmentsService {
       throw new AssignmentForbiddenException();
     }
 
-    const assignment = await this.assignmentRepo.findById(schoolId, assignmentId);
+    const assignment = await this.assignmentRepo.findById(
+      schoolId,
+      assignmentId,
+    );
     if (!assignment) {
       throw new AssignmentNotFoundException();
     }
 
+    await this.validateTargets(auth, schoolId, assignment.targets);
+
     // Count target students from assignment targets
-    const targets = (assignment as unknown as Record<string, unknown>).targets as Array<{ targetType: string; classId?: string | null; enrollmentId?: string | null }> | undefined;
+    const targets = (assignment as unknown as Record<string, unknown>)
+      .targets as
+      | Array<{
+          targetType: string;
+          classId?: string | null;
+          enrollmentId?: string | null;
+        }>
+      | undefined;
     const targetClassIds = (targets ?? [])
       .filter((t) => t.targetType === "CLASS" && t.classId)
       .map((t) => t.classId!);
@@ -361,36 +504,36 @@ export class AssignmentsService {
     totalStudents += targetEnrollmentIds.length;
 
     // Count submissions by status
-    const [
-      submittedCount,
-      reviewedCount,
-      needsReviewCount,
-    ] = await Promise.all([
-      this.prisma.submission.count({
-        where: {
-          schoolId,
-          assignmentId,
-          status: { in: ["SUBMITTED", "NEEDS_REVIEW", "REVIEWED", "ACCEPTED"] },
-          deletedAt: null,
-        },
-      }),
-      this.prisma.submission.count({
-        where: {
-          schoolId,
-          assignmentId,
-          status: { in: ["REVIEWED", "ACCEPTED"] },
-          deletedAt: null,
-        },
-      }),
-      this.prisma.submission.count({
-        where: {
-          schoolId,
-          assignmentId,
-          status: "NEEDS_REVIEW",
-          deletedAt: null,
-        },
-      }),
-    ]);
+    const [submittedCount, reviewedCount, needsReviewCount] = await Promise.all(
+      [
+        this.prisma.submission.count({
+          where: {
+            schoolId,
+            assignmentId,
+            status: {
+              in: ["SUBMITTED", "NEEDS_REVIEW", "REVIEWED", "ACCEPTED"],
+            },
+            deletedAt: null,
+          },
+        }),
+        this.prisma.submission.count({
+          where: {
+            schoolId,
+            assignmentId,
+            status: { in: ["REVIEWED", "ACCEPTED"] },
+            deletedAt: null,
+          },
+        }),
+        this.prisma.submission.count({
+          where: {
+            schoolId,
+            assignmentId,
+            status: "NEEDS_REVIEW",
+            deletedAt: null,
+          },
+        }),
+      ],
+    );
 
     const notSubmittedCount = Math.max(0, totalStudents - submittedCount);
 
@@ -401,7 +544,10 @@ export class AssignmentsService {
       notSubmittedCount,
       reviewedCount,
       needsReviewCount,
-      submissionRate: totalStudents > 0 ? Math.round((submittedCount / totalStudents) * 100) : 0,
+      submissionRate:
+        totalStudents > 0
+          ? Math.round((submittedCount / totalStudents) * 100)
+          : 0,
     };
   }
 }

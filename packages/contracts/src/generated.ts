@@ -279,7 +279,24 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/schools/{schoolId}/assignments/{assignmentId}:open": {
+  "/schools/{schoolId}/assignments/{assignmentId}/schedule": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** 排期任务（不自动开放） */
+    post: operations["scheduleAssignment"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/assignments/{assignmentId}/open": {
     parameters: {
       query?: never;
       header?: never;
@@ -2205,7 +2222,7 @@ export interface components {
       dueAt: string;
       /** @default false */
       offlineRequired: boolean;
-      targets?: components["schemas"]["AssignmentTarget"][];
+      targets: components["schemas"]["AssignmentTarget"][];
     };
     Assignment: {
       /** Format: uuid */
@@ -4448,6 +4465,42 @@ export interface operations {
       409: components["responses"]["Conflict"];
     };
   };
+  scheduleAssignment: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 任务 ID */
+        assignmentId: components["parameters"]["AssignmentId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          expectedRevision: number;
+        };
+      };
+    };
+    responses: {
+      /** @description Assignment scheduled */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AssignmentResponse"];
+        };
+      };
+      400: components["responses"]["BadRequest"];
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+      409: components["responses"]["Conflict"];
+    };
+  };
   openAssignment: {
     parameters: {
       query?: never;
@@ -4460,7 +4513,13 @@ export interface operations {
       };
       cookie?: never;
     };
-    requestBody?: never;
+    requestBody: {
+      content: {
+        "application/json": {
+          expectedRevision: number;
+        };
+      };
+    };
     responses: {
       /** @description Assignment opened */
       200: {
