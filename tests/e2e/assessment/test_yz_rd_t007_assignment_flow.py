@@ -9,14 +9,14 @@ import pytest
 from playwright.sync_api import expect, sync_playwright
 
 
-BASE = os.environ.get("YZ_T007_BASE_URL", "")
-DATABASE_URL = os.environ.get("YZ_T007_DATABASE_URL", "")
+BASE = os.environ.get("YZ_T010_BASE_URL", os.environ.get("YZ_T007_BASE_URL", ""))
+DATABASE_URL = os.environ.get("YZ_T010_DATABASE_URL", os.environ.get("YZ_T007_DATABASE_URL", ""))
 SCHOOL_ID = "11111111-1111-4111-8111-111111111111"
 TEACHER_A_ID = "33333333-3333-4333-8333-333333333333"
 STUDENT_A_ID = "22222222-2222-4222-8222-222222222222"
 CLASS_ID = "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee"
 COURSE_VERSION_ID = "f4444444-4444-4444-8444-444444444444"
-PASSWORD = os.environ.get("YZ_T007_PASSWORD", "YuzanTest!2026")
+PASSWORD = os.environ.get("YZ_T010_PASSWORD", os.environ.get("YZ_T007_PASSWORD", ""))
 PAGE_SIZE = 20
 pytestmark = pytest.mark.skipif(
     not BASE or not DATABASE_URL,
@@ -30,8 +30,8 @@ def sql(statement, *, capture=False):
     assert parsed.scheme == "postgresql"
     assert parsed.hostname == "127.0.0.1"
     assert parsed.port == int(os.environ["POSTGRES_PORT"])
-    assert parsed.username == os.environ["POSTGRES_USER"] == "yz_t007"
-    assert parsed.path.lstrip("/") == os.environ["POSTGRES_DB"] == "yuzan_t007_native"
+    assert parsed.username == os.environ["POSTGRES_USER"] == "yz_t010"
+    assert parsed.path.lstrip("/") == os.environ["POSTGRES_DB"] == "yuzan_t010_native"
     assert parsed.password
     env = {
         **os.environ,
@@ -68,7 +68,7 @@ def q(value):
 
 def verify_database_identity():
     row = sql_scalar("SELECT current_database() || '|' || current_user || '|' || version();")
-    assert row.startswith("yuzan_t007_native|yz_t007|PostgreSQL 17."), row.split("|", 2)[:2]
+    assert row.startswith("yuzan_t010_native|yz_t010|PostgreSQL 17."), row.split("|", 2)[:2]
 
 
 def install_fixture():
@@ -121,6 +121,14 @@ def install_fixture():
             WHERE id={q(STUDENT_A_ID)}''',
         f'''UPDATE "Class" SET name={q(ids["class_a_name"])}, grade='七年级', "updatedAt"=NOW()
             WHERE id={q(CLASS_ID)}''',
+        f'''INSERT INTO "Course" (id,"schoolId","authorUserId","stableKey",title,"createdAt","updatedAt")
+            VALUES ({q("f3333333-3333-4333-8333-333333333333")},{q(SCHOOL_ID)},{q(TEACHER_A_ID)},
+              'TEST_FIXTURE_ONLY_T007_COURSE','TEST_FIXTURE_ONLY T007 测试课程',NOW(),NOW())
+            ON CONFLICT (id) DO UPDATE SET title='TEST_FIXTURE_ONLY T007 测试课程',"updatedAt"=NOW()''',
+        f'''INSERT INTO "CourseVersion" (id,"schoolId","courseId",version,status,title,locale,objectives,"publishedAt","createdAt","updatedAt")
+            VALUES ({q(COURSE_VERSION_ID)},{q(SCHOOL_ID)},{q("f3333333-3333-4333-8333-333333333333")},1,'PUBLISHED',
+              'TEST_FIXTURE_ONLY T007 测试课程版本','zh-CN','[]'::jsonb,NOW(),NOW(),NOW())
+            ON CONFLICT (id) DO UPDATE SET status='PUBLISHED',title='TEST_FIXTURE_ONLY T007 测试课程版本',"updatedAt"=NOW()''',
         f'''INSERT INTO "User" (id,"loginIdentifier","displayName","passwordHash",status,"createdAt","updatedAt")
             SELECT {q(ids["teacher_b"])},{q(ids["teacher_b_login"])},'TEST_FIXTURE_ONLY T007 教师乙',"passwordHash",'ACTIVE',NOW(),NOW()
             FROM "User" WHERE id={q(TEACHER_A_ID)}''',
@@ -162,8 +170,9 @@ def install_fixture():
         f'''INSERT INTO "Assignment" (id,"schoolId","courseVersionId","createdByUserId",title,status,"startsAt","dueAt","openedAt","createdAt","updatedAt")
             VALUES ({q(ids["assignment"])},{q(SCHOOL_ID)},{q(COURSE_VERSION_ID)},{q(TEACHER_A_ID)},{q(ids["main_title"])},'OPEN',
             NOW()-INTERVAL '1 day','2026-11-20T12:00:00Z','2026-10-17T00:00:00Z',NOW(),NOW())''',
-        f'''INSERT INTO "AssignmentTarget" (id,"schoolId","assignmentId","targetType","classId","createdAt")
-            VALUES ({q(ids["assignment_target"])},{q(SCHOOL_ID)},{q(ids["assignment"])},'CLASS',{q(CLASS_ID)},NOW())''',
+        f'''INSERT INTO "AssignmentTarget" (id,"schoolId","assignmentId","targetType","enrollmentId","createdAt")
+            VALUES ({q(ids["assignment_target"])},{q(SCHOOL_ID)},{q(ids["assignment"])},'STUDENT',
+              'f1111111-1111-4111-8111-111111111111',NOW())''',
         f'''INSERT INTO "Assignment" (id,"schoolId","courseVersionId","createdByUserId",title,status,"startsAt","dueAt","createdAt","updatedAt")
             VALUES ({q(ids["transition_assignment"])},{q(SCHOOL_ID)},{q(COURSE_VERSION_ID)},{q(TEACHER_A_ID)},{q(ids["transition_title"])},'DRAFT',
             NOW()-INTERVAL '1 day',NOW()+INTERVAL '7 days',NOW(),NOW())''',
@@ -449,8 +458,7 @@ def test_teacher_assignment_filters_roster_authorization_and_dynamic_routes():
             expect(review_link).to_be_visible()
             review_href = review_link.get_attribute("href")
             assert review_href == f"/teacher/reviews/{linked_review['itemId']}"
-            # fit.js intercepts empty data-nav anchors; verify this real dynamic route without mocking its API.
-            page.goto(f"{BASE}{review_href}")
+            review_link.click()
             expect(page).to_have_url(f"{BASE}/teacher/reviews/{linked_review['itemId']}")
             expect(page.locator(".detail-top h1")).to_contain_text(fixture["student_a_name"])
             expect(page.locator(".detail-stimulus")).to_contain_text("春风又绿江南岸")
@@ -465,8 +473,24 @@ def test_teacher_assignment_filters_roster_authorization_and_dynamic_routes():
             page.go_back()
             expect(page).to_have_url(f"{BASE}/teacher/assignments/?assignmentId={fixture['assignment']}")
             expect(page.locator(".assignment-roster")).to_contain_text(fixture["student_a_name"])
+            evidence = os.environ.get("YZ_T010_EVIDENCE_DIR", os.environ.get("YZ_T007_EVIDENCE_DIR"))
+            evidence_dir = None
+            if evidence:
+                from pathlib import Path
+
+                evidence_dir = Path(evidence)
+                evidence_dir.mkdir(parents=True, exist_ok=True)
             page.reload()
             expect(page.locator(".row.expanded")).to_contain_text(fixture["main_title"])
+            for width in (1280, 1440):
+                page.set_viewport_size({"width": width, "height": 1000})
+                page.goto(f"{BASE}/teacher/assignments/?assignmentId={fixture['assignment']}")
+                expect(page.locator(".row.expanded")).to_contain_text(fixture["main_title"])
+                expect(page.locator(".assignment-roster a")).to_be_visible()
+                assert page.evaluate("document.documentElement.scrollWidth <= window.innerWidth + 1"), width
+                if evidence_dir:
+                    page.screenshot(path=str(evidence_dir / f"assignment-detail-{width}.png"), full_page=True)
+            page.set_viewport_size({"width": 1440, "height": 1000})
 
             # Empty teacher and one-shot API failure both render real recoverable UI states.
             ui_login(page, fixture["teacher_empty_login"])
@@ -512,17 +536,13 @@ def test_teacher_assignment_filters_roster_authorization_and_dynamic_routes():
                 f'''SELECT count(*) FROM "Assignment" WHERE "schoolId"={q(SCHOOL_ID)} AND title={q(fixture['transition_title'])};'''
             ) == "1"
 
-            evidence = os.environ.get("YZ_T007_EVIDENCE_DIR")
-            if evidence:
-                from pathlib import Path
-
-                evidence_dir = Path(evidence)
-                evidence_dir.mkdir(parents=True, exist_ok=True)
+            if evidence_dir:
                 page.screenshot(path=str(evidence_dir / "assignment-published.png"), full_page=True)
             print(
                 "T007 native proof: "
                 f"assignment={fixture['assignment']} submission={fixture['submission']} "
-                f"review={linked_review['itemId']} paged={len(all_sql_ids)} published={created_assignment_id}"
+                f"review={linked_review['itemId']} sql_api_stats={db_total}/{db_submitted}/{db_review} "
+                f"paged={len(all_sql_ids)} published={created_assignment_id}"
             )
         finally:
             context.close()

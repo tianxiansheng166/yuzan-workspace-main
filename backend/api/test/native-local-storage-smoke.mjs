@@ -34,8 +34,9 @@ try {
   await client.send(new CreateBucketCommand({ Bucket: bucket }));
 }
 
-const key = `t009-smoke/${randomUUID()}.txt`;
-const expected = Buffer.from("YZ-RD-T009 isolated MinIO smoke check\n", "utf8");
+const taskId = process.env.YZ_NATIVE_TASK_ID || "T009";
+const key = `${taskId.toLowerCase()}-smoke/${randomUUID()}.txt`;
+const expected = Buffer.from(`YZ-RD-${taskId} isolated MinIO smoke check\n`, "utf8");
 try {
   await client.send(new PutObjectCommand({ Bucket: bucket, Key: key, Body: expected, ContentType: "text/plain" }));
   const object = await client.send(new GetObjectCommand({ Bucket: bucket, Key: key }));

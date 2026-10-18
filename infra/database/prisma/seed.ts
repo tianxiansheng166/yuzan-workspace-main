@@ -827,7 +827,9 @@ async function main() {
 try {
   await main();
   console.log(
-    "Seeded fictional identities, teaching loop, four student courses, reusable practices, reports, and volunteer training data.",
+    process.env.P0_BOOTSTRAP_ONLY === "true"
+      ? "Seeded fictional identities and reusable practices/deliveries only; no completed recordings, scores, or reports."
+      : "Seeded fictional identities, teaching loop, four student courses, reusable practices, reports, and volunteer training data.",
   );
 } finally {
   await prisma.$disconnect();

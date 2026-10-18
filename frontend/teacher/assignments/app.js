@@ -398,7 +398,7 @@
         const submission = latestSubmission.get(enrollmentId);
         const label = submission ? (statusLabel[submission.status] || submission.status) : '待提交';
         const links = submission
-          ? (reviewsBySubmission.get(submission.id) || []).map((item) => `<a data-nav href="/teacher/reviews/${encodeURIComponent(item.itemId)}">打开题目复核 ${Number(item.sortOrder ?? 0) + 1}</a>`).join('') || `<a data-nav href="/teacher/submissions/${encodeURIComponent(submission.id)}">查看提交</a>`
+          ? (reviewsBySubmission.get(submission.id) || []).map((item) => `<a data-nav="/teacher/reviews/${encodeURIComponent(item.itemId)}" href="/teacher/reviews/${encodeURIComponent(item.itemId)}">打开题目复核 ${Number(item.sortOrder ?? 0) + 1}</a>`).join('') || `<a data-nav="/teacher/submissions/${encodeURIComponent(submission.id)}" href="/teacher/submissions/${encodeURIComponent(submission.id)}">查看提交</a>`
           : '<span>尚无提交记录</span>';
         return `<div class="roster-row"><b>${escape(student.displayName || '学生')}<small>${escape(student.className || '')}</small></b><span>${escape(label)}</span><span>${escape(formatDateTime(submission?.submittedAt || submission?.createdAt))}</span><span>${links}</span></div>`;
       });

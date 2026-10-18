@@ -851,7 +851,17 @@ paths:
           in: query
           schema:
             type: string
-            enum: [IN_PROGRESS, PENDING_SYNC, SUBMITTED, PROCESSING, NEEDS_REVIEW, REVIEWED, RETURNED, ACCEPTED]
+            enum:
+              [
+                IN_PROGRESS,
+                PENDING_SYNC,
+                SUBMITTED,
+                PROCESSING,
+                NEEDS_REVIEW,
+                REVIEWED,
+                RETURNED,
+                ACCEPTED,
+              ]
       responses:
         "200":
           description: 只包含本人任课班级或学校管理员可见目标的提交页
@@ -900,6 +910,29 @@ paths:
           $ref: "#/components/responses/NotFound"
         "409":
           $ref: "#/components/responses/Conflict"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /schools/{schoolId}/submissions/{submissionId}:
+    get:
+      summary: 获取本人或授权教师可见的真实提交详情
+      tags: [Submissions]
+      operationId: getSubmission
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/SubmissionId"
+      responses:
+        "200":
+          description: Submission detail with real assignment and student labels
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubmissionDetailResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
         "500":
           $ref: "#/components/responses/InternalServerError"
   /schools/{schoolId}/submissions/{submissionId}/feedback:
@@ -4114,9 +4147,23 @@ components:
           type: string
           format: date-time
         revision:
+          type: integer
+          minimum: 1
     AssignmentSummary:
       type: object
-      required: [id, schoolId, title, status, startsAt, dueAt, revision, createdAt, updatedAt, targets]
+      required:
+        [
+          id,
+          schoolId,
+          title,
+          status,
+          startsAt,
+          dueAt,
+          revision,
+          createdAt,
+          updatedAt,
+          targets,
+        ]
       properties:
         id: { type: string, format: uuid }
         schoolId: { type: string, format: uuid }
@@ -4127,20 +4174,6 @@ components:
         revision: { type: integer, minimum: 1 }
         createdAt: { type: string, format: date-time }
         updatedAt: { type: string, format: date-time }
-        targets:
-          type: array
-          items:
-            $ref: "#/components/schemas/AssignmentTarget"
-          type: integer
-          minimum: 1
-        enrollmentId:
-          type: [string, "null"]
-          format: uuid
-        classId:
-          type: [string, "null"]
-          format: uuid
-        offlineRequired:
-          type: boolean
         targets:
           type: array
           items:
@@ -4191,14 +4224,17 @@ components:
     StudentTodayAction:
       type: object
       required: [kind, title, reason, cta, target]
-    AssignmentStatsResponse:
-      type: object
-      required: [data, meta]
       properties:
-        data:
-          $ref: "#/components/schemas/AssignmentStats"
-        meta:
-          $ref: "#/components/schemas/EnvelopeMeta"
+        kind:
+          type: string
+        title:
+          type: string
+        reason:
+          type: string
+        cta:
+          type: string
+        target:
+          $ref: "#/components/schemas/StudentTodayTarget"
     AssignmentListResponse:
       type: object
       required: [data, meta]
@@ -4245,37 +4281,6 @@ components:
           $ref: "#/components/schemas/AssignmentStats"
         meta:
           $ref: "#/components/schemas/EnvelopeMeta"
-    AssignmentStats:
-      type: object
-      required:
-        [
-          assignmentId,
-          totalStudents,
-          submittedCount,
-          notSubmittedCount,
-          reviewedCount,
-          needsReviewCount,
-          submissionRate,
-        ]
-      properties:
-        assignmentId: { type: string, format: uuid }
-        totalStudents: { type: integer, minimum: 0 }
-        submittedCount: { type: integer, minimum: 0 }
-        notSubmittedCount: { type: integer, minimum: 0 }
-        reviewedCount: { type: integer, minimum: 0 }
-        needsReviewCount: { type: integer, minimum: 0 }
-        submissionRate: { type: integer, minimum: 0, maximum: 100 }
-      properties:
-        kind:
-          type: string
-        title:
-          type: string
-        reason:
-          type: string
-        cta:
-          type: string
-        target:
-          $ref: "#/components/schemas/StudentTodayTarget"
     StudentTodayWaiting:
       type: object
       required: [kind, title, reason, itemCount]
@@ -4458,12 +4463,35 @@ components:
             $ref: "#/components/schemas/ActivityAttemptInput"
     Submission:
       type: object
-      required: [id, assignmentId, status, attemptNo, revision, submittedAt]
+      required:
+        [
+          id,
+          schoolId,
+          assignmentId,
+          enrollmentId,
+          attemptNo,
+          status,
+          idempotencyKey,
+          revision,
+          createdAt,
+          updatedAt,
+        ]
       properties:
         id:
           type: string
           format: uuid
+        schoolId:
+          type: string
+          format: uuid
         assignmentId:
+          type: string
+          format: uuid
+        enrollmentId:
+          type: string
+          format: uuid
+        idempotencyKey:
+          type: string
+        deviceId:
           type: string
           format: uuid
         status:
@@ -4481,10 +4509,17 @@ components:
             ]
         attemptNo:
           type: integer
+          minimum: 1
         revision:
           type: integer
         submittedAt:
-          type: [string, "null"]
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
           format: date-time
     SubmissionResponse:
       type: object
@@ -4492,6 +4527,24 @@ components:
       properties:
         data:
           $ref: "#/components/schemas/Submission"
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
+    SubmissionDetail:
+      allOf:
+        - $ref: "#/components/schemas/Submission"
+        - type: object
+          required: [assignmentTitle, studentName]
+          properties:
+            assignmentTitle:
+              type: string
+            studentName:
+              type: string
+    SubmissionDetailResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          $ref: "#/components/schemas/SubmissionDetail"
         meta:
           $ref: "#/components/schemas/EnvelopeMeta"
     ReleaseFeedbackRequest:
@@ -4518,35 +4571,6 @@ components:
           format: uuid
         submissionId:
           type: string
-    SubmissionListResponse:
-      type: object
-      required: [data, meta]
-      properties:
-        data:
-          type: object
-          required: [items, nextCursor, hasMore]
-          properties:
-            items:
-              type: array
-              items:
-                type: object
-                required: [id, schoolId, assignmentId, enrollmentId, attemptNo, status, revision, createdAt]
-                properties:
-                  id: { type: string, format: uuid }
-                  schoolId: { type: string, format: uuid }
-                  assignmentId: { type: string, format: uuid }
-                  enrollmentId: { type: string, format: uuid }
-                  attemptNo: { type: integer, minimum: 1 }
-                  status:
-                    type: string
-                    enum: [IN_PROGRESS, PENDING_SYNC, SUBMITTED, PROCESSING, NEEDS_REVIEW, REVIEWED, RETURNED, ACCEPTED]
-                  revision: { type: integer, minimum: 0 }
-                  submittedAt: { type: [string, "null"], format: date-time }
-                  createdAt: { type: string, format: date-time }
-            nextCursor: { type: [string, "null"] }
-            hasMore: { type: boolean }
-        meta:
-          $ref: "#/components/schemas/EnvelopeMeta"
           format: uuid
         decision:
           type: string
@@ -4561,17 +4585,60 @@ components:
         revision:
           type: integer
     FeedbackResponse:
-        assignmentTitle:
-          type: string
-          description: 教师有权查看时返回的真实任务标题
-        studentName:
-          type: string
-          description: 教师有权查看时返回的真实学生姓名
       type: object
       required: [data, meta]
       properties:
         data:
           $ref: "#/components/schemas/Feedback"
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
+    SubmissionListResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: object
+          required: [items, nextCursor, hasMore]
+          properties:
+            items:
+              type: array
+              items:
+                type: object
+                required:
+                  [
+                    id,
+                    schoolId,
+                    assignmentId,
+                    enrollmentId,
+                    attemptNo,
+                    status,
+                    revision,
+                    createdAt,
+                  ]
+                properties:
+                  id: { type: string, format: uuid }
+                  schoolId: { type: string, format: uuid }
+                  assignmentId: { type: string, format: uuid }
+                  enrollmentId: { type: string, format: uuid }
+                  attemptNo: { type: integer, minimum: 1 }
+                  status:
+                    type: string
+                    enum:
+                      [
+                        IN_PROGRESS,
+                        PENDING_SYNC,
+                        SUBMITTED,
+                        PROCESSING,
+                        NEEDS_REVIEW,
+                        REVIEWED,
+                        RETURNED,
+                        ACCEPTED,
+                      ]
+                  revision: { type: integer, minimum: 0 }
+                  submittedAt: { type: [string, "null"], format: date-time }
+                  createdAt: { type: string, format: date-time }
+            nextCursor: { type: [string, "null"] }
+            hasMore: { type: boolean }
         meta:
           $ref: "#/components/schemas/EnvelopeMeta"
     SyncOperation:
@@ -5469,7 +5536,21 @@ components:
               format: uuid
     AssessmentReviewQueueItem:
       type: object
-      required: [itemId, sessionId, submissionId, assignmentId, student, practice, strategy, domain, maxScore, state, sessionStatus, sortOrder]
+      required:
+        [
+          itemId,
+          sessionId,
+          submissionId,
+          assignmentId,
+          student,
+          practice,
+          strategy,
+          domain,
+          maxScore,
+          state,
+          sessionStatus,
+          sortOrder,
+        ]
       properties:
         itemId: { type: string, format: uuid }
         sessionId: { type: string, format: uuid }
@@ -5514,7 +5595,8 @@ components:
       properties:
         data:
           type: object
-          required: [itemId, sessionId, student, practice, item, review, evidence]
+          required:
+            [itemId, sessionId, student, practice, item, review, evidence]
           properties:
             itemId: { type: string, format: uuid }
             sessionId: { type: string, format: uuid }
@@ -5536,8 +5618,6 @@ components:
       required: [data, meta]
       properties:
         data: { type: object, additionalProperties: true }
-        meta:
-          $ref: "#/components/schemas/EnvelopeMeta"
         meta:
           $ref: "#/components/schemas/EnvelopeMeta"
     AttachRecordingRequest:
@@ -5798,6 +5878,12 @@ components:
           type: array
           items: { $ref: "#/components/schemas/TeacherDiagnosticStudent" }
     TeacherDiagnosticClassIdentity:
+      type: object
+      required: [classId, className, grade]
+      properties:
+        classId: { type: string, format: uuid }
+        className: { type: string }
+        grade: { type: string }
     TeacherDashboardResponse:
       type: object
       required: [data, meta]
@@ -5887,12 +5973,6 @@ components:
         studentName: { type: string }
         taskTitle: { type: string }
         submittedAt: { type: string, format: date-time }
-      type: object
-      required: [classId, className, grade]
-      properties:
-        classId: { type: string, format: uuid }
-        className: { type: string }
-        grade: { type: string }
     TeacherDiagnosticSummary:
       type: object
       required:

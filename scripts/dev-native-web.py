@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Isolated native development runtime for YZ-RD-T009."""
+"""Isolated native development runtime for YZ-RD-T009 and YZ-RD-T010."""
 
 from __future__ import annotations
 
@@ -22,7 +22,9 @@ from urllib.request import ProxyHandler, build_opener
 
 
 ROOT = Path(__file__).resolve().parents[1]
-RUNTIME = ROOT / "runtime-local" / "native-web"
+TASK_ID = "T009"
+BASE_RUNTIME = ROOT / "runtime-local" / "native-web"
+RUNTIME = BASE_RUNTIME
 CONFIG_FILE = RUNTIME / ".env.local"
 STATE = RUNTIME / "state"
 LOGS = RUNTIME / "logs"
@@ -31,6 +33,8 @@ REDIS_DATA = RUNTIME / "redis-data"
 MINIO_DATA = RUNTIME / "minio-data"
 EVIDENCE = RUNTIME / "evidence"
 TOOLCHAIN = RUNTIME / "toolchain"
+TASK_BIN = RUNTIME / "bin"
+TEST_PYTHON = RUNTIME / "venv" / "bin" / "python"
 PG_PREFIX = TOOLCHAIN / "pgdg"
 PG_BIN = PG_PREFIX / "usr" / "lib" / "postgresql" / "17" / "bin"
 PG_LIBRARY = PG_PREFIX / "usr" / "lib" / "x86_64-linux-gnu"
@@ -40,6 +44,35 @@ CHROME = Path("/usr/bin/google-chrome")
 TEST_FILE = ROOT / "tests" / "e2e" / "assessment" / "test_yz_rd_t009_native_teacher_dashboard.py"
 STORAGE_TEST = ROOT / "backend" / "api" / "test" / "native-local-storage-smoke.mjs"
 TEST_REQUIREMENTS = ROOT / "scripts" / "dev-native-web-requirements.txt"
+
+
+def configure_task(task_id: str, shared_runtime_root: Path | None = None) -> None:
+    """Select task-owned runtime data while optionally reusing installed tools."""
+    global TASK_ID, BASE_RUNTIME, RUNTIME, CONFIG_FILE, STATE, LOGS, PGDATA
+    global REDIS_DATA, MINIO_DATA, EVIDENCE, TOOLCHAIN, TASK_BIN, PG_PREFIX, PG_BIN
+    global PG_LIBRARY, REDIS_DIR, MINIO_BIN, TEST_PYTHON
+
+    task_id = task_id.upper()
+    if task_id not in {"T009", "T010"}:
+        raise RuntimeErrorMessage("仅支持 T009 或 T010 原生环境")
+    TASK_ID = task_id
+    BASE_RUNTIME = shared_runtime_root.resolve() if shared_runtime_root else ROOT / "runtime-local" / "native-web"
+    RUNTIME = BASE_RUNTIME if task_id == "T009" else ROOT / "runtime-local" / "native-web-t010"
+    CONFIG_FILE = RUNTIME / ".env.local"
+    STATE = RUNTIME / "state"
+    LOGS = RUNTIME / "logs"
+    PGDATA = RUNTIME / "postgres-data"
+    REDIS_DATA = RUNTIME / "redis-data"
+    MINIO_DATA = RUNTIME / "minio-data"
+    EVIDENCE = RUNTIME / "evidence"
+    TOOLCHAIN = BASE_RUNTIME / "toolchain"
+    TASK_BIN = RUNTIME / "bin"
+    TEST_PYTHON = BASE_RUNTIME / "venv" / "bin" / "python"
+    PG_PREFIX = TOOLCHAIN / "pgdg"
+    PG_BIN = PG_PREFIX / "usr" / "lib" / "postgresql" / "17" / "bin"
+    PG_LIBRARY = PG_PREFIX / "usr" / "lib" / "x86_64-linux-gnu"
+    REDIS_DIR = TOOLCHAIN / "redis-7.4.10" / "src"
+    MINIO_BIN = TOOLCHAIN / "bin" / "minio"
 
 REQUIRED_CONFIG = {
     "API_HOST",
@@ -72,7 +105,7 @@ REQUIRED_CONFIG = {
     "SPEECH_PROVIDER",
 }
 
-SECRET_KEYS = ("POSTGRES_PASSWORD", "REDIS_PASSWORD", "SESSION_SECRET", "S3_SECRET_KEY")
+SECRET_KEYS = ("POSTGRES_PASSWORD", "REDIS_PASSWORD", "SESSION_SECRET", "S3_SECRET_KEY", "E2E_TEST_PASSWORD")
 SERVICE_ORDER = ("postgres", "api", "web", "redis", "minio", "worker")
 STOP_ORDER = ("worker", "web", "api", "minio", "redis", "postgres")
 DIRECT_HTTP = build_opener(ProxyHandler({}))
@@ -125,6 +158,15 @@ def node_binary() -> Path | None:
 
 
 def command_path(name: str) -> Path | None:
+    if name == "pnpm":
+        package_file = ROOT / "package.json"
+        if package_file.is_file():
+            package_manager = json.loads(package_file.read_text(encoding="utf-8")).get("packageManager", "")
+            match = re.fullmatch(r"pnpm@([^+]+)(?:\+.*)?", package_manager)
+            if match:
+                cached = Path.home() / ".cache" / "node" / "corepack" / "v1" / "pnpm" / match.group(1) / "bin" / "pnpm.cjs"
+                if cached.is_file() and os.access(cached, os.X_OK):
+                    return cached
     value = shutil.which(name)
     if not value and name == "pnpm":
         candidate = Path.home() / ".local" / "bin" / "pnpm"
@@ -144,6 +186,12 @@ def config_keys_from_example() -> set[str]:
     return keys
 
 
+def expected_database_identity() -> tuple[str, str]:
+    if TASK_ID == "T010":
+        return "yuzan_t010_native", "yz_t010"
+    return "yuzan_t009_native", "yz_t009"
+
+
 def create_local_config() -> None:
     if CONFIG_FILE.exists():
         if CONFIG_FILE.stat().st_mode & 0o777 != 0o600:
@@ -161,6 +209,10 @@ def create_local_config() -> None:
         if additions:
             with CONFIG_FILE.open("a", encoding="utf-8") as handle:
                 handle.writelines(additions)
+            os.chmod(CONFIG_FILE, 0o600)
+        if TASK_ID == "T010" and "E2E_TEST_PASSWORD" not in existing:
+            with CONFIG_FILE.open("a", encoding="utf-8") as handle:
+                handle.write("E2E_TEST_PASSWORD=YuzanTest!2026\n")
             os.chmod(CONFIG_FILE, 0o600)
         return
 
@@ -189,39 +241,50 @@ def create_local_config() -> None:
     pg_password = secrets.token_hex(32)
     redis_password = secrets.token_hex(32)
     s3_secret = secrets.token_hex(32)
+    database_name, database_user = expected_database_identity()
+    if TASK_ID == "T010":
+        api_port, web_port, postgres_port = "4089", "4289", "55629"
+        redis_port, minio_api_port, minio_console_port = "6429", "59182", "59183"
+        bucket = "yz-t010-native"
+    else:
+        api_port, web_port, postgres_port = "4085", "4285", "55617"
+        redis_port, minio_api_port, minio_console_port = "6428", "59180", "59181"
+        bucket = "yz-t009-native"
     values = {
         "NODE_ENV": "development",
         "API_HOST": "127.0.0.1",
-        "API_PORT": "4085",
-        "API_BASE_URL": "http://127.0.0.1:4085",
-        "DATABASE_URL": f"postgresql://yz_t009:{pg_password}@127.0.0.1:55617/yuzan_t009_native?schema=public",
-        "POSTGRES_USER": "yz_t009",
+        "API_PORT": api_port,
+        "API_BASE_URL": f"http://127.0.0.1:{api_port}",
+        "DATABASE_URL": f"postgresql://{database_user}:{pg_password}@127.0.0.1:{postgres_port}/{database_name}?schema=public",
+        "POSTGRES_USER": database_user,
         "POSTGRES_PASSWORD": pg_password,
-        "POSTGRES_DB": "yuzan_t009_native",
-        "POSTGRES_PORT": "55617",
+        "POSTGRES_DB": database_name,
+        "POSTGRES_PORT": postgres_port,
         "REDIS_HOST": "127.0.0.1",
-        "REDIS_PORT": "6428",
+        "REDIS_PORT": redis_port,
         "REDIS_PASSWORD": redis_password,
         "SESSION_SECRET": secrets.token_hex(48),
         "WEB_HOST": "127.0.0.1",
-        "WEB_ORIGIN": "http://127.0.0.1:4285",
-        "PORT": "4285",
-        "S3_ENDPOINT": "http://127.0.0.1:59180",
+        "WEB_ORIGIN": f"http://127.0.0.1:{web_port}",
+        "PORT": web_port,
+        "S3_ENDPOINT": f"http://127.0.0.1:{minio_api_port}",
         "S3_REGION": "us-east-1",
-        "S3_BUCKET": "yz-t009-native",
-        "S3_ACCESS_KEY": "yz_t009_local",
+        "S3_BUCKET": bucket,
+        "S3_ACCESS_KEY": f"{database_user}_local",
         "S3_SECRET_KEY": s3_secret,
-        "S3_ACCESS_KEY_ID": "yz_t009_local",
+        "S3_ACCESS_KEY_ID": f"{database_user}_local",
         "S3_SECRET_ACCESS_KEY": s3_secret,
         "S3_FORCE_PATH_STYLE": "true",
-        "MINIO_API_PORT": "59180",
-        "MINIO_CONSOLE_PORT": "59181",
-        "WORKER_HEARTBEAT_KEY": "yuzan:t009:worker:heartbeat",
+        "MINIO_API_PORT": minio_api_port,
+        "MINIO_CONSOLE_PORT": minio_console_port,
+        "WORKER_HEARTBEAT_KEY": f"yuzan:{TASK_ID.lower()}:worker:heartbeat",
         "WORKER_HEARTBEAT_INTERVAL_MS": "15000",
         "WORKER_HEARTBEAT_TTL_SECONDS": "60",
         "SPEECH_PROVIDER": "disabled",
         "LOG_LEVEL": "info",
     }
+    if TASK_ID == "T010":
+        values["E2E_TEST_PASSWORD"] = "YuzanTest!2026"
     RUNTIME.mkdir(parents=True, exist_ok=True, mode=0o700)
     content = "# Local-only native web runtime; derived from .env.example.\n"
     content += "".join(f"{key}={value}\n" for key, value in values.items())
@@ -252,6 +315,8 @@ def load_config(*, required: bool = True) -> dict[str, str]:
         key, value = line.split("=", 1)
         values[key.strip()] = value.strip()
     missing = sorted(REQUIRED_CONFIG - values.keys())
+    if TASK_ID == "T010" and not values.get("E2E_TEST_PASSWORD"):
+        missing.append("E2E_TEST_PASSWORD")
     if missing:
         raise RuntimeErrorMessage("隔离配置缺少字段: " + ", ".join(missing))
 
@@ -261,12 +326,12 @@ def load_config(*, required: bool = True) -> dict[str, str]:
         or parsed.hostname != "127.0.0.1"
         or parsed.port != int(values["POSTGRES_PORT"])
         or parsed.username != values["POSTGRES_USER"]
-        or parsed.path.lstrip("/") != "yuzan_t009_native"
-        or values["POSTGRES_DB"] != "yuzan_t009_native"
+        or parsed.path.lstrip("/") != expected_database_identity()[0]
+        or values["POSTGRES_DB"] != expected_database_identity()[0]
     ):
-        raise RuntimeErrorMessage("DATABASE_URL 必须指向本任务的 127.0.0.1/yuzan_t009_native 隔离数据库")
-    if values["POSTGRES_USER"] != "yz_t009":
-        raise RuntimeErrorMessage("本机隔离数据库用户必须为 yz_t009")
+        raise RuntimeErrorMessage(f"DATABASE_URL 必须指向本任务的 127.0.0.1/{expected_database_identity()[0]} 隔离数据库")
+    if values["POSTGRES_USER"] != expected_database_identity()[1]:
+        raise RuntimeErrorMessage(f"本机隔离数据库用户必须为 {expected_database_identity()[1]}")
     if values["REDIS_HOST"] != "127.0.0.1":
         raise RuntimeErrorMessage("REDIS_HOST 必须绑定 127.0.0.1")
     if values["S3_ACCESS_KEY_ID"] != values["S3_ACCESS_KEY"] or values["S3_SECRET_ACCESS_KEY"] != values["S3_SECRET_KEY"]:
@@ -299,7 +364,7 @@ def runtime_env(config: dict[str, str]) -> dict[str, str]:
     env = {key: os.environ[key] for key in inherited_keys if key in os.environ}
     env.update(config)
     node = node_binary()
-    extra = [str(PG_BIN), str(REDIS_DIR), str(TOOLCHAIN / "bin")]
+    extra = [str(TASK_BIN), str(PG_BIN), str(REDIS_DIR), str(TOOLCHAIN / "bin")]
     if node:
         extra.insert(0, str(node.parent))
     env["PATH"] = os.pathsep.join(value for value in [*extra, env.get("PATH", "")] if value)
@@ -466,10 +531,21 @@ def open_log(name: str):
 
 
 def ensure_dirs() -> None:
-    for path in (RUNTIME, STATE, LOGS, PGDATA, REDIS_DATA, MINIO_DATA, EVIDENCE):
+    for path in (RUNTIME, TASK_BIN, STATE, LOGS, PGDATA, REDIS_DATA, MINIO_DATA, EVIDENCE):
         path.mkdir(parents=True, exist_ok=True, mode=0o700)
         if path != RUNTIME:
             os.chmod(path, 0o700)
+    pnpm_link = TASK_BIN / "pnpm"
+    pnpm_target = command_path("pnpm")
+    if pnpm_target is None:
+        raise RuntimeErrorMessage("package.json 指定的 pnpm 缓存不存在")
+    if pnpm_link.is_symlink():
+        if pnpm_link.resolve() != pnpm_target.resolve():
+            raise RuntimeErrorMessage("任务本地 pnpm 入口指向不匹配文件，保留现场")
+    elif pnpm_link.exists():
+        raise RuntimeErrorMessage("任务本地 pnpm 入口已存在且不是预期符号链接，保留现场")
+    else:
+        pnpm_link.symlink_to(pnpm_target)
 
 
 def ensure_dependency(name: str, path: Path) -> Path:
@@ -505,7 +581,7 @@ def record_for_pid(name: str, pid: int, command_token: str, port: int | None = N
     if start is None:
         raise RuntimeErrorMessage(f"{name} 进程未能保持运行")
     record: dict[str, object] = {
-        "owner": "YZ-RD-T009",
+        "owner": f"YZ-RD-{TASK_ID}",
         "pid": pid,
         "start_ticks": start,
         "command_token": command_token,
@@ -520,7 +596,7 @@ def record_for_pid(name: str, pid: int, command_token: str, port: int | None = N
     return record
 
 
-def launch_process(name: str, args: list[str], *, env: dict[str, str], command_token: str, port: int | None = None, extra_ports: list[int] | None = None, cwd: Path = RUNTIME) -> bool:
+def launch_process(name: str, args: list[str], *, env: dict[str, str], command_token: str, port: int | None = None, extra_ports: list[int] | None = None, cwd: Path | None = None) -> bool:
     previous = read_record(name)
     if previous:
         okay, detail = record_process_ok(name, previous)
@@ -538,7 +614,7 @@ def launch_process(name: str, args: list[str], *, env: dict[str, str], command_t
     try:
         process = subprocess.Popen(
             args,
-            cwd=cwd,
+            cwd=cwd or RUNTIME,
             env=env,
             stdin=subprocess.DEVNULL,
             stdout=output,
@@ -626,7 +702,7 @@ def ensure_database(config: dict[str, str], env: dict[str, str], created_names: 
         raise RuntimeErrorMessage(f"本任务 PGDATA 已属于 PostgreSQL {major}，拒绝升级或重置")
     conf = PGDATA / "postgresql.conf"
     local_settings = (
-        "\n# YZ-RD-T009 isolated native runtime\n"
+        f"\n# YZ-RD-{TASK_ID} isolated native runtime\n"
         "listen_addresses = '127.0.0.1'\n"
         f"port = {int(config['POSTGRES_PORT'])}\n"
         f"unix_socket_directories = '{STATE / 'socket'}'\n"
@@ -634,7 +710,7 @@ def ensure_database(config: dict[str, str], env: dict[str, str], created_names: 
         "log_destination = 'stderr'\n"
     )
     content = conf.read_text(encoding="utf-8")
-    if "# YZ-RD-T009 isolated native runtime" not in content:
+    if f"# YZ-RD-{TASK_ID} isolated native runtime" not in content:
         with conf.open("a", encoding="utf-8") as handle:
             handle.write(local_settings)
     socket_dir = STATE / "socket"
@@ -689,7 +765,7 @@ def ensure_database(config: dict[str, str], env: dict[str, str], created_names: 
         )
         if result.returncode != 0:
             raise RuntimeErrorMessage("隔离数据库创建失败: " + safe_text(result.stderr, config))
-        print("PostgreSQL: 创建了本任务独立数据库 yuzan_t009_native")
+        print(f"PostgreSQL: 创建了本任务独立数据库 {expected_database_identity()[0]}")
     check = run_output(
         [str(psql), "-X", "-A", "-t", "-F", "|", "-c", "SELECT current_database(), current_user, version();"],
         env=db_env(config),
@@ -698,7 +774,8 @@ def ensure_database(config: dict[str, str], env: dict[str, str], created_names: 
     if check.returncode != 0:
         raise RuntimeErrorMessage("PostgreSQL 数据库连接验证失败: " + safe_text(check.stderr, config))
     row = check.stdout.strip()
-    if not row.startswith("yuzan_t009_native|yz_t009|PostgreSQL 17."):
+    database_name, database_user = expected_database_identity()
+    if not row.startswith(f"{database_name}|{database_user}|PostgreSQL 17."):
         raise RuntimeErrorMessage("PostgreSQL 数据库名、用户或版本不符合本任务隔离配置")
     print("PostgreSQL DB check: " + row.split("|", 2)[0] + " / " + row.split("|", 2)[1] + " / PostgreSQL 17.x")
     return created
@@ -882,6 +959,57 @@ def prepare_database_and_api(config: dict[str, str], env: dict[str, str], create
     pnpm = command_path("pnpm")
     if not pnpm:
         raise RuntimeErrorMessage("缺少 pnpm 10")
+    if TASK_ID == "T010":
+        probe = run_output(
+            [
+                str(PG_BIN / "psql"), "-X", "-A", "-t", "-F", "|",
+                "-c",
+                "SELECT current_database(), current_user, "
+                "(to_regclass('public._prisma_migrations') IS NOT NULL)::text, "
+                "(SELECT count(*) FROM information_schema.tables WHERE table_schema='public')::text;",
+            ],
+            env=db_env(config),
+            timeout=15,
+        )
+        if probe.returncode != 0:
+            raise RuntimeErrorMessage("无法确认 T010 数据库迁移状态: " + safe_text(probe.stderr, config))
+        fields = probe.stdout.strip().split("|")
+        database_name, database_user = expected_database_identity()
+        if len(fields) != 4 or fields[:2] != [database_name, database_user]:
+            raise RuntimeErrorMessage("T010 数据库身份与新建隔离配置不匹配；拒绝运行迁移")
+        has_migrations = fields[2] == "true"
+        table_count = int(fields[3])
+        if has_migrations and table_count > 0:
+            migration_probe = run_output(
+                [
+                    str(PG_BIN / "psql"), "-X", "-A", "-t", "-F", "|",
+                    "-c",
+                    'SELECT count(*) FILTER (WHERE finished_at IS NOT NULL AND rolled_back_at IS NULL)::text, '
+                    'count(*) FILTER (WHERE finished_at IS NULL OR rolled_back_at IS NOT NULL)::text '
+                    'FROM "_prisma_migrations";',
+                ],
+                env=db_env(config),
+                timeout=15,
+            )
+            if migration_probe.returncode != 0:
+                raise RuntimeErrorMessage("无法确认 T010 所有迁移均已完成；拒绝继续")
+            applied_count, incomplete_count = migration_probe.stdout.strip().split("|", 1)
+            migration_dir = ROOT / "infra" / "database" / "prisma" / "migrations"
+            expected_count = sum(path.is_dir() for path in migration_dir.iterdir())
+            if int(applied_count) != expected_count or incomplete_count != "0":
+                raise RuntimeErrorMessage("T010 迁移记录不完整；拒绝对已有数据重跑迁移")
+            print("T010 PostgreSQL: 已有本任务迁移记录；保留数据库并跳过 migrate/seed")
+        else:
+            if table_count != 0:
+                raise RuntimeErrorMessage("T010 数据库非空且没有完整 Prisma 迁移记录；拒绝运行迁移")
+            print("T010 PostgreSQL: 已确认新建、空白的本任务数据库；开始首次迁移与 seed")
+            run_checked([str(pnpm), "--filter", "@yuzan/database", "generate"], env=env, config=config, timeout=300)
+            run_checked([str(pnpm), "--filter", "@yuzan/database", "migrate:deploy"], env=env, config=config, timeout=300)
+            seed_env = dict(env)
+            seed_env["P0_BOOTSTRAP_ONLY"] = "true"
+            run_checked([str(pnpm), "--filter", "@yuzan/database", "seed"], env=seed_env, config=config, timeout=600)
+        run_checked([str(pnpm), "--filter", "@yuzan/api", "build"], env=env, config=config, timeout=600)
+        return
     run_checked([str(pnpm), "--filter", "@yuzan/database", "generate"], env=env, config=config, timeout=300)
     run_checked([str(pnpm), "--filter", "@yuzan/database", "migrate:deploy"], env=env, config=config, timeout=300)
     run_checked([str(pnpm), "--filter", "@yuzan/database", "seed"], env=env, config=config, timeout=600)
@@ -993,7 +1121,7 @@ def doctor(profile: str) -> int:
     print(f"ffmpeg: {command_version(ffmpeg, ['--version'])} ({ffmpeg or 'missing'})")
     chrome = command_path("google-chrome")
     print(f"Chromium: {command_version(chrome, ['--version'])}")
-    python = RUNTIME / "venv" / "bin" / "python"
+    python = TEST_PYTHON
     if python.is_file():
         result = run_output([str(python), "-c", "from importlib.metadata import version; print('pytest='+version('pytest')); print('playwright='+version('playwright'))"], timeout=10)
         print("Python Playwright: " + (result.stdout.strip() if result.returncode == 0 else "MISSING"))
@@ -1008,7 +1136,7 @@ def doctor(profile: str) -> int:
             "API": int(config["API_PORT"]),
             "Web": int(config["PORT"]),
         }
-        if profile == "full":
+        if profile in ("assessment", "full"):
             ports.update({"Redis": int(config["REDIS_PORT"]), "MinIO API": int(config["MINIO_API_PORT"]), "MinIO Console": int(config["MINIO_CONSOLE_PORT"])})
         for name, port in ports.items():
             owners = sorted(port_listener_pids(port))
@@ -1026,12 +1154,12 @@ def doctor(profile: str) -> int:
         missing.append("Node.js 24–26")
     if not pnpm:
         missing.append("pnpm 10")
-    elif not re.fullmatch(r"10\.\d+\.\d+", pnpm_version):
-        missing.append("pnpm 10")
+    elif pnpm_version != "10.13.1":
+        missing.append("pnpm 10.13.1")
     for name, path in (("PostgreSQL 17", PG_BIN / "postgres"), ("psql", PG_BIN / "psql")):
         if not path.is_file():
             missing.append(name)
-    if profile == "full":
+    if profile in ("assessment", "full"):
         if not (REDIS_DIR / "redis-server").is_file():
             missing.append("Redis 7")
         if not MINIO_BIN.is_file():
@@ -1132,13 +1260,14 @@ def start(profile: str) -> int:
     ensure_dirs()
     env = runtime_env(config)
     missing: list[str] = []
-    if not node_binary() or not command_path("pnpm"):
-        missing.append("Node.js 24–26 and pnpm 10")
+    pnpm = command_path("pnpm")
+    if not node_binary() or not pnpm or command_version(pnpm, ["--version"]) != "10.13.1":
+        missing.append("Node.js 24–26 and pnpm 10.13.1")
     if not (PG_BIN / "initdb").is_file():
         missing.append("PostgreSQL 17 binaries")
-    if profile == "full" and not (REDIS_DIR / "redis-server").is_file():
+    if profile in ("assessment", "full") and not (REDIS_DIR / "redis-server").is_file():
         missing.append("Redis 7 binaries")
-    if profile == "full" and not MINIO_BIN.is_file():
+    if profile in ("assessment", "full") and not MINIO_BIN.is_file():
         missing.append("MinIO Server binary")
     if missing:
         print("Start blocked: " + ", ".join(missing))
@@ -1147,21 +1276,23 @@ def start(profile: str) -> int:
     try:
         prepare_database_and_api(config, env, created)
         start_web_api(config, env, created)
-        if profile == "full":
+        if profile in ("assessment", "full"):
             start_redis(config, env, created)
             start_minio(config, env, created)
             if run_test("storage") != 0:
                 raise RuntimeErrorMessage("MinIO S3 smoke test failed")
             if http_status(f"{config['API_BASE_URL']}/api/v1/health/ready", timeout=3) != 200:
                 raise RuntimeErrorMessage("API 依赖 readiness 未通过（需要 PostgreSQL、Redis、MinIO 均 UP）")
+        if profile == "full":
             pnpm = str(command_path("pnpm"))
             run_checked([pnpm, "--filter", "@yuzan/worker", "build"], env=env, config=config, timeout=600)
             start_worker(config, env, created)
-        print(f"Start: PASS --profile {profile}")
+        print(f"Start: PASS --task {TASK_ID} --profile {profile}")
         print(f"Teacher Web: {config['WEB_ORIGIN']}/teacher/")
         print(f"API live: {config['API_BASE_URL']}/api/v1/health/live")
-        if profile == "full":
-            print("API readiness: HTTP 200; Redis, MinIO, Worker connected")
+        if profile in ("assessment", "full"):
+            suffix = ", Worker connected" if profile == "full" else "; worker deliberately stopped"
+            print(f"API readiness: HTTP 200; Redis, MinIO connected{suffix}")
         return 0
     except (RuntimeErrorMessage, subprocess.TimeoutExpired, OSError) as error:
         print("Start failed: " + safe_text(str(error), config))
@@ -1171,24 +1302,74 @@ def start(profile: str) -> int:
         return 1
 
 
+def import_question_bank(source_dir: Path) -> int:
+    if TASK_ID != "T010":
+        raise RuntimeErrorMessage("Question Bank fixture import is restricted to the isolated T010 database and bucket")
+    source = source_dir.expanduser().resolve()
+    required_sources = ("题库【三改】.docx", "答案及评分细则.docx", "题库音频及图片.zip")
+    missing = [name for name in required_sources if not (source / name).is_file()]
+    if missing:
+        raise RuntimeErrorMessage("只读题库素材不完整: " + ", ".join(missing))
+    config = load_config()
+    env = runtime_env(config)
+    if not minio_health(config):
+        raise RuntimeErrorMessage("T010 MinIO 未通过 Health 检查；未执行素材导入")
+    pnpm = command_path("pnpm")
+    if not pnpm:
+        raise RuntimeErrorMessage("缺少 pnpm 10")
+    command = [
+        str(pnpm), "qb:source:apply", "--", "--apply", "--all",
+        "--school-id", "11111111-1111-4111-8111-111111111111",
+        "--class-id", "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee",
+        "--source-dir", str(source),
+    ]
+    run_checked(command, env=env, config=config, timeout=3600)
+    print(f"T010 Question Bank import: PASS; source read only, target bucket={config['S3_BUCKET']}")
+    return 0
+
+
 def run_test(suite: str) -> int:
     config = load_config()
     env = runtime_env(config)
-    if suite == "teacher-dashboard":
-        python = RUNTIME / "venv" / "bin" / "python"
+    env["YZ_NATIVE_TASK_ID"] = TASK_ID
+    test_file = TEST_FILE
+    if suite in ("teacher-dashboard", "t007-assignment", "t008-student-history"):
+        python = TEST_PYTHON
         if not python.is_file():
-            raise RuntimeErrorMessage("缺少 runtime-local/native-web/venv；先运行 scripts/dev-native-web setup-test")
-        env["YZ_T009_BASE_URL"] = config["WEB_ORIGIN"]
-        env["YZ_T009_DATABASE_URL"] = config["DATABASE_URL"]
-        env["YZ_T009_EVIDENCE_DIR"] = str(EVIDENCE)
-        args = [str(python), "-m", "pytest", "-q", str(TEST_FILE)]
+            raise RuntimeErrorMessage("缺少已安装 pytest/Playwright 的原生 venv；请复用 T009 工具链，不要重复安装")
+        if suite == "teacher-dashboard":
+            env["YZ_T009_BASE_URL"] = config["WEB_ORIGIN"]
+            env["YZ_T009_DATABASE_URL"] = config["DATABASE_URL"]
+            env["YZ_T009_EVIDENCE_DIR"] = str(EVIDENCE)
+        else:
+            test_file = ROOT / "tests" / "e2e" / "assessment" / (
+                "test_yz_rd_t007_assignment_flow.py" if suite == "t007-assignment" else "test_yz_rd_t008_student_history.py"
+            )
+            env["YZ_T010_BASE_URL"] = config["WEB_ORIGIN"]
+            env["YZ_T010_DATABASE_URL"] = config["DATABASE_URL"]
+            env["YZ_T010_PASSWORD"] = config.get("E2E_TEST_PASSWORD", "")
+            env["YZ_T010_EVIDENCE_DIR"] = str(EVIDENCE)
+            env["POSTGRES_USER"] = config["POSTGRES_USER"]
+            env["POSTGRES_PASSWORD"] = config["POSTGRES_PASSWORD"]
+            env["POSTGRES_DB"] = config["POSTGRES_DB"]
+            env["POSTGRES_PORT"] = config["POSTGRES_PORT"]
+            if suite == "t008-student-history":
+                env["YZ_T010_S3_BUCKET"] = config["S3_BUCKET"]
+                env["YZ_T010_S3_ENDPOINT"] = config["S3_ENDPOINT"]
+                env["YZ_T010_S3_REGION"] = config["S3_REGION"]
+                env["YZ_T010_S3_ACCESS_KEY"] = config["S3_ACCESS_KEY"]
+                env["YZ_T010_S3_SECRET_KEY"] = config["S3_SECRET_KEY"]
+        args = [str(python), "-m", "pytest", "-q", "-s", str(test_file)]
         port = None
-    else:
+    elif suite == "storage":
         node = node_binary()
         if not node or not STORAGE_TEST.is_file():
             raise RuntimeErrorMessage("缺少 Node.js 或 MinIO 存储 smoke test")
         args = [str(node), str(STORAGE_TEST)]
+        test_file = STORAGE_TEST
         port = None
+    else:
+        raise RuntimeErrorMessage(f"未知原生回归套件: {suite}")
     test_record = read_record("test")
     if test_record and record_process_ok("test", test_record)[0]:
         raise RuntimeErrorMessage("本任务已有回归测试正在运行")
@@ -1202,19 +1383,37 @@ def run_test(suite: str) -> int:
         text=True,
         start_new_session=True,
     )
-    record_for_pid("test", process.pid, str(TEST_FILE if suite == "teacher-dashboard" else STORAGE_TEST), port, process.pid)
+    record_for_pid("test", process.pid, str(test_file), port, process.pid)
     try:
         output, _ = process.communicate()
     finally:
         current = read_record("test")
         if current and int(current.get("pid", -1)) == process.pid:
             service_file("test").unlink(missing_ok=True)
-    print(safe_text(output, config))
-    print(f"Test suite {suite}: {'PASS' if process.returncode == 0 else 'FAIL'}")
+    safe_output = safe_text(output, config)
+    result_text = f"Test suite {suite}: {'PASS' if process.returncode == 0 else 'FAIL'}"
+    EVIDENCE.mkdir(parents=True, exist_ok=True, mode=0o700)
+    evidence_path = EVIDENCE / f"{TASK_ID.lower()}-{suite}-{time.strftime('%Y%m%dT%H%M%S', time.localtime())}-{process.pid}.log"
+    descriptor = os.open(evidence_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    with os.fdopen(descriptor, "w", encoding="utf-8") as handle:
+        handle.write(safe_output)
+        if safe_output and not safe_output.endswith("\n"):
+            handle.write("\n")
+        handle.write(result_text + "\n")
+        handle.flush()
+        os.fsync(handle.fileno())
+    print(safe_output)
+    print(result_text)
+    print(f"Evidence: {evidence_path}")
     return process.returncode or 0
 
 
 def setup_test_environment() -> int:
+    if TASK_ID == "T010":
+        if TEST_PYTHON.is_file():
+            print(f"Python regression environment: reusing existing T009 venv at {TEST_PYTHON}")
+            return 0
+        raise RuntimeErrorMessage("T010 仅复用 T009 已安装的 pytest/Playwright；拒绝重复安装")
     venv = RUNTIME / "venv"
     python = venv / "bin" / "python"
     if not python.is_file():
@@ -1253,18 +1452,23 @@ def stop_all() -> int:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Isolated native Web/API development runtime; no container runtime is used.")
+    parser.add_argument("--task", choices=("t009", "t010"), default=os.environ.get("YZ_NATIVE_TASK_ID", "t009").lower())
+    parser.add_argument("--shared-runtime-root", type=Path, help="reuse installed native binaries and test venv from this runtime root")
     sub = parser.add_subparsers(dest="command", required=True)
     doctor_parser = sub.add_parser("doctor", help="check local versions, dependencies, ports, and permissions")
-    doctor_parser.add_argument("--profile", choices=("teacher", "full"), default="teacher")
+    doctor_parser.add_argument("--profile", choices=("teacher", "assessment", "full"), default="teacher")
     start_parser = sub.add_parser("start", help="start the isolated runtime")
-    start_parser.add_argument("--profile", choices=("teacher", "full"), default="teacher")
+    start_parser.add_argument("--profile", choices=("teacher", "assessment", "full"), default="teacher")
     sub.add_parser("status", help="show owned processes, ports, and health")
-    sub.add_parser("stop", help="stop only verified YZ-RD-T009 processes")
+    sub.add_parser("stop", help="stop only verified processes owned by the selected task runtime")
     test_parser = sub.add_parser("test", help="run an isolated targeted regression")
-    test_parser.add_argument("suite", choices=("teacher-dashboard", "storage"))
+    test_parser.add_argument("suite", choices=("teacher-dashboard", "t007-assignment", "t008-student-history", "storage"))
+    import_parser = sub.add_parser("import-question-bank", help="import read-only Question Bank source into the new T010 DB/bucket")
+    import_parser.add_argument("--source-dir", required=True, type=Path)
     sub.add_parser("setup-test", help="install pinned pytest and Playwright into the ignored local venv")
     args = parser.parse_args()
     try:
+        configure_task(args.task, args.shared_runtime_root)
         if args.command == "doctor":
             return doctor(args.profile)
         if args.command == "start":
@@ -1275,6 +1479,8 @@ def main() -> int:
             return stop_all()
         if args.command == "test":
             return run_test(args.suite)
+        if args.command == "import-question-bank":
+            return import_question_bank(args.source_dir)
         if args.command == "setup-test":
             return setup_test_environment()
     except (RuntimeErrorMessage, OSError, subprocess.TimeoutExpired) as error:
