@@ -465,7 +465,16 @@ body {
 .course-heading {
   min-width: 0;
   position: relative;
-  padding-bottom: 15px;
+  isolation: isolate;
+  overflow: hidden;
+  padding: 18px 22px 20px;
+  border: 1px solid rgba(221, 211, 196, .82);
+  border-radius: 12px;
+  background-color: #f8f4eb;
+  background-image: linear-gradient(90deg, rgba(248, 244, 235, .96), rgba(248, 244, 235, .84) 56%, rgba(248, 244, 235, .4)), var(--course-cover, none);
+  background-position: center;
+  background-size: cover;
+  box-shadow: 0 12px 28px rgba(54, 43, 28, .06);
 }
 .course-heading h1 {
   position: relative;
@@ -483,6 +492,44 @@ body {
   stroke-linecap: round;
   stroke-linejoin: round;
   pointer-events: none;
+}
+.course-content-images {
+  display: grid;
+  gap: 16px;
+  width: min(100%, 820px);
+  margin: 10px 0 24px;
+}
+.course-content-image-card {
+  min-width: 0;
+  margin: 0;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(255, 253, 248, .82);
+}
+.course-content-image {
+  display: block;
+  width: 100%;
+  max-height: 460px;
+  object-fit: contain;
+  border-radius: 6px;
+}
+.course-content-image-card figcaption {
+  margin-top: 8px;
+  color: var(--muted);
+  font: 12px/1.6 "Microsoft YaHei", sans-serif;
+}
+.course-image-state {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font: 12px/1.5 "Microsoft YaHei", sans-serif;
+}
+.course-image-state[data-tone="error"] {
+  color: var(--red);
+}
+.course-image-retry {
+  width: fit-content;
+  margin-top: 8px;
 }
 .course-status {
   display: grid;
@@ -854,7 +901,7 @@ body {
   .course-heading {
     grid-column: 1;
     grid-row: 2;
-    padding-bottom: 5px;
+    padding: 12px 12px 10px;
   }
   .course-heading h1 {
     font-size: clamp(24px, 7vw, 32px);

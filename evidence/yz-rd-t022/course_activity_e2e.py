@@ -170,7 +170,7 @@ def create_teacher_course(page):
     created = page.request.post(
         f"{prefix}/course-versions",
         headers=auth,
-        data={"title": f"T022 高原春声 {tag}", "description": "隔离验收课程，由教师 API 创建并发布。", "gradeBand": "七年级", "objectives": [objective]},
+        data={"title": f"T022 高原春声 {tag}", "description": "隔离验收课程，由教师 API 创建并发布。", "gradeBand": "七年级", "coverAsset": "/assets/generated-covers/course-spring-reading.png", "objectives": [objective]},
     )
     assert created.ok, f"teacher course draft create failed with HTTP {created.status}: {created.text()}"
     course = response_body(created)
@@ -182,6 +182,7 @@ def create_teacher_course(page):
     activities = [
         make_activity(ids["text"], "TEXT", "河谷春日阅读", "阅读两段课文后确认完成。", {
             "paragraphs": ["春风沿着山脊吹向河谷，雪水在石间汇成清亮的小溪。", "孩子们沿溪观察新芽，也把听见的声音写进学习笔记。"],
+            "imageUrl": "/assets/generated-covers/course-spring-reading.png", "imageAlt": "春季阅读课程封面插图", "imageCaption": "课程中的春季阅读插图。",
         }),
         make_activity(ids["audio"], "AUDIO", "听辨溪水与春风", "播放完整听力材料并保存学习进度。", {
             "audioUrl": "/assessment/assets/question-bank/audio/level-1-dictation-1.mp3",
@@ -212,7 +213,7 @@ def create_teacher_course(page):
     updated = page.request.patch(
         f"{prefix}/course-versions/{course['id']}",
         headers=auth,
-        data={"expectedUpdatedAt": detail["updatedAt"], "units": units},
+        data={"expectedUpdatedAt": detail["updatedAt"], "units": units, "coverAsset": "/assets/generated-covers/course-spring-reading.png"},
     )
     assert updated.ok, f"teacher course content update failed with HTTP {updated.status}: {updated.text()}"
     published = page.request.post(f"{prefix}/course-versions/{course['id']}/publish", headers=auth, data={})
@@ -257,6 +258,7 @@ def create_teacher_course(page):
     )
     return {"teacherId": teacher["user"]["id"], "courseVersionId": course["id"], "assignmentId": assignment["id"],
             "activityIds": ids, "practiceDefinitionId": practice_definition_id, "title": course["title"],
+            "coverAsset": "/assets/generated-covers/course-spring-reading.png",
             "assignmentStatus": opened["status"], "assignmentRevision": opened["revision"]}
 
 
@@ -358,6 +360,10 @@ def test_t022_real_course_learning_note_media_runner_and_isolation():
             headers_a = headers(session_a)
             enrollment_a = sql(f'''SELECT id FROM "Enrollment" WHERE "userId"='{session_a["user"]["id"]}' AND role='STUDENT' AND status='ACTIVE' LIMIT 1;''')
             assert enrollment_a
+            authorized_course = page.request.get(f"{API}/api/v1/schools/{SCHOOL}/student/courses/{assignment_id}", headers=headers_a)
+            assert authorized_course.ok
+            authorized_course_body = response_body(authorized_course)
+            assert authorized_course_body["courseVersion"].get("coverAsset") == teacher_course["coverAsset"]
 
             # Open the real course in the existing course-detail surface first.
             login_ui(page, "student.test")
@@ -369,6 +375,17 @@ def test_t022_real_course_learning_note_media_runner_and_isolation():
             assert submission_id
             course_detail_url = f"{BASE}/student/courses/course-detail/?id={assignment_id}&activityId={ids['text']}&submissionId={submission_id}"
             text_url = open_activity(page, assignment_id, submission_id, ids["text"])
+            expect(page.locator(".course-content-image")).to_be_visible(timeout=20_000)
+            page.wait_for_function("""() => {
+              const image = document.querySelector('.course-content-image');
+              return image && image.complete && image.naturalWidth > 0;
+            }""", timeout=20_000)
+            assert "course-spring-reading.png" in page.locator("#courseHeading").evaluate("element => getComputedStyle(element).getPropertyValue('--course-cover')")
+            visual_proof = {
+                "courseCoverAsset": authorized_course_body["courseVersion"]["coverAsset"],
+                "courseCoverStyle": page.locator("#courseHeading").evaluate("element => getComputedStyle(element).getPropertyValue('--course-cover')"),
+                "contentImage": page.locator(".course-content-image").evaluate("image => ({alt: image.alt, src: new URL(image.currentSrc).pathname, naturalWidth: image.naturalWidth, naturalHeight: image.naturalHeight})"),
+            }
 
             # The held first request allows the student to type again while an
             # autosave is active; only the last visible text may be confirmed.
@@ -868,6 +885,7 @@ def test_t022_real_course_learning_note_media_runner_and_isolation():
                 "practiceProgress": practice_progress,
                 "runner": {**runner_result, "submitPosts": len(runner_submit_requests), "confirmationDismissals": 0},
                 "microphoneSource": "SIMULATED_MIC (Chromium fake device; physical microphone not run)",
+                "visualProof": visual_proof,
                 "browserErrors": page_errors,
                 "negativeStatuses": {"noteStale": stale.status, "progressStale": stale_progress.status, "recordingB": recording_b_response.status,
                                      "submissionB": submission_b_response.status, "progressB": progress_b_response.status,

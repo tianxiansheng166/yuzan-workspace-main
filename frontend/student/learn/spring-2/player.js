@@ -31,6 +31,7 @@
     mediaLastSavedAt: 0,
     mediaPendingPosition: null,
     mediaSavePromise: null,
+    imageRequest: 0,
     activityAvailable: true,
     completing: false,
   };
@@ -165,6 +166,7 @@
     $('#backToCourse').href = courseUrl();
     $('#courseEyebrow').textContent = [activity.unitTitle, activity.lessonTitle].filter(Boolean).join(' · ');
     $('#courseTitle').textContent = detail.courseVersion.title;
+    renderCourseCover(detail);
     $('#activityType').textContent = typeLabels[activity.type] || activity.type;
     $('#activityTitle').textContent = activity.title || '课程活动';
     $('#activityInstruction').textContent = instructionText(activity.instruction);
@@ -223,6 +225,15 @@
     target.append(list, source);
   }
 
+  function renderCourseCover(detail) {
+    const heading = $('#courseHeading');
+    const version = detail?.courseVersion || {};
+    const preferred = checkedMediaUrl(version.coverAsset || detail?.course?.coverAsset || '');
+    const suggested = window.YuzanVisualAssets?.courseCover(version) || '';
+    const cover = preferred || checkedMediaUrl(suggested);
+    if (cover) heading.style.setProperty('--course-cover', `url(${JSON.stringify(cover)})`);
+  }
+
   function setContentMessage(target, message, tone = 'muted') {
     const paragraph = document.createElement('p');
     paragraph.className = tone;
@@ -242,6 +253,7 @@
     state.mediaReady = false;
     state.mediaEnded = false;
     state.activityAvailable = true;
+    renderActivityImages(target, activity, content);
 
     if (activity.practiceReference) {
       const callout = document.createElement('section');
@@ -362,6 +374,129 @@
     }
 
     setContentMessage(target, '当前活动类型不受支持，无法提交学习记录。', 'error-copy');
+  }
+
+  function imageEntries(activity, content) {
+    const entries = [];
+    const listed = Array.isArray(content.images) ? content.images : [];
+    const candidates = content.imageUrl ? [{ url: content.imageUrl, altText: content.imageAlt, caption: content.imageCaption }] : [];
+    listed.forEach((item) => candidates.push(typeof item === 'string' ? { url: item } : item));
+    candidates.forEach((item) => {
+      if (!item || typeof item !== 'object') return;
+      const url = item.url || item.src;
+      if (!url) return;
+      entries.push({ url, altText: item.altText || item.alt || content.imageAlt || '课程内容图片', caption: item.caption || '' });
+    });
+
+    (Array.isArray(activity.resources) ? activity.resources : []).forEach((link) => {
+      const resource = link?.resource || link;
+      if (!resource || typeof resource !== 'object') return;
+      const kind = String(resource.kind || resource.type || '').toUpperCase();
+      const mediaType = String(resource.mediaType || resource.mimeType || '').toLowerCase();
+      if (kind !== 'IMAGE' && !mediaType.startsWith('image/')) return;
+      if (!resource.id) return;
+      entries.push({
+        resourceId: resource.id,
+        altText: resource.altText || link?.meta?.altText || '课程内容图片',
+        caption: resource.caption || link?.meta?.caption || '',
+      });
+    });
+
+    const seen = new Set();
+    return entries.filter((entry) => {
+      const key = entry.resourceId ? `resource:${entry.resourceId}` : `url:${entry.url}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }
+
+  function renderActivityImages(target, activity, content) {
+    const entries = imageEntries(activity, content);
+    if (!entries.length) return;
+    const requestId = ++state.imageRequest;
+    const gallery = document.createElement('div');
+    gallery.className = 'course-content-images';
+    gallery.setAttribute('aria-label', '课程内容图片');
+    target.appendChild(gallery);
+
+    entries.forEach((entry) => {
+      const figure = document.createElement('figure');
+      figure.className = 'course-content-image-card';
+      figure.setAttribute('aria-busy', 'true');
+      const image = document.createElement('img');
+      image.className = 'course-content-image';
+      image.alt = entry.altText;
+      image.decoding = 'async';
+      image.loading = 'eager';
+      const status = document.createElement('p');
+      status.className = 'course-image-state';
+      status.setAttribute('role', 'status');
+      status.setAttribute('aria-live', 'polite');
+      status.textContent = '正在读取课程图片…';
+      const retry = document.createElement('button');
+      retry.type = 'button';
+      retry.className = 'quiet-button course-image-retry';
+      retry.textContent = '重新读取图片';
+      retry.hidden = true;
+      const caption = document.createElement('figcaption');
+      caption.textContent = entry.caption;
+      caption.hidden = !entry.caption;
+      figure.append(image, status, retry, caption);
+      gallery.appendChild(figure);
+
+      const showError = (message) => {
+        if (requestId !== state.imageRequest || !figure.isConnected) return;
+        figure.setAttribute('aria-busy', 'false');
+        status.textContent = message;
+        status.dataset.tone = 'error';
+        status.setAttribute('role', 'alert');
+        retry.hidden = false;
+      };
+      const load = async () => {
+        retry.disabled = true;
+        retry.hidden = true;
+        status.textContent = '正在读取课程图片…';
+        delete status.dataset.tone;
+        status.setAttribute('role', 'status');
+        try {
+          let source = entry.url;
+          if (entry.resourceId) {
+            let timeoutId;
+            try {
+              const playback = await Promise.race([
+                YuzanApi.getResourcePlaybackUrl(entry.resourceId),
+                new Promise((resolve) => {
+                  timeoutId = window.setTimeout(() => resolve({ timedOut: true }), 12000);
+                }),
+              ]);
+              if (playback?.timedOut) throw new Error('读取授权图片超时，请重试。');
+              source = playback?.url;
+            } finally {
+              window.clearTimeout(timeoutId);
+            }
+          }
+          if (requestId !== state.imageRequest || !figure.isConnected) return;
+          const url = checkedMediaUrl(source);
+          if (!url) throw new Error('课程图片没有有效的授权地址。');
+          image.src = url;
+        } catch (error) {
+          showError(error.message || '读取课程图片失败。');
+        } finally {
+          retry.disabled = false;
+        }
+      };
+      image.addEventListener('load', () => {
+        if (requestId !== state.imageRequest || !figure.isConnected) return;
+        figure.setAttribute('aria-busy', 'false');
+        status.remove();
+        retry.hidden = true;
+      });
+      image.addEventListener('error', () => showError('课程图片加载失败，请重新读取授权资源。'));
+      retry.addEventListener('click', () => { void load(); });
+      void load();
+    });
+
   }
 
   function mediaResource(activity, content) {
