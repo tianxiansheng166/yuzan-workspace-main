@@ -1,0 +1,42 @@
+{
+  "task": "YZ-RD-T023",
+  "database": "yuzan_t023_native",
+  "databaseUser": "yz_t023",
+  "servicePidsBeforeStop": {
+    "postgres": 674426,
+    "api": 674736,
+    "web": 674764,
+    "redis": 674495,
+    "minio": 674508
+  },
+  "chromiumPytestPid": 674806,
+  "chromiumPytestExited": true,
+  "portsAfterStop": {
+    "postgres": {
+      "port": 55663,
+      "stopped": true
+    },
+    "api": {
+      "port": 4123,
+      "stopped": true
+    },
+    "web": {
+      "port": 4323,
+      "stopped": true
+    },
+    "redis": {
+      "port": 6463,
+      "stopped": true
+    },
+    "minio-api": {
+      "port": 59263,
+      "stopped": true
+    },
+    "minio-console": {
+      "port": 59264,
+      "stopped": true
+    }
+  },
+  "stopPass": true,
+  "worker": "NOT_STARTED"
+}

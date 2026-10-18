@@ -245,6 +245,13 @@
                 <div><strong>对选中学生布置</strong><small>勾选学生后定向推送任务</small></div>
                 <button data-action="assign-selected">去布置</button>
               </article>
+              <article class="invitation-action">
+                <span class="action-icon invitation-action-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M4 7.5 12 3l8 4.5v9L12 21l-8-4.5z"/><path d="M4.5 7.8 12 12l7.5-4.2M12 12v8.5M8 5.3l8 4.5"/></svg>
+                </span>
+                <div><strong>邀请学生加入本班</strong><small>学生在个人中心输入后加入当前班级</small></div>
+                <button type="button" data-action="class-invitation" aria-haspopup="dialog" aria-controls="studentInvitationDialog">查看邀请</button>
+              </article>
               <article>
                 <span class="action-icon cyan">
                   <svg viewBox="0 0 24 24"><path d="M4 4h16v16H4zM8 16V9M12 16V6M16 16v-4"/></svg>
@@ -284,6 +291,51 @@
   </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <dialog class="student-invitation-dialog" id="studentInvitationDialog" aria-labelledby="studentInvitationTitle">
+    <div class="invitation-sheet">
+      <header class="invitation-dialog-header">
+        <div><span class="invitation-kicker">班级入班凭证 · STUDENT ENROLLMENT</span><h2 id="studentInvitationTitle">邀请学生加入本班</h2></div>
+        <button class="invitation-close" id="studentInvitationClose" type="button" aria-label="关闭邀请学生对话框">×</button>
+      </header>
+      <div class="invitation-pass">
+        <div class="invitation-pass-ornament" aria-hidden="true">
+          <svg viewBox="0 0 360 54" preserveAspectRatio="none"><path d="M0 43C45 7 80 68 129 31S211 12 246 39 315 59 360 17"/><path d="M0 50C51 17 80 74 132 39S211 20 248 46 316 66 360 25"/></svg>
+          <span></span><span></span><span></span>
+        </div>
+        <div class="invitation-class-mark"><span class="invitation-seal" aria-hidden="true">班</span><div><small>仅限当前学校与班级</small><strong id="invitationClassLabel">正在确认班级…</strong><small id="invitationScopeDetail">等待验证班级归属</small></div><span class="invitation-scope-tag">本班专属</span></div>
+        <p class="invitation-purpose">此邀请码用于学生在个人中心绑定本班学籍。AI 工具中心的“邀请同事”码属于另一项教师工具业务，不能用于学生入班。</p>
+        <div id="invitationStatus" class="invitation-live-status" data-state="loading" role="status" aria-live="polite">正在从服务器读取本班邀请码…</div>
+        <div id="invitationReadError" class="invitation-error" hidden>
+          <strong>服务器读取失败</strong>
+          <p id="invitationReadErrorText">请检查网络后重试。</p>
+          <button id="invitationRetry" class="invitation-secondary" type="button">重新读取</button>
+        </div>
+        <div id="invitationItems" class="invitation-items"></div>
+        <div id="invitationEmpty" class="invitation-empty" hidden>
+          <span class="invitation-path-mark" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M8 50c12-2 10-20 23-21s11 17 25 12"/><circle cx="8" cy="50" r="4"/><circle cx="31" cy="29" r="4"/><circle cx="56" cy="41" r="4"/></svg></span>
+          <div><strong>本班当前没有可使用的邀请码</strong><p>生成后可交给学生，在学生个人中心完成真实的班级绑定。</p></div>
+          <button id="invitationShowCreate" class="invitation-primary" type="button">生成邀请码</button>
+        </div>
+        <form id="invitationCreateForm" class="invitation-create-form" hidden>
+          <div class="invitation-form-heading"><strong>设置入班凭证</strong><small>限制人数与有效期均由服务器校验</small></div>
+          <label>允许使用次数
+            <select name="maxUses" required>
+              <option value="1">1 人</option><option value="10">10 人</option><option value="30" selected>30 人</option><option value="50">50 人</option><option value="100">100 人</option>
+            </select>
+          </label>
+          <label>有效天数
+            <select name="expiresInDays" required>
+              <option value="7">7 天</option><option value="30" selected>30 天</option><option value="60">60 天</option><option value="90">90 天</option>
+            </select>
+          </label>
+          <p id="invitationCreateMessage" class="invitation-form-message" role="status" aria-live="polite"></p>
+          <div class="invitation-form-actions"><button id="invitationCancelCreate" class="invitation-secondary" type="button">返回</button><button id="invitationCreateButton" class="invitation-primary" type="submit">确认生成邀请码</button></div>
+        </form>
+        <p class="invitation-footnote">凭证由语赞心声服务器生成并记录状态。不要公开发布；仅提供给拟加入本班的学生。</p>
+      </div>
+    </div>
+  </dialog>
 
   <div class="drawer-backdrop" id="drawerBackdrop" hidden>
     <aside class="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">

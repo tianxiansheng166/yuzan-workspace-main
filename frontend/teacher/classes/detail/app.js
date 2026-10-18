@@ -6,6 +6,13 @@
   const drawerTitle = document.getElementById("drawerTitle");
   const drawerText = document.getElementById("drawerText");
   const drawerData = document.getElementById("drawerData");
+  const invitationDialog = document.getElementById('studentInvitationDialog');
+  const invitationItemsEl = document.getElementById('invitationItems');
+  const invitationStatusEl = document.getElementById('invitationStatus');
+  const invitationReadErrorEl = document.getElementById('invitationReadError');
+  const invitationReadErrorTextEl = document.getElementById('invitationReadErrorText');
+  const invitationEmptyEl = document.getElementById('invitationEmpty');
+  const invitationCreateForm = document.getElementById('invitationCreateForm');
   let toastTimer;
   let classId = '';
   let schoolId = '';
@@ -13,6 +20,11 @@
   let studentSummaries = [];
   let publishedCourseVersions = null;
   let pendingRequestKey = '';
+  let teacherInvitations = [];
+  let invitationReadState = 'idle';
+  let invitationCreateInFlight = false;
+  let invitationIdentityWatch = null;
+  let invitationDialogOpener = null;
   const requestedStudentId = new URLSearchParams(location.search).get('studentId') || '';
   const requestedSchoolId = new URLSearchParams(location.search).get('schoolId') || '';
 
@@ -31,6 +43,305 @@
     if (error?.status === 403) return '当前账号没有该班级数据的访问权限。';
     if (error?.status === 404) return '班级或目标记录不存在。';
     return `${error?.message || fallback}。请检查网络后重试。`;
+  }
+
+  const invitationStatusLabels = {
+    ACTIVE: '可使用',
+    EXPIRED: '已过期',
+    REVOKED: '已撤销',
+    EXHAUSTED: '使用次数已满',
+  };
+
+  function invitationCurrentIdentityMatches() {
+    if (typeof YuzanApi === 'undefined' || !YuzanApi.getToken()) return false;
+    return Boolean(schoolId && YuzanApi.getActiveSchoolId() === schoolId);
+  }
+
+  function invitationCount(value) {
+    return typeof value === 'number' && Number.isFinite(value) ? String(value) : '服务器未返回';
+  }
+
+  function invitationExpiry(value) {
+    if (typeof value !== 'string' || !value.trim()) return '服务器未返回';
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? '服务器未返回有效日期' : date.toLocaleString('zh-CN');
+  }
+
+  function setInvitationStatus(state, message) {
+    invitationReadState = state;
+    invitationStatusEl.dataset.state = state;
+    invitationStatusEl.textContent = message;
+    invitationReadErrorEl.hidden = state !== 'error';
+    invitationEmptyEl.hidden = state !== 'loaded' || teacherInvitations.length > 0 || !invitationCreateForm.hidden;
+    const createButton = document.getElementById('invitationCreateButton');
+    if (createButton) {
+      createButton.disabled = invitationCreateInFlight || state !== 'loaded' || teacherInvitations.some((item) => item.status === 'ACTIVE');
+    }
+  }
+
+  function renderTeacherInvitations() {
+    invitationItemsEl.innerHTML = teacherInvitations.map((item) => {
+      const status = typeof item.status === 'string' ? item.status : '';
+      const statusLabel = invitationStatusLabels[status] || '服务器未返回状态';
+      const isUsable = status === 'ACTIVE' && typeof item.code === 'string' && item.code.trim();
+      const safeId = escapeHtml(item.id || '');
+      const usedCount = invitationCount(item.usedCount);
+      const maxUses = invitationCount(item.maxUses);
+      const hasUsage = typeof item.usedCount === 'number' && Number.isFinite(item.usedCount)
+        && typeof item.maxUses === 'number' && Number.isFinite(item.maxUses) && item.maxUses > 0;
+      const usagePercent = hasUsage ? Math.min(100, Math.max(0, item.usedCount / item.maxUses * 100)) : 0;
+      const codeMarkup = isUsable
+        ? `<div class="invitation-code-row"><label class="invitation-code-label" for="invitation-code-${safeId}">本班邀请码</label><input id="invitation-code-${safeId}" class="invitation-code-input" type="text" value="${escapeHtml(item.code)}" readonly autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="本班真实邀请码，可选中后手动复制" /><button class="invitation-copy-button" type="button" data-copy-invitation="${safeId}">复制邀请码</button><p class="invitation-copy-feedback" id="invitation-copy-feedback-${safeId}" role="status" aria-live="polite"></p></div>`
+        : `<p class="invitation-hidden-code">${status ? '失效凭证已隐藏，不能用于邀请新学生。' : '邀请码状态未确认，已隐藏凭证。'}</p>`;
+      return `<article class="invitation-record ${isUsable ? 'is-usable' : 'is-inactive'}" data-invitation-id="${safeId}">
+        <header class="invitation-record-heading"><span>学生入班 · ${status === 'ACTIVE' && !isUsable ? '凭证字段缺失' : status ? escapeHtml(status) : '状态未知'}</span><b class="invitation-state-tag" data-status="${escapeHtml(status || 'UNKNOWN')}">${escapeHtml(statusLabel)}</b></header>
+        ${codeMarkup}
+        <div class="invitation-usage"><div><span>使用进度</span><strong>${usedCount} / ${maxUses} 次</strong></div>${hasUsage ? `<div class="invitation-meter" role="img" aria-label="已使用 ${usedCount} 次，共 ${maxUses} 次"><span style="width:${usagePercent}%"></span></div>` : '<div class="invitation-meter invitation-meter-unknown" role="img" aria-label="服务器未返回完整使用次数"></div>'}</div>
+        <div class="invitation-expiry"><span>有效期至</span><time>${escapeHtml(invitationExpiry(item.expiresAt))}</time></div>
+      </article>`;
+    }).join('');
+    invitationEmptyEl.hidden = invitationReadState !== 'loaded' || teacherInvitations.length > 0 || !invitationCreateForm.hidden;
+    const createButton = document.getElementById('invitationCreateButton');
+    if (createButton) {
+      createButton.disabled = invitationCreateInFlight || invitationReadState !== 'loaded' || teacherInvitations.some((item) => item.status === 'ACTIVE');
+    }
+  }
+
+  function setInvitationScopeLabel(mismatch = false) {
+    const classLabel = document.getElementById('invitationClassLabel');
+    const scopeDetail = document.getElementById('invitationScopeDetail');
+    if (mismatch) {
+      classLabel.textContent = '账号或学校已切换';
+      scopeDetail.textContent = '当前页面与已选学校不一致，凭证已隐藏';
+      return;
+    }
+    classLabel.textContent = classDetail?.className || classDetail?.name || '当前授权班级';
+    scopeDetail.textContent = `学校 ${schoolId} · 班级 ${classId}`;
+  }
+
+  function clearTeacherInvitations(message = '邀请码已清除，请重新读取当前班级凭证。') {
+    teacherInvitations = [];
+    invitationItemsEl.replaceChildren();
+    invitationCreateForm.hidden = true;
+    document.getElementById('invitationCreateMessage').textContent = '';
+    setInvitationStatus('idle', message);
+    renderTeacherInvitations();
+  }
+
+  async function loadTeacherInvitations() {
+    teacherInvitations = [];
+    invitationItemsEl.replaceChildren();
+    invitationCreateForm.hidden = true;
+    document.getElementById('invitationCreateMessage').textContent = '';
+    if (typeof YuzanApi === 'undefined' || !YuzanApi.getToken()) {
+      setInvitationScopeLabel(true);
+      invitationReadErrorTextEl.textContent = '登录状态不可用，请重新登录后查看本人任教班级。';
+      setInvitationStatus('error', '服务器读取失败 · 登录状态不可用');
+      return [];
+    }
+    if (!invitationCurrentIdentityMatches()) {
+      setInvitationScopeLabel(true);
+      invitationReadErrorTextEl.textContent = '当前账号的已选学校与此班级页面不一致。请从当前学校的班级列表重新进入。';
+      setInvitationStatus('error', '学校已切换 · 本班邀请码已隐藏');
+      return [];
+    }
+    const tokenAtRequest = YuzanApi.getToken();
+    setInvitationScopeLabel(false);
+    setInvitationStatus('loading', '正在从服务器读取本班邀请码…');
+    try {
+      const response = await YuzanApi.listMyTeacherInvitations();
+      if (YuzanApi.getToken() !== tokenAtRequest || !invitationCurrentIdentityMatches()) {
+        setInvitationScopeLabel(true);
+        invitationReadErrorTextEl.textContent = '账号或学校在读取期间发生变化，已丢弃旧页面的凭证。';
+        setInvitationStatus('error', '账号或学校已切换 · 本班邀请码已隐藏');
+        return [];
+      }
+      const records = Array.isArray(response) ? response : response?.items;
+      if (!Array.isArray(records)) throw new Error('服务器没有返回邀请码列表');
+      teacherInvitations = records.filter((item) => item?.class?.id === classId);
+      invitationCreateForm.hidden = true;
+      renderTeacherInvitations();
+      setInvitationStatus('loaded', teacherInvitations.length
+        ? `服务器已读取本班 ${teacherInvitations.length} 条邀请记录。`
+        : '服务器已读取本班记录 · 当前没有可使用的邀请码');
+      renderTeacherInvitations();
+      return teacherInvitations;
+    } catch (error) {
+      teacherInvitations = [];
+      invitationItemsEl.replaceChildren();
+      invitationReadErrorTextEl.textContent = error?.status === 401
+        ? '登录已过期，请重新登录后读取本班邀请码。'
+        : error?.status === 403
+          ? '当前账号无权读取本班邀请码，请确认教师与学校身份。'
+          : error?.status === 404
+            ? '当前班级不存在或已不可用，请返回本人授权班级列表。'
+            : `${error?.message || '读取本班邀请码失败'}。请检查网络后重试。`;
+      setInvitationStatus('error', '服务器读取失败');
+      return null;
+    }
+  }
+
+  function openTeacherInvitationDialog() {
+    if (typeof YuzanApi === 'undefined' || !YuzanApi.getToken()) {
+      showToast('请先登录教师账号');
+      return;
+    }
+    if (!schoolId || !classId) {
+      showToast('学校或班级信息不可用，无法读取入班凭证');
+      return;
+    }
+    if (!invitationDialog.open) {
+      invitationDialogOpener = document.activeElement;
+      invitationDialog.showModal();
+    }
+    document.getElementById('studentInvitationClose').focus();
+    setInvitationScopeLabel(YuzanApi.getActiveSchoolId() !== schoolId);
+    void loadTeacherInvitations();
+    clearInterval(invitationIdentityWatch);
+    const tokenAtOpen = YuzanApi.getToken();
+    invitationIdentityWatch = setInterval(() => {
+      if (!invitationDialog.open || typeof YuzanApi === 'undefined') return;
+      if (YuzanApi.getToken() !== tokenAtOpen || YuzanApi.getActiveSchoolId() !== schoolId) {
+        clearTeacherInvitations('账号或学校已切换，旧凭证已清除。');
+        setInvitationScopeLabel(true);
+        invitationDialog.close();
+        showToast('账号或学校已切换，本班邀请码已清除');
+      }
+    }, 500);
+  }
+
+  async function copyTeacherInvitation(invitationId, button) {
+    button.disabled = true;
+    button.textContent = '正在核验…';
+    const records = await loadTeacherInvitations();
+    const feedback = document.getElementById(`invitation-copy-feedback-${invitationId}`);
+    if (feedback) feedback.textContent = '';
+    const invitation = records?.find((item) => item.id === invitationId && item.status === 'ACTIVE'
+      && typeof item.code === 'string' && item.code.trim());
+    if (!invitation) {
+      if (feedback) feedback.textContent = invitationReadState === 'error'
+        ? '服务器读取失败，请重新读取后再复制。'
+        : '该邀请码已失效或不属于当前班级，无法复制。';
+      showToast(invitationReadState === 'error' ? '服务器读取失败，未复制邀请码' : '邀请码已失效，未复制');
+      return;
+    }
+    const currentButton = [...invitationItemsEl.querySelectorAll('[data-copy-invitation]')]
+      .find((item) => item.dataset.copyInvitation === invitationId);
+    const codeInput = document.getElementById(`invitation-code-${invitationId}`);
+    try {
+      if (!navigator.clipboard?.writeText) throw new Error('Clipboard API unavailable');
+      await navigator.clipboard.writeText(invitation.code);
+      if (feedback) feedback.textContent = '邀请码已复制。';
+      showToast('邀请码已复制');
+    } catch {
+      if (codeInput) {
+        codeInput.focus();
+        codeInput.select();
+        codeInput.setSelectionRange(0, codeInput.value.length);
+      }
+      if (feedback) feedback.textContent = '复制失败。邀请码已选中，请使用键盘或菜单手动复制。';
+      showToast('复制失败，请手动复制已选中的邀请码');
+    } finally {
+      if (currentButton) {
+        currentButton.disabled = false;
+        currentButton.textContent = '复制邀请码';
+      }
+    }
+  }
+
+  async function createTeacherInvitation(event) {
+    event.preventDefault();
+    if (invitationCreateInFlight || invitationReadState !== 'loaded' || teacherInvitations.some((item) => item.status === 'ACTIVE')) return;
+    if (!invitationCurrentIdentityMatches()) {
+      clearTeacherInvitations('账号或学校已切换，旧凭证已清除。');
+      setInvitationScopeLabel(true);
+      return;
+    }
+    const form = invitationCreateForm;
+    if (!form.reportValidity()) return;
+    const submitButton = document.getElementById('invitationCreateButton');
+    const message = document.getElementById('invitationCreateMessage');
+    const beforeIds = new Set(teacherInvitations.map((item) => item.id).filter(Boolean));
+    const tokenAtSubmit = YuzanApi.getToken();
+    invitationCreateInFlight = true;
+    submitButton.disabled = true;
+    submitButton.textContent = '正在向服务器提交…';
+    message.textContent = '正在确认当前班级状态并请求服务器创建凭证…';
+    let responseItem = null;
+    try {
+      const latest = await loadTeacherInvitations();
+      if (!latest || YuzanApi.getToken() !== tokenAtSubmit || !invitationCurrentIdentityMatches()) {
+        message.textContent = '服务器状态或当前账号未能确认，尚未提交创建请求。请重新读取后再试。';
+        return;
+      }
+      if (latest.some((item) => item.status === 'ACTIVE')) {
+        message.textContent = '服务器已存在可使用的邀请码，请使用当前有效凭证。';
+        return;
+      }
+      const result = await YuzanApi.createTeacherInvitation({
+        classId,
+        maxUses: Number(form.elements.maxUses.value),
+        expiresInDays: Number(form.elements.expiresInDays.value),
+      });
+      if (YuzanApi.getToken() !== tokenAtSubmit || !invitationCurrentIdentityMatches()) {
+        clearTeacherInvitations('账号或学校已切换，已丢弃创建响应中的凭证。');
+        setInvitationScopeLabel(true);
+        invitationDialog.close();
+        return;
+      }
+      responseItem = result?.data || result;
+      if (responseItem?.class?.id !== classId || typeof responseItem.code !== 'string' || !responseItem.code.trim()) {
+        throw new Error('服务器创建响应缺少本班关联或真实邀请码，无法确认结果');
+      }
+      message.textContent = '服务器已返回真实凭证，正在重新读取本班记录…';
+      const refreshed = await loadTeacherInvitations();
+      if (refreshed === null) {
+        teacherInvitations = [responseItem];
+        invitationItemsEl.innerHTML = '';
+        invitationCreateForm.hidden = true;
+        renderTeacherInvitations();
+        invitationReadErrorTextEl.textContent = '创建接口已成功返回真实邀请码，但最新状态读取失败。请重新读取确认状态后再复制。';
+        setInvitationStatus('error', '创建已返回 · 最新服务器状态读取失败');
+        message.textContent = '创建响应来自服务器；请先重新读取最新状态，再复制或分享。';
+        return;
+      }
+      const newlyVisible = refreshed.find((item) => item.id === responseItem.id)
+        || refreshed.find((item) => !beforeIds.has(item.id) && item.status === 'ACTIVE');
+      if (newlyVisible) {
+        message.textContent = '邀请码已由服务器创建并重新读取确认。';
+        invitationCreateForm.hidden = true;
+        showToast('本班邀请码已生成');
+      } else {
+        teacherInvitations = [responseItem];
+        renderTeacherInvitations();
+        message.textContent = '创建接口已成功返回，但列表尚未确认新记录。请重新读取后再操作。';
+        invitationReadErrorTextEl.textContent = '创建请求已返回成功，但列表暂未显示新记录。请重新读取，避免重复创建。';
+        setInvitationStatus('error', '创建已返回 · 列表尚未确认');
+      }
+    } catch (error) {
+      const requestError = error;
+      const refreshed = await loadTeacherInvitations();
+      const newlyVisible = refreshed?.find((item) => !beforeIds.has(item.id) && item.id)
+        || refreshed?.find((item) => item.status === 'ACTIVE');
+      if (newlyVisible) {
+        message.textContent = '创建请求没有收到确认响应；服务器重新读取到本班凭证，请勿重复生成。';
+        invitationCreateForm.hidden = true;
+        showToast('已从服务器确认本班邀请码');
+      } else if (refreshed === null) {
+        invitationReadErrorTextEl.textContent = '创建结果尚未确认。服务器读取恢复前，系统会阻止再次创建，避免重复生成。';
+        message.textContent = `${requestError?.message || '网络中断'}；创建结果尚未确认，请重新读取服务器列表。`;
+      } else {
+        invitationCreateForm.hidden = false;
+        invitationEmptyEl.hidden = true;
+        renderTeacherInvitations();
+        message.textContent = `${requestError?.message || '邀请码创建失败'}。已重新读取服务器列表；本次没有确认到新记录。服务端未承诺创建请求幂等，重试前请再次核对列表。`;
+        showToast('服务器未确认创建，请先核对本班邀请码列表');
+      }
+    } finally {
+      invitationCreateInFlight = false;
+      submitButton.disabled = invitationReadState !== 'loaded' || teacherInvitations.some((item) => item.status === 'ACTIVE');
+      submitButton.textContent = '确认生成邀请码';
+    }
   }
 
   function getClassIdFromPath() {
@@ -231,6 +542,8 @@
       });
     } else if (action === 'settings') {
       btn.addEventListener("click", () => openDrawer('settings'));
+    } else if (action === 'class-invitation') {
+      btn.addEventListener('click', openTeacherInvitationDialog);
     } else if (action === 'practice') {
       btn.addEventListener("click", () => openSupplementaryPracticeDrawer(null));
     } else if (action === 'assessment') {
@@ -334,7 +647,41 @@
   });
 
   document.addEventListener("keydown", e => {
-    if (e.key === "Escape") closeDrawer();
+    if (e.key === "Escape" && !drawerBackdrop.hidden) closeDrawer();
+  });
+
+  document.getElementById('studentInvitationClose').addEventListener('click', () => invitationDialog.close());
+  invitationDialog.addEventListener('close', () => {
+    clearInterval(invitationIdentityWatch);
+    invitationIdentityWatch = null;
+    clearTeacherInvitations('邀请码已清除。再次打开时将从服务器重新读取。');
+    if (invitationDialogOpener?.isConnected) invitationDialogOpener.focus();
+    invitationDialogOpener = null;
+  });
+  document.getElementById('invitationRetry').addEventListener('click', () => { void loadTeacherInvitations(); });
+  document.getElementById('invitationShowCreate').addEventListener('click', () => {
+    if (invitationReadState !== 'loaded' || teacherInvitations.some((item) => item.status === 'ACTIVE')) return;
+    invitationCreateForm.hidden = false;
+    invitationEmptyEl.hidden = true;
+    invitationCreateForm.elements.maxUses.focus();
+  });
+  document.getElementById('invitationCancelCreate').addEventListener('click', () => {
+    invitationCreateForm.hidden = true;
+    document.getElementById('invitationCreateMessage').textContent = '';
+    renderTeacherInvitations();
+  });
+  invitationCreateForm.addEventListener('submit', createTeacherInvitation);
+  invitationItemsEl.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-copy-invitation]');
+    if (button) void copyTeacherInvitation(button.dataset.copyInvitation, button);
+  });
+  window.addEventListener('storage', (event) => {
+    if (!['yuzan-access-token', 'yuzan-active-school-id', 'yuzan-current-user'].includes(event.key)) return;
+    clearTeacherInvitations('账号或学校已切换，旧凭证已清除。');
+    if (invitationDialog.open) {
+      setInvitationScopeLabel(!invitationCurrentIdentityMatches());
+      void loadTeacherInvitations();
+    }
   });
 
   // ── API: 加载真实班级详情 ──
