@@ -78,3 +78,81 @@ button{font:inherit;color:inherit}.svg-sprite{position:absolute;width:0;height:0
 .student-avatar{width:31px;height:31px;display:grid;place-items:center;border-radius:50%;background:#e6eee6;color:#235c40;font-weight:700}
 @media (max-width:1120px){.workflow-cards{grid-template-columns:repeat(2,minmax(0,1fr))}.dashboard-grid{grid-template-columns:1fr}}
 @media (max-width:760px){.workspace .teacher-dashboard{padding:12px 14px 35px}.dashboard-toolbar{align-items:start}.teacher-dashboard .hero{min-height:210px;padding:15px 5px}.teacher-dashboard .hero h1{font-size:27px}.teacher-dashboard .action-creator{left:5px;right:auto;bottom:12px;top:auto;min-width:190px;margin:0}.workflow-cards{grid-template-columns:1fr}.workflow-card{min-height:72px}.dashboard-panel{padding:14px}.dashboard-row{grid-template-columns:30px minmax(0,1fr);}.row-value{grid-column:2;text-align:left}.student-heading{align-items:start;flex-direction:column}.class-filter select{max-width:220px}.class-card{grid-template-columns:minmax(0,1fr) auto}}
+
+/* T020 teacher action center */
+.section-hint{margin:0 0 3px;color:#69756b;font-size:12px}
+.panel-heading-action{display:flex;align-items:center;justify-content:flex-end;gap:12px;min-width:0}
+.panel-heading-action>a{display:flex;align-items:center;gap:6px;color:var(--green);font-size:12px;text-decoration:none;white-space:nowrap}
+.panel-heading-action>a svg{width:15px;height:15px}
+.data-status{display:inline-flex;align-items:center;min-height:22px;color:#747a72;font-size:11px;line-height:1.45}
+.data-status[data-tone="success"]{color:#356345}
+.data-status[data-tone="loading"]{color:#8b6427}
+.data-status[data-tone="warning"]{color:#8b6427}
+.data-status[data-tone="error"]{color:#9f342b}
+.panel-count{position:relative;display:inline-flex;align-items:center;justify-content:center;min-width:38px;min-height:34px;padding:2px 9px;border-left:2px solid var(--red);background:#f6eee1;color:#9d3029;font:600 19px/1 "Songti SC","STSong",serif;font-variant-numeric:tabular-nums}
+.panel-count:after{content:"";position:absolute;right:0;top:0;width:6px;height:6px;border-top:1px solid #c49e6a;border-right:1px solid #c49e6a}
+.panel-count.item-count{border-left-color:#9b7a42;background:#f4efdf;color:#765b2e}
+.panel-caption{margin:-3px 0 8px;color:#747a72;font-size:11px;line-height:1.55}
+.assessment-review-panel{grid-column:1/-1;border-top:2px solid #a98852;background:rgba(255,251,242,.9)}
+.assessment-review-panel>.data-status{margin:-5px 0 7px}
+.assessment-review-list{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:18px}
+.workflow-card{position:relative;overflow:hidden;min-height:94px;transition:border-color .18s ease,background-color .18s ease,transform .18s ease,box-shadow .18s ease}
+.workflow-card:before{content:"";position:absolute;left:0;right:42%;top:0;height:2px;background:#b79862;transform:scaleX(.38);transform-origin:left;transition:transform .2s ease}
+.workflow-card:hover:before,.workflow-card:focus-visible:before{transform:scaleX(1)}
+.workflow-card:focus-visible,.dashboard-row:focus-visible,.class-select:focus-visible,.class-card>a:focus-visible,.refresh-button:focus-visible,.retry-inline:focus-visible,.action-creator:focus-visible,.class-filter select:focus-visible{outline:3px solid #315d48;outline-offset:3px}
+.workflow-card-submission:before{background:#a33e35}
+.workflow-card-item-review:before{background:#997b3d}
+.workflow-icon{border:1px solid rgba(43,101,71,.14)}
+.workflow-card-submission .workflow-icon{background:#f5eae0;color:#9b3c31}
+.workflow-card-item-review .workflow-icon{background:#f2eddd;color:#84652f}
+.workflow-count{font-variant-numeric:tabular-nums}
+.workflow-card-submission .workflow-count{color:#9c392f}
+.workflow-card-item-review .workflow-count{color:#866831}
+.workflow-card-student .workflow-count{color:#38684d}
+.dashboard-panel{box-shadow:0 7px 25px rgba(73,57,35,.045)}
+.dashboard-panel .dashboard-section-heading h2{font-size:20px}
+.dashboard-panel .dashboard-section-heading .eyebrow{letter-spacing:.12em}
+.dashboard-row{min-height:57px;transition:background-color .16s ease,border-color .16s ease}
+.dashboard-row:hover{background:rgba(232,239,229,.78)}
+.assessment-review-row:hover{background:rgba(244,239,221,.84)}
+.submission-mark{background:#f3e8df;color:#93443a}
+.item-review-mark{background:#f1ecd9;color:#806430}
+.loading-note,.unknown-note{margin:0;padding:18px 9px;color:#777b73;font-size:13px;line-height:1.65}
+.loading-note{color:#87672f}
+.unknown-note{border-left:2px solid #c5a56d;background:rgba(250,246,235,.65)}
+.empty-note{border-left:2px solid #849984;background:rgba(239,244,236,.62)}
+.retry-inline{min-height:38px;cursor:pointer}
+.dashboard-state[data-tone="success"]{border-color:var(--green);color:#395c43}
+.dashboard-state a{min-height:32px;display:inline-flex;align-items:center}
+.class-card.selected{background:linear-gradient(105deg,#f6f3e9,#fffdf8 70%);border-color:#8eaa94;box-shadow:inset 3px 0 var(--green)}
+.class-select{min-height:42px;cursor:pointer}
+.class-card>a{min-height:38px;padding:0 5px}
+.refresh-button{min-height:42px;cursor:pointer;transition:background-color .18s,border-color .18s}
+.refresh-button:hover{background:#f4eddf;border-color:#b79b70}
+.action-creator{min-height:52px}
+.action-line{animation:none}
+@media (min-width:1121px){.workflow-cards{gap:14px}.dashboard-grid{gap:16px}.assessment-review-list .dashboard-row{padding-left:12px;padding-right:12px}}
+@media (min-width:761px) and (max-width:900px){
+  html body{--ts-sidebar:72px!important}
+  html body .ts-app-shell{width:100%;min-width:0;grid-template-columns:72px minmax(0,1fr)}
+  html body .ts-sidebar{width:72px!important;transition:none!important}
+  html body .ts-main{grid-column:2;width:100%;min-width:0}
+  html body #ts-page-root{width:100%;min-width:0;overflow-x:clip}
+  html body .workspace,html body .workspace .teacher-dashboard{width:100%;min-width:0;max-width:none;margin-right:0}
+  html body .workspace .teacher-dashboard{padding-left:16px;padding-right:16px}
+}
+@media (max-width:1120px){.assessment-review-list{grid-template-columns:1fr}}
+@media (max-width:760px){
+  .dashboard-toolbar{gap:9px}.refresh-button{min-height:42px;padding:8px 10px;white-space:nowrap}
+  .dashboard-section-heading{align-items:flex-start}.dashboard-section-heading h2{font-size:20px}
+  .section-hint{max-width:135px;text-align:right;line-height:1.5}
+  .panel-heading-action{gap:8px;flex-wrap:wrap}.panel-heading-action>a{min-height:34px}
+  .dashboard-panel .dashboard-section-heading h2{font-size:19px}
+  .assessment-review-panel{grid-column:1}
+  .assessment-review-list{grid-template-columns:1fr}
+  .workflow-card{grid-template-columns:38px minmax(0,1fr) auto;min-height:76px;padding:12px}
+  .dashboard-row{min-height:60px;padding:10px 7px}
+  .class-card>a{justify-content:center}
+  .data-status{font-size:10px}
+}
+@media (prefers-reduced-motion:reduce){.workflow-card,.workflow-card:before,.dashboard-row,.refresh-button{transition:none!important}}

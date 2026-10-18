@@ -1,0 +1,850 @@
+{
+  "database": [
+    "yuzan_t020_native",
+    "yz_t020"
+  ],
+  "ids": {
+    "school_a": "11111111-1111-4111-8111-111111111111",
+    "school_c": "da585401-8556-487e-bb23-690d519fa754",
+    "teacher_a": "d34e4a58-aaa3-4df8-a879-b4faff06d9b9",
+    "teacher_b": "4e81b9fe-1089-4f54-a07f-2b69cbce7002",
+    "teacher_c": "36d569f3-b08a-41e5-a5bf-36d620931cb1",
+    "teacher_empty": "80a40bdf-d943-4ae8-a083-05ae38716a07",
+    "student_a1": "42f2e58b-0f2a-49a3-9d10-984b4462dcb4",
+    "student_a2": "20f946ff-08c0-40f1-91d7-9ce29340e948",
+    "student_b": "bad12474-d2f5-4712-a082-e7eb43840cca",
+    "student_c": "a29a8771-5805-42ea-a336-e21577a2d5e1",
+    "class_a1": "d1730e62-d278-4c38-8a59-ebfbc5289c27",
+    "class_a2": "9a0d3437-305f-48f8-8fe3-3e8de11cdbab",
+    "class_b": "f79cd252-a8e9-4b8e-93cc-71ee8d492f94",
+    "class_c": "5fbe3c88-8ceb-4347-951c-c35fcf89b65a",
+    "term_a1": "9fdde67e-e1d8-4413-be21-c299ae8e2c85",
+    "term_a2": "93377fba-88d1-4cc5-8578-e2d945ce1155",
+    "term_b": "aeb65d3c-c771-4a48-bf66-46b31a82fa3e",
+    "term_c": "cad2e550-a01f-4717-984b-2254d753aa6c",
+    "enrollment_a1": "89130b33-8432-4e15-9a25-21334d4cc86b",
+    "enrollment_a2": "89e6c9e3-0d17-4c42-af3d-474f5f8e4d8e",
+    "enrollment_a_student1": "c7bfad9e-bc99-464d-bfbb-95b9271fe635",
+    "enrollment_a_student2": "c223cd64-cb62-47d0-964c-0845df904119",
+    "enrollment_b": "9c3f56ba-bbee-48ad-8cad-b1e1402307c8",
+    "enrollment_b_student": "33df7820-4ca5-48b5-849a-16defebde1b1",
+    "enrollment_c": "47b23e82-7af2-4078-b5da-bdff765e6d64",
+    "enrollment_c_student": "39afef50-d5e0-4753-9497-6beebc2a0e9b",
+    "assignment_a": "36da8830-f758-42b2-9364-9d5cd960cc7e",
+    "assignment_a2": "045ec90e-9dca-4d85-bbf8-c6c65ed3b65d",
+    "assignment_b": "bd062c5f-522c-42ac-ac57-666abf593f71",
+    "assignment_c": "02021ce2-806d-412d-bcfb-844b34be2419",
+    "submission_a": "1d890eb2-fece-446d-8a79-238f7293f45d",
+    "course_a": "9328f860-d87e-407a-9c61-ea67ee8495d5",
+    "course_b": "737170bd-55bd-4028-a846-b0afa4aeeaf1",
+    "course_c": "7e57a012-a140-4613-a7e0-15087c747378",
+    "version_a": "f849cdec-f3c3-46ee-beaf-a29d126dcb6a",
+    "version_b": "5572ee75-c51c-4dc9-84cd-52c05862f002",
+    "version_c": "4083c026-f109-4f25-9d35-3e4919052c06",
+    "practiceVersionId": "01d25d7a-d1d3-43e5-aa71-9474e5eb2fc2",
+    "practiceDeliveryId": "acb257fb-8cb5-4b29-b597-12b0a224098f",
+    "logins": {
+      "teacher_a": "teacher.t020.a.46062e5e35@test.invalid",
+      "teacher_b": "teacher.t020.b.46062e5e35@test.invalid",
+      "teacher_c": "teacher.t020.c.46062e5e35@test.invalid",
+      "teacher_empty": "teacher.t020.empty.46062e5e35@test.invalid",
+      "student_a1": "student.t020.a1.46062e5e35@test.invalid",
+      "student_a2": "student.t020.a2.46062e5e35@test.invalid",
+      "student_b": "student.t020.b.46062e5e35@test.invalid",
+      "student_c": "student.t020.c.46062e5e35@test.invalid"
+    },
+    "names": {
+      "teacher_a": "TEST_FIXTURE_ONLY T020 教师甲 46062e5e35",
+      "teacher_b": "TEST_FIXTURE_ONLY T020 教师乙 46062e5e35",
+      "teacher_c": "TEST_FIXTURE_ONLY T020 教师丙 46062e5e35",
+      "teacher_empty": "TEST_FIXTURE_ONLY T020 空任务教师 46062e5e35",
+      "student_a1": "TEST_FIXTURE_ONLY T020 学生甲一 46062e5e35",
+      "student_a2": "TEST_FIXTURE_ONLY T020 学生甲二 46062e5e35",
+      "student_b": "TEST_FIXTURE_ONLY T020 学生乙 46062e5e35",
+      "student_c": "TEST_FIXTURE_ONLY T020 学生丙 46062e5e35"
+    },
+    "suffix": "46062e5e35"
+  },
+  "responses": [
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/teacher/dashboard",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessment-reviews",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/teacher/dashboard",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes/9a0d3437-305f-48f8-8fe3-3e8de11cdbab/student-summaries",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes/d1730e62-d278-4c38-8a59-ebfbc5289c27/student-summaries",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessment-reviews",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/teacher/dashboard",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes/d1730e62-d278-4c38-8a59-ebfbc5289c27/student-summaries",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/teacher/dashboard",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessment-reviews",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes/d1730e62-d278-4c38-8a59-ebfbc5289c27/student-summaries",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/teacher/dashboard",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes/d1730e62-d278-4c38-8a59-ebfbc5289c27/student-summaries",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessment-reviews",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessment-reviews",
+      "status": 503
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/teacher/dashboard",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes/d1730e62-d278-4c38-8a59-ebfbc5289c27/student-summaries",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessment-reviews",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessment-reviews",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/teacher/dashboard",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes/d1730e62-d278-4c38-8a59-ebfbc5289c27/student-summaries",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes/9a0d3437-305f-48f8-8fe3-3e8de11cdbab/student-summaries",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes/d1730e62-d278-4c38-8a59-ebfbc5289c27/students/c7bfad9e-bc99-464d-bfbb-95b9271fe635",
+      "status": 403
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes/f79cd252-a8e9-4b8e-93cc-71ee8d492f94/student-summaries",
+      "status": 404
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/da585401-8556-487e-bb23-690d519fa754/teacher/dashboard",
+      "status": 403
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assignments/<missing-id>",
+      "status": 404
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessment-reviews/<missing-itemId>",
+      "status": 404
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes/teachers/me",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/course-versions",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assignments",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assignments/36da8830-f758-42b2-9364-9d5cd960cc7e/stats",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assignments/045ec90e-9dca-4d85-bbf8-c6c65ed3b65d/stats",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/teacher/dashboard",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessment-reviews",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assignments/045ec90e-9dca-4d85-bbf8-c6c65ed3b65d",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes/9a0d3437-305f-48f8-8fe3-3e8de11cdbab/student-summaries",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assignments/045ec90e-9dca-4d85-bbf8-c6c65ed3b65d/submissions",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/teacher/dashboard",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessment-reviews",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes/9a0d3437-305f-48f8-8fe3-3e8de11cdbab/student-summaries",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/course-versions",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes/teachers/me",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assignments",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assignments/36da8830-f758-42b2-9364-9d5cd960cc7e/stats",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assignments/045ec90e-9dca-4d85-bbf8-c6c65ed3b65d/stats",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessment-reviews",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/teacher/dashboard",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assignments/36da8830-f758-42b2-9364-9d5cd960cc7e",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes/d1730e62-d278-4c38-8a59-ebfbc5289c27/student-summaries",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assignments/36da8830-f758-42b2-9364-9d5cd960cc7e/submissions",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/teacher/dashboard",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessment-reviews",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes/9a0d3437-305f-48f8-8fe3-3e8de11cdbab/student-summaries",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/submissions/1d890eb2-fece-446d-8a79-238f7293f45d",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/teacher/dashboard",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessment-reviews",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes/9a0d3437-305f-48f8-8fe3-3e8de11cdbab/student-summaries",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes/d1730e62-d278-4c38-8a59-ebfbc5289c27/student-summaries",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes/9a0d3437-305f-48f8-8fe3-3e8de11cdbab/student-summaries",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes/d1730e62-d278-4c38-8a59-ebfbc5289c27/student-summaries",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes/d1730e62-d278-4c38-8a59-ebfbc5289c27/dashboard",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes/d1730e62-d278-4c38-8a59-ebfbc5289c27/assessment-summaries",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes/d1730e62-d278-4c38-8a59-ebfbc5289c27/assignment-summaries",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes/d1730e62-d278-4c38-8a59-ebfbc5289c27/pending-stats",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes/d1730e62-d278-4c38-8a59-ebfbc5289c27/student-summaries",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/teacher/dashboard",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessment-reviews",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes/d1730e62-d278-4c38-8a59-ebfbc5289c27/student-summaries",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes/d1730e62-d278-4c38-8a59-ebfbc5289c27/students/c7bfad9e-bc99-464d-bfbb-95b9271fe635",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/teacher/dashboard",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessment-reviews",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes/d1730e62-d278-4c38-8a59-ebfbc5289c27/student-summaries",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes/teachers/me",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/course-versions",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assignments",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assignments/36da8830-f758-42b2-9364-9d5cd960cc7e/stats",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assignments/045ec90e-9dca-4d85-bbf8-c6c65ed3b65d/stats",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/teacher/dashboard",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessment-reviews",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assignments/e92fbaed-5ad9-45ba-8cf0-b19a67f4f470",
+      "status": 404
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/teacher/dashboard",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessment-reviews",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes/d1730e62-d278-4c38-8a59-ebfbc5289c27/student-summaries",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessment-reviews",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/teacher/dashboard",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes/d1730e62-d278-4c38-8a59-ebfbc5289c27/student-summaries",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessment-reviews/bdd02da7-971e-4a5e-902c-c40ec3dc272f",
+      "status": 200
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessment-reviews/bdd02da7-971e-4a5e-902c-c40ec3dc272f",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/teacher/dashboard",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessment-reviews",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes/d1730e62-d278-4c38-8a59-ebfbc5289c27/student-summaries",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessment-reviews",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/teacher/dashboard",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/classes/d1730e62-d278-4c38-8a59-ebfbc5289c27/student-summaries",
+      "status": 200
+    }
+  ],
+  "faultInjection": [
+    {
+      "area": "Assessment Review Queue",
+      "kind": "browser network abort",
+      "recoveredBy": "queue-only retry",
+      "otherAreasRetained": true
+    },
+    {
+      "area": "Assessment Review Queue",
+      "kind": "HTTP 503 response fault injection",
+      "recoveredBy": "queue-only retry",
+      "otherAreasRetained": true
+    },
+    {
+      "area": "Classes",
+      "kind": "browser network abort",
+      "recoveredBy": "class-only retry",
+      "otherAreasRetained": true
+    },
+    {
+      "area": "Student Summaries",
+      "kind": "browser network abort",
+      "recoveredBy": "student-summary-only retry",
+      "otherAreasRetained": true
+    }
+  ],
+  "initialCounts": {
+    "taskSubmissionsPending": 1,
+    "assessmentItemsPending": 0
+  },
+  "emptyTeacher": {
+    "authorizedClasses": 0,
+    "authorizedStudents": 0
+  },
+  "teacherB": {
+    "schoolId": "11111111-1111-4111-8111-111111111111",
+    "classId": "f79cd252-a8e9-4b8e-93cc-71ee8d492f94",
+    "studentVisible": "TEST_FIXTURE_ONLY T020 学生乙 46062e5e35",
+    "teacherAStudentAbsent": true
+  },
+  "attemptId": "33f3076e-175c-4b41-8ae6-2871f4989af6",
+  "minioObjects": [
+    {
+      "assessmentItemId": "bdd02da7-971e-4a5e-902c-c40ec3dc272f",
+      "recordingId": "162286b9-5024-492b-9b0a-f18e7b18c4ea",
+      "objectKey": "recordings/162286b9-5024-492b-9b0a-f18e7b18c4ea/full",
+      "bytes": 23480,
+      "contentType": "audio/webm;codecs=opus"
+    },
+    {
+      "assessmentItemId": "6f656560-55d3-4917-9298-72dbb5c4311d",
+      "recordingId": "24704f51-8ee2-4432-b6f3-c3516939c6fa",
+      "objectKey": "recordings/24704f51-8ee2-4432-b6f3-c3516939c6fa/full",
+      "bytes": 23480,
+      "contentType": "audio/webm;codecs=opus"
+    },
+    {
+      "assessmentItemId": "9c4f0839-e79a-4b90-beb3-88e340f37b0a",
+      "recordingId": "395668d7-cfc7-40d3-a43a-a8554098639e",
+      "objectKey": "recordings/395668d7-cfc7-40d3-a43a-a8554098639e/full",
+      "bytes": 23480,
+      "contentType": "audio/webm;codecs=opus"
+    },
+    {
+      "assessmentItemId": "ad3fb412-0f24-4c06-9bae-631b78a75671",
+      "recordingId": "c47564c5-e02f-4431-a07a-a5419a346df5",
+      "objectKey": "recordings/c47564c5-e02f-4431-a07a-a5419a346df5/full",
+      "bytes": 23480,
+      "contentType": "audio/webm;codecs=opus"
+    }
+  ],
+  "queueBeforeReview": {
+    "teachingSubmissionPendingCount": 1,
+    "assessmentReviewItemTotal": 6,
+    "studentItemIds": [
+      "bdd02da7-971e-4a5e-902c-c40ec3dc272f",
+      "6f656560-55d3-4917-9298-72dbb5c4311d",
+      "9c4f0839-e79a-4b90-beb3-88e340f37b0a",
+      "ad3fb412-0f24-4c06-9bae-631b78a75671",
+      "58bae6ae-de5c-462a-a5b3-235dadd4a31e",
+      "16e3b973-1dac-4549-8089-564a5c87a111"
+    ]
+  },
+  "reviewedItemId": "bdd02da7-971e-4a5e-902c-c40ec3dc272f",
+  "postgresReviewedItem": {
+    "itemId": "bdd02da7-971e-4a5e-902c-c40ec3dc272f",
+    "score": "2",
+    "reviewerUserId": "d34e4a58-aaa3-4df8-a879-b4faff06d9b9",
+    "comment": "TEST_FIXTURE_ONLY T020 教师甲完成合法人工评分 46062e5e35。",
+    "revision": "2",
+    "status": "REVIEWED",
+    "formalReportRowsAfterOneReview": 0
+  },
+  "countsAfterReview": {
+    "taskSubmissionsPending": 1,
+    "assessmentItemsPending": 5
+  },
+  "responsive": [
+    {
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "screenshot": "teacher-home-390.png"
+    },
+    {
+      "width": 768,
+      "height": 960,
+      "scrollWidth": 768,
+      "screenshot": "teacher-home-768.png"
+    },
+    {
+      "width": 1280,
+      "height": 920,
+      "scrollWidth": 1280,
+      "screenshot": "teacher-home-1280.png"
+    },
+    {
+      "width": 1440,
+      "height": 1000,
+      "scrollWidth": 1440,
+      "screenshot": "teacher-home-1440.png"
+    }
+  ],
+  "accessibility": {
+    "dashboardLiveRegion": "polite",
+    "studentSelectorLabel": "选择查看学情的班级",
+    "keyboardFocusTagAfterTab": "A",
+    "keyboardSelectChangedClass": true
+  },
+  "staleIdentity": {
+    "oldSchool": "11111111-1111-4111-8111-111111111111",
+    "newSchool": "da585401-8556-487e-bb23-690d519fa754",
+    "oldResponseArrivedAfterSwitch": true,
+    "oldTeacherDataVisible": false
+  },
+  "clicks": [
+    {
+      "action": "dashboard-refresh-with-queue-network-interruption",
+      "urlBefore": "http://127.0.0.1:4320/teacher/",
+      "href": null
+    },
+    {
+      "action": "retry-assessment-review-queue",
+      "urlBefore": "http://127.0.0.1:4320/teacher/",
+      "href": null
+    },
+    {
+      "action": "dashboard-refresh-with-queue-503",
+      "urlBefore": "http://127.0.0.1:4320/teacher/",
+      "href": null
+    },
+    {
+      "action": "retry-after-503",
+      "urlBefore": "http://127.0.0.1:4320/teacher/",
+      "href": null
+    },
+    {
+      "action": "dashboard-refresh-with-class-network-interruption",
+      "urlBefore": "http://127.0.0.1:4320/teacher/",
+      "href": null
+    },
+    {
+      "action": "retry-class-list",
+      "urlBefore": "http://127.0.0.1:4320/teacher/",
+      "href": null
+    },
+    {
+      "action": "retry-student-summary",
+      "urlBefore": "http://127.0.0.1:4320/teacher/",
+      "href": null
+    },
+    {
+      "action": "open-server-priority-task-action",
+      "urlBefore": "http://127.0.0.1:4320/teacher/",
+      "href": "/teacher/assignments/?assignmentId=045ec90e-9dca-4d85-bbf8-c6c65ed3b65d"
+    },
+    {
+      "action": "open-real-assignment",
+      "urlBefore": "http://127.0.0.1:4320/teacher/",
+      "href": "/teacher/assignments/?assignmentId=36da8830-f758-42b2-9364-9d5cd960cc7e"
+    },
+    {
+      "action": "open-real-teaching-submission",
+      "urlBefore": "http://127.0.0.1:4320/teacher/",
+      "href": "/teacher/submissions/1d890eb2-fece-446d-8a79-238f7293f45d"
+    },
+    {
+      "action": "open-authorized-class",
+      "urlBefore": "http://127.0.0.1:4320/teacher/",
+      "href": "/teacher/classes/d1730e62-d278-4c38-8a59-ebfbc5289c27?schoolId=11111111-1111-4111-8111-111111111111"
+    },
+    {
+      "action": "open-authorized-student-detail",
+      "urlBefore": "http://127.0.0.1:4320/teacher/",
+      "href": "/teacher/students/c7bfad9e-bc99-464d-bfbb-95b9271fe635?schoolId=11111111-1111-4111-8111-111111111111&classId=d1730e62-d278-4c38-8a59-ebfbc5289c27"
+    },
+    {
+      "action": "student-open-practice",
+      "urlBefore": "http://127.0.0.1:4320/student/practices/",
+      "href": "/student/practices/6ab62737-49c4-4adb-84ba-11066a07fad6/"
+    },
+    {
+      "action": "student-start-real-practice",
+      "urlBefore": "http://127.0.0.1:4320/student/practices/6ab62737-49c4-4adb-84ba-11066a07fad6/",
+      "href": null
+    },
+    {
+      "action": "refresh-after-student-practice",
+      "urlBefore": "http://127.0.0.1:4320/teacher/",
+      "href": null
+    },
+    {
+      "action": "open-dynamic-review-item",
+      "urlBefore": "http://127.0.0.1:4320/teacher/",
+      "href": "/teacher/reviews/bdd02da7-971e-4a5e-902c-c40ec3dc272f"
+    },
+    {
+      "action": "submit-one-real-assessment-review",
+      "urlBefore": "http://127.0.0.1:4320/teacher/reviews/bdd02da7-971e-4a5e-902c-c40ec3dc272f",
+      "href": null
+    },
+    {
+      "action": "refresh-dashboard-after-server-review-save",
+      "urlBefore": "http://127.0.0.1:4320/teacher/",
+      "href": null
+    }
+  ],
+  "runtime": {
+    "apiBase": "http://127.0.0.1:4320",
+    "postgresDatabase": "yuzan_t020_native",
+    "postgresUser": "yz_t020",
+    "bucket": "yz-t020-native",
+    "worker": "stopped",
+    "docker": "not used"
+  }
+}
