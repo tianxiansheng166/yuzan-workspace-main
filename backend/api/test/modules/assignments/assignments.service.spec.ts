@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { Test } from "@nestjs/testing";
 import {
   MembershipRole,
@@ -32,9 +32,17 @@ function auth(userId: string, schoolId: string, roles: MembershipRole[]) {
 describe("AssignmentsService", () => {
   let service: AssignmentsService;
   let repo: FakeAssignmentRepository;
+  let targetEnrollmentsFindMany: ReturnType<typeof vi.fn>;
+  let assignmentSubmissionsFindMany: ReturnType<typeof vi.fn>;
 
   beforeEach(async () => {
     repo = new FakeAssignmentRepository();
+    targetEnrollmentsFindMany = vi.fn().mockImplementation(async ({ where }: any) => {
+      if (where.userId === "teacher-1") return [{ classId: "class-1" }];
+      if (where.id?.in) return where.id.in.map((id: string) => ({ id, classId: "class-1" }));
+      return [];
+    });
+    assignmentSubmissionsFindMany = vi.fn().mockResolvedValue([]);
 
     const moduleRef = await Test.createTestingModule({
       imports: [
@@ -47,7 +55,9 @@ describe("AssignmentsService", () => {
                 id: "teacher-enrollment",
                 classId: "class-1",
               }),
+              findMany: targetEnrollmentsFindMany,
             },
+            submission: { findMany: assignmentSubmissionsFindMany },
           }),
         ),
         AssignmentsModule,
@@ -122,6 +132,51 @@ describe("AssignmentsService", () => {
       await expect(
         service.getAssignment(teacherAuth, schoolId, "nonexistent"),
       ).rejects.toThrow();
+    });
+  });
+
+  describe("getAssignmentStats", () => {
+    it("deduplicates overlapping targets and counts each student's latest real submission", async () => {
+      const base = assignment({ schoolId });
+      repo.add({
+        ...base,
+        targets: [
+          ...base.targets,
+          {
+            id: "individual-target",
+            schoolId,
+            assignmentId: base.id,
+            targetType: "STUDENT",
+            enrollmentId: "student-enrollment-1",
+          },
+        ],
+      });
+      targetEnrollmentsFindMany.mockImplementation(async ({ where }: any) => {
+        if (where.userId === "teacher-1") return [{ classId: "class-1" }];
+        return [
+          { id: "student-enrollment-1", classId: "class-1" },
+          { id: "student-enrollment-2", classId: "class-1" },
+        ];
+      });
+      assignmentSubmissionsFindMany.mockResolvedValue([
+        { enrollmentId: "student-enrollment-1", status: "NEEDS_REVIEW", attemptNo: 2 },
+        { enrollmentId: "student-enrollment-1", status: "REVIEWED", attemptNo: 1 },
+        { enrollmentId: "student-enrollment-2", status: "IN_PROGRESS", attemptNo: 1 },
+      ]);
+
+      const result = await service.getAssignmentStats(teacherAuth, schoolId, base.id);
+
+      expect(result).toMatchObject({
+        totalStudents: 2,
+        submittedCount: 1,
+        notSubmittedCount: 1,
+        reviewedCount: 0,
+        needsReviewCount: 1,
+        submissionRate: 50,
+      });
+      expect(assignmentSubmissionsFindMany).toHaveBeenCalledWith(expect.objectContaining({
+        where: expect.objectContaining({ enrollmentId: { in: ["student-enrollment-1", "student-enrollment-2"] } }),
+      }));
     });
   });
 

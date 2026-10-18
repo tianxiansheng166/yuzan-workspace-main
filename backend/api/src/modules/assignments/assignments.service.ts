@@ -10,6 +10,7 @@ import {
 } from "./domain/assignment.errors.js";
 import { validateTransition } from "./domain/assignment.state-machine.js";
 import type {
+  AssignmentTarget,
   CreateAssignmentInput,
   UpdateAssignmentInput,
 } from "./domain/assignment.types.js";
@@ -99,8 +100,9 @@ export class AssignmentsService {
       auth.principal.roles.includes(MembershipRole.SCHOOL_ADMIN);
 
     if (isTeacherOrAdmin) {
-      await this.validateTargets(auth, schoolId, assignment.targets);
-      return toAssignmentResponse(assignment);
+      const visibleTargets = await this.visibleTargets(auth, schoolId, assignment.targets);
+      if (visibleTargets.length === 0) throw new AssignmentForbiddenException();
+      return toAssignmentResponse({ ...assignment, targets: visibleTargets });
     }
 
     if (isStudent) {
@@ -469,71 +471,58 @@ export class AssignmentsService {
       throw new AssignmentNotFoundException();
     }
 
-    await this.validateTargets(auth, schoolId, assignment.targets);
+    const targets = await this.visibleTargets(auth, schoolId, assignment.targets);
+    if (targets.length === 0) throw new AssignmentForbiddenException();
 
     // Count target students from assignment targets
-    const targets = (assignment as unknown as Record<string, unknown>)
-      .targets as
-      | Array<{
-          targetType: string;
-          classId?: string | null;
-          enrollmentId?: string | null;
-        }>
-      | undefined;
-    const targetClassIds = (targets ?? [])
+    const targetClassIds = [...new Set(targets
       .filter((t) => t.targetType === "CLASS" && t.classId)
-      .map((t) => t.classId!);
+      .map((t) => t.classId!))];
 
-    const targetEnrollmentIds = (targets ?? [])
+    const explicitlyTargetedEnrollmentIds = [...new Set(targets
       .filter((t) => t.targetType === "STUDENT" && t.enrollmentId)
-      .map((t) => t.enrollmentId!);
+      .map((t) => t.enrollmentId!))];
 
-    // Count total target students
-    let totalStudents = 0;
-    if (targetClassIds.length > 0) {
-      const classStudentCount = await this.prisma.enrollment.count({
+    const targetEnrollmentRows = await this.prisma.enrollment.findMany({
+      where: {
+        schoolId,
+        role: "STUDENT",
+        status: "ACTIVE",
+        OR: [
+          ...(targetClassIds.length ? [{ classId: { in: targetClassIds } }] : []),
+          ...(explicitlyTargetedEnrollmentIds.length ? [{ id: { in: explicitlyTargetedEnrollmentIds } }] : []),
+        ],
+      },
+      select: { id: true },
+    });
+    const targetEnrollmentIds = [...new Set(targetEnrollmentRows.map((row) => row.id))];
+    const totalStudents = targetEnrollmentIds.length;
+
+    const latestSubmissionByEnrollment = new Map<string, string>();
+    if (targetEnrollmentIds.length > 0) {
+      const submissions = await this.prisma.submission.findMany({
         where: {
           schoolId,
-          classId: { in: targetClassIds },
-          role: "STUDENT",
-          status: "ACTIVE",
+          assignmentId,
+          enrollmentId: { in: targetEnrollmentIds },
+          deletedAt: null,
         },
+        select: { enrollmentId: true, status: true },
+        orderBy: [{ enrollmentId: "asc" }, { attemptNo: "desc" }],
       });
-      totalStudents += classStudentCount;
+      for (const submission of submissions) {
+        if (!latestSubmissionByEnrollment.has(submission.enrollmentId)) {
+          latestSubmissionByEnrollment.set(submission.enrollmentId, submission.status);
+        }
+      }
     }
-    totalStudents += targetEnrollmentIds.length;
-
-    // Count submissions by status
-    const [submittedCount, reviewedCount, needsReviewCount] = await Promise.all(
-      [
-        this.prisma.submission.count({
-          where: {
-            schoolId,
-            assignmentId,
-            status: {
-              in: ["SUBMITTED", "NEEDS_REVIEW", "REVIEWED", "ACCEPTED"],
-            },
-            deletedAt: null,
-          },
-        }),
-        this.prisma.submission.count({
-          where: {
-            schoolId,
-            assignmentId,
-            status: { in: ["REVIEWED", "ACCEPTED"] },
-            deletedAt: null,
-          },
-        }),
-        this.prisma.submission.count({
-          where: {
-            schoolId,
-            assignmentId,
-            status: "NEEDS_REVIEW",
-            deletedAt: null,
-          },
-        }),
-      ],
-    );
+    const submittedStatuses = new Set([
+      "SUBMITTED", "PROCESSING", "NEEDS_REVIEW", "REVIEWED", "RETURNED", "ACCEPTED",
+    ]);
+    const reviewedStatuses = new Set(["REVIEWED", "ACCEPTED"]);
+    const submittedCount = [...latestSubmissionByEnrollment.values()].filter((status) => submittedStatuses.has(status)).length;
+    const reviewedCount = [...latestSubmissionByEnrollment.values()].filter((status) => reviewedStatuses.has(status)).length;
+    const needsReviewCount = [...latestSubmissionByEnrollment.values()].filter((status) => status === "NEEDS_REVIEW").length;
 
     const notSubmittedCount = Math.max(0, totalStudents - submittedCount);
 
@@ -549,5 +538,35 @@ export class AssignmentsService {
           ? Math.round((submittedCount / totalStudents) * 100)
           : 0,
     };
+  }
+
+  private async visibleTargets(
+    auth: AuthContext,
+    schoolId: string,
+    targets: readonly AssignmentTarget[],
+  ): Promise<readonly AssignmentTarget[]> {
+    if (auth.principal.roles.some((role) => [MembershipRole.SCHOOL_ADMIN, MembershipRole.PLATFORM_ADMIN].includes(role))) {
+      return targets;
+    }
+    const teacherClasses = await this.prisma.enrollment.findMany({
+      where: { schoolId, userId: auth.principal.userId, role: "TEACHER", status: "ACTIVE" },
+      select: { classId: true },
+    });
+    const authorizedClassIds = new Set(teacherClasses.map((enrollment) => enrollment.classId));
+    const individualEnrollmentIds = targets
+      .filter((target) => target.targetType === "STUDENT" && target.enrollmentId)
+      .map((target) => target.enrollmentId!);
+    const individualEnrollments = individualEnrollmentIds.length
+      ? await this.prisma.enrollment.findMany({
+          where: { schoolId, id: { in: individualEnrollmentIds }, role: "STUDENT", status: "ACTIVE" },
+          select: { id: true, classId: true },
+        })
+      : [];
+    const individualClassByEnrollment = new Map(individualEnrollments.map((enrollment) => [enrollment.id, enrollment.classId]));
+    return targets.filter((target) => {
+      if (target.targetType === "CLASS") return Boolean(target.classId && authorizedClassIds.has(target.classId));
+      const classId = target.enrollmentId ? individualClassByEnrollment.get(target.enrollmentId) : undefined;
+      return Boolean(classId && authorizedClassIds.has(classId));
+    });
   }
 }

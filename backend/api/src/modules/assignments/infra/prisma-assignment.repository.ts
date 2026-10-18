@@ -57,6 +57,18 @@ export class PrismaAssignmentRepository implements AssignmentRepositoryPort {
         where.status = options.status;
       }
 
+      if (options.search) {
+        where.title = { contains: options.search, mode: "insensitive" };
+      }
+
+      if (options.dueAtFrom || options.dueAtTo) {
+        where.dueAt = {
+          ...(options.dueAtFrom ? { gte: options.dueAtFrom } : {}),
+          ...(options.dueAtTo ? { lte: options.dueAtTo } : {}),
+        };
+      }
+
+      const targetFilters: Prisma.AssignmentTargetWhereInput[] = [];
       if (options.studentUserId) {
         const enrollmentScope = {
           schoolId,
@@ -71,41 +83,53 @@ export class PrismaAssignmentRepository implements AssignmentRepositoryPort {
               )
             : ["OPEN", "CLOSED"],
         };
-        where.targets = {
-          some: {
-            OR: [
-              { enrollment: enrollmentScope },
-              { class: { enrollments: { some: enrollmentScope } } },
-            ],
-          },
-        };
+        targetFilters.push({
+          OR: [
+            { enrollment: enrollmentScope },
+            { class: { enrollments: { some: enrollmentScope } } },
+          ],
+        });
       }
+
       if (options.teacherUserId) {
-        const scope = {
+        const teacherScope = {
           schoolId,
           userId: options.teacherUserId,
           role: "TEACHER" as const,
           status: "ACTIVE" as const,
         };
-        where.targets = {
-          some: {
-            OR: [
-              { class: { enrollments: { some: scope } } },
-              { enrollment: { class: { enrollments: { some: scope } } } },
-            ],
-          },
-        };
+        targetFilters.push({
+          OR: [
+            { class: { enrollments: { some: teacherScope } } },
+            { enrollment: { class: { enrollments: { some: teacherScope } } } },
+          ],
+        });
+      }
+      if (options.classId) {
+        targetFilters.push({
+          OR: [
+            { classId: options.classId },
+            { enrollment: { classId: options.classId } },
+          ],
+        });
+      }
+      if (targetFilters.length > 0) {
+        const targetFilter = targetFilters.length === 1 ? targetFilters[0]! : { AND: targetFilters };
+        where.targets = { some: targetFilter };
       }
 
-      if (options.cursor) {
-        where.id = { gt: options.cursor };
-      }
+      const visibleTargetFilter = targetFilters.length === 0
+        ? undefined
+        : targetFilters.length === 1
+          ? targetFilters[0]!
+          : { AND: targetFilters };
 
       const rows = await this.prisma.assignment.findMany({
         where,
-        orderBy: { createdAt: "desc" },
+        ...(options.cursor ? { cursor: { id: options.cursor }, skip: 1 } : {}),
+        orderBy: [{ createdAt: "desc" }, { id: "desc" }],
         take: options.limit + 1,
-        include: { targets: true },
+        include: { targets: visibleTargetFilter ? { where: visibleTargetFilter } : true },
       });
 
       const hasMore = rows.length > options.limit;

@@ -3,6 +3,15 @@
 Last updated: 2026-10-18
 Repository: `yuzan-workspace-main`
 
+## YZ-RD-T007 checkpoint (2026-10-18)
+
+- **BLOCKED / OFFLINE_IMPLEMENTATION_AND_TESTS_PASS; LIVE_API_DB_CHROMIUM_NOT_RUN.** Baseline `feat/question-bank-v1@ee77c899aa36effc3b661f7ce5bde48dbdb574dc`. Canonical teacher task route stays `/teacher/assignments/`; legacy `/teacher/assessments/*` entries now 308 to it, preserving an assignment ID and opening the create dialog for the old create entry.
+- The task page sends class, status, title, and due-date filters to `GET /schools/:schoolId/assignments`, uses its cursor for real next/previous pages, and labels only the loaded page range. Assignment statistics count unique active target enrollments and each target student's latest submission. Detail reads the same authorized Assignment, authorized class rosters, paginated submissions, and pending review items. Submission rows link by their real `submissionId`; linked AssessmentReview rows link by real `itemId`. Teacher responses hide targets from classes outside that teacher's active enrollment scope.
+- API contracts now cover assignment list/detail/submissions and the AssessmentReview queue/detail/submit routes, including queue `assignmentId`/`submissionId`; `generated.ts` matches the current OpenAPI generation. No schema or scoring changes.
+- PASS: API typecheck; 28 focused API tests (Assignments, scoped submission lists, review queue, and Submission status query validation); contracts Redocly lint/typecheck and generated file comparison; 17 frontend tests/runtime verification; JS syntax, E2E Python syntax, and `git diff --check`.
+- The task-specific real PostgreSQL/API/Chromium run is **NOT_RUN**. The task route records `BUSY_HOST`, and this session has no resource-admission capability. No API/DB/browser/MinIO service was started or stopped. A task-specific browser test is present at `tests/e2e/assessment/test_yz_rd_t007_assignment_flow.py`, awaiting an admitted T007 runtime and its `YZ_T007_*` fixture variables.
+- T005 bilingual changes and the original `习题课程资源/` inputs remain untouched and excluded from the T007 commit. A parallel `backend/api/src/main.ts` `API_HOST` edit was observed and left untouched/uncommitted. T008 files were not changed. Next: run the T007 browser/API/DB proof in its own admitted runtime, then return the task for acceptance.
+
 ## YZ-RD-T006 checkpoint (2026-10-18)
 
 - DONE / WEB_API_BROWSER_VERIFIED; REAL_DEVICE_AND_PILOT_NOT_RUN. Scope stayed Web. Baseline was `feat/question-bank-v1` / `4d9322fc9494e284eb028e032694b0572692489f`; exact final SHA/push receipt is reported in the task return and Git.

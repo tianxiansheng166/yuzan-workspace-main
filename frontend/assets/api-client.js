@@ -568,13 +568,28 @@
   async function listAssignments(options = {}) {
     const params = new URLSearchParams();
     if (options.status) params.set('status', options.status);
+    if (options.classId) params.set('classId', options.classId);
+    if (options.search) params.set('search', options.search);
+    if (options.dueAtFrom) params.set('dueAtFrom', options.dueAtFrom);
+    if (options.dueAtTo) params.set('dueAtTo', options.dueAtTo);
     if (options.limit) params.set('limit', String(options.limit));
     if (options.cursor) params.set('cursor', options.cursor);
     const qs = params.toString();
     return request(`/schools/${getActiveSchoolId()}/assignments${qs ? '?' + qs : ''}`);
   }
+  async function getAssignment(assignmentId) {
+    return request(`/schools/${getActiveSchoolId()}/assignments/${encodeURIComponent(assignmentId)}`);
+  }
   async function getAssignmentStats(assignmentId) {
     return request(`/schools/${getActiveSchoolId()}/assignments/${encodeURIComponent(assignmentId)}/stats`);
+  }
+  async function getAssignmentSubmissions(assignmentId, options = {}) {
+    const params = new URLSearchParams();
+    if (options.status) params.set('status', options.status);
+    if (options.limit) params.set('limit', String(options.limit));
+    if (options.cursor) params.set('cursor', options.cursor);
+    const qs = params.toString();
+    return request(`/schools/${getActiveSchoolId()}/assignments/${encodeURIComponent(assignmentId)}/submissions${qs ? '?' + qs : ''}`);
   }
 
   /* ── Teacher Tools ── */
@@ -1305,6 +1320,8 @@
     createAssignment,
     listAssignments,
     getAssignmentStats,
+    getAssignment,
+    getAssignmentSubmissions,
     /* Teacher Tools */
     getTeacherToolsState,
     generatePlan,

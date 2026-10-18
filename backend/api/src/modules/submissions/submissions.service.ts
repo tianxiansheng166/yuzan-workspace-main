@@ -162,10 +162,59 @@ export class SubmissionsService {
       throw new SubmissionForbiddenException();
     }
 
+    const assignment = await this.prisma.assignment.findFirst({
+      where: { id: assignmentId, schoolId, deletedAt: null },
+      select: { targets: { select: { targetType: true, classId: true, enrollmentId: true } } },
+    });
+    if (!assignment) throw new SubmissionNotFoundException("作业不存在");
+
+    const isSchoolAdmin = auth.principal.roles.includes(MembershipRole.SCHOOL_ADMIN);
+    const classIds = new Set<string>();
+    const explicitlyTargetedEnrollmentIds = new Set<string>();
+    let hasAuthorizedTarget = isSchoolAdmin;
+    for (const target of assignment.targets) {
+      let classId = target.classId;
+      let targetEnrollmentId: string | undefined;
+      if (target.targetType === "STUDENT" && target.enrollmentId) {
+        const enrollment = await this.prisma.enrollment.findFirst({
+          where: { id: target.enrollmentId, schoolId, role: "STUDENT", status: "ACTIVE" },
+          select: { id: true, classId: true },
+        });
+        if (!enrollment) continue;
+        targetEnrollmentId = enrollment.id;
+        classId = enrollment.classId;
+      }
+      if (!classId) continue;
+      if (!isSchoolAdmin) {
+        const teacherEnrollment = await this.prisma.enrollment.findFirst({
+          where: { schoolId, classId, userId: auth.principal.userId, role: "TEACHER", status: "ACTIVE" },
+          select: { id: true },
+        });
+        if (!teacherEnrollment) continue;
+      }
+      hasAuthorizedTarget = true;
+      if (targetEnrollmentId) explicitlyTargetedEnrollmentIds.add(targetEnrollmentId);
+      if (target.targetType === "CLASS") classIds.add(classId);
+    }
+    if (!hasAuthorizedTarget) throw new SubmissionForbiddenException("无权访问该作业的目标班级");
+    const targetEnrollments = await this.prisma.enrollment.findMany({
+      where: {
+        schoolId,
+        role: "STUDENT",
+        status: "ACTIVE",
+        OR: [
+          ...(classIds.size ? [{ classId: { in: [...classIds] } }] : []),
+          ...(explicitlyTargetedEnrollmentIds.size ? [{ id: { in: [...explicitlyTargetedEnrollmentIds] } }] : []),
+        ],
+      },
+      select: { id: true },
+    });
+    const enrollmentIds = [...new Set(targetEnrollments.map((enrollment) => enrollment.id))];
+
     const result = await this.submissionRepo.listByAssignment(
       schoolId,
       assignmentId,
-      options,
+      { ...options, enrollmentIds },
     );
     return {
       items: result.items.map(toSubmissionSummaryResponse),

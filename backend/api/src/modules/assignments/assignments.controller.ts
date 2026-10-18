@@ -49,6 +49,10 @@ export class AssignmentsController {
         limit: query.limit,
         ...(query.cursor ? { cursor: query.cursor } : {}),
         ...(query.status ? { status: query.status } : {}),
+        ...(query.classId ? { classId: query.classId } : {}),
+        ...(query.search ? { search: query.search } : {}),
+        ...(query.dueAtFrom ? { dueAtFrom: new Date(query.dueAtFrom) } : {}),
+        ...(query.dueAtTo ? { dueAtTo: new Date(query.dueAtTo) } : {}),
       };
 
     return this.service.listAssignments(

@@ -269,10 +269,28 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    get?: never;
+    /** 按教师授权范围列出任务 */
+    get: operations["listAssignments"];
     put?: never;
     /** 布置任务 */
     post: operations["createAssignment"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/assignments/{assignmentId}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 获取本人授权的任务详情 */
+    get: operations["getAssignment"];
+    put?: never;
+    post?: never;
     delete?: never;
     options?: never;
     head?: never;
@@ -289,6 +307,41 @@ export interface paths {
     /** 获取任务目标学生的真实提交与复核统计 */
     get: operations["getAssignmentStats"];
     put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/assessment-reviews": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 列出教师授权班级的待复核题目 */
+    get: operations["listAssessmentReviewQueue"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/assessment-reviews/{itemId}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 获取授权待复核题目证据 */
+    get: operations["getAssessmentReviewDetail"];
+    /** 提交题目人工评分 */
+    put: operations["submitAssessmentReview"];
     post?: never;
     delete?: never;
     options?: never;
@@ -388,7 +441,8 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    get?: never;
+    /** 列出任务授权目标学生的真实提交 */
+    get: operations["listAssignmentSubmissions"];
     put?: never;
     /** 提交任务答案 */
     post: operations["submitAssignment"];
@@ -2281,6 +2335,24 @@ export interface components {
       data: components["schemas"]["Assignment"];
       meta: components["schemas"]["EnvelopeMeta"];
     };
+    AssignmentSummary: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      schoolId: string;
+      title: string;
+      status: components["schemas"]["AssignmentStatus"];
+      /** Format: date-time */
+      startsAt: string;
+      /** Format: date-time */
+      dueAt: string;
+      revision: number;
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: date-time */
+      updatedAt: string;
+      targets: components["schemas"]["AssignmentTarget"][];
+    };
     TodayTask: components["schemas"]["Assignment"] & {
       /** @enum {string} */
       progressStatus:
@@ -2312,6 +2384,28 @@ export interface components {
       target: components["schemas"]["StudentTodayTarget"];
     };
     StudentTodayWaiting: {
+    AssignmentStatsResponse: {
+      data: components["schemas"]["AssignmentStats"];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    AssignmentListResponse: {
+      data: {
+        items: components["schemas"]["AssignmentSummary"][];
+        nextCursor: string | null;
+        hasMore: boolean;
+      };
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    AssignmentStats: {
+      /** Format: uuid */
+      assignmentId: string;
+      totalStudents: number;
+      submittedCount: number;
+      notSubmittedCount: number;
+      reviewedCount: number;
+      needsReviewCount: number;
+      submissionRate: number;
+    };
     AssignmentStatsResponse: {
       data: components["schemas"]["AssignmentStats"];
       meta: components["schemas"]["EnvelopeMeta"];
@@ -2475,6 +2569,39 @@ export interface components {
     };
     SyncOperation: {
       /** Format: uuid */
+    SubmissionListResponse: {
+      data: {
+        items: {
+          /** Format: uuid */
+          id: string;
+          /** Format: uuid */
+          schoolId: string;
+          /** Format: uuid */
+          assignmentId: string;
+          /** Format: uuid */
+          enrollmentId: string;
+          attemptNo: number;
+          /** @enum {string} */
+          status:
+            | "IN_PROGRESS"
+            | "PENDING_SYNC"
+            | "SUBMITTED"
+            | "PROCESSING"
+            | "NEEDS_REVIEW"
+            | "REVIEWED"
+            | "RETURNED"
+            | "ACCEPTED";
+          revision: number;
+          /** Format: date-time */
+          submittedAt?: string | null;
+          /** Format: date-time */
+          createdAt: string;
+        }[];
+        nextCursor: string | null;
+        hasMore: boolean;
+      };
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
       operationId: string;
       /** @enum {string} */
       entityType: "progress" | "submission" | "feedback";
@@ -2975,6 +3102,70 @@ export interface components {
       charCount?: number | null;
     };
     /** @description 教师复核。scoredScore/reviewerComment 均可选。 */
+    AssessmentReviewQueueItem: {
+      /** Format: uuid */
+      itemId: string;
+      /** Format: uuid */
+      sessionId: string;
+      /** Format: uuid */
+      submissionId: string | null;
+      /** Format: uuid */
+      assignmentId: string | null;
+      student: {
+        displayName: string;
+      };
+      practice: {
+        title: string;
+      };
+      /** @enum {string} */
+      strategy: "RUBRIC_TEXT" | "SPEECH_READING" | "SPEECH_OPEN_RESPONSE";
+      domain: string | null;
+      maxScore: number | null;
+      state: string;
+      sessionStatus: string;
+      sortOrder: number;
+    };
+    AssessmentReviewQueueResponse: {
+      data: {
+        items: components["schemas"]["AssessmentReviewQueueItem"][];
+        total: number;
+      };
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    AssessmentReviewDetailResponse: {
+      data: {
+        /** Format: uuid */
+        itemId: string;
+        /** Format: uuid */
+        sessionId: string;
+        student: {
+          [key: string]: unknown;
+        };
+        practice: {
+          [key: string]: unknown;
+        };
+        item: {
+          [key: string]: unknown;
+        };
+        review: {
+          [key: string]: unknown;
+        };
+        evidence: {
+          [key: string]: unknown;
+        };
+      };
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    AssessmentReviewSubmitRequest: {
+      score: number;
+      comment?: string;
+    };
+    AssessmentReviewSubmitResponse: {
+      data: {
+        [key: string]: unknown;
+      };
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
     ReviewItemRequest: {
       scoredScore?: number | null;
       reviewerComment?: string | null;
@@ -4578,7 +4769,34 @@ export interface operations {
       409: components["responses"]["Conflict"];
     };
   };
-  scheduleAssignment: {
+  getAssignment: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 任务 ID */
+        assignmentId: components["parameters"]["AssignmentId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 真实任务详情和目标 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AssignmentResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  getAssignmentStats: {
     parameters: {
       query?: never;
       header?: never;
@@ -4628,19 +4846,55 @@ export interface operations {
     };
     requestBody: {
       content: {
-        "application/json": {
-          expectedRevision: number;
-        };
+        "application/json": components["schemas"]["AssessmentReviewSubmitRequest"];
       };
     };
     responses: {
+  listAssignments: {
+    parameters: {
+      query?: {
+        /** @description 分页返回数量上限 */
+        limit?: components["parameters"]["Limit"];
+        /** @description 游标， opaque 字符串 */
+        cursor?: components["parameters"]["Cursor"];
+        status?: components["schemas"]["AssignmentStatus"];
+        /** @description 仅返回目标班级包含该班级的任务 */
+        classId?: string;
+        /** @description 按任务标题不区分大小写搜索 */
+        search?: string;
+        dueAtFrom?: string;
+        dueAtTo?: string;
+      };
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 本人授权范围内的任务页和下一页游标 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AssignmentListResponse"];
+        };
+      };
+      400: components["responses"]["BadRequest"];
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+    };
+  };
       /** @description Assignment opened */
       200: {
         headers: {
           [name: string]: unknown;
         };
         content: {
-          "application/json": components["schemas"]["AssignmentResponse"];
+          "application/json": components["schemas"]["AssessmentReviewSubmitResponse"];
         };
       };
       400: components["responses"]["BadRequest"];
@@ -4693,6 +4947,84 @@ export interface operations {
       200: {
         headers: {
           [name: string]: unknown;
+    requestBody?: never;
+    responses: {
+      /** @description 本人授权任务的目标人数、提交、未提交和待复核统计 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AssignmentStatsResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  listAssessmentReviewQueue: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 真实待复核题目，课程任务关联项包含 assignmentId 和 submissionId */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AssessmentReviewQueueResponse"];
+        };
+      };
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+    };
+  };
+  getAssessmentReviewDetail: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        itemId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 教师授权题目的安全复核资料 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AssessmentReviewDetailResponse"];
+        };
+      };
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  submitAssessmentReview: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        itemId: string;
+      };
+      cookie?: never;
+    };
         };
         content: {
   getAssignmentStats: {
@@ -4888,6 +5220,47 @@ export interface operations {
       content: {
         /**
          * @example {
+  listAssignmentSubmissions: {
+    parameters: {
+      query?: {
+        /** @description 分页返回数量上限 */
+        limit?: components["parameters"]["Limit"];
+        /** @description 游标， opaque 字符串 */
+        cursor?: components["parameters"]["Cursor"];
+        status?:
+          | "IN_PROGRESS"
+          | "PENDING_SYNC"
+          | "SUBMITTED"
+          | "PROCESSING"
+          | "NEEDS_REVIEW"
+          | "REVIEWED"
+          | "RETURNED"
+          | "ACCEPTED";
+      };
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 任务 ID */
+        assignmentId: components["parameters"]["AssignmentId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 只包含本人任课班级或学校管理员可见目标的提交页 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SubmissionListResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
          *       "deviceId": "55555555-5555-5555-5555-555555555555",
          *       "clientOperationId": "66666666-6666-6666-6666-666666666666",
          *       "operations": [

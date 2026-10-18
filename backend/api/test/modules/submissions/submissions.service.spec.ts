@@ -30,17 +30,21 @@ describe("SubmissionsService", () => {
   let repo: FakeSubmissionRepository;
   let lookup: FakeSubmissionLookupRepository;
   let enrollmentFindFirst: ReturnType<typeof vi.fn>;
+  let enrollmentFindMany: ReturnType<typeof vi.fn>;
   let assignmentFindFirst: ReturnType<typeof vi.fn>;
 
   beforeEach(async () => {
     repo = new FakeSubmissionRepository();
     lookup = new FakeSubmissionLookupRepository();
-    enrollmentFindFirst = vi.fn().mockResolvedValue(null);
-    assignmentFindFirst = vi.fn().mockResolvedValue(null);
+    enrollmentFindFirst = vi.fn().mockImplementation(async ({ where }: any) => where.role === "TEACHER" ? { id: "teacher-enrollment" } : null);
+    enrollmentFindMany = vi.fn().mockResolvedValue([]);
+    assignmentFindFirst = vi.fn().mockImplementation(async (args: any) => args.select?.targets
+      ? { targets: [{ targetType: "CLASS", classId: "class-1", enrollmentId: null }] }
+      : null);
 
     const moduleRef = await Test.createTestingModule({
       imports: [createFakeDatabaseModule(createFakePrismaService({
-        enrollment: { findFirst: enrollmentFindFirst },
+        enrollment: { findFirst: enrollmentFindFirst, findMany: enrollmentFindMany },
         assignment: { findFirst: assignmentFindFirst },
       })), SubmissionsModule],
     })
@@ -126,14 +130,27 @@ describe("SubmissionsService", () => {
   });
 
   describe("listAssignmentSubmissions", () => {
-    it("lists submissions for teacher", async () => {
-      const s = submission({ schoolId, assignmentId: "assignment-1" });
-      repo.add(s);
+    it("lists only submissions for the authorized assignment targets", async () => {
+      const targetSubmission = submission({ schoolId, assignmentId: "assignment-1", enrollmentId: "enrollment-1" });
+      const foreignSubmission = submission({ id: "submission-foreign", schoolId, assignmentId: "assignment-1", enrollmentId: "enrollment-2" });
+      repo.add(targetSubmission, foreignSubmission);
+      enrollmentFindMany.mockResolvedValueOnce([{ id: "enrollment-1" }]);
 
       const result = await service.listAssignmentSubmissions(
         teacherAuth, schoolId, "assignment-1", { limit: 20 },
       );
-      expect(result.items.length).toBeGreaterThan(0);
+      expect(result.items.map((item) => item.id)).toEqual([targetSubmission.id]);
+    });
+
+    it("rejects a teacher who is not assigned to the target class", async () => {
+      assignmentFindFirst.mockResolvedValueOnce({
+        targets: [{ targetType: "CLASS", classId: "other-class", enrollmentId: null }],
+      });
+      enrollmentFindFirst.mockResolvedValueOnce(null);
+
+      await expect(service.listAssignmentSubmissions(
+        teacherAuth, schoolId, "assignment-1", { limit: 20 },
+      )).rejects.toThrow(/目标班级/);
     });
 
     it("rejects student listing assignment submissions", async () => {

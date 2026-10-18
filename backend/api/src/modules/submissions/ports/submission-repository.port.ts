@@ -15,6 +15,7 @@ export interface PaginatedResult<T> {
 
 export interface ListSubmissionsOptions {
   readonly status?: SubmissionStatus;
+  readonly enrollmentIds?: readonly string[];
   readonly limit: number;
   readonly cursor?: string;
 }

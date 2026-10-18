@@ -49,6 +49,10 @@ export class FakeSubmissionRepository implements SubmissionRepositoryPort {
     if (options.status) {
       all = all.filter((s) => s.status === options.status);
     }
+    if (options.enrollmentIds) {
+      const allowed = new Set(options.enrollmentIds);
+      all = all.filter((s) => allowed.has(s.enrollmentId));
+    }
     const limit = options.limit;
     const start = options.cursor ? Number.parseInt(options.cursor, 10) : 0;
     const items = all.slice(start, start + limit).map(toSummary);

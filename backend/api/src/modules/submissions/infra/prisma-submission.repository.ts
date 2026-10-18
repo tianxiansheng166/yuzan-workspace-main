@@ -65,19 +65,17 @@ export class PrismaSubmissionRepository
         schoolId,
         assignmentId,
         deletedAt: null,
+        ...(options.enrollmentIds ? { enrollmentId: { in: [...options.enrollmentIds] } } : {}),
       };
 
       if (options.status) {
         where.status = options.status;
       }
 
-      if (options.cursor) {
-        where.id = { gt: options.cursor };
-      }
-
       const rows = await this.prisma.submission.findMany({
         where,
-        orderBy: { createdAt: "desc" },
+        ...(options.cursor ? { cursor: { id: options.cursor }, skip: 1 } : {}),
+        orderBy: [{ createdAt: "desc" }, { id: "desc" }],
         take: options.limit + 1,
       });
 

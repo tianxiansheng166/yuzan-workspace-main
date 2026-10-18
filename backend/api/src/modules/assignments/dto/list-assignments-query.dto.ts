@@ -1,5 +1,5 @@
 import { Transform } from "class-transformer";
-import { IsEnum, IsInt, IsOptional, IsString, Max, Min } from "class-validator";
+import { IsDateString, IsEnum, IsInt, IsOptional, IsString, IsUUID, Max, MaxLength, Min } from "class-validator";
 
 export class ListAssignmentsQueryDto {
   @IsOptional()
@@ -24,4 +24,22 @@ export class ListAssignmentsQueryDto {
     | "CLOSED"
     | "CANCELLED"
     | "ARCHIVED";
+
+  @IsOptional()
+  @IsUUID()
+  readonly classId?: string;
+
+  @IsOptional()
+  @Transform(({ value }) => typeof value === "string" ? value.trim() : value)
+  @IsString()
+  @MaxLength(100)
+  readonly search?: string;
+
+  @IsOptional()
+  @IsDateString()
+  readonly dueAtFrom?: string;
+
+  @IsOptional()
+  @IsDateString()
+  readonly dueAtTo?: string;
 }

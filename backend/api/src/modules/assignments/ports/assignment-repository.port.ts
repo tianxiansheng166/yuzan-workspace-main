@@ -16,6 +16,10 @@ export interface PaginatedResult<T> {
 
 export interface ListAssignmentsOptions {
   readonly status?: AssignmentStatus;
+  readonly classId?: string;
+  readonly search?: string;
+  readonly dueAtFrom?: Date;
+  readonly dueAtTo?: Date;
   readonly studentUserId?: string;
   readonly teacherUserId?: string;
   readonly limit: number;

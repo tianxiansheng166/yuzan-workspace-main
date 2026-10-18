@@ -238,6 +238,21 @@ const server = createServer((req, res) => {
     res.end();
     return;
   }
+  if (pathname === '/teacher/assessments' || pathname.startsWith('/teacher/assessments/')) {
+    const target = new URL('/teacher/assignments/', `http://${req.headers.host || 'localhost'}`);
+    for (const [key, value] of url.searchParams) target.searchParams.append(key, value);
+    if (pathname.startsWith('/teacher/assessments/create') && !target.searchParams.has('new')) {
+      target.searchParams.set('new', '1');
+    }
+    const legacyAssignmentId = target.searchParams.get('id');
+    if (legacyAssignmentId && !target.searchParams.has('assignmentId')) {
+      target.searchParams.set('assignmentId', legacyAssignmentId);
+      target.searchParams.delete('id');
+    }
+    res.writeHead(308, { Location: target.pathname + target.search });
+    res.end();
+    return;
+  }
   if (
     pathname === '/teacher/students'
     || pathname === '/teacher/students/'
@@ -356,7 +371,7 @@ function serveFile(file, req, res) {
   createReadStream(file).pipe(res);
 }
 
-server.listen(port, '0.0.0.0', () => {
+server.listen(port, process.env.HOST || '0.0.0.0', () => {
   console.log(`语赞心声统一演示站点已启动：http://127.0.0.1:${port}`);
   console.log(`入口页面：http://127.0.0.1:${port}/`);
 });

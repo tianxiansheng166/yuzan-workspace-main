@@ -1,6 +1,6 @@
 import { Transform } from "class-transformer";
-import { IsInt, IsOptional, IsString, Max, Min } from "class-validator";
-import type { SubmissionStatus } from "../domain/submission.types.js";
+import { IsEnum, IsInt, IsOptional, IsString, Max, Min } from "class-validator";
+import { SUBMISSION_STATUSES, type SubmissionStatus } from "../domain/submission.types.js";
 
 export class ListSubmissionsQueryDto {
   @IsOptional()
@@ -17,6 +17,6 @@ export class ListSubmissionsQueryDto {
   readonly limit = 20;
 
   @IsOptional()
-  @IsString()
+  @IsEnum(SUBMISSION_STATUSES)
   readonly status?: SubmissionStatus;
 }

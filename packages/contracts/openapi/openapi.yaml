@@ -483,6 +483,53 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
   /schools/{schoolId}/assignments:
+    get:
+      summary: 按教师授权范围列出任务
+      tags: [Assignments]
+      operationId: listAssignments
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Cursor"
+        - name: status
+          in: query
+          schema:
+            $ref: "#/components/schemas/AssignmentStatus"
+        - name: classId
+          in: query
+          description: 仅返回目标班级包含该班级的任务
+          schema:
+            type: string
+            format: uuid
+        - name: search
+          in: query
+          description: 按任务标题不区分大小写搜索
+          schema:
+            type: string
+            maxLength: 100
+        - name: dueAtFrom
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: dueAtTo
+          in: query
+          schema:
+            type: string
+            format: date-time
+      responses:
+        "200":
+          description: 本人授权范围内的任务页和下一页游标
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AssignmentListResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
     post:
       summary: 布置任务
       tags: [Assignments]
@@ -521,6 +568,25 @@ paths:
           $ref: "#/components/responses/NotFound"
         "409":
           $ref: "#/components/responses/Conflict"
+  /schools/{schoolId}/assignments/{assignmentId}:
+    get:
+      summary: 获取本人授权的任务详情
+      tags: [Assignments]
+      operationId: getAssignment
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/AssignmentId"
+      responses:
+        "200":
+          description: 真实任务详情和目标
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AssignmentResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
   /schools/{schoolId}/assignments/{assignmentId}/stats:
     get:
       summary: 获取任务目标学生的真实提交与复核统计
@@ -540,6 +606,81 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "404":
           $ref: "#/components/responses/NotFound"
+  /schools/{schoolId}/assessment-reviews:
+    get:
+      summary: 列出教师授权班级的待复核题目
+      tags: [Assessments]
+      operationId: listAssessmentReviewQueue
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+      responses:
+        "200":
+          description: 真实待复核题目，课程任务关联项包含 assignmentId 和 submissionId
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AssessmentReviewQueueResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+  /schools/{schoolId}/assessment-reviews/{itemId}:
+    get:
+      summary: 获取授权待复核题目证据
+      tags: [Assessments]
+      operationId: getAssessmentReviewDetail
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - name: itemId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: 教师授权题目的安全复核资料
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AssessmentReviewDetailResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      summary: 提交题目人工评分
+      tags: [Assessments]
+      operationId: submitAssessmentReview
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - name: itemId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AssessmentReviewSubmitRequest"
+      responses:
+        "200":
+          description: 评分已保存
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AssessmentReviewSubmitResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
   /schools/{schoolId}/assignments/{assignmentId}/schedule:
     post:
       summary: 排期任务（不自动开放）
@@ -697,6 +838,31 @@ paths:
         "500":
           $ref: "#/components/responses/InternalServerError"
   /schools/{schoolId}/assignments/{assignmentId}/submissions:
+    get:
+      summary: 列出任务授权目标学生的真实提交
+      tags: [Submissions]
+      operationId: listAssignmentSubmissions
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/AssignmentId"
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Cursor"
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [IN_PROGRESS, PENDING_SYNC, SUBMITTED, PROCESSING, NEEDS_REVIEW, REVIEWED, RETURNED, ACCEPTED]
+      responses:
+        "200":
+          description: 只包含本人任课班级或学校管理员可见目标的提交页
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubmissionListResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
     post:
       summary: 提交任务答案
       tags: [Submissions]
@@ -3948,6 +4114,23 @@ components:
           type: string
           format: date-time
         revision:
+    AssignmentSummary:
+      type: object
+      required: [id, schoolId, title, status, startsAt, dueAt, revision, createdAt, updatedAt, targets]
+      properties:
+        id: { type: string, format: uuid }
+        schoolId: { type: string, format: uuid }
+        title: { type: string }
+        status: { $ref: "#/components/schemas/AssignmentStatus" }
+        startsAt: { type: string, format: date-time }
+        dueAt: { type: string, format: date-time }
+        revision: { type: integer, minimum: 1 }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+        targets:
+          type: array
+          items:
+            $ref: "#/components/schemas/AssignmentTarget"
           type: integer
           minimum: 1
         enrollmentId:
@@ -4008,6 +4191,52 @@ components:
     StudentTodayAction:
       type: object
       required: [kind, title, reason, cta, target]
+    AssignmentStatsResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          $ref: "#/components/schemas/AssignmentStats"
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
+    AssignmentListResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: object
+          required: [items, nextCursor, hasMore]
+          properties:
+            items:
+              type: array
+              items:
+                $ref: "#/components/schemas/AssignmentSummary"
+            nextCursor:
+              type: [string, "null"]
+            hasMore:
+              type: boolean
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
+    AssignmentStats:
+      type: object
+      required:
+        [
+          assignmentId,
+          totalStudents,
+          submittedCount,
+          notSubmittedCount,
+          reviewedCount,
+          needsReviewCount,
+          submissionRate,
+        ]
+      properties:
+        assignmentId: { type: string, format: uuid }
+        totalStudents: { type: integer, minimum: 0 }
+        submittedCount: { type: integer, minimum: 0 }
+        notSubmittedCount: { type: integer, minimum: 0 }
+        reviewedCount: { type: integer, minimum: 0 }
+        needsReviewCount: { type: integer, minimum: 0 }
+        submissionRate: { type: integer, minimum: 0, maximum: 100 }
     AssignmentStatsResponse:
       type: object
       required: [data, meta]
@@ -4289,6 +4518,35 @@ components:
           format: uuid
         submissionId:
           type: string
+    SubmissionListResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: object
+          required: [items, nextCursor, hasMore]
+          properties:
+            items:
+              type: array
+              items:
+                type: object
+                required: [id, schoolId, assignmentId, enrollmentId, attemptNo, status, revision, createdAt]
+                properties:
+                  id: { type: string, format: uuid }
+                  schoolId: { type: string, format: uuid }
+                  assignmentId: { type: string, format: uuid }
+                  enrollmentId: { type: string, format: uuid }
+                  attemptNo: { type: integer, minimum: 1 }
+                  status:
+                    type: string
+                    enum: [IN_PROGRESS, PENDING_SYNC, SUBMITTED, PROCESSING, NEEDS_REVIEW, REVIEWED, RETURNED, ACCEPTED]
+                  revision: { type: integer, minimum: 0 }
+                  submittedAt: { type: [string, "null"], format: date-time }
+                  createdAt: { type: string, format: date-time }
+            nextCursor: { type: [string, "null"] }
+            hasMore: { type: boolean }
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
           format: uuid
         decision:
           type: string
@@ -5209,6 +5467,77 @@ components:
             recordingId:
               type: [string, "null"]
               format: uuid
+    AssessmentReviewQueueItem:
+      type: object
+      required: [itemId, sessionId, submissionId, assignmentId, student, practice, strategy, domain, maxScore, state, sessionStatus, sortOrder]
+      properties:
+        itemId: { type: string, format: uuid }
+        sessionId: { type: string, format: uuid }
+        submissionId: { type: [string, "null"], format: uuid }
+        assignmentId: { type: [string, "null"], format: uuid }
+        student:
+          type: object
+          required: [displayName]
+          properties:
+            displayName: { type: string }
+        practice:
+          type: object
+          required: [title]
+          properties:
+            title: { type: string }
+        strategy:
+          type: string
+          enum: [RUBRIC_TEXT, SPEECH_READING, SPEECH_OPEN_RESPONSE]
+        domain: { type: [string, "null"] }
+        maxScore: { type: [number, "null"] }
+        state: { type: string }
+        sessionStatus: { type: string }
+        sortOrder: { type: integer }
+    AssessmentReviewQueueResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: object
+          required: [items, total]
+          properties:
+            items:
+              type: array
+              items:
+                $ref: "#/components/schemas/AssessmentReviewQueueItem"
+            total: { type: integer, minimum: 0 }
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
+    AssessmentReviewDetailResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: object
+          required: [itemId, sessionId, student, practice, item, review, evidence]
+          properties:
+            itemId: { type: string, format: uuid }
+            sessionId: { type: string, format: uuid }
+            student: { type: object, additionalProperties: true }
+            practice: { type: object, additionalProperties: true }
+            item: { type: object, additionalProperties: true }
+            review: { type: object, additionalProperties: true }
+            evidence: { type: object, additionalProperties: true }
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
+    AssessmentReviewSubmitRequest:
+      type: object
+      required: [score]
+      properties:
+        score: { type: number }
+        comment: { type: string, maxLength: 2000 }
+    AssessmentReviewSubmitResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data: { type: object, additionalProperties: true }
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
         meta:
           $ref: "#/components/schemas/EnvelopeMeta"
     AttachRecordingRequest:

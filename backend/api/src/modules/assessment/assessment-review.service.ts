@@ -89,7 +89,21 @@ export class AssessmentReviewService {
           select: {
             status: true,
             classId: true,
+            enrollmentId: true,
             practiceDefinitionId: true,
+            courseSubmissionId: true,
+            courseSubmission: {
+              select: {
+                id: true,
+                assignmentId: true,
+                enrollmentId: true,
+                assignment: {
+                  select: {
+                    targets: { select: { targetType: true, classId: true, enrollmentId: true } },
+                  },
+                },
+              },
+            },
             enrollment: { select: { user: { select: { displayName: true } } } },
           },
         },
@@ -107,9 +121,18 @@ export class AssessmentReviewService {
     const items = rows.flatMap((row) => {
       const strategy = reviewableAssessmentStrategy(row.questionVersion?.scoringSpec);
       if (!strategy) return [];
+      const linkedSubmission = row.session.courseSubmission;
+      const linkedTargetMatches = linkedSubmission?.id === row.session.courseSubmissionId
+        && linkedSubmission.enrollmentId === row.session.enrollmentId
+        && linkedSubmission.assignment.targets.some((target) =>
+          (target.targetType === "CLASS" && target.classId === row.session.classId)
+          || (target.targetType === "STUDENT" && target.enrollmentId === row.session.enrollmentId),
+        );
       return [{
         itemId: row.id,
         sessionId: row.sessionId,
+        submissionId: linkedTargetMatches ? row.session.courseSubmissionId : null,
+        assignmentId: linkedTargetMatches ? linkedSubmission.assignmentId : null,
         student: { displayName: row.session.enrollment.user.displayName },
         practice: { title: titleMap.get(row.session.practiceDefinitionId ?? "") ?? "Level 1 综合诊断" },
         itemFamily: strategy,
