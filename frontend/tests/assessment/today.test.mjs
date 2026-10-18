@@ -53,6 +53,8 @@ function mount(api = {}) {
       getActiveSchoolId: () => "unit-school",
       getStudentToday: async () => decision,
       listStudentCourses: async () => ({ courses: [] }),
+      listPractices: async () => ({ items: [] }),
+      listAssessmentSessions: async () => ({ items: [], nextCursor: null, hasMore: false }),
       ...api,
     },
     location: {},
