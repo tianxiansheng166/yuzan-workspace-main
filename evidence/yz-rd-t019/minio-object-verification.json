@@ -1,6 +1,6 @@
 {
   "bucket": "yz-t019-native",
-  "objectCount": 13,
+  "objectCount": 15,
   "objects": [
     {
       "flow": "T011-reviewed-1",
@@ -114,6 +114,24 @@
       "flow": "T014-class-evidence",
       "recordingId": "452d3bd2-833b-41f9-a556-126feb15dc3a",
       "key": "recordings/452d3bd2-833b-41f9-a556-126feb15dc3a/full",
+      "bytes": 6444,
+      "contentType": "audio/wav",
+      "etag": "\"f9f6c71c12f8b953554803689e24e177\"",
+      "sha256": "946c3f59f3e671ef87ad6655ece8bfc00c451f868f751787278c2d462f4bde26"
+    },
+    {
+      "flow": "T014-responsive-recheck",
+      "recordingId": "f0f91381-c06c-4889-b226-b00055207762",
+      "key": "recordings/f0f91381-c06c-4889-b226-b00055207762/full",
+      "bytes": 6444,
+      "contentType": "audio/wav",
+      "etag": "\"f9f6c71c12f8b953554803689e24e177\"",
+      "sha256": "946c3f59f3e671ef87ad6655ece8bfc00c451f868f751787278c2d462f4bde26"
+    },
+    {
+      "flow": "T014-course-content-recheck",
+      "recordingId": "4d8222f0-a1bd-4c00-b8c4-2ebe88f278db",
+      "key": "recordings/4d8222f0-a1bd-4c00-b8c4-2ebe88f278db/full",
       "bytes": 6444,
       "contentType": "audio/wav",
       "etag": "\"f9f6c71c12f8b953554803689e24e177\"",

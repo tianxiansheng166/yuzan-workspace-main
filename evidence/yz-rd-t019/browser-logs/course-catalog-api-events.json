@@ -12,18 +12,18 @@
       "apiTotal": 24,
       "sqlTotal": 24,
       "firstPageIds": [
-        "27ddec0a-2308-4656-ae11-4c7dd4538f8a",
-        "8f4726fc-e6df-42b2-a4d3-dba9b409e76b",
-        "a6b254e7-8ac1-482f-a827-a97e5906fefd",
-        "53c169bd-f767-4681-ab8f-cde4e7a15675",
-        "efe61d2d-72fd-4f1f-bc72-142e158d5979",
-        "47e42398-8bf6-41af-b9cd-01e79262aa24",
-        "9d73f84d-6994-41f2-bb9c-7be863e698ad",
-        "ea445a54-4fcf-442b-9275-6fcc4cb32a08",
-        "fc5c1a0e-babf-4f79-94ad-49683d40bf83",
-        "78988e21-38ec-4ea5-b6d2-12fd9b7d8ce8",
-        "fe0f445a-6e02-40ef-bd9a-960a79963679",
-        "4afef5b1-8794-4d4b-b771-e84ca730138c"
+        "7ec83be0-9332-4cc4-8742-74f3628aacc1",
+        "3cd822b4-bc30-462b-afbe-004a0c1099e6",
+        "17282812-fd3d-4ea9-a577-26b566f2b409",
+        "fce4165c-9fa8-4dc3-a242-7a4b369aead6",
+        "45a03662-b535-4cee-8b93-122815df91df",
+        "3c5c6f4c-83e6-4416-a51a-c9c3a3108f5b",
+        "2ea87842-afa1-48e3-8794-211d3a84e5f4",
+        "9b5ab1d6-ace6-45cc-a410-0294939d5b7a",
+        "466792df-56d1-4abd-9092-ab833f5e9598",
+        "0bcbf05f-cda0-4e0d-9d0d-d19d4527ebb6",
+        "b7ae1307-b4e0-4065-a8e8-13d20cc9993a",
+        "b98d56dc-9e60-438e-b76e-7d90c2d7a312"
       ]
     },
     "progressPercentMatchesPostgres": {
@@ -110,38 +110,38 @@
     "cursorPaginationMatchesSQL": {
       "total": 24,
       "firstPage": [
-        "27ddec0a-2308-4656-ae11-4c7dd4538f8a",
-        "8f4726fc-e6df-42b2-a4d3-dba9b409e76b",
-        "a6b254e7-8ac1-482f-a827-a97e5906fefd",
-        "53c169bd-f767-4681-ab8f-cde4e7a15675",
-        "efe61d2d-72fd-4f1f-bc72-142e158d5979",
-        "47e42398-8bf6-41af-b9cd-01e79262aa24",
-        "9d73f84d-6994-41f2-bb9c-7be863e698ad",
-        "ea445a54-4fcf-442b-9275-6fcc4cb32a08",
-        "fc5c1a0e-babf-4f79-94ad-49683d40bf83",
-        "78988e21-38ec-4ea5-b6d2-12fd9b7d8ce8",
-        "fe0f445a-6e02-40ef-bd9a-960a79963679",
-        "4afef5b1-8794-4d4b-b771-e84ca730138c"
+        "7ec83be0-9332-4cc4-8742-74f3628aacc1",
+        "3cd822b4-bc30-462b-afbe-004a0c1099e6",
+        "17282812-fd3d-4ea9-a577-26b566f2b409",
+        "fce4165c-9fa8-4dc3-a242-7a4b369aead6",
+        "45a03662-b535-4cee-8b93-122815df91df",
+        "3c5c6f4c-83e6-4416-a51a-c9c3a3108f5b",
+        "2ea87842-afa1-48e3-8794-211d3a84e5f4",
+        "9b5ab1d6-ace6-45cc-a410-0294939d5b7a",
+        "466792df-56d1-4abd-9092-ab833f5e9598",
+        "0bcbf05f-cda0-4e0d-9d0d-d19d4527ebb6",
+        "b7ae1307-b4e0-4065-a8e8-13d20cc9993a",
+        "b98d56dc-9e60-438e-b76e-7d90c2d7a312"
       ],
       "secondPage": [
-        "0c7df191-9f1e-493a-b071-84db64419c45",
-        "69e32cd4-c591-4a06-bebe-aa7201fe8cb5",
-        "768645f3-6f99-461c-8ace-633ab3abe4e7",
-        "fe0e7260-c393-4fc6-8865-49e29478718e",
-        "5288d188-6e69-4332-9f38-1e0fde1af2e7",
-        "35287282-d9da-462a-bb16-beea15c60ddf",
-        "1310e616-a406-44db-952d-ada02af3982a",
-        "979ae555-98bf-413e-b94e-2e5e70c5bae7",
-        "a9818c94-f56c-4d01-964c-6b329e5a049a",
-        "5429c892-990e-4928-8c61-fa579924e3ca",
-        "853c9ae5-0fde-4b5a-8814-209112cf68ec",
-        "af02fc97-582b-4b55-8d63-095a9d5ca478"
+        "146901e7-9de8-4f4e-b5b8-d0f6c52dfaed",
+        "18b09662-2014-4f3d-80e3-c9824acc73f3",
+        "2f38e781-9925-4631-9011-783908fdbc33",
+        "6a09f69d-67d0-425d-a8ce-ec6a8d501216",
+        "873d245d-2471-47e5-b213-ee8e7b3e1183",
+        "748b91f9-1f59-47af-9c3c-20bea1b2d8b8",
+        "23b1fd98-56b5-4ff0-841a-ab866c61bdf5",
+        "7b3404f2-0115-4a4e-8cdf-d198c7aaf05c",
+        "1c525173-e620-42c4-98e6-d1e296ce066a",
+        "127f1dbb-f93c-4f49-9e3b-ab9ca7eb1f79",
+        "44cfb7f9-f9e8-4bf7-af29-9abe17eb97a3",
+        "ceb39148-2b37-4a5b-bef7-ccf75d33fa7c"
       ],
       "duplicates": 0
     },
     "popularitySortMatchesSubmissionCounts": {
       "sortBy": "popularity",
-      "topAssignment": "27ddec0a-2308-4656-ae11-4c7dd4538f8a",
+      "topAssignment": "7ec83be0-9332-4cc4-8742-74f3628aacc1",
       "topSubmissionCount": 3,
       "apiFirstPageMatchesSQL": true
     },
@@ -164,9 +164,9 @@
     },
     "staleRequestIgnored": true,
     "keyboardDetailAndReturn": {
-      "assignmentId": "27ddec0a-2308-4656-ae11-4c7dd4538f8a",
+      "assignmentId": "7ec83be0-9332-4cc4-8742-74f3628aacc1",
       "detailApiStatus": 200,
-      "activityId": "715babf6-531c-4bec-b1c7-c29fa362e1eb",
+      "activityId": "a7c6f9fb-857a-4017-b4e9-7123971729ec",
       "currentActivityOpened": true,
       "focusOutline": "solid",
       "returnedToCatalog": true
@@ -176,72 +176,72 @@
   },
   "fixtures": {
     "studentB": {
-      "id": "e0f3e3ca-e22e-40f5-a073-90d73bdce903",
-      "membership": "163f66ed-4ea9-4030-9950-95d14bdb776b",
-      "class": "f8b78361-5018-4d2b-9e59-5b22fa598ec9",
-      "enrollment": "f2efe055-3ee2-46e0-b7bb-6a4ac9cf1008",
-      "login": "student.t017.b.7a9b53d6a8@test.invalid"
+      "id": "05dc79eb-609e-4899-95e1-9e18f2bde2d0",
+      "membership": "226ead25-e3f7-467d-a58d-f1614d2a6ee0",
+      "class": "196f80c3-7830-4bed-8d0e-adca0449211e",
+      "enrollment": "bc378757-0e45-4679-98f4-0caef62df627",
+      "login": "student.t017.b.27740e815b@test.invalid"
     },
     "studentAAssignments": [
-      "27ddec0a-2308-4656-ae11-4c7dd4538f8a",
-      "8f4726fc-e6df-42b2-a4d3-dba9b409e76b",
-      "a6b254e7-8ac1-482f-a827-a97e5906fefd",
-      "53c169bd-f767-4681-ab8f-cde4e7a15675",
-      "efe61d2d-72fd-4f1f-bc72-142e158d5979",
-      "47e42398-8bf6-41af-b9cd-01e79262aa24",
-      "9d73f84d-6994-41f2-bb9c-7be863e698ad",
-      "ea445a54-4fcf-442b-9275-6fcc4cb32a08",
-      "fc5c1a0e-babf-4f79-94ad-49683d40bf83",
-      "78988e21-38ec-4ea5-b6d2-12fd9b7d8ce8",
-      "fe0f445a-6e02-40ef-bd9a-960a79963679",
-      "4afef5b1-8794-4d4b-b771-e84ca730138c",
-      "0c7df191-9f1e-493a-b071-84db64419c45",
-      "69e32cd4-c591-4a06-bebe-aa7201fe8cb5",
-      "768645f3-6f99-461c-8ace-633ab3abe4e7",
-      "fe0e7260-c393-4fc6-8865-49e29478718e",
-      "5288d188-6e69-4332-9f38-1e0fde1af2e7",
-      "35287282-d9da-462a-bb16-beea15c60ddf",
-      "1310e616-a406-44db-952d-ada02af3982a",
-      "979ae555-98bf-413e-b94e-2e5e70c5bae7",
-      "a9818c94-f56c-4d01-964c-6b329e5a049a",
-      "5429c892-990e-4928-8c61-fa579924e3ca",
-      "853c9ae5-0fde-4b5a-8814-209112cf68ec",
-      "af02fc97-582b-4b55-8d63-095a9d5ca478"
+      "7ec83be0-9332-4cc4-8742-74f3628aacc1",
+      "3cd822b4-bc30-462b-afbe-004a0c1099e6",
+      "17282812-fd3d-4ea9-a577-26b566f2b409",
+      "fce4165c-9fa8-4dc3-a242-7a4b369aead6",
+      "45a03662-b535-4cee-8b93-122815df91df",
+      "3c5c6f4c-83e6-4416-a51a-c9c3a3108f5b",
+      "2ea87842-afa1-48e3-8794-211d3a84e5f4",
+      "9b5ab1d6-ace6-45cc-a410-0294939d5b7a",
+      "466792df-56d1-4abd-9092-ab833f5e9598",
+      "0bcbf05f-cda0-4e0d-9d0d-d19d4527ebb6",
+      "b7ae1307-b4e0-4065-a8e8-13d20cc9993a",
+      "b98d56dc-9e60-438e-b76e-7d90c2d7a312",
+      "146901e7-9de8-4f4e-b5b8-d0f6c52dfaed",
+      "18b09662-2014-4f3d-80e3-c9824acc73f3",
+      "2f38e781-9925-4631-9011-783908fdbc33",
+      "6a09f69d-67d0-425d-a8ce-ec6a8d501216",
+      "873d245d-2471-47e5-b213-ee8e7b3e1183",
+      "748b91f9-1f59-47af-9c3c-20bea1b2d8b8",
+      "23b1fd98-56b5-4ff0-841a-ab866c61bdf5",
+      "7b3404f2-0115-4a4e-8cdf-d198c7aaf05c",
+      "1c525173-e620-42c4-98e6-d1e296ce066a",
+      "127f1dbb-f93c-4f49-9e3b-ab9ca7eb1f79",
+      "44cfb7f9-f9e8-4bf7-af29-9abe17eb97a3",
+      "ceb39148-2b37-4a5b-bef7-ccf75d33fa7c"
     ],
-    "popularAssignment": "27ddec0a-2308-4656-ae11-4c7dd4538f8a",
-    "nextActivity": "715babf6-531c-4bec-b1c7-c29fa362e1eb"
+    "popularAssignment": "7ec83be0-9332-4cc4-8742-74f3628aacc1",
+    "nextActivity": "a7c6f9fb-857a-4017-b4e9-7123971729ec"
   },
   "baselineBrowser": {
     "requests": [
       {
         "method": "POST",
-        "url": "http://127.0.0.1:35029/api/v1/auth/login"
+        "url": "http://127.0.0.1:47561/api/v1/auth/login"
       },
       {
         "method": "GET",
-        "url": "http://127.0.0.1:35029/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?limit=4"
+        "url": "http://127.0.0.1:47561/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?limit=4"
       },
       {
         "method": "GET",
-        "url": "http://127.0.0.1:35029/student/courses/"
+        "url": "http://127.0.0.1:47561/student/courses/"
       },
       {
         "method": "GET",
-        "url": "http://127.0.0.1:35029/student/courses/style.css"
+        "url": "http://127.0.0.1:47561/student/courses/style.css"
       },
       {
         "method": "GET",
-        "url": "http://127.0.0.1:35029/student/courses/courses.js"
+        "url": "http://127.0.0.1:47561/student/courses/courses.js"
       },
       {
         "method": "GET",
-        "url": "http://127.0.0.1:35029/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses"
+        "url": "http://127.0.0.1:47561/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses"
       }
     ],
     "responses": [
       {
         "method": "POST",
-        "url": "http://127.0.0.1:35029/api/v1/auth/login",
+        "url": "http://127.0.0.1:47561/api/v1/auth/login",
         "status": 200,
         "responseFields": [
           "accessToken",
@@ -264,22 +264,22 @@
       },
       {
         "method": "GET",
-        "url": "http://127.0.0.1:35029/student/courses/",
+        "url": "http://127.0.0.1:47561/student/courses/",
         "status": 200
       },
       {
         "method": "GET",
-        "url": "http://127.0.0.1:35029/student/courses/style.css",
+        "url": "http://127.0.0.1:47561/student/courses/style.css",
         "status": 200
       },
       {
         "method": "GET",
-        "url": "http://127.0.0.1:35029/student/courses/courses.js",
+        "url": "http://127.0.0.1:47561/student/courses/courses.js",
         "status": 200
       },
       {
         "method": "GET",
-        "url": "http://127.0.0.1:35029/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses",
+        "url": "http://127.0.0.1:47561/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses",
         "status": 200,
         "responseFields": [
           "categories",
@@ -301,31 +301,31 @@
             "七年级"
           ],
           "difficulties": [
+            "进阶",
             "入门",
-            "基础",
-            "进阶"
+            "基础"
           ],
           "assignmentIds": [
-            "af02fc97-582b-4b55-8d63-095a9d5ca478",
-            "853c9ae5-0fde-4b5a-8814-209112cf68ec",
-            "5429c892-990e-4928-8c61-fa579924e3ca",
-            "a9818c94-f56c-4d01-964c-6b329e5a049a",
-            "979ae555-98bf-413e-b94e-2e5e70c5bae7",
-            "1310e616-a406-44db-952d-ada02af3982a",
-            "35287282-d9da-462a-bb16-beea15c60ddf",
-            "5288d188-6e69-4332-9f38-1e0fde1af2e7",
-            "fe0e7260-c393-4fc6-8865-49e29478718e",
-            "768645f3-6f99-461c-8ace-633ab3abe4e7",
-            "69e32cd4-c591-4a06-bebe-aa7201fe8cb5",
-            "0c7df191-9f1e-493a-b071-84db64419c45",
-            "4afef5b1-8794-4d4b-b771-e84ca730138c",
-            "fe0f445a-6e02-40ef-bd9a-960a79963679",
-            "78988e21-38ec-4ea5-b6d2-12fd9b7d8ce8",
-            "fc5c1a0e-babf-4f79-94ad-49683d40bf83",
-            "ea445a54-4fcf-442b-9275-6fcc4cb32a08",
-            "9d73f84d-6994-41f2-bb9c-7be863e698ad",
-            "47e42398-8bf6-41af-b9cd-01e79262aa24",
-            "efe61d2d-72fd-4f1f-bc72-142e158d5979"
+            "ceb39148-2b37-4a5b-bef7-ccf75d33fa7c",
+            "44cfb7f9-f9e8-4bf7-af29-9abe17eb97a3",
+            "127f1dbb-f93c-4f49-9e3b-ab9ca7eb1f79",
+            "1c525173-e620-42c4-98e6-d1e296ce066a",
+            "7b3404f2-0115-4a4e-8cdf-d198c7aaf05c",
+            "23b1fd98-56b5-4ff0-841a-ab866c61bdf5",
+            "748b91f9-1f59-47af-9c3c-20bea1b2d8b8",
+            "873d245d-2471-47e5-b213-ee8e7b3e1183",
+            "6a09f69d-67d0-425d-a8ce-ec6a8d501216",
+            "2f38e781-9925-4631-9011-783908fdbc33",
+            "18b09662-2014-4f3d-80e3-c9824acc73f3",
+            "146901e7-9de8-4f4e-b5b8-d0f6c52dfaed",
+            "b98d56dc-9e60-438e-b76e-7d90c2d7a312",
+            "b7ae1307-b4e0-4065-a8e8-13d20cc9993a",
+            "0bcbf05f-cda0-4e0d-9d0d-d19d4527ebb6",
+            "466792df-56d1-4abd-9092-ab833f5e9598",
+            "9b5ab1d6-ace6-45cc-a410-0294939d5b7a",
+            "2ea87842-afa1-48e3-8794-211d3a84e5f4",
+            "3c5c6f4c-83e6-4416-a51a-c9c3a3108f5b",
+            "45a03662-b535-4cee-8b93-122815df91df"
           ],
           "catalogItemFields": [
             "assignmentId",
@@ -349,140 +349,140 @@
           ],
           "catalogItems": [
             {
-              "assignmentId": "af02fc97-582b-4b55-8d63-095a9d5ca478",
+              "assignmentId": "ceb39148-2b37-4a5b-bef7-ccf75d33fa7c",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "853c9ae5-0fde-4b5a-8814-209112cf68ec",
+              "assignmentId": "44cfb7f9-f9e8-4bf7-af29-9abe17eb97a3",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "5429c892-990e-4928-8c61-fa579924e3ca",
+              "assignmentId": "127f1dbb-f93c-4f49-9e3b-ab9ca7eb1f79",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "a9818c94-f56c-4d01-964c-6b329e5a049a",
+              "assignmentId": "1c525173-e620-42c4-98e6-d1e296ce066a",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "979ae555-98bf-413e-b94e-2e5e70c5bae7",
+              "assignmentId": "7b3404f2-0115-4a4e-8cdf-d198c7aaf05c",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "1310e616-a406-44db-952d-ada02af3982a",
+              "assignmentId": "23b1fd98-56b5-4ff0-841a-ab866c61bdf5",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "35287282-d9da-462a-bb16-beea15c60ddf",
+              "assignmentId": "748b91f9-1f59-47af-9c3c-20bea1b2d8b8",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "5288d188-6e69-4332-9f38-1e0fde1af2e7",
+              "assignmentId": "873d245d-2471-47e5-b213-ee8e7b3e1183",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "fe0e7260-c393-4fc6-8865-49e29478718e",
+              "assignmentId": "6a09f69d-67d0-425d-a8ce-ec6a8d501216",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "768645f3-6f99-461c-8ace-633ab3abe4e7",
+              "assignmentId": "2f38e781-9925-4631-9011-783908fdbc33",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "69e32cd4-c591-4a06-bebe-aa7201fe8cb5",
+              "assignmentId": "18b09662-2014-4f3d-80e3-c9824acc73f3",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "0c7df191-9f1e-493a-b071-84db64419c45",
+              "assignmentId": "146901e7-9de8-4f4e-b5b8-d0f6c52dfaed",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "4afef5b1-8794-4d4b-b771-e84ca730138c",
+              "assignmentId": "b98d56dc-9e60-438e-b76e-7d90c2d7a312",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "fe0f445a-6e02-40ef-bd9a-960a79963679",
+              "assignmentId": "b7ae1307-b4e0-4065-a8e8-13d20cc9993a",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "78988e21-38ec-4ea5-b6d2-12fd9b7d8ce8",
+              "assignmentId": "0bcbf05f-cda0-4e0d-9d0d-d19d4527ebb6",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "fc5c1a0e-babf-4f79-94ad-49683d40bf83",
+              "assignmentId": "466792df-56d1-4abd-9092-ab833f5e9598",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "ea445a54-4fcf-442b-9275-6fcc4cb32a08",
+              "assignmentId": "9b5ab1d6-ace6-45cc-a410-0294939d5b7a",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "9d73f84d-6994-41f2-bb9c-7be863e698ad",
+              "assignmentId": "2ea87842-afa1-48e3-8794-211d3a84e5f4",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "47e42398-8bf6-41af-b9cd-01e79262aa24",
+              "assignmentId": "3c5c6f4c-83e6-4416-a51a-c9c3a3108f5b",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "efe61d2d-72fd-4f1f-bc72-142e158d5979",
+              "assignmentId": "45a03662-b535-4cee-8b93-122815df91df",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
@@ -491,7 +491,7 @@
           ],
           "total": 24,
           "hasMore": true,
-          "nextCursor": "efe61d2d-72fd-4f1f-bc72-142e158d5979",
+          "nextCursor": "45a03662-b535-4cee-8b93-122815df91df",
           "favorited": null
         }
       }
@@ -499,7 +499,7 @@
   },
   "baseline": {
     "commit": "4d971c9683664c09e533069ec001b00d0dc239af",
-    "url": "http://127.0.0.1:35029/student/courses/",
+    "url": "http://127.0.0.1:47561/student/courses/",
     "catalog": {
       "categories": [
         "发音基础",
@@ -509,31 +509,31 @@
         "七年级"
       ],
       "difficulties": [
+        "进阶",
         "入门",
-        "基础",
-        "进阶"
+        "基础"
       ],
       "assignmentIds": [
-        "af02fc97-582b-4b55-8d63-095a9d5ca478",
-        "853c9ae5-0fde-4b5a-8814-209112cf68ec",
-        "5429c892-990e-4928-8c61-fa579924e3ca",
-        "a9818c94-f56c-4d01-964c-6b329e5a049a",
-        "979ae555-98bf-413e-b94e-2e5e70c5bae7",
-        "1310e616-a406-44db-952d-ada02af3982a",
-        "35287282-d9da-462a-bb16-beea15c60ddf",
-        "5288d188-6e69-4332-9f38-1e0fde1af2e7",
-        "fe0e7260-c393-4fc6-8865-49e29478718e",
-        "768645f3-6f99-461c-8ace-633ab3abe4e7",
-        "69e32cd4-c591-4a06-bebe-aa7201fe8cb5",
-        "0c7df191-9f1e-493a-b071-84db64419c45",
-        "4afef5b1-8794-4d4b-b771-e84ca730138c",
-        "fe0f445a-6e02-40ef-bd9a-960a79963679",
-        "78988e21-38ec-4ea5-b6d2-12fd9b7d8ce8",
-        "fc5c1a0e-babf-4f79-94ad-49683d40bf83",
-        "ea445a54-4fcf-442b-9275-6fcc4cb32a08",
-        "9d73f84d-6994-41f2-bb9c-7be863e698ad",
-        "47e42398-8bf6-41af-b9cd-01e79262aa24",
-        "efe61d2d-72fd-4f1f-bc72-142e158d5979"
+        "ceb39148-2b37-4a5b-bef7-ccf75d33fa7c",
+        "44cfb7f9-f9e8-4bf7-af29-9abe17eb97a3",
+        "127f1dbb-f93c-4f49-9e3b-ab9ca7eb1f79",
+        "1c525173-e620-42c4-98e6-d1e296ce066a",
+        "7b3404f2-0115-4a4e-8cdf-d198c7aaf05c",
+        "23b1fd98-56b5-4ff0-841a-ab866c61bdf5",
+        "748b91f9-1f59-47af-9c3c-20bea1b2d8b8",
+        "873d245d-2471-47e5-b213-ee8e7b3e1183",
+        "6a09f69d-67d0-425d-a8ce-ec6a8d501216",
+        "2f38e781-9925-4631-9011-783908fdbc33",
+        "18b09662-2014-4f3d-80e3-c9824acc73f3",
+        "146901e7-9de8-4f4e-b5b8-d0f6c52dfaed",
+        "b98d56dc-9e60-438e-b76e-7d90c2d7a312",
+        "b7ae1307-b4e0-4065-a8e8-13d20cc9993a",
+        "0bcbf05f-cda0-4e0d-9d0d-d19d4527ebb6",
+        "466792df-56d1-4abd-9092-ab833f5e9598",
+        "9b5ab1d6-ace6-45cc-a410-0294939d5b7a",
+        "2ea87842-afa1-48e3-8794-211d3a84e5f4",
+        "3c5c6f4c-83e6-4416-a51a-c9c3a3108f5b",
+        "45a03662-b535-4cee-8b93-122815df91df"
       ],
       "catalogItemFields": [
         "assignmentId",
@@ -557,140 +557,140 @@
       ],
       "catalogItems": [
         {
-          "assignmentId": "af02fc97-582b-4b55-8d63-095a9d5ca478",
+          "assignmentId": "ceb39148-2b37-4a5b-bef7-ccf75d33fa7c",
           "progressPercent": 0,
           "status": "NOT_STARTED",
           "isFavorite": false,
           "nextActivity": null
         },
         {
-          "assignmentId": "853c9ae5-0fde-4b5a-8814-209112cf68ec",
+          "assignmentId": "44cfb7f9-f9e8-4bf7-af29-9abe17eb97a3",
           "progressPercent": 0,
           "status": "NOT_STARTED",
           "isFavorite": false,
           "nextActivity": null
         },
         {
-          "assignmentId": "5429c892-990e-4928-8c61-fa579924e3ca",
+          "assignmentId": "127f1dbb-f93c-4f49-9e3b-ab9ca7eb1f79",
           "progressPercent": 0,
           "status": "NOT_STARTED",
           "isFavorite": false,
           "nextActivity": null
         },
         {
-          "assignmentId": "a9818c94-f56c-4d01-964c-6b329e5a049a",
+          "assignmentId": "1c525173-e620-42c4-98e6-d1e296ce066a",
           "progressPercent": 0,
           "status": "NOT_STARTED",
           "isFavorite": false,
           "nextActivity": null
         },
         {
-          "assignmentId": "979ae555-98bf-413e-b94e-2e5e70c5bae7",
+          "assignmentId": "7b3404f2-0115-4a4e-8cdf-d198c7aaf05c",
           "progressPercent": 0,
           "status": "NOT_STARTED",
           "isFavorite": false,
           "nextActivity": null
         },
         {
-          "assignmentId": "1310e616-a406-44db-952d-ada02af3982a",
+          "assignmentId": "23b1fd98-56b5-4ff0-841a-ab866c61bdf5",
           "progressPercent": 0,
           "status": "NOT_STARTED",
           "isFavorite": false,
           "nextActivity": null
         },
         {
-          "assignmentId": "35287282-d9da-462a-bb16-beea15c60ddf",
+          "assignmentId": "748b91f9-1f59-47af-9c3c-20bea1b2d8b8",
           "progressPercent": 0,
           "status": "NOT_STARTED",
           "isFavorite": false,
           "nextActivity": null
         },
         {
-          "assignmentId": "5288d188-6e69-4332-9f38-1e0fde1af2e7",
+          "assignmentId": "873d245d-2471-47e5-b213-ee8e7b3e1183",
           "progressPercent": 0,
           "status": "NOT_STARTED",
           "isFavorite": false,
           "nextActivity": null
         },
         {
-          "assignmentId": "fe0e7260-c393-4fc6-8865-49e29478718e",
+          "assignmentId": "6a09f69d-67d0-425d-a8ce-ec6a8d501216",
           "progressPercent": 0,
           "status": "NOT_STARTED",
           "isFavorite": false,
           "nextActivity": null
         },
         {
-          "assignmentId": "768645f3-6f99-461c-8ace-633ab3abe4e7",
+          "assignmentId": "2f38e781-9925-4631-9011-783908fdbc33",
           "progressPercent": 0,
           "status": "NOT_STARTED",
           "isFavorite": false,
           "nextActivity": null
         },
         {
-          "assignmentId": "69e32cd4-c591-4a06-bebe-aa7201fe8cb5",
+          "assignmentId": "18b09662-2014-4f3d-80e3-c9824acc73f3",
           "progressPercent": 0,
           "status": "NOT_STARTED",
           "isFavorite": false,
           "nextActivity": null
         },
         {
-          "assignmentId": "0c7df191-9f1e-493a-b071-84db64419c45",
+          "assignmentId": "146901e7-9de8-4f4e-b5b8-d0f6c52dfaed",
           "progressPercent": 0,
           "status": "NOT_STARTED",
           "isFavorite": false,
           "nextActivity": null
         },
         {
-          "assignmentId": "4afef5b1-8794-4d4b-b771-e84ca730138c",
+          "assignmentId": "b98d56dc-9e60-438e-b76e-7d90c2d7a312",
           "progressPercent": 0,
           "status": "NOT_STARTED",
           "isFavorite": false,
           "nextActivity": null
         },
         {
-          "assignmentId": "fe0f445a-6e02-40ef-bd9a-960a79963679",
+          "assignmentId": "b7ae1307-b4e0-4065-a8e8-13d20cc9993a",
           "progressPercent": 0,
           "status": "NOT_STARTED",
           "isFavorite": false,
           "nextActivity": null
         },
         {
-          "assignmentId": "78988e21-38ec-4ea5-b6d2-12fd9b7d8ce8",
+          "assignmentId": "0bcbf05f-cda0-4e0d-9d0d-d19d4527ebb6",
           "progressPercent": 0,
           "status": "NOT_STARTED",
           "isFavorite": false,
           "nextActivity": null
         },
         {
-          "assignmentId": "fc5c1a0e-babf-4f79-94ad-49683d40bf83",
+          "assignmentId": "466792df-56d1-4abd-9092-ab833f5e9598",
           "progressPercent": 0,
           "status": "NOT_STARTED",
           "isFavorite": false,
           "nextActivity": null
         },
         {
-          "assignmentId": "ea445a54-4fcf-442b-9275-6fcc4cb32a08",
+          "assignmentId": "9b5ab1d6-ace6-45cc-a410-0294939d5b7a",
           "progressPercent": 0,
           "status": "NOT_STARTED",
           "isFavorite": false,
           "nextActivity": null
         },
         {
-          "assignmentId": "9d73f84d-6994-41f2-bb9c-7be863e698ad",
+          "assignmentId": "2ea87842-afa1-48e3-8794-211d3a84e5f4",
           "progressPercent": 0,
           "status": "NOT_STARTED",
           "isFavorite": false,
           "nextActivity": null
         },
         {
-          "assignmentId": "47e42398-8bf6-41af-b9cd-01e79262aa24",
+          "assignmentId": "3c5c6f4c-83e6-4416-a51a-c9c3a3108f5b",
           "progressPercent": 0,
           "status": "NOT_STARTED",
           "isFavorite": false,
           "nextActivity": null
         },
         {
-          "assignmentId": "efe61d2d-72fd-4f1f-bc72-142e158d5979",
+          "assignmentId": "45a03662-b535-4cee-8b93-122815df91df",
           "progressPercent": 0,
           "status": "NOT_STARTED",
           "isFavorite": false,
@@ -699,7 +699,7 @@
       ],
       "total": 24,
       "hasMore": true,
-      "nextCursor": "efe61d2d-72fd-4f1f-bc72-142e158d5979",
+      "nextCursor": "45a03662-b535-4cee-8b93-122815df91df",
       "favorited": null
     }
   },
@@ -755,7 +755,7 @@
       },
       {
         "method": "PUT",
-        "url": "http://127.0.0.1:4319/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/27ddec0a-2308-4656-ae11-4c7dd4538f8a/favorite"
+        "url": "http://127.0.0.1:4319/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/7ec83be0-9332-4cc4-8742-74f3628aacc1/favorite"
       },
       {
         "method": "GET",
@@ -775,7 +775,7 @@
       },
       {
         "method": "DELETE",
-        "url": "http://127.0.0.1:4319/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/27ddec0a-2308-4656-ae11-4c7dd4538f8a/favorite"
+        "url": "http://127.0.0.1:4319/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/7ec83be0-9332-4cc4-8742-74f3628aacc1/favorite"
       },
       {
         "method": "GET",
@@ -795,11 +795,11 @@
       },
       {
         "method": "PUT",
-        "url": "http://127.0.0.1:4319/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/27ddec0a-2308-4656-ae11-4c7dd4538f8a/favorite"
+        "url": "http://127.0.0.1:4319/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/7ec83be0-9332-4cc4-8742-74f3628aacc1/favorite"
       },
       {
         "method": "DELETE",
-        "url": "http://127.0.0.1:4319/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/27ddec0a-2308-4656-ae11-4c7dd4538f8a/favorite"
+        "url": "http://127.0.0.1:4319/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/7ec83be0-9332-4cc4-8742-74f3628aacc1/favorite"
       },
       {
         "method": "GET",
@@ -807,7 +807,7 @@
       },
       {
         "method": "DELETE",
-        "url": "http://127.0.0.1:4319/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/27ddec0a-2308-4656-ae11-4c7dd4538f8a/favorite"
+        "url": "http://127.0.0.1:4319/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/7ec83be0-9332-4cc4-8742-74f3628aacc1/favorite"
       },
       {
         "method": "GET",
@@ -827,7 +827,7 @@
       },
       {
         "method": "GET",
-        "url": "http://127.0.0.1:4319/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=publishedAt&sortOrder=desc&limit=12&cursor=4afef5b1-8794-4d4b-b771-e84ca730138c"
+        "url": "http://127.0.0.1:4319/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=publishedAt&sortOrder=desc&limit=12&cursor=b98d56dc-9e60-438e-b76e-7d90c2d7a312"
       },
       {
         "method": "GET",
@@ -835,7 +835,7 @@
       },
       {
         "method": "GET",
-        "url": "http://127.0.0.1:4319/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=popularity&sortOrder=desc&limit=12&search=T017-%E6%97%A0%E5%8C%B9%E9%85%8D%E8%AF%BE%E7%A8%8B-5f7e8afa"
+        "url": "http://127.0.0.1:4319/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=popularity&sortOrder=desc&limit=12&search=T017-%E6%97%A0%E5%8C%B9%E9%85%8D%E8%AF%BE%E7%A8%8B-661e2a67"
       },
       {
         "method": "GET",
@@ -910,15 +910,15 @@
             "七年级"
           ],
           "difficulties": [
+            "进阶",
             "入门",
-            "基础",
-            "进阶"
+            "基础"
           ],
           "assignmentIds": [
-            "af02fc97-582b-4b55-8d63-095a9d5ca478",
-            "853c9ae5-0fde-4b5a-8814-209112cf68ec",
-            "5429c892-990e-4928-8c61-fa579924e3ca",
-            "a9818c94-f56c-4d01-964c-6b329e5a049a"
+            "ceb39148-2b37-4a5b-bef7-ccf75d33fa7c",
+            "44cfb7f9-f9e8-4bf7-af29-9abe17eb97a3",
+            "127f1dbb-f93c-4f49-9e3b-ab9ca7eb1f79",
+            "1c525173-e620-42c4-98e6-d1e296ce066a"
           ],
           "catalogItemFields": [
             "assignmentId",
@@ -942,28 +942,28 @@
           ],
           "catalogItems": [
             {
-              "assignmentId": "af02fc97-582b-4b55-8d63-095a9d5ca478",
+              "assignmentId": "ceb39148-2b37-4a5b-bef7-ccf75d33fa7c",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "853c9ae5-0fde-4b5a-8814-209112cf68ec",
+              "assignmentId": "44cfb7f9-f9e8-4bf7-af29-9abe17eb97a3",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "5429c892-990e-4928-8c61-fa579924e3ca",
+              "assignmentId": "127f1dbb-f93c-4f49-9e3b-ab9ca7eb1f79",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "a9818c94-f56c-4d01-964c-6b329e5a049a",
+              "assignmentId": "1c525173-e620-42c4-98e6-d1e296ce066a",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
@@ -972,7 +972,7 @@
           ],
           "total": 24,
           "hasMore": true,
-          "nextCursor": "a9818c94-f56c-4d01-964c-6b329e5a049a",
+          "nextCursor": "1c525173-e620-42c4-98e6-d1e296ce066a",
           "favorited": null
         }
       },
@@ -1015,23 +1015,23 @@
             "七年级"
           ],
           "difficulties": [
+            "进阶",
             "入门",
-            "基础",
-            "进阶"
+            "基础"
           ],
           "assignmentIds": [
-            "27ddec0a-2308-4656-ae11-4c7dd4538f8a",
-            "8f4726fc-e6df-42b2-a4d3-dba9b409e76b",
-            "a6b254e7-8ac1-482f-a827-a97e5906fefd",
-            "53c169bd-f767-4681-ab8f-cde4e7a15675",
-            "efe61d2d-72fd-4f1f-bc72-142e158d5979",
-            "47e42398-8bf6-41af-b9cd-01e79262aa24",
-            "9d73f84d-6994-41f2-bb9c-7be863e698ad",
-            "ea445a54-4fcf-442b-9275-6fcc4cb32a08",
-            "fc5c1a0e-babf-4f79-94ad-49683d40bf83",
-            "78988e21-38ec-4ea5-b6d2-12fd9b7d8ce8",
-            "fe0f445a-6e02-40ef-bd9a-960a79963679",
-            "4afef5b1-8794-4d4b-b771-e84ca730138c"
+            "7ec83be0-9332-4cc4-8742-74f3628aacc1",
+            "3cd822b4-bc30-462b-afbe-004a0c1099e6",
+            "17282812-fd3d-4ea9-a577-26b566f2b409",
+            "fce4165c-9fa8-4dc3-a242-7a4b369aead6",
+            "45a03662-b535-4cee-8b93-122815df91df",
+            "3c5c6f4c-83e6-4416-a51a-c9c3a3108f5b",
+            "2ea87842-afa1-48e3-8794-211d3a84e5f4",
+            "9b5ab1d6-ace6-45cc-a410-0294939d5b7a",
+            "466792df-56d1-4abd-9092-ab833f5e9598",
+            "0bcbf05f-cda0-4e0d-9d0d-d19d4527ebb6",
+            "b7ae1307-b4e0-4065-a8e8-13d20cc9993a",
+            "b98d56dc-9e60-438e-b76e-7d90c2d7a312"
           ],
           "catalogItemFields": [
             "assignmentId",
@@ -1055,88 +1055,88 @@
           ],
           "catalogItems": [
             {
-              "assignmentId": "27ddec0a-2308-4656-ae11-4c7dd4538f8a",
+              "assignmentId": "7ec83be0-9332-4cc4-8742-74f3628aacc1",
               "progressPercent": 50,
               "status": "IN_PROGRESS",
               "isFavorite": false,
               "nextActivity": {
-                "id": "715babf6-531c-4bec-b1c7-c29fa362e1eb",
+                "id": "a7c6f9fb-857a-4017-b4e9-7123971729ec",
                 "title": "T017 下一项活动：复述并说明",
                 "type": "TEXT"
               }
             },
             {
-              "assignmentId": "8f4726fc-e6df-42b2-a4d3-dba9b409e76b",
+              "assignmentId": "3cd822b4-bc30-462b-afbe-004a0c1099e6",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "a6b254e7-8ac1-482f-a827-a97e5906fefd",
+              "assignmentId": "17282812-fd3d-4ea9-a577-26b566f2b409",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "53c169bd-f767-4681-ab8f-cde4e7a15675",
+              "assignmentId": "fce4165c-9fa8-4dc3-a242-7a4b369aead6",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "efe61d2d-72fd-4f1f-bc72-142e158d5979",
+              "assignmentId": "45a03662-b535-4cee-8b93-122815df91df",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "47e42398-8bf6-41af-b9cd-01e79262aa24",
+              "assignmentId": "3c5c6f4c-83e6-4416-a51a-c9c3a3108f5b",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "9d73f84d-6994-41f2-bb9c-7be863e698ad",
+              "assignmentId": "2ea87842-afa1-48e3-8794-211d3a84e5f4",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "ea445a54-4fcf-442b-9275-6fcc4cb32a08",
+              "assignmentId": "9b5ab1d6-ace6-45cc-a410-0294939d5b7a",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "fc5c1a0e-babf-4f79-94ad-49683d40bf83",
+              "assignmentId": "466792df-56d1-4abd-9092-ab833f5e9598",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "78988e21-38ec-4ea5-b6d2-12fd9b7d8ce8",
+              "assignmentId": "0bcbf05f-cda0-4e0d-9d0d-d19d4527ebb6",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "fe0f445a-6e02-40ef-bd9a-960a79963679",
+              "assignmentId": "b7ae1307-b4e0-4065-a8e8-13d20cc9993a",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "4afef5b1-8794-4d4b-b771-e84ca730138c",
+              "assignmentId": "b98d56dc-9e60-438e-b76e-7d90c2d7a312",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
@@ -1145,7 +1145,7 @@
           ],
           "total": 24,
           "hasMore": true,
-          "nextCursor": "4afef5b1-8794-4d4b-b771-e84ca730138c",
+          "nextCursor": "b98d56dc-9e60-438e-b76e-7d90c2d7a312",
           "favorited": null
         }
       },
@@ -1173,23 +1173,23 @@
             "七年级"
           ],
           "difficulties": [
+            "进阶",
             "入门",
-            "基础",
-            "进阶"
+            "基础"
           ],
           "assignmentIds": [
-            "27ddec0a-2308-4656-ae11-4c7dd4538f8a",
-            "8f4726fc-e6df-42b2-a4d3-dba9b409e76b",
-            "a6b254e7-8ac1-482f-a827-a97e5906fefd",
-            "53c169bd-f767-4681-ab8f-cde4e7a15675",
-            "efe61d2d-72fd-4f1f-bc72-142e158d5979",
-            "47e42398-8bf6-41af-b9cd-01e79262aa24",
-            "9d73f84d-6994-41f2-bb9c-7be863e698ad",
-            "ea445a54-4fcf-442b-9275-6fcc4cb32a08",
-            "fc5c1a0e-babf-4f79-94ad-49683d40bf83",
-            "78988e21-38ec-4ea5-b6d2-12fd9b7d8ce8",
-            "fe0f445a-6e02-40ef-bd9a-960a79963679",
-            "4afef5b1-8794-4d4b-b771-e84ca730138c"
+            "7ec83be0-9332-4cc4-8742-74f3628aacc1",
+            "3cd822b4-bc30-462b-afbe-004a0c1099e6",
+            "17282812-fd3d-4ea9-a577-26b566f2b409",
+            "fce4165c-9fa8-4dc3-a242-7a4b369aead6",
+            "45a03662-b535-4cee-8b93-122815df91df",
+            "3c5c6f4c-83e6-4416-a51a-c9c3a3108f5b",
+            "2ea87842-afa1-48e3-8794-211d3a84e5f4",
+            "9b5ab1d6-ace6-45cc-a410-0294939d5b7a",
+            "466792df-56d1-4abd-9092-ab833f5e9598",
+            "0bcbf05f-cda0-4e0d-9d0d-d19d4527ebb6",
+            "b7ae1307-b4e0-4065-a8e8-13d20cc9993a",
+            "b98d56dc-9e60-438e-b76e-7d90c2d7a312"
           ],
           "catalogItemFields": [
             "assignmentId",
@@ -1213,88 +1213,88 @@
           ],
           "catalogItems": [
             {
-              "assignmentId": "27ddec0a-2308-4656-ae11-4c7dd4538f8a",
+              "assignmentId": "7ec83be0-9332-4cc4-8742-74f3628aacc1",
               "progressPercent": 50,
               "status": "IN_PROGRESS",
               "isFavorite": false,
               "nextActivity": {
-                "id": "715babf6-531c-4bec-b1c7-c29fa362e1eb",
+                "id": "a7c6f9fb-857a-4017-b4e9-7123971729ec",
                 "title": "T017 下一项活动：复述并说明",
                 "type": "TEXT"
               }
             },
             {
-              "assignmentId": "8f4726fc-e6df-42b2-a4d3-dba9b409e76b",
+              "assignmentId": "3cd822b4-bc30-462b-afbe-004a0c1099e6",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "a6b254e7-8ac1-482f-a827-a97e5906fefd",
+              "assignmentId": "17282812-fd3d-4ea9-a577-26b566f2b409",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "53c169bd-f767-4681-ab8f-cde4e7a15675",
+              "assignmentId": "fce4165c-9fa8-4dc3-a242-7a4b369aead6",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "efe61d2d-72fd-4f1f-bc72-142e158d5979",
+              "assignmentId": "45a03662-b535-4cee-8b93-122815df91df",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "47e42398-8bf6-41af-b9cd-01e79262aa24",
+              "assignmentId": "3c5c6f4c-83e6-4416-a51a-c9c3a3108f5b",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "9d73f84d-6994-41f2-bb9c-7be863e698ad",
+              "assignmentId": "2ea87842-afa1-48e3-8794-211d3a84e5f4",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "ea445a54-4fcf-442b-9275-6fcc4cb32a08",
+              "assignmentId": "9b5ab1d6-ace6-45cc-a410-0294939d5b7a",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "fc5c1a0e-babf-4f79-94ad-49683d40bf83",
+              "assignmentId": "466792df-56d1-4abd-9092-ab833f5e9598",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "78988e21-38ec-4ea5-b6d2-12fd9b7d8ce8",
+              "assignmentId": "0bcbf05f-cda0-4e0d-9d0d-d19d4527ebb6",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "fe0f445a-6e02-40ef-bd9a-960a79963679",
+              "assignmentId": "b7ae1307-b4e0-4065-a8e8-13d20cc9993a",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "4afef5b1-8794-4d4b-b771-e84ca730138c",
+              "assignmentId": "b98d56dc-9e60-438e-b76e-7d90c2d7a312",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
@@ -1303,7 +1303,7 @@
           ],
           "total": 24,
           "hasMore": true,
-          "nextCursor": "4afef5b1-8794-4d4b-b771-e84ca730138c",
+          "nextCursor": "b98d56dc-9e60-438e-b76e-7d90c2d7a312",
           "favorited": null
         }
       },
@@ -1331,23 +1331,23 @@
             "七年级"
           ],
           "difficulties": [
+            "进阶",
             "入门",
-            "基础",
-            "进阶"
+            "基础"
           ],
           "assignmentIds": [
-            "27ddec0a-2308-4656-ae11-4c7dd4538f8a",
-            "a6b254e7-8ac1-482f-a827-a97e5906fefd",
-            "efe61d2d-72fd-4f1f-bc72-142e158d5979",
-            "9d73f84d-6994-41f2-bb9c-7be863e698ad",
-            "fc5c1a0e-babf-4f79-94ad-49683d40bf83",
-            "fe0f445a-6e02-40ef-bd9a-960a79963679",
-            "0c7df191-9f1e-493a-b071-84db64419c45",
-            "768645f3-6f99-461c-8ace-633ab3abe4e7",
-            "5288d188-6e69-4332-9f38-1e0fde1af2e7",
-            "1310e616-a406-44db-952d-ada02af3982a",
-            "a9818c94-f56c-4d01-964c-6b329e5a049a",
-            "853c9ae5-0fde-4b5a-8814-209112cf68ec"
+            "7ec83be0-9332-4cc4-8742-74f3628aacc1",
+            "17282812-fd3d-4ea9-a577-26b566f2b409",
+            "45a03662-b535-4cee-8b93-122815df91df",
+            "2ea87842-afa1-48e3-8794-211d3a84e5f4",
+            "466792df-56d1-4abd-9092-ab833f5e9598",
+            "b7ae1307-b4e0-4065-a8e8-13d20cc9993a",
+            "146901e7-9de8-4f4e-b5b8-d0f6c52dfaed",
+            "2f38e781-9925-4631-9011-783908fdbc33",
+            "873d245d-2471-47e5-b213-ee8e7b3e1183",
+            "23b1fd98-56b5-4ff0-841a-ab866c61bdf5",
+            "1c525173-e620-42c4-98e6-d1e296ce066a",
+            "44cfb7f9-f9e8-4bf7-af29-9abe17eb97a3"
           ],
           "catalogItemFields": [
             "assignmentId",
@@ -1371,88 +1371,88 @@
           ],
           "catalogItems": [
             {
-              "assignmentId": "27ddec0a-2308-4656-ae11-4c7dd4538f8a",
+              "assignmentId": "7ec83be0-9332-4cc4-8742-74f3628aacc1",
               "progressPercent": 50,
               "status": "IN_PROGRESS",
               "isFavorite": false,
               "nextActivity": {
-                "id": "715babf6-531c-4bec-b1c7-c29fa362e1eb",
+                "id": "a7c6f9fb-857a-4017-b4e9-7123971729ec",
                 "title": "T017 下一项活动：复述并说明",
                 "type": "TEXT"
               }
             },
             {
-              "assignmentId": "a6b254e7-8ac1-482f-a827-a97e5906fefd",
+              "assignmentId": "17282812-fd3d-4ea9-a577-26b566f2b409",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "efe61d2d-72fd-4f1f-bc72-142e158d5979",
+              "assignmentId": "45a03662-b535-4cee-8b93-122815df91df",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "9d73f84d-6994-41f2-bb9c-7be863e698ad",
+              "assignmentId": "2ea87842-afa1-48e3-8794-211d3a84e5f4",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "fc5c1a0e-babf-4f79-94ad-49683d40bf83",
+              "assignmentId": "466792df-56d1-4abd-9092-ab833f5e9598",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "fe0f445a-6e02-40ef-bd9a-960a79963679",
+              "assignmentId": "b7ae1307-b4e0-4065-a8e8-13d20cc9993a",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "0c7df191-9f1e-493a-b071-84db64419c45",
+              "assignmentId": "146901e7-9de8-4f4e-b5b8-d0f6c52dfaed",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "768645f3-6f99-461c-8ace-633ab3abe4e7",
+              "assignmentId": "2f38e781-9925-4631-9011-783908fdbc33",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "5288d188-6e69-4332-9f38-1e0fde1af2e7",
+              "assignmentId": "873d245d-2471-47e5-b213-ee8e7b3e1183",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "1310e616-a406-44db-952d-ada02af3982a",
+              "assignmentId": "23b1fd98-56b5-4ff0-841a-ab866c61bdf5",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "a9818c94-f56c-4d01-964c-6b329e5a049a",
+              "assignmentId": "1c525173-e620-42c4-98e6-d1e296ce066a",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "853c9ae5-0fde-4b5a-8814-209112cf68ec",
+              "assignmentId": "44cfb7f9-f9e8-4bf7-af29-9abe17eb97a3",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
@@ -1489,15 +1489,15 @@
             "七年级"
           ],
           "difficulties": [
+            "进阶",
             "入门",
-            "基础",
-            "进阶"
+            "基础"
           ],
           "assignmentIds": [
-            "27ddec0a-2308-4656-ae11-4c7dd4538f8a",
-            "9d73f84d-6994-41f2-bb9c-7be863e698ad",
-            "0c7df191-9f1e-493a-b071-84db64419c45",
-            "1310e616-a406-44db-952d-ada02af3982a"
+            "7ec83be0-9332-4cc4-8742-74f3628aacc1",
+            "2ea87842-afa1-48e3-8794-211d3a84e5f4",
+            "146901e7-9de8-4f4e-b5b8-d0f6c52dfaed",
+            "23b1fd98-56b5-4ff0-841a-ab866c61bdf5"
           ],
           "catalogItemFields": [
             "assignmentId",
@@ -1521,32 +1521,32 @@
           ],
           "catalogItems": [
             {
-              "assignmentId": "27ddec0a-2308-4656-ae11-4c7dd4538f8a",
+              "assignmentId": "7ec83be0-9332-4cc4-8742-74f3628aacc1",
               "progressPercent": 50,
               "status": "IN_PROGRESS",
               "isFavorite": false,
               "nextActivity": {
-                "id": "715babf6-531c-4bec-b1c7-c29fa362e1eb",
+                "id": "a7c6f9fb-857a-4017-b4e9-7123971729ec",
                 "title": "T017 下一项活动：复述并说明",
                 "type": "TEXT"
               }
             },
             {
-              "assignmentId": "9d73f84d-6994-41f2-bb9c-7be863e698ad",
+              "assignmentId": "2ea87842-afa1-48e3-8794-211d3a84e5f4",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "0c7df191-9f1e-493a-b071-84db64419c45",
+              "assignmentId": "146901e7-9de8-4f4e-b5b8-d0f6c52dfaed",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "1310e616-a406-44db-952d-ada02af3982a",
+              "assignmentId": "23b1fd98-56b5-4ff0-841a-ab866c61bdf5",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
@@ -1583,15 +1583,15 @@
             "七年级"
           ],
           "difficulties": [
+            "进阶",
             "入门",
-            "基础",
-            "进阶"
+            "基础"
           ],
           "assignmentIds": [
-            "27ddec0a-2308-4656-ae11-4c7dd4538f8a",
-            "9d73f84d-6994-41f2-bb9c-7be863e698ad",
-            "0c7df191-9f1e-493a-b071-84db64419c45",
-            "1310e616-a406-44db-952d-ada02af3982a"
+            "7ec83be0-9332-4cc4-8742-74f3628aacc1",
+            "2ea87842-afa1-48e3-8794-211d3a84e5f4",
+            "146901e7-9de8-4f4e-b5b8-d0f6c52dfaed",
+            "23b1fd98-56b5-4ff0-841a-ab866c61bdf5"
           ],
           "catalogItemFields": [
             "assignmentId",
@@ -1615,32 +1615,32 @@
           ],
           "catalogItems": [
             {
-              "assignmentId": "27ddec0a-2308-4656-ae11-4c7dd4538f8a",
+              "assignmentId": "7ec83be0-9332-4cc4-8742-74f3628aacc1",
               "progressPercent": 50,
               "status": "IN_PROGRESS",
               "isFavorite": false,
               "nextActivity": {
-                "id": "715babf6-531c-4bec-b1c7-c29fa362e1eb",
+                "id": "a7c6f9fb-857a-4017-b4e9-7123971729ec",
                 "title": "T017 下一项活动：复述并说明",
                 "type": "TEXT"
               }
             },
             {
-              "assignmentId": "9d73f84d-6994-41f2-bb9c-7be863e698ad",
+              "assignmentId": "2ea87842-afa1-48e3-8794-211d3a84e5f4",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "0c7df191-9f1e-493a-b071-84db64419c45",
+              "assignmentId": "146901e7-9de8-4f4e-b5b8-d0f6c52dfaed",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "1310e616-a406-44db-952d-ada02af3982a",
+              "assignmentId": "23b1fd98-56b5-4ff0-841a-ab866c61bdf5",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
@@ -1677,15 +1677,15 @@
             "七年级"
           ],
           "difficulties": [
+            "进阶",
             "入门",
-            "基础",
-            "进阶"
+            "基础"
           ],
           "assignmentIds": [
-            "27ddec0a-2308-4656-ae11-4c7dd4538f8a",
-            "9d73f84d-6994-41f2-bb9c-7be863e698ad",
-            "0c7df191-9f1e-493a-b071-84db64419c45",
-            "1310e616-a406-44db-952d-ada02af3982a"
+            "7ec83be0-9332-4cc4-8742-74f3628aacc1",
+            "2ea87842-afa1-48e3-8794-211d3a84e5f4",
+            "146901e7-9de8-4f4e-b5b8-d0f6c52dfaed",
+            "23b1fd98-56b5-4ff0-841a-ab866c61bdf5"
           ],
           "catalogItemFields": [
             "assignmentId",
@@ -1709,32 +1709,32 @@
           ],
           "catalogItems": [
             {
-              "assignmentId": "27ddec0a-2308-4656-ae11-4c7dd4538f8a",
+              "assignmentId": "7ec83be0-9332-4cc4-8742-74f3628aacc1",
               "progressPercent": 50,
               "status": "IN_PROGRESS",
               "isFavorite": false,
               "nextActivity": {
-                "id": "715babf6-531c-4bec-b1c7-c29fa362e1eb",
+                "id": "a7c6f9fb-857a-4017-b4e9-7123971729ec",
                 "title": "T017 下一项活动：复述并说明",
                 "type": "TEXT"
               }
             },
             {
-              "assignmentId": "9d73f84d-6994-41f2-bb9c-7be863e698ad",
+              "assignmentId": "2ea87842-afa1-48e3-8794-211d3a84e5f4",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "0c7df191-9f1e-493a-b071-84db64419c45",
+              "assignmentId": "146901e7-9de8-4f4e-b5b8-d0f6c52dfaed",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "1310e616-a406-44db-952d-ada02af3982a",
+              "assignmentId": "23b1fd98-56b5-4ff0-841a-ab866c61bdf5",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
@@ -1771,12 +1771,12 @@
             "七年级"
           ],
           "difficulties": [
+            "进阶",
             "入门",
-            "基础",
-            "进阶"
+            "基础"
           ],
           "assignmentIds": [
-            "27ddec0a-2308-4656-ae11-4c7dd4538f8a"
+            "7ec83be0-9332-4cc4-8742-74f3628aacc1"
           ],
           "catalogItemFields": [
             "assignmentId",
@@ -1800,12 +1800,12 @@
           ],
           "catalogItems": [
             {
-              "assignmentId": "27ddec0a-2308-4656-ae11-4c7dd4538f8a",
+              "assignmentId": "7ec83be0-9332-4cc4-8742-74f3628aacc1",
               "progressPercent": 50,
               "status": "IN_PROGRESS",
               "isFavorite": false,
               "nextActivity": {
-                "id": "715babf6-531c-4bec-b1c7-c29fa362e1eb",
+                "id": "a7c6f9fb-857a-4017-b4e9-7123971729ec",
                 "title": "T017 下一项活动：复述并说明",
                 "type": "TEXT"
               }
@@ -1819,7 +1819,7 @@
       },
       {
         "method": "PUT",
-        "url": "http://127.0.0.1:4319/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/27ddec0a-2308-4656-ae11-4c7dd4538f8a/favorite",
+        "url": "http://127.0.0.1:4319/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/7ec83be0-9332-4cc4-8742-74f3628aacc1/favorite",
         "status": 200,
         "responseFields": [
           "favorited"
@@ -1839,12 +1839,12 @@
       },
       {
         "method": "GET",
-        "url": "http://127.0.0.1:4319/student/courses/",
+        "url": "http://127.0.0.1:4319/student/courses/style.css",
         "status": 200
       },
       {
         "method": "GET",
-        "url": "http://127.0.0.1:4319/student/courses/style.css",
+        "url": "http://127.0.0.1:4319/student/courses/",
         "status": 200
       },
       {
@@ -1876,23 +1876,23 @@
             "七年级"
           ],
           "difficulties": [
+            "进阶",
             "入门",
-            "基础",
-            "进阶"
+            "基础"
           ],
           "assignmentIds": [
-            "27ddec0a-2308-4656-ae11-4c7dd4538f8a",
-            "8f4726fc-e6df-42b2-a4d3-dba9b409e76b",
-            "a6b254e7-8ac1-482f-a827-a97e5906fefd",
-            "53c169bd-f767-4681-ab8f-cde4e7a15675",
-            "efe61d2d-72fd-4f1f-bc72-142e158d5979",
-            "47e42398-8bf6-41af-b9cd-01e79262aa24",
-            "9d73f84d-6994-41f2-bb9c-7be863e698ad",
-            "ea445a54-4fcf-442b-9275-6fcc4cb32a08",
-            "fc5c1a0e-babf-4f79-94ad-49683d40bf83",
-            "78988e21-38ec-4ea5-b6d2-12fd9b7d8ce8",
-            "fe0f445a-6e02-40ef-bd9a-960a79963679",
-            "4afef5b1-8794-4d4b-b771-e84ca730138c"
+            "7ec83be0-9332-4cc4-8742-74f3628aacc1",
+            "3cd822b4-bc30-462b-afbe-004a0c1099e6",
+            "17282812-fd3d-4ea9-a577-26b566f2b409",
+            "fce4165c-9fa8-4dc3-a242-7a4b369aead6",
+            "45a03662-b535-4cee-8b93-122815df91df",
+            "3c5c6f4c-83e6-4416-a51a-c9c3a3108f5b",
+            "2ea87842-afa1-48e3-8794-211d3a84e5f4",
+            "9b5ab1d6-ace6-45cc-a410-0294939d5b7a",
+            "466792df-56d1-4abd-9092-ab833f5e9598",
+            "0bcbf05f-cda0-4e0d-9d0d-d19d4527ebb6",
+            "b7ae1307-b4e0-4065-a8e8-13d20cc9993a",
+            "b98d56dc-9e60-438e-b76e-7d90c2d7a312"
           ],
           "catalogItemFields": [
             "assignmentId",
@@ -1916,88 +1916,88 @@
           ],
           "catalogItems": [
             {
-              "assignmentId": "27ddec0a-2308-4656-ae11-4c7dd4538f8a",
+              "assignmentId": "7ec83be0-9332-4cc4-8742-74f3628aacc1",
               "progressPercent": 50,
               "status": "IN_PROGRESS",
               "isFavorite": true,
               "nextActivity": {
-                "id": "715babf6-531c-4bec-b1c7-c29fa362e1eb",
+                "id": "a7c6f9fb-857a-4017-b4e9-7123971729ec",
                 "title": "T017 下一项活动：复述并说明",
                 "type": "TEXT"
               }
             },
             {
-              "assignmentId": "8f4726fc-e6df-42b2-a4d3-dba9b409e76b",
+              "assignmentId": "3cd822b4-bc30-462b-afbe-004a0c1099e6",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "a6b254e7-8ac1-482f-a827-a97e5906fefd",
+              "assignmentId": "17282812-fd3d-4ea9-a577-26b566f2b409",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "53c169bd-f767-4681-ab8f-cde4e7a15675",
+              "assignmentId": "fce4165c-9fa8-4dc3-a242-7a4b369aead6",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "efe61d2d-72fd-4f1f-bc72-142e158d5979",
+              "assignmentId": "45a03662-b535-4cee-8b93-122815df91df",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "47e42398-8bf6-41af-b9cd-01e79262aa24",
+              "assignmentId": "3c5c6f4c-83e6-4416-a51a-c9c3a3108f5b",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "9d73f84d-6994-41f2-bb9c-7be863e698ad",
+              "assignmentId": "2ea87842-afa1-48e3-8794-211d3a84e5f4",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "ea445a54-4fcf-442b-9275-6fcc4cb32a08",
+              "assignmentId": "9b5ab1d6-ace6-45cc-a410-0294939d5b7a",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "fc5c1a0e-babf-4f79-94ad-49683d40bf83",
+              "assignmentId": "466792df-56d1-4abd-9092-ab833f5e9598",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "78988e21-38ec-4ea5-b6d2-12fd9b7d8ce8",
+              "assignmentId": "0bcbf05f-cda0-4e0d-9d0d-d19d4527ebb6",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "fe0f445a-6e02-40ef-bd9a-960a79963679",
+              "assignmentId": "b7ae1307-b4e0-4065-a8e8-13d20cc9993a",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "4afef5b1-8794-4d4b-b771-e84ca730138c",
+              "assignmentId": "b98d56dc-9e60-438e-b76e-7d90c2d7a312",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
@@ -2006,13 +2006,13 @@
           ],
           "total": 24,
           "hasMore": true,
-          "nextCursor": "4afef5b1-8794-4d4b-b771-e84ca730138c",
+          "nextCursor": "b98d56dc-9e60-438e-b76e-7d90c2d7a312",
           "favorited": null
         }
       },
       {
         "method": "DELETE",
-        "url": "http://127.0.0.1:4319/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/27ddec0a-2308-4656-ae11-4c7dd4538f8a/favorite",
+        "url": "http://127.0.0.1:4319/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/7ec83be0-9332-4cc4-8742-74f3628aacc1/favorite",
         "status": 200,
         "responseFields": [
           "favorited"
@@ -2032,12 +2032,12 @@
       },
       {
         "method": "GET",
-        "url": "http://127.0.0.1:4319/student/courses/",
+        "url": "http://127.0.0.1:4319/student/courses/style.css",
         "status": 200
       },
       {
         "method": "GET",
-        "url": "http://127.0.0.1:4319/student/courses/style.css",
+        "url": "http://127.0.0.1:4319/student/courses/",
         "status": 200
       },
       {
@@ -2069,23 +2069,23 @@
             "七年级"
           ],
           "difficulties": [
+            "进阶",
             "入门",
-            "基础",
-            "进阶"
+            "基础"
           ],
           "assignmentIds": [
-            "27ddec0a-2308-4656-ae11-4c7dd4538f8a",
-            "8f4726fc-e6df-42b2-a4d3-dba9b409e76b",
-            "a6b254e7-8ac1-482f-a827-a97e5906fefd",
-            "53c169bd-f767-4681-ab8f-cde4e7a15675",
-            "efe61d2d-72fd-4f1f-bc72-142e158d5979",
-            "47e42398-8bf6-41af-b9cd-01e79262aa24",
-            "9d73f84d-6994-41f2-bb9c-7be863e698ad",
-            "ea445a54-4fcf-442b-9275-6fcc4cb32a08",
-            "fc5c1a0e-babf-4f79-94ad-49683d40bf83",
-            "78988e21-38ec-4ea5-b6d2-12fd9b7d8ce8",
-            "fe0f445a-6e02-40ef-bd9a-960a79963679",
-            "4afef5b1-8794-4d4b-b771-e84ca730138c"
+            "7ec83be0-9332-4cc4-8742-74f3628aacc1",
+            "3cd822b4-bc30-462b-afbe-004a0c1099e6",
+            "17282812-fd3d-4ea9-a577-26b566f2b409",
+            "fce4165c-9fa8-4dc3-a242-7a4b369aead6",
+            "45a03662-b535-4cee-8b93-122815df91df",
+            "3c5c6f4c-83e6-4416-a51a-c9c3a3108f5b",
+            "2ea87842-afa1-48e3-8794-211d3a84e5f4",
+            "9b5ab1d6-ace6-45cc-a410-0294939d5b7a",
+            "466792df-56d1-4abd-9092-ab833f5e9598",
+            "0bcbf05f-cda0-4e0d-9d0d-d19d4527ebb6",
+            "b7ae1307-b4e0-4065-a8e8-13d20cc9993a",
+            "b98d56dc-9e60-438e-b76e-7d90c2d7a312"
           ],
           "catalogItemFields": [
             "assignmentId",
@@ -2109,88 +2109,88 @@
           ],
           "catalogItems": [
             {
-              "assignmentId": "27ddec0a-2308-4656-ae11-4c7dd4538f8a",
+              "assignmentId": "7ec83be0-9332-4cc4-8742-74f3628aacc1",
               "progressPercent": 50,
               "status": "IN_PROGRESS",
               "isFavorite": false,
               "nextActivity": {
-                "id": "715babf6-531c-4bec-b1c7-c29fa362e1eb",
+                "id": "a7c6f9fb-857a-4017-b4e9-7123971729ec",
                 "title": "T017 下一项活动：复述并说明",
                 "type": "TEXT"
               }
             },
             {
-              "assignmentId": "8f4726fc-e6df-42b2-a4d3-dba9b409e76b",
+              "assignmentId": "3cd822b4-bc30-462b-afbe-004a0c1099e6",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "a6b254e7-8ac1-482f-a827-a97e5906fefd",
+              "assignmentId": "17282812-fd3d-4ea9-a577-26b566f2b409",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "53c169bd-f767-4681-ab8f-cde4e7a15675",
+              "assignmentId": "fce4165c-9fa8-4dc3-a242-7a4b369aead6",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "efe61d2d-72fd-4f1f-bc72-142e158d5979",
+              "assignmentId": "45a03662-b535-4cee-8b93-122815df91df",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "47e42398-8bf6-41af-b9cd-01e79262aa24",
+              "assignmentId": "3c5c6f4c-83e6-4416-a51a-c9c3a3108f5b",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "9d73f84d-6994-41f2-bb9c-7be863e698ad",
+              "assignmentId": "2ea87842-afa1-48e3-8794-211d3a84e5f4",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "ea445a54-4fcf-442b-9275-6fcc4cb32a08",
+              "assignmentId": "9b5ab1d6-ace6-45cc-a410-0294939d5b7a",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "fc5c1a0e-babf-4f79-94ad-49683d40bf83",
+              "assignmentId": "466792df-56d1-4abd-9092-ab833f5e9598",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "78988e21-38ec-4ea5-b6d2-12fd9b7d8ce8",
+              "assignmentId": "0bcbf05f-cda0-4e0d-9d0d-d19d4527ebb6",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "fe0f445a-6e02-40ef-bd9a-960a79963679",
+              "assignmentId": "b7ae1307-b4e0-4065-a8e8-13d20cc9993a",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "4afef5b1-8794-4d4b-b771-e84ca730138c",
+              "assignmentId": "b98d56dc-9e60-438e-b76e-7d90c2d7a312",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
@@ -2199,13 +2199,13 @@
           ],
           "total": 24,
           "hasMore": true,
-          "nextCursor": "4afef5b1-8794-4d4b-b771-e84ca730138c",
+          "nextCursor": "b98d56dc-9e60-438e-b76e-7d90c2d7a312",
           "favorited": null
         }
       },
       {
         "method": "PUT",
-        "url": "http://127.0.0.1:4319/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/27ddec0a-2308-4656-ae11-4c7dd4538f8a/favorite",
+        "url": "http://127.0.0.1:4319/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/7ec83be0-9332-4cc4-8742-74f3628aacc1/favorite",
         "status": 200,
         "responseFields": [
           "favorited"
@@ -2225,7 +2225,7 @@
       },
       {
         "method": "DELETE",
-        "url": "http://127.0.0.1:4319/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/27ddec0a-2308-4656-ae11-4c7dd4538f8a/favorite",
+        "url": "http://127.0.0.1:4319/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/7ec83be0-9332-4cc4-8742-74f3628aacc1/favorite",
         "status": 200,
         "responseFields": [
           "favorited"
@@ -2282,23 +2282,23 @@
             "七年级"
           ],
           "difficulties": [
+            "进阶",
             "入门",
-            "基础",
-            "进阶"
+            "基础"
           ],
           "assignmentIds": [
-            "27ddec0a-2308-4656-ae11-4c7dd4538f8a",
-            "8f4726fc-e6df-42b2-a4d3-dba9b409e76b",
-            "a6b254e7-8ac1-482f-a827-a97e5906fefd",
-            "53c169bd-f767-4681-ab8f-cde4e7a15675",
-            "efe61d2d-72fd-4f1f-bc72-142e158d5979",
-            "47e42398-8bf6-41af-b9cd-01e79262aa24",
-            "9d73f84d-6994-41f2-bb9c-7be863e698ad",
-            "ea445a54-4fcf-442b-9275-6fcc4cb32a08",
-            "fc5c1a0e-babf-4f79-94ad-49683d40bf83",
-            "78988e21-38ec-4ea5-b6d2-12fd9b7d8ce8",
-            "fe0f445a-6e02-40ef-bd9a-960a79963679",
-            "4afef5b1-8794-4d4b-b771-e84ca730138c"
+            "7ec83be0-9332-4cc4-8742-74f3628aacc1",
+            "3cd822b4-bc30-462b-afbe-004a0c1099e6",
+            "17282812-fd3d-4ea9-a577-26b566f2b409",
+            "fce4165c-9fa8-4dc3-a242-7a4b369aead6",
+            "45a03662-b535-4cee-8b93-122815df91df",
+            "3c5c6f4c-83e6-4416-a51a-c9c3a3108f5b",
+            "2ea87842-afa1-48e3-8794-211d3a84e5f4",
+            "9b5ab1d6-ace6-45cc-a410-0294939d5b7a",
+            "466792df-56d1-4abd-9092-ab833f5e9598",
+            "0bcbf05f-cda0-4e0d-9d0d-d19d4527ebb6",
+            "b7ae1307-b4e0-4065-a8e8-13d20cc9993a",
+            "b98d56dc-9e60-438e-b76e-7d90c2d7a312"
           ],
           "catalogItemFields": [
             "assignmentId",
@@ -2322,88 +2322,88 @@
           ],
           "catalogItems": [
             {
-              "assignmentId": "27ddec0a-2308-4656-ae11-4c7dd4538f8a",
+              "assignmentId": "7ec83be0-9332-4cc4-8742-74f3628aacc1",
               "progressPercent": 50,
               "status": "IN_PROGRESS",
               "isFavorite": false,
               "nextActivity": {
-                "id": "715babf6-531c-4bec-b1c7-c29fa362e1eb",
+                "id": "a7c6f9fb-857a-4017-b4e9-7123971729ec",
                 "title": "T017 下一项活动：复述并说明",
                 "type": "TEXT"
               }
             },
             {
-              "assignmentId": "8f4726fc-e6df-42b2-a4d3-dba9b409e76b",
+              "assignmentId": "3cd822b4-bc30-462b-afbe-004a0c1099e6",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "a6b254e7-8ac1-482f-a827-a97e5906fefd",
+              "assignmentId": "17282812-fd3d-4ea9-a577-26b566f2b409",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "53c169bd-f767-4681-ab8f-cde4e7a15675",
+              "assignmentId": "fce4165c-9fa8-4dc3-a242-7a4b369aead6",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "efe61d2d-72fd-4f1f-bc72-142e158d5979",
+              "assignmentId": "45a03662-b535-4cee-8b93-122815df91df",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "47e42398-8bf6-41af-b9cd-01e79262aa24",
+              "assignmentId": "3c5c6f4c-83e6-4416-a51a-c9c3a3108f5b",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "9d73f84d-6994-41f2-bb9c-7be863e698ad",
+              "assignmentId": "2ea87842-afa1-48e3-8794-211d3a84e5f4",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "ea445a54-4fcf-442b-9275-6fcc4cb32a08",
+              "assignmentId": "9b5ab1d6-ace6-45cc-a410-0294939d5b7a",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "fc5c1a0e-babf-4f79-94ad-49683d40bf83",
+              "assignmentId": "466792df-56d1-4abd-9092-ab833f5e9598",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "78988e21-38ec-4ea5-b6d2-12fd9b7d8ce8",
+              "assignmentId": "0bcbf05f-cda0-4e0d-9d0d-d19d4527ebb6",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "fe0f445a-6e02-40ef-bd9a-960a79963679",
+              "assignmentId": "b7ae1307-b4e0-4065-a8e8-13d20cc9993a",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "4afef5b1-8794-4d4b-b771-e84ca730138c",
+              "assignmentId": "b98d56dc-9e60-438e-b76e-7d90c2d7a312",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
@@ -2412,13 +2412,13 @@
           ],
           "total": 24,
           "hasMore": true,
-          "nextCursor": "4afef5b1-8794-4d4b-b771-e84ca730138c",
+          "nextCursor": "b98d56dc-9e60-438e-b76e-7d90c2d7a312",
           "favorited": null
         }
       },
       {
         "method": "GET",
-        "url": "http://127.0.0.1:4319/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=publishedAt&sortOrder=desc&limit=12&cursor=4afef5b1-8794-4d4b-b771-e84ca730138c",
+        "url": "http://127.0.0.1:4319/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=publishedAt&sortOrder=desc&limit=12&cursor=b98d56dc-9e60-438e-b76e-7d90c2d7a312",
         "status": 200,
         "responseFields": [
           "categories",
@@ -2440,23 +2440,23 @@
             "七年级"
           ],
           "difficulties": [
+            "进阶",
             "入门",
-            "基础",
-            "进阶"
+            "基础"
           ],
           "assignmentIds": [
-            "0c7df191-9f1e-493a-b071-84db64419c45",
-            "69e32cd4-c591-4a06-bebe-aa7201fe8cb5",
-            "768645f3-6f99-461c-8ace-633ab3abe4e7",
-            "fe0e7260-c393-4fc6-8865-49e29478718e",
-            "5288d188-6e69-4332-9f38-1e0fde1af2e7",
-            "35287282-d9da-462a-bb16-beea15c60ddf",
-            "1310e616-a406-44db-952d-ada02af3982a",
-            "979ae555-98bf-413e-b94e-2e5e70c5bae7",
-            "a9818c94-f56c-4d01-964c-6b329e5a049a",
-            "5429c892-990e-4928-8c61-fa579924e3ca",
-            "853c9ae5-0fde-4b5a-8814-209112cf68ec",
-            "af02fc97-582b-4b55-8d63-095a9d5ca478"
+            "146901e7-9de8-4f4e-b5b8-d0f6c52dfaed",
+            "18b09662-2014-4f3d-80e3-c9824acc73f3",
+            "2f38e781-9925-4631-9011-783908fdbc33",
+            "6a09f69d-67d0-425d-a8ce-ec6a8d501216",
+            "873d245d-2471-47e5-b213-ee8e7b3e1183",
+            "748b91f9-1f59-47af-9c3c-20bea1b2d8b8",
+            "23b1fd98-56b5-4ff0-841a-ab866c61bdf5",
+            "7b3404f2-0115-4a4e-8cdf-d198c7aaf05c",
+            "1c525173-e620-42c4-98e6-d1e296ce066a",
+            "127f1dbb-f93c-4f49-9e3b-ab9ca7eb1f79",
+            "44cfb7f9-f9e8-4bf7-af29-9abe17eb97a3",
+            "ceb39148-2b37-4a5b-bef7-ccf75d33fa7c"
           ],
           "catalogItemFields": [
             "assignmentId",
@@ -2480,84 +2480,84 @@
           ],
           "catalogItems": [
             {
-              "assignmentId": "0c7df191-9f1e-493a-b071-84db64419c45",
+              "assignmentId": "146901e7-9de8-4f4e-b5b8-d0f6c52dfaed",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "69e32cd4-c591-4a06-bebe-aa7201fe8cb5",
+              "assignmentId": "18b09662-2014-4f3d-80e3-c9824acc73f3",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "768645f3-6f99-461c-8ace-633ab3abe4e7",
+              "assignmentId": "2f38e781-9925-4631-9011-783908fdbc33",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "fe0e7260-c393-4fc6-8865-49e29478718e",
+              "assignmentId": "6a09f69d-67d0-425d-a8ce-ec6a8d501216",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "5288d188-6e69-4332-9f38-1e0fde1af2e7",
+              "assignmentId": "873d245d-2471-47e5-b213-ee8e7b3e1183",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "35287282-d9da-462a-bb16-beea15c60ddf",
+              "assignmentId": "748b91f9-1f59-47af-9c3c-20bea1b2d8b8",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "1310e616-a406-44db-952d-ada02af3982a",
+              "assignmentId": "23b1fd98-56b5-4ff0-841a-ab866c61bdf5",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "979ae555-98bf-413e-b94e-2e5e70c5bae7",
+              "assignmentId": "7b3404f2-0115-4a4e-8cdf-d198c7aaf05c",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "a9818c94-f56c-4d01-964c-6b329e5a049a",
+              "assignmentId": "1c525173-e620-42c4-98e6-d1e296ce066a",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "5429c892-990e-4928-8c61-fa579924e3ca",
+              "assignmentId": "127f1dbb-f93c-4f49-9e3b-ab9ca7eb1f79",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "853c9ae5-0fde-4b5a-8814-209112cf68ec",
+              "assignmentId": "44cfb7f9-f9e8-4bf7-af29-9abe17eb97a3",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "af02fc97-582b-4b55-8d63-095a9d5ca478",
+              "assignmentId": "ceb39148-2b37-4a5b-bef7-ccf75d33fa7c",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
@@ -2594,23 +2594,23 @@
             "七年级"
           ],
           "difficulties": [
+            "进阶",
             "入门",
-            "基础",
-            "进阶"
+            "基础"
           ],
           "assignmentIds": [
-            "27ddec0a-2308-4656-ae11-4c7dd4538f8a",
-            "fe0f445a-6e02-40ef-bd9a-960a79963679",
-            "fe0e7260-c393-4fc6-8865-49e29478718e",
-            "fc5c1a0e-babf-4f79-94ad-49683d40bf83",
-            "efe61d2d-72fd-4f1f-bc72-142e158d5979",
-            "ea445a54-4fcf-442b-9275-6fcc4cb32a08",
-            "af02fc97-582b-4b55-8d63-095a9d5ca478",
-            "a9818c94-f56c-4d01-964c-6b329e5a049a",
-            "a6b254e7-8ac1-482f-a827-a97e5906fefd",
-            "9d73f84d-6994-41f2-bb9c-7be863e698ad",
-            "979ae555-98bf-413e-b94e-2e5e70c5bae7",
-            "8f4726fc-e6df-42b2-a4d3-dba9b409e76b"
+            "7ec83be0-9332-4cc4-8742-74f3628aacc1",
+            "fce4165c-9fa8-4dc3-a242-7a4b369aead6",
+            "ceb39148-2b37-4a5b-bef7-ccf75d33fa7c",
+            "b98d56dc-9e60-438e-b76e-7d90c2d7a312",
+            "b7ae1307-b4e0-4065-a8e8-13d20cc9993a",
+            "9b5ab1d6-ace6-45cc-a410-0294939d5b7a",
+            "873d245d-2471-47e5-b213-ee8e7b3e1183",
+            "7b3404f2-0115-4a4e-8cdf-d198c7aaf05c",
+            "748b91f9-1f59-47af-9c3c-20bea1b2d8b8",
+            "6a09f69d-67d0-425d-a8ce-ec6a8d501216",
+            "466792df-56d1-4abd-9092-ab833f5e9598",
+            "45a03662-b535-4cee-8b93-122815df91df"
           ],
           "catalogItemFields": [
             "assignmentId",
@@ -2634,88 +2634,88 @@
           ],
           "catalogItems": [
             {
-              "assignmentId": "27ddec0a-2308-4656-ae11-4c7dd4538f8a",
+              "assignmentId": "7ec83be0-9332-4cc4-8742-74f3628aacc1",
               "progressPercent": 50,
               "status": "IN_PROGRESS",
               "isFavorite": false,
               "nextActivity": {
-                "id": "715babf6-531c-4bec-b1c7-c29fa362e1eb",
+                "id": "a7c6f9fb-857a-4017-b4e9-7123971729ec",
                 "title": "T017 下一项活动：复述并说明",
                 "type": "TEXT"
               }
             },
             {
-              "assignmentId": "fe0f445a-6e02-40ef-bd9a-960a79963679",
+              "assignmentId": "fce4165c-9fa8-4dc3-a242-7a4b369aead6",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "fe0e7260-c393-4fc6-8865-49e29478718e",
+              "assignmentId": "ceb39148-2b37-4a5b-bef7-ccf75d33fa7c",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "fc5c1a0e-babf-4f79-94ad-49683d40bf83",
+              "assignmentId": "b98d56dc-9e60-438e-b76e-7d90c2d7a312",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "efe61d2d-72fd-4f1f-bc72-142e158d5979",
+              "assignmentId": "b7ae1307-b4e0-4065-a8e8-13d20cc9993a",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "ea445a54-4fcf-442b-9275-6fcc4cb32a08",
+              "assignmentId": "9b5ab1d6-ace6-45cc-a410-0294939d5b7a",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "af02fc97-582b-4b55-8d63-095a9d5ca478",
+              "assignmentId": "873d245d-2471-47e5-b213-ee8e7b3e1183",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "a9818c94-f56c-4d01-964c-6b329e5a049a",
+              "assignmentId": "7b3404f2-0115-4a4e-8cdf-d198c7aaf05c",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "a6b254e7-8ac1-482f-a827-a97e5906fefd",
+              "assignmentId": "748b91f9-1f59-47af-9c3c-20bea1b2d8b8",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "9d73f84d-6994-41f2-bb9c-7be863e698ad",
+              "assignmentId": "6a09f69d-67d0-425d-a8ce-ec6a8d501216",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "979ae555-98bf-413e-b94e-2e5e70c5bae7",
+              "assignmentId": "466792df-56d1-4abd-9092-ab833f5e9598",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "8f4726fc-e6df-42b2-a4d3-dba9b409e76b",
+              "assignmentId": "45a03662-b535-4cee-8b93-122815df91df",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
@@ -2724,13 +2724,13 @@
           ],
           "total": 24,
           "hasMore": true,
-          "nextCursor": "8f4726fc-e6df-42b2-a4d3-dba9b409e76b",
+          "nextCursor": "45a03662-b535-4cee-8b93-122815df91df",
           "favorited": null
         }
       },
       {
         "method": "GET",
-        "url": "http://127.0.0.1:4319/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=popularity&sortOrder=desc&limit=12&search=T017-%E6%97%A0%E5%8C%B9%E9%85%8D%E8%AF%BE%E7%A8%8B-5f7e8afa",
+        "url": "http://127.0.0.1:4319/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=popularity&sortOrder=desc&limit=12&search=T017-%E6%97%A0%E5%8C%B9%E9%85%8D%E8%AF%BE%E7%A8%8B-661e2a67",
         "status": 200,
         "responseFields": [
           "categories",
@@ -2752,9 +2752,9 @@
             "七年级"
           ],
           "difficulties": [
+            "进阶",
             "入门",
-            "基础",
-            "进阶"
+            "基础"
           ],
           "assignmentIds": [],
           "catalogItemFields": [],
@@ -2789,9 +2789,9 @@
             "七年级"
           ],
           "difficulties": [
+            "进阶",
             "入门",
-            "基础",
-            "进阶"
+            "基础"
           ],
           "assignmentIds": [],
           "catalogItemFields": [],
@@ -2841,23 +2841,23 @@
             "七年级"
           ],
           "difficulties": [
+            "进阶",
             "入门",
-            "基础",
-            "进阶"
+            "基础"
           ],
           "assignmentIds": [
-            "27ddec0a-2308-4656-ae11-4c7dd4538f8a",
-            "8f4726fc-e6df-42b2-a4d3-dba9b409e76b",
-            "a6b254e7-8ac1-482f-a827-a97e5906fefd",
-            "53c169bd-f767-4681-ab8f-cde4e7a15675",
-            "efe61d2d-72fd-4f1f-bc72-142e158d5979",
-            "47e42398-8bf6-41af-b9cd-01e79262aa24",
-            "9d73f84d-6994-41f2-bb9c-7be863e698ad",
-            "ea445a54-4fcf-442b-9275-6fcc4cb32a08",
-            "fc5c1a0e-babf-4f79-94ad-49683d40bf83",
-            "78988e21-38ec-4ea5-b6d2-12fd9b7d8ce8",
-            "fe0f445a-6e02-40ef-bd9a-960a79963679",
-            "4afef5b1-8794-4d4b-b771-e84ca730138c"
+            "7ec83be0-9332-4cc4-8742-74f3628aacc1",
+            "3cd822b4-bc30-462b-afbe-004a0c1099e6",
+            "17282812-fd3d-4ea9-a577-26b566f2b409",
+            "fce4165c-9fa8-4dc3-a242-7a4b369aead6",
+            "45a03662-b535-4cee-8b93-122815df91df",
+            "3c5c6f4c-83e6-4416-a51a-c9c3a3108f5b",
+            "2ea87842-afa1-48e3-8794-211d3a84e5f4",
+            "9b5ab1d6-ace6-45cc-a410-0294939d5b7a",
+            "466792df-56d1-4abd-9092-ab833f5e9598",
+            "0bcbf05f-cda0-4e0d-9d0d-d19d4527ebb6",
+            "b7ae1307-b4e0-4065-a8e8-13d20cc9993a",
+            "b98d56dc-9e60-438e-b76e-7d90c2d7a312"
           ],
           "catalogItemFields": [
             "assignmentId",
@@ -2881,88 +2881,88 @@
           ],
           "catalogItems": [
             {
-              "assignmentId": "27ddec0a-2308-4656-ae11-4c7dd4538f8a",
+              "assignmentId": "7ec83be0-9332-4cc4-8742-74f3628aacc1",
               "progressPercent": 50,
               "status": "IN_PROGRESS",
               "isFavorite": false,
               "nextActivity": {
-                "id": "715babf6-531c-4bec-b1c7-c29fa362e1eb",
+                "id": "a7c6f9fb-857a-4017-b4e9-7123971729ec",
                 "title": "T017 下一项活动：复述并说明",
                 "type": "TEXT"
               }
             },
             {
-              "assignmentId": "8f4726fc-e6df-42b2-a4d3-dba9b409e76b",
+              "assignmentId": "3cd822b4-bc30-462b-afbe-004a0c1099e6",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "a6b254e7-8ac1-482f-a827-a97e5906fefd",
+              "assignmentId": "17282812-fd3d-4ea9-a577-26b566f2b409",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "53c169bd-f767-4681-ab8f-cde4e7a15675",
+              "assignmentId": "fce4165c-9fa8-4dc3-a242-7a4b369aead6",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "efe61d2d-72fd-4f1f-bc72-142e158d5979",
+              "assignmentId": "45a03662-b535-4cee-8b93-122815df91df",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "47e42398-8bf6-41af-b9cd-01e79262aa24",
+              "assignmentId": "3c5c6f4c-83e6-4416-a51a-c9c3a3108f5b",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "9d73f84d-6994-41f2-bb9c-7be863e698ad",
+              "assignmentId": "2ea87842-afa1-48e3-8794-211d3a84e5f4",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "ea445a54-4fcf-442b-9275-6fcc4cb32a08",
+              "assignmentId": "9b5ab1d6-ace6-45cc-a410-0294939d5b7a",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "fc5c1a0e-babf-4f79-94ad-49683d40bf83",
+              "assignmentId": "466792df-56d1-4abd-9092-ab833f5e9598",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "78988e21-38ec-4ea5-b6d2-12fd9b7d8ce8",
+              "assignmentId": "0bcbf05f-cda0-4e0d-9d0d-d19d4527ebb6",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "fe0f445a-6e02-40ef-bd9a-960a79963679",
+              "assignmentId": "b7ae1307-b4e0-4065-a8e8-13d20cc9993a",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "4afef5b1-8794-4d4b-b771-e84ca730138c",
+              "assignmentId": "b98d56dc-9e60-438e-b76e-7d90c2d7a312",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
@@ -2971,7 +2971,7 @@
           ],
           "total": 24,
           "hasMore": true,
-          "nextCursor": "4afef5b1-8794-4d4b-b771-e84ca730138c",
+          "nextCursor": "b98d56dc-9e60-438e-b76e-7d90c2d7a312",
           "favorited": null
         }
       }
@@ -3030,6 +3030,43 @@
       },
       {
         "method": "GET",
+        "url": "http://127.0.0.1:4319/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?limit=4",
+        "status": 200,
+        "responseFields": [
+          "categories",
+          "courses",
+          "difficulties",
+          "gradeBands",
+          "hasMore",
+          "nextCursor",
+          "sources",
+          "statuses",
+          "total"
+        ],
+        "data": {
+          "categories": [
+            "发音基础",
+            "古诗文"
+          ],
+          "gradeBands": [
+            "七年级"
+          ],
+          "difficulties": [
+            "进阶",
+            "入门",
+            "基础"
+          ],
+          "assignmentIds": [],
+          "catalogItemFields": [],
+          "catalogItems": [],
+          "total": 0,
+          "hasMore": false,
+          "nextCursor": null,
+          "favorited": null
+        }
+      },
+      {
+        "method": "GET",
         "url": "http://127.0.0.1:4319/student/courses/",
         "status": 200
       },
@@ -3067,9 +3104,9 @@
             "七年级"
           ],
           "difficulties": [
+            "进阶",
             "入门",
-            "基础",
-            "进阶"
+            "基础"
           ],
           "assignmentIds": [],
           "catalogItemFields": [],
@@ -3110,7 +3147,7 @@
       },
       {
         "method": "GET",
-        "url": "http://127.0.0.1:4319/student/courses/course-detail/?id=27ddec0a-2308-4656-ae11-4c7dd4538f8a"
+        "url": "http://127.0.0.1:4319/student/courses/course-detail/?id=7ec83be0-9332-4cc4-8742-74f3628aacc1"
       },
       {
         "method": "GET",
@@ -3138,15 +3175,15 @@
       },
       {
         "method": "GET",
-        "url": "http://127.0.0.1:4319/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/27ddec0a-2308-4656-ae11-4c7dd4538f8a"
+        "url": "http://127.0.0.1:4319/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/7ec83be0-9332-4cc4-8742-74f3628aacc1"
       },
       {
         "method": "POST",
-        "url": "http://127.0.0.1:4319/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/27ddec0a-2308-4656-ae11-4c7dd4538f8a/submissions"
+        "url": "http://127.0.0.1:4319/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/7ec83be0-9332-4cc4-8742-74f3628aacc1/submissions"
       },
       {
         "method": "GET",
-        "url": "http://127.0.0.1:4319/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/27ddec0a-2308-4656-ae11-4c7dd4538f8a/recommendations"
+        "url": "http://127.0.0.1:4319/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/7ec83be0-9332-4cc4-8742-74f3628aacc1/recommendations"
       },
       {
         "method": "GET",
@@ -3172,12 +3209,12 @@
     "responses": [
       {
         "method": "GET",
-        "url": "http://127.0.0.1:4319/student/courses/style.css",
+        "url": "http://127.0.0.1:4319/student/courses/",
         "status": 200
       },
       {
         "method": "GET",
-        "url": "http://127.0.0.1:4319/student/courses/",
+        "url": "http://127.0.0.1:4319/student/courses/style.css",
         "status": 200
       },
       {
@@ -3209,23 +3246,23 @@
             "七年级"
           ],
           "difficulties": [
+            "进阶",
             "入门",
-            "基础",
-            "进阶"
+            "基础"
           ],
           "assignmentIds": [
-            "27ddec0a-2308-4656-ae11-4c7dd4538f8a",
-            "8f4726fc-e6df-42b2-a4d3-dba9b409e76b",
-            "a6b254e7-8ac1-482f-a827-a97e5906fefd",
-            "53c169bd-f767-4681-ab8f-cde4e7a15675",
-            "efe61d2d-72fd-4f1f-bc72-142e158d5979",
-            "47e42398-8bf6-41af-b9cd-01e79262aa24",
-            "9d73f84d-6994-41f2-bb9c-7be863e698ad",
-            "ea445a54-4fcf-442b-9275-6fcc4cb32a08",
-            "fc5c1a0e-babf-4f79-94ad-49683d40bf83",
-            "78988e21-38ec-4ea5-b6d2-12fd9b7d8ce8",
-            "fe0f445a-6e02-40ef-bd9a-960a79963679",
-            "4afef5b1-8794-4d4b-b771-e84ca730138c"
+            "7ec83be0-9332-4cc4-8742-74f3628aacc1",
+            "3cd822b4-bc30-462b-afbe-004a0c1099e6",
+            "17282812-fd3d-4ea9-a577-26b566f2b409",
+            "fce4165c-9fa8-4dc3-a242-7a4b369aead6",
+            "45a03662-b535-4cee-8b93-122815df91df",
+            "3c5c6f4c-83e6-4416-a51a-c9c3a3108f5b",
+            "2ea87842-afa1-48e3-8794-211d3a84e5f4",
+            "9b5ab1d6-ace6-45cc-a410-0294939d5b7a",
+            "466792df-56d1-4abd-9092-ab833f5e9598",
+            "0bcbf05f-cda0-4e0d-9d0d-d19d4527ebb6",
+            "b7ae1307-b4e0-4065-a8e8-13d20cc9993a",
+            "b98d56dc-9e60-438e-b76e-7d90c2d7a312"
           ],
           "catalogItemFields": [
             "assignmentId",
@@ -3249,88 +3286,88 @@
           ],
           "catalogItems": [
             {
-              "assignmentId": "27ddec0a-2308-4656-ae11-4c7dd4538f8a",
+              "assignmentId": "7ec83be0-9332-4cc4-8742-74f3628aacc1",
               "progressPercent": 50,
               "status": "IN_PROGRESS",
               "isFavorite": false,
               "nextActivity": {
-                "id": "715babf6-531c-4bec-b1c7-c29fa362e1eb",
+                "id": "a7c6f9fb-857a-4017-b4e9-7123971729ec",
                 "title": "T017 下一项活动：复述并说明",
                 "type": "TEXT"
               }
             },
             {
-              "assignmentId": "8f4726fc-e6df-42b2-a4d3-dba9b409e76b",
+              "assignmentId": "3cd822b4-bc30-462b-afbe-004a0c1099e6",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "a6b254e7-8ac1-482f-a827-a97e5906fefd",
+              "assignmentId": "17282812-fd3d-4ea9-a577-26b566f2b409",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "53c169bd-f767-4681-ab8f-cde4e7a15675",
+              "assignmentId": "fce4165c-9fa8-4dc3-a242-7a4b369aead6",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "efe61d2d-72fd-4f1f-bc72-142e158d5979",
+              "assignmentId": "45a03662-b535-4cee-8b93-122815df91df",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "47e42398-8bf6-41af-b9cd-01e79262aa24",
+              "assignmentId": "3c5c6f4c-83e6-4416-a51a-c9c3a3108f5b",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "9d73f84d-6994-41f2-bb9c-7be863e698ad",
+              "assignmentId": "2ea87842-afa1-48e3-8794-211d3a84e5f4",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "ea445a54-4fcf-442b-9275-6fcc4cb32a08",
+              "assignmentId": "9b5ab1d6-ace6-45cc-a410-0294939d5b7a",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "fc5c1a0e-babf-4f79-94ad-49683d40bf83",
+              "assignmentId": "466792df-56d1-4abd-9092-ab833f5e9598",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "78988e21-38ec-4ea5-b6d2-12fd9b7d8ce8",
+              "assignmentId": "0bcbf05f-cda0-4e0d-9d0d-d19d4527ebb6",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "fe0f445a-6e02-40ef-bd9a-960a79963679",
+              "assignmentId": "b7ae1307-b4e0-4065-a8e8-13d20cc9993a",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "4afef5b1-8794-4d4b-b771-e84ca730138c",
+              "assignmentId": "b98d56dc-9e60-438e-b76e-7d90c2d7a312",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
@@ -3339,7 +3376,7 @@
           ],
           "total": 24,
           "hasMore": true,
-          "nextCursor": "4afef5b1-8794-4d4b-b771-e84ca730138c",
+          "nextCursor": "b98d56dc-9e60-438e-b76e-7d90c2d7a312",
           "favorited": null
         }
       },
@@ -3367,9 +3404,9 @@
             "七年级"
           ],
           "difficulties": [
+            "进阶",
             "入门",
-            "基础",
-            "进阶"
+            "基础"
           ],
           "assignmentIds": [],
           "catalogItemFields": [],
@@ -3404,12 +3441,12 @@
             "七年级"
           ],
           "difficulties": [
+            "进阶",
             "入门",
-            "基础",
-            "进阶"
+            "基础"
           ],
           "assignmentIds": [
-            "27ddec0a-2308-4656-ae11-4c7dd4538f8a"
+            "7ec83be0-9332-4cc4-8742-74f3628aacc1"
           ],
           "catalogItemFields": [
             "assignmentId",
@@ -3433,12 +3470,12 @@
           ],
           "catalogItems": [
             {
-              "assignmentId": "27ddec0a-2308-4656-ae11-4c7dd4538f8a",
+              "assignmentId": "7ec83be0-9332-4cc4-8742-74f3628aacc1",
               "progressPercent": 50,
               "status": "IN_PROGRESS",
               "isFavorite": false,
               "nextActivity": {
-                "id": "715babf6-531c-4bec-b1c7-c29fa362e1eb",
+                "id": "a7c6f9fb-857a-4017-b4e9-7123971729ec",
                 "title": "T017 下一项活动：复述并说明",
                 "type": "TEXT"
               }
@@ -3452,12 +3489,12 @@
       },
       {
         "method": "GET",
-        "url": "http://127.0.0.1:4319/student/courses/course-detail/style.css",
+        "url": "http://127.0.0.1:4319/student/courses/course-detail/?id=7ec83be0-9332-4cc4-8742-74f3628aacc1",
         "status": 200
       },
       {
         "method": "GET",
-        "url": "http://127.0.0.1:4319/student/courses/course-detail/?id=27ddec0a-2308-4656-ae11-4c7dd4538f8a",
+        "url": "http://127.0.0.1:4319/student/courses/course-detail/style.css",
         "status": 200
       },
       {
@@ -3467,12 +3504,12 @@
       },
       {
         "method": "GET",
-        "url": "http://127.0.0.1:4319/student/courses/course-detail/media-controller.js",
+        "url": "http://127.0.0.1:4319/student/courses/course-detail/course-player-state.js",
         "status": 200
       },
       {
         "method": "GET",
-        "url": "http://127.0.0.1:4319/student/courses/course-detail/course-player-state.js",
+        "url": "http://127.0.0.1:4319/student/courses/course-detail/media-controller.js",
         "status": 200
       },
       {
@@ -3487,7 +3524,7 @@
       },
       {
         "method": "GET",
-        "url": "http://127.0.0.1:4319/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/27ddec0a-2308-4656-ae11-4c7dd4538f8a",
+        "url": "http://127.0.0.1:4319/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/7ec83be0-9332-4cc4-8742-74f3628aacc1",
         "status": 200,
         "responseFields": [
           "assignment",
@@ -3516,7 +3553,7 @@
       },
       {
         "method": "POST",
-        "url": "http://127.0.0.1:4319/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/27ddec0a-2308-4656-ae11-4c7dd4538f8a/submissions",
+        "url": "http://127.0.0.1:4319/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/7ec83be0-9332-4cc4-8742-74f3628aacc1/submissions",
         "status": 201,
         "responseFields": [
           "resumed",
@@ -3537,7 +3574,7 @@
       },
       {
         "method": "GET",
-        "url": "http://127.0.0.1:4319/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/27ddec0a-2308-4656-ae11-4c7dd4538f8a/recommendations",
+        "url": "http://127.0.0.1:4319/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/7ec83be0-9332-4cc4-8742-74f3628aacc1/recommendations",
         "status": 200
       },
       {
@@ -3586,13 +3623,6 @@
             "progressPercent"
           ],
           "catalogItems": [
-            {
-              "assignmentId": null,
-              "progressPercent": 0,
-              "status": null,
-              "isFavorite": null,
-              "nextActivity": null
-            },
             {
               "assignmentId": null,
               "progressPercent": 100,
@@ -3753,6 +3783,13 @@
               "status": null,
               "isFavorite": null,
               "nextActivity": null
+            },
+            {
+              "assignmentId": null,
+              "progressPercent": 0,
+              "status": null,
+              "isFavorite": null,
+              "nextActivity": null
             }
           ],
           "total": null,
@@ -3800,23 +3837,23 @@
             "七年级"
           ],
           "difficulties": [
+            "进阶",
             "入门",
-            "基础",
-            "进阶"
+            "基础"
           ],
           "assignmentIds": [
-            "27ddec0a-2308-4656-ae11-4c7dd4538f8a",
-            "8f4726fc-e6df-42b2-a4d3-dba9b409e76b",
-            "a6b254e7-8ac1-482f-a827-a97e5906fefd",
-            "53c169bd-f767-4681-ab8f-cde4e7a15675",
-            "efe61d2d-72fd-4f1f-bc72-142e158d5979",
-            "47e42398-8bf6-41af-b9cd-01e79262aa24",
-            "9d73f84d-6994-41f2-bb9c-7be863e698ad",
-            "ea445a54-4fcf-442b-9275-6fcc4cb32a08",
-            "fc5c1a0e-babf-4f79-94ad-49683d40bf83",
-            "78988e21-38ec-4ea5-b6d2-12fd9b7d8ce8",
-            "fe0f445a-6e02-40ef-bd9a-960a79963679",
-            "4afef5b1-8794-4d4b-b771-e84ca730138c"
+            "7ec83be0-9332-4cc4-8742-74f3628aacc1",
+            "3cd822b4-bc30-462b-afbe-004a0c1099e6",
+            "17282812-fd3d-4ea9-a577-26b566f2b409",
+            "fce4165c-9fa8-4dc3-a242-7a4b369aead6",
+            "45a03662-b535-4cee-8b93-122815df91df",
+            "3c5c6f4c-83e6-4416-a51a-c9c3a3108f5b",
+            "2ea87842-afa1-48e3-8794-211d3a84e5f4",
+            "9b5ab1d6-ace6-45cc-a410-0294939d5b7a",
+            "466792df-56d1-4abd-9092-ab833f5e9598",
+            "0bcbf05f-cda0-4e0d-9d0d-d19d4527ebb6",
+            "b7ae1307-b4e0-4065-a8e8-13d20cc9993a",
+            "b98d56dc-9e60-438e-b76e-7d90c2d7a312"
           ],
           "catalogItemFields": [
             "assignmentId",
@@ -3840,88 +3877,88 @@
           ],
           "catalogItems": [
             {
-              "assignmentId": "27ddec0a-2308-4656-ae11-4c7dd4538f8a",
+              "assignmentId": "7ec83be0-9332-4cc4-8742-74f3628aacc1",
               "progressPercent": 50,
               "status": "IN_PROGRESS",
               "isFavorite": false,
               "nextActivity": {
-                "id": "715babf6-531c-4bec-b1c7-c29fa362e1eb",
+                "id": "a7c6f9fb-857a-4017-b4e9-7123971729ec",
                 "title": "T017 下一项活动：复述并说明",
                 "type": "TEXT"
               }
             },
             {
-              "assignmentId": "8f4726fc-e6df-42b2-a4d3-dba9b409e76b",
+              "assignmentId": "3cd822b4-bc30-462b-afbe-004a0c1099e6",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "a6b254e7-8ac1-482f-a827-a97e5906fefd",
+              "assignmentId": "17282812-fd3d-4ea9-a577-26b566f2b409",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "53c169bd-f767-4681-ab8f-cde4e7a15675",
+              "assignmentId": "fce4165c-9fa8-4dc3-a242-7a4b369aead6",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "efe61d2d-72fd-4f1f-bc72-142e158d5979",
+              "assignmentId": "45a03662-b535-4cee-8b93-122815df91df",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "47e42398-8bf6-41af-b9cd-01e79262aa24",
+              "assignmentId": "3c5c6f4c-83e6-4416-a51a-c9c3a3108f5b",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "9d73f84d-6994-41f2-bb9c-7be863e698ad",
+              "assignmentId": "2ea87842-afa1-48e3-8794-211d3a84e5f4",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "ea445a54-4fcf-442b-9275-6fcc4cb32a08",
+              "assignmentId": "9b5ab1d6-ace6-45cc-a410-0294939d5b7a",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "fc5c1a0e-babf-4f79-94ad-49683d40bf83",
+              "assignmentId": "466792df-56d1-4abd-9092-ab833f5e9598",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "78988e21-38ec-4ea5-b6d2-12fd9b7d8ce8",
+              "assignmentId": "0bcbf05f-cda0-4e0d-9d0d-d19d4527ebb6",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "fe0f445a-6e02-40ef-bd9a-960a79963679",
+              "assignmentId": "b7ae1307-b4e0-4065-a8e8-13d20cc9993a",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
               "nextActivity": null
             },
             {
-              "assignmentId": "4afef5b1-8794-4d4b-b771-e84ca730138c",
+              "assignmentId": "b98d56dc-9e60-438e-b76e-7d90c2d7a312",
               "progressPercent": 0,
               "status": "NOT_STARTED",
               "isFavorite": false,
@@ -3930,7 +3967,7 @@
           ],
           "total": 24,
           "hasMore": true,
-          "nextCursor": "4afef5b1-8794-4d4b-b771-e84ca730138c",
+          "nextCursor": "b98d56dc-9e60-438e-b76e-7d90c2d7a312",
           "favorited": null
         }
       }

@@ -18,6 +18,8 @@ const recordingObjects = [
   ["T012-processing-3", "d80f68c8-2750-458b-9809-a670f26a30f9"],
   ["T012-processing-4", "dc79fd0a-e7fc-4ea4-adb9-cfce306dd375"],
   ["T014-class-evidence", "452d3bd2-833b-41f9-a556-126feb15dc3a"],
+  ["T014-responsive-recheck", "f0f91381-c06c-4889-b226-b00055207762"],
+  ["T014-course-content-recheck", "4d8222f0-a1bd-4c00-b8c4-2ebe88f278db"],
 ];
 
 const client = new S3Client({

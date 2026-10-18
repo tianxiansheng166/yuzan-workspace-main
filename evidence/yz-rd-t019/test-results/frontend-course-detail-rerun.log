@@ -1,0 +1,80 @@
+
+> @yuzan/frontend@4.0.0 test /home/tian/code/yuzan-workspace-t019/frontend
+> node --test tests/assessment/*.test.mjs && node scripts/verify-runtime.mjs
+
+✔ assignment creation returns the server-issued assignment ID (4.05846ms)
+✔ assignment list sends real server filters and cursor parameters (2.794553ms)
+✔ assignment detail and submissions use the selected assignment ID (1.242221ms)
+✔ formal report takes precedence over a retained provisional ISE result (29.386302ms)
+✔ student report escapes teacher feedback and does not expose review-only fields (11.057234ms)
+✔ provisional ISE report keeps a non-remediation learning action (11.809286ms)
+✔ teacher reading review renders safe ISE dimensions and keeps formal score independent (11.003005ms)
+✔ teacher open-response detail keeps its local diagnostics path (11.227336ms)
+✔ teacher open-response detail explains unsupported automatic analysis without inventing diagnostics (11.189476ms)
+✔ browser-facing sources do not include provider raw audit fields (0.282381ms)
+✔ unified runner exposes a normal re-record path for a failed historical recording (0.138253ms)
+✔ unsupported local recorder fails visibly without generating demonstration audio (2.895854ms)
+✔ microphone denial does not start a simulated recording (1.084028ms)
+✔ online connectivity alone never marks local audio synchronized (0.840459ms)
+✔ history clears cached prior-student data and combines real in-progress sessions, reports, and feedback by the server-selected enrollment (26.886795ms)
+✔ history load failure is visible and its retry reloads the current student's records (22.162944ms)
+✔ favorites are sibling controls, never nested in the detail link (15.589936ms)
+▶ all persisted Attempt states route to their matching legal action
+  ✔ CREATED (10.916292ms)
+  ✔ IN_PROGRESS (10.837759ms)
+  ✔ SUBMITTED (10.634369ms)
+  ✔ PROCESSING (10.792064ms)
+  ✔ FAILED (11.321761ms)
+  ✔ COMPLETED (11.835772ms)
+✔ all persisted Attempt states route to their matching legal action (67.920393ms)
+✔ completed detail cannot accidentally create a second attempt (11.639593ms)
+✔ Attempt lookup follows real session cursors instead of stopping at page one (10.44941ms)
+✔ runner exposes real confirmation, recovery, and microphone source states (0.355902ms)
+✔ custom visual system uses accessible SVGs and honors reduced motion (0.934632ms)
+▶ practice catalog routes each real attempt status to the matching continuation
+  ✔ CREATED (12.674492ms)
+  ✔ IN_PROGRESS (10.625382ms)
+  ✔ SUBMITTED (10.586476ms)
+  ✔ PROCESSING (10.856016ms)
+  ✔ FAILED (11.722595ms)
+✔ practice catalog routes each real attempt status to the matching continuation (58.422745ms)
+✔ a submitted practice detail links to its real processing state and cannot create another attempt (10.846697ms)
+✔ empty growth state contains no invented score or chart (6.312042ms)
+✔ formal chart appears only with three real dated scores and a generated report (13.283947ms)
+✔ completed record without a report is labeled and never given a score (1.409265ms)
+✔ a report awaiting teacher review never exposes its provisional score (1.815831ms)
+✔ an official report shows only safe teacher comments on Growth (1.434375ms)
+✔ active Attempt shows saved item progress and a dynamic continuation link (2.86285ms)
+✔ feedback and identity switch use current server identity and records (1.774857ms)
+▶ permission and network errors replace the page with a retry state
+  ✔ HTTP 401 (1.479486ms)
+  ✔ HTTP 403 (1.352395ms)
+  ✔ HTTP 404 (1.31513ms)
+  ✔ HTTP 409 (1.569882ms)
+  ✔ network disconnected (1.26323ms)
+✔ permission and network errors replace the page with a retry state (11.31514ms)
+✔ Today uses the server primary action, real school identity, and dynamic Attempt (27.871783ms)
+✔ processing Attempt has a real status destination and does not invent a score (3.957286ms)
+✔ Today reads all authorized Attempt pages before showing an empty state (3.218139ms)
+✔ empty Today is explicit when all current endpoints return no tasks (1.656197ms)
+✔ Today does not report no tasks when supplemental task sources failed (1.72402ms)
+▶ 401, 403, and 404 from Today are visible and never retain the previous student
+  ✔ HTTP 401 (2.284811ms)
+  ✔ HTTP 403 (0.825194ms)
+  ✔ HTTP 404 (0.95969ms)
+✔ 401, 403, and 404 from Today are visible and never retain the previous student (4.760189ms)
+✔ switching the stored account and school rereads and replaces Today data (1.740313ms)
+✔ loading → empty and processing remain distinct from errors (18.469338ms)
+✔ 403 is a visible error; retry recovers with newly fetched data (4.754061ms)
+✔ catalog failure and malformed response never masquerade as empty; retry only catalog (2.609843ms)
+✔ primary creation failure preserves page and retries the real action (3.448155ms)
+✔ legacy redirect preserves dynamic assignment and activity IDs (2.820614ms)
+ℹ tests 63
+ℹ suites 0
+ℹ pass 63
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 232.909012
+Frontend runtime verified at /home/tian/code/yuzan-workspace-t019/frontend/

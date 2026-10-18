@@ -12,3 +12,33 @@ API dependency readiness: HTTP unreachable
 T019 listener check (expected no rows):
 
 T019 status: all six task ports free
+web: 已停止 (PID 399864)
+api: 已停止 (PID 399832)
+minio: 已停止 (PID 399892)
+redis: 已停止 (PID 399881)
+postgres: 已停止 (PID 399652)
+Stop: PASS
+SERVICE  PID     PORT / HEALTH
+postgres -       stopped [NOT_OWNED]
+api      -       stopped [NOT_OWNED]
+web      -       stopped [NOT_OWNED]
+API dependency readiness: HTTP unreachable
+
+T019 final listener check (expected no rows):
+T019 all six ports free
+
+T019 isolated database credential rotation: completed and verified; value not recorded.
+web: 已停止 (PID 460880)
+api: 已停止 (PID 460852)
+minio: 已停止 (PID 460924)
+redis: 已停止 (PID 460912)
+postgres: 已停止 (PID 460705)
+Stop: PASS
+SERVICE  PID     PORT / HEALTH
+postgres -       stopped [NOT_OWNED]
+api      -       stopped [NOT_OWNED]
+web      -       stopped [NOT_OWNED]
+API dependency readiness: HTTP unreachable
+
+T019 final listener check (expected no rows):
+T019 all six ports free

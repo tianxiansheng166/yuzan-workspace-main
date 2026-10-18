@@ -30,18 +30,21 @@
   }
 
   function clearExerciseSection() {
-    var section = document.getElementById('exerciseSection');
-    if (section) section.innerHTML = '';
+    var section = document.getElementById('cpExercisesList');
+    if (section) section.replaceChildren();
   }
 
   function getExerciseSection() {
-    var section = document.getElementById('exerciseSection');
+    var section = document.getElementById('cpExercisesList');
     if (!section) {
       section = document.createElement('div');
-      section.id = 'exerciseSection';
-      section.className = 'cp-exercise-section';
-      var player = document.querySelector('.cp-player') || document.body;
-      player.appendChild(section);
+      section.id = 'cpExercisesList';
+      section.className = 'cp-exercises-list';
+      var card = document.getElementById('cpSectionExercises');
+      if (!card) return null;
+      var title = card.querySelector('.cp-section-title');
+      if (title) title.insertAdjacentElement('afterend', section);
+      else card.appendChild(section);
     }
     return section;
   }
@@ -63,6 +66,7 @@
       if (!activity) return;
       clearExerciseSection();
       var section = getExerciseSection();
+      if (!section) return;
 
       var s = CoursePlayerState.getState();
       if (s.submissionStatus && ['SUBMITTED', 'PROCESSING', 'NEEDS_REVIEW', 'REVIEWED', 'ACCEPTED'].indexOf(s.submissionStatus) !== -1) {
@@ -133,12 +137,15 @@
       if (activity.content) {
         if (typeof activity.content === 'string') {
           contentDiv.textContent = activity.content;
-        } else if (activity.content.text) {
-          contentDiv.textContent = activity.content.text;
-        } else if (activity.content.passage) {
-          contentDiv.textContent = activity.content.passage;
+        } else if (typeof activity.content === 'object') {
+          contentDiv.textContent = activity.content.text
+            || activity.content.passage
+            || activity.content.body
+            || activity.content.description
+            || '';
         }
-      } else if (activity.description) {
+      }
+      if (!contentDiv.textContent && activity.description) {
         contentDiv.textContent = activity.description;
       }
       wrapper.appendChild(contentDiv);

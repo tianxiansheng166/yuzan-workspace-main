@@ -1,0 +1,5 @@
+
+> @yuzan/frontend@4.0.0 build /home/tian/code/yuzan-workspace-t019/frontend
+> node scripts/verify-runtime.mjs
+
+Frontend runtime verified at /home/tian/code/yuzan-workspace-t019/frontend/

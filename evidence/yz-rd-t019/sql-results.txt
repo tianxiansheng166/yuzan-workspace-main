@@ -125,3 +125,137 @@ SELECT s.id,s.status,(SELECT count(*) FROM "AssessmentItem" i WHERE i."sessionId
 ```text
 3d47b7f5-4353-4fd7-a697-061aa949e37e|PROCESSING|20|0
 ```
+
+## T014 responsive recheck after course-detail layout repair
+
+School `1127a453-921e-4d3a-ac28-031cb39a2cf2`, class `73cce6f8-1640-4832-a1af-5f3f1e527208`, Assignment `09ecc273-b2da-4466-9748-2e75d7fc03b8`. A enrollment `699481af-f31c-403b-8eb5-a1cde71a9844`, B `8df8a5eb-3370-4609-9229-b65bccc2ec6f`, C `419d6e6c-25e7-445d-aa0f-1906127bca62`.
+
+### Database identity
+
+```sql
+SELECT current_database() || '|' || current_user || '|' || version();
+```
+
+```text
+yuzan_t019_native|yz_t019|PostgreSQL 17.11 (Ubuntu 17.11-1.pgdg22.04+2) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0, 64-bit
+```
+
+### Assignment OPEN and active
+
+```sql
+SELECT id,status,("dueAt">NOW())::text AS due_active FROM "Assignment" WHERE id='09ecc273-b2da-4466-9748-2e75d7fc03b8';
+```
+
+```text
+09ecc273-b2da-4466-9748-2e75d7fc03b8|OPEN|true
+```
+
+### Assignment targets
+
+```sql
+SELECT "targetType",coalesce("enrollmentId"::text,''),coalesce("classId"::text,'') FROM "AssignmentTarget" WHERE "assignmentId"='09ecc273-b2da-4466-9748-2e75d7fc03b8' ORDER BY "enrollmentId";
+```
+
+```text
+STUDENT|699481af-f31c-403b-8eb5-a1cde71a9844|
+STUDENT|8df8a5eb-3370-4609-9229-b65bccc2ec6f|
+```
+
+### A/B course Submissions
+
+```sql
+SELECT id,"assignmentId","enrollmentId",status FROM "Submission" WHERE "assignmentId"='09ecc273-b2da-4466-9748-2e75d7fc03b8' ORDER BY "enrollmentId";
+```
+
+```text
+0240cedd-218a-4c72-9a3f-a127a89653ec|09ecc273-b2da-4466-9748-2e75d7fc03b8|699481af-f31c-403b-8eb5-a1cde71a9844|IN_PROGRESS
+689dafb8-7bf7-4b29-b8b8-c7c477354f86|09ecc273-b2da-4466-9748-2e75d7fc03b8|8df8a5eb-3370-4609-9229-b65bccc2ec6f|IN_PROGRESS
+```
+
+### Saved activity progress
+
+```sql
+SELECT "activityId","enrollmentId",completed,revision FROM "ActivityProgress" WHERE "activityId"='a6874f6c-cb82-4ca9-aa5d-9f08a7208e61' ORDER BY "enrollmentId";
+```
+
+```text
+a6874f6c-cb82-4ca9-aa5d-9f08a7208e61|699481af-f31c-403b-8eb5-a1cde71a9844|t|2
+a6874f6c-cb82-4ca9-aa5d-9f08a7208e61|8df8a5eb-3370-4609-9229-b65bccc2ec6f|t|1
+```
+
+### MinIO-linked Recording
+
+```sql
+SELECT id,status,"objectKey","mimeType","durationMs" FROM "Recording" WHERE id='f0f91381-c06c-4889-b226-b00055207762';
+```
+
+```text
+f0f91381-c06c-4889-b226-b00055207762|READY|recordings/f0f91381-c06c-4889-b226-b00055207762/full|audio/wav|200
+```
+
+## T014 content rendering recheck
+
+School `9b0ebfd4-b9d4-4b6e-ba4c-8ffb711e4610`, class `8ccd6c5f-a9bf-4e84-9665-63e45ddbafb7`, Assignment `e6945ec1-b760-42f3-b271-83ba12d6defd`. A enrollment `33549ca3-25ec-486e-8ef3-f392bba4a530`, B `b589d374-582b-47e5-bd57-b81b95a958fa`, C `30149b3a-507f-4253-9338-1e7b601e7126`.
+
+### Database identity
+
+```sql
+SELECT current_database() || '|' || current_user || '|' || version();
+```
+
+```text
+yuzan_t019_native|yz_t019|PostgreSQL 17.11 (Ubuntu 17.11-1.pgdg22.04+2) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0, 64-bit
+```
+
+### Assignment OPEN and active
+
+```sql
+SELECT id,status,("dueAt">NOW())::text AS due_active FROM "Assignment" WHERE id='e6945ec1-b760-42f3-b271-83ba12d6defd';
+```
+
+```text
+e6945ec1-b760-42f3-b271-83ba12d6defd|OPEN|true
+```
+
+### Assignment targets
+
+```sql
+SELECT "targetType",coalesce("enrollmentId"::text,''),coalesce("classId"::text,'') FROM "AssignmentTarget" WHERE "assignmentId"='e6945ec1-b760-42f3-b271-83ba12d6defd' ORDER BY "enrollmentId";
+```
+
+```text
+STUDENT|33549ca3-25ec-486e-8ef3-f392bba4a530|
+STUDENT|b589d374-582b-47e5-bd57-b81b95a958fa|
+```
+
+### A/B course Submissions
+
+```sql
+SELECT id,"assignmentId","enrollmentId",status FROM "Submission" WHERE "assignmentId"='e6945ec1-b760-42f3-b271-83ba12d6defd' ORDER BY "enrollmentId";
+```
+
+```text
+854fc0c5-d045-45e7-8021-6aeaf3eef316|e6945ec1-b760-42f3-b271-83ba12d6defd|33549ca3-25ec-486e-8ef3-f392bba4a530|IN_PROGRESS
+a0c87ee0-5fc2-4cb9-bc8a-7358d96f1271|e6945ec1-b760-42f3-b271-83ba12d6defd|b589d374-582b-47e5-bd57-b81b95a958fa|IN_PROGRESS
+```
+
+### Saved activity progress
+
+```sql
+SELECT "activityId","enrollmentId",completed,revision FROM "ActivityProgress" WHERE "activityId"='db38ed05-34a8-4964-8b01-e4e40ddeb463' ORDER BY "enrollmentId";
+```
+
+```text
+db38ed05-34a8-4964-8b01-e4e40ddeb463|33549ca3-25ec-486e-8ef3-f392bba4a530|t|2
+db38ed05-34a8-4964-8b01-e4e40ddeb463|b589d374-582b-47e5-bd57-b81b95a958fa|t|1
+```
+
+### MinIO-linked Recording
+
+```sql
+SELECT id,status,"objectKey","mimeType","durationMs" FROM "Recording" WHERE id='4d8222f0-a1bd-4c00-b8c4-2ebe88f278db';
+```
+
+```text
+4d8222f0-a1bd-4c00-b8c4-2ebe88f278db|READY|recordings/4d8222f0-a1bd-4c00-b8c4-2ebe88f278db/full|audio/wav|200
+```

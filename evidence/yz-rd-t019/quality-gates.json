@@ -71,6 +71,48 @@
       "exitCode": 0,
       "status": "PASS",
       "log": "evidence/yz-rd-t019/test-results/contracts-typecheck.log"
+    },
+    {
+      "name": "frontend-course-detail-rerun",
+      "command": "corepack pnpm --filter @yuzan/frontend test",
+      "exitCode": 0,
+      "status": "PASS",
+      "log": "evidence/yz-rd-t019/test-results/frontend-course-detail-rerun.log"
+    },
+    {
+      "name": "frontend-course-detail-typecheck",
+      "command": "corepack pnpm --filter @yuzan/frontend typecheck",
+      "exitCode": 0,
+      "status": "PASS",
+      "log": "evidence/yz-rd-t019/test-results/frontend-course-detail-typecheck.log"
+    },
+    {
+      "name": "frontend-course-detail-build",
+      "command": "corepack pnpm --filter @yuzan/frontend build",
+      "exitCode": 0,
+      "status": "PASS",
+      "log": "evidence/yz-rd-t019/test-results/frontend-course-detail-build.log"
+    },
+    {
+      "name": "t014-course-content-responsive-e2e",
+      "command": "python3 scripts/dev-native-web.py --task t019 test t014-teacher-class-remediation",
+      "exitCode": 0,
+      "status": "PASS",
+      "log": "evidence/yz-rd-t019/browser-logs/t014-cross-role.log"
+    },
+    {
+      "name": "t017-course-center-rerun",
+      "command": "python3 scripts/dev-native-web.py --task t019 test t017-student-courses",
+      "exitCode": 0,
+      "status": "PASS",
+      "log": "evidence/yz-rd-t019/browser-logs/t017-course-center.log"
+    },
+    {
+      "name": "minio-readback-rerun",
+      "command": "node evidence/yz-rd-t019/verify-minio-recordings.mjs",
+      "exitCode": 0,
+      "status": "PASS",
+      "log": "evidence/yz-rd-t019/minio-object-verification.json"
     }
   ]
 }

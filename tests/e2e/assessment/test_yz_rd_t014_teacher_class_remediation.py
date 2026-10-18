@@ -710,9 +710,12 @@ def test_teacher_class_student_assignment_and_today_loop():
                     expect(activity_row).to_be_visible()
                     activity_row.click()
                     expect(activity_row).to_have_class("cp-dir-item cp-dir-current")
+                    expect(page.locator("#cpExercisesList .cp-exercise-text-content")).to_contain_text("真实测试内容")
                     page.get_by_role("button", name="确认阅读").click()
                     confirmed_button = page.get_by_role("button", name="已确认")
                     expect(confirmed_button).to_be_disabled()
+                    expect(confirmed_button).to_have_class("cp-exercise-feedback correct")
+                    assert confirmed_button.evaluate("button => button.closest('#cpSectionExercises') !== null")
                     confirmed_button.scroll_into_view_if_needed()
                     page.screenshot(path=str(EVIDENCE_DIR / f"t014-course-activity-complete-viewport-{identifier}.png"), full_page=False)
                     page.screenshot(path=str(EVIDENCE_DIR / f"t014-course-activity-complete-{identifier}.png"), full_page=True)
@@ -721,6 +724,48 @@ def test_teacher_class_student_assignment_and_today_loop():
                             WHERE "schoolId"={q(ids['school_a'])} AND "activityId"={q(ids['activity_b'])}
                               AND "enrollmentId"={q(enrollment_id)} AND completed=true;'''
                     ) == "1"
+
+                    if identifier == "A":
+                        for viewport_width, viewport_height in [(390, 844), (768, 1024), (1280, 900), (1440, 1000)]:
+                            page.set_viewport_size({"width": viewport_width, "height": viewport_height})
+                            page.locator("#cpSectionExercises").scroll_into_view_if_needed()
+                            page.wait_for_timeout(80)
+                            layout = page.evaluate("""() => {
+                              const rect = selector => {
+                                const element = document.querySelector(selector);
+                                if (!element) return null;
+                                const box = element.getBoundingClientRect();
+                                return {left: box.left, right: box.right, top: box.top, bottom: box.bottom, width: box.width};
+                              };
+                              const feedback = document.querySelector('#cpExercisesList .cp-exercise-feedback');
+                              return {
+                                viewportWidth: window.innerWidth,
+                                documentWidth: document.documentElement.scrollWidth,
+                                player: rect('.cp-player-layout'),
+                                main: rect('.cp-player-main'),
+                                sidebar: rect('#cpDirectorySidebar'),
+                                exerciseCard: rect('#cpSectionExercises'),
+                                feedback: rect('#cpExercisesList .cp-exercise-feedback'),
+                                feedbackBackground: feedback ? getComputedStyle(feedback).backgroundColor : null
+                              };
+                            }""")
+                            assert layout["documentWidth"] <= viewport_width, layout
+                            assert layout["player"]["right"] <= viewport_width + 1, layout
+                            assert layout["feedback"] is not None, layout
+                            assert layout["feedbackBackground"] not in (None, "rgba(0, 0, 0, 0)"), layout
+                            card = layout["exerciseCard"]
+                            feedback = layout["feedback"]
+                            assert feedback["left"] >= card["left"] - 1 and feedback["right"] <= card["right"] + 1, layout
+                            if viewport_width > 1024:
+                                assert layout["main"]["right"] <= layout["sidebar"]["left"] + 1, layout
+                                assert layout["sidebar"]["right"] <= viewport_width + 1, layout
+                            else:
+                                assert layout["sidebar"]["top"] >= layout["main"]["bottom"] - 1, layout
+                            page.screenshot(
+                                path=str(EVIDENCE_DIR / f"t014-course-responsive-{viewport_width}-A.png"),
+                                full_page=False,
+                            )
+                        page.set_viewport_size({"width": 1280, "height": 900})
 
                     page.reload()
                     page.wait_for_function(

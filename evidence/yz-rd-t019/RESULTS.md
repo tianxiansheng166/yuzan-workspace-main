@@ -38,17 +38,17 @@ T010–T013 were already in T015; they were not cherry-picked or merged again. T
 - T019-only resources: database `yuzan_t019_native`, role `yz_t019`, bucket `yz-t019-native`; API 4119, Web 4319, PostgreSQL 55649, Redis 6449, MinIO 59222/59223.
 - 32 existing migrations were applied only to the T019 database. The read-only Question Bank source import produced 120 items, 126 assets (90 images and 36 audio files), six practice definitions, 24 sections and six deliveries.
 - Browser, API, PostgreSQL and MinIO were exercised together. Speech worker was stopped for the student recording/review flows, and `SPEECH_PROVIDER=disabled`; pending recordings remained pending manual review.
-- SQL excerpts and rows: [`sql-results.txt`](sql-results.txt). MinIO GetObject/read-back checks with byte lengths, ETags, content types and SHA-256: [`minio-object-verification.json`](minio-object-verification.json), reproducible with [`verify-minio-recordings.mjs`](verify-minio-recordings.mjs). There are 13 verified recording objects in the bucket.
-- Browser logs and response summaries: [`browser-logs/`](browser-logs/). Responsive screenshots: [`screenshots/`](screenshots/) (47 files). Quality-gate output and command exit codes: [`test-results/`](test-results/) and [`quality-gates.json`](quality-gates.json).
+- SQL excerpts and rows: [`sql-results.txt`](sql-results.txt). MinIO GetObject/read-back checks with byte lengths, ETags, content types and SHA-256: [`minio-object-verification.json`](minio-object-verification.json), reproducible with [`verify-minio-recordings.mjs`](verify-minio-recordings.mjs). There are 15 verified recording objects in the bucket.
+- Browser logs and response summaries: [`browser-logs/`](browser-logs/). Responsive screenshots: [`screenshots/`](screenshots/) (51 files). Quality-gate output and command exit codes: [`test-results/`](test-results/) and [`quality-gates.json`](quality-gates.json).
 
 ## Teacher assignment → student course
 
 Final Chromium run: `browser-logs/t014-cross-role.log`; SQL proof: `sql-results.txt`.
 
-- School `d2e0ee7a-0d43-4088-934a-8c4e3ddd13b8`, class `10583cfb-a4f6-4d5f-9aad-8a6df2cc0d3c`.
-- Student A enrollment `a1cdac5b-8e3b-4f41-855c-eab1093918b6`; B `7f96f52a-203a-4749-ae6e-cf065e2a74ed`; C `0dfa92ab-a9cf-403c-94e7-a66103ed51ad`.
-- Assignment `1881d6cf-2e18-4fdb-9ce8-f51fadd4c90f` is `OPEN`. PostgreSQL has exactly two STUDENT targets, A and B; C is absent. A's Submission is `596af160-4bc3-4355-a337-613371f5ab3b`; B's is `e6f175f1-3c08-4d9c-8093-6211b90e9144`.
-- Teacher login → real class → student details → select A/B → create assignment was clicked in Chromium. Both students separately logged in, opened Today, clicked the task into the same assigned course, opened the actual activity, saved progress and refreshed. Each refresh resumed its own Submission. Activity `d3c83bcd-ffe3-4a4a-bcdb-362e748cd05a` has completed progress rows for A and B. T014 recording `452d3bd2-833b-41f9-a556-126feb15dc3a` is `READY` and has a verified MinIO object.
+- Final content/layout recheck school `9b0ebfd4-b9d4-4b6e-ba4c-8ffb711e4610`, class `8ccd6c5f-a9bf-4e84-9665-63e45ddbafb7`.
+- Student A enrollment `33549ca3-25ec-486e-8ef3-f392bba4a530`; B `b589d374-582b-47e5-bd57-b81b95a958fa`; C `30149b3a-507f-4253-9338-1e7b601e7126`.
+- Assignment `e6945ec1-b760-42f3-b271-83ba12d6defd` is `OPEN`. PostgreSQL has exactly two STUDENT targets, A and B; C is absent. A's Submission is `854fc0c5-d045-45e7-8021-6aeaf3eef316`; B's is `a0c87ee0-5fc2-4cb9-bc8a-7358d96f1271`.
+- Teacher login → real class → student details → select A/B → create assignment was clicked in Chromium. Both students separately logged in, opened Today, clicked the task into the same assigned course, opened the actual activity, saved progress and refreshed. Each refresh resumed its own Submission. Activity `db38ed05-34a8-4964-8b01-e4e40ddeb463` has completed progress rows for A and B. The actual server payload had reading text in `content.body`; Chromium verified “真实测试内容” is rendered before confirmation. T014 recording `4d8222f0-a1bd-4c00-b8c4-2ebe88f278db` is `READY` and has a verified MinIO object.
 - C, a different class student D, and cross-school student X did not see the targeted task. API/browser coverage includes unauthenticated 401, wrong scope/role 403, missing resource 404, invalid target, duplicate assignment, idempotency replay, interrupted request, refresh and expired due date. The test restores the due date after the expiry check so retained data remains a live OPEN assignment.
 
 ## Student navigation, practice, history, review and growth
@@ -67,9 +67,9 @@ Final Chromium run: `browser-logs/t014-cross-role.log`; SQL proof: `sql-results.
 
 ## User interaction and responsive evidence
 
-Chromium 153 ran at 390, 768, 1280 and 1440 widths. T016/T017 evidence records document width equal to viewport width at all four sizes; the course center changes from one to two to three columns without horizontal overflow. Screenshots cover Today, navigation/menu open and closed, course cards and details, the twenty-item runner, History, processing Growth and reviewed Growth. Keyboard focus, dialog cancel, Escape, retry, reload, actual dynamic course links and refreshed progress/favorites were exercised.
+Chromium 153 ran at 390, 768, 1280 and 1440 widths. T016/T017 evidence records document width equal to viewport width at all four sizes; the course center changes from one to two to three columns without horizontal overflow. The T014 course detail was also exercised at each of those widths. The E2E asserts `documentElement.scrollWidth <= innerWidth`, desktop columns fit beside one another, mobile sidebar stacks below the main column, and the completed control stays inside the exercise card with its success style. Screenshots cover all four detail widths plus Today, navigation/menu open and closed, course cards and details, the twenty-item runner, History, processing Growth and reviewed Growth.
 
-One visual defect remains on the existing T014 course-detail activity path: after completion, the “已确认” control is visibly unstyled and sits at the card edge. Its source is under the explicitly protected `frontend/student/courses/course-detail/` T005 working-tree changes, so this T019 branch did not edit those files. Functionality and persisted progress pass; repair should be reviewed together with T005's bilingual diff. This is a known visual follow-up, not a claim of a fully polished course-detail screenshot.
+The audit found and fixed two real course-detail defects on the isolated T019 branch: exercise content used a stale `exerciseSection` ID and fell back to appending outside the player card; desktop columns each reserved a percentage before adding their gap. The controller now renders into `#cpExercisesList`, and the flex columns share available width around the gap. Submit/success states have visible styles and focus treatment. Regression evidence is `browser-logs/t014-cross-role.log` and `screenshots/t014/t014-course-responsive-{390,768,1280,1440}-A.png`. The T005 shared worktree remains untouched. T005 has its own uncommitted edits in this directory, so the exercise-controller and style changes need a deliberate three-way review when the branches are later integrated.
 
 ## Verification matrix
 
@@ -81,24 +81,25 @@ One visual defect remains on the existing T014 course-detail activity path: afte
 | StudentCourses service tests | PASS | 32 passed within the full API run; includes favorite concurrency and authorization |
 | Frontend full suite | PASS | 63 passed, 0 skipped; `test-results/frontend-full.log` |
 | Frontend typecheck and build | PASS | `test-results/frontend-typecheck.log`, `frontend-build.log` |
+| Frontend rerun after course-detail fix | PASS | 63 passed / 0 skipped; runtime verify, typecheck and build logs under `test-results/frontend-course-detail-*` |
 | OpenAPI generation, lint and contract tests | PASS | 6 passed; generation, Redocly, TypeScript pass; `test-results/contracts-*` |
-| T014 teacher→targeted students→Today→course→activity E2E | PASS | 1 passed; `browser-logs/t014-cross-role.log` |
+| T014 teacher→targeted students→Today→course→activity text + four-width detail regression E2E | PASS | 1 passed; `browser-logs/t014-cross-role.log` |
 | T016 navigation/Growth responsive and keyboard E2E | PASS | 1 passed; `browser-logs/t016-navigation.log` |
-| T017 catalog/favorite/contract/security Chromium E2E | PASS | 1 passed; `browser-logs/course-catalog-api-events.json` |
+| T017 catalog/favorite/contract/security Chromium E2E after detail fix | PASS | 1 passed; `browser-logs/course-catalog-api-events.json` |
 | T012 twenty-item audio/recording/submit E2E | PASS | 1 passed; `browser-logs/t012-e2e-summary.json` |
 | T011 teacher review/formal report/student feedback E2E | PASS | 2 passed; `browser-logs/t011-teacher-review-growth.log` |
 | T008 History alias/recording E2E | PASS | 1 passed; `browser-logs/t008-history-alias.log` |
 | T013 Today/Growth E2E | PASS | 1 passed; `browser-logs/t013-today-growth.log` |
-| MinIO object upload/read-back | PASS | 13 objects; `minio-object-verification.json` |
+| MinIO object upload/read-back | PASS | 15 objects; `minio-object-verification.json` |
 | Docker / Compose / P1-SIM / legacy PowerShell | NOT_RUN | Not used |
 | Physical microphone, calibrated automatic speech scoring, school pilot, production launch | NOT_RUN | Outside this task; see limitations above |
 
-No final acceptance suite failed. The 64 skipped API tests are existing environment-gated integration/runtime cases; the native cross-role E2Es cover the requested real-stack paths separately. A final full API rerun after documentation/evidence preparation also passed (1101 passed / 64 skipped) and is saved as `test-results/api-rerun.log`. Earlier exploratory reruns are retained only in the ignored T019 runtime evidence directory and are not counted as final acceptance runs.
+No final acceptance suite failed. The 64 skipped API tests are existing environment-gated integration/runtime cases; the native cross-role E2Es cover the requested real-stack paths separately. A final full API rerun after documentation/evidence preparation also passed (1101 passed / 64 skipped) and is saved as `test-results/api-rerun.log`. One initial ad-hoc read-only psql invocation exited 127 before executing SQL because it lacked the task-local native library environment; all six queries passed on retry through the T019 runner environment. The isolated PostgreSQL role password was rotated and verified afterward, and its value is not recorded. Earlier exploratory reruns are retained only in the ignored T019 runtime evidence directory and are not counted as final acceptance runs.
 
 ## Protected worktrees and scope
 
 - T019 changes and evidence are confined to `/home/tian/code/yuzan-workspace-t019` and this branch.
-- T005 shared worktree remains on `feat/question-bank-v1` at `9c77c8cd35ffd45d6a164cc7a4ec616c3345fd15` with its existing bilingual DTO, service, OpenAPI/generated-type, `course-detail/`, test and source-resource modifications still present. T019 did not edit or stage that worktree, root `.env`, `local_sources/` or `习题课程资源/`.
+- T005 shared worktree remains on `feat/question-bank-v1` at `9c77c8cd35ffd45d6a164cc7a4ec616c3345fd15` with its existing bilingual DTO, service, OpenAPI/generated-type, `course-detail/`, test and source-resource modifications still present. T019 did not edit or stage that worktree, root `.env`, `local_sources/` or `习题课程资源/`. T019 has isolated branch changes in `exercise-controller.js` and `style.css`; review these alongside T005's same-path bilingual edits at the future merge.
 - T018 remains at `73bb949b22f38b66f92edaa741aa042e504d2d7f`, with a clean status; no `frontend/teacher/reviews/**` file was edited, and no T018 service was stopped.
 - T014/T015/T016/T017 source worktrees remained clean at their source commits. No Docker command or L4 historical volume access/rebuild/cleanup was performed; L4 remains OPEN.
 - At final cleanup, only services whose ownership records belong to T019 were stopped. The T019 database, MinIO objects, logs and screenshots were retained. Final ports and process exits are recorded in `process-exit.txt`.
@@ -107,4 +108,4 @@ No final acceptance suite failed. The 64 skipped API tests are existing environm
 
 T019 has its own pushed branch and is **READY_TO_MERGE**. It has **not** been merged into the shared `feat/question-bank-v1` branch. The final local/remote tip equality is verified from Git at delivery; the exact delivery SHA is in the task return and remote ref, since a commit cannot contain its own SHA.
 
-Next web gaps: review the course-detail completion-control style together with T005's protected bilingual work; run a three-way T005/T019 integration for `student-courses.service.ts`, OpenAPI and generated types; then run real-device microphone and the school pilot as separately authorized gates. Do not treat simulated recordings as physical-device evidence.
+Next web gaps: run a three-way T005/T019 review for `student-courses.service.ts`, OpenAPI/generated types, and `course-detail/exercise-controller.js` plus `style.css`; then run real-device microphone and the school pilot as separately authorized gates. Do not treat simulated recordings as physical-device evidence.
