@@ -1,5 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
 import type { AuthContext } from "../../common/security/auth.types.js";
+import { MembershipRole } from "../../common/security/index.js";
 import {
   SubmissionConflictException,
   SubmissionForbiddenException,
@@ -15,6 +16,7 @@ import type {
 } from "./domain/submission.types.js";
 import {
   toSubmissionResponse,
+  toSubmissionDetailResponse,
   toSubmissionSummaryResponse,
 } from "./dto/submission.response.js";
 import type {
@@ -182,9 +184,56 @@ export class SubmissionsService {
       throw new SubmissionNotFoundException();
     }
 
-    // Students can only see their own submissions
-    // (enrollmentId ownership verified at a higher level if needed)
-    return toSubmissionResponse(submission);
+    const isSchoolAdmin = auth.principal.roles.includes(MembershipRole.SCHOOL_ADMIN);
+    const isTeacher = auth.principal.roles.includes(MembershipRole.TEACHER);
+    const isStudent = auth.principal.roles.includes(MembershipRole.STUDENT);
+    if (isTeacher || isSchoolAdmin) {
+      if (!this.policy.canReadAssignmentSubmissions(auth, schoolId)) {
+        throw new SubmissionForbiddenException();
+      }
+    } else if (!this.policy.canReadOwnSubmissions(auth, schoolId) || !isStudent) {
+      throw new SubmissionForbiddenException();
+    }
+
+    const enrollment = await this.prisma.enrollment.findFirst({
+      where: {
+        id: submission.enrollmentId,
+        schoolId,
+        role: "STUDENT",
+        status: "ACTIVE",
+      },
+      select: { id: true, classId: true, userId: true, user: { select: { displayName: true } } },
+    });
+    if (!enrollment) throw new SubmissionNotFoundException();
+
+    if (isStudent && !isTeacher && !isSchoolAdmin && enrollment.userId !== auth.principal.userId) {
+      throw new SubmissionNotFoundException();
+    }
+
+    if (isTeacher && !isSchoolAdmin) {
+      const teacherEnrollment = await this.prisma.enrollment.findFirst({
+        where: {
+          schoolId,
+          classId: enrollment.classId,
+          userId: auth.principal.userId,
+          role: "TEACHER",
+          status: "ACTIVE",
+        },
+        select: { id: true },
+      });
+      if (!teacherEnrollment) throw new SubmissionNotFoundException();
+    }
+
+    const assignment = await this.prisma.assignment.findFirst({
+      where: { id: submission.assignmentId, schoolId, deletedAt: null },
+      select: { title: true },
+    });
+    if (!assignment) throw new SubmissionNotFoundException();
+
+    return toSubmissionDetailResponse(submission, {
+      assignmentTitle: assignment.title,
+      studentName: enrollment.user.displayName,
+    });
   }
 
   async getUploadUrls(

@@ -14,6 +14,9 @@
   const listTbody = document.querySelector("#listView tbody");
   let toastTimer;
   let classes = [];
+  const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, char => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[char]));
 
   function showToast(message) {
     clearTimeout(toastTimer);
@@ -188,32 +191,35 @@
 
   // ── API: 加载真实班级列表 ──
   const CARD_COLORS = ['red', 'orange', 'green', 'blue', 'gray'];
-  const STATE_MAP = { true: 'done', false: 'pending' };
 
   function renderClassCards(items) {
     // 移除旧的硬编码卡片和创建空按钮
-    mapView.querySelectorAll(".class-card, .create-empty").forEach(el => el.remove());
+    mapView.querySelectorAll(".class-card, .create-empty, .class-loading").forEach(el => el.remove());
 
-    const createBtn = document.querySelector('[data-action="create"]'); // 保留创建按钮逻辑
+    if (items.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'class-empty-state';
+      empty.textContent = '当前账号暂无已授权班级。';
+      mapView.appendChild(empty);
+      return;
+    }
     items.forEach((cls, i) => {
       const color = CARD_COLORS[i % CARD_COLORS.length];
-      const progress = cls.overallProgress ?? cls.completionRate ?? 0;
-      const coverage = cls.submissionRate ?? cls.assessmentRate ?? 0;
       const grade = cls.grade || '';
+      const gradeLabel = grade ? (grade.endsWith('年级') ? grade : `${grade}年级`) : '年级未设置';
       const card = document.createElement("article");
       card.className = `class-card ${color}-card`;
       card.dataset.grade = grade;
-      card.dataset.classId = cls.classId || cls.id;
+      card.dataset.classId = cls.id;
       card.tabIndex = 0;
       if (i === 0) card.classList.add("selected-card");
       card.innerHTML = `
         <span class="class-book ${color}">▮</span>
-        <div class="card-top"><span class="grade ${color}-bg">${grade}</span><button class="state-dot ${STATE_MAP[progress > 50]} ${color === 'green' ? 'green-dot' : ''} ${color === 'blue' ? 'blue-dot' : ''}">${progress > 50 ? '✓' : ''}</button></div>
-        <h3>${cls.name || cls.className || '未命名班级'}</h3>
-        <p>学生 ${cls.studentCount ?? 0} 人 <i></i> ${cls.teacherName || '—'}　${cls.subject || '语文'}</p>
+        <div class="card-top"><span class="grade ${color}-bg">${escapeHtml(gradeLabel)}</span></div>
+        <h3>${escapeHtml(cls.name || '未命名班级')}</h3>
+        <p>在读学生 ${Number(cls.studentCount) || 0} 人</p>
         <hr />
-        <div class="metrics"><span>学习进度 <b>${progress}%</b></span><span>覆盖率 <b class="${coverage >= 70 ? 'green-text' : color + '-text'}">${coverage}%</b></span></div>
-        <div class="bar"><i style="width:${progress}%;background:var(--${color}-bar, #7a838a)"></i></div>
+        <div class="metrics"><span>授权班级数据</span><b>来自当前教师账号</b></div>
         <button class="enter-card" data-action="enter">进入班级</button>
       `;
       // 设置位置（沿学习路径分散）
@@ -227,28 +233,16 @@
       mapView.appendChild(card);
     });
 
-    // 重新添加创建空按钮
-    const createEmpty = document.createElement("button");
-    createEmpty.className = "create-empty";
-    createEmpty.dataset.action = "create";
-    createEmpty.style.left = "68%";
-    createEmpty.style.top = "82%";
-    createEmpty.innerHTML = '<span class="briefcase"><svg viewBox="0 0 32 32"><path d="M5 10h22v17H5zM11 10V6h10v4M12 17h8"/></svg></span><span><strong>创建新班级</strong><small>开启新的教学旅程</small></span>';
-    mapView.appendChild(createEmpty);
-    // 绑定创建按钮的UNSUPPORTED逻辑
-    createEmpty.disabled = true;
-    createEmpty.title = "创建班级功能暂未开通，请联系管理员";
-    createEmpty.style.opacity = ".55";
-    createEmpty.style.cursor = "not-allowed";
-    createEmpty.addEventListener("click", (e) => { e.preventDefault(); e.stopPropagation(); showToast("创建班级功能暂未开通，请联系管理员"); });
   }
 
   function renderListTable(items) {
     if (!listTbody) return;
+    if (!items.length) {
+      listTbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:24px">当前账号暂无已授权班级。</td></tr>';
+      return;
+    }
     listTbody.innerHTML = items.map(cls => {
-      const progress = cls.overallProgress ?? cls.completionRate ?? 0;
-      const coverage = cls.submissionRate ?? cls.assessmentRate ?? 0;
-      return `<tr><td>${cls.name || cls.className || '未命名班级'}</td><td>${cls.grade || ''}</td><td>${cls.studentCount ?? 0}</td><td>${cls.teacherName || '—'}</td><td>${progress}%</td><td>${coverage}%</td><td><button data-action="enter" data-class-id="${cls.classId || cls.id}">进入班级</button></td></tr>`;
+      return `<tr><td>${escapeHtml(cls.name || '未命名班级')}</td><td>${escapeHtml(cls.grade || '—')}</td><td>${Number(cls.studentCount) || 0}</td><td><button data-action="enter" data-class-id="${escapeHtml(cls.id)}">进入班级</button></td></tr>`;
     }).join('');
   }
 
@@ -283,10 +277,14 @@
       updateGradeFilter(items);
     } catch (err) {
       showToast(err.message || '加载班级列表失败');
-      // 回退：保留静态卡片，但给它们添加通用classId提示
-      mapView.querySelectorAll(".class-card").forEach(card => {
-        if (!card.dataset.classId) card.dataset.classId = '';
-      });
+      classes = [];
+      mapView.querySelectorAll(".class-card, .create-empty, .class-loading").forEach(el => el.remove());
+      const error = document.createElement('div');
+      error.className = 'class-empty-state';
+      error.textContent = err.status === 403 ? '当前账号无权读取此学校的班级。请切换学校或联系管理员。' : `${err.message || '班级数据加载失败'}。请刷新后重试。`;
+      mapView.appendChild(error);
+      if (classCountEl) classCountEl.textContent = '班级数据暂不可用';
+      if (listTbody) listTbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:24px">${escapeHtml(error.textContent)}</td></tr>`;
     }
   }
 

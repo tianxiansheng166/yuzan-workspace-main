@@ -17,11 +17,14 @@ export interface PronunciationCluster {
 export interface DashboardGreeting {
   name: string;
   date: string;
+  schoolName: string;
   priorityCount?: number;
 }
 
 export interface DashboardPriority {
+  readonly assignmentId: string;
   readonly title: string;
+  readonly dueAt: string;
   readonly detail: string;
   readonly count: number;
 }
@@ -56,11 +59,4 @@ export interface DashboardReview {
   readonly studentName: string;
   readonly taskTitle: string;
   readonly submittedAt: string;
-}
-
-export interface DashboardStudent {
-  readonly enrollmentId: string;
-  readonly name: string;
-  readonly issue: string;
-  readonly trend: string;
 }

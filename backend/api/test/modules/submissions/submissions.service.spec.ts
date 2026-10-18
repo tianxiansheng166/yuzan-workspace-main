@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { Test } from "@nestjs/testing";
 import {
   MembershipRole,
@@ -29,13 +29,20 @@ describe("SubmissionsService", () => {
   let service: SubmissionsService;
   let repo: FakeSubmissionRepository;
   let lookup: FakeSubmissionLookupRepository;
+  let enrollmentFindFirst: ReturnType<typeof vi.fn>;
+  let assignmentFindFirst: ReturnType<typeof vi.fn>;
 
   beforeEach(async () => {
     repo = new FakeSubmissionRepository();
     lookup = new FakeSubmissionLookupRepository();
+    enrollmentFindFirst = vi.fn().mockResolvedValue(null);
+    assignmentFindFirst = vi.fn().mockResolvedValue(null);
 
     const moduleRef = await Test.createTestingModule({
-      imports: [createFakeDatabaseModule(createFakePrismaService()), SubmissionsModule],
+      imports: [createFakeDatabaseModule(createFakePrismaService({
+        enrollment: { findFirst: enrollmentFindFirst },
+        assignment: { findFirst: assignmentFindFirst },
+      })), SubmissionsModule],
     })
       .overrideProvider(SUBMISSION_REPOSITORY)
       .useValue(repo)
@@ -139,12 +146,65 @@ describe("SubmissionsService", () => {
   });
 
   describe("getSubmission", () => {
-    it("returns submission by id", async () => {
+    it("returns submission context to its student", async () => {
       const s = submission({ schoolId });
       repo.add(s);
+      enrollmentFindFirst.mockResolvedValue({
+        id: s.enrollmentId,
+        classId: "class-1",
+        userId: "student-1",
+        user: { displayName: "测试学生" },
+      });
+      assignmentFindFirst.mockResolvedValue({ title: "测试任务" });
 
       const result = await service.getSubmission(studentAuth, schoolId, s.id);
-      expect(result.id).toBe(s.id);
+      expect(result).toMatchObject({ id: s.id, studentName: "测试学生", assignmentTitle: "测试任务" });
+    });
+
+    it("allows a teacher to read a submission from their own class", async () => {
+      const s = submission({ schoolId });
+      repo.add(s);
+      enrollmentFindFirst
+        .mockResolvedValueOnce({
+          id: s.enrollmentId,
+          classId: "class-1",
+          userId: "student-1",
+          user: { displayName: "测试学生" },
+        })
+        .mockResolvedValueOnce({ id: "teacher-enrollment" });
+      assignmentFindFirst.mockResolvedValue({ title: "测试任务" });
+
+      const result = await service.getSubmission(teacherAuth, schoolId, s.id);
+      expect(result).toMatchObject({ id: s.id, studentName: "测试学生", assignmentTitle: "测试任务" });
+    });
+
+    it("does not expose another class submission to a teacher", async () => {
+      const s = submission({ schoolId });
+      repo.add(s);
+      enrollmentFindFirst.mockResolvedValueOnce({
+        id: s.enrollmentId,
+        classId: "other-class",
+        userId: "student-1",
+        user: { displayName: "其他班级学生" },
+      });
+      enrollmentFindFirst.mockResolvedValueOnce(null);
+
+      await expect(service.getSubmission(teacherAuth, schoolId, s.id)).rejects.toThrow();
+      expect(assignmentFindFirst).not.toHaveBeenCalled();
+    });
+
+    it("does not expose another student's submission", async () => {
+      const s = submission({ schoolId });
+      repo.add(s);
+      enrollmentFindFirst.mockResolvedValue({
+        id: s.enrollmentId,
+        classId: "class-1",
+        userId: "another-student",
+        user: { displayName: "其他学生" },
+      });
+
+      await expect(service.getSubmission(studentAuth, schoolId, s.id)).rejects.toThrow();
+      expect(assignmentFindFirst).not.toHaveBeenCalled();
     });
 
     it("throws for non-existent submission", async () => {

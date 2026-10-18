@@ -10,6 +10,17 @@
   let classId = '';
   let schoolId = '';
   let classDetail = null;
+  const requestedStudentId = new URLSearchParams(location.search).get('studentId') || '';
+
+  const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, char => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[char]));
+
+  function formatActivityDate(value) {
+    if (!value) return '—';
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? '—' : date.toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+  }
 
   function getClassIdFromPath() {
     // /teacher/classes/:classId — 3rd segment
@@ -36,7 +47,7 @@
     const item = data[key] || ["操作详情", "该功能暂未开通。", ""];
     drawerTitle.textContent = item[0];
     drawerText.textContent = item[1];
-    drawerData.innerHTML = item[2];
+      drawerData.textContent = item[2].replace(/<br>/g, '\n');
     drawerBackdrop.hidden = false;
     document.body.style.overflow = "hidden";
     drawerBackdrop.dataset.type = key;
@@ -164,7 +175,7 @@
     }
     table.innerHTML =
       '<div class="issue-row header"><span></span><b>问题</b><b>出现次数</b><b>涉及学生</b></div>' +
-      rows.map(r => `<div class="issue-row"><span>${r[0]}</span><b>${r[1]}</b><em>${r[2]} 次</em><em>${r[3]} 人</em></div>`).join("");
+      rows.map(r => `<div class="issue-row"><span>${escapeHtml(r[0])}</span><b>${escapeHtml(r[1])}</b><em>${escapeHtml(r[2])} 次</em><em>${escapeHtml(r[3])} 人</em></div>`).join("");
   }
 
   document.querySelectorAll("[data-tab]").forEach(btn => {
@@ -173,25 +184,6 @@
       renderIssues(btn.dataset.tab === "writing" ? writingRows : pronunciationRows);
     });
   });
-
-  // ── LIVE_LOCAL: 日期范围选择器 ──
-  const dateBtn = document.getElementById("dateRangeBtn");
-  const pop = document.getElementById("datePopover");
-  if (dateBtn && pop) {
-    dateBtn.addEventListener("click", e => {
-      e.stopPropagation();
-      pop.hidden = !pop.hidden;
-    });
-    pop.addEventListener("click", e => e.stopPropagation());
-    document.addEventListener("click", () => pop.hidden = true);
-    document.getElementById("applyDate").addEventListener("click", () => {
-      const s = document.getElementById("startDate").value;
-      const e = document.getElementById("endDate").value;
-      document.getElementById("dateRangeText").textContent = `${s} ~ ${e}`;
-      pop.hidden = true;
-      showToast("数据时间范围已更新");
-    });
-  }
 
   // ── UNSUPPORTED: 侧栏无对应页面的链接 ──
   document.querySelectorAll("[data-unsupported]").forEach(el => {
@@ -212,7 +204,7 @@
   });
 
   document.addEventListener("keydown", e => {
-    if (e.key === "Escape") { closeDrawer(); if (pop) pop.hidden = true; }
+    if (e.key === "Escape") closeDrawer();
   });
 
   // ── API: 加载真实班级详情 ──
@@ -235,16 +227,16 @@
       if (classBread) classBread.textContent = name;
     }
     const h1 = document.querySelector('.class-title h1');
-    if (h1) h1.innerHTML = `${name} <span>在学</span>`;
+    if (h1) h1.innerHTML = `${escapeHtml(name)} <span>在学</span>`;
 
     // 更新班级描述
     const desc = document.querySelector('.class-title p');
-    if (desc) desc.innerHTML = `${detail.schoolName || '学校'} <i></i> 班级编号：${detail.classId?.slice(0,12) || '—'} <i></i> 学生人数：${detail.studentCount ?? '—'} 人 <i></i> 教师：${detail.teacherName || '—'}`;
+    if (desc) desc.innerHTML = `${escapeHtml(detail.schoolName || '学校')} <i></i> 班级编号：${escapeHtml(detail.classId?.slice(0,12) || '—')} <i></i> 学生人数：${detail.studentCount ?? '—'} 人 <i></i> 教师：${escapeHtml(detail.teacherName || '—')}`;
 
     // 更新当前课程
     if (detail.currentCourse) {
       const courseH2 = document.querySelector('.course-copy h2');
-      if (courseH2) courseH2.innerHTML = `${detail.currentCourse.title || '—'} <span>进行中</span>`;
+      if (courseH2) courseH2.innerHTML = `${escapeHtml(detail.currentCourse.title || '—')} <span>进行中</span>`;
     }
 
     // 更新整体进度（dashboard: completionRate 0-100; classDetail: overallProgress 0-100）
@@ -254,6 +246,20 @@
     if (progressB) progressB.textContent = progressStr + '%';
     const progressBar = document.querySelector('.metric.progress i b');
     if (progressBar) progressBar.style.width = progressStr + '%';
+
+    const courseMetrics = document.querySelectorAll('.course-progress .metric');
+    const setCourseMetric = (index, label, value) => {
+      const metric = courseMetrics[index];
+      if (!metric) return;
+      const labelEl = metric.querySelector('small');
+      const valueEl = metric.querySelector('strong');
+      if (labelEl) labelEl.textContent = label;
+      if (valueEl) valueEl.textContent = value;
+    };
+    setCourseMetric(1, '平均活动进度', detail.averageProgress == null ? '—' : `${detail.averageProgress}%`);
+    setCourseMetric(2, '中位活动进度', detail.medianProgress == null ? '—' : `${detail.medianProgress}%`);
+    setCourseMetric(3, '零进度学生', detail.zeroProgressCount == null ? '—' : `${detail.zeroProgressCount} 人`);
+    document.querySelectorAll('.course-copy p').forEach((paragraph) => { paragraph.hidden = true; });
 
     // 显示平均/中位数进度和零进度人数（Section IX）
     const progressDetail = document.querySelector('.metric.progress small');
@@ -298,12 +304,10 @@
 
     // 更新概览指标：任务完成率、测评参与率、风险学生数
     const overviewMetrics = document.querySelectorAll('.overview-card .overview-metric');
-    if (detail.submissionRate !== undefined && overviewMetrics[1]) {
-      overviewMetrics[1].querySelector('strong').textContent = `${detail.submissionRate}%`;
-    }
-    if (detail.assessmentParticipationRate !== undefined && overviewMetrics[3]) {
-      overviewMetrics[3].querySelector('strong').textContent = `${detail.assessmentParticipationRate}%`;
-    }
+    if (overviewMetrics[0]) overviewMetrics[0].querySelector('strong').textContent = String(detail.studentCount ?? '—');
+    if (overviewMetrics[1]) overviewMetrics[1].querySelector('strong').textContent = detail.completionRate == null ? '—' : `${detail.completionRate}%`;
+    if (overviewMetrics[2]) overviewMetrics[2].querySelector('strong').textContent = formatActivityDate(detail.lastActivityAt);
+    if (overviewMetrics[3]) overviewMetrics[3].querySelector('strong').textContent = detail.assessmentParticipationRate == null ? '—' : `${detail.assessmentParticipationRate}%`;
     if (detail.atRiskStudentCount !== undefined) {
       const riskEl = document.getElementById('atRiskBadge');
       if (riskEl) riskEl.textContent = `${detail.atRiskStudentCount} 人需关注`;
@@ -341,14 +345,21 @@
       const detail = await YuzanApi.request(`/schools/${schoolId}/classes/${classId}/dashboard`);
       applyClassDetail(detail);
     } catch (err) {
+      const title = document.querySelector('.class-title h1');
+      const description = document.querySelector('.class-title p');
+      if (title) title.textContent = '班级数据暂不可用';
+      if (description) description.textContent = err.status === 403
+        ? '当前账号无权查看此班级。请返回本人授权班级列表。'
+        : `${err.message || '加载班级详情失败'}。请返回本人授权班级列表后重试。`;
       showToast(err.message || '加载班级详情失败');
     }
     // 并行加载 student-summaries、assignment-summaries、assessment-summaries
     const basePath = `/schools/${schoolId}/classes/${classId}`;
-    const [studentRes, assignmentRes, assessmentRes] = await Promise.allSettled([
+    const [studentRes, assignmentRes, assessmentRes, pendingRes] = await Promise.allSettled([
       YuzanApi.request(`${basePath}/student-summaries`),
       YuzanApi.request(`${basePath}/assignment-summaries`),
       YuzanApi.request(`${basePath}/assessment-summaries`),
+      YuzanApi.request(`${basePath}/pending-stats`),
     ]);
     if (studentRes.status === 'fulfilled') renderStudentRoster(studentRes.value);
     else renderStudentRoster(null);
@@ -356,7 +367,11 @@
     else renderAssignmentList(null);
     if (assessmentRes.status === 'fulfilled') renderAssessmentList(assessmentRes.value);
     else renderAssessmentList(null);
-    renderPendingItems(classDetail);
+    renderPendingItems(
+      classDetail,
+      pendingRes.status === 'fulfilled' ? pendingRes.value : null,
+      pendingRes.status === 'rejected' ? pendingRes.reason : null,
+    );
   }
 
   // ── 渲染：学生名单 ──
@@ -371,16 +386,18 @@
     const rows = summaries.map(s => {
       const riskClass = s.riskStatus === 'OK' ? 'risk-ok' : s.riskStatus === 'AT_RISK' ? 'risk-at' : 'risk-inactive';
       const riskLabel = s.riskStatus === 'OK' ? '正常' : s.riskStatus === 'AT_RISK' ? '关注' : '不活跃';
-      return `<div class="roster-row" data-enrollment-id="${s.enrollmentId || ''}" data-risk="${s.riskStatus || 'OK'}">
-        <b><input type="checkbox" class="roster-check" data-enrollment-id="${s.enrollmentId || ''}"></b>
-        <b>${s.studentName || '—'}</b>
-        <span>${s.courseProgress != null ? Math.round(s.courseProgress * 100) + '%' : '—'}</span>
-        <span>${s.submittedCount ?? 0} / ${s.unsubmittedCount ?? 0}</span>
-        <span>${s.latestAssessment || '—'}</span>
-        <span>${s.score != null ? s.score : '—'}</span>
+      const enrollmentId = escapeHtml(s.enrollmentId || '');
+      const selected = requestedStudentId && s.enrollmentId === requestedStudentId;
+      return `<div class="roster-row ${selected ? 'selected-student' : ''}" data-enrollment-id="${enrollmentId}" data-risk="${escapeHtml(s.riskStatus || 'OK')}">
+        <b><input type="checkbox" class="roster-check" data-enrollment-id="${enrollmentId}"></b>
+        <b>${escapeHtml(s.displayName || '—')}</b>
+        <span>${s.courseProgress != null ? `${Math.round(s.courseProgress)}%` : '—'}</span>
+        <span>${s.submittedAssignmentCount ?? 0} / ${s.missingAssignmentCount ?? 0}</span>
+        <span>${escapeHtml(s.latestAssessmentStatus || '—')}</span>
+        <span>${s.latestAssessmentScore != null ? escapeHtml(s.latestAssessmentScore) : '—'}</span>
         <span>${s.recordingCount ?? 0}</span>
-        <span>${s.mainIssue || '—'}</span>
-        <span>${s.lastActiveAt || '—'}</span>
+        <span>${escapeHtml(s.topIssue || '—')}</span>
+        <span>${escapeHtml(formatActivityDate(s.lastActiveAt))}</span>
         <span class="${riskClass}">${riskLabel}</span>
       </div>`;
     }).join('');
@@ -391,6 +408,10 @@
       checkAll.addEventListener('change', () => {
         document.querySelectorAll('.roster-check').forEach(c => { c.checked = checkAll.checked; });
       });
+    }
+    if (requestedStudentId) {
+      const selectedRow = table.querySelector(`.roster-row[data-enrollment-id="${CSS.escape(requestedStudentId)}"]`);
+      selectedRow?.scrollIntoView({ block: 'center', behavior: 'smooth' });
     }
   }
 
@@ -403,16 +424,17 @@
       return;
     }
     list.innerHTML = summaries.map(a => {
-      const statusLabel = a.status === 'PUBLISHED' ? '已发布' : a.status === 'DRAFT' ? '草稿' : a.status === 'CLOSED' ? '已关闭' : a.status || '—';
-      return `<div class="assignment-row" data-assignment-id="${a.assignmentId || ''}">
+      const statusLabel = a.status === 'OPEN' ? '已发布' : a.status === 'DRAFT' ? '草稿' : a.status === 'CLOSED' ? '已关闭' : a.status || '—';
+      const total = Number(a.totalTargetCount) > 0 ? a.totalTargetCount : (classDetail?.studentCount ?? 0);
+      return `<div class="assignment-row" data-assignment-id="${escapeHtml(a.assignmentId || '')}">
         <div class="assignment-info">
-          <strong>${a.title || '—'}</strong>
-          <small>${a.courseName || '—'}</small>
+          <strong>${escapeHtml(a.title || '—')}</strong>
+          <small>${escapeHtml(a.courseTitle || '—')}</small>
         </div>
-        <span class="assignment-status">${statusLabel}</span>
-        <span>${a.submittedCount ?? 0} / ${a.totalCount ?? 0}</span>
-        <span class="pending-count">${a.pendingReviewCount ?? 0} 待批改</span>
-        <button class="view-answers-btn" data-assignment-id="${a.assignmentId || ''}" data-title="${a.title || ''}" data-submitted="${a.submittedCount ?? 0}" data-pending="${a.pendingReviewCount ?? 0}">查看答案</button>
+        <span class="assignment-status">${escapeHtml(statusLabel)}</span>
+        <span>${Number(a.submissionCount) || 0} / ${Number(total) || 0}</span>
+        <span class="pending-count">${Number(a.pendingReviewCount) || 0} 待复核</span>
+        <button class="view-answers-btn" data-assignment-id="${escapeHtml(a.assignmentId || '')}" data-title="${escapeHtml(a.title || '')}" data-submitted="${a.submissionCount ?? 0}" data-pending="${a.pendingReviewCount ?? 0}">查看答案</button>
       </div>`;
     }).join('');
   }
@@ -432,44 +454,41 @@
       const zeroInfo = (a.zeroScoreCount ?? 0) > 0 ? ` · ${a.zeroScoreCount}人零分` : '';
       return `<div class="assessment-row">
         <div class="assessment-info">
-          <strong>${a.title || '—'}</strong>
-          <small>${typeLabel}</small>
+          <strong>${escapeHtml(a.title || '—')}</strong>
+          <small>${escapeHtml(typeLabel)}</small>
         </div>
-        <span class="assessment-status">${statusLabel}${insufficient}</span>
-        <span>${a.completedCount ?? 0} / ${a.totalTargetCount ?? a.totalCount ?? 0}</span>
-        <span>均分 ${a.averageScore != null ? a.averageScore : '—'}${zeroInfo}</span>
-        <span>中位 ${a.medianScore != null ? a.medianScore : '—'}</span>
+        <span class="assessment-status">${escapeHtml(statusLabel)}${insufficient}</span>
+        <span>${Number(a.completedCount) || 0} / ${Number(a.totalTargetCount ?? a.totalCount) || 0}</span>
+        <span>均分 ${a.averageScore != null ? escapeHtml(a.averageScore) : '—'}${zeroInfo}</span>
+        <span>中位 ${a.medianScore != null ? escapeHtml(a.medianScore) : '—'}</span>
       </div>`;
     }).join('');
   }
 
   // ── 渲染：待处理事项 ──
-  function renderPendingItems(dashboard) {
+  function renderPendingItems(dashboard, pendingStats, error) {
     const list = document.getElementById('pendingList');
     if (!list) return;
-    if (!dashboard) {
-      list.innerHTML = '<div class="empty-hint">数据不足，暂无相关信息</div>';
+    if (!pendingStats && error) {
+      list.innerHTML = `<div class="empty-hint">${escapeHtml(error.message || '待处理统计暂不可用，请刷新后重试。')}</div>`;
+      return;
+    }
+    if (!dashboard && !pendingStats) {
+      list.innerHTML = '<div class="empty-hint">待处理统计暂不可用。</div>';
       return;
     }
     const items = [
-      { label: '待批改', value: dashboard.pendingReviewCount ?? 0, icon: '📝' },
-      { label: '未提交任务', value: dashboard.unsubmittedAssignmentCount ?? 0, icon: '📋' },
-      { label: '风险学生', value: dashboard.atRiskStudentCount ?? 0, icon: '⚠️' },
-      { label: '待测评', value: dashboard.pendingAssessmentCount ?? 0, icon: '📊' },
+      { label: '待复核提交', value: pendingStats?.pendingReviewCount ?? dashboard?.pendingReviewCount ?? '—', icon: '📝' },
+      { label: '有缺交任务', value: pendingStats?.unsubmittedAssignmentsCount ?? '—', icon: '📋' },
+      { label: '超过 7 天无活动', value: pendingStats?.atRiskStudentCount ?? dashboard?.atRiskStudentCount ?? '—', icon: '⚠️' },
+      { label: '待开始测评', value: pendingStats?.pendingAssessmentsCount ?? '—', icon: '📊' },
     ];
     list.innerHTML = items.map(item =>
-      `<div class="pending-item"><span class="pending-icon">${item.icon}</span><strong>${item.value}</strong><span>${item.label}</span></div>`
+      `<div class="pending-item"><span class="pending-icon">${item.icon}</span><strong>${escapeHtml(item.value)}</strong><span>${escapeHtml(item.label)}</span></div>`
     ).join('');
   }
 
-  // ── 事件委托：学生行点击 ──
-  document.addEventListener('click', e => {
-    const rosterRow = e.target.closest('.roster-row[data-enrollment-id]');
-    if (rosterRow && rosterRow.dataset.enrollmentId) {
-      location.href = `/teacher/students/${rosterRow.dataset.enrollmentId}`;
-      return;
-    }
-  });
+  // 学生行留在当前班级学情页；首页可通过 studentId 查询参数定位具体学生。
 
   // ── 事件委托：查看答案按钮 ──
   document.addEventListener('click', async e => {

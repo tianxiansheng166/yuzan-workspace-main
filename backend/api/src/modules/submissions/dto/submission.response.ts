@@ -43,6 +43,11 @@ export interface SubmissionResponse {
   readonly updatedAt: string;
 }
 
+export interface SubmissionDetailResponse extends SubmissionResponse {
+  readonly assignmentTitle: string;
+  readonly studentName: string;
+}
+
 export function toSubmissionResponse(
   submission: Submission,
 ): SubmissionResponse {
@@ -59,5 +64,15 @@ export function toSubmissionResponse(
     ...(submission.submittedAt ? { submittedAt: submission.submittedAt.toISOString() } : {}),
     createdAt: submission.createdAt.toISOString(),
     updatedAt: submission.updatedAt.toISOString(),
+  };
+}
+
+export function toSubmissionDetailResponse(
+  submission: Submission,
+  details: { assignmentTitle: string; studentName: string },
+): SubmissionDetailResponse {
+  return {
+    ...toSubmissionResponse(submission),
+    ...details,
   };
 }

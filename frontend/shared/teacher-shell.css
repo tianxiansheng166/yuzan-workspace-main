@@ -145,12 +145,25 @@ svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-l
   .ts-collapse-btn{display:none}
 }
 @media(max-width:760px){
-  /* 窄屏保持横向滚动，不堆叠；侧边栏改为抽屉式 */
-  :root{--ts-sidebar:0px}
-  .ts-app-shell{grid-template-columns:1fr;min-width:900px}
-  .ts-sidebar{transform:translateX(-100%);transition:transform .25s}
-  .ts-sidebar.open{transform:none;box-shadow:14px 0 40px rgba(0,0,0,.17)}
-  .ts-main{grid-column:1/-1}
-  .ts-context{overflow-x:auto}
+  :root{--ts-sidebar:100%}
+  .ts-app-shell{grid-template-columns:minmax(0,1fr);width:100%;min-width:0}
+  .ts-sidebar{position:relative;inset:auto;width:100%;min-width:0;height:auto;border-right:0;border-bottom:1px solid #e8e0d8;overflow:visible;transform:none}
+  .ts-brand{width:100%;min-width:0;height:48px;justify-content:flex-start;padding:6px 12px}
+  .ts-brand-copy{display:grid}
+  .ts-nav{width:100%;max-width:100%;min-width:0;height:auto;display:flex;gap:3px;padding:4px 8px;overflow-x:auto}
+  .ts-nav-item{flex:0 0 auto;min-height:40px;justify-content:center;gap:5px;padding:0 7px;font-size:10px}
+  .ts-nav-item span:not(.ts-nav-circle){display:inline;white-space:nowrap;font-size:10px}
+  .ts-nav-item svg{width:15px;height:15px}
+  .ts-sidebar-footer,.ts-collapse-btn{display:none}
+  .ts-main{grid-column:1/-1;width:100%;min-width:0}
+  .ts-topbar{width:100%;min-width:0;height:auto;min-height:58px;gap:8px;padding:8px}
+  #ts-page-root{width:100%;min-width:0;overflow-x:hidden}
+  .ts-context{min-width:0;flex:1;overflow:hidden}
+  .ts-context-btn{min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 8px}
+  .ts-sync-pill{display:none}
+  .ts-top-actions{gap:4px}
+  .ts-profile-btn{gap:6px;padding:0 2px}
+  .ts-profile-btn>span:nth-child(2){max-width:96px;overflow:hidden}
+  .ts-profile-btn strong,.ts-profile-btn small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 }
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}

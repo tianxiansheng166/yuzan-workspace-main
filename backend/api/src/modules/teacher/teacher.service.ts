@@ -17,7 +17,6 @@ import type {
   DashboardCourse,
   DashboardTask,
   DashboardReview,
-  DashboardStudent,
 } from "./domain/teacher.types.js";
 
 @Injectable()
@@ -35,8 +34,6 @@ export class TeacherService {
     }
 
     const teacherId = auth.principal.userId;
-
-    // Get teacher's classes
     const teacherEnrollments = await this.prisma.enrollment.findMany({
       where: {
         userId: teacherId,
@@ -44,70 +41,93 @@ export class TeacherService {
         role: "TEACHER",
         status: "ACTIVE",
       },
-      include: { class: true },
+      select: { classId: true },
     });
+    const classIds = [...new Set(teacherEnrollments.map((item) => item.classId))];
+    const activeStudents = classIds.length
+      ? await this.prisma.enrollment.findMany({
+          where: {
+            schoolId,
+            classId: { in: classIds },
+            role: "STUDENT",
+            status: "ACTIVE",
+          },
+          select: { id: true, classId: true },
+        })
+      : [];
+    const studentEnrollmentIds = activeStudents.map((item) => item.id);
+    const authorizedTarget =
+      classIds.length > 0
+        ? {
+            targets: {
+              some: {
+                OR: [
+                  { classId: { in: classIds } },
+                  ...(studentEnrollmentIds.length
+                    ? [{ enrollmentId: { in: studentEnrollmentIds } }]
+                    : []),
+                ],
+              },
+            },
+          }
+        : null;
+    const assignmentWhere = authorizedTarget
+      ? {
+          schoolId,
+          deletedAt: null,
+          status: "OPEN" as const,
+          ...authorizedTarget,
+        }
+      : null;
 
-    const classIds = teacherEnrollments.map((e) => e.classId);
+    const [user, school, draftCourses, openAssignmentCount, pendingReviews] =
+      await Promise.all([
+        this.prisma.user.findUnique({
+          where: { id: teacherId },
+          select: { displayName: true },
+        }),
+        this.prisma.school.findUnique({
+          where: { id: schoolId },
+          select: { name: true },
+        }),
+        this.prisma.courseVersion.count({
+          where: {
+            schoolId,
+            status: { in: ["DRAFT", "CHANGES_REQUESTED"] },
+            course: { authorUserId: teacherId },
+          },
+        }),
+        assignmentWhere
+          ? this.prisma.assignment.count({ where: assignmentWhere })
+          : Promise.resolve(0),
+        classIds.length
+          ? this.prisma.submission.count({
+              where: {
+                schoolId,
+                deletedAt: null,
+                status: "NEEDS_REVIEW",
+                enrollment: {
+                  schoolId,
+                  classId: { in: classIds },
+                  role: "STUDENT",
+                  status: "ACTIVE",
+                },
+              },
+            })
+          : Promise.resolve(0),
+      ]);
 
-    // Greeting
-    const user = await this.prisma.user.findUnique({
-      where: { id: teacherId },
-      select: { displayName: true },
-    });
     const greeting: DashboardGreeting = {
-      name: user?.displayName ?? "老师",
+      name: user?.displayName ?? "",
       date: new Date().toLocaleDateString("zh-CN", {
         year: "numeric",
         month: "long",
         day: "numeric",
         weekday: "long",
       }),
+      schoolName: school?.name ?? "",
       priorityCount: 0,
     };
-
-    // Workflow counts
-    const [
-      draftCourses,
-      openAssignments,
-      pendingReviews,
-      atRiskCount,
-      readyReports,
-    ] = await Promise.all([
-      this.prisma.courseVersion.count({
-        where: {
-          schoolId,
-          status: { in: ["DRAFT", "CHANGES_REQUESTED"] },
-        },
-      }),
-      this.prisma.assignment.count({
-        where: {
-          schoolId,
-          status: "OPEN",
-          targets: { some: { classId: { in: classIds } } },
-        },
-      }),
-      this.prisma.submission.count({
-        where: {
-          schoolId,
-          status: "NEEDS_REVIEW",
-          enrollment: { classId: { in: classIds } },
-        },
-      }),
-      this.prisma.enrollment.count({
-        where: {
-          schoolId,
-          classId: { in: classIds },
-          role: "STUDENT",
-          status: "ACTIVE",
-          progress: {
-            some: { completed: false },
-          },
-        },
-      }),
-      this.prisma.report.count({
-        where: { schoolId, status: "READY" },
-      }),
-    ]);
 
     const workflow: DashboardWorkflowItem[] = [
       {
@@ -116,81 +136,34 @@ export class TeacherService {
         icon: "book",
         count: draftCourses,
         title: "待发布课程",
-        subtitle: `${draftCourses} 门课程等待发布`,
+        subtitle: `${draftCourses} 门本人课程等待发布`,
       },
       {
         id: "task",
         tone: "red",
         icon: "clock",
-        count: openAssignments,
-        title: "即将截止任务",
-        subtitle: `${openAssignments} 个任务进行中`,
+        count: openAssignmentCount,
+        title: "进行中任务",
+        subtitle: `${openAssignmentCount} 个授权班级任务`,
       },
       {
         id: "review",
         tone: "green",
         icon: "mic",
         count: pendingReviews,
-        title: "待复核朗读",
-        subtitle: `${pendingReviews} 份朗读待复核`,
+        title: "待复核提交",
+        subtitle: `${pendingReviews} 份本人班级提交待复核`,
       },
       {
         id: "student",
-        tone: "red",
-        icon: "alert",
-        count: atRiskCount,
-        title: "需关注学生",
-        subtitle: `${atRiskCount} 名学生需要关注`,
-      },
-      {
-        id: "report",
         tone: "green",
-        icon: "chart",
-        count: readyReports,
-        title: "学习报告",
-        subtitle: `${readyReports} 份报告已就绪`,
+        icon: "people",
+        count: activeStudents.length,
+        title: "授权班级学生",
+        subtitle: `${activeStudents.length} 个在读学生班级记录`,
       },
     ];
 
-    // Priority: nearest due assignment with incomplete submissions
-    const urgentAssignment = await this.prisma.assignment.findFirst({
-      where: {
-        schoolId,
-        status: "OPEN",
-        targets: { some: { classId: { in: classIds } } },
-        dueAt: { gte: new Date() },
-      },
-      orderBy: { dueAt: "asc" },
-    });
-
-    let priority: DashboardPriority | null = null;
-    if (urgentAssignment) {
-      const totalStudents = await this.prisma.enrollment.count({
-        where: {
-          classId: { in: classIds },
-          role: "STUDENT",
-          status: "ACTIVE",
-        },
-      });
-      const submittedCount = await this.prisma.submission.count({
-        where: {
-          assignmentId: urgentAssignment.id,
-          schoolId,
-          status: {
-            in: ["SUBMITTED", "NEEDS_REVIEW", "REVIEWED", "ACCEPTED"],
-          },
-        },
-      });
-      const incomplete = totalStudents - submittedCount;
-      priority = {
-        title: urgentAssignment.title,
-        detail: `${incomplete} 位学生未完成`,
-        count: incomplete,
-      };
-      greeting.priorityCount = incomplete;
-    }
-
-    // Courses (drafts by this teacher)
     const courses: DashboardCourse[] = (
       await this.prisma.courseVersion.findMany({
         where: {
@@ -202,93 +175,139 @@ export class TeacherService {
         take: 5,
         select: { id: true, title: true, gradeBand: true, updatedAt: true },
       })
-    ).map((c) => ({
-      id: c.id,
-      title: c.title,
-      tags: c.gradeBand ? [c.gradeBand] : [],
-      updatedAt: c.updatedAt.toISOString(),
+    ).map((course) => ({
+      id: course.id,
+      title: course.title,
+      tags: course.gradeBand ? [course.gradeBand] : [],
+      updatedAt: course.updatedAt.toISOString(),
     }));
 
-    // Tasks (open assignments in teacher's classes)
-    const tasks: DashboardTask[] = (
-      await this.prisma.assignment.findMany({
-        where: {
-          schoolId,
-          status: "OPEN",
-          targets: { some: { classId: { in: classIds } } },
-        },
-        orderBy: { dueAt: "asc" },
-        take: 3,
-        select: { id: true, title: true, dueAt: true },
-      })
-    ).map((a) => ({
-      id: a.id,
-      title: a.title,
-      dueAt: a.dueAt.toISOString(),
-      done: 0,
-      total: 0,
-      tone:
-        new Date(a.dueAt) < new Date(Date.now() + 3 * 86400000)
-          ? "red"
-          : "green",
+    const [assignmentRows, reviewRows] = await Promise.all([
+      assignmentWhere
+        ? this.prisma.assignment.findMany({
+            where: assignmentWhere,
+            orderBy: { dueAt: "asc" },
+            take: 5,
+            select: {
+              id: true,
+              title: true,
+              dueAt: true,
+              targets: {
+                select: { targetType: true, classId: true, enrollmentId: true },
+              },
+            },
+          })
+        : Promise.resolve([]),
+      classIds.length
+        ? this.prisma.submission.findMany({
+            where: {
+              schoolId,
+              deletedAt: null,
+              status: "NEEDS_REVIEW",
+              enrollment: {
+                schoolId,
+                classId: { in: classIds },
+                role: "STUDENT",
+                status: "ACTIVE",
+              },
+            },
+            orderBy: { createdAt: "desc" },
+            take: 4,
+            select: {
+              id: true,
+              createdAt: true,
+              assignment: { select: { title: true } },
+              enrollment: {
+                select: { user: { select: { displayName: true } } },
+              },
+            },
+          })
+        : Promise.resolve([]),
+    ]);
+
+    const assignmentIds = assignmentRows.map((assignment) => assignment.id);
+    const targetIdsByAssignment = new Map<string, Set<string>>();
+    for (const assignment of assignmentRows) {
+      const targetIds = new Set<string>();
+      for (const target of assignment.targets) {
+        if (target.targetType === "CLASS" && target.classId) {
+          for (const student of activeStudents) {
+            if (student.classId === target.classId) targetIds.add(student.id);
+          }
+        } else if (
+          target.targetType === "STUDENT" &&
+          target.enrollmentId &&
+          studentEnrollmentIds.includes(target.enrollmentId)
+        ) {
+          targetIds.add(target.enrollmentId);
+        }
+      }
+      targetIdsByAssignment.set(assignment.id, targetIds);
+    }
+
+    const targetEnrollmentIds = [
+      ...new Set([...targetIdsByAssignment.values()].flatMap((ids) => [...ids])),
+    ];
+    const submittedRows =
+      assignmentIds.length > 0 && targetEnrollmentIds.length > 0
+        ? await this.prisma.submission.findMany({
+            where: {
+              schoolId,
+              deletedAt: null,
+              assignmentId: { in: assignmentIds },
+              enrollmentId: { in: targetEnrollmentIds },
+              status: { in: ["SUBMITTED", "NEEDS_REVIEW", "REVIEWED", "ACCEPTED"] },
+            },
+            select: { assignmentId: true, enrollmentId: true },
+          })
+        : [];
+    const submittedByAssignment = new Map<string, Set<string>>();
+    for (const submission of submittedRows) {
+      const ids = submittedByAssignment.get(submission.assignmentId) ?? new Set<string>();
+      ids.add(submission.enrollmentId);
+      submittedByAssignment.set(submission.assignmentId, ids);
+    }
+
+    const tasks: DashboardTask[] = assignmentRows.map((assignment) => {
+      const totalIds = targetIdsByAssignment.get(assignment.id) ?? new Set<string>();
+      const doneIds = submittedByAssignment.get(assignment.id) ?? new Set<string>();
+      return {
+        id: assignment.id,
+        title: assignment.title,
+        dueAt: assignment.dueAt.toISOString(),
+        done: [...doneIds].filter((id) => totalIds.has(id)).length,
+        total: totalIds.size,
+        tone:
+          assignment.dueAt.getTime() < Date.now() + 3 * 86400000
+            ? "red"
+            : "green",
+      };
+    });
+
+    let priority: DashboardPriority | null = null;
+    const urgentTask = tasks.find(
+      (task) => new Date(task.dueAt).getTime() >= Date.now() && task.done < task.total,
+    );
+    if (urgentTask) {
+      const incomplete = urgentTask.total - urgentTask.done;
+      priority = {
+        assignmentId: urgentTask.id,
+        title: urgentTask.title,
+        dueAt: urgentTask.dueAt,
+        detail: `${incomplete} 位目标学生尚未提交`,
+        count: incomplete,
+      };
+      greeting.priorityCount = incomplete;
+    }
+
+    const reviews: DashboardReview[] = reviewRows.map((submission) => ({
+      submissionId: submission.id,
+      studentName: submission.enrollment.user.displayName,
+      taskTitle: submission.assignment.title,
+      submittedAt: submission.createdAt.toISOString(),
     }));
 
-    // Reviews (pending submissions)
-    const reviews: DashboardReview[] = (
-      await this.prisma.submission.findMany({
-        where: {
-          schoolId,
-          status: "NEEDS_REVIEW",
-          enrollment: { classId: { in: classIds } },
-        },
-        orderBy: { createdAt: "desc" },
-        take: 4,
-        select: {
-          id: true,
-          createdAt: true,
-          assignment: { select: { title: true } },
-          enrollment: {
-            select: { user: { select: { displayName: true } } },
-          },
-        },
-      })
-    ).map((s) => ({
-      submissionId: s.id,
-      studentName: s.enrollment.user.displayName,
-      taskTitle: s.assignment.title,
-      submittedAt: s.createdAt.toISOString(),
-    }));
-
-    // At-risk students (simplified)
-    const students: DashboardStudent[] = (
-      await this.prisma.enrollment.findMany({
-        where: {
-          schoolId,
-          classId: { in: classIds },
-          role: "STUDENT",
-          status: "ACTIVE",
-        },
-        include: { user: { select: { displayName: true } } },
-        take: 5,
-      })
-    )
-      .filter((e) => e.user)
-      .map((e) => ({
-        enrollmentId: e.id,
-        name: e.user.displayName,
-        issue: "学习进度滞后",
-        trend: "→ 0%",
-      }));
-
-    return {
-      greeting,
-      priority,
-      workflow,
-      courses,
-      tasks,
-      reviews,
-      students,
-    };
+    return { greeting, priority, workflow, courses, tasks, reviews };
   }
 
   async getAtRiskStudents(

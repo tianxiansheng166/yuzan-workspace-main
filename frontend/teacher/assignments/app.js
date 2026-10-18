@@ -10,6 +10,10 @@
   let courseVersions = [];
   let assignments = [];
   let schoolId = '';
+  let assignmentStats = new Map();
+  let dashboardData = null;
+  let dashboardError = null;
+  let attentionFilter = '';
 
   const statusMap = {
     DRAFT: { label: '已保存草稿', cls: 'gold' },
@@ -56,12 +60,9 @@
   }
 
   function submissionDisplay(assignment) {
-    const classTarget = assignment.targets?.find((t) => t.targetType === 'CLASS');
-    const studentTarget = assignment.targets?.find((t) => t.targetType === 'STUDENT');
-    const total = classTarget
-      ? (getClassById(classTarget.classId)?.studentCount || 0)
-      : (studentTarget ? 1 : 0);
-    return `— / ${total || '—'} 已提交`;
+    const stats = assignmentStats.get(assignment.id);
+    if (!stats || stats.error) return '提交统计暂不可用';
+    return `${stats.submittedCount} / ${stats.totalStudents} 人已提交`;
   }
 
   function statusDisplay(status) {
@@ -102,7 +103,63 @@
   async function loadAssignments() {
     const data = await YuzanApi.request(`/schools/${schoolId}/assignments?limit=100`, { method: 'GET' });
     assignments = Array.isArray(data) ? data : (data.items || []);
+    const [statsResults, dashboardResult] = await Promise.all([
+      Promise.all(assignments.map(async (assignment) => {
+        try {
+          return [assignment.id, await YuzanApi.getAssignmentStats(assignment.id)];
+        } catch (error) {
+          return [assignment.id, { error }];
+        }
+      })),
+      YuzanApi.getDashboard().then((value) => ({ value }), (error) => ({ error })),
+    ]);
+    assignmentStats = new Map(statsResults);
+    dashboardData = dashboardResult.value || null;
+    dashboardError = dashboardResult.error || null;
     renderTable();
+    renderAttention();
+    revealRequestedAssignment();
+  }
+
+  function revealRequestedAssignment() {
+    const requestedId = new URLSearchParams(location.search).get('assignmentId');
+    if (!requestedId) return;
+    const row = [...table.querySelectorAll('.row[data-id]')].find(item => item.dataset.id === requestedId);
+    if (!row) return;
+    row.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    row.click();
+  }
+
+  function renderAttention() {
+    const openTasks = assignments.filter((assignment) => assignment.status === 'OPEN');
+    const statFailures = assignments.some((assignment) => assignmentStats.get(assignment.id)?.error);
+    const missingTargetCount = statFailures
+      ? null
+      : openTasks.reduce((sum, assignment) => sum + (assignmentStats.get(assignment.id)?.notSubmittedCount ?? 0), 0);
+    const pendingReviewCount = dashboardData?.workflow?.find((item) => item.id === 'review')?.count;
+    document.getElementById('attentionOpenCount').textContent = String(openTasks.length);
+    document.getElementById('attentionMissingCount').textContent = missingTargetCount == null ? '—' : String(missingTargetCount);
+    document.getElementById('attentionReviewCount').textContent = Number.isFinite(pendingReviewCount) ? String(pendingReviewCount) : '—';
+
+    const missingRows = openTasks
+      .filter((assignment) => (assignmentStats.get(assignment.id)?.notSubmittedCount ?? 0) > 0)
+      .slice(0, 3)
+      .map((assignment) => {
+        const count = assignmentStats.get(assignment.id).notSubmittedCount;
+        return `<li data-kind="missing"><i>!</i><div><h3>${escape(assignment.title)}</h3><p>${count} 个任务目标尚未提交。</p><a data-nav href="/teacher/assignments?assignmentId=${encodeURIComponent(assignment.id)}">查看任务　›</a></div></li>`;
+      });
+    const reviewRows = (dashboardData?.reviews || []).slice(0, 3).map((review) =>
+      `<li data-kind="review"><i>✓</i><div><h3>${escape(review.studentName || '学生')} · ${escape(review.taskTitle || '待复核')}</h3><p>${escape(formatDateTime(review.submittedAt))} 提交。</p><a data-nav href="/teacher/submissions/${encodeURIComponent(review.submissionId)}">查看提交　›</a></div></li>`,
+    );
+    const list = document.getElementById('attentionList');
+    const rows = [...missingRows, ...reviewRows];
+    if (rows.length) {
+      list.innerHTML = rows.join('');
+    } else if (dashboardError) {
+      list.innerHTML = `<li><i>!</i><div><h3>复核统计暂不可用</h3><p>${escape(dashboardError.message || '检查网络或权限后重新加载。')}</p><a data-nav href="/teacher/reviews/">打开复核队列　›</a></div></li>`;
+    } else {
+      list.innerHTML = '<li><i>✓</i><div><h3>当前没有待跟进项</h3><p>统计来自当前教师授权任务和复核提交。</p></div></li>';
+    }
   }
 
   function populateClassSelect() {
@@ -142,6 +199,18 @@
     }
 
     applyFilters();
+  }
+
+  function renderLoadError(error) {
+    const thead = table.querySelector('.thead');
+    const pager = table.querySelector('.pager');
+    table.innerHTML = '';
+    if (thead) table.appendChild(thead);
+    const row = document.createElement('div');
+    row.className = 'row empty-row';
+    row.innerHTML = `<span style="grid-column:1 / -1;text-align:center;color:#a02b24;padding:24px 0;">${escape(error?.message || '任务数据加载失败')}。请重新加载。</span>`;
+    table.appendChild(row);
+    if (pager) table.appendChild(pager);
   }
 
   function bindRow(row, assignment) {
@@ -221,6 +290,9 @@
       if (visible && classText !== '全部班级' && row.dataset.class !== classText) {
         visible = false;
       }
+      if (visible && attentionFilter === 'open' && row.dataset.status !== 'OPEN') visible = false;
+      if (visible && attentionFilter === 'missing' && (assignmentStats.get(row.dataset.id)?.notSubmittedCount ?? 0) <= 0) visible = false;
+      if (visible && attentionFilter === 'review' && (assignmentStats.get(row.dataset.id)?.needsReviewCount ?? 0) <= 0) visible = false;
       row.hidden = !visible;
     });
   }
@@ -232,8 +304,16 @@
       await loadAssignments();
     } catch (err) {
       YuzanDemo.toast(err.message || '加载教学任务失败', 'error');
+      renderLoadError(err);
     }
   }
+
+  document.getElementById('reloadAssignments').addEventListener('click', async (event) => {
+    const button = event.currentTarget;
+    button.disabled = true;
+    try { await init(); }
+    finally { button.disabled = false; }
+  });
 
   document.querySelector('.new').addEventListener('click', () => {
     if (classes.length === 0) {
@@ -328,12 +408,14 @@
     });
   });
 
-  // 关注卡片摘要按钮（未完成/等待同步/待反馈）- 保留高亮切换 + 弹出 UNSUPPORTED 提示
-  document.querySelectorAll('.attention-card [data-kind]').forEach((el) => {
+  // 关注摘要按 API 统计筛选真实任务行。
+  document.querySelectorAll('.attention-card .attention-summary [data-kind]').forEach((el) => {
     el.addEventListener('click', () => {
-      document.querySelectorAll('.attention-card [data-kind]').forEach((x) => {
+      attentionFilter = attentionFilter === el.dataset.kind ? '' : el.dataset.kind;
+      document.querySelectorAll('.attention-card .attention-summary [data-kind]').forEach((x) => {
         x.classList.toggle('highlight', x.dataset.kind === el.dataset.kind);
       });
+      applyFilters();
     });
   });
 
@@ -349,6 +431,5 @@
     });
   });
 
-  document.querySelector('#reloadAssignments').addEventListener('click', init);
   init();
 })();

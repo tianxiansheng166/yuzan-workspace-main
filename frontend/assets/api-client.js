@@ -573,6 +573,9 @@
     const qs = params.toString();
     return request(`/schools/${getActiveSchoolId()}/assignments${qs ? '?' + qs : ''}`);
   }
+  async function getAssignmentStats(assignmentId) {
+    return request(`/schools/${getActiveSchoolId()}/assignments/${encodeURIComponent(assignmentId)}/stats`);
+  }
 
   /* ── Teacher Tools ── */
   async function getTeacherToolsState() {
@@ -882,6 +885,9 @@
     if (options.limit) params.set('limit', String(options.limit));
     const qs = params.toString();
     return request(`/schools/${getActiveSchoolId()}/classes${qs ? '?' + qs : ''}`);
+  }
+  async function getClassStudentSummaries(classId) {
+    return request(`/schools/${getActiveSchoolId()}/classes/${encodeURIComponent(classId)}/student-summaries`);
   }
   async function createClassAssessment(classId, payload) {
     return request(`/schools/${getActiveSchoolId()}/classes/${classId}/assessments`, {
@@ -1298,6 +1304,7 @@
     /* Assignments */
     createAssignment,
     listAssignments,
+    getAssignmentStats,
     /* Teacher Tools */
     getTeacherToolsState,
     generatePlan,
@@ -1352,6 +1359,7 @@
     getLearningProgress,
     /* Classes */
     listClasses,
+    getClassStudentSummaries,
     createClassAssessment,
     /* Assessment Sessions */
     listAssessmentSessions,

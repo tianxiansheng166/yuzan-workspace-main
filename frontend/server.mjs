@@ -103,17 +103,16 @@ function routeToSpa(pathname) {
     if (pathname.startsWith('/teacher/courses/')) return join(root, 'teacher', 'courses', 'spring', 'studio', 'index.html');
     if (pathname.startsWith('/teacher/assignments')) return join(root, 'teacher', 'assignments', 'index.html');
     if (pathname === '/teacher/reviews' || pathname === '/teacher/reviews/') return join(root, 'teacher', 'reviews', 'index.html');
-    if (pathname === '/teacher/reviews/submission-1') return join(root, 'teacher', 'reviews', 'submission-1', 'index.html');
     if (pathname.startsWith('/teacher/reviews/')) return join(root, 'teacher', 'reviews', 'detail', 'index.html');
     if (pathname === '/teacher/diagnostics' || pathname === '/teacher/diagnostics/') return join(root, 'teacher', 'diagnostics', 'index.html');
     if (pathname.startsWith('/teacher/assessments/create')) return join(root, 'teacher', 'assessments', 'create', 'index.html');
     if (pathname.startsWith('/teacher/assessments/detail')) return join(root, 'teacher', 'assessments', 'detail', 'index.html');
     if (pathname.startsWith('/teacher/assessments/tasks')) return join(root, 'teacher', 'assessments', 'tasks', 'index.html');
     if (pathname.startsWith('/teacher/assessments')) return join(root, 'teacher', 'assessments', 'tasks', 'index.html');
-    if (pathname.startsWith('/teacher/classes/detail')) return join(root, 'teacher', 'classes', 'detail', 'index.html');
+    if (pathname === '/teacher/classes' || pathname === '/teacher/classes/') return join(root, 'teacher', 'classes', 'index.html');
+    if (/^\/teacher\/classes\/[^/]+\/?$/.test(pathname)) return join(root, 'teacher', 'classes', 'detail', 'index.html');
     if (pathname.startsWith('/teacher/classes')) return join(root, 'teacher', 'classes', 'index.html');
-    if (pathname.startsWith('/teacher/students/detail')) return join(root, 'teacher', 'students', 'detail', 'index.html');
-    if (pathname.startsWith('/teacher/students')) return join(root, 'teacher', 'students', 'demo', 'index.html');
+    if (pathname.startsWith('/teacher/submissions/')) return join(root, 'teacher', 'submissions', 'detail', 'index.html');
     if (pathname.startsWith('/teacher/ai-tools')) return join(root, 'teacher', 'ai-tools', 'index.html');
     if (pathname.startsWith('/teacher/translation')) return join(root, 'teacher', 'translation', 'index.html');
     return join(root, 'teacher-home', 'index.html');
@@ -215,6 +214,37 @@ const server = createServer((req, res) => {
 
   if (pathname.startsWith('/api/')) {
     proxyToApi(req, res);
+    return;
+  }
+
+  if (pathname === '/teacher.html') {
+    res.writeHead(308, { Location: '/teacher' });
+    res.end();
+    return;
+  }
+  if (pathname === '/teacher/review' || pathname === '/teacher/review/') {
+    res.writeHead(308, { Location: '/teacher/reviews/' });
+    res.end();
+    return;
+  }
+  if (pathname === '/teacher/classes/detail' || pathname === '/teacher/classes/detail/' || pathname === '/teacher/classes/detail/index.html') {
+    res.writeHead(308, { Location: '/teacher/classes' });
+    res.end();
+    return;
+  }
+
+  if (pathname === '/teacher/reviews/submission-1' || pathname === '/teacher/reviews/submission-1/' || pathname === '/teacher/reviews/submission-1/index.html') {
+    res.writeHead(308, { Location: '/teacher/reviews/' });
+    res.end();
+    return;
+  }
+  if (
+    pathname === '/teacher/students'
+    || pathname === '/teacher/students/'
+    || (pathname.startsWith('/teacher/students/') && (!extname(pathname) || pathname.endsWith('/index.html')))
+  ) {
+    res.writeHead(308, { Location: '/teacher/classes' });
+    res.end();
     return;
   }
 

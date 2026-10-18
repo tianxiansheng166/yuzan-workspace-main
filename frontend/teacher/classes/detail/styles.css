@@ -150,3 +150,4 @@ svg{fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-l
 }
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
 .stage-card{transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease}.stage-card:hover,.stage-card.selected{transform:translateY(-3px);border-color:#d9a38c;box-shadow:0 8px 18px rgba(80,45,20,.12)}button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #236f88;outline-offset:2px}
+.roster-row.selected-student{outline:2px solid #1d704c;outline-offset:-2px;background:#edf5ec}

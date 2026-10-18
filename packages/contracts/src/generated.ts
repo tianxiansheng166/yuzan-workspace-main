@@ -279,6 +279,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/schools/{schoolId}/assignments/{assignmentId}/stats": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 获取任务目标学生的真实提交与复核统计 */
+    get: operations["getAssignmentStats"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/schools/{schoolId}/assignments/{assignmentId}/schedule": {
     parameters: {
       query?: never;
@@ -818,6 +835,23 @@ export interface paths {
     };
     /** 获取当前学生的题库学习进步（正式趋势与专项巩固分开） */
     get: operations["getQuestionBankProgress"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/teacher/dashboard": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 获取当前教师授权范围内的工作台数据 */
+    get: operations["getTeacherDashboard"];
     put?: never;
     post?: never;
     delete?: never;
@@ -2278,6 +2312,20 @@ export interface components {
       target: components["schemas"]["StudentTodayTarget"];
     };
     StudentTodayWaiting: {
+    AssignmentStatsResponse: {
+      data: components["schemas"]["AssignmentStats"];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    AssignmentStats: {
+      /** Format: uuid */
+      assignmentId: string;
+      totalStudents: number;
+      submittedCount: number;
+      notSubmittedCount: number;
+      reviewedCount: number;
+      needsReviewCount: number;
+      submissionRate: number;
+    };
       kind: string;
       title: string;
       reason: string;
@@ -2432,6 +2480,10 @@ export interface components {
       entityType: "progress" | "submission" | "feedback";
       entityId: string;
       /** @enum {string} */
+      /** @description 教师有权查看时返回的真实任务标题 */
+      assignmentTitle?: string;
+      /** @description 教师有权查看时返回的真实学生姓名 */
+      studentName?: string;
       action: "upsert" | "delete";
       baseRevision?: number | null;
       payload: components["schemas"]["SyncPayload"];
@@ -3055,6 +3107,67 @@ export interface components {
       versionMixed: boolean;
     };
     TeacherDiagnosticDomain: {
+    TeacherDashboardResponse: {
+      data: components["schemas"]["TeacherDashboard"];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    TeacherDashboard: {
+      greeting: components["schemas"]["TeacherDashboardGreeting"];
+      priority: components["schemas"]["TeacherDashboardPriority"] | null;
+      workflow: components["schemas"]["TeacherDashboardWorkflowItem"][];
+      courses: components["schemas"]["TeacherDashboardCourse"][];
+      tasks: components["schemas"]["TeacherDashboardTask"][];
+      reviews: components["schemas"]["TeacherDashboardReview"][];
+    };
+    TeacherDashboardGreeting: {
+      name: string;
+      date: string;
+      schoolName: string;
+      priorityCount: number;
+    };
+    TeacherDashboardPriority: {
+      /** Format: uuid */
+      assignmentId: string;
+      title: string;
+      /** Format: date-time */
+      dueAt: string;
+      detail: string;
+      count: number;
+    };
+    TeacherDashboardWorkflowItem: {
+      id: string;
+      tone: string;
+      icon: string;
+      count: number;
+      title: string;
+      subtitle: string;
+    };
+    TeacherDashboardCourse: {
+      /** Format: uuid */
+      id: string;
+      title: string;
+      tags: string[];
+      /** Format: date-time */
+      updatedAt: string;
+    };
+    TeacherDashboardTask: {
+      /** Format: uuid */
+      id: string;
+      title: string;
+      /** Format: date-time */
+      dueAt: string;
+      done: number;
+      total: number;
+      tone: string;
+    };
+    TeacherDashboardReview: {
+      /** Format: uuid */
+      submissionId: string;
+      studentName: string;
+      taskTitle: string;
+      /** Format: date-time */
+      submittedAt: string;
+    };
       /** @enum {string} */
       domain: "LISTEN" | "SPEAK" | "READ" | "WRITE";
       displayName: string;
@@ -4582,6 +4695,33 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
+  getAssignmentStats: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 任务 ID */
+        assignmentId: components["parameters"]["AssignmentId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 本人授权任务的目标人数、提交、未提交和待复核统计 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AssignmentStatsResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
           "application/json": components["schemas"]["StudentTodayDecisionResponse"];
         };
       };
@@ -5715,6 +5855,30 @@ export interface operations {
       header?: never;
       path: {
         /** @description 学校（租户）标识 */
+  getTeacherDashboard: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 当前账号学校身份、本人课程、授权班级任务与待复核提交 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["TeacherDashboardResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+    };
+  };
         schoolId: components["parameters"]["SchoolId"];
         /** @description 测评会话 ID */
         sessionId: components["parameters"]["SessionId"];

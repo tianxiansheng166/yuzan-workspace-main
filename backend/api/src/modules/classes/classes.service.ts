@@ -124,17 +124,7 @@ export class ClassesService {
       throw new ClassForbiddenException();
     }
 
-    const classItem = await this.classRepo.findVisibleClassById({
-      schoolId,
-      classId,
-      actor: {
-        userId: auth.principal.userId,
-        roles: auth.principal.roles,
-      },
-    });
-    if (!classItem) {
-      throw new ClassNotFoundException();
-    }
+    await this.requireClassAccess(auth, schoolId, classId);
 
     const members = await this.classRepo.listMembers(schoolId, classId);
     return members.map(toClassMemberResponse);
@@ -410,10 +400,7 @@ export class ClassesService {
       throw new ClassForbiddenException();
     }
 
-    const existing = await this.classRepo.findById(schoolId, classId);
-    if (!existing) {
-      throw new ClassNotFoundException();
-    }
+    await this.requireClassAccess(auth, schoolId, classId);
 
     const enrollments = await this.classRepo.listEnrollmentsByClass(
       schoolId,
@@ -428,10 +415,7 @@ export class ClassesService {
     }
 
     // Verify class exists and user has access
-    const classItem = await this.classRepo.findById(schoolId, classId);
-    if (!classItem) {
-      throw new ClassNotFoundException();
-    }
+    const classItem = await this.requireClassAccess(auth, schoolId, classId);
 
     // Parallel data aggregation
     const [
@@ -637,10 +621,7 @@ export class ClassesService {
     }
 
     // Verify class exists
-    const classItem = await this.classRepo.findById(schoolId, classId);
-    if (!classItem) {
-      throw new ClassNotFoundException();
-    }
+    await this.requireClassAccess(auth, schoolId, classId);
 
     // Parallel queries for 4 stats
     const [
@@ -730,10 +711,7 @@ export class ClassesService {
     }
 
     // Verify class exists
-    const classItem = await this.classRepo.findById(schoolId, classId);
-    if (!classItem) {
-      throw new ClassNotFoundException();
-    }
+    const classItem = await this.requireClassAccess(auth, schoolId, classId);
 
     // Parallel data aggregation for export
     const [enrollments, classDetail, recentSubmissions] = await Promise.all([
@@ -1100,8 +1078,7 @@ export class ClassesService {
       throw new ClassForbiddenException();
     }
 
-    const classItem = await this.classRepo.findById(schoolId, classId);
-    if (!classItem) throw new ClassNotFoundException();
+    const classItem = await this.requireClassAccess(auth, schoolId, classId);
 
     const [
       enrollments,
@@ -1270,8 +1247,7 @@ export class ClassesService {
 
   async getStudentSummaries(auth: AuthContext, schoolId: string, classId: string): Promise<readonly StudentSummary[]> {
     if (!this.policy.canReadClassMembers(auth, schoolId)) throw new ClassForbiddenException();
-    const classItem = await this.classRepo.findById(schoolId, classId);
-    if (!classItem) throw new ClassNotFoundException();
+    await this.requireClassAccess(auth, schoolId, classId);
 
     const enrollments = await this.prisma.enrollment.findMany({
       where: { schoolId, classId, status: "ACTIVE", role: "STUDENT" },
@@ -1414,8 +1390,7 @@ export class ClassesService {
 
   async getAssignmentSummaries(auth: AuthContext, schoolId: string, classId: string): Promise<readonly AssignmentSummary[]> {
     if (!this.policy.canReadClassMembers(auth, schoolId)) throw new ClassForbiddenException();
-    const classItem = await this.classRepo.findById(schoolId, classId);
-    if (!classItem) throw new ClassNotFoundException();
+    await this.requireClassAccess(auth, schoolId, classId);
 
     const assignments = await this.prisma.assignment.findMany({
       where: { schoolId, targets: { some: { classId } }, deletedAt: null },
@@ -1467,8 +1442,7 @@ export class ClassesService {
 
   async getAssessmentSummaries(auth: AuthContext, schoolId: string, classId: string): Promise<readonly AssessmentSummary[]> {
     if (!this.policy.canReadClassMembers(auth, schoolId)) throw new ClassForbiddenException();
-    const classItem = await this.classRepo.findById(schoolId, classId);
-    if (!classItem) throw new ClassNotFoundException();
+    await this.requireClassAccess(auth, schoolId, classId);
 
     const sessions = await this.prisma.assessmentSession.findMany({
       where: { schoolId, classId },
@@ -1525,5 +1499,13 @@ export class ClassesService {
         createdAt: latestSession?.createdAt?.toISOString() ?? new Date().toISOString(),
       };
     });
+  }
+
+  private async requireClassAccess(auth: AuthContext, schoolId: string, classId: string) {
+    const classItem = await this.classRepo.findById(schoolId, classId);
+    if (!classItem || !this.policy.canAccessClassAsTeacher(auth, schoolId, classItem)) {
+      throw new ClassNotFoundException();
+    }
+    return classItem;
   }
 }

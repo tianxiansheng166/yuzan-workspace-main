@@ -16,7 +16,7 @@
       { id: 'review', label: '复核', route: '/teacher/reviews/', icon: '<svg viewBox="0 0 24 24"><path d="M4 5h16v14H4zM7 15l3-3 2 2 3-4 2 3"/></svg>' },
       { id: 'diagnostics', label: '学情诊断', route: '/teacher/diagnostics/', icon: '<svg viewBox="0 0 24 24"><path d="M4 19V9m5 10V5m5 14v-7m5 7V3"/><path d="M3 20h18"/></svg>' },
       { id: 'classes', label: '班级', route: '/teacher/classes', icon: '<svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="3"/><path d="M5 21v-3a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v3"/></svg>' },
-      { id: 'student', label: '学生', route: '/teacher/students/demo', icon: '<svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="3"/><path d="M5 21v-3a7 7 0 0 1 14 0v3"/></svg>' },
+      { id: 'student', label: '学生', route: '/teacher/classes', icon: '<svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="3"/><path d="M5 21v-3a7 7 0 0 1 14 0v3"/></svg>' },
       { id: 'ai-tools', label: 'AI 工具', route: '/teacher/ai-tools', icon: '<svg viewBox="0 0 24 24"><path d="M12 2v3M12 19v3M4.9 4.9 7 7M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1 7 17M17 7l2.1-2.1M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"/></svg>' },
       { id: 'translation', label: '翻译台', route: '/teacher/translation', icon: '<svg viewBox="0 0 24 24"><path d="M4 6h16v12H4zM7 8l3 4-3 4M12 8h5M12 12h4M12 16h3"/></svg>' }
     ];
@@ -70,14 +70,11 @@
       <div class="ts-main">
         <header class="ts-topbar">
           <div class="ts-context">
-            <button class="ts-context-btn" id="ts-school-select"><svg viewBox="0 0 24 24"><path d="M3 10 12 3l9 7M5 9v11h14V9M9 20v-6h6v6"/></svg><span>林芝市第一中学</span><b>⌄</b></button>
-            <button class="ts-context-btn" id="ts-semester-select"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M8 9h8M8 13h5M7 3v4M17 3v4"/></svg><span>2024-2025 学年下学期</span><b>⌄</b></button>
-            <span class="ts-sync-pill"><i></i>已同步 2 分钟前</span>
+            <button class="ts-context-btn" id="ts-school-select" type="button"><svg viewBox="0 0 24 24"><path d="M3 10 12 3l9 7M5 9v11h14V9M9 20v-6h6v6"/></svg><span id="ts-school-name">当前学校</span><b>切换</b></button>
+            <span class="ts-sync-pill" id="ts-identity-status"><i></i>身份来自当前登录</span>
           </div>
           <div class="ts-top-actions">
-            <button class="ts-icon-btn" id="ts-notifications" aria-label="通知"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 7h18s-3 0-3-7M10 20h4"/></svg><span class="ts-badge">3</span></button>
-            <button class="ts-help-btn" id="ts-help"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.8 9a2.4 2.4 0 1 1 3 2.3c-.8.3-.8.9-.8 1.7M12 17h.01"/></svg>帮助</button>
-            <button class="ts-profile-btn" id="ts-profile"><span class="ts-seal">师</span><span><strong>扎西卓玛</strong><small>普通话教师</small></span><b>⌄</b></button>
+            <div class="ts-profile-btn" id="ts-profile"><span class="ts-seal">师</span><span><strong id="ts-profile-name">教师</strong><small id="ts-profile-role">当前账号</small></span></div>
           </div>
         </header>
         <div id="ts-page-root"></div>
@@ -187,6 +184,18 @@
       });
       document.body.appendChild(shell);
     }
+
+    const activeSchoolId = window.YuzanApi?.getActiveSchoolId?.() || '';
+    const currentUser = window.YuzanApi?.getStoredUser?.();
+    const activeMembership = (currentUser?.memberships || []).find((item) => item?.schoolId === activeSchoolId);
+    const roleLabels = { TEACHER: '教师', SCHOOL_ADMIN: '学校管理员', VOLUNTEER: '志愿者', STUDENT: '学生' };
+    shell.querySelector('#ts-school-name').textContent = activeMembership?.schoolName || '当前学校';
+    shell.querySelector('#ts-profile-name').textContent = currentUser?.displayName || '教师';
+    shell.querySelector('#ts-profile-role').textContent = roleLabels[activeMembership?.role] || '当前账号';
+    shell.querySelector('#ts-school-select')?.addEventListener('click', () => {
+      sessionStorage.setItem('yuzan-select-school-from', location.pathname);
+      location.href = '/select-school';
+    });
 
     // 为统一导航链接绑定点击反馈：同域内链正常跳转，不拦截，保证浏览器原生行为
     shell.querySelectorAll('a[data-ts-route]').forEach(a => {
