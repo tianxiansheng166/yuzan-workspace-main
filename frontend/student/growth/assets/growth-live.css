@@ -146,6 +146,10 @@ body.growth-body { min-width: 320px; }
 .growth-retry-focus b { color: #7b693f; font-size: 9px; }
 .growth-retry-focus ul { display: flex; flex-wrap: wrap; gap: 5px; margin: 6px 0 0; padding: 0; list-style: none; }
 .growth-retry-focus li { padding: 3px 6px; border-radius: 5px; color: #786b4f; background: #fff; font-size: 9px; }
+.growth-report-feedback { margin-top: 9px; padding: 8px 10px; border-left: 2px solid #78927b; background: #f2f6f1; }
+.growth-report-feedback b { color: #49634e; font-size: 9px; }
+.growth-report-feedback ul { display: grid; gap: 5px; margin: 6px 0 0; padding-left: 16px; color: #58665e; font-size: 10px; line-height: 1.65; }
+.growth-report-feedback li { white-space: pre-wrap; overflow-wrap: anywhere; }
 .growth-not-generated { display: flex; align-items: center; gap: 10px; margin-top: 9px; padding: 11px; border-radius: 10px; color: #826a3d; background: #faf6ec; }
 .growth-not-generated > span { display: grid; width: 28px; height: 28px; flex: 0 0 auto; place-items: center; border-radius: 50%; background: #fff; }
 .growth-not-generated svg { width: 15px; height: 15px; }

@@ -290,8 +290,14 @@
     const cards = official.map(({ session, report }) => {
       const retryCandidates = Array.isArray(report.diagnosis?.retryCandidates) ? report.diagnosis.retryCandidates : [];
       const candidateRows = retryCandidates.slice(0, 5).map((candidate) => `<li>${safe(candidate.displayName || candidate.family || "待巩固题目")}</li>`).join("");
+      const teacherComments = Array.isArray(report.teacherFeedback)
+        ? report.teacherFeedback
+          .filter((entry) => entry && typeof entry.comment === "string" && entry.comment.trim())
+          .map((entry) => `<li>${safe(entry.comment)}</li>`)
+          .join("")
+        : "";
       const reportPath = `/assessment/sessions/${encodeURIComponent(session.sessionId)}/report/`;
-      return `<article class="growth-report-row"><span class="growth-report-icon">${icon("report")}</span><div class="growth-report-copy"><div class="growth-report-title"><strong>${safe(session.type === "READING" ? "朗读测评" : session.type === "WRITTEN" ? "书面测评" : "综合测评")}</strong><span>${safe(reportSummary(report))}</span></div><p>报告生成于 ${safe(formatDate(report.generatedAt, true))}</p>${candidateRows ? `<div class="growth-retry-focus"><b>报告中标记的待巩固题目</b><ul>${candidateRows}</ul></div>` : ""}</div><a class="growth-inline-link" href="${safe(reportPath)}">查看正式报告 ${icon("trend")}</a></article>`;
+      return `<article class="growth-report-row"><span class="growth-report-icon">${icon("report")}</span><div class="growth-report-copy"><div class="growth-report-title"><strong>${safe(session.type === "READING" ? "朗读测评" : session.type === "WRITTEN" ? "书面测评" : "综合测评")}</strong><span>${safe(reportSummary(report))}</span></div><p>报告生成于 ${safe(formatDate(report.generatedAt, true))}</p>${candidateRows ? `<div class="growth-retry-focus"><b>报告中标记的待巩固题目</b><ul>${candidateRows}</ul></div>` : ""}${teacherComments ? `<div class="growth-report-feedback"><b>教师评语</b><ul>${teacherComments}</ul></div>` : ""}</div><a class="growth-inline-link" href="${safe(reportPath)}">查看正式报告 ${icon("trend")}</a></article>`;
     }).join("");
     const missing = notGenerated.length
       ? `<div class="growth-not-generated"><span>${icon("clock")}</span><p><b>${notGenerated.length} 条已完成记录尚未生成正式报告</b><br>这些记录不会显示成绩。</p></div>`

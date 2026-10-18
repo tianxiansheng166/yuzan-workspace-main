@@ -173,6 +173,35 @@ test("a report awaiting teacher review never exposes its provisional score", asy
   assert.doesNotMatch(view.app.innerHTML, /88 分|speech-needs-review/);
 });
 
+test("an official report shows only safe teacher comments on Growth", async () => {
+  const view = mount();
+  view.current.history.sessions = [{
+    sessionId: "reviewed-report",
+    type: "MIXED",
+    purpose: "STANDARD",
+    completedAt: "2026-10-12T09:00:00.000Z",
+    metrics: { overall: 72 },
+    remediation: null,
+  }];
+  view.current.reports.set("reviewed-report", {
+    sessionId: "reviewed-report",
+    overallScore: 72,
+    dataCompleteness: 100,
+    generatedAt: "2026-10-12T09:00:00.000Z",
+    teacherFeedback: [{
+      comment: "朗读清楚，继续保持自然停顿。",
+      reviewedAt: "2026-10-12T08:55:00.000Z",
+      reviewerUserId: "private-reviewer-id",
+      scoringSpec: { answerKey: "private-answer" },
+    }],
+  });
+  await flush();
+  assert.match(view.app.innerHTML, /72 分/);
+  assert.match(view.app.innerHTML, /教师评语/);
+  assert.match(view.app.innerHTML, /朗读清楚，继续保持自然停顿。/);
+  assert.doesNotMatch(view.app.innerHTML, /private-reviewer-id|scoringSpec|private-answer/);
+});
+
 test("active Attempt shows saved item progress and a dynamic continuation link", async () => {
   const view = mount();
   view.current.sessions.items = [

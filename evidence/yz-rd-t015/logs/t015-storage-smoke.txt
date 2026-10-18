@@ -1,0 +1,2 @@
+MinIO S3 PASS: bucket=yz-t015-native; upload/read-back/signed-GET=38 bytes
+Test suite storage: PASS

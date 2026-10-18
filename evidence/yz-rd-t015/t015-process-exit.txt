@@ -1,0 +1,6 @@
+SERVICE  PID     PORT / HEALTH
+postgres -       stopped [NOT_OWNED]
+api      -       stopped [NOT_OWNED]
+web      -       stopped [NOT_OWNED]
+API dependency readiness: HTTP unreachable
+T015 port exit PASS; all task-owned ports are free: [55638, 6438, 59202, 59203, 4095, 4295]

@@ -1,0 +1,204 @@
+{
+  "identity": {
+    "database": "yuzan_t015_native",
+    "role": "yz_t015",
+    "version": "PostgreSQL 17.11 (Ubuntu 17.11-1.pgdg22.04+2) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0, 64-bit"
+  },
+  "attempts": [
+    {
+      "id": "68d703f6-6826-4bf1-8137-1e7a2f76a61b",
+      "status": "PROCESSING",
+      "item_count": 20,
+      "written_scored": 14,
+      "speech_scored": 0,
+      "recordings": 4,
+      "speech_jobs": 4,
+      "reports": 0
+    },
+    {
+      "id": "7e3697ae-4716-43f9-adde-f8f2c3be9bcc",
+      "status": "PROCESSING",
+      "item_count": 20,
+      "written_scored": 0,
+      "speech_scored": 0,
+      "recordings": 0,
+      "speech_jobs": 0,
+      "reports": 0
+    },
+    {
+      "id": "9b2f6183-d1b9-438c-93a4-c77ad6b3aa31",
+      "status": "COMPLETED",
+      "item_count": 20,
+      "written_scored": 16,
+      "speech_scored": 4,
+      "recordings": 4,
+      "speech_jobs": 4,
+      "reports": 1
+    },
+    {
+      "id": "b082376f-beb6-4d8f-8baf-60d8f27d6dee",
+      "status": "IN_PROGRESS",
+      "item_count": 20,
+      "written_scored": 0,
+      "speech_scored": 0,
+      "recordings": 0,
+      "speech_jobs": 0,
+      "reports": 0
+    },
+    {
+      "id": "cc93310f-e64c-4f2a-97b0-e7870a158913",
+      "status": "PROCESSING",
+      "item_count": 20,
+      "written_scored": 14,
+      "speech_scored": 0,
+      "recordings": 4,
+      "speech_jobs": 4,
+      "reports": 0
+    }
+  ],
+  "reports": [
+    {
+      "report_id": "206332de-a173-443f-b10b-d79304d433b1",
+      "sessionId": "9b2f6183-d1b9-438c-93a4-c77ad6b3aa31",
+      "overallScore": 55,
+      "dataCompleteness": 100,
+      "attempt_status": "COMPLETED",
+      "reviewed_items": 6,
+      "commented_items": 6
+    }
+  ],
+  "recordings": [
+    {
+      "attemptId": "68d703f6-6826-4bf1-8137-1e7a2f76a61b",
+      "recordingId": "41655c95-d3ba-4f1f-8a44-59849a27c721",
+      "objectKey": "recordings/41655c95-d3ba-4f1f-8a44-59849a27c721/full",
+      "status": "COMPLETE",
+      "mimeType": "audio/webm;codecs=opus",
+      "speechJobs": 1,
+      "minioBytes": 22514,
+      "minioContentType": "audio/webm;codecs=opus",
+      "exists": true
+    },
+    {
+      "attemptId": "68d703f6-6826-4bf1-8137-1e7a2f76a61b",
+      "recordingId": "8be18b89-be5c-4b37-ad4c-52e68782ac95",
+      "objectKey": "recordings/8be18b89-be5c-4b37-ad4c-52e68782ac95/full",
+      "status": "COMPLETE",
+      "mimeType": "audio/webm;codecs=opus",
+      "speechJobs": 1,
+      "minioBytes": 22514,
+      "minioContentType": "audio/webm;codecs=opus",
+      "exists": true
+    },
+    {
+      "attemptId": "68d703f6-6826-4bf1-8137-1e7a2f76a61b",
+      "recordingId": "bae9ec1f-1ca9-4f00-b0c3-9b09fb38fd93",
+      "objectKey": "recordings/bae9ec1f-1ca9-4f00-b0c3-9b09fb38fd93/full",
+      "status": "COMPLETE",
+      "mimeType": "audio/webm;codecs=opus",
+      "speechJobs": 1,
+      "minioBytes": 22514,
+      "minioContentType": "audio/webm;codecs=opus",
+      "exists": true
+    },
+    {
+      "attemptId": "68d703f6-6826-4bf1-8137-1e7a2f76a61b",
+      "recordingId": "f418f916-0ed6-427e-b47e-4db56f623431",
+      "objectKey": "recordings/f418f916-0ed6-427e-b47e-4db56f623431/full",
+      "status": "COMPLETE",
+      "mimeType": "audio/webm;codecs=opus",
+      "speechJobs": 1,
+      "minioBytes": 22514,
+      "minioContentType": "audio/webm;codecs=opus",
+      "exists": true
+    },
+    {
+      "attemptId": "9b2f6183-d1b9-438c-93a4-c77ad6b3aa31",
+      "recordingId": "3add017a-0704-4e13-8a94-852f0fed9af4",
+      "objectKey": "recordings/3add017a-0704-4e13-8a94-852f0fed9af4/full",
+      "status": "COMPLETE",
+      "mimeType": "audio/webm;codecs=opus",
+      "speechJobs": 1,
+      "minioBytes": 22514,
+      "minioContentType": "audio/webm;codecs=opus",
+      "exists": true
+    },
+    {
+      "attemptId": "9b2f6183-d1b9-438c-93a4-c77ad6b3aa31",
+      "recordingId": "891262c6-9d64-47de-be98-f75617a19603",
+      "objectKey": "recordings/891262c6-9d64-47de-be98-f75617a19603/full",
+      "status": "COMPLETE",
+      "mimeType": "audio/webm;codecs=opus",
+      "speechJobs": 1,
+      "minioBytes": 22514,
+      "minioContentType": "audio/webm;codecs=opus",
+      "exists": true
+    },
+    {
+      "attemptId": "9b2f6183-d1b9-438c-93a4-c77ad6b3aa31",
+      "recordingId": "8cc6d395-ed72-486f-a658-dff3f4f84b18",
+      "objectKey": "recordings/8cc6d395-ed72-486f-a658-dff3f4f84b18/full",
+      "status": "COMPLETE",
+      "mimeType": "audio/webm;codecs=opus",
+      "speechJobs": 1,
+      "minioBytes": 22514,
+      "minioContentType": "audio/webm;codecs=opus",
+      "exists": true
+    },
+    {
+      "attemptId": "9b2f6183-d1b9-438c-93a4-c77ad6b3aa31",
+      "recordingId": "e2dfecc9-843c-44d1-8900-dc68c707e4a2",
+      "objectKey": "recordings/e2dfecc9-843c-44d1-8900-dc68c707e4a2/full",
+      "status": "COMPLETE",
+      "mimeType": "audio/webm;codecs=opus",
+      "speechJobs": 1,
+      "minioBytes": 22514,
+      "minioContentType": "audio/webm;codecs=opus",
+      "exists": true
+    },
+    {
+      "attemptId": "cc93310f-e64c-4f2a-97b0-e7870a158913",
+      "recordingId": "5cf55b0f-aa4b-430a-8df6-d2c752fa540d",
+      "objectKey": "recordings/5cf55b0f-aa4b-430a-8df6-d2c752fa540d/full",
+      "status": "COMPLETE",
+      "mimeType": "audio/webm;codecs=opus",
+      "speechJobs": 1,
+      "minioBytes": 22514,
+      "minioContentType": "audio/webm;codecs=opus",
+      "exists": true
+    },
+    {
+      "attemptId": "cc93310f-e64c-4f2a-97b0-e7870a158913",
+      "recordingId": "886405b4-d61f-455d-a87d-2c9677afaa07",
+      "objectKey": "recordings/886405b4-d61f-455d-a87d-2c9677afaa07/full",
+      "status": "COMPLETE",
+      "mimeType": "audio/webm;codecs=opus",
+      "speechJobs": 1,
+      "minioBytes": 22514,
+      "minioContentType": "audio/webm;codecs=opus",
+      "exists": true
+    },
+    {
+      "attemptId": "cc93310f-e64c-4f2a-97b0-e7870a158913",
+      "recordingId": "a045f54c-26f2-4600-bfe7-fc07aa522188",
+      "objectKey": "recordings/a045f54c-26f2-4600-bfe7-fc07aa522188/full",
+      "status": "COMPLETE",
+      "mimeType": "audio/webm;codecs=opus",
+      "speechJobs": 1,
+      "minioBytes": 24446,
+      "minioContentType": "audio/webm;codecs=opus",
+      "exists": true
+    },
+    {
+      "attemptId": "cc93310f-e64c-4f2a-97b0-e7870a158913",
+      "recordingId": "a9a06918-2dca-4b59-b9fb-ccc33fe2107f",
+      "objectKey": "recordings/a9a06918-2dca-4b59-b9fb-ccc33fe2107f/full",
+      "status": "COMPLETE",
+      "mimeType": "audio/webm;codecs=opus",
+      "speechJobs": 1,
+      "minioBytes": 24446,
+      "minioContentType": "audio/webm;codecs=opus",
+      "exists": true
+    }
+  ]
+}

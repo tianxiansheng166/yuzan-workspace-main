@@ -1,0 +1,58 @@
+{
+  "attemptId": "cc93310f-e64c-4f2a-97b0-e7870a158913",
+  "practiceDefinitionId": "4c75e1b7-520a-4739-b1e7-e7dd073b258f",
+  "studentA": "25c1a24f-e5ba-43c5-9bd4-bc61aff61ba7",
+  "studentB": "51018a12-ccb9-476b-a115-17706f8728b7",
+  "enrollmentA": "8aa3a86f-0a7b-43bf-b3d8-319119cb1ef7",
+  "enrollmentB": "53f69c56-7abc-4c0c-beda-09359a3e3182",
+  "status": "PROCESSING",
+  "recordings": [
+    {
+      "itemId": "962b1ade-b0f2-463f-a91a-350f7a44e53a",
+      "recordingId": "a045f54c-26f2-4600-bfe7-fc07aa522188",
+      "status": "COMPLETE",
+      "objectKey": "recordings/a045f54c-26f2-4600-bfe7-fc07aa522188/full",
+      "bytes": 24446,
+      "contentType": "audio/webm;codecs=opus",
+      "signatureFailure": 403,
+      "retryCountForIdempotencyKey": 1
+    },
+    {
+      "itemId": "dbac0986-4244-4e9a-bf89-3aa48293fdd2",
+      "recordingId": "a9a06918-2dca-4b59-b9fb-ccc33fe2107f",
+      "status": "COMPLETE",
+      "objectKey": "recordings/a9a06918-2dca-4b59-b9fb-ccc33fe2107f/full",
+      "bytes": 24446,
+      "contentType": "audio/webm;codecs=opus",
+      "networkRetry": true,
+      "retryCountForIdempotencyKey": 1
+    }
+  ],
+  "reportCount": 0,
+  "scoredSpeechItems": 0,
+  "speechJobs": {
+    "count": 4,
+    "distinctRecordings": 4
+  },
+  "unauthenticated": 401,
+  "wrongSchool": 403,
+  "missingAttempt": 404,
+  "studentIsolation": 404,
+  "permissionDenied": true,
+  "invalidSignature": 403,
+  "networkInterrupted": true,
+  "duplicateSubmitPosts": 1,
+  "screenshots": [
+    "catalog-1280.png",
+    "catalog-1440.png",
+    "catalog-1920.png",
+    "catalog-390.png",
+    "detail-1440.png",
+    "detail-390.png",
+    "runner-audio-1440.png",
+    "runner-audio-390.png",
+    "runner-confirm-390.png",
+    "runner-ready-submit-1440.png",
+    "runner-ready-submit-390.png"
+  ]
+}

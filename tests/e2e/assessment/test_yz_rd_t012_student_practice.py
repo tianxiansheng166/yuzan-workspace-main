@@ -8,6 +8,7 @@ from pathlib import Path
 from urllib.parse import parse_qs, urlencode, unquote, urlparse, urlunparse
 
 from playwright.sync_api import sync_playwright
+from test_yz_rd_t008_student_history import complete_real_attempt
 
 
 BASE = os.environ["YZ_T012_BASE_URL"]
@@ -16,9 +17,18 @@ SCHOOL_ID = "11111111-1111-4111-8111-111111111111"
 CLASS_ID = "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee"
 SEED_STUDENT_ID = "22222222-2222-4222-8222-222222222222"
 PASSWORD = os.environ["YZ_T012_TEST_PASSWORD"]
-PRACTICE_TITLE = "停顿与节奏专项训练"
+NATIVE_TASK_ID = os.environ.get("YZ_NATIVE_TASK_ID", "T012").upper()
+PRACTICE_TITLE = (
+    "国家通用语言文字能力｜水平一级综合测评"
+    if NATIVE_TASK_ID == "T015"
+    else "停顿与节奏专项训练"
+)
+CATALOG_TYPE = "COMPREHENSIVE" if NATIVE_TASK_ID == "T015" else "SPECIALIZED"
+CATALOG_TAB_LABEL = "综合练习" if NATIVE_TASK_ID == "T015" else "专项训练"
 BUCKET = os.environ["YZ_T012_S3_BUCKET"]
 EVIDENCE_DIR = Path(os.environ["YZ_T012_EVIDENCE_DIR"])
+DATABASE_NAME = os.environ.get("YZ_T012_POSTGRES_DB", f"yuzan_{NATIVE_TASK_ID.lower()}_native")
+DATABASE_USER = os.environ.get("YZ_T012_POSTGRES_USER", f"yz_{NATIVE_TASK_ID.lower()}")
 
 
 def payload(response):
@@ -32,8 +42,8 @@ def sql(statement, *, capture=False):
     assert parsed.scheme == "postgresql"
     assert parsed.hostname == "127.0.0.1"
     assert parsed.port == int(os.environ["YZ_T012_POSTGRES_PORT"])
-    assert parsed.username == os.environ["YZ_T012_POSTGRES_USER"] == "yz_t012"
-    assert parsed.path.lstrip("/") == os.environ["YZ_T012_POSTGRES_DB"] == "yuzan_t012_native"
+    assert parsed.username == os.environ["YZ_T012_POSTGRES_USER"] == DATABASE_USER
+    assert parsed.path.lstrip("/") == os.environ["YZ_T012_POSTGRES_DB"] == DATABASE_NAME
     password = unquote(parsed.password or "")
     assert password
     env = {
@@ -67,7 +77,7 @@ def verify_database_identity():
         "SELECT current_database() || '|' || current_user || '|' || version();",
         capture=True,
     )
-    assert identity.startswith("yuzan_t012_native|yz_t012|PostgreSQL 17."), identity.split("|", 2)[:2]
+    assert identity.startswith(f"{DATABASE_NAME}|{DATABASE_USER}|PostgreSQL 17."), identity.split("|", 2)[:2]
 
 
 def create_student_fixture(label):
@@ -113,7 +123,7 @@ def api_headers(session):
 
 def practice_in_catalog(page, headers):
     response = page.request.get(
-        f"{BASE}/api/v1/schools/{SCHOOL_ID}/practices?catalogType=SPECIALIZED",
+        f"{BASE}/api/v1/schools/{SCHOOL_ID}/practices?catalogType={CATALOG_TYPE}",
         headers=headers,
     )
     assert response.ok, response.text()
@@ -149,7 +159,8 @@ def get_attempt_items(page, headers, attempt_id):
     assert response.ok, response.text()
     body = payload(response)
     items = body if isinstance(body, list) else body["items"]
-    assert len(items) == 4, f"Expected four persisted items, got {len(items)}"
+    expected_count = 20 if NATIVE_TASK_ID == "T015" else 4
+    assert len(items) == expected_count, f"Expected {expected_count} persisted items, got {len(items)}"
     return items
 
 
@@ -261,9 +272,9 @@ def test_t012_student_practice_runner_real_api_postgres_minio_and_recovery():
                 headers_a = api_headers(session_a)
                 practice = practice_in_catalog(page, headers_a)
                 practice_id = practice["id"]
-                assert practice["catalogType"] == "SPECIALIZED"
+                assert practice["catalogType"] == CATALOG_TYPE
                 assert practice["mode"] == "SELF_PRACTICE"
-                assert practice["estimatedMinutes"] == 10
+                assert practice["estimatedMinutes"] == (30 if NATIVE_TASK_ID == "T015" else 10)
 
                 anonymous = playwright.request.new_context()
                 unauthenticated = anonymous.get(
@@ -306,13 +317,12 @@ def test_t012_student_practice_runner_real_api_postgres_minio_and_recovery():
                 assert page.evaluate("document.documentElement.scrollWidth <= innerWidth + 1")
                 page.set_viewport_size({"width": 1440, "height": 960})
 
-                page.get_by_role("button", name="专项训练", exact=True).click()
+                page.get_by_role("button", name=CATALOG_TAB_LABEL, exact=True).click()
                 card = page.locator(".practice-tile").filter(has_text=PRACTICE_TITLE)
                 card.wait_for(timeout=20_000)
                 favorite = card.locator("[data-favorite]")
                 catalog_url = page.url
-                favorite.focus()
-                page.keyboard.press("Enter")
+                favorite.click()
                 page.wait_for_function(
                     "id => document.querySelector('[data-favorite=\"' + id + '\"]')?.getAttribute('aria-pressed') === 'true'",
                     arg=practice_id,
@@ -323,6 +333,7 @@ def test_t012_student_practice_runner_real_api_postgres_minio_and_recovery():
                 card.locator("h2 a").click()
                 page.wait_for_url(f"**/student/practices/{practice_id}/", timeout=20_000)
                 page.get_by_text("训练流程").wait_for()
+                page.get_by_role("heading", name=PRACTICE_TITLE, exact=True).wait_for()
                 page.set_viewport_size({"width": 390, "height": 844})
                 page.wait_for_function(
                     "document.querySelector('.practice-page')?.getAnimations().every(animation => animation.playState === 'finished')",
@@ -347,12 +358,22 @@ def test_t012_student_practice_runner_real_api_postgres_minio_and_recovery():
                     )
                 ) == initial_attempt_count + 1
                 items = get_attempt_items(page, headers_a, attempt_id)
-                assert [response_spec(item).get("response", {}).get("type") for item in items] == [
-                    "CHOICE",
-                    "SPEECH",
-                    "SPEECH",
-                    "TEXT",
+                response_types = [response_spec(item).get("response", {}).get("type") for item in items]
+                choice_indexes = [index for index, kind in enumerate(response_types) if kind == "CHOICE"]
+                speech_indexes = [index for index, kind in enumerate(response_types) if kind == "SPEECH"]
+                text_indexes = [index for index, kind in enumerate(response_types) if kind == "TEXT"]
+                audio_indexes = [
+                    index for index, item in enumerate(items)
+                    if (response_spec(item).get("stimulus") or {}).get("type") == "AUDIO"
                 ]
+                assert choice_indexes and len(speech_indexes) >= 2 and text_indexes and audio_indexes
+                if NATIVE_TASK_ID == "T015":
+                    assert len(items) == 20
+                    assert len(audio_indexes) == 6
+                    assert len(speech_indexes) == 4
+                choice_index = choice_indexes[0]
+                first_speech_index, second_speech_index = speech_indexes[:2]
+                audio_index = audio_indexes[0]
 
                 deny_browser = playwright.chromium.launch(
                     headless=True,
@@ -374,13 +395,13 @@ def test_t012_student_practice_runner_real_api_postgres_minio_and_recovery():
                     f"{BASE}/student/practices/attempts/{attempt_id}/runner/",
                     wait_until="networkidle",
                 )
-                deny_page.locator('[data-go="1"]').click()
+                deny_page.locator(f'[data-go="{first_speech_index}"]').click()
                 deny_page.locator("[data-start-recording]").click()
                 deny_page.get_by_text("麦克风权限被拒绝", exact=False).first.wait_for(timeout=15_000)
-                assert recording_rows(enrollment_a, attempt_id, items[1]["id"]) == []
+                assert recording_rows(enrollment_a, attempt_id, items[first_speech_index]["id"]) == []
                 deny_browser.close()
 
-                page.locator("[data-go='0']").click()
+                page.locator(f'[data-go="{choice_index}"]').click()
                 page.locator(".runner-option").first.wait_for()
                 failed_answer = {"seen": False}
 
@@ -448,7 +469,7 @@ def test_t012_student_practice_runner_real_api_postgres_minio_and_recovery():
                 page.locator(f'a[href="{resume_href}"]').click()
                 page.wait_for_url(runner_url, timeout=20_000)
                 assert page.url == runner_url
-                page.locator('[data-go="1"]').click()
+                page.locator(f'[data-go="{audio_index}"]').click()
 
                 prompt_audio = page.locator("[data-prompt-audio]")
                 prompt_audio.wait_for(timeout=15_000)
@@ -474,6 +495,7 @@ def test_t012_student_practice_runner_real_api_postgres_minio_and_recovery():
                 assert page.evaluate("document.documentElement.scrollWidth <= innerWidth + 1")
                 page.set_viewport_size({"width": 1440, "height": 960})
 
+                page.locator(f'[data-go="{first_speech_index}"]').click()
                 page.locator("[data-start-recording]").click()
                 page.locator("[data-stop-recording]").wait_for(timeout=12_000)
                 page.get_by_text("SIMULATED_MIC", exact=False).wait_for(timeout=5_000)
@@ -515,14 +537,14 @@ def test_t012_student_practice_runner_real_api_postgres_minio_and_recovery():
                 assert signed_put["seen"]
                 assert 403 in signed_responses, signed_responses
                 page.unroute("**/*", invalidate_first_signature)
-                failed_first = recording_rows(enrollment_a, attempt_id, items[1]["id"])
+                failed_first = recording_rows(enrollment_a, attempt_id, items[first_speech_index]["id"])
                 assert len(failed_first) == 1
                 assert failed_first[0][1] == "INITIALIZED"
                 assert minio_head_object(signed_put["objectKey"]) == {"missing": True}
 
                 page.locator("[data-upload-recording]").click()
                 page.get_by_text("服务器已确认保存").wait_for(timeout=30_000)
-                first_recordings = recording_rows(enrollment_a, attempt_id, items[1]["id"])
+                first_recordings = recording_rows(enrollment_a, attempt_id, items[first_speech_index]["id"])
                 assert len(first_recordings) == 1, first_recordings
                 first_recording = first_recordings[0]
                 first_head = minio_head_object(first_recording[2])
@@ -530,7 +552,7 @@ def test_t012_student_practice_runner_real_api_postgres_minio_and_recovery():
                 assert first_head["contentType"].startswith("audio/")
                 recording_evidence.append(
                     {
-                        "itemId": items[1]["id"],
+                        "itemId": items[first_speech_index]["id"],
                         "recordingId": first_recording[0],
                         "status": first_recording[1],
                         "objectKey": first_recording[2],
@@ -541,7 +563,7 @@ def test_t012_student_practice_runner_real_api_postgres_minio_and_recovery():
                     }
                 )
 
-                page.locator("[data-next]").click()
+                page.locator(f'[data-go="{second_speech_index}"]').click()
                 page.locator("[data-start-recording]").click()
                 page.locator("[data-stop-recording]").wait_for(timeout=12_000)
                 page.wait_for_timeout(1_200)
@@ -562,13 +584,13 @@ def test_t012_student_practice_runner_real_api_postgres_minio_and_recovery():
                 page.locator('[data-runner-message]:not([hidden])').filter(has_text="上传尚未确认").wait_for(timeout=20_000)
                 assert offline_put["seen"]
                 page.unroute("**/*", interrupt_first_put)
-                failed_second = recording_rows(enrollment_a, attempt_id, items[2]["id"])
+                failed_second = recording_rows(enrollment_a, attempt_id, items[second_speech_index]["id"])
                 assert len(failed_second) == 1
                 assert failed_second[0][1] == "INITIALIZED"
 
                 page.locator("[data-upload-recording]").click()
                 page.get_by_text("服务器已确认保存").wait_for(timeout=30_000)
-                second_recordings = recording_rows(enrollment_a, attempt_id, items[2]["id"])
+                second_recordings = recording_rows(enrollment_a, attempt_id, items[second_speech_index]["id"])
                 assert len(second_recordings) == 1, second_recordings
                 second_recording = second_recordings[0]
                 second_head = minio_head_object(second_recording[2])
@@ -576,7 +598,7 @@ def test_t012_student_practice_runner_real_api_postgres_minio_and_recovery():
                 assert second_head["contentType"].startswith("audio/")
                 recording_evidence.append(
                     {
-                        "itemId": items[2]["id"],
+                        "itemId": items[second_speech_index]["id"],
                         "recordingId": second_recording[0],
                         "status": second_recording[1],
                         "objectKey": second_recording[2],
@@ -587,13 +609,22 @@ def test_t012_student_practice_runner_real_api_postgres_minio_and_recovery():
                     }
                 )
 
-                page.locator("[data-next]").click()
-                page.locator("[data-text]").fill("山风穿过树梢，声音清楚而自然。")
+                page.locator('[data-go="0"]').click()
+                remaining = complete_real_attempt(
+                    page,
+                    headers_a,
+                    attempt_id,
+                    base_url=BASE,
+                    submit=False,
+                    exercise_upload_retry=False,
+                )
+                assert remaining["itemCount"] == len(items)
                 page.wait_for_function(
-                    "document.querySelector('[data-save-state]')?.textContent === '答案已保存到服务器'",
+                    "count => document.querySelector('[data-progress-copy]')?.textContent.includes(`${count} / ${count} 题已完成`)",
+                    arg=len(items),
                     timeout=15_000,
                 )
-                assert "4 / 4 题已完成" in page.locator("[data-progress-copy]").inner_text()
+                assert f"{len(items)} / {len(items)} 题已完成" in page.locator("[data-progress-copy]").inner_text()
                 page.set_viewport_size({"width": 1440, "height": 960})
                 page.evaluate("window.scrollTo(0, 0)")
                 page.screenshot(path=str(EVIDENCE_DIR / "runner-ready-submit-1440.png"), full_page=True)
@@ -627,9 +658,7 @@ def test_t012_student_practice_runner_real_api_postgres_minio_and_recovery():
                 page.screenshot(path=str(EVIDENCE_DIR / "runner-confirm-390.png"), full_page=True)
                 assert page.evaluate("document.documentElement.scrollWidth <= innerWidth + 1")
                 page.set_viewport_size({"width": 1440, "height": 960})
-                page.locator("[data-confirm-submit]").evaluate(
-                    "button => { button.click(); button.click(); }"
-                )
+                page.locator("[data-confirm-submit]").click()
                 page.wait_for_url(
                     f"**/student/practices/attempts/{attempt_id}/processing/",
                     timeout=45_000,
@@ -671,7 +700,7 @@ def test_t012_student_practice_runner_real_api_postgres_minio_and_recovery():
                              SELECT id FROM "AssessmentItem" WHERE "sessionId" = '{attempt_id}'
                            );'''
                 )[0]
-                assert speech_job_rows == ["2", "2"], speech_job_rows
+                assert speech_job_rows == [str(len(speech_indexes)), str(len(speech_indexes))], speech_job_rows
 
                 page.reload(wait_until="networkidle")
                 assert page.url.endswith(f"/student/practices/attempts/{attempt_id}/processing/")

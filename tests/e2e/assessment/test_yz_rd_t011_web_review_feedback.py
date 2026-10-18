@@ -2,6 +2,7 @@
 
 import json
 import os
+import re
 import subprocess
 import uuid
 from pathlib import Path
@@ -19,6 +20,11 @@ from test_yz_rd_t008_student_history import (
 BASE = os.environ.get("YZ_T011_BASE_URL", "")
 DATABASE_URL = os.environ.get("YZ_T011_DATABASE_URL", "")
 PASSWORD = os.environ.get("YZ_T011_PASSWORD", "")
+NATIVE_TASK_ID = os.environ.get("YZ_NATIVE_TASK_ID", "T011").upper()
+DATABASE_NAME = os.environ.get("YZ_T011_DATABASE_NAME", f"yuzan_{NATIVE_TASK_ID.lower()}_native")
+DATABASE_USER = os.environ.get("YZ_T011_DATABASE_USER", f"yz_{NATIVE_TASK_ID.lower()}")
+S3_BUCKET = os.environ.get("YZ_T011_S3_BUCKET", f"yz-{NATIVE_TASK_ID.lower()}-native")
+EVIDENCE_DIR = Path(os.environ.get("YZ_T011_EVIDENCE_DIR", str(Path(__file__).resolve().parents[3] / "evidence" / "yz-rd-t011")))
 SCHOOL_ID = "11111111-1111-4111-8111-111111111111"
 CLASS_ID = "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee"
 TEACHER_SEED_ID = "33333333-3333-4333-8333-333333333333"
@@ -42,8 +48,8 @@ def sql(statement, *, capture=False):
     assert parsed.scheme == "postgresql"
     assert parsed.hostname == "127.0.0.1"
     assert parsed.port == int(os.environ["POSTGRES_PORT"])
-    assert parsed.username == os.environ["POSTGRES_USER"] == "yz_t011"
-    assert parsed.path.lstrip("/") == os.environ["POSTGRES_DB"] == "yuzan_t011_native"
+    assert parsed.username == os.environ["POSTGRES_USER"] == DATABASE_USER
+    assert parsed.path.lstrip("/") == os.environ["POSTGRES_DB"] == DATABASE_NAME
     password = unquote(parsed.password or "")
     assert password
     env = {
@@ -79,7 +85,7 @@ def sql_scalar(statement):
 
 def verify_database_identity():
     identity = sql_scalar("SELECT current_database() || '|' || current_user || '|' || version();")
-    assert identity.startswith("yuzan_t011_native|yz_t011|PostgreSQL 17."), identity.split("|", 2)[:2]
+    assert identity.startswith(f"{DATABASE_NAME}|{DATABASE_USER}|PostgreSQL 17."), identity.split("|", 2)[:2]
 
 
 def payload(response):
@@ -115,7 +121,7 @@ def headers(session):
 
 
 def verify_minio_identity():
-    assert os.environ["YZ_T011_S3_BUCKET"] == "yz-t011-native"
+    assert os.environ["YZ_T011_S3_BUCKET"] == S3_BUCKET
     assert urlparse(os.environ["YZ_T011_S3_ENDPOINT"]).port == int(os.environ["YZ_T011_MINIO_API_PORT"])
 
 
@@ -555,6 +561,14 @@ def test_student_recording_teacher_review_and_student_safe_report():
             assert "尚未形成报告或成绩" in pending_row.inner_text()
             assert pending_row.get_by_role("link", name="查看处理状态").get_attribute("href") == f"/assessment/sessions/{attempt_id}/processing/"
 
+            page.goto(f"{BASE}/student/growth/", wait_until="networkidle")
+            page.locator("#growthApp[data-state='ready']").wait_for(timeout=20_000)
+            assert page.locator(
+                f'.growth-report-row a[href="/assessment/sessions/{attempt_id}/report/"]'
+            ).count() == 0, "PROCESSING must not appear as a formal Growth result"
+            EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
+            page.screenshot(path=str(EVIDENCE_DIR / "growth-processing-1440.png"), full_page=True)
+
             teacher = authenticate(page, "teacher.test")
             teacher_headers = headers(teacher)
             review_queue_url = f"{BASE}/api/v1/schools/{SCHOOL_ID}/assessment-reviews"
@@ -651,6 +665,22 @@ def test_student_recording_teacher_review_and_student_safe_report():
             )
             assert changed_duplicate.status == 409
 
+            growth_context = browser.new_context(viewport={"width": 1440, "height": 1000})
+            growth_page = growth_context.new_page()
+            student_a = authenticate(growth_page, fixtures["student_a"]["login"])
+            growth_page.goto(f"{BASE}/student/growth/", wait_until="networkidle")
+            growth_page.locator("#growthApp[data-state='ready']").wait_for(timeout=20_000)
+            assert growth_page.locator(
+                f'.growth-report-row a[href="/assessment/sessions/{attempt_id}/report/"]'
+            ).count() == 0, "one saved review must not create a formal Growth result"
+            pending_report = growth_page.request.get(
+                f"{BASE}/api/v1/schools/{SCHOOL_ID}/assessments/sessions/{attempt_id}/report",
+                headers=headers(student_a),
+            )
+            assert pending_report.ok and payload(pending_report) is None
+            growth_page.screenshot(path=str(EVIDENCE_DIR / "growth-one-review-pending-1440.png"), full_page=True)
+            growth_context.close()
+
             remaining_item_ids = [item_id for item_id in review_item_ids if item_id != audio_item_id]
             for index, next_item_id in enumerate(remaining_item_ids):
                 page.locator("[data-review-message]").get_by_role("link", name="返回复核队列").click()
@@ -718,6 +748,33 @@ def test_student_recording_teacher_review_and_student_safe_report():
             private_json = json.dumps(student_report, ensure_ascii=False)
             for private_field in ("reviewerUserId", "referenceAnswer", "deductionRules", "scoringSpec"):
                 assert private_field not in private_json
+
+            page.goto(f"{BASE}/student/growth/", wait_until="networkidle")
+            page.locator("#growthApp[data-state='ready']").wait_for(timeout=20_000)
+            growth_report_row = page.locator(
+                f'.growth-report-row a[href="/assessment/sessions/{attempt_id}/report/"]'
+            ).locator("xpath=..")
+            growth_report_row.wait_for(timeout=20_000)
+            score_match = re.search(r"([0-9]+(?:\.[0-9]+)?) 分", growth_report_row.inner_text())
+            assert score_match, growth_report_row.inner_text()
+            assert float(score_match.group(1)) == pytest.approx(float(student_report["overallScore"]))
+            growth_feedback = growth_report_row.locator(".growth-report-feedback")
+            for comment in comments.values():
+                expect(growth_feedback).to_contain_text(comment)
+            growth_text = page.locator("#growthApp").inner_text()
+            for private_field in ("reviewerUserId", "scoringSpec", "rubric", "answerKey"):
+                assert private_field not in growth_text
+            for width, height, filename in (
+                (1440, 1000, "growth-reviewed-1440.png"),
+                (1280, 900, "growth-reviewed-1280.png"),
+                (390, 844, "growth-reviewed-390.png"),
+            ):
+                page.set_viewport_size({"width": width, "height": height})
+                dimensions = page.evaluate(
+                    """() => ({ viewport: document.documentElement.clientWidth, document: document.documentElement.scrollWidth, body: document.body.scrollWidth })"""
+                )
+                assert max(dimensions["document"], dimensions["body"]) <= dimensions["viewport"] + 1, dimensions
+                page.screenshot(path=str(EVIDENCE_DIR / filename), full_page=True)
 
             student_b = login_api(page, fixtures["student_b"]["login"])
             foreign_report = page.request.get(

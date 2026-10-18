@@ -1,5 +1,15 @@
 # Development status
 
+## YZ-RD-T015 — student Web rolling integration (2026-10-18)
+
+DONE / WEB_ONLY / READY_TO_MERGE; NOT MERGED. The isolated branch starts at T011 `4d971c9683664c09e533069ec001b00d0dc239af` and cherry-picks T012 `67e79644e341164aaaf239ad4ebc466de1cc1c38` as `f15d1aac376adcb662d13d74ef995ba383cf2f26` and T013 `0bfd284dd8b31d95485c0be2b2993af15afef28e` as `96b0a44ab6d20e7d0f8fb27b21f3450848d21116`, both with `-x`. No file conflicts occurred; T010/T011 were not repeated.
+
+The final native Chromium/API/PostgreSQL/MinIO run passed the T008 20-item browser regression, T012 Runner E2E on an active imported Question Bank practice, T013 Today/Growth identity and responsive E2E, and T011 real human review/report/Growth E2E. T008 now handles cancel, Escape, and actual Confirm clicks and proves one browser submit; history resumes the same dynamic Attempt. Growth renders the official T011 score and every safe teacher comment only after all six required reviews produce a report. T011's first-review checkpoint verifies Growth remains without a formal result.
+
+T015 owns a dedicated DB/user, bucket, and ports; it applied the 32 existing migrations once to a new DB and imported the existing Question Bank source read-only. SQL and MinIO HeadObject evidence confirms 12 real test Recordings, one SpeechJob each, three 20-item Attempts in PROCESSING/COMPLETED, the T011 report (score 55, 6/6 reviewed comments), and a separate IN_PROGRESS/PROCESSING Today fixture. Browser recordings use `SIMULATED_MIC`; worker and automatic speech scoring were disabled. Physical devices, school pilot, and production launch are NOT_RUN. Full commands, exit results, IDs, screenshots, permission negatives, and service exit proof are in [`evidence/yz-rd-t015/RESULTS.md`](evidence/yz-rd-t015/RESULTS.md).
+
+T005 and original course resources remain untouched. T014 completed independently at `0596a9b8256c1d674b93eb2afd4de7306c768129`; T015 did not enter or modify its worktree or stop its services. Next: a short-cycle integration against T014's actual final commit. L4 remains OPEN and untouched.
+
 ## YZ-RD-T011 — draft visibility and human review feedback (2026-10-18)
 
 DONE / WEB_ONLY / NATIVE_CHROMIUM_API_POSTGRESQL_MINIO_VERIFIED. Based on accepted T010 integration `feat/yz-rd-t010-native-web-integration@9b4340081e7d330007368062a898f4c11d29a14f`; isolated branch `feat/yz-rd-t011-web-review-feedback`, not merged to the shared development branch. Assignment creation uses the API-returned ID and a recoverable `assignmentId` deep link, so sorting, pagination, search, attention filters, refresh, and legacy UTC-naive `createdAt` cannot hide the new DRAFT. Review submission now shows the server-saved score/comment. Student-safe report reads expose only comments and review timestamps from reviewed AssessmentItems; report generation continues to require all 20 Question Bank item scores.

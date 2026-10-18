@@ -1,5 +1,6 @@
 """Real Chromium + NestJS + isolated PostgreSQL proof for T013 student data."""
 
+import json
 import os
 import subprocess
 import uuid
@@ -14,22 +15,22 @@ BASE = os.environ.get("YZ_T013_BASE_URL", "")
 API = os.environ.get("YZ_T013_API_BASE_URL", "")
 DATABASE_URL = os.environ.get("DATABASE_URL", "")
 PASSWORD = os.environ.get("YZ_T013_TEST_PASSWORD", "")
-DATABASE_NAME = "yuzan_t013_native"
-DATABASE_USER = "yz_t013"
-DATABASE_PORT = 55631
+NATIVE_TASK_ID = os.environ.get("YZ_NATIVE_TASK_ID", "T013").upper()
+DATABASE_NAME = os.environ.get("YZ_T013_DATABASE_NAME", f"yuzan_{NATIVE_TASK_ID.lower()}_native")
+DATABASE_USER = os.environ.get("YZ_T013_DATABASE_USER", f"yz_{NATIVE_TASK_ID.lower()}")
+DATABASE_PORT = int(os.environ.get("YZ_T013_POSTGRES_PORT", "55631"))
 SCHOOL_A = "11111111-1111-4111-8111-111111111111"
 CLASS_A = "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee"
 SEED_STUDENT = "22222222-2222-4222-8222-222222222222"
-PRACTICE_TEACHER = "70000000-0000-4000-8000-000000000001"
-PRACTICE_SELF = "70000000-0000-4000-8000-000000000002"
-PRACTICE_REVIEW = "70000000-0000-4000-8000-000000000003"
-PRACTICE_UNREVIEWED = "70000000-0000-4000-8000-000000000004"
 PSQL = os.environ.get(
     "YZ_T013_PSQL",
     "/home/tian/code/yuzan-workspace-main/runtime-local/native-web/toolchain/pgdg/usr/lib/postgresql/17/bin/psql",
 )
 CHROME = os.environ.get("YZ_T013_CHROMIUM", "/usr/bin/google-chrome")
-EVIDENCE = Path(__file__).resolve().parents[3] / "evidence" / "yz-rd-t013"
+EVIDENCE = Path(os.environ.get(
+    "YZ_T013_EVIDENCE_DIR",
+    str(Path(__file__).resolve().parents[3] / "evidence" / "yz-rd-t013"),
+))
 
 
 def sql(statement: str, *, capture: bool = False) -> str:
@@ -76,7 +77,7 @@ def payload(response):
 
 def verify_database_identity() -> None:
     identity = sql("SELECT current_database() || '|' || current_user || '|' || version();", capture=True)
-    assert identity.startswith("yuzan_t013_native|yz_t013|PostgreSQL 17."), identity.split("|", 2)[:2]
+    assert identity.startswith(f"{DATABASE_NAME}|{DATABASE_USER}|PostgreSQL 17."), identity.split("|", 2)[:2]
 
 
 def create_user_fixture(label: str, school_id: str, class_id: str) -> dict[str, str]:
@@ -182,57 +183,42 @@ def test_student_today_growth_attempt_identity_and_school_isolation():
         session_a = authenticate(page, student_a["identifier"])
         assert session_a["activeSchoolId"] == SCHOOL_A
 
-        primary_attempt = create_attempt(page, session_a, SCHOOL_A, PRACTICE_TEACHER)
-        processing_attempt = create_attempt(page, session_a, SCHOOL_A, PRACTICE_SELF)
-        completed_without_report = create_attempt(page, session_a, SCHOOL_A, PRACTICE_REVIEW)
-        unreviewed_attempt = create_attempt(page, session_a, SCHOOL_A, PRACTICE_UNREVIEWED)
+        catalog_response = page.request.get(
+            f"{API}/api/v1/schools/{SCHOOL_A}/practices",
+            headers={"Authorization": f"Bearer {session_a['accessToken']}"},
+        )
+        assert catalog_response.ok, catalog_response.text()
+        catalog_items = payload(catalog_response)["items"]
+        available_practices = [item for item in catalog_items if item.get("mode") == "SELF_PRACTICE"]
+        assert len(available_practices) >= 2, available_practices
+        practice_ids = [item["id"] for item in available_practices[:2]]
+        primary_practice_title = available_practices[0]["title"]
+
+        primary_attempt = create_attempt(page, session_a, SCHOOL_A, practice_ids[0])
+        processing_attempt = create_attempt(page, session_a, SCHOOL_A, practice_ids[1])
         started = page.request.post(
             f"{API}/api/v1/schools/{SCHOOL_A}/assessments/sessions/{primary_attempt}/start",
             headers={"Authorization": f"Bearer {session_a['accessToken']}"},
         )
         assert started.ok, started.text()
 
-        # Persisted edge-state fixtures cover processing, a completed record with
-        # no report, and a provisional speech report marked NEEDS_REVIEW. These
-        # edge cases are read back through real APIs; they are not scoring flows.
+        # This fixture uses the real create/start paths and only places one attempt
+        # into the server's processing state. T011 separately verifies the complete
+        # human-review transition and resulting formal report.
         sql(
             f'''UPDATE "AssessmentSession"
                    SET "status" = 'PROCESSING', "submittedAt" = NOW(), "updatedAt" = NOW()
-                 WHERE "id" = '{processing_attempt}' AND "enrollmentId" = '{student_a['enrollmentId']}';
-                UPDATE "AssessmentSession"
-                   SET "status" = 'COMPLETED', "completedAt" = NOW(), "updatedAt" = NOW()
-                 WHERE "id" = '{completed_without_report}' AND "enrollmentId" = '{student_a['enrollmentId']}';
-                    UPDATE "AssessmentSession"
-                       SET "status" = 'COMPLETED', "completedAt" = NOW(), "updatedAt" = NOW()
-                 WHERE "id" = '{unreviewed_attempt}' AND "enrollmentId" = '{student_a['enrollmentId']}';'''
-        )
-        review_item = sql_rows(
-            f'''SELECT "id", "maxScore" FROM "AssessmentItem"
-                 WHERE "sessionId" = '{unreviewed_attempt}'
-                   AND "itemType" IN ('READING', 'SPEECH', 'LISTEN_REPEAT', 'READ_ALOUD')
-                 ORDER BY "sortOrder" LIMIT 1;'''
-        )
-        assert review_item and review_item[0][1]
-        provisional_score = float(review_item[0][1])
-        sql(
-            f'''UPDATE "AssessmentItem"
-                   SET "status" = 'FLAGGED', "scoredScore" = {provisional_score},
-                       "autoResult" = '{{"state":"NEEDS_REVIEW"}}'::jsonb, "updatedAt" = NOW()
-                 WHERE "id" = '{review_item[0][0]}';
-                INSERT INTO "AssessmentReport" ("id", "sessionId", "schoolId", "overallScore", "summary", "dataCompleteness", "generatedAt", "createdAt", "updatedAt")
-                VALUES ('{uuid.uuid4()}', '{unreviewed_attempt}', '{SCHOOL_A}', {provisional_score},
-                        '{{"requiresTeacherReview":true,"scoringState":"NEEDS_REVIEW"}}'::jsonb,
-                        100, NOW(), NOW(), NOW());'''
+                 WHERE "id" = '{processing_attempt}' AND "enrollmentId" = '{student_a['enrollmentId']}';'''
         )
         proof = sql_rows(
             f'''SELECT "id", "enrollmentId", "classId", "practiceDefinitionId", "status", "purpose"
                   FROM "AssessmentSession"
-                     WHERE "id" IN ('{primary_attempt}', '{processing_attempt}', '{completed_without_report}', '{unreviewed_attempt}')
+                     WHERE "id" IN ('{primary_attempt}', '{processing_attempt}')
                  ORDER BY "id";'''
         )
-        assert len(proof) == 4
+        assert len(proof) == 2
         assert all(row[1] == student_a["enrollmentId"] and row[2] == CLASS_A for row in proof)
-        assert {row[4] for row in proof} == {"IN_PROGRESS", "PROCESSING", "COMPLETED"}
+        assert {row[4] for row in proof} == {"IN_PROGRESS", "PROCESSING"}
         print(
             "T013_FIXTURE_A",
             f"user={student_a['id']}",
@@ -249,10 +235,9 @@ def test_student_today_growth_attempt_identity_and_school_isolation():
         )
         print(
             "T013_ATTEMPTS",
+            f"practiceDefinitions={practice_ids}",
             f"in_progress={primary_attempt}",
             f"processing_fixture={processing_attempt}",
-            f"completed_no_report_fixture={completed_without_report}",
-            f"unreviewed_report_fixture={unreviewed_attempt}",
         )
 
         headers_a = {"Authorization": f"Bearer {session_a['accessToken']}"}
@@ -261,15 +246,6 @@ def test_student_today_growth_attempt_identity_and_school_isolation():
         today_data = payload(today_response)
         assert today_data["primaryAction"]["kind"] == "RESUME_ASSESSMENT"
         assert today_data["primaryAction"]["target"]["href"] == f"/assessment/sessions/{primary_attempt}/"
-        unreviewed_report_response = page.request.get(
-            f"{API}/api/v1/schools/{SCHOOL_A}/assessments/sessions/{unreviewed_attempt}/report",
-            headers=headers_a,
-        )
-        assert unreviewed_report_response.ok, unreviewed_report_response.text()
-        unreviewed_report = payload(unreviewed_report_response)
-        assert unreviewed_report["overallScore"] == provisional_score
-        assert unreviewed_report["summary"]["requiresTeacherReview"] is True
-
         page.goto(f"{BASE}/student/today/")
         page.locator("#todayApp[data-state='processing']").wait_for(timeout=20_000)
         page.locator(".today-header h1").wait_for()
@@ -282,9 +258,9 @@ def test_student_today_growth_attempt_identity_and_school_isolation():
         assert page.locator(f'a[href="/student/practices/attempts/{primary_attempt}/runner/"]').count() >= 1
         processing_link = page.locator(f'a[href="/assessment/sessions/{processing_attempt}/processing/"]')
         assert processing_link.count() == 1
-        teacher_card = page.locator(".today-practice-card").filter(has_text="古诗文朗读与理解训练")
-        assert teacher_card.count() == 1
-        assert "老师开放" in teacher_card.inner_text()
+        practice_card = page.locator(".today-practice-card").filter(has_text=primary_practice_title)
+        assert practice_card.count() == 1
+        assert "自主练习" in practice_card.inner_text()
         assert "连续学习天" not in page.locator("body").inner_text()
         assert "还没有正式测评结果" in page.locator(".today-summary").inner_text()
         assert page.locator(".today-score").count() == 0
@@ -314,17 +290,42 @@ def test_student_today_growth_attempt_identity_and_school_isolation():
 
         growth_a = context.new_page()
         growth_a.set_viewport_size({"width": 1440, "height": 1000})
+        growth_errors: list[str] = []
+        growth_failures: list[tuple[str, int]] = []
+        growth_a.on("pageerror", lambda error: growth_errors.append(str(error)))
+        growth_a.on(
+            "response",
+            lambda response: growth_failures.append((response.url, response.status))
+            if response.status >= 400
+            else None,
+        )
         growth_a.goto(f"{BASE}/student/growth/")
-        growth_a.locator("#growthApp[data-state='ready']").wait_for(timeout=20_000)
+        try:
+            growth_a.locator("#growthApp[data-state='ready']").wait_for(timeout=20_000)
+        except Exception:
+            app = growth_a.locator("#growthApp")
+            print(
+                "T013_GROWTH_DIAGNOSTIC",
+                json.dumps(
+                    {
+                        "url": growth_a.url,
+                        "state": app.get_attribute("data-state"),
+                        "text": app.inner_text(),
+                        "pageErrors": growth_errors,
+                        "failedResponses": growth_failures,
+                    },
+                    ensure_ascii=False,
+                ),
+            )
+            raise
         growth_a.locator(".growth-header h1").wait_for()
         growth_a.wait_for_function("name => document.querySelector('.growth-header h1')?.textContent.includes(name)", arg=student_a["displayName"])
         assert "语赞测试学校" in growth_a.locator(".growth-school-line").inner_text()
         assert "已完成记录" in growth_a.locator(".growth-summary-grid").inner_text()
         assert "未完成 Attempt" in growth_a.locator(".growth-summary-grid").inner_text()
-        assert "1 条已完成记录尚未生成正式报告" in growth_a.locator(".growth-not-generated:not(.review)").inner_text()
-        assert "1 条报告正在等待教师复核" in growth_a.locator(".growth-not-generated.review").inner_text()
+        assert growth_a.locator(".growth-report-list .growth-report-row").count() == 0
+        assert growth_a.get_by_text("当前没有已完成的正式测评记录。", exact=True).count() == 1
         assert "0 分" not in growth_a.locator(".growth-report-list").inner_text()
-        assert f"{provisional_score:g} 分" not in growth_a.locator(".growth-report-list").inner_text()
         assert "继续练习" in growth_a.locator(".growth-practice-list").inner_text()
         assert not growth_a.locator('svg[role="img"]').count(), "one completed record is not enough for a growth curve"
         assert_no_horizontal_overflow(growth_a)
@@ -439,9 +440,9 @@ def test_student_today_growth_attempt_identity_and_school_isolation():
 
         # A browser page authenticated as B cannot open A's dynamic Attempt.
         page.goto(f"{BASE}/student/practices/attempts/{primary_attempt}/runner/")
-        page.locator(".runner-error").wait_for(timeout=15_000)
-        assert "加载练习失败" in page.locator(".runner-error").inner_text()
-        assert "古诗文朗读与理解训练" not in page.locator("body").inner_text()
+        page.get_by_text("练习暂时无法打开", exact=True).wait_for(timeout=15_000)
+        assert "加载练习失败：练习 Attempt 不存在" in page.locator("#app").inner_text()
+        assert primary_practice_title not in page.locator("body").inner_text()
 
         # Simulate a real network loss by aborting the request; no previous
         # identity or task survives, and the page's own Retry recovers.

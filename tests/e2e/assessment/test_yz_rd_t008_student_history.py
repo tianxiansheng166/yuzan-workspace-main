@@ -176,7 +176,7 @@ def response_spec(item):
     return spec if isinstance(spec, dict) else {}
 
 
-def complete_real_attempt(page, headers, attempt_id, base_url=None):
+def complete_real_attempt(page, headers, attempt_id, base_url=None, *, submit=True, exercise_upload_retry=True):
     base_url = base_url or BASE
     items_response = page.request.get(
         f"{base_url}/api/v1/schools/{SCHOOL_ID}/practices/attempts/{attempt_id}/items",
@@ -219,50 +219,75 @@ def complete_real_attempt(page, headers, attempt_id, base_url=None):
         elif response_type == "TEXT":
             page.locator("[data-text]").fill("学生本人练习回答")
         elif response_type == "SPEECH":
-            page.locator("[data-start-recording]").click()
-            page.locator("[data-stop-recording]").wait_for(timeout=10_000)
-            page.wait_for_timeout(1_100)
-            page.locator("[data-stop-recording]").click()
-            page.locator("[data-upload-recording]").wait_for(timeout=10_000)
-            failure = {"injected": False}
+            if not page.locator(".runner-speech.saved").count():
+                page.locator("[data-start-recording]").click()
+                page.locator("[data-stop-recording]").wait_for(timeout=10_000)
+                page.wait_for_timeout(1_100)
+                page.locator("[data-stop-recording]").click()
+                page.locator("[data-upload-recording]").wait_for(timeout=10_000)
+                if exercise_upload_retry:
+                    failure = {"injected": False}
 
-            def fail_first_upload(route):
-                request = route.request
-                if not failure["injected"] and request.method == "PUT" and "/recordings/" in request.url:
-                    failure["injected"] = True
-                    route.abort("internetdisconnected")
-                else:
-                    route.continue_()
+                    def fail_first_upload(route):
+                        request = route.request
+                        if not failure["injected"] and request.method == "PUT" and "/recordings/" in request.url:
+                            failure["injected"] = True
+                            route.abort("internetdisconnected")
+                        else:
+                            route.continue_()
 
-            page.route("**/*", fail_first_upload)
-            page.locator("[data-upload-recording]").click()
-            page.get_by_text("上传尚未确认").wait_for(timeout=20_000)
-            assert failure["injected"], "the test must exercise a failed real MinIO upload request"
-            page.unroute("**/*", fail_first_upload)
-            page.locator("[data-upload-recording]").click()
-            page.locator(".runner-speech.saved").wait_for(timeout=30_000)
-            recorded_audio += 1
-            upload_retries += 1
+                    page.route("**/*", fail_first_upload)
+                    page.locator("[data-upload-recording]").click()
+                    page.get_by_text("上传尚未确认").wait_for(timeout=20_000)
+                    assert failure["injected"], "the test must exercise a failed real MinIO upload request"
+                    page.unroute("**/*", fail_first_upload)
+                page.locator("[data-upload-recording]").click()
+                page.locator(".runner-speech.saved").wait_for(timeout=30_000)
+                recorded_audio += 1
+                upload_retries += int(exercise_upload_retry)
 
         if index < len(items) - 1:
             page.locator("[data-next]").click()
 
     submit_posts = []
-    page.on("request", lambda request: submit_posts.append(request.url) if request.method == "POST" and request.url.endswith(f"/assessments/sessions/{attempt_id}/submit") else None)
-    page.locator("[data-submit]").evaluate("button => { button.click(); button.click(); }")
-    page.wait_for_url(f"**/student/practices/attempts/{attempt_id}/processing/", timeout=60_000)
-    assert len(submit_posts) == 1
-    duplicate_submit = page.request.post(
-        f"{base_url}/api/v1/schools/{SCHOOL_ID}/assessments/sessions/{attempt_id}/submit",
-        headers=headers,
-        data={},
-    )
-    assert duplicate_submit.ok, duplicate_submit.text()
-    assert payload(duplicate_submit)["id"] == attempt_id
-    return {"itemCount": len(items), "playedAudio": played_audio, "recordedAudio": recorded_audio, "uploadRetries": upload_retries, "submitPosts": len(submit_posts), "duplicateSubmitId": payload(duplicate_submit)["id"]}
+    duplicate_submit_id = None
+    confirmation_dismissals = 0
+    if submit:
+        page.on("request", lambda request: submit_posts.append(request.url) if request.method == "POST" and request.url.endswith(f"/assessments/sessions/{attempt_id}/submit") else None)
+        submit_button = page.locator("[data-submit]")
+        submit_button.click()
+        dialog = page.get_by_role("dialog")
+        dialog.wait_for(timeout=10_000)
+        assert f"已完成 {len(items)} / {len(items)} 题" in dialog.inner_text()
+        dialog.get_by_role("button", name="再检查一下").click()
+        dialog.wait_for(state="detached", timeout=10_000)
+        assert submit_posts == [], "canceling the confirmation must not submit the attempt"
+        confirmation_dismissals += 1
+
+        submit_button.click()
+        dialog.wait_for(timeout=10_000)
+        page.keyboard.press("Escape")
+        dialog.wait_for(state="detached", timeout=10_000)
+        assert submit_posts == [], "Escape must not submit the attempt"
+        confirmation_dismissals += 1
+
+        submit_button.click()
+        dialog.wait_for(timeout=10_000)
+        dialog.get_by_role("button", name="确认交卷").click()
+        page.wait_for_url(f"**/student/practices/attempts/{attempt_id}/processing/", timeout=60_000)
+        assert len(submit_posts) == 1, "the real confirm click must issue exactly one submit request"
+        duplicate_submit = page.request.post(
+            f"{base_url}/api/v1/schools/{SCHOOL_ID}/assessments/sessions/{attempt_id}/submit",
+            headers=headers,
+            data={},
+        )
+        assert duplicate_submit.ok, duplicate_submit.text()
+        assert payload(duplicate_submit)["id"] == attempt_id
+        duplicate_submit_id = payload(duplicate_submit)["id"]
+    return {"itemCount": len(items), "playedAudio": played_audio, "recordedAudio": recorded_audio, "uploadRetries": upload_retries, "submitPosts": len(submit_posts), "confirmationDismissals": confirmation_dismissals, "duplicateSubmitId": duplicate_submit_id}
 
 
-@pytest.mark.skipif(not BASE or not DATABASE_URL, reason="requires the isolated T010 native API/PostgreSQL/MinIO fixture")
+@pytest.mark.skipif(not BASE or not DATABASE_URL, reason="requires an isolated native API/PostgreSQL/MinIO fixture")
 def test_student_practice_submission_appears_only_in_the_owners_history():
     verify_database_identity()
     user_a_id, identifier_a, enrollment_a = create_student_fixture("甲")
@@ -300,8 +325,23 @@ def test_student_practice_submission_appears_only_in_the_owners_history():
                     )
                 )
 
+                today_response = page.request.get(
+                    f"{BASE}/api/v1/schools/{SCHOOL_ID}/student/today",
+                    headers=headers_a,
+                )
+                assert today_response.ok, today_response.text()
+                today_data = payload(today_response)
+                primary_action = today_data.get("primaryAction")
+                assert primary_action and primary_action.get("kind") and primary_action.get("title"), today_data
                 page.goto(f"{BASE}/student/today/", wait_until="networkidle")
-                page.locator(".today-link-card").click()
+                primary_card = page.locator(".today-primary")
+                primary_card.wait_for(timeout=20_000)
+                assert primary_card.get_attribute("data-action-kind") == primary_action["kind"]
+                assert primary_action["title"] in primary_card.inner_text()
+                primary_control = page.locator("[data-primary-action]")
+                if primary_control.count() and primary_control.evaluate("element => element.tagName") == "A":
+                    assert primary_control.get_attribute("href") == primary_action["target"]["href"]
+                page.locator(".today-practice-section a[href='/student/practices/']").first.click()
                 page.wait_for_url("**/student/practices/", timeout=20_000)
                 practice_card = page.locator(".practice-tile").filter(has_text=PRACTICE_TITLE)
                 practice_card.wait_for(timeout=20_000)
@@ -313,8 +353,9 @@ def test_student_practice_submission_appears_only_in_the_owners_history():
                 attempt_a = page.url.split("/attempts/")[1].split("/")[0]
                 completion = complete_real_attempt(page, headers_a, attempt_a)
                 assert completion["itemCount"] == 20
-                assert completion["playedAudio"] >= 1
-                assert completion["recordedAudio"] >= 1
+                assert completion["playedAudio"] == 6
+                assert completion["recordedAudio"] == 4
+                assert completion["uploadRetries"] == 4
 
                 page.locator('a[href="/student/practices/history/"]').first.click()
                 page.wait_for_url("**/student/practices/history/", timeout=20_000)
@@ -437,7 +478,7 @@ def test_student_practice_submission_appears_only_in_the_owners_history():
                 practice_b = practice_in_catalog(page, headers_b)
                 assert practice_b["id"] == definition_id
                 page.goto(f"{BASE}/student/today/", wait_until="networkidle")
-                page.locator(".today-link-card").click()
+                page.locator(".today-practice-section a[href='/student/practices/']").first.click()
                 page.wait_for_url("**/student/practices/", timeout=20_000)
                 page.locator(".practice-tile").filter(has_text=PRACTICE_TITLE).locator("h2 a").click()
                 page.wait_for_url(f"**/student/practices/{definition_id}/", timeout=20_000)
