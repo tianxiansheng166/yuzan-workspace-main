@@ -12,7 +12,7 @@
     ['RECOMMENDED', '推荐给我'], ['ALL', '全部练习'], ['SPECIALIZED', '专项训练'],
     ['COMPREHENSIVE', '综合练习'], ['MOCK', '模拟测评'], ['FAVORITE', '我的收藏'],
   ];
-  const state = { query: '', tab: 'RECOMMENDED', filters: {}, sort: 'RECOMMENDED', view: 'grid', cursor: null, catalog: null, assignedRemediations: null, loadingMore: false, requestSerial: 0 };
+  const state = { query: '', tab: 'RECOMMENDED', filters: {}, sort: 'RECOMMENDED', view: 'grid', cursor: null, catalog: null, assignedRemediations: null, practiceAttemptsByDefinition: null, practiceAttemptStatusPromise: null, loadingMore: false, requestSerial: 0 };
   const safe = value => String(value ?? '').replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character]));
   const shell = body => `<div class="shell practice-${page}"><main class="page practice-page"><div class="practice-contours"></div>${body}</main></div>`;
   const icon = name => ({ search: '⌕', filter: '≡', grid: '▦', list: '☷', arrow: '→', star: '☆', filledStar: '★', clock: '◷', mic: '◉', close: '×', book: '▤' }[name] || '•');
@@ -31,14 +31,35 @@
   });
   const facetValues = (key, values) => (state.catalog?.facets?.[key] || []).filter(item => values ? values.includes(item.value) : true);
   const chip = (label, value, key, count) => `<button class="facet-chip ${state.filters[key] === value ? 'selected' : ''}" data-filter-key="${safe(key)}" data-filter-value="${safe(value)}">${safe(label)}<small>${count}</small></button>`;
-  const statusLabel = item => ({ IN_PROGRESS: '继续练习', COMPLETED: '已完成', NOT_STARTED: item.mode === 'ASSIGNMENT' ? '教师任务' : '开始练习' }[item.studentState?.completionStatus] || '查看详情');
-  const card = (item, index) => `<article class="practice-tile"><a class="practice-cover" href="/student/practices/${encodeURIComponent(item.id)}/" aria-label="查看 ${safe(item.title)}"><img src="${safe(window.YuzanVisualAssets?.practiceCover(item, undefined, index) || item.coverAsset || '/assets/generated-covers/practice-reading.png')}" alt="" loading="lazy"><span class="cover-shade"></span><span class="practice-kind">${item.mode === 'ASSIGNMENT' ? '教师任务' : item.catalogType === 'SPECIALIZED' ? '专项训练' : '综合练习'}</span><button class="favorite-button ${item.studentState?.favorite ? 'is-favorite' : ''}" data-favorite="${safe(item.id)}" aria-label="${item.studentState?.favorite ? '取消收藏' : '收藏练习'}">${icon(item.studentState?.favorite ? 'filledStar' : 'star')}</button></a><div class="practice-tile-body"><div class="practice-tile-meta"><span>${safe(item.gradeBand)}</span><i></i><span>${safe(item.difficulty)}</span><i></i><span>${icon('clock')} ${item.estimatedMinutes} 分钟</span></div><h2><a href="/student/practices/${encodeURIComponent(item.id)}/">${safe(item.title)}</a></h2><p>${safe(item.summary)}</p><div class="tag-row">${item.abilityCategories.slice(0, 3).map(tag => `<span>${safe(tag)}</span>`).join('')}</div><div class="practice-tile-foot"><span class="practice-state-label ${safe(item.studentState?.completionStatus || 'NOT_STARTED').toLowerCase()}">${safe(statusLabel(item))}</span><a href="/student/practices/${encodeURIComponent(item.id)}/">查看详情 ${icon('arrow')}</a></div></div></article>`;
-  const listRow = (item, index) => `<article class="practice-row"><img src="${safe(window.YuzanVisualAssets?.practiceCover(item, undefined, index) || item.coverAsset || '/assets/generated-covers/practice-reading.png')}" alt=""><div class="practice-row-main"><div class="practice-tile-meta"><span>${safe(item.gradeBand)}</span><i></i><span>${safe(item.difficulty)}</span><i></i><span>${item.estimatedMinutes} 分钟</span></div><h2>${safe(item.title)}</h2><p>${safe(item.summary)}</p><div class="tag-row">${item.abilityCategories.map(tag => `<span>${safe(tag)}</span>`).join('')}</div></div><div class="practice-row-state"><p>${safe(item.recommendationReason)}</p><span class="practice-state-label ${safe(item.studentState?.completionStatus || 'NOT_STARTED').toLowerCase()}">${safe(statusLabel(item))}</span><a class="btn primary" href="/student/practices/${encodeURIComponent(item.id)}/">进入练习 ${icon('arrow')}</a></div></article>`;
-  const assignedStatus = status => ({ CREATED: '未开始', IN_PROGRESS: '进行中', SUBMITTED: '已提交', PROCESSING: '待复核', COMPLETED: '已完成' }[status] || status);
+  const practiceAttemptStatus = new Set(['CREATED', 'IN_PROGRESS', 'SUBMITTED', 'PROCESSING', 'FAILED']);
+  const attemptFor = definitionId => state.practiceAttemptsByDefinition?.get(definitionId) || null;
+  const attemptPath = attempt => `/student/practices/attempts/${encodeURIComponent(attempt.id)}`;
+  const attemptAction = attempt => {
+    if (!attempt) return null;
+    if (attempt.status === 'CREATED') return { href: `${attemptPath(attempt)}/runner/`, label: '开始练习' };
+    if (attempt.status === 'IN_PROGRESS') return { href: `${attemptPath(attempt)}/runner/`, label: '继续练习' };
+    if (['SUBMITTED', 'PROCESSING', 'FAILED'].includes(attempt.status)) return { href: `${attemptPath(attempt)}/processing/`, label: '查看处理状态' };
+    if (attempt.status === 'COMPLETED') return { href: `${attemptPath(attempt)}/report/`, label: '查看结果' };
+    return null;
+  };
+  const statusLabel = item => {
+    const attempt = attemptFor(item.id);
+    if (attempt) return ({ CREATED: '待开始', IN_PROGRESS: '进行中', SUBMITTED: '已提交', PROCESSING: '处理中', FAILED: '处理失败', COMPLETED: '已完成' })[attempt.status] || '查看详情';
+    return ({ IN_PROGRESS: '继续练习', COMPLETED: '已完成', NOT_STARTED: item.mode === 'ASSIGNMENT' ? '教师任务' : '开始练习' }[item.studentState?.completionStatus] || '查看详情');
+  };
+  const practiceAction = item => attemptAction(attemptFor(item.id)) || {
+    href: `/student/practices/${encodeURIComponent(item.id)}/`,
+    label: item.studentState?.completionStatus === 'COMPLETED' ? '再次练习' : '查看详情',
+  };
+  const actionLink = (item, className = '') => { const action = practiceAction(item); return `<a ${className ? `class="${className}"` : ''} href="${safe(action.href)}">${safe(action.label)} ${icon('arrow')}</a>`; };
+  const card = (item, index) => `<article class="practice-tile"><a class="practice-cover" href="/student/practices/${encodeURIComponent(item.id)}/" aria-label="查看 ${safe(item.title)}"><img src="${safe(window.YuzanVisualAssets?.practiceCover(item, undefined, index) || item.coverAsset || '/assets/generated-covers/practice-reading.png')}" alt="" loading="lazy"><span class="cover-shade"></span><span class="practice-kind">${item.mode === 'ASSIGNMENT' ? '教师任务' : item.catalogType === 'SPECIALIZED' ? '专项训练' : '综合练习'}</span><button class="favorite-button ${item.studentState?.favorite ? 'is-favorite' : ''}" data-favorite="${safe(item.id)}" aria-label="${item.studentState?.favorite ? '取消收藏' : '收藏练习'}">${icon(item.studentState?.favorite ? 'filledStar' : 'star')}</button></a><div class="practice-tile-body"><div class="practice-tile-meta"><span>${safe(item.gradeBand)}</span><i></i><span>${safe(item.difficulty)}</span><i></i><span>${icon('clock')} ${item.estimatedMinutes} 分钟</span></div><h2><a href="/student/practices/${encodeURIComponent(item.id)}/">${safe(item.title)}</a></h2><p>${safe(item.summary)}</p><div class="tag-row">${item.abilityCategories.slice(0, 3).map(tag => `<span>${safe(tag)}</span>`).join('')}</div><div class="practice-tile-foot"><span class="practice-state-label ${safe(attemptFor(item.id)?.status || item.studentState?.completionStatus || 'NOT_STARTED').toLowerCase()}">${safe(statusLabel(item))}</span>${actionLink(item)}</div></div></article>`;
+  const listRow = (item, index) => `<article class="practice-row"><img src="${safe(window.YuzanVisualAssets?.practiceCover(item, undefined, index) || item.coverAsset || '/assets/generated-covers/practice-reading.png')}" alt=""><div class="practice-row-main"><div class="practice-tile-meta"><span>${safe(item.gradeBand)}</span><i></i><span>${safe(item.difficulty)}</span><i></i><span>${item.estimatedMinutes} 分钟</span></div><h2>${safe(item.title)}</h2><p>${safe(item.summary)}</p><div class="tag-row">${item.abilityCategories.map(tag => `<span>${safe(tag)}</span>`).join('')}</div></div><div class="practice-row-state"><p>${safe(item.recommendationReason)}</p><span class="practice-state-label ${safe(attemptFor(item.id)?.status || item.studentState?.completionStatus || 'NOT_STARTED').toLowerCase()}">${safe(statusLabel(item))}</span>${actionLink(item, 'btn primary')}</div></article>`;
+  const assignedStatus = status => ({ CREATED: '未开始', IN_PROGRESS: '进行中', SUBMITTED: '已提交', PROCESSING: '处理中', FAILED: '处理失败', COMPLETED: '已完成', CANCELLED: '已取消' }[status] || status);
+  const assignedAction = item => attemptAction({ id: item.attemptId, status: item.status }) || { href: '/student/practices/', label: '回到练习中心' };
   const assignedRemediationSection = () => {
     const items = state.assignedRemediations?.items || [];
     if (!items.length) return '';
-    return `<section class="assigned-remediations"><div class="catalog-section-head"><div><p class="eyebrow">老师布置</p><h2>老师布置的专项巩固</h2></div><span>${items.filter(item => item.status !== 'COMPLETED').length} 项待完成</span></div><div class="assigned-remediation-list">${items.map(item => `<article><div><strong>${safe(item.focus?.displayName || '专项巩固')}</strong><p>${safe(item.practiceTitle)}${item.teacherDisplayName ? ` · ${safe(item.teacherDisplayName)}老师布置` : ' · 老师布置'} · ${item.itemCount} 道题</p></div><div><span class="practice-state-label ${safe(item.status).toLowerCase()}">${safe(assignedStatus(item.status))}</span><a class="btn primary" href="/student/practices/attempts/${encodeURIComponent(item.attemptId)}/runner/">${item.status === 'CREATED' ? '开始巩固' : item.status === 'COMPLETED' ? '查看结果' : '继续巩固'} ${icon('arrow')}</a></div></article>`).join('')}</div></section>`;
+    return `<section class="assigned-remediations"><div class="catalog-section-head"><div><p class="eyebrow">老师布置</p><h2>老师布置的专项巩固</h2></div><span>${items.filter(item => !['COMPLETED', 'CANCELLED'].includes(item.status)).length} 项待完成</span></div><div class="assigned-remediation-list">${items.map(item => `<article><div><strong>${safe(item.focus?.displayName || '专项巩固')}</strong><p>${safe(item.practiceTitle)}${item.teacherDisplayName ? ` · ${safe(item.teacherDisplayName)}老师布置` : ' · 老师布置'} · ${item.itemCount} 道题</p></div><div><span class="practice-state-label ${safe(item.status).toLowerCase()}">${safe(assignedStatus(item.status))}</span><a class="btn primary" href="${safe(assignedAction(item).href)}">${item.status === 'CREATED' ? '开始巩固' : item.status === 'IN_PROGRESS' ? '继续巩固' : item.status === 'COMPLETED' ? '查看结果' : item.status === 'CANCELLED' ? '回到练习中心' : '查看处理状态'} ${icon('arrow')}</a></div></article>`).join('')}</div></section>`;
   };
   function catalogView() {
     const catalog = state.catalog || { items: [], facets: {}, total: 0, nextCursor: null };
@@ -76,7 +97,7 @@
     const serial = ++state.requestSerial;
     if (!state.catalog) loading(); else setCatalogRefreshing(true);
     try {
-      const [result, assignedRemediations] = await Promise.all([Api.listPractices(requestFilters()), Api.listAssignedRemediations()]);
+      const [result, assignedRemediations] = await Promise.all([Api.listPractices(requestFilters()), Api.listAssignedRemediations(), loadPracticeAttemptStates()]);
       if (serial !== state.requestSerial) return;
       state.catalog = result;
       state.assignedRemediations = assignedRemediations;
@@ -86,6 +107,42 @@
       if (!state.catalog) error(err.message || '后端服务暂不可用', err.status);
       else setCatalogRefreshing(false);
     }
+  }
+  async function mapLimit(items, concurrency, callback) {
+    const output = new Array(items.length);
+    let index = 0;
+    await Promise.all(Array.from({ length: Math.min(concurrency, items.length) }, async () => {
+      while (index < items.length) {
+        const current = index++;
+        output[current] = await callback(items[current]);
+      }
+    }));
+    return output;
+  }
+  async function loadPracticeAttemptStates() {
+    if (state.practiceAttemptsByDefinition) return state.practiceAttemptsByDefinition;
+    if (state.practiceAttemptStatusPromise) return state.practiceAttemptStatusPromise;
+    state.practiceAttemptStatusPromise = (async () => {
+      const page = await Api.listAssessmentSessions({ limit: 100 });
+      if (!Array.isArray(page?.items)) throw new Error('无法确认最近练习的状态，请刷新后重试。');
+      const candidates = page.items.filter(session => practiceAttemptStatus.has(session.status));
+      const attempts = await mapLimit(candidates, 8, async session => {
+        try { return await Api.getPracticeAttempt(session.id); }
+        catch (err) { if (err.status === 404) return null; throw err; }
+      });
+      const byDefinition = new Map();
+      for (const attempt of attempts) {
+        if (!attempt?.practiceDefinitionId) continue;
+        const current = byDefinition.get(attempt.practiceDefinitionId);
+        const updatedAt = new Date(attempt.updatedAt || attempt.createdAt || 0).getTime();
+        const currentUpdatedAt = current ? new Date(current.updatedAt || current.createdAt || 0).getTime() : -Infinity;
+        if (!current || updatedAt > currentUpdatedAt) byDefinition.set(attempt.practiceDefinitionId, attempt);
+      }
+      state.practiceAttemptsByDefinition = byDefinition;
+      return byDefinition;
+    })();
+    try { return await state.practiceAttemptStatusPromise; }
+    finally { state.practiceAttemptStatusPromise = null; }
   }
   async function toggleFavorite(id, button) {
     button.disabled = true;
@@ -120,17 +177,18 @@
     document.querySelector('[data-sort]')?.addEventListener('change', event => { state.sort = event.currentTarget.value; state.tab = 'ALL'; refreshCatalog(); });
     document.querySelectorAll('[data-view]').forEach(button => button.addEventListener('click', () => { state.view = button.dataset.view; catalogView(); }));
     document.querySelectorAll('[data-favorite]').forEach(button => button.addEventListener('click', event => { event.preventDefault(); event.stopPropagation(); toggleFavorite(button.dataset.favorite, button); }));
-    document.querySelector('[data-load-more]')?.addEventListener('click', async event => { if (state.loadingMore || !state.catalog.nextCursor) return; state.loadingMore = true; event.currentTarget.textContent = '正在加载…'; try { const result = await Api.listPractices({ ...requestFilters(), cursor: state.catalog.nextCursor }); state.catalog = { ...result, items: [...state.catalog.items, ...result.items] }; catalogView(); } catch (err) { alert(err.message || '加载更多失败'); } finally { state.loadingMore = false; } });
+    document.querySelector('[data-load-more]')?.addEventListener('click', async event => { if (state.loadingMore || !state.catalog.nextCursor) return; const button = event.currentTarget; const serial = state.requestSerial; state.loadingMore = true; button.disabled = true; button.textContent = '正在加载…'; try { const result = await Api.listPractices({ ...requestFilters(), cursor: state.catalog.nextCursor }); if (serial !== state.requestSerial) return; state.catalog = { ...result, items: [...state.catalog.items, ...result.items] }; catalogView(); } catch (err) { if (serial === state.requestSerial) { button.disabled = false; button.textContent = '加载失败，点击重试'; button.title = err.message || '加载更多失败'; } } finally { state.loadingMore = false; } });
   }
   function detailView(practice) {
     const stateInfo = practice.studentState || {};
     const latest = stateInfo.recentResult?.overallScore;
-    app.innerHTML = shell(`<section class="practice-detail-hero"><div class="detail-cover"><img src="${safe(window.YuzanVisualAssets?.practiceCover(practice) || practice.coverAsset || '/assets/generated-covers/practice-reading.png')}" alt=""><span></span></div><div class="detail-copy"><p class="eyebrow">${practice.mode === 'ASSIGNMENT' ? '教师任务' : '自主练习'} · ${safe(practice.catalogType === 'SPECIALIZED' ? '专项训练' : '综合练习')}</p><h1>${safe(practice.title)}</h1><p>${safe(practice.summary)}</p><div class="detail-metrics"><span>${safe(practice.gradeBand)}</span><span>${safe(practice.difficulty)}</span><span>${icon('clock')} 约 ${practice.estimatedMinutes} 分钟</span><span>${icon('mic')} ${practice.requiresRecording ? '需要录音' : '无需录音'}</span></div><div class="tag-row">${practice.abilityCategories.map(tag => `<span>${safe(tag)}</span>`).join('')}</div><div class="detail-actions"><button class="btn primary" data-start>${stateInfo.completionStatus === 'IN_PROGRESS' ? '继续练习' : '开始练习'} ${icon('arrow')}</button><button class="btn" data-detail-favorite>${stateInfo.favorite ? '已收藏' : '收藏练习'} ${icon(stateInfo.favorite ? 'filledStar' : 'star')}</button></div></div></section><section class="practice-detail-grid"><article class="card detail-sections"><div class="section-title"><h2>练习目录</h2><span>${practice.sections.length} 个环节</span></div>${practice.sections.map((section, index) => `<div class="detail-section"><b>${String(index + 1).padStart(2, '0')}</b><div><h3>${safe(section.title)}</h3><p>${safe(section.description || '完成本环节练习')} · 约 ${section.estimatedMinutes} 分钟</p></div></div>`).join('')}</article><aside class="detail-side"><article class="card detail-facts"><h2>开始前了解这些</h2><dl><div><dt>口语与书面题</dt><dd>${practice.oralItemCount} 个口语环节 · ${practice.writtenItemCount} 个书面环节</dd></div><div><dt>示范与录音</dt><dd>${practice.requiresRecording ? '有示范的口语题会在播放后进入录音；请使用麦克风。' : '本练习不要求录音。'}</dd></div><div><dt>重录规则</dt><dd>${safe(practice.reRecordPolicy?.maxAttempts ? `每题最多 ${practice.reRecordPolicy.maxAttempts} 次录制机会。` : '以老师设置的练习规则为准。')}</dd></div><div><dt>评分与复核</dt><dd>${safe(practice.scoringDisclosure)}</dd></div><div><dt>最近一次成绩</dt><dd>${latest === null || latest === undefined ? '暂未形成可用成绩' : `${latest} 分`}</dd></div><div><dt>推荐原因</dt><dd>${safe(practice.recommendationReason)}</dd></div></dl></article><article class="detail-note"><img src="/assessment/assets/practice-catalog/snow-peak-success.png" alt=""><p>完成后可在报告中查看真实处理状态、录音和历史记录。</p></article></aside></section>`);
-    document.querySelector('[data-start]')?.addEventListener('click', async event => { const button = event.currentTarget; button.disabled = true; button.textContent = '正在准备练习…'; try { const result = await Api.createOrResumePractice(practice.id); location.href = `/student/practices/attempts/${encodeURIComponent(result.attemptId)}/runner/`; } catch (err) { button.disabled = false; button.textContent = '开始练习'; alert(err.message || '创建练习失败'); } });
+    const currentAttempt = attemptFor(practice.id);
+    app.innerHTML = shell(`<section class="practice-detail-hero"><div class="detail-cover"><img src="${safe(window.YuzanVisualAssets?.practiceCover(practice) || practice.coverAsset || '/assets/generated-covers/practice-reading.png')}" alt=""><span></span></div><div class="detail-copy"><p class="eyebrow">${practice.mode === 'ASSIGNMENT' ? '教师任务' : '自主练习'} · ${safe(practice.catalogType === 'SPECIALIZED' ? '专项训练' : '综合练习')}</p><h1>${safe(practice.title)}</h1><p>${safe(practice.summary)}</p><div class="detail-metrics"><span>${safe(practice.gradeBand)}</span><span>${safe(practice.difficulty)}</span><span>${icon('clock')} 约 ${practice.estimatedMinutes} 分钟</span><span>${icon('mic')} ${practice.requiresRecording ? '需要录音' : '无需录音'}</span></div><div class="tag-row">${practice.abilityCategories.map(tag => `<span>${safe(tag)}</span>`).join('')}</div><div class="detail-actions">${attemptAction(currentAttempt) ? `<a class="btn primary" href="${safe(attemptAction(currentAttempt).href)}">${safe(attemptAction(currentAttempt).label)} ${icon('arrow')}</a>` : `<button class="btn primary" data-start>${stateInfo.completionStatus === 'COMPLETED' ? '再次练习' : '开始练习'} ${icon('arrow')}</button>`}<button class="btn" data-detail-favorite>${stateInfo.favorite ? '已收藏' : '收藏练习'} ${icon(stateInfo.favorite ? 'filledStar' : 'star')}</button></div></div></section><section class="practice-detail-grid"><article class="card detail-sections"><div class="section-title"><h2>练习目录</h2><span>${practice.sections.length} 个环节</span></div>${practice.sections.map((section, index) => `<div class="detail-section"><b>${String(index + 1).padStart(2, '0')}</b><div><h3>${safe(section.title)}</h3><p>${safe(section.description || '完成本环节练习')} · 约 ${section.estimatedMinutes} 分钟</p></div></div>`).join('')}</article><aside class="detail-side"><article class="card detail-facts"><h2>开始前了解这些</h2><dl><div><dt>口语与书面题</dt><dd>${practice.oralItemCount} 个口语环节 · ${practice.writtenItemCount} 个书面环节</dd></div><div><dt>示范与录音</dt><dd>${practice.requiresRecording ? '有示范的口语题会在播放后进入录音；请使用麦克风。' : '本练习不要求录音。'}</dd></div><div><dt>重录规则</dt><dd>${safe(practice.reRecordPolicy?.maxAttempts ? `每题最多 ${practice.reRecordPolicy.maxAttempts} 次录制机会。` : '以老师设置的练习规则为准。')}</dd></div><div><dt>评分与复核</dt><dd>${safe(practice.scoringDisclosure)}</dd></div><div><dt>最近一次成绩</dt><dd>${latest === null || latest === undefined ? '暂未形成可用成绩' : `${latest} 分`}</dd></div><div><dt>推荐原因</dt><dd>${safe(practice.recommendationReason)}</dd></div></dl></article><article class="detail-note"><img src="/assessment/assets/practice-catalog/snow-peak-success.png" alt=""><p>完成后可在报告中查看真实处理状态、录音和历史记录。</p></article></aside></section>`);
+    document.querySelector('[data-start]')?.addEventListener('click', async event => { const button = event.currentTarget; if (button.disabled) return; button.disabled = true; button.textContent = '正在准备练习…'; document.querySelector('[data-start-error]')?.remove(); try { const result = await Api.createOrResumePractice(practice.id); if (!result?.attemptId) throw new Error('服务器没有返回本次练习编号，请重试。'); location.href = `/student/practices/attempts/${encodeURIComponent(result.attemptId)}/runner/`; } catch (err) { button.disabled = false; button.textContent = stateInfo.completionStatus === 'COMPLETED' ? '再次练习' : '开始练习'; const feedback = document.createElement('p'); feedback.dataset.startError = ''; feedback.setAttribute('role', 'alert'); feedback.textContent = err.message || '创建练习失败，请重试。'; button.after(feedback); } });
     document.querySelector('[data-detail-favorite]')?.addEventListener('click', async event => { const button = event.currentTarget; button.disabled = true; try { if (stateInfo.favorite) await Api.unfavoritePractice(practice.id); else await Api.favoritePractice(practice.id); const fresh = await Api.getPractice(practice.id); detailView(fresh); } catch (err) { button.disabled = false; alert(err.message || '收藏操作失败'); } });
   }
   if (!Api?.getToken?.()) { error('请先登录后再进入练习中心。'); return; }
   window.addEventListener('offline', () => error('当前处于离线状态，无法加载新的练习内容。'));
   if (page === 'catalog') refreshCatalog();
-  else { loading(); Api.getPractice(definitionId).then(detailView).catch(err => error(err.message || '后端服务暂不可用', err.status)); }
+  else { loading(); Promise.all([Api.getPractice(definitionId), loadPracticeAttemptStates()]).then(([practice]) => detailView(practice)).catch(err => error(err.message || '后端服务暂不可用', err.status)); }
 })();
