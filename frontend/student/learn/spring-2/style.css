@@ -448,3 +448,509 @@ body {
     transition: none !important;
   }
 }
+
+/* T022 course activity surface */
+.learning-page[hidden],
+.page-state[hidden],
+.note-recovery[hidden],
+.note-retry[hidden] {
+  display: none !important;
+}
+.course-header {
+  grid-template-columns: 180px minmax(0, 1fr) 180px;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+.course-heading {
+  min-width: 0;
+  position: relative;
+  padding-bottom: 15px;
+}
+.course-heading h1 {
+  position: relative;
+  z-index: 1;
+}
+.highland-art {
+  position: absolute;
+  width: min(100%, 560px);
+  height: 90px;
+  right: 0;
+  bottom: -4px;
+  fill: none;
+  stroke: rgba(40, 95, 70, .28);
+  stroke-width: 1.35;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+.course-status {
+  display: grid;
+  justify-items: end;
+  gap: 8px;
+  text-align: right;
+}
+.progress-seal {
+  position: relative;
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  font-family: "Microsoft YaHei", sans-serif;
+}
+.progress-seal svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+.progress-seal circle {
+  fill: none;
+  stroke-width: 3;
+}
+.progress-track {
+  stroke: #e5dccd;
+}
+.progress-value {
+  stroke: var(--green);
+  stroke-linecap: round;
+  stroke-dasharray: 144.5;
+  transition: stroke-dashoffset .25s ease;
+}
+.progress-seal strong {
+  position: relative;
+  z-index: 1;
+  font-size: 13px;
+  color: var(--green);
+}
+.course-status > span {
+  max-width: 150px;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.chapter-path {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(168px, 1fr);
+  scrollbar-color: #c7bba8 transparent;
+  scrollbar-width: thin;
+}
+.chapter-path .activity-link {
+  display: grid;
+  gap: 5px;
+  min-width: 168px;
+  padding: 15px 17px 13px;
+  border-bottom: 3px solid transparent;
+  color: var(--muted);
+  font: 12px/1.45 "Microsoft YaHei", sans-serif;
+  text-decoration: none;
+}
+.activity-link .activity-number {
+  color: #948b7e;
+  font: 12px Georgia, serif;
+}
+.activity-link b {
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.activity-link small {
+  font-size: 10px;
+}
+.activity-link.completed {
+  color: var(--green);
+}
+.activity-link.completed .activity-number::before {
+  content: "✓ ";
+  font-family: "Microsoft YaHei", sans-serif;
+}
+.activity-link.active {
+  border-color: var(--red);
+  background: rgba(255, 253, 248, .62);
+  color: var(--ink);
+}
+.activity-link:focus-visible,
+.back-link:focus-visible,
+.primary-button:focus-visible,
+.quiet-button:focus-visible,
+.chapter-path a:focus-visible,
+.private-note textarea:focus-visible,
+.answer-field input:focus-visible,
+.answer-field textarea:focus-visible,
+.acknowledgement input:focus-visible,
+.media-block audio:focus-visible,
+.media-block video:focus-visible {
+  outline: 3px solid #a36e26;
+  outline-offset: 3px;
+}
+.learning-layout {
+  grid-template-columns: minmax(0, 1fr) minmax(270px, 340px);
+  align-items: start;
+}
+.activity-stage {
+  min-width: 0;
+  border: 1px solid rgba(221, 211, 196, .7);
+  border-radius: 3px;
+}
+.activity-heading {
+  max-width: 72ch;
+}
+.activity-heading h2 {
+  max-width: 19ch;
+  text-wrap: pretty;
+}
+.activity-heading p {
+  max-width: 66ch;
+}
+.activity-content {
+  min-width: 0;
+}
+.reading-paragraph {
+  max-width: 66ch;
+  margin: 0 0 1.2em;
+  font-size: clamp(19px, 1.65vw, 22px);
+  line-height: 2.05;
+  letter-spacing: .025em;
+}
+.media-block {
+  max-width: 860px;
+  margin: 0;
+  padding: clamp(18px, 3vw, 32px);
+  border: 1px solid #e4dacb;
+  border-left: 4px solid var(--gold);
+  border-radius: 2px;
+}
+.media-block audio {
+  display: block;
+  min-height: 46px;
+}
+.media-block video {
+  display: block;
+  width: 100%;
+  max-height: min(56vw, 480px);
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+}
+.media-block figcaption,
+.media-state {
+  color: #626b63;
+  font: 12px/1.65 "Microsoft YaHei", sans-serif;
+}
+.media-state {
+  margin: 16px 0 0;
+}
+.media-state[data-tone="error"] {
+  color: var(--red);
+}
+.media-retry,
+.note-retry {
+  margin-top: 12px;
+}
+.activity-action {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+}
+.acknowledgement {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  padding: 12px 15px;
+  border: 1px solid var(--line);
+  background: #fbf8f1;
+  font: 14px/1.5 "Microsoft YaHei", sans-serif;
+}
+.acknowledgement input,
+.answer-field input[type="radio"] {
+  width: 19px;
+  height: 19px;
+  accent-color: var(--green);
+  flex: 0 0 auto;
+}
+.answer-field label {
+  min-height: 54px;
+  border-radius: 2px;
+  cursor: pointer;
+}
+.answer-field label:focus-within {
+  border-color: var(--green);
+  outline: 2px solid rgba(40, 95, 70, .2);
+}
+.answer-field legend,
+.answer-field > span {
+  font-weight: 600;
+}
+.fill-answer {
+  max-width: 760px;
+}
+.fill-answer textarea {
+  border-radius: 2px;
+  font-size: 16px;
+}
+.speech-target {
+  max-width: 780px;
+  border-radius: 2px;
+}
+.speech-target blockquote {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.recorder-help {
+  margin-top: 8px;
+}
+.recorder:not([data-state="recording"]) .vr-canvas-wrap,
+.recorder:not([data-state="recording"]) .vr-meter,
+.recorder:not([data-state="recording"]) .vr-bars {
+  display: none !important;
+}
+.practice-button {
+  justify-self: start;
+}
+.learning-aside section {
+  padding: 24px 22px;
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--ink);
+  background: rgba(255, 253, 248, .6);
+}
+.learning-aside h2 {
+  margin-bottom: 12px;
+  font-size: 21px;
+}
+.course-points ul {
+  margin: 0 0 10px;
+  padding-left: 1.25em;
+  line-height: 1.9;
+}
+.private-note {
+  margin-top: 22px;
+}
+.note-title {
+  align-items: center;
+}
+.note-title h2 {
+  margin: 0;
+}
+.note-title span {
+  text-align: right;
+}
+.note-title span[data-tone="success"] {
+  font-weight: 700;
+}
+.note-help {
+  margin: 12px 0;
+}
+.private-note textarea {
+  min-height: 230px;
+  border-radius: 2px;
+  font-size: 15px;
+}
+.private-note textarea:disabled {
+  color: #85857f;
+  cursor: wait;
+}
+.note-recovery {
+  margin-top: 12px;
+  padding: 12px;
+  border-left: 3px solid var(--red);
+  background: #fbf0e9;
+  font: 12px/1.65 "Microsoft YaHei", sans-serif;
+}
+.note-recovery p {
+  margin: 0 0 10px;
+  color: #7e3029;
+}
+.note-recovery-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.note-recovery-actions button {
+  justify-self: start;
+  padding: 10px 12px;
+  font-size: 11px;
+}
+.activity-footer {
+  grid-template-columns: minmax(120px, 1fr) minmax(180px, 1.4fr) minmax(130px, 1fr);
+  gap: 12px;
+}
+.activity-footer button {
+  min-height: 46px;
+}
+.activity-footer #syncState {
+  margin: 0;
+  line-height: 1.5;
+}
+.activity-footer #syncState[data-tone="error"] {
+  font-weight: 600;
+}
+.primary-button,
+.quiet-button {
+  min-height: 44px;
+  border-radius: 2px;
+}
+.primary-button:disabled {
+  opacity: .48;
+  cursor: not-allowed;
+}
+.error-state {
+  max-width: 760px;
+  border-top: 4px solid var(--red);
+}
+.error-state h1 {
+  margin: 0 0 12px;
+  font-size: clamp(28px, 4vw, 40px);
+}
+.error-state p:not(.eyebrow) {
+  max-width: 56ch;
+  margin: 0 auto 20px;
+  line-height: 1.8;
+}
+.error-state .primary-button {
+  display: inline-flex;
+  align-items: center;
+  color: #fff;
+  text-decoration: none;
+}
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+@media (max-width: 900px) {
+  .learning-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 22px;
+  }
+  .learning-aside {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+    gap: 16px;
+  }
+  .learning-aside .private-note {
+    margin-top: 0;
+  }
+}
+@media (max-width: 600px) {
+  .course-header {
+    grid-template-columns: minmax(0, 1fr) 64px;
+    gap: 10px;
+    padding: 14px 0 18px;
+  }
+  .course-header > .back-link {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+  .course-heading {
+    grid-column: 1;
+    grid-row: 2;
+    padding-bottom: 5px;
+  }
+  .course-heading h1 {
+    font-size: clamp(24px, 7vw, 32px);
+    line-height: 1.3;
+  }
+  .highland-art {
+    width: 110%;
+    height: 60px;
+    opacity: .65;
+  }
+  .course-status {
+    grid-column: 2;
+    grid-row: 2;
+    gap: 4px;
+  }
+  .progress-seal {
+    width: 52px;
+    height: 52px;
+  }
+  .course-status > span {
+    max-width: 78px;
+    font-size: 9px;
+  }
+  .chapter-path {
+    margin-bottom: 16px;
+    grid-auto-columns: minmax(145px, 44vw);
+  }
+  .chapter-path .activity-link {
+    min-width: 145px;
+    padding: 12px 11px 10px;
+  }
+  .activity-stage {
+    padding: 24px 17px 18px;
+  }
+  .activity-heading h2 {
+    margin-top: 14px;
+    font-size: 30px;
+  }
+  .activity-heading p {
+    font-size: 14px;
+  }
+  .activity-content {
+    padding: 24px 0;
+  }
+  .reading-paragraph {
+    font-size: 19px;
+    line-height: 1.95;
+  }
+  .media-block {
+    padding: 14px;
+  }
+  .media-block video {
+    max-height: 58vw;
+  }
+  .activity-footer {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 9px;
+  }
+  .activity-footer #syncState {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    min-height: 22px;
+  }
+  .activity-footer .quiet-button {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .activity-footer .primary-button {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  .activity-footer button {
+    padding: 11px 9px;
+    font-size: 12px;
+  }
+  .learning-aside {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+  }
+  .learning-aside section {
+    padding: 20px 17px;
+  }
+  .private-note textarea {
+    min-height: 190px;
+  }
+  .note-recovery-actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .note-recovery-actions button {
+    width: 100%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .progress-value {
+    transition: none;
+  }
+}

@@ -3,29 +3,114 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>课程学习｜语赞心声</title>
+  <meta name="theme-color" content="#f4efe5">
+  <title>课程活动｜语赞心声</title>
+  <link rel="stylesheet" href="/student/learn/spring-2/style.css">
   <script>
-    // 兼容旧路径 /student/learn/spring-2 → /student/courses/course-detail/?id=xxx
     (function () {
+      var activityRoute = /^\/student\/courses\/[^/]+\/submissions\/[^/]+\/activities\/[^/]+\/?$/.test(window.location.pathname);
+      if (activityRoute) return;
       var params = new URLSearchParams(window.location.search);
       var assignmentId = params.get('id') || params.get('assignmentId') || '';
       var activityId = params.get('activityId') || '';
       var target = '/student/courses/course-detail/';
-      var qp = [];
-      if (assignmentId) qp.push('id=' + encodeURIComponent(assignmentId));
-      if (activityId) qp.push('activityId=' + encodeURIComponent(activityId));
-      if (qp.length) target += '?' + qp.join('&');
+      var query = new URLSearchParams();
+      if (assignmentId) query.set('id', assignmentId);
+      if (activityId) query.set('activityId', activityId);
+      if (query.size) target += '?' + query.toString();
       window.location.replace(target);
     })();
   </script>
-  <noscript>
-    <meta http-equiv="refresh" content="0;url=/student/courses/">
-  </noscript>
 </head>
 <body>
-  <p style="text-align:center;padding:4em 1em;font-family:sans-serif;color:#555;">
-    正在跳转到课程详情页…<br>
-    <a href="/student/courses/">如未自动跳转，请点击此处</a>
-  </p>
+  <main id="loadingState" class="page-state" aria-live="polite">
+    <p class="eyebrow">语赞心声 · 学习路径</p>
+    <h1>正在读取课程活动</h1>
+    <p>课程内容和学习进度来自你的课程记录。</p>
+  </main>
+
+  <section id="errorState" class="page-state error-state" role="alert" hidden></section>
+
+  <main id="learningShell" class="learning-page" hidden>
+    <header class="course-header">
+      <a id="backToCourse" class="back-link" href="/student/courses/course-detail/">
+        <span aria-hidden="true">←</span> 返回课程
+      </a>
+      <div class="course-heading">
+        <p id="courseEyebrow" class="eyebrow"></p>
+        <h1 id="courseTitle"></h1>
+        <svg class="highland-art" viewBox="0 0 560 100" aria-hidden="true" focusable="false">
+          <path d="M2 77 78 40l35 19 58-45 49 53 42-31 56 39 45-23 54 31 46-40 43 25 52-18" />
+          <path d="m123 48 48-34 27 29m119 28 45-23 30 17m89-24 31-27 41 24" />
+          <path d="M2 88c67-12 108-4 166 2s106-3 157-1 86 8 137 3 67-10 96-5" />
+        </svg>
+      </div>
+      <div class="course-status">
+        <div class="progress-seal" role="progressbar" aria-label="课程完成进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <svg viewBox="0 0 54 54" aria-hidden="true" focusable="false">
+            <circle class="progress-track" cx="27" cy="27" r="23" />
+            <circle id="progressRing" class="progress-value" cx="27" cy="27" r="23" />
+          </svg>
+          <strong id="progressPercent">0%</strong>
+        </div>
+        <span id="attainmentStatus"></span>
+      </div>
+    </header>
+
+    <nav id="chapterPath" class="chapter-path" aria-label="课程活动"></nav>
+
+    <div class="learning-layout">
+      <article class="activity-stage" aria-labelledby="activityTitle">
+        <header class="activity-heading">
+          <span id="activityType" class="type-label"></span>
+          <h2 id="activityTitle"></h2>
+          <p id="activityInstruction"></p>
+        </header>
+        <div id="activityContent" class="activity-content" aria-live="polite"></div>
+        <div id="activityAction" class="activity-action"></div>
+        <footer class="activity-footer">
+          <button type="button" class="quiet-button" id="previousActivity">上一个活动</button>
+          <p id="syncState" role="status" aria-live="polite">正在读取学习状态…</p>
+          <button type="button" class="primary-button" id="completeActivity">完成并继续</button>
+        </footer>
+      </article>
+
+      <aside class="learning-aside" aria-label="课程辅助信息">
+        <section class="course-points">
+          <p class="eyebrow">学习提示</p>
+          <h2>本活动要点</h2>
+          <div id="coursePoints"></div>
+        </section>
+        <section class="private-note" aria-labelledby="noteHeading">
+          <div class="note-title">
+            <div>
+              <p class="eyebrow">只属于你的学习记录</p>
+              <h2 id="noteHeading">学习笔记</h2>
+            </div>
+            <span id="noteState" data-tone="" role="status" aria-live="polite">正在读取…</span>
+          </div>
+          <p class="note-help">自动保存到当前学生账号。离开页面前请确认显示“已保存”。</p>
+          <label class="visually-hidden" for="noteContent">本活动学习笔记</label>
+          <textarea id="noteContent" maxlength="10000" placeholder="写下你的发现、疑问或想再练习的地方…" disabled></textarea>
+          <div class="note-recovery" id="noteRecovery" hidden>
+            <p id="noteConflictMessage" role="alert"></p>
+            <div class="note-recovery-actions">
+              <button type="button" class="quiet-button" id="useServerNote">采用云端版本</button>
+              <button type="button" class="primary-button" id="saveMyNote">保留本页草稿并保存</button>
+            </div>
+          </div>
+          <button type="button" class="quiet-button note-retry" id="retryNoteSave" hidden>重试保存</button>
+        </section>
+      </aside>
+    </div>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="/assets/app-core.js"></script>
+  <script src="/assets/api-client.js"></script>
+  <script src="/assets/recorder.js"></script>
+  <script src="/global-nav.js"></script>
+  <script src="/student/learn/spring-2/player.js"></script>
 </body>
 </html>
