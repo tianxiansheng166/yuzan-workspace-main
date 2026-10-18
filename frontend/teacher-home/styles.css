@@ -156,3 +156,10 @@ button{font:inherit;color:inherit}.svg-sprite{position:absolute;width:0;height:0
   .data-status{font-size:10px}
 }
 @media (prefers-reduced-motion:reduce){.workflow-card,.workflow-card:before,.dashboard-row,.refresh-button{transition:none!important}}
+
+@media (max-width:760px){
+  .workspace .teacher-dashboard .hero{display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:12px;min-height:230px;padding:15px 5px 22px}
+  .workspace .teacher-dashboard .hero-copy{width:100%;max-width:none;min-width:0}
+  .workspace .teacher-dashboard .hero h1{overflow-wrap:anywhere}
+  .workspace .teacher-dashboard .action-creator{position:relative;left:auto;right:auto;top:auto;bottom:auto;align-self:flex-start;width:min(100%,360px);max-width:100%;height:auto;min-height:52px;margin:0;padding:10px 14px;justify-content:flex-start}
+}

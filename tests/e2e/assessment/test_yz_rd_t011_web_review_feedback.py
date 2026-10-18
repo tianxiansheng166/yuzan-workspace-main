@@ -6,7 +6,7 @@ import re
 import subprocess
 import uuid
 from pathlib import Path
-from urllib.parse import unquote, urlparse
+from urllib.parse import quote, unquote, urlparse
 
 import pytest
 from playwright.sync_api import expect, sync_playwright
@@ -610,14 +610,16 @@ def test_student_recording_teacher_review_and_student_safe_report():
             )
             assert cross_school.status == 403
 
-            page.goto(f"{BASE}/teacher/reviews/", wait_until="networkidle")
-            audio_review = page.locator(f'.review-row[href="/teacher/reviews/{audio_item_id}"]')
+            student_filter = quote(fixtures["student_a"]["name"], safe="")
+            page.goto(f"{BASE}/teacher/reviews/?student={student_filter}", wait_until="networkidle")
+            assert page.locator("[data-student-filter]").input_value() == fixtures["student_a"]["name"]
+            audio_review = page.locator(f'.review-row[href^="/teacher/reviews/{audio_item_id}"]')
             audio_href = audio_review.get_attribute("href")
-            assert audio_href == f"/teacher/reviews/{audio_item_id}"
+            assert audio_href and audio_href.startswith(f"/teacher/reviews/{audio_item_id}")
             audio_review.click()
-            page.wait_for_url(f"**/teacher/reviews/{audio_item_id}", timeout=20_000)
+            page.wait_for_function("itemId => location.pathname.endsWith(`/teacher/reviews/${itemId}`)", arg=audio_item_id, timeout=20_000)
             page.get_by_text("同一条原始录音", exact=True).wait_for(timeout=20_000)
-            page.get_by_text("教师参考量表").wait_for()
+            page.get_by_role("heading", name="评分标准").wait_for()
             assert page.locator(".rubric-block li").count() > 0
             audio = page.locator(".detail-audio audio")
             expect(audio).to_be_visible()
@@ -681,13 +683,19 @@ def test_student_recording_teacher_review_and_student_safe_report():
             growth_page.screenshot(path=str(EVIDENCE_DIR / "growth-one-review-pending-1440.png"), full_page=True)
             growth_context.close()
 
-            remaining_item_ids = [item_id for item_id in review_item_ids if item_id != audio_item_id]
-            for index, next_item_id in enumerate(remaining_item_ids):
-                page.locator("[data-review-message]").get_by_role("link", name="返回复核队列").click()
-                page.wait_for_url("**/teacher/reviews/", timeout=20_000)
-                remaining_row = page.locator(f'.review-row[href="/teacher/reviews/{next_item_id}"]')
-                remaining_row.click()
-                page.wait_for_url(f"**/teacher/reviews/{next_item_id}", timeout=20_000)
+            pending_item_ids = set(review_item_ids) - {audio_item_id}
+            for index in range(len(pending_item_ids)):
+                fresh_queue_response = page.request.get(review_queue_url, headers=teacher_headers)
+                assert fresh_queue_response.ok, fresh_queue_response.text()
+                fresh_queue = [
+                    item for item in payload(fresh_queue_response)["items"]
+                    if item["student"]["displayName"] == fixtures["student_a"]["name"]
+                    and item["itemId"] in pending_item_ids
+                ]
+                assert fresh_queue, {"pending": sorted(pending_item_ids)}
+                next_item_id = fresh_queue[0]["itemId"]
+                page.get_by_role("button", name="继续复核下一题").click()
+                page.wait_for_function("itemId => location.pathname.endsWith(`/teacher/reviews/${itemId}`)", arg=next_item_id, timeout=20_000)
                 review_detail = payload(page.request.get(
                     f"{BASE}/api/v1/schools/{SCHOOL_ID}/assessment-reviews/{next_item_id}", headers=teacher_headers
                 ))
@@ -697,8 +705,9 @@ def test_student_recording_teacher_review_and_student_safe_report():
                 page.locator("[data-review-score]").fill(str(score_by_item[next_item_id]))
                 page.locator("[data-review-comment]").fill(comments[next_item_id])
                 page.locator("[data-review-submit]").click()
-                is_last_review = index == len(remaining_item_ids) - 1
-                expected_message = "正式报告已生成" if is_last_review else "其他必要题目仍待复核"
+                pending_item_ids.remove(next_item_id)
+                is_last_review = not pending_item_ids
+                expected_message = "正式报告" if is_last_review else "其他必要题目仍待复核"
                 expect(page.locator("[data-review-message]")).to_contain_text(expected_message, timeout=20_000)
                 expect(page.locator("[data-review-message]")).to_contain_text(comments[next_item_id])
                 if not is_last_review:
@@ -788,7 +797,7 @@ def test_student_recording_teacher_review_and_student_safe_report():
             )
             assert foreign_history.status == 403
             assert page_errors == [], page_errors
-            print(json.dumps({
+            proof = {
                 "attemptId": attempt_id,
                 "practiceId": practice_id,
                 "reviewItemIds": review_item_ids,
@@ -814,6 +823,9 @@ def test_student_recording_teacher_review_and_student_safe_report():
                     "studentBHistory": foreign_history.status,
                     "changedDuplicate": changed_duplicate.status,
                 },
-            }, ensure_ascii=False))
+            }
+            EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
+            (EVIDENCE_DIR / "proof.json").write_text(json.dumps(proof, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+            print(json.dumps(proof, ensure_ascii=False))
         finally:
             browser.close()

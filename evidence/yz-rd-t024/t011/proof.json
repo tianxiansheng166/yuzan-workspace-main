@@ -1,0 +1,150 @@
+{
+  "attemptId": "434c876b-ac80-4fa6-b3b5-c62d7f0842be",
+  "practiceId": "6004751a-db4f-4fc2-bc17-214604a8e719",
+  "reviewItemIds": [
+    "f4486c41-0389-40d6-b328-7a5f9bc5821f",
+    "0a38112c-3eb0-4458-9971-34b3e47ed811",
+    "f44598e8-9cbe-4b38-ab52-d527cf49061c",
+    "9c69aae3-eae0-47cb-85dc-c673201de541",
+    "aa63bf55-7276-4921-898d-70793f4a5ef3",
+    "75f689d5-2fa1-42bc-b67c-a6291610537f"
+  ],
+  "recordings": [
+    {
+      "itemId": "f4486c41-0389-40d6-b328-7a5f9bc5821f",
+      "recordingId": "d938ab54-1a18-41a2-bd53-babfe40ce935",
+      "bytes": 22514,
+      "speechJobs": 1
+    },
+    {
+      "itemId": "0a38112c-3eb0-4458-9971-34b3e47ed811",
+      "recordingId": "0126bae5-0739-47a4-8bec-bdd1a0113f26",
+      "bytes": 22514,
+      "speechJobs": 1
+    },
+    {
+      "itemId": "f44598e8-9cbe-4b38-ab52-d527cf49061c",
+      "recordingId": "ef311b54-b4ef-405f-80db-afc28a39cfaa",
+      "bytes": 22514,
+      "speechJobs": 1
+    },
+    {
+      "itemId": "9c69aae3-eae0-47cb-85dc-c673201de541",
+      "recordingId": "1d4c4ee5-d0fb-4fe8-8bf4-6ae108c1d751",
+      "bytes": 22514,
+      "speechJobs": 1
+    }
+  ],
+  "runnerCompletion": {
+    "itemCount": 20,
+    "playedAudio": 6,
+    "recordedAudio": 4,
+    "uploadRetries": 4,
+    "submitPosts": 1,
+    "confirmationDismissals": 2,
+    "duplicateSubmitId": "434c876b-ac80-4fa6-b3b5-c62d7f0842be"
+  },
+  "speechProvider": "disabled; worker not started",
+  "microphoneSource": "SIMULATED_MIC",
+  "queueClickedHref": "/teacher/reviews/f4486c41-0389-40d6-b328-7a5f9bc5821f?student=TEST_FIXTURE_ONLY+T011+%E5%AD%A6%E7%94%9F%E7%94%B2+6a868b8c61",
+  "manualReview": [
+    [
+      "f4486c41-0389-40d6-b328-7a5f9bc5821f",
+      "3",
+      "33333333-3333-4333-8333-333333333333",
+      "TEST_FIXTURE_ONLY 教师第 1 项复核：朗读清楚，继续保持自然停顿。",
+      "2026-10-18 16:39:34.214",
+      "2",
+      "REVIEWED"
+    ],
+    [
+      "0a38112c-3eb0-4458-9971-34b3e47ed811",
+      "3",
+      "33333333-3333-4333-8333-333333333333",
+      "TEST_FIXTURE_ONLY 教师第 2 项复核：朗读清楚，继续保持自然停顿。",
+      "2026-10-18 16:39:35.516",
+      "2",
+      "REVIEWED"
+    ],
+    [
+      "f44598e8-9cbe-4b38-ab52-d527cf49061c",
+      "3",
+      "33333333-3333-4333-8333-333333333333",
+      "TEST_FIXTURE_ONLY 教师第 3 项复核：朗读清楚，继续保持自然停顿。",
+      "2026-10-18 16:39:35.85",
+      "2",
+      "REVIEWED"
+    ],
+    [
+      "9c69aae3-eae0-47cb-85dc-c673201de541",
+      "13",
+      "33333333-3333-4333-8333-333333333333",
+      "TEST_FIXTURE_ONLY 教师第 4 项复核：朗读清楚，继续保持自然停顿。",
+      "2026-10-18 16:39:36.181",
+      "2",
+      "REVIEWED"
+    ],
+    [
+      "aa63bf55-7276-4921-898d-70793f4a5ef3",
+      "7",
+      "33333333-3333-4333-8333-333333333333",
+      "TEST_FIXTURE_ONLY 教师第 5 项复核：朗读清楚，继续保持自然停顿。",
+      "2026-10-18 16:39:36.517",
+      "2",
+      "REVIEWED"
+    ],
+    [
+      "75f689d5-2fa1-42bc-b67c-a6291610537f",
+      "7",
+      "33333333-3333-4333-8333-333333333333",
+      "TEST_FIXTURE_ONLY 教师第 6 项复核：朗读清楚，继续保持自然停顿。",
+      "2026-10-18 16:39:36.849",
+      "2",
+      "REVIEWED"
+    ]
+  ],
+  "reportId": "773d3f1e-c9f8-47fd-9908-d73eb1902eb0",
+  "studentReportScore": 55,
+  "teacherFeedback": [
+    {
+      "comment": "TEST_FIXTURE_ONLY 教师第 1 项复核：朗读清楚，继续保持自然停顿。",
+      "reviewedAt": "2026-10-18T16:39:34.214Z"
+    },
+    {
+      "comment": "TEST_FIXTURE_ONLY 教师第 2 项复核：朗读清楚，继续保持自然停顿。",
+      "reviewedAt": "2026-10-18T16:39:35.516Z"
+    },
+    {
+      "comment": "TEST_FIXTURE_ONLY 教师第 3 项复核：朗读清楚，继续保持自然停顿。",
+      "reviewedAt": "2026-10-18T16:39:35.850Z"
+    },
+    {
+      "comment": "TEST_FIXTURE_ONLY 教师第 4 项复核：朗读清楚，继续保持自然停顿。",
+      "reviewedAt": "2026-10-18T16:39:36.181Z"
+    },
+    {
+      "comment": "TEST_FIXTURE_ONLY 教师第 5 项复核：朗读清楚，继续保持自然停顿。",
+      "reviewedAt": "2026-10-18T16:39:36.517Z"
+    },
+    {
+      "comment": "TEST_FIXTURE_ONLY 教师第 6 项复核：朗读清楚，继续保持自然停顿。",
+      "reviewedAt": "2026-10-18T16:39:36.849Z"
+    }
+  ],
+  "pendingBeforeReview": {
+    "session": "PROCESSING",
+    "report": null
+  },
+  "firstReviewReportCount": 0,
+  "negativeStatuses": {
+    "unauthenticated": 401,
+    "studentReview": 403,
+    "missingReview": 404,
+    "scoreOutOfRange": 400,
+    "crossClassTeacher": 403,
+    "crossSchoolTeacher": 403,
+    "studentBReport": 403,
+    "studentBHistory": 403,
+    "changedDuplicate": 409
+  }
+}

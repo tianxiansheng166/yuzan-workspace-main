@@ -1,7 +1,17 @@
 # CURRENT HANDOFF
 
-Last updated: 2026-10-18
+Last updated: 2026-10-19
 Repository: `yuzan-workspace-main`
+
+## YZ-RD-T024 checkpoint (2026-10-19)
+
+- DONE / WEB_ONLY / NATIVE_CHROMIUM_API_POSTGRESQL_MINIO_VERIFIED / READY_TO_MERGE. Isolated branch `feat/yz-rd-t024-teacher-student-rolling-web`; no merge into shared `feat/question-bank-v1`. Merge commit `ce709b4539ae0502e4f1a7de216a8d7ba66adb0f` joins T019 `1ebc1923d44dcf238f3441552b7eda946b6c0b44` and T020 `e6b8e8aa0b2f8cfe9a3bed894f264c73f64e1f3c`; T020 already contains T018 `73bb949b22f38b66f92edaa741aa042e504d2d7f`. Merge base is T014 `0596a9b8256c1d674b93eb2afd4de7306c768129`; changed-file counts 201/45 with zero overlap and no conflicts. T014/T018 were not re-integrated.
+- The task was routed to one dedicated worktree at `/home/tian/code/yuzan-workspace-t024` from the exact T019 accepted SHA. Published Notion YZ-RD-T024 and the V5.9 historical/current V5.10 lane rules were read before work.
+- Final same-environment Chromium + NestJS + PostgreSQL 17 + MinIO run: 9 passed, 0 failed, 0 skipped. Teacher Home Submission and Assessment Review queue counts remain separate; dynamic Assignment/Submission/Review IDs and SQL are recorded in [`evidence/yz-rd-t024/RESULTS.md`](evidence/yz-rd-t024/RESULTS.md). A/B targeted OPEN course Assignment excludes C; Today/course progress and 20-item practice flow are exercised. Six manual Review Items are required before the server creates the AssessmentReport; the student sees saved comments in History and Growth.
+- T024 owns `yuzan_t024_native` / `yz_t024`, bucket `yz-t024-native`, ports 55674/6474/59274–59275/4134/4334. Fresh DB applied 32 migrations; read-only import found 120 Question Bank items and 126 assets. Worker and automatic speech scoring stayed disabled. All microphone evidence is `SIMULATED_MIC`. T024 process exit is verified, its database/objects are retained, no Docker/Compose/P1-SIM was used, and L4 remains OPEN.
+- Final checks: frontend 67/67; API 1101 passed / 64 environment-gated skips; Contracts 6/6; Prisma, OpenAPI generation, typechecks and builds PASS; native E2E 9/9, 0 skipped. Browser screenshots cover 390/768/1280/1440. The 390px Teacher Home action now flows below the greeting.
+- T005's original 20 dirty paths, root `.env`, and resource directory were not modified or staged. T019/T020 source checkouts remain clean and unchanged. T021/T022/T023 remained outside the T024 diff; T022/T023 progressed on their own branches and their own handoffs record their service exits. Exact final pushed branch SHA is returned with this task result.
+- Next: future owner-led integration of T005 bilingual course work and the T021/T022/T023 branches; physical microphone, calibrated scoring, pilot and production launch remain NOT_RUN.
 
 ## YZ-RD-T019 checkpoint (2026-10-18)
 

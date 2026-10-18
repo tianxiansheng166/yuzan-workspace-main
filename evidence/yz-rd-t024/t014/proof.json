@@ -1,0 +1,22 @@
+{
+  "schoolId": "338f0a1f-9274-4458-9dd0-83bb9592a4c2",
+  "classId": "d1df8582-e6f8-424b-820f-48e0192e9be2",
+  "enrollmentIds": [
+    "d94748d0-604b-4036-9317-9a6dc52efff4",
+    "dfe17d2e-3dec-474e-ac7a-6c2b465eebb9",
+    "1f8ea5da-a8d0-44e8-8415-ab03e0243d84"
+  ],
+  "assignmentId": "6ed5f8fb-f0c9-4ad7-a230-434b064e38c0",
+  "assignmentStatus": "OPEN",
+  "targets": [
+    "d94748d0-604b-4036-9317-9a6dc52efff4",
+    "dfe17d2e-3dec-474e-ac7a-6c2b465eebb9"
+  ],
+  "nonTarget": "1f8ea5da-a8d0-44e8-8415-ab03e0243d84",
+  "courseSubmissions": {
+    "A": "b48ba538-3480-43da-8828-892bae711869",
+    "B": "a5fe8dc0-44fb-44a3-b8ec-ce9f5fe67dcd"
+  },
+  "completedActivityId": "ca71edd4-ab1b-420f-b0ec-0e64ce018061",
+  "s3RecordingId": "f99ca718-7eb4-4906-8c94-f2a206626e97"
+}

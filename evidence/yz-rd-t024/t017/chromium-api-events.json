@@ -1,0 +1,3992 @@
+{
+  "task": "T024",
+  "base": "4d971c9683664c09e533069ec001b00d0dc239af",
+  "databaseIdentity": {
+    "database": "yuzan_t024_native",
+    "user": "yz_t024"
+  },
+  "requests": [],
+  "responses": [],
+  "assertions": {
+    "catalogCountAndFirstPageMatchSQL": {
+      "apiTotal": 24,
+      "sqlTotal": 24,
+      "firstPageIds": [
+        "ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84",
+        "22303ec9-bf38-4c5d-8905-4b8881c7b65f",
+        "6fc8e85b-6be2-4c8d-89a1-d22ac6542159",
+        "9cb11940-b283-4429-84fb-ff6414f7fa56",
+        "c0606ba8-3a73-4e45-9cd2-4737136df8c6",
+        "f254e952-aecb-4e79-9531-36707a6c5eb0",
+        "8da10169-c247-4940-8b11-a95f6d82c095",
+        "6854fc8b-0e5a-4d2d-8bb2-66ed33c45a71",
+        "f36c8921-319b-41e1-8fc0-2345e473b2d0",
+        "dd0b0a5f-96ef-4424-bc7e-606022922271",
+        "c187098a-bb47-41af-968c-8a0256a218e9",
+        "46842c6c-2a09-4a00-89be-588400dc701a"
+      ]
+    },
+    "progressPercentMatchesPostgres": {
+      "requiredActivities": 2,
+      "completedActivities": 1,
+      "apiProgressPercent": 50,
+      "apiStatus": "IN_PROGRESS",
+      "nextActivity": "T017 下一项活动：复述并说明"
+    },
+    "serverFilters": {
+      "gradeBand": "七年级",
+      "capabilityTheme": "发音基础",
+      "difficulty": "入门",
+      "taskGroup": "表达交流",
+      "culturalElement": "高原文化",
+      "search": "T017 快速结果课程"
+    },
+    "favoriteLifecycle": {
+      "persistedAfterRefresh": true,
+      "concurrentPutResponses": [
+        [
+          200,
+          {
+            "favorited": true
+          }
+        ],
+        [
+          200,
+          {
+            "favorited": true
+          }
+        ],
+        [
+          200,
+          {
+            "favorited": true
+          }
+        ],
+        [
+          200,
+          {
+            "favorited": true
+          }
+        ]
+      ],
+      "concurrentDeleteResponses": [
+        [
+          200,
+          {
+            "favorited": false
+          }
+        ],
+        [
+          200,
+          {
+            "favorited": false
+          }
+        ],
+        [
+          200,
+          {
+            "favorited": false
+          }
+        ],
+        [
+          200,
+          {
+            "favorited": false
+          }
+        ]
+      ],
+      "legacyPostToggle": [
+        {
+          "favorited": true
+        },
+        {
+          "favorited": false
+        }
+      ],
+      "doubleClickPutRequests": 1,
+      "browserOfflineRetainedFavoriteAndManualRetryRemovedIt": true,
+      "databaseFavoriteRows": 0
+    },
+    "cursorPaginationMatchesSQL": {
+      "total": 24,
+      "firstPage": [
+        "ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84",
+        "22303ec9-bf38-4c5d-8905-4b8881c7b65f",
+        "6fc8e85b-6be2-4c8d-89a1-d22ac6542159",
+        "9cb11940-b283-4429-84fb-ff6414f7fa56",
+        "c0606ba8-3a73-4e45-9cd2-4737136df8c6",
+        "f254e952-aecb-4e79-9531-36707a6c5eb0",
+        "8da10169-c247-4940-8b11-a95f6d82c095",
+        "6854fc8b-0e5a-4d2d-8bb2-66ed33c45a71",
+        "f36c8921-319b-41e1-8fc0-2345e473b2d0",
+        "dd0b0a5f-96ef-4424-bc7e-606022922271",
+        "c187098a-bb47-41af-968c-8a0256a218e9",
+        "46842c6c-2a09-4a00-89be-588400dc701a"
+      ],
+      "secondPage": [
+        "956339ef-a020-4ff8-86a6-9702a76d6e1f",
+        "5a3c00ae-fde9-4dc6-bd35-72d72016ce46",
+        "10e19509-b7bd-4601-86a6-7ec003e1be15",
+        "75632f48-24cd-43ca-b562-b5b6b7866cc9",
+        "dd25b322-f6c0-478f-8ee6-f207a6b60a93",
+        "c4b0c86d-52db-4fbe-8d94-3c8d9f6f8e7a",
+        "4221259c-7b53-4953-b0a0-489eee9e61c7",
+        "8864366a-6024-443b-987d-64b9e2cc9460",
+        "c4e9b05b-919f-4e9b-b759-433e087a5499",
+        "052c5646-4420-4cdb-9d2e-a91968a0b726",
+        "67d1bc07-a4d9-4c0f-835d-99293f388d18",
+        "26b6d6a1-c754-414e-833f-66bc2dd3f026"
+      ],
+      "duplicates": 0
+    },
+    "popularitySortMatchesSubmissionCounts": {
+      "sortBy": "popularity",
+      "topAssignment": "ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84",
+      "topSubmissionCount": 3,
+      "apiFirstPageMatchesSQL": true
+    },
+    "emptyNetworkErrorOfflineRetry": {
+      "emptyResultTotal": 0,
+      "requestFailureShown": true,
+      "offlineMessage": "当前需要联网加载课程。网络恢复后可以重试。",
+      "retryAfterOnline": true
+    },
+    "studentBIsolation": {
+      "bCatalogTotal": 0,
+      "aDetailFromB": 404,
+      "favoriteAFromB": 404,
+      "assignmentTargetRowsForB": 0
+    },
+    "authStatusChecks": {
+      "unauthenticated": 401,
+      "wrongRole": 403,
+      "inaccessibleCourse": 404
+    },
+    "staleRequestIgnored": true,
+    "keyboardDetailAndReturn": {
+      "assignmentId": "ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84",
+      "detailApiStatus": 200,
+      "activityId": "cfb9337d-d4e5-4674-9464-68e2832a8320",
+      "currentActivityOpened": true,
+      "focusOutline": "solid",
+      "returnedToCatalog": true
+    },
+    "browserLoginAndCatalogNavigation": true,
+    "returnedTotalUsesServerCount": true
+  },
+  "fixtures": {
+    "studentB": {
+      "id": "89e2171a-519c-4a06-80c0-51e9bd73b35d",
+      "membership": "e391f143-d2c8-415e-836a-5adfd3d16d8f",
+      "class": "3365c9dc-6c9f-45c8-a761-bf853fe6fb00",
+      "enrollment": "40e4940a-b77f-4786-934a-0c41c1b00ac5",
+      "login": "student.t017.b.ec832c38f4@test.invalid"
+    },
+    "studentAAssignments": [
+      "ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84",
+      "22303ec9-bf38-4c5d-8905-4b8881c7b65f",
+      "6fc8e85b-6be2-4c8d-89a1-d22ac6542159",
+      "9cb11940-b283-4429-84fb-ff6414f7fa56",
+      "c0606ba8-3a73-4e45-9cd2-4737136df8c6",
+      "f254e952-aecb-4e79-9531-36707a6c5eb0",
+      "8da10169-c247-4940-8b11-a95f6d82c095",
+      "6854fc8b-0e5a-4d2d-8bb2-66ed33c45a71",
+      "f36c8921-319b-41e1-8fc0-2345e473b2d0",
+      "dd0b0a5f-96ef-4424-bc7e-606022922271",
+      "c187098a-bb47-41af-968c-8a0256a218e9",
+      "46842c6c-2a09-4a00-89be-588400dc701a",
+      "956339ef-a020-4ff8-86a6-9702a76d6e1f",
+      "5a3c00ae-fde9-4dc6-bd35-72d72016ce46",
+      "10e19509-b7bd-4601-86a6-7ec003e1be15",
+      "75632f48-24cd-43ca-b562-b5b6b7866cc9",
+      "dd25b322-f6c0-478f-8ee6-f207a6b60a93",
+      "c4b0c86d-52db-4fbe-8d94-3c8d9f6f8e7a",
+      "4221259c-7b53-4953-b0a0-489eee9e61c7",
+      "8864366a-6024-443b-987d-64b9e2cc9460",
+      "c4e9b05b-919f-4e9b-b759-433e087a5499",
+      "052c5646-4420-4cdb-9d2e-a91968a0b726",
+      "67d1bc07-a4d9-4c0f-835d-99293f388d18",
+      "26b6d6a1-c754-414e-833f-66bc2dd3f026"
+    ],
+    "popularAssignment": "ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84",
+    "nextActivity": "cfb9337d-d4e5-4674-9464-68e2832a8320"
+  },
+  "baselineBrowser": {
+    "requests": [
+      {
+        "method": "POST",
+        "url": "http://127.0.0.1:39967/api/v1/auth/login"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:39967/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?limit=4"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:39967/student/courses/"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:39967/student/courses/style.css"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:39967/student/courses/courses.js"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:39967/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses"
+      }
+    ],
+    "responses": [
+      {
+        "method": "POST",
+        "url": "http://127.0.0.1:39967/api/v1/auth/login",
+        "status": 200,
+        "responseFields": [
+          "accessToken",
+          "activeSchoolId",
+          "expiresIn",
+          "user"
+        ],
+        "data": {
+          "categories": null,
+          "gradeBands": null,
+          "difficulties": null,
+          "assignmentIds": [],
+          "catalogItemFields": [],
+          "catalogItems": [],
+          "total": null,
+          "hasMore": null,
+          "nextCursor": null,
+          "favorited": null
+        }
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:39967/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?limit=4",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:39967/student/courses/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:39967/student/courses/style.css",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:39967/student/courses/courses.js",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:39967/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses",
+        "status": 200,
+        "responseFields": [
+          "categories",
+          "courses",
+          "difficulties",
+          "gradeBands",
+          "hasMore",
+          "nextCursor",
+          "sources",
+          "statuses",
+          "total"
+        ],
+        "data": {
+          "categories": [
+            "发音基础",
+            "古诗文"
+          ],
+          "gradeBands": [
+            "七年级"
+          ],
+          "difficulties": [
+            "入门",
+            "基础",
+            "进阶"
+          ],
+          "assignmentIds": [
+            "26b6d6a1-c754-414e-833f-66bc2dd3f026",
+            "67d1bc07-a4d9-4c0f-835d-99293f388d18",
+            "052c5646-4420-4cdb-9d2e-a91968a0b726",
+            "c4e9b05b-919f-4e9b-b759-433e087a5499",
+            "8864366a-6024-443b-987d-64b9e2cc9460",
+            "4221259c-7b53-4953-b0a0-489eee9e61c7",
+            "c4b0c86d-52db-4fbe-8d94-3c8d9f6f8e7a",
+            "dd25b322-f6c0-478f-8ee6-f207a6b60a93",
+            "75632f48-24cd-43ca-b562-b5b6b7866cc9",
+            "10e19509-b7bd-4601-86a6-7ec003e1be15",
+            "5a3c00ae-fde9-4dc6-bd35-72d72016ce46",
+            "956339ef-a020-4ff8-86a6-9702a76d6e1f",
+            "46842c6c-2a09-4a00-89be-588400dc701a",
+            "c187098a-bb47-41af-968c-8a0256a218e9",
+            "dd0b0a5f-96ef-4424-bc7e-606022922271",
+            "f36c8921-319b-41e1-8fc0-2345e473b2d0",
+            "6854fc8b-0e5a-4d2d-8bb2-66ed33c45a71",
+            "8da10169-c247-4940-8b11-a95f6d82c095",
+            "f254e952-aecb-4e79-9531-36707a6c5eb0",
+            "c0606ba8-3a73-4e45-9cd2-4737136df8c6"
+          ],
+          "catalogItemFields": [
+            "assignmentId",
+            "capabilityTheme",
+            "completedAt",
+            "course",
+            "coverAsset",
+            "culturalElements",
+            "description",
+            "difficulty",
+            "estimatedMinutes",
+            "gradeBand",
+            "isFavorite",
+            "nextActivity",
+            "progressPercent",
+            "source",
+            "status",
+            "submission",
+            "taskGroups",
+            "title"
+          ],
+          "catalogItems": [
+            {
+              "assignmentId": "26b6d6a1-c754-414e-833f-66bc2dd3f026",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "67d1bc07-a4d9-4c0f-835d-99293f388d18",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "052c5646-4420-4cdb-9d2e-a91968a0b726",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "c4e9b05b-919f-4e9b-b759-433e087a5499",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "8864366a-6024-443b-987d-64b9e2cc9460",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "4221259c-7b53-4953-b0a0-489eee9e61c7",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "c4b0c86d-52db-4fbe-8d94-3c8d9f6f8e7a",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "dd25b322-f6c0-478f-8ee6-f207a6b60a93",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "75632f48-24cd-43ca-b562-b5b6b7866cc9",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "10e19509-b7bd-4601-86a6-7ec003e1be15",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "5a3c00ae-fde9-4dc6-bd35-72d72016ce46",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "956339ef-a020-4ff8-86a6-9702a76d6e1f",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "46842c6c-2a09-4a00-89be-588400dc701a",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "c187098a-bb47-41af-968c-8a0256a218e9",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "dd0b0a5f-96ef-4424-bc7e-606022922271",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "f36c8921-319b-41e1-8fc0-2345e473b2d0",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "6854fc8b-0e5a-4d2d-8bb2-66ed33c45a71",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "8da10169-c247-4940-8b11-a95f6d82c095",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "f254e952-aecb-4e79-9531-36707a6c5eb0",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "c0606ba8-3a73-4e45-9cd2-4737136df8c6",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            }
+          ],
+          "total": 24,
+          "hasMore": true,
+          "nextCursor": "c0606ba8-3a73-4e45-9cd2-4737136df8c6",
+          "favorited": null
+        }
+      }
+    ]
+  },
+  "baseline": {
+    "commit": "4d971c9683664c09e533069ec001b00d0dc239af",
+    "url": "http://127.0.0.1:39967/student/courses/",
+    "catalog": {
+      "categories": [
+        "发音基础",
+        "古诗文"
+      ],
+      "gradeBands": [
+        "七年级"
+      ],
+      "difficulties": [
+        "入门",
+        "基础",
+        "进阶"
+      ],
+      "assignmentIds": [
+        "26b6d6a1-c754-414e-833f-66bc2dd3f026",
+        "67d1bc07-a4d9-4c0f-835d-99293f388d18",
+        "052c5646-4420-4cdb-9d2e-a91968a0b726",
+        "c4e9b05b-919f-4e9b-b759-433e087a5499",
+        "8864366a-6024-443b-987d-64b9e2cc9460",
+        "4221259c-7b53-4953-b0a0-489eee9e61c7",
+        "c4b0c86d-52db-4fbe-8d94-3c8d9f6f8e7a",
+        "dd25b322-f6c0-478f-8ee6-f207a6b60a93",
+        "75632f48-24cd-43ca-b562-b5b6b7866cc9",
+        "10e19509-b7bd-4601-86a6-7ec003e1be15",
+        "5a3c00ae-fde9-4dc6-bd35-72d72016ce46",
+        "956339ef-a020-4ff8-86a6-9702a76d6e1f",
+        "46842c6c-2a09-4a00-89be-588400dc701a",
+        "c187098a-bb47-41af-968c-8a0256a218e9",
+        "dd0b0a5f-96ef-4424-bc7e-606022922271",
+        "f36c8921-319b-41e1-8fc0-2345e473b2d0",
+        "6854fc8b-0e5a-4d2d-8bb2-66ed33c45a71",
+        "8da10169-c247-4940-8b11-a95f6d82c095",
+        "f254e952-aecb-4e79-9531-36707a6c5eb0",
+        "c0606ba8-3a73-4e45-9cd2-4737136df8c6"
+      ],
+      "catalogItemFields": [
+        "assignmentId",
+        "capabilityTheme",
+        "completedAt",
+        "course",
+        "coverAsset",
+        "culturalElements",
+        "description",
+        "difficulty",
+        "estimatedMinutes",
+        "gradeBand",
+        "isFavorite",
+        "nextActivity",
+        "progressPercent",
+        "source",
+        "status",
+        "submission",
+        "taskGroups",
+        "title"
+      ],
+      "catalogItems": [
+        {
+          "assignmentId": "26b6d6a1-c754-414e-833f-66bc2dd3f026",
+          "progressPercent": 0,
+          "status": "NOT_STARTED",
+          "isFavorite": false,
+          "nextActivity": null
+        },
+        {
+          "assignmentId": "67d1bc07-a4d9-4c0f-835d-99293f388d18",
+          "progressPercent": 0,
+          "status": "NOT_STARTED",
+          "isFavorite": false,
+          "nextActivity": null
+        },
+        {
+          "assignmentId": "052c5646-4420-4cdb-9d2e-a91968a0b726",
+          "progressPercent": 0,
+          "status": "NOT_STARTED",
+          "isFavorite": false,
+          "nextActivity": null
+        },
+        {
+          "assignmentId": "c4e9b05b-919f-4e9b-b759-433e087a5499",
+          "progressPercent": 0,
+          "status": "NOT_STARTED",
+          "isFavorite": false,
+          "nextActivity": null
+        },
+        {
+          "assignmentId": "8864366a-6024-443b-987d-64b9e2cc9460",
+          "progressPercent": 0,
+          "status": "NOT_STARTED",
+          "isFavorite": false,
+          "nextActivity": null
+        },
+        {
+          "assignmentId": "4221259c-7b53-4953-b0a0-489eee9e61c7",
+          "progressPercent": 0,
+          "status": "NOT_STARTED",
+          "isFavorite": false,
+          "nextActivity": null
+        },
+        {
+          "assignmentId": "c4b0c86d-52db-4fbe-8d94-3c8d9f6f8e7a",
+          "progressPercent": 0,
+          "status": "NOT_STARTED",
+          "isFavorite": false,
+          "nextActivity": null
+        },
+        {
+          "assignmentId": "dd25b322-f6c0-478f-8ee6-f207a6b60a93",
+          "progressPercent": 0,
+          "status": "NOT_STARTED",
+          "isFavorite": false,
+          "nextActivity": null
+        },
+        {
+          "assignmentId": "75632f48-24cd-43ca-b562-b5b6b7866cc9",
+          "progressPercent": 0,
+          "status": "NOT_STARTED",
+          "isFavorite": false,
+          "nextActivity": null
+        },
+        {
+          "assignmentId": "10e19509-b7bd-4601-86a6-7ec003e1be15",
+          "progressPercent": 0,
+          "status": "NOT_STARTED",
+          "isFavorite": false,
+          "nextActivity": null
+        },
+        {
+          "assignmentId": "5a3c00ae-fde9-4dc6-bd35-72d72016ce46",
+          "progressPercent": 0,
+          "status": "NOT_STARTED",
+          "isFavorite": false,
+          "nextActivity": null
+        },
+        {
+          "assignmentId": "956339ef-a020-4ff8-86a6-9702a76d6e1f",
+          "progressPercent": 0,
+          "status": "NOT_STARTED",
+          "isFavorite": false,
+          "nextActivity": null
+        },
+        {
+          "assignmentId": "46842c6c-2a09-4a00-89be-588400dc701a",
+          "progressPercent": 0,
+          "status": "NOT_STARTED",
+          "isFavorite": false,
+          "nextActivity": null
+        },
+        {
+          "assignmentId": "c187098a-bb47-41af-968c-8a0256a218e9",
+          "progressPercent": 0,
+          "status": "NOT_STARTED",
+          "isFavorite": false,
+          "nextActivity": null
+        },
+        {
+          "assignmentId": "dd0b0a5f-96ef-4424-bc7e-606022922271",
+          "progressPercent": 0,
+          "status": "NOT_STARTED",
+          "isFavorite": false,
+          "nextActivity": null
+        },
+        {
+          "assignmentId": "f36c8921-319b-41e1-8fc0-2345e473b2d0",
+          "progressPercent": 0,
+          "status": "NOT_STARTED",
+          "isFavorite": false,
+          "nextActivity": null
+        },
+        {
+          "assignmentId": "6854fc8b-0e5a-4d2d-8bb2-66ed33c45a71",
+          "progressPercent": 0,
+          "status": "NOT_STARTED",
+          "isFavorite": false,
+          "nextActivity": null
+        },
+        {
+          "assignmentId": "8da10169-c247-4940-8b11-a95f6d82c095",
+          "progressPercent": 0,
+          "status": "NOT_STARTED",
+          "isFavorite": false,
+          "nextActivity": null
+        },
+        {
+          "assignmentId": "f254e952-aecb-4e79-9531-36707a6c5eb0",
+          "progressPercent": 0,
+          "status": "NOT_STARTED",
+          "isFavorite": false,
+          "nextActivity": null
+        },
+        {
+          "assignmentId": "c0606ba8-3a73-4e45-9cd2-4737136df8c6",
+          "progressPercent": 0,
+          "status": "NOT_STARTED",
+          "isFavorite": false,
+          "nextActivity": null
+        }
+      ],
+      "total": 24,
+      "hasMore": true,
+      "nextCursor": "c0606ba8-3a73-4e45-9cd2-4737136df8c6",
+      "favorited": null
+    }
+  },
+  "studentABrowser": {
+    "requests": [
+      {
+        "method": "POST",
+        "url": "http://127.0.0.1:4334/api/v1/auth/login"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?limit=4"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/style.css"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/courses.js"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=publishedAt&sortOrder=desc&limit=12"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=publishedAt&sortOrder=desc&limit=12&gradeBand=%E4%B8%83%E5%B9%B4%E7%BA%A7"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=publishedAt&sortOrder=desc&limit=12&gradeBand=%E4%B8%83%E5%B9%B4%E7%BA%A7&capabilityTheme=%E5%8F%91%E9%9F%B3%E5%9F%BA%E7%A1%80"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=publishedAt&sortOrder=desc&limit=12&gradeBand=%E4%B8%83%E5%B9%B4%E7%BA%A7&capabilityTheme=%E5%8F%91%E9%9F%B3%E5%9F%BA%E7%A1%80&difficulty=%E5%85%A5%E9%97%A8"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=publishedAt&sortOrder=desc&limit=12&gradeBand=%E4%B8%83%E5%B9%B4%E7%BA%A7&capabilityTheme=%E5%8F%91%E9%9F%B3%E5%9F%BA%E7%A1%80&difficulty=%E5%85%A5%E9%97%A8&taskGroup=%E8%A1%A8%E8%BE%BE%E4%BA%A4%E6%B5%81"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=publishedAt&sortOrder=desc&limit=12&gradeBand=%E4%B8%83%E5%B9%B4%E7%BA%A7&capabilityTheme=%E5%8F%91%E9%9F%B3%E5%9F%BA%E7%A1%80&difficulty=%E5%85%A5%E9%97%A8&taskGroup=%E8%A1%A8%E8%BE%BE%E4%BA%A4%E6%B5%81&culturalElement=%E9%AB%98%E5%8E%9F%E6%96%87%E5%8C%96"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=publishedAt&sortOrder=desc&limit=12&gradeBand=%E4%B8%83%E5%B9%B4%E7%BA%A7&capabilityTheme=%E5%8F%91%E9%9F%B3%E5%9F%BA%E7%A1%80&difficulty=%E5%85%A5%E9%97%A8&taskGroup=%E8%A1%A8%E8%BE%BE%E4%BA%A4%E6%B5%81&culturalElement=%E9%AB%98%E5%8E%9F%E6%96%87%E5%8C%96&search=T017+%E5%BF%AB%E9%80%9F%E7%BB%93%E6%9E%9C%E8%AF%BE%E7%A8%8B"
+      },
+      {
+        "method": "PUT",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84/favorite"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/style.css"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/courses.js"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=publishedAt&sortOrder=desc&limit=12"
+      },
+      {
+        "method": "DELETE",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84/favorite"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/style.css"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/courses.js"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=publishedAt&sortOrder=desc&limit=12"
+      },
+      {
+        "method": "PUT",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84/favorite"
+      },
+      {
+        "method": "DELETE",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84/favorite"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=publishedAt&sortOrder=desc&limit=12"
+      },
+      {
+        "method": "DELETE",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84/favorite"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/style.css"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/courses.js"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=publishedAt&sortOrder=desc&limit=12"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=publishedAt&sortOrder=desc&limit=12&cursor=46842c6c-2a09-4a00-89be-588400dc701a"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=popularity&sortOrder=desc&limit=12"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=popularity&sortOrder=desc&limit=12&search=T017-%E6%97%A0%E5%8C%B9%E9%85%8D%E8%AF%BE%E7%A8%8B-25303927"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=popularity&sortOrder=desc&limit=12&search=T017+%E7%BD%91%E7%BB%9C%E6%9A%82%E6%97%B6%E5%A4%B1%E8%B4%A5"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=popularity&sortOrder=desc&limit=12&search=T017+%E7%BD%91%E7%BB%9C%E6%9A%82%E6%97%B6%E5%A4%B1%E8%B4%A5"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/style.css"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/courses.js"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=publishedAt&sortOrder=desc&limit=12"
+      }
+    ],
+    "responses": [
+      {
+        "method": "POST",
+        "url": "http://127.0.0.1:4334/api/v1/auth/login",
+        "status": 200,
+        "responseFields": [
+          "accessToken",
+          "activeSchoolId",
+          "expiresIn",
+          "user"
+        ],
+        "data": {
+          "categories": null,
+          "gradeBands": null,
+          "difficulties": null,
+          "assignmentIds": [],
+          "catalogItemFields": [],
+          "catalogItems": [],
+          "total": null,
+          "hasMore": null,
+          "nextCursor": null,
+          "favorited": null
+        }
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?limit=4",
+        "status": 200,
+        "responseFields": [
+          "categories",
+          "courses",
+          "difficulties",
+          "gradeBands",
+          "hasMore",
+          "nextCursor",
+          "sources",
+          "statuses",
+          "total"
+        ],
+        "data": {
+          "categories": [
+            "发音基础",
+            "古诗文"
+          ],
+          "gradeBands": [
+            "七年级"
+          ],
+          "difficulties": [
+            "入门",
+            "基础",
+            "进阶"
+          ],
+          "assignmentIds": [
+            "26b6d6a1-c754-414e-833f-66bc2dd3f026",
+            "67d1bc07-a4d9-4c0f-835d-99293f388d18",
+            "052c5646-4420-4cdb-9d2e-a91968a0b726",
+            "c4e9b05b-919f-4e9b-b759-433e087a5499"
+          ],
+          "catalogItemFields": [
+            "assignmentId",
+            "capabilityTheme",
+            "completedAt",
+            "course",
+            "coverAsset",
+            "culturalElements",
+            "description",
+            "difficulty",
+            "estimatedMinutes",
+            "gradeBand",
+            "isFavorite",
+            "nextActivity",
+            "progressPercent",
+            "source",
+            "status",
+            "submission",
+            "taskGroups",
+            "title"
+          ],
+          "catalogItems": [
+            {
+              "assignmentId": "26b6d6a1-c754-414e-833f-66bc2dd3f026",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "67d1bc07-a4d9-4c0f-835d-99293f388d18",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "052c5646-4420-4cdb-9d2e-a91968a0b726",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "c4e9b05b-919f-4e9b-b759-433e087a5499",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            }
+          ],
+          "total": 24,
+          "hasMore": true,
+          "nextCursor": "c4e9b05b-919f-4e9b-b759-433e087a5499",
+          "favorited": null
+        }
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/style.css",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/courses.js",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=publishedAt&sortOrder=desc&limit=12",
+        "status": 200,
+        "responseFields": [
+          "categories",
+          "courses",
+          "difficulties",
+          "gradeBands",
+          "hasMore",
+          "nextCursor",
+          "sources",
+          "statuses",
+          "total"
+        ],
+        "data": {
+          "categories": [
+            "发音基础",
+            "古诗文"
+          ],
+          "gradeBands": [
+            "七年级"
+          ],
+          "difficulties": [
+            "入门",
+            "基础",
+            "进阶"
+          ],
+          "assignmentIds": [
+            "ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84",
+            "22303ec9-bf38-4c5d-8905-4b8881c7b65f",
+            "6fc8e85b-6be2-4c8d-89a1-d22ac6542159",
+            "9cb11940-b283-4429-84fb-ff6414f7fa56",
+            "c0606ba8-3a73-4e45-9cd2-4737136df8c6",
+            "f254e952-aecb-4e79-9531-36707a6c5eb0",
+            "8da10169-c247-4940-8b11-a95f6d82c095",
+            "6854fc8b-0e5a-4d2d-8bb2-66ed33c45a71",
+            "f36c8921-319b-41e1-8fc0-2345e473b2d0",
+            "dd0b0a5f-96ef-4424-bc7e-606022922271",
+            "c187098a-bb47-41af-968c-8a0256a218e9",
+            "46842c6c-2a09-4a00-89be-588400dc701a"
+          ],
+          "catalogItemFields": [
+            "assignmentId",
+            "capabilityTheme",
+            "completedAt",
+            "course",
+            "coverAsset",
+            "culturalElements",
+            "description",
+            "difficulty",
+            "estimatedMinutes",
+            "gradeBand",
+            "isFavorite",
+            "nextActivity",
+            "progressPercent",
+            "source",
+            "status",
+            "submission",
+            "taskGroups",
+            "title"
+          ],
+          "catalogItems": [
+            {
+              "assignmentId": "ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84",
+              "progressPercent": 50,
+              "status": "IN_PROGRESS",
+              "isFavorite": false,
+              "nextActivity": {
+                "id": "cfb9337d-d4e5-4674-9464-68e2832a8320",
+                "title": "T017 下一项活动：复述并说明",
+                "type": "TEXT"
+              }
+            },
+            {
+              "assignmentId": "22303ec9-bf38-4c5d-8905-4b8881c7b65f",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "6fc8e85b-6be2-4c8d-89a1-d22ac6542159",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "9cb11940-b283-4429-84fb-ff6414f7fa56",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "c0606ba8-3a73-4e45-9cd2-4737136df8c6",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "f254e952-aecb-4e79-9531-36707a6c5eb0",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "8da10169-c247-4940-8b11-a95f6d82c095",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "6854fc8b-0e5a-4d2d-8bb2-66ed33c45a71",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "f36c8921-319b-41e1-8fc0-2345e473b2d0",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "dd0b0a5f-96ef-4424-bc7e-606022922271",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "c187098a-bb47-41af-968c-8a0256a218e9",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "46842c6c-2a09-4a00-89be-588400dc701a",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            }
+          ],
+          "total": 24,
+          "hasMore": true,
+          "nextCursor": "46842c6c-2a09-4a00-89be-588400dc701a",
+          "favorited": null
+        }
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=publishedAt&sortOrder=desc&limit=12&gradeBand=%E4%B8%83%E5%B9%B4%E7%BA%A7",
+        "status": 200,
+        "responseFields": [
+          "categories",
+          "courses",
+          "difficulties",
+          "gradeBands",
+          "hasMore",
+          "nextCursor",
+          "sources",
+          "statuses",
+          "total"
+        ],
+        "data": {
+          "categories": [
+            "发音基础",
+            "古诗文"
+          ],
+          "gradeBands": [
+            "七年级"
+          ],
+          "difficulties": [
+            "入门",
+            "基础",
+            "进阶"
+          ],
+          "assignmentIds": [
+            "ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84",
+            "22303ec9-bf38-4c5d-8905-4b8881c7b65f",
+            "6fc8e85b-6be2-4c8d-89a1-d22ac6542159",
+            "9cb11940-b283-4429-84fb-ff6414f7fa56",
+            "c0606ba8-3a73-4e45-9cd2-4737136df8c6",
+            "f254e952-aecb-4e79-9531-36707a6c5eb0",
+            "8da10169-c247-4940-8b11-a95f6d82c095",
+            "6854fc8b-0e5a-4d2d-8bb2-66ed33c45a71",
+            "f36c8921-319b-41e1-8fc0-2345e473b2d0",
+            "dd0b0a5f-96ef-4424-bc7e-606022922271",
+            "c187098a-bb47-41af-968c-8a0256a218e9",
+            "46842c6c-2a09-4a00-89be-588400dc701a"
+          ],
+          "catalogItemFields": [
+            "assignmentId",
+            "capabilityTheme",
+            "completedAt",
+            "course",
+            "coverAsset",
+            "culturalElements",
+            "description",
+            "difficulty",
+            "estimatedMinutes",
+            "gradeBand",
+            "isFavorite",
+            "nextActivity",
+            "progressPercent",
+            "source",
+            "status",
+            "submission",
+            "taskGroups",
+            "title"
+          ],
+          "catalogItems": [
+            {
+              "assignmentId": "ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84",
+              "progressPercent": 50,
+              "status": "IN_PROGRESS",
+              "isFavorite": false,
+              "nextActivity": {
+                "id": "cfb9337d-d4e5-4674-9464-68e2832a8320",
+                "title": "T017 下一项活动：复述并说明",
+                "type": "TEXT"
+              }
+            },
+            {
+              "assignmentId": "22303ec9-bf38-4c5d-8905-4b8881c7b65f",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "6fc8e85b-6be2-4c8d-89a1-d22ac6542159",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "9cb11940-b283-4429-84fb-ff6414f7fa56",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "c0606ba8-3a73-4e45-9cd2-4737136df8c6",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "f254e952-aecb-4e79-9531-36707a6c5eb0",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "8da10169-c247-4940-8b11-a95f6d82c095",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "6854fc8b-0e5a-4d2d-8bb2-66ed33c45a71",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "f36c8921-319b-41e1-8fc0-2345e473b2d0",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "dd0b0a5f-96ef-4424-bc7e-606022922271",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "c187098a-bb47-41af-968c-8a0256a218e9",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "46842c6c-2a09-4a00-89be-588400dc701a",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            }
+          ],
+          "total": 24,
+          "hasMore": true,
+          "nextCursor": "46842c6c-2a09-4a00-89be-588400dc701a",
+          "favorited": null
+        }
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=publishedAt&sortOrder=desc&limit=12&gradeBand=%E4%B8%83%E5%B9%B4%E7%BA%A7&capabilityTheme=%E5%8F%91%E9%9F%B3%E5%9F%BA%E7%A1%80",
+        "status": 200,
+        "responseFields": [
+          "categories",
+          "courses",
+          "difficulties",
+          "gradeBands",
+          "hasMore",
+          "nextCursor",
+          "sources",
+          "statuses",
+          "total"
+        ],
+        "data": {
+          "categories": [
+            "发音基础",
+            "古诗文"
+          ],
+          "gradeBands": [
+            "七年级"
+          ],
+          "difficulties": [
+            "入门",
+            "基础",
+            "进阶"
+          ],
+          "assignmentIds": [
+            "ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84",
+            "6fc8e85b-6be2-4c8d-89a1-d22ac6542159",
+            "c0606ba8-3a73-4e45-9cd2-4737136df8c6",
+            "8da10169-c247-4940-8b11-a95f6d82c095",
+            "f36c8921-319b-41e1-8fc0-2345e473b2d0",
+            "c187098a-bb47-41af-968c-8a0256a218e9",
+            "956339ef-a020-4ff8-86a6-9702a76d6e1f",
+            "10e19509-b7bd-4601-86a6-7ec003e1be15",
+            "dd25b322-f6c0-478f-8ee6-f207a6b60a93",
+            "4221259c-7b53-4953-b0a0-489eee9e61c7",
+            "c4e9b05b-919f-4e9b-b759-433e087a5499",
+            "67d1bc07-a4d9-4c0f-835d-99293f388d18"
+          ],
+          "catalogItemFields": [
+            "assignmentId",
+            "capabilityTheme",
+            "completedAt",
+            "course",
+            "coverAsset",
+            "culturalElements",
+            "description",
+            "difficulty",
+            "estimatedMinutes",
+            "gradeBand",
+            "isFavorite",
+            "nextActivity",
+            "progressPercent",
+            "source",
+            "status",
+            "submission",
+            "taskGroups",
+            "title"
+          ],
+          "catalogItems": [
+            {
+              "assignmentId": "ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84",
+              "progressPercent": 50,
+              "status": "IN_PROGRESS",
+              "isFavorite": false,
+              "nextActivity": {
+                "id": "cfb9337d-d4e5-4674-9464-68e2832a8320",
+                "title": "T017 下一项活动：复述并说明",
+                "type": "TEXT"
+              }
+            },
+            {
+              "assignmentId": "6fc8e85b-6be2-4c8d-89a1-d22ac6542159",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "c0606ba8-3a73-4e45-9cd2-4737136df8c6",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "8da10169-c247-4940-8b11-a95f6d82c095",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "f36c8921-319b-41e1-8fc0-2345e473b2d0",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "c187098a-bb47-41af-968c-8a0256a218e9",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "956339ef-a020-4ff8-86a6-9702a76d6e1f",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "10e19509-b7bd-4601-86a6-7ec003e1be15",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "dd25b322-f6c0-478f-8ee6-f207a6b60a93",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "4221259c-7b53-4953-b0a0-489eee9e61c7",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "c4e9b05b-919f-4e9b-b759-433e087a5499",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "67d1bc07-a4d9-4c0f-835d-99293f388d18",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            }
+          ],
+          "total": 12,
+          "hasMore": false,
+          "nextCursor": null,
+          "favorited": null
+        }
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=publishedAt&sortOrder=desc&limit=12&gradeBand=%E4%B8%83%E5%B9%B4%E7%BA%A7&capabilityTheme=%E5%8F%91%E9%9F%B3%E5%9F%BA%E7%A1%80&difficulty=%E5%85%A5%E9%97%A8",
+        "status": 200,
+        "responseFields": [
+          "categories",
+          "courses",
+          "difficulties",
+          "gradeBands",
+          "hasMore",
+          "nextCursor",
+          "sources",
+          "statuses",
+          "total"
+        ],
+        "data": {
+          "categories": [
+            "发音基础",
+            "古诗文"
+          ],
+          "gradeBands": [
+            "七年级"
+          ],
+          "difficulties": [
+            "入门",
+            "基础",
+            "进阶"
+          ],
+          "assignmentIds": [
+            "ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84",
+            "8da10169-c247-4940-8b11-a95f6d82c095",
+            "956339ef-a020-4ff8-86a6-9702a76d6e1f",
+            "4221259c-7b53-4953-b0a0-489eee9e61c7"
+          ],
+          "catalogItemFields": [
+            "assignmentId",
+            "capabilityTheme",
+            "completedAt",
+            "course",
+            "coverAsset",
+            "culturalElements",
+            "description",
+            "difficulty",
+            "estimatedMinutes",
+            "gradeBand",
+            "isFavorite",
+            "nextActivity",
+            "progressPercent",
+            "source",
+            "status",
+            "submission",
+            "taskGroups",
+            "title"
+          ],
+          "catalogItems": [
+            {
+              "assignmentId": "ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84",
+              "progressPercent": 50,
+              "status": "IN_PROGRESS",
+              "isFavorite": false,
+              "nextActivity": {
+                "id": "cfb9337d-d4e5-4674-9464-68e2832a8320",
+                "title": "T017 下一项活动：复述并说明",
+                "type": "TEXT"
+              }
+            },
+            {
+              "assignmentId": "8da10169-c247-4940-8b11-a95f6d82c095",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "956339ef-a020-4ff8-86a6-9702a76d6e1f",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "4221259c-7b53-4953-b0a0-489eee9e61c7",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            }
+          ],
+          "total": 4,
+          "hasMore": false,
+          "nextCursor": null,
+          "favorited": null
+        }
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=publishedAt&sortOrder=desc&limit=12&gradeBand=%E4%B8%83%E5%B9%B4%E7%BA%A7&capabilityTheme=%E5%8F%91%E9%9F%B3%E5%9F%BA%E7%A1%80&difficulty=%E5%85%A5%E9%97%A8&taskGroup=%E8%A1%A8%E8%BE%BE%E4%BA%A4%E6%B5%81",
+        "status": 200,
+        "responseFields": [
+          "categories",
+          "courses",
+          "difficulties",
+          "gradeBands",
+          "hasMore",
+          "nextCursor",
+          "sources",
+          "statuses",
+          "total"
+        ],
+        "data": {
+          "categories": [
+            "发音基础",
+            "古诗文"
+          ],
+          "gradeBands": [
+            "七年级"
+          ],
+          "difficulties": [
+            "入门",
+            "基础",
+            "进阶"
+          ],
+          "assignmentIds": [
+            "ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84",
+            "8da10169-c247-4940-8b11-a95f6d82c095",
+            "956339ef-a020-4ff8-86a6-9702a76d6e1f",
+            "4221259c-7b53-4953-b0a0-489eee9e61c7"
+          ],
+          "catalogItemFields": [
+            "assignmentId",
+            "capabilityTheme",
+            "completedAt",
+            "course",
+            "coverAsset",
+            "culturalElements",
+            "description",
+            "difficulty",
+            "estimatedMinutes",
+            "gradeBand",
+            "isFavorite",
+            "nextActivity",
+            "progressPercent",
+            "source",
+            "status",
+            "submission",
+            "taskGroups",
+            "title"
+          ],
+          "catalogItems": [
+            {
+              "assignmentId": "ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84",
+              "progressPercent": 50,
+              "status": "IN_PROGRESS",
+              "isFavorite": false,
+              "nextActivity": {
+                "id": "cfb9337d-d4e5-4674-9464-68e2832a8320",
+                "title": "T017 下一项活动：复述并说明",
+                "type": "TEXT"
+              }
+            },
+            {
+              "assignmentId": "8da10169-c247-4940-8b11-a95f6d82c095",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "956339ef-a020-4ff8-86a6-9702a76d6e1f",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "4221259c-7b53-4953-b0a0-489eee9e61c7",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            }
+          ],
+          "total": 4,
+          "hasMore": false,
+          "nextCursor": null,
+          "favorited": null
+        }
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=publishedAt&sortOrder=desc&limit=12&gradeBand=%E4%B8%83%E5%B9%B4%E7%BA%A7&capabilityTheme=%E5%8F%91%E9%9F%B3%E5%9F%BA%E7%A1%80&difficulty=%E5%85%A5%E9%97%A8&taskGroup=%E8%A1%A8%E8%BE%BE%E4%BA%A4%E6%B5%81&culturalElement=%E9%AB%98%E5%8E%9F%E6%96%87%E5%8C%96",
+        "status": 200,
+        "responseFields": [
+          "categories",
+          "courses",
+          "difficulties",
+          "gradeBands",
+          "hasMore",
+          "nextCursor",
+          "sources",
+          "statuses",
+          "total"
+        ],
+        "data": {
+          "categories": [
+            "发音基础",
+            "古诗文"
+          ],
+          "gradeBands": [
+            "七年级"
+          ],
+          "difficulties": [
+            "入门",
+            "基础",
+            "进阶"
+          ],
+          "assignmentIds": [
+            "ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84",
+            "8da10169-c247-4940-8b11-a95f6d82c095",
+            "956339ef-a020-4ff8-86a6-9702a76d6e1f",
+            "4221259c-7b53-4953-b0a0-489eee9e61c7"
+          ],
+          "catalogItemFields": [
+            "assignmentId",
+            "capabilityTheme",
+            "completedAt",
+            "course",
+            "coverAsset",
+            "culturalElements",
+            "description",
+            "difficulty",
+            "estimatedMinutes",
+            "gradeBand",
+            "isFavorite",
+            "nextActivity",
+            "progressPercent",
+            "source",
+            "status",
+            "submission",
+            "taskGroups",
+            "title"
+          ],
+          "catalogItems": [
+            {
+              "assignmentId": "ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84",
+              "progressPercent": 50,
+              "status": "IN_PROGRESS",
+              "isFavorite": false,
+              "nextActivity": {
+                "id": "cfb9337d-d4e5-4674-9464-68e2832a8320",
+                "title": "T017 下一项活动：复述并说明",
+                "type": "TEXT"
+              }
+            },
+            {
+              "assignmentId": "8da10169-c247-4940-8b11-a95f6d82c095",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "956339ef-a020-4ff8-86a6-9702a76d6e1f",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "4221259c-7b53-4953-b0a0-489eee9e61c7",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            }
+          ],
+          "total": 4,
+          "hasMore": false,
+          "nextCursor": null,
+          "favorited": null
+        }
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=publishedAt&sortOrder=desc&limit=12&gradeBand=%E4%B8%83%E5%B9%B4%E7%BA%A7&capabilityTheme=%E5%8F%91%E9%9F%B3%E5%9F%BA%E7%A1%80&difficulty=%E5%85%A5%E9%97%A8&taskGroup=%E8%A1%A8%E8%BE%BE%E4%BA%A4%E6%B5%81&culturalElement=%E9%AB%98%E5%8E%9F%E6%96%87%E5%8C%96&search=T017+%E5%BF%AB%E9%80%9F%E7%BB%93%E6%9E%9C%E8%AF%BE%E7%A8%8B",
+        "status": 200,
+        "responseFields": [
+          "categories",
+          "courses",
+          "difficulties",
+          "gradeBands",
+          "hasMore",
+          "nextCursor",
+          "sources",
+          "statuses",
+          "total"
+        ],
+        "data": {
+          "categories": [
+            "发音基础",
+            "古诗文"
+          ],
+          "gradeBands": [
+            "七年级"
+          ],
+          "difficulties": [
+            "入门",
+            "基础",
+            "进阶"
+          ],
+          "assignmentIds": [
+            "ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84"
+          ],
+          "catalogItemFields": [
+            "assignmentId",
+            "capabilityTheme",
+            "completedAt",
+            "course",
+            "coverAsset",
+            "culturalElements",
+            "description",
+            "difficulty",
+            "estimatedMinutes",
+            "gradeBand",
+            "isFavorite",
+            "nextActivity",
+            "progressPercent",
+            "source",
+            "status",
+            "submission",
+            "taskGroups",
+            "title"
+          ],
+          "catalogItems": [
+            {
+              "assignmentId": "ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84",
+              "progressPercent": 50,
+              "status": "IN_PROGRESS",
+              "isFavorite": false,
+              "nextActivity": {
+                "id": "cfb9337d-d4e5-4674-9464-68e2832a8320",
+                "title": "T017 下一项活动：复述并说明",
+                "type": "TEXT"
+              }
+            }
+          ],
+          "total": 1,
+          "hasMore": false,
+          "nextCursor": null,
+          "favorited": null
+        }
+      },
+      {
+        "method": "PUT",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84/favorite",
+        "status": 200,
+        "responseFields": [
+          "favorited"
+        ],
+        "data": {
+          "categories": null,
+          "gradeBands": null,
+          "difficulties": null,
+          "assignmentIds": [],
+          "catalogItemFields": [],
+          "catalogItems": [],
+          "total": null,
+          "hasMore": null,
+          "nextCursor": null,
+          "favorited": true
+        }
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/style.css",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/courses.js",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=publishedAt&sortOrder=desc&limit=12",
+        "status": 200,
+        "responseFields": [
+          "categories",
+          "courses",
+          "difficulties",
+          "gradeBands",
+          "hasMore",
+          "nextCursor",
+          "sources",
+          "statuses",
+          "total"
+        ],
+        "data": {
+          "categories": [
+            "发音基础",
+            "古诗文"
+          ],
+          "gradeBands": [
+            "七年级"
+          ],
+          "difficulties": [
+            "入门",
+            "基础",
+            "进阶"
+          ],
+          "assignmentIds": [
+            "ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84",
+            "22303ec9-bf38-4c5d-8905-4b8881c7b65f",
+            "6fc8e85b-6be2-4c8d-89a1-d22ac6542159",
+            "9cb11940-b283-4429-84fb-ff6414f7fa56",
+            "c0606ba8-3a73-4e45-9cd2-4737136df8c6",
+            "f254e952-aecb-4e79-9531-36707a6c5eb0",
+            "8da10169-c247-4940-8b11-a95f6d82c095",
+            "6854fc8b-0e5a-4d2d-8bb2-66ed33c45a71",
+            "f36c8921-319b-41e1-8fc0-2345e473b2d0",
+            "dd0b0a5f-96ef-4424-bc7e-606022922271",
+            "c187098a-bb47-41af-968c-8a0256a218e9",
+            "46842c6c-2a09-4a00-89be-588400dc701a"
+          ],
+          "catalogItemFields": [
+            "assignmentId",
+            "capabilityTheme",
+            "completedAt",
+            "course",
+            "coverAsset",
+            "culturalElements",
+            "description",
+            "difficulty",
+            "estimatedMinutes",
+            "gradeBand",
+            "isFavorite",
+            "nextActivity",
+            "progressPercent",
+            "source",
+            "status",
+            "submission",
+            "taskGroups",
+            "title"
+          ],
+          "catalogItems": [
+            {
+              "assignmentId": "ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84",
+              "progressPercent": 50,
+              "status": "IN_PROGRESS",
+              "isFavorite": true,
+              "nextActivity": {
+                "id": "cfb9337d-d4e5-4674-9464-68e2832a8320",
+                "title": "T017 下一项活动：复述并说明",
+                "type": "TEXT"
+              }
+            },
+            {
+              "assignmentId": "22303ec9-bf38-4c5d-8905-4b8881c7b65f",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "6fc8e85b-6be2-4c8d-89a1-d22ac6542159",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "9cb11940-b283-4429-84fb-ff6414f7fa56",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "c0606ba8-3a73-4e45-9cd2-4737136df8c6",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "f254e952-aecb-4e79-9531-36707a6c5eb0",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "8da10169-c247-4940-8b11-a95f6d82c095",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "6854fc8b-0e5a-4d2d-8bb2-66ed33c45a71",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "f36c8921-319b-41e1-8fc0-2345e473b2d0",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "dd0b0a5f-96ef-4424-bc7e-606022922271",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "c187098a-bb47-41af-968c-8a0256a218e9",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "46842c6c-2a09-4a00-89be-588400dc701a",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            }
+          ],
+          "total": 24,
+          "hasMore": true,
+          "nextCursor": "46842c6c-2a09-4a00-89be-588400dc701a",
+          "favorited": null
+        }
+      },
+      {
+        "method": "DELETE",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84/favorite",
+        "status": 200,
+        "responseFields": [
+          "favorited"
+        ],
+        "data": {
+          "categories": null,
+          "gradeBands": null,
+          "difficulties": null,
+          "assignmentIds": [],
+          "catalogItemFields": [],
+          "catalogItems": [],
+          "total": null,
+          "hasMore": null,
+          "nextCursor": null,
+          "favorited": false
+        }
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/style.css",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/courses.js",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=publishedAt&sortOrder=desc&limit=12",
+        "status": 200,
+        "responseFields": [
+          "categories",
+          "courses",
+          "difficulties",
+          "gradeBands",
+          "hasMore",
+          "nextCursor",
+          "sources",
+          "statuses",
+          "total"
+        ],
+        "data": {
+          "categories": [
+            "发音基础",
+            "古诗文"
+          ],
+          "gradeBands": [
+            "七年级"
+          ],
+          "difficulties": [
+            "入门",
+            "基础",
+            "进阶"
+          ],
+          "assignmentIds": [
+            "ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84",
+            "22303ec9-bf38-4c5d-8905-4b8881c7b65f",
+            "6fc8e85b-6be2-4c8d-89a1-d22ac6542159",
+            "9cb11940-b283-4429-84fb-ff6414f7fa56",
+            "c0606ba8-3a73-4e45-9cd2-4737136df8c6",
+            "f254e952-aecb-4e79-9531-36707a6c5eb0",
+            "8da10169-c247-4940-8b11-a95f6d82c095",
+            "6854fc8b-0e5a-4d2d-8bb2-66ed33c45a71",
+            "f36c8921-319b-41e1-8fc0-2345e473b2d0",
+            "dd0b0a5f-96ef-4424-bc7e-606022922271",
+            "c187098a-bb47-41af-968c-8a0256a218e9",
+            "46842c6c-2a09-4a00-89be-588400dc701a"
+          ],
+          "catalogItemFields": [
+            "assignmentId",
+            "capabilityTheme",
+            "completedAt",
+            "course",
+            "coverAsset",
+            "culturalElements",
+            "description",
+            "difficulty",
+            "estimatedMinutes",
+            "gradeBand",
+            "isFavorite",
+            "nextActivity",
+            "progressPercent",
+            "source",
+            "status",
+            "submission",
+            "taskGroups",
+            "title"
+          ],
+          "catalogItems": [
+            {
+              "assignmentId": "ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84",
+              "progressPercent": 50,
+              "status": "IN_PROGRESS",
+              "isFavorite": false,
+              "nextActivity": {
+                "id": "cfb9337d-d4e5-4674-9464-68e2832a8320",
+                "title": "T017 下一项活动：复述并说明",
+                "type": "TEXT"
+              }
+            },
+            {
+              "assignmentId": "22303ec9-bf38-4c5d-8905-4b8881c7b65f",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "6fc8e85b-6be2-4c8d-89a1-d22ac6542159",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "9cb11940-b283-4429-84fb-ff6414f7fa56",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "c0606ba8-3a73-4e45-9cd2-4737136df8c6",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "f254e952-aecb-4e79-9531-36707a6c5eb0",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "8da10169-c247-4940-8b11-a95f6d82c095",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "6854fc8b-0e5a-4d2d-8bb2-66ed33c45a71",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "f36c8921-319b-41e1-8fc0-2345e473b2d0",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "dd0b0a5f-96ef-4424-bc7e-606022922271",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "c187098a-bb47-41af-968c-8a0256a218e9",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "46842c6c-2a09-4a00-89be-588400dc701a",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            }
+          ],
+          "total": 24,
+          "hasMore": true,
+          "nextCursor": "46842c6c-2a09-4a00-89be-588400dc701a",
+          "favorited": null
+        }
+      },
+      {
+        "method": "PUT",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84/favorite",
+        "status": 200,
+        "responseFields": [
+          "favorited"
+        ],
+        "data": {
+          "categories": null,
+          "gradeBands": null,
+          "difficulties": null,
+          "assignmentIds": [],
+          "catalogItemFields": [],
+          "catalogItems": [],
+          "total": null,
+          "hasMore": null,
+          "nextCursor": null,
+          "favorited": true
+        }
+      },
+      {
+        "method": "DELETE",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84/favorite",
+        "status": 200,
+        "responseFields": [
+          "favorited"
+        ],
+        "data": {
+          "categories": null,
+          "gradeBands": null,
+          "difficulties": null,
+          "assignmentIds": [],
+          "catalogItemFields": [],
+          "catalogItems": [],
+          "total": null,
+          "hasMore": null,
+          "nextCursor": null,
+          "favorited": false
+        }
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/style.css",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/courses.js",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=publishedAt&sortOrder=desc&limit=12",
+        "status": 200,
+        "responseFields": [
+          "categories",
+          "courses",
+          "difficulties",
+          "gradeBands",
+          "hasMore",
+          "nextCursor",
+          "sources",
+          "statuses",
+          "total"
+        ],
+        "data": {
+          "categories": [
+            "发音基础",
+            "古诗文"
+          ],
+          "gradeBands": [
+            "七年级"
+          ],
+          "difficulties": [
+            "入门",
+            "基础",
+            "进阶"
+          ],
+          "assignmentIds": [
+            "ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84",
+            "22303ec9-bf38-4c5d-8905-4b8881c7b65f",
+            "6fc8e85b-6be2-4c8d-89a1-d22ac6542159",
+            "9cb11940-b283-4429-84fb-ff6414f7fa56",
+            "c0606ba8-3a73-4e45-9cd2-4737136df8c6",
+            "f254e952-aecb-4e79-9531-36707a6c5eb0",
+            "8da10169-c247-4940-8b11-a95f6d82c095",
+            "6854fc8b-0e5a-4d2d-8bb2-66ed33c45a71",
+            "f36c8921-319b-41e1-8fc0-2345e473b2d0",
+            "dd0b0a5f-96ef-4424-bc7e-606022922271",
+            "c187098a-bb47-41af-968c-8a0256a218e9",
+            "46842c6c-2a09-4a00-89be-588400dc701a"
+          ],
+          "catalogItemFields": [
+            "assignmentId",
+            "capabilityTheme",
+            "completedAt",
+            "course",
+            "coverAsset",
+            "culturalElements",
+            "description",
+            "difficulty",
+            "estimatedMinutes",
+            "gradeBand",
+            "isFavorite",
+            "nextActivity",
+            "progressPercent",
+            "source",
+            "status",
+            "submission",
+            "taskGroups",
+            "title"
+          ],
+          "catalogItems": [
+            {
+              "assignmentId": "ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84",
+              "progressPercent": 50,
+              "status": "IN_PROGRESS",
+              "isFavorite": false,
+              "nextActivity": {
+                "id": "cfb9337d-d4e5-4674-9464-68e2832a8320",
+                "title": "T017 下一项活动：复述并说明",
+                "type": "TEXT"
+              }
+            },
+            {
+              "assignmentId": "22303ec9-bf38-4c5d-8905-4b8881c7b65f",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "6fc8e85b-6be2-4c8d-89a1-d22ac6542159",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "9cb11940-b283-4429-84fb-ff6414f7fa56",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "c0606ba8-3a73-4e45-9cd2-4737136df8c6",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "f254e952-aecb-4e79-9531-36707a6c5eb0",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "8da10169-c247-4940-8b11-a95f6d82c095",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "6854fc8b-0e5a-4d2d-8bb2-66ed33c45a71",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "f36c8921-319b-41e1-8fc0-2345e473b2d0",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "dd0b0a5f-96ef-4424-bc7e-606022922271",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "c187098a-bb47-41af-968c-8a0256a218e9",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "46842c6c-2a09-4a00-89be-588400dc701a",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            }
+          ],
+          "total": 24,
+          "hasMore": true,
+          "nextCursor": "46842c6c-2a09-4a00-89be-588400dc701a",
+          "favorited": null
+        }
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=publishedAt&sortOrder=desc&limit=12&cursor=46842c6c-2a09-4a00-89be-588400dc701a",
+        "status": 200,
+        "responseFields": [
+          "categories",
+          "courses",
+          "difficulties",
+          "gradeBands",
+          "hasMore",
+          "nextCursor",
+          "sources",
+          "statuses",
+          "total"
+        ],
+        "data": {
+          "categories": [
+            "发音基础",
+            "古诗文"
+          ],
+          "gradeBands": [
+            "七年级"
+          ],
+          "difficulties": [
+            "入门",
+            "基础",
+            "进阶"
+          ],
+          "assignmentIds": [
+            "956339ef-a020-4ff8-86a6-9702a76d6e1f",
+            "5a3c00ae-fde9-4dc6-bd35-72d72016ce46",
+            "10e19509-b7bd-4601-86a6-7ec003e1be15",
+            "75632f48-24cd-43ca-b562-b5b6b7866cc9",
+            "dd25b322-f6c0-478f-8ee6-f207a6b60a93",
+            "c4b0c86d-52db-4fbe-8d94-3c8d9f6f8e7a",
+            "4221259c-7b53-4953-b0a0-489eee9e61c7",
+            "8864366a-6024-443b-987d-64b9e2cc9460",
+            "c4e9b05b-919f-4e9b-b759-433e087a5499",
+            "052c5646-4420-4cdb-9d2e-a91968a0b726",
+            "67d1bc07-a4d9-4c0f-835d-99293f388d18",
+            "26b6d6a1-c754-414e-833f-66bc2dd3f026"
+          ],
+          "catalogItemFields": [
+            "assignmentId",
+            "capabilityTheme",
+            "completedAt",
+            "course",
+            "coverAsset",
+            "culturalElements",
+            "description",
+            "difficulty",
+            "estimatedMinutes",
+            "gradeBand",
+            "isFavorite",
+            "nextActivity",
+            "progressPercent",
+            "source",
+            "status",
+            "submission",
+            "taskGroups",
+            "title"
+          ],
+          "catalogItems": [
+            {
+              "assignmentId": "956339ef-a020-4ff8-86a6-9702a76d6e1f",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "5a3c00ae-fde9-4dc6-bd35-72d72016ce46",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "10e19509-b7bd-4601-86a6-7ec003e1be15",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "75632f48-24cd-43ca-b562-b5b6b7866cc9",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "dd25b322-f6c0-478f-8ee6-f207a6b60a93",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "c4b0c86d-52db-4fbe-8d94-3c8d9f6f8e7a",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "4221259c-7b53-4953-b0a0-489eee9e61c7",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "8864366a-6024-443b-987d-64b9e2cc9460",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "c4e9b05b-919f-4e9b-b759-433e087a5499",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "052c5646-4420-4cdb-9d2e-a91968a0b726",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "67d1bc07-a4d9-4c0f-835d-99293f388d18",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "26b6d6a1-c754-414e-833f-66bc2dd3f026",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            }
+          ],
+          "total": 24,
+          "hasMore": false,
+          "nextCursor": null,
+          "favorited": null
+        }
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=popularity&sortOrder=desc&limit=12",
+        "status": 200,
+        "responseFields": [
+          "categories",
+          "courses",
+          "difficulties",
+          "gradeBands",
+          "hasMore",
+          "nextCursor",
+          "sources",
+          "statuses",
+          "total"
+        ],
+        "data": {
+          "categories": [
+            "发音基础",
+            "古诗文"
+          ],
+          "gradeBands": [
+            "七年级"
+          ],
+          "difficulties": [
+            "入门",
+            "基础",
+            "进阶"
+          ],
+          "assignmentIds": [
+            "ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84",
+            "f36c8921-319b-41e1-8fc0-2345e473b2d0",
+            "f254e952-aecb-4e79-9531-36707a6c5eb0",
+            "dd25b322-f6c0-478f-8ee6-f207a6b60a93",
+            "dd0b0a5f-96ef-4424-bc7e-606022922271",
+            "c4e9b05b-919f-4e9b-b759-433e087a5499",
+            "c4b0c86d-52db-4fbe-8d94-3c8d9f6f8e7a",
+            "c187098a-bb47-41af-968c-8a0256a218e9",
+            "c0606ba8-3a73-4e45-9cd2-4737136df8c6",
+            "9cb11940-b283-4429-84fb-ff6414f7fa56",
+            "956339ef-a020-4ff8-86a6-9702a76d6e1f",
+            "8da10169-c247-4940-8b11-a95f6d82c095"
+          ],
+          "catalogItemFields": [
+            "assignmentId",
+            "capabilityTheme",
+            "completedAt",
+            "course",
+            "coverAsset",
+            "culturalElements",
+            "description",
+            "difficulty",
+            "estimatedMinutes",
+            "gradeBand",
+            "isFavorite",
+            "nextActivity",
+            "progressPercent",
+            "source",
+            "status",
+            "submission",
+            "taskGroups",
+            "title"
+          ],
+          "catalogItems": [
+            {
+              "assignmentId": "ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84",
+              "progressPercent": 50,
+              "status": "IN_PROGRESS",
+              "isFavorite": false,
+              "nextActivity": {
+                "id": "cfb9337d-d4e5-4674-9464-68e2832a8320",
+                "title": "T017 下一项活动：复述并说明",
+                "type": "TEXT"
+              }
+            },
+            {
+              "assignmentId": "f36c8921-319b-41e1-8fc0-2345e473b2d0",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "f254e952-aecb-4e79-9531-36707a6c5eb0",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "dd25b322-f6c0-478f-8ee6-f207a6b60a93",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "dd0b0a5f-96ef-4424-bc7e-606022922271",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "c4e9b05b-919f-4e9b-b759-433e087a5499",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "c4b0c86d-52db-4fbe-8d94-3c8d9f6f8e7a",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "c187098a-bb47-41af-968c-8a0256a218e9",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "c0606ba8-3a73-4e45-9cd2-4737136df8c6",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "9cb11940-b283-4429-84fb-ff6414f7fa56",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "956339ef-a020-4ff8-86a6-9702a76d6e1f",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "8da10169-c247-4940-8b11-a95f6d82c095",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            }
+          ],
+          "total": 24,
+          "hasMore": true,
+          "nextCursor": "8da10169-c247-4940-8b11-a95f6d82c095",
+          "favorited": null
+        }
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=popularity&sortOrder=desc&limit=12&search=T017-%E6%97%A0%E5%8C%B9%E9%85%8D%E8%AF%BE%E7%A8%8B-25303927",
+        "status": 200,
+        "responseFields": [
+          "categories",
+          "courses",
+          "difficulties",
+          "gradeBands",
+          "hasMore",
+          "nextCursor",
+          "sources",
+          "statuses",
+          "total"
+        ],
+        "data": {
+          "categories": [
+            "发音基础",
+            "古诗文"
+          ],
+          "gradeBands": [
+            "七年级"
+          ],
+          "difficulties": [
+            "入门",
+            "基础",
+            "进阶"
+          ],
+          "assignmentIds": [],
+          "catalogItemFields": [],
+          "catalogItems": [],
+          "total": 0,
+          "hasMore": false,
+          "nextCursor": null,
+          "favorited": null
+        }
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=popularity&sortOrder=desc&limit=12&search=T017+%E7%BD%91%E7%BB%9C%E6%9A%82%E6%97%B6%E5%A4%B1%E8%B4%A5",
+        "status": 200,
+        "responseFields": [
+          "categories",
+          "courses",
+          "difficulties",
+          "gradeBands",
+          "hasMore",
+          "nextCursor",
+          "sources",
+          "statuses",
+          "total"
+        ],
+        "data": {
+          "categories": [
+            "发音基础",
+            "古诗文"
+          ],
+          "gradeBands": [
+            "七年级"
+          ],
+          "difficulties": [
+            "入门",
+            "基础",
+            "进阶"
+          ],
+          "assignmentIds": [],
+          "catalogItemFields": [],
+          "catalogItems": [],
+          "total": 0,
+          "hasMore": false,
+          "nextCursor": null,
+          "favorited": null
+        }
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/style.css",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/courses.js",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=publishedAt&sortOrder=desc&limit=12",
+        "status": 200,
+        "responseFields": [
+          "categories",
+          "courses",
+          "difficulties",
+          "gradeBands",
+          "hasMore",
+          "nextCursor",
+          "sources",
+          "statuses",
+          "total"
+        ],
+        "data": {
+          "categories": [
+            "发音基础",
+            "古诗文"
+          ],
+          "gradeBands": [
+            "七年级"
+          ],
+          "difficulties": [
+            "入门",
+            "基础",
+            "进阶"
+          ],
+          "assignmentIds": [
+            "ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84",
+            "22303ec9-bf38-4c5d-8905-4b8881c7b65f",
+            "6fc8e85b-6be2-4c8d-89a1-d22ac6542159",
+            "9cb11940-b283-4429-84fb-ff6414f7fa56",
+            "c0606ba8-3a73-4e45-9cd2-4737136df8c6",
+            "f254e952-aecb-4e79-9531-36707a6c5eb0",
+            "8da10169-c247-4940-8b11-a95f6d82c095",
+            "6854fc8b-0e5a-4d2d-8bb2-66ed33c45a71",
+            "f36c8921-319b-41e1-8fc0-2345e473b2d0",
+            "dd0b0a5f-96ef-4424-bc7e-606022922271",
+            "c187098a-bb47-41af-968c-8a0256a218e9",
+            "46842c6c-2a09-4a00-89be-588400dc701a"
+          ],
+          "catalogItemFields": [
+            "assignmentId",
+            "capabilityTheme",
+            "completedAt",
+            "course",
+            "coverAsset",
+            "culturalElements",
+            "description",
+            "difficulty",
+            "estimatedMinutes",
+            "gradeBand",
+            "isFavorite",
+            "nextActivity",
+            "progressPercent",
+            "source",
+            "status",
+            "submission",
+            "taskGroups",
+            "title"
+          ],
+          "catalogItems": [
+            {
+              "assignmentId": "ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84",
+              "progressPercent": 50,
+              "status": "IN_PROGRESS",
+              "isFavorite": false,
+              "nextActivity": {
+                "id": "cfb9337d-d4e5-4674-9464-68e2832a8320",
+                "title": "T017 下一项活动：复述并说明",
+                "type": "TEXT"
+              }
+            },
+            {
+              "assignmentId": "22303ec9-bf38-4c5d-8905-4b8881c7b65f",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "6fc8e85b-6be2-4c8d-89a1-d22ac6542159",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "9cb11940-b283-4429-84fb-ff6414f7fa56",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "c0606ba8-3a73-4e45-9cd2-4737136df8c6",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "f254e952-aecb-4e79-9531-36707a6c5eb0",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "8da10169-c247-4940-8b11-a95f6d82c095",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "6854fc8b-0e5a-4d2d-8bb2-66ed33c45a71",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "f36c8921-319b-41e1-8fc0-2345e473b2d0",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "dd0b0a5f-96ef-4424-bc7e-606022922271",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "c187098a-bb47-41af-968c-8a0256a218e9",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "46842c6c-2a09-4a00-89be-588400dc701a",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            }
+          ],
+          "total": 24,
+          "hasMore": true,
+          "nextCursor": "46842c6c-2a09-4a00-89be-588400dc701a",
+          "favorited": null
+        }
+      }
+    ]
+  },
+  "studentBBrowser": {
+    "requests": [
+      {
+        "method": "POST",
+        "url": "http://127.0.0.1:4334/api/v1/auth/login"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?limit=4"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/style.css"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/courses.js"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=publishedAt&sortOrder=desc&limit=12"
+      }
+    ],
+    "responses": [
+      {
+        "method": "POST",
+        "url": "http://127.0.0.1:4334/api/v1/auth/login",
+        "status": 200,
+        "responseFields": [
+          "accessToken",
+          "activeSchoolId",
+          "expiresIn",
+          "user"
+        ],
+        "data": {
+          "categories": null,
+          "gradeBands": null,
+          "difficulties": null,
+          "assignmentIds": [],
+          "catalogItemFields": [],
+          "catalogItems": [],
+          "total": null,
+          "hasMore": null,
+          "nextCursor": null,
+          "favorited": null
+        }
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?limit=4",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/style.css",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/courses.js",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=publishedAt&sortOrder=desc&limit=12",
+        "status": 200,
+        "responseFields": [
+          "categories",
+          "courses",
+          "difficulties",
+          "gradeBands",
+          "hasMore",
+          "nextCursor",
+          "sources",
+          "statuses",
+          "total"
+        ],
+        "data": {
+          "categories": [
+            "发音基础",
+            "古诗文"
+          ],
+          "gradeBands": [
+            "七年级"
+          ],
+          "difficulties": [
+            "入门",
+            "基础",
+            "进阶"
+          ],
+          "assignmentIds": [],
+          "catalogItemFields": [],
+          "catalogItems": [],
+          "total": 0,
+          "hasMore": false,
+          "nextCursor": null,
+          "favorited": null
+        }
+      }
+    ]
+  },
+  "raceBrowser": {
+    "requests": [
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/style.css"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/courses.js"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=publishedAt&sortOrder=desc&limit=12"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=publishedAt&sortOrder=desc&limit=12&search=%E7%9C%9F%E5%AE%9E%E5%AD%A6%E4%B9%A0%E6%B5%81%E7%A8%8B%E8%AF%BE%E7%A8%8B"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=publishedAt&sortOrder=desc&limit=12&search=T017+%E5%BF%AB%E9%80%9F%E7%BB%93%E6%9E%9C%E8%AF%BE%E7%A8%8B"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/course-detail/?id=ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/course-detail/style.css"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/course-detail/course-api-adapter.js"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/course-detail/course-player-state.js"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/course-detail/media-controller.js"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/course-detail/note-controller.js"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/course-detail/exercise-controller.js"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84"
+      },
+      {
+        "method": "POST",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84/submissions"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84/recommendations"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses-dashboard"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/style.css"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/courses.js"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=publishedAt&sortOrder=desc&limit=12"
+      }
+    ],
+    "responses": [
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/style.css",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/courses.js",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=publishedAt&sortOrder=desc&limit=12",
+        "status": 200,
+        "responseFields": [
+          "categories",
+          "courses",
+          "difficulties",
+          "gradeBands",
+          "hasMore",
+          "nextCursor",
+          "sources",
+          "statuses",
+          "total"
+        ],
+        "data": {
+          "categories": [
+            "发音基础",
+            "古诗文"
+          ],
+          "gradeBands": [
+            "七年级"
+          ],
+          "difficulties": [
+            "入门",
+            "基础",
+            "进阶"
+          ],
+          "assignmentIds": [
+            "ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84",
+            "22303ec9-bf38-4c5d-8905-4b8881c7b65f",
+            "6fc8e85b-6be2-4c8d-89a1-d22ac6542159",
+            "9cb11940-b283-4429-84fb-ff6414f7fa56",
+            "c0606ba8-3a73-4e45-9cd2-4737136df8c6",
+            "f254e952-aecb-4e79-9531-36707a6c5eb0",
+            "8da10169-c247-4940-8b11-a95f6d82c095",
+            "6854fc8b-0e5a-4d2d-8bb2-66ed33c45a71",
+            "f36c8921-319b-41e1-8fc0-2345e473b2d0",
+            "dd0b0a5f-96ef-4424-bc7e-606022922271",
+            "c187098a-bb47-41af-968c-8a0256a218e9",
+            "46842c6c-2a09-4a00-89be-588400dc701a"
+          ],
+          "catalogItemFields": [
+            "assignmentId",
+            "capabilityTheme",
+            "completedAt",
+            "course",
+            "coverAsset",
+            "culturalElements",
+            "description",
+            "difficulty",
+            "estimatedMinutes",
+            "gradeBand",
+            "isFavorite",
+            "nextActivity",
+            "progressPercent",
+            "source",
+            "status",
+            "submission",
+            "taskGroups",
+            "title"
+          ],
+          "catalogItems": [
+            {
+              "assignmentId": "ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84",
+              "progressPercent": 50,
+              "status": "IN_PROGRESS",
+              "isFavorite": false,
+              "nextActivity": {
+                "id": "cfb9337d-d4e5-4674-9464-68e2832a8320",
+                "title": "T017 下一项活动：复述并说明",
+                "type": "TEXT"
+              }
+            },
+            {
+              "assignmentId": "22303ec9-bf38-4c5d-8905-4b8881c7b65f",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "6fc8e85b-6be2-4c8d-89a1-d22ac6542159",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "9cb11940-b283-4429-84fb-ff6414f7fa56",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "c0606ba8-3a73-4e45-9cd2-4737136df8c6",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "f254e952-aecb-4e79-9531-36707a6c5eb0",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "8da10169-c247-4940-8b11-a95f6d82c095",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "6854fc8b-0e5a-4d2d-8bb2-66ed33c45a71",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "f36c8921-319b-41e1-8fc0-2345e473b2d0",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "dd0b0a5f-96ef-4424-bc7e-606022922271",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "c187098a-bb47-41af-968c-8a0256a218e9",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "46842c6c-2a09-4a00-89be-588400dc701a",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            }
+          ],
+          "total": 24,
+          "hasMore": true,
+          "nextCursor": "46842c6c-2a09-4a00-89be-588400dc701a",
+          "favorited": null
+        }
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=publishedAt&sortOrder=desc&limit=12&search=%E7%9C%9F%E5%AE%9E%E5%AD%A6%E4%B9%A0%E6%B5%81%E7%A8%8B%E8%AF%BE%E7%A8%8B",
+        "status": 200,
+        "responseFields": [
+          "categories",
+          "courses",
+          "difficulties",
+          "gradeBands",
+          "hasMore",
+          "nextCursor",
+          "sources",
+          "statuses",
+          "total"
+        ],
+        "data": {
+          "categories": [
+            "发音基础",
+            "古诗文"
+          ],
+          "gradeBands": [
+            "七年级"
+          ],
+          "difficulties": [
+            "入门",
+            "基础",
+            "进阶"
+          ],
+          "assignmentIds": [],
+          "catalogItemFields": [],
+          "catalogItems": [],
+          "total": 0,
+          "hasMore": false,
+          "nextCursor": null,
+          "favorited": null
+        }
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=publishedAt&sortOrder=desc&limit=12&search=T017+%E5%BF%AB%E9%80%9F%E7%BB%93%E6%9E%9C%E8%AF%BE%E7%A8%8B",
+        "status": 200,
+        "responseFields": [
+          "categories",
+          "courses",
+          "difficulties",
+          "gradeBands",
+          "hasMore",
+          "nextCursor",
+          "sources",
+          "statuses",
+          "total"
+        ],
+        "data": {
+          "categories": [
+            "发音基础",
+            "古诗文"
+          ],
+          "gradeBands": [
+            "七年级"
+          ],
+          "difficulties": [
+            "入门",
+            "基础",
+            "进阶"
+          ],
+          "assignmentIds": [
+            "ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84"
+          ],
+          "catalogItemFields": [
+            "assignmentId",
+            "capabilityTheme",
+            "completedAt",
+            "course",
+            "coverAsset",
+            "culturalElements",
+            "description",
+            "difficulty",
+            "estimatedMinutes",
+            "gradeBand",
+            "isFavorite",
+            "nextActivity",
+            "progressPercent",
+            "source",
+            "status",
+            "submission",
+            "taskGroups",
+            "title"
+          ],
+          "catalogItems": [
+            {
+              "assignmentId": "ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84",
+              "progressPercent": 50,
+              "status": "IN_PROGRESS",
+              "isFavorite": false,
+              "nextActivity": {
+                "id": "cfb9337d-d4e5-4674-9464-68e2832a8320",
+                "title": "T017 下一项活动：复述并说明",
+                "type": "TEXT"
+              }
+            }
+          ],
+          "total": 1,
+          "hasMore": false,
+          "nextCursor": null,
+          "favorited": null
+        }
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/course-detail/style.css",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/course-detail/?id=ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/course-detail/course-api-adapter.js",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/course-detail/course-player-state.js",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/course-detail/media-controller.js",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/course-detail/note-controller.js",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/course-detail/exercise-controller.js",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84",
+        "status": 200,
+        "responseFields": [
+          "assignment",
+          "course",
+          "courseCompletion",
+          "courseVersion",
+          "existingSubmission",
+          "nextActivity",
+          "practiceReferences",
+          "resources",
+          "studentProgress",
+          "units"
+        ],
+        "data": {
+          "categories": null,
+          "gradeBands": null,
+          "difficulties": null,
+          "assignmentIds": [],
+          "catalogItemFields": [],
+          "catalogItems": [],
+          "total": null,
+          "hasMore": null,
+          "nextCursor": null,
+          "favorited": null
+        }
+      },
+      {
+        "method": "POST",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84/submissions",
+        "status": 201,
+        "responseFields": [
+          "resumed",
+          "submission"
+        ],
+        "data": {
+          "categories": null,
+          "gradeBands": null,
+          "difficulties": null,
+          "assignmentIds": [],
+          "catalogItemFields": [],
+          "catalogItems": [],
+          "total": null,
+          "hasMore": null,
+          "nextCursor": null,
+          "favorited": null
+        }
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84/recommendations",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses-dashboard",
+        "status": 200,
+        "responseFields": [
+          "courses"
+        ],
+        "data": {
+          "categories": null,
+          "gradeBands": null,
+          "difficulties": null,
+          "assignmentIds": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "catalogItemFields": [
+            "courseTitle",
+            "courseVersionId",
+            "gradeBand",
+            "hasOfflinePackage",
+            "latestFeedbackAt",
+            "progressPercent"
+          ],
+          "catalogItems": [
+            {
+              "assignmentId": null,
+              "progressPercent": 0,
+              "status": null,
+              "isFavorite": null,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": null,
+              "progressPercent": 0,
+              "status": null,
+              "isFavorite": null,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": null,
+              "progressPercent": 0,
+              "status": null,
+              "isFavorite": null,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": null,
+              "progressPercent": 0,
+              "status": null,
+              "isFavorite": null,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": null,
+              "progressPercent": 0,
+              "status": null,
+              "isFavorite": null,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": null,
+              "progressPercent": 0,
+              "status": null,
+              "isFavorite": null,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": null,
+              "progressPercent": 0,
+              "status": null,
+              "isFavorite": null,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": null,
+              "progressPercent": 0,
+              "status": null,
+              "isFavorite": null,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": null,
+              "progressPercent": 0,
+              "status": null,
+              "isFavorite": null,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": null,
+              "progressPercent": 0,
+              "status": null,
+              "isFavorite": null,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": null,
+              "progressPercent": 0,
+              "status": null,
+              "isFavorite": null,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": null,
+              "progressPercent": 0,
+              "status": null,
+              "isFavorite": null,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": null,
+              "progressPercent": 0,
+              "status": null,
+              "isFavorite": null,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": null,
+              "progressPercent": 0,
+              "status": null,
+              "isFavorite": null,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": null,
+              "progressPercent": 100,
+              "status": null,
+              "isFavorite": null,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": null,
+              "progressPercent": 0,
+              "status": null,
+              "isFavorite": null,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": null,
+              "progressPercent": 0,
+              "status": null,
+              "isFavorite": null,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": null,
+              "progressPercent": 0,
+              "status": null,
+              "isFavorite": null,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": null,
+              "progressPercent": 0,
+              "status": null,
+              "isFavorite": null,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": null,
+              "progressPercent": 0,
+              "status": null,
+              "isFavorite": null,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": null,
+              "progressPercent": 0,
+              "status": null,
+              "isFavorite": null,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": null,
+              "progressPercent": 0,
+              "status": null,
+              "isFavorite": null,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": null,
+              "progressPercent": 0,
+              "status": null,
+              "isFavorite": null,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": null,
+              "progressPercent": 0,
+              "status": null,
+              "isFavorite": null,
+              "nextActivity": null
+            }
+          ],
+          "total": null,
+          "hasMore": null,
+          "nextCursor": null,
+          "favorited": null
+        }
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/style.css",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/student/courses/courses.js",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:4334/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses?sortBy=publishedAt&sortOrder=desc&limit=12",
+        "status": 200,
+        "responseFields": [
+          "categories",
+          "courses",
+          "difficulties",
+          "gradeBands",
+          "hasMore",
+          "nextCursor",
+          "sources",
+          "statuses",
+          "total"
+        ],
+        "data": {
+          "categories": [
+            "发音基础",
+            "古诗文"
+          ],
+          "gradeBands": [
+            "七年级"
+          ],
+          "difficulties": [
+            "入门",
+            "基础",
+            "进阶"
+          ],
+          "assignmentIds": [
+            "ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84",
+            "22303ec9-bf38-4c5d-8905-4b8881c7b65f",
+            "6fc8e85b-6be2-4c8d-89a1-d22ac6542159",
+            "9cb11940-b283-4429-84fb-ff6414f7fa56",
+            "c0606ba8-3a73-4e45-9cd2-4737136df8c6",
+            "f254e952-aecb-4e79-9531-36707a6c5eb0",
+            "8da10169-c247-4940-8b11-a95f6d82c095",
+            "6854fc8b-0e5a-4d2d-8bb2-66ed33c45a71",
+            "f36c8921-319b-41e1-8fc0-2345e473b2d0",
+            "dd0b0a5f-96ef-4424-bc7e-606022922271",
+            "c187098a-bb47-41af-968c-8a0256a218e9",
+            "46842c6c-2a09-4a00-89be-588400dc701a"
+          ],
+          "catalogItemFields": [
+            "assignmentId",
+            "capabilityTheme",
+            "completedAt",
+            "course",
+            "coverAsset",
+            "culturalElements",
+            "description",
+            "difficulty",
+            "estimatedMinutes",
+            "gradeBand",
+            "isFavorite",
+            "nextActivity",
+            "progressPercent",
+            "source",
+            "status",
+            "submission",
+            "taskGroups",
+            "title"
+          ],
+          "catalogItems": [
+            {
+              "assignmentId": "ad9bf40e-fbcf-4ffb-8d41-a2ff0b6fef84",
+              "progressPercent": 50,
+              "status": "IN_PROGRESS",
+              "isFavorite": false,
+              "nextActivity": {
+                "id": "cfb9337d-d4e5-4674-9464-68e2832a8320",
+                "title": "T017 下一项活动：复述并说明",
+                "type": "TEXT"
+              }
+            },
+            {
+              "assignmentId": "22303ec9-bf38-4c5d-8905-4b8881c7b65f",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "6fc8e85b-6be2-4c8d-89a1-d22ac6542159",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "9cb11940-b283-4429-84fb-ff6414f7fa56",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "c0606ba8-3a73-4e45-9cd2-4737136df8c6",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "f254e952-aecb-4e79-9531-36707a6c5eb0",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "8da10169-c247-4940-8b11-a95f6d82c095",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "6854fc8b-0e5a-4d2d-8bb2-66ed33c45a71",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "f36c8921-319b-41e1-8fc0-2345e473b2d0",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "dd0b0a5f-96ef-4424-bc7e-606022922271",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "c187098a-bb47-41af-968c-8a0256a218e9",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            },
+            {
+              "assignmentId": "46842c6c-2a09-4a00-89be-588400dc701a",
+              "progressPercent": 0,
+              "status": "NOT_STARTED",
+              "isFavorite": false,
+              "nextActivity": null
+            }
+          ],
+          "total": 24,
+          "hasMore": true,
+          "nextCursor": "46842c6c-2a09-4a00-89be-588400dc701a",
+          "favorited": null
+        }
+      }
+    ]
+  },
+  "viewports": {
+    "390": {
+      "viewport": 390,
+      "document": 390,
+      "firstCard": 354,
+      "columns": "354px",
+      "visibleCards": 12,
+      "pageHeight": 844,
+      "catalogHeight": 5841
+    },
+    "768": {
+      "viewport": 768,
+      "document": 768,
+      "firstCard": 351,
+      "columns": "351px 351px",
+      "visibleCards": 12,
+      "pageHeight": 1024,
+      "catalogHeight": 3567
+    },
+    "1280": {
+      "viewport": 1280,
+      "document": 1280,
+      "firstCard": 306,
+      "columns": "306px 306px 306px",
+      "visibleCards": 12,
+      "pageHeight": 900,
+      "catalogHeight": 2240
+    },
+    "1440": {
+      "viewport": 1440,
+      "document": 1440,
+      "firstCard": 315.328125,
+      "columns": "315.328px 315.328px 315.344px",
+      "visibleCards": 12,
+      "pageHeight": 1000,
+      "catalogHeight": 2269
+    }
+  },
+  "browserRuntime": {
+    "browser": "153.0.8010.52",
+    "baseUrl": "http://127.0.0.1:4334",
+    "apiBaseUrl": "http://127.0.0.1:4134"
+  }
+}

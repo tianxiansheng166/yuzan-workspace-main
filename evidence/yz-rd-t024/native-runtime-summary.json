@@ -1,0 +1,21 @@
+{
+  "task": "YZ-RD-T024",
+  "finishedAt": "2026-10-18T16:41:32.499848+00:00",
+  "database": "yuzan_t024_native",
+  "databaseRole": "yz_t024",
+  "bucket": "yz-t024-native",
+  "ports": {
+    "API_PORT": "4134",
+    "PORT": "4334",
+    "POSTGRES_PORT": "55674",
+    "REDIS_PORT": "6474",
+    "MINIO_API_PORT": "59274",
+    "MINIO_CONSOLE_PORT": "59275"
+  },
+  "runtimeStopped": true,
+  "workerStarted": false,
+  "testExitCode": 0,
+  "postgresSummary": "yuzan_t024_native|yz_t024|PostgreSQL 17.11 (Ubuntu 17.11-1.pgdg22.04+2) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0, 64-bit|32|90",
+  "browserLog": "/home/tian/code/yuzan-workspace-t024/evidence/yz-rd-t024/browser-logs/cross-role-native-playwright.log",
+  "dockerUsed": false
+}

@@ -1,5 +1,13 @@
 # Development status
 
+## YZ-RD-T024 — T019/T020 teacher + student Web integration (2026-10-19)
+
+DONE / WEB_ONLY / READY_TO_MERGE; NOT MERGED into `feat/question-bank-v1`. Isolated branch `feat/yz-rd-t024-teacher-student-rolling-web` combines accepted T019 `1ebc1923d44dcf238f3441552b7eda946b6c0b44` with T020 `e6b8e8aa0b2f8cfe9a3bed894f264c73f64e1f3c` (containing T018 `73bb949b22f38b66f92edaa741aa042e504d2d7f`) via no-fast-forward merge `ce709b4539ae0502e4f1a7de216a8d7ba66adb0f`. The true merge base is `0596a9b8256c1d674b93eb2afd4de7306c768129`; T019/T020 changed paths are 201/45, with zero overlap.
+
+One fresh T024 PostgreSQL 17/Redis/MinIO/API/Web environment passed a 9-test Chromium cross-role suite with zero skips. The suite proves dynamic teacher-home Submission and Review Item routes/counts, target Assignment A/B with C excluded, Today/course progress, 20-item recording/submission, six manual reviews, report generation only after final review, and student History/Growth feedback. T024 uses 120 Question Bank items and 126 imported media assets in its own bucket; recordings are `SIMULATED_MIC`, worker/automatic scoring remain disabled. Frontend 67, API 1101/64 environment-gated skips, Contracts 6, Prisma/OpenAPI/typechecks/builds pass. Detailed IDs, SQL, MinIO reads, click logs, screenshots and process exit evidence: [`evidence/yz-rd-t024/RESULTS.md`](evidence/yz-rd-t024/RESULTS.md).
+
+The mobile teacher-home primary action now flows below the greeting at 390px. T005's dirty bilingual worktree/resources, T021/T022/T023 source, and their services were not changed or stopped by T024. T024's own services stopped, test DB/bucket were retained, no Docker/Compose/P1-SIM was used, and L4 remains OPEN. Physical microphone, calibrated automatic scoring, pilot and production remain NOT_RUN. Next: future owner-led review of T005 bilingual changes and separate T021/T022/T023 integration.
+
 ## YZ-RD-T015 — student Web rolling integration (2026-10-18)
 
 DONE / WEB_ONLY / READY_TO_MERGE; NOT MERGED. The isolated branch starts at T011 `4d971c9683664c09e533069ec001b00d0dc239af` and cherry-picks T012 `67e79644e341164aaaf239ad4ebc466de1cc1c38` as `f15d1aac376adcb662d13d74ef995ba383cf2f26` and T013 `0bfd284dd8b31d95485c0be2b2993af15afef28e` as `96b0a44ab6d20e7d0f8fb27b21f3450848d21116`, both with `-x`. No file conflicts occurred; T010/T011 were not repeated.

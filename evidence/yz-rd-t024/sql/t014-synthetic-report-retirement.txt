@@ -1,0 +1,9 @@
+Scope: exact TEST_FIXTURE_ONLY T014 PracticeDefinition title in the T024 database.
+Reason: earlier accepted T014 browser fixture inserted score 83 directly; the T024 run now verifies an unreported PROCESSING session and server-generated reports only.
+Before rows (report ID | session ID | title | score | status):
+Cleanup output:
+BEGIN
+DELETE 0
+UPDATE 0
+COMMIT
+After rows (must be empty):

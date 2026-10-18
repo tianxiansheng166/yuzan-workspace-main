@@ -219,7 +219,6 @@ def create_fixture_accounts_and_records():
         "feedback_a": str(uuid.uuid4()),
         "recording_a": str(uuid.uuid4()),
         "assessment_session": str(uuid.uuid4()),
-        "assessment_report": str(uuid.uuid4()),
         "practice_definition": str(uuid.uuid4()),
         "draft_course": str(uuid.uuid4()),
         "draft_course_version": str(uuid.uuid4()),
@@ -367,9 +366,7 @@ def create_fixture_accounts_and_records():
       COMMIT;''')
     sql(f'''BEGIN;
       INSERT INTO "AssessmentSession" (id,"schoolId","enrollmentId","classId","initiatorUserId",type,purpose,status,"completedAt","practiceDefinitionId",revision,"createdAt","updatedAt")
-        VALUES ({q(ids['assessment_session'])},{q(ids['school_a'])},{q(ids['enrollment_a'])},{q(ids['class_a'])},{q(ids['teacher_a'])},'READING','STANDARD','COMPLETED',NOW(),{q(ids['practice_definition'])},1,NOW(),NOW());
-      INSERT INTO "AssessmentReport" (id,"sessionId","schoolId","overallScore","dataCompleteness","generatedAt","createdAt","updatedAt")
-        VALUES ({q(ids['assessment_report'])},{q(ids['assessment_session'])},{q(ids['school_a'])},83,1,NOW(),NOW(),NOW());
+        VALUES ({q(ids['assessment_session'])},{q(ids['school_a'])},{q(ids['enrollment_a'])},{q(ids['class_a'])},{q(ids['teacher_a'])},'READING','STANDARD','PROCESSING',NULL,{q(ids['practice_definition'])},1,NOW(),NOW());
       INSERT INTO "Recording" (id,"schoolId","enrollmentId","submissionId",status,"partCount","uploadedParts","durationMs","mimeType","objectKey",revision,"createdAt","updatedAt")
         VALUES ({q(ids['recording_a'])},{q(ids['school_a'])},{q(ids['enrollment_a'])},{q(ids['submission_a'])},'READY',1,ARRAY[1],200,'audio/wav',{q('recordings/'+ids['recording_a']+'/full')},1,NOW(),NOW());
       INSERT INTO "Course" (id,"schoolId","authorUserId","stableKey",title,"createdAt","updatedAt")
@@ -512,7 +509,7 @@ def test_teacher_class_student_assignment_and_today_loop():
             expect(teacher_page.locator("#learningSummary")).to_contain_text("50%")
             expect(teacher_page.locator("#studentAssignments")).to_contain_text(ids["baseline_title"])
             expect(teacher_page.locator("#studentAssignments")).to_contain_text("教师反馈")
-            expect(teacher_page.locator("#studentAssessments")).to_contain_text("83")
+            expect(teacher_page.locator("#studentAssessments")).to_contain_text("尚无正式报告分数")
             expect(teacher_page.locator("#studentEvidence")).to_contain_text("READY")
             teacher_page.locator("[data-play-recording]").click()
             audio = teacher_page.locator("audio").first
@@ -849,7 +846,7 @@ def test_teacher_class_student_assignment_and_today_loop():
             page_a.reload()
             expect(page_a.locator("#todayApp")).to_contain_text(ids["supplementary_title"], timeout=20_000)
 
-            print(json.dumps({
+            proof = {
                 "schoolId": ids["school_a"],
                 "classId": ids["class_a"],
                 "enrollmentIds": [ids["enrollment_a"], ids["enrollment_b"], ids["enrollment_c"]],
@@ -860,7 +857,10 @@ def test_teacher_class_student_assignment_and_today_loop():
                 "courseSubmissions": opened_course_submissions,
                 "completedActivityId": ids["activity_b"],
                 "s3RecordingId": ids["recording_a"],
-            }, ensure_ascii=False))
+            }
+            EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
+            (EVIDENCE_DIR / "proof.json").write_text(json.dumps(proof, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+            print(json.dumps(proof, ensure_ascii=False))
             for page in (page_a, page_b, page_c, page_d, page_x, teacher_page):
                 page.close()
         finally:

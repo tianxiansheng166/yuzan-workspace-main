@@ -320,9 +320,12 @@ def write_partial_evidence(log: dict[str, object], status: str) -> None:
 
 def extract_baseline_frontend() -> Path:
     runtime_root = Path(os.environ["YZ_T017_RUNTIME_ROOT"]).resolve()
-    runtime_name = "native-web-t019" if os.environ.get("YZ_E2E_TASK_ID") == "T019" else "native-web-t017"
+    runtime_name = {
+        "T019": "native-web-t019",
+        "T024": "native-web-t024",
+    }.get(os.environ.get("YZ_E2E_TASK_ID"), "native-web-t017")
     expected_runtime = (REPO / "runtime-local" / runtime_name).resolve()
-    assert runtime_root == expected_runtime, "baseline snapshot must stay inside the T017 runtime directory"
+    assert runtime_root == expected_runtime, "baseline snapshot must stay inside the active task runtime directory"
     baseline_root = runtime_root / "baseline-web"
     baseline_frontend = baseline_root / "frontend"
     assert baseline_frontend.is_relative_to(runtime_root)

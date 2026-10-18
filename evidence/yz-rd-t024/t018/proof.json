@@ -1,0 +1,76 @@
+{
+  "attemptId": "fb48fca4-1d86-4934-97c6-90d3f163609a",
+  "studentId": "b7e6f170-7510-4072-adf4-589b87dd16c3",
+  "reviewItemIds": [
+    "049a3766-ded8-43de-87d9-6989ff279f1d",
+    "4ee7ae25-e63c-41c5-bf48-faf9f348d39c",
+    "03b5e142-6e68-45d3-a7ac-6de7ec3d268c",
+    "d8a3b712-a381-4d4d-88ab-8c302bbf2376",
+    "dab4f391-8b4a-4d7f-b757-5842aec2bc25",
+    "a594c328-f960-42b5-acf7-945eeaf09970"
+  ],
+  "dynamicImageClick": {
+    "itemId": "d8a3b712-a381-4d4d-88ab-8c302bbf2376",
+    "authorizedRetry": true,
+    "naturalWidth": "positive"
+  },
+  "dynamicAudioClick": {
+    "itemId": "049a3766-ded8-43de-87d9-6989ff279f1d",
+    "authorizedRetry": true,
+    "playedSeconds": ">0.2"
+  },
+  "emptyScore": {
+    "uiRequests": 0,
+    "databaseRows": 0
+  },
+  "explicitZero": [
+    "0",
+    "33333333-3333-4333-8333-333333333333",
+    "TEST_FIXTURE_ONLY T018 教师确认此题没有获得分数。",
+    "2",
+    "REVIEWED"
+  ],
+  "positiveScore": true,
+  "nextItem": "4ee7ae25-e63c-41c5-bf48-faf9f348d39c",
+  "queueAfterReview": "all reviewed item IDs absent",
+  "reportId": "c0787b4e-958a-4f3c-8dda-404d0b104e5c",
+  "studentReportScore": 57,
+  "recordingsInMinIO": [
+    {
+      "itemId": "049a3766-ded8-43de-87d9-6989ff279f1d",
+      "recordingId": "d04f5419-4d48-44ff-960e-b2b9d0089b91",
+      "bytes": 22514
+    },
+    {
+      "itemId": "4ee7ae25-e63c-41c5-bf48-faf9f348d39c",
+      "recordingId": "25ed7cb3-f4c2-4148-8e32-74eb6c18cfaa",
+      "bytes": 22514
+    },
+    {
+      "itemId": "03b5e142-6e68-45d3-a7ac-6de7ec3d268c",
+      "recordingId": "23eb365a-0d4a-4c5a-877f-12354adba35b",
+      "bytes": 22514
+    },
+    {
+      "itemId": "d8a3b712-a381-4d4d-88ab-8c302bbf2376",
+      "recordingId": "9368a10e-5bcf-44ce-a553-ac10d39a5578",
+      "bytes": 22514
+    }
+  ],
+  "sessionBeforeReview": "PROCESSING",
+  "apiStatuses": {
+    "unauthenticated": 401,
+    "studentQueue": 403,
+    "studentReview": 403,
+    "missingItem": 404,
+    "scoreOverMax": 400,
+    "negativeScore": 400,
+    "crossClass": 403,
+    "crossSchool": 403,
+    "changedDuplicate": 409,
+    "studentOtherReport": 403,
+    "studentOtherHistory": 403
+  },
+  "reportGate": "report count 0 through penultimate review; 1 after last",
+  "microphoneSource": "SIMULATED_MIC; real recording upload and MinIO playback"
+}

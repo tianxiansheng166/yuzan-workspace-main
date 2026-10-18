@@ -22,6 +22,9 @@ BASE = os.environ.get("YZ_T020_BASE_URL", "")
 DATABASE_URL = os.environ.get("YZ_T020_DATABASE_URL", "")
 PASSWORD = os.environ.get("YZ_T020_PASSWORD", "")
 EVIDENCE_DIR = Path(os.environ.get("YZ_T020_EVIDENCE_DIR", ""))
+DATABASE_NAME = os.environ.get("YZ_T020_DATABASE_NAME", "yuzan_t020_native")
+DATABASE_USER = os.environ.get("YZ_T020_DATABASE_USER", "yz_t020")
+S3_BUCKET = os.environ.get("YZ_T020_S3_BUCKET", "yz-t020-native")
 SCHOOL_A = "11111111-1111-4111-8111-111111111111"
 TEACHER_TEMPLATE_ID = "33333333-3333-4333-8333-333333333333"
 STUDENT_TEMPLATE_ID = "22222222-2222-4222-8222-222222222222"
@@ -41,8 +44,8 @@ def sql(statement, *, capture=False):
     parsed = urlparse(DATABASE_URL)
     assert parsed.scheme == "postgresql" and parsed.hostname == "127.0.0.1"
     assert parsed.port == int(os.environ["POSTGRES_PORT"])
-    assert parsed.username == os.environ["POSTGRES_USER"] == "yz_t020"
-    assert parsed.path.lstrip("/") == os.environ["POSTGRES_DB"] == "yuzan_t020_native"
+    assert parsed.username == os.environ["POSTGRES_USER"] == DATABASE_USER
+    assert parsed.path.lstrip("/") == os.environ["POSTGRES_DB"] == DATABASE_NAME
     password = unquote(parsed.password or "")
     assert password and password == os.environ["POSTGRES_PASSWORD"]
     env = {
@@ -79,8 +82,8 @@ def sql_rows(statement):
 
 def verify_runtime_identity():
     identity = sql_scalar("SELECT current_database() || '|' || current_user || '|' || version();")
-    assert identity.startswith("yuzan_t020_native|yz_t020|PostgreSQL 17."), identity.split("|", 2)[:2]
-    assert os.environ["YZ_T020_S3_BUCKET"] == "yz-t020-native"
+    assert identity.startswith(f"{DATABASE_NAME}|{DATABASE_USER}|PostgreSQL 17."), identity.split("|", 2)[:2]
+    assert os.environ["YZ_T020_S3_BUCKET"] == S3_BUCKET
     assert urlparse(os.environ["YZ_T020_S3_ENDPOINT"]).port == int(os.environ["YZ_T020_MINIO_API_PORT"])
     return identity.split("|", 2)[:2]
 
@@ -304,12 +307,14 @@ def save_home_responsive(page):
             return {x: box.x, right: box.right, y: box.y, bottom: box.bottom, width: box.width, height: box.height};
           };
           const main = document.querySelector('#teacherDashboard');
+          const heroCopy = document.querySelector('.hero-copy');
           const action = document.querySelector('#primaryTaskAction');
           return {
             viewport: window.innerWidth,
             scrollWidth: document.documentElement.scrollWidth,
             sidebar: rect(document.querySelector('.ts-sidebar')),
             main: rect(main),
+            heroCopy: rect(heroCopy),
             action: rect(action),
             landscape: getComputedStyle(document.querySelector('.hero-landscape')).backgroundImage,
             live: document.querySelector('#dashboardState').getAttribute('aria-live'),
@@ -323,6 +328,8 @@ def save_home_responsive(page):
         else:
             assert layout["sidebar"]["bottom"] <= layout["main"]["y"] + 1, layout
         assert layout["action"]["x"] >= -1 and layout["action"]["right"] <= width + 1, layout
+        if width <= 760:
+            assert layout["action"]["y"] >= layout["heroCopy"]["bottom"] - 1, layout
         assert "hero-highland.webp" in layout["landscape"], "the highland background must remain visible"
         assert layout["live"] == "polite" and layout["refreshName"] == "button", layout
         EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
@@ -842,9 +849,9 @@ def test_teacher_home_routes_real_actions_and_reloads_authorized_data():
             evidence["responses"] = api_responses
             evidence["runtime"] = {
                 "apiBase": BASE,
-                "postgresDatabase": "yuzan_t020_native",
-                "postgresUser": "yz_t020",
-                "bucket": "yz-t020-native",
+                "postgresDatabase": DATABASE_NAME,
+                "postgresUser": DATABASE_USER,
+                "bucket": S3_BUCKET,
                 "worker": "stopped",
                 "docker": "not used",
             }

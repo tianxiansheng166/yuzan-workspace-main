@@ -1,0 +1,10 @@
+# YZ-RD-T024 native process and port exit
+
+Final native runner: `tests/e2e/assessment/run_yz_rd_t024_native.py`
+
+- Task-owned runtime: `/home/tian/code/yuzan-workspace-t024/runtime-local/native-web-t024`.
+- PostgreSQL PID 685042 was stopped by the T024 owner-aware native helper.
+- The helper tracked API, Web, Redis and MinIO by task-owned PID/command/port records, sent stop only to those records, then cleared the records after process-identity checks showed the children had exited.
+- Final status: PostgreSQL/API/Web/Redis/MinIO stopped; T024 listeners free on API 4134, Web 4334, PostgreSQL 55674, Redis 6474, MinIO 59274 and console 59275. `native-runtime-summary.json` records `runtimeStopped: true`, `workerStarted: false`, and `dockerUsed: false`.
+- PostgreSQL data, database `yuzan_t024_native`, MinIO data and bucket `yz-t024-native` were retained. The task-local `.env.local` remains mode 0600 and ignored.
+- No T005/T021/T022/T023 PID or port was passed to a stop command. T022/T023 owner's own handoffs/evidence later recorded their own process exits; T024 made no changes to their worktrees.

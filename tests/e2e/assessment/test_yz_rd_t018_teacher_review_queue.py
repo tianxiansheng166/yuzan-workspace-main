@@ -22,6 +22,9 @@ BASE = os.environ.get("YZ_T018_BASE_URL", "")
 DATABASE_URL = os.environ.get("YZ_T018_DATABASE_URL", "")
 PASSWORD = os.environ.get("YZ_T018_PASSWORD", "")
 EVIDENCE_DIR = Path(os.environ.get("YZ_T018_EVIDENCE_DIR", ""))
+DATABASE_NAME = os.environ.get("YZ_T018_DATABASE_NAME", "yuzan_t018_native")
+DATABASE_USER = os.environ.get("YZ_T018_DATABASE_USER", "yz_t018")
+S3_BUCKET = os.environ.get("YZ_T018_S3_BUCKET", "yz-t018-native")
 SCHOOL_ID = "11111111-1111-4111-8111-111111111111"
 CLASS_ID = "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee"
 TEACHER_SEED_ID = "33333333-3333-4333-8333-333333333333"
@@ -48,8 +51,8 @@ def sql(statement, *, capture=False):
     assert parsed.scheme == "postgresql"
     assert parsed.hostname == "127.0.0.1"
     assert parsed.port == int(os.environ["POSTGRES_PORT"])
-    assert parsed.username == os.environ["POSTGRES_USER"] == "yz_t018"
-    assert parsed.path.lstrip("/") == os.environ["POSTGRES_DB"] == "yuzan_t018_native"
+    assert parsed.username == os.environ["POSTGRES_USER"] == DATABASE_USER
+    assert parsed.path.lstrip("/") == os.environ["POSTGRES_DB"] == DATABASE_NAME
     password = unquote(parsed.password or "")
     assert password and password == os.environ["POSTGRES_PASSWORD"]
     env = {
@@ -86,8 +89,8 @@ def sql_scalar(statement):
 
 def verify_runtime_identity():
     identity = sql_scalar("SELECT current_database() || '|' || current_user || '|' || version();")
-    assert identity.startswith("yuzan_t018_native|yz_t018|PostgreSQL 17."), identity.split("|", 2)[:2]
-    assert os.environ["YZ_T018_S3_BUCKET"] == "yz-t018-native"
+    assert identity.startswith(f"{DATABASE_NAME}|{DATABASE_USER}|PostgreSQL 17."), identity.split("|", 2)[:2]
+    assert os.environ["YZ_T018_S3_BUCKET"] == S3_BUCKET
     assert urlparse(os.environ["YZ_T018_S3_ENDPOINT"]).port == int(os.environ["YZ_T018_MINIO_API_PORT"])
 
 
@@ -725,7 +728,7 @@ def test_real_student_to_teacher_review_to_student_report():
             )
             assert student_review_detail.status in (403, 404)
             assert errors == [], errors
-            print(json.dumps({
+            proof = {
                 "attemptId": attempt_id,
                 "studentId": student_a["user"],
                 "reviewItemIds": item_ids,
@@ -755,6 +758,9 @@ def test_real_student_to_teacher_review_to_student_report():
                 },
                 "reportGate": "report count 0 through penultimate review; 1 after last",
                 "microphoneSource": "SIMULATED_MIC; real recording upload and MinIO playback",
-            }, ensure_ascii=False))
+            }
+            EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
+            (EVIDENCE_DIR / "proof.json").write_text(json.dumps(proof, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+            print(json.dumps(proof, ensure_ascii=False))
         finally:
             browser.close()

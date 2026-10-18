@@ -1,0 +1,25 @@
+{
+  "status": "PASS",
+  "task": "T024",
+  "base": "4d971c9683664c09e533069ec001b00d0dc239af",
+  "branch": "feat/yz-rd-t024-teacher-student-rolling-web",
+  "database": "yuzan_t024_native",
+  "databaseUser": "yz_t024",
+  "screenshots": [
+    "course-catalog-after-1280.png",
+    "course-catalog-after-1440.png",
+    "course-catalog-after-390-viewport.png",
+    "course-catalog-after-390.png",
+    "course-catalog-after-768.png",
+    "course-catalog-before-1440.png",
+    "course-catalog-before-390.png",
+    "course-catalog-before-cards-1440.png",
+    "course-catalog-before-cards-390.png",
+    "course-catalog-cards-1280.png",
+    "course-catalog-cards-1440.png",
+    "course-catalog-cards-390.png",
+    "course-catalog-cards-768.png",
+    "course-detail-activity-1280.png"
+  ],
+  "apiAndSqlEvidence": "chromium-api-events.json"
+}

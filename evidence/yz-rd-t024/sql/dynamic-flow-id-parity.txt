@@ -1,0 +1,99 @@
+## T024 database identity
+SELECT current_database(),current_user,version();
+yuzan_t024_native|yz_t024|PostgreSQL 17.11 (Ubuntu 17.11-1.pgdg22.04+2) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0, 64-bit
+
+## T020 teacher-home Assignment
+SELECT id,status::text,"courseVersionId" FROM "Assignment" WHERE id='4381e4bc-4ba3-4227-85f6-7488272da94e';
+4381e4bc-4ba3-4227-85f6-7488272da94e|OPEN|b974dd0d-a6b3-418d-8ed4-f16dae72205a
+
+## T020 Submission remains separate
+SELECT id,"assignmentId","enrollmentId",status::text FROM "Submission" WHERE id='3f3685ec-8bb4-4a77-9479-95a96d2bdef0';
+3f3685ec-8bb4-4a77-9479-95a96d2bdef0|4381e4bc-4ba3-4227-85f6-7488272da94e|35ade831-321c-42ee-897e-9430f484cba2|NEEDS_REVIEW
+
+## T020 reviewed Assessment Item
+SELECT i.id,i."sessionId",i."scoredScore"::text,i."reviewerUserId",i.status::text,(SELECT count(*) FROM "AssessmentReport" r WHERE r."sessionId"=i."sessionId") FROM "AssessmentItem" i WHERE i.id='1ec7cdec-0750-4e4d-aa25-2a6ecf5ee974';
+1ec7cdec-0750-4e4d-aa25-2a6ecf5ee974|1e3d719d-d619-44eb-858c-c99ccf6f16cf|2|961d16fe-d837-48fa-a615-bd16e140b64a|REVIEWED|0
+
+## T020 six queue item rows and saved state
+SELECT id,"sessionId","scoredScore"::text,"reviewerUserId",status::text FROM "AssessmentItem" WHERE id IN ('1ec7cdec-0750-4e4d-aa25-2a6ecf5ee974','eaaaa031-f054-4372-b6e9-b6ff37fc0c01','efb2a52f-a934-4caa-82a5-59c4f090e6dd','ace2c45f-0bb8-4960-aa89-af5c7d0e03a5','cd8e803e-5081-4201-8be4-1ec180c55ebe','a4ca4ad2-eb5d-49ed-ae15-ff91f3de5ab1') ORDER BY id;
+1ec7cdec-0750-4e4d-aa25-2a6ecf5ee974|1e3d719d-d619-44eb-858c-c99ccf6f16cf|2|961d16fe-d837-48fa-a615-bd16e140b64a|REVIEWED
+a4ca4ad2-eb5d-49ed-ae15-ff91f3de5ab1|1e3d719d-d619-44eb-858c-c99ccf6f16cf|||ANSWERED
+ace2c45f-0bb8-4960-aa89-af5c7d0e03a5|1e3d719d-d619-44eb-858c-c99ccf6f16cf|||PENDING
+cd8e803e-5081-4201-8be4-1ec180c55ebe|1e3d719d-d619-44eb-858c-c99ccf6f16cf|||ANSWERED
+eaaaa031-f054-4372-b6e9-b6ff37fc0c01|1e3d719d-d619-44eb-858c-c99ccf6f16cf|||PENDING
+efb2a52f-a934-4caa-82a5-59c4f090e6dd|1e3d719d-d619-44eb-858c-c99ccf6f16cf|||PENDING
+
+## T020 queue item SQL count after one score
+SELECT count(*) FILTER (WHERE status::text='PENDING'),count(*) FILTER (WHERE status::text='REVIEWED') FROM "AssessmentItem" WHERE id IN ('1ec7cdec-0750-4e4d-aa25-2a6ecf5ee974','eaaaa031-f054-4372-b6e9-b6ff37fc0c01','efb2a52f-a934-4caa-82a5-59c4f090e6dd','ace2c45f-0bb8-4960-aa89-af5c7d0e03a5','cd8e803e-5081-4201-8be4-1ec180c55ebe','a4ca4ad2-eb5d-49ed-ae15-ff91f3de5ab1');
+3|1
+
+## T014 targeted OPEN Assignment
+SELECT a.id,a.status::text,at."targetType"::text,at."classId",at."enrollmentId" FROM "Assignment" a JOIN "AssignmentTarget" at ON at."assignmentId"=a.id WHERE a.id='6ed5f8fb-f0c9-4ad7-a230-434b064e38c0' ORDER BY at."enrollmentId";
+6ed5f8fb-f0c9-4ad7-a230-434b064e38c0|OPEN|STUDENT||d94748d0-604b-4036-9317-9a6dc52efff4
+6ed5f8fb-f0c9-4ad7-a230-434b064e38c0|OPEN|STUDENT||dfe17d2e-3dec-474e-ac7a-6c2b465eebb9
+
+## T014 selected A/B and excluded C
+SELECT count(*) FILTER (WHERE "enrollmentId" IN ('d94748d0-604b-4036-9317-9a6dc52efff4','dfe17d2e-3dec-474e-ac7a-6c2b465eebb9')),count(*) FILTER (WHERE "enrollmentId"='1f8ea5da-a8d0-44e8-8415-ab03e0243d84') FROM "AssignmentTarget" WHERE "assignmentId"='6ed5f8fb-f0c9-4ad7-a230-434b064e38c0';
+2|0
+
+## T014 A/B course Submissions
+SELECT id,"assignmentId","enrollmentId",status::text FROM "Submission" WHERE id IN ('b48ba538-3480-43da-8828-892bae711869','a5fe8dc0-44fb-44a3-b8ec-ce9f5fe67dcd') ORDER BY id;
+a5fe8dc0-44fb-44a3-b8ec-ce9f5fe67dcd|6ed5f8fb-f0c9-4ad7-a230-434b064e38c0|dfe17d2e-3dec-474e-ac7a-6c2b465eebb9|IN_PROGRESS
+b48ba538-3480-43da-8828-892bae711869|6ed5f8fb-f0c9-4ad7-a230-434b064e38c0|d94748d0-604b-4036-9317-9a6dc52efff4|IN_PROGRESS
+
+## T014 completed activity progress
+SELECT "activityId","enrollmentId",completed,position,revision FROM "ActivityProgress" WHERE "activityId"='ca71edd4-ab1b-420f-b0ec-0e64ce018061' ORDER BY "enrollmentId";
+ca71edd4-ab1b-420f-b0ec-0e64ce018061|d94748d0-604b-4036-9317-9a6dc52efff4|t|1|2
+ca71edd4-ab1b-420f-b0ec-0e64ce018061|dfe17d2e-3dec-474e-ac7a-6c2b465eebb9|t|1|1
+
+## T014 recording row
+SELECT id,"enrollmentId",status::text,"mimeType","objectKey" FROM "Recording" WHERE id='f99ca718-7eb4-4906-8c94-f2a206626e97';
+f99ca718-7eb4-4906-8c94-f2a206626e97|d94748d0-604b-4036-9317-9a6dc52efff4|READY|audio/wav|recordings/f99ca718-7eb4-4906-8c94-f2a206626e97/full
+
+## T012 twenty-item attempt remains PROCESSING without a report
+SELECT s.id,s.status::text,(SELECT count(*) FROM "AssessmentItem" i WHERE i."sessionId"=s.id),(SELECT count(*) FROM "AssessmentItem" i WHERE i."sessionId"=s.id AND i."recordingId" IS NOT NULL),(SELECT count(*) FROM "AssessmentItem" i WHERE i."sessionId"=s.id AND i."recordingId" IS NOT NULL AND i."scoredScore" IS NOT NULL),(SELECT count(*) FROM "SpeechJob" j JOIN "AssessmentItem" i ON i.id=j."assessmentItemId" WHERE i."sessionId"=s.id),(SELECT count(*) FROM "AssessmentReport" r WHERE r."sessionId"=s.id) FROM "AssessmentSession" s WHERE s.id='6cc0deeb-3d61-4098-aba7-953433d4e70a';
+6cc0deeb-3d61-4098-aba7-953433d4e70a|PROCESSING|20|4|0|4|0
+
+## T018 server-generated formal report and reviewed session
+SELECT s.id,s.status::text,r.id,r."overallScore"::text,(SELECT count(*) FROM "AssessmentItem" i WHERE i."sessionId"=s.id),(SELECT count(*) FROM "AssessmentItem" i WHERE i."sessionId"=s.id AND i."scoredScore" IS NOT NULL) FROM "AssessmentSession" s JOIN "AssessmentReport" r ON r."sessionId"=s.id WHERE s.id='fb48fca4-1d86-4934-97c6-90d3f163609a' AND r.id='c0787b4e-958a-4f3c-8dda-404d0b104e5c';
+fb48fca4-1d86-4934-97c6-90d3f163609a|COMPLETED|c0787b4e-958a-4f3c-8dda-404d0b104e5c|57|20|20
+
+## T018 six required manual review rows
+SELECT id,"scoredScore"::text,"reviewerUserId","reviewerComment",revision,status::text FROM "AssessmentItem" WHERE id IN ('049a3766-ded8-43de-87d9-6989ff279f1d','4ee7ae25-e63c-41c5-bf48-faf9f348d39c','03b5e142-6e68-45d3-a7ac-6de7ec3d268c','d8a3b712-a381-4d4d-88ab-8c302bbf2376','dab4f391-8b4a-4d7f-b757-5842aec2bc25','a594c328-f960-42b5-acf7-945eeaf09970') ORDER BY id;
+03b5e142-6e68-45d3-a7ac-6de7ec3d268c|4|33333333-3333-4333-8333-333333333333|TEST_FIXTURE_ONLY T018 人工复核 03b5e142。|2|REVIEWED
+049a3766-ded8-43de-87d9-6989ff279f1d|0|33333333-3333-4333-8333-333333333333|TEST_FIXTURE_ONLY T018 教师确认此题没有获得分数。|2|REVIEWED
+4ee7ae25-e63c-41c5-bf48-faf9f348d39c|4|33333333-3333-4333-8333-333333333333|TEST_FIXTURE_ONLY T018 人工复核 4ee7ae25。|2|REVIEWED
+a594c328-f960-42b5-acf7-945eeaf09970|8|33333333-3333-4333-8333-333333333333|TEST_FIXTURE_ONLY T018 人工复核 a594c328。|2|REVIEWED
+d8a3b712-a381-4d4d-88ab-8c302bbf2376|14|33333333-3333-4333-8333-333333333333|TEST_FIXTURE_ONLY T018 人工复核 d8a3b712。|2|REVIEWED
+dab4f391-8b4a-4d7f-b757-5842aec2bc25|8|33333333-3333-4333-8333-333333333333|TEST_FIXTURE_ONLY T018 人工复核 dab4f391。|2|REVIEWED
+
+## T018 MinIO recording row links
+SELECT id,"enrollmentId",status::text,"mimeType","objectKey" FROM "Recording" WHERE id IN ('d04f5419-4d48-44ff-960e-b2b9d0089b91','25ed7cb3-f4c2-4148-8e32-74eb6c18cfaa','23eb365a-0d4a-4c5a-877f-12354adba35b','9368a10e-5bcf-44ce-a553-ac10d39a5578') ORDER BY id;
+23eb365a-0d4a-4c5a-877f-12354adba35b|5f1a1d4c-ee30-433a-b69b-8c7d53e9acbb|COMPLETE|audio/webm;codecs=opus|recordings/23eb365a-0d4a-4c5a-877f-12354adba35b/full
+25ed7cb3-f4c2-4148-8e32-74eb6c18cfaa|5f1a1d4c-ee30-433a-b69b-8c7d53e9acbb|COMPLETE|audio/webm;codecs=opus|recordings/25ed7cb3-f4c2-4148-8e32-74eb6c18cfaa/full
+9368a10e-5bcf-44ce-a553-ac10d39a5578|5f1a1d4c-ee30-433a-b69b-8c7d53e9acbb|COMPLETE|audio/webm;codecs=opus|recordings/9368a10e-5bcf-44ce-a553-ac10d39a5578/full
+d04f5419-4d48-44ff-960e-b2b9d0089b91|5f1a1d4c-ee30-433a-b69b-8c7d53e9acbb|COMPLETE|audio/webm;codecs=opus|recordings/d04f5419-4d48-44ff-960e-b2b9d0089b91/full
+
+## T011 server-generated formal report and reviewed session
+SELECT s.id,s.status::text,r.id,r."overallScore"::text,(SELECT count(*) FROM "AssessmentItem" i WHERE i."sessionId"=s.id),(SELECT count(*) FROM "AssessmentItem" i WHERE i."sessionId"=s.id AND i."scoredScore" IS NOT NULL) FROM "AssessmentSession" s JOIN "AssessmentReport" r ON r."sessionId"=s.id WHERE s.id='434c876b-ac80-4fa6-b3b5-c62d7f0842be' AND r.id='773d3f1e-c9f8-47fd-9908-d73eb1902eb0';
+434c876b-ac80-4fa6-b3b5-c62d7f0842be|COMPLETED|773d3f1e-c9f8-47fd-9908-d73eb1902eb0|55|20|20
+
+## T011 six required manual review rows
+SELECT id,"scoredScore"::text,"reviewerUserId","reviewerComment",revision,status::text FROM "AssessmentItem" WHERE id IN ('f4486c41-0389-40d6-b328-7a5f9bc5821f','0a38112c-3eb0-4458-9971-34b3e47ed811','f44598e8-9cbe-4b38-ab52-d527cf49061c','9c69aae3-eae0-47cb-85dc-c673201de541','aa63bf55-7276-4921-898d-70793f4a5ef3','75f689d5-2fa1-42bc-b67c-a6291610537f') ORDER BY id;
+0a38112c-3eb0-4458-9971-34b3e47ed811|3|33333333-3333-4333-8333-333333333333|TEST_FIXTURE_ONLY 教师第 2 项复核：朗读清楚，继续保持自然停顿。|2|REVIEWED
+75f689d5-2fa1-42bc-b67c-a6291610537f|7|33333333-3333-4333-8333-333333333333|TEST_FIXTURE_ONLY 教师第 6 项复核：朗读清楚，继续保持自然停顿。|2|REVIEWED
+9c69aae3-eae0-47cb-85dc-c673201de541|13|33333333-3333-4333-8333-333333333333|TEST_FIXTURE_ONLY 教师第 4 项复核：朗读清楚，继续保持自然停顿。|2|REVIEWED
+aa63bf55-7276-4921-898d-70793f4a5ef3|7|33333333-3333-4333-8333-333333333333|TEST_FIXTURE_ONLY 教师第 5 项复核：朗读清楚，继续保持自然停顿。|2|REVIEWED
+f44598e8-9cbe-4b38-ab52-d527cf49061c|3|33333333-3333-4333-8333-333333333333|TEST_FIXTURE_ONLY 教师第 3 项复核：朗读清楚，继续保持自然停顿。|2|REVIEWED
+f4486c41-0389-40d6-b328-7a5f9bc5821f|3|33333333-3333-4333-8333-333333333333|TEST_FIXTURE_ONLY 教师第 1 项复核：朗读清楚，继续保持自然停顿。|2|REVIEWED
+
+## T011 MinIO recording row links
+SELECT id,"enrollmentId",status::text,"mimeType","objectKey" FROM "Recording" WHERE id IN ('d938ab54-1a18-41a2-bd53-babfe40ce935','0126bae5-0739-47a4-8bec-bdd1a0113f26','ef311b54-b4ef-405f-80db-afc28a39cfaa','1d4c4ee5-d0fb-4fe8-8bf4-6ae108c1d751') ORDER BY id;
+0126bae5-0739-47a4-8bec-bdd1a0113f26|24f84b68-1900-40fa-b70e-6e8e38f9caee|COMPLETE|audio/webm;codecs=opus|recordings/0126bae5-0739-47a4-8bec-bdd1a0113f26/full
+1d4c4ee5-d0fb-4fe8-8bf4-6ae108c1d751|24f84b68-1900-40fa-b70e-6e8e38f9caee|COMPLETE|audio/webm;codecs=opus|recordings/1d4c4ee5-d0fb-4fe8-8bf4-6ae108c1d751/full
+d938ab54-1a18-41a2-bd53-babfe40ce935|24f84b68-1900-40fa-b70e-6e8e38f9caee|COMPLETE|audio/webm;codecs=opus|recordings/d938ab54-1a18-41a2-bd53-babfe40ce935/full
+ef311b54-b4ef-405f-80db-afc28a39cfaa|24f84b68-1900-40fa-b70e-6e8e38f9caee|COMPLETE|audio/webm;codecs=opus|recordings/ef311b54-b4ef-405f-80db-afc28a39cfaa/full
+
+## T024 contains no T014 synthetic scored report
+SELECT count(*) FROM "AssessmentReport" r JOIN "AssessmentSession" s ON s.id=r."sessionId" JOIN "PracticeDefinition" p ON p.id=s."practiceDefinitionId" WHERE p.title='TEST_FIXTURE_ONLY T014 正式测评';
+0
