@@ -585,6 +585,19 @@ def test_t022_real_course_learning_note_media_runner_and_isolation():
             # Record a real browser MediaRecorder blob (Chromium test device),
             # inject one failed PUT, then recover the same idempotent Recording.
             speech_url = open_activity(page, assignment_id, submission_id, ids["speech"])
+            denied_context = browser.new_context(viewport={"width": 1280, "height": 900})
+            denied_page = denied_context.new_page()
+            denied_page.add_init_script("Object.defineProperty(navigator.mediaDevices, 'getUserMedia', { configurable: true, value: () => Promise.reject(new DOMException('Permission denied', 'NotAllowedError')) });")
+            login_ui(denied_page, "student.test")
+            open_activity(denied_page, assignment_id, submission_id, ids["speech"])
+            denied_page.locator("#courseRecorder .vr-action").click()
+            denied_page.wait_for_function("document.querySelector('#courseRecorder')?.dataset.state === 'error'", timeout=15_000)
+            expect(denied_page.locator("#syncState")).to_contain_text("麦克风不可用")
+            expect(denied_page.locator("#completeActivity")).to_be_disabled()
+            assert sql(f'''SELECT count(*) FROM "Recording" WHERE "enrollmentId"='{enrollment_a}' AND "submissionId"='{submission_id}' AND "idempotencyKey"='course:{submission_id}:{ids["speech"]}';''') == "0"
+            assert progress_sql(enrollment_a, ids["speech"]) is None
+            denied_context.close()
+
             recorder = page.locator("#courseRecorder")
             recorder.locator(".vr-action").click()
             page.wait_for_function("document.querySelector('#courseRecorder')?.dataset.state === 'recording'", timeout=15_000)
@@ -658,9 +671,11 @@ def test_t022_real_course_learning_note_media_runner_and_isolation():
             assert object_after_link_failure.get("bytes", 0) > 0 and not object_after_link_failure.get("missing")
             assert progress_sql(enrollment_a, ids["speech"]) is None
 
-            # Completion/link recovery resumes the completed object and ID;
-            # it does not upload a second effective Recording.
+            # Refresh restores the locally cached blob and the same completed
+            # server Recording. Retrying only repairs the missing activity link.
             page.unroute("**/activities/*/recordings/*/link", fail_first_course_link)
+            page.reload(wait_until="domcontentloaded")
+            page.wait_for_function("document.querySelector('#courseRecorder')?.__voiceRecorder?.blob?.size > 0", timeout=20_000)
             page.locator("#completeActivity").click()
             expect(page.locator("#syncState")).to_contain_text("服务器已保存", timeout=30_000)
             assert len(recording_init_ids) >= 3 and len(set(recording_init_ids)) == 1, recording_init_ids
@@ -838,6 +853,7 @@ def test_t022_real_course_learning_note_media_runner_and_isolation():
                 "videoProgress": progress_sql(enrollment_a, ids["video"]),
                 "mediaSources": {"audio": "/assessment/assets/question-bank/audio/level-1-dictation-1.mp3", "video": "/assets/media/video.mp4"},
                 "speechProgress": speech_progress,
+                "microphonePermissionDenied": {"uiErrorVisible": True, "recordingsCreated": 0, "progressCreated": False},
                 "recording": course_recording,
                 "minioHead": minio_object,
                 "minioHeadAfterLinkFailure": object_after_link_failure,

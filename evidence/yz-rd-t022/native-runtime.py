@@ -15,7 +15,7 @@ SHARED_TOOLS = Path("/home/tian/code/yuzan-workspace-main/runtime-local/native-w
 RUNTIME = ROOT / "runtime-local" / "native-web-t022"
 DATABASE = "yuzan_t022_native"
 DB_USER = "yz_t022"
-PORTS = {"API_PORT": "4092", "PORT": "4292", "POSTGRES_PORT": "55652", "REDIS_PORT": "6452", "MINIO_API_PORT": "59000", "MINIO_CONSOLE_PORT": "59001"}
+PORTS = {"API_PORT": "4092", "PORT": "4292", "POSTGRES_PORT": "55654", "REDIS_PORT": "6452", "MINIO_API_PORT": "59000", "MINIO_CONSOLE_PORT": "59001"}
 
 
 def load_manager():
