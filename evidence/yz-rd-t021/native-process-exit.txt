@@ -1,0 +1,1 @@
+T021 native process exit: PASS; ports 55639/6439/59204/59205/4096/4296 are free

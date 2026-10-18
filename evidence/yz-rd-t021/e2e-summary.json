@@ -1,0 +1,140 @@
+{
+  "postgres": "PostgreSQL 17.11 (Ubuntu 17.11-1.pgdg22.04+2) on x86_64-pc-linux-gnu",
+  "viewports": [
+    {
+      "width": 390,
+      "height": 844,
+      "screenshot": "profile-390.png",
+      "viewport": 390,
+      "document": 390,
+      "body": 390,
+      "documentHeight": 2043,
+      "contentEnd": 1595,
+      "profileHeight": 1966
+    },
+    {
+      "width": 768,
+      "height": 1024,
+      "screenshot": "profile-768.png",
+      "viewport": 768,
+      "document": 768,
+      "body": 768,
+      "documentHeight": 1669,
+      "contentEnd": 1370,
+      "profileHeight": 1591
+    },
+    {
+      "width": 1280,
+      "height": 960,
+      "screenshot": "profile-1280.png",
+      "viewport": 1280,
+      "document": 1280,
+      "body": 1280,
+      "documentHeight": 1442,
+      "contentEnd": 1388,
+      "profileHeight": 1352
+    },
+    {
+      "width": 1440,
+      "height": 1000,
+      "screenshot": "profile-1440.png",
+      "viewport": 1440,
+      "document": 1440,
+      "body": 1440,
+      "documentHeight": 1401,
+      "contentEnd": 1347,
+      "profileHeight": 1311
+    }
+  ],
+  "reducedMotionTransition": "1e-05s",
+  "teacherId": "58bfbee4-b241-4ed4-86e2-774cb37052b6",
+  "studentAId": "2ea5197e-a0a7-4ea0-a71d-fb7dda19a4e2",
+  "studentBId": "183dc023-05db-492f-ba58-69d25a4fe7b5",
+  "schoolA": "61e1b347-a6b7-47fd-9722-4bd6405b2724",
+  "schoolB": "a8a35c34-c446-4b4b-b7a6-becbcad2f4fd",
+  "classIds": [
+    "01b49053-33d0-4fa8-a415-09fb5e33c59b",
+    "699a7f0f-e470-4917-98c5-5c6e39964e27",
+    "41c76e43-6ee1-4ce9-b28d-c8fe8d6c47eb"
+  ],
+  "membershipRows": [
+    [
+      "61e1b347-a6b7-47fd-9722-4bd6405b2724",
+      "ACTIVE"
+    ],
+    [
+      "a8a35c34-c446-4b4b-b7a6-becbcad2f4fd",
+      "ACTIVE"
+    ]
+  ],
+  "enrollmentRows": [
+    [
+      "61e1b347-a6b7-47fd-9722-4bd6405b2724",
+      "01b49053-33d0-4fa8-a415-09fb5e33c59b",
+      "ACTIVE"
+    ],
+    [
+      "a8a35c34-c446-4b4b-b7a6-becbcad2f4fd",
+      "41c76e43-6ee1-4ce9-b28d-c8fe8d6c47eb",
+      "ACTIVE"
+    ],
+    [
+      "a8a35c34-c446-4b4b-b7a6-becbcad2f4fd",
+      "699a7f0f-e470-4917-98c5-5c6e39964e27",
+      "ACTIVE"
+    ]
+  ],
+  "auditRows": [
+    [
+      "7061af6a-4940-4284-8099-a7807919c009",
+      "01b49053-33d0-4fa8-a415-09fb5e33c59b",
+      "58bfbee4-b241-4ed4-86e2-774cb37052b6"
+    ],
+    [
+      "d7f8f677-520f-4748-96e1-9f351a7a4159",
+      "699a7f0f-e470-4917-98c5-5c6e39964e27",
+      "58bfbee4-b241-4ed4-86e2-774cb37052b6"
+    ],
+    [
+      "6c9a1a35-f64c-459b-9062-bc1dc37040cd",
+      "41c76e43-6ee1-4ce9-b28d-c8fe8d6c47eb",
+      "58bfbee4-b241-4ed4-86e2-774cb37052b6"
+    ]
+  ],
+  "teacherInvitationUsage": {
+    "7061af6a-4940-4284-8099-a7807919c009": 1,
+    "d7f8f677-520f-4748-96e1-9f351a7a4159": 1,
+    "6c9a1a35-f64c-459b-9062-bc1dc37040cd": 1
+  },
+  "bindPostCount": 5,
+  "apiStatusNegatives": {
+    "401": true,
+    "403": true,
+    "404": true,
+    "409": true
+  },
+  "rejectedInviteCases": [
+    {
+      "kind": "expired",
+      "invitationId": "07d633dd-3709-4a0c-bcb3-e8b7e33df423",
+      "status": 409,
+      "usedCountAfterRejection": 0
+    },
+    {
+      "kind": "revoked",
+      "invitationId": "4d253ecd-eeb4-423d-a214-2b76b6bd5505",
+      "status": 409,
+      "usedCountAfterRejection": 0
+    },
+    {
+      "kind": "exhausted",
+      "invitationId": "e4cb4158-125c-4d82-a9f0-0f54dbcf08d6",
+      "status": 409,
+      "usedCountAfterRejection": 1
+    }
+  ],
+  "inactiveTeacherInvitation": {
+    "status": 409,
+    "usedCount": 0
+  }
+}
