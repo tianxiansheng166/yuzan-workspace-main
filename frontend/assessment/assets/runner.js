@@ -4,7 +4,7 @@
   const app = document.querySelector('#app');
   const parts = location.pathname.split('/').filter(Boolean);
   const attemptId = parts[3] || '';
-  const state = { attempt: null, items: [], currentIndex: 0, save: 'IDLE', error: '', composing: false, timers: new Map(), saves: new Map(), media: null, blob: null, blobUrl: null, recordingIdempotencyKey: null, elapsed: 0, resourceUrls: new Map(), resourceErrors: new Map(), resolvingResources: new Set(), feedbackOpen: false, feedbackMessage: '', feedbackHistory: [] };
+  const state = { attempt: null, items: [], currentIndex: 0, save: 'IDLE', error: '', composing: false, submitting: false, timers: new Map(), saves: new Map(), media: null, blob: null, blobUrl: null, recordingIdempotencyKey: null, elapsed: 0, resourceUrls: new Map(), resourceErrors: new Map(), resolvingResources: new Set(), feedbackOpen: false, feedbackMessage: '', feedbackHistory: [] };
   const safe = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const isObject = value => value && typeof value === 'object' && !Array.isArray(value);
   const current = () => state.items[state.currentIndex];
@@ -265,7 +265,35 @@
       render();
     }
   }
-  async function submit() { await flush(); const incomplete = state.items.filter(item => normalize(item).response?.type !== 'NONE' && !saved(item)); if (incomplete.length) { state.error = `还有 ${incomplete.length} 题未完成`; state.save = 'ERROR'; render(); return; } try { for (const item of state.items) if (normalize(item).response?.type === 'CHOICE' || normalize(item).response?.type === 'TEXT') await Api.finalizeWrittenAnswer(attemptId, item.id); const result = await Api.submitAssessmentSession(attemptId); location.href = result.courseSync?.navigateTo || `/student/practices/attempts/${encodeURIComponent(attemptId)}/processing/`; } catch (error) { state.error = error.message || '提交失败'; state.save = 'ERROR'; render(); } }
+  async function submit() {
+    if (state.submitting) return;
+    state.submitting = true;
+    const button = document.querySelector('[data-submit]');
+    if (button) { button.disabled = true; button.textContent = '正在提交…'; }
+    await flush();
+    const incomplete = state.items.filter(item => normalize(item).response?.type !== 'NONE' && !saved(item));
+    if (incomplete.length) {
+      state.submitting = false;
+      state.error = `还有 ${incomplete.length} 题未完成`;
+      state.save = 'ERROR';
+      render();
+      return;
+    }
+    try {
+      for (const item of state.items) {
+        if (normalize(item).response?.type === 'CHOICE' || normalize(item).response?.type === 'TEXT') {
+          await Api.finalizeWrittenAnswer(attemptId, item.id);
+        }
+      }
+      const result = await Api.submitAssessmentSession(attemptId);
+      location.href = result.courseSync?.navigateTo || `/student/practices/attempts/${encodeURIComponent(attemptId)}/processing/`;
+    } catch (error) {
+      state.submitting = false;
+      state.error = error.message || '提交失败';
+      state.save = 'ERROR';
+      render();
+    }
+  }
   async function openFeedback() { try { state.feedbackHistory = (await Api.listMyPilotFeedback()).items || []; } catch (error) { state.error = error.message || '反馈记录暂不可用'; } state.feedbackOpen = true; render(); }
   async function submitFeedback() { const message = document.querySelector('[data-feedback-message]')?.value?.trim() || ''; if (message.length < 5) { state.feedbackMessage = message; state.error = '请至少描述 5 个字'; render(); return; } const category = document.querySelector('[data-feedback-category]')?.value || 'OTHER'; try { await Api.createPilotFeedback({ category, message, sessionId: attemptId, assessmentItemId: current()?.id, currentPath: location.pathname }); state.feedbackMessage = ''; state.feedbackHistory = (await Api.listMyPilotFeedback()).items || []; state.save = 'SAVED'; state.feedbackOpen = true; render(); } catch (error) { state.error = error.message || '反馈提交失败'; render(); } }
   function bind() { document.querySelectorAll('[data-go]').forEach(button => button.onclick = async () => { await flush(); resetTransientMedia(); state.currentIndex = Number(button.dataset.go); render(); }); document.querySelector('[data-prev]')?.addEventListener('click', async () => { await flush(); resetTransientMedia(); state.currentIndex--; render(); }); document.querySelector('[data-next]')?.addEventListener('click', async () => { await flush(); resetTransientMedia(); state.currentIndex++; render(); }); document.querySelectorAll('[data-choice]').forEach(button => button.onclick = () => save(current(), button.dataset.choice)); const textarea = document.querySelector('[data-text]'); const scheduleTextSave = () => { const item = current(); if (!item || state.composing) return; const value = textarea.value; clearTimeout(state.timers.get(item.id)); state.timers.set(item.id, setTimeout(() => { state.timers.delete(item.id); void save(item, value); }, 700)); }; textarea?.addEventListener('compositionstart', () => { state.composing = true; clearTimeout(state.timers.get(current()?.id)); state.save = 'DIRTY'; updateSaveStatus(); }); textarea?.addEventListener('compositionend', () => { state.composing = false; scheduleTextSave(); }); textarea?.addEventListener('input', () => { state.save = 'DIRTY'; updateSaveStatus(); scheduleTextSave(); }); document.querySelector('[data-start-recording]')?.addEventListener('click', beginSpeech); document.querySelector('[data-stop-recording]')?.addEventListener('click', () => { if (state.media?.recorder?.state !== 'recording') return; clearInterval(state.media.clock); state.media.state = 'STOPPING'; state.media.recorder.stop(); render(); }); document.querySelector('[data-rerecord]')?.addEventListener('click', async () => { await draftStore('delete').catch(() => {}); resetTransientMedia(); render(); }); document.querySelector('[data-upload-recording]')?.addEventListener('click', uploadSpeech); document.querySelector('[data-submit]')?.addEventListener('click', submit); document.querySelector('[data-feedback-open]')?.addEventListener('click', () => void openFeedback()); document.querySelector('[data-feedback-close]')?.addEventListener('click', () => { state.feedbackOpen = false; render(); }); document.querySelector('[data-feedback-submit]')?.addEventListener('click', () => void submitFeedback()); }
