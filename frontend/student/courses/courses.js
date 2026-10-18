@@ -1,57 +1,67 @@
 (() => {
   'use strict';
 
-  /* ── State ── */
+  const PAGE_SIZE = 12;
   const state = {
     courses: [],
-    filtered: [],
     filters: {
       gradeBand: '',
       capabilityTheme: '',
+      difficulty: '',
       taskGroup: '',
       culturalElement: '',
-      difficulty: 5,
       search: '',
-      sort: 'latest',
+      sortBy: 'publishedAt',
+      sortOrder: 'desc',
       view: 'grid',
     },
-    counts: { gradeBand: {}, capabilityTheme: {}, taskGroup: {}, culturalElement: {} },
+    categories: [],
+    gradeBands: [],
+    difficulties: [],
+    total: null,
     cursor: null,
     hasMore: false,
     loading: false,
+    pageLoading: false,
+    hasLoaded: false,
+    requestId: 0,
+    pendingFavorites: new Set(),
+    pageCursorByCourseId: new Map(),
   };
+  const textTimers = new Map();
 
-  const $ = (sel) => document.querySelector(sel);
-  const $$ = (sel) => document.querySelectorAll(sel);
-  const esc = (v = '') => String(v).replace(/[&<>'"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[c]);
+  const $ = (selector) => document.querySelector(selector);
+  const $$ = (selector) => document.querySelectorAll(selector);
+  const esc = (value = '') => String(value).replace(/[&<>"']/g, (char) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+  })[char]);
 
-  const GRADE_OPTIONS = [
-    { value: '', label: '全部年级' },
-    { value: 'PRIMARY_LOW', label: '小学低学段(1-2年级)' },
-    { value: 'PRIMARY_MID', label: '小学中学段(3-4年级)' },
-    { value: 'PRIMARY_HIGH', label: '小学高学段(5-6年级)' },
-    { value: 'JUNIOR', label: '初中学段' },
-  ];
-
-  const CATEGORY_OPTIONS = [
-    { value: '', label: '全部课程' },
-    { value: 'PHONICS', label: '发音基础' },
-    { value: 'LISTENING', label: '听说理解' },
-    { value: 'READING', label: '朗读表达' },
-    { value: 'WRITING', label: '阅读写作' },
-    { value: 'CLASSICS', label: '古诗文' },
-    { value: 'COMPREHENSIVE', label: '综合实践' },
-    { value: 'CULTURE', label: '文化素养' },
-  ];
-
-  const DIFFICULTY_LABELS = ['入门', '基础', '进阶', '高级', '专家'];
+  const GRADE_LABELS = {
+    PRIMARY_LOW: '小学低学段（1–2 年级）',
+    PRIMARY_MID: '小学中学段（3–4 年级）',
+    PRIMARY_HIGH: '小学高学段（5–6 年级）',
+    JUNIOR: '初中学段',
+  };
+  const CATEGORY_LABELS = {
+    PHONICS: '发音基础',
+    LISTENING: '听说理解',
+    READING: '朗读表达',
+    WRITING: '阅读写作',
+    CLASSICS: '古诗文',
+    COMPREHENSIVE: '综合实践',
+    CULTURE: '文化素养',
+  };
   const STATUS_LABELS = {
-    NOT_STARTED: '未开始',
-    IN_PROGRESS: '进行中',
+    NOT_STARTED: '尚未开始',
+    IN_PROGRESS: '学习中',
     COMPLETED: '已完成',
     RESULT_PENDING: '结果处理中',
   };
-
+  const SOURCE_LABELS = {
+    TEACHER_ASSIGNED: '老师布置',
+    RECOMMENDED: '推荐学习',
+    SELF_STUDY: '自主学习',
+  };
   const FALLBACK_COVERS = [
     '/assets/cover-spring.png',
     '/assets/cover-barley.png',
@@ -62,416 +72,509 @@
     '/assets/cover-translation.png',
     '/assets/cover-volunteer.png',
   ];
-
-  function fallbackCover(id) {
-    return FALLBACK_COVERS[(typeof id === 'string' ? id.charCodeAt(0) : Number(id) || 0) % FALLBACK_COVERS.length];
-  }
-
-  /* ── SVG Icons (replacing Font Awesome) ── */
   const ICONS = {
-    star: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
-    starFill: '<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
-    download: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
-    user: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+    star: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1L3.2 9.4l6.1-.9L12 3Z"/></svg>',
+    starFill: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1L3.2 9.4l6.1-.9L12 3Z"/></svg>',
+    arrow: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>',
   };
 
-  /* ── Toast ── */
-  function toast(msg) {
+  function toast(message) {
     const el = $('#toast');
-    el.textContent = msg;
+    el.textContent = message;
     el.hidden = false;
-    clearTimeout(toast._t);
-    toast._t = setTimeout(() => { el.hidden = true; }, 2600);
+    clearTimeout(toast.timer);
+    toast.timer = setTimeout(() => { el.hidden = true; }, 2600);
   }
 
-  /* ── Error state ── */
-  function showError(title, msg, retry) {
-    $('#catalogLoading').hidden = true;
-    const panel = $('#catalogState');
-    panel.innerHTML = `<h3>${esc(title)}</h3><p>${esc(msg)}</p>${retry ? '<button type="button" class="cc-btn-outline" data-retry>重新加载</button>' : ''}`;
-    panel.hidden = false;
-    panel.querySelector('[data-retry]')?.addEventListener('click', loadCatalog);
+  function gradeLabel(value) {
+    return GRADE_LABELS[value] || value || '';
   }
 
-  /* ── Build filter sidebar ── */
-  function buildFilters() {
-    // Grade filters
-    $('#gradeFilters').innerHTML = GRADE_OPTIONS.map(o =>
-      `<div class="cc-filter-item${o.value === state.filters.gradeBand ? ' active' : ''}" data-filter="gradeBand" data-value="${o.value}">${o.label}</div>`
-    ).join('');
-
-    // Category filters
-    $('#categoryFilters').innerHTML = CATEGORY_OPTIONS.map(o =>
-      `<div class="cc-filter-item${o.value === state.filters.capabilityTheme ? ' active' : ''}" data-filter="capabilityTheme" data-value="${o.value}">${o.label}</div>`
-    ).join('');
-
-    // Task groups - dynamic from API data
-    buildDynamicFilter('taskGroupFilters', 'taskGroup', state.counts.taskGroup);
-
-    // Cultural elements - dynamic from API data
-    buildDynamicFilter('culturalFilters', 'culturalElement', state.counts.culturalElement);
+  function categoryLabel(value) {
+    return CATEGORY_LABELS[value] || value || '';
   }
 
-  function buildDynamicFilter(containerId, filterKey, counts) {
-    const container = $(`#${containerId}`);
-    if (!container) return;
-    const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]);
-    if (entries.length === 0) {
-      container.innerHTML = '<div class="cc-filter-item" style="color:var(--cc-gray-mid);cursor:default">暂无数据</div>';
-      return;
+  function coverFor(course) {
+    const selected = window.YuzanVisualAssets?.courseCover(course) || course.coverAsset;
+    if (selected) return selected;
+    const seed = String(course.assignmentId || 'course').charCodeAt(0);
+    return FALLBACK_COVERS[seed % FALLBACK_COVERS.length];
+  }
+
+  function apiFilters(cursor) {
+    const query = {
+      sortBy: state.filters.sortBy,
+      sortOrder: state.filters.sortOrder,
+      limit: PAGE_SIZE,
+    };
+    for (const key of ['gradeBand', 'capabilityTheme', 'difficulty', 'taskGroup', 'culturalElement', 'search']) {
+      const value = state.filters[key].trim?.() ?? state.filters[key];
+      if (value) query[key] = value;
     }
-    let html = `<div class="cc-filter-item${!state.filters[filterKey] ? ' active' : ''}" data-filter="${filterKey}" data-value="">全部<span class="cc-filter-count">${Object.values(counts).reduce((s, v) => s + v, 0)}</span></div>`;
-    for (const [name, count] of entries) {
-      html += `<div class="cc-filter-item${state.filters[filterKey] === name ? ' active' : ''}" data-filter="${filterKey}" data-value="${esc(name)}">${esc(name)}<span class="cc-filter-count">${count}</span></div>`;
-    }
-    container.innerHTML = html;
+    if (cursor) query.cursor = cursor;
+    return query;
   }
 
-  function computeCounts() {
-    state.counts = { gradeBand: {}, capabilityTheme: {}, taskGroup: {}, culturalElement: {} };
-    for (const c of state.courses) {
-      if (c.gradeBand) state.counts.gradeBand[c.gradeBand] = (state.counts.gradeBand[c.gradeBand] || 0) + 1;
-      if (c.capabilityTheme) state.counts.capabilityTheme[c.capabilityTheme] = (state.counts.capabilityTheme[c.capabilityTheme] || 0) + 1;
-      const tgs = c.taskGroups || [];
-      for (const tg of tgs) state.counts.taskGroup[tg] = (state.counts.taskGroup[tg] || 0) + 1;
-      const ces = c.culturalElements || [];
-      for (const ce of ces) state.counts.culturalElement[ce] = (state.counts.culturalElement[ce] || 0) + 1;
-    }
+  function replaceOptions(select, values, emptyLabel, labels = {}) {
+    const selected = select.value;
+    const options = [...new Set((Array.isArray(values) ? values : []).filter((value) => typeof value === 'string' && value.trim()))]
+      .sort((left, right) => left.localeCompare(right, 'zh-CN'));
+    if (selected && !options.includes(selected)) options.push(selected);
+    select.innerHTML = `<option value="">${esc(emptyLabel)}</option>${options.map((value) =>
+      `<option value="${esc(value)}">${esc(labels[value] || value)}</option>`
+    ).join('')}`;
+    select.value = selected;
   }
 
-  /* ── Filter logic ── */
-  function applyFilters() {
-    const f = state.filters;
-    state.filtered = state.courses.filter(c => {
-      if (f.gradeBand && c.gradeBand !== f.gradeBand) return false;
-      if (f.capabilityTheme && c.capabilityTheme !== f.capabilityTheme) return false;
-      if (f.taskGroup && !(c.taskGroups || []).includes(f.taskGroup)) return false;
-      if (f.culturalElement && !(c.culturalElements || []).includes(f.culturalElement)) return false;
-      if (f.difficulty < 5 && c.difficultyLevel && c.difficultyLevel > f.difficulty) return false;
-      if (f.search) {
-        const q = f.search.toLowerCase();
-        const hay = [c.title, c.description, c.teacherName, c.capabilityTheme].filter(Boolean).join(' ').toLowerCase();
-        if (!hay.includes(q)) return false;
-      }
-      return true;
-    });
-
-    // Sort
-    if (f.sort === 'popular') state.filtered.sort((a, b) => (b.enrollCount || 0) - (a.enrollCount || 0));
-    else if (f.sort === 'rating') state.filtered.sort((a, b) => (b.avgRating || 0) - (a.avgRating || 0));
-    else state.filtered.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+  function updateFilterOptions(data) {
+    if (Array.isArray(data.categories)) state.categories = data.categories;
+    if (Array.isArray(data.gradeBands)) state.gradeBands = data.gradeBands;
+    if (Array.isArray(data.difficulties)) state.difficulties = data.difficulties;
+    replaceOptions($('#gradeFilter'), state.gradeBands, '全部年级', GRADE_LABELS);
+    replaceOptions($('#categoryFilter'), state.categories, '全部类别', CATEGORY_LABELS);
+    replaceOptions($('#difficultyFilter'), state.difficulties, '全部难度');
+    $('#gradeFilter').value = state.filters.gradeBand;
+    $('#categoryFilter').value = state.filters.capabilityTheme;
+    $('#difficultyFilter').value = state.filters.difficulty;
+    $('#taskGroupFilter').value = state.filters.taskGroup;
+    $('#culturalFilter').value = state.filters.culturalElement;
+    $('#searchInput').value = state.filters.search;
+    $('#sortSelect').value = state.filters.sortBy;
   }
 
-  /* ── Render course grid ── */
-  function render() {
-    applyFilters();
-    renderActiveTags();
-    renderGrid();
-    $('#resultCount').textContent = `显示 ${state.filtered.length} 门`;
-    $('#emptyState').hidden = state.filtered.length > 0;
-    $('#loadMore').hidden = !state.hasMore;
-    updateViewToggle();
+  function statusLabel(course) {
+    return STATUS_LABELS[course.status] || '学习进度';
+  }
+
+  function actionLabel(course) {
+    if (course.status === 'IN_PROGRESS') return '继续学习';
+    if (course.status === 'COMPLETED') return '查看课程';
+    if (course.status === 'RESULT_PENDING') return '查看学习进度';
+    return '开始学习';
+  }
+
+  function courseMarkup(course) {
+    const id = String(course.assignmentId || '');
+    const title = course.title || '未命名课程';
+    const progress = Math.max(0, Math.min(100, Number(course.progressPercent) || 0));
+    const circumference = 113.1;
+    const offset = circumference * (1 - progress / 100);
+    const isFavorite = course.isFavorite === true;
+    const category = categoryLabel(course.capabilityTheme);
+    const grade = gradeLabel(course.gradeBand);
+    const difficulty = course.difficulty || '';
+    const source = SOURCE_LABELS[course.source] || '';
+    const estimatedMinutes = Number(course.estimatedMinutes);
+    const description = typeof course.description === 'string' ? course.description.trim() : '';
+    const nextActivity = course.nextActivity && typeof course.nextActivity.title === 'string'
+      ? course.nextActivity.title.trim()
+      : '';
+    const taskGroup = Array.isArray(course.taskGroups) ? course.taskGroups.find(Boolean) : '';
+    const culturalElement = Array.isArray(course.culturalElements) ? course.culturalElements.find(Boolean) : '';
+    const extraTags = [taskGroup, culturalElement].filter(Boolean);
+
+    return `<article class="cc-card" data-course-id="${esc(id)}">
+      <a class="cc-card-link" href="/student/courses/course-detail/?id=${encodeURIComponent(id)}" aria-label="${esc(`${actionLabel(course)}：${title}`)}">
+        <div class="cc-card-cover">
+          <img src="${esc(coverFor(course))}" alt="" loading="lazy" />
+          <span class="cc-cover-wash" aria-hidden="true"></span>
+          <span class="cc-cover-category">${esc(category || '学习课程')}</span>
+          <div class="cc-cover-bottom">
+            <span class="cc-cover-status">${esc(statusLabel(course))}</span>
+            ${grade ? `<span class="cc-cover-grade">${esc(grade)}</span>` : ''}
+          </div>
+        </div>
+        <div class="cc-card-body">
+          <div class="cc-card-meta">
+            ${difficulty ? `<span class="cc-meta-item"><span class="cc-meta-dot" aria-hidden="true"></span>${esc(difficulty)}</span>` : ''}
+            ${source ? `<span class="cc-meta-source">${esc(source)}</span>` : ''}
+          </div>
+          <h3 class="cc-card-title">${esc(title)}</h3>
+          ${description ? `<p class="cc-card-description">${esc(description)}</p>` : ''}
+          ${extraTags.length ? `<div class="cc-card-tags">${extraTags.slice(0, 2).map((tag) => `<span>${esc(tag)}</span>`).join('')}</div>` : ''}
+          ${nextActivity ? `<p class="cc-next-activity"><span>下一项</span><strong>${esc(nextActivity)}</strong></p>` : ''}
+          <div class="cc-learning-progress" role="progressbar" aria-label="${esc(`${title}学习进度`)}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${progress}">
+            <span class="cc-progress-dial" aria-hidden="true">
+              <svg viewBox="0 0 42 42"><circle class="cc-progress-track" cx="21" cy="21" r="18"/><circle class="cc-progress-value" cx="21" cy="21" r="18" stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"/></svg>
+              <span>${progress}%</span>
+            </span>
+            <span class="cc-progress-copy"><strong>${progress === 100 ? '课程已完成' : `已完成 ${progress}%`}</strong><span>个人学习进度</span></span>
+            <span class="cc-progress-arrow" aria-hidden="true">${ICONS.arrow}</span>
+          </div>
+          <span class="cc-card-cta"><span>${esc(actionLabel(course))}</span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3.5 10h12m-4.5-4.5L15.5 10 11 14.5"/></svg></span>
+        </div>
+      </a>
+      <button class="cc-favorite-button${isFavorite ? ' is-favorite' : ''}" type="button" data-favorite="${esc(id)}" aria-label="${isFavorite ? '取消收藏' : '收藏课程'}：${esc(title)}" aria-pressed="${isFavorite}" title="${isFavorite ? '取消收藏' : '收藏课程'}">
+        ${isFavorite ? ICONS.starFill : ICONS.star}
+      </button>
+    </article>`;
   }
 
   function renderGrid() {
     const grid = $('#courseGrid');
-    const isListView = state.filters.view === 'list';
-    grid.className = `cc-grid cc-grid--${isListView ? '1' : '3'}`;
-    grid.innerHTML = state.filtered.map(cardMarkup).join('');
-    bindCardActions();
+    grid.className = `cc-grid${state.filters.view === 'list' ? ' cc-grid--list' : ''}`;
+    grid.innerHTML = state.courses.map(courseMarkup).join('');
+    grid.setAttribute('aria-busy', String(state.loading || state.pageLoading));
+    updateViewButtons();
   }
 
-  function cardMarkup(c) {
-    const progress = Number(c.progressPercent) || 0;
-    const coverUrl = window.YuzanVisualAssets?.courseCover(c) || c.coverAsset || fallbackCover(c.assignmentId);
-    const isNew = isNewCourse(c);
-    const dashoffset = 100 - progress;
-    const teacherDisplay = c.teacherName || '';
-    const lessonCount = Number(c.lessonCount || c.totalActivities || 0);
-    const lessonMeta = lessonCount > 0 ? `<span class="cc-card-lessons">${lessonCount}课时</span>` : '';
-    const teacherMeta = teacherDisplay ? `<span class="cc-card-teacher">${ICONS.user} ${esc(teacherDisplay)}</span>` : '';
-    const themeLabel = c.capabilityTheme || '综合';
-    const gradeLabel = gradeLabelFor(c.gradeBand);
-    const isFav = c.isFavorited || false;
-
-    return `
-      <div class="cc-card" data-assignment-id="${esc(c.assignmentId)}">
-        <div class="cc-card-cover">
-          <img src="${esc(coverUrl)}" alt="${esc(c.title)}" loading="lazy" onerror="this.onerror=null;this.src='/assets/cover-spring.png'" />
-          ${gradeLabel ? `<div class="cc-card-badge-grade">${esc(gradeLabel)}</div>` : ''}
-          ${isNew ? '<div class="cc-card-badge-new">新课</div>' : ''}
-          ${progress > 0 ? `
-            <div class="cc-card-progress-bar">
-              <svg class="cc-progress-ring" viewBox="0 0 36 36">
-                <circle stroke="#fff" stroke-opacity=".3" stroke-width="3" fill="transparent" r="16" cx="18" cy="18" stroke-dasharray="100" stroke-dashoffset="0"/>
-                <circle class="cc-progress-ring-circle" stroke="#fff" stroke-width="3" fill="transparent" r="16" cx="18" cy="18" stroke-dasharray="100" stroke-dashoffset="${dashoffset}"/>
-              </svg>
-              <span class="cc-card-progress-text">已学习 ${progress}%</span>
-            </div>
-          ` : ''}
-        </div>
-        <div class="cc-card-body">
-          <div class="cc-card-meta">
-            <span class="cc-card-theme">${esc(themeLabel)}</span>
-            ${lessonMeta}
-          </div>
-          <h3 class="cc-card-title">${esc(c.title)}</h3>
-          <p class="cc-card-desc">${esc(c.description || '')}</p>
-          <div class="cc-card-footer">
-            ${teacherMeta}
-            <div class="cc-card-actions">
-              <button class="cc-card-action${isFav ? ' favorited' : ''}" data-fav="${esc(c.assignmentId)}" aria-label="${isFav ? '取消收藏' : '收藏'}">${isFav ? ICONS.starFill : ICONS.star}</button>
-              <button class="cc-card-action" data-offline="${esc(c.assignmentId)}" aria-label="离线下载">${ICONS.download}</button>
-            </div>
-          </div>
-        </div>
-      </div>`;
-  }
-
-  function isNewCourse(c) {
-    if (!c.createdAt) return false;
-    const d = new Date(c.createdAt);
-    const now = new Date();
-    return (now - d) < 30 * 24 * 60 * 60 * 1000; // within 30 days
-  }
-
-  function gradeLabelFor(g) {
-    const found = GRADE_OPTIONS.find(o => o.value === g);
-    return found && found.value ? found.label : '';
-  }
-
-  /* ── Active tags ── */
   function renderActiveTags() {
-    const tags = [];
-    const f = state.filters;
-    if (f.gradeBand) tags.push({ key: 'gradeBand', value: f.gradeBand, label: gradeLabelFor(f.gradeBand) });
-    if (f.capabilityTheme) tags.push({ key: 'capabilityTheme', value: f.capabilityTheme, label: CATEGORY_OPTIONS.find(o => o.value === f.capabilityTheme)?.label || f.capabilityTheme });
-    if (f.taskGroup) tags.push({ key: 'taskGroup', value: f.taskGroup, label: f.taskGroup });
-    if (f.culturalElement) tags.push({ key: 'culturalElement', value: f.culturalElement, label: f.culturalElement });
-    if (f.difficulty < 5) tags.push({ key: 'difficulty', value: f.difficulty, label: `难度≤${DIFFICULTY_LABELS[f.difficulty - 1]}` });
-    if (f.search) tags.push({ key: 'search', value: f.search, label: `搜索: ${f.search}` });
-
-    const container = $('#activeTags');
-    container.hidden = tags.length === 0;
-    container.innerHTML = tags.map(t =>
-      `<span class="cc-tag">${esc(t.label)}<button class="cc-tag-close" data-remove-filter="${t.key}" data-remove-value="${esc(String(t.value))}">&times;</button></span>`
-    ).join('');
+    const labels = [
+      ['gradeBand', gradeLabel(state.filters.gradeBand)],
+      ['capabilityTheme', categoryLabel(state.filters.capabilityTheme)],
+      ['difficulty', state.filters.difficulty],
+      ['taskGroup', state.filters.taskGroup],
+      ['culturalElement', state.filters.culturalElement],
+      ['search', state.filters.search],
+    ].filter(([, label]) => label);
+    const tags = $('#activeTags');
+    tags.hidden = labels.length === 0;
+    tags.innerHTML = labels.map(([key, label]) => `<span class="cc-active-tag">${esc(label)}<button type="button" data-remove-filter="${key}" aria-label="移除筛选：${esc(label)}">×</button></span>`).join('');
   }
 
-  function updateViewToggle() {
-    $$('.cc-view-btn').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.view === state.filters.view);
-    });
-  }
-
-  /* ── Bind events ── */
-  function bindCardActions() {
-    // Card click -> navigate to player
-    $$('.cc-card').forEach(card => {
-      card.addEventListener('click', (e) => {
-        // Don't navigate if clicking action buttons
-        if (e.target.closest('.cc-card-action')) return;
-        const id = card.dataset.assignmentId;
-        if (id) location.href = `/student/courses/course-detail/?id=${encodeURIComponent(id)}`;
-      });
-    });
-
-    // Favorite toggle
-    $$('.cc-card-action[data-fav]').forEach(btn => {
-      btn.addEventListener('click', async (e) => {
-        e.stopPropagation();
-        const id = btn.dataset.fav;
-        try {
-          if (btn.classList.contains('favorited')) {
-            await YuzanApi.removeCourseFavorite(id);
-            btn.classList.remove('favorited');
-            btn.innerHTML = ICONS.star;
-            btn.setAttribute('aria-label', '收藏');
-            toast('已取消收藏');
-          } else {
-            await YuzanApi.addCourseFavorite(id);
-            btn.classList.add('favorited');
-            btn.innerHTML = ICONS.starFill;
-            btn.setAttribute('aria-label', '取消收藏');
-            toast('已添加收藏');
-          }
-        } catch (err) {
-          toast(err.message || '操作失败');
-        }
-      });
-    });
-
-    // Offline download
-    $$('.cc-card-action[data-offline]').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        toast('离线下载功能即将上线');
-      });
+  function updateViewButtons() {
+    $$('.cc-view-button').forEach((button) => {
+      const active = button.dataset.view === state.filters.view;
+      button.classList.toggle('is-active', active);
+      button.setAttribute('aria-pressed', String(active));
     });
   }
 
-  /* ── Main load ── */
-  async function loadCatalog() {
-    $('#catalogLoading').hidden = false;
-    $('#catalogState').hidden = true;
+  function updateResultCount() {
+    if (state.total !== null) {
+      $('#resultCount').textContent = `共 ${state.total} 门 · 已加载 ${state.courses.length} 门`;
+    } else if (state.hasLoaded) {
+      $('#resultCount').textContent = `已加载 ${state.courses.length} 门`;
+    } else {
+      $('#resultCount').textContent = '正在加载…';
+    }
+  }
+
+  function renderPage() {
+    renderActiveTags();
+    renderGrid();
+    updateResultCount();
+    $('#emptyState').hidden = state.loading || state.pageLoading || state.courses.length > 0;
+    $('#loadMore').hidden = !state.hasMore || !state.cursor || state.courses.length === 0;
+    $('#loadMoreBtn').disabled = state.pageLoading;
+    $('#loadMoreBtn').textContent = state.pageLoading ? '正在加载…' : '加载更多课程';
+  }
+
+  function showInitialError(title, message) {
+    $('#catalogLoading').hidden = true;
     $('#catalogContent').hidden = true;
+    const panel = $('#catalogState');
+    panel.innerHTML = `<span class="cc-error-mark" aria-hidden="true">!</span><div><h2>${esc(title)}</h2><p>${esc(message)}</p><button class="cc-outline-button" type="button" data-retry>重新加载</button></div>`;
+    panel.hidden = false;
+  }
 
-    if (!navigator.onLine) {
-      showError('当前处于离线状态', '课程目录需要联网读取。', true);
+  function showRequestError(title, message) {
+    const panel = $('#requestError');
+    panel.innerHTML = `<span>${esc(title)}：${esc(message)}</span><button class="cc-text-button" type="button" data-retry>重试</button>`;
+    panel.hidden = false;
+  }
+
+  function clearRequestError() {
+    $('#requestError').hidden = true;
+    $('#requestError').textContent = '';
+  }
+
+  function showNetworkNotice(message) {
+    $('#networkMessage').textContent = message;
+    $('#networkNotice').hidden = false;
+    $('#networkRetry').disabled = !navigator.onLine;
+  }
+
+  function clearNetworkNotice() {
+    $('#networkNotice').hidden = true;
+    $('#networkMessage').textContent = '';
+  }
+
+  function appendPage(data, pageCursor) {
+    const incoming = Array.isArray(data?.courses) ? data.courses : [];
+    const known = new Set(state.courses.map((course) => course.assignmentId));
+    for (const course of incoming) {
+      if (!course?.assignmentId || known.has(course.assignmentId)) continue;
+      known.add(course.assignmentId);
+      state.pageCursorByCourseId.set(course.assignmentId, pageCursor || null);
+      state.courses.push(course);
+    }
+    state.total = Number.isInteger(data?.total) && data.total >= 0 ? data.total : null;
+    state.cursor = typeof data?.nextCursor === 'string' && data.nextCursor ? data.nextCursor : null;
+    state.hasMore = data?.hasMore === true && Boolean(state.cursor);
+  }
+
+  function handleRequestError(error) {
+    if (error?.status === 401) {
+      location.href = `/login?returnTo=${encodeURIComponent(location.pathname + location.search)}`;
+      return;
+    }
+    if (!navigator.onLine || error?.offline || error instanceof TypeError) {
+      const message = '当前需要联网加载课程。网络恢复后可以重试。';
+      showNetworkNotice(navigator.onLine ? '网络连接暂不可用。请检查网络后重试。' : message);
+      if (!state.hasLoaded) showInitialError('课程目录需要联网', message);
+      else showRequestError('课程暂时无法更新', message);
+      return;
+    }
+    const title = error?.status === 403 ? '没有课程访问权限' : '课程暂时无法加载';
+    const message = error?.message || '请稍后重试。';
+    if (!state.hasLoaded) showInitialError(title, message);
+    else showRequestError(title, message);
+  }
+
+  async function loadCatalog({ append = false } = {}) {
+    if (append) {
+      if (state.loading || state.pageLoading || !state.cursor || !state.hasMore) return;
+      state.pageLoading = true;
+      const requestId = state.requestId;
+      const pageCursor = state.cursor;
+      const filters = apiFilters(pageCursor);
+      renderPage();
+      try {
+        const data = await YuzanApi.listStudentCourses(filters);
+        if (requestId !== state.requestId) return;
+        appendPage(data, pageCursor);
+        updateFilterOptions(data);
+        renderPage();
+        clearRequestError();
+      } catch (error) {
+        if (requestId === state.requestId) handleRequestError(error);
+      } finally {
+        if (requestId === state.requestId) {
+          state.pageLoading = false;
+          renderPage();
+        }
+      }
       return;
     }
 
+    const requestId = ++state.requestId;
+    state.loading = true;
+    state.pageLoading = false;
+    state.courses = [];
+    state.total = null;
+    state.cursor = null;
+    state.hasMore = false;
+    state.pageCursorByCourseId.clear();
+    clearRequestError();
+    $('#catalogState').hidden = true;
+    $('#catalogLoading').hidden = state.hasLoaded;
+    $('#catalogContent').hidden = !state.hasLoaded;
+    $('#gridLoading').hidden = !state.hasLoaded;
+    renderPage();
+
     try {
-      const data = await YuzanApi.listStudentCourses();
-      state.courses = Array.isArray(data?.courses) ? data.courses : Array.isArray(data) ? data : [];
-      state.cursor = data?.nextCursor || null;
-      state.hasMore = !!data?.hasMore;
-
-      computeCounts();
-      buildFilters();
-      render();
-
+      if (!navigator.onLine) {
+        const offlineError = new Error('当前需要联网加载课程。网络恢复后可以重试。');
+        offlineError.offline = true;
+        throw offlineError;
+      }
+      const data = await YuzanApi.listStudentCourses(apiFilters());
+      if (requestId !== state.requestId) return;
+      state.courses = [];
+      state.pageCursorByCourseId.clear();
+      appendPage(data, null);
+      updateFilterOptions(data);
+      state.hasLoaded = true;
+      state.loading = false;
       $('#catalogLoading').hidden = true;
+      $('#catalogState').hidden = true;
       $('#catalogContent').hidden = false;
-    } catch (err) {
-      if (err.status === 401) {
-        location.href = '/login?returnTo=' + encodeURIComponent(location.pathname);
+      $('#gridLoading').hidden = true;
+      clearNetworkNotice();
+      clearRequestError();
+      renderPage();
+    } catch (error) {
+      if (requestId !== state.requestId) return;
+      state.loading = false;
+      $('#gridLoading').hidden = true;
+      renderPage();
+      handleRequestError(error);
+    }
+  }
+
+  function setFilter(key, value) {
+    if (state.filters[key] === value) return;
+    state.filters[key] = value;
+    loadCatalog();
+  }
+
+  function resetFilters() {
+    for (const timer of textTimers.values()) clearTimeout(timer);
+    textTimers.clear();
+    state.filters.gradeBand = '';
+    state.filters.capabilityTheme = '';
+    state.filters.difficulty = '';
+    state.filters.taskGroup = '';
+    state.filters.culturalElement = '';
+    state.filters.search = '';
+    updateFilterOptions({});
+    loadCatalog();
+  }
+
+  async function reconcileFavorite(courseId, pageCursor) {
+    const data = await YuzanApi.listStudentCourses(apiFilters(pageCursor));
+    const updated = Array.isArray(data?.courses)
+      ? data.courses.find((course) => course.assignmentId === courseId)
+      : null;
+    if (!updated) return false;
+    const current = state.courses.find((course) => course.assignmentId === courseId);
+    if (!current) return false;
+    current.isFavorite = updated.isFavorite === true;
+    updateFavoriteButton(courseId, current);
+    return true;
+  }
+
+  function updateFavoriteButton(courseId, course) {
+    document.querySelectorAll(`[data-favorite="${CSS.escape(courseId)}"]`).forEach((button) => {
+      const favorite = course.isFavorite === true;
+      button.classList.toggle('is-favorite', favorite);
+      button.setAttribute('aria-pressed', String(favorite));
+      button.setAttribute('aria-label', `${favorite ? '取消收藏' : '收藏课程'}：${course.title || '课程'}`);
+      button.title = favorite ? '取消收藏' : '收藏课程';
+      button.innerHTML = favorite ? ICONS.starFill : ICONS.star;
+    });
+  }
+
+  async function toggleFavorite(button) {
+    const courseId = button.dataset.favorite;
+    const course = state.courses.find((item) => item.assignmentId === courseId);
+    if (!course || state.pendingFavorites.has(courseId)) return;
+    const wasFavorite = course.isFavorite === true;
+    const pageCursor = state.pageCursorByCourseId.get(courseId) || null;
+    state.pendingFavorites.add(courseId);
+    button.disabled = true;
+    button.setAttribute('aria-busy', 'true');
+
+    try {
+      let result;
+      if (wasFavorite) {
+        try {
+          result = await YuzanApi.removeCourseFavorite(courseId);
+        } catch (error) {
+          // The service on the verified T011 base exposes favorite removal through
+          // its POST toggle. Keep the existing DELETE client as the first attempt.
+          if (error?.status !== 404) throw error;
+          result = await YuzanApi.addCourseFavorite(courseId);
+        }
+      } else {
+        result = await YuzanApi.addCourseFavorite(courseId);
+      }
+      if (typeof result?.favorited !== 'boolean') {
+        const reconciled = await reconcileFavorite(courseId, pageCursor);
+        if (!reconciled) throw new Error('收藏结果尚未同步，请稍后重试。');
+      } else {
+        course.isFavorite = result.favorited;
+        updateFavoriteButton(courseId, course);
+      }
+      toast(course.isFavorite ? '已收藏这门课程' : '已取消收藏');
+    } catch (error) {
+      try {
+        await reconcileFavorite(courseId, pageCursor);
+      } catch {
+        // The control was never changed optimistically; retain its last server state.
+      }
+      toast(error?.message || '收藏操作失败，请稍后重试');
+    } finally {
+      state.pendingFavorites.delete(courseId);
+      const activeButton = document.querySelector(`[data-favorite="${CSS.escape(courseId)}"]`);
+      if (activeButton) {
+        activeButton.disabled = false;
+        activeButton.removeAttribute('aria-busy');
+      }
+    }
+  }
+
+  function bindEvents() {
+    $('#searchForm').addEventListener('submit', (event) => {
+      event.preventDefault();
+      setFilter('search', $('#searchInput').value.trim());
+    });
+
+    for (const [elementId, key] of [
+      ['gradeFilter', 'gradeBand'],
+      ['categoryFilter', 'capabilityTheme'],
+      ['difficultyFilter', 'difficulty'],
+    ]) {
+      $(`#${elementId}`).addEventListener('change', (event) => setFilter(key, event.target.value));
+    }
+
+    for (const [elementId, key] of [
+      ['taskGroupFilter', 'taskGroup'],
+      ['culturalFilter', 'culturalElement'],
+    ]) {
+      const input = $(`#${elementId}`);
+      input.addEventListener('input', (event) => {
+        clearTimeout(textTimers.get(key));
+        const value = event.target.value.trim();
+        textTimers.set(key, setTimeout(() => setFilter(key, value), 320));
+      });
+      input.addEventListener('keydown', (event) => {
+        if (event.key !== 'Enter') return;
+        event.preventDefault();
+        clearTimeout(textTimers.get(key));
+        setFilter(key, input.value.trim());
+      });
+    }
+
+    $('#searchInput').addEventListener('input', (event) => {
+      clearTimeout(textTimers.get('search'));
+      const value = event.target.value.trim();
+      textTimers.set('search', setTimeout(() => setFilter('search', value), 320));
+    });
+
+    $('#sortSelect').addEventListener('change', (event) => setFilter('sortBy', event.target.value));
+    $('#clearAllFilters').addEventListener('click', resetFilters);
+    $('#clearEmptyFilters').addEventListener('click', resetFilters);
+    $('#loadMoreBtn').addEventListener('click', () => loadCatalog({ append: true }));
+    $('#networkRetry').addEventListener('click', () => loadCatalog());
+
+    document.addEventListener('click', (event) => {
+      const favorite = event.target.closest('[data-favorite]');
+      if (favorite) {
+        event.preventDefault();
+        toggleFavorite(favorite);
         return;
       }
-      showError(
-        err.status === 403 ? '没有课程访问权限' : '课程暂时无法加载',
-        err.message || '请稍后重试。',
-        true,
-      );
-    }
-  }
-
-  /* ── Load more ── */
-  async function loadMore() {
-    if (state.loading || !state.cursor) return;
-    state.loading = true;
-    try {
-      const data = await YuzanApi.listStudentCourses({ cursor: state.cursor });
-      const more = Array.isArray(data?.courses) ? data.courses : [];
-      state.courses.push(...more);
-      state.cursor = data?.nextCursor || null;
-      state.hasMore = !!data?.hasMore;
-      computeCounts();
-      buildFilters();
-      render();
-    } catch (err) {
-      toast(err.message || '加载更多失败');
-    }
-    state.loading = false;
-  }
-
-  /* ── Event delegation ── */
-  function initEvents() {
-    // Filter items
-    document.addEventListener('click', (e) => {
-      const item = e.target.closest('.cc-filter-item[data-filter]');
-      if (item) {
-        const key = item.dataset.filter;
-        const val = item.dataset.value;
-        state.filters[key] = val;
-        buildFilters();
-        render();
+      const removeFilter = event.target.closest('[data-remove-filter]');
+      if (removeFilter) {
+        const key = removeFilter.dataset.removeFilter;
+        clearTimeout(textTimers.get(key));
+        textTimers.delete(key);
+        if (key === 'search') $('#searchInput').value = '';
+        if (key === 'taskGroup') $('#taskGroupFilter').value = '';
+        if (key === 'culturalElement') $('#culturalFilter').value = '';
+        setFilter(key, '');
+        return;
       }
+      if (event.target.closest('[data-retry]')) loadCatalog();
     });
 
-    // Remove filter tag
-    document.addEventListener('click', (e) => {
-      const btn = e.target.closest('[data-remove-filter]');
-      if (btn) {
-        const key = btn.dataset.removeFilter;
-        if (key === 'difficulty') state.filters.difficulty = 5;
-        else if (key === 'search') { state.filters.search = ''; $('#searchInput').value = ''; }
-        else state.filters[key] = '';
-        buildFilters();
-        render();
-      }
-    });
-
-    // Search
-    let searchTimer;
-    $('#searchInput').addEventListener('input', (e) => {
-      clearTimeout(searchTimer);
-      searchTimer = setTimeout(() => {
-        state.filters.search = e.target.value.trim();
-        render();
-      }, 300);
-    });
-    $('#searchBtn').addEventListener('click', () => {
-      state.filters.search = $('#searchInput').value.trim();
-      render();
-    });
-    $('#searchInput').addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        state.filters.search = e.target.value.trim();
-        render();
-      }
-    });
-
-    // Sort
-    $('#sortSelect').addEventListener('change', (e) => {
-      state.filters.sort = e.target.value;
-      render();
-    });
-
-    // View toggle
-    $$('.cc-view-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        state.filters.view = btn.dataset.view;
-        render();
+    $$('.cc-view-button').forEach((button) => {
+      button.addEventListener('click', () => {
+        state.filters.view = button.dataset.view;
+        renderGrid();
       });
     });
 
-    // Difficulty slider
-    $('#difficultyRange').addEventListener('input', (e) => {
-      state.filters.difficulty = Number(e.target.value);
-      render();
+    window.addEventListener('offline', () => {
+      const message = '当前需要联网加载课程。网络恢复后可以重试。';
+      if (state.hasLoaded) showNetworkNotice(message);
     });
-
-    // Clear all filters
-    $('#clearAllFilters').addEventListener('click', clearAllFilters);
-    $('#clearFilters')?.addEventListener('click', clearAllFilters);
-
-    // Load more
-    $('#loadMoreBtn')?.addEventListener('click', loadMore);
-
-    // Offline modal
-    document.addEventListener('click', (e) => {
-      if (e.target.closest('[data-close-modal]')) {
-        $('#offlineModal').hidden = true;
-        $('#offlineModal').setAttribute('aria-hidden', 'true');
+    window.addEventListener('online', () => {
+      if (state.hasLoaded && !$('#networkNotice').hidden) {
+        showNetworkNotice('网络已恢复，可以重试加载课程。');
       }
     });
   }
 
-  function clearAllFilters() {
-    state.filters = {
-      gradeBand: '',
-      capabilityTheme: '',
-      taskGroup: '',
-      culturalElement: '',
-      difficulty: 5,
-      search: '',
-      sort: state.filters.sort,
-      view: state.filters.view,
-    };
-    $('#searchInput').value = '';
-    $('#difficultyRange').value = 5;
-    buildFilters();
-    render();
-  }
-
-  /* ── Boot ── */
   document.addEventListener('DOMContentLoaded', () => {
     if (typeof YuzanApi === 'undefined') {
-      showError('系统加载失败', 'API客户端未就绪，请刷新页面重试。', true);
+      showInitialError('系统暂时不可用', '课程服务没有准备好，请刷新页面重试。');
       return;
     }
-    initEvents();
+    updateFilterOptions({});
+    bindEvents();
     loadCatalog();
   });
 })();
