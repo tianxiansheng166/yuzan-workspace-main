@@ -66,6 +66,16 @@ export class StudentCoursesController {
     return this.service.toggleFavorite(createAuthContext("request-id", principal, tenant), schoolId, assignmentId);
   }
 
+  @Put(":assignmentId/favorite")
+  setFavorite(@Param("schoolId", ParseUUIDPipe) schoolId: string, @Param("assignmentId", ParseUUIDPipe) assignmentId: string, @CurrentTenant() tenant: TenantContext, @CurrentPrincipal() principal: Principal) {
+    return this.service.setFavorite(createAuthContext("request-id", principal, tenant), schoolId, assignmentId, true);
+  }
+
+  @Delete(":assignmentId/favorite")
+  removeFavorite(@Param("schoolId", ParseUUIDPipe) schoolId: string, @Param("assignmentId", ParseUUIDPipe) assignmentId: string, @CurrentTenant() tenant: TenantContext, @CurrentPrincipal() principal: Principal) {
+    return this.service.setFavorite(createAuthContext("request-id", principal, tenant), schoolId, assignmentId, false);
+  }
+
   @Get(":assignmentId/recommendations")
   recommendations(@Param("schoolId", ParseUUIDPipe) schoolId: string, @Param("assignmentId", ParseUUIDPipe) assignmentId: string, @CurrentTenant() tenant: TenantContext, @CurrentPrincipal() principal: Principal) {
     return this.service.recommendations(createAuthContext("request-id", principal, tenant), schoolId, assignmentId);

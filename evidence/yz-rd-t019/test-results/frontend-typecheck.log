@@ -1,0 +1,3 @@
+
+> @yuzan/frontend@4.0.0 typecheck /home/tian/code/yuzan-workspace-t019/frontend
+> node --check server.mjs && node --check scripts/verify-runtime.mjs

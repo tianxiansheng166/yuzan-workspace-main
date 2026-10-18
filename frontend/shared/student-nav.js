@@ -22,7 +22,7 @@
     { label: '课程中心', route: '/student/courses/', icon: 'courses', match: /^\/student\/courses(?:\/|$)/ },
     { label: '练习中心', route: '/student/practices/', icon: 'practice', match: /^\/student\/practices(?:\/|$)|^\/assessment(?:\/|$)/ },
     { label: '学习历史', route: '/student/practices/history/', icon: 'history', match: /^\/student\/practices\/history(?:\/|$)|^\/assessment\/history(?:\/|$)/ },
-    { label: '我的成长', route: '/student/progress/', icon: 'growth', match: /^\/student\/(?:progress|growth)(?:\/|$)|^\/assessment\/progress(?:\/|$)/ },
+    { label: '我的成长', route: '/student/growth/', icon: 'growth', match: /^\/student\/(?:progress|growth)(?:\/|$)|^\/assessment\/progress(?:\/|$)/ },
     { label: '个人中心', route: '/student/profile/', icon: 'profile', match: /^\/student\/profile(?:\/|$)/ }
   ];
   const activeItem = navItems.slice().reverse().find((item) => item.match.test(path));

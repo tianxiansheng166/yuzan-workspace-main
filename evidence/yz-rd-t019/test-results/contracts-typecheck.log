@@ -1,0 +1,3 @@
+
+> @yuzan/contracts@ typecheck /home/tian/code/yuzan-workspace-t019/packages/contracts
+> tsc -p tsconfig.json --noEmit

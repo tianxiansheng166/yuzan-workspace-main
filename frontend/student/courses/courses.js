@@ -449,14 +449,7 @@
     try {
       let result;
       if (wasFavorite) {
-        try {
-          result = await YuzanApi.removeCourseFavorite(courseId);
-        } catch (error) {
-          // The service on the verified T011 base exposes favorite removal through
-          // its POST toggle. Keep the existing DELETE client as the first attempt.
-          if (error?.status !== 404) throw error;
-          result = await YuzanApi.addCourseFavorite(courseId);
-        }
+        result = await YuzanApi.removeCourseFavorite(courseId);
       } else {
         result = await YuzanApi.addCourseFavorite(courseId);
       }
@@ -474,7 +467,10 @@
       } catch {
         // The control was never changed optimistically; retain its last server state.
       }
-      toast(error?.message || '收藏操作失败，请稍后重试');
+      const message = error?.status === 0 || error?.name === 'TypeError'
+        ? '网络连接失败，收藏状态未更改，请检查网络后重试。'
+        : error?.message || '收藏操作失败，请稍后重试。';
+      toast(message);
     } finally {
       state.pendingFavorites.delete(courseId);
       const activeButton = document.querySelector(`[data-favorite="${CSS.escape(courseId)}"]`);

@@ -1,0 +1,7 @@
+
+> @yuzan/contracts@ generate /home/tian/code/yuzan-workspace-t019/packages/contracts
+> node scripts/generate-types.mjs
+
+✨ openapi-typescript 7.13.0
+🚀 openapi/openapi.yaml → src/.generate-types-Dh2nuH/generated.ts [221.7ms]
+src/.generate-types-Dh2nuH/generated.ts 436ms

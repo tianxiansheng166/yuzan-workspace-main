@@ -20,11 +20,11 @@ PASSWORD = os.environ["YZ_T012_TEST_PASSWORD"]
 NATIVE_TASK_ID = os.environ.get("YZ_NATIVE_TASK_ID", "T012").upper()
 PRACTICE_TITLE = (
     "国家通用语言文字能力｜水平一级综合测评"
-    if NATIVE_TASK_ID == "T015"
+    if NATIVE_TASK_ID in {"T015", "T019"}
     else "停顿与节奏专项训练"
 )
-CATALOG_TYPE = "COMPREHENSIVE" if NATIVE_TASK_ID == "T015" else "SPECIALIZED"
-CATALOG_TAB_LABEL = "综合练习" if NATIVE_TASK_ID == "T015" else "专项训练"
+CATALOG_TYPE = "COMPREHENSIVE" if NATIVE_TASK_ID in {"T015", "T019"} else "SPECIALIZED"
+CATALOG_TAB_LABEL = "综合练习" if NATIVE_TASK_ID in {"T015", "T019"} else "专项训练"
 BUCKET = os.environ["YZ_T012_S3_BUCKET"]
 EVIDENCE_DIR = Path(os.environ["YZ_T012_EVIDENCE_DIR"])
 DATABASE_NAME = os.environ.get("YZ_T012_POSTGRES_DB", f"yuzan_{NATIVE_TASK_ID.lower()}_native")
@@ -159,7 +159,7 @@ def get_attempt_items(page, headers, attempt_id):
     assert response.ok, response.text()
     body = payload(response)
     items = body if isinstance(body, list) else body["items"]
-    expected_count = 20 if NATIVE_TASK_ID == "T015" else 4
+    expected_count = 20 if NATIVE_TASK_ID in {"T015", "T019"} else 4
     assert len(items) == expected_count, f"Expected {expected_count} persisted items, got {len(items)}"
     return items
 
@@ -274,7 +274,7 @@ def test_t012_student_practice_runner_real_api_postgres_minio_and_recovery():
                 practice_id = practice["id"]
                 assert practice["catalogType"] == CATALOG_TYPE
                 assert practice["mode"] == "SELF_PRACTICE"
-                assert practice["estimatedMinutes"] == (30 if NATIVE_TASK_ID == "T015" else 10)
+                assert practice["estimatedMinutes"] == (30 if NATIVE_TASK_ID in {"T015", "T019"} else 10)
 
                 anonymous = playwright.request.new_context()
                 unauthenticated = anonymous.get(
@@ -367,7 +367,7 @@ def test_t012_student_practice_runner_real_api_postgres_minio_and_recovery():
                     if (response_spec(item).get("stimulus") or {}).get("type") == "AUDIO"
                 ]
                 assert choice_indexes and len(speech_indexes) >= 2 and text_indexes and audio_indexes
-                if NATIVE_TASK_ID == "T015":
+                if NATIVE_TASK_ID in {"T015", "T019"}:
                     assert len(items) == 20
                     assert len(audio_indexes) == 6
                     assert len(speech_indexes) == 4

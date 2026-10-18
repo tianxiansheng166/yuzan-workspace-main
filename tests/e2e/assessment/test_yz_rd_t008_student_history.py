@@ -365,6 +365,18 @@ def test_student_practice_submission_appears_only_in_the_owners_history():
                 own_row.get_by_text("查看处理状态").wait_for()
                 assert "尚未形成报告或成绩" in own_row.inner_text()
 
+                page.goto(f"{BASE}/assessment/history/", wait_until="networkidle")
+                compatibility_row = page.locator(f'[data-history-session="{attempt_a}"]')
+                compatibility_row.wait_for(timeout=20_000)
+                compatibility_row.get_by_text("处理中").wait_for()
+                assert "尚未形成报告或成绩" in compatibility_row.inner_text()
+                evidence_dir = Path(os.environ["YZ_T010_EVIDENCE_DIR"])
+                evidence_dir.mkdir(parents=True, exist_ok=True)
+                page.screenshot(path=str(evidence_dir / "assessment-history-alias-1280.png"), full_page=True)
+                page.goto(f"{BASE}/student/practices/history/", wait_until="networkidle")
+                own_row = page.locator(f'[data-history-session="{attempt_a}"]')
+                own_row.wait_for(timeout=20_000)
+
                 page.goto(f"{BASE}/student/practices/", wait_until="networkidle")
                 current_card = page.locator(".practice-tile").filter(has_text=PRACTICE_TITLE)
                 current_card.wait_for(timeout=20_000)

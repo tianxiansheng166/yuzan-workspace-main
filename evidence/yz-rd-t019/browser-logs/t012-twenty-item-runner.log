@@ -1,0 +1,63 @@
+T012 resume diagnostic: {"attempt": {"id": "dd3dc230-04c0-42e9-a67e-87d87539fa22", "status": "IN_PROGRESS", "practiceDefinitionId": "cb27ede9-f1fc-4287-b439-3f1cf1227cac"}, "listedSessionIds": ["dd3dc230-04c0-42e9-a67e-87d87539fa22"], "detailActionLinks": 1, "detailStartButtons": 0, "pageErrors": []}
+{
+  "attemptId": "dd3dc230-04c0-42e9-a67e-87d87539fa22",
+  "practiceDefinitionId": "cb27ede9-f1fc-4287-b439-3f1cf1227cac",
+  "studentA": "0624cd71-2315-4cf1-a832-8a3b8ab32b6d",
+  "studentB": "0efaa474-dfbb-4dfb-96ae-20ec8a7a308e",
+  "enrollmentA": "50dd52b3-f54b-4b68-9ea5-0db7d87ef6b6",
+  "enrollmentB": "f3869ecd-d63d-42b9-a824-12aab078d0bb",
+  "status": "PROCESSING",
+  "recordings": [
+    {
+      "itemId": "b3dfd64e-99db-40c8-9624-3e9ba8fd4d6b",
+      "recordingId": "89c8914a-79d1-4ea8-8707-61be71d4e27a",
+      "status": "COMPLETE",
+      "objectKey": "recordings/89c8914a-79d1-4ea8-8707-61be71d4e27a/full",
+      "bytes": 24446,
+      "contentType": "audio/webm;codecs=opus",
+      "signatureFailure": 403,
+      "retryCountForIdempotencyKey": 1
+    },
+    {
+      "itemId": "3ad1017e-e5a9-4411-afe1-a548aff9b474",
+      "recordingId": "dc79fd0a-e7fc-4ea4-adb9-cfce306dd375",
+      "status": "COMPLETE",
+      "objectKey": "recordings/dc79fd0a-e7fc-4ea4-adb9-cfce306dd375/full",
+      "bytes": 23480,
+      "contentType": "audio/webm;codecs=opus",
+      "networkRetry": true,
+      "retryCountForIdempotencyKey": 1
+    }
+  ],
+  "reportCount": 0,
+  "scoredSpeechItems": 0,
+  "speechJobs": {
+    "count": 4,
+    "distinctRecordings": 4
+  },
+  "unauthenticated": 401,
+  "wrongSchool": 403,
+  "missingAttempt": 404,
+  "studentIsolation": 404,
+  "permissionDenied": true,
+  "invalidSignature": 403,
+  "networkInterrupted": true,
+  "duplicateSubmitPosts": 1,
+  "screenshots": [
+    "catalog-1280.png",
+    "catalog-1440.png",
+    "catalog-1920.png",
+    "catalog-390.png",
+    "detail-1440.png",
+    "detail-390.png",
+    "runner-audio-1440.png",
+    "runner-audio-390.png",
+    "runner-confirm-390.png",
+    "runner-ready-submit-1440.png",
+    "runner-ready-submit-390.png"
+  ]
+}
+
+.
+1 passed in 42.22s
+Test suite t012-student-practice: PASS

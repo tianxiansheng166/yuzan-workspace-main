@@ -28,7 +28,7 @@ NAV_ROUTES = [
     ("课程中心", "/student/courses/", "#catalogContent", "/student/courses"),
     ("练习中心", "/student/practices/", "#app .practice-catalog-head", "/practices"),
     ("学习历史", "/student/practices/history/", "#app .history-record-panel", "/assessments/history"),
-    ("我的成长", "/student/progress/", "#app .page-title", "/students/me/question-bank-progress"),
+    ("我的成长", "/student/growth/", "#growthApp h1", "/assessments/sessions"),
     ("个人中心", "/student/profile/", "#profileName", "/student/profile"),
 ]
 
@@ -47,8 +47,8 @@ def sql(statement: str, *, capture: bool = False) -> str:
     assert parsed.scheme == "postgresql"
     assert parsed.hostname == "127.0.0.1"
     assert parsed.port == int(os.environ["YZ_T016_POSTGRES_PORT"])
-    assert parsed.username == os.environ["YZ_T016_POSTGRES_USER"] == "yz_t016"
-    assert parsed.path.lstrip("/") == os.environ["YZ_T016_POSTGRES_DB"] == "yuzan_t016_navigation"
+    assert parsed.username == os.environ["YZ_T016_POSTGRES_USER"]
+    assert parsed.path.lstrip("/") == os.environ["YZ_T016_POSTGRES_DB"]
     password = unquote(parsed.password or "")
     assert password
     env = {
@@ -188,7 +188,7 @@ def assert_route_content(page, label: str):
     if label == "个人中心":
         expect(page.locator("#profileName")).to_contain_text("同学")
     if label == "我的成长":
-        expect(page.locator("#app .page-title")).to_contain_text("学习进步")
+        expect(page.locator("#growthApp h1")).to_contain_text("成长")
 
 
 def assert_current_route(page, label: str):
@@ -269,7 +269,9 @@ def test_t016_student_nav_real_routes_identity_keyboard_and_viewports():
             "SELECT current_database() || '|' || current_user || '|' || version();",
             capture=True,
         )
-        assert identity.startswith("yuzan_t016_navigation|yz_t016|PostgreSQL 17."), identity.split("|", 2)[:2]
+        expected_database = os.environ["YZ_T016_POSTGRES_DB"]
+        expected_user = os.environ["YZ_T016_POSTGRES_USER"]
+        assert identity.startswith(f"{expected_database}|{expected_user}|PostgreSQL 17."), identity.split("|", 2)[:2]
 
         with sync_playwright() as playwright:
             browser_path = os.environ.get("YZ_T016_CHROME", "/usr/bin/google-chrome")
@@ -277,11 +279,19 @@ def test_t016_student_nav_real_routes_identity_keyboard_and_viewports():
             context = browser.new_context(viewport={"width": 390, "height": 844}, reduced_motion="no-preference")
             page = context.new_page()
             responses = []
-            page.on(
-                "response",
-                lambda response: responses.append((response.url, response.status))
-                if "/api/v1/" in response.url else None,
-            )
+            history_payloads = []
+
+            def capture_api_response(response):
+                if "/api/v1/" not in response.url:
+                    return
+                responses.append((response.url, response.status))
+                if urlparse(response.url).path.rstrip("/").endswith("/assessments/history") and 200 <= response.status < 300:
+                    try:
+                        history_payloads.append(payload(response))
+                    except Exception:
+                        pass
+
+            page.on("response", capture_api_response)
 
             student_a_login = login_api(page, fixtures["student_a_login"])
             student_a_primary = select_school(page, student_a_login, SCHOOL_ID)
@@ -363,14 +373,24 @@ def test_t016_student_nav_real_routes_identity_keyboard_and_viewports():
                 if label == "个人中心":
                     page.screenshot(path=str(SCREENSHOT_DIR / "after-390-profile.png"), full_page=False)
 
+            first_history = history_payloads[-1] if history_payloads else None
+            assert first_history is not None, "the student history route did not load its real history response"
+            history_start = len(history_payloads)
+            page.goto(BASE + "/assessment/history/", wait_until="domcontentloaded")
+            page.wait_for_load_state("networkidle", timeout=30_000)
+            page.locator("#app .history-record-panel").first.wait_for(state="visible", timeout=25_000)
+            assert len(history_payloads) > history_start, "the compatibility history route did not load the API"
+            assert history_payloads[-1] == first_history, "history aliases returned different authenticated learning records"
+            assert_current_route(page, "学习历史")
+
             # Refresh, back, and forward keep browser history and current-route state aligned.
             page.reload(wait_until="networkidle")
-            assert_current_route(page, "个人中心")
+            assert_current_route(page, "学习历史")
             page.go_back(wait_until="networkidle")
-            assert_current_route(page, "我的成长")
-            page.go_forward(wait_until="networkidle")
             assert_current_route(page, "个人中心")
-            assert_route_content(page, "个人中心")
+            page.go_forward(wait_until="networkidle")
+            assert_current_route(page, "学习历史")
+            assert_route_content(page, "学习历史")
 
             # At 768px, the complete menu remains available; resizing to desktop restores inline nav.
             page.set_viewport_size({"width": 768, "height": 1024})
@@ -390,7 +410,7 @@ def test_t016_student_nav_real_routes_identity_keyboard_and_viewports():
             assert_current_route(page, "今日学习")
             assert any("/student/today" in url and 200 <= status < 300 for url, status in responses[tablet_api_start:])
             page.go_back(wait_until="networkidle")
-            assert_current_route(page, "个人中心")
+            assert_current_route(page, "学习历史")
 
             # Reduced-motion preference keeps the menu immediate and accessible.
             page.emulate_media(reduced_motion="reduce")
@@ -410,12 +430,12 @@ def test_t016_student_nav_real_routes_identity_keyboard_and_viewports():
             expect(toggle).to_be_hidden()
             expect(page.locator(".sn-menu-panel")).to_be_visible()
             expect(toggle).to_have_attribute("aria-expanded", "false")
-            assert_current_route(page, "个人中心")
+            assert_current_route(page, "学习历史")
             assert_no_horizontal_overflow(page)
             page.screenshot(path=str(SCREENSHOT_DIR / "after-1280-desktop.png"), full_page=False)
 
             page.set_viewport_size({"width": 1440, "height": 1000})
-            assert_current_route(page, "个人中心")
+            assert_current_route(page, "学习历史")
             assert_no_horizontal_overflow(page)
             page.screenshot(path=str(SCREENSHOT_DIR / "after-1440-desktop.png"), full_page=False)
 

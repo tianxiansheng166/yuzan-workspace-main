@@ -1,0 +1,110 @@
+
+> @yuzan/api@ test /home/tian/code/yuzan-workspace-t019/backend/api
+> vitest run --passWithNoTests --pool=forks --poolOptions.forks.singleFork -- student-courses.service.spec.ts
+
+
+ RUN  v3.2.7 /home/tian/code/yuzan-workspace-t019/backend/api
+
+ ✓ test/identity/prisma-adapters.spec.ts (2 tests) 117ms
+ ✓ test/modules/admin/admin-stub.controller.spec.ts (38 tests) 54ms
+ ✓ test/assessment/assessment.service.spec.ts (30 tests) 47ms
+ ✓ test/organizations/classes.controller.spec.ts (23 tests) 36ms
+ ✓ test/ai-lesson-planning/ai-lesson-planning.spec.ts (23 tests) 30ms
+ ✓ test/auth/identity.service.spec.ts (39 tests) 18ms
+stdout | test/organizations/organizations.controller.spec.ts > OrganizationsController > security guards > rejects unknown role via AuthenticationGuard
+{"type":"SECURITY","requestId":"req-1","code":"UNKNOWN_ROLE","method":"GET","path":"/schools/school-a","event":"AUTHORIZATION_DENIED"}
+
+stdout | test/organizations/organizations.controller.spec.ts > OrganizationsController > security guards > rejects client-forged schoolId via TenantAuthorizationGuard
+{"type":"SECURITY","requestId":"req-1","code":"FORBIDDEN_TENANT","schoolId":"school-a","method":"GET","path":"/schools/school-b","userId":"teacher-1","event":"AUTHORIZATION_DENIED"}
+
+stdout | test/organizations/organizations.controller.spec.ts > OrganizationsController > security guards > rejects suspended membership
+{"type":"SECURITY","requestId":"req-1","code":"UNAUTHENTICATED","method":"GET","path":"/schools/school-a","event":"AUTHORIZATION_DENIED"}
+
+ ✓ test/organizations/organizations.controller.spec.ts (11 tests) 13ms
+ ✓ test/recordings/recordings.service.spec.ts (21 tests) 13ms
+stdout | test/curriculum/curriculum.controller.spec.ts > CurriculumController > rejects unknown role via AuthenticationGuard
+{"type":"SECURITY","requestId":"req-1","code":"UNKNOWN_ROLE","method":"GET","path":"/schools/school-a/course-versions","event":"AUTHORIZATION_DENIED"}
+
+stdout | test/curriculum/curriculum.controller.spec.ts > CurriculumController > rejects client-forged schoolId via TenantAuthorizationGuard
+{"type":"SECURITY","requestId":"req-1","code":"FORBIDDEN_TENANT","schoolId":"school-a","method":"GET","path":"/schools/school-b/course-versions","userId":"teacher-1","event":"AUTHORIZATION_DENIED"}
+
+ ✓ test/curriculum/curriculum.controller.spec.ts (9 tests) 13ms
+ ✓ test/speech-job/speech-job.service.spec.ts (19 tests) 12ms
+ ✓ test/modules/assignments/assignments.service.spec.ts (12 tests) 11ms
+ ✓ test/modules/submissions/submissions.service.spec.ts (13 tests) 11ms
+ ✓ test/student-courses/student-courses.service.spec.ts (32 tests) 8ms
+ ✓ test/modules/learning/learning.service.spec.ts (6 tests) 8ms
+ ✓ test/modules/cooperation/cooperation.service.spec.ts (72 tests) 8ms
+ ✓ test/modules/community/community.service.spec.ts (92 tests) 7ms
+ ✓ test/modules/translations/translations.service.spec.ts (45 tests) 6ms
+ ✓ test/modules/training/training.service.spec.ts (58 tests) 12ms
+ ✓ test/assessment/practice.service.spec.ts (20 tests) 7ms
+ ✓ test/assessment/teacher-question-bank-diagnostic.service.spec.ts (4 tests) 13ms
+ ✓ test/modules/tools/tools.service.spec.ts (47 tests) 5ms
+ ✓ test/classes/classes.supplementary-practice.spec.ts (13 tests) 4ms
+ ✓ test/modules/support-pairings/support-pairings.service.spec.ts (42 tests) 4ms
+ ✓ test/reporting/reporting.service.spec.ts (9 tests) 4ms
+ ✓ test/assessment/question-bank-deterministic-scoring.service.spec.ts (8 tests) 2ms
+ ✓ test/assessment/remediation.service.spec.ts (6 tests) 4ms
+ ✓ test/contracts/p0-golden-flow.contract.spec.ts (38 tests) 4ms
+ ✓ test/assessment/student-dashboard.today.service.spec.ts (9 tests) 4ms
+ ✓ test/curriculum/curriculum.service.spec.ts (23 tests) 4ms
+ ✓ test/organizations/organizations.service.spec.ts (7 tests) 4ms
+ ✓ test/teacher/teacher-dashboard.service.spec.ts (3 tests) 2ms
+ ✓ test/speech-job/speech-job.result-policy.spec.ts (5 tests) 4ms
+ ✓ test/modules/feedback/feedback.service.spec.ts (8 tests) 4ms
+ ✓ test/assessment/assessment-review.service.spec.ts (2 tests) 3ms
+ ✓ test/modules/volunteers/volunteers.service.spec.ts (22 tests) 4ms
+ ✓ test/modules/assignments/publishing.spec.ts (13 tests) 4ms
+ ✓ test/assessment/question-bank-progress.service.spec.ts (6 tests) 3ms
+ ✓ test/offline/offline.service.spec.ts (5 tests) 3ms
+ ✓ test/assessment/question-bank-assessment-scoring.spec.ts (7 tests) 3ms
+ ✓ test/modules/submissions/submission.state-machine.spec.ts (35 tests) 1ms
+ ✓ test/organizations/classes.teacher-scope.spec.ts (6 tests) 2ms
+ ✓ test/assessment/question-bank-diagnosis.spec.ts (11 tests) 3ms
+ ✓ test/modules/pilot/pilot-observability.service.spec.ts (2 tests) 2ms
+ ✓ test/speech-job/speech-result.policy.spec.ts (10 tests) 1ms
+ ✓ test/teacher-invitations/teacher-invitations.service.spec.ts (3 tests) 3ms
+ ✓ test/curriculum/publishing.validator.spec.ts (13 tests) 2ms
+ ✓ test/modules/pilot/pilot-feedback.service.spec.ts (3 tests) 1ms
+ ✓ test/modules/pilot/pilot-health.spec.ts (5 tests) 1ms
+ ✓ test/auth/session-auth-context.source.spec.ts (5 tests) 2ms
+ ✓ test/assessment/question-bank.security.spec.ts (2 tests) 1ms
+ ✓ test/modules/admin/invite-redeem.controller.spec.ts (2 tests) 2ms
+ ✓ test/modules/assignments/assignment.state-machine.spec.ts (34 tests) 1ms
+ ✓ test/modules/admin/assessment-link.controller.spec.ts (2 tests) 1ms
+ ✓ test/modules/volunteers/volunteer-state-machine.spec.ts (25 tests) 1ms
+ ✓ test/assessment/student-today-decision.spec.ts (9 tests) 2ms
+ ✓ test/auth/identity.controller.spec.ts (9 tests) 1ms
+ ✓ test/modules/admin/audit-stub.controller.spec.ts (3 tests) 1ms
+ ✓ test/assessment/question-bank-runtime-import.service.spec.ts (2 tests) 1ms
+ ✓ test/database/database-runtime.integration.spec.ts (22 tests | 11 skipped) 2ms
+ ✓ test/assessment/question-bank-diagnosis.security.spec.ts (3 tests) 1ms
+ ✓ test/modules/assignments/prisma-assignment.repository.spec.ts (1 test) 1ms
+ ✓ test/assessment/assessment-review.queue.spec.ts (1 test) 1ms
+ ✓ test/modules/feedback/feedback.policy.spec.ts (12 tests) 1ms
+ ✓ test/bootstrap/environment.spec.ts (3 tests) 1ms
+ ✓ test/reporting/error-sanitization.spec.ts (3 tests) 1ms
+ ✓ test/modules/assignments/assignments.policy.spec.ts (11 tests) 1ms
+ ✓ test/volunteer-persistence-tenant.spec.ts (2 tests) 1ms
+ ✓ test/curriculum/curriculum.policy.spec.ts (6 tests) 1ms
+ ✓ test/modules/submissions/submissions.policy.spec.ts (12 tests) 1ms
+ ✓ test/modules/admin/plans-stub.controller.spec.ts (1 test) 0ms
+ ✓ test/modules/submissions/list-submissions-query.dto.spec.ts (1 test) 0ms
+ ✓ test/modules/learning/learning.policy.spec.ts (7 tests) 0ms
+ ✓ test/operations/operations.service.spec.ts (4 tests) 0ms
+ ↓ test/assessment/qb015f.teacher-assignment.runtime.integration.spec.ts (2 tests | 2 skipped)
+ ↓ test/assessment/question-bank-deterministic.integration.spec.ts (1 test | 1 skipped)
+ ↓ test/assessment/question-bank-progress.runtime.integration.spec.ts (1 test | 1 skipped)
+ ↓ test/assessment/question-bank.runtime.integration.spec.ts (2 tests | 2 skipped)
+ ↓ test/assessment/remediation.runtime.integration.spec.ts (1 test | 1 skipped)
+ ↓ test/bootstrap/startup.spec.ts (3 tests | 3 skipped)
+ ↓ test/pilot/pilot.runtime.integration.spec.ts (1 test | 1 skipped)
+ ↓ test/root/app-composition.spec.ts (6 tests | 6 skipped)
+ ↓ test/integration/curriculum/prisma-course-version.repository.spec.ts (15 tests | 15 skipped)
+ ↓ test/integration/identity/prisma-identity.repository.spec.ts (21 tests | 21 skipped)
+
+ Test Files  73 passed | 10 skipped (83)
+      Tests  1101 passed | 64 skipped (1165)
+   Start at  22:50:35
+   Duration  4.04s (transform 1.21s, setup 0ms, collect 2.85s, tests 556ms, environment 0ms, prepare 38ms)

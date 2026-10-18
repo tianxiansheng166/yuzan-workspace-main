@@ -1,0 +1,22 @@
+
+> @yuzan/contracts@ test /home/tian/code/yuzan-workspace-t019/packages/contracts
+> redocly lint openapi/openapi.yaml && node --test scripts/generate-types.test.mjs
+
+✔ the production generator succeeds without leaking machine-specific output (1734.629745ms)
+✔ two production runs produce identical hashes (3444.160866ms)
+✔ generated types satisfy Prettier (766.882868ms)
+✔ contract sources and documentation satisfy Prettier (873.233452ms)
+✔ generator failures make the command fail (40.419709ms)
+✔ formatter failures make the command fail (39.539404ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6963.605927
+validating openapi/openapi.yaml...
+openapi/openapi.yaml: validated in 102ms
+
+Woohoo! Your API description is valid. 🎉

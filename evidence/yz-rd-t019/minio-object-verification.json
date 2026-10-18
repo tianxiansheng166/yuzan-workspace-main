@@ -1,0 +1,123 @@
+{
+  "bucket": "yz-t019-native",
+  "objectCount": 13,
+  "objects": [
+    {
+      "flow": "T011-reviewed-1",
+      "recordingId": "b7ba2bbf-e50f-4603-bf13-85c781b1a6bb",
+      "key": "recordings/b7ba2bbf-e50f-4603-bf13-85c781b1a6bb/full",
+      "bytes": 22514,
+      "contentType": "audio/webm;codecs=opus",
+      "etag": "\"4f52a8e49ec07b1460d908adc16cc9c5\"",
+      "sha256": "5e9657aef26d24b97e1835dce205156aa7e5b3ab376042a3360190ecc96a52dd"
+    },
+    {
+      "flow": "T011-reviewed-2",
+      "recordingId": "3b0b3f3f-e7c7-436f-b9a5-0705289bfb85",
+      "key": "recordings/3b0b3f3f-e7c7-436f-b9a5-0705289bfb85/full",
+      "bytes": 22514,
+      "contentType": "audio/webm;codecs=opus",
+      "etag": "\"8333cb5eaf91d495440923f13120e5a7\"",
+      "sha256": "c0b82cc48813bb925a2b9e7807a21e25d38e9dda58ba8a1b399598ae36d962e7"
+    },
+    {
+      "flow": "T011-reviewed-3",
+      "recordingId": "a5bbfaaf-986f-47a1-bdca-5fae4f6b7a90",
+      "key": "recordings/a5bbfaaf-986f-47a1-bdca-5fae4f6b7a90/full",
+      "bytes": 22514,
+      "contentType": "audio/webm;codecs=opus",
+      "etag": "\"13b4cc2de7b3f6055fa16d68e57f77e7\"",
+      "sha256": "b0594cb99537fe925f88d18904cd1ec0be925d0be5d2980af2400723cf29f495"
+    },
+    {
+      "flow": "T011-reviewed-4",
+      "recordingId": "c51ed04e-3e12-443b-b676-e49ea8614b9a",
+      "key": "recordings/c51ed04e-3e12-443b-b676-e49ea8614b9a/full",
+      "bytes": 22514,
+      "contentType": "audio/webm;codecs=opus",
+      "etag": "\"cfefa3465c61f982b814b1c62a054eef\"",
+      "sha256": "8a911a6d1060e6282c5ac352736c25da70dcf5649a8ecd4150aad3871aca338b"
+    },
+    {
+      "flow": "T008-processing-1",
+      "recordingId": "050bd722-6c78-45a4-9a7c-54855ccc2afa",
+      "key": "recordings/050bd722-6c78-45a4-9a7c-54855ccc2afa/full",
+      "bytes": 22514,
+      "contentType": "audio/webm;codecs=opus",
+      "etag": "\"59696f3532d0c1fca53fa27c7430fdaf\"",
+      "sha256": "0195da59039e43a1c31811c84a7f5f2169b8fe386de32b4b3a27c7fa297111fe"
+    },
+    {
+      "flow": "T008-processing-2",
+      "recordingId": "89906d3a-8d2b-4b9d-8af4-abf00cfa1dce",
+      "key": "recordings/89906d3a-8d2b-4b9d-8af4-abf00cfa1dce/full",
+      "bytes": 22514,
+      "contentType": "audio/webm;codecs=opus",
+      "etag": "\"259d4f1d663c255200b24824e067ba4b\"",
+      "sha256": "5341ecbb1d5b8350708979dae2166f894ead1821f462e47cd19334ae511207f4"
+    },
+    {
+      "flow": "T008-processing-3",
+      "recordingId": "a9f2258a-1a14-429a-be06-cb2172c7a457",
+      "key": "recordings/a9f2258a-1a14-429a-be06-cb2172c7a457/full",
+      "bytes": 22514,
+      "contentType": "audio/webm;codecs=opus",
+      "etag": "\"eae3480e580e9efac71f8060f039f03c\"",
+      "sha256": "315e5a5814d093321fa987954689495b22a6282ca20168f1ee88a770a74f3ac2"
+    },
+    {
+      "flow": "T008-processing-4",
+      "recordingId": "c0b1d221-d640-41ec-bb7f-39950926cc59",
+      "key": "recordings/c0b1d221-d640-41ec-bb7f-39950926cc59/full",
+      "bytes": 22514,
+      "contentType": "audio/webm;codecs=opus",
+      "etag": "\"37d921e02cff7719f9d99d9db0fa9785\"",
+      "sha256": "2b315e249435e86f188f43c7bcc1fce65d6a301a0fc3090003393adeb522c314"
+    },
+    {
+      "flow": "T012-processing-1",
+      "recordingId": "89c8914a-79d1-4ea8-8707-61be71d4e27a",
+      "key": "recordings/89c8914a-79d1-4ea8-8707-61be71d4e27a/full",
+      "bytes": 24446,
+      "contentType": "audio/webm;codecs=opus",
+      "etag": "\"38f7f021b4223f6a8859fdef49dc744b\"",
+      "sha256": "40361ad4160a918ea90e3e4086f65b0b01da91851c331198b6c01329dc914b1d"
+    },
+    {
+      "flow": "T012-processing-2",
+      "recordingId": "98d1026a-6bbc-45f6-92be-0655cceca6e6",
+      "key": "recordings/98d1026a-6bbc-45f6-92be-0655cceca6e6/full",
+      "bytes": 22514,
+      "contentType": "audio/webm;codecs=opus",
+      "etag": "\"2c2acd025bccf3e83fc4e03b11dfcb28\"",
+      "sha256": "218c91a2d5731e0d0035fb03969c0d75fc604f453dc275fe4802fceb86f95db8"
+    },
+    {
+      "flow": "T012-processing-3",
+      "recordingId": "d80f68c8-2750-458b-9809-a670f26a30f9",
+      "key": "recordings/d80f68c8-2750-458b-9809-a670f26a30f9/full",
+      "bytes": 22514,
+      "contentType": "audio/webm;codecs=opus",
+      "etag": "\"41c72b1540e42505f6db49eac35115ac\"",
+      "sha256": "30a1bd82f5d6e5a024d2eac4ed2a1c848a98b550ed7bd5fedfc97d08ff4cee8d"
+    },
+    {
+      "flow": "T012-processing-4",
+      "recordingId": "dc79fd0a-e7fc-4ea4-adb9-cfce306dd375",
+      "key": "recordings/dc79fd0a-e7fc-4ea4-adb9-cfce306dd375/full",
+      "bytes": 23480,
+      "contentType": "audio/webm;codecs=opus",
+      "etag": "\"112df7c3148478b325a214e5bd62a2de\"",
+      "sha256": "badff9c414abd98eb622645f5b4e9b8989702a72dbdecc861151b6e00f6d1271"
+    },
+    {
+      "flow": "T014-class-evidence",
+      "recordingId": "452d3bd2-833b-41f9-a556-126feb15dc3a",
+      "key": "recordings/452d3bd2-833b-41f9-a556-126feb15dc3a/full",
+      "bytes": 6444,
+      "contentType": "audio/wav",
+      "etag": "\"f9f6c71c12f8b953554803689e24e177\"",
+      "sha256": "946c3f59f3e671ef87ad6655ece8bfc00c451f868f751787278c2d462f4bde26"
+    }
+  ]
+}

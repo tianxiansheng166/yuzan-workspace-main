@@ -1,0 +1,4 @@
+{"schoolId": "d2e0ee7a-0d43-4088-934a-8c4e3ddd13b8", "classId": "10583cfb-a4f6-4d5f-9aad-8a6df2cc0d3c", "enrollmentIds": ["a1cdac5b-8e3b-4f41-855c-eab1093918b6", "7f96f52a-203a-4749-ae6e-cf065e2a74ed", "0dfa92ab-a9cf-403c-94e7-a66103ed51ad"], "assignmentId": "1881d6cf-2e18-4fdb-9ce8-f51fadd4c90f", "assignmentStatus": "OPEN", "targets": ["a1cdac5b-8e3b-4f41-855c-eab1093918b6", "7f96f52a-203a-4749-ae6e-cf065e2a74ed"], "nonTarget": "0dfa92ab-a9cf-403c-94e7-a66103ed51ad", "courseSubmissions": {"A": "596af160-4bc3-4355-a337-613371f5ab3b", "B": "e6f175f1-3c08-4d9c-8093-6211b90e9144"}, "completedActivityId": "d3c83bcd-ffe3-4a4a-bcdb-362e748cd05a", "s3RecordingId": "452d3bd2-833b-41f9-a556-126feb15dc3a"}
+.
+1 passed in 8.72s
+Test suite t014-teacher-class-remediation: PASS

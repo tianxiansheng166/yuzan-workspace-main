@@ -2652,6 +2652,50 @@ paths:
         "200": { description: Current student's course learning counts }
         "403": { $ref: "#/components/responses/Forbidden" }
   /schools/{schoolId}/student/courses/{assignmentId}/favorite:
+    put:
+      summary: 将当前学生对课程的状态设为已收藏
+      tags: [StudentCourses]
+      operationId: setStudentCourseFavorite
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/AssignmentId"
+      responses:
+        "200":
+          description: Favorite state set to true
+          content:
+            {
+              application/json:
+                {
+                  schema:
+                    {
+                      $ref: "#/components/schemas/StudentCourseFavoriteResponse",
+                    },
+                },
+            }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+    delete:
+      summary: 将当前学生对课程的状态设为未收藏
+      tags: [StudentCourses]
+      operationId: removeStudentCourseFavorite
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/AssignmentId"
+      responses:
+        "200":
+          description: Favorite state set to false
+          content:
+            {
+              application/json:
+                {
+                  schema:
+                    {
+                      $ref: "#/components/schemas/StudentCourseFavoriteResponse",
+                    },
+                },
+            }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
     post:
       summary: 切换当前学生对课程的收藏状态
       tags: [StudentCourses]
@@ -2660,7 +2704,18 @@ paths:
         - $ref: "#/components/parameters/SchoolId"
         - $ref: "#/components/parameters/AssignmentId"
       responses:
-        "201": { description: Favorite state toggled }
+        "201":
+          description: Favorite state toggled for compatibility
+          content:
+            {
+              application/json:
+                {
+                  schema:
+                    {
+                      $ref: "#/components/schemas/StudentCourseFavoriteResponse",
+                    },
+                },
+            }
         "403": { $ref: "#/components/responses/Forbidden" }
         "404": { $ref: "#/components/responses/NotFound" }
   /schools/{schoolId}/student/courses/{assignmentId}/recommendations:
@@ -7139,9 +7194,35 @@ components:
           { type: array, items: { type: string, format: uuid } }
     StudentCourseCatalogItem:
       type: object
-      required: [assignmentId, title, source, status, progressPercent]
+      required:
+        [
+          assignmentId,
+          course,
+          title,
+          description,
+          capabilityTheme,
+          gradeBand,
+          difficulty,
+          estimatedMinutes,
+          coverAsset,
+          taskGroups,
+          culturalElements,
+          source,
+          status,
+          progressPercent,
+          isFavorite,
+          nextActivity,
+          submission,
+          completedAt,
+        ]
       properties:
         assignmentId: { type: string, format: uuid }
+        course:
+          type: object
+          required: [id, title]
+          properties:
+            id: { type: string, format: uuid }
+            title: { type: string }
         title: { type: string }
         description: { type: [string, "null"] }
         capabilityTheme: { type: [string, "null"] }
@@ -7149,6 +7230,8 @@ components:
         difficulty: { type: [string, "null"] }
         estimatedMinutes: { type: [integer, "null"] }
         coverAsset: { type: [string, "null"] }
+        taskGroups: { type: [array, "null"], items: { type: string } }
+        culturalElements: { type: [array, "null"], items: { type: string } }
         source:
           { type: string, enum: [TEACHER_ASSIGNED, RECOMMENDED, SELF_STUDY] }
         status:
@@ -7157,17 +7240,80 @@ components:
             enum: [NOT_STARTED, IN_PROGRESS, COMPLETED, RESULT_PENDING],
           }
         progressPercent: { type: integer, minimum: 0, maximum: 100 }
-        nextActivity: { type: [object, "null"], additionalProperties: true }
+        isFavorite: { type: boolean }
+        nextActivity:
+          {
+            oneOf:
+              [
+                {
+                  type: object,
+                  required: [id, title, type],
+                  properties:
+                    {
+                      id: { type: string, format: uuid },
+                      title: { type: string },
+                      type: { type: string },
+                    },
+                },
+                { type: "null" },
+              ],
+          }
         submission:
           {
             oneOf:
-              [{ $ref: "#/components/schemas/Submission" }, { type: "null" }],
+              [
+                { $ref: "#/components/schemas/StudentCourseSubmissionSummary" },
+                { type: "null" },
+              ],
           }
+        completedAt: { type: [string, "null"], format: date-time }
+    StudentCourseSubmissionSummary:
+      type: object
+      required:
+        [
+          id,
+          assignmentId,
+          enrollmentId,
+          attemptNo,
+          status,
+          revision,
+          submittedAt,
+          createdAt,
+          updatedAt,
+        ]
+      properties:
+        id: { type: string, format: uuid }
+        assignmentId: { type: string, format: uuid }
+        enrollmentId: { type: string, format: uuid }
+        attemptNo: { type: integer, minimum: 1 }
+        status: { type: string }
+        revision: { type: integer, minimum: 1 }
+        submittedAt: { type: [string, "null"], format: date-time }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+    StudentCourseFavoriteResponse:
+      type: object
+      required: [favorited]
+      properties:
+        favorited: { type: boolean }
     StudentCourseCatalogResponse:
       type: object
-      required: [categories, sources, statuses, courses]
+      required:
+        [
+          categories,
+          gradeBands,
+          difficulties,
+          statuses,
+          sources,
+          courses,
+          total,
+          hasMore,
+          nextCursor,
+        ]
       properties:
         categories: { type: array, items: { type: string } }
+        gradeBands: { type: array, items: { type: string } }
+        difficulties: { type: array, items: { type: string } }
         sources: { type: array, items: { type: string } }
         statuses: { type: array, items: { type: string } }
         courses:
@@ -7175,6 +7321,9 @@ components:
             type: array,
             items: { $ref: "#/components/schemas/StudentCourseCatalogItem" },
           }
+        total: { type: integer, minimum: 0 }
+        hasMore: { type: boolean }
+        nextCursor: { type: [string, "null"], format: uuid }
     StudentCourseAggregateResponse:
       type: object
       required:

@@ -1,0 +1,127 @@
+## Database identity
+
+```sql
+SELECT current_database() || '|' || current_user || '|' || version();
+```
+
+```text
+yuzan_t019_native|yz_t019|PostgreSQL 17.11 (Ubuntu 17.11-1.pgdg22.04+2) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0, 64-bit
+```
+
+## T014 Assignment state
+
+```sql
+SELECT id,status,("dueAt">NOW())::text AS due_active FROM "Assignment" WHERE id='1881d6cf-2e18-4fdb-9ce8-f51fadd4c90f';
+```
+
+```text
+1881d6cf-2e18-4fdb-9ce8-f51fadd4c90f|OPEN|true
+```
+
+## T014 AssignmentTargets
+
+```sql
+SELECT "targetType",coalesce("enrollmentId"::text,''),coalesce("classId"::text,'') FROM "AssignmentTarget" WHERE "assignmentId"='1881d6cf-2e18-4fdb-9ce8-f51fadd4c90f' ORDER BY "enrollmentId";
+```
+
+```text
+STUDENT|7f96f52a-203a-4749-ae6e-cf065e2a74ed|
+STUDENT|a1cdac5b-8e3b-4f41-855c-eab1093918b6|
+```
+
+## T014 course Submissions
+
+```sql
+SELECT id,"assignmentId","enrollmentId",status FROM "Submission" WHERE id IN ('596af160-4bc3-4355-a337-613371f5ab3b','e6f175f1-3c08-4d9c-8093-6211b90e9144') ORDER BY id;
+```
+
+```text
+596af160-4bc3-4355-a337-613371f5ab3b|1881d6cf-2e18-4fdb-9ce8-f51fadd4c90f|a1cdac5b-8e3b-4f41-855c-eab1093918b6|IN_PROGRESS
+e6f175f1-3c08-4d9c-8093-6211b90e9144|1881d6cf-2e18-4fdb-9ce8-f51fadd4c90f|7f96f52a-203a-4749-ae6e-cf065e2a74ed|IN_PROGRESS
+```
+
+## T014 saved activity progress
+
+```sql
+SELECT "activityId","enrollmentId",completed,revision FROM "ActivityProgress" WHERE "activityId"='d3c83bcd-ffe3-4a4a-bcdb-362e748cd05a' ORDER BY "enrollmentId";
+```
+
+```text
+d3c83bcd-ffe3-4a4a-bcdb-362e748cd05a|7f96f52a-203a-4749-ae6e-cf065e2a74ed|t|1
+d3c83bcd-ffe3-4a4a-bcdb-362e748cd05a|a1cdac5b-8e3b-4f41-855c-eab1093918b6|t|2
+```
+
+## T014 MinIO-linked Recording
+
+```sql
+SELECT id,status,"objectKey","mimeType","durationMs" FROM "Recording" WHERE id='452d3bd2-833b-41f9-a556-126feb15dc3a';
+```
+
+```text
+452d3bd2-833b-41f9-a556-126feb15dc3a|READY|recordings/452d3bd2-833b-41f9-a556-126feb15dc3a/full|audio/wav|200
+```
+
+## T011 reviewed AssessmentSession
+
+```sql
+SELECT s.id,s.status,s."enrollmentId",(SELECT count(*) FROM "AssessmentItem" i WHERE i."sessionId"=s.id)::text AS items,(SELECT count(*) FROM "AssessmentReport" r WHERE r."sessionId"=s.id)::text AS reports FROM "AssessmentSession" s WHERE s.id='ea1f8994-519a-4c96-bf37-77334bf08a19';
+```
+
+```text
+ea1f8994-519a-4c96-bf37-77334bf08a19|COMPLETED|dee8a9d8-e97a-48cd-9b7a-e9fa2bc60923|20|1
+```
+
+## T011 formal AssessmentReport
+
+```sql
+SELECT id,"sessionId","overallScore","dataCompleteness","generatedAt" FROM "AssessmentReport" WHERE id='7a238abf-b42c-4a1e-8a8a-aff0b74eadac';
+```
+
+```text
+7a238abf-b42c-4a1e-8a8a-aff0b74eadac|ea1f8994-519a-4c96-bf37-77334bf08a19|55|100|2026-10-18 14:32:29.248
+```
+
+## T011 manual review and SpeechJob counts
+
+```sql
+SELECT count(*)::text,count(*) FILTER (WHERE status='REVIEWED')::text,count(*) FILTER (WHERE "scoredScore" IS NOT NULL AND "recordingId" IS NOT NULL)::text,(SELECT count(*) FROM "AssessmentItem" i JOIN "SpeechJob" j ON j."assessmentItemId"=i.id WHERE i."sessionId"='ea1f8994-519a-4c96-bf37-77334bf08a19')::text FROM "AssessmentItem" WHERE "sessionId"='ea1f8994-519a-4c96-bf37-77334bf08a19';
+```
+
+```text
+20|6|4|4
+```
+
+## T011 six reviewed comments
+
+```sql
+SELECT "sortOrder",status,"scoredScore",coalesce("reviewerComment",'') FROM "AssessmentItem" WHERE "sessionId"='ea1f8994-519a-4c96-bf37-77334bf08a19' AND status='REVIEWED' ORDER BY "sortOrder";
+```
+
+```text
+7|REVIEWED|3|TEST_FIXTURE_ONLY 教师第 1 项复核：朗读清楚，继续保持自然停顿。
+8|REVIEWED|3|TEST_FIXTURE_ONLY 教师第 2 项复核：朗读清楚，继续保持自然停顿。
+9|REVIEWED|3|TEST_FIXTURE_ONLY 教师第 3 项复核：朗读清楚，继续保持自然停顿。
+10|REVIEWED|13|TEST_FIXTURE_ONLY 教师第 4 项复核：朗读清楚，继续保持自然停顿。
+19|REVIEWED|7|TEST_FIXTURE_ONLY 教师第 5 项复核：朗读清楚，继续保持自然停顿。
+20|REVIEWED|7|TEST_FIXTURE_ONLY 教师第 6 项复核：朗读清楚，继续保持自然停顿。
+```
+
+## T012 processing 20-item attempt before review
+
+```sql
+SELECT s.id,s.status,(SELECT count(*) FROM "AssessmentItem" i WHERE i."sessionId"=s.id)::text AS items,(SELECT count(*) FROM "AssessmentReport" r WHERE r."sessionId"=s.id)::text AS reports FROM "AssessmentSession" s WHERE s.id='dd3dc230-04c0-42e9-a67e-87d87539fa22';
+```
+
+```text
+dd3dc230-04c0-42e9-a67e-87d87539fa22|PROCESSING|20|0
+```
+
+## T008 history alias processing attempt
+
+```sql
+SELECT s.id,s.status,(SELECT count(*) FROM "AssessmentItem" i WHERE i."sessionId"=s.id)::text AS items,(SELECT count(*) FROM "AssessmentReport" r WHERE r."sessionId"=s.id)::text AS reports FROM "AssessmentSession" s WHERE s.id='3d47b7f5-4353-4fd7-a697-061aa949e37e';
+```
+
+```text
+3d47b7f5-4353-4fd7-a697-061aa949e37e|PROCESSING|20|0
+```

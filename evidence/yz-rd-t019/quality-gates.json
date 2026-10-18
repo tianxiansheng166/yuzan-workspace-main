@@ -1,0 +1,76 @@
+{
+  "node": "v24.20.0",
+  "pnpm": "10.13.1",
+  "commands": [
+    {
+      "name": "prisma-validate",
+      "command": "corepack pnpm --filter @yuzan/database validate",
+      "exitCode": 0,
+      "status": "PASS",
+      "log": "evidence/yz-rd-t019/test-results/prisma-validate.log"
+    },
+    {
+      "name": "api-typecheck",
+      "command": "corepack pnpm --filter @yuzan/api typecheck",
+      "exitCode": 0,
+      "status": "PASS",
+      "log": "evidence/yz-rd-t019/test-results/api-typecheck.log"
+    },
+    {
+      "name": "api-build",
+      "command": "corepack pnpm --filter @yuzan/api build",
+      "exitCode": 0,
+      "status": "PASS",
+      "log": "evidence/yz-rd-t019/test-results/api-build.log"
+    },
+    {
+      "name": "api-full",
+      "command": "corepack pnpm --filter @yuzan/api test",
+      "exitCode": 0,
+      "status": "PASS",
+      "log": "evidence/yz-rd-t019/test-results/api-full.log"
+    },
+    {
+      "name": "frontend-full",
+      "command": "corepack pnpm --filter @yuzan/frontend test",
+      "exitCode": 0,
+      "status": "PASS",
+      "log": "evidence/yz-rd-t019/test-results/frontend-full.log"
+    },
+    {
+      "name": "frontend-typecheck",
+      "command": "corepack pnpm --filter @yuzan/frontend typecheck",
+      "exitCode": 0,
+      "status": "PASS",
+      "log": "evidence/yz-rd-t019/test-results/frontend-typecheck.log"
+    },
+    {
+      "name": "frontend-build",
+      "command": "corepack pnpm --filter @yuzan/frontend build",
+      "exitCode": 0,
+      "status": "PASS",
+      "log": "evidence/yz-rd-t019/test-results/frontend-build.log"
+    },
+    {
+      "name": "contracts-generate",
+      "command": "corepack pnpm --filter @yuzan/contracts generate",
+      "exitCode": 0,
+      "status": "PASS",
+      "log": "evidence/yz-rd-t019/test-results/contracts-generate.log"
+    },
+    {
+      "name": "contracts-full",
+      "command": "corepack pnpm --filter @yuzan/contracts test",
+      "exitCode": 0,
+      "status": "PASS",
+      "log": "evidence/yz-rd-t019/test-results/contracts-full.log"
+    },
+    {
+      "name": "contracts-typecheck",
+      "command": "corepack pnpm --filter @yuzan/contracts typecheck",
+      "exitCode": 0,
+      "status": "PASS",
+      "log": "evidence/yz-rd-t019/test-results/contracts-typecheck.log"
+    }
+  ]
+}

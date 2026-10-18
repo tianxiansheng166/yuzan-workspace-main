@@ -43,8 +43,8 @@ def sql(statement, *, capture=False):
     assert parsed.scheme == "postgresql"
     assert parsed.hostname == "127.0.0.1"
     assert parsed.port == int(os.environ["POSTGRES_PORT"])
-    assert parsed.username == os.environ["POSTGRES_USER"] == "yz_t014"
-    assert parsed.path.lstrip("/") == os.environ["POSTGRES_DB"] == "yuzan_t014_native"
+    assert parsed.username == os.environ["POSTGRES_USER"]
+    assert parsed.path.lstrip("/") == os.environ["POSTGRES_DB"]
     password = unquote(parsed.password or "")
     assert password
     env = {
@@ -80,7 +80,9 @@ def sql_rows(statement):
 
 def verify_database_identity():
     identity = sql_scalar("SELECT current_database() || '|' || current_user || '|' || version();")
-    assert identity.startswith("yuzan_t014_native|yz_t014|PostgreSQL 17."), identity.split("|", 2)[:2]
+    expected_database = os.environ["POSTGRES_DB"]
+    expected_user = os.environ["POSTGRES_USER"]
+    assert identity.startswith(f"{expected_database}|{expected_user}|PostgreSQL 17."), identity.split("|", 2)[:2]
 
 
 def payload(response):
@@ -654,7 +656,9 @@ def test_teacher_class_student_assignment_and_today_loop():
                 f'''SELECT "targetType",coalesce("classId"::text,''),"enrollmentId"::text
                     FROM "AssignmentTarget" WHERE "assignmentId"={q(assignment_id)} ORDER BY "enrollmentId";'''
             )
-            assert target_rows == [["STUDENT", "", ids["enrollment_a"]], ["STUDENT", "", ids["enrollment_b"]]]
+            assert len(target_rows) == 2
+            assert all(row[:2] == ["STUDENT", ""] for row in target_rows)
+            assert {row[2] for row in target_rows} == {ids["enrollment_a"], ids["enrollment_b"]}
             assert sql_scalar(
                 f'''SELECT count(*) FROM "Assignment" WHERE id={q(assignment_id)} AND title={q('【补充练习】'+ids['supplementary_title'])};'''
             ) == "1"
@@ -668,16 +672,68 @@ def test_teacher_class_student_assignment_and_today_loop():
             student_d = api_login(request, ids["login_student_d"])
             student_x = api_login(request, ids["login_student_x"])
 
-            def open_today(identifier, session, expected):
+            opened_course_submissions = {}
+
+            def open_today(identifier, session, expected, enrollment_id=None):
                 page = browser.new_page(viewport={"width": 1280, "height": 900})
                 authenticate(page, session)
                 page.goto(f"{BASE}/student/today/")
                 if expected:
                     expect(page.locator("#todayApp")).to_contain_text(ids["supplementary_title"], timeout=20_000)
-                    today_task = page.locator(".today-list-item").filter(has_text=ids["supplementary_title"])
-                    today_task.get_by_role("link", name="进入课程").click()
+                    today_task = page.locator(".today-record-row").filter(has_text=ids["supplementary_title"])
+                    course_link = today_task.get_by_role("link")
+                    expect(course_link).to_have_count(1)
+                    expect(course_link).to_contain_text("课程")
+                    course_link.click()
                     page.wait_for_url("**/student/courses/course-detail/?id=*")
                     expect(page.locator("body")).to_contain_text(ids["course_title"], timeout=20_000)
+                    page.wait_for_function(
+                        "assignmentId => { const state = window.CoursePlayerState?.getState?.(); return state?.assignmentId === assignmentId && state.submissionId && state.currentActivityId; }",
+                        arg=assignment_id,
+                        timeout=25_000,
+                    )
+                    course_state = page.evaluate("window.CoursePlayerState.getState()")
+                    assert course_state["currentActivityId"] == ids["activity_b"]
+                    assert course_state["currentActivity"]["title"] == "TEST_FIXTURE_ONLY 活动乙"
+                    page.screenshot(path=str(EVIDENCE_DIR / f"t014-course-activity-{identifier}.png"), full_page=True)
+                    submission_id = course_state["submissionId"]
+                    assert submission_id
+                    assert enrollment_id
+                    submission_rows = sql_rows(
+                        f'''SELECT id,status FROM "Submission"
+                            WHERE "schoolId"={q(ids['school_a'])} AND "assignmentId"={q(assignment_id)}
+                              AND "enrollmentId"={q(enrollment_id)} AND "deletedAt" IS NULL;'''
+                    )
+                    assert submission_rows == [[submission_id, "IN_PROGRESS"]]
+
+                    activity_row = page.locator(f'#cpDirectory li[data-activity-id="{ids["activity_b"]}"]')
+                    expect(activity_row).to_be_visible()
+                    activity_row.click()
+                    expect(activity_row).to_have_class("cp-dir-item cp-dir-current")
+                    page.get_by_role("button", name="确认阅读").click()
+                    confirmed_button = page.get_by_role("button", name="已确认")
+                    expect(confirmed_button).to_be_disabled()
+                    confirmed_button.scroll_into_view_if_needed()
+                    page.screenshot(path=str(EVIDENCE_DIR / f"t014-course-activity-complete-viewport-{identifier}.png"), full_page=False)
+                    page.screenshot(path=str(EVIDENCE_DIR / f"t014-course-activity-complete-{identifier}.png"), full_page=True)
+                    assert sql_scalar(
+                        f'''SELECT count(*) FROM "ActivityProgress"
+                            WHERE "schoolId"={q(ids['school_a'])} AND "activityId"={q(ids['activity_b'])}
+                              AND "enrollmentId"={q(enrollment_id)} AND completed=true;'''
+                    ) == "1"
+
+                    page.reload()
+                    page.wait_for_function(
+                        "submissionId => { const state = window.CoursePlayerState?.getState?.(); return state?.submissionId === submissionId && state.currentActivityId; }",
+                        arg=submission_id,
+                        timeout=25_000,
+                    )
+                    assert sql_scalar(
+                        f'''SELECT count(*) FROM "Submission"
+                            WHERE "schoolId"={q(ids['school_a'])} AND "assignmentId"={q(assignment_id)}
+                              AND "enrollmentId"={q(enrollment_id)} AND "deletedAt" IS NULL;'''
+                    ) == "1"
+                    opened_course_submissions[identifier] = submission_id
                     page.goto(f"{BASE}/student/today/")
                     expect(page.locator("#todayApp")).to_contain_text(ids["supplementary_title"], timeout=20_000)
                     page.reload()
@@ -687,8 +743,8 @@ def test_teacher_class_student_assignment_and_today_loop():
                 page.screenshot(path=str(EVIDENCE_DIR / f"t014-today-{identifier}.png"), full_page=True)
                 return page
 
-            page_a = open_today("A", student_a, True)
-            page_b = open_today("B", student_b, True)
+            page_a = open_today("A", student_a, True, ids["enrollment_a"])
+            page_b = open_today("B", student_b, True, ids["enrollment_b"])
             page_c = open_today("C", student_c, False)
             page_d = open_today("same-school-other-class", student_d, False)
             page_x = open_today("cross-school", student_x, False)
@@ -739,6 +795,14 @@ def test_teacher_class_student_assignment_and_today_loop():
             assert sql_scalar(
                 f'''SELECT status || '|' || ("dueAt" < NOW())::text FROM "Assignment" WHERE id={q(assignment_id)};'''
             ) == "OPEN|true"
+            sql(
+                f'''UPDATE "Assignment" SET "dueAt"=NOW()+INTERVAL '1 day'
+                    WHERE id={q(assignment_id)} AND "schoolId"={q(ids['school_a'])};'''
+            )
+            page_a.goto(f"{BASE}/student/today/")
+            expect(page_a.locator("#todayApp")).to_contain_text(ids["supplementary_title"], timeout=20_000)
+            page_a.reload()
+            expect(page_a.locator("#todayApp")).to_contain_text(ids["supplementary_title"], timeout=20_000)
 
             print(json.dumps({
                 "schoolId": ids["school_a"],
@@ -748,6 +812,8 @@ def test_teacher_class_student_assignment_and_today_loop():
                 "assignmentStatus": "OPEN",
                 "targets": [ids["enrollment_a"], ids["enrollment_b"]],
                 "nonTarget": ids["enrollment_c"],
+                "courseSubmissions": opened_course_submissions,
+                "completedActivityId": ids["activity_b"],
                 "s3RecordingId": ids["recording_a"],
             }, ensure_ascii=False))
             for page in (page_a, page_b, page_c, page_d, page_x, teacher_page):

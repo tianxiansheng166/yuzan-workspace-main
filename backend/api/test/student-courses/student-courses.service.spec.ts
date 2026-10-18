@@ -31,6 +31,71 @@ describe("StudentCoursesService security and completion", () => {
     await expect(service.list(auth("33333333-3333-4333-8333-333333333333"), schoolId)).rejects.toBeInstanceOf(ForbiddenException);
   });
 
+  it("sets course favorites idempotently under repeated concurrent PUT calls", async () => {
+    const courseVersionId = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
+    const prisma = {
+      enrollment: { findFirst: vi.fn().mockResolvedValue({ id: enrollmentId, classId: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb" }) },
+      assignment: { findFirstOrThrow: vi.fn().mockResolvedValue({ courseVersionId }) },
+      courseFavorite: { createMany: vi.fn().mockResolvedValue({ count: 1 }), deleteMany: vi.fn() },
+    };
+    const service = new StudentCoursesService(prisma as any);
+
+    const results = await Promise.all([
+      service.setFavorite(auth(), schoolId, "cccccccc-cccc-4ccc-8ccc-cccccccccccc", true),
+      service.setFavorite(auth(), schoolId, "cccccccc-cccc-4ccc-8ccc-cccccccccccc", true),
+    ]);
+
+    expect(results).toEqual([{ favorited: true }, { favorited: true }]);
+    expect(prisma.courseFavorite.createMany).toHaveBeenCalledTimes(2);
+    expect(prisma.courseFavorite.createMany).toHaveBeenCalledWith({
+      data: [{ schoolId, enrollmentId, courseVersionId }],
+      skipDuplicates: true,
+    });
+    expect(prisma.courseFavorite.deleteMany).not.toHaveBeenCalled();
+  });
+
+  it("sets course favorites idempotently under repeated DELETE calls", async () => {
+    const courseVersionId = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
+    const assignmentId = "cccccccc-cccc-4ccc-8ccc-cccccccccccc";
+    const prisma = {
+      enrollment: { findFirst: vi.fn().mockResolvedValue({ id: enrollmentId, classId: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb" }) },
+      assignment: { findFirstOrThrow: vi.fn().mockResolvedValue({ courseVersionId }) },
+      courseFavorite: { createMany: vi.fn(), deleteMany: vi.fn().mockResolvedValue({ count: 1 }) },
+    };
+    const service = new StudentCoursesService(prisma as any);
+
+    const results = await Promise.all([
+      service.setFavorite(auth(), schoolId, assignmentId, false),
+      service.setFavorite(auth(), schoolId, assignmentId, false),
+    ]);
+
+    expect(results).toEqual([{ favorited: false }, { favorited: false }]);
+    expect(prisma.courseFavorite.deleteMany).toHaveBeenCalledTimes(2);
+    expect(prisma.courseFavorite.deleteMany).toHaveBeenCalledWith({
+      where: { schoolId, enrollmentId, courseVersionId },
+    });
+    expect(prisma.courseFavorite.createMany).not.toHaveBeenCalled();
+  });
+
+  it("checks the authenticated school and assignment authorization before changing favorites", async () => {
+    const prisma = {
+      enrollment: { findFirst: vi.fn() },
+      assignment: { findFirstOrThrow: vi.fn() },
+      courseFavorite: { createMany: vi.fn(), deleteMany: vi.fn() },
+    };
+    const service = new StudentCoursesService(prisma as any);
+
+    await expect(service.setFavorite(auth(), otherSchoolId, "cccccccc-cccc-4ccc-8ccc-cccccccccccc", true))
+      .rejects.toBeInstanceOf(ForbiddenException);
+    expect(prisma.enrollment.findFirst).not.toHaveBeenCalled();
+
+    prisma.enrollment.findFirst.mockResolvedValue({ id: enrollmentId, classId: null });
+    prisma.assignment.findFirstOrThrow.mockRejectedValue(new Error("not visible"));
+    await expect(service.setFavorite(auth(), schoolId, "cccccccc-cccc-4ccc-8ccc-cccccccccccc", false))
+      .rejects.toBeInstanceOf(NotFoundException);
+    expect(prisma.courseFavorite.deleteMany).not.toHaveBeenCalled();
+  });
+
   it("keeps the catalog cursor out of the Prisma where filter", async () => {
     const prisma = {
       enrollment: { findFirst: vi.fn().mockResolvedValue({ id: enrollmentId, classId: null }), findMany: vi.fn().mockResolvedValue([{ id: enrollmentId, classId: null }]) },

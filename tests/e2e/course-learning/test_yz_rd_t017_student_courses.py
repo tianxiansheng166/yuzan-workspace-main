@@ -12,9 +12,10 @@ import subprocess
 import tarfile
 import time
 import uuid
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
-from urllib.request import urlopen
+from urllib.request import Request, urlopen
 
 from playwright.sync_api import expect, sync_playwright
 
@@ -72,7 +73,7 @@ def sql_rows(statement: str) -> list[list[str]]:
 
 def verify_database_identity() -> None:
     identity = sql("SELECT current_database() || '|' || current_user || '|' || version();")
-    assert identity.startswith("yuzan_t017_native|yz_t017|PostgreSQL 17."), identity.split("|", 2)[:2]
+    assert identity.startswith(f"{PG_DATABASE}|{PG_USER}|PostgreSQL 17."), identity.split("|", 2)[:2]
 
 
 def create_fixtures() -> dict[str, object]:
@@ -120,7 +121,7 @@ def create_fixtures() -> dict[str, object]:
     )
 
     courses: list[dict[str, str]] = []
-    for index in range(12):
+    for index in range(24):
         course_id = str(uuid.uuid4())
         version_id = str(uuid.uuid4())
         assignment_id = str(uuid.uuid4())
@@ -197,7 +198,11 @@ def attach_network_log(page, log: dict[str, list[dict[str, object]]]) -> None:
             if isinstance(body, dict):
                 entry["responseFields"] = sorted(body.keys())
                 entry["data"] = {
+                    "categories": body.get("categories"),
+                    "gradeBands": body.get("gradeBands"),
+                    "difficulties": body.get("difficulties"),
                     "assignmentIds": [course.get("assignmentId") for course in body.get("courses", []) if isinstance(course, dict)],
+                    "catalogItemFields": sorted(body["courses"][0].keys()) if body.get("courses") and isinstance(body["courses"][0], dict) else [],
                     "catalogItems": [
                         {
                             "assignmentId": course.get("assignmentId"),
@@ -271,6 +276,18 @@ def api_login(request, identifier: str) -> dict[str, object]:
     return result
 
 
+def direct_favorite(method: str, url: str, access_token: str) -> tuple[int, dict[str, object]]:
+    request = Request(url, headers={"Authorization": f"Bearer {access_token}"}, method=method)
+    with urlopen(request, timeout=30) as response:
+        body = json.loads(response.read().decode("utf-8"))
+        return response.status, payload(body)
+
+
+def concurrent_favorite_requests(method: str, url: str, access_token: str, count: int = 4) -> list[tuple[int, dict[str, object]]]:
+    with ThreadPoolExecutor(max_workers=count) as pool:
+        return list(pool.map(lambda _: direct_favorite(method, url, access_token), range(count)))
+
+
 def authorized_courses_sql() -> list[str]:
     rows = sql_rows(
         f'''SELECT a.id
@@ -290,8 +307,9 @@ def write_partial_evidence(log: dict[str, object], status: str) -> None:
     (EVIDENCE / "chromium-api-events.json").write_text(json.dumps(log, ensure_ascii=False, indent=2), encoding="utf-8")
     summary = {
         "status": status,
+        "task": os.environ.get("YZ_E2E_TASK_ID", "T017"),
         "base": BASE_SHA,
-        "branch": "feat/yz-rd-t017-course-catalog-web-experience",
+        "branch": os.environ.get("YZ_E2E_BRANCH", "feat/yz-rd-t017-course-catalog-web-experience"),
         "database": PG_DATABASE,
         "databaseUser": PG_USER,
         "screenshots": sorted(path.name for path in EVIDENCE.glob("*.png")),
@@ -302,7 +320,8 @@ def write_partial_evidence(log: dict[str, object], status: str) -> None:
 
 def extract_baseline_frontend() -> Path:
     runtime_root = Path(os.environ["YZ_T017_RUNTIME_ROOT"]).resolve()
-    expected_runtime = (REPO / "runtime-local" / "native-web-t017").resolve()
+    runtime_name = "native-web-t019" if os.environ.get("YZ_E2E_TASK_ID") == "T019" else "native-web-t017"
+    expected_runtime = (REPO / "runtime-local" / runtime_name).resolve()
     assert runtime_root == expected_runtime, "baseline snapshot must stay inside the T017 runtime directory"
     baseline_root = runtime_root / "baseline-web"
     baseline_frontend = baseline_root / "frontend"
@@ -357,7 +376,7 @@ def start_baseline_server(frontend_root: Path) -> tuple[subprocess.Popen, str]:
 def test_real_student_course_catalog_chromium_api_postgres() -> None:
     EVIDENCE.mkdir(parents=True, exist_ok=True)
     log: dict[str, object] = {
-        "task": "YZ-RD-T017",
+        "task": os.environ.get("YZ_E2E_TASK_ID", "T017"),
         "base": BASE_SHA,
         "databaseIdentity": {"database": PG_DATABASE, "user": PG_USER},
         "requests": [],
@@ -413,6 +432,8 @@ def test_real_student_course_catalog_chromium_api_postgres() -> None:
             a_log: dict[str, list[dict[str, object]]] = {"requests": [], "responses": []}
             log["studentABrowser"] = a_log
             login_in_browser(page_a, BASE, "student.test", PASSWORD, a_log)
+            student_a_session = api_login(page_a.request, "student.test")
+            student_a_token = str(student_a_session["accessToken"])
             course_link = page_a.get_by_role("link", name="课程中心").first
             expect(course_link).to_be_visible(timeout=10_000)
             course_link.click()
@@ -422,6 +443,16 @@ def test_real_student_course_catalog_chromium_api_postgres() -> None:
             expected_ids = authorized_courses_sql()
             first_page = last_catalog_response(a_log)
             assert first_page["status"] == 200
+            assert {
+                "categories", "gradeBands", "difficulties", "statuses", "sources", "courses", "total", "hasMore", "nextCursor",
+            }.issubset(first_page["responseFields"])
+            assert {
+                "assignmentId", "course", "title", "description", "capabilityTheme", "gradeBand", "difficulty",
+                "estimatedMinutes", "coverAsset", "taskGroups", "culturalElements", "source", "status", "progressPercent",
+                "isFavorite", "nextActivity", "submission", "completedAt",
+            }.issubset(first_page["data"]["catalogItemFields"])
+            assert isinstance(first_page["data"]["gradeBands"], list)
+            assert isinstance(first_page["data"]["difficulties"], list)
             assert first_page["data"]["total"] == len(expected_ids)
             assert first_page["data"]["assignmentIds"] == expected_ids[:12]
             assert first_page["data"]["hasMore"] is True
@@ -489,6 +520,10 @@ def test_real_student_course_catalog_chromium_api_postgres() -> None:
             expect(favorite).to_have_attribute("aria-pressed", "true", timeout=10_000)
             favorite_count = int(sql(f'''SELECT count(*) FROM "CourseFavorite" WHERE "schoolId"={quote(SCHOOL_ID)} AND "enrollmentId"={quote(STUDENT_A_ENROLLMENT_ID)} AND "courseVersionId"={quote(course_version_id)};'''))
             assert favorite_count == 1
+            favorite_url = f"{API_BASE}/api/v1/schools/{SCHOOL_ID}/student/courses/{special_id}/favorite"
+            put_results = concurrent_favorite_requests("PUT", favorite_url, student_a_token)
+            assert all(status == 200 and body == {"favorited": True} for status, body in put_results), put_results
+            assert int(sql(f'''SELECT count(*) FROM "CourseFavorite" WHERE "schoolId"={quote(SCHOOL_ID)} AND "enrollmentId"={quote(STUDENT_A_ENROLLMENT_ID)} AND "courseVersionId"={quote(course_version_id)};''')) == 1
             page_a.reload(wait_until="domcontentloaded")
             wait_catalog(page_a)
             favorite_after_refresh = page_a.locator(f'[data-favorite="{special_id}"]')
@@ -496,35 +531,61 @@ def test_real_student_course_catalog_chromium_api_postgres() -> None:
 
             favorite_after_refresh.click()
             expect(favorite_after_refresh).to_have_attribute("aria-pressed", "false", timeout=10_000)
+            delete_results = concurrent_favorite_requests("DELETE", favorite_url, student_a_token)
+            assert all(status == 200 and body == {"favorited": False} for status, body in delete_results), delete_results
+            favorite_count = int(sql(f'''SELECT count(*) FROM "CourseFavorite" WHERE "schoolId"={quote(SCHOOL_ID)} AND "enrollmentId"={quote(STUDENT_A_ENROLLMENT_ID)} AND "courseVersionId"={quote(course_version_id)};'''))
+            assert favorite_count == 0
             favorite_requests = [
                 entry for entry in a_log["responses"]
                 if urlparse(str(entry["url"])).path.endswith(f"/{special_id}/favorite")
             ]
-            assert any(entry["method"] == "DELETE" and entry["status"] == 404 for entry in favorite_requests)
-            assert any(entry["method"] == "POST" and entry["status"] in (200, 201) for entry in favorite_requests)
-            favorite_count = int(sql(f'''SELECT count(*) FROM "CourseFavorite" WHERE "schoolId"={quote(SCHOOL_ID)} AND "enrollmentId"={quote(STUDENT_A_ENROLLMENT_ID)} AND "courseVersionId"={quote(course_version_id)};'''))
-            assert favorite_count == 0
+            assert any(entry["method"] == "PUT" and entry["status"] == 200 for entry in favorite_requests)
+            assert any(entry["method"] == "DELETE" and entry["status"] == 200 for entry in favorite_requests)
+
+            post_url = f"{API_BASE}/api/v1/schools/{SCHOOL_ID}/student/courses/{special_id}/favorite"
+            post_added = page_a.request.post(post_url, headers={"Authorization": f"Bearer {student_a_token}"})
+            post_removed = page_a.request.post(post_url, headers={"Authorization": f"Bearer {student_a_token}"})
+            assert post_added.status == 201 and payload(post_added.json()) == {"favorited": True}
+            assert post_removed.status == 201 and payload(post_removed.json()) == {"favorited": False}
+            page_a.reload(wait_until="domcontentloaded")
+            wait_catalog(page_a)
+            favorite_after_refresh = page_a.locator(f'[data-favorite="{special_id}"]')
+            expect(favorite_after_refresh).to_have_attribute("aria-pressed", "false")
 
             before_double = len([
                 entry for entry in a_log["requests"]
-                if entry["method"] == "POST" and urlparse(str(entry["url"])).path.endswith(f"/{special_id}/favorite")
+                if entry["method"] == "PUT" and urlparse(str(entry["url"])).path.endswith(f"/{special_id}/favorite")
             ])
             favorite_after_refresh.evaluate("button => { button.click(); button.click(); }")
             expect(favorite_after_refresh).to_have_attribute("aria-pressed", "true", timeout=10_000)
             after_double = len([
                 entry for entry in a_log["requests"]
-                if entry["method"] == "POST" and urlparse(str(entry["url"])).path.endswith(f"/{special_id}/favorite")
+                if entry["method"] == "PUT" and urlparse(str(entry["url"])).path.endswith(f"/{special_id}/favorite")
             ])
             assert after_double - before_double == 1
+
+            context_a.set_offline(True)
+            favorite_after_refresh.click()
+            expect(favorite_after_refresh).to_have_attribute("aria-pressed", "true", timeout=10_000)
+            expect(page_a.locator("#toast")).to_contain_text("网络连接失败", timeout=10_000)
+            assert int(sql(f'''SELECT count(*) FROM "CourseFavorite" WHERE "schoolId"={quote(SCHOOL_ID)} AND "enrollmentId"={quote(STUDENT_A_ENROLLMENT_ID)} AND "courseVersionId"={quote(course_version_id)};''')) == 1
+            context_a.set_offline(False)
+            favorite_after_refresh.click()
+            expect(favorite_after_refresh).to_have_attribute("aria-pressed", "false", timeout=10_000)
+            assert int(sql(f'''SELECT count(*) FROM "CourseFavorite" WHERE "schoolId"={quote(SCHOOL_ID)} AND "enrollmentId"={quote(STUDENT_A_ENROLLMENT_ID)} AND "courseVersionId"={quote(course_version_id)};''')) == 0
+
             page_a.reload(wait_until="domcontentloaded")
             wait_catalog(page_a)
-            expect(page_a.locator(f'[data-favorite="{special_id}"]')).to_have_attribute("aria-pressed", "true")
-            assert int(sql(f'''SELECT count(*) FROM "CourseFavorite" WHERE "schoolId"={quote(SCHOOL_ID)} AND "enrollmentId"={quote(STUDENT_A_ENROLLMENT_ID)} AND "courseVersionId"={quote(course_version_id)};''')) == 1
+            expect(page_a.locator(f'[data-favorite="{special_id}"]')).to_have_attribute("aria-pressed", "false")
+            assert int(sql(f'''SELECT count(*) FROM "CourseFavorite" WHERE "schoolId"={quote(SCHOOL_ID)} AND "enrollmentId"={quote(STUDENT_A_ENROLLMENT_ID)} AND "courseVersionId"={quote(course_version_id)};''')) == 0
             log["assertions"]["favoriteLifecycle"] = {
                 "persistedAfterRefresh": True,
-                "deleteEndpoint404FallbackToServiceToggle": True,
-                "doubleClickPostRequests": after_double - before_double,
-                "databaseFavoriteRows": 1,
+                "concurrentPutResponses": put_results,
+                "concurrentDeleteResponses": delete_results,
+                "legacyPostToggle": [payload(post_added.json()), payload(post_removed.json())],
+                "doubleClickPutRequests": after_double - before_double,
+                "browserOfflineRetainedFavoriteAndManualRetryRemovedIt": True,
+                "databaseFavoriteRows": 0,
             }
 
             latest = last_catalog_response(a_log)
@@ -619,6 +680,15 @@ def test_real_student_course_catalog_chromium_api_postgres() -> None:
             a_detail_url = f"{API_BASE}/api/v1/schools/{SCHOOL_ID}/student/courses/{special_id}"
             assert page_b.request.get(a_detail_url, headers=b_headers).status == 404
             assert page_b.request.post(f"{a_detail_url}/favorite", headers=b_headers).status == 404
+            assert page_b.request.put(f"{a_detail_url}/favorite", headers=b_headers).status == 404
+            assert page_b.request.delete(f"{a_detail_url}/favorite", headers=b_headers).status == 404
+            other_school_url = f"{API_BASE}/api/v1/schools/99999999-9999-4999-8999-999999999999/student/courses/{special_id}/favorite"
+            assert page_a.request.put(other_school_url, headers={"Authorization": f"Bearer {student_a_token}"}).status == 403
+            assert page_a.request.delete(other_school_url, headers={"Authorization": f"Bearer {student_a_token}"}).status == 403
+            invalid_id = str(uuid.uuid4())
+            invalid_favorite_url = f"{API_BASE}/api/v1/schools/{SCHOOL_ID}/student/courses/{invalid_id}/favorite"
+            assert page_a.request.put(invalid_favorite_url, headers={"Authorization": f"Bearer {student_a_token}"}).status == 404
+            assert page_a.request.delete(invalid_favorite_url, headers={"Authorization": f"Bearer {student_a_token}"}).status == 404
             assert sql(f'''SELECT count(*) FROM "AssignmentTarget" WHERE "assignmentId"={quote(special_id)} AND "enrollmentId"={quote(str(fixtures['student_b']['enrollment']))};''') == "0"
             log["assertions"]["studentBIsolation"] = {
                 "bCatalogTotal": 0,
@@ -631,11 +701,15 @@ def test_real_student_course_catalog_chromium_api_postgres() -> None:
             try:
                 unauthenticated = anonymous_api.get(f"{API_BASE}/api/v1/schools/{SCHOOL_ID}/student/courses")
                 assert unauthenticated.status == 401
+                assert anonymous_api.put(favorite_url).status == 401
+                assert anonymous_api.delete(favorite_url).status == 401
             finally:
                 anonymous_api.dispose()
             teacher_session = api_login(page_b.request, "teacher.test")
             teacher_headers = {"Authorization": f"Bearer {teacher_session['accessToken']}"}
             assert page_b.request.get(f"{API_BASE}/api/v1/schools/{SCHOOL_ID}/student/courses", headers=teacher_headers).status == 403
+            assert page_b.request.put(favorite_url, headers=teacher_headers).status == 403
+            assert page_b.request.delete(favorite_url, headers=teacher_headers).status == 403
             log["assertions"]["authStatusChecks"] = {"unauthenticated": 401, "wrongRole": 403, "inaccessibleCourse": 404}
             b_context.close()
 

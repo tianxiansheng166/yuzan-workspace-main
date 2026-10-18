@@ -1189,7 +1189,7 @@
   }
   async function addCourseFavorite(assignmentId) {
     const schoolId = await requireActiveSchoolId();
-    return request(`/schools/${schoolId}/student/courses/${encodeURIComponent(assignmentId)}/favorite`, { method: 'POST' });
+    return request(`/schools/${schoolId}/student/courses/${encodeURIComponent(assignmentId)}/favorite`, { method: 'PUT' });
   }
   async function removeCourseFavorite(assignmentId) {
     const schoolId = await requireActiveSchoolId();

@@ -1,0 +1,14 @@
+web: 已停止 (PID 266360)
+api: 已停止 (PID 266344)
+minio: 已停止 (PID 266397)
+redis: 已停止 (PID 266374)
+postgres: 已停止 (PID 265930)
+Stop: PASS
+SERVICE  PID     PORT / HEALTH
+postgres -       stopped [NOT_OWNED]
+api      -       stopped [NOT_OWNED]
+web      -       stopped [NOT_OWNED]
+API dependency readiness: HTTP unreachable
+T019 listener check (expected no rows):
+
+T019 status: all six task ports free

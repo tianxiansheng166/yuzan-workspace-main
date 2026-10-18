@@ -1636,10 +1636,12 @@ export interface paths {
       cookie?: never;
     };
     get?: never;
-    put?: never;
+    /** 将当前学生对课程的状态设为已收藏 */
+    put: operations["setStudentCourseFavorite"];
     /** 切换当前学生对课程的收藏状态 */
     post: operations["toggleStudentCourseFavorite"];
-    delete?: never;
+    /** 将当前学生对课程的状态设为未收藏 */
+    delete: operations["removeStudentCourseFavorite"];
     options?: never;
     head?: never;
     patch?: never;
@@ -4043,28 +4045,68 @@ export interface components {
     StudentCourseCatalogItem: {
       /** Format: uuid */
       assignmentId: string;
+      course: {
+        /** Format: uuid */
+        id: string;
+        title: string;
+      };
       title: string;
-      description?: string | null;
-      capabilityTheme?: string | null;
-      gradeBand?: string | null;
-      difficulty?: string | null;
-      estimatedMinutes?: number | null;
-      coverAsset?: string | null;
+      description: string | null;
+      capabilityTheme: string | null;
+      gradeBand: string | null;
+      difficulty: string | null;
+      estimatedMinutes: number | null;
+      coverAsset: string | null;
+      taskGroups: string[] | null;
+      culturalElements: string[] | null;
       /** @enum {string} */
       source: "TEACHER_ASSIGNED" | "RECOMMENDED" | "SELF_STUDY";
       /** @enum {string} */
       status: "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED" | "RESULT_PENDING";
       progressPercent: number;
-      nextActivity?: {
-        [key: string]: unknown;
+      isFavorite: boolean;
+      nextActivity: {
+        /** Format: uuid */
+        id: string;
+        title: string;
+        type: string;
       } | null;
-      submission?: components["schemas"]["Submission"] | null;
+      submission:
+        components["schemas"]["StudentCourseSubmissionSummary"] | null;
+      /** Format: date-time */
+      completedAt: string | null;
+    };
+    StudentCourseSubmissionSummary: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      assignmentId: string;
+      /** Format: uuid */
+      enrollmentId: string;
+      attemptNo: number;
+      status: string;
+      revision: number;
+      /** Format: date-time */
+      submittedAt: string | null;
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: date-time */
+      updatedAt: string;
+    };
+    StudentCourseFavoriteResponse: {
+      favorited: boolean;
     };
     StudentCourseCatalogResponse: {
       categories: string[];
+      gradeBands: string[];
+      difficulties: string[];
       sources: string[];
       statuses: string[];
       courses: components["schemas"]["StudentCourseCatalogItem"][];
+      total: number;
+      hasMore: boolean;
+      /** Format: uuid */
+      nextCursor: string | null;
     };
     StudentCourseAggregateResponse: {
       assignment: {
@@ -7745,6 +7787,33 @@ export interface operations {
       403: components["responses"]["Forbidden"];
     };
   };
+  setStudentCourseFavorite: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 任务 ID */
+        assignmentId: components["parameters"]["AssignmentId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Favorite state set to true */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["StudentCourseFavoriteResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
   toggleStudentCourseFavorite: {
     parameters: {
       query?: never;
@@ -7759,12 +7828,41 @@ export interface operations {
     };
     requestBody?: never;
     responses: {
-      /** @description Favorite state toggled */
+      /** @description Favorite state toggled for compatibility */
       201: {
         headers: {
           [name: string]: unknown;
         };
-        content?: never;
+        content: {
+          "application/json": components["schemas"]["StudentCourseFavoriteResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  removeStudentCourseFavorite: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 任务 ID */
+        assignmentId: components["parameters"]["AssignmentId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Favorite state set to false */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["StudentCourseFavoriteResponse"];
+        };
       };
       403: components["responses"]["Forbidden"];
       404: components["responses"]["NotFound"];

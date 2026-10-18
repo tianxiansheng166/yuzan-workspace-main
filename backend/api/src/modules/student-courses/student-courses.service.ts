@@ -458,6 +458,20 @@ export class StudentCoursesService {
     return { favorited: true };
   }
 
+  async setFavorite(auth: AuthContext, schoolId: string, assignmentId: string, favorited: boolean) {
+    const enrollment = await this.studentEnrollment(auth, schoolId, { assignmentId });
+    const assignment = await this.visibleAssignment(schoolId, assignmentId, enrollment);
+    const key = { schoolId, enrollmentId: enrollment.id, courseVersionId: assignment.courseVersionId };
+
+    if (favorited) {
+      await this.prisma.courseFavorite.createMany({ data: [key], skipDuplicates: true });
+      return { favorited: true };
+    }
+
+    await this.prisma.courseFavorite.deleteMany({ where: key });
+    return { favorited: false };
+  }
+
   async recommendations(auth: AuthContext, schoolId: string, assignmentId: string) {
     const enrollment = await this.studentEnrollment(auth, schoolId, { assignmentId });
     const assignment = await this.visibleAssignment(schoolId, assignmentId, enrollment);
