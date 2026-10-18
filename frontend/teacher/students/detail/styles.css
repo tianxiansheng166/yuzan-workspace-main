@@ -22,3 +22,100 @@
 @media (max-width:1100px){.page-grid{grid-template-columns:1fr}.hero-top{height:180px}.cards-row,.tables-row{grid-template-columns:1fr}.path-graphic{height:360px}.path-stage{width:46%;left:auto}.path-stage.s1{left:2%;top:68px}.path-stage.s2{left:26%;top:112px}.path-stage.s3{left:48%;top:74px}.path-stage.s4{left:70%;top:118px}}
 @media (max-width:820px){:root{--sidebar:84px}.brand-copy,.nav-item span,.nav-item b,.subnav,.support-box{display:none}.sidebar{width:var(--sidebar)}.brand{justify-content:center;padding-inline:10px}.nav{padding:12px}.nav-item{justify-content:center;padding:0}.main{margin-left:var(--sidebar);width:calc(100% - var(--sidebar))}.topbar{padding:0 14px}.crumbs strong{font-size:20px}.student-card{flex-direction:column}.student-actions{align-self:stretch;flex-wrap:wrap}.path-stage{width:48%;font-size:12px}}
 @media (max-width:640px){:root{--sidebar:0px}.sidebar{display:none}.main{margin-left:0;width:100%}.topbar{height:auto;padding:10px 12px;gap:12px;flex-wrap:wrap}.crumbs strong{font-size:18px}.page-grid{padding:12px}.student-meta{flex-direction:column;align-items:flex-start}.tabs{gap:16px;overflow:auto;padding:12px 14px 0}.tab{white-space:nowrap}.path-panel{padding:14px}.path-graphic{height:auto;display:grid;gap:10px}.path-graphic svg{position:relative;height:110px}.path-stage{position:static;width:auto;padding:10px 0;border-top:1px solid #eee4da;text-align:left}.path-stage p{max-width:none}.hero-top{height:110px}}
+.student-load-error {
+  margin: 14px 0;
+  padding: 14px 16px;
+  border: 1px solid #e3b5ad;
+  border-radius: 10px;
+  background: #fff5f2;
+  color: #8b3028;
+}
+
+.student-learning-summary,
+.student-record-card > div {
+  color: #594f49;
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.student-progress-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.student-progress-row strong {
+  color: #287050;
+  font-size: 28px;
+}
+
+.student-progress-track {
+  height: 8px;
+  margin: 8px 0 12px;
+  border-radius: 99px;
+  background: #e8eee8;
+  overflow: hidden;
+}
+
+.student-progress-track i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #287050;
+}
+
+.student-record-row {
+  padding: 12px 0;
+  border-bottom: 1px solid #eee7df;
+}
+
+.student-record-row:last-child {
+  border-bottom: 0;
+}
+
+.student-record-row p {
+  margin: 5px 0;
+}
+
+.student-record-row a {
+  color: #a33c34;
+  text-decoration: none;
+}
+
+.student-record-row a:hover {
+  text-decoration: underline;
+}
+
+.student-record-row button {
+  min-height: 34px;
+  padding: 5px 10px;
+  border: 1px solid #c9ad9a;
+  border-radius: 6px;
+  background: #fffefa;
+  color: #75453a;
+}
+
+.recording-player audio {
+  display: block;
+  width: min(100%, 360px);
+  margin-top: 9px;
+}
+
+.unsupported-actions {
+  color: #777;
+}
+
+.unsupported-actions li {
+  margin: 6px 0;
+}
+
+.tabs .tab {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.crumbs a {
+  color: inherit;
+  text-decoration: none;
+}

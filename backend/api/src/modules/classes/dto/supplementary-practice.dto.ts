@@ -1,6 +1,9 @@
 import {
   IsArray,
   IsDateString,
+  ArrayMinSize,
+  IsNotEmpty,
+  MaxLength,
   IsOptional,
   IsString,
   IsUUID,
@@ -8,6 +11,8 @@ import {
 
 export class SupplementaryPracticeDto {
   @IsString()
+  @IsNotEmpty()
+  @MaxLength(120)
   readonly title!: string;
 
   @IsOptional()
@@ -24,6 +29,7 @@ export class SupplementaryPracticeDto {
 
   @IsOptional()
   @IsArray()
+  @ArrayMinSize(1)
   @IsUUID(undefined, { each: true })
   readonly targetEnrollmentIds?: string[];
 }

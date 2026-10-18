@@ -151,3 +151,58 @@ svg{fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-l
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
 .stage-card{transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease}.stage-card:hover,.stage-card.selected{transform:translateY(-3px);border-color:#d9a38c;box-shadow:0 8px 18px rgba(80,45,20,.12)}button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #236f88;outline-offset:2px}
 .roster-row.selected-student{outline:2px solid #1d704c;outline-offset:-2px;background:#edf5ec}
+.student-detail-link,
+.submission-detail-link {
+  color: var(--red, #b74b3f);
+  text-decoration: none;
+}
+
+.student-detail-link:hover,
+.submission-detail-link:hover {
+  text-decoration: underline;
+}
+
+.supplementary-form {
+  display: grid;
+  gap: 14px;
+  margin: 18px 0;
+}
+
+.supplementary-form label {
+  display: grid;
+  gap: 6px;
+  color: #5c5148;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.supplementary-form input,
+.supplementary-form select {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 42px;
+  padding: 8px 10px;
+  border: 1px solid #d9d0c6;
+  border-radius: 8px;
+  background: #fffefa;
+  color: #342c26;
+  font: inherit;
+}
+
+.supplementary-target-summary {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #f7f1e8;
+  color: #51463d;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.supplementary-form-message {
+  min-height: 20px;
+  margin: 0;
+  color: #8b4137;
+  font-size: 12px;
+  line-height: 1.5;
+}

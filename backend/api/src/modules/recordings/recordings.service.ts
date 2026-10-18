@@ -1,5 +1,6 @@
 import { Inject, Injectable, Logger, Optional } from "@nestjs/common";
 import type { AuthContext } from "../../common/security/auth.types.js";
+import { MembershipRole } from "../../common/security/index.js";
 import { PrismaService } from "../../shared/database/prisma.service.js";
 import type { StoragePort } from "../../shared/storage/storage.port.js";
 import { STORAGE_PORT } from "../../shared/storage/storage.port.js";
@@ -579,6 +580,8 @@ export class RecordingsService {
       throw new RecordingNotFoundException();
     }
 
+    await this.verifyEnrollmentOwnership(auth, schoolId, recording.enrollmentId);
+
     // Only generate download URL if recording is in a ready state
     if (
       recording.status !== "COMPLETE" &&
@@ -602,24 +605,42 @@ export class RecordingsService {
     schoolId: string,
     enrollmentId: string,
   ): Promise<void> {
-    // PLATFORM_ADMIN can access any recording
-    if (this.policy.canViewEvidence(auth, schoolId)) {
-      // For TEACHER/SCHOOL_ADMIN roles, skip ownership check
-      const isStudent = auth.principal.roles.includes("STUDENT" as never);
-      if (!isStudent) return;
-    }
-
     const enrollment = await this.prisma.enrollment.findFirst({
       where: {
         id: enrollmentId,
-        userId: auth.principal.userId,
         schoolId,
         status: "ACTIVE",
+        role: "STUDENT",
       },
+      select: { userId: true, classId: true },
     });
     if (!enrollment) {
       throw new RecordingForbiddenException();
     }
+
+    const roles = auth.principal.roles;
+    if (roles.includes(MembershipRole.SCHOOL_ADMIN)) return;
+    if (roles.includes(MembershipRole.TEACHER)) {
+      const teacherEnrollment = await this.prisma.enrollment.findFirst({
+        where: {
+          schoolId,
+          classId: enrollment.classId,
+          userId: auth.principal.userId,
+          role: "TEACHER",
+          status: "ACTIVE",
+        },
+        select: { id: true },
+      });
+      if (teacherEnrollment) return;
+      throw new RecordingForbiddenException();
+    }
+    if (
+      roles.includes(MembershipRole.STUDENT) &&
+      enrollment.userId === auth.principal.userId
+    ) {
+      return;
+    }
+    throw new RecordingForbiddenException();
   }
 
   private async generateUploadUrls(

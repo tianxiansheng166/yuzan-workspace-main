@@ -348,6 +348,71 @@ describe("StudentDashboardService Student Today", () => {
     );
   });
 
+  it("matches Assignment target types so a student target cannot expose a task to classmates", async () => {
+    const assignedTask = {
+      id: "55555555-5555-4555-8555-555555555555",
+      title: "TEST_FIXTURE_ONLY 定向补练",
+      dueAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      status: "OPEN",
+      courseVersionId: "66666666-6666-4666-8666-666666666666",
+      courseVersion: { title: "TEST_FIXTURE_ONLY 已发布课程" },
+    };
+    const assignmentFindMany = vi.fn().mockResolvedValue([assignedTask]);
+    const studentAEnrollment = { id: ENROLLMENT_A, classId: CLASS_A };
+    const prismaA = prismaForToday(
+      { assignment: { findMany: assignmentFindMany } },
+      [studentAEnrollment],
+    );
+    const resultA = await new StudentDashboardService(
+      prismaA as any,
+      {} as any,
+    ).getTodayTasks(auth(), SCHOOL_ID);
+
+    expect(resultA.legacyTasks).toMatchObject([
+      { assignmentId: assignedTask.id, status: "OPEN" },
+    ]);
+    expect(assignmentFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          status: "OPEN",
+          targets: {
+            some: {
+              OR: [
+                { targetType: "CLASS", classId: { in: [CLASS_A] } },
+                { targetType: "STUDENT", enrollmentId: { in: [ENROLLMENT_A] } },
+              ],
+            },
+          },
+        }),
+      }),
+    );
+
+    const assignmentForClassmate = vi.fn().mockResolvedValue([]);
+    const prismaC = prismaForToday(
+      { assignment: { findMany: assignmentForClassmate } },
+      [{ id: ENROLLMENT_B, classId: CLASS_A }],
+    );
+    const resultC = await new StudentDashboardService(
+      prismaC as any,
+      {} as any,
+    ).getTodayTasks(auth(), SCHOOL_ID);
+    expect(resultC.legacyTasks).toEqual([]);
+    expect(assignmentForClassmate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          targets: {
+            some: {
+              OR: [
+                { targetType: "CLASS", classId: { in: [CLASS_A] } },
+                { targetType: "STUDENT", enrollmentId: { in: [ENROLLMENT_B] } },
+              ],
+            },
+          },
+        }),
+      }),
+    );
+  });
+
   it("keeps non-reading teacher review wording generic", async () => {
     const prisma = prismaForToday({
       assessmentSession: {

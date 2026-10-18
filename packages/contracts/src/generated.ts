@@ -675,6 +675,125 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/schools/{schoolId}/classes/{classId}/dashboard": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 获取本人授权班级的真实学习概况 */
+    get: operations["getClassDashboard"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/classes/{classId}/student-summaries": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 获取授权班级的学生真实学习摘要 */
+    get: operations["getClassStudentSummaries"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/classes/{classId}/assignment-summaries": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 获取授权班级 Assignment 提交摘要 */
+    get: operations["getClassAssignmentSummaries"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/classes/{classId}/assessment-summaries": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 获取授权班级测评会话与正式报告摘要 */
+    get: operations["getClassAssessmentSummaries"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/classes/{classId}/pending-stats": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 获取授权班级真实待处理统计 */
+    get: operations["getClassPendingStats"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/classes/{classId}/students/{enrollmentId}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 获取授权班级内单名 ACTIVE STUDENT 的学习与提交详情 */
+    get: operations["getClassStudentDetail"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/classes/{classId}/supplementary-practice": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** 为授权班级创建 OPEN Assignment 定向补练 */
+    post: operations["createSupplementaryPractice"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/schools/{schoolId}/classes/{classId}/assessments": {
     parameters: {
       query?: never;
@@ -2832,6 +2951,245 @@ export interface components {
     };
     OperationsStatusResponse: {
       data: components["schemas"]["OperationsStatus"];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    ClassGrowthStage: {
+      id: string;
+      title: string;
+      completionRate: number | null;
+      participantCount: number;
+      totalCount: number;
+    };
+    ClassPronunciationCluster: {
+      type: string;
+      label: string;
+      occurrenceCount: number;
+      affectedStudentCount: number;
+      percentage: number;
+    };
+    ClassDashboard: {
+      /** Format: uuid */
+      classId: string;
+      className: string;
+      grade: string;
+      studentCount: number;
+      currentCourse: null | {
+        /** Format: uuid */
+        id: string;
+        title: string;
+      };
+      completionRate: number | null;
+      averageProgress: number | null;
+      medianProgress: number | null;
+      zeroProgressCount: number;
+      submissionRate: number | null;
+      assessmentParticipationRate: number | null;
+      pendingReviewCount: number;
+      atRiskStudentCount: number;
+      /** Format: date-time */
+      lastActivityAt: string | null;
+      dataSufficient: boolean;
+      stages: components["schemas"]["ClassGrowthStage"][];
+      pronunciationClusters: components["schemas"]["ClassPronunciationCluster"][];
+    };
+    ClassDashboardResponse: {
+      data: components["schemas"]["ClassDashboard"];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    ClassStudentSummary: {
+      /** Format: uuid */
+      enrollmentId: string;
+      /** Format: uuid */
+      userId: string;
+      displayName: string;
+      courseProgress: number | null;
+      submittedAssignmentCount: number;
+      missingAssignmentCount: number;
+      latestAssessmentStatus: string | null;
+      latestAssessmentScore: number | null;
+      recordingCount: number;
+      topIssue: string | null;
+      /** Format: date-time */
+      lastActiveAt: string | null;
+      /** @enum {string} */
+      riskStatus: "OK" | "AT_RISK" | "INACTIVE";
+    };
+    ClassStudentSummaryListResponse: {
+      data: components["schemas"]["ClassStudentSummary"][];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    ClassAssignmentSummary: {
+      /** Format: uuid */
+      assignmentId: string;
+      title: string;
+      status: components["schemas"]["AssignmentStatus"];
+      /** Format: date-time */
+      dueAt: string | null;
+      submissionCount: number;
+      notSubmittedCount: number;
+      pendingReviewCount: number;
+      totalTargetCount: number;
+      courseTitle: string | null;
+    };
+    ClassAssignmentSummaryListResponse: {
+      data: components["schemas"]["ClassAssignmentSummary"][];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    ClassAssessmentSummary: {
+      /** Format: uuid */
+      sessionId: string;
+      title: string | null;
+      type: string;
+      status: string;
+      completedCount: number;
+      averageScore: number | null;
+      medianScore: number | null;
+      zeroScoreCount: number;
+      totalTargetCount: number;
+      dataSufficient: boolean;
+      /** Format: date-time */
+      createdAt: string;
+    };
+    ClassAssessmentSummaryListResponse: {
+      data: components["schemas"]["ClassAssessmentSummary"][];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    ClassPendingStats: {
+      pendingReviewCount: number;
+      unsubmittedAssignmentsCount: number;
+      atRiskStudentCount: number;
+      pendingAssessmentsCount: number;
+    };
+    ClassPendingStatsResponse: {
+      data: components["schemas"]["ClassPendingStats"];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    ClassStudentDetail: {
+      /** Format: uuid */
+      schoolId: string;
+      /** Format: uuid */
+      classId: string;
+      enrollment: {
+        /** Format: uuid */
+        id: string;
+        /** Format: uuid */
+        userId: string;
+        displayName: string;
+        /** Format: uuid */
+        classId: string;
+        className: string;
+        grade: string;
+        /** @constant */
+        role: "STUDENT";
+        /** @constant */
+        status: "ACTIVE";
+        /** Format: date-time */
+        joinedAt: string;
+      };
+      learning: {
+        totalActivities: number;
+        completedActivities: number;
+        completionRate: number | null;
+        /** Format: date-time */
+        lastActivityAt: string | null;
+      };
+      assignments: {
+        /** Format: uuid */
+        assignmentId: string;
+        title: string;
+        courseTitle: string | null;
+        status: components["schemas"]["AssignmentStatus"];
+        /** Format: date-time */
+        dueAt: string;
+        /** Format: date-time */
+        createdAt: string;
+        submissionStatus: string | null;
+        /** Format: uuid */
+        submissionId: string | null;
+        /** Format: date-time */
+        submittedAt: string | null;
+        feedback: null | {
+          decision: string;
+          comment: string;
+          score: number | null;
+          /** Format: date-time */
+          releasedAt: string;
+        };
+      }[];
+      assessments: {
+        /** Format: uuid */
+        sessionId: string;
+        /** Format: uuid */
+        practiceDefinitionId: string | null;
+        title: string | null;
+        type: string;
+        status: string;
+        /** Format: date-time */
+        createdAt: string;
+        /** Format: date-time */
+        completedAt: string | null;
+        overallScore: number | null;
+        /** Format: date-time */
+        reportGeneratedAt: string | null;
+      }[];
+      recordings: {
+        /** Format: uuid */
+        recordingId: string;
+        status: string;
+        durationMs: number | null;
+        /** Format: date-time */
+        createdAt: string;
+        /** Format: uuid */
+        assignmentId: string | null;
+        assignmentTitle: string | null;
+      }[];
+    };
+    ClassStudentDetailResponse: {
+      data: components["schemas"]["ClassStudentDetail"];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    /** @description Omit targetEnrollmentIds to target the whole class. When provided, the array must be non-empty and every ID must be an ACTIVE STUDENT enrollment in this school and class. courseVersionId must identify a published version in this school; if omitted, only a published version from an existing OPEN class Assignment may be reused. */
+    SupplementaryPracticeRequest: {
+      title: string;
+      description?: string;
+      /** Format: uuid */
+      courseVersionId?: string;
+      /**
+       * Format: date-time
+       * @description Must be a future timestamp; defaults to seven days from creation when omitted.
+       */
+      dueAt?: string;
+      targetEnrollmentIds?: string[];
+    };
+    SupplementaryPracticeTarget: {
+      /** Format: uuid */
+      id: string;
+      /** @enum {string} */
+      targetType: "CLASS" | "STUDENT";
+      /** Format: uuid */
+      classId: string | null;
+      /** Format: uuid */
+      enrollmentId: string | null;
+    };
+    SupplementaryPractice: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      schoolId: string;
+      /** Format: uuid */
+      courseVersionId: string;
+      title: string;
+      /** @constant */
+      status: "OPEN";
+      /** Format: date-time */
+      startsAt: string;
+      /** Format: date-time */
+      dueAt: string;
+      targetCount: number;
+      targets: components["schemas"]["SupplementaryPracticeTarget"][];
+    };
+    SupplementaryPracticeResponse: {
+      data: components["schemas"]["SupplementaryPractice"];
       meta: components["schemas"]["EnvelopeMeta"];
     };
     /** @description 创建班级测评请求。enrollmentIds 省略取全班 ACTIVE 学生；questionIds 省略从班级最新课程解析默认题目；service 强制非空，不可能创建 0-item 空测评。 */
@@ -5717,6 +6075,213 @@ export interface operations {
       500: components["responses"]["InternalServerError"];
     };
   };
+  getClassDashboard: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 班级 ID */
+        classId: components["parameters"]["ClassId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 班级学习进度、提交、测评参与和最近活动；无数据指标为 null */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ClassDashboardResponse"];
+        };
+      };
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  getClassStudentSummaries: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 班级 ID */
+        classId: components["parameters"]["ClassId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description ACTIVE STUDENT 学籍、实际进度、提交和录音数 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ClassStudentSummaryListResponse"];
+        };
+      };
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  getClassAssignmentSummaries: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 班级 ID */
+        classId: components["parameters"]["ClassId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 真实目标学生、已提交、未提交及待复核数量 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ClassAssignmentSummaryListResponse"];
+        };
+      };
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  getClassAssessmentSummaries: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 班级 ID */
+        classId: components["parameters"]["ClassId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 正式分数仅来自已生成的 AssessmentReport */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ClassAssessmentSummaryListResponse"];
+        };
+      };
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  getClassPendingStats: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 班级 ID */
+        classId: components["parameters"]["ClassId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 班级待复核、缺交和风险学生数量 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ClassPendingStatsResponse"];
+        };
+      };
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  getClassStudentDetail: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 班级 ID */
+        classId: components["parameters"]["ClassId"];
+        /** @description 注册 ID */
+        enrollmentId: components["parameters"]["EnrollmentId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 学籍、活动进度、目标 Assignment、最近提交、已生成正式报告和录音 ID */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ClassStudentDetailResponse"];
+        };
+      };
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  createSupplementaryPractice: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description 同一教师、学校和 key 的重复请求复用原 Assignment；不同请求体返回 409 */
+        "Idempotency-Key"?: string;
+      };
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 班级 ID */
+        classId: components["parameters"]["ClassId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["SupplementaryPracticeRequest"];
+      };
+    };
+    responses: {
+      /** @description 已创建或复用真实 OPEN Assignment，返回可打开的 Assignment ID 和准确目标 */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SupplementaryPracticeResponse"];
+        };
+      };
+      400: components["responses"]["BadRequest"];
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+      409: components["responses"]["Conflict"];
+    };
+  };
   createClassAssessment: {
     parameters: {
       query?: never;
@@ -5923,8 +6488,10 @@ export interface operations {
           "application/json": components["schemas"]["RecordingEvidenceResponse"];
         };
       };
+      401: components["responses"]["Unauthorized"];
       403: components["responses"]["Forbidden"];
       404: components["responses"]["NotFound"];
+      409: components["responses"]["Conflict"];
     };
   };
   createSpeechJob: {

@@ -71,7 +71,7 @@ export class ClassesPolicy {
     schoolId: string,
     classItem: Class,
   ): boolean {
-    if (!this.isMemberOfSchool(auth, schoolId)) {
+    if (!isActive(auth) || !this.isMemberOfSchool(auth, schoolId)) {
       return false;
     }
     return (

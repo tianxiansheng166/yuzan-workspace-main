@@ -109,6 +109,7 @@ function routeToSpa(pathname) {
     if (pathname.startsWith('/teacher/assessments/detail')) return join(root, 'teacher', 'assessments', 'detail', 'index.html');
     if (pathname.startsWith('/teacher/assessments/tasks')) return join(root, 'teacher', 'assessments', 'tasks', 'index.html');
     if (pathname.startsWith('/teacher/assessments')) return join(root, 'teacher', 'assessments', 'tasks', 'index.html');
+    if (/^\/teacher\/students\/[^/]+\/?$/.test(pathname)) return join(root, 'teacher', 'students', 'detail', 'index.html');
     if (pathname === '/teacher/classes' || pathname === '/teacher/classes/') return join(root, 'teacher', 'classes', 'index.html');
     if (/^\/teacher\/classes\/[^/]+\/?$/.test(pathname)) return join(root, 'teacher', 'classes', 'detail', 'index.html');
     if (pathname.startsWith('/teacher/classes')) return join(root, 'teacher', 'classes', 'index.html');
@@ -256,9 +257,8 @@ const server = createServer((req, res) => {
   if (
     pathname === '/teacher/students'
     || pathname === '/teacher/students/'
-    || (pathname.startsWith('/teacher/students/') && (!extname(pathname) || pathname.endsWith('/index.html')))
   ) {
-    res.writeHead(308, { Location: '/teacher/classes' });
+    res.writeHead(308, { Location: '/teacher/classes/' });
     res.end();
     return;
   }

@@ -27,6 +27,12 @@ export class ClassConflictException extends HttpException {
   }
 }
 
+export class ClassInvalidInputException extends HttpException {
+  constructor(message = "请求参数无效") {
+    super({ code: "CLASS_INVALID_INPUT", message }, HttpStatus.BAD_REQUEST);
+  }
+}
+
 export class EnrollmentConflictException extends HttpException {
   constructor(message = "该成员已在此班级中") {
     super({ code: "ENROLLMENT_CONFLICT", message }, HttpStatus.CONFLICT);

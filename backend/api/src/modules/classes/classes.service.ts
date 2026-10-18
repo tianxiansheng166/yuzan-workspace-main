@@ -1,11 +1,12 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { randomUUID } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import type { AuthContext } from "../../common/security/auth.types.js";
-import { MembershipRole } from "../../common/security/index.js";
+import { isActive, MembershipRole } from "../../common/security/index.js";
 import { PrismaService } from "../../shared/database/prisma.service.js";
 import { Prisma } from "@yuzan/database";
 import {
   ClassConflictException,
+  ClassInvalidInputException,
   ClassForbiddenException,
   ClassNotFoundException,
 } from "./domain/class.errors.js";
@@ -26,6 +27,7 @@ import {
 } from "./dto/class.response.js";
 import { toClassDetailResponse } from "./dto/class-detail.response.js";
 import { toEnrollmentResponse } from "./dto/enrollment.response.js";
+import type { ClassStudentDetailResponse } from "./dto/class-student-detail.response.js";
 import type {
   ClassRepositoryPort,
   ListClassesOptions,
@@ -782,106 +784,465 @@ export class ClassesService {
     };
   }
 
+  async getClassStudentDetail(
+    auth: AuthContext,
+    schoolId: string,
+    classId: string,
+    enrollmentId: string,
+  ): Promise<ClassStudentDetailResponse> {
+    const classItem = await this.requireSupplementaryPracticeClassAccess(
+      auth,
+      schoolId,
+      classId,
+    );
+    const enrollment = await this.prisma.enrollment.findFirst({
+      where: {
+        id: enrollmentId,
+        schoolId,
+        classId,
+        role: "STUDENT",
+        status: "ACTIVE",
+      },
+      select: {
+        id: true,
+        userId: true,
+        role: true,
+        status: true,
+        joinedAt: true,
+        user: { select: { displayName: true } },
+        class: { select: { id: true, name: true, grade: true } },
+      },
+    });
+    if (!enrollment) {
+      throw new ClassNotFoundException("该班级中没有此有效学生学籍");
+    }
+
+    const [progressRows, assignmentRows, assessmentRows, recordingRows] =
+      await Promise.all([
+        this.prisma.activityProgress.findMany({
+          where: { schoolId, enrollmentId },
+          select: { completed: true, updatedAt: true },
+        }),
+        this.prisma.assignment.findMany({
+          where: {
+            schoolId,
+            deletedAt: null,
+            targets: {
+              some: {
+                OR: [
+                  { targetType: "CLASS", classId },
+                  { targetType: "STUDENT", enrollmentId },
+                ],
+              },
+            },
+          },
+          select: {
+            id: true,
+            title: true,
+            status: true,
+            dueAt: true,
+            createdAt: true,
+            courseVersion: { select: { title: true } },
+            submissions: {
+              where: { schoolId, enrollmentId, deletedAt: null },
+              orderBy: [{ attemptNo: "desc" }, { createdAt: "desc" }],
+              take: 1,
+              select: {
+                id: true,
+                status: true,
+                submittedAt: true,
+                feedback: {
+                  where: { schoolId, deletedAt: null },
+                  orderBy: { releasedAt: "desc" },
+                  take: 1,
+                  select: {
+                    decision: true,
+                    comment: true,
+                    score: true,
+                    releasedAt: true,
+                  },
+                },
+              },
+            },
+          },
+          orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+          take: 100,
+        }),
+        this.prisma.assessmentSession.findMany({
+          where: { schoolId, classId, enrollmentId },
+          select: {
+            id: true,
+            practiceDefinitionId: true,
+            type: true,
+            status: true,
+            createdAt: true,
+            completedAt: true,
+            report: {
+              select: { overallScore: true, generatedAt: true },
+            },
+          },
+          orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+          take: 50,
+        }),
+        this.prisma.recording.findMany({
+          where: { schoolId, enrollmentId },
+          select: {
+            id: true,
+            status: true,
+            durationMs: true,
+            createdAt: true,
+            submissionId: true,
+            submission: {
+              select: {
+                assignmentId: true,
+                assignment: { select: { title: true } },
+              },
+            },
+          },
+          orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+          take: 50,
+        }),
+      ]);
+
+    const completedActivities = progressRows.filter((row) => row.completed).length;
+    const lastActivityAt = progressRows.reduce<Date | null>(
+      (latest, row) =>
+        !latest || row.updatedAt > latest ? row.updatedAt : latest,
+      null,
+    );
+
+    return {
+      schoolId,
+      classId,
+      enrollment: {
+        id: enrollment.id,
+        userId: enrollment.userId,
+        displayName: enrollment.user.displayName,
+        classId: enrollment.class.id,
+        className: enrollment.class.name,
+        grade: enrollment.class.grade,
+        role: "STUDENT",
+        status: "ACTIVE",
+        joinedAt: enrollment.joinedAt.toISOString(),
+      },
+      learning: {
+        totalActivities: progressRows.length,
+        completedActivities,
+        completionRate:
+          progressRows.length > 0
+            ? Math.round((completedActivities / progressRows.length) * 100)
+            : null,
+        lastActivityAt: lastActivityAt?.toISOString() ?? null,
+      },
+      assignments: assignmentRows.map((assignment) => {
+        const submission = assignment.submissions[0] ?? null;
+        const feedback = submission?.feedback[0] ?? null;
+        return {
+          assignmentId: assignment.id,
+          title: assignment.title,
+          courseTitle: assignment.courseVersion?.title ?? null,
+          status: assignment.status,
+          dueAt: assignment.dueAt.toISOString(),
+          createdAt: assignment.createdAt.toISOString(),
+          submissionStatus: submission?.status ?? null,
+          submissionId: submission?.id ?? null,
+          submittedAt: submission?.submittedAt?.toISOString() ?? null,
+          feedback: feedback
+            ? {
+                decision: feedback.decision,
+                comment: feedback.comment,
+                score: feedback.score,
+                releasedAt: feedback.releasedAt.toISOString(),
+              }
+            : null,
+        };
+      }),
+      assessments: assessmentRows.map((session) => ({
+        sessionId: session.id,
+        practiceDefinitionId: session.practiceDefinitionId,
+        title: null,
+        type: session.type,
+        status: session.status,
+        createdAt: session.createdAt.toISOString(),
+        completedAt: session.completedAt?.toISOString() ?? null,
+        overallScore:
+          session.status === "COMPLETED" && session.report?.generatedAt
+            ? session.report.overallScore
+            : null,
+        reportGeneratedAt: session.report?.generatedAt?.toISOString() ?? null,
+      })),
+      recordings: recordingRows.map((recording) => ({
+        recordingId: recording.id,
+        status: recording.status,
+        durationMs: recording.durationMs,
+        createdAt: recording.createdAt.toISOString(),
+        assignmentId: recording.submission?.assignmentId ?? null,
+        assignmentTitle: recording.submission?.assignment?.title ?? null,
+      })),
+    };
+  }
+
   async createSupplementaryPractice(
     auth: AuthContext,
     schoolId: string,
     classId: string,
-    dto: { title: string; description?: string; courseVersionId?: string; dueAt?: string; targetEnrollmentIds?: string[] },
+    dto: {
+      title: string;
+      description?: string;
+      courseVersionId?: string;
+      dueAt?: string;
+      targetEnrollmentIds?: string[];
+    },
+    idempotencyKey?: string,
   ) {
-    if (!this.policy.canUpdateClass(auth, schoolId)) {
-      throw new ClassForbiddenException();
-    }
+    const classItem = await this.requireSupplementaryPracticeClassAccess(
+      auth,
+      schoolId,
+      classId,
+    );
+    const titleValue = dto.title.trim();
+    if (!titleValue) throw new ClassInvalidInputException("补练标题不能为空");
 
-    // Verify class exists
-    const classItem = await this.classRepo.findById(schoolId, classId);
-    if (!classItem) {
-      throw new ClassNotFoundException();
+    const requestedKey = idempotencyKey?.trim();
+    if (requestedKey && requestedKey.length > 200) {
+      throw new ClassInvalidInputException("Idempotency-Key 长度不能超过 200 个字符");
     }
+    const requestId = requestedKey || randomUUID();
 
-    // Need a courseVersionId — if not provided, find one from existing assignments targeting this class
-    let courseVersionId = dto.courseVersionId;
-    if (!courseVersionId) {
+    let resolvedCourseVersionId = dto.courseVersionId;
+    if (!resolvedCourseVersionId) {
       const existingAssignment = await this.prisma.assignment.findFirst({
         where: {
           schoolId,
-          targets: { some: { classId } },
+          status: "OPEN",
           deletedAt: null,
+          targets: { some: { targetType: "CLASS", classId } },
+          courseVersion: {
+            status: "PUBLISHED",
+            publishedAt: { not: null },
+            retiredAt: null,
+          },
         },
         select: { courseVersionId: true },
         orderBy: { createdAt: "desc" },
       });
-      if (!existingAssignment?.courseVersionId) {
-        throw new ClassConflictException("无法创建补充练习：班级没有关联课程版本，请指定 courseVersionId");
-      }
-      courseVersionId = existingAssignment.courseVersionId;
+      resolvedCourseVersionId = existingAssignment?.courseVersionId;
     }
-    const resolvedCourseVersionId = courseVersionId;
     if (!resolvedCourseVersionId) {
-      throw new ClassConflictException("无法创建补充练习：缺少课程版本");
+      throw new ClassConflictException(
+        "无法创建补练：请选择已发布课程版本，且班级没有可复用的已发布课程版本",
+      );
     }
 
-    // Build assignment targets
-    const targets: { targetType: "CLASS" | "STUDENT"; classId?: string; enrollmentId?: string }[] = [];
-
-    if (dto.targetEnrollmentIds && dto.targetEnrollmentIds.length > 0) {
-      // Target specific students
-      for (const enrollmentId of dto.targetEnrollmentIds) {
-        targets.push({ targetType: "STUDENT", classId, enrollmentId });
-      }
-    } else {
-      // Target entire class
-      targets.push({ targetType: "CLASS", classId });
-    }
-
-    // Create the supplementary practice as an Assignment
-    const now = new Date();
-    const dueDate = dto.dueAt ? new Date(dto.dueAt) : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // Default 7 days
-    const title = dto.title.startsWith("【补充练习】") ? dto.title : `【补充练习】${dto.title}`;
-
-    const assignment = await this.prisma.assignment.create({
-      data: {
-        schoolId,
-        title,
-        courseVersionId: resolvedCourseVersionId,
-        startsAt: now,
-        dueAt: dueDate,
-        status: "OPEN",
-        createdByUserId: auth.principal.userId,
-        targets: {
-          create: targets.map((t) => ({
-            schoolId,
-            targetType: t.targetType,
-            classId: t.classId ?? null,
-            enrollmentId: t.enrollmentId ?? null,
-          })),
-        },
-      },
-      include: {
-        targets: true,
-      },
+    const courseVersion = await this.prisma.courseVersion.findFirst({
+      where: { id: resolvedCourseVersionId, schoolId },
+      select: { id: true, status: true, publishedAt: true, retiredAt: true },
     });
+    if (!courseVersion) {
+      throw new ClassNotFoundException("课程版本不存在或不属于当前学校");
+    }
+    if (
+      courseVersion.status !== "PUBLISHED" ||
+      !courseVersion.publishedAt ||
+      courseVersion.retiredAt
+    ) {
+      throw new ClassConflictException("补练只能使用当前学校已发布的课程版本");
+    }
 
-    // Write audit log
-    await this.prisma.auditLog.create({
-      data: {
-        actorUserId: auth.principal.userId,
-        schoolId,
-        action: "SUPPLEMENTARY_PRACTICE_CREATED",
-        resourceType: "Assignment",
-        resourceId: assignment.id,
-        requestId: `supp-${Date.now()}`,
-        afterSummary: { classId, title: assignment.title, targetCount: targets.length },
-      },
+    let targetIds: string[] | undefined;
+    if (dto.targetEnrollmentIds !== undefined) {
+      if (dto.targetEnrollmentIds.length === 0) {
+        throw new ClassInvalidInputException("定向补练至少需要选择一名学生");
+      }
+      if (new Set(dto.targetEnrollmentIds).size !== dto.targetEnrollmentIds.length) {
+        throw new ClassConflictException("定向补练目标中包含重复学籍");
+      }
+      targetIds = [...dto.targetEnrollmentIds];
+      const targetEnrollments = await this.prisma.enrollment.findMany({
+        where: {
+          schoolId,
+          classId,
+          id: { in: targetIds },
+          role: "STUDENT",
+          status: "ACTIVE",
+        },
+        select: { id: true },
+      });
+      if (targetEnrollments.length !== targetIds.length) {
+        throw new ClassInvalidInputException(
+          "每名补练目标都必须是当前学校、当前班级的有效在读学生",
+        );
+      }
+    }
+
+    const now = new Date();
+    const dueAt = dto.dueAt
+      ? new Date(dto.dueAt)
+      : new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+    if (!Number.isFinite(dueAt.getTime()) || dueAt <= now) {
+      throw new ClassInvalidInputException("截止时间必须是有效的未来时间");
+    }
+    const title = titleValue.startsWith("【补充练习】")
+      ? titleValue
+      : `【补充练习】${titleValue}`;
+    const requestHash = createHash("sha256")
+      .update(
+        JSON.stringify({
+          classId,
+          title,
+          description: dto.description?.trim() ?? "",
+          courseVersionId: resolvedCourseVersionId,
+          dueAt: dueAt.toISOString(),
+          targetEnrollmentIds: targetIds ?? null,
+        }),
+      )
+      .digest("hex");
+    const targetCount =
+      targetIds?.length ??
+      (await this.prisma.enrollment.count({
+        where: { schoolId, classId, role: "STUDENT", status: "ACTIVE" },
+      }));
+
+    const assignment = await this.prisma.$transaction(async (tx) => {
+      if (requestedKey) {
+        const lockKey = BigInt.asIntN(
+          64,
+          BigInt(
+            `0x${createHash("sha256")
+              .update(`${schoolId}:${auth.principal.userId}:${requestedKey}`)
+              .digest("hex")
+              .slice(0, 16)}`,
+          ),
+        ).toString();
+        await tx.$queryRaw(
+          Prisma.sql`SELECT 1::int AS locked FROM (SELECT pg_advisory_xact_lock(${lockKey}::bigint)) AS advisory_lock`,
+        );
+        const priorAudit = await tx.auditLog.findFirst({
+          where: {
+            actorUserId: auth.principal.userId,
+            schoolId,
+            action: "SUPPLEMENTARY_PRACTICE_CREATED",
+            resourceType: "Assignment",
+            requestId,
+          },
+          select: { resourceId: true, afterSummary: true },
+        });
+        if (priorAudit) {
+          if (!priorAudit.resourceId) {
+            throw new ClassConflictException("补练审计记录缺少任务 ID");
+          }
+          const priorSummary = priorAudit.afterSummary as {
+            requestHash?: string;
+          } | null;
+          if (priorSummary?.requestHash !== requestHash) {
+            throw new ClassConflictException(
+              "相同 Idempotency-Key 已用于不同的补练请求",
+            );
+          }
+          const priorAssignment = await tx.assignment.findFirst({
+            where: {
+              id: priorAudit.resourceId,
+              schoolId,
+              deletedAt: null,
+            },
+            include: { targets: true },
+          });
+          if (!priorAssignment) {
+            throw new ClassConflictException("原补练任务已不可用，请重新布置");
+          }
+          return priorAssignment;
+        }
+      }
+
+      const created = await tx.assignment.create({
+        data: {
+          schoolId,
+          title,
+          courseVersionId: resolvedCourseVersionId,
+          startsAt: now,
+          dueAt,
+          openedAt: now,
+          status: "OPEN",
+          createdByUserId: auth.principal.userId,
+        },
+      });
+      const targets = targetIds
+        ? await Promise.all(
+            targetIds.map((enrollmentId) =>
+              tx.assignmentTarget.create({
+                data: {
+                  schoolId,
+                  assignmentId: created.id,
+                  targetType: "STUDENT",
+                  enrollmentId,
+                },
+              }),
+            ),
+          )
+        : [
+            await tx.assignmentTarget.create({
+              data: {
+                schoolId,
+                assignmentId: created.id,
+                targetType: "CLASS",
+                classId,
+              },
+            }),
+          ];
+
+      await tx.auditLog.create({
+        data: {
+          actorUserId: auth.principal.userId,
+          schoolId,
+          action: "SUPPLEMENTARY_PRACTICE_CREATED",
+          resourceType: "Assignment",
+          resourceId: created.id,
+          requestId,
+          afterSummary: {
+            classId,
+            title: created.title,
+            targetCount,
+            targetEnrollmentIds: targetIds ?? null,
+            courseVersionId: resolvedCourseVersionId,
+            requestHash,
+          },
+        },
+      });
+      return { ...created, targets };
     });
 
     return {
       id: assignment.id,
+      schoolId: assignment.schoolId,
+      courseVersionId: assignment.courseVersionId,
       title: assignment.title,
       status: assignment.status,
       startsAt: assignment.startsAt.toISOString(),
       dueAt: assignment.dueAt.toISOString(),
-      targetCount: targets.length,
+      targetCount,
+      targets: assignment.targets.map((target) => ({
+        id: target.id,
+        targetType: target.targetType,
+        classId: target.classId,
+        enrollmentId: target.enrollmentId,
+      })),
     };
+  }
+
+  private async requireSupplementaryPracticeClassAccess(
+    auth: AuthContext,
+    schoolId: string,
+    classId: string,
+  ) {
+    if (!isActive(auth) || auth.tenant.schoolId !== schoolId) {
+      throw new ClassForbiddenException();
+    }
+    const classItem = await this.classRepo.findById(schoolId, classId);
+    if (!classItem) throw new ClassNotFoundException();
+    if (!this.policy.canAccessClassAsTeacher(auth, schoolId, classItem)) {
+      throw new ClassForbiddenException("当前教师没有该班级的授权");
+    }
+    return classItem;
   }
 
   async createClassAssessment(
@@ -890,11 +1251,7 @@ export class ClassesService {
     classId: string,
     dto: { type: string; title?: string; targetEnrollmentIds?: string[]; questionIds?: string[] },
   ) {
-    if (!this.policy.canUpdateClass(auth, schoolId)) {
-      throw new ClassForbiddenException();
-    }
-    const classItem = await this.classRepo.findById(schoolId, classId);
-    if (!classItem) throw new ClassNotFoundException();
+    await this.requireSupplementaryPracticeClassAccess(auth, schoolId, classId);
 
     // Determine target enrollment IDs: use provided list or all active students in class
     let enrollmentIds: string[];
@@ -1095,7 +1452,28 @@ export class ClassesService {
         select: { id: true, userId: true },
       }),
       this.prisma.assignment.findMany({
-        where: { schoolId, targets: { some: { classId } }, deletedAt: null },
+        where: {
+          schoolId,
+          deletedAt: null,
+          targets: {
+            some: {
+              OR: [
+                { targetType: "CLASS", classId },
+                {
+                  targetType: "STUDENT",
+                  enrollment: {
+                    is: {
+                      schoolId,
+                      classId,
+                      role: "STUDENT",
+                      status: "ACTIVE",
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        },
         select: { id: true, title: true, status: true, courseVersionId: true, courseVersion: { select: { id: true, title: true } } },
         orderBy: { createdAt: "desc" },
         take: 20,
@@ -1136,7 +1514,9 @@ export class ClassesService {
     const enrollmentIds = new Set(enrollments.map((e) => e.id));
     const relevantProgress = activityProgressRows.filter((p) => enrollmentIds.has(p.enrollmentId));
     const completedProgress = relevantProgress.filter((p) => p.completed).length;
-    const completionRate = relevantProgress.length > 0 ? Math.round((completedProgress / relevantProgress.length) * 100) : 0;
+    const completionRate = relevantProgress.length > 0
+      ? Math.round((completedProgress / relevantProgress.length) * 100)
+      : null;
 
     // Submission rate: students who submitted at least once / total students
     const submittedEnrollmentIds = new Set(
@@ -1146,7 +1526,9 @@ export class ClassesService {
         distinct: ["enrollmentId"],
       }).then((rows) => rows.map((r) => r.enrollmentId)),
     );
-    const submissionRate = studentCount > 0 ? Math.round((submittedEnrollmentIds.size / studentCount) * 100) : 0;
+    const submissionRate = studentCount > 0 && assignments.length > 0
+      ? Math.round((submittedEnrollmentIds.size / studentCount) * 100)
+      : null;
 
     // Assessment participation rate
     const assessedEnrollmentIds = new Set(
@@ -1156,7 +1538,9 @@ export class ClassesService {
         distinct: ["enrollmentId"],
       }).then((rows) => rows.map((r) => r.enrollmentId)),
     );
-    const assessmentParticipationRate = studentCount > 0 ? Math.round((assessedEnrollmentIds.size / studentCount) * 100) : 0;
+    const assessmentParticipationRate = studentCount > 0 && assessmentSessionCount > 0
+      ? Math.round((assessedEnrollmentIds.size / studentCount) * 100)
+      : null;
 
     // At-risk students: no activity in 7 days
     const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
@@ -1201,7 +1585,7 @@ export class ClassesService {
       { id: "course-learning", title: "课程学习", completionRate, participantCount: relevantProgress.length > 0 ? new Set(relevantProgress.map((p) => p.enrollmentId)).size : 0, totalCount: studentCount },
       { id: "practice", title: "课后练习", completionRate: submissionRate, participantCount: submittedEnrollmentIds.size, totalCount: studentCount },
       { id: "assessment", title: "阶段测评", completionRate: assessmentParticipationRate, participantCount: assessedEnrollmentIds.size, totalCount: studentCount },
-      { id: "review", title: "复习巩固", completionRate: studentCount > 0 ? Math.round((hasRecordingEnrollmentIds.size / studentCount) * 100) : 0, participantCount: hasRecordingEnrollmentIds.size, totalCount: studentCount },
+      { id: "review", title: "复习巩固", completionRate: studentCount > 0 && hasRecordingEnrollmentIds.size > 0 ? Math.round((hasRecordingEnrollmentIds.size / studentCount) * 100) : null, participantCount: hasRecordingEnrollmentIds.size, totalCount: studentCount },
     ];
 
     // Pronunciation clusters (reuse dedup logic)
@@ -1269,15 +1653,24 @@ export class ClassesService {
         where: { schoolId, enrollmentId: { in: enrollmentIds }, deletedAt: null },
         select: { enrollmentId: true, assignmentId: true, status: true },
       }),
-      // Latest assessment session per enrollment (score computed from items)
+      // Latest session state and only server-generated formal report scores.
       this.prisma.assessmentSession.findMany({
         where: { schoolId, classId, enrollmentId: { in: enrollmentIds } },
-        select: { enrollmentId: true, status: true, createdAt: true, items: { select: { scoredScore: true, maxScore: true } } },
+        select: {
+          enrollmentId: true,
+          status: true,
+          createdAt: true,
+          report: { select: { overallScore: true, generatedAt: true } },
+        },
         orderBy: { createdAt: "desc" },
       }),
       // Recording count per enrollment
       this.prisma.recording.findMany({
-        where: { schoolId, enrollmentId: { in: enrollmentIds } },
+        where: {
+          schoolId,
+          enrollmentId: { in: enrollmentIds },
+          status: { in: ["COMPLETE", "PROCESSING", "READY"] },
+        },
         select: { enrollmentId: true },
       }),
       // Speech jobs for top issue detection
@@ -1302,28 +1695,65 @@ export class ClassesService {
       progressMap.set(p.enrollmentId, entry);
     }
 
-    const submissionMap = new Map<string, { submitted: number; assignmentIds: Set<string> }>();
-    for (const s of submissionRows) {
-      const entry = submissionMap.get(s.enrollmentId) ?? { submitted: 0, assignmentIds: new Set<string>() };
-      entry.assignmentIds.add(s.assignmentId);
-      if (["SUBMITTED", "REVIEWED", "ACCEPTED"].includes(s.status)) entry.submitted += 1;
-      submissionMap.set(s.enrollmentId, entry);
-    }
-
-    // Total assignments targeting this class
+    // Count only assignments that target the whole class or this student's enrollment.
     const totalAssignments = await this.prisma.assignment.findMany({
-      where: { schoolId, targets: { some: { classId } }, deletedAt: null },
-      select: { id: true },
+      where: {
+        schoolId,
+        deletedAt: null,
+        targets: {
+          some: {
+            OR: [
+              { targetType: "CLASS", classId },
+              { targetType: "STUDENT", enrollmentId: { in: enrollmentIds } },
+            ],
+          },
+        },
+      },
+      select: {
+        id: true,
+        targets: {
+          where: {
+            OR: [
+              { targetType: "CLASS", classId },
+              { targetType: "STUDENT", enrollmentId: { in: enrollmentIds } },
+            ],
+          },
+          select: { targetType: true, enrollmentId: true },
+        },
+      },
     });
-    const totalAssignmentIds = new Set(totalAssignments.map((a) => a.id));
+    const assignmentIdsByEnrollment = new Map<string, Set<string>>();
+    for (const assignment of totalAssignments) {
+      const classWide = assignment.targets.some(
+        (target) => target.targetType === "CLASS",
+      );
+      const targetIds = classWide
+        ? enrollmentIds
+        : assignment.targets.flatMap((target) =>
+            target.enrollmentId ? [target.enrollmentId] : [],
+          );
+      for (const enrollmentId of targetIds) {
+        const ids = assignmentIdsByEnrollment.get(enrollmentId) ?? new Set<string>();
+        ids.add(assignment.id);
+        assignmentIdsByEnrollment.set(enrollmentId, ids);
+      }
+    }
 
     // Latest assessment per enrollment (score computed from AssessmentItem.scoredScore)
     const latestAssessmentMap = new Map<string, { status: string; score: number | null }>();
     for (const a of assessmentRows) {
-      if (!latestAssessmentMap.has(a.enrollmentId)) {
-        const scored = a.items.filter((i) => i.scoredScore !== null);
-        const avgScore = scored.length > 0 ? Math.round((scored.reduce((sum, i) => sum + (i.scoredScore ?? 0), 0) / scored.length) * 10) / 10 : null;
-        latestAssessmentMap.set(a.enrollmentId, { status: a.status, score: avgScore });
+      const current = latestAssessmentMap.get(a.enrollmentId);
+      const formalScore =
+        a.status === "COMPLETED" && a.report?.generatedAt
+          ? a.report.overallScore
+          : null;
+      if (!current) {
+        latestAssessmentMap.set(a.enrollmentId, {
+          status: a.status,
+          score: formalScore,
+        });
+      } else if (current.score == null && formalScore != null) {
+        latestAssessmentMap.set(a.enrollmentId, { ...current, score: formalScore });
       }
     }
 
@@ -1359,11 +1789,22 @@ export class ClassesService {
 
     return enrollments.map((e) => {
       const progress = progressMap.get(e.id);
-      const courseProgress = progress && progress.total > 0 ? Math.round((progress.completed / progress.total) * 100) : 0;
-      const sub = submissionMap.get(e.id);
-      const submittedCount = sub?.submitted ?? 0;
-      const submittedAssignmentIds = sub?.assignmentIds ?? new Set<string>();
-      const missingCount = [...totalAssignmentIds].filter((aid) => !submittedAssignmentIds.has(aid)).length;
+      const courseProgress = progress && progress.total > 0
+        ? Math.round((progress.completed / progress.total) * 100)
+        : null;
+      const assignedAssignmentIds = assignmentIdsByEnrollment.get(e.id) ?? new Set<string>();
+      const submittedAssignmentIds = new Set(
+        submissionRows
+          .filter(
+            (row) =>
+              row.enrollmentId === e.id &&
+              assignedAssignmentIds.has(row.assignmentId) &&
+              ["SUBMITTED", "PROCESSING", "NEEDS_REVIEW", "REVIEWED", "RETURNED", "ACCEPTED"].includes(row.status),
+          )
+          .map((row) => row.assignmentId),
+      );
+      const submittedCount = submittedAssignmentIds.size;
+      const missingCount = Math.max(0, assignedAssignmentIds.size - submittedCount);
       const latestAssessment = latestAssessmentMap.get(e.id);
       const lastActive = lastActivityMap.get(e.id);
 
@@ -1375,7 +1816,7 @@ export class ClassesService {
         enrollmentId: e.id,
         userId: e.userId,
         displayName: e.user?.displayName ?? "",
-        courseProgress,
+        courseProgress: progress && progress.total > 0 ? courseProgress : null,
         submittedAssignmentCount: submittedCount,
         missingAssignmentCount: missingCount,
         latestAssessmentStatus: latestAssessment?.status ?? null,
@@ -1392,49 +1833,95 @@ export class ClassesService {
     if (!this.policy.canReadClassMembers(auth, schoolId)) throw new ClassForbiddenException();
     await this.requireClassAccess(auth, schoolId, classId);
 
-    const assignments = await this.prisma.assignment.findMany({
-      where: { schoolId, targets: { some: { classId } }, deletedAt: null },
+    const [students, assignments] = await Promise.all([
+      this.prisma.enrollment.findMany({
+        where: { schoolId, classId, role: "STUDENT", status: "ACTIVE" },
+        select: { id: true },
+      }),
+      this.prisma.assignment.findMany({
+      where: {
+        schoolId,
+        deletedAt: null,
+        targets: {
+          some: {
+            OR: [
+              { targetType: "CLASS", classId },
+              {
+                targetType: "STUDENT",
+                enrollment: {
+                  is: {
+                    schoolId,
+                    classId,
+                    role: "STUDENT",
+                    status: "ACTIVE",
+                  },
+                },
+              },
+            ],
+          },
+        },
+      },
       select: {
         id: true, title: true, status: true, dueAt: true,
         courseVersion: { select: { title: true } },
-        targets: { where: { classId }, select: { targetType: true, enrollmentId: true } },
+        targets: {
+          where: {
+            OR: [
+              { targetType: "CLASS", classId },
+              { targetType: "STUDENT", enrollment: { is: { schoolId, classId, role: "STUDENT", status: "ACTIVE" } } },
+            ],
+          },
+          select: { targetType: true, enrollmentId: true },
+        },
       },
       orderBy: { createdAt: "desc" },
       take: 50,
-    });
+      }),
+    ]);
 
     if (assignments.length === 0) return [];
 
     const assignmentIds = assignments.map((a) => a.id);
+    const classEnrollmentIds = students.map((student) => student.id);
 
-    // Batch submission stats per assignment
-    const submissionRows = await this.prisma.submission.findMany({
-      where: { schoolId, assignmentId: { in: assignmentIds }, enrollment: { classId, schoolId, role: "STUDENT", status: "ACTIVE" }, deletedAt: null },
-      select: { assignmentId: true, status: true },
-    });
-
-    const subMap = new Map<string, { total: number; pendingReview: number }>();
-    for (const s of submissionRows) {
-      const entry = subMap.get(s.assignmentId) ?? { total: 0, pendingReview: 0 };
-      entry.total += 1;
-      if (["SUBMITTED", "NEEDS_REVIEW"].includes(s.status)) entry.pendingReview += 1;
-      subMap.set(s.assignmentId, entry);
+    const submissionRows = classEnrollmentIds.length
+      ? await this.prisma.submission.findMany({
+          where: {
+            schoolId,
+            assignmentId: { in: assignmentIds },
+            enrollmentId: { in: classEnrollmentIds },
+            deletedAt: null,
+          },
+          select: { assignmentId: true, enrollmentId: true, status: true, attemptNo: true },
+          orderBy: [{ assignmentId: "asc" }, { enrollmentId: "asc" }, { attemptNo: "desc" }],
+        })
+      : [];
+    const latestStatusByAssignment = new Map<string, Map<string, string>>();
+    for (const row of submissionRows) {
+      const byStudent = latestStatusByAssignment.get(row.assignmentId) ?? new Map<string, string>();
+      if (!byStudent.has(row.enrollmentId)) byStudent.set(row.enrollmentId, row.status);
+      latestStatusByAssignment.set(row.assignmentId, byStudent);
     }
 
     return assignments.map((a) => {
-      const sub = subMap.get(a.id) ?? { total: 0, pendingReview: 0 };
-      // Total target count: CLASS target → all class students; STUDENT targets → count of individual targets
-      const studentTargets = a.targets.filter((t) => t.enrollmentId);
-      const totalTargetCount = studentTargets.length > 0 ? studentTargets.length : 0; // 0 means "whole class"
+      const classWide = a.targets.some((target) => target.targetType === "CLASS");
+      const targetIds = classWide
+        ? classEnrollmentIds
+        : a.targets.flatMap((target) => target.enrollmentId ? [target.enrollmentId] : []);
+      const latestByStudent = latestStatusByAssignment.get(a.id) ?? new Map<string, string>();
+      const submittedStatuses = new Set(["SUBMITTED", "PROCESSING", "NEEDS_REVIEW", "REVIEWED", "RETURNED", "ACCEPTED"]);
+      const submittedCount = targetIds.filter((id) => submittedStatuses.has(latestByStudent.get(id) ?? "")).length;
+      const pendingReviewCount = targetIds.filter((id) => ["SUBMITTED", "PROCESSING", "NEEDS_REVIEW"].includes(latestByStudent.get(id) ?? "")).length;
 
       return {
         assignmentId: a.id,
         title: a.title,
         status: a.status,
         dueAt: a.dueAt?.toISOString() ?? null,
-        submissionCount: sub.total,
-        pendingReviewCount: sub.pendingReview,
-        totalTargetCount,
+        submissionCount: submittedCount,
+        notSubmittedCount: Math.max(0, targetIds.length - submittedCount),
+        pendingReviewCount,
+        totalTargetCount: targetIds.length,
         courseTitle: a.courseVersion?.title ?? null,
       };
     });
@@ -1446,7 +1933,14 @@ export class ClassesService {
 
     const sessions = await this.prisma.assessmentSession.findMany({
       where: { schoolId, classId },
-      select: { id: true, type: true, status: true, createdAt: true, enrollmentId: true, items: { select: { scoredScore: true, maxScore: true } } },
+      select: {
+        id: true,
+        type: true,
+        status: true,
+        createdAt: true,
+        enrollmentId: true,
+        report: { select: { overallScore: true, generatedAt: true } },
+      },
       orderBy: { createdAt: "desc" },
       take: 50,
     });
@@ -1460,18 +1954,20 @@ export class ClassesService {
       where: { schoolId, classId, status: "ACTIVE", role: "STUDENT" },
     });
 
-    // Group sessions by type for class-level summary (score computed from items)
+    // Aggregate only generated formal reports; item-level review data is not a report score.
     const typeGroups = new Map<string, { sessions: typeof sessions; scores: number[] }>();
     for (const s of sessions) {
       const key = s.type;
       if (!typeGroups.has(key)) typeGroups.set(key, { sessions: [], scores: [] });
       const group = typeGroups.get(key)!;
       group.sessions.push(s);
-      // Compute per-session average score from items
-      const scoredItems = s.items.filter((i) => i.scoredScore !== null);
-      if (scoredItems.length > 0) {
-        const avg = scoredItems.reduce((sum, i) => sum + (i.scoredScore ?? 0), 0) / scoredItems.length;
-        group.scores.push(Math.round(avg * 10) / 10);
+      if (
+        s.status === "COMPLETED" &&
+        s.report?.generatedAt &&
+        typeof s.report.overallScore === "number" &&
+        Number.isFinite(s.report.overallScore)
+      ) {
+        group.scores.push(Math.round(s.report.overallScore * 10) / 10);
       }
     }
 
@@ -1483,7 +1979,7 @@ export class ClassesService {
       const medianScore = scores.length > 0 && scores[midIdx] !== undefined ? Math.round(scores[midIdx] * 10) / 10 : null;
       const zeroScoreCount = scores.filter((s) => s === 0).length;
       const latestSession = group.sessions[0];
-      const dataSufficient = completedCount >= 2;
+      const dataSufficient = scores.length >= 2;
 
       return {
         sessionId: latestSession?.id ?? "",

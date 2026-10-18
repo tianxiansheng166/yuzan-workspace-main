@@ -25,6 +25,16 @@
     toastTimer = setTimeout(() => toast.classList.remove("show"), 2200);
   }
 
+  function openClass(classId) {
+    if (!classId) {
+      showToast("班级标识缺失，无法进入");
+      return;
+    }
+    const schoolId = typeof YuzanApi !== "undefined" ? YuzanApi.getActiveSchoolId() : "";
+    const query = schoolId ? `?schoolId=${encodeURIComponent(schoolId)}` : "";
+    location.href = `/teacher/classes/${encodeURIComponent(classId)}${query}`;
+  }
+
   function openModal(type) {
     const data = {
       guide: ["班级学习路径指南", "通过课程、任务、测评和复盘四个阶段组织班级教学进度。", "⌁"],
@@ -77,21 +87,13 @@
     if (!btn) return;
     const card = btn.closest(".class-card");
     const classId = card?.dataset?.classId;
-    if (classId) {
-      location.href = `/teacher/classes/${classId}`;
-    } else {
-      showToast("班级标识缺失，无法进入");
-    }
+    openClass(classId);
   });
   listTbody?.addEventListener("click", (event) => {
     const btn = event.target.closest('[data-action="enter"]');
     if (!btn) return;
     const classId = btn.dataset.classId;
-    if (classId) {
-      location.href = `/teacher/classes/${classId}`;
-    } else {
-      showToast("班级标识缺失，无法进入");
-    }
+    openClass(classId);
   });
 
   // ── UNSUPPORTED: 创建班级（后端无教师自建班级API） ──

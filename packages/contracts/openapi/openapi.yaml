@@ -1326,6 +1326,148 @@ paths:
   # ════════════════════════════════════════════════════════════
   # P0-CONTRACT-CONVERGENCE-001: 黄金闭环端点（classes/recordings/speech-jobs/assessments）
   # ════════════════════════════════════════════════════════════
+  /schools/{schoolId}/classes/{classId}/dashboard:
+    get:
+      summary: 获取本人授权班级的真实学习概况
+      tags: [Classes]
+      operationId: getClassDashboard
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/ClassId"
+      responses:
+        "200":
+          description: 班级学习进度、提交、测评参与和最近活动；无数据指标为 null
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ClassDashboardResponse" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /schools/{schoolId}/classes/{classId}/student-summaries:
+    get:
+      summary: 获取授权班级的学生真实学习摘要
+      tags: [Classes]
+      operationId: getClassStudentSummaries
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/ClassId"
+      responses:
+        "200":
+          description: ACTIVE STUDENT 学籍、实际进度、提交和录音数
+          content:
+            application/json:
+              schema:
+                { $ref: "#/components/schemas/ClassStudentSummaryListResponse" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /schools/{schoolId}/classes/{classId}/assignment-summaries:
+    get:
+      summary: 获取授权班级 Assignment 提交摘要
+      tags: [Classes, Assignments]
+      operationId: getClassAssignmentSummaries
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/ClassId"
+      responses:
+        "200":
+          description: 真实目标学生、已提交、未提交及待复核数量
+          content:
+            application/json:
+              schema:
+                {
+                  $ref: "#/components/schemas/ClassAssignmentSummaryListResponse",
+                }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /schools/{schoolId}/classes/{classId}/assessment-summaries:
+    get:
+      summary: 获取授权班级测评会话与正式报告摘要
+      tags: [Classes, Assessments]
+      operationId: getClassAssessmentSummaries
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/ClassId"
+      responses:
+        "200":
+          description: 正式分数仅来自已生成的 AssessmentReport
+          content:
+            application/json:
+              schema:
+                {
+                  $ref: "#/components/schemas/ClassAssessmentSummaryListResponse",
+                }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /schools/{schoolId}/classes/{classId}/pending-stats:
+    get:
+      summary: 获取授权班级真实待处理统计
+      tags: [Classes]
+      operationId: getClassPendingStats
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/ClassId"
+      responses:
+        "200":
+          description: 班级待复核、缺交和风险学生数量
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ClassPendingStatsResponse" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /schools/{schoolId}/classes/{classId}/students/{enrollmentId}:
+    get:
+      summary: 获取授权班级内单名 ACTIVE STUDENT 的学习与提交详情
+      tags: [Classes, Assessments, Submissions, Recordings]
+      operationId: getClassStudentDetail
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/ClassId"
+        - $ref: "#/components/parameters/EnrollmentId"
+      responses:
+        "200":
+          description: 学籍、活动进度、目标 Assignment、最近提交、已生成正式报告和录音 ID
+          content:
+            application/json:
+              schema:
+                { $ref: "#/components/schemas/ClassStudentDetailResponse" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /schools/{schoolId}/classes/{classId}/supplementary-practice:
+    post:
+      summary: 为授权班级创建 OPEN Assignment 定向补练
+      tags: [Classes, Assignments]
+      operationId: createSupplementaryPractice
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/ClassId"
+        - in: header
+          name: Idempotency-Key
+          required: false
+          description: 同一教师、学校和 key 的重复请求复用原 Assignment；不同请求体返回 409
+          schema: { type: string, maxLength: 200 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              { $ref: "#/components/schemas/SupplementaryPracticeRequest" }
+      responses:
+        "201":
+          description: 已创建或复用真实 OPEN Assignment，返回可打开的 Assignment ID 和准确目标
+          content:
+            application/json:
+              schema:
+                { $ref: "#/components/schemas/SupplementaryPracticeResponse" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "409": { $ref: "#/components/responses/Conflict" }
   # ── Classes: 创建班级测评（黄金闭环入口） ──
   /schools/{schoolId}/classes/{classId}/assessments:
     post:
@@ -1494,10 +1636,14 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/RecordingEvidenceResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
         "404":
           $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
   # ── Speech Jobs ──
   /schools/{schoolId}/speech-jobs:
     post:
@@ -5069,6 +5215,410 @@ components:
     # ════════════════════════════════════════════════════════════
     # P0-CONTRACT-CONVERGENCE-001: 黄金闭环 schemas
     # ════════════════════════════════════════════════════════════
+    ClassGrowthStage:
+      type: object
+      required: [id, title, completionRate, participantCount, totalCount]
+      properties:
+        id: { type: string }
+        title: { type: string }
+        completionRate: { type: [integer, "null"], minimum: 0, maximum: 100 }
+        participantCount: { type: integer, minimum: 0 }
+        totalCount: { type: integer, minimum: 0 }
+    ClassPronunciationCluster:
+      type: object
+      required: [type, label, occurrenceCount, affectedStudentCount, percentage]
+      properties:
+        type: { type: string }
+        label: { type: string }
+        occurrenceCount: { type: integer, minimum: 0 }
+        affectedStudentCount: { type: integer, minimum: 0 }
+        percentage: { type: integer, minimum: 0, maximum: 100 }
+    ClassDashboard:
+      type: object
+      required:
+        [
+          classId,
+          className,
+          grade,
+          studentCount,
+          currentCourse,
+          completionRate,
+          averageProgress,
+          medianProgress,
+          zeroProgressCount,
+          submissionRate,
+          assessmentParticipationRate,
+          pendingReviewCount,
+          atRiskStudentCount,
+          lastActivityAt,
+          dataSufficient,
+          stages,
+          pronunciationClusters,
+        ]
+      properties:
+        classId: { type: string, format: uuid }
+        className: { type: string }
+        grade: { type: string }
+        studentCount: { type: integer, minimum: 0 }
+        currentCourse:
+          oneOf:
+            - type: "null"
+            - type: object
+              required: [id, title]
+              properties:
+                id: { type: string, format: uuid }
+                title: { type: string }
+        completionRate: { type: [integer, "null"], minimum: 0, maximum: 100 }
+        averageProgress: { type: [number, "null"], minimum: 0, maximum: 100 }
+        medianProgress: { type: [number, "null"], minimum: 0, maximum: 100 }
+        zeroProgressCount: { type: integer, minimum: 0 }
+        submissionRate: { type: [integer, "null"], minimum: 0, maximum: 100 }
+        assessmentParticipationRate:
+          { type: [integer, "null"], minimum: 0, maximum: 100 }
+        pendingReviewCount: { type: integer, minimum: 0 }
+        atRiskStudentCount: { type: integer, minimum: 0 }
+        lastActivityAt: { type: [string, "null"], format: date-time }
+        dataSufficient: { type: boolean }
+        stages:
+          type: array
+          items: { $ref: "#/components/schemas/ClassGrowthStage" }
+        pronunciationClusters:
+          type: array
+          items: { $ref: "#/components/schemas/ClassPronunciationCluster" }
+    ClassDashboardResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data: { $ref: "#/components/schemas/ClassDashboard" }
+        meta: { $ref: "#/components/schemas/EnvelopeMeta" }
+    ClassStudentSummary:
+      type: object
+      required:
+        [
+          enrollmentId,
+          userId,
+          displayName,
+          courseProgress,
+          submittedAssignmentCount,
+          missingAssignmentCount,
+          latestAssessmentStatus,
+          latestAssessmentScore,
+          recordingCount,
+          topIssue,
+          lastActiveAt,
+          riskStatus,
+        ]
+      properties:
+        enrollmentId: { type: string, format: uuid }
+        userId: { type: string, format: uuid }
+        displayName: { type: string }
+        courseProgress: { type: [integer, "null"], minimum: 0, maximum: 100 }
+        submittedAssignmentCount: { type: integer, minimum: 0 }
+        missingAssignmentCount: { type: integer, minimum: 0 }
+        latestAssessmentStatus: { type: [string, "null"] }
+        latestAssessmentScore: { type: [number, "null"] }
+        recordingCount: { type: integer, minimum: 0 }
+        topIssue: { type: [string, "null"] }
+        lastActiveAt: { type: [string, "null"], format: date-time }
+        riskStatus: { type: string, enum: [OK, AT_RISK, INACTIVE] }
+    ClassStudentSummaryListResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: array
+          items: { $ref: "#/components/schemas/ClassStudentSummary" }
+        meta: { $ref: "#/components/schemas/EnvelopeMeta" }
+    ClassAssignmentSummary:
+      type: object
+      required:
+        [
+          assignmentId,
+          title,
+          status,
+          dueAt,
+          submissionCount,
+          notSubmittedCount,
+          pendingReviewCount,
+          totalTargetCount,
+          courseTitle,
+        ]
+      properties:
+        assignmentId: { type: string, format: uuid }
+        title: { type: string }
+        status: { $ref: "#/components/schemas/AssignmentStatus" }
+        dueAt: { type: [string, "null"], format: date-time }
+        submissionCount: { type: integer, minimum: 0 }
+        notSubmittedCount: { type: integer, minimum: 0 }
+        pendingReviewCount: { type: integer, minimum: 0 }
+        totalTargetCount: { type: integer, minimum: 0 }
+        courseTitle: { type: [string, "null"] }
+    ClassAssignmentSummaryListResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: array
+          items: { $ref: "#/components/schemas/ClassAssignmentSummary" }
+        meta: { $ref: "#/components/schemas/EnvelopeMeta" }
+    ClassAssessmentSummary:
+      type: object
+      required:
+        [
+          sessionId,
+          title,
+          type,
+          status,
+          completedCount,
+          averageScore,
+          medianScore,
+          zeroScoreCount,
+          totalTargetCount,
+          dataSufficient,
+          createdAt,
+        ]
+      properties:
+        sessionId: { type: string, format: uuid }
+        title: { type: [string, "null"] }
+        type: { type: string }
+        status: { type: string }
+        completedCount: { type: integer, minimum: 0 }
+        averageScore: { type: [number, "null"] }
+        medianScore: { type: [number, "null"] }
+        zeroScoreCount: { type: integer, minimum: 0 }
+        totalTargetCount: { type: integer, minimum: 0 }
+        dataSufficient: { type: boolean }
+        createdAt: { type: string, format: date-time }
+    ClassAssessmentSummaryListResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: array
+          items: { $ref: "#/components/schemas/ClassAssessmentSummary" }
+        meta: { $ref: "#/components/schemas/EnvelopeMeta" }
+    ClassPendingStats:
+      type: object
+      required:
+        [
+          pendingReviewCount,
+          unsubmittedAssignmentsCount,
+          atRiskStudentCount,
+          pendingAssessmentsCount,
+        ]
+      properties:
+        pendingReviewCount: { type: integer, minimum: 0 }
+        unsubmittedAssignmentsCount: { type: integer, minimum: 0 }
+        atRiskStudentCount: { type: integer, minimum: 0 }
+        pendingAssessmentsCount: { type: integer, minimum: 0 }
+    ClassPendingStatsResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data: { $ref: "#/components/schemas/ClassPendingStats" }
+        meta: { $ref: "#/components/schemas/EnvelopeMeta" }
+    ClassStudentDetail:
+      type: object
+      required:
+        [
+          schoolId,
+          classId,
+          enrollment,
+          learning,
+          assignments,
+          assessments,
+          recordings,
+        ]
+      properties:
+        schoolId: { type: string, format: uuid }
+        classId: { type: string, format: uuid }
+        enrollment:
+          type: object
+          required:
+            [
+              id,
+              userId,
+              displayName,
+              classId,
+              className,
+              grade,
+              role,
+              status,
+              joinedAt,
+            ]
+          properties:
+            id: { type: string, format: uuid }
+            userId: { type: string, format: uuid }
+            displayName: { type: string }
+            classId: { type: string, format: uuid }
+            className: { type: string }
+            grade: { type: string }
+            role: { type: string, const: STUDENT }
+            status: { type: string, const: ACTIVE }
+            joinedAt: { type: string, format: date-time }
+        learning:
+          type: object
+          required:
+            [
+              totalActivities,
+              completedActivities,
+              completionRate,
+              lastActivityAt,
+            ]
+          properties:
+            totalActivities: { type: integer, minimum: 0 }
+            completedActivities: { type: integer, minimum: 0 }
+            completionRate:
+              { type: [integer, "null"], minimum: 0, maximum: 100 }
+            lastActivityAt: { type: [string, "null"], format: date-time }
+        assignments:
+          type: array
+          items:
+            type: object
+            required:
+              [
+                assignmentId,
+                title,
+                courseTitle,
+                status,
+                dueAt,
+                createdAt,
+                submissionStatus,
+                submissionId,
+                submittedAt,
+                feedback,
+              ]
+            properties:
+              assignmentId: { type: string, format: uuid }
+              title: { type: string }
+              courseTitle: { type: [string, "null"] }
+              status: { $ref: "#/components/schemas/AssignmentStatus" }
+              dueAt: { type: string, format: date-time }
+              createdAt: { type: string, format: date-time }
+              submissionStatus: { type: [string, "null"] }
+              submissionId: { type: [string, "null"], format: uuid }
+              submittedAt: { type: [string, "null"], format: date-time }
+              feedback:
+                oneOf:
+                  - type: "null"
+                  - type: object
+                    required: [decision, comment, score, releasedAt]
+                    properties:
+                      decision: { type: string }
+                      comment: { type: string }
+                      score: { type: [number, "null"] }
+                      releasedAt: { type: string, format: date-time }
+        assessments:
+          type: array
+          items:
+            type: object
+            required:
+              [
+                sessionId,
+                practiceDefinitionId,
+                title,
+                type,
+                status,
+                createdAt,
+                completedAt,
+                overallScore,
+                reportGeneratedAt,
+              ]
+            properties:
+              sessionId: { type: string, format: uuid }
+              practiceDefinitionId: { type: [string, "null"], format: uuid }
+              title: { type: [string, "null"] }
+              type: { type: string }
+              status: { type: string }
+              createdAt: { type: string, format: date-time }
+              completedAt: { type: [string, "null"], format: date-time }
+              overallScore: { type: [number, "null"] }
+              reportGeneratedAt: { type: [string, "null"], format: date-time }
+        recordings:
+          type: array
+          items:
+            type: object
+            required:
+              [
+                recordingId,
+                status,
+                durationMs,
+                createdAt,
+                assignmentId,
+                assignmentTitle,
+              ]
+            properties:
+              recordingId: { type: string, format: uuid }
+              status: { type: string }
+              durationMs: { type: [integer, "null"], minimum: 0 }
+              createdAt: { type: string, format: date-time }
+              assignmentId: { type: [string, "null"], format: uuid }
+              assignmentTitle: { type: [string, "null"] }
+    ClassStudentDetailResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data: { $ref: "#/components/schemas/ClassStudentDetail" }
+        meta: { $ref: "#/components/schemas/EnvelopeMeta" }
+    SupplementaryPracticeRequest:
+      type: object
+      required: [title]
+      description: Omit targetEnrollmentIds to target the whole class. When provided, the array must be non-empty and every ID must be an ACTIVE STUDENT enrollment in this school and class. courseVersionId must identify a published version in this school; if omitted, only a published version from an existing OPEN class Assignment may be reused.
+      properties:
+        title: { type: string, minLength: 1, maxLength: 120 }
+        description: { type: string }
+        courseVersionId: { type: string, format: uuid }
+        dueAt:
+          {
+            type: string,
+            format: date-time,
+            description: Must be a future timestamp; defaults to seven days from creation when omitted.,
+          }
+        targetEnrollmentIds:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          items: { type: string, format: uuid }
+    SupplementaryPracticeTarget:
+      type: object
+      required: [id, targetType, classId, enrollmentId]
+      properties:
+        id: { type: string, format: uuid }
+        targetType: { type: string, enum: [CLASS, STUDENT] }
+        classId: { type: [string, "null"], format: uuid }
+        enrollmentId: { type: [string, "null"], format: uuid }
+    SupplementaryPractice:
+      type: object
+      required:
+        [
+          id,
+          schoolId,
+          courseVersionId,
+          title,
+          status,
+          startsAt,
+          dueAt,
+          targetCount,
+          targets,
+        ]
+      properties:
+        id: { type: string, format: uuid }
+        schoolId: { type: string, format: uuid }
+        courseVersionId: { type: string, format: uuid }
+        title: { type: string }
+        status: { type: string, const: OPEN }
+        startsAt: { type: string, format: date-time }
+        dueAt: { type: string, format: date-time }
+        targetCount: { type: integer, minimum: 0 }
+        targets:
+          type: array
+          items: { $ref: "#/components/schemas/SupplementaryPracticeTarget" }
+    SupplementaryPracticeResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data: { $ref: "#/components/schemas/SupplementaryPractice" }
+        meta: { $ref: "#/components/schemas/EnvelopeMeta" }
     ClassAssessmentRequest:
       type: object
       required: [type]
