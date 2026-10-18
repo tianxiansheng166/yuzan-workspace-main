@@ -41,7 +41,10 @@ export async function bootstrap(): Promise<INestApplication> {
   const config = app.get(ConfigService);
   configureApplication(app, config);
 
-  await app.listen(config.getOrThrow<number>("API_PORT"), "0.0.0.0");
+  await app.listen(
+    config.getOrThrow<number>("API_PORT"),
+    config.get<string>("API_HOST") ?? "0.0.0.0",
+  );
   return app;
 }
 
