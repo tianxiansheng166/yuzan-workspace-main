@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "base": "4d971c9683664c09e533069ec001b00d0dc239af",
+  "branch": "feat/yz-rd-t017-course-catalog-web-experience",
+  "database": "yuzan_t017_native",
+  "databaseUser": "yz_t017",
+  "screenshots": [
+    "course-catalog-after-1280.png",
+    "course-catalog-after-1440.png",
+    "course-catalog-after-390-viewport.png",
+    "course-catalog-after-390.png",
+    "course-catalog-after-768.png",
+    "course-catalog-before-1440.png",
+    "course-catalog-before-390.png",
+    "course-catalog-before-cards-1440.png",
+    "course-catalog-before-cards-390.png",
+    "course-catalog-cards-1280.png",
+    "course-catalog-cards-1440.png",
+    "course-catalog-cards-390.png",
+    "course-catalog-cards-768.png",
+    "course-detail-activity-1280.png"
+  ],
+  "apiAndSqlEvidence": "chromium-api-events.json"
+}
