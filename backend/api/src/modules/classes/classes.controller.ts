@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   HttpCode,
+  Headers,
   Inject,
   Param,
   ParseUUIDPipe,
@@ -192,6 +193,23 @@ export class ClassesController {
     );
   }
 
+  @Get(":classId/students/:enrollmentId")
+  @RequireRoles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
+  async getClassStudentDetail(
+    @Param("schoolId", ParseUUIDPipe) schoolId: string,
+    @Param("classId", ParseUUIDPipe) classId: string,
+    @Param("enrollmentId", ParseUUIDPipe) enrollmentId: string,
+    @CurrentTenant() tenant: TenantContext,
+    @CurrentPrincipal() principal: Principal,
+  ) {
+    return this.service.getClassStudentDetail(
+      createAuthContext("request-id", principal, tenant),
+      schoolId,
+      classId,
+      enrollmentId,
+    );
+  }
+
   @Get(":classId/assignment-summaries")
   @RequireRoles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN, MembershipRole.PLATFORM_ADMIN)
   async getAssignmentSummaries(
@@ -302,6 +320,7 @@ export class ClassesController {
     @Param("schoolId", ParseUUIDPipe) schoolId: string,
     @Param("classId", ParseUUIDPipe) classId: string,
     @Body() dto: SupplementaryPracticeDto,
+    @Headers("idempotency-key") idempotencyKey: string | undefined,
     @CurrentTenant() tenant: TenantContext,
     @CurrentPrincipal() principal: Principal,
   ) {
@@ -310,6 +329,7 @@ export class ClassesController {
       schoolId,
       classId,
       dto,
+      idempotencyKey,
     );
   }
 

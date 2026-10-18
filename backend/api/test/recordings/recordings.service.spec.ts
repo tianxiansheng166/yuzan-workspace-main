@@ -150,7 +150,11 @@ async function buildService(opts: BuildOptions = {}) {
 
   const fakePrisma = createFakePrismaService({
     enrollment: {
-      findFirst: async () => ({ id: ENROLLMENT_ID }),
+      findFirst: async () => ({
+        id: ENROLLMENT_ID,
+        userId: STUDENT_ID,
+        classId: "class-0000-0000-0000-000000000001",
+      }),
     },
     recording: {
       findUnique: async () => recordingRepo["_setRecording"] ? makeRecording() : null,
@@ -470,6 +474,64 @@ describe("RecordingsService", () => {
       await expect(
         service.getRecordingStatus(studentAuthA, SCHOOL_A, RECORDING_ID),
       ).rejects.toThrow(RecordingForbiddenException);
+    });
+  });
+
+  describe("getRecordingEvidence — class authorization", () => {
+    it("allows the teacher assigned to the recording student's class", async () => {
+      const recording = makeRecording({ status: "READY" });
+      const fakeRepo = createFakeRecordingRepo(recording);
+      const { service } = await buildService({
+        recordingRepo: fakeRepo,
+        prismaOverrides: {
+          enrollment: {
+            findFirst: async ({ where }: any) =>
+              where.role === "TEACHER"
+                ? { id: "teacher-enrollment" }
+                : {
+                    id: ENROLLMENT_ID,
+                    userId: STUDENT_ID,
+                    classId: "class-0000-0000-0000-000000000001",
+                  },
+          },
+        },
+      });
+
+      const result = await service.getRecordingEvidence(
+        teacherAuthA,
+        SCHOOL_A,
+        RECORDING_ID,
+      );
+      expect(result.id).toBe(RECORDING_ID);
+      expect(result.downloadUrl).toContain(RECORDING_ID);
+    });
+
+    it("rejects a teacher who is not assigned to that class", async () => {
+      const recording = makeRecording({ status: "READY" });
+      const fakeRepo = createFakeRecordingRepo(recording);
+      const storage = createFakeStorage();
+      const downloadUrl = vi.spyOn(storage, "generateDownloadUrl");
+      const { service } = await buildService({
+        recordingRepo: fakeRepo,
+        storage,
+        prismaOverrides: {
+          enrollment: {
+            findFirst: async ({ where }: any) =>
+              where.role === "TEACHER"
+                ? null
+                : {
+                    id: ENROLLMENT_ID,
+                    userId: STUDENT_ID,
+                    classId: "class-0000-0000-0000-000000000001",
+                  },
+          },
+        },
+      });
+
+      await expect(
+        service.getRecordingEvidence(teacherAuthA, SCHOOL_A, RECORDING_ID),
+      ).rejects.toThrow(RecordingForbiddenException);
+      expect(downloadUrl).not.toHaveBeenCalled();
     });
   });
 

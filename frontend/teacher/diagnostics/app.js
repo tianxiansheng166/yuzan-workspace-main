@@ -38,6 +38,10 @@
   let dashboard = null;
   let dashboardRequestId = 0;
   let selectedEnrollmentIds = new Set();
+  const requestedParams = new URLSearchParams(location.search);
+  const requestedClassId = requestedParams.get("classId") || "";
+  const requestedPracticeDefinitionId = requestedParams.get("practiceDefinitionId") || "";
+  const requestedEnrollmentId = requestedParams.get("enrollmentId") || "";
 
   function empty(message) {
     root.innerHTML = `<div class="diagnostic-empty"><h1>学情诊断</h1><p>${esc(message)}</p></div>`;
@@ -89,6 +93,8 @@
 
   function renderDashboard() {
     const host = root.querySelector("#diagnostic-content");
+    const classes = catalog?.availableClasses || [];
+    const practices = catalog?.availablePractices || [];
     const summary = dashboard.summary;
     const attention = dashboard.students.filter(
       (student) => student.needsAttention,
@@ -111,6 +117,14 @@
         <div class="student-table-wrap"><table><thead><tr><th><input id="select-all-students" type="checkbox" aria-label="选择当前学生"></th><th>姓名</th><th>状态</th><th>最近正式分</th><th>与本人上次比较</th><th>优先巩固</th><th>专项巩固</th><th>待复核</th><th></th></tr></thead><tbody id="diagnostic-students"></tbody></table></div>
       </section>
       <section id="student-detail" class="student-detail" hidden></section>`;
+    const classSelect = root.querySelector("#diagnostic-class");
+    const practiceSelect = root.querySelector("#diagnostic-practice");
+    if (requestedClassId && classes.some((entry) => entry.classId === requestedClassId)) {
+      classSelect.value = requestedClassId;
+    }
+    if (requestedPracticeDefinitionId && practices.some((entry) => entry.practiceDefinitionId === requestedPracticeDefinitionId)) {
+      practiceSelect.value = requestedPracticeDefinitionId;
+    }
     renderStudents(false);
     bindAssignmentControls();
     root
@@ -224,6 +238,9 @@
       dashboard = nextDashboard;
       selectedEnrollmentIds = new Set([...selectedEnrollmentIds].filter((id) => dashboard.students.some((student) => student.enrollmentId === id)));
       renderDashboard();
+      if (requestedEnrollmentId && dashboard.students.some((student) => student.enrollmentId === requestedEnrollmentId)) {
+        loadStudentDetail(requestedEnrollmentId);
+      }
     } catch (error) {
       if (requestId !== dashboardRequestId) return;
       host.innerHTML = `<div class="diagnostic-error">加载失败：${esc(error.message || "请稍后重试")}<br><button type="button" id="diagnostic-retry">重试</button></div>`;

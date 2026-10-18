@@ -14,7 +14,7 @@ export interface ClassDetail {
 export interface ClassGrowthStage {
   readonly id: string;
   readonly title: string;
-  readonly completionRate: number;
+  readonly completionRate: number | null;
   readonly participantCount: number;
   readonly totalCount: number;
 }
@@ -41,12 +41,12 @@ export interface ClassDashboard {
   readonly grade: string;
   readonly studentCount: number;
   readonly currentCourse: { readonly id: string; readonly title: string } | null;
-  readonly completionRate: number;
+  readonly completionRate: number | null;
   readonly averageProgress: number | null;
   readonly medianProgress: number | null;
   readonly zeroProgressCount: number;
-  readonly submissionRate: number;
-  readonly assessmentParticipationRate: number;
+  readonly submissionRate: number | null;
+  readonly assessmentParticipationRate: number | null;
   readonly pendingReviewCount: number;
   readonly atRiskStudentCount: number;
   readonly lastActivityAt: string | null;
@@ -60,7 +60,7 @@ export interface StudentSummary {
   readonly enrollmentId: string;
   readonly userId: string;
   readonly displayName: string;
-  readonly courseProgress: number;
+  readonly courseProgress: number | null;
   readonly submittedAssignmentCount: number;
   readonly missingAssignmentCount: number;
   readonly latestAssessmentStatus: string | null;
@@ -78,6 +78,7 @@ export interface AssignmentSummary {
   readonly status: string;
   readonly dueAt: string | null;
   readonly submissionCount: number;
+  readonly notSubmittedCount: number;
   readonly pendingReviewCount: number;
   readonly totalTargetCount: number;
   readonly courseTitle: string | null;

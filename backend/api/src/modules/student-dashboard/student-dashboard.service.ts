@@ -196,7 +196,6 @@ export class StudentDashboardService {
     }
 
     const now = new Date();
-    const threeDaysLater = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
     const enrollments = await this.prisma.enrollment.findMany({
       where: { userId: auth.principal.userId, schoolId, status: "ACTIVE", role: "STUDENT" },
       select: { id: true, classId: true },
@@ -253,12 +252,16 @@ export class StudentDashboardService {
           schoolId,
           status: "OPEN",
           deletedAt: null,
-          dueAt: { gte: now, lte: threeDaysLater },
+          startsAt: { lte: now },
+          dueAt: { gte: now },
           targets: {
             some: {
               OR: [
-                { classId: { in: classIds } },
-                { enrollmentId: { in: enrollmentIds } },
+                { targetType: "CLASS", classId: { in: classIds } },
+                {
+                  targetType: "STUDENT",
+                  enrollmentId: { in: enrollmentIds },
+                },
               ],
             },
           },
