@@ -1,117 +1,285 @@
-/* 学生域统一导航栏 —— 顶部主导航 */
-:root{
-  --student-header:90px;
-  --student-red:#c91518;
-  --student-green:#2f7a50;
-  --student-paper:#f8f4ec;
-  --student-ink:#272c29;
-  --student-muted:#727873;
-  --student-line:#e8e0d6;
+:root {
+  --student-header: 90px;
+  --student-red: #c91518;
+  --student-green: #2f7a50;
+  --student-paper: #f8f4ec;
+  --student-ink: #272c29;
+  --student-muted: #727873;
+  --student-line: #e8e0d6;
 }
 
-.student-has-nav{
-  --nav-header-height:var(--student-header);
+.student-has-nav {
+  --nav-header-height: var(--student-header);
+  min-width: 0 !important;
 }
 
-.student-topbar{
-  position:fixed;
-  inset:0 0 auto 0;
-  height:var(--student-header);
-  z-index:1000;
-  background:rgba(255,255,255,.97);
-  border-bottom:1px solid var(--student-line);
-  display:grid;
-  grid-template-columns:auto 1fr auto;
-  align-items:center;
+.student-topbar {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 1000;
+  box-sizing: border-box;
+  height: var(--student-header);
+  padding: 0 20px 0 18px;
+  background: rgba(255, 255, 255, .97);
+  border-bottom: 1px solid var(--student-line);
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(16px, 2.1vw, 34px);
+  color: var(--student-ink);
+  box-shadow: 0 4px 18px rgba(53, 47, 36, .035);
 }
 
-.student-topbar .sn-brand{
-  display:flex;
-  align-items:center;
-  gap:7px;
-  padding-left:18px;
-  text-decoration:none;
-  color:inherit;
-}
-.student-topbar .sn-brand img{width:42px;height:50px;object-fit:contain}
-.student-topbar .sn-brand strong{font-family:"STKaiti","KaiTi",serif;color:#c82722;font-size:20px;letter-spacing:2px}
-.student-topbar .sn-brand small{display:block;margin-top:3px;color:#666c67;font-size:9px}
-
-.student-topbar .sn-menu-toggle{
-  display:none;
-  position:absolute;
-  left:12px;
-  top:50%;
-  transform:translateY(-50%);
-  width:38px;
-  height:38px;
-  border:0;
-  background:transparent;
-  font-size:20px;
-  color:#4d544f;
-  cursor:pointer;
-  z-index:2;
+.student-topbar .sn-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: max-content;
+  color: inherit;
+  text-decoration: none;
 }
 
-.student-topbar .sn-topnav{
-  height:100%;
-  display:flex;
-  align-items:stretch;
-  justify-content:center;
-  gap:8px;
-}
-.student-topbar .sn-topnav a{
-  min-width:64px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:6px;
-  white-space:nowrap;
-  text-decoration:none;
-  color:#5f6661;
-  font-size:14px;
-  position:relative;
-}
-.student-topbar .sn-topnav a svg{width:20px;height:20px}
-.student-topbar .sn-topnav a.active{color:var(--student-red);font-weight:750}
-.student-topbar .sn-topnav a.active:after{
-  content:"";
-  position:absolute;
-  left:14px;
-  right:14px;
-  bottom:0;
-  height:3px;
-  background:var(--student-red);
-  border-radius:2px;
+.student-topbar .sn-brand img {
+  display: block;
+  width: 42px;
+  height: 50px;
+  object-fit: contain;
 }
 
-.student-topbar .sn-account{
-  height:100%;
-  display:flex;
-  align-items:center;
-  justify-content:flex-end;
-  gap:14px;
-  padding-right:22px;
+.student-topbar .sn-brand strong {
+  color: #c82722;
+  font-family: "STKaiti", "KaiTi", serif;
+  font-size: 20px;
+  letter-spacing: 2px;
 }
-.student-topbar .sn-account .sn-offline{display:flex;align-items:center;gap:6px;color:#505752;cursor:pointer;font-size:13px}
-.student-topbar .sn-account .sn-state{display:flex;align-items:center;gap:5px;color:#52645a;font-size:13px}
-.student-topbar .sn-account .sn-state i{width:7px;height:7px;border-radius:50%;background:#3b855a}
-.student-topbar .sn-account .sn-user{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  padding-left:8px;
-  border-left:1px solid #e6dfd6;
+
+.student-topbar .sn-brand small {
+  display: block;
+  margin-top: 3px;
+  color: #666c67;
+  font-size: 9px;
+  letter-spacing: .04em;
 }
-.student-topbar .sn-account .sn-user img{width:40px;height:40px;border-radius:50%;object-fit:cover}
-.student-topbar .sn-account .sn-user small{display:block;color:#777;font-size:11px}
 
-/* 强制 fit.js 设计页左上角对齐，并允许横向滚动条 */
-body.student-has-nav{overflow-x:auto;overflow-y:auto}
-body.student-has-nav .viewport{overflow-x:auto !important;overflow-y:auto !important}
-body.student-has-nav .design{left:0 !important;top:0 !important;margin:0 !important}
+.student-topbar .sn-menu-toggle {
+  display: none;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: transparent;
+  color: #4d544f;
+  cursor: pointer;
+  place-items: center;
+  -webkit-tap-highlight-color: transparent;
+}
 
-/* 当统一导航栏加载后，隐藏原有的独立导航栏 */
+.student-topbar .sn-menu-glyph {
+  width: 23px;
+  height: 23px;
+  overflow: visible;
+}
+
+.student-topbar .sn-menu-line {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  transform-origin: 12px 12px;
+  transition: transform 180ms cubic-bezier(.2, .7, .2, 1), opacity 140ms ease;
+}
+
+.student-topbar.menu-open .sn-menu-line-top {
+  transform: translateY(4.5px) rotate(45deg);
+}
+
+.student-topbar.menu-open .sn-menu-line-mid {
+  opacity: 0;
+  transform: scaleX(.45);
+}
+
+.student-topbar.menu-open .sn-menu-line-bottom {
+  transform: translateY(-4.5px) rotate(-45deg);
+}
+
+.student-topbar .sn-menu-panel {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: clamp(12px, 1.8vw, 28px);
+  min-width: 0;
+  height: 100%;
+}
+
+.student-topbar .sn-topnav {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: clamp(1px, .35vw, 7px);
+  min-width: 0;
+  height: 100%;
+}
+
+.student-topbar .sn-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: 78px;
+  padding: 0 8px;
+  color: #5f6661;
+  font-size: 13px;
+  line-height: 1.2;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 150ms ease, background-color 150ms ease;
+}
+
+.student-topbar .sn-icon {
+  display: block;
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+}
+
+.student-topbar .sn-link::after {
+  position: absolute;
+  right: 14px;
+  bottom: 0;
+  left: 14px;
+  height: 2px;
+  border-radius: 2px 2px 0 0;
+  background: var(--student-red);
+  content: "";
+  transform: scaleX(.35);
+  transform-origin: center;
+  opacity: 0;
+  transition: transform 180ms cubic-bezier(.2, .7, .2, 1), opacity 150ms ease;
+}
+
+.student-topbar .sn-link:hover {
+  color: var(--student-red);
+  background: rgba(201, 21, 24, .035);
+}
+
+.student-topbar .sn-link.is-current {
+  color: var(--student-red);
+  font-weight: 700;
+}
+
+.student-topbar .sn-link.is-current::after {
+  transform: scaleX(1);
+  opacity: 1;
+}
+
+.student-topbar .sn-account {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 18px;
+  min-width: max-content;
+  padding-left: 15px;
+  border-left: 1px solid #e6dfd6;
+}
+
+.student-topbar .sn-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #52645a;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.student-topbar .sn-state i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #3b855a;
+  box-shadow: 0 0 0 3px rgba(59, 133, 90, .1);
+}
+
+.student-topbar .sn-state.is-offline {
+  color: #8a5b32;
+}
+
+.student-topbar .sn-state.is-offline i {
+  background: #c98719;
+  box-shadow: 0 0 0 3px rgba(201, 135, 25, .12);
+}
+
+.student-topbar .sn-user {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  max-width: 210px;
+  padding-left: 1px;
+}
+
+.student-topbar .sn-avatar {
+  display: grid;
+  flex: 0 0 auto;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid #e1d8ca;
+  border-radius: 50%;
+  background: #f8f4ec;
+  color: #657266;
+  font-family: "Noto Serif SC", "Songti SC", serif;
+  font-size: 17px;
+}
+
+.student-topbar .sn-avatar .sn-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.student-topbar .sn-user.is-confirmed .sn-avatar {
+  border-color: #c9d8cb;
+  background: #eef4ed;
+  color: var(--student-green);
+}
+
+.student-topbar .sn-user-copy {
+  display: block;
+  min-width: 0;
+}
+
+.student-topbar .sn-user strong {
+  display: block;
+  overflow: hidden;
+  color: #303832;
+  font-size: 13px;
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.student-topbar .sn-user small {
+  display: block;
+  overflow: hidden;
+  margin-top: 3px;
+  color: #777e78;
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.student-topbar :focus-visible {
+  outline: 3px solid rgba(47, 122, 80, .62);
+  outline-offset: 3px;
+}
+
+.student-topbar .sn-menu-toggle:focus-visible {
+  outline-offset: 2px;
+}
+
+/* The shared bar replaces legacy headers; unverified offline controls stay unavailable. */
 body.student-has-nav header.topbar,
 body.student-has-nav .topbar,
 body.student-has-nav nav.topnav,
@@ -120,31 +288,226 @@ body.student-has-nav .page-shell > .topbar {
   display: none !important;
 }
 
-/* 最小宽度保证内容不被挤坏 */
-.student-has-nav{min-width:900px}
-
-@media(max-width:1100px){
-  :root{--student-header:90px}
-  .student-topbar .sn-topnav{gap:4px;overflow-x:auto}
-  .student-topbar .sn-topnav a{min-width:58px;font-size:13px}
+body.student-has-nav {
+  overflow-x: clip;
+  overflow-y: auto;
 }
 
-@media(max-width:900px){
-  :root{--student-header:78px}
-  .student-topbar{height:78px;grid-template-columns:1fr;justify-items:center}
-  .student-topbar .sn-menu-toggle{display:block}
-  .student-topbar .sn-brand{padding-left:58px;justify-self:start}
-  .student-topbar .sn-brand img{width:36px;height:44px}
-  .student-topbar .sn-brand strong{font-size:17px}
-  .student-topbar .sn-brand small{display:none}
-  .student-topbar .sn-topnav a{min-width:55px;font-size:12px}
-  .student-topbar .sn-topnav a svg{width:17px;height:17px}
-  .student-topbar .sn-account{display:none}
-  .student-has-nav{min-width:0}
+body.student-has-nav .viewport {
+  overflow-x: clip !important;
+  overflow-y: auto !important;
 }
 
-@media(max-width:600px){
-  .student-topbar .sn-topnav a:nth-child(n+4){display:none}
-  .student-topbar .sn-topnav a{min-width:50px;font-size:11px;gap:4px}
-  .student-topbar .sn-brand strong{letter-spacing:1px}
+body.student-has-nav .design {
+  left: 0 !important;
+  top: 0 !important;
+  margin: 0 !important;
+}
+
+body.student-has-nav [data-offline],
+body.student-has-nav .sn-offline {
+  display: none !important;
+}
+
+@media (max-width: 1080px) {
+  :root {
+    --student-header: 74px;
+  }
+
+  .student-topbar {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 0 14px 0 10px;
+  }
+
+  .student-topbar .sn-brand {
+    padding-left: 2px;
+  }
+
+  .student-topbar .sn-brand img {
+    width: 36px;
+    height: 44px;
+  }
+
+  .student-topbar .sn-brand strong {
+    font-size: 17px;
+    letter-spacing: 1px;
+  }
+
+  .student-topbar .sn-brand small {
+    display: none;
+  }
+
+  .student-topbar .sn-menu-toggle {
+    display: grid;
+    flex: 0 0 auto;
+    order: 2;
+  }
+
+  .student-topbar .sn-menu-panel {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: 0;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    width: 100%;
+    height: auto;
+    max-height: calc(100vh - var(--student-header));
+    max-height: calc(100dvh - var(--student-header));
+    overflow-y: auto;
+    border-bottom: 1px solid var(--student-line);
+    background: #fff;
+    box-shadow: 0 16px 30px rgba(49, 42, 32, .13);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-7px);
+    transform-origin: top center;
+    transition: opacity 160ms ease, transform 180ms cubic-bezier(.2, .7, .2, 1), visibility 180ms;
+    visibility: hidden;
+  }
+
+  .student-topbar.menu-open .sn-menu-panel {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+    visibility: visible;
+  }
+
+  .student-topbar .sn-menu-panel[hidden] {
+    display: none !important;
+  }
+
+  .student-topbar .sn-topnav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 5px;
+    height: auto;
+    padding: 12px 14px 13px;
+  }
+
+  .student-topbar .sn-link {
+    justify-content: flex-start;
+    gap: 10px;
+    min-width: 0;
+    min-height: 51px;
+    padding: 0 13px;
+    border: 1px solid #eee7dd;
+    border-radius: 8px;
+    color: #4d5650;
+    font-size: 14px;
+  }
+
+  .student-topbar .sn-link::after {
+    top: 10px;
+    right: auto;
+    bottom: 10px;
+    left: 0;
+    width: 2px;
+    height: auto;
+    border-radius: 0 2px 2px 0;
+    transform: scaleY(.35);
+    transform-origin: center;
+  }
+
+  .student-topbar .sn-link.is-current {
+    border-color: #e7d5ca;
+    background: #fbf6f0;
+  }
+
+  .student-topbar .sn-link.is-current::after {
+    transform: scaleY(1);
+  }
+
+  .student-topbar .sn-icon {
+    width: 21px;
+    height: 21px;
+  }
+
+  .student-topbar .sn-account {
+    justify-content: space-between;
+    gap: 12px;
+    min-width: 0;
+    padding: 12px 18px 14px;
+    border-top: 1px solid #eee7dd;
+    border-left: 0;
+  }
+
+  .student-topbar .sn-user {
+    max-width: min(68vw, 300px);
+  }
+
+  .student-topbar .sn-avatar {
+    width: 35px;
+    height: 35px;
+  }
+}
+
+@media (min-width: 601px) and (max-width: 1080px) {
+  .student-topbar .sn-topnav {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    padding-right: clamp(22px, 8vw, 74px);
+    padding-left: clamp(22px, 8vw, 74px);
+  }
+}
+
+@media (max-width: 480px) {
+  .student-topbar {
+    padding-right: 10px;
+  }
+
+  .student-topbar .sn-brand {
+    gap: 6px;
+  }
+
+  .student-topbar .sn-brand img {
+    width: 33px;
+    height: 41px;
+  }
+
+  .student-topbar .sn-brand strong {
+    font-size: 16px;
+    letter-spacing: .5px;
+  }
+
+  .student-topbar .sn-menu-toggle {
+    width: 40px;
+    height: 40px;
+  }
+
+  .student-topbar .sn-topnav {
+    gap: 6px;
+    padding: 10px 12px 12px;
+  }
+
+  .student-topbar .sn-link {
+    gap: 8px;
+    min-height: 50px;
+    padding: 0 10px;
+    font-size: 13px;
+  }
+
+  .student-topbar .sn-account {
+    align-items: center;
+    padding: 11px 14px 13px;
+  }
+
+  .student-topbar .sn-state {
+    font-size: 11px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .student-topbar *,
+  .student-topbar *::before,
+  .student-topbar *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
 }
