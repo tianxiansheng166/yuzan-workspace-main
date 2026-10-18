@@ -1,0 +1,92 @@
+[
+  {
+    "action": "dashboard-refresh-with-queue-network-interruption",
+    "urlBefore": "http://127.0.0.1:4320/teacher/",
+    "href": null
+  },
+  {
+    "action": "retry-assessment-review-queue",
+    "urlBefore": "http://127.0.0.1:4320/teacher/",
+    "href": null
+  },
+  {
+    "action": "dashboard-refresh-with-queue-503",
+    "urlBefore": "http://127.0.0.1:4320/teacher/",
+    "href": null
+  },
+  {
+    "action": "retry-after-503",
+    "urlBefore": "http://127.0.0.1:4320/teacher/",
+    "href": null
+  },
+  {
+    "action": "dashboard-refresh-with-class-network-interruption",
+    "urlBefore": "http://127.0.0.1:4320/teacher/",
+    "href": null
+  },
+  {
+    "action": "retry-class-list",
+    "urlBefore": "http://127.0.0.1:4320/teacher/",
+    "href": null
+  },
+  {
+    "action": "retry-student-summary",
+    "urlBefore": "http://127.0.0.1:4320/teacher/",
+    "href": null
+  },
+  {
+    "action": "open-server-priority-task-action",
+    "urlBefore": "http://127.0.0.1:4320/teacher/",
+    "href": "/teacher/assignments/?assignmentId=045ec90e-9dca-4d85-bbf8-c6c65ed3b65d"
+  },
+  {
+    "action": "open-real-assignment",
+    "urlBefore": "http://127.0.0.1:4320/teacher/",
+    "href": "/teacher/assignments/?assignmentId=36da8830-f758-42b2-9364-9d5cd960cc7e"
+  },
+  {
+    "action": "open-real-teaching-submission",
+    "urlBefore": "http://127.0.0.1:4320/teacher/",
+    "href": "/teacher/submissions/1d890eb2-fece-446d-8a79-238f7293f45d"
+  },
+  {
+    "action": "open-authorized-class",
+    "urlBefore": "http://127.0.0.1:4320/teacher/",
+    "href": "/teacher/classes/d1730e62-d278-4c38-8a59-ebfbc5289c27?schoolId=11111111-1111-4111-8111-111111111111"
+  },
+  {
+    "action": "open-authorized-student-detail",
+    "urlBefore": "http://127.0.0.1:4320/teacher/",
+    "href": "/teacher/students/c7bfad9e-bc99-464d-bfbb-95b9271fe635?schoolId=11111111-1111-4111-8111-111111111111&classId=d1730e62-d278-4c38-8a59-ebfbc5289c27"
+  },
+  {
+    "action": "student-open-practice",
+    "urlBefore": "http://127.0.0.1:4320/student/practices/",
+    "href": "/student/practices/6ab62737-49c4-4adb-84ba-11066a07fad6/"
+  },
+  {
+    "action": "student-start-real-practice",
+    "urlBefore": "http://127.0.0.1:4320/student/practices/6ab62737-49c4-4adb-84ba-11066a07fad6/",
+    "href": null
+  },
+  {
+    "action": "refresh-after-student-practice",
+    "urlBefore": "http://127.0.0.1:4320/teacher/",
+    "href": null
+  },
+  {
+    "action": "open-dynamic-review-item",
+    "urlBefore": "http://127.0.0.1:4320/teacher/",
+    "href": "/teacher/reviews/bdd02da7-971e-4a5e-902c-c40ec3dc272f"
+  },
+  {
+    "action": "submit-one-real-assessment-review",
+    "urlBefore": "http://127.0.0.1:4320/teacher/reviews/bdd02da7-971e-4a5e-902c-c40ec3dc272f",
+    "href": null
+  },
+  {
+    "action": "refresh-dashboard-after-server-review-save",
+    "urlBefore": "http://127.0.0.1:4320/teacher/",
+    "href": null
+  }
+]

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#f7f0e4">
   <title>教师工作台｜语赞心声</title>
-  <link rel="stylesheet" href="/teacher-home/styles.css?v=2026101801">
+  <link rel="stylesheet" href="/teacher-home/styles.css?v=2026101802">
   <link rel="stylesheet" href="/shared/teacher-shell.css?v=2026101801">
 </head>
 <body>
@@ -13,6 +13,7 @@
     <symbol id="i-course" viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v16H6.5A2.5 2.5 0 0 0 4 21.5z"/><path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v16h4.5a2.5 2.5 0 0 1 2.5 2.5z"/></symbol>
     <symbol id="i-task" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 3.5h6M8 9h8M8 13h5M8 17h7"/></symbol>
     <symbol id="i-review" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="15" rx="2"/><path d="M7 5V3m10 2V3M7 10h4m-4 4h8"/></symbol>
+    <symbol id="i-submission" viewBox="0 0 24 24"><path d="M5 3.5h10l4 4v13H5z"/><path d="M14 3.5v5h5M8 12h8M8 16h5"/><circle cx="18" cy="18" r="3.5"/><path d="m16.6 18 1 1 1.9-2"/></symbol>
     <symbol id="i-people" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20a6 6 0 0 1 12 0M14 20a5 5 0 0 1 7 0"/></symbol>
     <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h13m-5-5 5 5-5 5"/></symbol>
     <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 6l2 2M4 16l2 2a7 7 0 0 0 12.5-3"/></symbol>
@@ -34,34 +35,41 @@
             <p id="dashboardWelcome">课程、任务、班级和复核数据将从当前教师账号加载。</p>
             <div class="hero-meta"><span><i></i><b id="schoolName">当前学校</b></span><span id="todayDate">日期加载中</span></div>
           </div>
-          <a class="action-creator" href="/teacher/assignments"><span class="action-line"></span><svg><use href="#i-task"/></svg><span>进入任务管理</span><svg class="arrow"><use href="#i-arrow"/></svg></a>
+          <a class="action-creator" id="primaryTaskAction" href="/teacher/assignments/"><span class="action-line" aria-hidden="true"></span><svg aria-hidden="true"><use href="#i-task"/></svg><span data-primary-action-label>打开任务管理</span><svg class="arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
         </section>
 
         <section id="dashboardState" class="dashboard-state" aria-live="polite">正在加载工作台数据…</section>
 
         <section id="workflowSection" class="workflow-summary" hidden>
-          <div class="dashboard-section-heading"><div><p class="eyebrow">工作概况</p><h2>本人授权范围</h2></div><a href="/teacher/classes">查看班级 <svg><use href="#i-arrow"/></svg></a></div>
+          <div class="dashboard-section-heading"><div><p class="eyebrow">行动优先级</p><h2>教学行动中心</h2></div><p class="section-hint">教学任务提交与题库人工评分分别统计</p></div>
           <div id="workflowCards" class="workflow-cards"></div>
         </section>
 
         <section id="primaryGrid" class="dashboard-grid" hidden>
           <article class="dashboard-panel">
-            <div class="dashboard-section-heading"><div><p class="eyebrow">ASSIGNMENTS</p><h2>进行中任务</h2></div><a href="/teacher/assignments">任务管理 <svg><use href="#i-arrow"/></svg></a></div>
+            <div class="dashboard-section-heading"><div><p class="eyebrow">ASSIGNMENTS</p><h2>进行中教学任务</h2></div><div class="panel-heading-action"><span id="dashboardDataStatus" class="data-status" role="status" aria-live="polite">尚未读取</span><a href="/teacher/assignments/">任务管理 <svg aria-hidden="true"><use href="#i-arrow"/></svg></a></div></div>
             <div id="taskList" class="dashboard-list"></div>
           </article>
           <article class="dashboard-panel">
-            <div class="dashboard-section-heading"><div><p class="eyebrow">REVIEW</p><h2>待复核提交</h2></div><a href="/teacher/reviews/">复核队列 <svg><use href="#i-arrow"/></svg></a></div>
+            <div class="dashboard-section-heading"><div><p class="eyebrow">ASSIGNMENT SUBMISSIONS</p><h2>教学任务提交待查看</h2></div><div class="panel-heading-action"><span id="submissionReviewCount" class="panel-count" aria-label="教学任务提交待查看数量尚未读取">—</span><a href="/teacher/assignments/">任务管理 <svg aria-hidden="true"><use href="#i-arrow"/></svg></a></div></div>
+            <p class="panel-caption">Dashboard 中的 Submission ID；点击后进入提交详情。</p>
             <div id="reviewList" class="dashboard-list"></div>
+          </article>
+          <article id="assessmentReviewPanel" class="dashboard-panel assessment-review-panel">
+            <div class="dashboard-section-heading"><div><p class="eyebrow">QUESTION BANK · HUMAN REVIEW</p><h2>题库人工评分待复核</h2></div><div class="panel-heading-action"><span id="assessmentReviewCount" class="panel-count item-count" aria-label="题库人工评分待复核数量尚未读取">—</span><a href="/teacher/reviews/">复核队列 <svg aria-hidden="true"><use href="#i-arrow"/></svg></a></div></div>
+            <span id="assessmentReviewStatus" class="data-status" role="status" aria-live="polite">尚未读取</span>
+            <p class="panel-caption">Assessment Review Queue 的 itemId；点击后查看录音证据与人工评分。</p>
+            <div id="assessmentReviewList" class="dashboard-list assessment-review-list" aria-live="polite"></div>
           </article>
         </section>
 
         <section id="learningGrid" class="dashboard-grid learning-grid" hidden>
           <article class="dashboard-panel">
-            <div class="dashboard-section-heading"><div><p class="eyebrow">CLASSES</p><h2>本人授权班级</h2></div><a href="/teacher/classes">班级管理 <svg><use href="#i-arrow"/></svg></a></div>
+            <div class="dashboard-section-heading"><div><p class="eyebrow">CLASSES</p><h2>本人授权班级</h2></div><div class="panel-heading-action"><span id="classDataStatus" class="data-status" role="status" aria-live="polite">尚未读取</span><a href="/teacher/classes/">班级管理 <svg aria-hidden="true"><use href="#i-arrow"/></svg></a></div></div>
             <div id="classList" class="class-list"></div>
           </article>
           <article class="dashboard-panel">
-            <div class="dashboard-section-heading student-heading"><div><p class="eyebrow">LEARNING</p><h2>学生学习情况</h2></div><label class="class-filter">班级<select id="studentClassSelect" aria-label="选择查看学情的班级"></select></label></div>
+            <div class="dashboard-section-heading student-heading"><div><p class="eyebrow">LEARNING</p><h2>学生学习情况</h2><span id="studentDataStatus" class="data-status" role="status" aria-live="polite">尚未读取</span></div><label class="class-filter">班级<select id="studentClassSelect" aria-label="选择查看学情的班级"></select></label></div>
             <div id="studentState" class="dashboard-list" aria-live="polite">选择班级后加载学生记录。</div>
           </article>
         </section>
@@ -70,7 +78,7 @@
   </div>
 
   <script src="/assets/api-client.js?v=2026101801"></script>
-  <script type="module" src="/teacher-home/app.mjs?v=2026101801"></script>
+  <script type="module" src="/teacher-home/app.mjs?v=2026101802"></script>
   <script src="/shared/teacher-shell.js?v=2026101801" defer></script>
 </body>
 </html>
