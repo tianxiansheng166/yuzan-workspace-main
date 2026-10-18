@@ -184,6 +184,8 @@
       }
     }
     if (!row) return;
+    row.dataset.forceVisible = 'true';
+    applyLocalVisibility();
     row.scrollIntoView({ block: 'center', behavior: 'smooth' });
     row.click();
   }
@@ -418,9 +420,11 @@
   function applyLocalVisibility() {
     table.querySelectorAll('.row[data-id]').forEach((row) => {
       let visible = true;
-      if (attentionFilter === 'open' && row.dataset.status !== 'OPEN') visible = false;
-      if (attentionFilter === 'missing' && (assignmentStats.get(row.dataset.id)?.notSubmittedCount ?? 0) <= 0) visible = false;
-      if (attentionFilter === 'review' && (assignmentStats.get(row.dataset.id)?.needsReviewCount ?? 0) <= 0) visible = false;
+      if (row.dataset.forceVisible !== 'true') {
+        if (attentionFilter === 'open' && row.dataset.status !== 'OPEN') visible = false;
+        if (attentionFilter === 'missing' && (assignmentStats.get(row.dataset.id)?.notSubmittedCount ?? 0) <= 0) visible = false;
+        if (attentionFilter === 'review' && (assignmentStats.get(row.dataset.id)?.needsReviewCount ?? 0) <= 0) visible = false;
+      }
       row.hidden = !visible;
       if (!visible && row.nextElementSibling?.classList.contains('dynamic-detail')) row.nextElementSibling.hidden = true;
       if (visible && row.nextElementSibling?.classList.contains('dynamic-detail')) row.nextElementSibling.hidden = false;
@@ -510,25 +514,40 @@
     saveBtn.disabled = true;
     saveBtn.textContent = '保存中…';
 
+    let created;
     try {
-      await YuzanApi.request(`/schools/${schoolId}/assignments`, {
-        method: 'POST',
-        body: JSON.stringify({
-          title,
-          courseVersionId,
-          startsAt: new Date(form.startsAt.value).toISOString(),
-          dueAt: new Date(deadline).toISOString(),
-          offlineRequired: false,
-          targets: [{ targetType: 'CLASS', classId }],
-        }),
+      created = await YuzanApi.createAssignment({
+        title,
+        courseVersionId,
+        startsAt: new Date(form.startsAt.value).toISOString(),
+        dueAt: new Date(deadline).toISOString(),
+        offlineRequired: false,
+        targets: [{ targetType: 'CLASS', classId }],
       });
-      modal.close();
-      YuzanDemo.toast('已保存草稿', 'success');
-      pageCursors = [null];
-      pageIndex = 0;
-      await loadAssignments();
+      if (!created?.id) {
+        throw new Error('服务端未返回新任务 ID，无法确认任务位置。请先刷新核对，再决定是否重试。');
+      }
     } catch (err) {
-      dialogError.textContent = err.message || '创建任务失败';
+      dialogError.textContent = err?.status
+        ? (err.message || '创建任务失败')
+        : `保存请求未收到服务端确认。请先刷新并按任务标题核对，确认不存在后再重试。${err?.message ? `（${err.message}）` : ''}`;
+      saveBtn.disabled = false;
+      saveBtn.textContent = '保存草稿';
+      return;
+    }
+
+    modal.close();
+    const destination = new URL(location.href);
+    destination.searchParams.set('assignmentId', created.id);
+    history.replaceState(null, '', `${destination.pathname}${destination.search}${destination.hash}`);
+    pageCursors = [null];
+    pageIndex = 0;
+    try {
+      await loadAssignments({ deepLink: true });
+      YuzanDemo.toast('草稿已保存并已打开', 'success');
+    } catch (err) {
+      try { await revealRequestedAssignment(); } catch {}
+      YuzanDemo.toast(`草稿已在服务端保存，但任务列表暂时无法刷新：${err.message || '请刷新页面重试'}`, 'warning');
     } finally {
       saveBtn.disabled = false;
       saveBtn.textContent = '保存草稿';

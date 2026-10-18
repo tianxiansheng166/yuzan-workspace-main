@@ -176,6 +176,13 @@ describe("AssessmentService Question Bank human review", () => {
     const repeated = await service.finalizeQuestionBankIfComplete(SCHOOL_ID, SESSION_ID, TEACHER_ID);
     expect(repeated?.id).toBe("report-qb-007");
     expect(reportRepo.create).toHaveBeenCalledTimes(1);
+
+    const studentSafeReport = await service.getReport(auth(TEACHER_ID), SCHOOL_ID, SESSION_ID);
+    expect(studentSafeReport?.teacherFeedback).toEqual(expect.arrayContaining([
+      expect.objectContaining({ comment: "review-0", reviewedAt: expect.any(String) }),
+    ]));
+    expect(studentSafeReport).not.toHaveProperty("reviewerUserId");
+    expect(studentSafeReport).not.toHaveProperty("rubric");
   });
 
   it("bounds scores, rejects deterministic items, enforces class scope, and keeps idempotency/concurrency safe", async () => {

@@ -92,12 +92,27 @@ function runReview(detail) {
 }
 
 test('formal report takes precedence over a retained provisional ISE result', async () => {
-  const formal = { overallScore: 76, dataCompleteness: 100, generatedAt: '2026-09-07T10:10:00.000Z', summary: { scoringState: 'AUTO_RESULT', requiresTeacherReview: false }, diagnosis: null };
+  const formal = { overallScore: 76, dataCompleteness: 100, generatedAt: '2026-09-07T10:10:00.000Z', summary: { scoringState: 'AUTO_RESULT', requiresTeacherReview: false }, teacherFeedback: [{ comment: '停顿自然，请继续保持。', reviewedAt: '2026-09-07T10:11:00.000Z' }], diagnosis: null };
   const html = await runAssessment({ report: formal });
   assert.match(html, /总体得分/);
   assert.match(html, /教师已复核/);
+  assert.match(html, /停顿自然，请继续保持。/);
   assert.doesNotMatch(html, /这一次的声音，已经被认真保存/);
   assert.doesNotMatch(html, /进入针对性强化/);
+});
+
+test('student report escapes teacher feedback and does not expose review-only fields', async () => {
+  const html = await runAssessment({ report: {
+    overallScore: 76,
+    dataCompleteness: 100,
+    generatedAt: '2026-09-07T10:10:00.000Z',
+    summary: {},
+    teacherFeedback: [{ comment: '<script>private</script> 朗读节奏清楚。', reviewedAt: '2026-09-07T10:11:00.000Z' }],
+    diagnosis: null,
+  } });
+  assert.match(html, /&lt;script&gt;private&lt;\/script&gt; 朗读节奏清楚。/);
+  assert.doesNotMatch(html, /<script>private<\/script>/);
+  assert.doesNotMatch(html, /reviewerUserId|referenceAnswer|deductionRules/);
 });
 
 test('provisional ISE report keeps a non-remediation learning action', async () => {

@@ -3190,6 +3190,11 @@ export interface components {
         /** Format: date-time */
         generatedAt: string;
         summary?: Record<string, never> | null;
+        teacherFeedback?: {
+          comment: string;
+          /** Format: date-time */
+          reviewedAt: string;
+        }[];
         diagnosis?: components["schemas"]["QuestionBankDiagnosis"] | null;
       };
     };

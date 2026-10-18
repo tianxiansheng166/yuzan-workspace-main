@@ -88,9 +88,27 @@
     message.textContent = '正在保存…';
     try {
       const result = await YuzanApi.submitAssessmentReview(itemId, { score, ...(comment.trim() ? { comment: comment.trim() } : {}) });
+      const savedItem = result?.item || result?.data?.item || null;
+      const report = result?.report || result?.data?.report || null;
       message.className = 'review-message review-success';
-      message.textContent = result?.report || result?.data?.report ? '已保存，最后一道复核完成，Level 1 报告已生成。' : '已保存，返回队列继续复核。';
-      setTimeout(() => { location.href = '/teacher/reviews/'; }, 900);
+      if (!Number.isFinite(savedItem?.scoredScore)) {
+        message.className = 'review-message';
+        message.textContent = '服务端未返回已保存评分，当前状态未确认。请刷新页面核对后再操作。';
+        button.disabled = false;
+        return;
+      }
+      const savedScore = savedItem.scoredScore;
+      const savedComment = typeof savedItem?.reviewerComment === 'string' ? savedItem.reviewerComment : comment.trim();
+      message.textContent = `服务端已保存正式得分 ${savedScore} 分${savedComment ? `，评语：${savedComment}` : ''}。${report ? '所有必要题目已复核，正式报告已生成。' : '其他必要题目仍待复核。'}`;
+      root.querySelector('[data-review-score]')?.setAttribute('disabled', 'disabled');
+      root.querySelector('[data-review-comment]')?.setAttribute('disabled', 'disabled');
+      button.disabled = true;
+      button.textContent = '复核已保存';
+      const back = document.createElement('a');
+      back.className = 'review-back';
+      back.href = '/teacher/reviews/';
+      back.textContent = '返回复核队列';
+      message.append(document.createElement('br'), back);
     } catch (error) {
       button.disabled = false;
       message.textContent = error.message || '保存失败，请刷新后重试。';

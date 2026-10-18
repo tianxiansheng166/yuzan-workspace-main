@@ -5667,6 +5667,17 @@ components:
               format: date-time
             summary:
               type: [object, "null"]
+            teacherFeedback:
+              type: array
+              items:
+                type: object
+                required: [comment, reviewedAt]
+                properties:
+                  comment:
+                    type: string
+                  reviewedAt:
+                    type: string
+                    format: date-time
             diagnosis:
               oneOf:
                 - $ref: "#/components/schemas/QuestionBankDiagnosis"

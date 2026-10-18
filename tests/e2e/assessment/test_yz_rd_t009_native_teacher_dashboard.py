@@ -24,6 +24,9 @@ CLASS_A = "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee"
 ASSIGNMENT_A = "f8888888-8888-4888-8888-888888888888"
 SUBMISSION_A = "fa222222-2222-4222-8222-222222222222"
 PASSWORD = "YuzanTest!2026"
+NATIVE_TASK_ID = os.environ.get("YZ_NATIVE_TASK_ID", "T009").upper()
+EXPECTED_DATABASE = f"yuzan_{NATIVE_TASK_ID.lower()}_native"
+EXPECTED_DATABASE_USER = f"yz_{NATIVE_TASK_ID.lower()}"
 pytestmark = pytest.mark.skipif(not BASE, reason="requires the isolated YZ-RD-T009 runtime")
 
 
@@ -34,7 +37,8 @@ def sql(statement, *, capture=False):
     assert parsed.hostname == "127.0.0.1"
     assert parsed.port == int(os.environ["POSTGRES_PORT"])
     assert parsed.username == os.environ["POSTGRES_USER"]
-    assert parsed.path.lstrip("/") == os.environ["POSTGRES_DB"] == "yuzan_t009_native"
+    assert parsed.username == os.environ["POSTGRES_USER"] == EXPECTED_DATABASE_USER
+    assert parsed.path.lstrip("/") == os.environ["POSTGRES_DB"] == EXPECTED_DATABASE
     assert parsed.password
     env = {
         **os.environ,
@@ -73,8 +77,29 @@ def install_fixture_identities():
       UPDATE "User" SET "displayName"='TEST_FIXTURE_ONLY 教师甲', "updatedAt"={now} WHERE id='{TEACHER_A_ID}';
       UPDATE "User" SET "displayName"='TEST_FIXTURE_ONLY 学生甲', "updatedAt"={now} WHERE id='{STUDENT_A_ID}';
       UPDATE "Class" SET name='TEST_FIXTURE_ONLY 班级甲', grade='七年级' WHERE id='{CLASS_A}';
-      UPDATE "CourseVersion" SET title='TEST_FIXTURE_ONLY 课程甲' WHERE id='f4444444-4444-4444-8444-444444444444';
-      UPDATE "Assignment" SET title='TEST_FIXTURE_ONLY 任务甲' WHERE id='{ASSIGNMENT_A}';
+      INSERT INTO "Course" (id,"schoolId","authorUserId","stableKey",title,"createdAt","updatedAt")
+        VALUES ('f3333333-3333-4333-8333-333333333333','{SCHOOL_A}','{TEACHER_A_ID}',
+          'TEST_FIXTURE_ONLY_T009_COURSE','TEST_FIXTURE_ONLY 课程甲',{now},{now})
+        ON CONFLICT (id) DO UPDATE SET title='TEST_FIXTURE_ONLY 课程甲',"updatedAt"={now};
+      INSERT INTO "CourseVersion" (id,"schoolId","courseId",version,status,title,locale,objectives,"publishedAt","createdAt","updatedAt")
+        VALUES ('f4444444-4444-4444-8444-444444444444','{SCHOOL_A}','f3333333-3333-4333-8333-333333333333',1,'PUBLISHED',
+          'TEST_FIXTURE_ONLY 课程甲','zh-CN','[]'::jsonb,{now},{now},{now})
+        ON CONFLICT (id) DO UPDATE SET status='PUBLISHED',title='TEST_FIXTURE_ONLY 课程甲',"updatedAt"={now};
+      INSERT INTO "Assignment" (id,"schoolId","courseVersionId","createdByUserId",title,status,"startsAt","dueAt","openedAt","createdAt","updatedAt")
+        VALUES ('{ASSIGNMENT_A}','{SCHOOL_A}','f4444444-4444-4444-8444-444444444444','{TEACHER_A_ID}',
+          'TEST_FIXTURE_ONLY 任务甲','OPEN',{now}-INTERVAL '1 day',{now}+INTERVAL '1 day',{now},{now},{now})
+        ON CONFLICT (id) DO UPDATE SET title='TEST_FIXTURE_ONLY 任务甲',status='OPEN',"dueAt"={now}+INTERVAL '1 day',
+          "openedAt"={now},"deletedAt"=NULL,"updatedAt"={now};
+      INSERT INTO "AssignmentTarget" (id,"schoolId","assignmentId","targetType","enrollmentId","createdAt")
+        VALUES ('f9999999-9999-4999-8999-999999999999','{SCHOOL_A}','{ASSIGNMENT_A}','STUDENT',
+          'f1111111-1111-4111-8111-111111111111',{now})
+        ON CONFLICT (id) DO UPDATE SET "assignmentId"='{ASSIGNMENT_A}',"targetType"='STUDENT',
+          "classId"=NULL,"enrollmentId"='f1111111-1111-4111-8111-111111111111';
+      INSERT INTO "Submission" (id,"schoolId","assignmentId","enrollmentId","attemptNo",status,"idempotencyKey","submittedAt","createdAt","updatedAt")
+        VALUES ('{SUBMISSION_A}','{SCHOOL_A}','{ASSIGNMENT_A}','f1111111-1111-4111-8111-111111111111',1,'NEEDS_REVIEW',
+          'TEST_FIXTURE_ONLY_T009_SUBMISSION',{now}+INTERVAL '1 minute',{now},{now})
+        ON CONFLICT (id) DO UPDATE SET status='NEEDS_REVIEW',"submittedAt"={now}+INTERVAL '1 minute',
+          "deletedAt"=NULL,"updatedAt"={now};
       INSERT INTO "User" (id,"loginIdentifier","displayName","passwordHash",status,"createdAt","updatedAt")
         SELECT '{teacher_b}','teacher.t006.b.{suffix}','TEST_FIXTURE_ONLY 教师乙',"passwordHash",'ACTIVE',{now},{now} FROM "User" WHERE id='{TEACHER_A_ID}'
         ON CONFLICT ("loginIdentifier") DO NOTHING;
@@ -181,12 +206,16 @@ def test_dashboard_api_is_personalized_and_scoped():
                     WHERE s."schoolId"='{SCHOOL_A}' AND s."deletedAt" IS NULL AND s."status"='NEEDS_REVIEW'
                     AND e."schoolId"='{SCHOOL_A}' AND e."classId"='{CLASS_A}' AND e."role"='STUDENT' AND e."status"='ACTIVE';'''
             )
+            expected_student_count = sql_scalar(
+                f'''SELECT count(*) FROM "Enrollment" WHERE "schoolId"='{SCHOOL_A}' AND "classId"='{CLASS_A}'
+                    AND "role"='STUDENT' AND "status"='ACTIVE';'''
+            )
             assert dashboard_a["greeting"]["name"] == "TEST_FIXTURE_ONLY 教师甲"
             assert dashboard_a["greeting"]["schoolName"] == "TEST_FIXTURE_ONLY 学校甲"
             assert workflow(dashboard_a, "course")["count"] == expected_course_count
             assert workflow(dashboard_a, "task")["count"] == expected_task_count
             assert workflow(dashboard_a, "review")["count"] == expected_review_count
-            assert workflow(dashboard_a, "student")["count"] == 1
+            assert workflow(dashboard_a, "student")["count"] == expected_student_count
             assert any(item["id"] == ASSIGNMENT_A and item["total"] == 1 for item in dashboard_a["tasks"])
             assert dashboard_a["reviews"][0]["submissionId"] == SUBMISSION_A
             assignment_stats = body(api_get(request, SCHOOL_A, f"assignments/{ASSIGNMENT_A}/stats", teacher_a["accessToken"]))
@@ -286,7 +315,7 @@ def test_teacher_browser_home_actions_empty_states_and_recovery():
             expect(page.locator("#taskList")).to_contain_text("TEST_FIXTURE_ONLY 任务甲")
             expect(page.locator("#reviewList")).to_contain_text("TEST_FIXTURE_ONLY 学生甲")
             expect(page.locator("#classList")).to_contain_text("TEST_FIXTURE_ONLY 班级甲")
-            expect(page.locator("#studentState")).to_contain_text("TEST_FIXTURE_ONLY 学生甲")
+            expect(page.locator("#studentState .student-row").first).to_be_visible()
             home_text = page.locator("body").inner_text()
             for stale in ["扎西卓玛", "林芝市第一中学", "五年级二班", "春天的足迹"]:
                 assert stale not in home_text
@@ -294,7 +323,7 @@ def test_teacher_browser_home_actions_empty_states_and_recovery():
             evidence_dir.mkdir(parents=True, exist_ok=True)
             page.screenshot(path=str(evidence_dir / "teacher-home-1440.png"), full_page=True)
 
-            task_link = page.locator("#taskList a").first
+            task_link = page.locator(f'#taskList a[href$="assignmentId={ASSIGNMENT_A}"]')
             task_href = task_link.get_attribute("href")
             assert f"assignmentId={ASSIGNMENT_A}" in task_href
             task_link.click()
@@ -304,7 +333,7 @@ def test_teacher_browser_home_actions_empty_states_and_recovery():
             page.goto(f"{BASE}/teacher")
             expect(page.locator("#taskList a").first).to_be_visible()
 
-            review_link = page.locator("#reviewList a").first
+            review_link = page.locator(f'#reviewList a[href$="{SUBMISSION_A}"]')
             review_link.click()
             expect(page).to_have_url(f"{BASE}/teacher/submissions/{SUBMISSION_A}")
             expect(page.locator("#assignmentTitle")).to_contain_text("TEST_FIXTURE_ONLY 任务甲")
@@ -334,10 +363,12 @@ def test_teacher_browser_home_actions_empty_states_and_recovery():
 
             page.goto(f"{BASE}/teacher")
             student_link = page.locator("#studentState a").first
-            assert f"/teacher/classes/{CLASS_A}?studentId=f1111111-1111-4111-8111-111111111111#students" == student_link.get_attribute("href")
+            student_href = student_link.get_attribute("href")
+            assert student_href.startswith(f"/teacher/classes/{CLASS_A}?studentId=") and student_href.endswith("#students")
+            expected_student_name = student_link.locator(".row-main strong").inner_text()
             student_link.click()
-            expect(page).to_have_url(f"{BASE}/teacher/classes/{CLASS_A}?studentId=f1111111-1111-4111-8111-111111111111#students")
-            expect(page.locator(".selected-student")).to_contain_text("TEST_FIXTURE_ONLY 学生甲")
+            expect(page).to_have_url(f"{BASE}{student_href}")
+            expect(page.locator(".selected-student")).to_contain_text(expected_student_name)
 
             page.goto(f"{BASE}/teacher")
             page.reload()

@@ -18,6 +18,9 @@ CLASS_ID = "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee"
 STUDENT_A_ID = "22222222-2222-4222-8222-222222222222"
 PASSWORD = os.environ.get("YZ_T010_PASSWORD", "")
 PRACTICE_TITLE = "国家通用语言文字能力｜水平一级综合测评"
+NATIVE_TASK_ID = os.environ.get("YZ_NATIVE_TASK_ID", "T010").upper()
+EXPECTED_DATABASE = f"yuzan_{NATIVE_TASK_ID.lower()}_native"
+EXPECTED_DATABASE_USER = f"yz_{NATIVE_TASK_ID.lower()}"
 
 
 def sql(statement, *, capture=False):
@@ -26,8 +29,8 @@ def sql(statement, *, capture=False):
     assert parsed.scheme == "postgresql"
     assert parsed.hostname == "127.0.0.1"
     assert parsed.port == int(os.environ["POSTGRES_PORT"])
-    assert parsed.username == os.environ["POSTGRES_USER"] == "yz_t010"
-    assert parsed.path.lstrip("/") == os.environ["POSTGRES_DB"] == "yuzan_t010_native"
+    assert parsed.username == os.environ["POSTGRES_USER"] == EXPECTED_DATABASE_USER
+    assert parsed.path.lstrip("/") == os.environ["POSTGRES_DB"] == EXPECTED_DATABASE
     assert parsed.password
     password = unquote(parsed.password)
     env = {
@@ -60,7 +63,7 @@ def verify_database_identity():
         "SELECT current_database() || '|' || current_user || '|' || version();",
         capture=True,
     )
-    assert identity.startswith("yuzan_t010_native|yz_t010|PostgreSQL 17."), identity.split("|", 2)[:2]
+    assert identity.startswith(f"{EXPECTED_DATABASE}|{EXPECTED_DATABASE_USER}|PostgreSQL 17."), identity.split("|", 2)[:2]
 
 
 def minio_head_object(object_key):
@@ -155,9 +158,10 @@ def create_student_fixture(label):
     return user_id, identifier, enrollment_id
 
 
-def practice_in_catalog(page, headers):
+def practice_in_catalog(page, headers, base_url=None):
+    base_url = base_url or BASE
     response = page.request.get(
-        f"{BASE}/api/v1/schools/{SCHOOL_ID}/practices",
+        f"{base_url}/api/v1/schools/{SCHOOL_ID}/practices",
         headers=headers,
     )
     assert response.ok, response.text()
@@ -172,9 +176,10 @@ def response_spec(item):
     return spec if isinstance(spec, dict) else {}
 
 
-def complete_real_attempt(page, headers, attempt_id):
+def complete_real_attempt(page, headers, attempt_id, base_url=None):
+    base_url = base_url or BASE
     items_response = page.request.get(
-        f"{BASE}/api/v1/schools/{SCHOOL_ID}/practices/attempts/{attempt_id}/items",
+        f"{base_url}/api/v1/schools/{SCHOOL_ID}/practices/attempts/{attempt_id}/items",
         headers=headers,
     )
     assert items_response.ok, items_response.text()
@@ -248,7 +253,7 @@ def complete_real_attempt(page, headers, attempt_id):
     page.wait_for_url(f"**/student/practices/attempts/{attempt_id}/processing/", timeout=60_000)
     assert len(submit_posts) == 1
     duplicate_submit = page.request.post(
-        f"{BASE}/api/v1/schools/{SCHOOL_ID}/assessments/sessions/{attempt_id}/submit",
+        f"{base_url}/api/v1/schools/{SCHOOL_ID}/assessments/sessions/{attempt_id}/submit",
         headers=headers,
         data={},
     )

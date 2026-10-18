@@ -532,7 +532,19 @@ export class AssessmentService {
     if (!report) {
       return null;
     }
-    return toAssessmentReportResponse(report, { includeDiagnosis: session.status === "COMPLETED" });
+    const teacherFeedback = await this.prisma.assessmentItem.findMany({
+      where: { sessionId, reviewedAt: { not: null }, reviewerComment: { not: null } },
+      select: { reviewerComment: true, reviewedAt: true },
+      orderBy: { sortOrder: "asc" },
+    });
+    return {
+      ...toAssessmentReportResponse(report, { includeDiagnosis: session.status === "COMPLETED" }),
+      teacherFeedback: teacherFeedback.flatMap((item) => (
+        typeof item.reviewerComment === "string" && item.reviewedAt
+          ? [{ comment: item.reviewerComment, reviewedAt: item.reviewedAt.toISOString() }]
+          : []
+      )),
+    };
   }
 
   async generateReport(auth: AuthContext, schoolId: string, sessionId: string) {

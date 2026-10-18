@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 
 const apiClientSource = readFileSync(new URL("../../assets/api-client.js", import.meta.url), "utf8");
 
-async function createApiClient() {
+async function createApiClient(responseBody = { data: { items: [], nextCursor: null, hasMore: false } }) {
   const values = new Map([
     ["yuzan-active-school-id", "school-1"],
     ["yuzan-access-token", "test-token"],
@@ -22,12 +22,24 @@ async function createApiClient() {
     },
     fetch: async (url, options) => {
       calls.push({ url: String(url), options });
-      return { ok: true, status: 200, json: async () => ({ data: { items: [], nextCursor: null, hasMore: false } }) };
+      return { ok: true, status: 200, json: async () => responseBody };
     },
   };
   vm.runInNewContext(apiClientSource, context, { filename: fileURLToPath(new URL("../../assets/api-client.js", import.meta.url)) });
   return { api: context.window.YuzanApi, calls };
 }
+
+test("assignment creation returns the server-issued assignment ID", async () => {
+  const createdAssignment = { id: "assignment-created-42", status: "DRAFT", revision: 1 };
+  const { api, calls } = await createApiClient({ data: createdAssignment });
+  const result = await api.createAssignment({ title: "草稿", targets: [{ targetType: "CLASS", classId: "class-1" }] });
+
+  assert.equal(result.id, createdAssignment.id);
+  assert.equal(result.status, "DRAFT");
+  assert.equal(calls[0].options.method, "POST");
+  assert.equal(new URL(calls[0].url, "http://localhost").pathname, "/api/v1/schools/school-1/assignments");
+  assert.deepEqual(JSON.parse(calls[0].options.body), { title: "草稿", targets: [{ targetType: "CLASS", classId: "class-1" }] });
+});
 
 test("assignment list sends real server filters and cursor parameters", async () => {
   const { api, calls } = await createApiClient();

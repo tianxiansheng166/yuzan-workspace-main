@@ -18,6 +18,9 @@ CLASS_ID = "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee"
 COURSE_VERSION_ID = "f4444444-4444-4444-8444-444444444444"
 PASSWORD = os.environ.get("YZ_T010_PASSWORD", os.environ.get("YZ_T007_PASSWORD", ""))
 PAGE_SIZE = 20
+NATIVE_TASK_ID = os.environ.get("YZ_NATIVE_TASK_ID", "T010").upper()
+EXPECTED_DATABASE = f"yuzan_{NATIVE_TASK_ID.lower()}_native"
+EXPECTED_DATABASE_USER = f"yz_{NATIVE_TASK_ID.lower()}"
 pytestmark = pytest.mark.skipif(
     not BASE or not DATABASE_URL,
     reason="requires the isolated YZ-RD-T007 native API/PostgreSQL/Chromium fixture",
@@ -30,8 +33,8 @@ def sql(statement, *, capture=False):
     assert parsed.scheme == "postgresql"
     assert parsed.hostname == "127.0.0.1"
     assert parsed.port == int(os.environ["POSTGRES_PORT"])
-    assert parsed.username == os.environ["POSTGRES_USER"] == "yz_t010"
-    assert parsed.path.lstrip("/") == os.environ["POSTGRES_DB"] == "yuzan_t010_native"
+    assert parsed.username == os.environ["POSTGRES_USER"] == EXPECTED_DATABASE_USER
+    assert parsed.path.lstrip("/") == os.environ["POSTGRES_DB"] == EXPECTED_DATABASE
     assert parsed.password
     env = {
         **os.environ,
@@ -68,7 +71,7 @@ def q(value):
 
 def verify_database_identity():
     row = sql_scalar("SELECT current_database() || '|' || current_user || '|' || version();")
-    assert row.startswith("yuzan_t010_native|yz_t010|PostgreSQL 17."), row.split("|", 2)[:2]
+    assert row.startswith(f"{EXPECTED_DATABASE}|{EXPECTED_DATABASE_USER}|PostgreSQL 17."), row.split("|", 2)[:2]
 
 
 def install_fixture():
