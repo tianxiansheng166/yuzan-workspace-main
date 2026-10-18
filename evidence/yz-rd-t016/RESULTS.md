@@ -70,7 +70,7 @@ E2E 在 T016 PostgreSQL 中创建虚构学生甲、乙以及仅用于验证的�
 - `tests/e2e/assessment/run-yz-rd-t016-native.py`
 - 本目录中的 T016 RESULTS、截图和 E2E 输出
 
-T016 从指定 SHA 新建独立 worktree；未修改 `frontend/server.mjs`、`frontend/assets/api-client.js`、学生业务页面、API、contracts、Prisma、T014/T015/T005 文件或根目录 `.env`。主工作区仍保有 T005 双语改动和原课程素材。T014 HEAD 在检查前后均为 `0596a9b8256c1d674b93eb2afd4de7306c768129`，工作树干净。T015 HEAD 在 T016 开始时为 `96b0a44ab6d20e7d0f8fb27b21f3450848d21116`，最终检查时已独立前进到 `6de3e1be9e06a92e9436012ac6b6fafb59e08e45`；T016 只读检查其 Git/运行状态，没有写入或停止 T015 的进程。T015 最终工作树干净，原生状态为 stopped。没有运行 Docker，也没有停止其他任务的服务。
+T016 从指定 SHA 新建独立 worktree；未修改 `frontend/server.mjs`、`frontend/assets/api-client.js`、学生业务页面、API、contracts、Prisma、T014/T015/T005 文件或根目录 `.env`。主工作区仍保有 T005 双语改动和原课程素材。T014 HEAD 在检查前后均为 `0596a9b8256c1d674b93eb2afd4de7306c768129`，工作树干净。T015 HEAD 在 T016 开始时为 `96b0a44ab6d20e7d0f8fb27b21f3450848d21116`，并在 T016 执行期间由其自身工作推进至 `4475f418078e5800678a55b05d418d216962732e`；T016 只读检查其 Git/运行状态，没有写入或停止 T015 的进程。最终检查时 T015 工作树干净，原生状态为 stopped。没有运行 Docker，也没有停止其他任务的服务。
 
 ## 服务退出与剩余事项
 
