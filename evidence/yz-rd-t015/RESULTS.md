@@ -12,6 +12,7 @@
 - T013 `0bfd284dd8b31d95485c0be2b2993af15afef28e` was cherry-picked with `-x` as `96b0a44ab6d20e7d0f8fb27b21f3450848d21116`.
 - Git graph: `9b43400` (T010) → `4d971c9` (T011) → `f15d1aa` (T012, `-x`) → `96b0a44` (T013, `-x`) → T015 validation/evidence commit.
 - Both source cherry-picks completed without conflicts. T012 and T013 changes originally had no source-file overlap.
+- T015 validation/evidence commit `6de3e1b` was pushed to `origin/feat/yz-rd-t015-student-web-rollup`; remote creation succeeded. The final docs checkpoint is also pushed and its SHA is verified in the task handoff.
 - This branch has not been merged into the shared branch. `READY_TO_MERGE`; `MERGED` is false.
 
 ## Integrated student flow
@@ -66,4 +67,5 @@
 - T005’s dirty bilingual source changes and original `习题课程资源/` remain untouched. T010/T011/T012/T013 source worktrees remain clean at their original SHAs. T014 completed independently at `feat/yz-rd-t014-teacher-class-remediation@0596a9b8256c1d674b93eb2afd4de7306c768129`; its handoff records its own task-aware service stop. T015 did not modify its worktree or stop its processes.
 - No Docker/Compose/P1-SIM or old PowerShell control plane was used. The PostgreSQL default-volume incident remains `L4 OPEN`; its volume was not accessed or changed. T015’s isolated DB, bucket, recordings, logs, and screenshots are retained.
 - `NOT_RUN`: physical microphone/device and OS permission testing; calibrated/automatic speech scoring (provider disabled and worker deliberately stopped); school pilot; production launch. Browser recording evidence is `SIMULATED_MIC` only.
+- Final acceptance failures: `0`. API suite skipped tests: `64` as reported by the full package suite; the T008/T011/T012/T013 Chromium suites and required frontend, contract, and typecheck suites had no skips.
 - `API_REQUEST`: none. `COMBINED_BRANCH_FILE_CONFLICTS`: none. `NEXT_WEB_SLICE`: perform the next short-cycle integration against T014’s actual final commit; T015 itself is ready to merge and is not merged.
