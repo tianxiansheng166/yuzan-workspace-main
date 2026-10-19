@@ -1,0 +1,14 @@
+Scope: 6 of 7 workspace projects
+frontend build$ node scripts/verify-runtime.mjs
+infra/database build$ tsc -p tsconfig.json
+packages/domain build$ tsc -p tsconfig.json
+packages/contracts build$ tsc -p tsconfig.json
+frontend build: Frontend runtime verified at /home/tian/.devspace/worktrees/yuzan-workspace-main-7fe81740/frontend/
+frontend build: Done
+packages/domain build: Done
+packages/contracts build: Done
+infra/database build: Done
+backend/api build$ nest build
+backend/worker build$ tsc -p tsconfig.json
+backend/worker build: Done
+backend/api build: Done

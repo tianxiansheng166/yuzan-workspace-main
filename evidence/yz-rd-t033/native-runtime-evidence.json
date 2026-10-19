@@ -1,0 +1,48 @@
+{
+  "task": "YZ-RD-T033",
+  "runtime": "native; Docker/Compose not used",
+  "database": "yuzan_t033_native",
+  "databaseRole": "yz_t033",
+  "postgresVersion": "17.11",
+  "minioBucket": "yz-t033-native",
+  "node": "v24.20.0",
+  "pnpm": "10.13.1",
+  "chromium": "Google Chrome 153.0.8010.52",
+  "startExitCode": 0,
+  "e2eExitCode": 0,
+  "stopExitCode": 0,
+  "services": {
+    "postgres": {
+      "pidBeforeStop": 3089706,
+      "port": 55673,
+      "listenerPidsAfterStop": [],
+      "stopped": true
+    },
+    "api": {
+      "pidBeforeStop": 3094683,
+      "port": 4173,
+      "listenerPidsAfterStop": [],
+      "stopped": true
+    },
+    "web": {
+      "pidBeforeStop": 3094739,
+      "port": 4373,
+      "listenerPidsAfterStop": [],
+      "stopped": true
+    },
+    "redis": {
+      "pidBeforeStop": 3094636,
+      "port": 6473,
+      "listenerPidsAfterStop": [],
+      "stopped": true
+    },
+    "minio": {
+      "pidBeforeStop": 3094647,
+      "port": 59473,
+      "listenerPidsAfterStop": [],
+      "stopped": true
+    }
+  },
+  "evidenceGeneratedAt": "2026-10-19T10:31:47.589746+00:00",
+  "dataRetained": true
+}

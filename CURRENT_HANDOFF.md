@@ -3,6 +3,15 @@
 Last updated: 2026-10-19
 Repository: `yuzan-workspace-main`
 
+## YZ-RD-T033 checkpoint (2026-10-19)
+
+- ACCEPTANCE VERIFIED on feat/yz-rd-t033-multirole-web-rolling-integration. Starting accepted HEAD was 38d36c7255568a5bcc7af3200ce2b23b9de758bc. Three first-parent no-fast-forward merges preserve T029→T030→T031→T032; exact parents and merge bases are in [evidence/yz-rd-t033/RESULTS.md](evidence/yz-rd-t033/RESULTS.md).
+- One isolated native T033 Chromium/NestJS/PostgreSQL 17/MinIO runtime passed four cross-role E2Es with 0 failures and 0 skips: teacher invitation→student join→revoke→live roster; authorized roster CSV; Growth→formal report→15-item Remediation Runner; course activity→Runner submit 201→course completion 201→single course return.
+- API contract audit corrected two OpenAPI/generated-type mismatches against observed runtime: assessment-session submit returns 201, and class student summaries return an unpaginated array. Contracts 6/6, frontend 115/115, API 1109 passed/64 environment-gated skips, workspace typechecks/builds, and Prisma validation pass.
+- Full API lint still reports 1201 errors/1 warning, identical to the prior T029 baseline. No backend/api files changed after T029; the invitation controller/service targeted lint passes. READY_TO_MERGE remains NO until the API owner resolves or explicitly waives that baseline.
+- T033 services exited and all six T033 ports are free; database and MinIO objects are retained. No Docker/Compose, Worker, shared-branch merge, T005 worktree change, other task runtime, or L4 access. The target checkout has no V2.2 marker; the supplied task/safety instructions were followed.
+- The branch was committed and pushed without rewriting history; the final SHA is in the task return.
+
 ## YZ-RD-T026 checkpoint (2026-10-19)
 
 - DONE / WEB_ONLY / NATIVE_CHROMIUM_API_POSTGRESQL_MINIO_VERIFIED / READY_TO_MERGE on `feat/yz-rd-t026-onboarding-rolling-web`; not merged to shared `feat/question-bank-v1`.

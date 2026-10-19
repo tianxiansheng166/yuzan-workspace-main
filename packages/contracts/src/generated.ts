@@ -3037,10 +3037,7 @@ export interface components {
       /** @enum {string} */
       riskStatus: "OK" | "AT_RISK" | "INACTIVE";
     };
-    ClassStudentSummaryListResponse: {
-      data: components["schemas"]["ClassStudentSummary"][];
-      meta: components["schemas"]["EnvelopeMeta"];
-    };
+    ClassStudentSummaryListResponse: components["schemas"]["ClassStudentSummary"][];
     ClassAssignmentSummary: {
       /** Format: uuid */
       assignmentId: string;
@@ -7001,7 +6998,7 @@ export interface operations {
     requestBody?: never;
     responses: {
       /** @description 会话已提交 */
-      200: {
+      201: {
         headers: {
           [name: string]: unknown;
         };

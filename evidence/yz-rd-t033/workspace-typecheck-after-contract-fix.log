@@ -1,0 +1,13 @@
+Scope: 6 of 7 workspace projects
+frontend typecheck$ node --check server.mjs && node --check scripts/verify-runtime.mjs
+infra/database typecheck$ tsc -p tsconfig.json --noEmit
+packages/domain typecheck$ tsc -p tsconfig.json --noEmit
+packages/contracts typecheck$ tsc -p tsconfig.json --noEmit
+frontend typecheck: Done
+packages/contracts typecheck: Done
+packages/domain typecheck: Done
+infra/database typecheck: Done
+backend/api typecheck$ tsc -p tsconfig.json --noEmit
+backend/worker typecheck$ tsc -p tsconfig.json --noEmit
+backend/worker typecheck: Done
+backend/api typecheck: Done

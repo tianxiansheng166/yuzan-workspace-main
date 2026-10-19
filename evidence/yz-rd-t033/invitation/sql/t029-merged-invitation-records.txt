@@ -1,0 +1,20 @@
+SELECT invitation id, revokedAt, usedCount, matching revoke audit count, Student A active enrollment count, Student B active enrollment count
+f1a71a03-51d7-4a2a-9f17-34e8161cace5|2026-10-19 10:27:27.536|1|1|1|1
+
+Dynamic evidence summary (secret invitation values omitted):
+{
+  "database": "yuzan_t033_native",
+  "databaseUser": "yz_t033",
+  "schoolId": "ae79c172-545a-47b0-a0b5-459770b5a813",
+  "classId": "08a281fb-1562-401b-8489-8b0e529e0824",
+  "teacherCUserId": "80b931e2-00eb-48fa-bbb2-728b96515637",
+  "studentAUserId": "ed440b95-c16e-4337-b63e-12554398f082",
+  "studentBUserId": "61f45d24-8592-4ab0-b607-3d1087c44a6f",
+  "revokedInvitationId": "f1a71a03-51d7-4a2a-9f17-34e8161cace5",
+  "revokeAuditLogId": "461a1e96-c199-4411-9920-b179a299890f",
+  "revokeAuditCount": "1",
+  "studentAActiveEnrollmentCount": "1",
+  "studentBActiveEnrollmentCount": "1",
+  "teacherRosterRows": 3,
+  "studentAAfterRevokeToday": "REAL_EMPTY_STATE_NO_OPEN_ASSIGNMENT"
+}

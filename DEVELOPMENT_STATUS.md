@@ -1,5 +1,17 @@
 # Development status
 
+## YZ-RD-T033 — V5.14 multi-role platform integration (2026-10-19)
+
+ACCEPTANCE VERIFIED / MERGE BLOCKED BY THE UNCHANGED API LINT BASELINE. The independent branch feat/yz-rd-t033-multirole-web-rolling-integration preserves the accepted T029→T030→T031→T032 first-parent sequence with three no-fast-forward integrations. The merge graph and exact source commits are recorded in [evidence/yz-rd-t033/RESULTS.md](evidence/yz-rd-t033/RESULTS.md).
+
+One fresh task-owned Chromium/NestJS/PostgreSQL 17/Redis/MinIO runtime passed four cross-role E2Es, 0 failures and 0 skips. Evidence covers teacher-generated invitation→student join→teacher revoke→live roster; authorized live roster CSV; Student Growth→formal report→15-item Remediation Runner; and course activity→Runner submit 201→course completion 201→single CourseDetail return. Browser screenshots verify invitation, roster, Growth and course activity at 390/768/1280/1440. All fixture accounts are synthetic; browser audio uses a fake microphone.
+
+API Client routes matched the active-school runtime paths. Contract audit found that assessment-session submit returns 201 and class student summaries return an unpaginated array, while OpenAPI said 200 and described an envelope. OpenAPI and generated types now match runtime. Contracts 6/6, frontend 115/115, API tests 1109 passed / 64 environment-gated skips, workspace typechecks/builds, and Prisma validation pass.
+
+Full API lint reports 1201 errors and 1 warning, exactly matching T029's existing full-lint baseline. The current T033 integration adds no backend/api changes after T029; its teacher-invitation controller/service lint cleanly. This remains the only merge blocker and needs the API owner to resolve or explicitly waive it.
+
+T033's five services exited and all six task ports are free. Its database, MinIO bucket and evidence remain for audit. No Docker/Compose, Worker, shared branch, T005 worktree or L4 incident was used or changed. The branch was pushed; see the final task return for its SHA.
+
 ## YZ-RD-T026 — T021 student Profile + T023 teacher invitation into T024 (2026-10-19)
 
 DONE / WEB_ONLY / READY_TO_MERGE; not merged into `feat/question-bank-v1`. T026 starts from accepted T024 `ea1a048966d3eb5e17d9ba1c24d565e4616499de` and merges exact T021 `6445dca34c19fea89c885a3e4085cf47f9d7e5ed` and T023 `34af873837c9cfb74a7be33e94617b94668b4f4d` with two no-fast-forward commits. True merge bases are T015 `4475f418078e5800678a55b05d418d216962732e` and T020 `e6b8e8aa0b2f8cfe9a3bed894f264c73f64e1f3c`; both changed-file intersections are empty and there were no conflicts.

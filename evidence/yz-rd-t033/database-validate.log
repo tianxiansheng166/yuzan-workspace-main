@@ -1,0 +1,15 @@
+
+> yuzan-next@0.1.0 db:validate /home/tian/.devspace/worktrees/yuzan-workspace-main-7fe81740
+> pnpm --filter @yuzan/database validate
+
+
+> @yuzan/database@ validate /home/tian/.devspace/worktrees/yuzan-workspace-main-7fe81740/infra/database
+> prisma validate
+
+Loaded Prisma config from prisma.config.ts.
+
+Prisma schema loaded from prisma/schema.prisma.
+
+Prisma schema warning:
+- The `onDelete` referential action of a relation should not be set to `SetNull` when a referenced field is required. We recommend either to choose another referential action, or to make the referenced fields optional. Read more at https://pris.ly/d/postgres-set-null
+The schema at prisma/schema.prisma is valid 🚀

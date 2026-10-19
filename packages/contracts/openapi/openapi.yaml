@@ -2004,7 +2004,7 @@ paths:
         - $ref: "#/components/parameters/SchoolId"
         - $ref: "#/components/parameters/SessionId"
       responses:
-        "200":
+        "201":
           description: 会话已提交
           content:
             application/json:
@@ -5407,13 +5407,8 @@ components:
         lastActiveAt: { type: [string, "null"], format: date-time }
         riskStatus: { type: string, enum: [OK, AT_RISK, INACTIVE] }
     ClassStudentSummaryListResponse:
-      type: object
-      required: [data, meta]
-      properties:
-        data:
-          type: array
-          items: { $ref: "#/components/schemas/ClassStudentSummary" }
-        meta: { $ref: "#/components/schemas/EnvelopeMeta" }
+      type: array
+      items: { $ref: "#/components/schemas/ClassStudentSummary" }
     ClassAssignmentSummary:
       type: object
       required:

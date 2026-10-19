@@ -1,0 +1,12 @@
+{
+  "database": {
+    "database": "yuzan_t033_native",
+    "role": "yz_t033",
+    "version": "PostgreSQL 17"
+  },
+  "teacherId": "80b931e2-00eb-48fa-bbb2-728b96515637",
+  "schoolId": "ae79c172-545a-47b0-a0b5-459770b5a813",
+  "classId": "08a281fb-1562-401b-8489-8b0e529e0824",
+  "activeStudentEnrollmentsAfterInvitationRevocation": 2,
+  "browserRosterAndRevocation": "PASS"
+}
