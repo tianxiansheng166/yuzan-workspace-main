@@ -2403,6 +2403,35 @@ paths:
                       $ref: "#/components/schemas/TeacherInvitationResponse"
         "403":
           $ref: "#/components/responses/Forbidden"
+  /schools/{schoolId}/teacher-invitations/{invitationId}/revoke:
+    post:
+      summary: 撤销当前教师本人仍有效的学生邀请码
+      description: 已撤销的重复请求幂等返回 REVOKED；已过期或耗尽的邀请码返回 409。撤销不会移除已入班学生。
+      tags: [TeacherInvitations]
+      operationId: revokeTeacherInvitation
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - name: invitationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Server-confirmed revoked invitation; the secret code is omitted.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TeacherInvitationResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
   /student/teacher-invitations/bind:
     post:
       summary: 学生绑定教师邀请码并加入目标班级
@@ -3882,7 +3911,8 @@ components:
           type: string
           format: uuid
         code:
-          type: string
+          type: [string, "null"]
+          description: Present only while status is ACTIVE; inactive invitation codes are redacted.
         class:
           $ref: "#/components/schemas/TeacherInvitationClass"
         maxUses:

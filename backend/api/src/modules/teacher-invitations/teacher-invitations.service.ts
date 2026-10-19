@@ -59,6 +59,91 @@ export class TeacherInvitationsService {
     return { items: invitations.map((invitation) => this.toTeacherResponse(invitation, invitation.class)) };
   }
 
+  async revoke(auth: AuthContext, schoolId: string, invitationId: string) {
+    this.assertTeacherScope(auth, schoolId);
+
+    return this.prisma.$transaction(async (tx) => {
+      const invitation = await tx.teacherInvitation.findUnique({
+        where: { id: invitationId },
+        include: { class: { select: { id: true, name: true, grade: true } } },
+      });
+      if (!invitation) throw new NotFoundException("教师邀请码不存在");
+      if (invitation.schoolId !== schoolId) throw new ForbiddenException("无权管理其他学校的教师邀请码");
+      if (invitation.teacherUserId !== auth.principal.userId) throw new ForbiddenException("只能撤销自己创建的教师邀请码");
+
+      const teacherEnrollment = await tx.enrollment.findFirst({
+        where: {
+          schoolId: invitation.schoolId,
+          classId: invitation.classId,
+          userId: auth.principal.userId,
+          role: MembershipRole.TEACHER,
+          status: "ACTIVE",
+        },
+        select: { id: true },
+      });
+      if (!teacherEnrollment) throw new ForbiddenException("当前教师不再任教该班级，无法撤销邀请码");
+
+      // A retry after a committed revoke returns the same server truth and
+      // deliberately does not produce another audit record.
+      if (invitation.revokedAt) return this.toTeacherResponse(invitation, invitation.class);
+
+      const revokedAt = new Date();
+      if (invitation.expiresAt <= revokedAt || invitation.usedCount >= invitation.maxUses) {
+        throw new ConflictException("该邀请码已过期或使用次数已满，无法撤销");
+      }
+
+      // The conditional claim serializes with student binding's usedCount
+      // claim. A bind that commits first may make the invitation exhausted;
+      // a revoke that commits first makes the student's claim fail.
+      const claimed = await tx.teacherInvitation.updateMany({
+        where: {
+          id: invitation.id,
+          schoolId,
+          teacherUserId: auth.principal.userId,
+          revokedAt: null,
+          expiresAt: { gt: revokedAt },
+          usedCount: { lt: invitation.maxUses },
+        },
+        data: { revokedAt },
+      });
+
+      if (claimed.count !== 1) {
+        const current = await tx.teacherInvitation.findUnique({
+          where: { id: invitation.id },
+          include: { class: { select: { id: true, name: true, grade: true } } },
+        });
+        if (!current) throw new NotFoundException("教师邀请码不存在");
+        if (current.revokedAt) return this.toTeacherResponse(current, current.class);
+        throw new ConflictException("该邀请码已失效或使用次数已满，无法撤销");
+      }
+
+      const updated = await tx.teacherInvitation.findUnique({
+        where: { id: invitation.id },
+        include: { class: { select: { id: true, name: true, grade: true } } },
+      });
+      if (!updated) throw new NotFoundException("教师邀请码不存在");
+
+      await tx.auditLog.create({
+        data: {
+          actorUserId: auth.principal.userId,
+          schoolId,
+          action: "TEACHER_INVITATION_REVOKED",
+          resourceType: "TeacherInvitation",
+          resourceId: invitation.id,
+          requestId: auth.requestId,
+          afterSummary: {
+            invitationId: invitation.id,
+            classId: invitation.classId,
+            revokedAt: revokedAt.toISOString(),
+            usedCount: updated.usedCount,
+          },
+        },
+      });
+
+      return this.toTeacherResponse(updated, updated.class);
+    });
+  }
+
   async bind(auth: AuthContext, dto: { code: string }) {
     if (!auth.principal.roles.includes(MembershipRole.STUDENT)) {
       throw new ForbiddenException("只有学生可以绑定教师邀请码");
@@ -154,7 +239,7 @@ export class TeacherInvitationsService {
     const status = invitation.revokedAt ? "REVOKED" : invitation.expiresAt <= now ? "EXPIRED" : invitation.usedCount >= invitation.maxUses ? "EXHAUSTED" : "ACTIVE";
     return {
       id: invitation.id,
-      code: invitation.code,
+      code: status === "ACTIVE" ? invitation.code : null,
       class: classItem,
       maxUses: invitation.maxUses,
       usedCount: invitation.usedCount,

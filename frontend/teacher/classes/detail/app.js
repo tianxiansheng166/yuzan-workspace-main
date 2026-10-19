@@ -7,6 +7,7 @@
   const drawerText = document.getElementById("drawerText");
   const drawerData = document.getElementById("drawerData");
   const invitationDialog = document.getElementById('studentInvitationDialog');
+  const invitationRevokeDialog = document.getElementById('invitationRevokeDialog');
   const invitationItemsEl = document.getElementById('invitationItems');
   const invitationStatusEl = document.getElementById('invitationStatus');
   const invitationReadErrorEl = document.getElementById('invitationReadError');
@@ -25,6 +26,10 @@
   let invitationCreateInFlight = false;
   let invitationIdentityWatch = null;
   let invitationDialogOpener = null;
+  let invitationRevokeOpener = null;
+  let invitationRevokeId = '';
+  let invitationRevokeInFlight = false;
+  const invitationPendingVerification = new Map();
   const requestedStudentId = new URLSearchParams(location.search).get('studentId') || '';
   const requestedSchoolId = new URLSearchParams(location.search).get('schoolId') || '';
 
@@ -50,6 +55,7 @@
     EXPIRED: '已过期',
     REVOKED: '已撤销',
     EXHAUSTED: '使用次数已满',
+    VERIFYING: '等待服务器核实',
   };
 
   function invitationCurrentIdentityMatches() {
@@ -72,7 +78,7 @@
     invitationStatusEl.dataset.state = state;
     invitationStatusEl.textContent = message;
     invitationReadErrorEl.hidden = state !== 'error';
-    invitationEmptyEl.hidden = state !== 'loaded' || teacherInvitations.length > 0 || !invitationCreateForm.hidden;
+    invitationEmptyEl.hidden = state !== 'loaded' || teacherInvitations.some((item) => item.status === 'ACTIVE') || !invitationCreateForm.hidden;
     const createButton = document.getElementById('invitationCreateButton');
     if (createButton) {
       createButton.disabled = invitationCreateInFlight || state !== 'loaded' || teacherInvitations.some((item) => item.status === 'ACTIVE');
@@ -81,9 +87,12 @@
 
   function renderTeacherInvitations() {
     invitationItemsEl.innerHTML = teacherInvitations.map((item) => {
-      const status = typeof item.status === 'string' ? item.status : '';
+      const serverStatus = typeof item.status === 'string' ? item.status : '';
+      const pendingVerification = invitationPendingVerification.has(item.id);
+      const status = pendingVerification ? 'VERIFYING' : serverStatus;
       const statusLabel = invitationStatusLabels[status] || '服务器未返回状态';
       const isUsable = status === 'ACTIVE' && typeof item.code === 'string' && item.code.trim();
+      const isRevoked = status === 'REVOKED';
       const safeId = escapeHtml(item.id || '');
       const usedCount = invitationCount(item.usedCount);
       const maxUses = invitationCount(item.maxUses);
@@ -92,15 +101,20 @@
       const usagePercent = hasUsage ? Math.min(100, Math.max(0, item.usedCount / item.maxUses * 100)) : 0;
       const codeMarkup = isUsable
         ? `<div class="invitation-code-row"><label class="invitation-code-label" for="invitation-code-${safeId}">本班邀请码</label><input id="invitation-code-${safeId}" class="invitation-code-input" type="text" value="${escapeHtml(item.code)}" readonly autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="本班真实邀请码，可选中后手动复制" /><button class="invitation-copy-button" type="button" data-copy-invitation="${safeId}">复制邀请码</button><p class="invitation-copy-feedback" id="invitation-copy-feedback-${safeId}" role="status" aria-live="polite"></p></div>`
-        : `<p class="invitation-hidden-code">${status ? '失效凭证已隐藏，不能用于邀请新学生。' : '邀请码状态未确认，已隐藏凭证。'}</p>`;
-      return `<article class="invitation-record ${isUsable ? 'is-usable' : 'is-inactive'}" data-invitation-id="${safeId}">
+        : `<p class="invitation-hidden-code">${pendingVerification ? '撤销结果待服务器核实，凭证暂时隐藏；重新读取不会重复提交撤销。' : status ? '失效凭证已隐藏，不能用于邀请新学生。' : '邀请码状态未确认，已隐藏凭证。'}</p>`;
+      const revokeMarkup = isUsable
+        ? `<button class="invitation-revoke-button" type="button" data-revoke-invitation="${safeId}" aria-haspopup="dialog" aria-controls="invitationRevokeDialog">撤销邀请码</button>`
+        : '';
+      return `<article class="invitation-record ${isUsable ? 'is-usable' : 'is-inactive'} ${isRevoked ? 'is-revoked' : ''} ${pendingVerification ? 'is-verifying' : ''}" data-invitation-id="${safeId}">
         <header class="invitation-record-heading"><span>学生入班 · ${status === 'ACTIVE' && !isUsable ? '凭证字段缺失' : status ? escapeHtml(status) : '状态未知'}</span><b class="invitation-state-tag" data-status="${escapeHtml(status || 'UNKNOWN')}">${escapeHtml(statusLabel)}</b></header>
         ${codeMarkup}
+        ${revokeMarkup}
+        ${isRevoked ? '<span class="invitation-revoke-seal" aria-hidden="true">撤</span>' : ''}
         <div class="invitation-usage"><div><span>使用进度</span><strong>${usedCount} / ${maxUses} 次</strong></div>${hasUsage ? `<div class="invitation-meter" role="img" aria-label="已使用 ${usedCount} 次，共 ${maxUses} 次"><span style="width:${usagePercent}%"></span></div>` : '<div class="invitation-meter invitation-meter-unknown" role="img" aria-label="服务器未返回完整使用次数"></div>'}</div>
         <div class="invitation-expiry"><span>有效期至</span><time>${escapeHtml(invitationExpiry(item.expiresAt))}</time></div>
       </article>`;
     }).join('');
-    invitationEmptyEl.hidden = invitationReadState !== 'loaded' || teacherInvitations.length > 0 || !invitationCreateForm.hidden;
+    invitationEmptyEl.hidden = invitationReadState !== 'loaded' || teacherInvitations.some((item) => item.status === 'ACTIVE') || !invitationCreateForm.hidden;
     const createButton = document.getElementById('invitationCreateButton');
     if (createButton) {
       createButton.disabled = invitationCreateInFlight || invitationReadState !== 'loaded' || teacherInvitations.some((item) => item.status === 'ACTIVE');
@@ -121,6 +135,7 @@
 
   function clearTeacherInvitations(message = '邀请码已清除，请重新读取当前班级凭证。') {
     teacherInvitations = [];
+    invitationPendingVerification.clear();
     invitationItemsEl.replaceChildren();
     invitationCreateForm.hidden = true;
     document.getElementById('invitationCreateMessage').textContent = '';
@@ -159,11 +174,21 @@
       const records = Array.isArray(response) ? response : response?.items;
       if (!Array.isArray(records)) throw new Error('服务器没有返回邀请码列表');
       teacherInvitations = records.filter((item) => item?.class?.id === classId);
+      for (const [invitationId, verificationState] of invitationPendingVerification) {
+        const current = teacherInvitations.find((item) => item.id === invitationId);
+        if (current?.status === 'REVOKED' || (current && verificationState === 'post-unconfirmed')) {
+          invitationPendingVerification.delete(invitationId);
+        }
+      }
       invitationCreateForm.hidden = true;
       renderTeacherInvitations();
       setInvitationStatus('loaded', teacherInvitations.length
         ? `服务器已读取本班 ${teacherInvitations.length} 条邀请记录。`
         : '服务器已读取本班记录 · 当前没有可使用的邀请码');
+      if (invitationPendingVerification.size) {
+        setInvitationStatus('error', '有邀请码撤销结果尚待核实 · 凭证已隐藏 · 请重新读取');
+        invitationReadErrorTextEl.textContent = '服务器列表仍未与撤销响应一致。凭证保持隐藏；重新读取只查询状态，不会再次提交撤销。';
+      }
       renderTeacherInvitations();
       return teacherInvitations;
     } catch (error) {
@@ -247,6 +272,148 @@
         currentButton.textContent = '复制邀请码';
       }
     }
+  }
+
+  function openInvitationRevokeConfirmation(invitationId, opener) {
+    const invitation = teacherInvitations.find((item) => item.id === invitationId
+      && item.status === 'ACTIVE' && typeof item.code === 'string' && item.code.trim());
+    if (!invitation || invitationPendingVerification.has(invitationId)) {
+      showToast('服务器尚未确认此邀请码可撤销，请重新读取');
+      void loadTeacherInvitations();
+      return;
+    }
+    if (!invitationCurrentIdentityMatches()) {
+      clearTeacherInvitations('账号或学校已切换，旧凭证已清除。');
+      setInvitationScopeLabel(true);
+      invitationDialog.close();
+      return;
+    }
+    invitationRevokeId = invitationId;
+    invitationRevokeOpener = opener;
+    const className = invitation.class?.name || classDetail?.className || classDetail?.name || '当前授权班级';
+    document.getElementById('invitationRevokeTarget').textContent = `${className} · 已使用 ${invitationCount(invitation.usedCount)} / ${invitationCount(invitation.maxUses)} 次`;
+    document.getElementById('invitationRevokeMessage').textContent = '';
+    document.getElementById('invitationRevokeConfirm').disabled = false;
+    document.getElementById('invitationRevokeCancel').disabled = false;
+    if (!invitationRevokeDialog.open) invitationRevokeDialog.showModal();
+    document.getElementById('invitationRevokeCancel').focus();
+  }
+
+  function handleInvitationRevokeTabKey(event) {
+    if (event.key !== 'Tab') return;
+    const focusable = [...invitationRevokeDialog.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')]
+      .filter((element) => !element.hidden && element.getAttribute('aria-hidden') !== 'true');
+    if (!focusable.length) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  }
+
+  async function revokeTeacherInvitation() {
+    if (invitationRevokeInFlight || !invitationRevokeId) return;
+    const invitationId = invitationRevokeId;
+    const invitation = teacherInvitations.find((item) => item.id === invitationId && item.status === 'ACTIVE');
+    if (!invitation || !invitationCurrentIdentityMatches()) {
+      document.getElementById('invitationRevokeMessage').textContent = '当前账号、学校或服务器状态已变化。请关闭后重新读取本班记录。';
+      return;
+    }
+
+    const tokenAtRequest = YuzanApi.getToken();
+    const message = document.getElementById('invitationRevokeMessage');
+    const confirmButton = document.getElementById('invitationRevokeConfirm');
+    const cancelButton = document.getElementById('invitationRevokeCancel');
+    invitationRevokeInFlight = true;
+    invitationPendingVerification.set(invitationId, 'requesting');
+    confirmButton.disabled = true;
+    cancelButton.disabled = true;
+    confirmButton.textContent = '正在核对服务器…';
+    message.textContent = '只提交一次撤销请求；随后重新读取服务器状态确认结果。';
+    renderTeacherInvitations();
+
+    let postAccepted = false;
+    let postError = null;
+    try {
+      const response = await YuzanApi.revokeTeacherInvitation(invitationId);
+      const result = response?.data || response;
+      if (result?.id !== invitationId || result?.status !== 'REVOKED' || result?.code !== null) {
+        throw new Error('撤销接口没有返回完整的服务器 REVOKED 确认');
+      }
+      postAccepted = true;
+    } catch (error) {
+      postError = error;
+    }
+
+    if (YuzanApi.getToken() !== tokenAtRequest || !invitationCurrentIdentityMatches()) {
+      clearTeacherInvitations('账号或学校已切换，旧凭证已清除。');
+      setInvitationScopeLabel(true);
+      invitationRevokeDialog.close();
+      invitationDialog.close();
+      invitationRevokeInFlight = false;
+      return;
+    }
+
+    invitationPendingVerification.set(invitationId, postAccepted ? 'post-confirmed' : 'post-unconfirmed');
+    const refreshed = await loadTeacherInvitations();
+    if (YuzanApi.getToken() !== tokenAtRequest || !invitationCurrentIdentityMatches()) {
+      clearTeacherInvitations('账号或学校已切换，旧凭证已清除。');
+      setInvitationScopeLabel(true);
+      invitationRevokeDialog.close();
+      invitationDialog.close();
+      invitationRevokeInFlight = false;
+      return;
+    }
+
+    const current = refreshed?.find((item) => item.id === invitationId);
+    if (current?.status === 'REVOKED') {
+      invitationPendingVerification.delete(invitationId);
+      renderTeacherInvitations();
+      setInvitationStatus('loaded', '服务器已确认邀请码撤销；已经入班的学生不会移除。');
+      document.getElementById('invitationRevokeDialog').close();
+      showToast('服务器已确认邀请码撤销');
+    } else if (refreshed === null) {
+      invitationPendingVerification.set(invitationId, postAccepted ? 'post-confirmed' : 'post-unconfirmed');
+      message.textContent = postAccepted
+        ? '撤销接口已确认，但最新列表读取失败。凭证已隐藏；请重新读取核实，不会重复提交撤销。'
+        : '请求结果未知且列表读取失败。凭证已隐藏；请重新读取核实，不会重复提交撤销。';
+      invitationReadErrorTextEl.textContent = message.textContent;
+      setInvitationStatus('error', '撤销结果尚未核实 · 凭证已隐藏');
+      invitationRevokeDialog.close();
+    } else if (postAccepted) {
+      invitationPendingVerification.set(invitationId, 'post-confirmed');
+      renderTeacherInvitations();
+      message.textContent = '撤销接口返回成功，但最新列表仍未确认已撤销。凭证保持隐藏；请重新读取核实。';
+      invitationReadErrorTextEl.textContent = message.textContent;
+      setInvitationStatus('error', '撤销响应与列表不一致 · 凭证已隐藏');
+      invitationRevokeDialog.close();
+    } else {
+      invitationPendingVerification.delete(invitationId);
+      renderTeacherInvitations();
+      const statusDescription = current?.status === 'ACTIVE'
+        ? '服务器仍确认该邀请码有效，尚未撤销。'
+        : '服务器确认该邀请码不是可撤销的有效状态。';
+      const failure = postError?.status === 403
+        ? '当前教师无权撤销此邀请码。'
+        : postError?.status === 404
+          ? '邀请码不存在。'
+          : postError?.status === 409
+            ? '邀请码已过期或使用次数已满，不能撤销。'
+            : `${postError?.message || '服务器没有确认撤销'}。`;
+      message.textContent = `${failure}${statusDescription}列表已重新读取；未显示撤销成功。`;
+      invitationReadErrorTextEl.textContent = message.textContent;
+      setInvitationStatus('error', '服务器未确认撤销');
+      invitationRevokeDialog.close();
+    }
+
+    invitationRevokeInFlight = false;
+    confirmButton.disabled = false;
+    cancelButton.disabled = false;
+    confirmButton.textContent = '确认撤销邀请码';
   }
 
   async function createTeacherInvitation(event) {
@@ -654,9 +821,25 @@
   invitationDialog.addEventListener('close', () => {
     clearInterval(invitationIdentityWatch);
     invitationIdentityWatch = null;
+    if (invitationRevokeDialog.open) invitationRevokeDialog.close();
     clearTeacherInvitations('邀请码已清除。再次打开时将从服务器重新读取。');
     if (invitationDialogOpener?.isConnected) invitationDialogOpener.focus();
     invitationDialogOpener = null;
+  });
+  document.getElementById('invitationRevokeCancel').addEventListener('click', () => invitationRevokeDialog.close());
+  document.getElementById('invitationRevokeConfirm').addEventListener('click', () => { void revokeTeacherInvitation(); });
+  invitationRevokeDialog.addEventListener('keydown', handleInvitationRevokeTabKey);
+  invitationRevokeDialog.addEventListener('cancel', (event) => {
+    if (invitationRevokeInFlight) event.preventDefault();
+  });
+  invitationRevokeDialog.addEventListener('close', () => {
+    invitationRevokeId = '';
+    if (invitationRevokeOpener?.isConnected && invitationDialog.open) invitationRevokeOpener.focus();
+    else if (invitationDialog.open) {
+      if (!invitationReadErrorEl.hidden) document.getElementById('invitationRetry').focus();
+      else document.getElementById('studentInvitationClose').focus();
+    }
+    invitationRevokeOpener = null;
   });
   document.getElementById('invitationRetry').addEventListener('click', () => { void loadTeacherInvitations(); });
   document.getElementById('invitationShowCreate').addEventListener('click', () => {
@@ -674,6 +857,8 @@
   invitationItemsEl.addEventListener('click', (event) => {
     const button = event.target.closest('[data-copy-invitation]');
     if (button) void copyTeacherInvitation(button.dataset.copyInvitation, button);
+    const revokeButton = event.target.closest('[data-revoke-invitation]');
+    if (revokeButton) openInvitationRevokeConfirmation(revokeButton.dataset.revokeInvitation, revokeButton);
   });
   window.addEventListener('storage', (event) => {
     if (!['yuzan-access-token', 'yuzan-active-school-id', 'yuzan-current-user'].includes(event.key)) return;

@@ -262,6 +262,29 @@ svg{fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-l
 .invitation-copy-button:disabled,.invitation-primary:disabled{opacity:.6;cursor:wait}
 .invitation-copy-feedback{grid-column:1/-1;min-height:16px;margin:0;color:#276046;font-size:10px;line-height:1.5}
 .invitation-hidden-code{margin:11px 0;padding:10px;border:1px dashed #d7d1c6;border-radius:5px;color:#73716a;background:#f5f3ee;font-size:11px;line-height:1.6}
+.invitation-revoke-button{width:100%;min-height:40px;margin-top:8px;padding:0 13px;border:1px solid #a9473d;border-radius:5px;background:#fff8f5;color:#923d35;font-size:11px;font-weight:800}
+.invitation-revoke-button:hover{background:#faeee9}
+.invitation-record.is-revoked{position:relative;overflow:hidden;border-color:#dfb8ad;background:linear-gradient(150deg,#fffefa 0 68%,#fbf2ec 100%)}
+.invitation-record.is-revoked:before{position:absolute;z-index:1;top:22%;left:7%;right:17%;height:2px;content:"";background:linear-gradient(90deg,transparent,#a9473d 12% 88%,transparent);opacity:.64;transform:rotate(-5deg);pointer-events:none}
+.invitation-revoke-seal{position:absolute;right:13px;top:46px;display:grid;width:33px;height:33px;place-items:center;border:1px solid #a9473d;border-radius:50%;color:#963e35;font-family:"Noto Serif CJK SC",STKaiti,KaiTi,serif;font-size:16px;font-weight:800;box-shadow:inset 0 0 0 2px #fff,inset 0 0 0 3px #c78e81;transform:rotate(9deg)}
+.invitation-record.is-revoked .invitation-hidden-code{padding-right:57px;border-style:solid;border-color:#e3c6be;background:#fff9f6;color:#7b524b}
+.invitation-record.is-verifying{border-color:#d6c59e;background:#fffaf0}
+.invitation-state-tag[data-status="VERIFYING"]{border-color:#d6c59e;background:#fff7e5;color:#795f30}
+.invitation-revoke-dialog{width:min(430px,calc(100vw - 26px));max-width:none;margin:auto;padding:0;overflow:hidden;border:1px solid #dbc9b1;border-radius:12px;background:transparent;color:var(--ink);box-shadow:0 24px 80px rgba(22,34,34,.3)}
+.invitation-revoke-dialog::backdrop{background:rgba(11,31,35,.58);backdrop-filter:blur(2px)}
+.invitation-revoke-sheet{position:relative;padding:24px;background:#fffdf8;background-image:linear-gradient(rgba(255,253,248,.95),rgba(255,253,248,.95)),url("./assets/paper-texture.webp");background-size:auto,900px}
+.invitation-cancellation-mark{position:relative;display:grid;width:54px;height:54px;place-items:center;float:right;margin:2px 0 8px 18px;color:#a9473d}
+.invitation-cancellation-mark svg{position:absolute;inset:0;width:54px;height:54px;stroke-width:1.15;opacity:.8}
+.invitation-cancellation-mark span{font-family:"Noto Serif CJK SC",STKaiti,KaiTi,serif;font-size:19px;font-weight:800;transform:rotate(8deg)}
+.invitation-revoke-dialog h2{margin:7px 0 14px;font-family:"Noto Serif CJK SC",STKaiti,KaiTi,serif;font-size:22px;letter-spacing:.03em}
+.invitation-revoke-warning{margin:0;padding:12px;border-left:3px solid #a9473d;background:#fff3ef;color:#643d38;font-size:13px;font-weight:700;line-height:1.75}
+.invitation-revoke-target{margin:13px 0 0;color:#746c61;font-size:11px;line-height:1.6}
+.invitation-revoke-message{min-height:18px;margin:10px 0;color:#7e453b;font-size:11px;line-height:1.6}
+.invitation-revoke-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:8px}
+.invitation-revoke-actions button{min-height:42px;padding:0 15px}
+.invitation-revoke-confirm{border:1px solid #963c34;border-radius:5px;background:#a3453b;color:#fff;font-size:11px;font-weight:800}
+.invitation-revoke-confirm:disabled,.invitation-revoke-actions button:disabled{opacity:.65;cursor:wait}
+.invitation-revoke-dialog button:focus-visible{outline:3px solid #1d7180;outline-offset:2px}
 .invitation-usage{display:grid;gap:7px;margin-top:12px}
 .invitation-usage>div:first-child,.invitation-expiry{display:flex;justify-content:space-between;gap:10px;color:#747871;font-size:10px}
 .invitation-usage strong{color:#454e4a;font-size:10px}
@@ -318,3 +341,5 @@ svg{fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-l
   body.ts-has-shell .ts-profile-btn strong,body.ts-has-shell .ts-profile-btn small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 }
 @media(prefers-reduced-motion:reduce){.invitation-meter span{transition:none}}
+@media(max-width:600px){.invitation-revoke-sheet{padding:20px 16px}.invitation-revoke-actions{display:grid;grid-template-columns:1fr;gap:8px}.invitation-revoke-actions button{width:100%;min-height:45px}}
+@media(prefers-reduced-motion:reduce){.invitation-record.is-revoked:before{transition:none}}

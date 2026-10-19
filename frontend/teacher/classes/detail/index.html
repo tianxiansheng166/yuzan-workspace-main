@@ -335,6 +335,23 @@
         <p class="invitation-footnote">凭证由语赞心声服务器生成并记录状态。不要公开发布；仅提供给拟加入本班的学生。</p>
       </div>
     </div>
+    <dialog class="invitation-revoke-dialog" id="invitationRevokeDialog" aria-labelledby="invitationRevokeTitle" aria-describedby="invitationRevokeWarning">
+      <section class="invitation-revoke-sheet">
+        <div class="invitation-cancellation-mark" aria-hidden="true">
+          <svg viewBox="0 0 72 72"><circle cx="36" cy="36" r="31"/><path d="M16 54 56 18M19 18l35 36"/><path d="M25 36h22"/></svg>
+          <span>撤</span>
+        </div>
+        <span class="invitation-kicker">班级凭证 · SERVER ACTION</span>
+        <h2 id="invitationRevokeTitle">撤销本班邀请码</h2>
+        <p id="invitationRevokeWarning" class="invitation-revoke-warning">撤销后不能再让新学生加入；已经入班的学生不会移除</p>
+        <p id="invitationRevokeTarget" class="invitation-revoke-target"></p>
+        <p id="invitationRevokeMessage" class="invitation-revoke-message" role="status" aria-live="polite"></p>
+        <div class="invitation-revoke-actions">
+          <button id="invitationRevokeCancel" class="invitation-secondary" type="button">保留邀请码</button>
+          <button id="invitationRevokeConfirm" class="invitation-revoke-confirm" type="button">确认撤销邀请码</button>
+        </div>
+      </section>
+    </dialog>
   </dialog>
 
   <div class="drawer-backdrop" id="drawerBackdrop" hidden>
