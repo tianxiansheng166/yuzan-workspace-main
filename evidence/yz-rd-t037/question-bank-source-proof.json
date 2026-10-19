@@ -1,0 +1,23 @@
+{
+  "sourceDir": "/home/tian/code/yuzan-workspace-main/习题课程资源",
+  "sourceFiles": [
+    {
+      "path": "题库【三改】.docx",
+      "bytes": 3200067,
+      "sha256": "d9632117a4487ab706f4132b0dd0a5b87fdc5911389aa0daa12f7a2fcb52aada"
+    },
+    {
+      "path": "答案及评分细则.docx",
+      "bytes": 27918,
+      "sha256": "a0ce9ab946fb5aa943190ffa6052bf3a4100a9442ce9479fd000e0dc244b45cc"
+    },
+    {
+      "path": "题库音频及图片.zip",
+      "bytes": 128497084,
+      "sha256": "004a8147735eb3b8d15d0d04c19f16ed03f938a9ab4732041e135ea87bdfaaf2"
+    }
+  ],
+  "unchangedAfterImport": true,
+  "targetDatabase": "yuzan_t037_native",
+  "targetBucket": "yz-t037-native"
+}

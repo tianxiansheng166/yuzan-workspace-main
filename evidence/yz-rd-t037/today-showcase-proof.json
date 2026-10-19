@@ -1,0 +1,103 @@
+{
+  "databaseVersion": "PostgreSQL 17.11 (Ubuntu 17.11-1.pgdg22.04+2) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0, 64-bit",
+  "testDataBoundary": "TEST_FIXTURE_ONLY database identities/content; accepted authored Question Bank source files were imported read-only",
+  "studentId": "5cd8161d-1265-4fc3-8f5a-a6acf4424070",
+  "authorizedCourse": {
+    "assignmentId": "e3b1da77-d6fe-4401-b005-fbec5a426b83",
+    "courseVersionId": "f4444444-4444-4444-8444-444444444444",
+    "status": "OPEN",
+    "authorizedEnrollmentId": "9d8c8fb9-e507-449c-88ef-ae07eb387a61",
+    "activityId": "528abd83-b838-42d5-b89b-c37f54988271",
+    "browserUrl": "http://127.0.0.1:4387/student/courses/course-detail/?id=e3b1da77-d6fe-4401-b005-fbec5a426b83",
+    "apiStatus": 200
+  },
+  "recordingPractice": {
+    "practiceDefinitionId": "fc3e1ecd-84e4-4efd-87ce-0ec4017fea89",
+    "title": "国家通用语言文字能力｜水平二级综合测评",
+    "requiresRecording": true,
+    "detailApiStatus": 200,
+    "browserUrl": "http://127.0.0.1:4387/student/practices/fc3e1ecd-84e4-4efd-87ce-0ec4017fea89/"
+  },
+  "assessmentEntry": {
+    "practiceDefinitionId": "e5344e01-13d9-41ca-b3c1-52a4f8d1c16e",
+    "title": "国家通用语言文字能力｜水平一级综合测评",
+    "baselineAction": "BASELINE",
+    "detailApiStatus": 200,
+    "browserUrl": "http://127.0.0.1:4387/student/practices/e5344e01-13d9-41ca-b3c1-52a4f8d1c16e/"
+  },
+  "formalReport": {
+    "reportId": "c3d0fd07-d696-44e7-8850-8df02ac696b2",
+    "sessionId": "1153a677-4376-47be-9df0-d6f90cccd85e",
+    "overallScore": 0,
+    "sql": [
+      "c3d0fd07-d696-44e7-8850-8df02ac696b2",
+      "0",
+      "COMPLETED",
+      "STANDARD",
+      "true"
+    ],
+    "apiStatus": 200,
+    "growthHref": "/assessment/sessions/1153a677-4376-47be-9df0-d6f90cccd85e/report/"
+  },
+  "isolation": {
+    "sameSchoolOtherStudent": {
+      "courseStatus": 404,
+      "practiceStatus": 404,
+      "reportStatus": 403
+    },
+    "crossSchoolStudent": {
+      "courseStatus": 403,
+      "practiceStatus": 403,
+      "reportStatus": 403
+    },
+    "freshStudentWithPendingReview": {
+      "enrollmentId": "6a7e411b-f81a-4b8b-b9e9-8f1147666bd8",
+      "sessionId": "3a26960b-1182-4e5b-9806-65ad7aa66b52",
+      "sessionSQL": [
+        "PROCESSING",
+        "STANDARD"
+      ],
+      "formalReportCount": 0,
+      "latestFormalAssessment": null,
+      "networkFailureCount": 1,
+      "retryCardsRendered": 4,
+      "refreshRetainedNoReport": true,
+      "recordedAudio": 4,
+      "recordingSource": "Chromium fake microphone (SIMULATED_MIC)"
+    }
+  },
+  "responsive": {
+    "390": {
+      "viewport": 390,
+      "document": 390,
+      "body": 390
+    },
+    "768": {
+      "viewport": 768,
+      "document": 768,
+      "body": 768
+    },
+    "1280": {
+      "viewport": 1280,
+      "document": 1280,
+      "body": 1280
+    },
+    "1440": {
+      "viewport": 1440,
+      "document": 1440,
+      "body": 1440
+    }
+  },
+  "browserErrors": [],
+  "screenshots": [
+    "screenshots/authorized-assessment-definition-1440.png",
+    "screenshots/authorized-course-detail-1440.png",
+    "screenshots/recording-practice-definition-1440.png",
+    "screenshots/today-formal-zero-score-1440.png",
+    "screenshots/today-pending-no-score-1280.png",
+    "screenshots/today-showcase-1280.png",
+    "screenshots/today-showcase-1440.png",
+    "screenshots/today-showcase-390.png",
+    "screenshots/today-showcase-768.png"
+  ]
+}
