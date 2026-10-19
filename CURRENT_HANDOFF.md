@@ -5,9 +5,11 @@ Repository: `yuzan-workspace-main`
 
 ## YZ-RD-T044 practice catalog UX hierarchy correction (2026-10-19)
 
-- Started from T038 native-accepted `7c2c8da` in an isolated branch. T038's real recording and formal review flow remains untouched, but its three large catalog promotion cards duplicated existing server-backed tabs/filters and pushed actual content down.
-- T044 replaces those cards with a single compact and accessible `requiresRecording=true` facet control inside the original search tools; MOCK/SPECIALIZED remain the original real tabs. Users choose a real exercise instead of scrolling through a second set of feature advertisements.
-- Frontend regression 92 PASS, JS syntax/diffcheck PASS. T044's own real Chrome/API/PG/MinIO E2E and new viewport screenshots remain NOT_RUN; accepted source T038 evidence does not transfer to the new UX. T033 full API lint debt is still unresolved. T005 protected resources and L4 remain untouched.
+- COMPLETE / WEB_ONLY / NATIVE_CHROMIUM_API_POSTGRESQL17_REDIS_MINIO_VERIFIED / NOT_MERGED. Branch `feat/yz-rd-t044-practice-catalog-ux-hierarchy`, exact start `ef3e5404ab43561b89b6bf863f5c7f7a250afa27`; Git HEAD is authoritative for the final SHA.
+- The three large promotion cards are absent. Original server-backed MOCK/SPECIALIZED tabs remain; the compact oral filter sends the real `requiresRecording=true` catalog request. Chromium confirmed the authorized `停顿与节奏专项训练` flow and checked the small-screen filter layout after overriding the later shared CSS cascade in the T044-owned `practice.css`.
+- Frontend 92/92 PASS; native Chrome 153 + API + PostgreSQL 17.11 + Redis + MinIO passed 1/1 with zero skips. Two recordings were auditioned, saved to MinIO, read back, recovered after interrupted upload, then submitted once. The Attempt remains PROCESSING with two CREATED SpeechJobs, no result, zero scored items, and no formal report. No teacher score, fake grade, or automatic score was generated. Auth 401/403/404 and four catalog/Runner viewports passed; `evidence/yz-rd-t044/RESULTS.md` and its screenshots/JSON/logs contain the evidence.
+- T044 runtime ports were stopped cleanly; isolated database and MinIO objects remain for audit. No Docker/Compose, T005 or other task source edit, shared-branch merge, or L4 access. The target checkout's `AGENTS.md` lacks the AA-DEV-V2.2 marker; the supplied task card and root safety baseline were followed.
+- `READY_TO_MERGE=NO`: inherited T033 full API lint debt (1201 errors / 1 warning) remains unresolved. Physical microphone/device, calibrated provider, human-reviewed formal report, pilot, and production launch remain NOT_RUN. L4 remains OPEN.
 
 ## YZ-RD-T038 checkpoint (2026-10-19)
 

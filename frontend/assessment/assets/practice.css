@@ -27,3 +27,6 @@
 .catalog-oral-indicator{font-size:16px;line-height:0.6}
 .catalog-oral-help{color:#89938a}
 @media(max-width:680px){.catalog-oral-toolbar{justify-content:flex-start}.catalog-oral-help{width:100%;font-size:10px}}
+/* T012's shared visuals sheet restores the full filter panel for mobile;
+   the compact oral control replaces that tall panel on small screens. */
+@media(max-width:680px){.practice-page .catalog-workbench{display:block}.practice-page .catalog-workbench .catalog-filters{display:none}}
