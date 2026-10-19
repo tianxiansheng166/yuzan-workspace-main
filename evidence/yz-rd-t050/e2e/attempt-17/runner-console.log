@@ -1,0 +1,45 @@
+Redis PING: PONG at 127.0.0.1:6561
+T050 Redis read/write: PASS {"write": "SET OK", "readBack": "exact value matched", "cleanup": "own key deleted", "redisPort": "6561"}
+MinIO health: HTTP 200 at http://127.0.0.1:59772/minio/health/live; console port 59773 owned
+{"isolatedRuntime":"T050-owned cloned MinIO data directory","clonedResourceBucket":"yz-t047-native","sourceFixtureReadable":true,"sourceFixtureBytes":49578,"probeWrite":"PASS","probeReadBack":"PASS"}
+> @yuzan/database@ generate /home/tian/code/work/yuzan-workspace-t050/infra/database
+> prisma generate
+
+
+✔ Generated Prisma Client (7.8.0) to ./generated/client in 427ms
+
+Loaded Prisma config from prisma.config.ts.
+
+Prisma schema loaded from prisma/schema.prisma.
+> @yuzan/database@ build /home/tian/code/work/yuzan-workspace-t050/infra/database
+> tsc -p tsconfig.json
+> @yuzan/database@ migrate:deploy /home/tian/code/work/yuzan-workspace-t050/infra/database
+> prisma migrate deploy
+
+Datasource "db": PostgreSQL database "yuzan_t050_native", schema "public" at "127.0.0.1:55761"
+
+32 migrations found in prisma/migrations
+
+
+No pending migrations to apply.
+Loaded Prisma config from prisma.config.ts.
+
+Prisma schema loaded from prisma/schema.prisma.
+> @yuzan/api@ build /home/tian/code/work/yuzan-workspace-t050/backend/api
+> nest build
+API live: HTTP 200 http://127.0.0.1:4261/api/v1/health/live
+Teacher Web: HTTP 200 http://127.0.0.1:4461/teacher/
+T050 native runtime: FAIL — T050 API readiness did not pass (HTTP None)
+web: 收到 TERM 后仍在运行；保留 PID 记录，未强制终止
+api: 原进程已退出；清理了本任务的陈旧 PID 记录
+Stop: INCOMPLETE; see identity checks above
+T050 cleanup: reaped exited owned web child PID 15018.
+web: 原进程已退出；清理了本任务的陈旧 PID 记录
+Stop: PASS
+SERVICE  PID     PORT / HEALTH
+postgres -       stopped [NOT_OWNED]
+api      -       stopped [NOT_OWNED]
+web      -       stopped [NOT_OWNED]
+API dependency readiness: HTTP unreachable
+T050 cleanup: runtime-owned services stopped; database, bucket and evidence retained.
+EXIT_CODE=1

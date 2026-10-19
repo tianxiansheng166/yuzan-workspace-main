@@ -1,5 +1,13 @@
 # Development status
 
+## YZ-RD-T050 — integrated teacher speech review (2026-10-20)
+
+COMPLETE / NATIVE_E2E_PASS / `READY_TO_MERGE=NO` due the unwaived API lint debt. The independent branch starts from formally accepted T047 `598fd18db3ae8d7dc4feaabdd8bc7425c1be6389`; no-FF merge `383f2923e551c239acc9a79d2dc279a7a98485a4` has exact parents T047 and accepted T048 `23ea9e3f550672b7deb36f690c9c0adb436ebe80`.
+
+T050 native Chrome/Web/API/PostgreSQL 17/Redis/MinIO passed 3/3 integrated tests. The student completed a real course activity and simulated-mic oral attempt; four non-empty WebM/Opus objects were read back from isolated MinIO. The teacher played/paused/replayed audio, refreshed an expired signed URL, saved six manual reviews including legal zero and multiline feedback, and generated one formal report only after the final manual item. The same student opened the same report from History. Cross-class, cross-school, other-student and anonymous permission checks passed. A 35-row CSV matched PostgreSQL and preserved blank unscored values.
+
+Today, course, runner, report, catalog, teacher review and roster views passed four widths (390/768/1280/1440) with no horizontal overflow. At 390×844 the first oral title ends at y=817.5. Frontend 137/137 and runtime verification pass. Full API lint is recorded at 1201 errors / 1 warning (exit 1), not waived. Physical student audio was NOT_RUN. Full proof: [evidence/yz-rd-t050/RESULTS.md](evidence/yz-rd-t050/RESULTS.md).
+
 ## YZ-RD-T047 — T045 mobile-first practice merged into T046 (2026-10-20)
 
 COMPLETE / `READY_TO_MERGE=NO` due the inherited API lint baseline. No-FF merge commit `b5a57430d03d8f92b1419c08b871abc19a415d5d` has exact parents BASE `0f6ea3710797612aa08f37944a9ab9d92f033da1` and T045 `e3a3c544bb990904212f5ad518a6dc46ae68916c`.

@@ -1,0 +1,410 @@
+RESPONSIVE teacher-review-queue 390px {"scroll": 390, "client": 390, "inner": 390, "shellColumns": "390px", "sidebarWidth": "390px", "shell": {"x": 0, "width": 390, "right": 390, "y": 0, "height": 1659.625, "bottom": 1659.625}, "sidebar": {"x": 0, "width": 390, "right": 390, "y": 0, "height": 97, "bottom": 97}, "main": {"x": 0, "width": 390, "right": 390, "y": 97, "height": 1562.625, "bottom": 1659.625}, "page": {"x": 0, "width": 390, "right": 390, "y": 155, "height": 1504.625, "bottom": 1659.625}}
+RESPONSIVE teacher-review-queue 768px {"scroll": 768, "client": 768, "inner": 768, "shellColumns": "72px 696px", "sidebarWidth": "72px", "shell": {"x": 0, "width": 768, "right": 768, "y": 0, "height": 1645.4375, "bottom": 1645.4375}, "sidebar": {"x": 0, "width": 72, "right": 72, "y": 0, "height": 920, "bottom": 920}, "main": {"x": 72, "width": 696, "right": 768, "y": 0, "height": 1645.4375, "bottom": 1645.4375}, "page": {"x": 72, "width": 696, "right": 768, "y": 69, "height": 1576.4375, "bottom": 1645.4375}}
+RESPONSIVE teacher-review-queue 1280px {"scroll": 1280, "client": 1280, "inner": 1280, "shellColumns": "190px 1090px", "sidebarWidth": "190px", "shell": {"x": 0, "width": 1280, "right": 1280, "y": 0, "height": 1038.484375, "bottom": 1038.484375}, "sidebar": {"x": 0, "width": 190, "right": 190, "y": 0, "height": 920, "bottom": 920}, "main": {"x": 190, "width": 1090, "right": 1280, "y": 0, "height": 1038.484375, "bottom": 1038.484375}, "page": {"x": 190, "width": 1090, "right": 1280, "y": 69, "height": 969.484375, "bottom": 1038.484375}}
+RESPONSIVE teacher-review-queue 1440px {"scroll": 1440, "client": 1440, "inner": 1440, "shellColumns": "190px 1250px", "sidebarWidth": "190px", "shell": {"x": 0, "width": 1440, "right": 1440, "y": 0, "height": 1038.484375, "bottom": 1038.484375}, "sidebar": {"x": 0, "width": 190, "right": 190, "y": 0, "height": 920, "bottom": 920}, "main": {"x": 190, "width": 1250, "right": 1440, "y": 0, "height": 1038.484375, "bottom": 1038.484375}, "page": {"x": 190, "width": 1250, "right": 1440, "y": 69, "height": 969.484375, "bottom": 1038.484375}}
+RESPONSIVE teacher-review-detail 390px {"scroll": 390, "client": 390, "inner": 390, "shellColumns": "390px", "sidebarWidth": "390px", "shell": {"x": 0, "width": 390, "right": 390, "y": 0, "height": 2328.1875, "bottom": 2328.1875}, "sidebar": {"x": 0, "width": 390, "right": 390, "y": 0, "height": 97, "bottom": 97}, "main": {"x": 0, "width": 390, "right": 390, "y": 97, "height": 2231.1875, "bottom": 2328.1875}, "page": {"x": 0, "width": 390, "right": 390, "y": 155, "height": 2173.1875, "bottom": 2328.1875}, "audio": {"x": 44, "y": 808.34375, "width": 302, "height": 54}, "scoreSubmit": {"x": 28, "y": 2225.1875, "width": 334, "height": 51}}
+RESPONSIVE teacher-review-detail 768px {"scroll": 768, "client": 768, "inner": 768, "shellColumns": "72px 696px", "sidebarWidth": "72px", "shell": {"x": 0, "width": 768, "right": 768, "y": 0, "height": 2160.171875, "bottom": 2160.171875}, "sidebar": {"x": 0, "width": 72, "right": 72, "y": 0, "height": 920, "bottom": 920}, "main": {"x": 72, "width": 696, "right": 768, "y": 0, "height": 2160.171875, "bottom": 2160.171875}, "page": {"x": 72, "width": 696, "right": 768, "y": 69, "height": 2091.171875, "bottom": 2160.171875}, "audio": {"x": 126, "y": 621.96875, "width": 588, "height": 54}, "scoreSubmit": {"x": 110, "y": 2045.171875, "width": 620, "height": 51}}
+RESPONSIVE teacher-review-detail 1280px {"scroll": 1280, "client": 1280, "inner": 1280, "shellColumns": "190px 1090px", "sidebarWidth": "190px", "shell": {"x": 0, "width": 1280, "right": 1280, "y": 0, "height": 1488.03125, "bottom": 1488.03125}, "sidebar": {"x": 0, "width": 190, "right": 190, "y": 0, "height": 920, "bottom": 920}, "main": {"x": 190, "width": 1090, "right": 1280, "y": 0, "height": 1488.03125, "bottom": 1488.03125}, "page": {"x": 190, "width": 1090, "right": 1280, "y": 69, "height": 1419.03125, "bottom": 1488.03125}, "audio": {"x": 271, "y": 596.96875, "width": 577.296875, "height": 54}, "scoreSubmit": {"x": 929.296875, "y": 809.78125, "width": 285.6875, "height": 51}}
+RESPONSIVE teacher-review-detail 1440px {"scroll": 1440, "client": 1440, "inner": 1440, "shellColumns": "190px 1250px", "sidebarWidth": "190px", "shell": {"x": 0, "width": 1440, "right": 1440, "y": 0, "height": 1488.03125, "bottom": 1488.03125}, "sidebar": {"x": 0, "width": 190, "right": 190, "y": 0, "height": 920, "bottom": 920}, "main": {"x": 190, "width": 1250, "right": 1440, "y": 0, "height": 1488.03125, "bottom": 1488.03125}, "page": {"x": 190, "width": 1250, "right": 1440, "y": 69, "height": 1419.03125, "bottom": 1488.03125}, "audio": {"x": 271, "y": 596.96875, "width": 683.53125, "height": 54}, "scoreSubmit": {"x": 1035.53125, "y": 809.78125, "width": 339.46875, "height": 51}}
+FFF
+=================================== FAILURES ===================================
+___ test_t050_integrated_student_course_audio_teacher_review_report_history ____
+
+    def test_t050_integrated_student_course_audio_teacher_review_report_history():
+        """Exercise T047 Today/course + T048 review on the same fresh T050 runtime and Attempt."""
+        t048.verify_runtime_identity()
+        EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
+        student_a = t048.create_student_fixture("T050复核学生", CLASS_ID)
+        student_b = t048.create_student_fixture("T050隔离学生", CLASS_ID)
+        teacher_other = t048.create_teacher_fixture("T050跨班")
+        foreign_teacher = t048.create_cross_school_teacher()
+        browser_errors: list[str] = []
+        proof: dict[str, object] = {"task": "YZ-RD-T050", "fixturePolicy": "TEST_FIXTURE_ONLY; no real student records"}
+
+        with sync_playwright() as playwright:
+            browser = playwright.chromium.launch(
+                headless=True,
+                executable_path="/usr/bin/google-chrome",
+                args=["--use-fake-ui-for-media-stream", "--use-fake-device-for-media-stream"],
+            )
+            context = browser.new_context(
+                viewport={"width": 1440, "height": 1000},
+                permissions=["microphone"],
+                has_touch=True,
+                accept_downloads=True,
+            )
+            context.add_init_script("window.__yuzanRunnerMicrophoneSource = 'SIMULATED_MIC';")
+            page = context.new_page()
+            page.on("pageerror", lambda error: browser_errors.append(type(error).__name__))
+            try:
+                teacher_api = t048.login_api(page, "teacher.test")
+                assignment_id, course = create_open_course_assignment(page, teacher_api, CLASS_ID)
+                student = browser_login_student(page, student_a["login"])
+                student_headers = t048.headers(student)
+                assert student["user"]["id"] == student_a["user"]
+                today = t037.open_today(page)
+                assert today and today["version"] == "student-today-v1"
+                assert today["primaryAction"], today
+                assert page.locator(".today-primary").count() == 1
+                assert page.locator(".today-skill-card").count() == 0
+                course_link = page.locator(f".today-course-item a[href*='{assignment_id}']")
+                course_link.wait_for(timeout=30_000)
+                course_href = course_link.get_attribute("href")
+                assert course_href == f"/student/courses/course-detail/?id={assignment_id}"
+                today_layout = save_viewports(page, "student-today")
+
+                course_api = page.request.get(
+                    f"{API}/schools/{SCHOOL_ID}/student/courses/{assignment_id}",
+                    headers=student_headers,
+                )
+                assert course_api.ok, course_api.text()
+                detail = payload(course_api)
+                activities = [
+                    activity
+                    for unit in detail["units"]
+                    for lesson in unit["lessons"]
+                    for activity in lesson["activities"]
+                ]
+                assert any(activity["id"] == course["activity"] for activity in activities), activities
+                course_link.click()
+                page.wait_for_url(f"**/student/courses/course-detail/?id={assignment_id}", timeout=30_000)
+                page.locator("#cpMain").wait_for(state="visible", timeout=30_000)
+                expect(page.locator("#cpHeroTitle")).to_contain_text(course["courseTitle"])
+                expect(page.locator("body")).to_contain_text(course["activityTitle"])
+                ack_button = page.locator(".cp-exercise-text .cp-exercise-submit")
+                ack_button.wait_for(timeout=20_000)
+                ack_button.click()
+                page.locator(".cp-exercise-text .cp-exercise-feedback.correct").wait_for(timeout=20_000)
+                progress = sql_rows(
+                    f'''SELECT completed::text FROM "ActivityProgress"
+                        WHERE "schoolId"={q(SCHOOL_ID)} AND "enrollmentId"={q(student_a['enrollment'])}
+                          AND "activityId"={q(course['activity'])};'''
+                )
+                assert progress == [["true"]], progress
+                course_layout = save_viewports(page, "student-course-detail")
+
+                today_after_course = t037.open_today(page)
+                assert today_after_course["primaryAction"] and page.locator(".today-primary").count() == 1
+                practice_nav = page.locator('[data-student-nav][href="/student/practices/"]')
+                if not practice_nav.is_visible():
+                    page.locator(".sn-menu-toggle").click()
+                    practice_nav.wait_for(state="visible", timeout=10_000)
+                practice_nav.click()
+                page.wait_for_url("**/student/practices/", timeout=20_000)
+                page.locator(".catalog-oral-toolbar").wait_for(timeout=20_000)
+                page.locator('.catalog-tabs button[data-tab="MOCK"]').click()
+                page.wait_for_function("document.querySelector('.catalog-tabs button[data-tab=MOCK]')?.getAttribute('aria-pressed') === 'true'")
+                oral_button = page.locator("[data-journey-oral]")
+                oral_button.wait_for(timeout=10_000)
+                oral_button.focus()
+                with page.expect_request(lambda request: t045.catalog_request(request, key="requiresRecording", value="true")) as oral_request:
+                    page.keyboard.press("Enter")
+                oral_response = page.request.get(
+                    f"{API}/schools/{SCHOOL_ID}/practices?requiresRecording=true", headers=student_headers
+                )
+                assert oral_response.ok, oral_response.text()
+                oral_items = payload(oral_response)["items"]
+                assert oral_items and all(item["requiresRecording"] is True for item in oral_items)
+                rhythm = oral_items[0]
+                first_oral_card = page.locator(f'[data-practice-detail="{rhythm["id"]}"] h2 a')
+                first_oral_card.wait_for(timeout=20_000)
+                first_oral_card.click()
+                page.wait_for_url(f"**/student/practices/{rhythm['id']}/", timeout=20_000)
+                page.locator("[data-start]").click()
+                page.wait_for_url("**/student/practices/attempts/*/runner/", timeout=30_000)
+                page.locator(".question-shell").wait_for(timeout=20_000)
+                attempt_id = page.url.split("/attempts/")[1].split("/")[0]
+                runner_layout = save_viewports(page, "student-runner")
+                page.set_viewport_size({"width": 1440, "height": 1000})
+                completion = t048.complete_t048_attempt(page, student_headers, attempt_id)
+                assert completion["itemCount"] == 20, completion
+                assert completion["recordedAudio"] >= 2 and completion["uploadRetries"] == completion["recordedAudio"], completion
+                attempt_rows = sql_rows(
+                    f'''SELECT s.status::text,s."schoolId",e."userId",e.id
+                        FROM "AssessmentSession" s JOIN "Enrollment" e ON e.id=s."enrollmentId"
+                        WHERE s.id={q(attempt_id)};'''
+                )
+                assert len(attempt_rows) == 1 and attempt_rows[0][0:3] == ["PROCESSING", SCHOOL_ID, student_a["user"]], attempt_rows
+                assert sql_scalar(f'''SELECT COUNT(*) FROM "AssessmentReport" WHERE "sessionId"={q(attempt_id)};''') == "0"
+                assert sql_scalar(
+                    f'''SELECT COUNT(*) FROM "AssessmentItem" WHERE "sessionId"={q(attempt_id)}
+                        AND "recordingId" IS NOT NULL AND "scoredScore" IS NOT NULL;'''
+                ) == "0"
+                recording_rows = sql_rows(
+                    f'''SELECT i.id,r.id,r."objectKey",r."mimeType",r.status::text
+                        FROM "AssessmentItem" i JOIN "Recording" r ON r.id=i."recordingId"
+                        WHERE i."sessionId"={q(attempt_id)} ORDER BY i."sortOrder";'''
+                )
+                assert len(recording_rows) == completion["recordedAudio"]
+                minio_objects = []
+                for item_id, recording_id, object_key, mime_type, state in recording_rows:
+                    assert object_key.startswith(f"recordings/{recording_id}/")
+                    assert mime_type.startswith("audio/") and state in {"READY", "PROCESSING", "COMPLETE"}
+                    head = t048.minio_head_object(object_key)
+                    assert head.get("bytes", 0) > 0 and head.get("contentType", "").startswith("audio/"), head
+                    minio_objects.append({"itemId": item_id, "recordingId": recording_id, "bytes": head["bytes"], "contentType": head["contentType"]})
+                no_report = page.request.get(
+                    f"{API}/schools/{SCHOOL_ID}/assessments/sessions/{attempt_id}/report",
+                    headers=student_headers,
+                )
+                assert no_report.ok and payload(no_report) is None
+
+                anonymous = playwright.request.new_context()
+                try:
+                    no_auth = anonymous.get(f"{API}/schools/{SCHOOL_ID}/assessment-reviews")
+                    assert no_auth.status == 401
+                finally:
+                    anonymous.dispose()
+                student_queue = page.request.get(f"{API}/schools/{SCHOOL_ID}/assessment-reviews", headers=student_headers)
+                assert student_queue.status == 403
+
+                teacher_api = t048.login_api(page, "teacher.test")
+                teacher_headers = t048.headers(teacher_api)
+                initial_queue = t048.item_queue(page.request, teacher_headers, student_a["name"])
+                assert len(initial_queue) >= 2, initial_queue
+                item_ids = [item["itemId"] for item in initial_queue]
+                audio_item = next(item for item in initial_queue if item["strategy"] == "SPEECH_READING")
+                audio_id = audio_item["itemId"]
+                pending_before_review = [item for item in initial_queue if item["itemId"] != audio_id]
+                assert pending_before_review
+                pending_sample = pending_before_review[0]["itemId"]
+                assert sql_scalar(
+                    f'''SELECT COUNT(*) FROM "AssessmentItem" WHERE id={q(audio_id)} AND "scoredScore" IS NULL;'''
+                ) == "1"
+                assert sql_scalar(
+                    f'''SELECT COUNT(*) FROM "AssessmentItem" WHERE id={q(pending_sample)} AND "scoredScore" IS NULL;'''
+                ) == "1"
+
+                student_write = page.request.put(
+                    f"{API}/schools/{SCHOOL_ID}/assessment-reviews/{audio_id}",
+                    headers=student_headers,
+                    data={"score": 0, "comment": "TEST_FIXTURE_ONLY 学生无权写复核"},
+                )
+                assert student_write.status == 403
+                missing_detail = page.request.get(
+                    f"{API}/schools/{SCHOOL_ID}/assessment-reviews/{uuid.uuid4()}", headers=teacher_headers
+                )
+                assert missing_detail.status == 404
+                over_score = page.request.put(
+                    f"{API}/schools/{SCHOOL_ID}/assessment-reviews/{audio_id}",
+                    headers=teacher_headers,
+                    data={"score": float(audio_item["maxScore"]) + 1, "comment": "TEST_FIXTURE_ONLY"},
+                )
+                negative_score = page.request.put(
+                    f"{API}/schools/{SCHOOL_ID}/assessment-reviews/{audio_id}",
+                    headers=teacher_headers,
+                    data={"score": -1, "comment": "TEST_FIXTURE_ONLY"},
+                )
+                assert over_score.status == negative_score.status == 400
+                other_teacher_session = t048.login_api(page, teacher_other["login"])
+                cross_class_detail = page.request.get(
+                    f"{API}/schools/{SCHOOL_ID}/assessment-reviews/{audio_id}",
+                    headers=t048.headers(other_teacher_session),
+                )
+                foreign_teacher_session = t048.login_api(page, foreign_teacher["login"])
+                cross_school_detail = page.request.get(
+                    f"{API}/schools/{SCHOOL_ID}/assessment-reviews/{audio_id}",
+                    headers=t048.headers(foreign_teacher_session),
+                )
+                assert cross_class_detail.status == cross_school_detail.status == 403
+
+                browser_login_teacher(page, "teacher.test")
+                page.goto(f"{BASE}/teacher/reviews/", wait_until="networkidle")
+                page.locator("[data-student-filter]").fill(student_a["name"])
+                audio_row = page.locator(f'.review-row[href^="/teacher/reviews/{audio_id}"]')
+                audio_row.wait_for(timeout=20_000)
+                t048.save_responsive_screenshots(page, "teacher-review-queue")
+
+                audio_row.click()
+                t048.wait_for_review_item(page, audio_id)
+                page.wait_for_function("document.querySelector('[data-review-audio]')?.readyState >= 3", timeout=30_000)
+                audio_player = page.locator("[data-review-audio]")
+                authorized_url = audio_player.get_attribute("src") or ""
+                assert authorized_url and authorized_url.startswith("http://127.0.0.1:")
+
+                stale_url = expired_signed_url(authorized_url)
+                expired_request: list[str] = []
+                refresh_requests: list[str] = []
+                detail_api_url = f"{API}/schools/{SCHOOL_ID}/assessment-reviews/{audio_id}"
+                page.on(
+                    "request",
+                    lambda request: refresh_requests.append(request.url)
+                    if request.method == "GET" and request.url == detail_api_url else None,
+                )
+
+                def reject_expired_url(route):
+                    if route.request.url == stale_url:
+                        expired_request.append(route.request.url)
+                        route.fulfill(status=403, content_type="text/plain", body="ExpiredToken")
+                    else:
+                        route.continue_()
+
+                page.route("**/*", reject_expired_url)
+                audio_player.evaluate("(audio, url) => { audio.pause(); audio.src = url; audio.load(); }", stale_url)
+                page.locator("[data-audio-retry]").wait_for(state="visible", timeout=20_000)
+                expect(page.locator("[data-audio-state]")).to_contain_text("未确认播放成功")
+                assert expired_request == [stale_url], expired_request
+                page.locator("[data-audio-retry]").click()
+                page.wait_for_function("document.querySelector('[data-review-audio]')?.readyState >= 3", timeout=30_000)
+                refreshed_url = audio_player.get_attribute("src") or ""
+                assert refreshed_url and refreshed_url != stale_url and refresh_requests, {
+                    "stale": stale_url, "refreshed": refreshed_url, "detailRefreshes": refresh_requests,
+                }
+                page.unroute("**/*", reject_expired_url)
+
+                t048.save_responsive_screenshots(page, "teacher-review-detail", detail=True)
+                audio_player.evaluate("audio => { audio.muted = true; return audio.play(); }")
+                page.wait_for_function("document.querySelector('[data-review-audio]')?.currentTime > 0.2", timeout=20_000)
+                audio_player.evaluate("audio => audio.pause()")
+                expect(page.locator("[data-audio-state]")).to_contain_text("录音已暂停")
+                page.locator("[data-audio-replay]").click()
+                page.wait_for_function("document.querySelector('[data-review-audio]')?.currentTime > 0.2", timeout=20_000)
+                audio_player.evaluate("audio => audio.pause()")
+                playback = {
+                    "play": True,
+                    "pause": True,
+                    "replayFromStart": True,
+                    "expiredSignedUrlRejected": True,
+                    "authorizedUrlRefreshed": True,
+                    "detailRefreshes": len(refresh_requests),
+                }
+
+                score_input = page.locator("[data-review-score]")
+                expect(score_input).to_have_value("")
+                submit_url = f"{API}/schools/{SCHOOL_ID}/assessment-reviews/{audio_id}"
+                put_requests: list[str] = []
+                page.on("request", lambda request: put_requests.append(request.url) if request.method == "PUT" and request.url == submit_url else None)
+                score_input.press("Enter")
+                page.get_by_text("请先输入得分").wait_for(timeout=10_000)
+                assert put_requests == []
+                assert sql_scalar(f'''SELECT COUNT(*) FROM "AssessmentItem" WHERE id={q(audio_id)} AND "scoredScore" IS NULL;''') == "1"
+                score_input.fill("0")
+                expect(page.locator("[data-score-preview]")).to_have_text("当前选择：0 分")
+                comment = "具体观察：这次朗读停顿自然，句尾收得清楚。\n下一步练习：把第二句放慢半拍，留出句间停顿。"
+                page.locator("[data-review-comment]").fill(comment)
+                expect(page.locator("[data-feedback-preview-text]")).to_have_text(comment)
+                page.route(submit_url, lambda route: route.abort("internetdisconnected") if route.request.method == "PUT" else route.continue_())
+                page.locator("[data-review-submit]").click()
+                page.get_by_text("输入内容已保留").wait_for(timeout=20_000)
+                assert score_input.input_value() == "0"
+                assert page.locator("[data-review-comment]").input_value() == comment
+                assert len(put_requests) == 1
+                page.unroute(submit_url)
+                page.locator("[data-review-submit]").click()
+                page.get_by_text("服务器已保存正式得分 0 分").wait_for(timeout=20_000)
+                assert len(put_requests) == 2
+                saved_zero = sql_rows(
+                    f'''SELECT "scoredScore"::text,"reviewerUserId",encode(convert_to("reviewerComment",'UTF8'),'hex'),"revision"::text,status::text
+                        FROM "AssessmentItem" WHERE id={q(audio_id)};'''
+                )[0]
+                saved_zero[2] = bytes.fromhex(saved_zero[2]).decode("utf-8")
+                assert saved_zero == ["0", t048.TEACHER_SEED_ID, comment, "2", "REVIEWED"], saved_zero
+                assert sql_scalar(f'''SELECT COUNT(*) FROM "AssessmentReport" WHERE "sessionId"={q(attempt_id)};''') == "0"
+                assert sql_scalar(
+                    f'''SELECT COUNT(*) FROM "AssessmentItem" WHERE "sessionId"={q(attempt_id)}
+                        AND "scoredScore" IS NULL;'''
+                ) == str(len(initial_queue) - 1)
+                same_retry = page.request.put(submit_url, headers=teacher_headers, data={"score": 0, "comment": comment})
+                changed_duplicate = page.request.put(
+                    submit_url,
+                    headers=teacher_headers,
+                    data={"score": float(audio_item["maxScore"]), "comment": "TEST_FIXTURE_ONLY 不得覆盖"},
+                )
+                assert same_retry.status == 200 and changed_duplicate.status == 409
+
+                comments = {audio_id: comment}
+                remaining_items = [item for item in initial_queue if item["itemId"] != audio_id]
+                for index, queue_item in enumerate(remaining_items):
+                    item_id = queue_item["itemId"]
+                    item_detail_response = page.request.get(
+                        f"{API}/schools/{SCHOOL_ID}/assessment-reviews/{item_id}", headers=teacher_headers
+                    )
+                    assert item_detail_response.ok, item_detail_response.text()
+                    item_detail = payload(item_detail_response)
+                    item_comment = f"TEST_FIXTURE_ONLY T050 人工复核 {item_id[:8]}。"
+                    saved = page.request.put(
+                        f"{API}/schools/{SCHOOL_ID}/assessment-reviews/{item_id}",
+                        headers=teacher_headers,
+                        data={"score": 0, "comment": item_comment},
+                    )
+                    assert saved.ok, saved.text()
+                    comments[item_id] = item_comment
+                    if index < len(remaining_items) - 1:
+                        assert sql_scalar(f'''SELECT COUNT(*) FROM "AssessmentReport" WHERE "sessionId"={q(attempt_id)};''') == "0"
+                    else:
+                        assert sql_scalar(f'''SELECT COUNT(*) FROM "AssessmentReport" WHERE "sessionId"={q(attempt_id)};''') == "1"
+
+                reviewed = sql_rows(
+                    f'''SELECT "scoredScore"::text,"reviewerUserId",status::text FROM "AssessmentItem"
+                        WHERE "sessionId"={q(attempt_id)} ORDER BY "sortOrder";'''
+                )
+>               assert reviewed and all(row == ["0", t048.TEACHER_SEED_ID, "REVIEWED"] for row in reviewed), reviewed
+E               AssertionError: [['0', '', 'ANSWERED'], ['0', '', 'ANSWERED'], ['0', '', 'ANSWERED'], ['0', '', 'ANSWERED'], ['3', '', 'ANSWERED'], ['0', '', 'ANSWERED'], ...]
+E               assert ([['0', '', 'ANSWERED'], ['0', '', 'ANSWERED'], ['0', '', 'ANSWERED'], ['0', '', 'ANSWERED'], ['3', '', 'ANSWERED'], ['0', '', 'ANSWERED'], ...] and False)
+E                +  where False = all(<generator object test_t050_integrated_student_course_audio_teacher_review_report_history.<locals>.<genexpr> at 0x7df2b63089e0>)
+
+tests/e2e/assessment/test_yz_rd_t050_integrated_speech_review.py:489: AssertionError
+______ test_t050_retained_mock_specialized_catalog_and_mobile_first_card _______
+
+    def test_t050_retained_mock_specialized_catalog_and_mobile_first_card():
+        """Check the T050 catalog modes and the actual first oral card at four widths."""
+        t048.verify_runtime_identity()
+>       student_proof = json.loads((EVIDENCE_DIR / "t050-integrated-proof.json").read_text(encoding="utf-8"))
+
+tests/e2e/assessment/test_yz_rd_t050_integrated_speech_review.py:591:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/usr/lib/python3.10/pathlib.py:1134: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = PosixPath('/home/tian/code/work/yuzan-workspace-t050/evidence/yz-rd-t050/e2e/attempt-10/task-summary/t050-integrated-proof.json')
+mode = 'r', buffering = -1, encoding = 'utf-8', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return self._accessor.open(self, mode, buffering, encoding, errors,
+                                   newline)
+E       FileNotFoundError: [Errno 2] No such file or directory: '/home/tian/code/work/yuzan-workspace-t050/evidence/yz-rd-t050/e2e/attempt-10/task-summary/t050-integrated-proof.json'
+
+/usr/lib/python3.10/pathlib.py:1119: FileNotFoundError
+_____ test_t050_same_class_roster_csv_zero_null_and_permission_regression ______
+
+    def test_t050_same_class_roster_csv_zero_null_and_permission_regression():
+        """Verify the same class roster still exports all 35 rows with zero separate from null."""
+        t048.verify_runtime_identity()
+        t032.sql = lambda statement: t048.sql(statement, capture=True)
+>       main_flow = json.loads((EVIDENCE_DIR / "t050-integrated-proof.json").read_text(encoding="utf-8"))
+
+tests/e2e/assessment/test_yz_rd_t050_integrated_speech_review.py:698:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/usr/lib/python3.10/pathlib.py:1134: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = PosixPath('/home/tian/code/work/yuzan-workspace-t050/evidence/yz-rd-t050/e2e/attempt-10/task-summary/t050-integrated-proof.json')
+mode = 'r', buffering = -1, encoding = 'utf-8', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return self._accessor.open(self, mode, buffering, encoding, errors,
+                                   newline)
+E       FileNotFoundError: [Errno 2] No such file or directory: '/home/tian/code/work/yuzan-workspace-t050/evidence/yz-rd-t050/e2e/attempt-10/task-summary/t050-integrated-proof.json'
+
+/usr/lib/python3.10/pathlib.py:1119: FileNotFoundError
+=========================== short test summary info ============================
+FAILED tests/e2e/assessment/test_yz_rd_t050_integrated_speech_review.py::test_t050_integrated_student_course_audio_teacher_review_report_history
+FAILED tests/e2e/assessment/test_yz_rd_t050_integrated_speech_review.py::test_t050_retained_mock_specialized_catalog_and_mobile_first_card
+FAILED tests/e2e/assessment/test_yz_rd_t050_integrated_speech_review.py::test_t050_same_class_roster_csv_zero_null_and_permission_regression
+3 failed in 50.23s

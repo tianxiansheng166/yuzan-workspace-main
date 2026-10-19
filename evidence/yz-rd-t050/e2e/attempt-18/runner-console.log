@@ -1,0 +1,64 @@
+Redis PING: PONG at 127.0.0.1:6561
+T050 Redis read/write: PASS {"write": "SET OK", "readBack": "exact value matched", "cleanup": "own key deleted", "redisPort": "6561"}
+MinIO health: HTTP 200 at http://127.0.0.1:59772/minio/health/live; console port 59773 owned
+{"isolatedRuntime":"T050-owned cloned MinIO data directory","clonedResourceBucket":"yz-t047-native","sourceFixtureReadable":true,"sourceFixtureBytes":49578,"probeWrite":"PASS","probeReadBack":"PASS"}
+> @yuzan/database@ generate /home/tian/code/work/yuzan-workspace-t050/infra/database
+> prisma generate
+
+
+✔ Generated Prisma Client (7.8.0) to ./generated/client in 412ms
+
+Loaded Prisma config from prisma.config.ts.
+
+Prisma schema loaded from prisma/schema.prisma.
+> @yuzan/database@ build /home/tian/code/work/yuzan-workspace-t050/infra/database
+> tsc -p tsconfig.json
+> @yuzan/database@ migrate:deploy /home/tian/code/work/yuzan-workspace-t050/infra/database
+> prisma migrate deploy
+
+Datasource "db": PostgreSQL database "yuzan_t050_native", schema "public" at "127.0.0.1:55761"
+
+32 migrations found in prisma/migrations
+
+
+No pending migrations to apply.
+Loaded Prisma config from prisma.config.ts.
+
+Prisma schema loaded from prisma/schema.prisma.
+> @yuzan/api@ build /home/tian/code/work/yuzan-workspace-t050/backend/api
+> nest build
+API live: HTTP 200 http://127.0.0.1:4261/api/v1/health/live
+Teacher Web: HTTP 200 http://127.0.0.1:4461/teacher/
+T050 native runtime: PostgreSQL 17, Redis 7, MinIO, NestJS API and Web are ready; Worker remains stopped.
+RESPONSIVE teacher-review-queue 390px {"scroll": 390, "client": 390, "inner": 390, "shellColumns": "390px", "sidebarWidth": "390px", "shell": {"x": 0, "width": 390, "right": 390, "y": 0, "height": 1659.625, "bottom": 1659.625}, "sidebar": {"x": 0, "width": 390, "right": 390, "y": 0, "height": 97, "bottom": 97}, "main": {"x": 0, "width": 390, "right": 390, "y": 97, "height": 1562.625, "bottom": 1659.625}, "page": {"x": 0, "width": 390, "right": 390, "y": 155, "height": 1504.625, "bottom": 1659.625}}
+RESPONSIVE teacher-review-queue 768px {"scroll": 768, "client": 768, "inner": 768, "shellColumns": "72px 696px", "sidebarWidth": "72px", "shell": {"x": 0, "width": 768, "right": 768, "y": 0, "height": 1645.4375, "bottom": 1645.4375}, "sidebar": {"x": 0, "width": 72, "right": 72, "y": 0, "height": 920, "bottom": 920}, "main": {"x": 72, "width": 696, "right": 768, "y": 0, "height": 1645.4375, "bottom": 1645.4375}, "page": {"x": 72, "width": 696, "right": 768, "y": 69, "height": 1576.4375, "bottom": 1645.4375}}
+RESPONSIVE teacher-review-queue 1280px {"scroll": 1280, "client": 1280, "inner": 1280, "shellColumns": "190px 1090px", "sidebarWidth": "190px", "shell": {"x": 0, "width": 1280, "right": 1280, "y": 0, "height": 1038.484375, "bottom": 1038.484375}, "sidebar": {"x": 0, "width": 190, "right": 190, "y": 0, "height": 920, "bottom": 920}, "main": {"x": 190, "width": 1090, "right": 1280, "y": 0, "height": 1038.484375, "bottom": 1038.484375}, "page": {"x": 190, "width": 1090, "right": 1280, "y": 69, "height": 969.484375, "bottom": 1038.484375}}
+RESPONSIVE teacher-review-queue 1440px {"scroll": 1440, "client": 1440, "inner": 1440, "shellColumns": "190px 1250px", "sidebarWidth": "190px", "shell": {"x": 0, "width": 1440, "right": 1440, "y": 0, "height": 1038.484375, "bottom": 1038.484375}, "sidebar": {"x": 0, "width": 190, "right": 190, "y": 0, "height": 920, "bottom": 920}, "main": {"x": 190, "width": 1250, "right": 1440, "y": 0, "height": 1038.484375, "bottom": 1038.484375}, "page": {"x": 190, "width": 1250, "right": 1440, "y": 69, "height": 969.484375, "bottom": 1038.484375}}
+RESPONSIVE teacher-review-detail 390px {"scroll": 390, "client": 390, "inner": 390, "shellColumns": "390px", "sidebarWidth": "390px", "shell": {"x": 0, "width": 390, "right": 390, "y": 0, "height": 2328.1875, "bottom": 2328.1875}, "sidebar": {"x": 0, "width": 390, "right": 390, "y": 0, "height": 97, "bottom": 97}, "main": {"x": 0, "width": 390, "right": 390, "y": 97, "height": 2231.1875, "bottom": 2328.1875}, "page": {"x": 0, "width": 390, "right": 390, "y": 155, "height": 2173.1875, "bottom": 2328.1875}, "audio": {"x": 44, "y": 808.34375, "width": 302, "height": 54}, "scoreSubmit": {"x": 28, "y": 2225.1875, "width": 334, "height": 51}}
+RESPONSIVE teacher-review-detail 768px {"scroll": 768, "client": 768, "inner": 768, "shellColumns": "72px 696px", "sidebarWidth": "72px", "shell": {"x": 0, "width": 768, "right": 768, "y": 0, "height": 2160.171875, "bottom": 2160.171875}, "sidebar": {"x": 0, "width": 72, "right": 72, "y": 0, "height": 920, "bottom": 920}, "main": {"x": 72, "width": 696, "right": 768, "y": 0, "height": 2160.171875, "bottom": 2160.171875}, "page": {"x": 72, "width": 696, "right": 768, "y": 69, "height": 2091.171875, "bottom": 2160.171875}, "audio": {"x": 126, "y": 621.96875, "width": 588, "height": 54}, "scoreSubmit": {"x": 110, "y": 2045.171875, "width": 620, "height": 51}}
+RESPONSIVE teacher-review-detail 1280px {"scroll": 1280, "client": 1280, "inner": 1280, "shellColumns": "190px 1090px", "sidebarWidth": "190px", "shell": {"x": 0, "width": 1280, "right": 1280, "y": 0, "height": 1488.03125, "bottom": 1488.03125}, "sidebar": {"x": 0, "width": 190, "right": 190, "y": 0, "height": 920, "bottom": 920}, "main": {"x": 190, "width": 1090, "right": 1280, "y": 0, "height": 1488.03125, "bottom": 1488.03125}, "page": {"x": 190, "width": 1090, "right": 1280, "y": 69, "height": 1419.03125, "bottom": 1488.03125}, "audio": {"x": 271, "y": 596.96875, "width": 577.296875, "height": 54}, "scoreSubmit": {"x": 929.296875, "y": 809.78125, "width": 285.6875, "height": 51}}
+RESPONSIVE teacher-review-detail 1440px {"scroll": 1440, "client": 1440, "inner": 1440, "shellColumns": "190px 1250px", "sidebarWidth": "190px", "shell": {"x": 0, "width": 1440, "right": 1440, "y": 0, "height": 1488.03125, "bottom": 1488.03125}, "sidebar": {"x": 0, "width": 190, "right": 190, "y": 0, "height": 920, "bottom": 920}, "main": {"x": 190, "width": 1250, "right": 1440, "y": 0, "height": 1488.03125, "bottom": 1488.03125}, "page": {"x": 190, "width": 1250, "right": 1440, "y": 69, "height": 1419.03125, "bottom": 1488.03125}, "audio": {"x": 271, "y": 596.96875, "width": 683.53125, "height": 54}, "scoreSubmit": {"x": 1035.53125, "y": 809.78125, "width": 339.46875, "height": 51}}
+{"integration": "student Today → course → oral recording → teacher review → same Attempt report from History", "attemptId": "82ccde29-4760-40c1-b154-147ee53e680d", "reportId": "92ab68f9-eda7-4ff3-a629-57ac35fc74df", "overallScore": 0}
+..{"classRosterRows": 35, "csvSqlParity": {"headerColumns": 8, "studentRows": 35, "sqlRows": 35, "parity": "PASS"}, "zeroAndNullSeparate": true, "viewports": [390, 768, 1280, 1440]}
+.
+3 passed in 69.85s (0:01:09)
+
+Native Chromium/API/PostgreSQL/MinIO E2E: PASS
+web: 收到 TERM 后仍在运行；保留 PID 记录，未强制终止
+api: 收到 TERM 后仍在运行；保留 PID 记录，未强制终止
+minio: 收到 TERM 后仍在运行；保留 PID 记录，未强制终止
+redis: 收到 TERM 后仍在运行；保留 PID 记录，未强制终止
+postgres: 已停止 (PID 15919)
+Stop: INCOMPLETE; see identity checks above
+web: 原进程已退出；清理了本任务的陈旧 PID 记录
+api: 原进程已退出；清理了本任务的陈旧 PID 记录
+minio: 原进程已退出；清理了本任务的陈旧 PID 记录
+redis: 原进程已退出；清理了本任务的陈旧 PID 记录
+Stop: PASS
+SERVICE  PID     PORT / HEALTH
+postgres -       stopped [NOT_OWNED]
+api      -       stopped [NOT_OWNED]
+web      -       stopped [NOT_OWNED]
+API dependency readiness: HTTP unreachable
+T050 cleanup: runtime-owned services stopped; database, bucket and evidence retained.
+EXIT_CODE=0

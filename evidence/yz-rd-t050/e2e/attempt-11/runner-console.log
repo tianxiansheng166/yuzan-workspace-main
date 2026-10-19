@@ -1,0 +1,161 @@
+Redis PING: PONG at 127.0.0.1:6558
+T050 Redis read/write: PASS {"write": "SET OK", "readBack": "exact value matched", "cleanup": "own key deleted", "redisPort": "6558"}
+MinIO health: HTTP 200 at http://127.0.0.1:59766/minio/health/live; console port 59767 owned
+{"isolatedRuntime":"T050-owned cloned MinIO data directory","clonedResourceBucket":"yz-t047-native","sourceFixtureReadable":true,"sourceFixtureBytes":49578,"probeWrite":"PASS","probeReadBack":"PASS"}
+> @yuzan/database@ generate /home/tian/code/work/yuzan-workspace-t050/infra/database
+> prisma generate
+
+
+✔ Generated Prisma Client (7.8.0) to ./generated/client in 416ms
+
+Loaded Prisma config from prisma.config.ts.
+
+Prisma schema loaded from prisma/schema.prisma.
+> @yuzan/database@ build /home/tian/code/work/yuzan-workspace-t050/infra/database
+> tsc -p tsconfig.json
+> @yuzan/database@ migrate:deploy /home/tian/code/work/yuzan-workspace-t050/infra/database
+> prisma migrate deploy
+
+Datasource "db": PostgreSQL database "yuzan_t050_native", schema "public" at "127.0.0.1:55758"
+
+32 migrations found in prisma/migrations
+
+
+No pending migrations to apply.
+Loaded Prisma config from prisma.config.ts.
+
+Prisma schema loaded from prisma/schema.prisma.
+> @yuzan/api@ build /home/tian/code/work/yuzan-workspace-t050/backend/api
+> nest build
+API live: HTTP 200 http://127.0.0.1:4258/api/v1/health/live
+Teacher Web: HTTP 200 http://127.0.0.1:4458/teacher/
+T050 native runtime: PostgreSQL 17, Redis 7, MinIO, NestJS API and Web are ready; Worker remains stopped.
+RESPONSIVE teacher-review-queue 390px {"scroll": 390, "client": 390, "inner": 390, "shellColumns": "390px", "sidebarWidth": "390px", "shell": {"x": 0, "width": 390, "right": 390, "y": 0, "height": 1659.625, "bottom": 1659.625}, "sidebar": {"x": 0, "width": 390, "right": 390, "y": 0, "height": 97, "bottom": 97}, "main": {"x": 0, "width": 390, "right": 390, "y": 97, "height": 1562.625, "bottom": 1659.625}, "page": {"x": 0, "width": 390, "right": 390, "y": 155, "height": 1504.625, "bottom": 1659.625}}
+RESPONSIVE teacher-review-queue 768px {"scroll": 768, "client": 768, "inner": 768, "shellColumns": "72px 696px", "sidebarWidth": "72px", "shell": {"x": 0, "width": 768, "right": 768, "y": 0, "height": 1645.4375, "bottom": 1645.4375}, "sidebar": {"x": 0, "width": 72, "right": 72, "y": 0, "height": 920, "bottom": 920}, "main": {"x": 72, "width": 696, "right": 768, "y": 0, "height": 1645.4375, "bottom": 1645.4375}, "page": {"x": 72, "width": 696, "right": 768, "y": 69, "height": 1576.4375, "bottom": 1645.4375}}
+RESPONSIVE teacher-review-queue 1280px {"scroll": 1280, "client": 1280, "inner": 1280, "shellColumns": "190px 1090px", "sidebarWidth": "190px", "shell": {"x": 0, "width": 1280, "right": 1280, "y": 0, "height": 1038.484375, "bottom": 1038.484375}, "sidebar": {"x": 0, "width": 190, "right": 190, "y": 0, "height": 920, "bottom": 920}, "main": {"x": 190, "width": 1090, "right": 1280, "y": 0, "height": 1038.484375, "bottom": 1038.484375}, "page": {"x": 190, "width": 1090, "right": 1280, "y": 69, "height": 969.484375, "bottom": 1038.484375}}
+RESPONSIVE teacher-review-queue 1440px {"scroll": 1440, "client": 1440, "inner": 1440, "shellColumns": "190px 1250px", "sidebarWidth": "190px", "shell": {"x": 0, "width": 1440, "right": 1440, "y": 0, "height": 1038.484375, "bottom": 1038.484375}, "sidebar": {"x": 0, "width": 190, "right": 190, "y": 0, "height": 920, "bottom": 920}, "main": {"x": 190, "width": 1250, "right": 1440, "y": 0, "height": 1038.484375, "bottom": 1038.484375}, "page": {"x": 190, "width": 1250, "right": 1440, "y": 69, "height": 969.484375, "bottom": 1038.484375}}
+RESPONSIVE teacher-review-detail 390px {"scroll": 390, "client": 390, "inner": 390, "shellColumns": "390px", "sidebarWidth": "390px", "shell": {"x": 0, "width": 390, "right": 390, "y": 0, "height": 2328.1875, "bottom": 2328.1875}, "sidebar": {"x": 0, "width": 390, "right": 390, "y": 0, "height": 97, "bottom": 97}, "main": {"x": 0, "width": 390, "right": 390, "y": 97, "height": 2231.1875, "bottom": 2328.1875}, "page": {"x": 0, "width": 390, "right": 390, "y": 155, "height": 2173.1875, "bottom": 2328.1875}, "audio": {"x": 44, "y": 808.34375, "width": 302, "height": 54}, "scoreSubmit": {"x": 28, "y": 2225.1875, "width": 334, "height": 51}}
+RESPONSIVE teacher-review-detail 768px {"scroll": 768, "client": 768, "inner": 768, "shellColumns": "72px 696px", "sidebarWidth": "72px", "shell": {"x": 0, "width": 768, "right": 768, "y": 0, "height": 2160.171875, "bottom": 2160.171875}, "sidebar": {"x": 0, "width": 72, "right": 72, "y": 0, "height": 920, "bottom": 920}, "main": {"x": 72, "width": 696, "right": 768, "y": 0, "height": 2160.171875, "bottom": 2160.171875}, "page": {"x": 72, "width": 696, "right": 768, "y": 69, "height": 2091.171875, "bottom": 2160.171875}, "audio": {"x": 126, "y": 621.96875, "width": 588, "height": 54}, "scoreSubmit": {"x": 110, "y": 2045.171875, "width": 620, "height": 51}}
+RESPONSIVE teacher-review-detail 1280px {"scroll": 1280, "client": 1280, "inner": 1280, "shellColumns": "190px 1090px", "sidebarWidth": "190px", "shell": {"x": 0, "width": 1280, "right": 1280, "y": 0, "height": 1488.03125, "bottom": 1488.03125}, "sidebar": {"x": 0, "width": 190, "right": 190, "y": 0, "height": 920, "bottom": 920}, "main": {"x": 190, "width": 1090, "right": 1280, "y": 0, "height": 1488.03125, "bottom": 1488.03125}, "page": {"x": 190, "width": 1090, "right": 1280, "y": 69, "height": 1419.03125, "bottom": 1488.03125}, "audio": {"x": 271, "y": 596.96875, "width": 577.296875, "height": 54}, "scoreSubmit": {"x": 929.296875, "y": 809.78125, "width": 285.6875, "height": 51}}
+RESPONSIVE teacher-review-detail 1440px {"scroll": 1440, "client": 1440, "inner": 1440, "shellColumns": "190px 1250px", "sidebarWidth": "190px", "shell": {"x": 0, "width": 1440, "right": 1440, "y": 0, "height": 1488.03125, "bottom": 1488.03125}, "sidebar": {"x": 0, "width": 190, "right": 190, "y": 0, "height": 920, "bottom": 920}, "main": {"x": 190, "width": 1250, "right": 1440, "y": 0, "height": 1488.03125, "bottom": 1488.03125}, "page": {"x": 190, "width": 1250, "right": 1440, "y": 69, "height": 1419.03125, "bottom": 1488.03125}, "audio": {"x": 271, "y": 596.96875, "width": 683.53125, "height": 54}, "scoreSubmit": {"x": 1035.53125, "y": 809.78125, "width": 339.46875, "height": 51}}
+{"integration": "student Today → course → oral recording → teacher review → same Attempt report from History", "attemptId": "214c5503-d33e-44df-92c7-8481cbf33b30", "reportId": "b61877de-99b7-4eb0-9914-4b34a5942bb1", "overallScore": 0}
+.FF
+=================================== FAILURES ===================================
+______ test_t050_retained_mock_specialized_catalog_and_mobile_first_card _______
+
+    def test_t050_retained_mock_specialized_catalog_and_mobile_first_card():
+        """Check the T050 catalog modes and the actual first oral card at four widths."""
+        t048.verify_runtime_identity()
+        student_proof = json.loads((EVIDENCE_DIR / "t050-integrated-proof.json").read_text(encoding="utf-8"))
+        original_class_id = t045.CLASS_ID
+        t045.CLASS_ID = str(student_proof["reviewClassId"])
+        t045.sql = t048.sql
+        mock_fixture = t045.create_mock_catalog_fixture(uuid.uuid4().hex[:8])
+        page_errors: list[str] = []
+        with sync_playwright() as playwright:
+            browser = playwright.chromium.launch(headless=True, executable_path="/usr/bin/google-chrome")
+            context = browser.new_context(viewport={"width": 1440, "height": 1000})
+            page = context.new_page()
+            page.on("pageerror", lambda error: page_errors.append(type(error).__name__))
+            try:
+                student = browser_login_student(page, student_proof["studentLogin"])
+                student_headers = t048.headers(student)
+                page.goto(f"{BASE}/student/practices/", wait_until="networkidle")
+                page.locator(".catalog-oral-toolbar").wait_for(timeout=20_000)
+                expect(page.locator('.catalog-tabs button[data-tab="MOCK"]')).to_be_visible()
+                expect(page.locator('.catalog-tabs button[data-tab="SPECIALIZED"]')).to_be_visible()
+                assert page.locator(".practice-journey, .practice-journey-card, [data-promotion-card]").count() == 0
+
+                with page.expect_request(lambda request: t045.catalog_request(request, key="catalogType", value="MOCK")) as mock_request:
+                    page.locator('.catalog-tabs button[data-tab="MOCK"]').click()
+                mock_response = page.request.get(
+                    f"{API}/schools/{SCHOOL_ID}/practices?catalogType=MOCK", headers=student_headers
+                )
+                assert mock_response.ok, mock_response.text()
+                mock_items = payload(mock_response)["items"]
+                assert mock_items and all(item["catalogType"] == "MOCK" for item in mock_items)
+                assert any(item["id"] == mock_fixture["definitionId"] for item in mock_items)
+
+                with page.expect_request(lambda request: t045.catalog_request(request, key="catalogType", value="SPECIALIZED")) as specialized_request:
+                    page.locator('.catalog-tabs button[data-tab="SPECIALIZED"]').click()
+                specialized_response = page.request.get(
+                    f"{API}/schools/{SCHOOL_ID}/practices?catalogType=SPECIALIZED", headers=student_headers
+                )
+                assert specialized_response.ok, specialized_response.text()
+                specialized_items = payload(specialized_response)["items"]
+>               assert specialized_items and all(item["catalogType"] == "SPECIALIZED" for item in specialized_items)
+E               assert ([])
+
+tests/e2e/assessment/test_yz_rd_t050_integrated_speech_review.py:634: AssertionError
+_____ test_t050_same_class_roster_csv_zero_null_and_permission_regression ______
+
+    def test_t050_same_class_roster_csv_zero_null_and_permission_regression():
+        """Verify the same class roster still exports all 35 rows with zero separate from null."""
+        t048.verify_runtime_identity()
+        t032.sql = lambda statement: t048.sql(statement, capture=True)
+        main_flow = json.loads((EVIDENCE_DIR / "t050-integrated-proof.json").read_text(encoding="utf-8"))
+        assert main_flow["explicitZero"][0] == "0" and main_flow["blankScore"]["databaseScore"] is None
+        roster_teacher = t048.create_teacher_fixture("T050名单35")
+        roster_class_id = str(roster_teacher["class"])
+        attach_seed_teacher_to_class(roster_class_id)
+        roster_students = [
+            t048.create_student_fixture(f"T050名单{index + 1:02d}", roster_class_id)
+            for index in range(35)
+        ]
+        assert sql_scalar(
+            f'''SELECT COUNT(*) FROM "Enrollment" WHERE "schoolId"={q(SCHOOL_ID)} AND "classId"={q(roster_class_id)}
+                AND role='STUDENT' AND status='ACTIVE';'''
+        ) == "35"
+
+        with sync_playwright() as playwright:
+            request = playwright.request.new_context()
+            try:
+                teacher = login_api_context(request, "teacher.test")
+                teacher_headers = t048.headers(teacher)
+                roster_path = f"{API}/schools/{SCHOOL_ID}/classes/{roster_class_id}/student-summaries"
+                response = request.get(roster_path, headers=teacher_headers)
+                assert response.ok, response.text()
+                summaries = payload(response)
+                assert isinstance(summaries, list) and len(summaries) == 35, len(summaries) if isinstance(summaries, list) else type(summaries).__name__
+                assert all(item["latestAssessmentScore"] is None for item in summaries)
+                expected_rows = t032.sql_expected_roster(roster_class_id, SCHOOL_ID)
+                assert len(expected_rows) == 35
+
+                other_teacher = t048.create_teacher_fixture("T050名单跨班")
+                foreign_teacher = t048.create_cross_school_teacher()
+                same_class_student = login_api_context(request, roster_students[0]["login"])
+                other_class_api = request.get(roster_path, headers=t048.headers(login_api_context(request, other_teacher["login"])))
+                cross_school_api = request.get(roster_path, headers=t048.headers(login_api_context(request, foreign_teacher["login"])))
+                student_api = request.get(roster_path, headers=t048.headers(same_class_student))
+                anonymous_api = request.get(roster_path)
+                assert other_class_api.status in (403, 404)
+                assert cross_school_api.status == student_api.status == 403
+>               assert anonymous_api.status == 401
+E               AssertionError: assert 403 == 401
+E                +  where 403 = <APIResponse url='http://127.0.0.1:4458/api/v1/schools/11111111-1111-4111-8111-111111111111/classes/446dc4be-ebe8-4eb4-85b3-cbea710c4add/student-summaries' status=403 status_text='Forbidden'>.status
+
+tests/e2e/assessment/test_yz_rd_t050_integrated_speech_review.py:741: AssertionError
+=========================== short test summary info ============================
+FAILED tests/e2e/assessment/test_yz_rd_t050_integrated_speech_review.py::test_t050_retained_mock_specialized_catalog_and_mobile_first_card
+FAILED tests/e2e/assessment/test_yz_rd_t050_integrated_speech_review.py::test_t050_same_class_roster_csv_zero_null_and_permission_regression
+2 failed, 1 passed in 65.11s (0:01:05)
+
+Native Chromium/API/PostgreSQL/MinIO E2E: FAIL
+web: 收到 TERM 后仍在运行；保留 PID 记录，未强制终止
+api: 收到 TERM 后仍在运行；保留 PID 记录，未强制终止
+minio: 收到 TERM 后仍在运行；保留 PID 记录，未强制终止
+redis: 收到 TERM 后仍在运行；保留 PID 记录，未强制终止
+postgres: 已停止 (PID 4135671)
+Stop: INCOMPLETE; see identity checks above
+web: 原进程已退出；清理了本任务的陈旧 PID 记录
+api: 原进程已退出；清理了本任务的陈旧 PID 记录
+minio: 原进程已退出；清理了本任务的陈旧 PID 记录
+redis: 原进程已退出；清理了本任务的陈旧 PID 记录
+Stop: PASS
+SERVICE  PID     PORT / HEALTH
+postgres -       stopped [NOT_OWNED]
+api      -       stopped [NOT_OWNED]
+web      -       stopped [NOT_OWNED]
+API dependency readiness: HTTP unreachable
+T050 cleanup: runtime-owned services stopped; database, bucket and evidence retained.
+EXIT_CODE=1

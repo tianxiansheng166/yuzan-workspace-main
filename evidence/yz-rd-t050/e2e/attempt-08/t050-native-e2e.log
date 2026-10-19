@@ -1,0 +1,76 @@
+FFF
+=================================== FAILURES ===================================
+___ test_t050_integrated_student_course_audio_teacher_review_report_history ____
+
+    def test_t050_integrated_student_course_audio_teacher_review_report_history():
+        """Exercise T047 Today/course + T048 review on the same fresh T050 runtime and Attempt."""
+        t048.verify_runtime_identity()
+        EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
+>       student_a = t048.create_student_fixture("T050复核学生", CLASS_ID)
+E       NameError: name 'CLASS_ID' is not defined
+
+tests/e2e/assessment/test_yz_rd_t050_integrated_speech_review.py:164: NameError
+______ test_t050_retained_mock_specialized_catalog_and_mobile_first_card _______
+
+    def test_t050_retained_mock_specialized_catalog_and_mobile_first_card():
+        """Check the T050 catalog modes and the actual first oral card at four widths."""
+        t048.verify_runtime_identity()
+>       student_proof = json.loads((EVIDENCE_DIR / "t050-integrated-proof.json").read_text(encoding="utf-8"))
+
+tests/e2e/assessment/test_yz_rd_t050_integrated_speech_review.py:590:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/usr/lib/python3.10/pathlib.py:1134: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = PosixPath('/home/tian/code/work/yuzan-workspace-t050/evidence/yz-rd-t050/e2e/attempt-08/task-summary/t050-integrated-proof.json')
+mode = 'r', buffering = -1, encoding = 'utf-8', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return self._accessor.open(self, mode, buffering, encoding, errors,
+                                   newline)
+E       FileNotFoundError: [Errno 2] No such file or directory: '/home/tian/code/work/yuzan-workspace-t050/evidence/yz-rd-t050/e2e/attempt-08/task-summary/t050-integrated-proof.json'
+
+/usr/lib/python3.10/pathlib.py:1119: FileNotFoundError
+_____ test_t050_same_class_roster_csv_zero_null_and_permission_regression ______
+
+    def test_t050_same_class_roster_csv_zero_null_and_permission_regression():
+        """Verify the same class roster still exports all 35 rows with zero separate from null."""
+        t048.verify_runtime_identity()
+        t032.sql = lambda statement: t048.sql(statement, capture=True)
+>       main_flow = json.loads((EVIDENCE_DIR / "t050-integrated-proof.json").read_text(encoding="utf-8"))
+
+tests/e2e/assessment/test_yz_rd_t050_integrated_speech_review.py:697:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/usr/lib/python3.10/pathlib.py:1134: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = PosixPath('/home/tian/code/work/yuzan-workspace-t050/evidence/yz-rd-t050/e2e/attempt-08/task-summary/t050-integrated-proof.json')
+mode = 'r', buffering = -1, encoding = 'utf-8', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return self._accessor.open(self, mode, buffering, encoding, errors,
+                                   newline)
+E       FileNotFoundError: [Errno 2] No such file or directory: '/home/tian/code/work/yuzan-workspace-t050/evidence/yz-rd-t050/e2e/attempt-08/task-summary/t050-integrated-proof.json'
+
+/usr/lib/python3.10/pathlib.py:1119: FileNotFoundError
+=========================== short test summary info ============================
+FAILED tests/e2e/assessment/test_yz_rd_t050_integrated_speech_review.py::test_t050_integrated_student_course_audio_teacher_review_report_history
+FAILED tests/e2e/assessment/test_yz_rd_t050_integrated_speech_review.py::test_t050_retained_mock_specialized_catalog_and_mobile_first_card
+FAILED tests/e2e/assessment/test_yz_rd_t050_integrated_speech_review.py::test_t050_same_class_roster_csv_zero_null_and_permission_regression
+3 failed in 0.15s

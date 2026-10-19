@@ -1,0 +1,329 @@
+RESPONSIVE teacher-review-queue 390px {"scroll": 390, "client": 390, "inner": 390, "shellColumns": "390px", "sidebarWidth": "390px", "shell": {"x": 0, "width": 390, "right": 390, "y": 0, "height": 1659.625, "bottom": 1659.625}, "sidebar": {"x": 0, "width": 390, "right": 390, "y": 0, "height": 97, "bottom": 97}, "main": {"x": 0, "width": 390, "right": 390, "y": 97, "height": 1562.625, "bottom": 1659.625}, "page": {"x": 0, "width": 390, "right": 390, "y": 155, "height": 1504.625, "bottom": 1659.625}}
+RESPONSIVE teacher-review-queue 768px {"scroll": 768, "client": 768, "inner": 768, "shellColumns": "72px 696px", "sidebarWidth": "72px", "shell": {"x": 0, "width": 768, "right": 768, "y": 0, "height": 1645.4375, "bottom": 1645.4375}, "sidebar": {"x": 0, "width": 72, "right": 72, "y": 0, "height": 920, "bottom": 920}, "main": {"x": 72, "width": 696, "right": 768, "y": 0, "height": 1645.4375, "bottom": 1645.4375}, "page": {"x": 72, "width": 696, "right": 768, "y": 69, "height": 1576.4375, "bottom": 1645.4375}}
+RESPONSIVE teacher-review-queue 1280px {"scroll": 1280, "client": 1280, "inner": 1280, "shellColumns": "190px 1090px", "sidebarWidth": "190px", "shell": {"x": 0, "width": 1280, "right": 1280, "y": 0, "height": 1038.484375, "bottom": 1038.484375}, "sidebar": {"x": 0, "width": 190, "right": 190, "y": 0, "height": 920, "bottom": 920}, "main": {"x": 190, "width": 1090, "right": 1280, "y": 0, "height": 1038.484375, "bottom": 1038.484375}, "page": {"x": 190, "width": 1090, "right": 1280, "y": 69, "height": 969.484375, "bottom": 1038.484375}}
+RESPONSIVE teacher-review-queue 1440px {"scroll": 1440, "client": 1440, "inner": 1440, "shellColumns": "190px 1250px", "sidebarWidth": "190px", "shell": {"x": 0, "width": 1440, "right": 1440, "y": 0, "height": 1038.484375, "bottom": 1038.484375}, "sidebar": {"x": 0, "width": 190, "right": 190, "y": 0, "height": 920, "bottom": 920}, "main": {"x": 190, "width": 1250, "right": 1440, "y": 0, "height": 1038.484375, "bottom": 1038.484375}, "page": {"x": 190, "width": 1250, "right": 1440, "y": 69, "height": 969.484375, "bottom": 1038.484375}}
+FFF
+=================================== FAILURES ===================================
+___ test_t050_integrated_student_course_audio_teacher_review_report_history ____
+
+    def test_t050_integrated_student_course_audio_teacher_review_report_history():
+        """Exercise T047 Today/course + T048 review on the same fresh T050 runtime and Attempt."""
+        t048.verify_runtime_identity()
+        EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
+        student_a = t048.create_student_fixture("T050复核学生", CLASS_ID)
+        student_b = t048.create_student_fixture("T050隔离学生", CLASS_ID)
+        teacher_other = t048.create_teacher_fixture("T050跨班")
+        foreign_teacher = t048.create_cross_school_teacher()
+        browser_errors: list[str] = []
+        proof: dict[str, object] = {"task": "YZ-RD-T050", "fixturePolicy": "TEST_FIXTURE_ONLY; no real student records"}
+
+        with sync_playwright() as playwright:
+            browser = playwright.chromium.launch(
+                headless=True,
+                executable_path="/usr/bin/google-chrome",
+                args=["--use-fake-ui-for-media-stream", "--use-fake-device-for-media-stream"],
+            )
+            context = browser.new_context(
+                viewport={"width": 1440, "height": 1000},
+                permissions=["microphone"],
+                has_touch=True,
+                accept_downloads=True,
+            )
+            context.add_init_script("window.__yuzanRunnerMicrophoneSource = 'SIMULATED_MIC';")
+            page = context.new_page()
+            page.on("pageerror", lambda error: browser_errors.append(type(error).__name__))
+            try:
+                teacher_api = t048.login_api(page, "teacher.test")
+                assignment_id, course = create_open_course_assignment(page, teacher_api)
+                student = browser_login_student(page, student_a["login"])
+                student_headers = t048.headers(student)
+                assert student["user"]["id"] == student_a["user"]
+                today = t037.open_today(page)
+                assert today and today["version"] == "student-today-v1"
+                assert today["primaryAction"], today
+                assert page.locator(".today-primary").count() == 1
+                assert page.locator(".today-skill-card").count() == 0
+                course_link = page.locator(f".today-course-item a[href*='{assignment_id}']")
+                course_link.wait_for(timeout=30_000)
+                course_href = course_link.get_attribute("href")
+                assert course_href == f"/student/courses/course-detail/?id={assignment_id}"
+                today_layout = save_viewports(page, "student-today")
+
+                course_api = page.request.get(
+                    f"{API}/schools/{SCHOOL_ID}/student/courses/{assignment_id}",
+                    headers=student_headers,
+                )
+                assert course_api.ok, course_api.text()
+                detail = payload(course_api)
+                activities = [
+                    activity
+                    for unit in detail["units"]
+                    for lesson in unit["lessons"]
+                    for activity in lesson["activities"]
+                ]
+                assert any(activity["id"] == course["activity"] for activity in activities), activities
+                course_link.click()
+                page.wait_for_url(f"**/student/courses/course-detail/?id={assignment_id}", timeout=30_000)
+                page.locator("#cpMain").wait_for(state="visible", timeout=30_000)
+                expect(page.locator("#cpHeroTitle")).to_contain_text(course["courseTitle"])
+                expect(page.locator("body")).to_contain_text(course["activityTitle"])
+                ack_button = page.locator(".cp-exercise-text .cp-exercise-submit")
+                ack_button.wait_for(timeout=20_000)
+                ack_button.click()
+                page.locator(".cp-exercise-text .cp-exercise-feedback.correct").wait_for(timeout=20_000)
+                progress = sql_rows(
+                    f'''SELECT completed::text FROM "ActivityProgress"
+                        WHERE "schoolId"={q(SCHOOL_ID)} AND "enrollmentId"={q(student_a['enrollment'])}
+                          AND "activityId"={q(course['activity'])};'''
+                )
+                assert progress == [["true"]], progress
+                course_layout = save_viewports(page, "student-course-detail")
+
+                t037.open_today(page)
+                assert page.locator(".today-discover-link").count() == 1
+                discovery_href = page.locator(".today-discover-link").get_attribute("href")
+                assert discovery_href and discovery_href.startswith("/student/practices/")
+                discovery_id = discovery_href.rstrip("/").split("/")[-1]
+                today_after_course = t037.open_today(page)
+                assert today_after_course["primaryAction"] and page.locator(".today-primary").count() == 1
+                page.goto(f"{BASE}/student/practices/", wait_until="networkidle")
+                page.locator(".catalog-oral-toolbar").wait_for(timeout=20_000)
+                page.locator('.catalog-tabs button[data-tab="MOCK"]').click()
+                page.wait_for_function("document.querySelector('.catalog-tabs button[data-tab=MOCK]')?.getAttribute('aria-pressed') === 'true'")
+                oral_button = page.locator("[data-journey-oral]")
+                oral_button.wait_for(timeout=10_000)
+                oral_button.focus()
+                with page.expect_request(lambda request: t045.catalog_request(request, key="requiresRecording", value="true")) as oral_request:
+                    page.keyboard.press("Enter")
+                oral_response = page.request.get(
+                    f"{API}/schools/{SCHOOL_ID}/practices?requiresRecording=true", headers=student_headers
+                )
+                assert oral_response.ok, oral_response.text()
+                oral_items = payload(oral_response)["items"]
+                assert oral_items and all(item["requiresRecording"] is True for item in oral_items)
+                discovery_response = page.request.get(
+                    f"{API}/schools/{SCHOOL_ID}/practices/{discovery_id}", headers=student_headers
+                )
+                assert discovery_response.ok, discovery_response.text()
+                rhythm = payload(discovery_response)
+                assert rhythm["id"] == discovery_id and rhythm["requiresRecording"] is True, rhythm
+                assert any(item["id"] == rhythm["id"] and item["requiresRecording"] for item in oral_items)
+                page.locator(f'[data-practice-detail="{rhythm["id"]}"] h2 a').click()
+                page.wait_for_url(f"**/student/practices/{rhythm['id']}/", timeout=20_000)
+                page.locator("[data-start]").click()
+                page.wait_for_url("**/student/practices/attempts/*/runner/", timeout=30_000)
+                page.locator(".question-shell").wait_for(timeout=20_000)
+                attempt_id = page.url.split("/attempts/")[1].split("/")[0]
+                runner_layout = save_viewports(page, "student-runner")
+                page.set_viewport_size({"width": 1440, "height": 1000})
+                completion = t048.complete_t048_attempt(page, student_headers, attempt_id)
+                assert completion["itemCount"] == 20, completion
+                assert completion["recordedAudio"] >= 2 and completion["uploadRetries"] == completion["recordedAudio"], completion
+                attempt_rows = sql_rows(
+                    f'''SELECT s.status::text,s."schoolId",e."userId",e.id
+                        FROM "AssessmentSession" s JOIN "Enrollment" e ON e.id=s."enrollmentId"
+                        WHERE s.id={q(attempt_id)};'''
+                )
+                assert len(attempt_rows) == 1 and attempt_rows[0][0:3] == ["PROCESSING", SCHOOL_ID, student_a["user"]], attempt_rows
+                assert sql_scalar(f'''SELECT COUNT(*) FROM "AssessmentReport" WHERE "sessionId"={q(attempt_id)};''') == "0"
+                assert sql_scalar(
+                    f'''SELECT COUNT(*) FROM "AssessmentItem" WHERE "sessionId"={q(attempt_id)}
+                        AND "recordingId" IS NOT NULL AND "scoredScore" IS NOT NULL;'''
+                ) == "0"
+                recording_rows = sql_rows(
+                    f'''SELECT i.id,r.id,r."objectKey",r."mimeType",r.status::text
+                        FROM "AssessmentItem" i JOIN "Recording" r ON r.id=i."recordingId"
+                        WHERE i."sessionId"={q(attempt_id)} ORDER BY i."sortOrder";'''
+                )
+                assert len(recording_rows) == completion["recordedAudio"]
+                minio_objects = []
+                for item_id, recording_id, object_key, mime_type, state in recording_rows:
+                    assert object_key.startswith(f"recordings/{recording_id}/")
+                    assert mime_type.startswith("audio/") and state in {"READY", "PROCESSING", "COMPLETE"}
+                    head = t048.minio_head_object(object_key)
+                    assert head.get("bytes", 0) > 0 and head.get("contentType", "").startswith("audio/"), head
+                    minio_objects.append({"itemId": item_id, "recordingId": recording_id, "bytes": head["bytes"], "contentType": head["contentType"]})
+                no_report = page.request.get(
+                    f"{API}/schools/{SCHOOL_ID}/assessments/sessions/{attempt_id}/report",
+                    headers=student_headers,
+                )
+                assert no_report.ok and payload(no_report) is None
+
+                anonymous = playwright.request.new_context()
+                try:
+                    no_auth = anonymous.get(f"{API}/schools/{SCHOOL_ID}/assessment-reviews")
+                    assert no_auth.status == 401
+                finally:
+                    anonymous.dispose()
+                student_queue = page.request.get(f"{API}/schools/{SCHOOL_ID}/assessment-reviews", headers=student_headers)
+                assert student_queue.status == 403
+
+                teacher_api = t048.login_api(page, "teacher.test")
+                teacher_headers = t048.headers(teacher_api)
+                initial_queue = t048.item_queue(page.request, teacher_headers, student_a["name"])
+                assert len(initial_queue) >= 2, initial_queue
+                item_ids = [item["itemId"] for item in initial_queue]
+                audio_item = next(item for item in initial_queue if item["strategy"] == "SPEECH_READING")
+                audio_id = audio_item["itemId"]
+                pending_before_review = [item for item in initial_queue if item["itemId"] != audio_id]
+                assert pending_before_review
+                pending_sample = pending_before_review[0]["itemId"]
+                assert sql_scalar(
+                    f'''SELECT COUNT(*) FROM "AssessmentItem" WHERE id={q(audio_id)} AND "scoredScore" IS NULL;'''
+                ) == "1"
+                assert sql_scalar(
+                    f'''SELECT COUNT(*) FROM "AssessmentItem" WHERE id={q(pending_sample)} AND "scoredScore" IS NULL;'''
+                ) == "1"
+
+                student_write = page.request.put(
+                    f"{API}/schools/{SCHOOL_ID}/assessment-reviews/{audio_id}",
+                    headers=student_headers,
+                    data={"score": 0, "comment": "TEST_FIXTURE_ONLY 学生无权写复核"},
+                )
+                assert student_write.status == 403
+                missing_detail = page.request.get(
+                    f"{API}/schools/{SCHOOL_ID}/assessment-reviews/{uuid.uuid4()}", headers=teacher_headers
+                )
+                assert missing_detail.status == 404
+                over_score = page.request.put(
+                    f"{API}/schools/{SCHOOL_ID}/assessment-reviews/{audio_id}",
+                    headers=teacher_headers,
+                    data={"score": float(audio_item["maxScore"]) + 1, "comment": "TEST_FIXTURE_ONLY"},
+                )
+                negative_score = page.request.put(
+                    f"{API}/schools/{SCHOOL_ID}/assessment-reviews/{audio_id}",
+                    headers=teacher_headers,
+                    data={"score": -1, "comment": "TEST_FIXTURE_ONLY"},
+                )
+                assert over_score.status == negative_score.status == 400
+                other_teacher_session = t048.login_api(page, teacher_other["login"])
+                cross_class_detail = page.request.get(
+                    f"{API}/schools/{SCHOOL_ID}/assessment-reviews/{audio_id}",
+                    headers=t048.headers(other_teacher_session),
+                )
+                foreign_teacher_session = t048.login_api(page, foreign_teacher["login"])
+                cross_school_detail = page.request.get(
+                    f"{API}/schools/{SCHOOL_ID}/assessment-reviews/{audio_id}",
+                    headers=t048.headers(foreign_teacher_session),
+                )
+                assert cross_class_detail.status == cross_school_detail.status == 403
+
+                browser_login_teacher(page, "teacher.test")
+                page.goto(f"{BASE}/teacher/reviews/", wait_until="networkidle")
+                page.locator("[data-student-filter]").fill(student_a["name"])
+                audio_row = page.locator(f'.review-row[href^="/teacher/reviews/{audio_id}"]')
+                audio_row.wait_for(timeout=20_000)
+                t048.save_responsive_screenshots(page, "teacher-review-queue")
+
+                expired_url_evidence: dict[str, object] = {"freshDetailFetches": 0, "expiredResponseCount": 0}
+                audio_detail_path = f"**/api/v1/schools/{SCHOOL_ID}/assessment-reviews/{audio_id}"
+
+                def mutate_first_signed_url(route):
+                    if route.request.method != "GET" or expired_url_evidence["freshDetailFetches"]:
+                        expired_url_evidence["freshDetailFetches"] += int(route.request.method == "GET")
+                        route.continue_()
+                        return
+                    expired_url_evidence["freshDetailFetches"] += 1
+                    expired_playback_response(route, expired_url_evidence)
+
+                page.route(audio_detail_path, mutate_first_signed_url)
+                expired_url = {"url": ""}
+
+                def reject_stale_signed_url(route):
+                    query = parse_qs(urlsplit(route.request.url).query)
+                    if query.get("X-Amz-Date") == ["20000101T000000Z"]:
+                        expired_url_evidence["expiredResponseCount"] += 1
+                        route.fulfill(status=403, content_type="text/plain", body="ExpiredToken")
+                    else:
+                        route.continue_()
+
+                page.route("**/*", reject_stale_signed_url)
+                audio_row.click()
+                t048.wait_for_review_item(page, audio_id)
+>               stale_url = str(expired_url_evidence["staleSignedUrl"])
+E               KeyError: 'staleSignedUrl'
+
+tests/e2e/assessment/test_yz_rd_t050_integrated_speech_review.py:399: KeyError
+______ test_t050_retained_mock_specialized_catalog_and_mobile_first_card _______
+
+    def test_t050_retained_mock_specialized_catalog_and_mobile_first_card():
+        """Check the T050 catalog modes and the actual first oral card at four widths."""
+        t048.verify_runtime_identity()
+>       student_proof = json.loads((EVIDENCE_DIR / "t050-integrated-proof.json").read_text(encoding="utf-8"))
+
+tests/e2e/assessment/test_yz_rd_t050_integrated_speech_review.py:592:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/usr/lib/python3.10/pathlib.py:1134: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = PosixPath('/home/tian/code/work/yuzan-workspace-t050/evidence/yz-rd-t050/e2e/attempt-05/task-summary/t050-integrated-proof.json')
+mode = 'r', buffering = -1, encoding = 'utf-8', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return self._accessor.open(self, mode, buffering, encoding, errors,
+                                   newline)
+E       FileNotFoundError: [Errno 2] No such file or directory: '/home/tian/code/work/yuzan-workspace-t050/evidence/yz-rd-t050/e2e/attempt-05/task-summary/t050-integrated-proof.json'
+
+/usr/lib/python3.10/pathlib.py:1119: FileNotFoundError
+_____ test_t050_same_class_roster_csv_zero_null_and_permission_regression ______
+
+    def test_t050_same_class_roster_csv_zero_null_and_permission_regression():
+        """Verify the same class roster still exports all 35 rows with zero separate from null."""
+        t048.verify_runtime_identity()
+        t032.sql = lambda statement: t048.sql(statement, capture=True)
+        count = int(sql_scalar(
+            f'''SELECT COUNT(*) FROM "Enrollment" WHERE "schoolId"={q(SCHOOL_ID)} AND "classId"={q(CLASS_ID)}
+                AND role='STUDENT' AND status='ACTIVE';'''
+        ))
+        if count > 35:
+            raise AssertionError(f"T050 isolated fixture already has {count} active students in its class; preserving rows instead of deleting them")
+        for index in range(count, 35):
+            t048.create_student_fixture(f"T050名单{index + 1:02d}", CLASS_ID)
+
+        with sync_playwright() as playwright:
+            request = playwright.request.new_context()
+            try:
+                teacher = login_api_context(request, "teacher.test")
+                teacher_headers = t048.headers(teacher)
+                roster_path = f"{API}/schools/{SCHOOL_ID}/classes/{CLASS_ID}/student-summaries"
+                response = request.get(roster_path, headers=teacher_headers)
+                assert response.ok, response.text()
+                summaries = payload(response)
+                assert isinstance(summaries, list) and len(summaries) == 35, len(summaries) if isinstance(summaries, list) else type(summaries).__name__
+>               proof = json.loads((EVIDENCE_DIR / "t050-integrated-proof.json").read_text(encoding="utf-8"))
+
+tests/e2e/assessment/test_yz_rd_t050_integrated_speech_review.py:715:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/usr/lib/python3.10/pathlib.py:1134: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = PosixPath('/home/tian/code/work/yuzan-workspace-t050/evidence/yz-rd-t050/e2e/attempt-05/task-summary/t050-integrated-proof.json')
+mode = 'r', buffering = -1, encoding = 'utf-8', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return self._accessor.open(self, mode, buffering, encoding, errors,
+                                   newline)
+E       FileNotFoundError: [Errno 2] No such file or directory: '/home/tian/code/work/yuzan-workspace-t050/evidence/yz-rd-t050/e2e/attempt-05/task-summary/t050-integrated-proof.json'
+
+/usr/lib/python3.10/pathlib.py:1119: FileNotFoundError
+=========================== short test summary info ============================
+FAILED tests/e2e/assessment/test_yz_rd_t050_integrated_speech_review.py::test_t050_integrated_student_course_audio_teacher_review_report_history
+FAILED tests/e2e/assessment/test_yz_rd_t050_integrated_speech_review.py::test_t050_retained_mock_specialized_catalog_and_mobile_first_card
+FAILED tests/e2e/assessment/test_yz_rd_t050_integrated_speech_review.py::test_t050_same_class_roster_csv_zero_null_and_permission_regression
+3 failed in 46.12s

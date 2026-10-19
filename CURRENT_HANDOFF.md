@@ -3,6 +3,14 @@
 Last updated: 2026-10-20
 Repository: `yuzan-workspace-main`
 
+## YZ-RD-T050 integrated teacher speech review (2026-10-20)
+
+- COMPLETE on independent branch `feat/yz-rd-t050-integrated-teacher-speech-review`, created from formally accepted T047 `598fd18db3ae8d7dc4feaabdd8bc7425c1be6389`. No-FF merge `383f2923e551c239acc9a79d2dc279a7a98485a4` preserves accepted T048 `23ea9e3f550672b7deb36f690c9c0adb436ebe80` as its second parent; branch was pushed and remains unmerged to the shared branch.
+- Fresh T050 native Chrome/Web/API/PostgreSQL 17/Redis/MinIO run passed 3/3. It covered personalized Today → opened course activity → simulated-mic recording upload → six-item teacher review → one formal API report → same report from student History. Four WebM/Opus objects were read back from T050's isolated MinIO clone. Physical student microphone audio was NOT_RUN.
+- Empty score stayed NULL without a PUT; explicit 0 saved as a legal teacher-reviewed value. Play/pause/replay, expired signed URL refresh, multiline feedback, report-after-final-review gating, 35-row CSV parity, and student/class/school isolation passed. Four viewport widths (390/768/1280/1440) had no horizontal overflow; at 390×844 the first oral title ends at y=817.5. Frontend 137/137 and runtime verification pass.
+- Full API lint remains FAIL at 1201 errors / 1 warning, not waived; `READY_TO_MERGE=NO`. Raw output and final screenshots/proofs: [evidence/yz-rd-t050/RESULTS.md](evidence/yz-rd-t050/RESULTS.md). All task-owned runtime services stopped. No Docker, T005 edits, shared-branch merge, force Git operation, or L4 access; `L4_OPEN=OPEN`.
+- Target checkout `AGENTS.md` lacks the AA-DEV-V2.2 marker; no Lane policy path was supplied. Root `/home/tian/code/AGENTS.md` applied.
+
 ## YZ-RD-T047 mobile-first unified product integration (2026-10-20)
 
 - COMPLETE on independent branch `feat/yz-rd-t047-mobile-first-unified-product`. No-FF merge `b5a57430d03d8f92b1419c08b871abc19a415d5d` preserves BASE T046 `0f6ea3710797612aa08f37944a9ab9d92f033da1` and accepted T045 `e3a3c544bb990904212f5ad518a6dc46ae68916c` as its exact parents.

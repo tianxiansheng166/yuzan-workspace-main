@@ -1,0 +1,18 @@
+Redis PING: PONG at 127.0.0.1:6551
+T050 Redis read/write: PASS {"write": "SET OK", "readBack": "exact value matched", "cleanup": "own key deleted", "redisPort": "6551"}
+MinIO health: HTTP 200 at http://127.0.0.1:59752/minio/health/live; console port 59753 owned
+T050 native runtime: FAIL — T050 MinIO bucket copy failed: SlowDownRead: Resource requested is unreadable, please reduce your request rate
+minio: 收到 TERM 后仍在运行；保留 PID 记录，未强制终止
+redis: 收到 TERM 后仍在运行；保留 PID 记录，未强制终止
+postgres: 已停止 (PID 4039696)
+Stop: INCOMPLETE; see identity checks above
+minio: 原进程已退出；清理了本任务的陈旧 PID 记录
+redis: 原进程已退出；清理了本任务的陈旧 PID 记录
+Stop: PASS
+SERVICE  PID     PORT / HEALTH
+postgres -       stopped [NOT_OWNED]
+api      -       stopped [NOT_OWNED]
+web      -       stopped [NOT_OWNED]
+API dependency readiness: HTTP unreachable
+T050 cleanup: runtime-owned services stopped; database, bucket and evidence retained.
+EXIT_CODE=1

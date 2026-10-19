@@ -31,6 +31,7 @@ test('mobile search keeps its action beside the field with a comfortable touch t
 
 test('mobile first-card hierarchy reflows the tools and preserves a strong cover', () => {
   assert.match(css, /\.practice-page \.catalog-head-tools\{display:flex;flex-wrap:wrap/);
-  assert.match(css, /\.practice-page \.practice-cover\{height:150px\}/);
+  assert.match(css, /\.practice-page \.practice-cover\{height:120px\}/);
+  assert.match(css, /\.practice-page \.practice-tile h2\{font-size:18px;line-height:1\.2\}/);
   assert.match(css, /\.practice-page \.catalog-oral-help\{display:none\}/);
 });

@@ -1,0 +1,6 @@
+{
+  "write": "SET OK",
+  "readBack": "exact value matched",
+  "cleanup": "own key deleted",
+  "redisPort": "6556"
+}

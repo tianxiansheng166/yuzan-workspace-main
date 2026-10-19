@@ -1,0 +1,6 @@
+{
+  "attempt": 1,
+  "runtimeSeed": "older T011 retained fixture; this was superseded because the T047 specialized practice was absent",
+  "e2e": "3 collected, 3 failed; first flow stopped at the 390px title fold, catalog mode proof found no specialized test item, roster proof then lacked the first flow report",
+  "services": "T050-owned services stopped after the run; runtime-local/native-web-t050 data/logs retained"
+}

@@ -1,0 +1,48 @@
+T050 native runtime: FAIL — 127.0.0.1:55759 已由其他进程监听；未尝试占用或停止它
+minio: 已停止 (PID 4167928)
+redis: 已停止 (PID 4167913)
+postgres: 已停止 (PID 4167891)
+Stop: PASS
+Stop: PASS
+SERVICE  PID     PORT / HEALTH
+postgres -       stopped [NOT_OWNED]
+api      -       stopped [NOT_OWNED]
+web      -       stopped [NOT_OWNED]
+API dependency readiness: HTTP unreachable
+T050 cleanup: runtime-owned services stopped; database, bucket and evidence retained.
+/home/tian/code/work/yuzan-workspace-t050/infra/database
+> prisma generate
+
+
+✔ Generated Prisma Client (7.8.0) to ./generated/client in 443ms
+
+Loaded Prisma config from prisma.config.ts.
+
+Prisma schema loaded from prisma/schema.prisma.
+> @yuzan/database@ build /home/tian/code/work/yuzan-workspace-t050/infra/database
+> tsc -p tsconfig.json
+T050 native runtime: FAIL — 命令失败（退出码 1）: /home/tian/.cache/node/corepack/v1/pnpm/10.13.1/bin/pnpm.cjs --filter @yuzan/database migrate:deploy
+> @yuzan/database@ migrate:deploy /home/tian/code/work/yuzan-workspace-t050/infra/database
+> prisma migrate deploy
+
+Datasource "db": PostgreSQL database "yuzan_t050_native", schema "public" at "127.0.0.1:55759"
+
+/home/tian/code/work/yuzan-workspace-t050/infra/database:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @yuzan/database@ migrate:deploy: `prisma migrate deploy`
+Exit status 1
+Loaded Prisma config from prisma.config.ts.
+
+Prisma schema loaded from prisma/schema.prisma.
+Error: Schema engine error:
+FATAL: the database system is shutting down
+postgres: 已停止 (PID 4167891)
+Stop: PASS
+Stop: PASS
+SERVICE  PID     PORT / HEALTH
+postgres -       stopped [NOT_OWNED]
+api      -       stopped [NOT_OWNED]
+web      -       stopped [NOT_OWNED]
+API dependency readiness: HTTP unreachable
+T050 cleanup: runtime-owned services stopped; database, bucket and evidence retained.
+EXIT_CODE=1
+EXIT_CODE=1

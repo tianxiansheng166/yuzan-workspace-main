@@ -1,0 +1,163 @@
+FFF
+=================================== FAILURES ===================================
+___ test_t050_integrated_student_course_audio_teacher_review_report_history ____
+
+    def test_t050_integrated_student_course_audio_teacher_review_report_history():
+        """Exercise T047 Today/course + T048 review on the same fresh T050 runtime and Attempt."""
+        t048.verify_runtime_identity()
+        EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
+        review_teacher_class = t048.create_teacher_fixture("T050复核班")
+        attach_seed_teacher_to_class(review_teacher_class["class"])
+        student_a = t048.create_student_fixture("T050复核学生", review_teacher_class["class"])
+        student_b = t048.create_student_fixture("T050隔离学生", review_teacher_class["class"])
+        teacher_other = t048.create_teacher_fixture("T050跨班")
+        foreign_teacher = t048.create_cross_school_teacher()
+        browser_errors: list[str] = []
+        proof: dict[str, object] = {"task": "YZ-RD-T050", "fixturePolicy": "TEST_FIXTURE_ONLY; no real student records"}
+
+        with sync_playwright() as playwright:
+            browser = playwright.chromium.launch(
+                headless=True,
+                executable_path="/usr/bin/google-chrome",
+                args=["--use-fake-ui-for-media-stream", "--use-fake-device-for-media-stream"],
+            )
+            context = browser.new_context(
+                viewport={"width": 1440, "height": 1000},
+                permissions=["microphone"],
+                has_touch=True,
+                accept_downloads=True,
+            )
+            context.add_init_script("window.__yuzanRunnerMicrophoneSource = 'SIMULATED_MIC';")
+            page = context.new_page()
+            page.on("pageerror", lambda error: browser_errors.append(type(error).__name__))
+            try:
+                teacher_api = t048.login_api(page, "teacher.test")
+                assignment_id, course = create_open_course_assignment(page, teacher_api, review_teacher_class["class"])
+                student = browser_login_student(page, student_a["login"])
+                student_headers = t048.headers(student)
+                assert student["user"]["id"] == student_a["user"]
+                today = t037.open_today(page)
+                assert today and today["version"] == "student-today-v1"
+                assert today["primaryAction"], today
+                assert page.locator(".today-primary").count() == 1
+                assert page.locator(".today-skill-card").count() == 0
+                course_link = page.locator(f".today-course-item a[href*='{assignment_id}']")
+                course_link.wait_for(timeout=30_000)
+                course_href = course_link.get_attribute("href")
+                assert course_href == f"/student/courses/course-detail/?id={assignment_id}"
+                today_layout = save_viewports(page, "student-today")
+
+                course_api = page.request.get(
+                    f"{API}/schools/{SCHOOL_ID}/student/courses/{assignment_id}",
+                    headers=student_headers,
+                )
+                assert course_api.ok, course_api.text()
+                detail = payload(course_api)
+                activities = [
+                    activity
+                    for unit in detail["units"]
+                    for lesson in unit["lessons"]
+                    for activity in lesson["activities"]
+                ]
+                assert any(activity["id"] == course["activity"] for activity in activities), activities
+                course_link.click()
+                page.wait_for_url(f"**/student/courses/course-detail/?id={assignment_id}", timeout=30_000)
+                page.locator("#cpMain").wait_for(state="visible", timeout=30_000)
+                expect(page.locator("#cpHeroTitle")).to_contain_text(course["courseTitle"])
+                expect(page.locator("body")).to_contain_text(course["activityTitle"])
+                ack_button = page.locator(".cp-exercise-text .cp-exercise-submit")
+                ack_button.wait_for(timeout=20_000)
+                ack_button.click()
+                page.locator(".cp-exercise-text .cp-exercise-feedback.correct").wait_for(timeout=20_000)
+                progress = sql_rows(
+                    f'''SELECT completed::text FROM "ActivityProgress"
+                        WHERE "schoolId"={q(SCHOOL_ID)} AND "enrollmentId"={q(student_a['enrollment'])}
+                          AND "activityId"={q(course['activity'])};'''
+                )
+                assert progress == [["true"]], progress
+                course_layout = save_viewports(page, "student-course-detail")
+
+                today_after_course = t037.open_today(page)
+                assert today_after_course["primaryAction"] and page.locator(".today-primary").count() == 1
+                page.goto(f"{BASE}/student/practices/", wait_until="networkidle")
+                page.locator(".catalog-oral-toolbar").wait_for(timeout=20_000)
+                page.locator('.catalog-tabs button[data-tab="MOCK"]').click()
+                page.wait_for_function("document.querySelector('.catalog-tabs button[data-tab=MOCK]')?.getAttribute('aria-pressed') === 'true'")
+                oral_button = page.locator("[data-journey-oral]")
+                oral_button.wait_for(timeout=10_000)
+                oral_button.focus()
+                with page.expect_request(lambda request: t045.catalog_request(request, key="requiresRecording", value="true")) as oral_request:
+                    page.keyboard.press("Enter")
+                oral_response = page.request.get(
+                    f"{API}/schools/{SCHOOL_ID}/practices?requiresRecording=true", headers=student_headers
+                )
+                assert oral_response.ok, oral_response.text()
+                oral_items = payload(oral_response)["items"]
+>               assert oral_items and all(item["requiresRecording"] is True for item in oral_items)
+E               assert ([])
+
+tests/e2e/assessment/test_yz_rd_t050_integrated_speech_review.py:243: AssertionError
+______ test_t050_retained_mock_specialized_catalog_and_mobile_first_card _______
+
+    def test_t050_retained_mock_specialized_catalog_and_mobile_first_card():
+        """Check the T050 catalog modes and the actual first oral card at four widths."""
+        t048.verify_runtime_identity()
+>       student_proof = json.loads((EVIDENCE_DIR / "t050-integrated-proof.json").read_text(encoding="utf-8"))
+
+tests/e2e/assessment/test_yz_rd_t050_integrated_speech_review.py:542:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/usr/lib/python3.10/pathlib.py:1134: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = PosixPath('/home/tian/code/work/yuzan-workspace-t050/evidence/yz-rd-t050/e2e/attempt-07/task-summary/t050-integrated-proof.json')
+mode = 'r', buffering = -1, encoding = 'utf-8', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return self._accessor.open(self, mode, buffering, encoding, errors,
+                                   newline)
+E       FileNotFoundError: [Errno 2] No such file or directory: '/home/tian/code/work/yuzan-workspace-t050/evidence/yz-rd-t050/e2e/attempt-07/task-summary/t050-integrated-proof.json'
+
+/usr/lib/python3.10/pathlib.py:1119: FileNotFoundError
+_____ test_t050_same_class_roster_csv_zero_null_and_permission_regression ______
+
+    def test_t050_same_class_roster_csv_zero_null_and_permission_regression():
+        """Verify the same class roster still exports all 35 rows with zero separate from null."""
+        t048.verify_runtime_identity()
+        t032.sql = lambda statement: t048.sql(statement, capture=True)
+>       proof = json.loads((EVIDENCE_DIR / "t050-integrated-proof.json").read_text(encoding="utf-8"))
+
+tests/e2e/assessment/test_yz_rd_t050_integrated_speech_review.py:649:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/usr/lib/python3.10/pathlib.py:1134: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = PosixPath('/home/tian/code/work/yuzan-workspace-t050/evidence/yz-rd-t050/e2e/attempt-07/task-summary/t050-integrated-proof.json')
+mode = 'r', buffering = -1, encoding = 'utf-8', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return self._accessor.open(self, mode, buffering, encoding, errors,
+                                   newline)
+E       FileNotFoundError: [Errno 2] No such file or directory: '/home/tian/code/work/yuzan-workspace-t050/evidence/yz-rd-t050/e2e/attempt-07/task-summary/t050-integrated-proof.json'
+
+/usr/lib/python3.10/pathlib.py:1119: FileNotFoundError
+=========================== short test summary info ============================
+FAILED tests/e2e/assessment/test_yz_rd_t050_integrated_speech_review.py::test_t050_integrated_student_course_audio_teacher_review_report_history
+FAILED tests/e2e/assessment/test_yz_rd_t050_integrated_speech_review.py::test_t050_retained_mock_specialized_catalog_and_mobile_first_card
+FAILED tests/e2e/assessment/test_yz_rd_t050_integrated_speech_review.py::test_t050_same_class_roster_csv_zero_null_and_permission_regression
+3 failed in 9.64s

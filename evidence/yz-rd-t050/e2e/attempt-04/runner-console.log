@@ -1,0 +1,243 @@
+Redis PING: PONG at 127.0.0.1:6552
+T050 Redis read/write: PASS {"write": "SET OK", "readBack": "exact value matched", "cleanup": "own key deleted", "redisPort": "6552"}
+MinIO health: HTTP 200 at http://127.0.0.1:59754/minio/health/live; console port 59755 owned
+{"isolatedRuntime":"T050-owned cloned MinIO data directory","clonedResourceBucket":"yz-t047-native","sourceFixtureReadable":true,"sourceFixtureBytes":49578,"probeWrite":"PASS","probeReadBack":"PASS"}
+> @yuzan/database@ generate /home/tian/code/work/yuzan-workspace-t050/infra/database
+> prisma generate
+
+
+✔ Generated Prisma Client (7.8.0) to ./generated/client in 525ms
+
+Loaded Prisma config from prisma.config.ts.
+
+Prisma schema loaded from prisma/schema.prisma.
+┌─────────────────────────────────────────────────────────┐
+│  Update available 7.8.0 -> 8.0.0-rc.23                  │
+│                                                         │
+│  This is a major update - please follow the guide at    │
+│  https://pris.ly/d/major-version-upgrade                │
+│                                                         │
+│  Run the following to update                            │
+│    npm i --save-dev prisma@latest                       │
+│    npm i @prisma/client@latest                          │
+└─────────────────────────────────────────────────────────┘
+> @yuzan/database@ build /home/tian/code/work/yuzan-workspace-t050/infra/database
+> tsc -p tsconfig.json
+> @yuzan/database@ migrate:deploy /home/tian/code/work/yuzan-workspace-t050/infra/database
+> prisma migrate deploy
+
+Datasource "db": PostgreSQL database "yuzan_t050_native", schema "public" at "127.0.0.1:55752"
+
+32 migrations found in prisma/migrations
+
+
+No pending migrations to apply.
+Loaded Prisma config from prisma.config.ts.
+
+Prisma schema loaded from prisma/schema.prisma.
+> @yuzan/api@ build /home/tian/code/work/yuzan-workspace-t050/backend/api
+> nest build
+API live: HTTP 200 http://127.0.0.1:4252/api/v1/health/live
+Teacher Web: HTTP 200 http://127.0.0.1:4452/teacher/
+T050 native runtime: PostgreSQL 17, Redis 7, MinIO, NestJS API and Web are ready; Worker remains stopped.
+FFF
+=================================== FAILURES ===================================
+___ test_t050_integrated_student_course_audio_teacher_review_report_history ____
+
+    def test_t050_integrated_student_course_audio_teacher_review_report_history():
+        """Exercise T047 Today/course + T048 review on the same fresh T050 runtime and Attempt."""
+        t048.verify_runtime_identity()
+        EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
+        student_a = t048.create_student_fixture("T050复核学生", CLASS_ID)
+        student_b = t048.create_student_fixture("T050隔离学生", CLASS_ID)
+        teacher_other = t048.create_teacher_fixture("T050跨班")
+        foreign_teacher = t048.create_cross_school_teacher()
+        browser_errors: list[str] = []
+        proof: dict[str, object] = {"task": "YZ-RD-T050", "fixturePolicy": "TEST_FIXTURE_ONLY; no real student records"}
+
+        with sync_playwright() as playwright:
+            browser = playwright.chromium.launch(
+                headless=True,
+                executable_path="/usr/bin/google-chrome",
+                args=["--use-fake-ui-for-media-stream", "--use-fake-device-for-media-stream"],
+            )
+            context = browser.new_context(
+                viewport={"width": 1440, "height": 1000},
+                permissions=["microphone"],
+                has_touch=True,
+                accept_downloads=True,
+            )
+            context.add_init_script("window.__yuzanRunnerMicrophoneSource = 'SIMULATED_MIC';")
+            page = context.new_page()
+            page.on("pageerror", lambda error: browser_errors.append(type(error).__name__))
+            try:
+                teacher_api = t048.login_api(page, "teacher.test")
+                assignment_id, course = create_open_course_assignment(page, teacher_api)
+                student = browser_login_student(page, student_a["login"])
+                student_headers = t048.headers(student)
+                assert student["user"]["id"] == student_a["user"]
+                today = t037.open_today(page)
+                assert today and today["version"] == "student-today-v1"
+                assert today["primaryAction"], today
+                assert page.locator(".today-primary").count() == 1
+                assert page.locator(".today-skill-card").count() == 0
+                course_link = page.locator(f".today-course-item a[href*='{assignment_id}']")
+                course_link.wait_for(timeout=30_000)
+                course_href = course_link.get_attribute("href")
+                assert course_href == f"/student/courses/course-detail/?id={assignment_id}"
+                today_layout = save_viewports(page, "student-today")
+
+                course_api = page.request.get(
+                    f"{API}/schools/{SCHOOL_ID}/student/courses/{assignment_id}",
+                    headers=student_headers,
+                )
+                assert course_api.ok, course_api.text()
+                detail = payload(course_api)
+                activities = [
+                    activity
+                    for unit in detail["units"]
+                    for lesson in unit["lessons"]
+                    for activity in lesson["activities"]
+                ]
+                assert any(activity["id"] == course["activity"] for activity in activities), activities
+                course_link.click()
+                page.wait_for_url(f"**/student/courses/course-detail/?id={assignment_id}", timeout=30_000)
+                page.locator("#cpMain").wait_for(state="visible", timeout=30_000)
+                expect(page.locator("#cpHeroTitle")).to_contain_text(course["courseTitle"])
+                expect(page.locator("body")).to_contain_text(course["activityTitle"])
+                ack_button = page.locator(".cp-exercise-text .cp-exercise-submit")
+                ack_button.wait_for(timeout=20_000)
+                ack_button.click()
+                page.locator(".cp-exercise-text .cp-exercise-feedback.correct").wait_for(timeout=20_000)
+                progress = sql_rows(
+                    f'''SELECT completed::text FROM "ActivityProgress"
+                        WHERE "schoolId"={q(SCHOOL_ID)} AND "enrollmentId"={q(student_a['enrollment'])}
+                          AND "activityId"={q(course['activity'])};'''
+                )
+                assert progress == [["true"]], progress
+                course_layout = save_viewports(page, "student-course-detail")
+
+                t037.open_today(page)
+                assert page.locator(".today-discover-link").count() == 1
+                discovery_href = page.locator(".today-discover-link").get_attribute("href")
+                assert discovery_href and discovery_href.startswith("/student/practices/")
+                discovery_id = discovery_href.rstrip("/").split("/")[-1]
+                discovery_response = page.request.get(
+                    f"{API}/schools/{SCHOOL_ID}/practices/{discovery_id}",
+                    headers=student_headers,
+                )
+                assert discovery_response.ok, discovery_response.text()
+                discovery_data = payload(discovery_response)
+                assert discovery_data["id"] == discovery_id
+>               assert discovery_data["title"] == t008.PRACTICE_TITLE and discovery_data["requiresRecording"] is True
+E               AssertionError: assert ('国家通用语言文字能力｜水平二级综合测评' == '国家通用语言文字能力｜水平一级综合测评'
+E
+E                 - 国家通用语言文字能力｜水平一级综合测评
+E                 ?              ^
+E                 + 国家通用语言文字能力｜水平二级综合测评
+E                 ?              ^)
+
+tests/e2e/assessment/test_yz_rd_t050_integrated_speech_review.py:251: AssertionError
+______ test_t050_retained_mock_specialized_catalog_and_mobile_first_card _______
+
+    def test_t050_retained_mock_specialized_catalog_and_mobile_first_card():
+        """Check the T050 catalog modes and the actual first oral card at four widths."""
+        t048.verify_runtime_identity()
+>       student_proof = json.loads((EVIDENCE_DIR / "t050-integrated-proof.json").read_text(encoding="utf-8"))
+
+tests/e2e/assessment/test_yz_rd_t050_integrated_speech_review.py:575:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/usr/lib/python3.10/pathlib.py:1134: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = PosixPath('/home/tian/code/work/yuzan-workspace-t050/evidence/yz-rd-t050/e2e/attempt-04/task-summary/t050-integrated-proof.json')
+mode = 'r', buffering = -1, encoding = 'utf-8', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return self._accessor.open(self, mode, buffering, encoding, errors,
+                                   newline)
+E       FileNotFoundError: [Errno 2] No such file or directory: '/home/tian/code/work/yuzan-workspace-t050/evidence/yz-rd-t050/e2e/attempt-04/task-summary/t050-integrated-proof.json'
+
+/usr/lib/python3.10/pathlib.py:1119: FileNotFoundError
+_____ test_t050_same_class_roster_csv_zero_null_and_permission_regression ______
+
+    def test_t050_same_class_roster_csv_zero_null_and_permission_regression():
+        """Verify the same class roster still exports all 35 rows with zero separate from null."""
+        t048.verify_runtime_identity()
+        t032.sql = lambda statement: t048.sql(statement, capture=True)
+        count = int(sql_scalar(
+            f'''SELECT COUNT(*) FROM "Enrollment" WHERE "schoolId"={q(SCHOOL_ID)} AND "classId"={q(CLASS_ID)}
+                AND role='STUDENT' AND status='ACTIVE';'''
+        ))
+        if count > 35:
+            raise AssertionError(f"T050 isolated fixture already has {count} active students in its class; preserving rows instead of deleting them")
+        for index in range(count, 35):
+            t048.create_student_fixture(f"T050名单{index + 1:02d}", CLASS_ID)
+
+        with sync_playwright() as playwright:
+            request = playwright.request.new_context()
+            try:
+                teacher = login_api_context(request, "teacher.test")
+                teacher_headers = t048.headers(teacher)
+                roster_path = f"{API}/schools/{SCHOOL_ID}/classes/{CLASS_ID}/student-summaries"
+                response = request.get(roster_path, headers=teacher_headers)
+                assert response.ok, response.text()
+                summaries = payload(response)
+                assert isinstance(summaries, list) and len(summaries) == 35, len(summaries) if isinstance(summaries, list) else type(summaries).__name__
+>               proof = json.loads((EVIDENCE_DIR / "t050-integrated-proof.json").read_text(encoding="utf-8"))
+
+tests/e2e/assessment/test_yz_rd_t050_integrated_speech_review.py:698:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/usr/lib/python3.10/pathlib.py:1134: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = PosixPath('/home/tian/code/work/yuzan-workspace-t050/evidence/yz-rd-t050/e2e/attempt-04/task-summary/t050-integrated-proof.json')
+mode = 'r', buffering = -1, encoding = 'utf-8', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return self._accessor.open(self, mode, buffering, encoding, errors,
+                                   newline)
+E       FileNotFoundError: [Errno 2] No such file or directory: '/home/tian/code/work/yuzan-workspace-t050/evidence/yz-rd-t050/e2e/attempt-04/task-summary/t050-integrated-proof.json'
+
+/usr/lib/python3.10/pathlib.py:1119: FileNotFoundError
+=========================== short test summary info ============================
+FAILED tests/e2e/assessment/test_yz_rd_t050_integrated_speech_review.py::test_t050_integrated_student_course_audio_teacher_review_report_history
+FAILED tests/e2e/assessment/test_yz_rd_t050_integrated_speech_review.py::test_t050_retained_mock_specialized_catalog_and_mobile_first_card
+FAILED tests/e2e/assessment/test_yz_rd_t050_integrated_speech_review.py::test_t050_same_class_roster_csv_zero_null_and_permission_regression
+3 failed in 12.28s
+
+Native Chromium/API/PostgreSQL/MinIO E2E: FAIL
+web: 收到 TERM 后仍在运行；保留 PID 记录，未强制终止
+api: 收到 TERM 后仍在运行；保留 PID 记录，未强制终止
+minio: 收到 TERM 后仍在运行；保留 PID 记录，未强制终止
+redis: 收到 TERM 后仍在运行；保留 PID 记录，未强制终止
+postgres: 已停止 (PID 4047803)
+Stop: INCOMPLETE; see identity checks above
+web: 原进程已退出；清理了本任务的陈旧 PID 记录
+api: 原进程已退出；清理了本任务的陈旧 PID 记录
+minio: 原进程已退出；清理了本任务的陈旧 PID 记录
+redis: 原进程已退出；清理了本任务的陈旧 PID 记录
+Stop: PASS
+SERVICE  PID     PORT / HEALTH
+postgres -       stopped [NOT_OWNED]
+api      -       stopped [NOT_OWNED]
+web      -       stopped [NOT_OWNED]
+API dependency readiness: HTTP unreachable
+T050 cleanup: runtime-owned services stopped; database, bucket and evidence retained.
+EXIT_CODE=1

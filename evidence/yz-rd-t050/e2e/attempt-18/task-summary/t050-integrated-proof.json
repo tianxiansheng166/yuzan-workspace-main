@@ -1,0 +1,229 @@
+{
+  "task": "YZ-RD-T050",
+  "fixturePolicy": "TEST_FIXTURE_ONLY; no real student records",
+  "studentUserId": "c5ebf932-0b6b-412e-a0a9-c30366b52f3e",
+  "studentLogin": "student.t048.T050复核学生.2cd91e47ab@test.invalid",
+  "studentEnrollmentId": "1a4f3122-9a73-4bc5-9a3d-9460c9793c4b",
+  "courseAssignmentId": "e5819092-96ea-4cd3-88a5-9a29b4582452",
+  "reviewClassId": "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee",
+  "courseActivityId": "5813cd04-4b3e-4b55-817f-59a4836ee0fe",
+  "courseActivityPersisted": true,
+  "todayPersonalizedPrimaryPreserved": "BASELINE",
+  "fourCardFallbackCount": 0,
+  "todayViewports": [
+    {
+      "width": 390,
+      "height": 844,
+      "viewport": 390,
+      "document": 390,
+      "body": 390,
+      "horizontalOverflow": false
+    },
+    {
+      "width": 768,
+      "height": 1024,
+      "viewport": 768,
+      "document": 768,
+      "body": 768,
+      "horizontalOverflow": false
+    },
+    {
+      "width": 1280,
+      "height": 900,
+      "viewport": 1280,
+      "document": 1280,
+      "body": 1280,
+      "horizontalOverflow": false
+    },
+    {
+      "width": 1440,
+      "height": 1000,
+      "viewport": 1440,
+      "document": 1440,
+      "body": 1440,
+      "horizontalOverflow": false
+    }
+  ],
+  "courseViewports": [
+    {
+      "width": 390,
+      "height": 844,
+      "viewport": 390,
+      "document": 390,
+      "body": 390,
+      "horizontalOverflow": false
+    },
+    {
+      "width": 768,
+      "height": 1024,
+      "viewport": 768,
+      "document": 768,
+      "body": 768,
+      "horizontalOverflow": false
+    },
+    {
+      "width": 1280,
+      "height": 900,
+      "viewport": 1280,
+      "document": 1280,
+      "body": 1280,
+      "horizontalOverflow": false
+    },
+    {
+      "width": 1440,
+      "height": 1000,
+      "viewport": 1440,
+      "document": 1440,
+      "body": 1440,
+      "horizontalOverflow": false
+    }
+  ],
+  "todayPostCoursePrimaryAction": "BASELINE",
+  "oralCatalogFilterRequest": "http://127.0.0.1:4461/api/v1/schools/11111111-1111-4111-8111-111111111111/practices?requiresRecording=true&sort=RECOMMENDED",
+  "studentFirstOralPracticeId": "39e34b66-375e-46f3-8589-8e6832e28c86",
+  "runnerViewports": [
+    {
+      "width": 390,
+      "height": 844,
+      "viewport": 390,
+      "document": 390,
+      "body": 390,
+      "horizontalOverflow": false
+    },
+    {
+      "width": 768,
+      "height": 1024,
+      "viewport": 768,
+      "document": 768,
+      "body": 768,
+      "horizontalOverflow": false
+    },
+    {
+      "width": 1280,
+      "height": 900,
+      "viewport": 1280,
+      "document": 1280,
+      "body": 1280,
+      "horizontalOverflow": false
+    },
+    {
+      "width": 1440,
+      "height": 1000,
+      "viewport": 1440,
+      "document": 1440,
+      "body": 1440,
+      "horizontalOverflow": false
+    }
+  ],
+  "attemptId": "82ccde29-4760-40c1-b154-147ee53e680d",
+  "recordingsInMinIO": [
+    {
+      "itemId": "7db60e6f-a225-4256-b327-5d0894dad335",
+      "recordingId": "b8340ea4-c4f6-4674-949c-581e01e99b37",
+      "bytes": 22514,
+      "contentType": "audio/webm;codecs=opus"
+    },
+    {
+      "itemId": "27582412-f282-4a35-bce5-e9930c140762",
+      "recordingId": "faec2deb-8f7c-4081-a119-cb15e502d07c",
+      "bytes": 22514,
+      "contentType": "audio/webm;codecs=opus"
+    },
+    {
+      "itemId": "5924d2fb-1119-4bff-b684-0b563b0d50e1",
+      "recordingId": "d6264182-e2a4-4909-997e-67510aec3a5d",
+      "bytes": 22514,
+      "contentType": "audio/webm;codecs=opus"
+    },
+    {
+      "itemId": "01e6b142-43cc-40d1-9edf-dfe0d826cf3a",
+      "recordingId": "ccc16cc0-b947-4b56-83a8-84748593c9b1",
+      "bytes": 22514,
+      "contentType": "audio/webm;codecs=opus"
+    }
+  ],
+  "uiSubmitPosts": 1,
+  "idempotentSubmitReplayAttemptId": "82ccde29-4760-40c1-b154-147ee53e680d",
+  "sessionBeforeReview": "PROCESSING",
+  "reportCountBeforeReview": 0,
+  "manualReviewItemIds": [
+    "7db60e6f-a225-4256-b327-5d0894dad335",
+    "27582412-f282-4a35-bce5-e9930c140762",
+    "5924d2fb-1119-4bff-b684-0b563b0d50e1",
+    "01e6b142-43cc-40d1-9edf-dfe0d826cf3a",
+    "4e1aa257-daaa-4c2d-bce0-f44eab3e839b",
+    "49d46a00-311a-4533-a499-62184f983a17"
+  ],
+  "blankScore": {
+    "PUTRequests": 0,
+    "databaseScore": null
+  },
+  "explicitZero": [
+    "0",
+    "33333333-3333-4333-8333-333333333333",
+    "具体观察：这次朗读停顿自然，句尾收得清楚。\n下一步练习：把第二句放慢半拍，留出句间停顿。",
+    "2",
+    "REVIEWED"
+  ],
+  "unscoredItemsAfterZero": 5,
+  "teacherAudioPlayback": {
+    "play": true,
+    "pause": true,
+    "replayFromStart": true,
+    "expiredSignedUrlRejected": true,
+    "authorizedUrlRefreshed": true,
+    "detailRefreshes": 1
+  },
+  "multilineFeedback": "具体观察：这次朗读停顿自然，句尾收得清楚。\n下一步练习：把第二句放慢半拍，留出句间停顿。",
+  "changedDuplicateStatus": 409,
+  "reportId": "92ab68f9-eda7-4ff3-a629-57ac35fc74df",
+  "reportSource": "AssessmentReport generated by API after every queued manual item was reviewed",
+  "reportOverallScore": 15,
+  "historyHref": "/student/practices/attempts/82ccde29-4760-40c1-b154-147ee53e680d/report/",
+  "studentReportViewports": [
+    {
+      "width": 390,
+      "height": 844,
+      "viewport": 390,
+      "document": 390,
+      "body": 390,
+      "horizontalOverflow": false
+    },
+    {
+      "width": 768,
+      "height": 1024,
+      "viewport": 768,
+      "document": 768,
+      "body": 768,
+      "horizontalOverflow": false
+    },
+    {
+      "width": 1280,
+      "height": 900,
+      "viewport": 1280,
+      "document": 1280,
+      "body": 1280,
+      "horizontalOverflow": false
+    },
+    {
+      "width": 1440,
+      "height": 1000,
+      "viewport": 1440,
+      "document": 1440,
+      "body": 1440,
+      "horizontalOverflow": false
+    }
+  ],
+  "permissions": {
+    "anonymousQueue": 401,
+    "studentQueue": 403,
+    "studentWriteReview": 403,
+    "missingReview": 404,
+    "overScore": 400,
+    "negativeScore": 400,
+    "crossClassTeacherReview": 403,
+    "crossSchoolTeacherReview": 403,
+    "otherStudentReport": 403,
+    "otherStudentHistory": 403
+  }
+}

@@ -1,0 +1,845 @@
+.                                        |  WARN  Unsupported engine: wanted: {"node":">=24 <27"} (current: {"node":"v22.22.0","pnpm":"10.13.1"})
+
+> @yuzan/frontend@4.0.0 test /home/tian/code/work/yuzan-workspace-t050/frontend
+> node --test tests/assessment/*.test.mjs && node scripts/verify-runtime.mjs
+
+TAP version 13
+# Subtest: assignment creation returns the server-issued assignment ID
+ok 1 - assignment creation returns the server-issued assignment ID
+  ---
+  duration_ms: 5.934045
+  type: 'test'
+  ...
+# Subtest: assignment list sends real server filters and cursor parameters
+ok 2 - assignment list sends real server filters and cursor parameters
+  ---
+  duration_ms: 1.442842
+  type: 'test'
+  ...
+# Subtest: assignment detail and submissions use the selected assignment ID
+ok 3 - assignment detail and submissions use the selected assignment ID
+  ---
+  duration_ms: 1.279101
+  type: 'test'
+  ...
+# Subtest: formal report takes precedence over a retained provisional ISE result
+ok 4 - formal report takes precedence over a retained provisional ISE result
+  ---
+  duration_ms: 47.224341
+  type: 'test'
+  ...
+# Subtest: student report escapes teacher feedback and does not expose review-only fields
+ok 5 - student report escapes teacher feedback and does not expose review-only fields
+  ---
+  duration_ms: 11.803177
+  type: 'test'
+  ...
+# Subtest: provisional ISE report keeps a non-remediation learning action
+ok 6 - provisional ISE report keeps a non-remediation learning action
+  ---
+  duration_ms: 11.848203
+  type: 'test'
+  ...
+# Subtest: teacher reading review renders safe ISE dimensions and keeps formal score independent
+ok 7 - teacher reading review renders safe ISE dimensions and keeps formal score independent
+  ---
+  duration_ms: 11.221364
+  type: 'test'
+  ...
+# Subtest: teacher open-response detail keeps its local diagnostics path
+ok 8 - teacher open-response detail keeps its local diagnostics path
+  ---
+  duration_ms: 10.591523
+  type: 'test'
+  ...
+# Subtest: teacher open-response detail explains unsupported automatic analysis without inventing diagnostics
+ok 9 - teacher open-response detail explains unsupported automatic analysis without inventing diagnostics
+  ---
+  duration_ms: 10.975928
+  type: 'test'
+  ...
+# Subtest: browser-facing sources do not include provider raw audit fields
+ok 10 - browser-facing sources do not include provider raw audit fields
+  ---
+  duration_ms: 0.229832
+  type: 'test'
+  ...
+# Subtest: unified runner exposes a normal re-record path for a failed historical recording
+ok 11 - unified runner exposes a normal re-record path for a failed historical recording
+  ---
+  duration_ms: 0.104135
+  type: 'test'
+  ...
+# Subtest: unsupported local recorder fails visibly without generating demonstration audio
+ok 12 - unsupported local recorder fails visibly without generating demonstration audio
+  ---
+  duration_ms: 2.17435
+  type: 'test'
+  ...
+# Subtest: microphone denial does not start a simulated recording
+ok 13 - microphone denial does not start a simulated recording
+  ---
+  duration_ms: 0.899986
+  type: 'test'
+  ...
+# Subtest: online connectivity alone never marks local audio synchronized
+ok 14 - online connectivity alone never marks local audio synchronized
+  ---
+  duration_ms: 0.730052
+  type: 'test'
+  ...
+# Subtest: history clears cached prior-student data and combines real in-progress sessions, reports, and feedback by the server-selected enrollment
+ok 15 - history clears cached prior-student data and combines real in-progress sessions, reports, and feedback by the server-selected enrollment
+  ---
+  duration_ms: 32.237783
+  type: 'test'
+  ...
+# Subtest: history load failure is visible and its retry reloads the current student's records
+ok 16 - history load failure is visible and its retry reloads the current student's records
+  ---
+  duration_ms: 21.256112
+  type: 'test'
+  ...
+# Subtest: formal zero, missing, and incomplete reports stay distinct and only a complete authorized report is linked
+ok 17 - formal zero, missing, and incomplete reports stay distinct and only a complete authorized report is linked
+  ---
+  duration_ms: 11.051743
+  type: 'test'
+  ...
+# Subtest: status changes use exact server filters and cursor paging loads the next real page
+ok 18 - status changes use exact server filters and cursor paging loads the next real page
+  ---
+  duration_ms: 43.122184
+  type: 'test'
+  ...
+# Subtest: name search scans cursor pages and discards a slower stale status response
+ok 19 - name search scans cursor pages and discards a slower stale status response
+  ---
+  duration_ms: 381.707492
+  type: 'test'
+  ...
+# Subtest: favorites are sibling controls, never nested in the detail link
+ok 20 - favorites are sibling controls, never nested in the detail link
+  ---
+  duration_ms: 12.932637
+  type: 'test'
+  ...
+# Subtest: all persisted Attempt states route to their matching legal action
+    # Subtest: CREATED
+    ok 1 - CREATED
+      ---
+      duration_ms: 10.970119
+      type: 'test'
+      ...
+    # Subtest: IN_PROGRESS
+    ok 2 - IN_PROGRESS
+      ---
+      duration_ms: 11.718922
+      type: 'test'
+      ...
+    # Subtest: SUBMITTED
+    ok 3 - SUBMITTED
+      ---
+      duration_ms: 11.832162
+      type: 'test'
+      ...
+    # Subtest: PROCESSING
+    ok 4 - PROCESSING
+      ---
+      duration_ms: 11.123535
+      type: 'test'
+      ...
+    # Subtest: FAILED
+    ok 5 - FAILED
+      ---
+      duration_ms: 11.331794
+      type: 'test'
+      ...
+    # Subtest: COMPLETED
+    ok 6 - COMPLETED
+      ---
+      duration_ms: 11.029735
+      type: 'test'
+      ...
+    1..6
+ok 21 - all persisted Attempt states route to their matching legal action
+  ---
+  duration_ms: 69.36019
+  type: 'test'
+  ...
+# Subtest: completed detail cannot accidentally create a second attempt
+ok 22 - completed detail cannot accidentally create a second attempt
+  ---
+  duration_ms: 11.867372
+  type: 'test'
+  ...
+# Subtest: Attempt lookup follows real session cursors instead of stopping at page one
+ok 23 - Attempt lookup follows real session cursors instead of stopping at page one
+  ---
+  duration_ms: 11.60724
+  type: 'test'
+  ...
+# Subtest: runner exposes real confirmation, recovery, and microphone source states
+ok 24 - runner exposes real confirmation, recovery, and microphone source states
+  ---
+  duration_ms: 0.308541
+  type: 'test'
+  ...
+# Subtest: custom visual system uses accessible SVGs and honors reduced motion
+ok 25 - custom visual system uses accessible SVGs and honors reduced motion
+  ---
+  duration_ms: 0.834353
+  type: 'test'
+  ...
+# Subtest: practice catalog routes each real attempt status to the matching continuation
+    # Subtest: CREATED
+    ok 1 - CREATED
+      ---
+      duration_ms: 15.905408
+      type: 'test'
+      ...
+    # Subtest: IN_PROGRESS
+    ok 2 - IN_PROGRESS
+      ---
+      duration_ms: 11.229576
+      type: 'test'
+      ...
+    # Subtest: SUBMITTED
+    ok 3 - SUBMITTED
+      ---
+      duration_ms: 11.593782
+      type: 'test'
+      ...
+    # Subtest: PROCESSING
+    ok 4 - PROCESSING
+      ---
+      duration_ms: 11.431381
+      type: 'test'
+      ...
+    # Subtest: FAILED
+    ok 5 - FAILED
+      ---
+      duration_ms: 10.202516
+      type: 'test'
+      ...
+    1..5
+ok 26 - practice catalog routes each real attempt status to the matching continuation
+  ---
+  duration_ms: 62.189677
+  type: 'test'
+  ...
+# Subtest: a submitted practice detail links to its real processing state and cannot create another attempt
+ok 27 - a submitted practice detail links to its real processing state and cannot create another attempt
+  ---
+  duration_ms: 10.72424
+  type: 'test'
+  ...
+# Subtest: empty growth state contains no invented score or chart
+ok 28 - empty growth state contains no invented score or chart
+  ---
+  duration_ms: 9.769431
+  type: 'test'
+  ...
+# Subtest: formal chart appears only with three real dated scores and a generated report
+ok 29 - formal chart appears only with three real dated scores and a generated report
+  ---
+  duration_ms: 16.503571
+  type: 'test'
+  ...
+# Subtest: completed record without a report is labeled and never given a score
+ok 30 - completed record without a report is labeled and never given a score
+  ---
+  duration_ms: 2.686614
+  type: 'test'
+  ...
+# Subtest: a report awaiting teacher review never exposes its provisional score
+ok 31 - a report awaiting teacher review never exposes its provisional score
+  ---
+  duration_ms: 1.68508
+  type: 'test'
+  ...
+# Subtest: an official report shows only safe teacher comments on Growth
+ok 32 - an official report shows only safe teacher comments on Growth
+  ---
+  duration_ms: 4.753536
+  type: 'test'
+  ...
+# Subtest: active Attempt shows saved item progress and a dynamic continuation link
+ok 33 - active Attempt shows saved item progress and a dynamic continuation link
+  ---
+  duration_ms: 3.241332
+  type: 'test'
+  ...
+# Subtest: feedback and identity switch use current server identity and records
+ok 34 - feedback and identity switch use current server identity and records
+  ---
+  duration_ms: 2.61802
+  type: 'test'
+  ...
+# Subtest: permission and network errors replace the page with a retry state
+    # Subtest: HTTP 401
+    ok 1 - HTTP 401
+      ---
+      duration_ms: 1.981005
+      type: 'test'
+      ...
+    # Subtest: HTTP 403
+    ok 2 - HTTP 403
+      ---
+      duration_ms: 1.982443
+      type: 'test'
+      ...
+    # Subtest: HTTP 404
+    ok 3 - HTTP 404
+      ---
+      duration_ms: 1.643372
+      type: 'test'
+      ...
+    # Subtest: HTTP 409
+    ok 4 - HTTP 409
+      ---
+      duration_ms: 1.381649
+      type: 'test'
+      ...
+    # Subtest: network disconnected
+    ok 5 - network disconnected
+      ---
+      duration_ms: 1.458955
+      type: 'test'
+      ...
+    1..5
+ok 35 - permission and network errors replace the page with a retry state
+  ---
+  duration_ms: 10.223083
+  type: 'test'
+  ...
+# Subtest: Today uses the server primary action, real school identity, and dynamic Attempt
+ok 36 - Today uses the server primary action, real school identity, and dynamic Attempt
+  ---
+  duration_ms: 35.44288
+  type: 'test'
+  ...
+# Subtest: processing Attempt has a real status destination and does not invent a score
+ok 37 - processing Attempt has a real status destination and does not invent a score
+  ---
+  duration_ms: 2.165486
+  type: 'test'
+  ...
+# Subtest: Today reads all authorized Attempt pages before showing an empty state
+ok 38 - Today reads all authorized Attempt pages before showing an empty state
+  ---
+  duration_ms: 1.839512
+  type: 'test'
+  ...
+# Subtest: empty Today is explicit when all current endpoints return no tasks
+ok 39 - empty Today is explicit when all current endpoints return no tasks
+  ---
+  duration_ms: 1.252244
+  type: 'test'
+  ...
+# Subtest: Today does not report no tasks when supplemental task sources failed
+ok 40 - Today does not report no tasks when supplemental task sources failed
+  ---
+  duration_ms: 1.39692
+  type: 'test'
+  ...
+# Subtest: 401, 403, and 404 from Today are visible and never retain the previous student
+    # Subtest: HTTP 401
+    ok 1 - HTTP 401
+      ---
+      duration_ms: 1.589639
+      type: 'test'
+      ...
+    # Subtest: HTTP 403
+    ok 2 - HTTP 403
+      ---
+      duration_ms: 1.861704
+      type: 'test'
+      ...
+    # Subtest: HTTP 404
+    ok 3 - HTTP 404
+      ---
+      duration_ms: 1.23594
+      type: 'test'
+      ...
+    1..3
+ok 41 - 401, 403, and 404 from Today are visible and never retain the previous student
+  ---
+  duration_ms: 5.585453
+  type: 'test'
+  ...
+# Subtest: switching the stored account and school rereads and replaces Today data
+ok 42 - switching the stored account and school rereads and replaces Today data
+  ---
+  duration_ms: 2.175089
+  type: 'test'
+  ...
+# Subtest: T025: empty Growth data has no score, report action, or invented practice
+ok 43 - T025: empty Growth data has no score, report action, or invented practice
+  ---
+  duration_ms: 6.937168
+  type: 'test'
+  ...
+# Subtest: T025: a completed linked formal report shows real feedback, candidate content, source IDs, and a scoped action
+ok 44 - T025: a completed linked formal report shows real feedback, candidate content, source IDs, and a scoped action
+  ---
+  duration_ms: 22.286729
+  type: 'test'
+  ...
+# Subtest: T025: zero and absent official scores remain different states
+ok 45 - T025: zero and absent official scores remain different states
+  ---
+  duration_ms: 3.706282
+  type: 'test'
+  ...
+# Subtest: T025: only a completed, fully linked, complete report can expose an official score or retry action
+    # Subtest: IN_PROGRESS source with an otherwise complete fake report
+    ok 1 - IN_PROGRESS source with an otherwise complete fake report
+      ---
+      duration_ms: 3.048323
+      type: 'test'
+      ...
+    # Subtest: PROCESSING source with an otherwise complete fake report
+    ok 2 - PROCESSING source with an otherwise complete fake report
+      ---
+      duration_ms: 2.019018
+      type: 'test'
+      ...
+    # Subtest: completed report still awaiting teacher review
+    ok 3 - completed report still awaiting teacher review
+      ---
+      duration_ms: 1.891531
+      type: 'test'
+      ...
+    # Subtest: score outside the formal 0–100 range
+    ok 4 - score outside the formal 0–100 range
+      ---
+      duration_ms: 2.061535
+      type: 'test'
+      ...
+    # Subtest: source Session belongs to a different school
+    ok 5 - source Session belongs to a different school
+      ---
+      duration_ms: 2.256513
+      type: 'test'
+      ...
+    # Subtest: source Session belongs to a different enrollment
+    ok 6 - source Session belongs to a different enrollment
+      ---
+      duration_ms: 2.327596
+      type: 'test'
+      ...
+    # Subtest: Report belongs to a different school
+    ok 7 - Report belongs to a different school
+      ---
+      duration_ms: 2.134131
+      type: 'test'
+      ...
+    # Subtest: Report points at a different Session ID
+    ok 8 - Report points at a different Session ID
+      ---
+      duration_ms: 3.196478
+      type: 'test'
+      ...
+    # Subtest: source response points at a different Session ID
+    ok 9 - source response points at a different Session ID
+      ---
+      duration_ms: 1.953228
+      type: 'test'
+      ...
+    # Subtest: 99 percent complete report
+    ok 10 - 99 percent complete report
+      ---
+      duration_ms: 1.762077
+      type: 'test'
+      ...
+    # Subtest: null completeness and missing generated time
+    ok 11 - null completeness and missing generated time
+      ---
+      duration_ms: 2.985109
+      type: 'test'
+      ...
+    1..11
+ok 46 - T025: only a completed, fully linked, complete report can expose an official score or retry action
+  ---
+  duration_ms: 27.934002
+  type: 'test'
+  ...
+# Subtest: T025: published Submission feedback is visibly separate from AssessmentReport comments
+ok 47 - T025: published Submission feedback is visibly separate from AssessmentReport comments
+  ---
+  duration_ms: 2.967437
+  type: 'test'
+  ...
+# Subtest: T025: a late history response from the previous school is discarded
+ok 48 - T025: a late history response from the previous school is discarded
+  ---
+  duration_ms: 1.891911
+  type: 'test'
+  ...
+# Subtest: T025: double click creates once, verifies the returned session relation, and routes by its real ID
+ok 49 - T025: double click creates once, verifies the returned session relation, and routes by its real ID
+  ---
+  duration_ms: 4.089289
+  type: 'test'
+  ...
+# Subtest: T025: unknown POST outcome is recovered with GET only and stays pending across refresh
+ok 50 - T025: unknown POST outcome is recovered with GET only and stays pending across refresh
+  ---
+  duration_ms: 3.216689
+  type: 'test'
+  ...
+# Subtest: T025: when retry state cannot be persisted, the client does not send a create request
+ok 51 - T025: when retry state cannot be persisted, the client does not send a create request
+  ---
+  duration_ms: 1.056551
+  type: 'test'
+  ...
+# Subtest: T025: if the server committed before a lost response, the student recovers and opens that session
+ok 52 - T025: if the server committed before a lost response, the student recovers and opens that session
+  ---
+  duration_ms: 1.425857
+  type: 'test'
+  ...
+# Subtest: T025: an existing related session resumes by its returned ID and never posts again
+ok 53 - T025: an existing related session resumes by its returned ID and never posts again
+  ---
+  duration_ms: 1.952258
+  type: 'test'
+  ...
+# Subtest: T025: server conflicts show the returned reason and never claim success
+ok 54 - T025: server conflicts show the returned reason and never claim success
+  ---
+  duration_ms: 1.342769
+  type: 'test'
+  ...
+# Subtest: T025: open practice status and destinations use server practice and Attempt IDs
+ok 55 - T025: open practice status and destinations use server practice and Attempt IDs
+  ---
+  duration_ms: 1.966094
+  type: 'test'
+  ...
+# Subtest: plain strings normalize to originalText and never acquire translation metadata
+ok 56 - plain strings normalize to originalText and never acquire translation metadata
+  ---
+  duration_ms: 1.34077
+  type: 'test'
+  ...
+# Subtest: nested body and text values resolve their original independently of translation
+ok 57 - nested body and text values resolve their original independently of translation
+  ---
+  duration_ms: 0.393946
+  type: 'test'
+  ...
+# Subtest: only expert-confirmed zh to bo expert or community translations are eligible
+ok 58 - only expert-confirmed zh to bo expert or community translations are eligible
+  ---
+  duration_ms: 1.140982
+  type: 'test'
+  ...
+# Subtest: unreviewed, machine, wrong-language, or incomplete values keep Chinese only
+ok 59 - unreviewed, machine, wrong-language, or incomplete values keep Chinese only
+  ---
+  duration_ms: 0.246015
+  type: 'test'
+  ...
+# Subtest: subtitle tracks require an approved licensed WebVTT resource and exact Tibetan review metadata
+ok 60 - subtitle tracks require an approved licensed WebVTT resource and exact Tibetan review metadata
+  ---
+  duration_ms: 0.292468
+  type: 'test'
+  ...
+# Subtest: revoke control is rendered only for a server-active credential
+ok 61 - revoke control is rendered only for a server-active credential
+  ---
+  duration_ms: 0.77968
+  type: 'test'
+  ...
+# Subtest: confirmation warns about retained students and uses a labelled native modal
+ok 62 - confirmation warns about retained students and uses a labelled native modal
+  ---
+  duration_ms: 0.223284
+  type: 'test'
+  ...
+# Subtest: unknown response performs one list reconciliation and masks the pending credential
+ok 63 - unknown response performs one list reconciliation and masks the pending credential
+  ---
+  duration_ms: 0.155756
+  type: 'test'
+  ...
+# Subtest: inactive cards redact code and keep the bespoke paper cancellation seal
+ok 64 - inactive cards redact code and keep the bespoke paper cancellation seal
+  ---
+  duration_ms: 0.207739
+  type: 'test'
+  ...
+# Subtest: revoke API client posts to the active school and the generated route matches OpenAPI
+ok 65 - revoke API client posts to the active school and the generated route matches OpenAPI
+  ---
+  duration_ms: 2.692645
+  type: 'test'
+  ...
+# Subtest: Runner uses one navigation owner and the API returns server-confirmed course destination
+ok 66 - Runner uses one navigation owner and the API returns server-confirmed course destination
+  ---
+  duration_ms: 24.231676
+  type: 'test'
+  ...
+# Subtest: a submit 201 followed by course-sync outage stays pending and retries the same attempt only
+ok 67 - a submit 201 followed by course-sync outage stays pending and retries the same attempt only
+  ---
+  duration_ms: 2.402193
+  type: 'test'
+  ...
+# Subtest: a committed course completion with a dropped 201 response is reconciled by GET without a duplicate POST
+ok 68 - a committed course completion with a dropped 201 response is reconciled by GET without a duplicate POST
+  ---
+  duration_ms: 1.65807
+  type: 'test'
+  ...
+# Subtest: refresh reconciliation skips submit and course-complete POSTs when server progress is already complete
+ok 69 - refresh reconciliation skips submit and course-complete POSTs when server progress is already complete
+  ---
+  duration_ms: 1.684978
+  type: 'test'
+  ...
+# Subtest: safe return target requires same-origin exact CourseDetail path and matching dynamic IDs
+ok 70 - safe return target requires same-origin exact CourseDetail path and matching dynamic IDs
+  ---
+  duration_ms: 5.833579
+  type: 'test'
+  ...
+# Subtest: 401, 403, and 404 access failures clear stale context and cached identity; 409 keeps recovery context
+ok 71 - 401, 403, and 404 access failures clear stale context and cached identity; 409 keeps recovery context
+  ---
+  duration_ms: 5.2059
+  type: 'test'
+  ...
+# Subtest: changed identity is cleared before any foreign attempt read
+ok 72 - changed identity is cleared before any foreign attempt read
+  ---
+  duration_ms: 0.970939
+  type: 'test'
+  ...
+# Subtest: T012 confirmation cancel and Escape remain non-submitting; Runner has safe return and recovery controls
+ok 73 - T012 confirmation cancel and Escape remain non-submitting; Runner has safe return and recovery controls
+  ---
+  duration_ms: 0.354725
+  type: 'test'
+  ...
+# Subtest: CSV has UTF-8 BOM, stable headers, and supports an authorized empty class
+ok 74 - CSV has UTF-8 BOM, stable headers, and supports an authorized empty class
+  ---
+  duration_ms: 3.074757
+  type: 'test'
+  ...
+# Subtest: CSV quotes RFC 4180 separators and neutralizes formula-leading student text
+ok 75 - CSV quotes RFC 4180 separators and neutralizes formula-leading student text
+  ---
+  duration_ms: 1.401846
+  type: 'test'
+  ...
+# Subtest: zero values remain visible while null progress and score are not converted to zero
+ok 76 - zero values remain visible while null progress and score are not converted to zero
+  ---
+  duration_ms: 17.755239
+  type: 'test'
+  ...
+# Subtest: filename is based on class scope and time without student names
+ok 77 - filename is based on class scope and time without student names
+  ---
+  duration_ms: 1.171676
+  type: 'test'
+  ...
+# Subtest: export makes a fresh scoped request, checks current identity, and never reuses page summaries
+ok 78 - export makes a fresh scoped request, checks current identity, and never reuses page summaries
+  ---
+  duration_ms: 0.420262
+  type: 'test'
+  ...
+# Subtest: export controls and status are keyboard and screen reader discoverable at narrow widths
+ok 79 - export controls and status are keyboard and screen reader discoverable at narrow widths
+  ---
+  duration_ms: 0.302013
+  type: 'test'
+  ...
+# Subtest: real-name search normalizes Unicode and keeps distinct same-name enrollment IDs
+ok 80 - real-name search normalizes Unicode and keeps distinct same-name enrollment IDs
+  ---
+  duration_ms: 9.818317
+  type: 'test'
+  ...
+# Subtest: risk filter accepts only server states and treats absent or future states as neutral unknown
+ok 81 - risk filter accepts only server states and treats absent or future states as neutral unknown
+  ---
+  duration_ms: 1.001792
+  type: 'test'
+  ...
+# Subtest: formal score filter preserves score zero separately from null
+ok 82 - formal score filter preserves score zero separately from null
+  ---
+  duration_ms: 1.281333
+  type: 'test'
+  ...
+# Subtest: recent activity and course progress sort descending with nulls last and stable ID ties
+ok 83 - recent activity and course progress sort descending with nulls last and stable ID ties
+  ---
+  duration_ms: 0.998419
+  type: 'test'
+  ...
+# Subtest: query state is allowlisted, preserves unrelated route context, and removes invalid enum values
+ok 84 - query state is allowlisted, preserves unrelated route context, and removes invalid enum values
+  ---
+  duration_ms: 1.999411
+  type: 'test'
+  ...
+# Subtest: class page retains only identity-scoped filter state and discards stale async data
+ok 85 - class page retains only identity-scoped filter state and discards stale async data
+  ---
+  duration_ms: 0.238039
+  type: 'test'
+  ...
+# Subtest: filters expose formal-score state and whole-class CSV scope at all sizes
+ok 86 - filters expose formal-score state and whole-class CSV scope at all sizes
+  ---
+  duration_ms: 0.398893
+  type: 'test'
+  ...
+# Subtest: personalized primary task has priority over optional discovery in Today layout
+ok 87 - personalized primary task has priority over optional discovery in Today layout
+  ---
+  duration_ms: 0.982869
+  type: 'test'
+  ...
+# Subtest: a real authorized recording practice is an optional activity, not a fake task
+ok 88 - a real authorized recording practice is an optional activity, not a fake task
+  ---
+  duration_ms: 0.173935
+  type: 'test'
+  ...
+# Subtest: does not repeat the exact practice or course already selected as the primary step
+ok 89 - does not repeat the exact practice or course already selected as the primary step
+  ---
+  duration_ms: 0.228489
+  type: 'test'
+  ...
+# Subtest: Today keeps the server-issued BASELINE id when ordinary practice catalog omits SYSTEM definitions
+ok 90 - Today keeps the server-issued BASELINE id when ordinary practice catalog omits SYSTEM definitions
+  ---
+  duration_ms: 0.103844
+  type: 'test'
+  ...
+# Subtest: does not recommend the practice behind a real resumed assessment session
+ok 91 - does not recommend the practice behind a real resumed assessment session
+  ---
+  duration_ms: 0.197748
+  type: 'test'
+  ...
+# Subtest: API errors and missing authorized work never produce filler buttons or scores
+ok 92 - API errors and missing authorized work never produce filler buttons or scores
+  ---
+  duration_ms: 0.19803
+  type: 'test'
+  ...
+# Subtest: oral practice is a small real server-filter tool, not three promotional navigation cards
+ok 93 - oral practice is a small real server-filter tool, not three promotional navigation cards
+  ---
+  duration_ms: 0.977009
+  type: 'test'
+  ...
+# Subtest: recording filter active state is accessible and keeps catalog request controls
+ok 94 - recording filter active state is accessible and keeps catalog request controls
+  ---
+  duration_ms: 0.228648
+  type: 'test'
+  ...
+# Subtest: mobile ability controls remain available in keyboard-operable native disclosure
+ok 95 - mobile ability controls remain available in keyboard-operable native disclosure
+  ---
+  duration_ms: 1.332396
+  type: 'test'
+  ...
+# Subtest: catalog filters and real server-owned practice tab requests remain intact
+ok 96 - catalog filters and real server-owned practice tab requests remain intact
+  ---
+  duration_ms: 0.177907
+  type: 'test'
+  ...
+# Subtest: mobile search keeps its action beside the field with a comfortable touch target
+ok 97 - mobile search keeps its action beside the field with a comfortable touch target
+  ---
+  duration_ms: 0.085542
+  type: 'test'
+  ...
+# Subtest: mobile first-card hierarchy reflows the tools and preserves a strong cover
+ok 98 - mobile first-card hierarchy reflows the tools and preserves a strong cover
+  ---
+  duration_ms: 0.080479
+  type: 'test'
+  ...
+# Subtest: empty and whitespace review scores are rejected before numeric conversion
+ok 99 - empty and whitespace review scores are rejected before numeric conversion
+  ---
+  duration_ms: 5.324367
+  type: 'test'
+  ...
+# Subtest: an explicitly entered zero is valid and remains numeric zero
+ok 100 - an explicitly entered zero is valid and remains numeric zero
+  ---
+  duration_ms: 1.78317
+  type: 'test'
+  ...
+# Subtest: valid positive scores and equivalent trailing zero precision are accepted
+ok 101 - valid positive scores and equivalent trailing zero precision are accepted
+  ---
+  duration_ms: 1.103026
+  type: 'test'
+  ...
+# Subtest: invalid, negative, over-maximum, and over-precision scores are rejected
+ok 102 - invalid, negative, over-maximum, and over-precision scores are rejected
+  ---
+  duration_ms: 1.053751
+  type: 'test'
+  ...
+# Subtest: loading → empty and processing remain distinct from errors
+ok 103 - loading → empty and processing remain distinct from errors
+  ---
+  duration_ms: 14.830302
+  type: 'test'
+  ...
+# Subtest: 403 is a visible error; retry recovers with newly fetched data
+ok 104 - 403 is a visible error; retry recovers with newly fetched data
+  ---
+  duration_ms: 2.09155
+  type: 'test'
+  ...
+# Subtest: catalog failure and malformed response never masquerade as empty; retry only catalog
+ok 105 - catalog failure and malformed response never masquerade as empty; retry only catalog
+  ---
+  duration_ms: 1.147244
+  type: 'test'
+  ...
+# Subtest: primary creation failure preserves page and retries the real action
+ok 106 - primary creation failure preserves page and retries the real action
+  ---
+  duration_ms: 1.246721
+  type: 'test'
+  ...
+# Subtest: legacy redirect preserves dynamic assignment and activity IDs
+ok 107 - legacy redirect preserves dynamic assignment and activity IDs
+  ---
+  duration_ms: 2.357972
+  type: 'test'
+  ...
+1..107
+# tests 137
+# suites 0
+# pass 137
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 544.418781
+Frontend runtime verified at /home/tian/code/work/yuzan-workspace-t050/frontend/
+
+EXIT_CODE=0
