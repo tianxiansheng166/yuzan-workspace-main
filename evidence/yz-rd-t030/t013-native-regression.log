@@ -1,0 +1,6 @@
+T013_FIXTURE_A user=608beaf8-276c-4240-b3ae-b3171fed2f94 school=11111111-1111-4111-8111-111111111111 class=eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee enrollment=d5d6eb1d-d574-41f5-b66a-b615cb0c4959
+T013_FIXTURE_B user=2b0d3394-2949-4bb1-9118-d2eac7353f22 school=db81b451-4077-4eb0-b6bd-4d8b7259d55d class=6f665b72-d4c4-4131-930f-00aea96ad14f enrollment=7c324626-4f35-4ee0-9e60-0bfa272d660e
+T013_ATTEMPTS practiceDefinitions=['fa7bba70-de90-46d2-9f0f-3b696f2b0526', '703c4872-6fad-440d-9eb2-25908eaec53f'] in_progress=15382577-2dd9-40c7-9e33-4814adb2bd16 processing_fixture=dc8abc04-23bf-46e9-aa0a-c6dd6a57428a
+T013_NEGATIVES unauthenticated=401 cross_school=403 cross_student=404 missing_attempt=404
+.
+1 passed in 5.17s

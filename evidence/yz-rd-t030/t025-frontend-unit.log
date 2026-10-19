@@ -1,0 +1,33 @@
+✔ T025: empty Growth data has no score, report action, or invented practice (5.420792ms)
+✔ T025: a completed linked formal report shows real feedback, candidate content, source IDs, and a scoped action (11.042405ms)
+✔ T025: zero and absent official scores remain different states (2.260336ms)
+▶ T025: only a completed, fully linked, complete report can expose an official score or retry action
+  ✔ IN_PROGRESS source with an otherwise complete fake report (1.791072ms)
+  ✔ PROCESSING source with an otherwise complete fake report (3.259136ms)
+  ✔ completed report still awaiting teacher review (1.872497ms)
+  ✔ score outside the formal 0–100 range (1.741247ms)
+  ✔ source Session belongs to a different school (1.717816ms)
+  ✔ source Session belongs to a different enrollment (1.814649ms)
+  ✔ Report belongs to a different school (1.681824ms)
+  ✔ Report points at a different Session ID (1.422274ms)
+  ✔ source response points at a different Session ID (0.98326ms)
+  ✔ 99 percent complete report (0.951581ms)
+  ✔ null completeness and missing generated time (1.516978ms)
+✔ T025: only a completed, fully linked, complete report can expose an official score or retry action (20.602079ms)
+✔ T025: published Submission feedback is visibly separate from AssessmentReport comments (1.452244ms)
+✔ T025: a late history response from the previous school is discarded (0.976447ms)
+✔ T025: double click creates once, verifies the returned session relation, and routes by its real ID (1.996024ms)
+✔ T025: unknown POST outcome is recovered with GET only and stays pending across refresh (2.438533ms)
+✔ T025: when retry state cannot be persisted, the client does not send a create request (1.250446ms)
+✔ T025: if the server committed before a lost response, the student recovers and opens that session (2.203299ms)
+✔ T025: an existing related session resumes by its returned ID and never posts again (1.665292ms)
+✔ T025: server conflicts show the returned reason and never claim success (1.183658ms)
+✔ T025: open practice status and destinations use server practice and Attempt IDs (1.527342ms)
+ℹ tests 24
+ℹ suites 0
+ℹ pass 24
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 109.549349

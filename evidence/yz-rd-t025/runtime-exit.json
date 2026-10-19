@@ -1,0 +1,65 @@
+{
+  "task": "YZ-RD-T025",
+  "stopAttempts": [
+    "INCOMPLETE",
+    "PASS"
+  ],
+  "stopResult": "PASS",
+  "processes": {
+    "postgres": {
+      "pid": 1958923,
+      "stopped_or_pid_reused": true,
+      "record_cleared": true
+    },
+    "api": {
+      "pid": 1959624,
+      "stopped_or_pid_reused": true,
+      "record_cleared": true
+    },
+    "web": {
+      "pid": 1959669,
+      "stopped_or_pid_reused": true,
+      "record_cleared": true
+    },
+    "redis": {
+      "pid": 1959700,
+      "stopped_or_pid_reused": true,
+      "record_cleared": true
+    },
+    "minio": {
+      "pid": 1959712,
+      "stopped_or_pid_reused": true,
+      "record_cleared": true
+    }
+  },
+  "ports": {
+    "postgres": {
+      "port": 55650,
+      "free": true
+    },
+    "redis": {
+      "port": 6450,
+      "free": true
+    },
+    "minio_api": {
+      "port": 59224,
+      "free": true
+    },
+    "minio_console": {
+      "port": 59225,
+      "free": true
+    },
+    "api": {
+      "port": 4125,
+      "free": true
+    },
+    "web": {
+      "port": 4325,
+      "free": true
+    }
+  },
+  "databaseRetained": true,
+  "minioDataRetained": true,
+  "L4HistoryPostgreSQLDockerVolume": "OPEN_UNTOUCHED",
+  "DockerComposeP1SIM": "NOT_USED"
+}

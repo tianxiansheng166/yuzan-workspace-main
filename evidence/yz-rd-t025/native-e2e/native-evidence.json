@@ -1,0 +1,435 @@
+{
+  "sourceSessionId": "b695f157-03b0-4af4-8c0b-724e5d6fdda0",
+  "sourceSessionSQL": [
+    "b695f157-03b0-4af4-8c0b-724e5d6fdda0",
+    "11111111-1111-4111-8111-111111111111",
+    "a3c27f5a-85ea-4805-bc1b-7b808a291680",
+    "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee",
+    "STANDARD",
+    "COMPLETED",
+    "6fde96c9-5083-45db-89ec-f16c4f390b1e",
+    "a99d48e2-aed5-44cd-beec-d44732008a76",
+    "a98d8414-79f8-478b-8283-eb05ec9508aa",
+    "2026-10-19 00:40:24.12"
+  ],
+  "assessmentReportId": "376579c3-e1ea-4393-b416-59ef134f30b6",
+  "assessmentReportSQL": [
+    "376579c3-e1ea-4393-b416-59ef134f30b6",
+    "b695f157-03b0-4af4-8c0b-724e5d6fdda0",
+    "11111111-1111-4111-8111-111111111111",
+    "55",
+    "100",
+    "2026-10-19 00:40:24.115"
+  ],
+  "formalOverallScore": "55",
+  "formalResultCount": 1,
+  "manualReviewSQL": [
+    [
+      "2208bcd3-23b4-4fef-b486-4c09a3f05f0f",
+      "3",
+      "33333333-3333-4333-8333-333333333333",
+      "TEST_FIXTURE_ONLY T025 教师复核 1：朗读清楚，请继续练习自然停顿。",
+      "2026-10-19 00:40:23.797"
+    ],
+    [
+      "7a841854-84a9-44e7-9c22-9a1aaab0d6c1",
+      "3",
+      "33333333-3333-4333-8333-333333333333",
+      "TEST_FIXTURE_ONLY T025 教师复核 2：朗读清楚，请继续练习自然停顿。",
+      "2026-10-19 00:40:23.858"
+    ],
+    [
+      "87bdd7cd-99d7-4f08-a716-b254da90b0aa",
+      "3",
+      "33333333-3333-4333-8333-333333333333",
+      "TEST_FIXTURE_ONLY T025 教师复核 3：朗读清楚，请继续练习自然停顿。",
+      "2026-10-19 00:40:23.921"
+    ],
+    [
+      "b95db7e5-a5f8-4ecc-b75f-07b997990ba4",
+      "13",
+      "33333333-3333-4333-8333-333333333333",
+      "TEST_FIXTURE_ONLY T025 教师复核 4：朗读清楚，请继续练习自然停顿。",
+      "2026-10-19 00:40:23.976"
+    ],
+    [
+      "f17ba34a-9170-4636-a140-efea58d9f9a3",
+      "7",
+      "33333333-3333-4333-8333-333333333333",
+      "TEST_FIXTURE_ONLY T025 教师复核 5：朗读清楚，请继续练习自然停顿。",
+      "2026-10-19 00:40:24.026"
+    ],
+    [
+      "2dfec2f2-2767-44f2-941e-99eb2146d069",
+      "7",
+      "33333333-3333-4333-8333-333333333333",
+      "TEST_FIXTURE_ONLY T025 教师复核 6：朗读清楚，请继续练习自然停顿。",
+      "2026-10-19 00:40:24.067"
+    ]
+  ],
+  "identities": {
+    "studentA": {
+      "userId": "143ec4cf-8caf-4f74-b8ce-5f66d6a5c586",
+      "schoolId": "11111111-1111-4111-8111-111111111111",
+      "classId": "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee",
+      "enrollmentId": "a3c27f5a-85ea-4805-bc1b-7b808a291680"
+    },
+    "studentB": {
+      "userId": "205cf84c-d106-4651-ac22-c556037cc479",
+      "schoolId": "11111111-1111-4111-8111-111111111111",
+      "classId": "7345ccd3-a272-4d38-8da2-e7b3d55a8efd",
+      "enrollmentId": "0f8aced3-4314-432b-b47c-6d7c724f7771"
+    },
+    "studentC": {
+      "userId": "04aaa552-482c-41eb-84b7-a573bbf43992",
+      "schoolId": "5895fcdf-d56b-4669-b94b-ebd35c8299ec",
+      "classId": "03a98422-62d5-4ce4-960c-9a977707316f",
+      "enrollmentId": "fcc2d36c-846a-4ab9-aed2-307ba78a8e9b"
+    },
+    "teacherA": {
+      "userId": "33333333-3333-4333-8333-333333333333",
+      "schoolId": "11111111-1111-4111-8111-111111111111"
+    }
+  },
+  "studentAOwnership": {
+    "userId": "143ec4cf-8caf-4f74-b8ce-5f66d6a5c586",
+    "schoolId": "11111111-1111-4111-8111-111111111111",
+    "classId": "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee",
+    "enrollmentId": "a3c27f5a-85ea-4805-bc1b-7b808a291680"
+  },
+  "practiceDefinitionId": "6fde96c9-5083-45db-89ec-f16c4f390b1e",
+  "teacherFeedbackSource": {
+    "assessmentItemIds": [
+      "2208bcd3-23b4-4fef-b486-4c09a3f05f0f",
+      "7a841854-84a9-44e7-9c22-9a1aaab0d6c1",
+      "87bdd7cd-99d7-4f08-a716-b254da90b0aa",
+      "b95db7e5-a5f8-4ecc-b75f-07b997990ba4",
+      "f17ba34a-9170-4636-a140-efea58d9f9a3",
+      "2dfec2f2-2767-44f2-941e-99eb2146d069"
+    ],
+    "reportId": "376579c3-e1ea-4393-b416-59ef134f30b6",
+    "comments": [
+      "TEST_FIXTURE_ONLY T025 教师复核 1：朗读清楚，请继续练习自然停顿。",
+      "TEST_FIXTURE_ONLY T025 教师复核 2：朗读清楚，请继续练习自然停顿。",
+      "TEST_FIXTURE_ONLY T025 教师复核 3：朗读清楚，请继续练习自然停顿。",
+      "TEST_FIXTURE_ONLY T025 教师复核 4：朗读清楚，请继续练习自然停顿。",
+      "TEST_FIXTURE_ONLY T025 教师复核 5：朗读清楚，请继续练习自然停顿。",
+      "TEST_FIXTURE_ONLY T025 教师复核 6：朗读清楚，请继续练习自然停顿。"
+    ]
+  },
+  "courseFeedbackSource": {
+    "assignmentId": "04f9e33e-9744-4a4a-b47e-cbfe89e65c8c",
+    "submissionId": "bb9f22e4-4561-4c73-851c-a4745fa67186",
+    "feedbackId": "ac79fc36-953b-40e5-84c7-c5e89b729708",
+    "feedbackComment": "TEST_FIXTURE_ONLY 课程任务反馈：请朗读后再核对停顿。",
+    "releasedAt": "2026-10-19T00:39:54.449Z",
+    "feedbackSQL": [
+      "ac79fc36-953b-40e5-84c7-c5e89b729708",
+      "bb9f22e4-4561-4c73-851c-a4745fa67186",
+      "33333333-3333-4333-8333-333333333333",
+      "RETURN",
+      "2026-10-19 00:39:54.449",
+      "04f9e33e-9744-4a4a-b47e-cbfe89e65c8c",
+      "a3c27f5a-85ea-4805-bc1b-7b808a291680",
+      "RETURNED",
+      "11111111-1111-4111-8111-111111111111",
+      "OPEN"
+    ],
+    "submissionReviewState": "NEEDS_REVIEW (isolated SQL fixture transition)"
+  },
+  "recordings": [
+    {
+      "recordingId": "9e355253-a32b-4a24-92e1-797e78333f0c",
+      "objectKey": "recordings/9e355253-a32b-4a24-92e1-797e78333f0c/full",
+      "bytes": 22514
+    },
+    {
+      "recordingId": "0d8c12e2-c012-4bcf-82bc-f689dd414a12",
+      "objectKey": "recordings/0d8c12e2-c012-4bcf-82bc-f689dd414a12/full",
+      "bytes": 22514
+    },
+    {
+      "recordingId": "59497d01-fd95-4580-996a-19cfbd59c7b8",
+      "objectKey": "recordings/59497d01-fd95-4580-996a-19cfbd59c7b8/full",
+      "bytes": 22514
+    },
+    {
+      "recordingId": "ce4fd526-892e-4b90-bfe9-0fe55bdb0b43",
+      "objectKey": "recordings/ce4fd526-892e-4b90-bfe9-0fe55bdb0b43/full",
+      "bytes": 22514
+    }
+  ],
+  "remediationRecordings": [
+    {
+      "itemId": "0e7e66c1-5b41-4d90-941f-4fdf81eceec5",
+      "recordingId": "054521a6-3f78-4f74-9134-c5bbeb532158",
+      "objectKey": "recordings/054521a6-3f78-4f74-9134-c5bbeb532158/full",
+      "bytes": 22514
+    },
+    {
+      "itemId": "8b1da629-f436-45b8-8a26-b00c323a94e2",
+      "recordingId": "71f34161-cc5b-4998-a1c9-e1e962606d10",
+      "objectKey": "recordings/71f34161-cc5b-4998-a1c9-e1e962606d10/full",
+      "bytes": 22514
+    },
+    {
+      "itemId": "a072ddf3-1a6f-4ac6-a157-6f911c648fde",
+      "recordingId": "f8802959-03df-4958-9671-08c1f0b2830b",
+      "objectKey": "recordings/f8802959-03df-4958-9671-08c1f0b2830b/full",
+      "bytes": 22514
+    },
+    {
+      "itemId": "177b8e4d-00b2-45c4-831c-348e8fb3c2cc",
+      "recordingId": "74cf902b-072a-4124-ba0a-3ee0a4e68805",
+      "objectKey": "recordings/74cf902b-072a-4124-ba0a-3ee0a4e68805/full",
+      "bytes": 22514
+    }
+  ],
+  "retryCandidates": [
+    {
+      "assessmentItemId": "8127769e-ca4b-477b-ac0b-1ba5935b1a5f",
+      "questionVersionId": "f3fc2cd2-4e91-4155-b094-539789ef7431",
+      "family": "LISTEN_IMAGE_CHOICE",
+      "displayName": "听音选图",
+      "domain": "LISTEN",
+      "domainDisplayName": "听",
+      "earned": 0,
+      "max": 3
+    },
+    {
+      "assessmentItemId": "50d6a910-410e-42c6-aaf6-6d9996837ba3",
+      "questionVersionId": "83660ed4-c5ec-42cb-b290-6409af88c272",
+      "family": "LISTEN_IMAGE_CHOICE",
+      "displayName": "听音选图",
+      "domain": "LISTEN",
+      "domainDisplayName": "听",
+      "earned": 0,
+      "max": 3
+    },
+    {
+      "assessmentItemId": "a22c9378-ab6a-42da-a41b-59c72acaade8",
+      "questionVersionId": "8d788104-16e3-4f0a-ae1c-949f1aa2b5b5",
+      "family": "DICTATION",
+      "displayName": "听写句子",
+      "domain": "LISTEN",
+      "domainDisplayName": "听",
+      "earned": 0,
+      "max": 5
+    },
+    {
+      "assessmentItemId": "9a0bdf00-418a-4244-a7e4-e55fed693aed",
+      "questionVersionId": "4f3424ba-8366-4c1b-a3ec-ea0b135c0c17",
+      "family": "DICTATION",
+      "displayName": "听写句子",
+      "domain": "LISTEN",
+      "domainDisplayName": "听",
+      "earned": 0,
+      "max": 5
+    },
+    {
+      "assessmentItemId": "33a76c0a-eb19-482f-bbfd-0217fdb8172b",
+      "questionVersionId": "72631553-80b3-42df-9a2b-4820bbd97d5a",
+      "family": "DICTATION",
+      "displayName": "听写句子",
+      "domain": "LISTEN",
+      "domainDisplayName": "听",
+      "earned": 0,
+      "max": 5
+    },
+    {
+      "assessmentItemId": "2208bcd3-23b4-4fef-b486-4c09a3f05f0f",
+      "questionVersionId": "0883c3c4-28b6-4327-9532-a2e5fa30e251",
+      "family": "READ_ALOUD",
+      "displayName": "朗读句子",
+      "domain": "SPEAK",
+      "domainDisplayName": "说",
+      "earned": 3,
+      "max": 4
+    },
+    {
+      "assessmentItemId": "7a841854-84a9-44e7-9c22-9a1aaab0d6c1",
+      "questionVersionId": "b428d73c-0810-4501-b8f9-825b1c941c16",
+      "family": "READ_ALOUD",
+      "displayName": "朗读句子",
+      "domain": "SPEAK",
+      "domainDisplayName": "说",
+      "earned": 3,
+      "max": 4
+    },
+    {
+      "assessmentItemId": "87bdd7cd-99d7-4f08-a716-b254da90b0aa",
+      "questionVersionId": "dba14f49-8845-4a90-bb71-dc9adb7832b2",
+      "family": "READ_ALOUD",
+      "displayName": "朗读句子",
+      "domain": "SPEAK",
+      "domainDisplayName": "说",
+      "earned": 3,
+      "max": 4
+    },
+    {
+      "assessmentItemId": "b95db7e5-a5f8-4ecc-b75f-07b997990ba4",
+      "questionVersionId": "aa4033b0-f8cc-4183-a612-a96f525c4d43",
+      "family": "PICTURE_SPEAKING",
+      "displayName": "看图说话",
+      "domain": "SPEAK",
+      "domainDisplayName": "说",
+      "earned": 13,
+      "max": 14
+    },
+    {
+      "assessmentItemId": "de7a3d50-eae3-4247-99f3-094cb4119236",
+      "questionVersionId": "2bf93377-dd58-4025-acc6-e02b65aa7a6f",
+      "family": "WORD_RECOGNITION",
+      "displayName": "单词认读",
+      "domain": "READ",
+      "domainDisplayName": "读",
+      "earned": 0,
+      "max": 4
+    },
+    {
+      "assessmentItemId": "6f6ce6eb-61a5-46f3-bd7e-867a9bb1ecfe",
+      "questionVersionId": "77f52243-1587-442c-be87-d4c7c3b68717",
+      "family": "WORD_RECOGNITION",
+      "displayName": "单词认读",
+      "domain": "READ",
+      "domainDisplayName": "读",
+      "earned": 0,
+      "max": 4
+    },
+    {
+      "assessmentItemId": "4ce435f9-07b2-43a9-be09-f9e90a60ad4b",
+      "questionVersionId": "c3bf7021-25d3-46d5-94ce-944da582b799",
+      "family": "PICTURE_WORD",
+      "displayName": "看图写词",
+      "domain": "WRITE",
+      "domainDisplayName": "写",
+      "earned": 0,
+      "max": 5
+    },
+    {
+      "assessmentItemId": "3210aade-3797-47f4-a1c7-3ab31cf78140",
+      "questionVersionId": "9420a4a2-dfff-4895-b86f-ce13ce2ab8f6",
+      "family": "PICTURE_WORD",
+      "displayName": "看图写词",
+      "domain": "WRITE",
+      "domainDisplayName": "写",
+      "earned": 0,
+      "max": 5
+    },
+    {
+      "assessmentItemId": "f17ba34a-9170-4636-a140-efea58d9f9a3",
+      "questionVersionId": "29e1dbec-4c88-48c3-9e6c-4585b40e66a8",
+      "family": "SENTENCE_COMPLETION",
+      "displayName": "句子补全",
+      "domain": "WRITE",
+      "domainDisplayName": "写",
+      "earned": 7,
+      "max": 8
+    },
+    {
+      "assessmentItemId": "2dfec2f2-2767-44f2-941e-99eb2146d069",
+      "questionVersionId": "10a67ca0-b793-4d5d-aaa8-28d58aee899b",
+      "family": "SENTENCE_COMPLETION",
+      "displayName": "句子补全",
+      "domain": "WRITE",
+      "domainDisplayName": "写",
+      "earned": 7,
+      "max": 8
+    }
+  ],
+  "remediationSessionId": "ac9856fd-d307-4dff-b5c5-99fe12531043",
+  "remediationCreationResponse": {
+    "outcome": "CREATED",
+    "sourceSessionId": "b695f157-03b0-4af4-8c0b-724e5d6fdda0",
+    "attemptId": "ac9856fd-d307-4dff-b5c5-99fe12531043",
+    "status": "CREATED",
+    "itemCount": 15,
+    "resumed": false
+  },
+  "remediationCompletion": {
+    "itemCount": 15,
+    "playedAudio": 5,
+    "recordedAudio": 4,
+    "uploadRetries": 0,
+    "submitPosts": 1,
+    "confirmationDismissals": 2,
+    "duplicateSubmitId": "ac9856fd-d307-4dff-b5c5-99fe12531043"
+  },
+  "remediationSQL": [
+    "ac9856fd-d307-4dff-b5c5-99fe12531043",
+    "11111111-1111-4111-8111-111111111111",
+    "a3c27f5a-85ea-4805-bc1b-7b808a291680",
+    "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee",
+    "REMEDIATION",
+    "IN_PROGRESS",
+    "b695f157-03b0-4af4-8c0b-724e5d6fdda0",
+    "143ec4cf-8caf-4f74-b8ce-5f66d6a5c586",
+    "6fde96c9-5083-45db-89ec-f16c4f390b1e",
+    "a99d48e2-aed5-44cd-beec-d44732008a76",
+    "a98d8414-79f8-478b-8283-eb05ec9508aa"
+  ],
+  "remediationItemQuestionVersionIds": [
+    "f3fc2cd2-4e91-4155-b094-539789ef7431",
+    "83660ed4-c5ec-42cb-b290-6409af88c272",
+    "8d788104-16e3-4f0a-ae1c-949f1aa2b5b5",
+    "4f3424ba-8366-4c1b-a3ec-ea0b135c0c17",
+    "72631553-80b3-42df-9a2b-4820bbd97d5a",
+    "0883c3c4-28b6-4327-9532-a2e5fa30e251",
+    "b428d73c-0810-4501-b8f9-825b1c941c16",
+    "dba14f49-8845-4a90-bb71-dc9adb7832b2",
+    "aa4033b0-f8cc-4183-a612-a96f525c4d43",
+    "2bf93377-dd58-4025-acc6-e02b65aa7a6f",
+    "77f52243-1587-442c-be87-d4c7c3b68717",
+    "c3bf7021-25d3-46d5-94ce-944da582b799",
+    "9420a4a2-dfff-4895-b86f-ce13ce2ab8f6",
+    "29e1dbec-4c88-48c3-9e6c-4585b40e66a8",
+    "10a67ca0-b793-4d5d-aaa8-28d58aee899b"
+  ],
+  "relatedRemediationCount": "1",
+  "remediationResult": {
+    "status": "PROCESSING",
+    "pendingItemCount": 6
+  },
+  "lostPostResponse": {
+    "serverStatus": 201,
+    "browserPostCount": 1,
+    "recoveredBySessionList": true
+  },
+  "apiNegativeStatuses": {
+    "unauthenticated": 401,
+    "sameSchoolOtherStudentReport": 403,
+    "sameSchoolOtherStudentRemediationPost": 403,
+    "sameSchoolOtherStudentHistory": 403,
+    "crossSchoolReport": 403,
+    "missingReport": 404,
+    "ineligibleRemediation": 409
+  },
+  "responsive": {
+    "390": {
+      "viewport": 390,
+      "document": 390,
+      "body": 390
+    },
+    "768": {
+      "viewport": 768,
+      "document": 768,
+      "body": 768
+    },
+    "1280": {
+      "viewport": 1280,
+      "document": 1280,
+      "body": 1280
+    },
+    "1440": {
+      "viewport": 1440,
+      "document": 1440,
+      "body": 1440
+    }
+  },
+  "keyboardAndMotion": {
+    "sourceDetailsOpenedWithEnter": true,
+    "remediationActionActivatedWithEnter": true,
+    "reducedMotion": true
+  },
+  "browserErrors": []
+}

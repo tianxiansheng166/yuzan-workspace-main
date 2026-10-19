@@ -1,0 +1,8 @@
+
+> @yuzan/contracts@ validate /home/tian/code/yuzan-workspace-t025/packages/contracts
+> redocly lint openapi/openapi.yaml
+
+validating openapi/openapi.yaml...
+openapi/openapi.yaml: validated in 172ms
+
+Woohoo! Your API description is valid. 🎉

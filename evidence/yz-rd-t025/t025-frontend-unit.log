@@ -1,0 +1,24 @@
+✔ T025: empty Growth data has no score, report action, or invented practice (6.988925ms)
+✔ T025: a completed linked formal report shows real feedback, candidate content, source IDs, and a scoped action (12.440488ms)
+✔ T025: zero and absent official scores remain different states (2.893185ms)
+▶ T025: PROCESSING and incomplete or mismatched reports never expose a score or a retry action
+  ✔ processing report awaiting review (1.501935ms)
+  ✔ report session mismatch (1.616212ms)
+  ✔ incomplete score data (1.429533ms)
+✔ T025: PROCESSING and incomplete or mismatched reports never expose a score or a retry action (5.207297ms)
+✔ T025: published Submission feedback is visibly separate from AssessmentReport comments (1.54324ms)
+✔ T025: double click creates once, verifies the returned session relation, and routes by its real ID (3.223479ms)
+✔ T025: unknown POST outcome is recovered with GET only and stays pending across refresh (4.404983ms)
+✔ T025: when retry state cannot be persisted, the client does not send a create request (1.38111ms)
+✔ T025: if the server committed before a lost response, the student recovers and opens that session (1.513483ms)
+✔ T025: an existing related session resumes by its returned ID and never posts again (2.871517ms)
+✔ T025: server conflicts show the returned reason and never claim success (1.696137ms)
+✔ T025: open practice status and destinations use server practice and Attempt IDs (2.882264ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 94.642546
