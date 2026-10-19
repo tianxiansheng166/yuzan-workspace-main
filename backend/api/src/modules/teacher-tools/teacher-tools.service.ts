@@ -29,7 +29,8 @@ export class TeacherToolsService {
     }
 
     // Parallel queries
-    const [recentDrafts, activeInviteCode, toolUsageCounts] = await Promise.all([
+    const [recentDrafts, activeInviteCode, toolUsageCounts] = await Promise.all(
+      [
       // Recent drafts by this teacher
       this.prisma.teacherDraft.findMany({
         where: { schoolId, authorUserId: teacherId },
@@ -67,7 +68,8 @@ export class TeacherToolsService {
         where: { schoolId, authorUserId: teacherId },
         _count: { id: true },
       }),
-    ]);
+      ],
+    );
 
     // Build tools list
     const tools = [
@@ -77,7 +79,9 @@ export class TeacherToolsService {
         description: "AI 辅助生成备课路径与教学方案",
         icon: "brain",
         enabled: true,
-        draftCount: toolUsageCounts.find((g) => g.toolSource === "MINDMATE")?._count.id ?? 0,
+        draftCount:
+          toolUsageCounts.find((g) => g.toolSource === "MINDMATE")?._count.id ??
+          0,
       },
       {
         id: "mindgraph",
@@ -85,7 +89,9 @@ export class TeacherToolsService {
         description: "构建课程知识结构与关联",
         icon: "graph",
         enabled: true,
-        draftCount: toolUsageCounts.find((g) => g.toolSource === "MINDGRAPH")?._count.id ?? 0,
+        draftCount:
+          toolUsageCounts.find((g) => g.toolSource === "MINDGRAPH")?._count
+            .id ?? 0,
       },
       {
         id: "lesson-plan",
@@ -93,7 +99,9 @@ export class TeacherToolsService {
         description: "根据教学目标生成结构化教案",
         icon: "file-text",
         enabled: true,
-        draftCount: toolUsageCounts.find((g) => g.toolSource === "LESSON_PLAN")?._count.id ?? 0,
+        draftCount:
+          toolUsageCounts.find((g) => g.toolSource === "LESSON_PLAN")?._count
+            .id ?? 0,
       },
       {
         id: "worksheet",
@@ -101,7 +109,9 @@ export class TeacherToolsService {
         description: "根据知识点生成配套练习题",
         icon: "pencil",
         enabled: true,
-        draftCount: toolUsageCounts.find((g) => g.toolSource === "WORKSHEET")?._count.id ?? 0,
+        draftCount:
+          toolUsageCounts.find((g) => g.toolSource === "WORKSHEET")?._count
+            .id ?? 0,
       },
     ];
 
@@ -140,7 +150,10 @@ export class TeacherToolsService {
   async listDrafts(
     auth: AuthContext,
     schoolId: string,
-    options: { toolSource?: "MINDMATE" | "MINDGRAPH" | "LESSON_PLAN" | "WORKSHEET"; limit: number },
+    options: {
+      toolSource?: "MINDMATE" | "MINDGRAPH" | "LESSON_PLAN" | "WORKSHEET";
+      limit: number;
+    },
   ) {
     const teacherId = auth.principal.userId;
 
@@ -180,7 +193,11 @@ export class TeacherToolsService {
   async createDraft(
     auth: AuthContext,
     schoolId: string,
-    dto: { toolSource: string; title: string; content: Record<string, unknown> },
+    dto: {
+      toolSource: string;
+      title: string;
+      content: Record<string, unknown>;
+    },
   ) {
     const teacherId = auth.principal.userId;
 
@@ -188,9 +205,11 @@ export class TeacherToolsService {
       data: {
         schoolId,
         authorUserId: teacherId,
-        toolSource: dto.toolSource as "MINDMATE" | "MINDGRAPH" | "LESSON_PLAN" | "WORKSHEET",
+        toolSource: dto.toolSource as
+          "MINDMATE" | "MINDGRAPH" | "LESSON_PLAN" | "WORKSHEET",
         title: dto.title,
-        content: dto.content as unknown as import("@yuzan/database").Prisma.InputJsonValue,
+        content:
+          dto.content as unknown as import("@yuzan/database").Prisma.InputJsonValue,
       },
     });
 
@@ -303,7 +322,8 @@ export class TeacherToolsService {
       _meta: {
         generatedBy: "placeholder",
         providerStatus: "PROVIDER_NOT_CONFIGURED",
-        message: "AI 服务尚未配置，当前为默认备课路径模板。接入 AI 服务后将生成个性化备课建议。",
+        message:
+          "AI 服务尚未配置，当前为默认备课路径模板。接入 AI 服务后将生成个性化备课建议。",
       },
     };
 
@@ -315,7 +335,7 @@ export class TeacherToolsService {
         authorUserId: teacherId,
         toolSource: "LESSON_PLAN",
         title: `备课路径：${input.goal.slice(0, 50)}`,
-        content: placeholderPlan as unknown as import("@yuzan/database").Prisma.InputJsonValue,
+        content: placeholderPlan,
       },
     });
 

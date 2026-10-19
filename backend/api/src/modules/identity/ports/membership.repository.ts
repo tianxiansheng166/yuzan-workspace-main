@@ -1,7 +1,3 @@
-import type {
-  MembershipRole,
-  MembershipStatus,
-} from "../../../common/security/index.js";
 import type { UserMembership } from "../identity.types.js";
 
 /**

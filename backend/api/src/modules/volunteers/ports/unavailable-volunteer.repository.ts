@@ -8,60 +8,56 @@ import type {
 import { VolunteerUnavailableException } from "../domain/volunteer.errors.js";
 import type {
   VolunteerRepositoryPort,
-  ListVolunteersOptions,
-  ListServiceTasksOptions,
   PaginatedResult,
-  CreateVolunteerData,
-  CreateIncidentData,
 } from "./volunteer-repository.port.js";
 
 @Injectable()
 export class UnavailableVolunteerRepository implements VolunteerRepositoryPort {
-  async findById(): Promise<Volunteer | null> {
-    throw new VolunteerUnavailableException();
+  findById(): Promise<Volunteer | null> {
+    return Promise.reject(new VolunteerUnavailableException());
   }
 
-  async findByUserId(): Promise<Volunteer | null> {
-    throw new VolunteerUnavailableException();
+  findByUserId(): Promise<Volunteer | null> {
+    return Promise.reject(new VolunteerUnavailableException());
   }
 
-  async list(): Promise<PaginatedResult<VolunteerSummary>> {
-    throw new VolunteerUnavailableException();
+  list(): Promise<PaginatedResult<VolunteerSummary>> {
+    return Promise.reject(new VolunteerUnavailableException());
   }
 
-  async create(): Promise<Volunteer> {
-    throw new VolunteerUnavailableException();
+  create(): Promise<Volunteer> {
+    return Promise.reject(new VolunteerUnavailableException());
   }
 
-  async updateStatus(): Promise<Volunteer> {
-    throw new VolunteerUnavailableException();
+  updateStatus(): Promise<Volunteer> {
+    return Promise.reject(new VolunteerUnavailableException());
   }
 
-  async listServiceTasks(): Promise<PaginatedResult<VolunteerServiceTask>> {
-    throw new VolunteerUnavailableException();
+  listServiceTasks(): Promise<PaginatedResult<VolunteerServiceTask>> {
+    return Promise.reject(new VolunteerUnavailableException());
   }
 
-  async findServiceTaskById(): Promise<VolunteerServiceTask | null> {
-    throw new VolunteerUnavailableException();
+  findServiceTaskById(): Promise<VolunteerServiceTask | null> {
+    return Promise.reject(new VolunteerUnavailableException());
   }
 
-  async assignServiceTask(): Promise<VolunteerServiceTask> {
-    throw new VolunteerUnavailableException();
+  assignServiceTask(): Promise<VolunteerServiceTask> {
+    return Promise.reject(new VolunteerUnavailableException());
   }
 
-  async updateServiceTaskStatus(): Promise<VolunteerServiceTask> {
-    throw new VolunteerUnavailableException();
+  updateServiceTaskStatus(): Promise<VolunteerServiceTask> {
+    return Promise.reject(new VolunteerUnavailableException());
   }
 
-  async createIncidentReport(): Promise<IncidentReport> {
-    throw new VolunteerUnavailableException();
+  createIncidentReport(): Promise<IncidentReport> {
+    return Promise.reject(new VolunteerUnavailableException());
   }
 
-  async findIncidentById(): Promise<IncidentReport | null> {
-    throw new VolunteerUnavailableException();
+  findIncidentById(): Promise<IncidentReport | null> {
+    return Promise.reject(new VolunteerUnavailableException());
   }
 
-  async listIncidents(): Promise<PaginatedResult<IncidentReport>> {
-    throw new VolunteerUnavailableException();
+  listIncidents(): Promise<PaginatedResult<IncidentReport>> {
+    return Promise.reject(new VolunteerUnavailableException());
   }
 }

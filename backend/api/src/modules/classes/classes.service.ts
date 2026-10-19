@@ -380,7 +380,7 @@ export class ClassesService {
           created: results.filter((r) => r.status === "created").length,
           skipped: results.filter((r) => r.status === "skipped").length,
           errors: results.filter((r) => r.status === "error").length,
-        } as object,
+        },
       },
     });
 
@@ -482,7 +482,7 @@ export class ClassesService {
 
     const studentCount = enrollments.length;
     const currentCourse = assignments.length > 0 && assignments[0]?.courseVersion
-      ? { id: assignments[0].courseVersion!.id, title: assignments[0].courseVersion!.title }
+      ? { id: assignments[0].courseVersion.id, title: assignments[0].courseVersion.title }
       : null;
 
     // Calculate overall progress
@@ -790,7 +790,7 @@ export class ClassesService {
     classId: string,
     enrollmentId: string,
   ): Promise<ClassStudentDetailResponse> {
-    const classItem = await this.requireSupplementaryPracticeClassAccess(
+    await this.requireSupplementaryPracticeClassAccess(
       auth,
       schoolId,
       classId,
@@ -995,7 +995,7 @@ export class ClassesService {
     },
     idempotencyKey?: string,
   ) {
-    const classItem = await this.requireSupplementaryPracticeClassAccess(
+    await this.requireSupplementaryPracticeClassAccess(
       auth,
       schoolId,
       classId,
@@ -1309,7 +1309,7 @@ export class ClassesService {
           `部分题目ID无效或不存在: ${missing.join(", ")}`,
         );
       }
-      questions = dbQuestions as Array<{ id: string; prompt: unknown; kind: string }>;
+      questions = dbQuestions;
     } else {
       // Resolve default questions from the class's current course version.
       const latestAssignment = await this.prisma.assignment.findFirst({
@@ -1349,7 +1349,7 @@ export class ClassesService {
           "班级当前课程没有可用题目，请先在课程管理中添加题目",
         );
       }
-      questions = defaultQuestions as Array<{ id: string; prompt: unknown; kind: string }>;
+      questions = defaultQuestions;
     }
 
     if (questions.length === 0) {
@@ -1379,7 +1379,7 @@ export class ClassesService {
         sessionId: session.id,
         schoolId,
         questionId: q.id,
-        prompt: (q.prompt ?? {}) as Prisma.InputJsonValue,
+        prompt: (q.prompt ?? {}),
         itemType: q.kind ?? (assessmentType === "READING" ? "READING" : "WRITTEN"),
         sortOrder: index + 1,
         status: "PENDING" as const,
@@ -1412,7 +1412,7 @@ export class ClassesService {
         resourceType: "AssessmentSession",
         resourceId: sessions[0]?.id ?? classId,
         requestId: `class-assess-${Date.now()}`,
-        afterSummary: { classId, sessionCount: sessions.length, type: assessmentType, questionCount: questions.length } as object,
+        afterSummary: { classId, sessionCount: sessions.length, type: assessmentType, questionCount: questions.length },
       },
     });
 
@@ -1443,7 +1443,6 @@ export class ClassesService {
       pendingSubmissions,
       activityProgressRows,
       speechJobs,
-      submissionCount,
       assessmentSessionCount,
       lastActivityRow,
     ] = await Promise.all([
@@ -1489,10 +1488,6 @@ export class ClassesService {
         where: { status: { in: ["AUTO_RESULT", "NEEDS_REVIEW", "FINALIZED"] }, result: { not: Prisma.AnyNull }, submission: { schoolId, enrollment: { classId, schoolId, role: "STUDENT", status: "ACTIVE" } } },
         select: { result: true, submission: { select: { enrollmentId: true } } },
       }),
-      // Total submitted/Reviewed/Accepted submissions (for submissionRate)
-      this.prisma.submission.count({
-        where: { schoolId, status: { in: ["SUBMITTED", "REVIEWED", "ACCEPTED"] }, enrollment: { classId, schoolId, role: "STUDENT", status: "ACTIVE" }, deletedAt: null },
-      }),
       // Completed assessment sessions (for assessmentParticipationRate)
       this.prisma.assessmentSession.count({
         where: { schoolId, classId, status: "COMPLETED" },
@@ -1507,7 +1502,7 @@ export class ClassesService {
 
     const studentCount = enrollments.length;
     const currentCourse = assignments.length > 0 && assignments[0]?.courseVersion
-      ? { id: assignments[0].courseVersion!.id, title: assignments[0].courseVersion!.title }
+      ? { id: assignments[0].courseVersion.id, title: assignments[0].courseVersion.title }
       : null;
 
     // Completion rate

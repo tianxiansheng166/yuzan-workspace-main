@@ -11,7 +11,11 @@ import {
   type HeadObjectCommandOutput,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import type { StoragePort, PresignedUrlResult, HeadObjectResult } from "./storage.port.js";
+import type {
+  StoragePort,
+  PresignedUrlResult,
+  HeadObjectResult,
+} from "./storage.port.js";
 
 @Injectable()
 export class S3CompatibleStorageAdapter implements StoragePort {
@@ -25,8 +29,11 @@ export class S3CompatibleStorageAdapter implements StoragePort {
     const region = this.config.getOrThrow<string>("S3_REGION");
     this.bucket = this.config.getOrThrow<string>("S3_BUCKET");
     const accessKeyId = this.config.getOrThrow<string>("S3_ACCESS_KEY_ID");
-    const secretAccessKey = this.config.getOrThrow<string>("S3_SECRET_ACCESS_KEY");
-    const forcePathStyle = this.config.get<string>("S3_FORCE_PATH_STYLE") === "true";
+    const secretAccessKey = this.config.getOrThrow<string>(
+      "S3_SECRET_ACCESS_KEY",
+    );
+    const forcePathStyle =
+      this.config.get<string>("S3_FORCE_PATH_STYLE") === "true";
 
     this.client = new S3Client({
       endpoint,
@@ -141,16 +148,22 @@ export class S3CompatibleStorageAdapter implements StoragePort {
 
       return {
         exists: true,
-        ...(response.ContentLength !== undefined ? { contentLength: response.ContentLength } : {}),
+        ...(response.ContentLength !== undefined
+          ? { contentLength: response.ContentLength }
+          : {}),
         ...(response.ContentType ? { contentType: response.ContentType } : {}),
-        ...(response.LastModified ? { lastModified: response.LastModified } : {}),
-        ...(response.Metadata ? { metadata: response.Metadata as Record<string, string> } : {}),
+        ...(response.LastModified
+          ? { lastModified: response.LastModified }
+          : {}),
+        ...(response.Metadata ? { metadata: response.Metadata } : {}),
       };
     } catch (error: unknown) {
       if (this.isNotFoundError(error)) {
         return { exists: false };
       }
-      this.logger.error(`HeadObject failed for ${objectKey}: ${this.extractErrorMessage(error)}`);
+      this.logger.error(
+        `HeadObject failed for ${objectKey}: ${this.extractErrorMessage(error)}`,
+      );
       throw error;
     }
   }
@@ -171,7 +184,8 @@ export class S3CompatibleStorageAdapter implements StoragePort {
         if (name === "NotFound" || name === "NoSuchKey") return true;
       }
       if ("$metadata" in error) {
-        const meta = (error as { $metadata?: { httpStatusCode?: number } }).$metadata;
+        const meta = (error as { $metadata?: { httpStatusCode?: number } })
+          .$metadata;
         if (meta?.httpStatusCode === 404) return true;
       }
     }
@@ -181,10 +195,16 @@ export class S3CompatibleStorageAdapter implements StoragePort {
   private isBucketAlreadyExists(error: unknown): boolean {
     if (!error || typeof error !== "object") return false;
     const name = "name" in error ? String(error.name) : "";
-    const status = "$metadata" in error
-      ? (error.$metadata as { httpStatusCode?: number } | undefined)?.httpStatusCode
+    const status =
+      "$metadata" in error
+        ? (error.$metadata as { httpStatusCode?: number } | undefined)
+            ?.httpStatusCode
       : undefined;
-    return name === "BucketAlreadyExists" || name === "BucketAlreadyOwnedByYou" || status === 409;
+    return (
+      name === "BucketAlreadyExists" ||
+      name === "BucketAlreadyOwnedByYou" ||
+      status === 409
+    );
   }
 
   private extractErrorMessage(error: unknown): string {

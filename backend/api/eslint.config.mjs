@@ -7,7 +7,11 @@ export default tseslint.config(
   {
     languageOptions: {
       parserOptions: {
-        projectService: true,
+        projectService: {
+          allowDefaultProject: ["test/native-local-storage-smoke.mjs"],
+          defaultProject: "tsconfig.json",
+          maximumDefaultProjectFileMatchCount_THIS_WILL_SLOW_DOWN_LINTING: 1,
+        },
         tsconfigRootDir: import.meta.dirname,
       },
     },

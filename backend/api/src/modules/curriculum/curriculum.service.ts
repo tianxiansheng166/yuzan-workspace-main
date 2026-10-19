@@ -256,6 +256,10 @@ export class CurriculumService {
 
     const { submittedAt, approvedAt, publishedAt, retiredAt, ...rest } =
       version;
+    void submittedAt;
+    void approvedAt;
+    void publishedAt;
+    void retiredAt;
 
     const nextVersion: CourseVersion = {
       ...rest,
@@ -375,7 +379,7 @@ export class CurriculumService {
     const updated: CourseVersion = {
       ...version,
       updatedAt: new Date(),
-    } as CourseVersion;
+    };
     (updated as CourseVersion & { resources?: unknown[] }).resources = [
       ...existingResources,
       newResource,

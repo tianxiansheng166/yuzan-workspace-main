@@ -1,11 +1,11 @@
 import {
   BadRequestException,
-  ConflictException,
   ForbiddenException,
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
 import type { Prisma } from "@yuzan/database";
+import { MembershipRole } from "../../common/security/index.js";
 import { PrismaService } from "../../shared/database/index.js";
 import type { AuthContext } from "../../common/security/auth.types.js";
 import { assertSafeQuestionDeliverySpec } from "./question-bank-delivery.js";
@@ -17,6 +17,57 @@ export type PracticeCatalogQuery = {
 };
 
 const OPEN_ATTEMPT_STATUSES = ["CREATED", "IN_PROGRESS"] as const;
+const PRACTICE_CATALOG_INCLUDE = {
+  practiceVersion: {
+    include: {
+      definition: true,
+      sections: { include: { items: true }, orderBy: { sortOrder: "asc" } },
+    },
+  },
+} satisfies Prisma.PracticeDeliveryInclude;
+const PRACTICE_ATTEMPT_SELECT = {
+  id: true,
+  practiceDefinitionId: true,
+  deliveryId: true,
+  status: true,
+  updatedAt: true,
+  completedAt: true,
+  report: { select: { overallScore: true, readingScore: true, writtenScore: true } },
+} satisfies Prisma.AssessmentSessionSelect;
+
+type PracticeDeliveryWithCatalog = Prisma.PracticeDeliveryGetPayload<{
+  include: typeof PRACTICE_CATALOG_INCLUDE;
+}>;
+type PracticeAttempt = Prisma.AssessmentSessionGetPayload<{
+  select: typeof PRACTICE_ATTEMPT_SELECT;
+}>;
+type PracticeCatalogEntry = {
+  id: PracticeDeliveryWithCatalog["practiceVersion"]["definition"]["id"];
+  title: PracticeDeliveryWithCatalog["practiceVersion"]["definition"]["title"];
+  summary: PracticeDeliveryWithCatalog["practiceVersion"]["definition"]["summary"];
+  coverAsset: PracticeDeliveryWithCatalog["practiceVersion"]["definition"]["coverAsset"];
+  difficulty: PracticeDeliveryWithCatalog["practiceVersion"]["definition"]["difficulty"];
+  estimatedMinutes: PracticeDeliveryWithCatalog["practiceVersion"]["definition"]["estimatedMinutes"];
+  gradeBand: PracticeDeliveryWithCatalog["practiceVersion"]["definition"]["gradeBand"];
+  abilityCategories: PracticeDeliveryWithCatalog["practiceVersion"]["definition"]["abilityCategories"];
+  cultureTags: PracticeDeliveryWithCatalog["practiceVersion"]["definition"]["cultureTags"];
+  catalogType: PracticeDeliveryWithCatalog["practiceVersion"]["definition"]["catalogType"];
+  requiresRecording: PracticeDeliveryWithCatalog["practiceVersion"]["definition"]["requiresRecording"];
+  instantFeedback: PracticeDeliveryWithCatalog["practiceVersion"]["definition"]["instantFeedback"];
+  mode: PracticeDeliveryWithCatalog["mode"];
+  deadline: string | null;
+  sectionCount: number;
+  itemTypes: PracticeDeliveryWithCatalog["practiceVersion"]["sections"][number]["items"][number]["itemType"][];
+  studentState: {
+    completionStatus: "IN_PROGRESS" | "COMPLETED" | "NOT_STARTED";
+    favorite: boolean;
+    attempt: { status: PracticeAttempt["status"]; updatedAt: string } | null;
+    lastCompletedAt: string | null;
+    recentResult: Pick<NonNullable<PracticeAttempt["report"]>, "overallScore" | "readingScore" | "writtenScore"> | null;
+  };
+  recommendationReason: string;
+  recommendationRank: number;
+};
 
 @Injectable()
 export class PracticeService {
@@ -32,15 +83,13 @@ export class PracticeService {
         OR: [{ studentId: auth.principal.userId }, { studentId: null, classId: enrollment.classId }],
         AND: [{ OR: [{ deadline: null }, { deadline: { gte: new Date() } }] }],
       },
-      include: {
-        practiceVersion: { include: { definition: true, sections: { include: { items: true }, orderBy: { sortOrder: "asc" } } } },
-      },
+      include: PRACTICE_CATALOG_INCLUDE,
       orderBy: { createdAt: "asc" },
     });
 
     const attempts = await this.prisma.assessmentSession.findMany({
       where: { schoolId, enrollmentId: enrollment.id, courseSubmissionId: null, practiceDefinitionId: { not: null } },
-      select: { id: true, practiceDefinitionId: true, deliveryId: true, status: true, updatedAt: true, completedAt: true, report: { select: { overallScore: true, readingScore: true, writtenScore: true } } },
+      select: PRACTICE_ATTEMPT_SELECT,
       orderBy: { updatedAt: "desc" },
     });
     const favorites = await this.prisma.practiceFavorite.findMany({ where: { schoolId, studentId: auth.principal.userId }, select: { definitionId: true } });
@@ -75,7 +124,7 @@ export class PracticeService {
     if (!delivery) throw new NotFoundException("练习不存在或暂未向你开放");
     const attempts = await this.prisma.assessmentSession.findMany({
       where: { schoolId, enrollmentId: enrollment.id, deliveryId: delivery.id, courseSubmissionId: null },
-      select: { id: true, practiceDefinitionId: true, deliveryId: true, status: true, updatedAt: true, completedAt: true, report: { select: { overallScore: true, readingScore: true, writtenScore: true } } },
+      select: PRACTICE_ATTEMPT_SELECT,
       orderBy: { updatedAt: "desc" },
     });
     const isFavorite = await this.prisma.practiceFavorite.findUnique({ where: { schoolId_studentId_definitionId: { schoolId, studentId: auth.principal.userId, definitionId } }, select: { id: true } });
@@ -332,16 +381,16 @@ export class PracticeService {
         OR: [{ studentId }, { studentId: null, classId }],
         AND: [{ OR: [{ deadline: null }, { deadline: { gte: new Date() } }] }],
       },
-      include: { practiceVersion: { include: { definition: true, sections: { include: { items: true }, orderBy: { sortOrder: "asc" } } } } },
+      include: PRACTICE_CATALOG_INCLUDE,
     });
   }
 
-  private catalogEntry(delivery: any, attempts: Array<{ id: string; status: string; updatedAt: Date; completedAt?: Date | null; report?: { overallScore: number | null; readingScore: number | null; writtenScore: number | null } | null }>, favorite: boolean) {
+  private catalogEntry(delivery: PracticeDeliveryWithCatalog, attempts: PracticeAttempt[], favorite: boolean): PracticeCatalogEntry {
     const { definition } = delivery.practiceVersion;
-    const openAttempt = attempts.find((attempt) => OPEN_ATTEMPT_STATUSES.includes(attempt.status as typeof OPEN_ATTEMPT_STATUSES[number])) ?? null;
+    const openAttempt = attempts.find((attempt) => OPEN_ATTEMPT_STATUSES.some((status) => status === attempt.status)) ?? null;
     const completedAttempt = attempts.find((attempt) => attempt.status === "COMPLETED") ?? null;
     const completionStatus = openAttempt ? "IN_PROGRESS" : completedAttempt ? "COMPLETED" : "NOT_STARTED";
-    const itemTypes = [...new Set(delivery.practiceVersion.sections.flatMap((section: any) => section.items.map((item: any) => item.itemType)))];
+    const itemTypes = [...new Set(delivery.practiceVersion.sections.flatMap((section) => section.items.map((item) => item.itemType)))];
     const recommendationReason = openAttempt
       ? "你有一项未完成的练习，建议从上次进度继续。"
       : delivery.mode === "ASSIGNMENT"
@@ -374,10 +423,11 @@ export class PracticeService {
         recentResult: completedAttempt?.report ? { overallScore: completedAttempt.report.overallScore, readingScore: completedAttempt.report.readingScore, writtenScore: completedAttempt.report.writtenScore } : null,
       },
       recommendationReason,
+      recommendationRank: 50,
     };
   }
 
-  private matchesCatalogQuery(entry: any, query: PracticeCatalogQuery) {
+  private matchesCatalogQuery(entry: PracticeCatalogEntry, query: PracticeCatalogQuery) {
     const normalizedQuery = query.query?.trim().toLocaleLowerCase();
     if (normalizedQuery && !`${entry.title} ${entry.summary} ${entry.abilityCategories.join(" ")} ${entry.cultureTags.join(" ")}`.toLocaleLowerCase().includes(normalizedQuery)) return false;
     if (query.abilityCategory && !entry.abilityCategories.includes(query.abilityCategory)) return false;
@@ -397,7 +447,7 @@ export class PracticeService {
     return true;
   }
 
-  private sortCatalog(entries: any[], sort?: string) {
+  private sortCatalog(entries: PracticeCatalogEntry[], sort?: string) {
     return [...entries].sort((a, b) => {
       if (sort === "DURATION_ASC") return a.estimatedMinutes - b.estimatedMinutes || a.title.localeCompare(b.title, "zh-CN");
       if (sort === "DURATION_DESC") return b.estimatedMinutes - a.estimatedMinutes || a.title.localeCompare(b.title, "zh-CN");
@@ -407,7 +457,7 @@ export class PracticeService {
     });
   }
 
-  private catalogFacets(entries: any[]) {
+  private catalogFacets(entries: PracticeCatalogEntry[]) {
     const countValues = (values: string[]) => Object.entries(values.reduce<Record<string, number>>((counts, value) => { counts[value] = (counts[value] ?? 0) + 1; return counts; }, {})).map(([value, count]) => ({ value, count }));
     return {
       abilityCategory: countValues(entries.flatMap((entry) => entry.abilityCategories)),
@@ -426,7 +476,7 @@ export class PracticeService {
   // P0 deliberately uses stable, explainable rules instead of a random daily
   // feed. Once reports expose richer dimensions this mapper can grow without
   // changing the catalogue page or the reusable executor.
-  private applyRecommendationRules(entries: any[], attempts: Array<{ status: string; updatedAt: Date; completedAt?: Date | null; report?: { overallScore: number | null; readingScore: number | null; writtenScore: number | null } | null }>) {
+  private applyRecommendationRules(entries: PracticeCatalogEntry[], attempts: PracticeAttempt[]) {
     const latestReport = attempts.filter((attempt) => attempt.report).sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())[0]?.report ?? null;
     const weakDimension = latestReport
       ? ([
@@ -461,7 +511,7 @@ export class PracticeService {
   }
 
   private assertStudentTenant(auth: AuthContext, schoolId: string) {
-    if (auth.tenant.schoolId !== schoolId || !auth.principal.roles.includes("STUDENT" as any)) {
+    if (auth.tenant.schoolId !== schoolId || !auth.principal.roles.includes(MembershipRole.STUDENT)) {
       throw new ForbiddenException("无权访问该学校的学生练习");
     }
   }

@@ -9,23 +9,23 @@ import type { SessionRepository } from "../ports/index.js";
  * wired. All operations fail with AUTH_SERVICE_UNAVAILABLE.
  */
 export class UnavailableSessionRepository implements SessionRepository {
-  async create(): Promise<UserSession> {
-    throw new IdentityException("AUTH_SERVICE_UNAVAILABLE");
+  create(): Promise<UserSession> {
+    return Promise.reject(new IdentityException("AUTH_SERVICE_UNAVAILABLE"));
   }
 
-  async findByAccessTokenHash(): Promise<UserSession | null> {
-    throw new IdentityException("AUTH_SERVICE_UNAVAILABLE");
+  findByAccessTokenHash(): Promise<UserSession | null> {
+    return Promise.reject(new IdentityException("AUTH_SERVICE_UNAVAILABLE"));
   }
 
-  async findByRefreshTokenHash(): Promise<UserSession | null> {
-    throw new IdentityException("AUTH_SERVICE_UNAVAILABLE");
+  findByRefreshTokenHash(): Promise<UserSession | null> {
+    return Promise.reject(new IdentityException("AUTH_SERVICE_UNAVAILABLE"));
   }
 
-  async revoke(): Promise<void> {
-    throw new IdentityException("AUTH_SERVICE_UNAVAILABLE");
+  revoke(): Promise<void> {
+    return Promise.reject(new IdentityException("AUTH_SERVICE_UNAVAILABLE"));
   }
 
-  async compareAndRotateRefreshSession(): Promise<UserSession | null> {
-    throw new IdentityException("AUTH_SERVICE_UNAVAILABLE");
+  compareAndRotateRefreshSession(): Promise<UserSession | null> {
+    return Promise.reject(new IdentityException("AUTH_SERVICE_UNAVAILABLE"));
   }
 }

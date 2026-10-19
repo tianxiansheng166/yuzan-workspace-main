@@ -3,7 +3,6 @@ import { Prisma } from "@yuzan/database";
 import { PrismaService } from "../../../shared/database/prisma.service.js";
 import type {
   Activity,
-  ActivityType,
   BilingualContent,
   CourseVersion,
   CourseVersionStatus,
@@ -12,7 +11,7 @@ import type {
   ResourceRef,
   Unit,
 } from "../domain/course-version.types.js";
-import { toSummary } from "../domain/course-version.types.js";
+
 import {
   CurriculumConflictException,
   CurriculumNotFoundException,
@@ -49,13 +48,9 @@ const fullCourseVersionInclude = {
   },
 } as const satisfies Prisma.CourseVersionInclude;
 
-const courseVersionWithCourseAndUnitsArgs = {
-  include: fullCourseVersionInclude,
-} as const;
-
-type CourseVersionWithCourseAndUnits = Prisma.CourseVersionGetPayload<
-  typeof courseVersionWithCourseAndUnitsArgs
->;
+type CourseVersionWithCourseAndUnits = Prisma.CourseVersionGetPayload<{
+  include: typeof fullCourseVersionInclude;
+}>;
 
 function handleDbError(error: unknown): never {
   if (
@@ -73,9 +68,7 @@ function handleDbError(error: unknown): never {
 }
 
 @Injectable()
-export class PrismaCourseVersionRepository
-  implements CourseVersionRepositoryPort
-{
+export class PrismaCourseVersionRepository implements CourseVersionRepositoryPort {
   constructor(private readonly prisma: PrismaService) {}
 
   async nextVersion(schoolId: string, courseId: string): Promise<number> {
@@ -84,7 +77,10 @@ export class PrismaCourseVersionRepository
         where: {
           schoolId,
           courseId,
-          course: { deletedAt: null, school: { isActive: true, deletedAt: null } },
+          course: {
+            deletedAt: null,
+            school: { isActive: true, deletedAt: null },
+          },
         },
         _max: { version: true },
       });
@@ -254,7 +250,10 @@ export class PrismaCourseVersionRepository
         where: {
           id: courseVersionId,
           schoolId,
-          course: { deletedAt: null, school: { isActive: true, deletedAt: null } },
+          course: {
+            deletedAt: null,
+            school: { isActive: true, deletedAt: null },
+          },
         },
         include: fullCourseVersionInclude,
       });
@@ -271,7 +270,10 @@ export class PrismaCourseVersionRepository
     try {
       const where: Prisma.CourseVersionWhereInput = {
         schoolId,
-        course: { deletedAt: null, school: { isActive: true, deletedAt: null } },
+        course: {
+          deletedAt: null,
+          school: { isActive: true, deletedAt: null },
+        },
       };
       if (options.status) {
         where.status = options.status;
@@ -293,7 +295,7 @@ export class PrismaCourseVersionRepository
         courseId: row.courseId,
         version: row.version,
         title: row.title,
-        status: row.status as CourseVersionStatus,
+        status: row.status,
         gradeBand: row.gradeBand ?? null,
         updatedAt: row.updatedAt,
       }));
@@ -315,7 +317,10 @@ export class PrismaCourseVersionRepository
           schoolId,
           courseId,
           status: "PUBLISHED",
-          course: { deletedAt: null, school: { isActive: true, deletedAt: null } },
+          course: {
+            deletedAt: null,
+            school: { isActive: true, deletedAt: null },
+          },
         },
         include: fullCourseVersionInclude,
       });
@@ -335,7 +340,10 @@ export class PrismaCourseVersionRepository
           schoolId,
           courseId,
           status: "DRAFT",
-          course: { deletedAt: null, school: { isActive: true, deletedAt: null } },
+          course: {
+            deletedAt: null,
+            school: { isActive: true, deletedAt: null },
+          },
         },
         include: fullCourseVersionInclude,
       });
@@ -445,7 +453,8 @@ export class PrismaCourseVersionRepository
       throw new CurriculumNotFoundException();
     }
 
-    const resourceIds = [...new Set(
+    const resourceIds = [
+      ...new Set(
       version.units.flatMap((unit) =>
         unit.lessons.flatMap((lesson) =>
           lesson.activities.flatMap((activity) =>
@@ -453,7 +462,8 @@ export class PrismaCourseVersionRepository
           ),
         ),
       ),
-    )];
+      ),
+    ];
     if (resourceIds.length === 0) return;
 
     const resources = await tx.resource.findMany({
@@ -478,7 +488,10 @@ export class PrismaCourseVersionRepository
       where: {
         id: courseVersionId,
         schoolId,
-        course: { deletedAt: null, school: { isActive: true, deletedAt: null } },
+        course: {
+          deletedAt: null,
+          school: { isActive: true, deletedAt: null },
+        },
       },
       include: fullCourseVersionInclude,
     });
@@ -491,7 +504,7 @@ export class PrismaCourseVersionRepository
     if (value === undefined || value === null) {
       return Prisma.DbNull;
     }
-    return value as Prisma.InputJsonValue;
+    return value;
   }
 
   private toNullable<T>(value: T | undefined): T | null {
@@ -587,7 +600,7 @@ export class PrismaCourseVersionRepository
       courseId: row.courseId,
       authorUserId: row.course.authorUserId,
       version: row.version,
-      status: row.status as CourseVersionStatus,
+      status: row.status,
       title: row.title,
       description: row.description ?? undefined,
       gradeBand: row.gradeBand ?? undefined,
@@ -662,7 +675,7 @@ export class PrismaCourseVersionRepository
   ): Activity {
     return {
       id: activity.id,
-      type: activity.type as ActivityType,
+      type: activity.type,
       title: activity.title,
       instruction: activity.instruction
         ? (activity.instruction as unknown as BilingualContent)

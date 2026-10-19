@@ -18,115 +18,146 @@ import type {
 
 @Injectable()
 export class UnavailableTrainingRepository implements TrainingRepositoryPort {
-  private fail(): never {
-    throw new TrainingUnavailableException();
+  private fail(): Promise<never> {
+    return Promise.reject(new TrainingUnavailableException());
   }
 
   // Programs
-  async findProgramById(
+  findProgramById(
     _schoolId: string,
     _programId: string,
   ): Promise<TrainingProgram | null> {
-    this.fail();
+    void _schoolId;
+    void _programId;
+    return this.fail();
   }
 
-  async listPrograms(
+  listPrograms(
     _schoolId: string,
     _options: ListProgramsOptions,
   ): Promise<PaginatedResult<TrainingProgram>> {
-    this.fail();
+    void _schoolId;
+    void _options;
+    return this.fail();
   }
 
-  async createProgram(_program: TrainingProgram): Promise<TrainingProgram> {
-    this.fail();
+  createProgram(_program: TrainingProgram): Promise<TrainingProgram> {
+    void _program;
+    return this.fail();
   }
 
-  async updateProgram(_program: TrainingProgram): Promise<TrainingProgram> {
-    this.fail();
+  updateProgram(_program: TrainingProgram): Promise<TrainingProgram> {
+    void _program;
+    return this.fail();
   }
 
   // Enrollments
-  async findEnrollmentById(
+  findEnrollmentById(
     _schoolId: string,
     _enrollmentId: string,
   ): Promise<TrainingEnrollment | null> {
-    this.fail();
+    void _schoolId;
+    void _enrollmentId;
+    return this.fail();
   }
 
-  async listEnrollmentsByVolunteer(
+  listEnrollmentsByVolunteer(
     _schoolId: string,
     _volunteerUserId: string,
     _options: ListEnrollmentsOptions,
   ): Promise<PaginatedResult<TrainingEnrollment>> {
-    this.fail();
+    void _schoolId;
+    void _volunteerUserId;
+    void _options;
+    return this.fail();
   }
 
-  async listEnrollments(
+  listEnrollments(
     _schoolId: string,
     _programId: string,
     _options: ListEnrollmentsOptions,
   ): Promise<PaginatedResult<TrainingEnrollment>> {
-    this.fail();
+    void _schoolId;
+    void _programId;
+    void _options;
+    return this.fail();
   }
 
-  async createEnrollment(
+  createEnrollment(
     _enrollment: TrainingEnrollment,
   ): Promise<TrainingEnrollment> {
-    this.fail();
+    void _enrollment;
+    return this.fail();
   }
 
-  async updateEnrollmentStatus(
+  updateEnrollmentStatus(
     _schoolId: string,
     _enrollmentId: string,
     _status: TrainingEnrollmentStatus,
     _completedAt?: Date,
   ): Promise<TrainingEnrollment> {
-    this.fail();
+    void _schoolId;
+    void _enrollmentId;
+    void _status;
+    void _completedAt;
+    return this.fail();
   }
 
   // Progress
-  async findProgressByEnrollment(
+  findProgressByEnrollment(
     _schoolId: string,
     _enrollmentId: string,
   ): Promise<readonly TrainingProgress[]> {
-    this.fail();
+    void _schoolId;
+    void _enrollmentId;
+    return this.fail();
   }
 
-  async upsertProgress(_progress: TrainingProgress): Promise<TrainingProgress> {
-    this.fail();
+  upsertProgress(_progress: TrainingProgress): Promise<TrainingProgress> {
+    void _progress;
+    return this.fail();
   }
 
   // Exams
-  async findExamById(
+  findExamById(
     _schoolId: string,
     _examId: string,
   ): Promise<TrainingExam | null> {
-    this.fail();
+    void _schoolId;
+    void _examId;
+    return this.fail();
   }
 
-  async listExamsByEnrollment(
+  listExamsByEnrollment(
     _schoolId: string,
     _enrollmentId: string,
   ): Promise<readonly TrainingExam[]> {
-    this.fail();
+    void _schoolId;
+    void _enrollmentId;
+    return this.fail();
   }
 
-  async createExam(_exam: TrainingExam): Promise<TrainingExam> {
-    this.fail();
+  createExam(_exam: TrainingExam): Promise<TrainingExam> {
+    void _exam;
+    return this.fail();
   }
 
-  async updateExamStatus(
+  updateExamStatus(
     _schoolId: string,
     _examId: string,
     _status: TrainingExamStatus,
   ): Promise<TrainingExam> {
-    this.fail();
+    void _schoolId;
+    void _examId;
+    void _status;
+    return this.fail();
   }
 
   // Exam Attempts
-  async createExamAttempt(
+  createExamAttempt(
     _attempt: TrainingExamAttempt,
   ): Promise<TrainingExamAttempt> {
-    this.fail();
+    void _attempt;
+    return this.fail();
   }
 }

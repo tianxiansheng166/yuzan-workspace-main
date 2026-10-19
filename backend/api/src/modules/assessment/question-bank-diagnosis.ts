@@ -390,7 +390,16 @@ export function buildQuestionBankDiagnosis(
           left.sortOrder - right.sortOrder ||
           left.assessmentItemId.localeCompare(right.assessmentItemId),
       )
-      .map(({ sortOrder: _sortOrder, ...candidate }) => candidate),
+      .map((candidate) => ({
+        assessmentItemId: candidate.assessmentItemId,
+        questionVersionId: candidate.questionVersionId,
+        family: candidate.family,
+        displayName: candidate.displayName,
+        domain: candidate.domain,
+        domainDisplayName: candidate.domainDisplayName,
+        earned: candidate.earned,
+        max: candidate.max,
+      })),
     nextSteps: priorities.map((family) => ({
       family: family.family,
       displayName: family.displayName,

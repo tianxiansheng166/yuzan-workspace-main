@@ -8,22 +8,24 @@ import type { LearningRepositoryPort } from "./learning-repository.port.js";
 
 @Injectable()
 export class UnavailableLearningRepository implements LearningRepositoryPort {
-  async findProgress(
+  findProgress(
     _activityId: string,
     _enrollmentId: string,
   ): Promise<ActivityProgressRecord | null> {
-    throw new LearningUnavailableException();
+    void _activityId;
+    void _enrollmentId;
+    return Promise.reject(new LearningUnavailableException());
   }
 
-  async upsertProgress(
-    _input: UpdateProgressInput,
-  ): Promise<ActivityProgressRecord> {
-    throw new LearningUnavailableException();
+  upsertProgress(_input: UpdateProgressInput): Promise<ActivityProgressRecord> {
+    void _input;
+    return Promise.reject(new LearningUnavailableException());
   }
 
-  async listProgressByEnrollment(
+  listProgressByEnrollment(
     _enrollmentId: string,
   ): Promise<readonly ActivityProgressRecord[]> {
-    throw new LearningUnavailableException();
+    void _enrollmentId;
+    return Promise.reject(new LearningUnavailableException());
   }
 }

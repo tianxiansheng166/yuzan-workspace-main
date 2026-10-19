@@ -9,21 +9,26 @@ import type {
 
 @Injectable()
 export class UnavailableMembershipRepository implements MembershipRepositoryPort {
-  async findMembership(
+  findMembership(
     _schoolId: string,
     _userId: string,
   ): Promise<Membership | null> {
-    throw new OrganizationUnavailableException();
+    void _schoolId;
+    void _userId;
+    return Promise.reject(new OrganizationUnavailableException());
   }
 
-  async listMembers(
+  listMembers(
     _schoolId: string,
     _options: ListMembersOptions,
   ): Promise<PaginatedResult<SchoolMember>> {
-    throw new OrganizationUnavailableException();
+    void _schoolId;
+    void _options;
+    return Promise.reject(new OrganizationUnavailableException());
   }
 
-  async listMembershipsByUser(_userId: string): Promise<readonly Membership[]> {
-    throw new OrganizationUnavailableException();
+  listMembershipsByUser(_userId: string): Promise<readonly Membership[]> {
+    void _userId;
+    return Promise.reject(new OrganizationUnavailableException());
   }
 }

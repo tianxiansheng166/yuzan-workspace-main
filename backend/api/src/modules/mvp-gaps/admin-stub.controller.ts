@@ -619,7 +619,7 @@ export class AdminStubController {
   @Get("privacy/policies")
   @RequireRoles(MembershipRole.PLATFORM_ADMIN, MembershipRole.SCHOOL_ADMIN)
   async listDataPolicies(@Query() query: ProductPlanQueryDto) {
-    return { items: await this.prisma.dataPolicyVersion.findMany({ where: query.status ? { status: query.status as "DRAFT" | "ACTIVE" | "RETIRED" } : {}, orderBy: [{ resourceType: "asc" }, { version: "desc" }], take: query.limit, select: { id: true, name: true, version: true, resourceType: true, retentionDays: true, status: true, rules: true, createdByUserId: true, createdAt: true, updatedAt: true } }) };
+    return { items: await this.prisma.dataPolicyVersion.findMany({ where: query.status ? { status: query.status } : {}, orderBy: [{ resourceType: "asc" }, { version: "desc" }], take: query.limit, select: { id: true, name: true, version: true, resourceType: true, retentionDays: true, status: true, rules: true, createdByUserId: true, createdAt: true, updatedAt: true } }) };
   }
 
   @Post("privacy/policies")
@@ -842,7 +842,7 @@ export class AdminStubController {
     const row = await this.prisma.$transaction(async (tx) => {
       await tx.schoolSubscription.updateMany({ where: { schoolId: id, status: { in: ["TRIAL", "ACTIVE", "PAST_DUE"] } }, data: { status: "CANCELLED" } });
       const created = await tx.schoolSubscription.create({ data: { schoolId: id, planId: dto.planId, status: (dto.status ?? "TRIAL") as "TRIAL" | "ACTIVE" | "PAST_DUE" | "SUSPENDED" | "EXPIRED" | "CANCELLED", startsAt, endsAt, autoRenew: dto.autoRenew ?? false, ...(dto.externalRef ? { externalRef: dto.externalRef } : {}), createdByUserId: principal.userId } });
-      await tx.subscriptionEvent.create({ data: { subscriptionId: created.id, type: "CREATED", actorUserId: principal.userId, payload: { planId: dto.planId, status: created.status } as Prisma.InputJsonValue } });
+      await tx.subscriptionEvent.create({ data: { subscriptionId: created.id, type: "CREATED", actorUserId: principal.userId, payload: { planId: dto.planId, status: created.status } } });
       return created;
     });
     await this.audit(principal.userId, id, "ADMIN_SUBSCRIPTION_CREATED", "SchoolSubscription", row.id, null, { planId: row.planId, status: row.status });
@@ -856,7 +856,7 @@ export class AdminStubController {
     if (!before) throw new NotFoundException("订阅不存在");
     const row = await this.prisma.$transaction(async (tx) => {
       const updated = await tx.schoolSubscription.update({ where: { id }, data: { ...(dto.status !== undefined ? { status: dto.status as "TRIAL" | "ACTIVE" | "PAST_DUE" | "SUSPENDED" | "EXPIRED" | "CANCELLED" } : {}), ...(dto.endsAt !== undefined ? { endsAt: new Date(dto.endsAt) } : {}), ...(dto.autoRenew !== undefined ? { autoRenew: dto.autoRenew } : {}) } });
-      await tx.subscriptionEvent.create({ data: { subscriptionId: id, type: "UPDATED", actorUserId: principal.userId, payload: { before: { status: before.status, endsAt: before.endsAt }, after: { status: updated.status, endsAt: updated.endsAt } } as Prisma.InputJsonValue } });
+      await tx.subscriptionEvent.create({ data: { subscriptionId: id, type: "UPDATED", actorUserId: principal.userId, payload: { before: { status: before.status, endsAt: before.endsAt }, after: { status: updated.status, endsAt: updated.endsAt } } } });
       return updated;
     });
     await this.audit(principal.userId, row.schoolId, "ADMIN_SUBSCRIPTION_UPDATED", "SchoolSubscription", id, { status: before.status }, { status: row.status });
@@ -874,7 +874,7 @@ export class AdminStubController {
     const endsAt = new Date(base.getTime() + dto.days * 86400000);
     const row = await this.prisma.$transaction(async (tx) => {
       const updated = await tx.schoolSubscription.update({ where: { id }, data: { endsAt, status: "ACTIVE", autoRenew: false } });
-      await tx.subscriptionEvent.create({ data: { subscriptionId: id, type: "RENEWED", actorUserId: principal.userId, payload: { days: dto.days, reason: dto.reason?.trim() || null, previousEndsAt: before.endsAt, endsAt } as Prisma.InputJsonValue } });
+      await tx.subscriptionEvent.create({ data: { subscriptionId: id, type: "RENEWED", actorUserId: principal.userId, payload: { days: dto.days, reason: dto.reason?.trim() || null, previousEndsAt: before.endsAt, endsAt } } });
       return updated;
     });
     await this.audit(principal.userId, row.schoolId, "ADMIN_SUBSCRIPTION_RENEWED", "SchoolSubscription", id, { status: before.status, endsAt: before.endsAt }, { status: row.status, endsAt: row.endsAt, days: dto.days });
@@ -918,7 +918,7 @@ export class AdminStubController {
     let inserted = 0;
     try {
       if (valid.length) inserted = (await this.prisma.school.createMany({ data: valid })).count;
-      const result = await this.prisma.schoolImportJob.update({ where: { id: job.id }, data: { status: rowErrors.length ? (inserted ? "COMPLETED" : "FAILED") : "COMPLETED", successCount: inserted, errorCount: rowErrors.length, rowErrors: rowErrors as Prisma.InputJsonValue, completedAt: new Date() }, select: { id: true, fileHash: true, status: true, rowCount: true, successCount: true, errorCount: true, rowErrors: true, completedAt: true } });
+      const result = await this.prisma.schoolImportJob.update({ where: { id: job.id }, data: { status: rowErrors.length ? (inserted ? "COMPLETED" : "FAILED") : "COMPLETED", successCount: inserted, errorCount: rowErrors.length, rowErrors: rowErrors, completedAt: new Date() }, select: { id: true, fileHash: true, status: true, rowCount: true, successCount: true, errorCount: true, rowErrors: true, completedAt: true } });
       await this.audit(principal.userId, null, "ADMIN_SCHOOL_IMPORT_COMPLETED", "SchoolImportJob", job.id, { status: "PROCESSING" }, { status: result.status, successCount: inserted, errorCount: rowErrors.length });
       return { idempotent: false, job: result };
     } catch (error) {
@@ -956,7 +956,7 @@ export class AdminStubController {
         return false;
       });
       const inserted = valid.length ? (await this.prisma.school.createMany({ data: valid })).count : 0;
-      const result = await this.prisma.schoolImportJob.update({ where: { id }, data: { status: rowErrors.length && !inserted ? "FAILED" : "COMPLETED", successCount: inserted, errorCount: rowErrors.length, rowErrors: rowErrors as Prisma.InputJsonValue, completedAt: new Date() }, select: { id: true, fileHash: true, status: true, rowCount: true, successCount: true, errorCount: true, rowErrors: true, completedAt: true } });
+      const result = await this.prisma.schoolImportJob.update({ where: { id }, data: { status: rowErrors.length && !inserted ? "FAILED" : "COMPLETED", successCount: inserted, errorCount: rowErrors.length, rowErrors: rowErrors, completedAt: new Date() }, select: { id: true, fileHash: true, status: true, rowCount: true, successCount: true, errorCount: true, rowErrors: true, completedAt: true } });
       await this.audit(principal.userId, null, "ADMIN_SCHOOL_IMPORT_COMPLETED", "SchoolImportJob", id, { status: "PROCESSING" }, { status: result.status, successCount: inserted, errorCount: rowErrors.length, async: true });
       return { idempotent: false, queued: false, job: result };
     } catch (error) {
@@ -1485,7 +1485,7 @@ export class AdminStubController {
         const memberships = await tx.membership.findMany({ where: { userId: before.subjectUserId, schoolId: before.schoolId }, select: { id: true, status: true } });
         await tx.user.update({ where: { id: before.subjectUserId }, data: { status: "SUSPENDED" } });
         await tx.membership.updateMany({ where: { userId: before.subjectUserId, schoolId: before.schoolId, status: "ACTIVE" }, data: { status: "SUSPENDED" } });
-        return tx.privacyRequest.update({ where: { id }, data: { status: "COMPLETED", reviewedByUserId: principal.userId, completedAt: new Date(), executionSnapshot: memberships as Prisma.InputJsonValue }, select: { id: true, schoolId: true, subjectUserId: true, type: true, status: true, completedAt: true } });
+        return tx.privacyRequest.update({ where: { id }, data: { status: "COMPLETED", reviewedByUserId: principal.userId, completedAt: new Date(), executionSnapshot: memberships }, select: { id: true, schoolId: true, subjectUserId: true, type: true, status: true, completedAt: true } });
       } else {
         await tx.user.update({ where: { id: before.subjectUserId }, data: { status: "DISABLED", loginIdentifier: `deleted-${before.subjectUserId}`, displayName: "已删除用户", passwordHash: `redacted-${randomBytes(24).toString("hex")}` } });
         await tx.membership.updateMany({ where: { userId: before.subjectUserId, schoolId: before.schoolId, status: { in: ["ACTIVE", "SUSPENDED", "INVITED"] } }, data: { status: "LEFT" } });

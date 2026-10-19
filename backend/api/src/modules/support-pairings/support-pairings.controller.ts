@@ -18,11 +18,7 @@ import {
   type Principal,
   type TenantContext,
 } from "../../common/security/index.js";
-import {
-  ConsentStatus,
-  PairingStatus,
-  TeacherReviewStatus,
-} from "./domain/support-pairing.types.js";
+
 import {
   CreatePairingDto,
   CreateSessionDto,
@@ -30,7 +26,6 @@ import {
   ReviewSessionDto,
   UpdateConsentDto,
   UpdatePairingStatusDto,
-  UpdateSessionDto,
 } from "./dto/support-pairing.dto.js";
 import type { ListPairingsOptions } from "./ports/support-pairing-repository.port.js";
 import { SupportPairingsService } from "./support-pairings.service.js";
@@ -136,7 +131,7 @@ export class SupportPairingsController {
       createAuthContext("request-id", principal, tenant),
       schoolId,
       pairingId,
-      dto.consentStatus as ConsentStatus,
+      dto.consentStatus,
     );
   }
 
@@ -153,7 +148,7 @@ export class SupportPairingsController {
       createAuthContext("request-id", principal, tenant),
       schoolId,
       pairingId,
-      dto.status as PairingStatus,
+      dto.status,
     );
   }
 
@@ -212,7 +207,7 @@ export class SupportPairingsController {
       schoolId,
       pairingId,
       sessionId,
-      dto.teacherReviewStatus as TeacherReviewStatus,
+      dto.teacherReviewStatus,
     );
   }
 }

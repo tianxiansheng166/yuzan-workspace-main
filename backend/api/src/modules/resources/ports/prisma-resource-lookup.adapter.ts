@@ -12,7 +12,9 @@ export class PrismaResourceLookupAdapter implements ResourceLookupPort {
       where: {
         id: resourceId,
         deletedAt: null,
-        ...(schoolId === null ? { schoolId: null } : { OR: [{ schoolId }, { schoolId: null }] }),
+        ...(schoolId === null
+          ? { schoolId: null }
+          : { OR: [{ schoolId }, { schoolId: null }] }),
       },
       select: { id: true },
     });
@@ -21,17 +23,19 @@ export class PrismaResourceLookupAdapter implements ResourceLookupPort {
 
   async findByIds(ids: readonly string[]): Promise<readonly Resource[]> {
     if (ids.length === 0) return [];
-    const resources = await this.prisma.resource.findMany({ where: { id: { in: [...ids] }, deletedAt: null } });
+    const resources = await this.prisma.resource.findMany({
+      where: { id: { in: [...ids] }, deletedAt: null },
+    });
     return resources.map((resource) => ({
       id: resource.id,
       schoolId: resource.schoolId,
-      kind: resource.kind as Resource["kind"],
+      kind: resource.kind,
       objectKey: resource.objectKey,
       originalName: resource.originalName,
       mediaType: resource.mediaType,
       byteSize: Number(resource.byteSize),
       checksumSha256: resource.checksumSha256,
-      rightsStatus: resource.rightsStatus as Resource["rightsStatus"],
+      rightsStatus: resource.rightsStatus,
       ...(resource.rightsNote ? { rightsNote: resource.rightsNote } : {}),
       offlineAllowed: resource.offlineAllowed,
     }));

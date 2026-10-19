@@ -39,10 +39,7 @@ const REFRESH_TYPE = "REFRESH";
 
 @Injectable()
 export class PrismaIdentityRepository
-  implements
-    UserIdentityRepository,
-    MembershipRepository,
-    SessionRepository
+  implements UserIdentityRepository, MembershipRepository, SessionRepository
 {
   constructor(private readonly prisma: PrismaService) {}
 
@@ -161,7 +158,7 @@ export class PrismaIdentityRepository
         include: { pair: { include: { sessions: true } } },
       });
       if (!row || String(row.type) !== expectedType) return null;
-      return this.mapPairWithSessions(row.pair as Row);
+      return this.mapPairWithSessions(row.pair);
     });
   }
 
@@ -234,7 +231,7 @@ export class PrismaIdentityRepository
   }
 
   private mapPairWithSessions(row: Row): UserSession {
-    const pair = row as Row;
+    const pair = row;
     const sessions = (pair.sessions as Row[]) ?? [];
     const access = sessions.find((s) => String(s.type) === ACCESS_TYPE);
     const refresh = sessions.find((s) => String(s.type) === REFRESH_TYPE);

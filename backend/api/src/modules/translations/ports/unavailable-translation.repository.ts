@@ -13,31 +13,37 @@ import type {
 
 @Injectable()
 export class UnavailableTranslationRepository implements TranslationRepositoryPort {
-  async createJob(
+  createJob(
     _job: Omit<TranslationJob, "id" | "createdAt" | "updatedAt">,
   ): Promise<TranslationJob> {
-    throw new TranslationUnavailableException();
+    void _job;
+    return Promise.reject(new TranslationUnavailableException());
   }
 
-  async findJobById(
+  findJobById(
     _schoolId: string,
     _jobId: string,
   ): Promise<TranslationJob | null> {
-    throw new TranslationUnavailableException();
+    void _schoolId;
+    void _jobId;
+    return Promise.reject(new TranslationUnavailableException());
   }
 
-  async findJobByIdOnly(_jobId: string): Promise<TranslationJob | null> {
-    throw new TranslationUnavailableException();
+  findJobByIdOnly(_jobId: string): Promise<TranslationJob | null> {
+    void _jobId;
+    return Promise.reject(new TranslationUnavailableException());
   }
 
-  async listJobsBySchool(
+  listJobsBySchool(
     _schoolId: string,
     _options: ListJobsOptions,
   ): Promise<PaginatedResult<TranslationJob>> {
-    throw new TranslationUnavailableException();
+    void _schoolId;
+    void _options;
+    return Promise.reject(new TranslationUnavailableException());
   }
 
-  async updateJobResult(
+  updateJobResult(
     _schoolId: string,
     _jobId: string,
     _data: {
@@ -50,10 +56,13 @@ export class UnavailableTranslationRepository implements TranslationRepositoryPo
       errorCode?: string;
     },
   ): Promise<TranslationJob | null> {
-    throw new TranslationUnavailableException();
+    void _schoolId;
+    void _jobId;
+    void _data;
+    return Promise.reject(new TranslationUnavailableException());
   }
 
-  async updateJobRevision(
+  updateJobRevision(
     _schoolId: string,
     _jobId: string,
     _data: {
@@ -64,19 +73,23 @@ export class UnavailableTranslationRepository implements TranslationRepositoryPo
       revision: number;
     },
   ): Promise<TranslationJob | null> {
-    throw new TranslationUnavailableException();
+    void _schoolId;
+    void _jobId;
+    void _data;
+    return Promise.reject(new TranslationUnavailableException());
   }
 
-  async listGlossary(
+  listGlossary(
     _schoolId: string,
     _version?: number,
   ): Promise<readonly GlossaryEntry[]> {
-    throw new TranslationUnavailableException();
+    void _schoolId;
+    void _version;
+    return Promise.reject(new TranslationUnavailableException());
   }
 
-  async findGlossaryByVersion(
-    _version: number,
-  ): Promise<readonly GlossaryEntry[]> {
-    throw new TranslationUnavailableException();
+  findGlossaryByVersion(_version: number): Promise<readonly GlossaryEntry[]> {
+    void _version;
+    return Promise.reject(new TranslationUnavailableException());
   }
 }

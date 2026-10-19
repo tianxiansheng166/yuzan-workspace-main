@@ -1,4 +1,4 @@
-import { IsEnum, IsOptional, IsString, IsObject } from "class-validator";
+import { IsEnum, IsString, IsObject } from "class-validator";
 
 export enum DraftToolSourceEnum {
   MINDMATE = "MINDMATE",

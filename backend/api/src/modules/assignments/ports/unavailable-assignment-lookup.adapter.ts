@@ -5,24 +5,27 @@ import type { AssignmentLookupPort } from "./assignment-lookup.port.js";
 
 @Injectable()
 export class UnavailableAssignmentLookupAdapter implements AssignmentLookupPort {
-  async findSummaryById(
+  findSummaryById(
     _schoolId: string,
     _assignmentId: string,
   ): Promise<AssignmentSummary | null> {
-    throw new AssignmentUnavailableException();
+    void _schoolId;
+    void _assignmentId;
+    return Promise.reject(new AssignmentUnavailableException());
   }
 
-  async isOpen(
-    _schoolId: string,
-    _assignmentId: string,
-  ): Promise<boolean> {
-    throw new AssignmentUnavailableException();
+  isOpen(_schoolId: string, _assignmentId: string): Promise<boolean> {
+    void _schoolId;
+    void _assignmentId;
+    return Promise.reject(new AssignmentUnavailableException());
   }
 
-  async listByEnrollment(
+  listByEnrollment(
     _schoolId: string,
     _enrollmentId: string,
   ): Promise<readonly AssignmentSummary[]> {
-    throw new AssignmentUnavailableException();
+    void _schoolId;
+    void _enrollmentId;
+    return Promise.reject(new AssignmentUnavailableException());
   }
 }

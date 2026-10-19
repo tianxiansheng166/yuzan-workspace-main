@@ -1,7 +1,14 @@
 # CURRENT HANDOFF
 
-Last updated: 2026-10-19
+Last updated: 2026-10-20
 Repository: `yuzan-workspace-main`
+
+## YZ-RD-T041 API lint debt slice (2026-10-20)
+
+- `PARTIAL_WITH_DEBT` on `feat/yz-rd-t041-api-lint-debt-first-slice`, based on exact `b3a731bb32f404f4a55f4d4f56d265514d324d40`. The T046 baseline was verified at `0f6ea3710797612aa08f37944a9ab9d92f033da1`: full API lint 1,201 errors / 1 warning (1,037 source findings plus 164 test TypeScript project-service parsing errors).
+- T041 fixes TypeScript project membership for API tests and the separate `.mjs` default-project case, declares `@eslint/js@9.39.4`, types assessment/practice queries with Prisma payloads, validates Prisma JSON boundaries, and removes a broad group of unused/unsafe source findings. Final full lint is 1,960 errors / 0 warnings with no parser errors: 60 source errors and 1,900 now-visible test errors. The overall count is higher because typed lint exposed test debt; it is not waived.
+- PASS: API typecheck; API Vitest 1,109 passed / 64 environment-gated skipped; Contracts 6/6. Full evidence and raw logs are in [`evidence/yz-rd-t041/RESULTS.md`](evidence/yz-rd-t041/RESULTS.md). `READY_TO_MERGE=NO`; `L4_OPEN=OPEN`.
+- Target checkout `AGENTS.md` lacks the `AA-DEV-V2.2` marker, and the task card supplied no Lane policy reference. The user-provided `/home/tian/code/AGENTS.md` baseline governed. No L4/runtime services were accessed.
 
 ## YZ-RD-T033 checkpoint (2026-10-19)
 

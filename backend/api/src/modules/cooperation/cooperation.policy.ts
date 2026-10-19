@@ -9,6 +9,7 @@ import {
 export class CooperationPolicy {
   canSubmitLead(_auth: AuthContext | null): boolean {
     // Public: no school context required, but rate-limited at controller level
+    void _auth;
     return true;
   }
 
@@ -31,6 +32,7 @@ export class CooperationPolicy {
 
   canSubmitSupportApplication(_auth: AuthContext | null): boolean {
     // Public: rate-limited at controller level
+    void _auth;
     return true;
   }
 
@@ -46,6 +48,7 @@ export class CooperationPolicy {
 
   canSubmitVolunteerApplication(_auth: AuthContext | null): boolean {
     // Public: rate-limited at controller level
+    void _auth;
     return true;
   }
 

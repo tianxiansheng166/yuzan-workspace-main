@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import type { Prisma } from "@yuzan/database";
+
 import { PrismaService } from "../../../shared/database/prisma.service.js";
 import {
   ServiceType,

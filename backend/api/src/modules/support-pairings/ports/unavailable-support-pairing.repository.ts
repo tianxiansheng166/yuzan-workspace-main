@@ -1,5 +1,11 @@
 import { Injectable } from "@nestjs/common";
-import type { ConsentStatus, PairingStatus, SupportPairing, SupportSession, TeacherReviewStatus } from "../domain/support-pairing.types.js";
+import type {
+  ConsentStatus,
+  PairingStatus,
+  SupportPairing,
+  SupportSession,
+  TeacherReviewStatus,
+} from "../domain/support-pairing.types.js";
 import { SupportPairingUnavailableException } from "../domain/support-pairing.errors.js";
 import type {
   ListPairingsOptions,
@@ -8,64 +14,78 @@ import type {
 } from "./support-pairing-repository.port.js";
 
 @Injectable()
-export class UnavailableSupportPairingRepository
-  implements SupportPairingRepositoryPort
-{
-  async findById(
+export class UnavailableSupportPairingRepository implements SupportPairingRepositoryPort {
+  findById(
     _schoolId: string,
     _pairingId: string,
   ): Promise<SupportPairing | null> {
-    throw new SupportPairingUnavailableException();
+    void _schoolId;
+    void _pairingId;
+    return Promise.reject(new SupportPairingUnavailableException());
   }
 
-  async findBySchoolId(
+  findBySchoolId(
     _schoolId: string,
     _options: ListPairingsOptions,
   ): Promise<PaginatedResult<SupportPairing>> {
-    throw new SupportPairingUnavailableException();
+    void _schoolId;
+    void _options;
+    return Promise.reject(new SupportPairingUnavailableException());
   }
 
-  async create(
+  create(
     _schoolId: string,
     _data: Omit<
       SupportPairing,
       "id" | "consentStatus" | "status" | "createdAt" | "updatedAt"
     >,
   ): Promise<SupportPairing> {
-    throw new SupportPairingUnavailableException();
+    void _schoolId;
+    void _data;
+    return Promise.reject(new SupportPairingUnavailableException());
   }
 
-  async updateConsentStatus(
+  updateConsentStatus(
     _schoolId: string,
     _pairingId: string,
     _consentStatus: ConsentStatus,
   ): Promise<SupportPairing> {
-    throw new SupportPairingUnavailableException();
+    void _schoolId;
+    void _pairingId;
+    void _consentStatus;
+    return Promise.reject(new SupportPairingUnavailableException());
   }
 
-  async updateStatus(
+  updateStatus(
     _schoolId: string,
     _pairingId: string,
     _status: PairingStatus,
   ): Promise<SupportPairing> {
-    throw new SupportPairingUnavailableException();
+    void _schoolId;
+    void _pairingId;
+    void _status;
+    return Promise.reject(new SupportPairingUnavailableException());
   }
 
-  async findSessionById(
+  findSessionById(
     _schoolId: string,
     _sessionId: string,
   ): Promise<SupportSession | null> {
-    throw new SupportPairingUnavailableException();
+    void _schoolId;
+    void _sessionId;
+    return Promise.reject(new SupportPairingUnavailableException());
   }
 
-  async listSessionsByPairing(
+  listSessionsByPairing(
     _schoolId: string,
     _pairingId: string,
   ): Promise<readonly SupportSession[]> {
-    throw new SupportPairingUnavailableException();
+    void _schoolId;
+    void _pairingId;
+    return Promise.reject(new SupportPairingUnavailableException());
   }
 
-  async createSession(
+  createSession(
     _schoolId: string,
     _pairingId: string,
     _data: Omit<
@@ -73,14 +93,20 @@ export class UnavailableSupportPairingRepository
       "id" | "riskLevel" | "teacherReviewStatus" | "createdAt" | "updatedAt"
     >,
   ): Promise<SupportSession> {
-    throw new SupportPairingUnavailableException();
+    void _schoolId;
+    void _pairingId;
+    void _data;
+    return Promise.reject(new SupportPairingUnavailableException());
   }
 
-  async updateSessionReviewStatus(
+  updateSessionReviewStatus(
     _schoolId: string,
     _sessionId: string,
     _teacherReviewStatus: TeacherReviewStatus,
   ): Promise<SupportSession> {
-    throw new SupportPairingUnavailableException();
+    void _schoolId;
+    void _sessionId;
+    void _teacherReviewStatus;
+    return Promise.reject(new SupportPairingUnavailableException());
   }
 }

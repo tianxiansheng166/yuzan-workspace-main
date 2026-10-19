@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  HttpCode,
   Inject,
   Param,
   ParseUUIDPipe,
@@ -10,13 +9,8 @@ import {
   Query,
 } from "@nestjs/common";
 import {
-  createAuthContext,
-  CurrentPrincipal,
-  CurrentTenant,
   MembershipRole,
   RequireRoles,
-  type Principal,
-  type TenantContext,
 } from "../../common/security/index.js";
 import { SyncService } from "./sync.service.js";
 import { CreateSyncBatchDto, ListSyncBatchesQueryDto, UpdateSyncBatchDto } from "./dto/sync.dto.js";
@@ -33,8 +27,6 @@ export class SyncController {
   async createBatch(
     @Param("schoolId", ParseUUIDPipe) schoolId: string,
     @Body() dto: CreateSyncBatchDto,
-    @CurrentTenant() tenant: TenantContext,
-    @CurrentPrincipal() principal: Principal,
   ) {
     return this.service.createBatch(schoolId, dto);
   }
@@ -44,8 +36,6 @@ export class SyncController {
   async listBatches(
     @Param("schoolId", ParseUUIDPipe) schoolId: string,
     @Query() query: ListSyncBatchesQueryDto,
-    @CurrentTenant() tenant: TenantContext,
-    @CurrentPrincipal() principal: Principal,
   ) {
     return this.service.listBatches(schoolId, query);
   }
@@ -55,8 +45,6 @@ export class SyncController {
   async getBatch(
     @Param("schoolId", ParseUUIDPipe) schoolId: string,
     @Param("batchId", ParseUUIDPipe) batchId: string,
-    @CurrentTenant() tenant: TenantContext,
-    @CurrentPrincipal() principal: Principal,
   ) {
     return this.service.getBatch(schoolId, batchId);
   }
@@ -67,8 +55,6 @@ export class SyncController {
     @Param("schoolId", ParseUUIDPipe) schoolId: string,
     @Param("batchId", ParseUUIDPipe) batchId: string,
     @Body() dto: UpdateSyncBatchDto,
-    @CurrentTenant() tenant: TenantContext,
-    @CurrentPrincipal() principal: Principal,
   ) {
     return this.service.updateBatch(schoolId, batchId, dto);
   }
@@ -78,8 +64,6 @@ export class SyncController {
   async getCursors(
     @Param("schoolId", ParseUUIDPipe) schoolId: string,
     @Param("deviceId", ParseUUIDPipe) deviceId: string,
-    @CurrentTenant() tenant: TenantContext,
-    @CurrentPrincipal() principal: Principal,
   ) {
     return this.service.getCursors(schoolId, deviceId);
   }
@@ -90,8 +74,6 @@ export class SyncController {
     @Param("schoolId", ParseUUIDPipe) schoolId: string,
     @Param("deviceId", ParseUUIDPipe) deviceId: string,
     @Body() body: { entityType: string; lastSyncedAt: string; lastEntityId?: string },
-    @CurrentTenant() tenant: TenantContext,
-    @CurrentPrincipal() principal: Principal,
   ) {
     return this.service.upsertCursor(
       schoolId,

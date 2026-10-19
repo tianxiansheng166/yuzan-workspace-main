@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger } from "@nestjs/common";
 import type { AuthContext } from "../../common/security/auth.types.js";
-import { MembershipRole } from "../../common/security/index.js";
+
 import {
   TranslationConflictException,
   TranslationForbiddenException,
@@ -104,7 +104,13 @@ export class TranslationsService {
 
     // Fire-and-forget: attempt synchronous translation via provider
     // In production, this would be dispatched to a BullMQ worker queue.
-    this.processTranslation(job.id, schoolId, sourceLanguage, targetLanguage, sourceTextEncrypted).catch(() => {
+    this.processTranslation(
+      job.id,
+      schoolId,
+      sourceLanguage,
+      targetLanguage,
+      sourceTextEncrypted,
+    ).catch(() => {
       // Errors are handled inside processTranslation; this catch prevents unhandled rejection
     });
 
@@ -154,7 +160,10 @@ export class TranslationsService {
       throw new TranslationForbiddenException();
     }
 
-    const result = await this.translationRepo.listJobsBySchool(schoolId, options);
+    const result = await this.translationRepo.listJobsBySchool(
+      schoolId,
+      options,
+    );
 
     return {
       items: result.items.map(toTranslationJobResponse),
@@ -301,11 +310,19 @@ export class TranslationsService {
       jobId,
       {
         status: dto.status,
-        ...(dto.machineResult != null ? { machineResult: dto.machineResult } : {}),
+        ...(dto.machineResult != null
+          ? { machineResult: dto.machineResult }
+          : {}),
         ...(dto.provider != null ? { provider: dto.provider } : {}),
-        ...(dto.providerRequestId != null ? { providerRequestId: dto.providerRequestId } : {}),
-        ...(dto.providerModel != null ? { providerModel: dto.providerModel } : {}),
-        ...(dto.providerLatencyMs != null ? { providerLatencyMs: dto.providerLatencyMs } : {}),
+        ...(dto.providerRequestId != null
+          ? { providerRequestId: dto.providerRequestId }
+          : {}),
+        ...(dto.providerModel != null
+          ? { providerModel: dto.providerModel }
+          : {}),
+        ...(dto.providerLatencyMs != null
+          ? { providerLatencyMs: dto.providerLatencyMs }
+          : {}),
         ...(dto.errorCode != null ? { errorCode: dto.errorCode } : {}),
       },
     );
@@ -356,12 +373,14 @@ export class TranslationsService {
         err instanceof Error &&
         err.constructor.name === "TranslationUnavailableException";
 
-      await this.translationRepo.updateJobResult(schoolId, jobId, {
+      await this.translationRepo
+        .updateJobResult(schoolId, jobId, {
         status: isUnavailable
           ? TranslationStatus.PROVIDER_UNAVAILABLE
           : TranslationStatus.FAILED,
         errorCode: isUnavailable ? "PROVIDER_UNAVAILABLE" : "INTERNAL_ERROR",
-      }).catch(() => {
+        })
+        .catch(() => {
         // Prevent double-failure from masking the original error
       });
 

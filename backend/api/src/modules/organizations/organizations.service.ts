@@ -8,7 +8,7 @@ import {
   OrganizationForbiddenException,
   OrganizationNotFoundException,
 } from "./domain/organization.errors.js";
-import type { Membership, School } from "./domain/organization.types.js";
+import type { Membership } from "./domain/organization.types.js";
 import {
   toMemberResponse,
   toMembershipResponse,

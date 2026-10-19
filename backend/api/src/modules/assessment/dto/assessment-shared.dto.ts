@@ -1,4 +1,4 @@
-import { IsUUID, IsObject, IsOptional, IsNumber, Min, Max } from "class-validator";
+import { IsUUID, IsObject, IsOptional, IsNumber, Min } from "class-validator";
 import { Type } from "class-transformer";
 
 export class SaveWrittenAnswerDto {

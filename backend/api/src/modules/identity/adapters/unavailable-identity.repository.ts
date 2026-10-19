@@ -14,24 +14,29 @@ import type {
 export class UnavailableIdentityRepository
   implements UserIdentityRepository, MembershipRepository
 {
-  async findByIdentifier(_identifier: string): Promise<UserIdentity | null> {
-    throw new IdentityException("AUTH_SERVICE_UNAVAILABLE");
+  findByIdentifier(_identifier: string): Promise<UserIdentity | null> {
+    void _identifier;
+    return Promise.reject(new IdentityException("AUTH_SERVICE_UNAVAILABLE"));
   }
 
-  async findById(_userId: string): Promise<UserIdentity | null> {
-    throw new IdentityException("AUTH_SERVICE_UNAVAILABLE");
+  findById(_userId: string): Promise<UserIdentity | null> {
+    void _userId;
+    return Promise.reject(new IdentityException("AUTH_SERVICE_UNAVAILABLE"));
   }
 
-  async findActiveMembershipsByUser(
+  findActiveMembershipsByUser(
     _userId: string,
   ): Promise<readonly UserMembership[]> {
-    throw new IdentityException("AUTH_SERVICE_UNAVAILABLE");
+    void _userId;
+    return Promise.reject(new IdentityException("AUTH_SERVICE_UNAVAILABLE"));
   }
 
-  async findByUserAndSchool(
+  findByUserAndSchool(
     _userId: string,
     _schoolId: string,
   ): Promise<UserMembership | null> {
-    throw new IdentityException("AUTH_SERVICE_UNAVAILABLE");
+    void _userId;
+    void _schoolId;
+    return Promise.reject(new IdentityException("AUTH_SERVICE_UNAVAILABLE"));
   }
 }

@@ -32,7 +32,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       exceptionResponse &&
       typeof exceptionResponse === "object" &&
       "code" in exceptionResponse &&
-      typeof (exceptionResponse as { code: unknown }).code === "string"
+      typeof exceptionResponse.code === "string"
         ? (exceptionResponse as { code: string }).code
         : exception instanceof HttpException
           ? `HTTP_${status}`
@@ -44,7 +44,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
         : exceptionResponse &&
             typeof exceptionResponse === "object" &&
             "message" in exceptionResponse &&
-            typeof (exceptionResponse as { message: unknown }).message === "string"
+            typeof exceptionResponse.message === "string"
           ? (exceptionResponse as { message: string }).message
           : exception instanceof HttpException
             ? exception.message
@@ -54,7 +54,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       exceptionResponse &&
       typeof exceptionResponse === "object" &&
       "details" in exceptionResponse &&
-      typeof (exceptionResponse as { details: unknown }).details === "object"
+      typeof exceptionResponse.details === "object"
         ? (exceptionResponse as { details: Record<string, unknown> }).details
         : {};
 

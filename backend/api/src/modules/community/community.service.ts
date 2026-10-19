@@ -7,7 +7,7 @@ import {
   CommunityReportNotFoundException,
 } from "./domain/community.errors.js";
 import { ContentStatus, ReportStatus } from "./domain/community.types.js";
-import type { CommunityPost, ReportReason } from "./domain/community.types.js";
+
 import {
   toCommunityPostResponse,
   toContentReportResponse,
@@ -50,11 +50,7 @@ export class CommunityService {
     private readonly communityRepo: CommunityRepositoryPort,
   ) {}
 
-  async createPost(
-    auth: AuthContext,
-    schoolId: string,
-    data: CreatePostInput,
-  ) {
+  async createPost(auth: AuthContext, schoolId: string, data: CreatePostInput) {
     if (!this.policy.canCreatePost(auth, schoolId)) {
       throw new CommunityForbiddenException();
     }
@@ -65,7 +61,9 @@ export class CommunityService {
       title: data.title,
       contentType: data.contentType,
       content: data.content,
-      ...(data.attachmentObjectKey !== undefined ? { attachmentObjectKey: data.attachmentObjectKey } : {}),
+      ...(data.attachmentObjectKey !== undefined
+        ? { attachmentObjectKey: data.attachmentObjectKey }
+        : {}),
       visibilityScope: data.visibilityScope,
     };
 
@@ -123,15 +121,15 @@ export class CommunityService {
       ...(data.content !== undefined ? { content: data.content } : {}),
     };
 
-    const updated = await this.communityRepo.updatePost(schoolId, postId, repoData);
+    const updated = await this.communityRepo.updatePost(
+      schoolId,
+      postId,
+      repoData,
+    );
     return toCommunityPostResponse(updated);
   }
 
-  async submitForReview(
-    auth: AuthContext,
-    schoolId: string,
-    postId: string,
-  ) {
+  async submitForReview(auth: AuthContext, schoolId: string, postId: string) {
     const post = await this.communityRepo.findPostById(schoolId, postId);
     if (!post) {
       throw new CommunityPostNotFoundException();
@@ -179,7 +177,8 @@ export class CommunityService {
 
     const now = new Date();
     const statusData: UpdatePostStatusData = {
-      status: action === "approve" ? ContentStatus.PUBLISHED : ContentStatus.REJECTED,
+      status:
+        action === "approve" ? ContentStatus.PUBLISHED : ContentStatus.REJECTED,
       reviewedBy: auth.principal.userId,
       ...(note !== undefined ? { reviewNote: note } : {}),
       ...(action === "approve" ? { publishedAt: now } : {}),
@@ -328,7 +327,7 @@ export class CommunityService {
         await this.communityRepo.updatePostStatus(schoolId, report.postId, {
           status: ContentStatus.HIDDEN,
           reviewedBy: auth.principal.userId,
-        } as UpdatePostStatusData);
+        });
       }
     }
 

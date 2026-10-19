@@ -3,6 +3,7 @@ import { ConfigService } from "@nestjs/config";
 import { Queue } from "bullmq";
 import type { SpeechJobStatus } from "@yuzan/database";
 import { PrismaService } from "../../shared/database/prisma.service.js";
+import { toPrismaJsonObject } from "../../shared/database/prisma-json.js";
 import { toSpeechJobResponse } from "./dto/speech-job.response.js";
 import { SPEECH_QUEUE } from "./speech-job.tokens.js";
 import {
@@ -277,7 +278,7 @@ export class SpeechJobService {
           policy.providerResult.providerModel
             ? { providerModel: policy.providerResult.providerModel }
             : {}),
-          result: policy.providerResult as any,
+          result: toPrismaJsonObject(policy.providerResult),
           confidence: policy.providerResult.confidence,
           ...(policy.providerResult.processingMs !== undefined
             ? { processingMs: policy.providerResult.processingMs }
@@ -288,7 +289,7 @@ export class SpeechJobService {
       await tx.assessmentItem.update({
         where: { id: item.id },
         data: {
-          autoResult: policy.diagnostic as any,
+          autoResult: toPrismaJsonObject(policy.diagnostic),
           scoredScore: null,
         },
       });
@@ -312,6 +313,7 @@ export class SpeechJobService {
       providerModel?: string;
     },
   ) {
+    void _extra;
     return this.applySpeechProviderResult(id, result);
   }
 
@@ -347,6 +349,7 @@ export class SpeechJobService {
     errorCode = "PROCESSING_FAILED",
     _errorMessage?: string,
   ) {
+    void _errorMessage;
     const job = await this.prisma.speechJob.findUnique({
       where: { id },
       include: { recording: { select: { id: true } } },

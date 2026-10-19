@@ -15,56 +15,71 @@ import type {
 
 @Injectable()
 export class UnavailableAssignmentRepository implements AssignmentRepositoryPort {
-  async findById(
+  findById(
     _schoolId: string,
     _assignmentId: string,
   ): Promise<Assignment | null> {
-    throw new AssignmentUnavailableException();
+    void _schoolId;
+    void _assignmentId;
+    return Promise.reject(new AssignmentUnavailableException());
   }
 
-  async list(
+  list(
     _schoolId: string,
     _options: ListAssignmentsOptions,
   ): Promise<PaginatedResult<AssignmentSummary>> {
-    throw new AssignmentUnavailableException();
+    void _schoolId;
+    void _options;
+    return Promise.reject(new AssignmentUnavailableException());
   }
 
-  async listByEnrollment(
+  listByEnrollment(
     _schoolId: string,
     _enrollmentId: string,
   ): Promise<readonly AssignmentSummary[]> {
-    throw new AssignmentUnavailableException();
+    void _schoolId;
+    void _enrollmentId;
+    return Promise.reject(new AssignmentUnavailableException());
   }
 
-  async save(
+  save(
     _input: CreateAssignmentInput,
     _createdByUserId: string,
   ): Promise<Assignment> {
-    throw new AssignmentUnavailableException();
+    void _input;
+    void _createdByUserId;
+    return Promise.reject(new AssignmentUnavailableException());
   }
 
-  async update(
+  update(
     _schoolId: string,
     _assignmentId: string,
     _data: UpdateAssignmentInput,
     _expectedRevision: number,
   ): Promise<Assignment> {
-    throw new AssignmentUnavailableException();
+    void _schoolId;
+    void _assignmentId;
+    void _data;
+    void _expectedRevision;
+    return Promise.reject(new AssignmentUnavailableException());
   }
 
-  async updateStatus(
+  updateStatus(
     _schoolId: string,
     _assignmentId: string,
     _status: AssignmentStatus,
     _expectedRevision: number,
   ): Promise<Assignment> {
-    throw new AssignmentUnavailableException();
+    void _schoolId;
+    void _assignmentId;
+    void _status;
+    void _expectedRevision;
+    return Promise.reject(new AssignmentUnavailableException());
   }
 
-  async softDelete(
-    _schoolId: string,
-    _assignmentId: string,
-  ): Promise<void> {
-    throw new AssignmentUnavailableException();
+  softDelete(_schoolId: string, _assignmentId: string): Promise<void> {
+    void _schoolId;
+    void _assignmentId;
+    return Promise.reject(new AssignmentUnavailableException());
   }
 }

@@ -20,7 +20,6 @@ export interface SecurityLogEvent {
 export class SecurityLogger {
   log(event: SecurityLogEvent): void {
     const redacted = redact(event);
-    // eslint-disable-next-line no-console
     console.log(JSON.stringify({ type: "SECURITY", ...redacted }));
   }
 

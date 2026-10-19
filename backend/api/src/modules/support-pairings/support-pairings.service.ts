@@ -3,7 +3,6 @@ import type { AuthContext } from "../../common/security/auth.types.js";
 import { MembershipRole, hasAnyRole } from "../../common/security/index.js";
 import {
   ConsentRequiredException,
-  HighRiskEventException,
   SupportPairingForbiddenException,
   SupportPairingNotFoundException,
   SupportSessionNotFoundException,
@@ -77,11 +76,7 @@ export class SupportPairingsService {
     };
   }
 
-  async getPairing(
-    auth: AuthContext,
-    schoolId: string,
-    pairingId: string,
-  ) {
+  async getPairing(auth: AuthContext, schoolId: string, pairingId: string) {
     const pairing = await this.pairingRepo.findById(schoolId, pairingId);
     if (!pairing) {
       throw new SupportPairingNotFoundException();
@@ -141,7 +136,10 @@ export class SupportPairingsService {
       throw new SupportPairingForbiddenException();
     }
 
-    if (status === PairingStatus.ACTIVE && pairing.consentStatus !== ConsentStatus.GRANTED) {
+    if (
+      status === PairingStatus.ACTIVE &&
+      pairing.consentStatus !== ConsentStatus.GRANTED
+    ) {
       throw new ConsentRequiredException();
     }
 
@@ -196,11 +194,7 @@ export class SupportPairingsService {
     return toSupportSessionResponse(session);
   }
 
-  async listSessions(
-    auth: AuthContext,
-    schoolId: string,
-    pairingId: string,
-  ) {
+  async listSessions(auth: AuthContext, schoolId: string, pairingId: string) {
     const pairing = await this.pairingRepo.findById(schoolId, pairingId);
     if (!pairing) {
       throw new SupportPairingNotFoundException();
@@ -211,7 +205,10 @@ export class SupportPairingsService {
       MembershipRole.SCHOOL_ADMIN,
     ]);
 
-    if (!isTeacherOrAdmin && !this.policy.canViewOwnPairing(auth, schoolId, pairing)) {
+    if (
+      !isTeacherOrAdmin &&
+      !this.policy.canViewOwnPairing(auth, schoolId, pairing)
+    ) {
       throw new SupportPairingForbiddenException();
     }
 

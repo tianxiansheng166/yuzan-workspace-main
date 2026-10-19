@@ -38,6 +38,7 @@ export class ResearchStubController {
   )
   @HttpCode(HttpStatus.SERVICE_UNAVAILABLE)
   getGovernanceVersion(@Param("id", ParseUUIDPipe) _id: string) {
+    void _id;
     return mvpGapResponse(
       "research",
       "PERSISTENCE_PENDING",
@@ -49,6 +50,7 @@ export class ResearchStubController {
   @RequireRoles(MembershipRole.RESEARCHER, MembershipRole.SCHOOL_ADMIN)
   @HttpCode(HttpStatus.SERVICE_UNAVAILABLE)
   submitReview(@Param("id", ParseUUIDPipe) _id: string) {
+    void _id;
     return mvpGapResponse(
       "research",
       "PERSISTENCE_PENDING",
@@ -64,6 +66,7 @@ export class ResearchStubController {
   )
   @HttpCode(HttpStatus.SERVICE_UNAVAILABLE)
   listReviews(@Param("id", ParseUUIDPipe) _id: string) {
+    void _id;
     return mvpGapResponse(
       "research",
       "PERSISTENCE_PENDING",

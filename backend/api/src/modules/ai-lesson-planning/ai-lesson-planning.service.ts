@@ -4,6 +4,7 @@ import { Queue } from "bullmq";
 import type { AuthContext } from "../../common/security/auth.types.js";
 import { MembershipRole } from "../../common/security/index.js";
 import { PrismaService } from "../../shared/database/prisma.service.js";
+import { toPrismaJsonObject } from "../../shared/database/prisma-json.js";
 import type {
   CreateLessonPlanJobDto,
 } from "./dto/create-lesson-plan-job.dto.js";
@@ -15,10 +16,19 @@ import type {
   LessonPlanDraftResponse,
   WorkflowStatusResponse,
 } from "./dto/lesson-plan-job.response.js";
-import type { AiJobStatus } from "@yuzan/database";
+import type { AiJobStatus, Prisma } from "@yuzan/database";
 
-const AI_GENERATION_QUEUE = "ai-generation-jobs";
 const LESSON_PLANNER_WORKFLOW_KEY = "lesson-planner";
+
+function databaseJsonObject(value: Prisma.JsonValue): Record<string, unknown> {
+  return value !== null && typeof value === "object" && !Array.isArray(value)
+    ? value
+    : {};
+}
+
+function hasErrorCode(error: unknown, code: string): boolean {
+  return typeof error === "object" && error !== null && "code" in error && error.code === code;
+}
 
 /** Terminal states — a job in any of these cannot transition further. */
 const TERMINAL_STATES: ReadonlySet<string> = new Set([
@@ -64,8 +74,8 @@ export class AiLessonPlanningService {
           teacherId,
           workflowDefinitionId: await this.getOrCreateWorkflowDefinitionId(),
           idempotencyKey: dto.idempotencyKey ?? crypto.randomUUID(),
-          status: "PROVIDER_NOT_CONFIGURED" as AiJobStatus,
-          inputSnapshot: dto as any,
+          status: "PROVIDER_NOT_CONFIGURED",
+          inputSnapshot: toPrismaJsonObject(dto),
           errorCode: "PROVIDER_NOT_CONFIGURED",
         },
       });
@@ -104,8 +114,8 @@ export class AiLessonPlanningService {
         teacherId,
         workflowDefinitionId,
         idempotencyKey: dto.idempotencyKey ?? crypto.randomUUID(),
-        status: "QUEUED" as AiJobStatus,
-        inputSnapshot: enrichedInput as any,
+        status: "QUEUED",
+        inputSnapshot: toPrismaJsonObject(enrichedInput),
       },
     });
 
@@ -198,7 +208,7 @@ export class AiLessonPlanningService {
     const updated = await this.prisma.aiGenerationJob.update({
       where: { id: jobId },
       data: {
-        status: "CANCELLED" as AiJobStatus,
+        status: "CANCELLED",
         completedAt: new Date(),
       },
     });
@@ -237,7 +247,7 @@ export class AiLessonPlanningService {
       take: limit,
     });
 
-    return drafts.map((d: any) => this.toDraftResponse(d));
+    return drafts.map((draft) => this.toDraftResponse(draft));
   }
 
   /**
@@ -300,7 +310,7 @@ export class AiLessonPlanningService {
       data: {
         draftId,
         revision: nextRevision,
-        content: dto.content as any,
+        content: toPrismaJsonObject(dto.content),
         source: "TEACHER_EDIT",
         editorUserId: auth.principal.userId,
       },
@@ -311,7 +321,7 @@ export class AiLessonPlanningService {
       where: { id: draftId },
       data: {
         title: dto.title ?? draft.title,
-        content: dto.content as any,
+        content: toPrismaJsonObject(dto.content),
         revision: nextRevision,
       },
     });
@@ -346,7 +356,7 @@ export class AiLessonPlanningService {
       data: {
         draftId,
         revision: nextRevision,
-        content: draft.content as any,
+        content: toPrismaJsonObject(draft.content),
         source: "TEACHER_APPROVE",
         editorUserId: auth.principal.userId,
       },
@@ -374,6 +384,10 @@ export class AiLessonPlanningService {
     _auth: AuthContext,
     _schoolId: string,
   ): Promise<WorkflowStatusResponse> {
+    // Workflow availability is shared across schools; route guards still
+    // enforce the authenticated role and tenant context.
+    void _auth;
+    void _schoolId;
     const workflow = await this.prisma.aiWorkflowDefinition.findUnique({
       where: { workflowKey: LESSON_PLANNER_WORKFLOW_KEY },
     });
@@ -453,11 +467,11 @@ export class AiLessonPlanningService {
       data: {
         status: data.status as AiJobStatus,
         ...(data.outputSnapshot !== undefined
-          ? { outputSnapshot: data.outputSnapshot as any }
+          ? { outputSnapshot: toPrismaJsonObject(data.outputSnapshot) }
           : {}),
         ...(data.errorCode !== undefined ? { errorCode: data.errorCode } : {}),
         ...(data.tokenUsage !== undefined
-          ? { tokenUsage: data.tokenUsage as any }
+          ? { tokenUsage: toPrismaJsonObject(data.tokenUsage) }
           : {}),
         ...(data.latencyMs !== undefined ? { latencyMs: data.latencyMs } : {}),
         ...(data.providerRequestId !== undefined
@@ -495,7 +509,7 @@ export class AiLessonPlanningService {
             lessonId: (input.lessonId as string) ?? null,
             generationJobId: jobId,
             title,
-            content: data.outputSnapshot as any,
+            content: toPrismaJsonObject(data.outputSnapshot),
           },
         });
 
@@ -503,7 +517,7 @@ export class AiLessonPlanningService {
           data: {
             draftId: draft.id,
             revision: 1,
-            content: data.outputSnapshot as any,
+            content: toPrismaJsonObject(data.outputSnapshot),
             source: "AI_GENERATION",
           },
         });
@@ -615,7 +629,7 @@ export class AiLessonPlanningService {
         }
       } catch (err: unknown) {
         // Rethrow explicit FORBIDDEN — not a "best effort" case
-        if (err instanceof Error && (err as any).code === "FORBIDDEN") throw err;
+        if (hasErrorCode(err, "FORBIDDEN")) throw err;
         // Other errors (e.g. table not queryable) — log but don't fail job creation
         const msg = err instanceof Error ? err.message : String(err);
         console.warn("[AiLessonPlanning] CourseVersion lookup failed:", dto.courseVersionId, msg);
@@ -644,7 +658,7 @@ export class AiLessonPlanningService {
           input.lessonTitle = lesson.title;
         }
       } catch (err: unknown) {
-        if (err instanceof Error && (err as any).code === "FORBIDDEN") throw err;
+        if (hasErrorCode(err, "FORBIDDEN")) throw err;
         const msg = err instanceof Error ? err.message : String(err);
         console.warn("[AiLessonPlanning] Lesson lookup failed:", dto.lessonId, msg);
       }
@@ -672,7 +686,7 @@ export class AiLessonPlanningService {
   }
 
   private toJobResponse(
-    job: any,
+    job: Prisma.AiGenerationJobGetPayload<Prisma.AiGenerationJobDefaultArgs>,
     draftId: string | null,
   ): LessonPlanJobResponse {
     return {
@@ -682,8 +696,8 @@ export class AiLessonPlanningService {
       teacherId: job.teacherId,
       status: job.status,
       idempotencyKey: job.idempotencyKey,
-      inputSnapshot: job.inputSnapshot as Record<string, unknown>,
-      outputSnapshot: job.outputSnapshot as Record<string, unknown> | null,
+      inputSnapshot: databaseJsonObject(job.inputSnapshot),
+      outputSnapshot: job.outputSnapshot === null ? null : databaseJsonObject(job.outputSnapshot),
       errorCode: job.errorCode,
       latencyMs: job.latencyMs,
       createdAt: job.createdAt.toISOString(),
@@ -694,7 +708,7 @@ export class AiLessonPlanningService {
   }
 
   private toDraftResponse(
-    draft: any,
+    draft: Prisma.LessonPlanDraftGetPayload<Prisma.LessonPlanDraftDefaultArgs>,
   ): LessonPlanDraftResponse {
     return {
       id: draft.id,
@@ -704,7 +718,7 @@ export class AiLessonPlanningService {
       lessonId: draft.lessonId,
       generationJobId: draft.generationJobId,
       title: draft.title,
-      content: draft.content as Record<string, unknown>,
+      content: databaseJsonObject(draft.content),
       revision: draft.revision,
       status: draft.status,
       approvedAt: draft.approvedAt?.toISOString() ?? null,

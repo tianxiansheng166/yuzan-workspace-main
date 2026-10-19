@@ -18,11 +18,16 @@ import { timingSafeEqual } from "node:crypto";
 import type { Response } from "express";
 import { Public } from "../../common/security/public.decorator.js";
 import { PrismaService } from "../../shared/database/prisma.service.js";
+import { toPrismaJsonObject } from "../../shared/database/prisma-json.js";
 import type { StoragePort } from "../../shared/storage/storage.port.js";
 import { STORAGE_PORT } from "../../shared/storage/storage.port.js";
 import { AssessmentService } from "../assessment/assessment.service.js";
 import { AiLessonPlanningService } from "../ai-lesson-planning/ai-lesson-planning.service.js";
 import { SpeechJobService } from "../speech-job/speech-job.service.js";
+
+function isJsonRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
 
 /**
  * Internal API controller for Worker callbacks.
@@ -214,7 +219,7 @@ export class InternalController {
     const updated = await this.prisma.assessmentItem.update({
       where: { id: itemId },
       data: {
-        autoResult: body.autoResult as any,
+        autoResult: toPrismaJsonObject(body.autoResult),
         scoredScore: body.scoredScore,
       },
       include: { session: { select: { id: true, schoolId: true } } },
@@ -343,13 +348,13 @@ export class InternalController {
 
       // Parse response to extract token usage (for audit logging)
       try {
-        const parsed = JSON.parse(responseText);
-        if (parsed.usage) {
-          tokenUsage = parsed.usage as Record<string, unknown>;
-        }
-        // Strip any API key from response
-        if (typeof parsed === "object" && parsed !== null) {
-          delete (parsed as Record<string, unknown>).apiKey;
+        const parsed: unknown = JSON.parse(responseText);
+        if (isJsonRecord(parsed)) {
+          if (isJsonRecord(parsed.usage)) {
+            tokenUsage = parsed.usage;
+          }
+          // Strip any API key from response
+          delete parsed.apiKey;
         }
         res.status(statusCode).json(parsed);
       } catch {
