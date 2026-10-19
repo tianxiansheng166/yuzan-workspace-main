@@ -1483,6 +1483,34 @@
   }
 
   function bindHistory(){
+    // Filters only the currently loaded, authenticated history page(s).
+    const panel = document.querySelector('.history-record-panel');
+    if (panel) {
+      const controls = document.createElement('div');
+      controls.className = 'history-local-filters';
+      controls.innerHTML = '<label>搜索已加载练习 <input type="search" data-history-query autocomplete="off" placeholder="练习名称"></label><label>状态 <select data-history-status><option value="">全部状态</option><option value="进行中">进行中</option><option value="处理">待处理</option><option value="完成">已完成</option></select></label><span data-history-count role="status" aria-live="polite"></span>';
+      panel.insertBefore(controls, panel.querySelector('.history-record-row'));
+      const query = controls.querySelector('[data-history-query]');
+      const status = controls.querySelector('[data-history-status]');
+      query.value = appState._historyLocalQuery || '';
+      status.value = appState._historyLocalStatus || '';
+      const apply = () => {
+        const items = [...panel.querySelectorAll('[data-history-session]')];
+        const needle = query.value.trim().toLocaleLowerCase();
+        let showing = 0;
+        for (const item of items) {
+          const name = item.querySelector('h3')?.textContent.toLocaleLowerCase() || '';
+          const chip = item.querySelector('.chip')?.textContent || '';
+          const visible = (!needle || name.includes(needle)) && (!status.value || chip.includes(status.value));
+          item.hidden = !visible;
+          if (visible) showing++;
+        }
+        controls.querySelector('[data-history-count]').textContent = `当前显示 ${showing} / 已加载 ${items.length} 条`;
+      };
+      query.addEventListener('input', () => { appState._historyLocalQuery = query.value; apply(); });
+      status.addEventListener('change', () => { appState._historyLocalStatus = status.value; apply(); });
+      apply();
+    }
     document.querySelector('[data-retry]')?.addEventListener('click', loadHistory);
     document.querySelector('[data-history-more]')?.addEventListener('click', loadMoreHistorySessions);
     document.querySelector('[data-history-events-retry]')?.addEventListener('click', () => loadHistoryEvents(appState.apiHistory?.enrollmentId));

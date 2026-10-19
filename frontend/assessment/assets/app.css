@@ -1,3 +1,9 @@
+.history-local-filters{display:flex;flex-wrap:wrap;align-items:end;gap:12px;padding:16px 0;font-size:13px}
+.history-local-filters label{display:flex;flex:1 1 180px;flex-direction:column;gap:6px}
+.history-local-filters input,.history-local-filters select{min-height:40px;border:1px solid #c8c6b9;border-radius:6px;background:#fffdf6;color:#273b40;padding:8px;font:inherit}
+.history-local-filters :is(input,select):focus-visible{outline:2px solid #4b756c;outline-offset:2px}
+.history-local-filters [role=status]{padding-bottom:10px}
+.history-record-row[hidden]{display:none!important}
 :root{
   --paper:#f7f2e8;
   --paper-2:#fbf8f1;
