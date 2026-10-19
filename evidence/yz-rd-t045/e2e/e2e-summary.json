@@ -1,0 +1,266 @@
+{
+  "runKey": "93552d58",
+  "fixturePolicy": "TEST_FIXTURE_ONLY; no production account or source data used",
+  "catalogHierarchy": {
+    "extraPromotionCards": 0,
+    "practiceCards": 12,
+    "oralFilterTop": 138,
+    "categoryTabsTop": 369,
+    "abilityRailTop": 424,
+    "catalogTop": 712
+  },
+  "practiceCenter": "http://127.0.0.1:4345/student/practices/",
+  "search": {
+    "query": [
+      "停顿与节奏专项训练"
+    ],
+    "resultCount": 1,
+    "resultVisible": true
+  },
+  "mockRequest": "http://127.0.0.1:4345/api/v1/schools/11111111-1111-4111-8111-111111111111/practices?sort=RECOMMENDED&catalogType=MOCK",
+  "mockMode": {
+    "query": {
+      "sort": [
+        "RECOMMENDED"
+      ],
+      "catalogType": [
+        "MOCK"
+      ]
+    },
+    "count": 12,
+    "officialExamDisclaimer": true
+  },
+  "specializedRequest": "http://127.0.0.1:4345/api/v1/schools/11111111-1111-4111-8111-111111111111/practices?sort=RECOMMENDED&catalogType=SPECIALIZED",
+  "remediationMode": {
+    "query": {
+      "sort": [
+        "RECOMMENDED"
+      ],
+      "catalogType": [
+        "SPECIALIZED"
+      ]
+    },
+    "practiceId": "70000000-0000-4000-8000-000000000003"
+  },
+  "oralRequest": "http://127.0.0.1:4345/api/v1/schools/11111111-1111-4111-8111-111111111111/practices?requiresRecording=true&sort=RECOMMENDED",
+  "realSpeakingPractice": {
+    "definitionId": "70000000-0000-4000-8000-000000000003",
+    "title": "停顿与节奏专项训练",
+    "requiresRecording": true,
+    "catalogType": "SPECIALIZED"
+  },
+  "mobileAbilityInteraction": {
+    "keyboardExpandCollapse": "PASS",
+    "touchExpandCollapse": "PASS",
+    "touchFacetValue": "发音基础",
+    "facetRequest": "http://127.0.0.1:4345/api/v1/schools/11111111-1111-4111-8111-111111111111/practices?requiresRecording=true&abilityCategory=%E5%8F%91%E9%9F%B3%E5%9F%BA%E7%A1%80&sort=RECOMMENDED",
+    "clearRequest": "http://127.0.0.1:4345/api/v1/schools/11111111-1111-4111-8111-111111111111/practices?requiresRecording=true&sort=RECOMMENDED",
+    "summaryReflectsSelectedFacet": true,
+    "recordingFilterChip": "需要录音"
+  },
+  "fourViewports": [
+    {
+      "viewport": 390,
+      "scrollWidth": 390,
+      "screenshot": "catalog-390.png",
+      "filterPanelDisplay": "none",
+      "oralFilterVisible": true,
+      "mobileAbilityVisible": true,
+      "mobileAbilityExpanded": false,
+      "firstPracticeCardTop": 623.3417358398438,
+      "firstPracticeCardDocumentY": 623,
+      "firstPracticeCardId": "70000000-0000-4000-8000-000000000001",
+      "firstPracticeCardTitle": "古诗文朗读与理解训练",
+      "firstPracticeTitleTop": 813.3417358398438,
+      "firstPracticeTitleBottom": 838.3417358398438,
+      "firstPracticeTitleVisible": true,
+      "firstPracticeCardRequiresRecording": true
+    },
+    {
+      "viewport": 768,
+      "scrollWidth": 768,
+      "screenshot": "catalog-768.png",
+      "filterPanelDisplay": "block",
+      "oralFilterVisible": true,
+      "mobileAbilityVisible": false,
+      "mobileAbilityExpanded": false,
+      "firstPracticeCardTop": 833,
+      "firstPracticeCardDocumentY": 833,
+      "firstPracticeCardId": "70000000-0000-4000-8000-000000000001",
+      "firstPracticeCardTitle": "古诗文朗读与理解训练",
+      "firstPracticeTitleTop": 1070,
+      "firstPracticeTitleBottom": 1120,
+      "firstPracticeTitleVisible": false,
+      "firstPracticeCardRequiresRecording": true
+    },
+    {
+      "viewport": 1280,
+      "scrollWidth": 1280,
+      "screenshot": "catalog-1280.png",
+      "filterPanelDisplay": "block",
+      "oralFilterVisible": true,
+      "mobileAbilityVisible": false,
+      "mobileAbilityExpanded": false,
+      "firstPracticeCardTop": 835,
+      "firstPracticeCardDocumentY": 835,
+      "firstPracticeCardId": "70000000-0000-4000-8000-000000000001",
+      "firstPracticeCardTitle": "古诗文朗读与理解训练",
+      "firstPracticeTitleTop": 1072,
+      "firstPracticeTitleBottom": 1097,
+      "firstPracticeTitleVisible": false,
+      "firstPracticeCardRequiresRecording": true
+    },
+    {
+      "viewport": 1440,
+      "scrollWidth": 1440,
+      "screenshot": "catalog-1440.png",
+      "filterPanelDisplay": "block",
+      "oralFilterVisible": true,
+      "mobileAbilityVisible": false,
+      "mobileAbilityExpanded": false,
+      "firstPracticeCardTop": 835,
+      "firstPracticeCardDocumentY": 835,
+      "firstPracticeCardId": "70000000-0000-4000-8000-000000000001",
+      "firstPracticeCardTitle": "古诗文朗读与理解训练",
+      "firstPracticeTitleTop": 1072,
+      "firstPracticeTitleBottom": 1097,
+      "firstPracticeTitleVisible": false,
+      "firstPracticeCardRequiresRecording": true
+    }
+  ],
+  "detailViewports": [
+    {
+      "viewport": 390,
+      "scrollWidth": 390
+    },
+    {
+      "viewport": 1440,
+      "scrollWidth": 1440
+    }
+  ],
+  "realRecordingAttempt": {
+    "attemptId": "449178bb-8fcc-476b-84d5-5aba967d2b35",
+    "studentUserId": "5d21b8dd-57bc-4496-b6a5-e06737bf3ca4",
+    "studentEnrollmentId": "2aa7f3fd-b2dd-4b29-9da1-0894b4706c13",
+    "practiceDefinitionId": "70000000-0000-4000-8000-000000000003"
+  },
+  "realQuestions": [
+    {
+      "itemId": "1049836d-421b-45e3-a9f2-994bf686a21f",
+      "type": "CHOICE",
+      "prompt": "{'prompt': '哪一种停顿更自然？', 'options': ['春风 / 又绿江南岸', '春 / 风又绿江南岸'], 'maxScore': 25, 'required': True}"
+    },
+    {
+      "itemId": "aca6e784-402b-46cc-8301-3afaba3576ee",
+      "type": "SPEECH",
+      "prompt": "{'maxScore': 25, 'targetText': '春风又绿江南岸，明月何时照我还。', 'instruction': '听完示范后跟读。', 'demoAudioUrl': '/student/growth/assets/pr"
+    },
+    {
+      "itemId": "7006fed9-de93-4c77-a398-ff936f1b9f9b",
+      "type": "SPEECH",
+      "prompt": "{'maxScore': 25, 'targetText': '海日生残夜，江春入旧年。', 'instruction': '请独立朗读。'}"
+    },
+    {
+      "itemId": "935fd0d7-8fbe-4335-9f13-9fb7fdf29479",
+      "type": "TEXT",
+      "prompt": "{'prompt': '回听自己的朗读后，写下一个准备调整的停顿或语速问题。', 'maxScore': 25, 'required': True}"
+    }
+  ],
+  "authorization": {
+    "anonymous": 401,
+    "foreignSchool": 403,
+    "studentReviewQueue": 403,
+    "missingPractice": 404
+  },
+  "permissionDenied": {
+    "microphone": "denied",
+    "recordingRowsCreated": 0
+  },
+  "recordingAndAudition": {
+    "playedPromptAudio": [
+      {
+        "itemId": "aca6e784-402b-46cc-8301-3afaba3576ee",
+        "sourcePath": "/student/growth/assets/practice-sample.wav"
+      }
+    ],
+    "recordings": [
+      {
+        "itemId": "aca6e784-402b-46cc-8301-3afaba3576ee",
+        "recordingId": "de8c2a39-4f04-4f3e-84d9-741c17f139ac",
+        "status": "COMPLETE",
+        "objectKey": "recordings/de8c2a39-4f04-4f3e-84d9-741c17f139ac/full",
+        "bytes": 24446,
+        "contentType": "audio/webm;codecs=opus",
+        "etag": "\"1c496b5a0581890edaad4666f6583351\""
+      },
+      {
+        "itemId": "7006fed9-de93-4c77-a398-ff936f1b9f9b",
+        "recordingId": "28e02691-e924-48f1-acc9-5a119cb239f5",
+        "status": "COMPLETE",
+        "objectKey": "recordings/28e02691-e924-48f1-acc9-5a119cb239f5/full",
+        "bytes": 24446,
+        "contentType": "audio/webm;codecs=opus",
+        "etag": "\"6339dc12b364134cedd30d7bd8411a05\""
+      }
+    ],
+    "offlineAnswerRetry": true,
+    "offlineUploadRetry": true
+  },
+  "runnerViewports": [
+    {
+      "viewport": 390,
+      "scrollWidth": 390
+    },
+    {
+      "viewport": 768,
+      "scrollWidth": 768
+    },
+    {
+      "viewport": 1280,
+      "scrollWidth": 1280
+    },
+    {
+      "viewport": 1440,
+      "scrollWidth": 1440
+    }
+  ],
+  "postSubmitHandling": {
+    "session": "PROCESSING",
+    "reportsBeforeReview": 0,
+    "scoredItems": 0,
+    "speechJobs": 2,
+    "createdJobsWithoutProviderResult": 2,
+    "submitPosts": 1,
+    "automaticSpeechScoring": "disabled; no fabricated score"
+  },
+  "formalReportState": {
+    "apiStatus": 200,
+    "apiBody": null,
+    "databaseRows": 0,
+    "visibleReportLink": false,
+    "status": "unavailable while the real session remains PROCESSING",
+    "scoresGenerated": 0
+  },
+  "teacherTask": {
+    "apiBackedSectionVisible": true,
+    "activeTaskCount": 1,
+    "entryHref": "/student/practices/attempts/3f0f056c-9601-41e5-893d-5dd2bce5a365/runner/",
+    "keptBeforeCatalogCategories": true
+  },
+  "identityIsolation": {
+    "studentA": "5d21b8dd-57bc-4496-b6a5-e06737bf3ca4",
+    "studentB": "3bdfb8c6-cc08-44a4-be0e-550e5168637c",
+    "sameSchoolDifferentEnrollment": true,
+    "otherStudentAttempt": 404,
+    "otherStudentReport": 403,
+    "otherStudentHistoryContainsAttempt": false
+  },
+  "pageErrors": [],
+  "screenshots": [
+    "ability-expanded-390.png",
+    "catalog-1280.png",
+    "catalog-1440.png",
+    "catalog-390.png",
+    "catalog-768.png"
+  ]
+}

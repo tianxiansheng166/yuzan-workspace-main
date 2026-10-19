@@ -1,0 +1,9 @@
+2026-10-19T22:22:04+08:00
+ 22:22:04 up 6 days,  2:43,  1 user,  load average: 9.53, 5.14, 8.15
+               total        used        free      shared  buff/cache   available
+内存：       31Gi        19Gi       317Mi       147Mi        11Gi        11Gi
+交换：       15Gi       9.2Gi       6.8Gi
+procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----
+ r  b 交换 空闲 缓冲 缓存   si   so    bi    bo   in   cs us sy id wa st
+12  0 9644820 324836 1988508 9900400   13   21  1374   231    1    2  8  2 89  2  0
+13  0 9697372 348904 1965020 9812796   20 52796   176 54476 38163 203374 55 10 35  0  0
