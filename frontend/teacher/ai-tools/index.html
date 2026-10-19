@@ -27,12 +27,6 @@
         <a class="nav-item" data-unsupported="设置中心功能暂未开通"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.9 4.9 7 7M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1 7 17M17 7l2.1-2.1"/></svg><b>设置中心</b></a>
       </nav>
       <div class="sidebar-lower">
-        <section class="invite-card">
-          <div class="mini-title"><b>教师邀请码</b><span>i</span></div>
-          <p>邀请同事加入，共建优质课堂</p>
-          <strong id="inviteCode">TCH-7Q1A-B9K2</strong>
-          <button data-action="copy-code"><svg viewBox="0 0 24 24"><path d="M8 8h11v11H8zM5 16H3V3h13v2"/></svg>复制邀请码</button>
-        </section>
         <section class="guide-card">
           <div class="mini-title"><b>新手引导</b><span>?</span></div>
           <p>3 分钟了解工具中心</p>
@@ -58,6 +52,15 @@
           <div><h1>教师 AI 工具中心</h1><p>智能备课 · 精准教学 · 共育成长</p></div>
           <div class="privacy-banner"><svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3 8 8 9 5-1 8-4 8-9V6z"/><path d="m9 12 2 2 4-5"/></svg><span><b>数据安全与隐私保护：</b>本平台遵循最小必要原则，AI 处理内容仅用于教学辅助，结果需教师人工确认后使用。</span><button data-action="privacy">了解更多 ›</button></div>
         </div>
+        <section class="invite-card coworker-invite-card" aria-label="教师工具同事邀请码">
+          <div class="coworker-invite-copy">
+            <div class="mini-title"><b>教师工具 · 邀请同事</b><span aria-hidden="true">i</span></div>
+            <p>邀请校内教师加入当前教师工具空间。此码不用于学生加入班级。</p>
+          </div>
+          <input id="inviteCode" class="invite-code-value" type="text" value="" placeholder="等待服务器确认" readonly autocomplete="off" aria-label="教师工具同事邀请码，可选中后手动复制" />
+          <button data-action="copy-code" disabled><svg viewBox="0 0 24 24"><path d="M8 8h11v11H8zM5 16H3V3h13v2"/></svg>复制同事邀请码</button>
+          <p id="inviteCodeStatus" class="invite-code-status" role="status" aria-live="polite">正在读取教师工具服务器…</p>
+        </section>
 
         <div class="layout-grid">
           <section class="workspace-column">

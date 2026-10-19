@@ -54,6 +54,25 @@
     toastTimer = setTimeout(() => toast.classList.remove('show'), 3200);
   }
 
+  function setCoworkerInviteCode(code, status) {
+    inviteCodeValue = typeof code === 'string' ? code.trim() : '';
+    const codeEl = document.querySelector('#inviteCode');
+    const statusEl = document.querySelector('#inviteCodeStatus');
+    const copyButton = document.querySelector('[data-action="copy-code"]');
+    const api = window.YuzanApi;
+    if (codeEl) codeEl.value = inviteCodeValue;
+    if (statusEl) statusEl.textContent = status;
+    if (copyButton) copyButton.disabled = !api || !api.getToken || !api.getToken();
+  }
+
+  function selectCoworkerInviteCode() {
+    const codeEl = document.querySelector('#inviteCode');
+    if (!codeEl || !codeEl.value) return;
+    codeEl.focus();
+    codeEl.select();
+    codeEl.setSelectionRange(0, codeEl.value.length);
+  }
+
   function openModal(action) {
     const [title, text, mark] = content[action] || ['操作说明', '该功能已连接到本地交互演示。', '✓'];
     modalTitle.textContent = title;
@@ -280,38 +299,55 @@
     });
   });
 
-  /* ── 复制邀请码 - 优先从 API 获取 ── */
+  /* ── 教师工具同事邀请码：只读取教师工具服务，不回退到页面文本 ── */
   document.querySelectorAll('[data-action]').forEach((button) => {
     button.addEventListener('click', async () => {
       const action = button.dataset.action;
       if (action === 'copy-code') {
         const api = window.YuzanApi;
+        if (!api || !api.getToken || !api.getToken()) {
+          setCoworkerInviteCode('', '请先登录教师账号，再读取教师工具同事邀请码。');
+          showToast('登录后才能读取教师工具同事邀请码');
+          return;
+        }
+        const tokenAtRequest = api.getToken();
+        const schoolAtRequest = api.getActiveSchoolId?.() || '';
+        button.disabled = true;
+        button.textContent = '正在核验…';
+        setCoworkerInviteCode('', '正在向教师工具服务器读取最新同事邀请码…');
         let codeToCopy = '';
-
-        if (api && api.getToken && api.getToken()) {
-          try {
-            const result = await api.getInviteCode();
-            if (result && result.code) {
-              codeToCopy = result.code;
-              inviteCodeValue = result.code;
-              const codeEl = document.querySelector('#inviteCode');
-              if (codeEl) codeEl.textContent = result.code;
-            }
-          } catch (err) {
-            // API 失败，使用页面上已有的邀请码
+        try {
+          const response = await api.getInviteCode();
+          const result = response?.data || response;
+          if (api.getToken() !== tokenAtRequest || (schoolAtRequest && api.getActiveSchoolId?.() !== schoolAtRequest)) {
+            setCoworkerInviteCode('', '教师账号或学校已切换，旧邀请码已清除。');
+            showToast('账号或学校已切换，请重新读取邀请码');
+            return;
           }
+          if (typeof result?.code !== 'string' || !result.code.trim()) {
+            throw new Error('教师工具服务器没有返回可用的同事邀请码');
+          }
+          codeToCopy = result.code.trim();
+          setCoworkerInviteCode(codeToCopy, '来自教师工具服务器 · 用于邀请校内教师加入工具空间');
+        } catch (error) {
+          setCoworkerInviteCode('', `${error?.message || '读取失败'}。请检查网络后重试。`);
+          showToast('无法从教师工具服务器读取邀请码');
+          return;
+        } finally {
+          button.textContent = '复制同事邀请码';
+          button.disabled = !api.getToken();
         }
-
-        if (!codeToCopy) {
-          const codeEl = document.querySelector('#inviteCode');
-          codeToCopy = codeEl ? codeEl.textContent : '';
-        }
-
-        if (codeToCopy) {
-          try { await navigator.clipboard.writeText(codeToCopy); } catch (_) {}
-          showToast('邀请码已复制');
-        } else {
-          showToast('邀请码暂不可用，请稍后重试');
+        try {
+          if (!navigator.clipboard?.writeText) throw new Error('Clipboard API unavailable');
+          await navigator.clipboard.writeText(codeToCopy);
+          const statusEl = document.querySelector('#inviteCodeStatus');
+          if (statusEl) statusEl.textContent = '教师工具同事邀请码已复制。此码不能用于学生加入班级。';
+          showToast('教师工具同事邀请码已复制');
+        } catch {
+          selectCoworkerInviteCode();
+          const statusEl = document.querySelector('#inviteCodeStatus');
+          if (statusEl) statusEl.textContent = '复制失败。邀请码已选中，请使用键盘或菜单手动复制。';
+          showToast('复制失败，请手动复制已选中的邀请码');
         }
         return;
       }
@@ -422,18 +458,30 @@
   /* ── 页面初始化 - 加载工具状态 ── */
   async function initToolsState() {
     const api = window.YuzanApi;
-    if (!api || !api.getToken || !api.getToken()) return;
+    if (!api || !api.getToken || !api.getToken()) {
+      setCoworkerInviteCode('', '登录后读取教师工具同事邀请码。');
+      return;
+    }
+    const tokenAtRequest = api.getToken();
+    const schoolAtRequest = api.getActiveSchoolId?.() || '';
 
     try {
       const state = await api.getTeacherToolsState();
-      if (!state) return;
+      if (api.getToken() !== tokenAtRequest || (schoolAtRequest && api.getActiveSchoolId?.() !== schoolAtRequest)) {
+        setCoworkerInviteCode('', '教师账号或学校已切换，旧邀请码已清除。');
+        return;
+      }
+      if (!state) {
+        setCoworkerInviteCode('', '教师工具服务器没有返回同事邀请码状态。');
+        return;
+      }
       toolsState = state;
 
-      // 更新邀请码显示
+      // This is the teacher-tools coworker code, never the class enrollment code.
       if (state.inviteCode && state.inviteCode.code) {
-        inviteCodeValue = state.inviteCode.code;
-        const codeEl = document.querySelector('#inviteCode');
-        if (codeEl) codeEl.textContent = state.inviteCode.code;
+        setCoworkerInviteCode(state.inviteCode.code, '来自教师工具服务器 · 用于邀请校内教师加入工具空间');
+      } else {
+        setCoworkerInviteCode('', '教师工具服务器尚未返回同事邀请码。');
       }
 
       // 如果有外部服务状态，可以用来更新 UI
@@ -450,6 +498,7 @@
         }
       }
     } catch (err) {
+      setCoworkerInviteCode('', `${err?.message || '读取教师工具状态失败'}。可点击按钮重试。`);
       console.warn('加载工具状态失败:', err.message);
     }
 

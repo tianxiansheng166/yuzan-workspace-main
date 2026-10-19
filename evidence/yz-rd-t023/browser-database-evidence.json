@@ -1,0 +1,326 @@
+{
+  "database": {
+    "name": "yuzan_t023_native",
+    "user": "yz_t023",
+    "version": "PostgreSQL 17"
+  },
+  "schoolId": "4c347c5a-00e7-4409-9def-b5cbe1469b4d",
+  "teacherClassId": "efd11052-1096-4989-8888-4ab5f4b66f8d",
+  "teacherOtherClassId": "950897f9-4f67-4fd5-b986-b1a5667b5754",
+  "teacherOtherClassEnrollmentId": "5d18fad4-a05b-481c-81aa-9aa8e3210416",
+  "teacherBClassId": "2c73d7f6-a29f-4a7f-8455-994cdd14d6d6",
+  "browserActions": [
+    "Teacher C authenticated through the browser login form",
+    "Clicked Teacher C's own class from the teacher home class list",
+    "Observed real server-read failure, then clicked retry; other-class code stayed hidden",
+    "Selected use limit and validity; submitted from UI; server commit survived a dropped response and UI re-read the real invitation",
+    "Denied clipboard write; UI reported failure and selected the real input for manual copy",
+    "Clicked copy; awaited Clipboard API success; read back the exact code in Chromium without logging it",
+    "Student A logged in through the browser, pasted the copied code in /student/profile/, and submitted the bind form",
+    "Student A opened Today; PostgreSQL had no open assignment or delivery and the page showed the real empty state",
+    "Teacher C re-logged in, refreshed the class roster, saw Student A and opened the student's detail"
+  ],
+  "apiStatuses": [
+    {
+      "case": "teacher-C-other-class-create",
+      "status": 201
+    },
+    {
+      "case": "unauthenticated-create",
+      "status": 401
+    },
+    {
+      "case": "teacher-B-create-for-C-class",
+      "status": 403
+    },
+    {
+      "case": "nonexistent-class",
+      "status": 404
+    },
+    {
+      "case": "student-create",
+      "status": 403
+    },
+    {
+      "case": "invalid-code",
+      "status": 404
+    },
+    {
+      "case": "student-bind",
+      "status": 201
+    },
+    {
+      "case": "student-duplicate-bind",
+      "status": 201,
+      "alreadyBound": true
+    },
+    {
+      "case": "student-bind-expired",
+      "status": 409
+    },
+    {
+      "case": "student-bind-revoked",
+      "status": 409
+    },
+    {
+      "case": "student-bind-exhausted",
+      "status": 409
+    }
+  ],
+  "responsive": [
+    {
+      "width": 390,
+      "height": 844,
+      "documentScrollWidth": 390,
+      "dialogBounds": {
+        "left": 9,
+        "right": 381,
+        "width": 372,
+        "top": 46.6,
+        "bottom": 797.4
+      },
+      "copyBounds": {
+        "left": 51,
+        "right": 339,
+        "width": 288,
+        "top": 569.8,
+        "bottom": 613.8
+      },
+      "screenshot": "class-invitation-390.png",
+      "codeScreenshotMask": "server-issued code input masked"
+    },
+    {
+      "width": 768,
+      "height": 900,
+      "documentScrollWidth": 768,
+      "dialogBounds": {
+        "left": 94,
+        "right": 674,
+        "width": 580,
+        "top": 108.8,
+        "bottom": 791.2
+      },
+      "copyBounds": {
+        "left": 532,
+        "right": 617,
+        "width": 85,
+        "top": 569.4,
+        "bottom": 609.4
+      },
+      "screenshot": "class-invitation-768.png",
+      "codeScreenshotMask": "server-issued code input masked"
+    },
+    {
+      "width": 1280,
+      "height": 900,
+      "documentScrollWidth": 1280,
+      "dialogBounds": {
+        "left": 350,
+        "right": 930,
+        "width": 580,
+        "top": 108.8,
+        "bottom": 791.2
+      },
+      "copyBounds": {
+        "left": 788,
+        "right": 873,
+        "width": 85,
+        "top": 569.4,
+        "bottom": 609.4
+      },
+      "screenshot": "class-invitation-1280.png",
+      "codeScreenshotMask": "server-issued code input masked"
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "documentScrollWidth": 1440,
+      "dialogBounds": {
+        "left": 430,
+        "right": 1010,
+        "width": 580,
+        "top": 108.8,
+        "bottom": 791.2
+      },
+      "copyBounds": {
+        "left": 868,
+        "right": 953,
+        "width": 85,
+        "top": 569.4,
+        "bottom": 609.4
+      },
+      "screenshot": "class-invitation-1440.png",
+      "codeScreenshotMask": "server-issued code input masked"
+    }
+  ],
+  "teacherCUserId": "1e0939d2-41af-42c5-b20e-c5cd18b66698",
+  "teacherCMainEnrollmentId": "3b4b6423-e7f1-4f7a-846b-b81d50099fbe",
+  "teacherBUserId": "a7f3454b-7504-4a22-8f19-e78ccf37501a",
+  "teacherBClassEnrollmentId": "a3864957-98d9-4d72-acda-d5c2f6ec494e",
+  "network": {
+    "teacher-list-abort-count": 1,
+    "retry-result": "empty list for current class",
+    "create-response-lost": true,
+    "create-server-status": 201,
+    "post-count": 1,
+    "retry-action": "GET confirmed the created invitation; no second POST"
+  },
+  "clipboard": {
+    "writeText-resolved": true,
+    "failure-selected-input": true,
+    "evidence-code": "TC-•••••-•••••"
+  },
+  "accessibility": {
+    "dialog-labelled": true,
+    "keyboard-tab-contained": true,
+    "escape-closes-and-clears": true,
+    "reduced-motion": "Chromium context emulated reduce"
+  },
+  "identitySwitch": {
+    "teacher-account-switch-cleared": true,
+    "school-switch-cleared": true
+  },
+  "postgres": {
+    "schoolId": "4c347c5a-00e7-4409-9def-b5cbe1469b4d",
+    "classId": "efd11052-1096-4989-8888-4ab5f4b66f8d",
+    "studentUserId": "0e08d7e2-b25c-4e0e-8997-171a7561c1f9",
+    "membershipId": "f81e2808-a8bf-4ce9-8767-8670278b47e7",
+    "studentMembershipStatus": "ACTIVE",
+    "enrollmentId": "0f9fd94a-8892-4ffc-8c23-ea86a725de2c",
+    "enrollmentRole": "STUDENT",
+    "enrollmentStatus": "ACTIVE",
+    "enrollmentSchoolId": "4c347c5a-00e7-4409-9def-b5cbe1469b4d",
+    "enrollmentClassId": "efd11052-1096-4989-8888-4ab5f4b66f8d",
+    "teacherInvitationId": "f4a4dcf9-34c7-4f05-8a8a-a35d8a7e6f4b",
+    "auditLogId": "23b302f1-6e7f-4339-8731-3312170db43e",
+    "auditLogAction": "STUDENT_BOUND_TEACHER_INVITATION",
+    "usedCountAfterFirstBind": "1",
+    "maxUses": "1",
+    "expiresAt": "2026-11-17 16:29:46.013",
+    "usedCountAfterDuplicateBind": "1",
+    "activeEnrollmentCountAfterDuplicate": "1",
+    "bindAuditLogCount": "1"
+  },
+  "studentToday": {
+    "state": "empty",
+    "openAssignments": "0",
+    "openPracticeDeliveries": "0",
+    "courseState": "empty"
+  },
+  "statusRendering": {
+    "counts": {
+      "ACTIVE": 0,
+      "EXPIRED": 1,
+      "REVOKED": 1,
+      "EXHAUSTED": 2
+    },
+    "inactiveCodeMasked": true,
+    "otherClassCodeHidden": true,
+    "screenshots": [
+      "class-invitation-inactive-states-top.png",
+      "class-invitation-inactive-states-bottom.png"
+    ]
+  },
+  "coworkerInvitation": {
+    "label": "teacher-tools coworker invitation",
+    "classBindingCodeUsed": false,
+    "apiFailureFallback": "no code shown and no success"
+  },
+  "browserApiEvents": [
+    {
+      "method": "GET",
+      "operation": "request-failed",
+      "route": "mine"
+    },
+    {
+      "method": "GET",
+      "operation": "list-mine",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "operation": "list-mine",
+      "status": 403
+    },
+    {
+      "method": "GET",
+      "operation": "list-mine",
+      "status": 403
+    },
+    {
+      "method": "GET",
+      "operation": "student-today",
+      "status": 301
+    },
+    {
+      "method": "GET",
+      "operation": "student-today",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "operation": "list-mine",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "operation": "list-mine",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "operation": "request-failed",
+      "route": "teacher-invitations"
+    },
+    {
+      "method": "GET",
+      "operation": "list-mine",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "operation": "list-mine",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "operation": "list-mine",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "operation": "list-mine",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "operation": "list-mine",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "operation": "student-today",
+      "status": 301
+    },
+    {
+      "method": "GET",
+      "operation": "student-today",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "operation": "student-bind",
+      "status": 201
+    },
+    {
+      "method": "GET",
+      "operation": "student-today",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "operation": "list-mine",
+      "status": 200
+    }
+  ]
+}

@@ -206,3 +206,115 @@ svg{fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-l
   font-size: 12px;
   line-height: 1.5;
 }
+
+/* T023: student enrollment invitation credential */
+.action-list article.invitation-action{height:auto;min-height:88px;background:linear-gradient(105deg,#fffdfa,#fff8ed)}
+.invitation-action-icon{background:#f5ead5!important;color:#8a642b!important}
+.invitation-action>div{min-width:0}
+.invitation-action small{line-height:1.5}
+.invitation-action button{border-color:#b68a4c!important;color:#76531f!important;font-weight:700}
+.student-invitation-dialog{width:min(580px,calc(100vw - 30px));max-width:none;max-height:min(92vh,820px);margin:auto;padding:0;overflow:auto;border:0;border-radius:14px;background:transparent;color:var(--ink);box-shadow:0 28px 90px rgba(16,31,34,.28)}
+.student-invitation-dialog::backdrop{background:rgba(11,31,35,.52);backdrop-filter:blur(2px)}
+.invitation-sheet{position:relative;padding:23px;background:#fffdf8;background-image:linear-gradient(rgba(255,253,248,.94),rgba(255,253,248,.94)),url("./assets/paper-texture.webp");background-size:auto,900px}
+.invitation-dialog-header{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:17px}
+.invitation-kicker{color:#876736;font-size:10px;font-weight:800;letter-spacing:.15em}
+.invitation-dialog-header h2{margin:5px 0 0;font-family:"Noto Serif CJK SC",STKaiti,KaiTi,serif;font-size:24px;letter-spacing:.03em}
+.invitation-close{width:38px;height:38px;flex:0 0 auto;border:1px solid #e2d8c9;border-radius:50%;background:#fff;color:#4b5558;font-size:24px;line-height:1}
+.invitation-pass{position:relative;padding:19px;border:1px solid #d8c7ab;border-radius:10px;background:rgba(255,255,255,.93);box-shadow:inset 0 0 0 4px #fff,inset 0 0 0 5px #eadfce}
+.invitation-pass:before,.invitation-pass:after{position:absolute;top:50%;width:15px;height:30px;content:"";background:#273f43;border:1px solid #d8c7ab}
+.invitation-pass:before{left:-8px;border-left:0;border-radius:0 18px 18px 0}
+.invitation-pass:after{right:-8px;border-right:0;border-radius:18px 0 0 18px}
+.invitation-pass-ornament{position:relative;height:48px;margin:-4px 0 13px;overflow:hidden;border-bottom:1px solid #ebdfcc}
+.invitation-pass-ornament svg{width:100%;height:100%;stroke:#c19a59;stroke-width:1.2;opacity:.75}
+.invitation-pass-ornament span{position:absolute;right:19%;bottom:8px;width:7px;height:7px;border:1px solid #8d6b37;border-radius:50%;background:#fff}
+.invitation-pass-ornament span:nth-of-type(2){right:49%;bottom:19px;width:5px;height:5px}
+.invitation-pass-ornament span:nth-of-type(3){right:78%;bottom:11px;width:6px;height:6px}
+.invitation-class-mark{display:grid;grid-template-columns:42px minmax(0,1fr) auto;gap:11px;align-items:center}
+.invitation-seal{display:grid;width:40px;height:40px;place-items:center;border:1px solid #a23a2f;border-radius:50%;color:#a23a2f;font-family:"Noto Serif CJK SC",STKaiti,KaiTi,serif;font-size:18px;box-shadow:inset 0 0 0 2px #fff,inset 0 0 0 3px #a23a2f}
+.invitation-class-mark>div{display:grid;gap:3px;min-width:0}
+.invitation-class-mark small{color:#79736a;font-size:10px;line-height:1.4}
+.invitation-class-mark strong{overflow-wrap:anywhere;color:#253b3e;font-family:"Noto Serif CJK SC",STKaiti,KaiTi,serif;font-size:16px}
+.invitation-scope-tag{padding:5px 8px;border:1px solid #d6c29e;border-radius:999px;background:#fff9ec;color:#805f2b;font-size:10px;font-weight:700;white-space:nowrap}
+.invitation-purpose{margin:13px 0 15px;color:#6b7475;font-size:11px;line-height:1.8}
+.invitation-live-status{padding:9px 11px;border-left:3px solid #b08a51;background:#f8f4eb;color:#665a45;font-size:11px;line-height:1.6}
+.invitation-live-status[data-state="loading"]{border-color:#8b9b8f}
+.invitation-live-status[data-state="error"]{border-color:#b64036;background:#fff2ef;color:#9b322c}
+.invitation-live-status[data-state="loaded"]{border-color:#38785c;background:#f1f7f1;color:#315e49}
+.invitation-error{margin-top:12px;padding:13px;border:1px solid #e6b5ad;border-radius:7px;background:#fff6f3;color:#813b34}
+.invitation-error[hidden],.invitation-empty[hidden],.invitation-create-form[hidden]{display:none}
+.invitation-error strong{font-size:12px}
+.invitation-error p{margin:5px 0 12px;color:#735a55;font-size:11px;line-height:1.6}
+.invitation-items{display:grid;gap:11px;margin-top:12px}
+.invitation-record{padding:13px;border:1px solid #e0d8ca;border-radius:7px;background:#fffefa}
+.invitation-record.is-usable{border-color:#b5cdbb;background:linear-gradient(150deg,#fffefa 0 72%,#f4f8f1 100%)}
+.invitation-record.is-inactive{background:#f8f6f2}
+.invitation-record-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;color:#6a716e;font-size:10px}
+.invitation-state-tag{padding:4px 8px;border:1px solid #cfc9be;border-radius:999px;background:#f3f1eb;color:#68655f;font-size:10px;white-space:nowrap}
+.invitation-state-tag[data-status="ACTIVE"]{border-color:#b5cdbb;background:#edf5ee;color:#286347}
+.invitation-state-tag[data-status="EXPIRED"]{border-color:#e0c49c;background:#fff6e6;color:#8b6223}
+.invitation-state-tag[data-status="REVOKED"]{border-color:#e0b6ae;background:#fff0ed;color:#963e35}
+.invitation-state-tag[data-status="EXHAUSTED"]{border-color:#c9c5bd;background:#efede8;color:#615e57}
+.invitation-code-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px 10px;align-items:center;margin-top:12px}
+.invitation-code-label{grid-column:1/-1;color:#6c746d;font-size:10px;font-weight:700;letter-spacing:.04em}
+.invitation-code-input{width:100%;min-width:0;height:45px;padding:0 11px;border:1px solid #c8d6c7;border-radius:5px;background:#f8fbf6;color:#203e34;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:16px;font-weight:800;letter-spacing:.12em;user-select:all}
+.invitation-copy-button,.invitation-primary,.invitation-secondary{min-height:40px;padding:0 14px;border:1px solid #2f684d;border-radius:5px;background:#315f49;color:#fff;font-size:11px;font-weight:700}
+.invitation-copy-button{border-color:#a6362f;background:#a6362f}
+.invitation-copy-button:disabled,.invitation-primary:disabled{opacity:.6;cursor:wait}
+.invitation-copy-feedback{grid-column:1/-1;min-height:16px;margin:0;color:#276046;font-size:10px;line-height:1.5}
+.invitation-hidden-code{margin:11px 0;padding:10px;border:1px dashed #d7d1c6;border-radius:5px;color:#73716a;background:#f5f3ee;font-size:11px;line-height:1.6}
+.invitation-usage{display:grid;gap:7px;margin-top:12px}
+.invitation-usage>div:first-child,.invitation-expiry{display:flex;justify-content:space-between;gap:10px;color:#747871;font-size:10px}
+.invitation-usage strong{color:#454e4a;font-size:10px}
+.invitation-meter{height:5px;overflow:hidden;border-radius:99px;background:#ebe8df}
+.invitation-meter span{display:block;height:100%;border-radius:inherit;background:#568363;transition:width .24s ease}
+.invitation-meter-unknown{background:repeating-linear-gradient(135deg,#eeeae1 0 4px,#e1ddd4 4px 8px)}
+.invitation-expiry{margin-top:9px;padding-top:9px;border-top:1px dashed #e4ded3}
+.invitation-expiry time{color:#4d5551;text-align:right}
+.invitation-empty{display:grid;grid-template-columns:42px minmax(0,1fr) auto;gap:10px;align-items:center;margin-top:12px;padding:13px;border:1px dashed #cdbb9d;border-radius:7px;background:#fffaf0}
+.invitation-path-mark{display:grid;width:40px;height:40px;place-items:center;border-radius:50%;background:#f2ead8;color:#9b763c}
+.invitation-path-mark svg{width:32px;height:32px;stroke-width:1.4}
+.invitation-empty strong{color:#4a4b43;font-family:"Noto Serif CJK SC",STKaiti,KaiTi,serif;font-size:12px}
+.invitation-empty p{margin:4px 0 0;color:#74736b;font-size:10px;line-height:1.6}
+.invitation-empty .invitation-primary{white-space:nowrap}
+.invitation-create-form{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;padding:13px;border:1px solid #dfd6c8;border-radius:7px;background:#fffdfa}
+.invitation-form-heading{grid-column:1/-1;display:grid;gap:4px}
+.invitation-form-heading strong{color:#394944;font-size:13px}
+.invitation-form-heading small{color:#77786f;font-size:10px}
+.invitation-create-form label{display:grid;gap:6px;color:#625f56;font-size:10px;font-weight:700}
+.invitation-create-form select{width:100%;height:39px;padding:0 9px;border:1px solid #d8d0c2;border-radius:5px;background:#fff;color:#303934;font-size:11px}
+.invitation-form-message{grid-column:1/-1;min-height:18px;margin:0;color:#626b63;font-size:10px;line-height:1.6}
+.invitation-form-actions{grid-column:1/-1;display:flex;justify-content:flex-end;gap:8px}
+.invitation-secondary{border-color:#cbc4b8;background:#fff;color:#514f49}
+.invitation-footnote{margin:13px 2px 0;color:#88847b;font-size:9px;line-height:1.7}
+.student-invitation-dialog button:focus-visible,.student-invitation-dialog input:focus-visible,.student-invitation-dialog select:focus-visible{outline:3px solid #1d7180;outline-offset:2px}
+@media(max-width:600px){
+  .student-invitation-dialog{width:calc(100vw - 18px);max-height:calc(100dvh - 18px);border-radius:10px}
+  .invitation-sheet{padding:17px 13px}
+  .invitation-dialog-header h2{font-size:21px}
+  .invitation-pass{padding:14px}
+  .invitation-class-mark{grid-template-columns:38px minmax(0,1fr);gap:9px}
+  .invitation-seal{width:36px;height:36px}
+  .invitation-class-mark strong{font-size:14px}
+  .invitation-scope-tag{grid-column:2;justify-self:start}
+  .invitation-code-row{grid-template-columns:minmax(0,1fr)}
+  .invitation-code-input{font-size:clamp(13px,4.1vw,16px);letter-spacing:.09em}
+  .invitation-copy-button{width:100%;min-height:44px}
+  .invitation-empty{grid-template-columns:38px minmax(0,1fr)}
+  .invitation-empty .invitation-primary{grid-column:1/-1;width:100%;min-height:44px}
+  .invitation-create-form{grid-template-columns:1fr}
+  .invitation-form-heading,.invitation-form-message,.invitation-form-actions{grid-column:1}
+  .invitation-create-form select{height:44px}
+  .invitation-form-actions button{flex:1;min-height:44px}
+}
+@media(min-width:761px) and (max-width:900px){
+  body.ts-has-shell .ts-app-shell{min-width:0;grid-template-columns:72px minmax(0,1fr)}
+  body.ts-has-shell .ts-main{min-width:0;width:100%}
+  body.ts-has-shell .ts-topbar{min-width:0}
+  body.ts-has-shell .ts-context{min-width:0;flex:1;overflow:hidden}
+  body.ts-has-shell .ts-context-btn{min-width:0;max-width:100%;overflow:hidden;white-space:nowrap}
+  body.ts-has-shell #ts-school-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  body.ts-has-shell .ts-top-actions{flex:0 0 auto}
+  body.ts-has-shell .ts-profile-btn>span:nth-child(2){min-width:0;max-width:120px;overflow:hidden}
+  body.ts-has-shell .ts-profile-btn strong,body.ts-has-shell .ts-profile-btn small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+}
+@media(prefers-reduced-motion:reduce){.invitation-meter span{transition:none}}
