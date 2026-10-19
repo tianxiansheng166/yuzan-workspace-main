@@ -3,6 +3,13 @@
 Last updated: 2026-10-20
 Repository: `yuzan-workspace-main`
 
+## YZ-RD-T051 API test lint first slice (2026-10-20)
+
+- PARTIAL_WITH_DEBT on feat/yz-rd-t051-api-test-lint-first-slice, based on exact 987e7321157033001b8548e0c0b4318d9f14e503. The bounded assessment-module slice owns 10 test files and removes 120 findings.
+- Full API lint changed from 1,960 errors / 0 warnings to 1,840 errors / 0 warnings. Exact after counts: 60 source errors, 1,780 test errors, 0 parser errors. All 10 selected files now pass targeted ESLint; no rule was disabled and no any annotation was added.
+- Selected tests: 20 passed, 0 failed, 7 database-gated skips. Full raw lint, targeted lint and test logs are in evidence/yz-rd-t051/RESULTS.md. READY_TO_MERGE=NO; L4_OPEN=OPEN.
+- The checkout AGENTS.md has no AA-DEV-V2.2 marker and the task card supplied no Lane policy reference. The user-provided /home/tian/code/AGENTS.md safety baseline governed. No API source, database service or L4 runtime was accessed.
+
 ## YZ-RD-T041 API lint debt slice (2026-10-20)
 
 - `PARTIAL_WITH_DEBT` on `feat/yz-rd-t041-api-lint-debt-first-slice`, based on exact `b3a731bb32f404f4a55f4d4f56d265514d324d40`. The T046 baseline was verified at `0f6ea3710797612aa08f37944a9ab9d92f033da1`: full API lint 1,201 errors / 1 warning (1,037 source findings plus 164 test TypeScript project-service parsing errors).

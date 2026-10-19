@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto";
 import { Pool } from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@yuzan/database";
+import type { PrismaService } from "../../src/shared/database/prisma.service.js";
 import { PracticeService } from "../../src/modules/assessment/practice.service.js";
 import { MembershipRole } from "../../src/common/security/membership-role.js";
 import { MembershipStatus, type AuthContext } from "../../src/common/security/auth.types.js";
@@ -35,7 +36,7 @@ describe.skipIf(!databaseUrl)("Question Bank runtime delivery — PostgreSQL int
   let deliveryId: string;
   let attemptId: string | undefined;
 
-  beforeAll(async () => {
+  beforeAll(() => {
     pool = new Pool({ connectionString: databaseUrl });
     prisma = new PrismaClient({ adapter: new PrismaPg(pool) });
   });
@@ -50,7 +51,7 @@ describe.skipIf(!databaseUrl)("Question Bank runtime delivery — PostgreSQL int
   });
 
   it("keeps the six seeded legacy practices and six published level practices runnable", async () => {
-    const service = new PracticeService(prisma as any);
+    const service = new PracticeService(prisma as unknown as PrismaService);
     const catalog = await service.listForStudent(auth, schoolId);
     expect(catalog.total).toBe(12);
 
@@ -122,7 +123,7 @@ describe.skipIf(!databaseUrl)("Question Bank runtime delivery — PostgreSQL int
     });
     deliveryId = delivery.id;
 
-    const service = new PracticeService(prisma as any);
+    const service = new PracticeService(prisma as unknown as PrismaService);
     const created = await service.createOrResume(auth, schoolId, definitionId);
     attemptId = created.attemptId;
     const snapshot = await prisma.assessmentItem.findFirstOrThrow({ where: { sessionId: attemptId } });
