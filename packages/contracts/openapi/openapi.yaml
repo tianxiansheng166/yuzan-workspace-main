@@ -458,6 +458,60 @@ paths:
           $ref: "#/components/responses/NotFound"
         "409":
           $ref: "#/components/responses/Conflict"
+  /schools/{schoolId}/course-versions/{courseVersionId}/practice-options:
+    get:
+      summary: 列出课程可关联的已发布练习
+      tags: [Curriculum]
+      operationId: listCoursePracticeOptions
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/CourseVersionId"
+      responses:
+        "200":
+          description: School-visible published practice definitions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CoursePracticeOptionListResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /schools/{schoolId}/course-versions/{courseVersionId}/activities/{activityId}/practice:
+    put:
+      summary: 将已发布练习关联到课程活动
+      description: Only editable course versions can be changed. Repeated writes of the same relation are idempotent. A stale course version or a learning activity with existing student state returns 409.
+      tags: [Curriculum]
+      operationId: saveCourseActivityPractice
+      parameters:
+        - $ref: "#/components/parameters/SchoolId"
+        - $ref: "#/components/parameters/CourseVersionId"
+        - $ref: "#/components/parameters/ActivityId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SaveCourseActivityPracticeRequest"
+      responses:
+        "200":
+          description: Saved course activity practice relation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CourseActivityPracticeResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
   /schools/{schoolId}/classes:
     get:
       summary: 列出班级
@@ -4272,7 +4326,7 @@ components:
             units:
               type: array
               items:
-                type: object
+                $ref: "#/components/schemas/CourseUnitDetail"
             createdAt:
               type: string
               format: date-time
@@ -4290,6 +4344,122 @@ components:
       properties:
         data:
           $ref: "#/components/schemas/CourseVersionSummary"
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
+    CourseUnitDetail:
+      type: object
+      additionalProperties: true
+      properties:
+        lessons:
+          type: array
+          items:
+            $ref: "#/components/schemas/CourseLessonDetail"
+    CourseLessonDetail:
+      type: object
+      additionalProperties: true
+      properties:
+        activities:
+          type: array
+          items:
+            $ref: "#/components/schemas/CourseActivityDetail"
+    CourseActivityDetail:
+      type: object
+      additionalProperties: true
+      properties:
+        practiceReference:
+          anyOf:
+            - $ref: "#/components/schemas/CourseActivityPracticeReference"
+            - type: "null"
+    CourseActivityPracticeReference:
+      type: object
+      additionalProperties: false
+      required: [practiceDefinitionId, title, required]
+      properties:
+        practiceDefinitionId:
+          type: string
+          format: uuid
+        title:
+          type: string
+        required:
+          type: boolean
+    CoursePracticeOption:
+      type: object
+      additionalProperties: false
+      required: [id, title, summary, difficulty, requiresRecording]
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        summary:
+          type: string
+        difficulty:
+          type: string
+        requiresRecording:
+          type: boolean
+    CoursePracticeOptionListResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/CoursePracticeOption"
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
+    SaveCourseActivityPracticeRequest:
+      type: object
+      additionalProperties: false
+      required: [practiceDefinitionId, required, expectedUpdatedAt]
+      properties:
+        practiceDefinitionId:
+          type: string
+          format: uuid
+        required:
+          type: boolean
+        expectedUpdatedAt:
+          type: string
+          format: date-time
+    CourseActivityPracticeWriteResult:
+      type: object
+      additionalProperties: false
+      required:
+        [
+          id,
+          courseVersionId,
+          activityId,
+          practiceDefinitionId,
+          title,
+          required,
+          courseVersionUpdatedAt,
+        ]
+      properties:
+        id:
+          type: string
+          format: uuid
+        courseVersionId:
+          type: string
+          format: uuid
+        activityId:
+          type: string
+          format: uuid
+        practiceDefinitionId:
+          type: string
+          format: uuid
+        title:
+          type: string
+        required:
+          type: boolean
+        courseVersionUpdatedAt:
+          type: string
+          format: date-time
+    CourseActivityPracticeResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          $ref: "#/components/schemas/CourseActivityPracticeWriteResult"
         meta:
           $ref: "#/components/schemas/EnvelopeMeta"
     ClassSummary:

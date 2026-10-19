@@ -1,5 +1,13 @@
 # Development status
 
+## YZ-RD-T049 — teacher course practice authoring (2026-10-20)
+
+ACCEPTANCE VERIFIED / NATIVE CHROMIUM + API + POSTGRESQL + REDIS + MINIO E2E PASS. Teacher course practice authoring now uses a published-practice selector and a school-scoped, optimistic API writer for the existing `CourseActivityPractice` relation. Course-version detail reads round-trip the relation, and the studio reopens the saved practice. No schema migration was required.
+
+The isolated native E2E passed 1/1 with 0 skips: teacher UI → writer API → database → published class course → authorized student activity → unified practice Runner → course completion/return. It verified 401/403/404/409, duplicate association writes, idempotent duplicate submission, immutable published version, one relation row, version 1, and an unchanged pre-existing Attempt. Existing course audio playback and speech recording/upload retry also passed. The WebM/Opus object read back from MinIO; its SpeechJob stayed CREATED with no result and the practice Attempt stayed PROCESSING without a score/report. Browser capture used `SIMULATED_MIC`; no unreviewed Tibetan subtitle, Docker/Compose, Worker or automatic scoring was used. See [`evidence/yz-rd-t049/RESULTS.md`](evidence/yz-rd-t049/RESULTS.md).
+
+Frontend 133/133 plus runtime verification, curriculum API tests 55, API contract tests 38, Contracts 6/6, OpenAPI lint/generation, API typecheck/build, Python/JavaScript syntax and `git diff --check` passed. Full API lint remains 1201 errors / 1 warning, matching the inherited T033 baseline, so `READY_TO_MERGE=NO`. T049 services exited and owned ports are free. No T005 protected-source change, shared-branch merge or L4 access. The target checkout lacks the V2.2 marker and the Task Card supplied no Lane policy reference; `/home/tian/code/AGENTS.md` governed. `L4_OPEN=OPEN`.
+
 ## YZ-RD-T040 — course-to-speech player (2026-10-19)
 
 ACCEPTANCE VERIFIED / NATIVE CHROME + API + POSTGRESQL + REDIS + MINIO E2E PASS. The Today course card opens its authorized Course Detail; directory activities now lead to the focused student Activity Player with the same server-issued course Submission. Students can play real course audio, complete speaking capture, audition the local recording, submit it, and continue into the course-linked practice Runner.

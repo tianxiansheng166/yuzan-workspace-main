@@ -13,6 +13,7 @@
   let selectedActivity = null;
   let dirty = false;
   let activeTab = 'goals';
+  let coursePracticeOptions = [];
 
   // ── DOM 引用 ──
   const $ = (sel) => document.querySelector(sel);
@@ -73,6 +74,15 @@
     SELF_STUDY: '自主学习'
   };
 
+  const STUDIO_ACTIVITY_CONTENT_FIELDS = [
+    'duration', 'difficulty', 'gradeLevel', 'teachingMode', 'objectives',
+    'keyPoints', 'coreQuestion', 'keyContent', 'teacherSummary', 'aiSummary',
+    'videoUrl', 'posterUrl', 'subtitleZhUrl', 'subtitleBoUrl', 'timelineMarkers',
+    'exercises', 'oralDemoUrl', 'oralDemoText', 'supportAudioUrl', 'pauseGuide',
+    'classQuestions', 'differentiation', 'observationPoints', 'offlineResources',
+    'tags', 'note'
+  ];
+
   // ── 工具函数 ──
   function escapeHtml(text) {
     if (text == null) return '';
@@ -95,6 +105,21 @@
 
   function getToken() {
     return window.YuzanApi?.getToken?.() || null;
+  }
+
+  function hydrateStudioActivityFields(version) {
+    (version?.units || []).forEach((unit) => (unit.lessons || []).forEach((lesson) =>
+      (lesson.activities || []).forEach((activity) => {
+        const content = activity.content && typeof activity.content === 'object' && !Array.isArray(activity.content)
+          ? activity.content
+          : {};
+        STUDIO_ACTIVITY_CONTENT_FIELDS.forEach((field) => {
+          if (activity[field] === undefined && content[field] !== undefined) {
+            activity[field] = content[field];
+          }
+        });
+      }),
+    ));
   }
 
   async function apiRequest(path, options) {
@@ -470,7 +495,64 @@
     if (editorBodyEl) {
       editorBodyEl.innerHTML = html;
       bindEditorEvents();
+      bindCoursePracticeEditor();
     }
+  }
+
+  function bindCoursePracticeEditor() {
+    const select = editorBodyEl?.querySelector('[data-course-practice-definition]');
+    const required = editorBodyEl?.querySelector('[data-course-practice-required]');
+    const saveButton = editorBodyEl?.querySelector('[data-action="save-course-practice"]');
+    const status = editorBodyEl?.querySelector('[data-bind="course-practice-current"]');
+    if (!select || !required || !saveButton || !selectedActivity?.id) return;
+
+    saveButton.addEventListener('click', async (event) => {
+      event.preventDefault();
+      if (!courseVersion?.id || !['DRAFT', 'CHANGES_REQUESTED'].includes(courseVersion.status)) {
+        toast('只有可编辑课程草稿才能保存练习关联', 'warning');
+        return;
+      }
+      const practiceDefinitionId = select.value;
+      if (!practiceDefinitionId) {
+        toast('请选择一个已发布练习', 'warning');
+        return;
+      }
+      const schoolId = getActiveSchoolId();
+      if (!schoolId) {
+        toast('请先选择学校', 'warning');
+        return;
+      }
+
+      saveButton.disabled = true;
+      saveButton.textContent = '正在保存…';
+      try {
+        const saved = await apiRequest(
+          `/schools/${schoolId}/course-versions/${courseVersion.id}/activities/${selectedActivity.id}/practice`,
+          {
+            method: 'PUT',
+            body: JSON.stringify({
+              practiceDefinitionId,
+              required: required.checked,
+              expectedUpdatedAt: courseVersion.updatedAt,
+            }),
+          },
+        );
+        selectedActivity.practiceReference = {
+          practiceDefinitionId: saved.practiceDefinitionId,
+          title: saved.title,
+          required: saved.required,
+        };
+        courseVersion.updatedAt = saved.courseVersionUpdatedAt;
+        if (status) status.textContent = `当前关联：${saved.title}`;
+        saveButton.textContent = '已保存';
+        toast('课程练习关联已保存', 'success');
+      } catch (err) {
+        saveButton.textContent = '保存练习关联';
+        toast(err.message || '练习关联保存失败，请重新载入课程后重试', 'error');
+      } finally {
+        saveButton.disabled = false;
+      }
+    });
   }
 
   // ── Tab 1: 本节目标（学习目标 + 核心问题 + 关键内容 + 教师总结 + AI 摘要）──
@@ -588,9 +670,18 @@
     const exercises = Array.isArray(a.exercises) ? a.exercises : [];
     const oralDemoUrl = a.oralDemoUrl || '';
     const oralDemoText = a.oralDemoText || '';
-    const practiceTitle = a.practiceTitle || '';
-    const practiceDescription = a.practiceDescription || '';
-    const practiceId = a.practiceId || '';
+    const practiceReference = a.practiceReference || null;
+    const currentPracticeId = practiceReference?.practiceDefinitionId || '';
+    const availablePractices = coursePracticeOptions.slice();
+    if (practiceReference && !availablePractices.some((option) => option.id === currentPracticeId)) {
+      availablePractices.unshift({
+        id: currentPracticeId,
+        title: practiceReference.title,
+        summary: '当前活动已关联的练习',
+        requiresRecording: false,
+      });
+    }
+    const editablePractice = ['DRAFT', 'CHANGES_REQUESTED'].includes(courseVersion?.status);
 
     return `
       <h3>视频中互动题</h3>
@@ -630,20 +721,22 @@
 
       <div class="dash"></div>
 
-      <h3>课后练习（P0 Practice 引用）</h3>
-      <p class="form-hint">关联正式练习执行器中的多题练习。学生完成视频学习后点击"开始练习"进入。</p>
+      <h3>课程练习关联</h3>
+      <p class="form-hint">选择本校已发布的正式练习。学生进入已开放的课程后，会从当前活动启动该练习。</p>
       <label class="form-row">
-        <span>练习 ID</span>
-        <input type="text" data-field="practiceId" value="${escapeHtml(practiceId)}" placeholder="Practice ID">
+        <span>已发布练习</span>
+        <select data-course-practice-definition ${editablePractice ? '' : 'disabled'}>
+          <option value="">${availablePractices.length ? '选择练习' : '没有可关联的已发布练习'}</option>
+          ${availablePractices.map((option) => `<option value="${escapeHtml(option.id)}" ${option.id === currentPracticeId ? 'selected' : ''}>${escapeHtml(option.title)}${option.requiresRecording ? ' · 含录音题' : ''}</option>`).join('')}
+        </select>
       </label>
-      <label class="form-row">
-        <span>练习标题</span>
-        <input type="text" data-field="practiceTitle" value="${escapeHtml(practiceTitle)}" placeholder="例如：高原上的春天 · 课后练习">
+      <label class="form-row practice-required-row">
+        <input type="checkbox" data-course-practice-required ${practiceReference?.required !== false ? 'checked' : ''} ${editablePractice ? '' : 'disabled'}>
+        <span>完成课程时要求提交此练习</span>
       </label>
-      <label class="form-row">
-        <span>练习描述</span>
-        <textarea data-field="practiceDescription" placeholder="练习简介" rows="2">${escapeHtml(practiceDescription)}</textarea>
-      </label>
+      <p class="form-hint" data-bind="course-practice-current">${practiceReference ? `当前关联：${escapeHtml(practiceReference.title)}` : '当前活动尚未关联正式练习。'}</p>
+      <button class="btn-add-item" data-action="save-course-practice" ${editablePractice && availablePractices.length ? '' : 'disabled'}>保存练习关联</button>
+      ${editablePractice ? '' : '<p class="form-hint">已发布课程版本不可直接修改。请创建新的草稿版本后编辑。</p>'}
     `;
   }
 
@@ -1020,6 +1113,16 @@
       // 加载课程版本，包含 units/lessons/activities/resources
       courseVersion = await apiRequest(`/schools/${schoolId}/course-versions/${courseVersionId}`, { method: 'GET' });
       if (!courseVersion) throw new Error('课程版本为空');
+      const optionsResult = await apiRequest(
+        `/schools/${schoolId}/course-versions/${courseVersionId}/practice-options`,
+        { method: 'GET' },
+      );
+      coursePracticeOptions = Array.isArray(optionsResult)
+        ? optionsResult
+        : Array.isArray(optionsResult?.items)
+          ? optionsResult.items
+          : [];
+      hydrateStudioActivityFields(courseVersion);
 
       // 渲染标题
       if (titleEl) titleEl.textContent = courseVersion.title || '未命名课程';
@@ -1037,7 +1140,7 @@
     }
   }
 
-  // ── 保存（PATCH 活动内容 + 课程版本元数据）──
+  // ── 保存（通过正式 CourseVersion PATCH 持久化课程树与元数据）──
   async function saveCourse() {
     if (!courseVersion?.id) {
       toast('课程版本未加载', 'warning');
@@ -1050,56 +1153,48 @@
     }
 
     try {
-      // 1. 保存课程版本元数据（标题、状态）
-      await apiRequest(`/schools/${schoolId}/course-versions/${courseVersion.id}`, {
+      const units = (courseVersion.units || []).map((unit) => ({
+        ...unit,
+        lessons: (unit.lessons || []).map((lesson) => ({
+          ...lesson,
+          activities: (lesson.activities || []).map((activity) => {
+            const content = activity.content && typeof activity.content === 'object' && !Array.isArray(activity.content)
+              ? { ...activity.content }
+              : {};
+            STUDIO_ACTIVITY_CONTENT_FIELDS.forEach((field) => {
+              if (activity[field] !== undefined) content[field] = activity[field];
+            });
+            return {
+              id: activity.id,
+              type: activity.type,
+              title: activity.title,
+              instruction: activity.instruction,
+              sortOrder: activity.sortOrder,
+              required: activity.required,
+              completionRule: activity.completionRule,
+              content,
+              teacherNotes: activity.teacherNotes,
+              studentNotes: activity.studentNotes,
+              resources: activity.resources || [],
+              practiceReference: activity.practiceReference || null,
+            };
+          }),
+        })),
+      }));
+
+      const savedVersion = await apiRequest(`/schools/${schoolId}/course-versions/${courseVersion.id}`, {
         method: 'PATCH',
         body: JSON.stringify({
           expectedUpdatedAt: courseVersion.updatedAt || new Date().toISOString(),
-          title: titleEl?.textContent || courseVersion.title
+          title: titleEl?.textContent || courseVersion.title,
+          units,
         })
       });
-
-      // 2. 保存当前活动内容（如果有选中的活动）
-      if (selectedActivity?.id) {
-        await apiRequest(`/schools/${schoolId}/course-versions/${courseVersion.id}/activities/${selectedActivity.id}`, {
-          method: 'PATCH',
-          body: JSON.stringify({
-            expectedUpdatedAt: selectedActivity.updatedAt || new Date().toISOString(),
-            title: selectedActivity.title,
-            type: selectedActivity.type,
-            duration: selectedActivity.duration,
-            difficulty: selectedActivity.difficulty,
-            gradeLevel: selectedActivity.gradeLevel,
-            teachingMode: selectedActivity.teachingMode,
-            objectives: selectedActivity.objectives,
-            keyPoints: selectedActivity.keyPoints,
-            coreQuestion: selectedActivity.coreQuestion,
-            keyContent: selectedActivity.keyContent,
-            teacherSummary: selectedActivity.teacherSummary,
-            aiSummary: selectedActivity.aiSummary,
-            videoUrl: selectedActivity.videoUrl,
-            posterUrl: selectedActivity.posterUrl,
-            subtitleZhUrl: selectedActivity.subtitleZhUrl,
-            subtitleBoUrl: selectedActivity.subtitleBoUrl,
-            timelineMarkers: selectedActivity.timelineMarkers,
-            exercises: selectedActivity.exercises,
-            oralDemoUrl: selectedActivity.oralDemoUrl,
-            oralDemoText: selectedActivity.oralDemoText,
-            practiceId: selectedActivity.practiceId,
-            practiceTitle: selectedActivity.practiceTitle,
-            practiceDescription: selectedActivity.practiceDescription,
-            supportAudioUrl: selectedActivity.supportAudioUrl,
-            pauseGuide: selectedActivity.pauseGuide,
-            classQuestions: selectedActivity.classQuestions,
-            differentiation: selectedActivity.differentiation,
-            observationPoints: selectedActivity.observationPoints,
-            offlineResources: selectedActivity.offlineResources,
-            tags: selectedActivity.tags,
-            note: selectedActivity.note
-          })
-        });
-      }
-
+      courseVersion = savedVersion;
+      if (titleEl) titleEl.textContent = courseVersion.title || '未命名课程';
+      if (crumbEl) crumbEl.textContent = courseVersion.title || '课程详情';
+      renderSteps();
+      renderStructure();
       setDirty(false);
       toast('课程草稿已保存', 'success');
     } catch (err) {

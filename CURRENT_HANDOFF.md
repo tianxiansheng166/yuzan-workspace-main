@@ -1,7 +1,14 @@
 # CURRENT HANDOFF
 
-Last updated: 2026-10-19
+Last updated: 2026-10-20
 Repository: `yuzan-workspace-main`
+
+## YZ-RD-T049 teacher course practice authoring checkpoint (2026-10-20)
+
+- ACCEPTANCE VERIFIED on independent branch `feat/yz-rd-t049-teacher-course-practice-authoring-contract`, based on exact T040 `cd17360e67356dcdd04062b69b94e253ef5a7468`; not merged. Added teacher practice-option discovery and an optimistic, school-scoped PUT writer for `CourseActivityPractice`. Course-version reads now round-trip the link. The teacher studio replaces its free-text Practice ID with a published-practice selector, writes through the API, and reopens the same link. Existing course-version create/edit/publish APIs remain the course authoring contract.
+- Native Chrome 153/API/PostgreSQL 17.11/Redis/MinIO passed 1/1 E2E, 0 failed / 0 skipped. Real teacher UI → writer API → PostgreSQL relation → published class course → student course activity → unified practice Runner → completion/return. 401/403/404/409, repeated link write, repeated Attempt submit, stale/published immutability, one relation row, version 1 and unchanged prior Attempt were verified. Course audio and speech recording/upload retry remained intact; the WebM/Opus object read back from MinIO. The SpeechJob remained CREATED with no result, and the practice Attempt remained PROCESSING without an automatic score/report.
+- PASS: frontend 133/133 + runtime verification; curriculum API 55, API contract 38, Contracts 6, OpenAPI validation/type generation, API typecheck/build, E2E/Python/JS syntax and `git diff --check`. Full API lint remains 1201 errors / 1 warning, matching inherited T033 debt and unwaived; `READY_TO_MERGE=NO`.
+- All five T049 services exited and owned ports are free. Full evidence: [evidence/yz-rd-t049/RESULTS.md](evidence/yz-rd-t049/RESULTS.md), including native proof, runtime shutdown record and screenshots. No relation SQL insert was used to set up the flow. No schema change, T005 edit, Tibetan subtitle publication, Worker, Docker/Compose, shared-branch merge or L4 access. Target `AGENTS.md` lacks the V2.2 marker and Task Card supplied no Lane policy reference; supplied local safety baseline governed. `L4_OPEN=OPEN`.
 
 ## YZ-RD-T040 course-to-speech player checkpoint (2026-10-19)
 

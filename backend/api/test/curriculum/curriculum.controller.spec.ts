@@ -90,6 +90,32 @@ describe("CurriculumController", () => {
     ).toBe(HttpStatus.OK);
   });
 
+  it("restricts course practice discovery and writes to teachers and school admins", () => {
+    for (const handler of [controller.listCoursePracticeOptions, controller.saveActivityPractice]) {
+      const roles = reflector.get("requiredRoles", handler);
+      expect(roles).toContain(MembershipRole.TEACHER);
+      expect(roles).toContain(MembershipRole.SCHOOL_ADMIN);
+    }
+    expect(
+      Reflect.getMetadata(
+        PATH_METADATA,
+        CurriculumController.prototype.saveActivityPractice,
+      ),
+    ).toBe(":courseVersionId/activities/:activityId/practice");
+    expect(
+      Reflect.getMetadata(
+        METHOD_METADATA,
+        CurriculumController.prototype.saveActivityPractice,
+      ),
+    ).toBe(RequestMethod.PUT);
+    expect(
+      Reflect.getMetadata(
+        HTTP_CODE_METADATA,
+        CurriculumController.prototype.saveActivityPractice,
+      ),
+    ).toBe(HttpStatus.OK);
+  });
+
   it("allows student role on list endpoint", () => {
     const roles = reflector.get("requiredRoles", controller.listCourseVersions);
     expect(roles).toContain(MembershipRole.STUDENT);

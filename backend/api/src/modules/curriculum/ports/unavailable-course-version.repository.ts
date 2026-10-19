@@ -1,5 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import type {
+  CourseActivityPracticeWriteResult,
+  CoursePracticeOption,
   CourseVersion,
   CourseVersionSummary,
 } from "../domain/course-version.types.js";
@@ -9,6 +11,7 @@ import type {
   ListCourseVersionsOptions,
   PaginatedResult,
   SaveCourseVersionOptions,
+  SaveCourseActivityPracticeInput,
 } from "./course-version-repository.port.js";
 
 @Injectable()
@@ -54,6 +57,20 @@ export class UnavailableCourseVersionRepository implements CourseVersionReposito
     _courseId: string,
   ): Promise<readonly CourseVersion[]> {
     this.fail();
+  }
+
+  listCoursePracticeOptions(
+    _schoolId: string,
+  ): Promise<readonly CoursePracticeOption[]> {
+    void _schoolId;
+    return this.fail();
+  }
+
+  saveActivityPractice(
+    _input: SaveCourseActivityPracticeInput,
+  ): Promise<CourseActivityPracticeWriteResult> {
+    void _input;
+    return this.fail();
   }
 
   async publish(

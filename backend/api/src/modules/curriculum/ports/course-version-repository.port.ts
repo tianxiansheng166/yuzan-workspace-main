@@ -2,6 +2,8 @@ import type {
   CourseVersion,
   CourseVersionStatus,
   CourseVersionSummary,
+  CourseActivityPracticeWriteResult,
+  CoursePracticeOption,
 } from "../domain/course-version.types.js";
 
 export const COURSE_VERSION_REPOSITORY = Symbol("COURSE_VERSION_REPOSITORY");
@@ -21,6 +23,18 @@ export interface ListCourseVersionsOptions {
 export interface SaveCourseVersionOptions {
   readonly generateVersion: boolean;
   readonly expectedUpdatedAt?: Date;
+  /** Keep the existing activity tree when a mutation only changes version metadata. */
+  readonly replaceUnits?: boolean;
+}
+
+export interface SaveCourseActivityPracticeInput {
+  readonly schoolId: string;
+  readonly courseVersionId: string;
+  readonly courseAuthorUserId: string;
+  readonly activityId: string;
+  readonly practiceDefinitionId: string;
+  readonly required: boolean;
+  readonly expectedUpdatedAt: Date;
 }
 
 export interface CourseVersionRepositoryPort {
@@ -45,6 +59,10 @@ export interface CourseVersionRepositoryPort {
     schoolId: string,
     courseId: string,
   ): Promise<readonly CourseVersion[]>;
+  listCoursePracticeOptions(schoolId: string): Promise<readonly CoursePracticeOption[]>;
+  saveActivityPractice(
+    input: SaveCourseActivityPracticeInput,
+  ): Promise<CourseActivityPracticeWriteResult>;
   publish(
     schoolId: string,
     courseVersionId: string,

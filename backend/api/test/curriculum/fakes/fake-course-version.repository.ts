@@ -1,4 +1,6 @@
 import type {
+  CourseActivityPracticeWriteResult,
+  CoursePracticeOption,
   CourseVersion,
   CourseVersionSummary,
 } from "../../../src/modules/curriculum/domain/course-version.types.js";
@@ -7,12 +9,18 @@ import type {
   CourseVersionRepositoryPort,
   ListCourseVersionsOptions,
   PaginatedResult,
+  SaveCourseActivityPracticeInput,
   SaveCourseVersionOptions,
 } from "../../../src/modules/curriculum/ports/course-version-repository.port.js";
+import {
+  CurriculumConflictException,
+  CurriculumNotFoundException,
+} from "../../../src/modules/curriculum/domain/curriculum.errors.js";
 
 export class FakeCourseVersionRepository implements CourseVersionRepositoryPort {
   private readonly versions = new Map<string, CourseVersion>();
   private readonly versionCounters = new Map<string, number>();
+  private readonly practiceOptions = new Map<string, CoursePracticeOption>();
 
   add(...versions: CourseVersion[]): void {
     for (const version of versions) {
@@ -22,6 +30,10 @@ export class FakeCourseVersionRepository implements CourseVersionRepositoryPort 
         this.versionCounters.set(version.courseId, version.version);
       }
     }
+  }
+
+  addPracticeOptions(...options: CoursePracticeOption[]): void {
+    for (const option of options) this.practiceOptions.set(option.id, option);
   }
 
   async nextVersion(_schoolId: string, courseId: string): Promise<number> {
@@ -110,6 +122,75 @@ export class FakeCourseVersionRepository implements CourseVersionRepositoryPort 
         v.courseId === courseId &&
         v.status === "DRAFT",
     );
+  }
+
+  async listCoursePracticeOptions(_schoolId: string): Promise<readonly CoursePracticeOption[]> {
+    return [...this.practiceOptions.values()];
+  }
+
+  async saveActivityPractice(
+    input: SaveCourseActivityPracticeInput,
+  ): Promise<CourseActivityPracticeWriteResult> {
+    const version = await this.findById(input.schoolId, input.courseVersionId);
+    if (!version) throw new CurriculumNotFoundException();
+    const option = this.practiceOptions.get(input.practiceDefinitionId);
+    if (!option) throw new CurriculumNotFoundException("可用课程练习不存在");
+    const activity = version.units
+      .flatMap((unit) => unit.lessons)
+      .flatMap((lesson) => lesson.activities)
+      .find((entry) => entry.id === input.activityId);
+    if (!activity) throw new CurriculumNotFoundException("课程活动不存在");
+    const existing = activity.practiceReference;
+    if (
+      existing?.practiceDefinitionId === input.practiceDefinitionId &&
+      existing.required === input.required
+    ) {
+      return {
+        id: `course-practice-${input.activityId}`,
+        courseVersionId: input.courseVersionId,
+        activityId: input.activityId,
+        practiceDefinitionId: option.id,
+        title: option.title,
+        required: input.required,
+        courseVersionUpdatedAt: version.updatedAt,
+      };
+    }
+    if (version.updatedAt.getTime() !== input.expectedUpdatedAt.getTime()) {
+      throw new CurriculumConflictException("课程版本已被其他修改更新，请重新载入后再保存");
+    }
+    const updatedAt = new Date(version.updatedAt.getTime() + 1);
+    const updated: CourseVersion = {
+      ...version,
+      updatedAt,
+      units: version.units.map((unit) => ({
+        ...unit,
+        lessons: unit.lessons.map((lesson) => ({
+          ...lesson,
+          activities: lesson.activities.map((entry) =>
+            entry.id === input.activityId
+              ? {
+                  ...entry,
+                  practiceReference: {
+                    practiceDefinitionId: option.id,
+                    title: option.title,
+                    required: input.required,
+                  },
+                }
+              : entry,
+          ),
+        })),
+      })),
+    };
+    this.versions.set(updated.id, updated);
+    return {
+      id: `course-practice-${input.activityId}`,
+      courseVersionId: input.courseVersionId,
+      activityId: input.activityId,
+      practiceDefinitionId: option.id,
+      title: option.title,
+      required: input.required,
+      courseVersionUpdatedAt: updatedAt,
+    };
   }
 
   async publish(
