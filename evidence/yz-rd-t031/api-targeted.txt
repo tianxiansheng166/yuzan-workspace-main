@@ -1,0 +1,13 @@
+
+ RUN  v3.2.7 /home/tian/code/yuzan-workspace-t031/backend/api
+
+ ✓ test/assessment/practice.service.spec.ts (20 tests) 13ms
+ ✓ test/recordings/recordings.service.spec.ts (19 tests) 24ms
+ ✓ test/modules/assignments/assignments.service.spec.ts (12 tests) 12ms
+ ✓ test/student-courses/student-courses.service.spec.ts (29 tests) 8ms
+ ✓ test/curriculum/publishing.validator.spec.ts (13 tests) 3ms
+
+ Test Files  5 passed (5)
+      Tests  93 passed (93)
+   Start at  13:35:59
+   Duration  675ms (transform 252ms, setup 0ms, collect 477ms, tests 59ms, environment 0ms, prepare 39ms)

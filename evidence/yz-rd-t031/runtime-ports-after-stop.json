@@ -1,0 +1,30 @@
+{
+  "task": "YZ-RD-T031",
+  "ports": [
+    {
+      "port": 55657,
+      "status": "FREE"
+    },
+    {
+      "port": 6457,
+      "status": "FREE"
+    },
+    {
+      "port": 59006,
+      "status": "FREE"
+    },
+    {
+      "port": 59007,
+      "status": "FREE"
+    },
+    {
+      "port": 4098,
+      "status": "FREE"
+    },
+    {
+      "port": 4298,
+      "status": "FREE"
+    }
+  ],
+  "allFree": true
+}

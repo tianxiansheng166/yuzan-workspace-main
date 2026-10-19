@@ -1,0 +1,7 @@
+SERVICE  PID     PORT / HEALTH
+postgres 2493247 127.0.0.1:55657 [UP]
+api      2494507 127.0.0.1:4098 HTTP 200 [UP]
+web      2494540 127.0.0.1:4298 HTTP 200 [UP]
+redis    2494627 127.0.0.1:6457 PING PONG [UP]
+minio    2494665 127.0.0.1:59006 health PASS; console 127.0.0.1:59007 owned [UP]
+API dependency readiness: HTTP 200

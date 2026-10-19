@@ -1,0 +1,10 @@
+T031 runner main-frame route: /student/courses/course-detail/
+T031 runner main-frame route: /student/courses/course-detail/
+T031 runner main-frame route: /student/practices/attempts/84642f46-2c00-4973-855f-9371c03bfba2/prepare/
+T031 runner main-frame route: /student/practices/attempts/84642f46-2c00-4973-855f-9371c03bfba2/runner/
+T031 runner API response: 201 /api/v1/schools/11111111-1111-4111-8111-111111111111/assessments/sessions/84642f46-2c00-4973-855f-9371c03bfba2/submit
+T031 runner main-frame route: /student/courses/course-detail/
+T031 runner main-frame route: /student/courses/course-detail/
+T031 runner main-frame route: /student/courses/course-detail/
+.
+1 passed in 80.81s (0:01:20)

@@ -1051,10 +1051,15 @@
       const attemptId = result?.attemptId || result?.id;
       if (!attemptId) throw new Error('练习 API 没有返回真实 Attempt ID。');
       const returnTo = courseUrl();
+      const currentUser = YuzanApi.getStoredUser?.();
       localStorage.setItem(`yuzan-course-practice-context:${attemptId}`, JSON.stringify({
+        attemptId,
         assignmentId: state.assignmentId,
         submissionId: state.submissionId,
         activityId: state.activity.id,
+        enrollmentId: state.enrollmentId,
+        userId: currentUser?.id || null,
+        schoolId: YuzanApi.getActiveSchoolId?.() || null,
         returnTo,
       }));
       location.href = `/student/practices/attempts/${encodeURIComponent(attemptId)}/prepare/?returnTo=${encodeURIComponent(returnTo)}`;

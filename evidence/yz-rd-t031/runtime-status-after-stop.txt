@@ -1,0 +1,5 @@
+SERVICE  PID     PORT / HEALTH
+postgres -       stopped [NOT_OWNED]
+api      -       stopped [NOT_OWNED]
+web      -       stopped [NOT_OWNED]
+API dependency readiness: HTTP unreachable
