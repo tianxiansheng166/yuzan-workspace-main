@@ -1,0 +1,80 @@
+{
+  "taskId": "YZ-RD-T029",
+  "nativeE2E": "PASS",
+  "pass": 1,
+  "fail": 0,
+  "skip": 0,
+  "t026SourceFlow": "PASS_SAME_T029_RUNTIME",
+  "t028SourceFlow": "PASS_SAME_T029_RUNTIME",
+  "statuses": {
+    "malformedInvitationUuid": 400
+  },
+  "sql": {
+    "database": "yuzan_t029_native",
+    "databaseUser": "yz_t029",
+    "schoolId": "e2594b13-8efa-4663-b570-999ecfda3369",
+    "classId": "6c886d71-fe9d-4e80-808e-e174aeb588c5",
+    "teacherCUserId": "73b33d61-e282-4bad-816c-b0577271b32a",
+    "studentAUserId": "33036e9b-2529-42cf-997f-bf60a29f2409",
+    "studentBUserId": "51c92753-2919-4abe-9df6-4e09c6c1ec5e",
+    "revokedInvitationId": "38d6c491-dba9-4f59-801e-2a49b10cb8bf",
+    "revokeAuditLogId": "55d42e5d-efaa-4738-8f0d-b599e0eb6ddc",
+    "revokeAuditCount": "1",
+    "studentAActiveEnrollmentCount": "1",
+    "studentBActiveEnrollmentCount": "1",
+    "teacherRosterRows": 3,
+    "studentAAfterRevokeToday": "REAL_EMPTY_STATE_NO_OPEN_ASSIGNMENT"
+  },
+  "teacherRoster": {
+    "studentAVisible": true,
+    "studentBVisible": true,
+    "renderedRows": 3,
+    "screenshot": "screenshots/teacher-c-roster-1280.png"
+  },
+  "teacherInvitationViewportClicks": [
+    {
+      "width": 390,
+      "height": 844,
+      "openAndCloseClicked": true,
+      "horizontalOverflow": false,
+      "activeCodeMasked": true,
+      "screenshot": "screenshots/teacher-invitation-dialog-390.png"
+    },
+    {
+      "width": 768,
+      "height": 900,
+      "openAndCloseClicked": true,
+      "horizontalOverflow": false,
+      "activeCodeMasked": true,
+      "screenshot": "screenshots/teacher-invitation-dialog-768.png"
+    },
+    {
+      "width": 1280,
+      "height": 900,
+      "openAndCloseClicked": true,
+      "horizontalOverflow": false,
+      "activeCodeMasked": true,
+      "screenshot": "screenshots/teacher-invitation-dialog-1280.png"
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "openAndCloseClicked": true,
+      "horizontalOverflow": false,
+      "activeCodeMasked": true,
+      "screenshot": "screenshots/teacher-invitation-dialog-1440.png"
+    }
+  ],
+  "studentA": {
+    "activeEnrollmentRetained": true,
+    "todayRefreshedAfterRevoke": true,
+    "noAssignmentEmptyState": true,
+    "normalCourseAndTodayNavClicks": 2,
+    "screenshot": "screenshots/student-a-today-after-revoke-1280.png"
+  },
+  "sourceFlows": {
+    "t026Summary": "t026/native-e2e-summary.json",
+    "t028Evidence": "t028/t028-browser-database-evidence.json"
+  },
+  "secrets": "Invitation tokens, database credentials and access tokens omitted"
+}

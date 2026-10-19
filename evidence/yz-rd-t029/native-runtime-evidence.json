@@ -1,0 +1,49 @@
+{
+  "task": "YZ-RD-T029",
+  "database": "yuzan_t029_native",
+  "databaseUser": "yz_t029",
+  "bucket": "yz-t029-native",
+  "minioBucketReady": true,
+  "servicePidsBeforeStop": {
+    "postgres": 2524553,
+    "api": 2524906,
+    "web": 2524956,
+    "redis": 2524591,
+    "minio": 2524603
+  },
+  "chromiumPytestPid": 2525004,
+  "chromiumPytestExited": true,
+  "chromiumPytestExitCode": 0,
+  "nativeE2E": "PASS",
+  "portsAfterStop": {
+    "postgres": {
+      "port": 55829,
+      "stopped": true
+    },
+    "api": {
+      "port": 4129,
+      "stopped": true
+    },
+    "web": {
+      "port": 4329,
+      "stopped": true
+    },
+    "redis": {
+      "port": 6469,
+      "stopped": true
+    },
+    "minio-api": {
+      "port": 59429,
+      "stopped": true
+    },
+    "minio-console": {
+      "port": 59430,
+      "stopped": true
+    }
+  },
+  "stopPass": true,
+  "worker": "NOT_STARTED",
+  "dockerComposeP1Sim": "NOT_USED",
+  "databaseAndMinioData": "RETAINED",
+  "l4HistoricalVolumeIncident": "OPEN_NOT_INSPECTED"
+}

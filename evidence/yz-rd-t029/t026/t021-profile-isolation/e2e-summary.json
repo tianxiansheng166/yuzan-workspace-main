@@ -1,0 +1,160 @@
+{
+  "postgres": "PostgreSQL 17.11 (Ubuntu 17.11-1.pgdg22.04+2) on x86_64-pc-linux-gnu",
+  "viewports": [
+    {
+      "width": 390,
+      "height": 844,
+      "screenshot": "profile-390.png",
+      "viewport": 390,
+      "document": 390,
+      "body": 390,
+      "documentHeight": 2039,
+      "contentEnd": 1591,
+      "profileHeight": 1966
+    },
+    {
+      "width": 768,
+      "height": 1024,
+      "screenshot": "profile-768.png",
+      "viewport": 768,
+      "document": 768,
+      "body": 768,
+      "documentHeight": 1665,
+      "contentEnd": 1366,
+      "profileHeight": 1591
+    },
+    {
+      "width": 1280,
+      "height": 960,
+      "screenshot": "profile-1280.png",
+      "viewport": 1280,
+      "document": 1280,
+      "body": 1280,
+      "documentHeight": 1442,
+      "contentEnd": 1388,
+      "profileHeight": 1352
+    },
+    {
+      "width": 1440,
+      "height": 1000,
+      "screenshot": "profile-1440.png",
+      "viewport": 1440,
+      "document": 1440,
+      "body": 1440,
+      "documentHeight": 1401,
+      "contentEnd": 1347,
+      "profileHeight": 1311
+    }
+  ],
+  "reducedMotionTransition": "1e-05s",
+  "teacherId": "87918c84-a400-46e9-af37-b7579f835c21",
+  "studentAId": "ab32b6ab-41cb-423f-b9f4-6f73feaaef66",
+  "studentBId": "75e2a56f-1118-434e-a4d6-22a9293efcab",
+  "schoolA": "df13210d-65ea-4ce1-9264-46bd76402a21",
+  "schoolB": "78098c16-109f-4c05-a4eb-5594485a8120",
+  "classIds": [
+    "75062b64-5ee9-46a4-bed5-76cc79d9b4e3",
+    "f8776744-e8de-443e-838d-e703566979b7",
+    "45e406df-babc-473f-be81-8625a937ef35"
+  ],
+  "membershipRows": [
+    [
+      "78098c16-109f-4c05-a4eb-5594485a8120",
+      "ACTIVE"
+    ],
+    [
+      "df13210d-65ea-4ce1-9264-46bd76402a21",
+      "ACTIVE"
+    ]
+  ],
+  "enrollmentRows": [
+    [
+      "78098c16-109f-4c05-a4eb-5594485a8120",
+      "45e406df-babc-473f-be81-8625a937ef35",
+      "ACTIVE"
+    ],
+    [
+      "78098c16-109f-4c05-a4eb-5594485a8120",
+      "f8776744-e8de-443e-838d-e703566979b7",
+      "ACTIVE"
+    ],
+    [
+      "df13210d-65ea-4ce1-9264-46bd76402a21",
+      "75062b64-5ee9-46a4-bed5-76cc79d9b4e3",
+      "ACTIVE"
+    ]
+  ],
+  "auditRows": [
+    [
+      "307146d0-a8f8-487f-963e-4eddb746d58c",
+      "75062b64-5ee9-46a4-bed5-76cc79d9b4e3",
+      "87918c84-a400-46e9-af37-b7579f835c21"
+    ],
+    [
+      "b76b023a-d3f7-416f-ad7a-4c1c5b2c1157",
+      "f8776744-e8de-443e-838d-e703566979b7",
+      "87918c84-a400-46e9-af37-b7579f835c21"
+    ],
+    [
+      "49b14a4f-a13d-48f8-a962-a3e0832c7e61",
+      "45e406df-babc-473f-be81-8625a937ef35",
+      "87918c84-a400-46e9-af37-b7579f835c21"
+    ]
+  ],
+  "teacherInvitationUsage": {
+    "307146d0-a8f8-487f-963e-4eddb746d58c": 1,
+    "b76b023a-d3f7-416f-ad7a-4c1c5b2c1157": 1,
+    "49b14a4f-a13d-48f8-a962-a3e0832c7e61": 1
+  },
+  "bindPostCount": 5,
+  "apiStatusNegatives": {
+    "401": true,
+    "403": true,
+    "404": true,
+    "409": true
+  },
+  "rejectedInviteCases": [
+    {
+      "kind": "expired",
+      "invitationId": "2dccf124-e34c-4536-8a38-351647a221c0",
+      "status": 409,
+      "usedCountAfterRejection": 0
+    },
+    {
+      "kind": "revoked",
+      "invitationId": "862cba9e-65b6-4a1c-891c-830891c155b4",
+      "status": 409,
+      "usedCountAfterRejection": 0
+    },
+    {
+      "kind": "exhausted",
+      "invitationId": "d358bada-560b-4f24-82b2-ca204c2a3db7",
+      "status": 409,
+      "usedCountAfterRejection": 1
+    }
+  ],
+  "inactiveTeacherInvitation": {
+    "status": 409,
+    "usedCount": 0
+  },
+  "t026GlobalNavigationClicks": [
+    {
+      "flow": "T023",
+      "from": "/student/today/",
+      "to": "/student/profile/",
+      "action": "clicked shared student navigation"
+    },
+    {
+      "flow": "T023",
+      "from": "/student/today/",
+      "to": "/student/profile/",
+      "action": "clicked shared student navigation"
+    },
+    {
+      "flow": "T023",
+      "from": "/student/profile/",
+      "to": "/student/today/",
+      "action": "clicked shared student navigation"
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "taskId": "YZ-RD-T026",
+  "nativeE2E": "PASS",
+  "pytestCaseCount": 1,
+  "sourceScenarios": [
+    "T023 real teacher Class Detail invitation create, lost response recheck, real clipboard copy/paste, Student Profile bind, SQL membership/enrollment/audit/usedCount, Teacher roster detail and Student Today",
+    "T021 student Profile two-school/three-class isolation, school-switch re-fetch, lost bind/school-switch recovery, distinct Student B identity and 401/403/404/409 negatives"
+  ],
+  "identityNote": "The T023 linked teacher/student click flow and the T021 multi-school identity-isolation flow use separate fictional test identities in the same task-owned database.",
+  "postgres": {
+    "database": "yuzan_t029_native",
+    "user": "yz_t029",
+    "version": "PostgreSQL 17.11 (Ubuntu 17.11-1.pgdg22.04+2) on x86_64-pc-linux-gnu"
+  },
+  "teacherHomeScreenshots": [
+    {
+      "width": 390,
+      "documentScrollWidth": 390,
+      "screenshot": "teacher-home-390.png"
+    },
+    {
+      "width": 768,
+      "documentScrollWidth": 768,
+      "screenshot": "teacher-home-768.png"
+    },
+    {
+      "width": 1280,
+      "documentScrollWidth": 1280,
+      "screenshot": "teacher-home-1280.png"
+    },
+    {
+      "width": 1440,
+      "documentScrollWidth": 1440,
+      "screenshot": "teacher-home-1440.png"
+    }
+  ],
+  "globalNavigationClicks": [
+    {
+      "flow": "T023",
+      "from": "/student/today/",
+      "to": "/student/profile/",
+      "action": "clicked shared student navigation"
+    },
+    {
+      "flow": "T023",
+      "from": "/student/today/",
+      "to": "/student/profile/",
+      "action": "clicked shared student navigation"
+    },
+    {
+      "flow": "T023",
+      "from": "/student/profile/",
+      "to": "/student/today/",
+      "action": "clicked shared student navigation"
+    }
+  ],
+  "inviteSecretHandling": "Only screenshots masked with warm parchment #f3ecdd and evidence without the code are persisted; the server code is held in browser memory for clipboard verification.",
+  "flowEvidence": [
+    "evidence/yz-rd-t029/t026/t023-browser-flow/browser-database-evidence.json",
+    "evidence/yz-rd-t029/t026/t021-profile-isolation/e2e-summary.json"
+  ]
+}
