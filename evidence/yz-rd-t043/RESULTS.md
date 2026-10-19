@@ -6,7 +6,7 @@
 | STATUS | ACCEPTANCE_VERIFIED |
 | BRANCH | `feat/yz-rd-t043-personalized-today-ux-restoration` |
 | START_SHA | `752a6b9ec42e6903635ea6cc45d757eb5aa592aa` |
-| FINAL_SHA | Returned with the final task checkpoint; this evidence commit does not self-reference its SHA. |
+| FINAL_SHA | `fd6648ee8b4686b6cec8f8e320ea65214a6df63c` — verified implementation and native E2E evidence checkpoint. The final results-only branch-head commit is reported in the task return because a Git commit cannot embed its own SHA. |
 | READY_TO_MERGE | NO — inherited full API lint baseline remains unresolved (T033: 1201 errors / 1 warning); this task made no API source changes and did not rerun or waive that baseline. |
 | L4_OPEN | OPEN / untouched |
 
