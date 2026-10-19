@@ -3,6 +3,14 @@
 Last updated: 2026-10-19
 Repository: `yuzan-workspace-main`
 
+## YZ-RD-T026 checkpoint (2026-10-19)
+
+- DONE / WEB_ONLY / NATIVE_CHROMIUM_API_POSTGRESQL_MINIO_VERIFIED / READY_TO_MERGE on `feat/yz-rd-t026-onboarding-rolling-web`; not merged to shared `feat/question-bank-v1`.
+- Exact T024 `ea1a048966d3eb5e17d9ba1c24d565e4616499de`, T021 `6445dca34c19fea89c885a3e4085cf47f9d7e5ed`, and T023 `34af873837c9cfb74a7be33e94617b94668b4f4d` are preserved by two no-fast-forward merges. True bases are T015 `4475f418078e5800678a55b05d418d216962732e` and T020 `e6b8e8aa0b2f8cfe9a3bed894f264c73f64e1f3c`; zero changed-path overlaps/conflicts.
+- Native T026 Chromium/API/PostgreSQL 17/MinIO: 1 passed, 0 failed, 0 skipped. Teacher Class Detail → server invite → clipboard copy/paste → Student Profile bind → PostgreSQL Membership/Enrollment/AuditLog/usedCount → refreshed roster/detail → Student Today is evidenced with dynamic IDs and SQL. Separate T021 Profile verification covers two schools/three classes, retry recovery, and cross-identity isolation.
+- Final suite results, screenshots at 390/768/1280/1440, SQL, API/FE/contract checks, native PIDs/ports, sibling noninterference and known NOT_RUN items are in [`evidence/yz-rd-t026/RESULTS.md`](evidence/yz-rd-t026/RESULTS.md). T026's six ports were stopped; database/MinIO/evidence remain. No Docker/Compose/P1-SIM; L4 remains OPEN.
+- The T005 `feat/question-bank-v1` worktree and original course resource/root environment, plus T022/T025/T027 and all sibling worktrees, were not edited or stopped. Continue integration only from this pushed T026 branch under Commander ownership; do not merge it directly into the dirty shared branch.
+
 ## YZ-RD-T024 checkpoint (2026-10-19)
 
 - DONE / WEB_ONLY / NATIVE_CHROMIUM_API_POSTGRESQL_MINIO_VERIFIED / READY_TO_MERGE. Isolated branch `feat/yz-rd-t024-teacher-student-rolling-web`; no merge into shared `feat/question-bank-v1`. Merge commit `ce709b4539ae0502e4f1a7de216a8d7ba66adb0f` joins T019 `1ebc1923d44dcf238f3441552b7eda946b6c0b44` and T020 `e6b8e8aa0b2f8cfe9a3bed894f264c73f64e1f3c`; T020 already contains T018 `73bb949b22f38b66f92edaa741aa042e504d2d7f`. Merge base is T014 `0596a9b8256c1d674b93eb2afd4de7306c768129`; changed-file counts 201/45 with zero overlap and no conflicts. T014/T018 were not re-integrated.

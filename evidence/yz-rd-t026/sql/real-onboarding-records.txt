@@ -1,0 +1,33 @@
+## T026 database identity
+SELECT current_database(),current_user,version();
+yuzan_t026_native|yz_t026|PostgreSQL 17.11 (Ubuntu 17.11-1.pgdg22.04+2) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0, 64-bit
+
+## T023 linked browser invitation → membership/enrollment/audit/use count
+SELECT i.id AS invitation_id,i."schoolId",i."classId",i."teacherUserId",i."maxUses",i."usedCount",i."expiresAt",
+                       m.id AS membership_id,m.status::text,e.id AS enrollment_id,e.role::text,e.status::text,
+                       a.id AS audit_log_id,a.action
+                  FROM "TeacherInvitation" i
+                  JOIN "Membership" m ON m."schoolId"=i."schoolId" AND m."userId"='95cf0d1e-2c36-412d-a36d-391697bdacd1' AND m.role='STUDENT'
+                  JOIN "Enrollment" e ON e."schoolId"=i."schoolId" AND e."classId"=i."classId" AND e."userId"=m."userId" AND e.role='STUDENT'
+                  JOIN "AuditLog" a ON a."resourceId"=i.id::text AND a."actorUserId"=m."userId" AND a.action='STUDENT_BOUND_TEACHER_INVITATION'
+                 WHERE i.id='db2a6c3b-459c-483b-8d92-01d7e0a37e53';
+db2a6c3b-459c-483b-8d92-01d7e0a37e53|2c883092-5be5-4b41-9d2f-7dcc90ce122a|d08c894b-8a27-43c2-8ca7-6c2517b4bd0a|60b3ae85-5961-405a-a638-0f65c330fee5|1|1|2026-11-18 00:49:51.04|06ded14d-6087-46d7-9c57-a7fad0a44d16|ACTIVE|35f51728-b095-4686-8c63-23400c0c9d7b|STUDENT|ACTIVE|285b0964-d5d0-42cb-a4e3-3438390e2c40|STUDENT_BOUND_TEACHER_INVITATION
+
+## T021 student A school/class memberships and enrollment counts
+SELECT m."schoolId",m."userId",m.status::text,
+                       count(e.id) FILTER (WHERE e.status='ACTIVE') AS active_class_enrollments
+                  FROM "Membership" m LEFT JOIN "Enrollment" e ON e."schoolId"=m."schoolId" AND e."userId"=m."userId" AND e.role='STUDENT'
+                 WHERE m."userId"='15bf2444-5a8a-43e0-90f4-be0e793a596f' AND m.role='STUDENT'
+                 GROUP BY m."schoolId",m."userId",m.status ORDER BY m."schoolId";
+b1a963c5-672b-404d-96e0-4058acfed588|15bf2444-5a8a-43e0-90f4-be0e793a596f|ACTIVE|2
+d99670ae-d940-4766-8729-e5a745f108d9|15bf2444-5a8a-43e0-90f4-be0e793a596f|ACTIVE|1
+
+## T021 student A bound invitation IDs, classes and audit records
+SELECT i.id AS invitation_id,i."schoolId",i."classId",i."usedCount",e.id AS enrollment_id,e.status::text,a.id AS audit_log_id,a.action
+                  FROM "TeacherInvitation" i
+                  JOIN "Enrollment" e ON e."schoolId"=i."schoolId" AND e."classId"=i."classId" AND e."userId"='15bf2444-5a8a-43e0-90f4-be0e793a596f' AND e.role='STUDENT'
+                  LEFT JOIN "AuditLog" a ON a."resourceId"=i.id::text AND a."actorUserId"='15bf2444-5a8a-43e0-90f4-be0e793a596f' AND a.action='STUDENT_BOUND_TEACHER_INVITATION'
+                 WHERE i.id IN ('61e68337-9f95-4679-b39a-bc9b85e1cc02','9bcd3f6f-0b98-4c40-b012-ecdaf852d1fc','ecc6ca6a-1393-42eb-9ed7-ddb0cd8bdea4') ORDER BY i."schoolId",i."classId";
+61e68337-9f95-4679-b39a-bc9b85e1cc02|b1a963c5-672b-404d-96e0-4058acfed588|3024e8ae-39db-4608-9518-a8b19abe5c2f|1|f09cac62-cefc-4397-ba40-3ee8b70cac9a|ACTIVE|6af828c9-e434-4de4-ad5d-1766410585ab|STUDENT_BOUND_TEACHER_INVITATION
+ecc6ca6a-1393-42eb-9ed7-ddb0cd8bdea4|b1a963c5-672b-404d-96e0-4058acfed588|f0a21057-3480-4c37-9a33-44239e932161|1|e0b6b449-9dcd-4a51-9157-c2111c25ddca|ACTIVE|0f549370-50e5-406c-a3e5-3fd977d43890|STUDENT_BOUND_TEACHER_INVITATION
+9bcd3f6f-0b98-4c40-b012-ecdaf852d1fc|d99670ae-d940-4766-8729-e5a745f108d9|0a7a1494-4142-4471-9165-bad9c95c95cb|1|4374810a-0efd-4ba0-ba9f-7e20e3005d37|ACTIVE|b40d4b47-c080-42b4-8a09-17e7ec105f72|STUDENT_BOUND_TEACHER_INVITATION

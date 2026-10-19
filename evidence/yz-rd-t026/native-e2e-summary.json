@@ -1,0 +1,139 @@
+{
+  "taskId": "YZ-RD-T026",
+  "nativeE2E": "PASS",
+  "pytestCaseCount": 1,
+  "sourceScenarios": [
+    "T023 real teacher Class Detail invitation create, lost response recheck, real clipboard copy/paste, Student Profile bind, SQL membership/enrollment/audit/usedCount, Teacher roster detail and Student Today",
+    "T021 student Profile two-school/three-class isolation, school-switch re-fetch, lost bind/school-switch recovery, distinct Student B identity and 401/403/404/409 negatives"
+  ],
+  "identityNote": "The T023 linked teacher/student click flow and the T021 multi-school identity-isolation flow use separate fictional test identities in the same task-owned database.",
+  "postgres": {
+    "database": "yuzan_t026_native",
+    "user": "yz_t026",
+    "version": "PostgreSQL 17.11 (Ubuntu 17.11-1.pgdg22.04+2) on x86_64-pc-linux-gnu"
+  },
+  "teacherHomeScreenshots": [
+    {
+      "width": 390,
+      "documentScrollWidth": 390,
+      "screenshot": "teacher-home-390.png"
+    },
+    {
+      "width": 768,
+      "documentScrollWidth": 768,
+      "screenshot": "teacher-home-768.png"
+    },
+    {
+      "width": 1280,
+      "documentScrollWidth": 1280,
+      "screenshot": "teacher-home-1280.png"
+    },
+    {
+      "width": 1440,
+      "documentScrollWidth": 1440,
+      "screenshot": "teacher-home-1440.png"
+    }
+  ],
+  "globalNavigationClicks": [
+    {
+      "flow": "T023",
+      "from": "/student/today/",
+      "to": "/student/profile/",
+      "action": "clicked shared student navigation"
+    },
+    {
+      "flow": "T023",
+      "from": "/student/today/",
+      "to": "/student/profile/",
+      "action": "clicked shared student navigation"
+    },
+    {
+      "flow": "T023",
+      "from": "/student/profile/",
+      "to": "/student/today/",
+      "action": "clicked shared student navigation"
+    }
+  ],
+  "inviteSecretHandling": "Only screenshots masked with warm parchment #f3ecdd and evidence without the code are persisted; the server code is held in browser memory for clipboard verification.",
+  "flowEvidence": [
+    "evidence/yz-rd-t026/t023-browser-flow/browser-database-evidence.json",
+    "evidence/yz-rd-t026/t021-profile-isolation/e2e-summary.json"
+  ],
+  "multiSchoolEvidence": {
+    "studentAUserId": "15bf2444-5a8a-43e0-90f4-be0e793a596f",
+    "schoolAId": "d99670ae-d940-4766-8729-e5a745f108d9",
+    "schoolBId": "b1a963c5-672b-404d-96e0-4058acfed588",
+    "classIds": [
+      "0a7a1494-4142-4471-9165-bad9c95c95cb",
+      "f0a21057-3480-4c37-9a33-44239e932161",
+      "3024e8ae-39db-4608-9518-a8b19abe5c2f"
+    ],
+    "activeMembershipRows": [
+      ["b1a963c5-672b-404d-96e0-4058acfed588", "ACTIVE"],
+      ["d99670ae-d940-4766-8729-e5a745f108d9", "ACTIVE"]
+    ],
+    "activeEnrollmentRows": [
+      [
+        "b1a963c5-672b-404d-96e0-4058acfed588",
+        "3024e8ae-39db-4608-9518-a8b19abe5c2f",
+        "ACTIVE"
+      ],
+      [
+        "b1a963c5-672b-404d-96e0-4058acfed588",
+        "f0a21057-3480-4c37-9a33-44239e932161",
+        "ACTIVE"
+      ],
+      [
+        "d99670ae-d940-4766-8729-e5a745f108d9",
+        "0a7a1494-4142-4471-9165-bad9c95c95cb",
+        "ACTIVE"
+      ]
+    ],
+    "teacherInvitationUsage": {
+      "9bcd3f6f-0b98-4c40-b012-ecdaf852d1fc": 1,
+      "ecc6ca6a-1393-42eb-9ed7-ddb0cd8bdea4": 1,
+      "61e68337-9f95-4679-b39a-bc9b85e1cc02": 1
+    },
+    "auditRows": [
+      [
+        "9bcd3f6f-0b98-4c40-b012-ecdaf852d1fc",
+        "0a7a1494-4142-4471-9165-bad9c95c95cb",
+        "a8cbc722-fcbe-4c04-8c13-c6bd71431de4"
+      ],
+      [
+        "ecc6ca6a-1393-42eb-9ed7-ddb0cd8bdea4",
+        "f0a21057-3480-4c37-9a33-44239e932161",
+        "a8cbc722-fcbe-4c04-8c13-c6bd71431de4"
+      ],
+      [
+        "61e68337-9f95-4679-b39a-bc9b85e1cc02",
+        "3024e8ae-39db-4608-9518-a8b19abe5c2f",
+        "a8cbc722-fcbe-4c04-8c13-c6bd71431de4"
+      ]
+    ],
+    "schoolSwitchRefetchedProfile": true,
+    "lostBindResponseRecheckedWithoutExtraUse": true,
+    "committedBindWithSchoolSwitch503ShownPendingThenRechecked": true,
+    "missingOptionalStatisticsDisplay": "—",
+    "explicitServerZeroDisplay": "0",
+    "studentBIdentityChangeClearedStudentAData": true,
+    "studentBUnauthorizedSchoolProfileStatus": 403
+  },
+  "linkedT023Evidence": {
+    "teacherUserId": "60b3ae85-5961-405a-a638-0f65c330fee5",
+    "studentUserId": "95cf0d1e-2c36-412d-a36d-391697bdacd1",
+    "schoolId": "2c883092-5be5-4b41-9d2f-7dcc90ce122a",
+    "classId": "d08c894b-8a27-43c2-8ca7-6c2517b4bd0a",
+    "membershipId": "06ded14d-6087-46d7-9c57-a7fad0a44d16",
+    "enrollmentId": "35f51728-b095-4686-8c63-23400c0c9d7b",
+    "invitationId": "db2a6c3b-459c-483b-8d92-01d7e0a37e53",
+    "auditLogId": "285b0964-d5d0-42cb-a4e3-3438390e2c40",
+    "usedCount": "1",
+    "maxUses": "1",
+    "realClipboardWriteResolvedAndReadBack": true,
+    "createResponseLossRecheckedWithOnePOST": true,
+    "rosterAndEnrollmentDetailOpened": true,
+    "studentTodayRealEmptyState": true,
+    "detailEvidence": "see t023-browser-flow/browser-database-evidence.json and sql/real-onboarding-records.txt"
+  }
+}

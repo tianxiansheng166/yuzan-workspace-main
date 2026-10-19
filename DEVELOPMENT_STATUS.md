@@ -1,5 +1,13 @@
 # Development status
 
+## YZ-RD-T026 — T021 student Profile + T023 teacher invitation into T024 (2026-10-19)
+
+DONE / WEB_ONLY / READY_TO_MERGE; not merged into `feat/question-bank-v1`. T026 starts from accepted T024 `ea1a048966d3eb5e17d9ba1c24d565e4616499de` and merges exact T021 `6445dca34c19fea89c885a3e4085cf47f9d7e5ed` and T023 `34af873837c9cfb74a7be33e94617b94668b4f4d` with two no-fast-forward commits. True merge bases are T015 `4475f418078e5800678a55b05d418d216962732e` and T020 `e6b8e8aa0b2f8cfe9a3bed894f264c73f64e1f3c`; both changed-file intersections are empty and there were no conflicts.
+
+The T026 native Chromium/API/PostgreSQL 17/MinIO E2E passes `1/1`, `0` skipped. It verifies the real teacher Class Detail invitation and clipboard, Student Profile binding, SQL Membership/Enrollment/AuditLog/usedCount, refreshed teacher roster/detail, Student Today, and a separate two-school/three-class identity-isolation path. Frontend `67/67`, T023 invitation UI contract `4/4`, targeted invitation/class/review API `48/48`, full API `1101 passed / 64 environment-gated skips`, Contracts `6/6`, Prisma validation, typecheck, and build passed. See [`evidence/yz-rd-t026/RESULTS.md`](evidence/yz-rd-t026/RESULTS.md) for IDs, SQL, screenshots, failure/retry checks, ports, and source graph.
+
+T026 services were stopped with all six owned ports free; its PostgreSQL/MinIO data and evidence remain. Worker, Docker, Compose, and P1-SIM were not used. L4 remains OPEN. T005's dirty course/bilingual tree and T022/T025/T027/sibling worktrees were not modified or stopped.
+
 ## YZ-RD-T024 — T019/T020 teacher + student Web integration (2026-10-19)
 
 DONE / WEB_ONLY / READY_TO_MERGE; NOT MERGED into `feat/question-bank-v1`. Isolated branch `feat/yz-rd-t024-teacher-student-rolling-web` combines accepted T019 `1ebc1923d44dcf238f3441552b7eda946b6c0b44` with T020 `e6b8e8aa0b2f8cfe9a3bed894f264c73f64e1f3c` (containing T018 `73bb949b22f38b66f92edaa741aa042e504d2d7f`) via no-fast-forward merge `ce709b4539ae0502e4f1a7de216a8d7ba66adb0f`. The true merge base is `0596a9b8256c1d674b93eb2afd4de7306c768129`; T019/T020 changed paths are 201/45, with zero overlap.
