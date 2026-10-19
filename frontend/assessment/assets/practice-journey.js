@@ -41,7 +41,7 @@
         ${lane.href
           ? `<a href="${safe(lane.href)}">${lane.label} <span aria-hidden="true">↗</span></a>`
           : lane.filter
-            ? `<button type="button" data-filter-key="${lane.filter.key}" data-filter-value="${lane.filter.value}">${lane.label} <span aria-hidden="true">↗</span></button>`
+            ? `<button type="button" data-journey-oral>${lane.label} <span aria-hidden="true">↗</span></button>`
             : `<button type="button" data-tab="${lane.tab}" aria-pressed="${Boolean(lane.selected)}">${lane.label} <span aria-hidden="true">↗</span></button>`}
       </article>`).join('')}</div>
     </section>`;

@@ -15,7 +15,7 @@ test('catalog channels use real existing server-side filters, not invented exams
   assert.equal(model[1].selected, true);
   assert.equal(model[2].tab, 'SPECIALIZED');
   const html = render({ items: [], tab: 'RECOMMENDED' });
-  assert.match(html, /data-filter-key="requiresRecording"/);
+  assert.match(html, /data-journey-oral/);
   assert.match(html, /data-tab="MOCK"/);
   assert.match(html, /data-tab="SPECIALIZED"/);
   assert.match(html, /不是官方考试/);

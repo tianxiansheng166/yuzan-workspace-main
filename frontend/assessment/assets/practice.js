@@ -217,6 +217,12 @@
     compactCatalogFilters();
     document.querySelector('[data-search-form]')?.addEventListener('submit', event => { event.preventDefault(); state.query = document.querySelector('[data-search-input]').value.trim(); refreshCatalog(); });
     document.querySelectorAll('[data-tab]').forEach(button => button.addEventListener('click', () => { state.tab = button.dataset.tab; if (state.tab !== 'RECOMMENDED') state.sort = 'RECOMMENDED'; refreshCatalog(); }));
+    document.querySelector('[data-journey-oral]')?.addEventListener('click', () => {
+      // Discover recording practice across the whole authorized catalog, not
+      // only inside the last selected MOCK or SPECIALIZED tab.
+      state.tab = 'ALL'; state.query = ''; state.filters = { requiresRecording: 'true' };
+      state.sort = 'RECOMMENDED'; refreshCatalog();
+    });
     document.querySelectorAll('[data-filter-key]').forEach(button => button.addEventListener('click', () => { const key = button.dataset.filterKey; const value = button.dataset.filterValue; state.filters[key] = state.filters[key] === value ? undefined : value; refreshCatalog(); }));
     document.querySelectorAll('[data-clear-filter]').forEach(button => button.addEventListener('click', () => { delete state.filters[button.dataset.clearFilter]; refreshCatalog(); }));
     document.querySelectorAll('[data-clear-all]').forEach(button => button.addEventListener('click', () => { state.filters = {}; state.query = ''; state.tab = 'ALL'; refreshCatalog(); }));
