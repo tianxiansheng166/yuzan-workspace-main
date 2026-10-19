@@ -3,6 +3,13 @@
 Last updated: 2026-10-19
 Repository: `yuzan-workspace-main`
 
+## YZ-RD-T045 mobile practice catalog density checkpoint (2026-10-19)
+
+- Started from T044 native E2E accepted-scoped source. At 390px its first actual practice card begins around document y=1018, below a 390×844 initial viewport even though oral facet, tabs, auth and recording E2E passed.
+- T045 changes only `frontend/assessment/assets/practice.js` and `practice.css` to reduce mobile decorative spacing, keep the real catalog worklist first, and move mobile abilities to accessible native `<details>` with existing authentic facet buttons; desktop ability rail remains unchanged.
+- Frontend 94/94 PASS and JS/diffcheck PASS. Chrome visual-only fixture was attempted but its browser launch stalled under high host load (about 50 Chrome processes, host load 65), and only the owned T045 test was interrupted; 390px first card y and native API/PG E2E are **NOT_VERIFIED**. Never claim ACCEPTED or merge shared until those gates pass. The inherited full API lint debt remains.
+- No T005 dirty worktree, T043 active verification, other worktrees/services, or historical L4 data were modified.
+
 ## YZ-RD-T044 practice catalog UX hierarchy correction (2026-10-19)
 
 - COMPLETE / WEB_ONLY / NATIVE_CHROMIUM_API_POSTGRESQL17_REDIS_MINIO_VERIFIED / NOT_MERGED. Branch `feat/yz-rd-t044-practice-catalog-ux-hierarchy`, exact start `ef3e5404ab43561b89b6bf863f5c7f7a250afa27`; Git HEAD is authoritative for the final SHA.

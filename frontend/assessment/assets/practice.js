@@ -84,6 +84,20 @@
     // The optional recording facet lives alongside existing search tools.
     document.querySelector('.catalog-head-tools')?.insertAdjacentHTML('afterbegin',
       window.YuzanPracticeJourney?.render({ filters: state.filters, tab: state.tab }) || '');
+    // On narrow screens, let students see actual exercises before a large
+    // ability filter rail. Keep the exact same authorized facet controls in
+    // an accessible disclosure instead of removing filters from mobile.
+    const desktopAbilities = document.querySelector('.catalog-ability');
+    if (desktopAbilities) {
+      const mobileAbilities = document.createElement('details');
+      mobileAbilities.className = 'catalog-mobile-abilities';
+      const summary = document.createElement('summary');
+      summary.textContent = selectedCategory ? `能力方向：${selectedCategory}` : '按能力方向筛选';
+      mobileAbilities.append(summary);
+      const abilityButtons = desktopAbilities.querySelector('.ability-rail')?.cloneNode(true);
+      if (abilityButtons) mobileAbilities.append(abilityButtons);
+      desktopAbilities.before(mobileAbilities);
+    }
     if (recommendedLabel) {
       const banner = document.createElement('article');
       banner.className = 'card notice';
