@@ -1,9 +1,9 @@
 # CURRENT HANDOFF
 
-Last updated: 2026-10-19
+Last updated: 2026-10-20
 Repository: `yuzan-workspace-main`
 
-## YZ-RD-T047 mobile-first unified product integration (2026-10-19)
+## YZ-RD-T047 mobile-first unified product integration (2026-10-20)
 
 - COMPLETE on independent branch `feat/yz-rd-t047-mobile-first-unified-product`. No-FF merge `b5a57430d03d8f92b1419c08b871abc19a415d5d` preserves BASE T046 `0f6ea3710797612aa08f37944a9ab9d92f033da1` and accepted T045 `e3a3c544bb990904212f5ad518a6dc46ae68916c` as its exact parents.
 - T047 native Chromium/API/PostgreSQL/Redis/MinIO E2E verified the server-backed first oral practice at 390×844: card y=624, title y=813.8–838.8, fully visible; 390/768/1280/1440 have zero horizontal overflow. T045 task rendering, T046 personalized Today, teacher assignment, real speech upload/PROCESSING state, review isolation, six manual reviews and student formal 0/100 + 55/100 reports passed. The first full suite had two legacy-selector failures; the existing integrated route was enabled and both affected cases replayed PASS. Detailed evidence: [evidence/yz-rd-t047/RESULTS.md](evidence/yz-rd-t047/RESULTS.md).
