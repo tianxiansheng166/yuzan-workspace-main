@@ -1,0 +1,17 @@
+QB source validator
+DRY RUN — NO DATABASE WRITE — NO MINIO WRITE
+Parsed items: 120
+Media: 126 files (90 images, 36 audio)
+Selected: 120 items, 600 points, scoring binding 120/120 (missing 0, ambiguous 0)
+Validation: errors 0, warnings 0
+{
+  "mode": "DRY RUN — NO DATABASE WRITE — NO MINIO WRITE",
+  "level": "all",
+  "preflight": {
+    "items": 120,
+    "points": 600,
+    "bound": 120,
+    "missing": 0,
+    "ambiguous": 0
+  }
+}

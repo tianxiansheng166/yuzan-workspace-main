@@ -1,0 +1,189 @@
+{
+  "courseVersionId": "1ca497cc-8386-48a7-b616-54e0a276eec6",
+  "courseVersionSql": {
+    "id": "1ca497cc-8386-48a7-b616-54e0a276eec6",
+    "status": "PUBLISHED",
+    "version": 1
+  },
+  "assignmentId": "a0be52ce-ff8d-4305-aa8c-f41ccd5851df",
+  "assignmentSql": {
+    "id": "a0be52ce-ff8d-4305-aa8c-f41ccd5851df",
+    "status": "OPEN",
+    "revision": 3,
+    "courseVersionId": "1ca497cc-8386-48a7-b616-54e0a276eec6"
+  },
+  "assignmentStatus": "OPEN",
+  "assignmentRevision": 3,
+  "submissionId": "082c2812-93c1-412d-8b5b-3cb54cb87a0b",
+  "submissionSql": {
+    "id": "082c2812-93c1-412d-8b5b-3cb54cb87a0b",
+    "status": "IN_PROGRESS",
+    "assignmentId": "a0be52ce-ff8d-4305-aa8c-f41ccd5851df",
+    "enrollmentId": "f1111111-1111-4111-8111-111111111111"
+  },
+  "enrollmentA": "f1111111-1111-4111-8111-111111111111",
+  "enrollmentB": "f5fc8621-40e3-4bbd-867d-6b5c4ff32ce8",
+  "activityIds": {
+    "unit": "7a18ee9f-c49c-4271-b979-bae5dbc217ae",
+    "lesson": "2a92920b-3487-493a-96d4-90974e1c5b4e",
+    "text": "f12ab8eb-d0cc-4e57-b060-65522f0b00e3",
+    "audio": "b501588f-ee03-4e97-b942-2f6569b35c47",
+    "video": "6befd1a2-c3d2-4af3-b400-4acad06f782a",
+    "missing_video": "f28ce32d-ea38-4e27-af68-d9a91b46d01e",
+    "choice": "87184bb4-6687-44cd-bb1a-e7ef323f465e",
+    "fill": "5784b59f-84f6-4904-b034-0ce38ee3211d",
+    "speech": "ff137fc3-3c46-4bb9-b57d-0c8250b83541",
+    "practice": "bae83bb7-082d-4bfd-8615-a3cf07fe8feb"
+  },
+  "practiceDefinitionId": "70000000-0000-4000-8000-000000000003",
+  "note": {
+    "content": "断网时的草稿：重新联网后保存到 PostgreSQL。",
+    "revision": 5
+  },
+  "noteDuringSaving": {
+    "putRequests": 2,
+    "firstPendingSaveFinalRevision": 2
+  },
+  "noteTimeout": {
+    "putRequests": 1,
+    "serverConfirmedAfterRequestReturned": true,
+    "revision": 3
+  },
+  "noteTwoTabConflict": {
+    "preservedDraft": "来自标签页 B 的新草稿",
+    "selectedServerContent": "来自标签页 A 的新草稿"
+  },
+  "unsavedLeavePrompt": "本活动笔记尚未确认保存。离开后本页草稿可能丢失，仍要离开吗？",
+  "noteAfterRelogin": {
+    "content": "断网时的草稿：重新联网后保存到 PostgreSQL。",
+    "revision": 5,
+    "enrollmentId": "f1111111-1111-4111-8111-111111111111",
+    "activityId": "f12ab8eb-d0cc-4e57-b060-65522f0b00e3"
+  },
+  "textProgress": {
+    "completed": true,
+    "position": 1,
+    "revision": 1,
+    "activityId": "f12ab8eb-d0cc-4e57-b060-65522f0b00e3",
+    "enrollmentId": "f1111111-1111-4111-8111-111111111111"
+  },
+  "choiceProgress": {
+    "completed": true,
+    "position": 1,
+    "revision": 1,
+    "activityId": "87184bb4-6687-44cd-bb1a-e7ef323f465e",
+    "enrollmentId": "f1111111-1111-4111-8111-111111111111"
+  },
+  "fillAnswer": "融化的积雪和新生的草芽。",
+  "audioProgress": {
+    "completed": true,
+    "position": 1,
+    "revision": 3,
+    "activityId": "b501588f-ee03-4e97-b942-2f6569b35c47",
+    "enrollmentId": "f1111111-1111-4111-8111-111111111111"
+  },
+  "videoProgress": {
+    "completed": true,
+    "position": 1,
+    "revision": 5,
+    "activityId": "6befd1a2-c3d2-4af3-b400-4acad06f782a",
+    "enrollmentId": "f1111111-1111-4111-8111-111111111111"
+  },
+  "mediaSources": {
+    "audio": "/assessment/assets/question-bank/audio/level-1-dictation-1.mp3",
+    "video": "/assets/media/video.mp4"
+  },
+  "speechProgress": {
+    "completed": true,
+    "position": 1,
+    "revision": 1,
+    "activityId": "ff137fc3-3c46-4bb9-b57d-0c8250b83541",
+    "enrollmentId": "f1111111-1111-4111-8111-111111111111"
+  },
+  "microphonePermissionDenied": {
+    "uiErrorVisible": true,
+    "recordingsCreated": 0,
+    "progressCreated": false
+  },
+  "recording": {
+    "id": "aeaa2d5e-16ea-4b61-bf30-a6d2c2ab176a",
+    "status": "COMPLETE",
+    "objectKey": "recordings/aeaa2d5e-16ea-4b61-bf30-a6d2c2ab176a/full",
+    "mimeType": "audio/webm;codecs=opus",
+    "durationMs": 2349,
+    "activityAttemptId": "bac86982-2be5-49ca-a1c4-a915daaf43b8",
+    "linkedAttemptId": "bac86982-2be5-49ca-a1c4-a915daaf43b8"
+  },
+  "minioHead": {
+    "bytes": 30017,
+    "contentType": "audio/webm;codecs=opus",
+    "etag": "\"f41fb3452812c0efbfe6cd3dd27ee045\""
+  },
+  "minioHeadAfterLinkFailure": {
+    "bytes": 30017,
+    "contentType": "audio/webm;codecs=opus",
+    "etag": "\"f41fb3452812c0efbfe6cd3dd27ee045\""
+  },
+  "speechJobCount": 1,
+  "uploadNetworkFailureCount": 1,
+  "signedUrl403RetryCount": 1,
+  "courseLinkFailureCount": 1,
+  "recordingRetryIds": [
+    "aeaa2d5e-16ea-4b61-bf30-a6d2c2ab176a",
+    "aeaa2d5e-16ea-4b61-bf30-a6d2c2ab176a",
+    "aeaa2d5e-16ea-4b61-bf30-a6d2c2ab176a",
+    "aeaa2d5e-16ea-4b61-bf30-a6d2c2ab176a"
+  ],
+  "practiceAttemptId": "1256080c-4152-4866-934a-c96c138afd85",
+  "practiceAttempt": {
+    "id": "1256080c-4152-4866-934a-c96c138afd85",
+    "deliveryId": "72000000-0000-4000-8000-000000000003",
+    "courseActivityId": "bae83bb7-082d-4bfd-8615-a3cf07fe8feb",
+    "courseSubmissionId": "082c2812-93c1-412d-8b5b-3cb54cb87a0b",
+    "status": "PROCESSING"
+  },
+  "coursePracticeLink": {
+    "activityId": "bae83bb7-082d-4bfd-8615-a3cf07fe8feb",
+    "practiceDefinitionId": "70000000-0000-4000-8000-000000000003",
+    "required": true
+  },
+  "practiceProgress": {
+    "completed": true,
+    "position": 1,
+    "revision": 1,
+    "activityId": "bae83bb7-082d-4bfd-8615-a3cf07fe8feb",
+    "enrollmentId": "f1111111-1111-4111-8111-111111111111"
+  },
+  "runner": {
+    "itemCount": 4,
+    "playedAudio": 1,
+    "recordedAudio": 2,
+    "uploadRetries": 0,
+    "submitPosts": 1,
+    "confirmationDismissals": 0,
+    "duplicateSubmitId": null
+  },
+  "microphoneSource": "SIMULATED_MIC (Chromium fake device; physical microphone not run)",
+  "visualProof": {
+    "courseCoverAsset": "/assets/generated-covers/course-spring-reading.png",
+    "courseCoverStyle": "url(\"http://127.0.0.1:4292/assets/generated-covers/course-spring-reading.png\")",
+    "contentImage": {
+      "alt": "春季阅读课程封面插图",
+      "src": "/assets/generated-covers/course-spring-reading.png",
+      "naturalWidth": 1536,
+      "naturalHeight": 1024
+    }
+  },
+  "browserErrors": [],
+  "negativeStatuses": {
+    "noteStale": 409,
+    "progressStale": 409,
+    "recordingB": 403,
+    "submissionB": 404,
+    "progressB": 403,
+    "activityWriteB": 404,
+    "wrongSchool": 403,
+    "anonymous": 401,
+    "missingAssignment": 404
+  }
+}

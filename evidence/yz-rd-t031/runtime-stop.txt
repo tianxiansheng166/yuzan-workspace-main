@@ -1,0 +1,6 @@
+web: 已停止 (PID 2494540)
+api: 已停止 (PID 2494507)
+minio: 已停止 (PID 2494665)
+redis: 已停止 (PID 2494627)
+postgres: 已停止 (PID 2493247)
+Stop: PASS

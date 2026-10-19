@@ -1,0 +1,309 @@
+{
+  "courseVersionId": "c91311e6-ea97-4294-9c03-17b5cacf4adc",
+  "courseVersionSql": {
+    "id": "c91311e6-ea97-4294-9c03-17b5cacf4adc",
+    "status": "PUBLISHED",
+    "version": 1
+  },
+  "assignmentId": "ca22b82b-7756-4e68-a615-5b9faefc8969",
+  "assignmentSql": {
+    "id": "ca22b82b-7756-4e68-a615-5b9faefc8969",
+    "status": "OPEN",
+    "revision": 3,
+    "courseVersionId": "c91311e6-ea97-4294-9c03-17b5cacf4adc"
+  },
+  "assignmentStatus": "OPEN",
+  "assignmentRevision": 3,
+  "submissionId": "4b949b52-1aa2-4ec5-bc78-960a1a47ed9f",
+  "submissionSql": {
+    "id": "4b949b52-1aa2-4ec5-bc78-960a1a47ed9f",
+    "status": "IN_PROGRESS",
+    "assignmentId": "ca22b82b-7756-4e68-a615-5b9faefc8969",
+    "enrollmentId": "f1111111-1111-4111-8111-111111111111"
+  },
+  "enrollmentA": "f1111111-1111-4111-8111-111111111111",
+  "enrollmentB": "145ad0c3-b709-4293-9337-b7751d2c8485",
+  "activityIds": {
+    "unit": "5afe7cd7-cf00-4587-9b6d-7d33fb89e8c8",
+    "lesson": "78019090-7f69-45f7-b1ac-6d458a900dcd",
+    "text": "0ff19f53-fcd8-46b9-ac6f-90485a6bb371",
+    "audio": "4ee42721-ae1f-47bf-8a93-9c45785e9286",
+    "video": "0fbd65ba-c496-4384-9b67-52f41e2fe1ab",
+    "missing_video": "72c8bc3f-a96d-4fb7-9b04-2f21b2e6c2b2",
+    "choice": "d6b14b45-e1d3-4dad-b2e4-351f4c78750e",
+    "fill": "1ba6d819-e4ae-4c8f-bcdc-edb83e2d1c38",
+    "speech": "1e0d9aa4-4674-4334-be79-ca0577d2744e",
+    "practice": "b8b7877e-933b-4742-b30b-160216016be7"
+  },
+  "practiceDefinitionId": "92f440b6-537e-4e28-ba31-352c8b54a418",
+  "note": {
+    "content": "断网时的草稿：重新联网后保存到 PostgreSQL。",
+    "revision": 5
+  },
+  "noteDuringSaving": {
+    "putRequests": 2,
+    "firstPendingSaveFinalRevision": 2
+  },
+  "noteTimeout": {
+    "putRequests": 1,
+    "serverConfirmedAfterRequestReturned": true,
+    "revision": 3
+  },
+  "noteTwoTabConflict": {
+    "preservedDraft": "来自标签页 B 的新草稿",
+    "selectedServerContent": "来自标签页 A 的新草稿"
+  },
+  "unsavedLeavePrompt": "本活动笔记尚未确认保存。离开后本页草稿可能丢失，仍要离开吗？",
+  "noteAfterRelogin": {
+    "content": "断网时的草稿：重新联网后保存到 PostgreSQL。",
+    "revision": 5,
+    "enrollmentId": "f1111111-1111-4111-8111-111111111111",
+    "activityId": "0ff19f53-fcd8-46b9-ac6f-90485a6bb371"
+  },
+  "textProgress": {
+    "completed": true,
+    "position": 1,
+    "revision": 1,
+    "activityId": "0ff19f53-fcd8-46b9-ac6f-90485a6bb371",
+    "enrollmentId": "f1111111-1111-4111-8111-111111111111"
+  },
+  "choiceProgress": {
+    "completed": true,
+    "position": 1,
+    "revision": 1,
+    "activityId": "d6b14b45-e1d3-4dad-b2e4-351f4c78750e",
+    "enrollmentId": "f1111111-1111-4111-8111-111111111111"
+  },
+  "fillAnswer": "融化的积雪和新生的草芽。",
+  "audioProgress": {
+    "completed": true,
+    "position": 1,
+    "revision": 3,
+    "activityId": "4ee42721-ae1f-47bf-8a93-9c45785e9286",
+    "enrollmentId": "f1111111-1111-4111-8111-111111111111"
+  },
+  "videoProgress": {
+    "completed": true,
+    "position": 1,
+    "revision": 5,
+    "activityId": "0fbd65ba-c496-4384-9b67-52f41e2fe1ab",
+    "enrollmentId": "f1111111-1111-4111-8111-111111111111"
+  },
+  "mediaSources": {
+    "audio": "/assessment/assets/question-bank/audio/level-1-dictation-1.mp3",
+    "video": "/assets/media/video.mp4"
+  },
+  "speechProgress": {
+    "completed": true,
+    "position": 1,
+    "revision": 1,
+    "activityId": "1e0d9aa4-4674-4334-be79-ca0577d2744e",
+    "enrollmentId": "f1111111-1111-4111-8111-111111111111"
+  },
+  "microphonePermissionDenied": {
+    "uiErrorVisible": true,
+    "recordingsCreated": 0,
+    "progressCreated": false
+  },
+  "recording": {
+    "id": "daeabadc-d9f8-44b4-9235-3ee8a6048ff3",
+    "status": "COMPLETE",
+    "objectKey": "recordings/daeabadc-d9f8-44b4-9235-3ee8a6048ff3/full",
+    "mimeType": "audio/webm;codecs=opus",
+    "durationMs": 2349,
+    "activityAttemptId": "72597002-f22b-4eac-8cac-16deb4223e1b",
+    "linkedAttemptId": "72597002-f22b-4eac-8cac-16deb4223e1b"
+  },
+  "minioHead": {
+    "bytes": 30331,
+    "contentType": "audio/webm;codecs=opus",
+    "etag": "\"58d3311df14abbd02eab7681066e7d22\""
+  },
+  "minioHeadAfterLinkFailure": {
+    "bytes": 30331,
+    "contentType": "audio/webm;codecs=opus",
+    "etag": "\"58d3311df14abbd02eab7681066e7d22\""
+  },
+  "speechJobCount": 1,
+  "uploadNetworkFailureCount": 1,
+  "signedUrl403RetryCount": 1,
+  "courseLinkFailureCount": 1,
+  "recordingRetryIds": [
+    "daeabadc-d9f8-44b4-9235-3ee8a6048ff3",
+    "daeabadc-d9f8-44b4-9235-3ee8a6048ff3",
+    "daeabadc-d9f8-44b4-9235-3ee8a6048ff3",
+    "daeabadc-d9f8-44b4-9235-3ee8a6048ff3"
+  ],
+  "practiceAttemptId": "84642f46-2c00-4973-855f-9371c03bfba2",
+  "practiceAttempt": {
+    "id": "84642f46-2c00-4973-855f-9371c03bfba2",
+    "deliveryId": "9b7bd744-8196-4c4e-a9fc-b4c50235718c",
+    "courseActivityId": "b8b7877e-933b-4742-b30b-160216016be7",
+    "courseSubmissionId": "4b949b52-1aa2-4ec5-bc78-960a1a47ed9f",
+    "status": "PROCESSING"
+  },
+  "practiceAttemptCountForActivity": 1,
+  "runnerItemCount": 20,
+  "runnerScoredAudioItemCount": 0,
+  "runnerAssessmentReportCount": 0,
+  "runnerRecordings": [
+    {
+      "recordingId": "70da5bf4-1932-4ef6-a264-3e0ef6b3c081",
+      "objectKey": "recordings/70da5bf4-1932-4ef6-a264-3e0ef6b3c081/full",
+      "status": "COMPLETE",
+      "mimeType": "audio/webm;codecs=opus",
+      "durationMs": 1000,
+      "idempotencyKey": "runner-84642f46-2c00-4973-855f-9371c03bfba2-2054408b-9cc5-4ecc-811d-51fb5975af74-4ac5e87f-e199-4a73-94df-44c10d48c93f",
+      "speechJobCount": 1,
+      "minioHead": {
+        "bytes": 22514,
+        "contentType": "audio/webm;codecs=opus",
+        "etag": "\"f57831e2a8dfd2944c6ebcb8b29fe93d\""
+      }
+    },
+    {
+      "recordingId": "9e3e9e85-05ba-4bc8-8ceb-f2722d773424",
+      "objectKey": "recordings/9e3e9e85-05ba-4bc8-8ceb-f2722d773424/full",
+      "status": "COMPLETE",
+      "mimeType": "audio/webm;codecs=opus",
+      "durationMs": 1000,
+      "idempotencyKey": "runner-84642f46-2c00-4973-855f-9371c03bfba2-03543791-e0e6-4e17-aa7d-fa2b61a1ffe4-ef70590e-a573-4df9-a813-a4c370a6d1f4",
+      "speechJobCount": 1,
+      "minioHead": {
+        "bytes": 22514,
+        "contentType": "audio/webm;codecs=opus",
+        "etag": "\"6d946abbc54340fd6b44a7c5dbe67024\""
+      }
+    },
+    {
+      "recordingId": "cd89520b-a58b-4a88-9084-66c2e2d21687",
+      "objectKey": "recordings/cd89520b-a58b-4a88-9084-66c2e2d21687/full",
+      "status": "COMPLETE",
+      "mimeType": "audio/webm;codecs=opus",
+      "durationMs": 1000,
+      "idempotencyKey": "runner-84642f46-2c00-4973-855f-9371c03bfba2-4e2830c5-3936-402b-b700-0e63a1646160-aaf66795-1744-4195-b8a0-dcb8130e6218",
+      "speechJobCount": 1,
+      "minioHead": {
+        "bytes": 22514,
+        "contentType": "audio/webm;codecs=opus",
+        "etag": "\"3bc38d535e11fc09c9807a91a9b75ff3\""
+      }
+    },
+    {
+      "recordingId": "f1b3667b-bafc-48cf-8181-8ce6a9a8dc75",
+      "objectKey": "recordings/f1b3667b-bafc-48cf-8181-8ce6a9a8dc75/full",
+      "status": "COMPLETE",
+      "mimeType": "audio/webm;codecs=opus",
+      "durationMs": 1000,
+      "idempotencyKey": "runner-84642f46-2c00-4973-855f-9371c03bfba2-3cc4b201-3e16-42df-a2ee-3c759305b171-37617fae-a31c-40a7-92d7-b94ccd4a3f95",
+      "speechJobCount": 1,
+      "minioHead": {
+        "bytes": 22514,
+        "contentType": "audio/webm;codecs=opus",
+        "etag": "\"e502dfac36a9e623c937919ec8adc822\""
+      }
+    }
+  ],
+  "coursePracticeLink": {
+    "activityId": "b8b7877e-933b-4742-b30b-160216016be7",
+    "practiceDefinitionId": "92f440b6-537e-4e28-ba31-352c8b54a418",
+    "required": true
+  },
+  "practiceProgress": {
+    "completed": true,
+    "position": 1,
+    "revision": 1,
+    "activityId": "b8b7877e-933b-4742-b30b-160216016be7",
+    "enrollmentId": "f1111111-1111-4111-8111-111111111111"
+  },
+  "runner": {
+    "itemCount": 20,
+    "playedAudio": 0,
+    "recordedAudio": 4,
+    "uploadRetries": 0,
+    "submitPosts": 1,
+    "confirmationDismissals": 2,
+    "duplicateSubmitId": null,
+    "courseCompletePosts": 2,
+    "courseCompletionBackendStatuses": [
+      201
+    ],
+    "courseCompletionResponseDrops": 1,
+    "courseCompletionNetworkFailures": 1,
+    "pendingContextAfterInitialSyncFailure": {
+      "attemptId": "84642f46-2c00-4973-855f-9371c03bfba2",
+      "assignmentId": "ca22b82b-7756-4e68-a615-5b9faefc8969",
+      "submissionId": "4b949b52-1aa2-4ec5-bc78-960a1a47ed9f",
+      "activityId": "b8b7877e-933b-4742-b30b-160216016be7",
+      "enrollmentId": "f1111111-1111-4111-8111-111111111111",
+      "userId": "22222222-2222-4222-8222-222222222222",
+      "schoolId": "11111111-1111-4111-8111-111111111111",
+      "returnTo": "/student/courses/course-detail/?id=ca22b82b-7756-4e68-a615-5b9faefc8969&activityId=b8b7877e-933b-4742-b30b-160216016be7&submissionId=4b949b52-1aa2-4ec5-bc78-960a1a47ed9f",
+      "syncStatus": "PENDING",
+      "submitStatus": "CONFIRMED",
+      "lastSyncError": {
+        "code": "COURSE_PROGRESS_SYNC_PENDING",
+        "message": "练习已交卷，课程同步待核实。请稍后安全重试。"
+      },
+      "updatedAt": "2026-10-19T05:33:27.272Z"
+    },
+    "serverReadbackConfirmedProgress": true,
+    "returnNavigationCount": 1,
+    "returnNavigationUrl": "http://127.0.0.1:4298/student/courses/course-detail/?id=ca22b82b-7756-4e68-a615-5b9faefc8969&activityId=b8b7877e-933b-4742-b30b-160216016be7&submissionId=4b949b52-1aa2-4ec5-bc78-960a1a47ed9f&practiceAttemptId=84642f46-2c00-4973-855f-9371c03bfba2",
+    "returnNavigationUrlEvents": [
+      "http://127.0.0.1:4298/student/courses/course-detail/?id=ca22b82b-7756-4e68-a615-5b9faefc8969&activityId=b8b7877e-933b-4742-b30b-160216016be7&submissionId=4b949b52-1aa2-4ec5-bc78-960a1a47ed9f&practiceAttemptId=84642f46-2c00-4973-855f-9371c03bfba2"
+    ],
+    "beforeunloadDialogs": [],
+    "apiRequestEvents": [
+      {
+        "method": "POST",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessments/sessions/84642f46-2c00-4973-855f-9371c03bfba2/submit"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/ca22b82b-7756-4e68-a615-5b9faefc8969/submissions/4b949b52-1aa2-4ec5-bc78-960a1a47ed9f/activities/b8b7877e-933b-4742-b30b-160216016be7/practice-attempts/84642f46-2c00-4973-855f-9371c03bfba2/complete"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/student/courses/ca22b82b-7756-4e68-a615-5b9faefc8969/submissions/4b949b52-1aa2-4ec5-bc78-960a1a47ed9f/activities/b8b7877e-933b-4742-b30b-160216016be7/practice-attempts/84642f46-2c00-4973-855f-9371c03bfba2/complete"
+      }
+    ],
+    "apiResponses": [
+      {
+        "status": 201,
+        "method": "POST",
+        "path": "/api/v1/schools/11111111-1111-4111-8111-111111111111/assessments/sessions/84642f46-2c00-4973-855f-9371c03bfba2/submit"
+      }
+    ],
+    "refreshBusinessPosts": [],
+    "attemptCountAfterRefresh": 1,
+    "recordingCountAfterRefresh": 4
+  },
+  "microphoneSource": "SIMULATED_MIC (Chromium fake device; physical microphone not run)",
+  "visualProof": {
+    "courseCoverAsset": "/assets/generated-covers/course-spring-reading.png",
+    "courseCoverStyle": "url(\"http://127.0.0.1:4298/assets/generated-covers/course-spring-reading.png\")",
+    "contentImage": {
+      "alt": "春季阅读课程封面插图",
+      "src": "/assets/generated-covers/course-spring-reading.png",
+      "naturalWidth": 1536,
+      "naturalHeight": 1024
+    }
+  },
+  "browserErrors": [],
+  "negativeStatuses": {
+    "noteStale": 409,
+    "progressStale": 409,
+    "recordingB": 403,
+    "submissionB": 404,
+    "progressB": 403,
+    "activityWriteB": 404,
+    "wrongSchool": 403,
+    "anonymous": 401,
+    "missingAssignment": 404,
+    "courseSessionAnonymous": 401,
+    "courseSessionStudentB": 403,
+    "courseSessionMissing": 404,
+    "coursePracticeMismatch409": 409
+  }
+}

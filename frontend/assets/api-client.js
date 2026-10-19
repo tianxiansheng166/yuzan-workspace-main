@@ -190,6 +190,7 @@
     localStorage.removeItem(USER_KEY);
     localStorage.removeItem(SCHOOL_KEY);
     localStorage.removeItem('yuzan-demo-session');
+    clearCoursePracticeContexts();
   }
 
   function requireAuth(fallback = '/login') {
@@ -980,21 +981,225 @@
       return null;
     }
   }
-  function safeCourseReturnTo(candidate) {
-    if (typeof candidate !== 'string' || !candidate.startsWith('/') || candidate.startsWith('//')) return null;
-    const parsed = new URL(candidate, location.origin);
-    if (parsed.origin !== location.origin || !parsed.pathname.startsWith('/student/courses/course-detail/')) return null;
-    return `${parsed.pathname}${parsed.search}${parsed.hash}`;
+  function clearCoursePracticeContext(sessionId) {
+    localStorage.removeItem(`yuzan-course-practice-context:${sessionId}`);
+  }
+  function clearCoursePracticeContexts() {
+    const keys = [];
+    try {
+      for (let index = 0; index < localStorage.length; index += 1) {
+        const key = localStorage.key(index);
+        if (key?.startsWith('yuzan-course-practice-context:')) keys.push(key);
+      }
+    } catch {}
+    keys.forEach(key => localStorage.removeItem(key));
+  }
+  function courseContextKey(sessionId) {
+    return `yuzan-course-practice-context:${sessionId}`;
+  }
+  function safeCourseReturnTo(candidate, courseContext, sessionId, strict = true) {
+    if (typeof candidate !== 'string' || !courseContext || !courseContext.assignmentId || !courseContext.submissionId || !courseContext.activityId) return null;
+    let parsed;
+    try { parsed = new URL(candidate, location.origin); } catch { return null; }
+    if (parsed.origin !== location.origin || parsed.username || parsed.password || parsed.pathname !== '/student/courses/course-detail/') return null;
+    for (const [key, expected] of [['id', courseContext.assignmentId], ['activityId', courseContext.activityId], ['submissionId', courseContext.submissionId]]) {
+      const values = parsed.searchParams.getAll(key);
+      if ((strict && values.length !== 1) || (!strict && key !== 'submissionId' && values.length !== 1) || values.length > 1 || (values.length === 1 && values[0] !== String(expected))) return null;
+    }
+    const attemptValues = parsed.searchParams.getAll('practiceAttemptId');
+    if (attemptValues.length > 1 || (attemptValues.length === 1 && attemptValues[0] !== String(sessionId))) return null;
+    if (!strict) return `${parsed.pathname}${parsed.search}`;
+    const query = new URLSearchParams({ id: String(courseContext.assignmentId), activityId: String(courseContext.activityId), submissionId: String(courseContext.submissionId) });
+    return `${parsed.pathname}?${query.toString()}`;
+  }
+  function coursePracticeNavigateTo(courseContext, sessionId, strict = true) {
+    const returnTo = safeCourseReturnTo(courseContext?.returnTo, courseContext, sessionId, strict);
+    if (!returnTo) return '/student/courses/';
+    const parsed = new URL(returnTo, location.origin);
+    parsed.searchParams.set('practiceAttemptId', sessionId);
+    return `${parsed.pathname}${parsed.search}`;
+  }
+  function getCoursePracticeReturnTo(sessionId) {
+    const courseContext = getCoursePracticeContext(sessionId);
+    return courseContext ? coursePracticeNavigateTo(courseContext, sessionId) : '/student/practices/';
+  }
+  function courseError(message, code, status = 0, cause) {
+    const error = new Error(message);
+    error.code = code;
+    error.status = status;
+    if (cause) error.cause = cause;
+    return error;
+  }
+  function courseSyncPendingError(message, cause, submitted) {
+    const error = courseError(message, 'COURSE_PROGRESS_SYNC_PENDING', cause?.status || 0, cause);
+    error.submitted = submitted;
+    return error;
+  }
+  function validateCoursePracticeContext(sessionId, courseContext) {
+    if (!courseContext?.assignmentId || !courseContext?.submissionId || !courseContext?.activityId) {
+      throw courseError('课程练习上下文不完整，请从本人课程重新进入。', 'COURSE_PROGRESS_CONTEXT_INVALID', 409);
+    }
+    if (courseContext.attemptId && courseContext.attemptId !== sessionId) {
+      throw courseError('课程练习 Attempt 与恢复记录不一致。', 'COURSE_PROGRESS_CONTEXT_INVALID', 409);
+    }
+    const currentUserId = getStoredUser()?.id;
+    const currentSchoolId = getActiveSchoolId();
+    if ((courseContext.userId && currentUserId && courseContext.userId !== currentUserId)
+      || (courseContext.schoolId && currentSchoolId && courseContext.schoolId !== currentSchoolId)) {
+      throw courseError('登录身份或学校已变化，请从当前账号的课程目录重新进入。', 'COURSE_PRACTICE_IDENTITY_CHANGED', 403);
+    }
+  }
+  function isCourseAccessError(error) {
+    return [401, 403, 404].includes(Number(error?.status));
+  }
+  function clearCourseSessionForAccessFailure(sessionId, cause) {
+    clearCoursePracticeContexts();
+    clearCoursePracticeContext(sessionId);
+    clearSession();
+    return courseError('当前账号无法访问原课程练习，已清除旧会话。请重新登录并从本人课程目录继续。', 'COURSE_PROGRESS_ACCESS_LOST', cause?.status || 403, cause);
+  }
+  function savePendingCoursePracticeContext(sessionId, courseContext, cause, submitted) {
+    const pending = {
+      ...courseContext,
+      attemptId: sessionId,
+      syncStatus: 'PENDING',
+      submitStatus: submitted ? 'CONFIRMED' : 'UNCONFIRMED',
+      lastSyncError: {
+        code: cause?.code || 'COURSE_PROGRESS_SYNC_FAILED',
+        message: cause?.message || '课程进度暂未获服务器确认',
+      },
+      updatedAt: new Date().toISOString(),
+    };
+    localStorage.setItem(courseContextKey(sessionId), JSON.stringify(pending));
+    return pending;
+  }
+  function pendingCourseSyncResult(sessionId, error, submitted) {
+    return {
+      linked: false,
+      pending: true,
+      submitted: Boolean(submitted),
+      message: submitted ? '练习已交卷，课程同步待核实' : '交卷状态待核实',
+      errorCode: error?.code || 'COURSE_PROGRESS_SYNC_PENDING',
+      navigateTo: getCoursePracticeReturnTo(sessionId),
+    };
+  }
+  async function readCoursePracticeTruth(sessionId, courseContext) {
+    const [session, attempt] = await Promise.all([getAssessmentSession(sessionId), getPracticeAttempt(sessionId)]);
+    if (session?.id !== sessionId || attempt?.id !== sessionId) {
+      throw courseError('服务器返回的练习 Attempt 与当前记录不一致。', 'COURSE_PROGRESS_CONTEXT_CONFLICT', 409);
+    }
+    const schoolId = getActiveSchoolId();
+    const enrollmentId = courseContext.enrollmentId || attempt.enrollmentId || session.enrollmentId;
+    if (!enrollmentId || session.enrollmentId !== enrollmentId || attempt.enrollmentId !== enrollmentId
+      || (courseContext.schoolId && courseContext.schoolId !== schoolId)
+      || (session.schoolId && session.schoolId !== schoolId)
+      || attempt.courseSubmissionId !== courseContext.submissionId
+      || attempt.courseActivityId !== courseContext.activityId) {
+      throw courseError('服务器练习记录与当前学生、课程或活动不一致。', 'COURSE_PROGRESS_CONTEXT_CONFLICT', 409);
+    }
+    const progress = await getLearningProgress(courseContext.activityId, enrollmentId);
+    if (progress && (progress.activityId !== courseContext.activityId || progress.enrollmentId !== enrollmentId)) {
+      throw courseError('服务器课程进度与当前活动不一致。', 'COURSE_PROGRESS_CONTEXT_CONFLICT', 409);
+    }
+    return {
+      session,
+      attempt,
+      progress,
+      enrollmentId,
+      submitted: ['SUBMITTED', 'PROCESSING', 'COMPLETED'].includes(session.status),
+      completed: progress?.completed === true,
+    };
+  }
+  async function verifyCourseReturnAccess(courseContext) {
+    const course = await getStudentCourse(courseContext.assignmentId);
+    if (course?.assignment?.id !== courseContext.assignmentId) {
+      throw courseError('当前账号无法恢复原课程。', 'COURSE_RETURN_ACCESS_LOST', 404);
+    }
+    if (course.existingSubmission?.id && course.existingSubmission.id !== courseContext.submissionId) {
+      throw courseError('课程提交已切换，请从当前课程记录重新进入。', 'COURSE_RETURN_ACCESS_LOST', 409);
+    }
+    const activities = (course.units || course.courseVersion?.units || []).flatMap(unit => (unit.lessons || []).flatMap(lesson => lesson.activities || []));
+    if (!activities.some(activity => activity.id === courseContext.activityId)) {
+      throw courseError('原课程活动已不可访问，请从本人课程目录继续。', 'COURSE_RETURN_ACCESS_LOST', 404);
+    }
+    return course;
   }
   async function retryCoursePracticeCompletion(sessionId, options = {}) {
-    const contextKey = `yuzan-course-practice-context:${sessionId}`;
     const courseContext = getCoursePracticeContext(sessionId);
     if (!courseContext) return { linked: false, reason: 'NO_COURSE_CONTEXT' };
-    const returnTo = safeCourseReturnTo(courseContext.returnTo);
-    if (!courseContext.assignmentId || !courseContext.submissionId || !courseContext.activityId || !returnTo) {
-      const invalid = new Error('课程进度同步上下文不完整，请返回原课程重新进入练习');
-      invalid.code = 'COURSE_PROGRESS_CONTEXT_INVALID';
-      throw invalid;
+    const contextKey = courseContextKey(sessionId);
+    try { validateCoursePracticeContext(sessionId, courseContext); }
+    catch (error) {
+      if (error.status === 401 || error.status === 403) throw clearCourseSessionForAccessFailure(sessionId, error);
+      throw error;
+    }
+    const returnTo = safeCourseReturnTo(courseContext.returnTo, courseContext, sessionId, options.verifyServer === true);
+    if (options.verifyServer === true) {
+      let truth;
+      try { truth = await readCoursePracticeTruth(sessionId, courseContext); }
+      catch (cause) {
+        if (isCourseAccessError(cause)) throw clearCourseSessionForAccessFailure(sessionId, cause);
+        savePendingCoursePracticeContext(sessionId, courseContext, cause, null);
+        throw courseSyncPendingError('交卷或课程进度暂未获服务器确认，可安全重试核实。', cause, null);
+      }
+      if (!truth.submitted) {
+        const cause = courseError('服务器尚未确认本次练习已交卷。', 'COURSE_SUBMISSION_NOT_CONFIRMED', 409);
+        savePendingCoursePracticeContext(sessionId, courseContext, cause, false);
+        throw courseSyncPendingError('交卷状态待核实，请重试服务器核实。', cause, false);
+      }
+      let completion = null;
+      let reconciledAfterLostResponse = false;
+      if (!truth.completed) {
+        try { completion = await completeCoursePractice(courseContext.assignmentId, courseContext.submissionId, courseContext.activityId, sessionId); }
+        catch (cause) {
+          let confirmed;
+          try { confirmed = await readCoursePracticeTruth(sessionId, courseContext); }
+          catch (verifyError) {
+            if (isCourseAccessError(verifyError)) throw clearCourseSessionForAccessFailure(sessionId, verifyError);
+            savePendingCoursePracticeContext(sessionId, courseContext, cause, true);
+            throw courseSyncPendingError('练习已交卷，课程同步待核实。请稍后安全重试。', cause, true);
+          }
+          if (!confirmed.completed) {
+            if (isCourseAccessError(cause)) throw clearCourseSessionForAccessFailure(sessionId, cause);
+            savePendingCoursePracticeContext(sessionId, courseContext, cause, true);
+            throw courseSyncPendingError('练习已交卷，课程同步待核实。请稍后安全重试。', cause, true);
+          }
+          truth = confirmed;
+          reconciledAfterLostResponse = true;
+        }
+        if (completion) {
+          try { truth = await readCoursePracticeTruth(sessionId, courseContext); }
+          catch (cause) {
+            if (isCourseAccessError(cause)) throw clearCourseSessionForAccessFailure(sessionId, cause);
+            savePendingCoursePracticeContext(sessionId, courseContext, cause, true);
+            throw courseSyncPendingError('练习已交卷，课程同步待核实。请稍后安全重试。', cause, true);
+          }
+          if (!truth.completed) {
+            const cause = courseError('服务器尚未确认课程活动完成。', 'COURSE_PROGRESS_NOT_CONFIRMED', 409);
+            savePendingCoursePracticeContext(sessionId, courseContext, cause, true);
+            throw courseSyncPendingError('练习已交卷，课程同步待核实。请稍后安全重试。', cause, true);
+          }
+        }
+      }
+      try { await verifyCourseReturnAccess(courseContext); }
+      catch (cause) {
+        clearCoursePracticeContext(sessionId);
+        if (isCourseAccessError(cause) || cause?.code === 'COURSE_RETURN_ACCESS_LOST') throw clearCourseSessionForAccessFailure(sessionId, cause);
+        savePendingCoursePracticeContext(sessionId, courseContext, cause, true);
+        throw courseError('练习已交卷，课程进度已写入，但返回课程权限待核实。请重试核实或返回课程目录。', 'COURSE_PROGRESS_SYNC_PENDING', cause?.status || 0, cause);
+      }
+      const confirmedContext = { ...courseContext, attemptId: sessionId, enrollmentId: truth.enrollmentId, syncStatus: 'COMPLETED', updatedAt: new Date().toISOString() };
+      localStorage.setItem(contextKey, JSON.stringify(confirmedContext));
+      return {
+        linked: true,
+        completion,
+        navigateTo: returnTo ? coursePracticeNavigateTo(confirmedContext, sessionId, true) : '/student/courses/',
+        serverConfirmed: true,
+        activityProgress: truth.progress,
+        alreadyCompleted: !completion && !reconciledAfterLostResponse,
+        reconciledAfterLostResponse,
+        returnToValid: Boolean(returnTo),
+      };
     }
     try {
       const completion = await completeCoursePractice(
@@ -1004,8 +1209,7 @@
         sessionId,
       );
       localStorage.removeItem(contextKey);
-      const separator = returnTo.includes('?') ? '&' : '?';
-      const navigateTo = `${returnTo}${separator}practiceAttemptId=${encodeURIComponent(sessionId)}`;
+      const navigateTo = returnTo ? coursePracticeNavigateTo(courseContext, sessionId, false) : '/student/courses/';
       if (options.navigate !== false) location.href = navigateTo;
       return { linked: true, completion, navigateTo };
     } catch (cause) {
@@ -1026,12 +1230,55 @@
       throw error;
     }
   }
-  async function submitAssessmentSession(sessionId) {
+  async function submitAssessmentSession(sessionId, options = {}) {
+    if (options.verifyServer === true && getCoursePracticeContext(sessionId)) {
+      let truth;
+      let courseContext = getCoursePracticeContext(sessionId);
+      try {
+        validateCoursePracticeContext(sessionId, courseContext);
+        truth = await readCoursePracticeTruth(sessionId, courseContext);
+      } catch (cause) {
+        if (isCourseAccessError(cause) || cause?.code === 'COURSE_PRACTICE_IDENTITY_CHANGED') throw clearCourseSessionForAccessFailure(sessionId, cause);
+        const submitted = cause?.code === 'COURSE_PROGRESS_CONTEXT_CONFLICT' ? null : false;
+        savePendingCoursePracticeContext(sessionId, courseContext, cause, submitted);
+        return { id: sessionId, courseSync: pendingCourseSyncResult(sessionId, cause, submitted) };
+      }
+      if (truth.submitted) {
+        try {
+          const courseSync = await retryCoursePracticeCompletion(sessionId, { verifyServer: true, navigate: false });
+          return { ...truth.session, courseSync };
+        } catch (cause) {
+          if (cause?.code !== 'COURSE_PROGRESS_SYNC_PENDING') throw cause;
+          return { ...truth.session, courseSync: pendingCourseSyncResult(sessionId, cause, true) };
+        }
+      }
+      if (!['CREATED', 'IN_PROGRESS'].includes(truth.session.status)) {
+        const cause = courseError('服务器练习状态不允许交卷，请先核实当前课程记录。', 'COURSE_SUBMISSION_NOT_CONFIRMED', 409);
+        savePendingCoursePracticeContext(sessionId, courseContext, cause, false);
+        return { ...truth.session, courseSync: pendingCourseSyncResult(sessionId, cause, false) };
+      }
+      let result;
+      let submitError = null;
+      try {
+        result = await request(`/schools/${getActiveSchoolId()}/assessments/sessions/${sessionId}/submit`, { method: 'POST' });
+      } catch (cause) { submitError = cause; }
+      try {
+        const courseSync = await retryCoursePracticeCompletion(sessionId, { verifyServer: true, navigate: false });
+        return { ...(result || truth.session), courseSync };
+      } catch (cause) {
+        if (cause?.code !== 'COURSE_PROGRESS_SYNC_PENDING') throw cause;
+        const submitted = cause.submitted === undefined ? (result ? true : null) : cause.submitted;
+        const wrapped = submitError || cause;
+        savePendingCoursePracticeContext(sessionId, courseContext, wrapped, submitted);
+        return { ...(result || truth.session), courseSync: pendingCourseSyncResult(sessionId, cause, submitted) };
+      }
+    }
     const result = await request(`/schools/${getActiveSchoolId()}/assessments/sessions/${sessionId}/submit`, {
       method: 'POST',
     });
     if (getCoursePracticeContext(sessionId)) {
-      const courseSync = await retryCoursePracticeCompletion(sessionId);
+      const courseSync = await retryCoursePracticeCompletion(sessionId, { navigate: false });
+      if (options.navigate !== false && courseSync.navigateTo) location.href = courseSync.navigateTo;
       return { ...result, courseSync };
     }
     return result;
@@ -1399,6 +1646,8 @@
     startAssessmentSession,
     submitAssessmentSession,
     getCoursePracticeContext,
+    getCoursePracticeReturnTo,
+    clearCoursePracticeContext,
     retryCoursePracticeCompletion,
     /* Assessment Reading */
     getReadingItem,

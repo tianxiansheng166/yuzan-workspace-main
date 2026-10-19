@@ -5,7 +5,7 @@
   const app = document.querySelector('#app');
   const parts = location.pathname.split('/').filter(Boolean);
   const attemptId = parts[3] || '';
-  const state = { attempt: null, items: [], currentIndex: 0, save: 'IDLE', error: '', composing: false, submitting: false, submitConfirm: false, timers: new Map(), saves: new Map(), pendingAnswers: new Map(), media: null, blob: null, blobUrl: null, recordingIdempotencyKey: null, elapsed: 0, resourceUrls: new Map(), resourceErrors: new Map(), resolvingResources: new Set(), feedbackOpen: false, feedbackMessage: '', feedbackHistory: [] };
+  const state = { attempt: null, items: [], currentIndex: 0, save: 'IDLE', error: '', composing: false, submitting: false, submitConfirm: false, courseSyncPending: null, courseSyncComplete: false, courseReturnTo: '', returnToCatalog: false, recoveryOnly: false, timers: new Map(), saves: new Map(), pendingAnswers: new Map(), media: null, blob: null, blobUrl: null, recordingIdempotencyKey: null, elapsed: 0, resourceUrls: new Map(), resourceErrors: new Map(), resolvingResources: new Set(), feedbackOpen: false, feedbackMessage: '', feedbackHistory: [] };
   const safe = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const icon = name => Visuals?.icon(name) || `<span class="runner-icon-fallback" aria-hidden="true">${({ play: '▶', pause: 'Ⅱ', stop: '■', mic: '●', arrow: '→', check: '✓', retry: '↻', upload: '↑', clock: '◷' })[name] || '•'}</span>`;
   const waveform = (kind, extraClass = '') => Visuals?.waveform({ kind, className: extraClass }) || '<span class="runner-waveform-fallback" aria-hidden="true">〰</span>';
@@ -145,6 +145,7 @@
     const text = statusText();
     document.querySelectorAll('[data-save-status], [data-save-state]').forEach(element => { element.textContent = text; });
     const message = document.querySelector('[data-runner-message]');
+    if (state.courseSyncPending) return;
     if (message && !state.submitConfirm) {
       message.hidden = !state.error;
       message.innerHTML = state.error ? `<span>${safe(state.error)}</span>${state.pendingAnswers.has(current()?.id) ? `<button type="button" class="runner-quiet-button" data-retry-save>${icon('retry')} 重试保存</button>` : ''}` : '';
@@ -166,6 +167,59 @@
     state.blobUrl = null;
     state.recordingIdempotencyKey = null;
     state.elapsed = 0;
+  }
+  function courseReturnHref() {
+    if (state.returnToCatalog) return '/student/courses/';
+    if (state.courseReturnTo) return state.courseReturnTo;
+    const context = Api?.getCoursePracticeContext?.(attemptId);
+    if (!context) return '/student/practices/';
+    return Api?.getCoursePracticeReturnTo?.(attemptId) || '/student/courses/';
+  }
+  function courseReturnLabel() {
+    return courseReturnHref().startsWith('/student/courses/course-detail/') ? '返回课程' : '返回课程目录';
+  }
+  function renderCourseSyncRecovery() {
+    const href = courseReturnHref();
+    const submitted = state.courseSyncPending?.submitted !== false;
+    app.innerHTML = `<main class="runner-page runner-boot-error"><header class="runner-header"><a class="runner-back" href="${safe(href)}">${icon('arrow')} ${safe(courseReturnLabel())}</a><div class="runner-title"><b>课程练习同步</b><span class="runner-attempt-state">${safe(state.attempt?.status || 'PROCESSING')}</span></div></header><section class="question-shell" role="status" aria-live="polite"><h1>${submitted ? '练习已交卷，课程同步待核实' : '交卷状态待核实'}</h1><p>系统正在核对本次练习和课程活动的服务器记录。重试会先读取现有 Attempt 与课程进度，不会创建新的练习或录音。</p><div data-course-sync-message role="alert">${safe(state.error || '请安全重试课程同步，或返回本人课程目录。')}</div><div class="runner-confirm-actions"><button type="button" class="btn primary" data-retry-course-sync>${icon('retry')} 安全重试课程同步</button><a class="btn" href="${safe(href)}">${safe(courseReturnLabel())}</a></div></section></main>`;
+    document.querySelector('[data-retry-course-sync]')?.addEventListener('click', () => void retryCourseSync());
+  }
+  async function retryCourseSync() {
+    if (state.courseSyncPending?.running) return;
+    const pending = state.courseSyncPending || { submitted: true };
+    state.courseSyncPending = { ...pending, running: true };
+    state.error = pending.submitted === false ? '正在核实本次交卷状态…' : '正在核实课程进度…';
+    if (state.recoveryOnly) renderCourseSyncRecovery();
+    else render();
+    try {
+      const result = pending.submitted === false
+        ? await Api.submitAssessmentSession(attemptId, { navigate: false, verifyServer: true })
+        : await Api.retryCoursePracticeCompletion(attemptId, { navigate: false, verifyServer: true });
+      const courseSync = result?.courseSync || result;
+      if (courseSync?.linked && courseSync.serverConfirmed) {
+        state.courseSyncPending = null;
+        state.courseSyncComplete = true;
+        state.returnToCatalog = courseSync.returnToValid === false;
+        state.courseReturnTo = courseSync.navigateTo || '/student/courses/';
+        location.assign(state.courseReturnTo);
+        return;
+      }
+      state.courseSyncPending = { submitted: courseSync?.submitted === true };
+      state.error = courseSync?.message || (courseSync?.submitted ? '练习已交卷，课程同步待核实。' : '交卷状态待核实。');
+    } catch (error) {
+      state.submitting = false;
+      if (error?.code === 'COURSE_PROGRESS_ACCESS_LOST') {
+        state.returnToCatalog = true;
+        state.courseReturnTo = '/student/courses/';
+        state.courseSyncPending = null;
+        state.error = '原课程当前不可访问。旧会话已清除，请重新登录后从本人课程目录继续。';
+      } else {
+        state.courseSyncPending = { submitted: error?.submitted === undefined ? pending.submitted !== false : error.submitted };
+        state.error = error?.message || (state.courseSyncPending.submitted ? '练习已交卷，课程同步待核实。' : '交卷状态待核实。');
+      }
+    }
+    if (state.recoveryOnly) renderCourseSyncRecovery();
+    else render();
   }
   function renderSpeech(item) {
     const previousRecordingFailed = item.recordingId && item.recordingStatus === 'FAILED';
@@ -276,6 +330,7 @@
     textarea?.addEventListener('compositionend', () => { state.composing = false; scheduleTextSave(); });
     textarea?.addEventListener('input', () => { state.error = ''; state.save = 'DIRTY'; updateSaveStatus(); scheduleTextSave(); });
     document.querySelector('[data-runner-message]')?.addEventListener('click', async event => {
+      if (event.target.closest('[data-retry-course-sync]')) { void retryCourseSync(); return; }
       if (!event.target.closest('[data-retry-save]')) return;
       const item = current();
       const value = document.querySelector('[data-text]')?.value ?? state.pendingAnswers.get(item?.id);
@@ -358,7 +413,7 @@
     if (track) track.setAttribute('aria-valuenow', String(completed));
     const bar = document.querySelector('[data-progress-bar]');
     const submitButton = document.querySelector('[data-submit]');
-    if (submitButton) submitButton.disabled = Boolean(state.media && (state.media.state !== 'REVIEW' || !state.media.cached));
+    if (submitButton) submitButton.disabled = Boolean(state.courseSyncPending || state.submitting || (state.media && (state.media.state !== 'REVIEW' || !state.media.cached)));
     if (bar) bar.style.width = `${count ? (completed / count) * 100 : 0}%`;
     document.querySelectorAll('[data-go]').forEach(button => {
       const item = state.items[Number(button.dataset.go)];
@@ -376,18 +431,20 @@
     const count = state.items.length;
     const completed = progressCount();
     const incomplete = state.items.filter(entry => !complete(entry));
-    const currentLocked = state.media && (state.media.state !== 'REVIEW' || !state.media.cached);
+    const currentLocked = Boolean(state.courseSyncPending || state.submitting || (state.media && (state.media.state !== 'REVIEW' || !state.media.cached)));
     const feedbackPanel = state.feedbackOpen ? `<div class="runner-feedback-modal" role="presentation"><div class="runner-feedback-card" role="dialog" aria-modal="true" aria-labelledby="runner-feedback-title"><button type="button" class="runner-feedback-close" data-feedback-close aria-label="关闭反馈">×</button><h2 id="runner-feedback-title">反馈问题</h2><p>请描述遇到的问题，不要填写手机号等敏感信息。不会提交你的答案、录音或评分细节。</p><label>问题类型<select data-feedback-category><option value="CONTENT">题目内容</option><option value="MEDIA">图片/音频</option><option value="RECORDING">录音</option><option value="SCORING">评分结果</option><option value="USABILITY">使用体验</option><option value="TECHNICAL">系统问题</option><option value="OTHER">其他</option></select></label><label for="runner-feedback-message">问题描述</label><textarea id="runner-feedback-message" data-feedback-message minlength="5" maxlength="1000" placeholder="至少输入 5 个字">${safe(state.feedbackMessage)}</textarea><button type="button" class="btn primary" data-feedback-submit>提交反馈</button><div class="runner-feedback-history"><b>我的反馈</b>${state.feedbackHistory.length ? state.feedbackHistory.map(entry => `<p>${safe(entry.category)} · ${safe({ OPEN: '待处理', ACKNOWLEDGED: '已知悉', RESOLVED: '已解决' }[entry.status] || entry.status)}${entry.resolutionNote ? `：${safe(entry.resolutionNote)}` : ''}</p>`).join('') : '<p>暂无反馈。</p>'}</div></div></div>` : '';
     const courseContext = Api.getCoursePracticeContext?.(attemptId);
-    const returnTo = courseContext?.returnTo;
-    const courseReturn = typeof returnTo === 'string' && /^\/student\/courses\/course-detail\/(?:\?|$)/.test(returnTo) ? returnTo : null;
+    const courseReturn = courseContext || state.returnToCatalog ? courseReturnHref() : null;
+    const courseSyncMessage = state.courseSyncPending
+      ? `<span>${state.courseSyncPending.submitted ? '练习已交卷，课程同步待核实。' : '交卷状态待核实。'} ${safe(state.error)}</span><button type="button" class="runner-quiet-button" data-retry-course-sync ${state.courseSyncPending.running ? 'disabled' : ''}>${icon('retry')} 安全重试课程同步</button>`
+      : state.error ? `<span>${safe(state.error)}</span>${state.pendingAnswers.has(item.id) ? `<button type="button" class="runner-quiet-button" data-retry-save>${icon('retry')} 重试保存</button>` : ''}` : '';
     const questionMap = state.items.map((entry, index) => {
       const status = saved(entry) ? '已保存' : complete(entry) ? '无需作答' : '未完成';
       return `<button type="button" data-go="${index}" class="${index === state.currentIndex ? 'current' : ''} ${saved(entry) ? 'answered' : ''}" aria-current="${index === state.currentIndex ? 'step' : 'false'}" aria-label="第 ${index + 1} 题，${status}" ${currentLocked ? 'disabled' : ''}>${index + 1}</button>`;
     }).join('');
     const firstIncomplete = state.items.findIndex(entry => !complete(entry));
     const submitDialog = state.submitConfirm ? `<div class="runner-confirm-modal" role="presentation"><section class="runner-confirm-card" role="dialog" aria-modal="true" aria-labelledby="runner-confirm-title" aria-describedby="runner-confirm-copy"><span class="runner-confirm-icon">${icon(incomplete.length ? 'clock' : 'check')}</span><h2 id="runner-confirm-title">${incomplete.length ? '还有题目未完成' : '确认交卷'}</h2><p id="runner-confirm-copy">${incomplete.length ? `当前有 ${incomplete.length} 道题尚未保存答案或录音。` : `已完成 ${completed} / ${count} 题。提交后将进入服务器处理流程。`}</p><p class="runner-confirm-note">交卷不会生成未校准的语音分数；处理结果以服务器为准。</p><div class="runner-confirm-actions">${incomplete.length ? `<button type="button" class="btn primary" data-fix-incomplete>返回第 ${firstIncomplete + 1} 题继续作答</button>` : `<button type="button" class="btn primary" data-confirm-submit>${icon('check')} 确认交卷</button>`}<button type="button" class="btn" data-cancel-submit>${incomplete.length ? '留在本次练习' : '再检查一下'}</button></div></section></div>` : '';
-    app.innerHTML = `<main class="runner-page" ${state.submitConfirm ? 'inert' : ''}><header class="runner-header"><a class="runner-back" href="${safe(courseReturn || '/student/practices/')}">${icon('arrow')} ${courseReturn ? '返回课程' : '返回练习中心'}</a><div class="runner-title"><b>听说训练台</b><span class="runner-attempt-state">${safe(state.attempt?.status || 'IN_PROGRESS')}</span></div><button type="button" class="btn runner-feedback-open" data-feedback-open>反馈问题</button></header><section class="runner-progress"><span class="runner-current-position">第 <b>${state.currentIndex + 1}</b> / ${count} 题</span><div class="runner-progress-track" role="progressbar" aria-label="已完成题目" aria-valuemin="0" aria-valuemax="${count}" aria-valuenow="${completed}"><i data-progress-bar style="width:${count ? (completed / count) * 100 : 0}%"></i></div><span data-progress-copy>${completed} / ${count} 题已完成</span></section><nav class="runner-map" aria-label="题目导航">${questionMap}</nav><article class="question-shell"><div class="runner-question-heading"><p class="runner-section">${safe(item.sectionTitle || '练习题')}</p><span>第 ${state.currentIndex + 1} 题</span></div>${renderStimulus(spec.stimulus)}<section class="runner-response">${renderResponse(item, spec)}</section><div data-runner-message class="runner-message" role="alert" aria-live="assertive" ${state.error ? '' : 'hidden'}>${state.error ? `<span>${safe(state.error)}</span>${state.pendingAnswers.has(item.id) ? `<button type="button" class="runner-quiet-button" data-retry-save>${icon('retry')} 重试保存</button>` : ''}` : ''}</div></article><footer class="runner-footer"><button type="button" class="btn" data-prev ${state.currentIndex && !currentLocked ? '' : 'disabled'}>${icon('arrow')} 上一题</button><span data-save-state aria-live="polite">${safe(statusText())}</span>${state.currentIndex === count - 1 ? `<button type="button" class="btn primary runner-submit-button" data-submit ${currentLocked ? 'disabled' : ''}>检查并交卷 ${icon('arrow')}</button>` : `<button type="button" class="btn primary runner-next-button" data-next ${currentLocked ? 'disabled' : ''}>下一题 ${icon('arrow')}</button>`}</footer></main>${feedbackPanel}${submitDialog}`;
+    app.innerHTML = `<main class="runner-page" ${state.submitConfirm ? 'inert' : ''}><header class="runner-header"><a class="runner-back" href="${safe(courseReturn || '/student/practices/')}">${icon('arrow')} ${courseReturn ? safe(courseReturnLabel()) : '返回练习中心'}</a><div class="runner-title"><b>听说训练台</b><span class="runner-attempt-state">${safe(state.attempt?.status || 'IN_PROGRESS')}</span></div><button type="button" class="btn runner-feedback-open" data-feedback-open>反馈问题</button></header><section class="runner-progress"><span class="runner-current-position">第 <b>${state.currentIndex + 1}</b> / ${count} 题</span><div class="runner-progress-track" role="progressbar" aria-label="已完成题目" aria-valuemin="0" aria-valuemax="${count}" aria-valuenow="${completed}"><i data-progress-bar style="width:${count ? (completed / count) * 100 : 0}%"></i></div><span data-progress-copy>${completed} / ${count} 题已完成</span></section><nav class="runner-map" aria-label="题目导航">${questionMap}</nav><article class="question-shell"><div class="runner-question-heading"><p class="runner-section">${safe(item.sectionTitle || '练习题')}</p><span>第 ${state.currentIndex + 1} 题</span></div>${renderStimulus(spec.stimulus)}<section class="runner-response">${renderResponse(item, spec)}</section><div data-runner-message class="runner-message" role="alert" aria-live="assertive" ${state.error || state.courseSyncPending ? '' : 'hidden'}>${courseSyncMessage}</div></article><footer class="runner-footer"><button type="button" class="btn" data-prev ${state.currentIndex && !currentLocked ? '' : 'disabled'}>${icon('arrow')} 上一题</button><span data-save-state aria-live="polite">${safe(statusText())}</span>${state.currentIndex === count - 1 ? `<button type="button" class="btn primary runner-submit-button" data-submit ${currentLocked ? 'disabled' : ''}>检查并交卷 ${icon('arrow')}</button>` : `<button type="button" class="btn primary runner-next-button" data-next ${currentLocked ? 'disabled' : ''}>下一题 ${icon('arrow')}</button>`}</footer></main>${feedbackPanel}${submitDialog}`;
     bind();
   }
   async function save(item, value) {
@@ -623,11 +680,37 @@
           await Api.finalizeWrittenAnswer(attemptId, item.id);
         }
       }
-      const result = await Api.submitAssessmentSession(attemptId);
-      location.href = result.courseSync?.navigateTo || `/student/practices/attempts/${encodeURIComponent(attemptId)}/processing/`;
+      const result = await Api.submitAssessmentSession(attemptId, { navigate: false, verifyServer: true });
+      const courseSync = result?.courseSync;
+      if (courseSync?.pending) {
+        state.submitting = false;
+        state.courseSyncPending = { submitted: courseSync.submitted === true };
+        state.error = courseSync.message || (courseSync.submitted ? '练习已交卷，课程同步待核实。' : '交卷状态待核实。');
+        state.save = 'ERROR';
+        render();
+        return;
+      }
+      if (courseSync?.linked && courseSync.serverConfirmed) {
+        state.courseSyncComplete = true;
+        state.returnToCatalog = courseSync.returnToValid === false;
+        state.courseReturnTo = courseSync.navigateTo || '/student/courses/';
+        location.assign(state.courseReturnTo);
+        return;
+      }
+      location.assign(`/student/practices/attempts/${encodeURIComponent(attemptId)}/processing/`);
     } catch (error) {
       state.submitting = false;
-      state.error = error.message || '提交失败';
+      if (error?.code === 'COURSE_PROGRESS_ACCESS_LOST') {
+        state.returnToCatalog = true;
+        state.courseReturnTo = '/student/courses/';
+        state.courseSyncPending = null;
+        state.error = '当前账号无法访问原课程练习。旧会话已清除，请重新登录后从本人课程目录继续。';
+      } else if (error?.code === 'COURSE_PROGRESS_SYNC_PENDING') {
+        state.courseSyncPending = { submitted: error.submitted !== false };
+        state.error = error.message || (error.submitted === false ? '交卷状态待核实。' : '练习已交卷，课程同步待核实。');
+      } else {
+        state.error = error.message || '提交失败';
+      }
       state.save = 'ERROR';
       render();
     }
@@ -645,11 +728,20 @@
     try {
       const attempt = await Api.getPracticeAttempt(attemptId);
       if (['SUBMITTED', 'PROCESSING', 'FAILED'].includes(attempt.status)) {
-        location.href = '/student/practices/attempts/' + encodeURIComponent(attemptId) + '/processing/';
+        if (Api.getCoursePracticeContext?.(attemptId)) {
+          state.attempt = attempt;
+          state.courseSyncPending = { submitted: attempt.status !== 'FAILED' };
+          state.recoveryOnly = true;
+          state.error = '正在核实本次 Attempt 和课程活动的服务器状态…';
+          renderCourseSyncRecovery();
+          void retryCourseSync();
+          return;
+        }
+        location.assign('/student/practices/attempts/' + encodeURIComponent(attemptId) + '/processing/');
         return;
       }
       if (attempt.status === 'COMPLETED') {
-        location.href = '/student/practices/attempts/' + encodeURIComponent(attemptId) + '/report/';
+        location.assign('/student/practices/attempts/' + encodeURIComponent(attemptId) + '/report/');
         return;
       }
       if (attempt.status === 'CANCELLED') {

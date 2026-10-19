@@ -1,0 +1,212 @@
+.bilingual-field {
+  min-width: 0;
+}
+
+.bilingual-original {
+  display: block;
+  min-width: 0;
+  color: inherit;
+  font-family: "Noto Serif CJK SC", "Songti SC", "Noto Serif Tibetan", "Tibetan Machine Uni", Georgia, serif;
+  line-height: inherit;
+  overflow-wrap: anywhere;
+}
+
+.bilingual-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+  margin-top: 10px;
+}
+
+.bilingual-toggle {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 7px 12px;
+  border: 1px solid #8d806e;
+  border-radius: 2px;
+  background: transparent;
+  color: #344b3c;
+  font: 600 12px/1.4 "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+  cursor: pointer;
+  transition: color 150ms ease, background-color 150ms ease, border-color 150ms ease;
+}
+
+.bilingual-toggle:hover {
+  border-color: #285f46;
+  background: #edf2eb;
+  color: #204733;
+}
+
+.bilingual-toggle:focus-visible {
+  outline: 3px solid #a36e26;
+  outline-offset: 3px;
+}
+
+.bilingual-toggle[aria-expanded="true"] {
+  border-color: #285f46;
+  background: #edf2eb;
+}
+
+.bilingual-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 23px;
+  padding: 3px 8px;
+  border: 1px solid #b9c7b6;
+  border-radius: 2px;
+  background: #f3f7f0;
+  color: #3f6048;
+  font: 600 10px/1.35 "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+  letter-spacing: .02em;
+}
+
+.bilingual-help-panel {
+  max-width: 72ch;
+  margin-top: 10px;
+  padding: 12px 15px;
+  border: 1px solid #d8dfd4;
+  border-left: 3px solid #64816a;
+  background: #f5f7f1;
+  color: #354538;
+  animation: bilingual-panel-in 150ms ease-out both;
+}
+
+.bilingual-help-panel[hidden] {
+  display: none !important;
+}
+
+.bilingual-help-text {
+  display: block;
+  font-family: "Noto Serif Tibetan", "Tibetan Machine Uni", "Noto Sans Tibetan", "Jomolhari", serif;
+  font-size: 1.06em;
+  line-height: 2.05;
+  letter-spacing: .01em;
+  overflow-wrap: anywhere;
+  text-wrap: pretty;
+}
+
+.activity-instruction .bilingual-original {
+  max-width: 66ch;
+}
+
+.activity-heading .activity-instruction {
+  margin: 0;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+.course-objective-list,
+.activity-point-list {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding-left: 1.2em;
+  color: #4f5a53;
+  line-height: 1.9;
+}
+
+.course-objective-list .bilingual-field,
+.activity-point-list .bilingual-field {
+  display: grid;
+  gap: 2px;
+}
+
+.course-objectives-empty {
+  margin: 0;
+  color: var(--muted);
+  font: 11px/1.6 "Microsoft YaHei", sans-serif;
+}
+
+.course-points h3 {
+  margin: 24px 0 12px;
+  font-size: 16px;
+}
+
+.answer-option-row {
+  display: grid;
+  gap: 0 10px;
+  padding: 0 10px 10px 0;
+  border: 1px solid var(--line);
+  background: #fffdf8;
+}
+
+.answer-option-row > label {
+  border: 0;
+  background: transparent;
+}
+
+.answer-option-row > .bilingual-field {
+  margin: 0 12px 4px 48px;
+}
+
+.answer-option-row > .bilingual-field .bilingual-original {
+  font-size: 14px;
+}
+
+.answer-option-row .bilingual-controls {
+  margin-top: 4px;
+}
+
+.answer-option-row .bilingual-toggle {
+  min-height: 34px;
+}
+
+.activity-feedback {
+  margin-top: 24px;
+  padding: 16px 18px;
+  border-left: 3px solid var(--gold);
+  background: #f7f2e8;
+}
+
+.activity-feedback h3 {
+  margin: 0 0 8px;
+  font: 700 12px/1.5 "Microsoft YaHei", sans-serif;
+}
+
+.activity-feedback .bilingual-field {
+  line-height: 1.8;
+}
+
+.media-caption .bilingual-original {
+  font-size: inherit;
+}
+
+@keyframes bilingual-panel-in {
+  from { opacity: 0; transform: translateY(-3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 600px) {
+  .bilingual-controls {
+    gap: 7px;
+  }
+
+  .bilingual-toggle {
+    min-height: 40px;
+    padding: 8px 10px;
+    font-size: 11px;
+  }
+
+  .bilingual-help-panel {
+    padding: 10px 12px;
+  }
+
+  .activity-heading .activity-instruction {
+    font-size: 14px;
+  }
+
+  .answer-option-row > .bilingual-field {
+    margin-left: 43px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bilingual-toggle,
+  .bilingual-help-panel {
+    animation: none !important;
+    transition: none !important;
+  }
+}

@@ -1,0 +1,87 @@
+QB source validator
+DRY RUN — NO DATABASE WRITE — NO MINIO WRITE
+Parsed items: 120
+Media: 126 files (90 images, 36 audio)
+Selected: 120 items, 600 points, scoring binding 120/120 (missing 0, ambiguous 0)
+Validation: errors 0, warnings 0
+{
+  "mode": "APPLY",
+  "level": "all",
+  "target": {
+    "schoolId": "11111111-1111-4111-8111-111111111111",
+    "classId": "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee"
+  },
+  "preflight": {
+    "items": 120,
+    "points": 600,
+    "bound": 120,
+    "missing": 0,
+    "ambiguous": 0
+  },
+  "result": {
+    "resources": {
+      "created": 126,
+      "reused": 0,
+      "total": 126,
+      "images": 90,
+      "audio": 36
+    },
+    "legacyAudioVerificationDeliveriesClosed": 0,
+    "legacyHardcodedPracticeDeliveriesClosed": 6,
+    "questionBankItems": {
+      "created": 120,
+      "reused": 0
+    },
+    "questionBankItemVersions": {
+      "created": 120,
+      "reused": 0
+    },
+    "practiceDefinitions": {
+      "created": 6,
+      "reused": 0,
+      "total": 6,
+      "ids": [
+        "92f440b6-537e-4e28-ba31-352c8b54a418",
+        "7a9cda64-0b7d-4e0c-8d83-44c3f97c3f87",
+        "f3adc139-2f29-4679-8f7a-1e00797d7418",
+        "0e226f80-c7ac-4087-9e1f-2604b50fc25a",
+        "7be18f43-cfca-473e-9226-cbd60efc5dd9",
+        "78ee2bc3-45be-4115-8e0c-533b8d849b63"
+      ]
+    },
+    "practiceVersions": {
+      "created": 6,
+      "reused": 0,
+      "total": 6,
+      "ids": [
+        "844ea05f-ec5d-4151-82b6-9d8bb7405dc3",
+        "dfec92d4-52f9-41a1-ba86-78b5855b5414",
+        "89e61e24-fe5d-48aa-9857-f54de6702fa7",
+        "06ed8dd8-5133-4b55-8be7-fd1e2b4a7905",
+        "b9702d7a-49aa-41a0-bcc6-eb691a276898",
+        "fd0a20c2-a90d-4eb0-ad19-35de41b7d9c5"
+      ]
+    },
+    "practiceSections": {
+      "created": 24,
+      "reused": 0
+    },
+    "practiceItemRefs": {
+      "created": 120,
+      "reused": 0
+    },
+    "practiceDeliveries": {
+      "created": 6,
+      "reused": 0,
+      "total": 6,
+      "ids": [
+        "9b7bd744-8196-4c4e-a9fc-b4c50235718c",
+        "30eaaca2-d93d-46f2-950d-4a17b6816e40",
+        "c4e65d99-8805-414a-82c0-c54187ac4c05",
+        "2fb3b4ac-bcc7-4c02-95c0-655aed8a8828",
+        "91e25020-08b6-4e95-9503-f4752ec49991",
+        "7b8df16a-d040-4f4a-b893-fd01d21b3a49"
+      ]
+    }
+  }
+}
