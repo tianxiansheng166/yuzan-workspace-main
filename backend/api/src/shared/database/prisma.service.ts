@@ -124,7 +124,7 @@ export class PrismaService
     }
   }
 
-  async beforeApplicationShutdown(): Promise<void> {
+  beforeApplicationShutdown(): void {
     if (this._shuttingDown) return;
     this._shuttingDown = true;
     this.logger.log("Database runtime entering drain mode");

@@ -441,7 +441,7 @@ export class RecordingsService {
 
   private strategyFromScoringSpec(
     scoringSpec: unknown,
-  ): "SPEECH_READING" | "SPEECH_OPEN_RESPONSE" | string | undefined {
+  ): string | undefined {
     if (
       !scoringSpec ||
       typeof scoringSpec !== "object" ||

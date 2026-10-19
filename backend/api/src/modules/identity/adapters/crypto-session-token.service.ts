@@ -15,16 +15,19 @@ function generateToken(): string {
  * random values; the hash is used for lookup, not for password protection.
  */
 export class CryptoSessionTokenService implements SessionTokenService {
-  async generatePair(): Promise<{
+  generatePair(): Promise<{
     accessToken: string;
     refreshToken: string;
   }> {
-    const accessToken = generateToken();
-    const refreshToken = generateToken();
-    return { accessToken, refreshToken };
+    return Promise.resolve().then(() => ({
+      accessToken: generateToken(),
+      refreshToken: generateToken(),
+    }));
   }
 
-  async hash(token: string): Promise<string> {
-    return createHash("sha256").update(token).digest("hex");
+  hash(token: string): Promise<string> {
+    return Promise.resolve().then(() =>
+      createHash("sha256").update(token).digest("hex"),
+    );
   }
 }

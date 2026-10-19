@@ -24,6 +24,7 @@ import {
 } from "./dto/report-response.js";
 import { PrismaService } from "../../shared/database/prisma.service.js";
 import { Prisma } from "@yuzan/database";
+import { MembershipRole } from "../../common/security/membership-role.js";
 import type {
   EnrichedStudentGrowthProfile,
   LearningSummary,
@@ -142,7 +143,9 @@ export class ReportingService {
       isTeacherOfClass = !!teacherEnrollment;
     }
     const isAdmin = auth.principal.roles.some(
-      (r) => r === "SCHOOL_ADMIN" || r === "PLATFORM_ADMIN",
+      (r) =>
+        r === MembershipRole.SCHOOL_ADMIN ||
+        r === MembershipRole.PLATFORM_ADMIN,
     );
     if (!isStudent && !isTeacherOfClass && !isAdmin) {
       throw new ReportForbiddenException("无权查看该学生的成长档案");
@@ -454,7 +457,9 @@ export class ReportingService {
     const userId = auth.principal.userId;
     const isStudent = enrollment.userId === userId;
     const isAdmin = auth.principal.roles.some(
-      (r) => r === "SCHOOL_ADMIN" || r === "PLATFORM_ADMIN",
+      (r) =>
+        r === MembershipRole.SCHOOL_ADMIN ||
+        r === MembershipRole.PLATFORM_ADMIN,
     );
     if (!isStudent && !isAdmin) {
       // Check if teacher of this class
@@ -503,7 +508,9 @@ export class ReportingService {
     const userId = auth.principal.userId;
     const isStudent = enrollment.userId === userId;
     const isAdmin = auth.principal.roles.some(
-      (r) => r === "SCHOOL_ADMIN" || r === "PLATFORM_ADMIN",
+      (r) =>
+        r === MembershipRole.SCHOOL_ADMIN ||
+        r === MembershipRole.PLATFORM_ADMIN,
     );
     if (!isStudent && !isAdmin) {
       const teacherEnrollment = await this.prisma.enrollment.findFirst({

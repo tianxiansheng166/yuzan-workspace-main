@@ -265,7 +265,7 @@ function compileDictationRule(spec: ScoringSpecRecord): DictationRule | null {
 
   const rules = spec.deductionRules as string[];
   const characterRule = rules.find((rule) =>
-    /扣\s*\d+(?:\.\d+)?\s*分\s*[\/／]\s*字/.test(rule),
+    /扣\s*\d+(?:\.\d+)?\s*分\s*[/／]\s*字/.test(rule),
   );
   const zeroMatch = characterRule?.match(
     /错\s*(\d+)\s*个字[^。；;]*本题不得分/,

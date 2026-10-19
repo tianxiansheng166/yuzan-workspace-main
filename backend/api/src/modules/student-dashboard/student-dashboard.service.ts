@@ -143,13 +143,15 @@ export class StudentDashboardService {
     return { courses };
   }
 
-  async getRecommendations(auth: AuthContext, schoolId: string) {
-    if (!this.policy.canAccessDashboard(auth, schoolId)) {
-      throw new StudentDashboardForbiddenException();
-    }
+  getRecommendations(auth: AuthContext, schoolId: string) {
+    return Promise.resolve().then(() => {
+      if (!this.policy.canAccessDashboard(auth, schoolId)) {
+        throw new StudentDashboardForbiddenException();
+      }
 
-    // AI recommendation engine is not yet implemented
-    return { items: [] };
+      // AI recommendation engine is not yet implemented
+      return { items: [] };
+    });
   }
 
   async getTeacherAdvice(

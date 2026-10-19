@@ -1,12 +1,13 @@
 import { Inject, Injectable } from "@nestjs/common";
 import type { AuthContext } from "../../common/security/auth.types.js";
 import { PrismaService } from "../../shared/database/prisma.service.js";
+import { toPrismaJsonObject } from "../../shared/database/prisma-json.js";
 
 import type {
   IntegrationKey,
   MindGraphJobStatus,
 } from "./domain/tool.types.js";
-import { IntegrationMode } from "./domain/tool.types.js";
+import { IntegrationMode, IntegrationStatus } from "./domain/tool.types.js";
 import {
   IntegrationForbiddenException,
   IntegrationNotFoundException,
@@ -106,8 +107,8 @@ export class ToolsService {
 
     // When provider is NOT connected, MUST NOT fake "AI has generated" results
     if (
-      config.status === "PROVIDER_UNAVAILABLE" ||
-      config.status === "OFFLINE"
+      config.status === IntegrationStatus.PROVIDER_UNAVAILABLE ||
+      config.status === IntegrationStatus.OFFLINE
     ) {
       throw new MindGraphProviderUnavailableException();
     }
@@ -290,8 +291,8 @@ export class ToolsService {
     }
 
     if (
-      config.status === "PROVIDER_UNAVAILABLE" ||
-      config.status === "OFFLINE"
+      config.status === IntegrationStatus.PROVIDER_UNAVAILABLE ||
+      config.status === IntegrationStatus.OFFLINE
     ) {
       return {
         status: "PROVIDER_NOT_CONFIGURED" as const,
@@ -373,7 +374,7 @@ export class ToolsService {
         toolSource: dto.toolSource as
           "MINDMATE" | "MINDGRAPH" | "LESSON_PLAN" | "WORKSHEET",
         title: dto.title,
-        content: JSON.parse(JSON.stringify(dto.content)),
+        content: toPrismaJsonObject(dto.content),
       },
     });
 

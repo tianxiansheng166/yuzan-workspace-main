@@ -4,6 +4,7 @@ import type {
   RolePermissionSet,
   TenantContext,
 } from "./auth.types.js";
+import { MembershipStatus } from "./auth.types.js";
 import { MembershipRole, roleRank } from "./membership-role.js";
 import { Permission } from "./permission.js";
 
@@ -105,7 +106,7 @@ export function isAtLeastRole(
 }
 
 export function isActive(context: AuthContext): boolean {
-  return context.principal.membershipStatus === "ACTIVE";
+  return context.principal.membershipStatus === MembershipStatus.ACTIVE;
 }
 
 export function isPlatformAdmin(context: AuthContext): boolean {

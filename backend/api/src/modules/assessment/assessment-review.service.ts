@@ -71,7 +71,7 @@ export class AssessmentReviewService {
   ) {}
 
   async listQueue(auth: AuthContext, schoolId: string) {
-    await this.assertTeacherScope(auth, schoolId);
+    this.assertTeacherScope(auth, schoolId);
     const classIds = await this.reviewableClassIds(auth, schoolId);
     if (!this.isAdmin(auth) && classIds.length === 0) {
       return { items: [], total: 0 };
@@ -183,7 +183,7 @@ export class AssessmentReviewService {
   }
 
   async getDetail(auth: AuthContext, schoolId: string, itemId: string) {
-    await this.assertTeacherScope(auth, schoolId);
+    this.assertTeacherScope(auth, schoolId);
     const row = await this.prisma.assessmentItem.findFirst({
       where: { id: itemId, session: { schoolId } },
       select: {
@@ -365,7 +365,7 @@ export class AssessmentReviewService {
     auth: AuthContext,
     schoolId: string,
   ): Promise<string[] | null> {
-    await this.assertTeacherScope(auth, schoolId);
+    this.assertTeacherScope(auth, schoolId);
     return this.isAdmin(auth) ? null : this.reviewableClassIds(auth, schoolId);
   }
 
@@ -374,11 +374,11 @@ export class AssessmentReviewService {
     schoolId: string,
     classId: string,
   ) {
-    await this.assertTeacherScope(auth, schoolId);
+    this.assertTeacherScope(auth, schoolId);
     await this.assertReviewClass(auth, schoolId, classId);
   }
 
-  private async assertTeacherScope(auth: AuthContext, schoolId: string) {
+  private assertTeacherScope(auth: AuthContext, schoolId: string): void {
     if (
       auth.tenant.schoolId !== schoolId ||
       !auth.principal.roles.some((role) =>

@@ -6,6 +6,7 @@ import {
 } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import type { Request, Response } from "express";
+import { MembershipStatus } from "./auth.types.js";
 import type { AuthContext, Principal, TenantContext } from "./auth.types.js";
 import {
   AUTH_CONTEXT_SOURCE,
@@ -62,7 +63,9 @@ export class AuthenticationGuard implements CanActivate {
         throw new SecurityException("UNAUTHENTICATED");
       }
 
-      if (authContext.principal.membershipStatus !== "ACTIVE") {
+      if (
+        authContext.principal.membershipStatus !== MembershipStatus.ACTIVE
+      ) {
         this.logDenial(request, requestId, "UNAUTHENTICATED");
         throw new SecurityException("UNAUTHENTICATED", "成员状态未激活");
       }

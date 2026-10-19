@@ -103,7 +103,11 @@ export class AssessmentService {
     const teacherEnrollment = await this.prisma.enrollment.findFirst({
       where: { userId: auth.principal.userId, schoolId, classId: dto.classId, role: "TEACHER", status: "ACTIVE" },
     });
-    const isAdmin = auth.principal.roles.some((r) => r === "SCHOOL_ADMIN" || r === "PLATFORM_ADMIN");
+    const isAdmin = auth.principal.roles.some(
+      (r) =>
+        r === MembershipRole.SCHOOL_ADMIN ||
+        r === MembershipRole.PLATFORM_ADMIN,
+    );
     if (!teacherEnrollment && !isAdmin) {
       throw new AssessmentForbiddenException("您不是该班级的任课教师");
     }
@@ -1561,7 +1565,11 @@ export class AssessmentService {
 
   private async verifyAccess(auth: AuthContext, schoolId: string, session: AssessmentSession) {
     const userId = auth.principal.userId;
-    const isAdmin = auth.principal.roles.some((r) => r === "SCHOOL_ADMIN" || r === "PLATFORM_ADMIN");
+    const isAdmin = auth.principal.roles.some(
+      (r) =>
+        r === MembershipRole.SCHOOL_ADMIN ||
+        r === MembershipRole.PLATFORM_ADMIN,
+    );
 
     // Student can access own sessions
     const enrollment = await this.prisma.enrollment.findFirst({
@@ -1617,7 +1625,9 @@ export class AssessmentService {
 
     const isSelf = targetEnrollment.userId === userId;
     const isAdmin = auth.principal.roles.some(
-      (r) => r === "SCHOOL_ADMIN" || r === "PLATFORM_ADMIN",
+      (r) =>
+        r === MembershipRole.SCHOOL_ADMIN ||
+        r === MembershipRole.PLATFORM_ADMIN,
     );
     let isTeacherOfClass = false;
     if (!isSelf && !isAdmin) {
@@ -1783,7 +1793,11 @@ export class AssessmentService {
     }
 
     const isSelf = targetEnrollment.userId === userId;
-    const isAdmin = auth.principal.roles.some((r) => r === "SCHOOL_ADMIN" || r === "PLATFORM_ADMIN");
+    const isAdmin = auth.principal.roles.some(
+      (r) =>
+        r === MembershipRole.SCHOOL_ADMIN ||
+        r === MembershipRole.PLATFORM_ADMIN,
+    );
     const isTeacherOfClass = !!(await this.prisma.enrollment.findFirst({
       where: { userId, schoolId, classId: targetEnrollment.classId, role: "TEACHER", status: "ACTIVE" },
       select: { id: true },
@@ -1911,7 +1925,11 @@ export class AssessmentService {
     }
 
     const isSelf = auth.principal.userId === enrollment.userId;
-    const isAdmin = auth.principal.roles.some((r) => r === "SCHOOL_ADMIN" || r === "PLATFORM_ADMIN");
+    const isAdmin = auth.principal.roles.some(
+      (r) =>
+        r === MembershipRole.SCHOOL_ADMIN ||
+        r === MembershipRole.PLATFORM_ADMIN,
+    );
     const isTeacherOfClass = !!(await this.prisma.enrollment.findFirst({
       where: { userId: auth.principal.userId, schoolId, classId: enrollment.classId, role: "TEACHER", status: "ACTIVE" },
       select: { id: true },
