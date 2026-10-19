@@ -162,6 +162,43 @@ svg{fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-l
   text-decoration: underline;
 }
 
+.toolbar-btn[data-action="export"]{white-space:nowrap}
+.course-card{grid-template-columns:86px minmax(145px,1fr) minmax(245px,38%) 105px;gap:12px}
+.roster-section .roster-section-heading{position:static;display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin:0 0 8px}
+.roster-section .roster-section-heading h2{margin:0}
+.roster-section .roster-section-heading p{margin:4px 0 0;color:#737b80;font-size:11px;line-height:1.6}
+.roster-export-button{min-height:38px;display:inline-flex;align-items:center;justify-content:center;gap:8px;flex:0 0 auto;padding:0 13px;border:1px solid #b68a4c;border-radius:5px;background:#fffaf1;color:#76531f;font-size:12px;font-weight:700;cursor:pointer}
+.roster-export-button svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.roster-export-button:disabled{opacity:.6;cursor:wait}
+.roster-export-status{min-height:18px;margin:0 0 10px;color:#667075;font-size:11px;line-height:1.6;overflow-wrap:anywhere}
+.roster-row [data-label]{min-width:0;overflow-wrap:anywhere}
+
+@media(max-width:900px){
+  .roster-table-wrap{overflow:visible}
+  .roster-table{min-width:0}
+  .roster-row.header{display:none}
+  .roster-row:not(.header){height:auto;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 14px;padding:12px 8px}
+  .roster-row:not(.header)>b:first-child{grid-column:1/-1;justify-self:end}
+  .roster-row:not(.header)>b:not(:first-child),.roster-row:not(.header)>span{display:block;min-width:0;line-height:1.5}
+  .roster-row:not(.header)>b:not(:first-child)::before,.roster-row:not(.header)>span::before{display:block;margin-bottom:2px;color:#7c8489;font-size:10px;font-weight:400;content:attr(data-label)}
+  .roster-row:not(.header)>b:first-child::before{display:block;color:#7c8489;font-size:10px;font-weight:400;content:attr(data-label)}
+}
+
+@media(max-width:1050px){
+  .course-card{grid-template-columns:82px minmax(0,1fr) 110px;gap:10px}
+  .course-progress{grid-column:1/-1;grid-row:2;width:100%}
+  .course-detail{grid-column:3;grid-row:1}
+}
+
+@media(max-width:760px){
+  .course-card{height:auto;grid-template-columns:78px minmax(0,1fr);gap:10px;padding:11px}
+  .course-card>img{width:78px;height:78px}
+  .course-progress{grid-column:1/-1;grid-row:auto;grid-template-columns:1fr 1fr}
+  .course-detail{grid-column:1/-1;grid-row:auto}
+  .roster-section .roster-section-heading{flex-direction:column;align-items:stretch;gap:10px}
+  .roster-export-button{align-self:flex-start;max-width:100%;min-height:40px}
+}
+
 .supplementary-form {
   display: grid;
   gap: 14px;

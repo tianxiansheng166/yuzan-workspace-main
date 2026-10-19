@@ -65,9 +65,9 @@
             <span id="dateRangeText">日期范围筛选暂未开放</span>
             <svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>
           </button>
-          <button class="toolbar-btn" data-action="export">
+          <button class="toolbar-btn" data-action="export" aria-label="导出名单/学情CSV" title="导出名单/学情CSV">
             <svg viewBox="0 0 24 24"><path d="M12 3v11M8 7l4-4 4 4M5 12v7h14v-7"/></svg>
-            导出报表
+            导出名单/学情CSV
           </button>
           <i class="toolbar-divider"></i>
           <button class="icon-text-btn">
@@ -180,10 +180,17 @@
           </section>
 
           <section class="roster-section" id="students">
-            <div class="section-heading">
-              <h2>学生名单</h2>
-              <p>查看班级全部学生的详细学习情况</p>
+            <div class="section-heading roster-section-heading">
+              <div>
+                <h2>学生名单</h2>
+                <p>查看班级全部学生的详细学习情况</p>
+              </div>
+              <button class="roster-export-button" type="button" data-action="export" aria-label="导出名单/学情CSV">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v11M8 7l4-4 4 4M5 12v7h14v-7"/></svg>
+                导出名单/学情CSV
+              </button>
             </div>
+            <p class="roster-export-status" id="rosterExportStatus" role="status" aria-live="polite">导出时会重新读取本人授权班级名单；无课程进度显示为—，无正式分数留空。</p>
             <div class="roster-table-wrap">
               <div class="roster-table" id="rosterTable">
                 <div class="roster-row header">
@@ -366,6 +373,7 @@
   </div>
 
   <script src="/assets/api-client.js"></script>
+  <script src="/teacher/classes/detail/roster-export.js"></script>
   <script src="/teacher/classes/detail/app.js"></script>
   <script src="/shared/teacher-shell.js" defer></script>
 
