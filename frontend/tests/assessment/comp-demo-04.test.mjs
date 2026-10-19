@@ -36,14 +36,14 @@ const readingItem = {
   },
 };
 
-function runAssessment({ report = null, item = readingItem } = {}) {
+function runAssessment({ report = null, item = readingItem, sessionRecord = session } = {}) {
   const appRoot = { innerHTML: '' };
   const storageData = new Map([
-    ['yuzan-assessment-v5-session-comp-demo-04', JSON.stringify({ apiSession: session, apiItems: [item], apiReport: report })],
+    ['yuzan-assessment-v5-session-comp-demo-04', JSON.stringify({ apiSession: sessionRecord, apiItems: [item], apiReport: report })],
   ]);
   const api = {
     getToken: () => 'test-token',
-    getPracticeAttempt: async () => session,
+    getPracticeAttempt: async () => sessionRecord,
     getPracticeAttemptItems: async () => [item],
     getAssessmentReport: async () => report,
   };
@@ -92,8 +92,8 @@ function runReview(detail) {
 }
 
 test('formal report takes precedence over a retained provisional ISE result', async () => {
-  const formal = { overallScore: 76, dataCompleteness: 100, generatedAt: '2026-09-07T10:10:00.000Z', summary: { scoringState: 'AUTO_RESULT', requiresTeacherReview: false }, teacherFeedback: [{ comment: '停顿自然，请继续保持。', reviewedAt: '2026-09-07T10:11:00.000Z' }], diagnosis: null };
-  const html = await runAssessment({ report: formal });
+  const formal = { id: 'report-comp-demo-04', sessionId: session.id, overallScore: 76, dataCompleteness: 100, generatedAt: '2026-09-07T10:10:00.000Z', summary: { scoringState: 'AUTO_RESULT', requiresTeacherReview: false }, teacherFeedback: [{ comment: '停顿自然，请继续保持。', reviewedAt: '2026-09-07T10:11:00.000Z' }], diagnosis: null };
+  const html = await runAssessment({ report: formal, sessionRecord: { ...session, status: 'COMPLETED' } });
   assert.match(html, /总体得分/);
   assert.match(html, /教师已复核/);
   assert.match(html, /停顿自然，请继续保持。/);
@@ -102,7 +102,9 @@ test('formal report takes precedence over a retained provisional ISE result', as
 });
 
 test('student report escapes teacher feedback and does not expose review-only fields', async () => {
-  const html = await runAssessment({ report: {
+  const html = await runAssessment({ sessionRecord: { ...session, status: 'COMPLETED' }, report: {
+    id: 'report-comp-demo-04',
+    sessionId: session.id,
     overallScore: 76,
     dataCompleteness: 100,
     generatedAt: '2026-09-07T10:10:00.000Z',

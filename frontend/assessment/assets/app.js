@@ -114,11 +114,23 @@
     catch { return { ...defaultState }; }
   };
   let appState = loadState();
+  let historyIdentityKey = '';
+  let historyLoadEpoch = 0;
+  let historyEventsEpoch = 0;
+  let historySearchTimer = null;
+  const HISTORY_PAGE_SIZE = 25;
+  const HISTORY_MAX_SCAN_PAGES = 100;
   if (document.body.dataset.page === 'history') {
     // History belongs to the current server identity; do not render a cached
     // previous student's records while the authorized request is in flight.
     appState.apiHistory = null;
     appState.apiSessionPage = null;
+    appState.apiHistoryReports = {};
+    appState.apiPracticeRoutes = {};
+    appState.apiPracticeTitles = {};
+    appState.apiPracticeTitlesBySession = {};
+    appState._historyQueryResults = null;
+    appState._historyQueryOffset = 0;
     appState.apiHistoryEvents = null;
     appState._historyError = null;
     appState._historyEventsError = null;
@@ -126,13 +138,15 @@
     appState._loadingHistoryEvents = false;
     appState._loadingMoreHistory = false;
     appState._historyMoreError = null;
+    appState._historyLocalQuery = '';
+    appState._historyLocalStatus = '';
   }
   // Blob/URL 不可序列化，每次从内存恢复时清空
   appState._recordingBlob = null;
   appState._recordingUrl = null;
   const saveState = () => {
     // Never persist personal history across account switches.
-    const { _recordingBlob, _recordingUrl, apiHistory, apiSessionPage, apiHistoryEvents, _historyError, _historyEventsError, _loadingHistory, _loadingHistoryEvents, _loadingMoreHistory, _historyMoreError, ...persistable } = appState;
+    const { _recordingBlob, _recordingUrl, apiHistory, apiSessionPage, apiHistoryReports, apiPracticeRoutes, apiPracticeTitles, apiPracticeTitlesBySession, _historyQueryResults, _historyLocalQuery, _historyLocalStatus, apiHistoryEvents, _historyError, _historyEventsError, _loadingHistory, _loadingHistoryEvents, _loadingMoreHistory, _historyMoreError, ...persistable } = appState;
     storage.setItem(stateKey, JSON.stringify(persistable));
   };
 
@@ -640,6 +654,10 @@
         ? renderRemediationReferencePreview(session, appState.apiItems)
         : renderRemediationResult(session, appState.apiRemediationResult);
     }
+    if (report && (session?.status !== 'COMPLETED' || report.dataCompleteness !== 100)) {
+      const content = `<main class="page"><div class="hero-landscape" style="height:220px"></div><section class="report-head"><a class="muted small" href="${routes.history}">‹ 返回学习记录</a><h1 class="page-title" style="margin-top:16px">正式报告尚未完整</h1><p class="page-subtitle">只有本人已完成且数据完整度为 100% 的授权 AssessmentReport 才会展示成绩和评语。</p></section><article class="card history-report-unavailable"><h2>当前不显示正式成绩</h2><p class="muted">该报告尚未满足完整性条件。历史成绩和复核评语不会从不完整数据推算。</p><p class="muted small">Attempt 状态：${safe(session?.status || '未知')} · 数据完整度：${report.dataCompleteness == null ? '未提供' : `${safe(report.dataCompleteness)}%`}</p><button class="btn" data-retry>${icon('refresh')} 重新读取报告</button></article></main>`;
+      return shell(content);
+    }
     const diagnosticItem = speechDiagnosticItems(appState.apiItems)[0];
     if (!report && !diagnosticItem) {
       const content = `<main class="page"><div class="hero-landscape" style="height:220px"></div><section class="report-head"><a class="muted small" href="${routes.center}">‹ 返回测评列表</a><h1 class="page-title" style="margin-top:16px">${session ? (session.type === 'READING' ? '朗读测评' : '综合测评') : '测评'} ${statusChip(session?.status || '—', session?.status === 'COMPLETED' ? 'green' : 'gold')}</h1><p class="page-subtitle">报告尚未生成</p></section><article class="card" style="padding:40px;text-align:center"><div class="icon" style="margin:0 auto 16px;width:56px;height:56px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#eef0ec">${icon('file')}</div><h2>当前测评尚未生成报告</h2><p class="muted">报告在教师复核或系统自动评分完成后生成。请稍后刷新查看。</p>${session && (session.status === 'SUBMITTED' || session.status === 'PROCESSING') ? `<div style="margin-top:24px"><a class="btn primary" href="${routes.processing}">${icon('arrow')} 查看处理状态</a></div>` : ''}<div style="margin-top:12px"><button class="btn" data-retry>${icon('refresh')} 刷新报告</button></div></article></main>`;
@@ -653,7 +671,7 @@
     const teacherFeedbackItems = Array.isArray(report.teacherFeedback)
       ? report.teacherFeedback.filter(item => typeof item?.comment === 'string' && item.comment.trim())
       : [];
-    const teacherFeedback = `<section class="report-bottom teacher-feedback" data-report-teacher-feedback><article class="card"><h2 class="card-title">教师反馈</h2>${teacherFeedbackItems.length ? teacherFeedbackItems.map(item => `<p class="teacher-feedback-item">${safe(item.comment)}${item.reviewedAt ? `<small>${safe(new Date(item.reviewedAt).toLocaleString())}</small>` : ''}</p>`).join('') : '<p class="muted">教师尚未留下文字评语。</p>'}</article></section>`;
+    const teacherFeedback = `<section class="report-bottom teacher-feedback" data-report-teacher-feedback><article class="card"><h2 class="card-title">正式测评复核评语 · AssessmentReview</h2><p class="muted small">来自本次正式测评的逐题人工复核，不属于课程任务 Feedback。</p>${teacherFeedbackItems.length ? teacherFeedbackItems.map(item => `<p class="teacher-feedback-item">${safe(item.comment)}${item.reviewedAt ? `<small>${safe(new Date(item.reviewedAt).toLocaleString())}</small>` : ''}</p>`).join('') : '<p class="muted">教师尚未留下正式测评复核评语。</p>'}</article></section>`;
     const content=`<main class="page"><div class="hero-landscape" style="height:220px"></div><section class="report-head"><a class="muted small" href="${routes.center}">‹ 返回练习中心</a><h1 class="page-title" style="margin-top:16px">${session?.type === 'READING' ? '朗读练习' : '综合练习'} ${statusChip(needsReview ? '待教师复核' : '已完成',needsReview ? 'gold' : 'green')}</h1><p class="page-subtitle">科学测评，精准反馈，见证每一次进步</p></section>${needsReview ? `<article class="card notice" style="margin-bottom:13px">${icon('info')} 本报告已展示本次真实模型评分；其中至少一段录音建议由教师复核，复核意见会另行保存。</article>` : ''}<article class="card report-info"><div class="icon red">${icon('mic')}</div><div class="info-cell">数据完整度<b>${report.dataCompleteness != null ? Math.round(report.dataCompleteness) + '%' : '—'}</b></div><div class="info-cell">生成时间<b>${report.generatedAt ? new Date(report.generatedAt).toLocaleString() : '—'}</b></div><div class="info-cell">结果状态<b>${needsReview ? '待教师复核' : '已保存'}</b></div>${oralReviewComplete ? '<div class="info-cell">朗读复核<b>教师已复核</b></div>' : ''}</article><section class="report-grid"><article class="card score-card"><h3 class="card-title" style="color:var(--red)">总体得分</h3><div class="score-number">${report.overallScore != null ? report.overallScore : '—'} <small style="font-size:17px;color:#777">/100</small></div>${statusChip(report.overallScore != null ? (report.overallScore >= 80 ? '良好' : report.overallScore >= 60 ? '中等' : '需提升') : '等待复核', 'green')}<p class="muted small">${report.summary?.text || (report.recommendations?.text || '基于本次已完成评分的真实结果。')}</p></article>${report.readingScore != null ? metricCard('wave','朗读得分',report.readingScore,'基于本次朗读录音的实际评分','green') : ''}${report.writtenScore != null ? metricCard('book','书面得分',report.writtenScore,'基于已完成评分的书面作答','green') : ''}</section>${report.recommendations ? `<section class="report-bottom"><article class="card"><h2 class="card-title">推荐练习</h2>${Array.isArray(report.recommendations) ? report.recommendations.map(r => `<div class="recommend-item"><div><strong>${typeof r === 'string' ? r : (r.title || r.text || JSON.stringify(r))}</strong><p class="muted small">基于本次报告的个性化建议</p></div></div>`).join('') : `<p class="muted">${typeof report.recommendations === 'string' ? report.recommendations : JSON.stringify(report.recommendations)}</p>`}</article></section>` : ''}<section class="report-bottom"><article class="card"><h2 class="card-title">练习档案</h2><p class="muted">录音、报告与历史记录已按本次练习保存。</p><div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="${routes.recordings}">${icon('wave')} 我的录音</a><a class="btn" href="${routes.history}">${icon('chart')} 历史记录</a><a class="btn primary" href="${routes.progress}">${icon('trend')} 查看学习进步</a></div></article></section></main>`;
     return shell(content.replace('</main>', `${teacherFeedback}${diagnosisPanel(report.diagnosis)}</main>`));
   }
@@ -732,9 +750,7 @@
     for (const completed of history.sessions || []) {
       if (!completed?.sessionId) continue;
       const current = byId.get(completed.sessionId);
-      byId.set(completed.sessionId, current
-        ? { ...current, historyRecord: completed }
-        : { id: completed.sessionId, status: 'COMPLETED', purpose: completed.purpose, type: completed.type, completedAt: completed.completedAt, createdAt: completed.completedAt, enrollmentId: history.enrollmentId, historyRecord: completed });
+      if (current) byId.set(completed.sessionId, { ...current, historyRecord: completed });
     }
     const timestamp = session => new Date(session.updatedAt || session.submittedAt || session.completedAt || session.createdAt || 0).getTime();
     return [...byId.values()].sort((left, right) => timestamp(right) - timestamp(left));
@@ -744,27 +760,69 @@
     return ({ CREATED: '待开始', IN_PROGRESS: '进行中', SUBMITTED: '已提交', PROCESSING: '处理中', FAILED: '处理失败', COMPLETED: '已完成', CANCELLED: '已取消' })[session.status] || session.status || '状态未知';
   }
 
+  function historyTitle(session) {
+    const practiceTitle = session.practiceTitle || appState.apiPracticeTitlesBySession?.[session.id || session.sessionId];
+    if (session.purpose === 'REMEDIATION') return session.historyRecord?.remediation?.title || practiceTitle || '专项巩固';
+    return practiceTitle || `${session.type === 'READING' ? '朗读' : session.type === 'WRITTEN' ? '书面' : '综合'}练习`;
+  }
+
+  function historyReportState(session) {
+    return appState.apiHistoryReports?.[session.id || session.sessionId] || null;
+  }
+
   function historyAction(session) {
     const id = encodeURIComponent(session.id || session.sessionId);
-    const root = session.purpose === 'REMEDIATION' ? `/student/practices/attempts/${id}` : `${base}/sessions/${id}`;
-    if (session.status === 'CREATED') return { href: `${root}/`, label: '开始练习' };
-    if (session.status === 'IN_PROGRESS') return { href: `${root}/`, label: '继续作答' };
-    if (['SUBMITTED', 'PROCESSING', 'FAILED'].includes(session.status)) return { href: `${root}/processing/`, label: '查看处理状态' };
-    if (session.status === 'COMPLETED') return { href: `${root}/report/`, label: '查看报告或结果' };
-    return { href: '/student/practices/', label: '返回练习中心' };
+    const isPractice = session.purpose === 'REMEDIATION' || appState.apiPracticeRoutes?.[session.id] === 'PRACTICE';
+    const routeState = appState.apiPracticeRoutes?.[session.id];
+    const root = isPractice ? `/student/practices/attempts/${id}` : `${base}/sessions/${id}`;
+    if (['CREATED', 'IN_PROGRESS'].includes(session.status)) {
+      if (routeState === 'UNAVAILABLE') return null;
+      return isPractice
+        ? { href: `${root}/runner/`, label: session.status === 'CREATED' ? '开始练习' : '继续练习' }
+        : { href: `${root}/`, label: session.status === 'CREATED' ? '开始练习' : '继续作答' };
+    }
+    if (['SUBMITTED', 'PROCESSING', 'FAILED'].includes(session.status)) {
+      if (routeState === 'UNAVAILABLE') return null;
+      return { href: `${root}/processing/`, label: '查看处理状态' };
+    }
+    if (session.status === 'COMPLETED') {
+      const reportState = historyReportState(session);
+      if (reportState?.state !== 'READY') return null;
+      return { href: `${root}/report/`, label: session.purpose === 'REMEDIATION' ? '查看巩固结果' : '查看正式报告' };
+    }
+    return null;
   }
 
   function historyScore(session) {
     if (session.status !== 'COMPLETED') return '尚未形成报告或成绩';
-    const record = session.historyRecord;
-    if (!record) return '报告暂不可用；没有展示成绩';
-    if (record.purpose === 'REMEDIATION') {
-      const summary = record.remediation;
-      return summary ? `本次巩固 ${summary.earnedPoints} / ${summary.maxPoints} 分` : '专项巩固结果暂不可用；没有展示成绩';
+    const reportState = historyReportState(session);
+    if (session.purpose === 'REMEDIATION') {
+      const result = reportState?.result;
+      if (reportState?.state !== 'READY' || !result) return '专项巩固结果暂不可用；没有展示成绩';
+      return typeof result.earnedPoints === 'number' && Number.isFinite(result.earnedPoints) &&
+        typeof result.maxPoints === 'number' && Number.isFinite(result.maxPoints)
+        ? `本次巩固 ${result.earnedPoints} / ${result.maxPoints} 分`
+        : '专项巩固结果没有提供完整分数';
     }
-    return typeof record.metrics?.overall === 'number' && Number.isFinite(record.metrics.overall)
-      ? `正式报告 ${record.metrics.overall} 分`
-      : '正式报告暂不可用；没有展示成绩';
+    if (reportState?.state === 'MISSING') return '正式报告尚未生成；没有展示成绩';
+    if (reportState?.state === 'INCOMPLETE') return '正式报告尚未完整；没有展示成绩';
+    if (reportState?.state !== 'READY' || !reportState.report) return reportReadMessage(reportState?.state);
+    const score = reportState.report.overallScore;
+    return typeof score === 'number' && Number.isFinite(score)
+      ? `正式报告 ${score} 分`
+      : '正式报告已生成；本次未提供总分';
+  }
+
+  function historyReportComments(session) {
+    const report = historyReportState(session)?.report;
+    const comments = Array.isArray(report?.teacherFeedback)
+      ? report.teacherFeedback.filter(item => typeof item?.comment === 'string' && item.comment.trim())
+      : [];
+    if (!comments.length) return '';
+    return `<details class="history-review-comments"><summary>正式测评复核评语 · AssessmentReview（${comments.length}）</summary><ul>${comments.map(item => {
+      const reviewedAt = item.reviewedAt && Number.isFinite(Date.parse(item.reviewedAt)) ? new Date(item.reviewedAt) : null;
+      return `<li>${safe(item.comment)}${reviewedAt ? `<time datetime="${safe(reviewedAt.toISOString())}">${safe(reviewedAt.toLocaleString())}</time>` : ''}</li>`;
+    }).join('')}</ul><p class="muted small">这些评语来自本次正式测评的人工复核，与课程任务 Feedback 分开保存。</p></details>`;
   }
 
   function renderHistory() {
@@ -777,9 +835,7 @@
     const activeCount = records.filter(session => ['CREATED', 'IN_PROGRESS', 'SUBMITTED', 'PROCESSING'].includes(session.status)).length;
     const rows = records.map(session => {
       const action = historyAction(session);
-      const title = session.purpose === 'REMEDIATION'
-        ? (session.historyRecord?.remediation?.title || '专项巩固')
-        : `${session.type === 'READING' ? '朗读' : session.type === 'WRITTEN' ? '书面' : '综合'}练习`;
+      const title = historyTitle(session);
       const statusClass = session.status === 'COMPLETED' ? 'green' : session.status === 'CANCELLED' || session.status === 'FAILED' ? 'red' : 'gold';
       const date = session.completedAt || session.submittedAt || session.updatedAt || session.createdAt;
       const pendingCopy = ['SUBMITTED', 'PROCESSING'].includes(session.status)
@@ -787,19 +843,34 @@
         : session.status === 'FAILED'
           ? '处理失败；打开状态页查看可用的重试或后续提示。'
           : '';
-      return `<article class="history-record-row" data-history-session="${safe(session.id || session.sessionId)}"><div><span class="chip ${statusClass}">${safe(historyStatus(session))}</span><h3>${safe(title)}</h3><p>${date ? new Date(date).toLocaleString() : '时间暂不可用'} · ${safe(historyScore(session))}</p>${pendingCopy ? `<p class="muted small">${pendingCopy}</p>` : ''}</div><a class="btn ${session.status === 'COMPLETED' ? 'ghost' : 'primary'}" href="${safe(action.href)}">${safe(action.label)}</a></article>`;
-    }).join('') || '<div class="card" style="padding:32px;text-align:center"><h2>还没有练习记录</h2><p class="muted">完成练习后，真实状态和已生成的报告会出现在这里。</p><a class="btn primary" href="/student/practices/">前往练习中心</a></div>';
+      const statusLabel = historyStatus(session);
+      const purposeLabel = session.purpose === 'REMEDIATION' ? '<span class="chip purple">专项巩固 · REMEDIATION</span>' : '<span class="chip gray">正式测评</span>';
+      const searchText = `${title} ${statusLabel} ${session.status || ''} ${session.purpose || ''}`.toLocaleLowerCase();
+      const actionContent = action
+        ? `<a class="btn ${session.status === 'COMPLETED' ? 'ghost' : 'primary'}" href="${safe(action.href)}">${safe(action.label)}</a>`
+        : `<span class="history-action-unavailable" role="status">${session.status === 'COMPLETED' ? '结果暂不可用' : '当前 Attempt 暂不可打开'}</span>`;
+      return `<article class="history-record-row" data-history-session="${safe(session.id || session.sessionId)}" data-history-status="${safe(session.status || '')}" data-history-purpose="${safe(session.purpose || 'STANDARD')}" data-history-search="${safe(searchText)}"><div class="history-record-copy">${purposeLabel}<span class="chip ${statusClass}" aria-label="状态：${safe(statusLabel)}（${safe(session.status || 'UNKNOWN')}）">${safe(statusLabel)} · ${safe(session.status || 'UNKNOWN')}</span><h3>${safe(title)}</h3><p>${date ? new Date(date).toLocaleString() : '时间暂不可用'} · ${safe(historyScore(session))}</p>${pendingCopy ? `<p class="muted small">${pendingCopy}</p>` : ''}${session.status === 'COMPLETED' && session.purpose !== 'REMEDIATION' ? historyReportComments(session) : ''}</div>${actionContent}</article>`;
+    }).join('') || ((appState._historyLocalQuery || appState._historyLocalStatus)
+      ? '<div class="card history-filter-empty" style="padding:32px;text-align:center"><h2>没有符合条件的学习记录</h2><p class="muted">调整搜索词或筛选条件后重试。</p></div>'
+      : '<div class="card" style="padding:32px;text-align:center"><h2>还没有练习记录</h2><p class="muted">完成练习后，本人真实状态和已完整生成的报告会出现在这里。</p><a class="btn primary" href="/student/practices/">前往练习中心</a></div>');
     const hasMore = Boolean(appState.apiSessionPage?.nextCursor);
+    const hasMoreQueryResults = Array.isArray(appState._historyQueryResults) && appState._historyQueryOffset < appState._historyQueryResults.length;
     const events = (appState.apiHistoryEvents?.events || []).filter(event => event.type === 'FEEDBACK');
     const eventContent = appState._historyEventsError
       ? `<p role="alert">老师反馈暂时无法加载：${safe(appState._historyEventsError)} <button class="btn" data-history-events-retry>重试反馈</button></p>`
       : appState._loadingHistoryEvents
         ? '<p class="muted" aria-busy="true">正在加载老师反馈…</p>'
         : events.length
-          ? events.map(event => `<article class="history-record-row"><div><span class="chip blue">老师反馈</span><h3>${safe(event.title || '教师反馈')}</h3><p>${event.timestamp ? new Date(event.timestamp).toLocaleString() : '时间暂不可用'}</p><p class="muted">${safe(event.description || '老师没有留下文字说明。')}</p></div></article>`).join('')
+          ? events.map(event => `<article class="history-record-row history-course-feedback"><div><span class="chip blue">课程任务反馈 · Feedback</span><h3>${safe(event.title || '教师反馈')}</h3><p>${event.timestamp ? new Date(event.timestamp).toLocaleString() : '时间暂不可用'}</p><p class="muted">${safe(event.description || '老师没有留下文字说明。')}</p>${event.id ? `<details class="history-source-reference"><summary>查看 Feedback 来源</summary><code>Feedback ${safe(event.id)}</code></details>` : ''}</div></article>`).join('')
           : '<p class="muted">目前没有已发布的老师反馈。</p>';
 
-    return shell(`<main class="page"><div class="hero-landscape" style="height:220px"></div><section class="hero-head" style="min-height:130px"><h1 class="page-title">我的学习记录</h1><p class="page-subtitle">练习进度、提交状态、正式测评与老师反馈都来自当前登录账号。</p><a class="btn primary" href="/student/practices/">选择下一项练习 ${icon('arrow')}</a></section><div class="history-summary"><article class="card"><div class="icon red">${icon('assessment')}</div><small>已完成记录</small><b style="display:block;font-size:32px">${completedCount}</b><span class="muted small">只有已生成的本人结果会显示成绩</span></article><article class="card"><div class="icon">${icon('clock')}</div><small>进行中或待处理</small><b style="display:block;font-size:32px">${activeCount}</b><span class="muted small">提交后可继续查看状态</span></article></div><section class="history-record-panel card"><div class="section-title"><div><h2>练习与测评</h2><p class="muted small">本人最近的服务端 Attempt 与已生成结果，按最近更新时间排序。</p></div></div>${rows}${appState._historyMoreError ? `<p role="alert">${safe(appState._historyMoreError)}</p>` : ''}${hasMore ? `<button class="load-more" data-history-more ${appState._loadingMoreHistory ? 'disabled' : ''}>${appState._loadingMoreHistory ? '正在加载…' : appState._historyMoreError ? '重试加载更早记录' : '加载更早记录'}</button>` : ''}</section><section class="history-record-panel card"><div class="section-title"><div><h2>老师反馈</h2><p class="muted small">只展示当前学生学籍下已发布的反馈。</p></div></div>${eventContent}</section><aside class="history-side"><article class="card retest"><h2 class="card-title">学习入口</h2><p class="muted">没有开放练习时，这里不会生成推荐题目或成绩。</p><a class="btn" href="/student/today/">回到今天的学习</a></article></aside></main>`);
+    const filterStatus = appState._historyLocalStatus || '';
+    const filterQuery = appState._historyLocalQuery || '';
+    const countText = appState._historyQueryLoading
+      ? '正在查询完整历史…'
+      : `${records.length} 条记录${hasMore || hasMoreQueryResults ? ' · 还可继续加载' : ''}`;
+
+    return shell(`<main class="page"><div class="hero-landscape" style="height:220px"></div><section class="hero-head" style="min-height:130px"><h1 class="page-title">我的学习记录</h1><p class="page-subtitle">只显示当前登录账号和当前学校下的真实 Attempt、正式报告及课程任务反馈。</p><a class="btn primary" href="/student/practices/">选择下一项练习 ${icon('arrow')}</a></section><div class="history-summary"><article class="card"><div class="icon red">${icon('assessment')}</div><small>当前结果中的已完成记录</small><b style="display:block;font-size:32px">${completedCount}</b><span class="muted small">成绩只来自本人授权且完整的正式报告或巩固结果</span></article><article class="card"><div class="icon">${icon('clock')}</div><small>当前结果中的进行中或待处理</small><b style="display:block;font-size:32px">${activeCount}</b><span class="muted small">IN_PROGRESS 与 PROCESSING 分开展示</span></article></div><section class="history-record-panel card" aria-labelledby="history-records-title" aria-busy="${appState._historyQueryLoading ? 'true' : 'false'}"><div class="section-title"><div><h2 id="history-records-title">练习与测评</h2><p class="muted small">状态筛选使用服务端 Attempt 状态；关键词和专项巩固查询会按 cursor 检索完整历史。</p></div></div><div class="history-local-filters" role="search" aria-label="筛选本人学习记录"><label for="history-query">搜索练习名称<input id="history-query" type="search" data-history-query autocomplete="off" value="${safe(filterQuery)}" placeholder="如：朗读、书面、专项巩固" aria-describedby="history-filter-help"></label><label for="history-status">筛选状态或类型<select id="history-status" data-history-status aria-describedby="history-filter-help"><option value=""${filterStatus === '' ? ' selected' : ''}>全部状态与类型</option><option value="IN_PROGRESS"${filterStatus === 'IN_PROGRESS' ? ' selected' : ''}>进行中 · IN_PROGRESS</option><option value="PROCESSING"${filterStatus === 'PROCESSING' ? ' selected' : ''}>处理中 · PROCESSING</option><option value="COMPLETED"${filterStatus === 'COMPLETED' ? ' selected' : ''}>已完成 · COMPLETED</option><option value="REMEDIATION"${filterStatus === 'REMEDIATION' ? ' selected' : ''}>专项巩固 · REMEDIATION</option></select></label><button class="history-filter-reset" type="button" data-history-reset ${filterQuery || filterStatus ? '' : 'disabled'}>清除筛选</button><span id="history-filter-help" class="history-filter-help">精确状态由服务器过滤；名称搜索和专项巩固检索会逐页读取本人历史。</span><span class="history-filter-count" data-history-count role="status" aria-live="polite" aria-atomic="true">${countText}</span></div>${appState._historyQueryError ? `<p class="history-query-error" role="alert">完整历史查询未完成：${safe(appState._historyQueryError)} <button class="btn" data-history-query-retry>重试查询</button>。当前列表是上一次成功读取的结果。</p>` : ''}<div id="history-record-list">${rows}</div>${appState._historyMoreError ? `<p role="alert">${safe(appState._historyMoreError)}</p>` : ''}${hasMore || hasMoreQueryResults ? `<button class="load-more" data-history-more aria-controls="history-record-list" ${appState._loadingMoreHistory || appState._historyQueryLoading ? 'disabled' : ''}>${appState._loadingMoreHistory ? '正在加载…' : appState._historyMoreError ? '重试加载更早记录' : '加载更多学习记录'}</button>` : ''}</section><section class="history-record-panel card" aria-labelledby="course-feedback-title"><div class="section-title"><div><h2 id="course-feedback-title">课程任务教师反馈 · Feedback</h2><p class="muted small">来自课程 Submission 的已发布 Feedback；与正式测评的 AssessmentReview 评语分开显示。</p></div></div>${eventContent}</section><aside class="history-side"><article class="card retest"><h2 class="card-title">学习入口</h2><p class="muted">没有开放练习时，这里不会生成推荐题目或成绩。</p><a class="btn" href="/student/today/">回到今天的学习</a></article></aside></main>`);
   }
 
   function progressDeltaWording(delta) {
@@ -1483,9 +1554,64 @@
   }
 
   function bindHistory(){
+    const query = document.querySelector('[data-history-query]');
+    const status = document.querySelector('[data-history-status]');
+    const reset = document.querySelector('[data-history-reset]');
+    const applyLocal = () => {
+      const items = [...document.querySelectorAll('[data-history-session]')];
+      const needle = (appState._historyLocalQuery || '').trim().toLocaleLowerCase();
+      const filter = appState._historyLocalStatus || '';
+      let showing = 0;
+      for (const item of items) {
+        const search = (item.dataset.historySearch || '').toLocaleLowerCase();
+        const exactStatus = item.dataset.historyStatus || '';
+        const purpose = item.dataset.historyPurpose || '';
+        const statusMatches = !filter || (filter === 'REMEDIATION' ? purpose === 'REMEDIATION' : exactStatus === filter);
+        const visible = statusMatches && (!needle || search.includes(needle));
+        item.hidden = !visible;
+        if (visible) showing += 1;
+      }
+      const count = document.querySelector('[data-history-count]');
+      if (count && !appState._historyQueryLoading) count.textContent = `${showing} 条当前记录${appState.apiSessionPage?.nextCursor || appState._historyQueryResults?.length > appState._historyQueryOffset ? ' · 还可继续加载' : ''}`;
+      if (reset) reset.disabled = !needle && !filter;
+    };
+    const scheduleQuery = (focusTarget) => {
+      clearTimeout(historySearchTimer);
+      historyLoadEpoch += 1;
+      if (appState._loadingHistoryEvents) {
+        historyEventsEpoch += 1;
+        appState._loadingHistoryEvents = false;
+      }
+      appState._historyQueryError = null;
+      appState._historyMoreError = null;
+      appState._historyQueryLoading = true;
+      const count = document.querySelector('[data-history-count]');
+      const panel = document.querySelector('.history-record-panel');
+      if (count) count.textContent = '正在查询完整历史…';
+      panel?.setAttribute('aria-busy', 'true');
+      applyLocal();
+      historySearchTimer = setTimeout(() => loadHistory({ preserveView: true, focusTarget }), focusTarget === 'query' ? 280 : 0);
+    };
+    query?.addEventListener('input', () => {
+      appState._historyLocalQuery = query.value;
+      scheduleQuery('query');
+    });
+    status?.addEventListener('change', () => {
+      appState._historyLocalStatus = status.value;
+      scheduleQuery('status');
+    });
+    reset?.addEventListener('click', () => {
+      appState._historyLocalQuery = '';
+      appState._historyLocalStatus = '';
+      if (query) query.value = '';
+      if (status) status.value = '';
+      scheduleQuery('reset');
+    });
     document.querySelector('[data-retry]')?.addEventListener('click', loadHistory);
     document.querySelector('[data-history-more]')?.addEventListener('click', loadMoreHistorySessions);
-    document.querySelector('[data-history-events-retry]')?.addEventListener('click', () => loadHistoryEvents(appState.apiHistory?.enrollmentId));
+    document.querySelector('[data-history-query-retry]')?.addEventListener('click', () => loadHistory({ preserveView: true, focusTarget: 'query' }));
+    document.querySelector('[data-history-events-retry]')?.addEventListener('click', () => loadHistoryEvents(appState.apiHistory?.enrollmentId, { quiet: true }));
+    applyLocal();
   }
 
   function bindProgress(){
@@ -1717,7 +1843,12 @@
         appState.apiRemediationResult = await Api.getAssessmentRemediationResult(SESSION_ID);
       } else {
         appState.apiRemediationResult = null;
-        appState.apiReport = await Api.getAssessmentReport(SESSION_ID);
+        const report = await Api.getAssessmentReport(SESSION_ID);
+        if (report && (report.sessionId !== SESSION_ID ||
+          (currentSchoolId() && report.schoolId && report.schoolId !== currentSchoolId()))) {
+          throw new Error('报告来源与当前 Attempt 或学校身份不一致，已停止显示。');
+        }
+        appState.apiReport = report;
       }
     } catch (err) {
       console.error('[assessment] 加载报告失败:', err);
@@ -1729,76 +1860,421 @@
     }
   }
 
-  async function loadHistoryEvents(enrollmentId) {
+  function currentSchoolId() {
+    try { return storage.getItem('yuzan-active-school-id') || ''; } catch { return ''; }
+  }
+
+  function currentHistoryIdentityKey() {
+    return `${Api?.getToken?.() || ''}|${currentSchoolId()}`;
+  }
+
+  function reportReadState(err) {
+    if (err?.status === 401) return 'UNAUTHORIZED';
+    if (err?.status === 403) return 'FORBIDDEN';
+    if (err?.status === 404) return 'MISSING';
+    if (err?.status === 409) return 'CONFLICT';
+    if (!err?.status) return 'OFFLINE';
+    return 'ERROR';
+  }
+
+  function reportReadMessage(state) {
+    return ({
+      UNAUTHORIZED: '请重新登录后查看本人结果。',
+      FORBIDDEN: '当前学校或学籍无权查看该结果。',
+      MISSING: '正式报告尚未生成。',
+      CONFLICT: '记录状态已变化，请刷新后重试。',
+      OFFLINE: '网络暂时不可用，结果未读取。',
+      ERROR: '结果暂时不可读取。'
+    })[state] || '结果暂不可用。';
+  }
+
+  function clearHistoryForIdentityChange() {
+    historyLoadEpoch += 1;
+    historyEventsEpoch += 1;
+    historyIdentityKey = currentHistoryIdentityKey();
+    appState.apiHistory = null;
+    appState.apiSessionPage = null;
+    appState.apiHistoryReports = {};
+    appState.apiPracticeRoutes = {};
+    appState.apiPracticeTitles = {};
+    appState.apiPracticeTitlesBySession = {};
+    appState._historyQueryResults = null;
+    appState._historyQueryOffset = 0;
+    appState.apiHistoryEvents = null;
+    appState._historyLocalQuery = '';
+    appState._historyLocalStatus = '';
+    appState._historyError = '登录身份或当前学校已变化；旧记录已清除，请重新读取。';
+    appState._historyQueryError = null;
+    appState._historyQueryLoading = false;
+    appState._historyMoreError = null;
+    appState._historyEventsError = null;
+    appState._loadingHistory = false;
+    appState._loadingHistoryEvents = false;
+    appState._loadingMoreHistory = false;
+    renderCurrent();
+  }
+
+  function historyResponseIsStale(epoch, identity) {
+    if (epoch !== historyLoadEpoch) return true;
+    if (identity !== currentHistoryIdentityKey()) {
+      clearHistoryForIdentityChange();
+      return true;
+    }
+    return false;
+  }
+
+  function renderHistoryPreservingFocus() {
+    const active = document.activeElement;
+    const focusKind = active?.matches?.('[data-history-query]') ? 'query'
+      : active?.matches?.('[data-history-status]') ? 'status'
+        : active?.matches?.('[data-history-reset]') ? 'reset' : '';
+    const selection = focusKind === 'query' ? [active.selectionStart, active.selectionEnd] : null;
+    renderCurrent();
+    if (!focusKind) return;
+    const selector = focusKind === 'query' ? '[data-history-query]' : focusKind === 'status' ? '[data-history-status]' : '[data-history-reset]';
+    const next = document.querySelector(selector);
+    next?.focus();
+    if (selection && typeof next?.setSelectionRange === 'function') {
+      try { next.setSelectionRange(...selection); } catch {}
+    }
+  }
+
+  function mergeHistoryPage(sessions, history) {
+    const completedById = new Map((history?.sessions || []).filter(item => item?.sessionId).map(item => [item.sessionId, item]));
+    return (sessions || []).map(session => completedById.has(session.id)
+      ? { ...session, historyRecord: completedById.get(session.id) }
+      : { ...session });
+  }
+
+  async function hydrateHistoryPracticeMetadata(sessions, epoch, identity) {
+    const practiceRoutes = { ...(appState.apiPracticeRoutes || {}) };
+    const practiceTitles = { ...(appState.apiPracticeTitles || {}) };
+    const definitionBySession = new Map();
+    const tasks = (sessions || []).map(session => async () => {
+      const id = session.id;
+      if (!id) return;
+      if (Object.prototype.hasOwnProperty.call(practiceRoutes, id)) return;
+      if (typeof Api.getPracticeAttempt !== 'function') {
+        practiceRoutes[id] = session.purpose === 'REMEDIATION' ? 'UNAVAILABLE' : 'ASSESSMENT';
+        return;
+      }
+      try {
+        const attempt = await Api.getPracticeAttempt(id);
+        if (attempt?.id !== id) {
+          practiceRoutes[id] = 'UNAVAILABLE';
+          return;
+        }
+        if (typeof attempt.practiceDefinitionId === 'string' && attempt.practiceDefinitionId) {
+          practiceRoutes[id] = 'PRACTICE';
+          definitionBySession.set(id, attempt.practiceDefinitionId);
+        } else {
+          practiceRoutes[id] = session.purpose === 'REMEDIATION' ? 'UNAVAILABLE' : 'ASSESSMENT';
+        }
+      } catch (err) {
+        practiceRoutes[id] = err?.status === 404 && session.purpose !== 'REMEDIATION' ? 'ASSESSMENT' : 'UNAVAILABLE';
+      }
+    });
+    const workers = [];
+    let next = 0;
+    for (let worker = 0; worker < Math.min(6, tasks.length); worker += 1) {
+      workers.push((async () => {
+        while (next < tasks.length) {
+          const current = next++;
+          await tasks[current]();
+        }
+      })());
+    }
+    await Promise.all(workers);
+    if (historyResponseIsStale(epoch, identity)) return null;
+
+    const definitionIds = [...new Set([...definitionBySession.values()])];
+    if (typeof Api.getPractice === 'function') {
+      let definitionIndex = 0;
+      const titleWorkers = [];
+      for (let worker = 0; worker < Math.min(6, definitionIds.length); worker += 1) {
+        titleWorkers.push((async () => {
+          while (definitionIndex < definitionIds.length) {
+            const index = definitionIndex++;
+            const definitionId = definitionIds[index];
+            if (typeof practiceTitles[definitionId] === 'string') continue;
+            try {
+              const definition = await Api.getPractice(definitionId);
+              if (definition?.id === definitionId && typeof definition.title === 'string' && definition.title.trim()) {
+                practiceTitles[definitionId] = definition.title.trim();
+              }
+            } catch {
+              // A historical definition may no longer be in the active catalog.
+              // Keep the real attempt route and use its safe type label instead.
+            }
+          }
+        })());
+      }
+      await Promise.all(titleWorkers);
+    }
+    if (historyResponseIsStale(epoch, identity)) return null;
+    const sessionTitles = { ...(appState.apiPracticeTitlesBySession || {}) };
+    for (const [sessionId, definitionId] of definitionBySession) {
+      if (typeof practiceTitles[definitionId] === 'string') sessionTitles[sessionId] = practiceTitles[definitionId];
+    }
+    appState.apiPracticeRoutes = practiceRoutes;
+    appState.apiPracticeTitles = practiceTitles;
+    appState.apiPracticeTitlesBySession = sessionTitles;
+    return (sessions || []).map(session => ({
+      ...session,
+      ...(sessionTitles[session.id] ? { practiceTitle: sessionTitles[session.id] } : {})
+    }));
+  }
+
+  async function hydrateHistoryDetails(sessions, epoch, identity) {
+    const enrichedSessions = await hydrateHistoryPracticeMetadata(sessions, epoch, identity);
+    if (!enrichedSessions) return false;
+    const reports = { ...(appState.apiHistoryReports || {}) };
+    const tasks = enrichedSessions.map(session => async () => {
+      const id = session.id;
+      if (!id) return;
+      if (session.status !== 'COMPLETED') return;
+      if (session.purpose === 'REMEDIATION') {
+        try {
+          const result = await Api.getAssessmentRemediationResult(id);
+          reports[id] = result?.status === 'COMPLETED' && result.pendingItemCount === 0
+            ? { state: 'READY', result }
+            : { state: 'INCOMPLETE' };
+        } catch (err) {
+          reports[id] = { state: reportReadState(err) };
+        }
+        return;
+      }
+      try {
+        const report = await Api.getAssessmentReport(id);
+        if (!report) {
+          reports[id] = { state: 'MISSING' };
+        } else if (report.sessionId !== id || typeof report.id !== 'string' ||
+          (currentSchoolId() && report.schoolId && report.schoolId !== currentSchoolId())) {
+          reports[id] = { state: 'ERROR' };
+        } else if (report.dataCompleteness !== 100) {
+          reports[id] = { state: 'INCOMPLETE' };
+        } else {
+          reports[id] = { state: 'READY', report };
+        }
+      } catch (err) {
+        reports[id] = { state: reportReadState(err) };
+      }
+    });
+    const workers = [];
+    let next = 0;
+    for (let worker = 0; worker < Math.min(6, tasks.length); worker += 1) {
+      workers.push((async () => {
+        while (next < tasks.length) {
+          const current = next++;
+          await tasks[current]();
+        }
+      })());
+    }
+    await Promise.all(workers);
+    if (historyResponseIsStale(epoch, identity)) return false;
+    appState.apiHistoryReports = reports;
+    return true;
+  }
+
+  async function loadHistoryEvents(enrollmentId, options = {}) {
     if (!apiEnabled) return;
+    const epoch = ++historyEventsEpoch;
+    const identity = currentHistoryIdentityKey();
     appState._loadingHistoryEvents = true;
     appState._historyEventsError = null;
-    renderCurrent();
+    if (!options.quiet) renderCurrent();
     try {
-      appState.apiHistoryEvents = await Api.getAssessmentHistoryEvents(enrollmentId);
+      const events = await Api.getAssessmentHistoryEvents(enrollmentId);
+      if (epoch !== historyEventsEpoch) return;
+      if (identity !== currentHistoryIdentityKey()) { clearHistoryForIdentityChange(); return; }
+      appState.apiHistoryEvents = events;
     } catch (err) {
-      console.error('[assessment] 加载本人教师反馈失败:', err);
+      if (epoch !== historyEventsEpoch) return;
+      if (identity !== currentHistoryIdentityKey()) { clearHistoryForIdentityChange(); return; }
+      console.error('[assessment] 加载本人课程任务 Feedback 失败:', err);
       appState._historyEventsError = err.message || String(err);
     } finally {
-      appState._loadingHistoryEvents = false;
-      renderCurrent();
+      if (epoch === historyEventsEpoch && identity === currentHistoryIdentityKey()) {
+        appState._loadingHistoryEvents = false;
+        if (options.quiet) renderHistoryPreservingFocus();
+        else renderCurrent();
+      }
     }
   }
 
   async function loadMoreHistorySessions() {
     const current = appState.apiSessionPage;
-    if (!apiEnabled || appState._loadingMoreHistory || !current?.nextCursor) return;
+    if (!apiEnabled || appState._loadingMoreHistory) return;
+    const identity = currentHistoryIdentityKey();
+    const epoch = historyLoadEpoch;
     appState._loadingMoreHistory = true;
     appState._historyMoreError = null;
     renderCurrent();
     try {
-      const page = await Api.listAssessmentSessions({ limit: 100, cursor: current.nextCursor, ...(current.enrollmentId ? { enrollmentId: current.enrollmentId } : {}) });
-      if (!Array.isArray(page?.items)) throw new Error('历史记录响应不可用，请重试。');
-      if (current.enrollmentId && page.items.some(session => session.enrollmentId !== current.enrollmentId)) {
-        throw new Error('练习记录的学籍范围不一致，已停止显示后续记录。');
+      if (Array.isArray(appState._historyQueryResults)) {
+        const start = appState._historyQueryOffset || current.items.length;
+        const nextItems = appState._historyQueryResults.slice(start, start + HISTORY_PAGE_SIZE);
+        if (!nextItems.length) return;
+        if (!await hydrateHistoryDetails(nextItems, epoch, identity)) return;
+        if (historyResponseIsStale(epoch, identity)) return;
+        appState.apiSessionPage = { ...current, items: [...current.items, ...nextItems] };
+        appState._historyQueryOffset = start + nextItems.length;
+      } else {
+        if (!current?.nextCursor) return;
+        const page = await Api.listAssessmentSessions({
+          limit: HISTORY_PAGE_SIZE,
+          cursor: current.nextCursor,
+          ...(current.enrollmentId ? { enrollmentId: current.enrollmentId } : {}),
+          ...(current.statusFilter ? { status: current.statusFilter } : {})
+        });
+        if (historyResponseIsStale(epoch, identity)) return;
+        if (!Array.isArray(page?.items)) throw new Error('历史记录响应不可用，请重试。');
+        if (current.enrollmentId && page.items.some(session => session.enrollmentId !== current.enrollmentId)) {
+          throw new Error('练习记录的学籍范围不一致，已停止显示后续记录。');
+        }
+        if (!await hydrateHistoryDetails(page.items, epoch, identity)) return;
+        if (historyResponseIsStale(epoch, identity)) return;
+        appState.apiSessionPage = { ...page, enrollmentId: current.enrollmentId, statusFilter: current.statusFilter, items: [...current.items, ...page.items] };
+        appState.apiHistory = appState.apiHistory;
       }
-      appState.apiSessionPage = { ...page, enrollmentId: current.enrollmentId, items: [...current.items, ...page.items] };
     } catch (err) {
-      console.error('[assessment] 加载更早本人练习记录失败:', err);
-      appState._historyMoreError = err.message || String(err);
+      if (epoch === historyLoadEpoch && identity !== currentHistoryIdentityKey()) {
+        clearHistoryForIdentityChange();
+      } else if (epoch === historyLoadEpoch) {
+        console.error('[assessment] 加载更多本人学习记录失败:', err);
+        appState._historyMoreError = err.message || String(err);
+      }
     } finally {
-      appState._loadingMoreHistory = false;
-      renderCurrent();
+      if (epoch === historyLoadEpoch && identity === currentHistoryIdentityKey()) {
+        appState._loadingMoreHistory = false;
+        renderCurrent();
+      }
     }
   }
 
-  async function loadHistory() {
+  async function loadHistory(options = {}) {
     if (!apiEnabled) return;
-    appState.apiHistory = null;
-    appState.apiSessionPage = null;
-    appState.apiHistoryEvents = null;
-    appState._historyError = null;
-    appState._historyEventsError = null;
-    appState._historyMoreError = null;
-    appState._loadingHistory = true;
-    renderCurrent();
+    const preserveView = options.preserveView === true;
+    const epoch = ++historyLoadEpoch;
+    const identity = currentHistoryIdentityKey();
+    const identityChanged = Boolean(historyIdentityKey && historyIdentityKey !== identity);
+    historyIdentityKey = identity;
+    const focusTarget = options.focusTarget || '';
+    if (!preserveView || identityChanged) {
+      historyEventsEpoch += 1;
+      appState._loadingHistoryEvents = false;
+      appState.apiHistory = null;
+      appState.apiSessionPage = null;
+      appState.apiHistoryReports = {};
+      appState.apiPracticeRoutes = {};
+      appState.apiPracticeTitles = {};
+      appState.apiPracticeTitlesBySession = {};
+      appState._historyQueryResults = null;
+      appState._historyQueryOffset = 0;
+      appState.apiHistoryEvents = null;
+      appState._historyEventsError = null;
+      appState._historyMoreError = null;
+      appState._loadingHistory = true;
+      appState._historyQueryLoading = false;
+      appState._historyQueryError = null;
+      if (identityChanged) {
+        appState._historyLocalQuery = '';
+        appState._historyLocalStatus = '';
+      }
+      renderCurrent();
+    } else {
+      appState._historyQueryLoading = true;
+      appState._historyQueryError = null;
+      appState._historyMoreError = null;
+    }
+
+    const queryText = (appState._historyLocalQuery || '').trim().toLocaleLowerCase();
+    const selectedFilter = appState._historyLocalStatus || '';
+    const statusFilter = ['IN_PROGRESS', 'PROCESSING', 'COMPLETED'].includes(selectedFilter) ? selectedFilter : '';
+    const scanAll = Boolean(queryText || selectedFilter === 'REMEDIATION');
     let enrollmentId;
     try {
-      const sessionPage = await Api.listAssessmentSessions({ limit: 100 });
-      if (!Array.isArray(sessionPage?.items)) throw new Error('本人练习记录响应不可用，请重试。');
-      enrollmentId = sessionPage.items.find(session => typeof session.enrollmentId === 'string')?.enrollmentId;
+      const sessionItems = [];
+      const seenCursors = new Set();
+      let page = await Api.listAssessmentSessions({ limit: scanAll ? 100 : HISTORY_PAGE_SIZE, ...(statusFilter ? { status: statusFilter } : {}) });
+      if (!Array.isArray(page?.items)) throw new Error('本人 Attempt 历史响应不可用，请重试。');
+      sessionItems.push(...page.items);
+      const pageEnrollment = page.items.find(session => typeof session.enrollmentId === 'string')?.enrollmentId;
+      if (pageEnrollment && page.items.some(session => session.enrollmentId !== pageEnrollment)) {
+        throw new Error('Attempt 列表包含多个学籍，已停止显示以保护学校身份范围。');
+      }
+      enrollmentId = pageEnrollment;
+      if (scanAll) {
+        for (let pageNumber = 1; page.nextCursor; pageNumber += 1) {
+          if (pageNumber >= HISTORY_MAX_SCAN_PAGES) throw new Error('历史记录超过本次安全查询上限；请缩小搜索词后重试。');
+          if (seenCursors.has(page.nextCursor)) throw new Error('Attempt 历史分页游标重复，已停止查询。');
+          seenCursors.add(page.nextCursor);
+          page = await Api.listAssessmentSessions({ limit: 100, cursor: page.nextCursor, ...(enrollmentId ? { enrollmentId } : {}), ...(statusFilter ? { status: statusFilter } : {}) });
+          if (historyResponseIsStale(epoch, identity)) return;
+          if (!Array.isArray(page?.items)) throw new Error('本人 Attempt 历史分页响应不可用，请重试。');
+          if (enrollmentId && page.items.some(session => session.enrollmentId !== enrollmentId)) {
+            throw new Error('Attempt 分页的学籍范围不一致，已停止显示后续记录。');
+          }
+          sessionItems.push(...page.items);
+        }
+        if (page?.hasMore && !page?.nextCursor) throw new Error('Attempt 历史分页游标缺失，已停止查询。');
+      }
+      if (historyResponseIsStale(epoch, identity)) return;
+
       const history = await Api.getAssessmentHistory({ ...(enrollmentId ? { enrollmentId } : {}), range: 'all' });
-      if (!Array.isArray(history?.sessions)) throw new Error('本人历史结果响应不可用，请重试。');
+      if (historyResponseIsStale(epoch, identity)) return;
+      if (!Array.isArray(history?.sessions)) throw new Error('本人正式结果历史响应不可用，请重试。');
       if (enrollmentId && history.enrollmentId && history.enrollmentId !== enrollmentId) {
-        throw new Error('练习进度与历史结果的学籍范围不一致，已停止显示记录。');
+        throw new Error('Attempt 与历史结果的学籍范围不一致，已停止显示记录。');
       }
       enrollmentId = history.enrollmentId || enrollmentId;
-      appState.apiSessionPage = { ...sessionPage, enrollmentId };
+      const merged = mergeHistoryPage(sessionItems, history);
+      const historyNamedSessions = await hydrateHistoryPracticeMetadata(merged, epoch, identity);
+      if (!historyNamedSessions || historyResponseIsStale(epoch, identity)) return;
+      const filtered = historyNamedSessions.filter(session => {
+        if (selectedFilter === 'REMEDIATION' && session.purpose !== 'REMEDIATION') return false;
+        if (queryText && !`${historyTitle(session)} ${historyStatus(session)} ${session.status || ''} ${session.purpose || ''}`.toLocaleLowerCase().includes(queryText)) return false;
+        return true;
+      });
+      const visibleItems = scanAll ? filtered.slice(0, HISTORY_PAGE_SIZE) : filtered;
+      const visiblePage = {
+        items: visibleItems,
+        nextCursor: scanAll ? null : page.nextCursor || null,
+        hasMore: scanAll ? false : Boolean(page.hasMore),
+        enrollmentId,
+        statusFilter
+      };
       appState.apiHistory = history;
-    } catch (err) {
-      console.error('[assessment] 加载历史失败:', err);
-      appState._historyError = err.message || String(err);
-    } finally {
+      appState.apiSessionPage = visiblePage;
+      appState._historyQueryResults = scanAll ? filtered : null;
+      appState._historyQueryOffset = scanAll ? visibleItems.length : 0;
+      appState._historyError = null;
+      if (!await hydrateHistoryDetails(visibleItems, epoch, identity)) return;
+      if (historyResponseIsStale(epoch, identity)) return;
+      appState._historyMoreError = null;
+      appState._historyQueryError = null;
+      appState._historyQueryLoading = false;
       appState._loadingHistory = false;
       saveState();
-      renderCurrent();
+      if (preserveView) renderHistoryPreservingFocus();
+      else renderCurrent();
+      if (!preserveView || identityChanged || !appState.apiHistoryEvents) {
+        await loadHistoryEvents(enrollmentId, { quiet: preserveView });
+      }
+    } catch (err) {
+      if (historyResponseIsStale(epoch, identity)) return;
+      console.error('[assessment] 加载本人学习历史失败:', err);
+      if (preserveView && !identityChanged && appState.apiSessionPage) {
+        appState._historyQueryError = err.message || String(err);
+        appState._historyQueryLoading = false;
+        renderHistoryPreservingFocus();
+      } else {
+        appState._historyError = err.message || String(err);
+        appState._historyQueryLoading = false;
+        appState._loadingHistory = false;
+        renderCurrent();
+      }
     }
-    if (!appState._historyError) await loadHistoryEvents(enrollmentId);
   }
 
   async function loadProgress() {

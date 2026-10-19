@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Isolated native development runtime for YZ-RD-T009 through YZ-RD-T019."""
+"""Isolated native development runtime for YZ-RD-T009 through YZ-RD-T036."""
 
 from __future__ import annotations
 
@@ -48,6 +48,7 @@ T013_TEST_FILE = ROOT / "tests" / "e2e" / "assessment" / "test_yz_rd_t013_studen
 T014_TEST_FILE = ROOT / "tests" / "e2e" / "assessment" / "test_yz_rd_t014_teacher_class_remediation.py"
 T016_TEST_FILE = ROOT / "tests" / "e2e" / "assessment" / "test_yz_rd_t016_student_navigation.py"
 T017_TEST_FILE = ROOT / "tests" / "e2e" / "course-learning" / "test_yz_rd_t017_student_courses.py"
+T036_TEST_FILE = ROOT / "tests" / "e2e" / "assessment" / "test_yz_rd_t036_student_history.py"
 STORAGE_TEST = ROOT / "backend" / "api" / "test" / "native-local-storage-smoke.mjs"
 TEST_REQUIREMENTS = ROOT / "scripts" / "dev-native-web-requirements.txt"
 
@@ -59,8 +60,8 @@ def configure_task(task_id: str, shared_runtime_root: Path | None = None) -> Non
     global PG_LIBRARY, REDIS_DIR, MINIO_BIN, TEST_PYTHON
 
     task_id = task_id.upper()
-    if task_id not in {"T009", "T010", "T011", "T014", "T015", "T019"}:
-        raise RuntimeErrorMessage("仅支持 T009、T010、T011、T014、T015 或 T019 原生环境")
+    if task_id not in {"T009", "T010", "T011", "T014", "T015", "T019", "T036"}:
+        raise RuntimeErrorMessage("仅支持 T009、T010、T011、T014、T015、T019 或 T036 原生环境")
     TASK_ID = task_id
     BASE_RUNTIME = shared_runtime_root.resolve() if shared_runtime_root else ROOT / "runtime-local" / "native-web"
     RUNTIME = {
@@ -70,6 +71,7 @@ def configure_task(task_id: str, shared_runtime_root: Path | None = None) -> Non
         "T015": ROOT / "runtime-local" / "native-web-t015",
         "T014": ROOT / "runtime-local" / "native-web-t014",
         "T019": ROOT / "runtime-local" / "native-web-t019",
+        "T036": ROOT / "runtime-local" / "native-web-t036",
     }[task_id]
     CONFIG_FILE = RUNTIME / ".env.local"
     STATE = RUNTIME / "state"
@@ -207,6 +209,7 @@ def expected_database_identity() -> tuple[str, str]:
         "T015": ("yuzan_t015_native", "yz_t015"),
         "T014": ("yuzan_t014_native", "yz_t014"),
         "T019": ("yuzan_t019_native", "yz_t019"),
+        "T036": ("yuzan_t036_native", "yz_t036"),
     }[TASK_ID]
 
 
@@ -228,7 +231,7 @@ def create_local_config() -> None:
             with CONFIG_FILE.open("a", encoding="utf-8") as handle:
                 handle.writelines(additions)
             os.chmod(CONFIG_FILE, 0o600)
-        if TASK_ID in {"T010", "T011", "T014", "T015", "T019"} and "E2E_TEST_PASSWORD" not in existing:
+        if TASK_ID in {"T010", "T011", "T014", "T015", "T019", "T036"} and "E2E_TEST_PASSWORD" not in existing:
             with CONFIG_FILE.open("a", encoding="utf-8") as handle:
                 handle.write("E2E_TEST_PASSWORD=YuzanTest!2026\n")
             os.chmod(CONFIG_FILE, 0o600)
@@ -267,6 +270,7 @@ def create_local_config() -> None:
         "T015": ("4095", "4295", "55638", "6438", "59202", "59203", "yz-t015-native"),
         "T014": ("4091", "4291", "55631", "6431", "59186", "59187", "yz-t014-native"),
         "T019": ("4119", "4319", "55649", "6449", "59222", "59223", "yz-t019-native"),
+        "T036": ("4136", "4336", "55666", "6466", "59256", "59257", "yz-t036-native"),
     }[TASK_ID]
     values = {
         "NODE_ENV": "development",
@@ -301,7 +305,7 @@ def create_local_config() -> None:
         "SPEECH_PROVIDER": "disabled",
         "LOG_LEVEL": "info",
     }
-    if TASK_ID in {"T010", "T011", "T014", "T015", "T019"}:
+    if TASK_ID in {"T010", "T011", "T014", "T015", "T019", "T036"}:
         values["E2E_TEST_PASSWORD"] = "YuzanTest!2026"
     RUNTIME.mkdir(parents=True, exist_ok=True, mode=0o700)
     content = "# Local-only native web runtime; derived from .env.example.\n"
@@ -333,7 +337,7 @@ def load_config(*, required: bool = True) -> dict[str, str]:
         key, value = line.split("=", 1)
         values[key.strip()] = value.strip()
     missing = sorted(REQUIRED_CONFIG - values.keys())
-    if TASK_ID in {"T010", "T011", "T014", "T015", "T019"} and not values.get("E2E_TEST_PASSWORD"):
+    if TASK_ID in {"T010", "T011", "T014", "T015", "T019", "T036"} and not values.get("E2E_TEST_PASSWORD"):
         missing.append("E2E_TEST_PASSWORD")
     if missing:
         raise RuntimeErrorMessage("隔离配置缺少字段: " + ", ".join(missing))
@@ -719,11 +723,22 @@ def ensure_database(config: dict[str, str], env: dict[str, str], created_names: 
     if major != "17":
         raise RuntimeErrorMessage(f"本任务 PGDATA 已属于 PostgreSQL {major}，拒绝升级或重置")
     conf = PGDATA / "postgresql.conf"
+    socket_dir = STATE / "socket"
+    if TASK_ID == "T036":
+        socket_dir = Path("/tmp") / f"yz-rd-t036-pg-{int(config['POSTGRES_PORT'])}"
+        if socket_dir.is_symlink():
+            raise RuntimeErrorMessage("T036 PostgreSQL socket 目录是符号链接；保留现场并拒绝启动")
+        if socket_dir.exists():
+            if not socket_dir.is_dir() or socket_dir.stat().st_uid != os.getuid():
+                raise RuntimeErrorMessage("T036 PostgreSQL socket 目录已存在但不属于当前用户；保留现场并拒绝启动")
+        else:
+            socket_dir.mkdir(mode=0o700)
+        os.chmod(socket_dir, 0o700)
     local_settings = (
         f"\n# YZ-RD-{TASK_ID} isolated native runtime\n"
         "listen_addresses = '127.0.0.1'\n"
         f"port = {int(config['POSTGRES_PORT'])}\n"
-        f"unix_socket_directories = '{STATE / 'socket'}'\n"
+        f"unix_socket_directories = '{socket_dir}'\n"
         "logging_collector = off\n"
         "log_destination = 'stderr'\n"
     )
@@ -731,9 +746,14 @@ def ensure_database(config: dict[str, str], env: dict[str, str], created_names: 
     if f"# YZ-RD-{TASK_ID} isolated native runtime" not in content:
         with conf.open("a", encoding="utf-8") as handle:
             handle.write(local_settings)
-    socket_dir = STATE / "socket"
-    socket_dir.mkdir(parents=True, exist_ok=True, mode=0o700)
-    os.chmod(socket_dir, 0o700)
+    elif TASK_ID == "T036":
+        updated_content, count = re.subn(
+            r"(?m)^unix_socket_directories\s*=.*$",
+            f"unix_socket_directories = '{socket_dir}'",
+            content,
+        )
+        if count:
+            conf.write_text(updated_content, encoding="utf-8")
     running = run_output([str(pg_ctl), "--pgdata", str(PGDATA), "status"], env=env, timeout=10)
     created = False
     if running.returncode != 0:
@@ -977,7 +997,7 @@ def prepare_database_and_api(config: dict[str, str], env: dict[str, str], create
     pnpm = command_path("pnpm")
     if not pnpm:
         raise RuntimeErrorMessage("缺少 pnpm 10")
-    if TASK_ID in {"T010", "T011", "T014", "T015", "T019"}:
+    if TASK_ID in {"T010", "T011", "T014", "T015", "T019", "T036"}:
         probe = run_output(
             [
                 str(PG_BIN / "psql"), "-X", "-A", "-t", "-F", "|",
@@ -1024,7 +1044,10 @@ def prepare_database_and_api(config: dict[str, str], env: dict[str, str], create
             run_checked([str(pnpm), "--filter", "@yuzan/database", "generate"], env=env, config=config, timeout=300)
             run_checked([str(pnpm), "--filter", "@yuzan/database", "migrate:deploy"], env=env, config=config, timeout=300)
             seed_env = dict(env)
-            seed_env["P0_BOOTSTRAP_ONLY"] = "true"
+            if TASK_ID == "T036":
+                seed_env.pop("P0_BOOTSTRAP_ONLY", None)
+            else:
+                seed_env["P0_BOOTSTRAP_ONLY"] = "true"
             run_checked([str(pnpm), "--filter", "@yuzan/database", "seed"], env=seed_env, config=config, timeout=600)
         run_checked([str(pnpm), "--filter", "@yuzan/api", "build"], env=env, config=config, timeout=600)
         return
@@ -1495,6 +1518,24 @@ def run_test(suite: str) -> int:
         env["POSTGRES_DB"] = config["POSTGRES_DB"]
         args = [str(python), "-m", "pytest", "-q", "-s", str(test_file)]
         port = None
+    elif suite == "t036-student-history":
+        if TASK_ID != "T036":
+            raise RuntimeErrorMessage("T036 学生学习历史 E2E 必须运行在 T036 自有原生环境中")
+        python = TEST_PYTHON
+        if not python.is_file():
+            raise RuntimeErrorMessage("缺少复用自 T009 的 pytest/Playwright 工具链")
+        test_file = T036_TEST_FILE
+        env["YZ_T036_BASE_URL"] = config["WEB_ORIGIN"]
+        env["YZ_T036_DATABASE_URL"] = config["DATABASE_URL"]
+        env["YZ_T036_PASSWORD"] = config["E2E_TEST_PASSWORD"]
+        env["YZ_T036_EVIDENCE_DIR"] = str(EVIDENCE / "t036-history")
+        env["YZ_T036_PSQL"] = str(PG_BIN / "psql")
+        env["POSTGRES_USER"] = config["POSTGRES_USER"]
+        env["POSTGRES_PASSWORD"] = config["POSTGRES_PASSWORD"]
+        env["POSTGRES_DB"] = config["POSTGRES_DB"]
+        env["POSTGRES_PORT"] = config["POSTGRES_PORT"]
+        args = [str(python), "-m", "pytest", "-q", "-s", str(test_file)]
+        port = None
     elif suite == "storage":
         node = node_binary()
         if not node or not STORAGE_TEST.is_file():
@@ -1543,7 +1584,7 @@ def run_test(suite: str) -> int:
 
 
 def setup_test_environment() -> int:
-    if TASK_ID in {"T010", "T011", "T014", "T015", "T019"}:
+    if TASK_ID in {"T010", "T011", "T014", "T015", "T019", "T036"}:
         if TEST_PYTHON.is_file():
             print(f"Python regression environment: reusing existing native-Web venv at {TEST_PYTHON}")
             return 0
@@ -1586,7 +1627,7 @@ def stop_all() -> int:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Isolated native Web/API development runtime; no container runtime is used.")
-    parser.add_argument("--task", choices=("t009", "t010", "t011", "t014", "t015", "t019"), default=os.environ.get("YZ_NATIVE_TASK_ID", "t009").lower())
+    parser.add_argument("--task", choices=("t009", "t010", "t011", "t014", "t015", "t019", "t036"), default=os.environ.get("YZ_NATIVE_TASK_ID", "t009").lower())
     parser.add_argument("--shared-runtime-root", type=Path, help="reuse installed native binaries and test venv from this runtime root")
     sub = parser.add_subparsers(dest="command", required=True)
     doctor_parser = sub.add_parser("doctor", help="check local versions, dependencies, ports, and permissions")
@@ -1596,7 +1637,7 @@ def main() -> int:
     sub.add_parser("status", help="show owned processes, ports, and health")
     sub.add_parser("stop", help="stop only verified processes owned by the selected task runtime")
     test_parser = sub.add_parser("test", help="run an isolated targeted regression")
-    test_parser.add_argument("suite", choices=("teacher-dashboard", "t007-assignment", "t008-student-history", "t011-draft-review-feedback", "t012-student-practice", "t013-student-today-growth", "t014-teacher-class-remediation", "t016-student-navigation", "t017-student-courses", "storage"))
+    test_parser.add_argument("suite", choices=("teacher-dashboard", "t007-assignment", "t008-student-history", "t011-draft-review-feedback", "t012-student-practice", "t013-student-today-growth", "t014-teacher-class-remediation", "t016-student-navigation", "t017-student-courses", "t036-student-history", "storage"))
     import_parser = sub.add_parser("import-question-bank", help="import read-only Question Bank source into an isolated T010/T011/T014/T015/T019 DB/bucket")
     import_parser.add_argument("--source-dir", required=True, type=Path)
     sub.add_parser("setup-test", help="install pinned pytest and Playwright into the ignored local venv")
