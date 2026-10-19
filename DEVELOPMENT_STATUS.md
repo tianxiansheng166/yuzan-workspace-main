@@ -1,5 +1,13 @@
 # Development status
 
+## YZ-RD-T038 — speaking practice and mock/specialized catalog closure (2026-10-19)
+
+DONE / WEB_ONLY / NATIVE_CHROMIUM_API_POSTGRESQL17_MINIO_VERIFIED / READY_TO_MERGE; NOT MERGED. The isolated branch is `feat/yz-rd-t038-speech-practice-exam-showcase`, based on exact start `39c01598e687f020037c82c23e3e0cfd7029ba64`. The practice-center portal was verified against the real authorized `停顿与节奏专项训练`: oral requests sent `requiresRecording=true`, mock sent `catalogType=MOCK` with the non-official disclaimer, and specialized sent `catalogType=SPECIALIZED`.
+
+Native Chrome 153 + API + PostgreSQL 17.11 + Redis + MinIO passed 1/1 with no skips. Two browser recordings were auditioned, uploaded, retried after an interrupted MinIO PUT, and read back from MinIO. Submit produced one request; the unscored speech session stayed `PROCESSING` with no report while provider/worker were disabled. A separate dynamic `TEST_FIXTURE_ONLY` Question Bank attempt entered the teacher review queue as `PENDING`; manual review through the existing API generated the complete report, which the student opened from history. No automatic speech score was generated. Frontend tests passed 92/92; four viewport widths and keyboard submission passed. Evidence: [`evidence/yz-rd-t038/RESULTS.md`](evidence/yz-rd-t038/RESULTS.md).
+
+The isolated branch is ready for normal review and integration. Physical microphone/device, calibrated automatic scoring, school pilot, and production launch remain NOT_RUN. T005 and other task worktrees were not edited; no Docker/Compose or L4 data was accessed. L4 remains OPEN.
+
 ## YZ-RD-T015 — student Web rolling integration (2026-10-18)
 
 DONE / WEB_ONLY / READY_TO_MERGE; NOT MERGED. The isolated branch starts at T011 `4d971c9683664c09e533069ec001b00d0dc239af` and cherry-picks T012 `67e79644e341164aaaf239ad4ebc466de1cc1c38` as `f15d1aac376adcb662d13d74ef995ba383cf2f26` and T013 `0bfd284dd8b31d95485c0be2b2993af15afef28e` as `96b0a44ab6d20e7d0f8fb27b21f3450848d21116`, both with `-x`. No file conflicts occurred; T010/T011 were not repeated.
@@ -60,6 +68,7 @@ DONE / BROWSER + DB VERIFIED: teacher creates DRAFT→schedules→opens through 
 | QB-016  | DONE / PILOT OBSERVABLE / BROWSER VERIFIED | Added real PostgreSQL/Redis/object-storage readiness probes, a non-authoritative Redis worker heartbeat, derived pilot funnel/backlog/speech/remediation metrics, a separate privacy-safe `PilotFeedback` loop, and a School Admin `试点运行` page. QB-016F closed the isolated PostgreSQL integration (`1 passed`, `0 skipped`) and Chromium feedback loop (`1 passed`, `0 skipped`) in Compose project `qb016f-pilot-20260824a`; full API, Course Feedback, API typecheck/build, and frontend test/build also pass. See `evidence/qb016f-pilot/RESULTS.md`. |
 | COMP-DEMO-01+02 | DONE / ISE LIVE / RUNTIME IMPORTED | User-provided `习题课程资源/` preflight passed at 120/120 items, 600/600 points, 126 media objects, zero errors/warnings; six canonical level practices replaced the six seed-authored catalog deliveries. A canonical Question Bank READ_ALOUD SpeechJob reached `NEEDS_REVIEW` with `provider=iflytek`, while formal score policy stayed unchanged. Reading and report routes received the 1920×1080 recording composition. |
 | COMP-DEMO-03 | DONE / BROWSER VERIFIED | Exactly one real demonstration lesson (`《春》生字认读与易错音纠正`) is imported through an idempotent MP4 + PPTX→PDF course importer. CourseVersion metadata round-trips, resources are MinIO-backed and rights-approved, the version is published with an OPEN class assignment, the real DOCX-derived choice persists, and the existing CourseActivityPractice path reaches the unified read-aloud runner. |
+| YZ-RD-T038 | DONE / NATIVE CHROMIUM + API + PG17 + MINIO VERIFIED | Real practice-center clicks verified server-side MOCK/SPECIALIZED/recording filters, microphone denial, audio audition, two MinIO recordings, offline recovery, single submit, pending teacher review, and the student-opened formal report. Frontend 92/92; native E2E 1/1, zero skips. See `evidence/yz-rd-t038/RESULTS.md`. |
 
 ## Architecture checkpoints
 
