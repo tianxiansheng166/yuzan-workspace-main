@@ -1,5 +1,13 @@
 # Development status
 
+## YZ-RD-T045 — mobile practice catalog acceptance (2026-10-19)
+
+COMPLETE / NATIVE_CHROMIUM_API_POSTGRESQL17_REDIS_MINIO_VERIFIED; NOT MERGED. Branch `feat/yz-rd-t045-mobile-practice-first-card`, start `c1402145b132306adcc077555d641b2c0c4eaf83`. On real authenticated API data at 390×844, the first recording-required practice card begins at document y=623 and its title is fully visible through y=838. The search action is inline with its field; the existing category tabs, recording filter, and teacher-task display remain available. Ability filters are in a keyboard/touch-operable disclosure. No promotional button wall was added.
+
+Frontend assessment tests: 96/96. Native Chrome 153 + NestJS + PostgreSQL 17.11 + Redis 7.4.10 + MinIO: 1/1 E2E, zero skips. Four real catalog viewport screenshots (390/768/1280/1440), four Runner widths, API authorization negatives, two `SIMULATED_MIC` MinIO uploads/read-backs, retry recovery, and PROCESSING/no-score/no-report state passed. Evidence, runtime resource sampling, failure causes, and screenshots are in [`evidence/yz-rd-t045/RESULTS.md`](evidence/yz-rd-t045/RESULTS.md).
+
+T045-owned services are stopped; isolated PostgreSQL and MinIO data remain for audit. No Docker/Compose, T005/other worktree edits, or L4 access occurred. The target checkout lacks the AA-DEV-V2.2 marker; the supplied task card and root safety baseline were applied. `READY_TO_MERGE=NO` due inherited T033 full API lint debt (1201 errors / 1 warning; not rerun, no backend changes). Physical microphone/device, calibrated scoring, manual report review, pilot, and production remain NOT_RUN. L4 remains OPEN.
+
 ## YZ-RD-T044 — practice catalog UX and real speaking workflow (2026-10-19)
 
 COMPLETE / NATIVE_CHROMIUM_API_POSTGRESQL17_REDIS_MINIO_VERIFIED; NOT MERGED. The isolated branch is `feat/yz-rd-t044-practice-catalog-ux-hierarchy`, starting from `ef3e5404ab43561b89b6bf863f5c7f7a250afa27`. T044 removes the duplicate promotion cards, keeps server-backed MOCK/SPECIALIZED tabs, and exposes the compact oral filter. A T044-owned mobile CSS override keeps the compact filter visible while hiding the tall facet panel at 680px and below.

@@ -3,12 +3,13 @@
 Last updated: 2026-10-19
 Repository: `yuzan-workspace-main`
 
-## YZ-RD-T045 mobile practice catalog density checkpoint (2026-10-19)
+## YZ-RD-T045 mobile practice catalog acceptance (2026-10-19)
 
-- Started from T044 native E2E accepted-scoped source. At 390px its first actual practice card begins around document y=1018, below a 390×844 initial viewport even though oral facet, tabs, auth and recording E2E passed.
-- T045 changes only `frontend/assessment/assets/practice.js` and `practice.css` to reduce mobile decorative spacing, keep the real catalog worklist first, and move mobile abilities to accessible native `<details>` with existing authentic facet buttons; desktop ability rail remains unchanged.
-- Frontend 94/94 PASS and JS/diffcheck PASS. Chrome visual-only fixture was attempted but its browser launch stalled under high host load (about 50 Chrome processes, host load 65), and only the owned T045 test was interrupted; 390px first card y and native API/PG E2E are **NOT_VERIFIED**. Never claim ACCEPTED or merge shared until those gates pass. The inherited full API lint debt remains.
-- No T005 dirty worktree, T043 active verification, other worktrees/services, or historical L4 data were modified.
+- COMPLETE / `NATIVE_CHROMIUM_API_POSTGRESQL17_REDIS_MINIO_VERIFIED` / NOT MERGED. Branch `feat/yz-rd-t045-mobile-practice-first-card`, start SHA `c1402145b132306adcc077555d641b2c0c4eaf83`; final SHA is the pushed branch HEAD.
+- At 390×844, the first actual API result (`古诗文朗读与理解训练`, recording-required) begins at y=623; its title is fully visible at y=813–838. Mobile search and its 44px action share a row; ability facets remain in a keyboard/touch-operable native disclosure; the real recording filter is labeled `需要录音`. No promotional button wall was added.
+- Frontend 96/96 PASS. Native Chrome 153 + NestJS API + PostgreSQL 17.11 + Redis 7.4.10 + MinIO E2E 1/1 PASS, zero skips. Search, MOCK/SPECIALIZED categories, actual recording filter, ability keyboard/touch, API-backed teacher-task rendering, four viewport widths, authorization negatives, simulated recording upload/read-back/retry, and PROCESSING/no-score/no-report behavior passed. Four exact viewport catalog screenshots are retained under `evidence/yz-rd-t045/e2e/`; detail and Runner responsive checks are in the E2E summary.
+- Full evidence, resource usage, and resolved startup/test-attempt failures are in [`evidence/yz-rd-t045/RESULTS.md`](evidence/yz-rd-t045/RESULTS.md). Final T045 services were stopped and owned ports are free; isolated PG/MinIO data remains for audit. No Docker/Compose, T005/other task worktree edits, or L4 access. The target checkout lacks the AA-DEV-V2.2 marker; the supplied task card and root safety baseline were followed. L4 remains OPEN.
+- `READY_TO_MERGE=NO`: inherited T033 API full-lint debt (1201 errors / 1 warning) remains unresolved. Physical microphone/device, calibrated speech scoring, manual review/report, school pilot, and production launch remain NOT_RUN.
 
 ## YZ-RD-T044 practice catalog UX hierarchy correction (2026-10-19)
 

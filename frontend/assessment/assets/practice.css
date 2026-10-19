@@ -36,22 +36,31 @@
 .catalog-mobile-abilities{display:none}
 @media(max-width:680px){
   .practice-page{padding-top:12px}
-  .practice-page .practice-catalog-head{margin-top:3px;margin-bottom:11px}
+  .practice-page .practice-catalog-head{margin-top:3px;margin-bottom:8px}
   .practice-page .practice-catalog-head h1{font-size:clamp(25px,6.4vw,30px);line-height:1.17}
-  .practice-page .catalog-intro>p:not(.eyebrow){margin:9px 0 6px;font-size:12px;line-height:1.5}
-  .practice-page .catalog-head-tools{gap:6px}
-  .practice-page .catalog-archive-nav{margin-top:5px}
-  .practice-page .catalog-search{margin-top:4px}
-  .practice-page .catalog-tabs button{padding:10px 12px 8px;min-height:39px}
+  .practice-page .catalog-intro>p:not(.eyebrow){margin:8px 0 5px;font-size:12px;line-height:1.5}
+  .practice-page .catalog-head-tools{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+  .practice-page .catalog-oral-help{display:none}
+  .practice-page .catalog-archive-nav{margin:0}
+  .practice-page .catalog-search{margin-top:2px}
+  .practice-page .catalog-search{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px;width:100%}
+  .practice-page .catalog-search{flex:0 0 100%}
+  .practice-page .catalog-search label{min-width:0;width:100%}
+  .practice-page .catalog-search .btn{min-height:44px;padding:10px 13px;white-space:nowrap}
+  .practice-page .catalog-archive-nav a{padding:6px 8px}
+  .practice-page .catalog-tabs button{padding:9px 12px 7px;min-height:36px}
   .practice-page .catalog-ability{display:none}
-  .practice-page .catalog-mobile-abilities{position:relative;z-index:1;display:block;margin:9px 0 10px;border:1px solid #d8dfd4;border-radius:9px;background:#fbfaf5}
+  .practice-page .catalog-mobile-abilities{position:relative;z-index:1;display:block;margin:6px 0;border:1px solid #d8dfd4;border-radius:9px;background:#fbfaf5}
   .practice-page .catalog-mobile-abilities summary{min-height:43px;padding:11px 15px;color:#315f4a;font-size:13px;font-weight:700;cursor:pointer}
   .practice-page .catalog-mobile-abilities summary:focus-visible{outline:3px solid #ae8646;outline-offset:2px}
   .practice-page .catalog-mobile-abilities .ability-rail{margin:0;padding:10px 12px 14px;border-top:1px solid #e7e1d3}
   .practice-page .catalog-mobile-abilities .ability-button{min-width:116px;padding:10px 12px}
-  .practice-page .catalog-workbench{padding-top:11px}
-  .practice-page .catalog-workbench .result-toolbar{flex-direction:column;align-items:stretch;gap:9px;margin-bottom:11px}
+  .practice-page .catalog-workbench{padding-top:8px}
+  .practice-page .practice-cover{height:150px}
+  .practice-page .catalog-workbench .result-toolbar{flex-direction:column;align-items:stretch;gap:6px;margin-bottom:8px}
   .practice-page .catalog-workbench .result-actions{width:100%;flex-direction:row;align-items:center;justify-content:flex-start;flex-wrap:wrap;gap:8px}
   .practice-page .catalog-workbench .result-actions select{max-width:210px;min-height:38px}
   .practice-page .catalog-workbench .result-toolbar h2{font-size:20px}
+  .practice-page .catalog-results .result-toolbar>div:first-child>.eyebrow{display:none}
+  .practice-page .catalog-results .active-filter-row{margin-top:6px}
 }

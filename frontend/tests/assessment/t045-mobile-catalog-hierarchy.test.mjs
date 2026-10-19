@@ -18,7 +18,19 @@ test('catalog filters and real server-owned practice tab requests remain intact'
   assert.match(app, /data-tab="\$\{value\}"/);
   assert.match(app, /data-filter-key="abilityCategory"/);
   assert.match(app, /requiresRecording: 'true'/);
+  assert.match(app, /key === 'requiresRecording' \? \(value === 'true' \? '需要录音' : '无需录音'\)/);
   assert.match(app, /catalogType: \['SPECIALIZED', 'COMPREHENSIVE', 'MOCK'\]/);
   assert.match(css, /\.practice-page \.catalog-ability\{display:none\}/);
   assert.match(css, /\.practice-page \.catalog-mobile-abilities\{position:relative/);
+});
+
+test('mobile search keeps its action beside the field with a comfortable touch target', () => {
+  assert.match(css, /\.practice-page \.catalog-search\{display:grid;grid-template-columns:minmax\(0,1fr\) auto;/);
+  assert.match(css, /\.practice-page \.catalog-search \.btn\{min-height:44px/);
+});
+
+test('mobile first-card hierarchy reflows the tools and preserves a strong cover', () => {
+  assert.match(css, /\.practice-page \.catalog-head-tools\{display:flex;flex-wrap:wrap/);
+  assert.match(css, /\.practice-page \.practice-cover\{height:150px\}/);
+  assert.match(css, /\.practice-page \.catalog-oral-help\{display:none\}/);
 });

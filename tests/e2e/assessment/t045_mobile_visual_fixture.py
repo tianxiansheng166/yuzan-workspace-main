@@ -13,7 +13,7 @@ from playwright.sync_api import sync_playwright
 
 ROOT = Path(__file__).resolve().parents[3]
 FRONTEND = ROOT / "frontend"
-EVIDENCE = ROOT / "evidence/yz-rd-t045"
+EVIDENCE = ROOT / "evidence/yz-rd-t045/visual-fixture"
 EVIDENCE.mkdir(parents=True, exist_ok=True)
 HTML = (FRONTEND / "assessment/practice-shell.html").read_text().replace(
     "__ASSESSMENT_PAGE__", "catalog"

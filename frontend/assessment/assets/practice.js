@@ -69,7 +69,10 @@
   };
   function catalogView() {
     const catalog = state.catalog || { items: [], facets: {}, total: 0, nextCursor: null };
-    const activeFilters = Object.entries(state.filters).filter(([, value]) => value).map(([key, value]) => `<button type="button" class="active-filter" data-clear-filter="${safe(key)}" aria-label="移除筛选：${safe(value)}">${safe(value)} ${icon('close')}</button>`).join('');
+    const activeFilters = Object.entries(state.filters).filter(([, value]) => value).map(([key, value]) => {
+      const label = key === 'requiresRecording' ? (value === 'true' ? '需要录音' : '无需录音') : value;
+      return `<button type="button" class="active-filter" data-clear-filter="${safe(key)}" aria-label="移除筛选：${safe(label)}">${safe(label)} ${icon('close')}</button>`;
+    }).join('');
     const abilityFacets = facetValues('abilityCategory');
     const selectedCategory = state.filters.abilityCategory;
     const results = catalog.items || [];
