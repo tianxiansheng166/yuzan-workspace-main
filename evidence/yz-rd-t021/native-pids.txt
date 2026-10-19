@@ -1,0 +1,5 @@
+postgres=569178
+redis=569212
+minio=569239
+api=569701
+web=569729
