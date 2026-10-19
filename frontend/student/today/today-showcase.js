@@ -14,6 +14,7 @@
     const baselineId = today.primaryAction?.kind === "BASELINE"
       ? today.primaryAction?.target?.practiceDefinitionId : null;
     const baseline = baselineId && openPractices.find((item) => item?.id === baselineId);
+    const hasBaselineAction = Boolean(baselineId);
     const formal = today.summary?.latestFormalAssessment;
     const hasFormalScore = Number.isFinite(formal?.score);
 
@@ -34,10 +35,10 @@
       },
       {
         key: "exam", number: "03", title: "测 · 规范作答", kicker: "ASSESS",
-        detail: baseline ? safe(baseline.title) : "查看真实测评与练习要求，按题作答并提交。",
-        status: baseline ? "首次测评已开放" : "具体题型以授权清单为准",
-        href: baseline ? `/student/practices/${encodeURIComponent(baseline.id)}/` : "/student/practices/",
-        cta: baseline ? "查看本次测评" : "进入测评与练习",
+        detail: baseline ? safe(baseline.title) : hasBaselineAction ? "学校已开放首次测评，查看说明后开始作答。" : "查看真实测评与练习要求，按题作答并提交。",
+        status: hasBaselineAction ? "首次测评已开放" : "具体题型以授权清单为准",
+        href: hasBaselineAction ? `/student/practices/${encodeURIComponent(baselineId)}/` : "/student/practices/",
+        cta: hasBaselineAction ? "查看本次测评" : "进入测评与练习",
       },
       {
         key: "report", number: "04", title: "评 · 报告复练", kicker: "REVIEW",

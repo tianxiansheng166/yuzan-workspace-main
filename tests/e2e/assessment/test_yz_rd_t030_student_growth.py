@@ -335,7 +335,13 @@ def test_growth_feedback_remediation_recovery_and_identity_isolation():
             practice = t008.practice_in_catalog(page, student_headers, base_url=BASE)
             practice_id = practice["id"]
             assert practice["title"] == t008.PRACTICE_TITLE
-            page.locator(".practice-tile").filter(has_text=t008.PRACTICE_TITLE).locator("h2 a").click()
+            if os.environ.get("YZ_T042_INTEGRATED_NATIVE") == "true":
+                # T042 separately proves the current Today card click. Reuse the
+                # API-resolved definition here because the legacy catalog tile
+                # selector predates the integrated student shell markup.
+                page.goto(f"{BASE}/student/practices/{practice_id}/", wait_until="networkidle")
+            else:
+                page.locator(".practice-tile").filter(has_text=t008.PRACTICE_TITLE).locator("h2 a").click()
             page.wait_for_url(f"**/student/practices/{practice_id}/", timeout=20_000)
             page.locator("[data-start]").click()
             page.wait_for_url("**/student/practices/attempts/*/runner/", timeout=30_000)

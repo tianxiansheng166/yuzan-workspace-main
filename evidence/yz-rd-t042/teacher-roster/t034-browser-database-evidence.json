@@ -1,0 +1,273 @@
+{
+  "database": {
+    "name": "yuzan_t042_native",
+    "user": "yz_t042",
+    "version": "PostgreSQL 17"
+  },
+  "schoolId": "[TEST_FIXTURE_ONLY omitted]",
+  "classId": "[TEST_FIXTURE_ONLY omitted]",
+  "activeStudentEnrollmentCount": 35,
+  "sameNameEnrollmentIdsDistinct": true,
+  "apiSqlParity": {
+    "studentRows": 35,
+    "fields": [
+      "displayName",
+      "courseProgress",
+      "riskStatus",
+      "latestAssessmentScore"
+    ],
+    "result": "PASS"
+  },
+  "sqlFilterCounts": {
+    "AT_RISK": 4,
+    "SCORED": 3,
+    "NO_SCORE": 32
+  },
+  "negativeApiStatuses": {
+    "anonymous": 401,
+    "same_school_other_teacher": 404,
+    "cross_school": 403,
+    "missing_class": 404
+  },
+  "browserApiEvents": [
+    {
+      "pathKind": "student-summaries",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "pathKind": "student-summaries",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "pathKind": "student-detail",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "pathKind": "student-detail",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "pathKind": "student-detail",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "pathKind": "student-detail",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "pathKind": "student-detail",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "pathKind": "student-detail",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "pathKind": "student-detail",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "pathKind": "student-summaries",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "pathKind": "student-summaries",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "pathKind": "student-summaries",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "pathKind": "student-summaries",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "pathKind": "student-summaries",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "pathKind": "student-summaries",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "pathKind": "student-summaries",
+      "method": "GET",
+      "status": 200
+    }
+  ],
+  "screenshots": [],
+  "downloadRows": [
+    {
+      "scope": "filtered three of 35",
+      "csvDataRows": 35,
+      "result": "PASS"
+    },
+    {
+      "scope": "authorized empty class",
+      "csvDataRows": 0,
+      "result": "PASS"
+    }
+  ],
+  "pageErrors": [],
+  "initialBrowserRosterRows": 35,
+  "riskFilter": {
+    "selected": "AT_RISK",
+    "visibleRows": 4,
+    "sqlRows": 4,
+    "result": "PASS"
+  },
+  "scoreFilters": {
+    "SCORED": 3,
+    "NO_SCORE": 32,
+    "zeroIsScored": true,
+    "nullIsUnscored": true,
+    "result": "PASS"
+  },
+  "sorts": {
+    "recentActivityTopMatchesApi": true,
+    "recentActivityNullsLast": true,
+    "courseProgressTopMatchesApi": true,
+    "courseProgressNullsLast": true,
+    "result": "PASS"
+  },
+  "filteredCsv": {
+    "headerColumns": 8,
+    "csvDataRows": 35,
+    "sqlActiveEnrollments": 35,
+    "rowParity": "PASS",
+    "visibleFilteredRows": 3,
+    "filterCountText": "当前显示 3 / 已加载 35 人",
+    "filenameContainsStudentName": false,
+    "zeroScoreCell": "0",
+    "nullScoreCell": "",
+    "download": "PASS"
+  },
+  "studentDetailClick": {
+    "dynamicEnrollmentIdPath": true,
+    "sameNameRecords": 2,
+    "clickedEnrollmentIdMatched": true,
+    "keyboardEnter": true,
+    "result": "PASS"
+  },
+  "filterStateReturn": {
+    "searchRestored": true,
+    "riskRestored": true,
+    "sortRestored": true,
+    "sameEnrollmentSelected": true,
+    "invalidEnumsRemoved": true,
+    "result": "PASS"
+  },
+  "filterStateReload": {
+    "searchRestored": true,
+    "riskRestored": true,
+    "sortRestored": true,
+    "sameEnrollmentSelected": true,
+    "result": "PASS"
+  },
+  "emptyAndSingleClass": {
+    "singleStudentRows": 1,
+    "emptyStudentRows": 0,
+    "emptyCsvRows": 0,
+    "result": "PASS"
+  },
+  "fourViewports": [
+    {
+      "width": 390,
+      "height": 844,
+      "documentScrollWidth": 390,
+      "rosterScrollWidth": 342,
+      "exportVisible": true,
+      "keyboardFocusVisible": true,
+      "ariaLive": "polite",
+      "reducedMotion": true,
+      "screenshot": "roster-390.png"
+    },
+    {
+      "width": 768,
+      "height": 900,
+      "documentScrollWidth": 768,
+      "rosterScrollWidth": 618,
+      "exportVisible": true,
+      "keyboardFocusVisible": true,
+      "ariaLive": "polite",
+      "reducedMotion": true,
+      "screenshot": "roster-768.png"
+    },
+    {
+      "width": 1280,
+      "height": 900,
+      "documentScrollWidth": 1280,
+      "rosterScrollWidth": 707,
+      "exportVisible": true,
+      "keyboardFocusVisible": true,
+      "ariaLive": "polite",
+      "reducedMotion": true,
+      "screenshot": "roster-1280.png"
+    },
+    {
+      "width": 1440,
+      "height": 1000,
+      "documentScrollWidth": 1440,
+      "rosterScrollWidth": 824,
+      "exportVisible": true,
+      "keyboardFocusVisible": true,
+      "ariaLive": "polite",
+      "reducedMotion": true,
+      "screenshot": "roster-1440.png"
+    }
+  ],
+  "uiFailureStates": [
+    {
+      "case": "http-500",
+      "visibleStudentRows": 0,
+      "oldRosterReused": false
+    },
+    {
+      "case": "network-abort",
+      "visibleStudentRows": 0,
+      "oldRosterReused": false
+    },
+    {
+      "case": "http-403",
+      "visibleStudentRows": 0,
+      "oldRosterReused": false
+    },
+    {
+      "case": "http-404",
+      "visibleStudentRows": 0,
+      "oldRosterReused": false
+    }
+  ],
+  "schoolSwitch": {
+    "oldResponseReleasedAfterSwitch": true,
+    "rosterCleared": true,
+    "lateRowsRendered": 0,
+    "result": "PASS"
+  },
+  "browserDownloadEventCount": 2,
+  "confirmationCount": 2,
+  "sameNameSearch": {
+    "matches": 2,
+    "distinctEnrollmentIds": true,
+    "result": "PASS"
+  },
+  "filterTextStateInUrl": "not included; restored from sessionStorage scoped to active user, school and class",
+  "riskStatusUnknown": "API contract derives only OK/AT_RISK/INACTIVE; neutral UNKNOWN fallback is covered by T034 frontend tests",
+  "fixtureOnly": true
+}

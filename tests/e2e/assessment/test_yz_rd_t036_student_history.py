@@ -15,6 +15,7 @@ from urllib.parse import unquote, urlparse
 import pytest
 from playwright.sync_api import sync_playwright
 
+import test_yz_rd_t011_web_review_feedback as t011
 from test_yz_rd_t008_student_history import complete_real_attempt, payload
 
 
@@ -23,6 +24,8 @@ DATABASE_URL = os.environ.get("YZ_T036_DATABASE_URL", "")
 PASSWORD = os.environ.get("YZ_T036_PASSWORD", "")
 PSQL = os.environ.get("YZ_T036_PSQL", "psql")
 EVIDENCE = Path(os.environ.get("YZ_T036_EVIDENCE_DIR", "/tmp/yz-rd-t036-history"))
+EXPECTED_DATABASE_NAME = os.environ.get("YZ_T036_EXPECTED_DATABASE_NAME", "yuzan_t036_native")
+EXPECTED_DATABASE_USER = os.environ.get("YZ_T036_EXPECTED_DATABASE_USER", "yz_t036")
 SCHOOL_ID = "11111111-1111-4111-8111-111111111111"
 CLASS_ID = "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee"
 STUDENT_A_ID = "22222222-2222-4222-8222-222222222222"
@@ -39,9 +42,9 @@ def sql(statement, *, capture=False):
     parsed = urlparse(DATABASE_URL)
     assert parsed.scheme == "postgresql"
     assert parsed.hostname == "127.0.0.1"
-    assert parsed.username == os.environ["POSTGRES_USER"] == "yz_t036"
+    assert parsed.username == os.environ["POSTGRES_USER"] == EXPECTED_DATABASE_USER
     assert parsed.port == int(os.environ["POSTGRES_PORT"])
-    assert parsed.path.lstrip("/") == os.environ["POSTGRES_DB"] == "yuzan_t036_native"
+    assert parsed.path.lstrip("/") == os.environ["POSTGRES_DB"] == EXPECTED_DATABASE_NAME
     assert parsed.password
     password = unquote(parsed.password)
     env = {
@@ -74,7 +77,7 @@ def verify_database_identity():
         "SELECT current_database() || '|' || current_user || '|' || version();",
         capture=True,
     )
-    assert identity.startswith("yuzan_t036_native|yz_t036|PostgreSQL 17."), identity.split("|", 2)[:2]
+    assert identity.startswith(f"{EXPECTED_DATABASE_NAME}|{EXPECTED_DATABASE_USER}|PostgreSQL 17."), identity.split("|", 2)[:2]
 
 
 def authenticate(page, identifier):
@@ -126,6 +129,20 @@ def create_foreign_school():
               VALUES ('{school_id}', '{code}', 'TEST_FIXTURE_ONLY T036 跨校隔离', 'TEST', true, NOW(), NOW());'''
     )
     return school_id
+
+
+def ensure_feedback_assignment_fixture():
+    """Keep this history E2E independent of the full, non-bootstrap seed."""
+    t011.ensure_test_course()
+    sql(
+        f'''INSERT INTO "Assignment" (id,"schoolId","courseVersionId","createdByUserId",title,status,"startsAt","dueAt","openedAt","createdAt","updatedAt")
+              VALUES ('{SEED_ASSIGNMENT_ID}','{SCHOOL_ID}','{t011.COURSE_VERSION_ID}','{TEACHER_ID}',
+                      'TEST_FIXTURE_ONLY T036 history feedback assignment','OPEN',NOW()-INTERVAL '1 day',NOW()+INTERVAL '30 days',NOW(),NOW(),NOW())
+              ON CONFLICT (id) DO NOTHING;
+            INSERT INTO "AssignmentTarget" (id,"schoolId","assignmentId","targetType","enrollmentId","createdAt")
+              VALUES ('f9999999-9999-4999-8999-999999999999','{SCHOOL_ID}','{SEED_ASSIGNMENT_ID}','STUDENT','{STUDENT_A_ENROLLMENT}',NOW())
+              ON CONFLICT (id) DO NOTHING;'''
+    )
 
 
 def prepare_question_bank_test_families():
@@ -222,6 +239,7 @@ def test_student_history_is_actionable_private_and_report_backed():
     ]
 
     feedback_submission_id = str(uuid.uuid4())
+    ensure_feedback_assignment_fixture()
     sql(
         f'''INSERT INTO "Submission" ("id", "schoolId", "assignmentId", "enrollmentId", "attemptNo", "status", "idempotencyKey", "submittedAt", "createdAt", "updatedAt")
               SELECT '{feedback_submission_id}', '{SCHOOL_ID}', '{SEED_ASSIGNMENT_ID}', '{STUDENT_A_ENROLLMENT}',
@@ -230,7 +248,7 @@ def test_student_history_is_actionable_private_and_report_backed():
     )
 
     evidence = {
-        "database": "yuzan_t036_native",
+        "database": EXPECTED_DATABASE_NAME,
         "postgresMajor": "17",
         "fixtureRunKey": run_key,
         "studentAUserId": STUDENT_A_ID,

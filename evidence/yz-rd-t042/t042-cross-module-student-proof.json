@@ -1,0 +1,26 @@
+{
+  "flow": "student login -> Today live Attempt -> learning history -> continue same Runner",
+  "identity": {
+    "studentId": "fe6c0b77-6225-49db-8e3a-3c0b94b9987f",
+    "enrollmentId": "4a424cad-f70d-45c2-853b-46c7f890ff66",
+    "schoolId": "11111111-1111-4111-8111-111111111111"
+  },
+  "practiceDefinitionId": "5ee33292-a076-4da7-a9cc-ac83838724c6",
+  "authorizedPracticeDetailStatus": 200,
+  "continuedAttemptId": "640aafcd-98ae-4c20-9e93-066fd33c25e4",
+  "attemptState": "IN_PROGRESS",
+  "sameIdAcrossTodayHistoryRunnerApiAndPostgreSQL": true,
+  "apiAttempt": {
+    "id": "640aafcd-98ae-4c20-9e93-066fd33c25e4",
+    "status": "IN_PROGRESS"
+  },
+  "postgresRow": [
+    "640aafcd-98ae-4c20-9e93-066fd33c25e4",
+    "4a424cad-f70d-45c2-853b-46c7f890ff66",
+    "IN_PROGRESS",
+    "STANDARD"
+  ],
+  "browserErrors": [],
+  "screenshot": "screenshots/t042-history-attempt-resume-1280.png",
+  "fixtureBoundary": "TEST_FIXTURE_ONLY; same isolated T042 runtime as the student Today and teacher roster E2Es"
+}

@@ -110,6 +110,7 @@ def login_in_browser(page, identifier: str) -> dict:
     page.goto(f"{BASE}/login/")
     page.evaluate("localStorage.clear()")
     page.reload()
+    page.locator("#intro").wait_for(state="hidden", timeout=15_000)
     page.locator("#loginAccount").fill(identifier)
     page.locator("#loginPassword").fill(PASSWORD)
     page.locator('[data-action="login"]').click()
@@ -152,12 +153,38 @@ def add_test_course_activity(assignment_id: str) -> dict[str, str]:
     )
     assert len(row) == 1 and row[0][2] == "OPEN", row
     version_id, course_title = row[0][:2]
-    ids = {key: str(uuid.uuid4()) for key in ("unit", "lesson", "activity")}
     activity_title = "TEST_FIXTURE_ONLY T037 课程正文验收段落"
+    existing = sql_rows(
+        f'''SELECT cv.id,cv.title,u.id,l.id,la.id,la.title
+              FROM "Assignment" a
+              JOIN "CourseVersion" cv ON cv.id=a."courseVersionId"
+              JOIN "Unit" u ON u."courseVersionId"=cv.id
+              JOIN "Lesson" l ON l."unitId"=u.id
+              JOIN "LearningActivity" la ON la."lessonId"=l.id
+             WHERE a.id={q(assignment_id)} AND a."schoolId"={q(SCHOOL_ID)}
+               AND la.title={q(activity_title)}
+             ORDER BY u."sortOrder",l."sortOrder",la."sortOrder" LIMIT 1;'''
+    )
+    if existing:
+        version_id, course_title, unit_id, lesson_id, activity_id, existing_title = existing[0]
+        return {
+            "assignmentId": assignment_id,
+            "courseVersionId": version_id,
+            "courseTitle": course_title,
+            "unit": unit_id,
+            "lesson": lesson_id,
+            "activity": activity_id,
+            "activityTitle": existing_title,
+        }
+    unit_order = int(sql(
+        f'''SELECT COALESCE(MAX("sortOrder"),0)+1 FROM "Unit" WHERE "courseVersionId"={q(version_id)};''',
+        capture=True,
+    ))
+    ids = {key: str(uuid.uuid4()) for key in ("unit", "lesson", "activity")}
     sql(
         f'''BEGIN;
         INSERT INTO "Unit" (id,"courseVersionId",title,"sortOrder")
-          VALUES ({q(ids['unit'])},{q(version_id)},'TEST_FIXTURE_ONLY T037 学习单元',1);
+          VALUES ({q(ids['unit'])},{q(version_id)},'TEST_FIXTURE_ONLY T037 学习单元',{unit_order});
         INSERT INTO "Lesson" (id,"unitId",title,"sortOrder")
           VALUES ({q(ids['lesson'])},{q(ids['unit'])},'TEST_FIXTURE_ONLY T037 学习课时',1);
         INSERT INTO "LearningActivity" (id,"lessonId",type,title,instruction,"sortOrder",required,"completionRule",content,"studentNotes")
@@ -269,7 +296,16 @@ def test_02_today_showcase_clicks_isolation_retry_and_four_viewports():
             assert recording_definition["title"] in page.locator(".today-skill-speak").inner_text()
 
             baseline_id = today["primaryAction"]["target"]["practiceDefinitionId"]
-            baseline = next(item for item in practice_catalog if item["id"] == baseline_id)
+            # The Level 1 SYSTEM practice is resolved by Today and may not be
+            # included in the general self-practice catalog list. Follow the
+            # authorized id returned by Today through its detail API.
+            baseline_response = page.request.get(
+                f"{API}/schools/{SCHOOL_ID}/practices/{baseline_id}",
+                headers=auth_headers(showcase_session),
+            )
+            assert baseline_response.ok, baseline_response.text()
+            baseline = payload(baseline_response)
+            assert baseline["id"] == baseline_id
             exam_href = page.locator(".today-skill-exam .today-skill-link").get_attribute("href")
             assert exam_href == f"/student/practices/{baseline_id}/", exam_href
             assert baseline_id == practice_id, {"todayBaseline": baseline_id, "reportPathPractice": practice_id}
@@ -287,8 +323,14 @@ def test_02_today_showcase_clicks_isolation_retry_and_four_viewports():
             )
             assert course_detail_response.ok, course_detail_response.text()
             detail = payload(course_detail_response)
-            activity = detail["units"][0]["lessons"][0]["activities"][0]
-            assert activity["id"] == course["activity"] and activity["title"] == course["activityTitle"]
+            activities = [
+                activity
+                for unit in detail["units"]
+                for lesson in unit["lessons"]
+                for activity in lesson["activities"]
+            ]
+            activity = next((item for item in activities if item["id"] == course["activity"]), None)
+            assert activity and activity["title"] == course["activityTitle"], activities
             page.locator(".today-skill-listen .today-skill-link").click()
             page.wait_for_url(f"**/student/courses/course-detail/?id={assignment_id}", timeout=20_000)
             page.locator("#cpMain").wait_for(state="visible", timeout=30_000)

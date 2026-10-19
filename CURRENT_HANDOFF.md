@@ -5,8 +5,12 @@ Repository: `yuzan-workspace-main`
 
 ## YZ-RD-T042 isolated showcase integration (2026-10-19)
 
-- Scope: T039 accepted-source rolling integration + accepted T037 Today four-step visual entry. This is a development merge checkpoint; T039 still requires new native cross-role E2E and inherited API full lint is unresolved.
-- Preserve both source checkpoints; do not claim shared-merge readiness from source-branch E2Es alone.
+- ACCEPTANCE VERIFIED on independent branch `feat/yz-rd-t042-student-showcase-roster-history-integration`, starting at `a676c99f81400b950b3de00f98e83dea05622485`; no shared-branch merge. The existing no-fast-forward T039 + T037 integration graph is preserved.
+- A fresh T042-owned Chromium 153/NestJS/PostgreSQL 17.11/Redis/MinIO runtime passed 5/5 cross-module E2Es, 0 failed, 0 skipped. Student login → Today four entries → authorized course, recording practice and Level 1 detail; actual submission remained PROCESSING with no report/score until teacher review, then generated a complete legal 0/100 report. Today → History → continued the exact same persisted Attempt ID. Student A/B/cross-school isolation passed.
+- Teacher browser flow verified an authorized 35-student roster, search/filter/sort/detail/return state, 401/403/404 cases, and 3 visible of 35 exporting all 35 rows. CSV rows match the independent PostgreSQL Enrollment query, preserving score 0 separately from NULL.
+- PASS: frontend 130/130; full API tests 1109 passed / 64 environment-gated skips; Contracts 6/6; workspace TypeScript and build. Full API lint rerun reports 1201 errors / 1 warning, matching the inherited T033 baseline; `READY_TO_MERGE=NO` pending API-owner resolution or waiver. `@eslint/js@9.39.4` was added as the API lint config's direct development dependency so the command runs in a clean checkout.
+- All task users, class rows, course activity, Attempts and recordings are `TEST_FIXTURE_ONLY`; browser recordings use `SIMULATED_MIC`. Physical microphone, calibrated speech scoring, school pilot and production launch are NOT_RUN. The accepted Question Bank source hashes are unchanged. T005's original worktree status hash was unchanged; Worker, Docker/Compose, shared-branch merge and L4 were not used. The T042 services exited and all six owned ports are free.
+- Target checkout `AGENTS.md` has no AA-DEV-V2.2 marker and the Task Card supplied no Lane policy reference; the user-provided `/home/tian/code/AGENTS.md` baseline governed. Full evidence: [evidence/yz-rd-t042/RESULTS.md](evidence/yz-rd-t042/RESULTS.md). The final pushed SHA is returned with the task result.
 
 ## YZ-RD-T039 rolling integration checkpoint (2026-10-19)
 

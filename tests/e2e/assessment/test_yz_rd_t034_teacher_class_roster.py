@@ -30,6 +30,8 @@ BASE = os.environ.get("YZ_T034_BASE_URL", "")
 DATABASE_URL = os.environ.get("YZ_T034_DATABASE_URL", "")
 PASSWORD = os.environ.get("YZ_T034_PASSWORD", "")
 EVIDENCE_DIR = Path(os.environ.get("YZ_T034_EVIDENCE_DIR", ROOT / "evidence" / "yz-rd-t034"))
+EXPECTED_DATABASE_NAME = os.environ.get("YZ_T034_EXPECTED_DATABASE_NAME", "yuzan_t034_native")
+EXPECTED_DATABASE_USER = os.environ.get("YZ_T034_EXPECTED_DATABASE_USER", "yz_t034")
 TEACHER_TEMPLATE_ID = "33333333-3333-4333-8333-333333333333"
 STUDENT_TEMPLATE_ID = "22222222-2222-4222-8222-222222222222"
 
@@ -61,7 +63,7 @@ def sql(statement: str) -> str:
         raise AssertionError("T034 test refuses a non-local or non-PostgreSQL target")
     if parsed.port != int(os.environ["POSTGRES_PORT"]):
         raise AssertionError("T034 database URL does not match the isolated PostgreSQL port")
-    if parsed.username != "yz_t034" or parsed.path.lstrip("/") != "yuzan_t034_native":
+    if parsed.username != EXPECTED_DATABASE_USER or parsed.path.lstrip("/") != EXPECTED_DATABASE_NAME:
         raise AssertionError("T034 database name/user does not match the task-owned database")
     if unquote(parsed.password or "") != os.environ["POSTGRES_PASSWORD"]:
         raise AssertionError("T034 database URL password differs from its private runtime config")
@@ -88,7 +90,7 @@ def sql_json(statement: str):
 def verify_runtime_identity() -> dict[str, str]:
     identity = sql("SELECT current_database() || '|' || current_user || '|' || version();")
     name, user, version = identity.split("|", 2)
-    if (name, user) != ("yuzan_t034_native", "yz_t034") or not version.startswith("PostgreSQL 17."):
+    if (name, user) != (EXPECTED_DATABASE_NAME, EXPECTED_DATABASE_USER) or not version.startswith("PostgreSQL 17."):
         raise AssertionError("T034 E2E is not attached to its task-owned PostgreSQL 17 database/user")
     return {"name": name, "user": user, "version": "PostgreSQL 17"}
 

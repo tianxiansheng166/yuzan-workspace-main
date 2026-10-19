@@ -43,6 +43,17 @@ test("course and first assessment destination use dynamic server identifiers", (
   assert.match(model[2].status, /首次测评已开放/);
 });
 
+test("Today follows its authorized baseline id even when the general catalog omits SYSTEM practice", () => {
+  const exam = cards({
+    today: { primaryAction: { kind: "BASELINE", target: { practiceDefinitionId: "system-baseline" } } },
+    practices: { items: [] },
+  })[2];
+  assert.equal(exam.href, "/student/practices/system-baseline/");
+  assert.equal(exam.cta, "查看本次测评");
+  assert.match(exam.detail, /学校已开放首次测评/);
+  assert.match(exam.status, /首次测评已开放/);
+});
+
 test("only server-provided numeric formal score is shown, preserving a real zero", () => {
   const formal = (score) => cards({ today: { summary: { latestFormalAssessment: { score } } } })[3];
   assert.match(formal(0).detail, /正式成绩 0 分/);
