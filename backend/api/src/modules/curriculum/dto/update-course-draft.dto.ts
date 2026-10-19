@@ -1,3 +1,4 @@
+import { Type } from "class-transformer";
 import {
   IsArray,
   IsISO8601,
@@ -5,8 +6,10 @@ import {
   IsString,
   MaxLength,
   MinLength,
+  ValidateNested,
 } from "class-validator";
-import type { BilingualContent, Unit } from "../domain/course-version.types.js";
+import type { Unit } from "../domain/course-version.types.js";
+import { BilingualContentDto } from "./bilingual-content.dto.js";
 
 export class UpdateCourseDraftDto {
   @IsISO8601({ strict: true })
@@ -50,7 +53,9 @@ export class UpdateCourseDraftDto {
 
   @IsOptional()
   @IsArray()
-  objectives?: readonly BilingualContent[];
+  @ValidateNested({ each: true })
+  @Type(() => BilingualContentDto)
+  objectives?: readonly BilingualContentDto[];
 
   @IsOptional()
   @IsString()

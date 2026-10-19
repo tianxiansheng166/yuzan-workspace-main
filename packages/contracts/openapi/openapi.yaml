@@ -3907,6 +3907,45 @@ components:
     CourseVersionStatus:
       type: string
       enum: [DRAFT, IN_REVIEW, CHANGES_REQUESTED, APPROVED, PUBLISHED, RETIRED]
+    BilingualContent:
+      type: object
+      required: [originalText, locale, translationSource, reviewStatus]
+      properties:
+        originalText:
+          type: string
+        translation:
+          type: string
+          description: Untrusted until reviewStatus and translationSource pass the publication gate.
+        locale:
+          type: string
+          description: Locale of originalText; it does not identify the translation language.
+        translationLocale:
+          type: string
+          description: Explicit BCP-47 locale of translation, for example bo-CN.
+        translationSource:
+          type: string
+          enum: [NONE, AUTO, EXPERT, COMMUNITY]
+        reviewStatus:
+          type: string
+          enum: [PENDING, REVIEWED, EXPERT_CONFIRMED]
+    StudentVisibleBilingualContent:
+      description: Original text is always returned; translation fields are present only for nonempty expert-confirmed Tibetan help.
+      oneOf:
+        - type: string
+        - type: object
+          required: [originalText]
+          properties:
+            originalText: { type: string }
+            locale: { type: string, description: Locale of originalText. }
+            translation:
+              {
+                type: string,
+                description: Expert-confirmed Tibetan translation.,
+              }
+            translationLocale:
+              { type: string, description: Explicit BCP-47 target locale. }
+            translationSource: { type: string, enum: [EXPERT, COMMUNITY] }
+            reviewStatus: { type: string, enum: [EXPERT_CONFIRMED] }
     CourseVersionSummary:
       type: object
       required: [id, courseId, version, title, status, updatedAt]
@@ -3955,6 +3994,11 @@ components:
         locale:
           type: string
           default: zh-CN
+          description: Locale of the course's original learning content.
+        objectives:
+          type: array
+          items:
+            $ref: "#/components/schemas/BilingualContent"
     UpdateCourseDraftRequest:
       type: object
       required: [expectedUpdatedAt]
@@ -3976,10 +4020,11 @@ components:
         locale:
           type: string
           maxLength: 20
+          description: Locale of the course's original learning content.
         objectives:
           type: array
           items:
-            type: object
+            $ref: "#/components/schemas/BilingualContent"
         units:
           type: array
           items:
@@ -4001,10 +4046,11 @@ components:
               type: string
             locale:
               type: string
+              description: Locale of the course's original learning content.
             objectives:
               type: array
               items:
-                type: object
+                $ref: "#/components/schemas/StudentVisibleBilingualContent"
             units:
               type: array
               items:
@@ -4068,6 +4114,23 @@ components:
         enrollmentId:
           type: string
           format: uuid
+    AssignmentSummary:
+      type: object
+      required: [id, schoolId, title, status, startsAt, dueAt, revision, createdAt, updatedAt, targets]
+      properties:
+        id: { type: string, format: uuid }
+        schoolId: { type: string, format: uuid }
+        title: { type: string }
+        status: { $ref: "#/components/schemas/AssignmentStatus" }
+        startsAt: { type: string, format: date-time }
+        dueAt: { type: string, format: date-time }
+        revision: { type: integer, minimum: 1 }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+        targets:
+          type: array
+          items:
+            $ref: "#/components/schemas/AssignmentTarget"
     CreateAssignmentRequest:
       type: object
       required: [courseVersionId, title, startsAt, dueAt, targets]
@@ -4114,23 +4177,6 @@ components:
           type: string
           format: date-time
         revision:
-    AssignmentSummary:
-      type: object
-      required: [id, schoolId, title, status, startsAt, dueAt, revision, createdAt, updatedAt, targets]
-      properties:
-        id: { type: string, format: uuid }
-        schoolId: { type: string, format: uuid }
-        title: { type: string }
-        status: { $ref: "#/components/schemas/AssignmentStatus" }
-        startsAt: { type: string, format: date-time }
-        dueAt: { type: string, format: date-time }
-        revision: { type: integer, minimum: 1 }
-        createdAt: { type: string, format: date-time }
-        updatedAt: { type: string, format: date-time }
-        targets:
-          type: array
-          items:
-            $ref: "#/components/schemas/AssignmentTarget"
           type: integer
           minimum: 1
         enrollmentId:
@@ -4145,52 +4191,6 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/AssignmentTarget"
-    AssignmentResponse:
-      type: object
-      required: [data, meta]
-      properties:
-        data:
-          $ref: "#/components/schemas/Assignment"
-        meta:
-          $ref: "#/components/schemas/EnvelopeMeta"
-    TodayTask:
-      allOf:
-        - $ref: "#/components/schemas/Assignment"
-        - type: object
-          required: [progressStatus, downloadStatus]
-          properties:
-            progressStatus:
-              type: string
-              enum:
-                [NOT_STARTED, IN_PROGRESS, PENDING_SYNC, SUBMITTED, REVIEWED]
-            downloadStatus:
-              type: string
-              enum: [NOT_REQUIRED, NOT_DOWNLOADED, DOWNLOADING, READY, FAILED]
-    TodayTasksResponse:
-      type: object
-      required: [data, meta]
-      properties:
-        data:
-          type: array
-          items:
-            $ref: "#/components/schemas/TodayTask"
-        meta:
-          $ref: "#/components/schemas/EnvelopeMeta"
-    StudentTodayTarget:
-      type: object
-      required: [href]
-      properties:
-        href:
-          type: string
-        sourceSessionId:
-          type: string
-          format: uuid
-        practiceDefinitionId:
-          type: string
-          format: uuid
-    StudentTodayAction:
-      type: object
-      required: [kind, title, reason, cta, target]
     AssignmentStatsResponse:
       type: object
       required: [data, meta]
@@ -4237,34 +4237,52 @@ components:
         reviewedCount: { type: integer, minimum: 0 }
         needsReviewCount: { type: integer, minimum: 0 }
         submissionRate: { type: integer, minimum: 0, maximum: 100 }
-    AssignmentStatsResponse:
+    AssignmentResponse:
       type: object
       required: [data, meta]
       properties:
         data:
-          $ref: "#/components/schemas/AssignmentStats"
+          $ref: "#/components/schemas/Assignment"
         meta:
           $ref: "#/components/schemas/EnvelopeMeta"
-    AssignmentStats:
+    TodayTask:
+      allOf:
+        - $ref: "#/components/schemas/Assignment"
+        - type: object
+          required: [progressStatus, downloadStatus]
+          properties:
+            progressStatus:
+              type: string
+              enum:
+                [NOT_STARTED, IN_PROGRESS, PENDING_SYNC, SUBMITTED, REVIEWED]
+            downloadStatus:
+              type: string
+              enum: [NOT_REQUIRED, NOT_DOWNLOADED, DOWNLOADING, READY, FAILED]
+    TodayTasksResponse:
       type: object
-      required:
-        [
-          assignmentId,
-          totalStudents,
-          submittedCount,
-          notSubmittedCount,
-          reviewedCount,
-          needsReviewCount,
-          submissionRate,
-        ]
+      required: [data, meta]
       properties:
-        assignmentId: { type: string, format: uuid }
-        totalStudents: { type: integer, minimum: 0 }
-        submittedCount: { type: integer, minimum: 0 }
-        notSubmittedCount: { type: integer, minimum: 0 }
-        reviewedCount: { type: integer, minimum: 0 }
-        needsReviewCount: { type: integer, minimum: 0 }
-        submissionRate: { type: integer, minimum: 0, maximum: 100 }
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/TodayTask"
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
+    StudentTodayTarget:
+      type: object
+      required: [href]
+      properties:
+        href:
+          type: string
+        sourceSessionId:
+          type: string
+          format: uuid
+        practiceDefinitionId:
+          type: string
+          format: uuid
+    StudentTodayAction:
+      type: object
+      required: [kind, title, reason, cta, target]
       properties:
         kind:
           type: string
@@ -4486,6 +4504,12 @@ components:
         submittedAt:
           type: [string, "null"]
           format: date-time
+        assignmentTitle:
+          type: string
+          description: 教师有权查看时返回的真实任务标题
+        studentName:
+          type: string
+          description: 教师有权查看时返回的真实学生姓名
     SubmissionResponse:
       type: object
       required: [data, meta]
@@ -4494,30 +4518,6 @@ components:
           $ref: "#/components/schemas/Submission"
         meta:
           $ref: "#/components/schemas/EnvelopeMeta"
-    ReleaseFeedbackRequest:
-      type: object
-      required: [decision, comment]
-      properties:
-        decision:
-          type: string
-          enum: [ACCEPT, RETURN]
-        comment:
-          type: string
-          minLength: 1
-          maxLength: 4000
-        score:
-          type: [number, "null"]
-          minimum: 0
-          maximum: 100
-    Feedback:
-      type: object
-      required: [id, submissionId, decision, comment, releasedAt, revision]
-      properties:
-        id:
-          type: string
-          format: uuid
-        submissionId:
-          type: string
     SubmissionListResponse:
       type: object
       required: [data, meta]
@@ -4547,6 +4547,30 @@ components:
             hasMore: { type: boolean }
         meta:
           $ref: "#/components/schemas/EnvelopeMeta"
+    ReleaseFeedbackRequest:
+      type: object
+      required: [decision, comment]
+      properties:
+        decision:
+          type: string
+          enum: [ACCEPT, RETURN]
+        comment:
+          type: string
+          minLength: 1
+          maxLength: 4000
+        score:
+          type: [number, "null"]
+          minimum: 0
+          maximum: 100
+    Feedback:
+      type: object
+      required: [id, submissionId, decision, comment, releasedAt, revision]
+      properties:
+        id:
+          type: string
+          format: uuid
+        submissionId:
+          type: string
           format: uuid
         decision:
           type: string
@@ -4561,12 +4585,6 @@ components:
         revision:
           type: integer
     FeedbackResponse:
-        assignmentTitle:
-          type: string
-          description: 教师有权查看时返回的真实任务标题
-        studentName:
-          type: string
-          description: 教师有权查看时返回的真实学生姓名
       type: object
       required: [data, meta]
       properties:
@@ -5449,24 +5467,6 @@ components:
                 $ref: "#/components/schemas/AssessmentItem"
         meta:
           $ref: "#/components/schemas/EnvelopeMeta"
-    ReadingItemResponse:
-      type: object
-      required: [data, meta]
-      properties:
-        data:
-          type: object
-          required: [itemId, targetText]
-          properties:
-            itemId:
-              type: string
-              format: uuid
-            targetText:
-              type: string
-            prompt:
-              type: string
-            recordingId:
-              type: [string, "null"]
-              format: uuid
     AssessmentReviewQueueItem:
       type: object
       required: [itemId, sessionId, submissionId, assignmentId, student, practice, strategy, domain, maxScore, state, sessionStatus, sortOrder]
@@ -5538,6 +5538,24 @@ components:
         data: { type: object, additionalProperties: true }
         meta:
           $ref: "#/components/schemas/EnvelopeMeta"
+    ReadingItemResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: object
+          required: [itemId, targetText]
+          properties:
+            itemId:
+              type: string
+              format: uuid
+            targetText:
+              type: string
+            prompt:
+              type: string
+            recordingId:
+              type: [string, "null"]
+              format: uuid
         meta:
           $ref: "#/components/schemas/EnvelopeMeta"
     AttachRecordingRequest:
@@ -5752,52 +5770,6 @@ components:
         title: { type: string }
         difficulty: { type: string }
         latestPublishedVersionId: { type: string, format: uuid }
-    TeacherQuestionBankDiagnosticDashboardResponse:
-      type: object
-      required: [data, meta]
-      properties:
-        data:
-          $ref: "#/components/schemas/TeacherQuestionBankDiagnosticDashboard"
-        meta:
-          $ref: "#/components/schemas/EnvelopeMeta"
-    TeacherQuestionBankDiagnosticDashboard:
-      type: object
-      required:
-        [
-          class,
-          practice,
-          summary,
-          domains,
-          families,
-          commonDifficulties,
-          strengths,
-          students,
-        ]
-      properties:
-        class:
-          $ref: "#/components/schemas/TeacherDiagnosticClassIdentity"
-        practice:
-          $ref: "#/components/schemas/TeacherDiagnosticPractice"
-        summary:
-          $ref: "#/components/schemas/TeacherDiagnosticSummary"
-        domains:
-          type: array
-          items: { $ref: "#/components/schemas/TeacherDiagnosticDomain" }
-        families:
-          type: array
-          items: { $ref: "#/components/schemas/TeacherDiagnosticFamily" }
-        commonDifficulties:
-          type: array
-          maxItems: 3
-          items: { $ref: "#/components/schemas/TeacherDiagnosticFamily" }
-        strengths:
-          type: array
-          maxItems: 2
-          items: { $ref: "#/components/schemas/TeacherDiagnosticFamily" }
-        students:
-          type: array
-          items: { $ref: "#/components/schemas/TeacherDiagnosticStudent" }
-    TeacherDiagnosticClassIdentity:
     TeacherDashboardResponse:
       type: object
       required: [data, meta]
@@ -5887,6 +5859,52 @@ components:
         studentName: { type: string }
         taskTitle: { type: string }
         submittedAt: { type: string, format: date-time }
+    TeacherQuestionBankDiagnosticDashboardResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          $ref: "#/components/schemas/TeacherQuestionBankDiagnosticDashboard"
+        meta:
+          $ref: "#/components/schemas/EnvelopeMeta"
+    TeacherQuestionBankDiagnosticDashboard:
+      type: object
+      required:
+        [
+          class,
+          practice,
+          summary,
+          domains,
+          families,
+          commonDifficulties,
+          strengths,
+          students,
+        ]
+      properties:
+        class:
+          $ref: "#/components/schemas/TeacherDiagnosticClassIdentity"
+        practice:
+          $ref: "#/components/schemas/TeacherDiagnosticPractice"
+        summary:
+          $ref: "#/components/schemas/TeacherDiagnosticSummary"
+        domains:
+          type: array
+          items: { $ref: "#/components/schemas/TeacherDiagnosticDomain" }
+        families:
+          type: array
+          items: { $ref: "#/components/schemas/TeacherDiagnosticFamily" }
+        commonDifficulties:
+          type: array
+          maxItems: 3
+          items: { $ref: "#/components/schemas/TeacherDiagnosticFamily" }
+        strengths:
+          type: array
+          maxItems: 2
+          items: { $ref: "#/components/schemas/TeacherDiagnosticFamily" }
+        students:
+          type: array
+          items: { $ref: "#/components/schemas/TeacherDiagnosticStudent" }
+    TeacherDiagnosticClassIdentity:
       type: object
       required: [classId, className, grade]
       properties:
@@ -6534,6 +6552,129 @@ components:
             type: array,
             items: { $ref: "#/components/schemas/StudentCourseCatalogItem" },
           }
+    StudentCourseActivity:
+      type: object
+      required:
+        [
+          id,
+          type,
+          title,
+          instruction,
+          content,
+          required,
+          studentNotes,
+          personalNotes,
+          resources,
+          progress,
+          attempt,
+          practiceReference,
+        ]
+      properties:
+        id: { type: string, format: uuid }
+        type: { type: string }
+        title: { type: string }
+        instruction:
+          oneOf:
+            - $ref: "#/components/schemas/StudentVisibleBilingualContent"
+            - type: "null"
+        content:
+          oneOf:
+            - type: string
+            - type: object
+              additionalProperties: true
+            - type: "null"
+          description: Student-safe content projection. Answer keys and formal scoring configuration are omitted.
+        required: { type: boolean }
+        studentNotes:
+          oneOf:
+            - $ref: "#/components/schemas/StudentVisibleBilingualContent"
+            - type: object
+              required: [published, items]
+              properties:
+                published: { type: boolean, enum: [true] }
+                items: { type: array, items: { type: string } }
+            - type: "null"
+        personalNotes:
+          { type: array, items: { type: object, additionalProperties: true } }
+        resources:
+          { type: array, items: { type: object, additionalProperties: true } }
+        progress:
+          {
+            oneOf:
+              [{ type: object, additionalProperties: true }, { type: "null" }],
+          }
+        attempt:
+          {
+            oneOf:
+              [{ type: object, additionalProperties: true }, { type: "null" }],
+          }
+        practiceReference:
+          {
+            oneOf:
+              [{ type: object, additionalProperties: true }, { type: "null" }],
+          }
+    StudentCourseLesson:
+      type: object
+      required: [id, title, sortOrder, activities]
+      properties:
+        id: { type: string, format: uuid }
+        title: { type: string }
+        sortOrder: { type: integer }
+        activities:
+          type: array
+          items: { $ref: "#/components/schemas/StudentCourseActivity" }
+    StudentCourseUnit:
+      type: object
+      required: [id, title, sortOrder, lessons]
+      properties:
+        id: { type: string, format: uuid }
+        title: { type: string }
+        sortOrder: { type: integer }
+        lessons:
+          type: array
+          items: { $ref: "#/components/schemas/StudentCourseLesson" }
+    StudentCourseVersion:
+      type: object
+      required: [id, version, status, title, objectives]
+      properties:
+        id: { type: string, format: uuid }
+        version: { type: integer, minimum: 1 }
+        status: { $ref: "#/components/schemas/CourseVersionStatus" }
+        title: { type: string }
+        description: { type: [string, "null"] }
+        gradeBand: { type: [string, "null"] }
+        objectives:
+          type: array
+          items: { $ref: "#/components/schemas/StudentVisibleBilingualContent" }
+        capabilityTheme: { type: [string, "null"] }
+        difficulty: { type: [string, "null"] }
+        estimatedMinutes: { type: [integer, "null"] }
+        coverAsset: { type: [string, "null"] }
+        deviceRequirements:
+          { type: [object, "null"], additionalProperties: true }
+    StudentCourseAssignment:
+      type: object
+      required: [id, title, source, startsAt, dueAt]
+      properties:
+        id: { type: string, format: uuid }
+        title: { type: string }
+        source: { type: string }
+        startsAt: { type: string, format: date-time }
+        dueAt: { type: [string, "null"], format: date-time }
+    StudentCourseIdentity:
+      type: object
+      required: [id, stableKey, title]
+      properties:
+        id: { type: string, format: uuid }
+        stableKey: { type: string }
+        title: { type: string }
+    StudentCourseNextActivity:
+      type: object
+      required: [id, title, type]
+      properties:
+        id: { type: string, format: uuid }
+        title: { type: string }
+        type: { type: string }
     StudentCourseAggregateResponse:
       type: object
       required:
@@ -6550,11 +6691,14 @@ components:
           practiceReferences,
         ]
       properties:
-        assignment: { type: object, additionalProperties: true }
-        course: { type: object, additionalProperties: true }
-        courseVersion: { type: object, additionalProperties: true }
+        assignment: { $ref: "#/components/schemas/StudentCourseAssignment" }
+        course: { $ref: "#/components/schemas/StudentCourseIdentity" }
+        courseVersion: { $ref: "#/components/schemas/StudentCourseVersion" }
         units:
-          { type: array, items: { type: object, additionalProperties: true } }
+          {
+            type: array,
+            items: { $ref: "#/components/schemas/StudentCourseUnit" },
+          }
         resources:
           { type: array, items: { type: object, additionalProperties: true } }
         studentProgress:
@@ -6564,7 +6708,10 @@ components:
             oneOf:
               [{ $ref: "#/components/schemas/Submission" }, { type: "null" }],
           }
-        nextActivity: { type: [object, "null"], additionalProperties: true }
+        nextActivity:
+          oneOf:
+            - $ref: "#/components/schemas/StudentCourseNextActivity"
+            - type: "null"
         courseCompletion:
           { $ref: "#/components/schemas/StudentCourseCompletion" }
         practiceReferences:

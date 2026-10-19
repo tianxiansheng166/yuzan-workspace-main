@@ -98,19 +98,41 @@ function validateObjectives(
 }
 
 function validateBilingualContent(
-  content: BilingualContent | undefined,
+  content: BilingualContent | string | undefined,
   path: string,
   errors: PublishValidationError[],
   requireOriginal: boolean,
 ): void {
-  if (!content) {
+  if (content === undefined || content === null) {
     if (requireOriginal) {
       addError(errors, path, "MISSING_BILINGUAL_CONTENT", "缺少双语内容");
     }
     return;
   }
 
-  if (requireOriginal && content.originalText.trim().length === 0) {
+  if (typeof content === "string") {
+    if (requireOriginal && content.trim().length === 0) {
+      addError(
+        errors,
+        path,
+        "MISSING_ORIGINAL_TEXT",
+        "原文不能为空",
+      );
+    }
+    return;
+  }
+
+  if (typeof content !== "object" || Array.isArray(content)) {
+    addError(errors, path, "INVALID_BILINGUAL_CONTENT", "双语内容格式无效");
+    return;
+  }
+
+  const value = content as BilingualContent;
+
+  if (
+    requireOriginal &&
+    (typeof value.originalText !== "string" || value.originalText.trim().length === 0)
+  ) {
     addError(
       errors,
       `${path}.originalText`,
@@ -119,11 +141,40 @@ function validateBilingualContent(
     );
   }
 
-  if (!content.locale || content.locale.trim().length === 0) {
+  if (value.originalText !== undefined && typeof value.originalText !== "string") {
+    addError(errors, `${path}.originalText`, "INVALID_ORIGINAL_TEXT", "原文格式无效");
+  }
+
+  if (typeof value.locale !== "string" || value.locale.trim().length === 0) {
     addError(errors, `${path}.locale`, "MISSING_LANGUAGE", "语言字段不能为空");
   }
 
-  if (content.reviewStatus === "PENDING") {
+  if (
+    value.translation !== undefined &&
+    value.translation !== null &&
+    typeof value.translation !== "string"
+  ) {
+    addError(errors, `${path}.translation`, "INVALID_TRANSLATION", "译文格式无效");
+  }
+
+  if (value.translationLocale !== undefined &&
+    (typeof value.translationLocale !== "string" || !isLocaleTag(value.translationLocale))) {
+    addError(errors, `${path}.translationLocale`, "INVALID_TRANSLATION_LANGUAGE", "译文语言格式无效");
+  }
+
+  if (typeof value.translation === "string" && value.translation.trim().length > 0 && !value.translationLocale) {
+    addError(errors, `${path}.translationLocale`, "MISSING_TRANSLATION_LANGUAGE", "译文目标语言不能为空");
+  }
+
+  if (!(["NONE", "AUTO", "EXPERT", "COMMUNITY"] as const).includes(value.translationSource)) {
+    addError(errors, `${path}.translationSource`, "INVALID_TRANSLATION_SOURCE", "译文来源无效");
+  }
+
+  if (!(["PENDING", "REVIEWED", "EXPERT_CONFIRMED"] as const).includes(value.reviewStatus)) {
+    addError(errors, `${path}.reviewStatus`, "INVALID_TRANSLATION_REVIEW_STATUS", "译文审核状态无效");
+  }
+
+  if (value.reviewStatus === "PENDING") {
     addError(
       errors,
       `${path}.reviewStatus`,
@@ -133,8 +184,8 @@ function validateBilingualContent(
   }
 
   if (
-    content.reviewStatus === "EXPERT_CONFIRMED" &&
-    content.translationSource === "AUTO"
+    value.reviewStatus === "EXPERT_CONFIRMED" &&
+    value.translationSource === "AUTO"
   ) {
     addError(
       errors,
@@ -145,8 +196,8 @@ function validateBilingualContent(
   }
 
   if (
-    content.reviewStatus === "EXPERT_CONFIRMED" &&
-    content.translationSource === "NONE"
+    value.reviewStatus === "EXPERT_CONFIRMED" &&
+    value.translationSource === "NONE"
   ) {
     addError(
       errors,
@@ -155,6 +206,10 @@ function validateBilingualContent(
       "无来源的翻译不能标记为专家确认",
     );
   }
+}
+
+function isLocaleTag(value: string): boolean {
+  return /^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/.test(value.trim());
 }
 
 function validateStructure(

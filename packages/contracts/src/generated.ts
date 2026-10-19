@@ -2225,6 +2225,35 @@ export interface components {
       | "APPROVED"
       | "PUBLISHED"
       | "RETIRED";
+    BilingualContent: {
+      originalText: string;
+      /** @description Untrusted until reviewStatus and translationSource pass the publication gate. */
+      translation?: string;
+      /** @description Locale of originalText; it does not identify the translation language. */
+      locale: string;
+      /** @description Explicit BCP-47 locale of translation, for example bo-CN. */
+      translationLocale?: string;
+      /** @enum {string} */
+      translationSource: "NONE" | "AUTO" | "EXPERT" | "COMMUNITY";
+      /** @enum {string} */
+      reviewStatus: "PENDING" | "REVIEWED" | "EXPERT_CONFIRMED";
+    };
+    /** @description Original text is always returned; translation fields are present only for nonempty expert-confirmed Tibetan help. */
+    StudentVisibleBilingualContent:
+      | string
+      | {
+          originalText: string;
+          /** @description Locale of originalText. */
+          locale?: string;
+          /** @description Expert-confirmed Tibetan translation. */
+          translation?: string;
+          /** @description Explicit BCP-47 target locale. */
+          translationLocale?: string;
+          /** @enum {string} */
+          translationSource?: "EXPERT" | "COMMUNITY";
+          /** @enum {string} */
+          reviewStatus?: "EXPERT_CONFIRMED";
+        };
     CourseVersionSummary: {
       /** Format: uuid */
       id: string;
@@ -2245,8 +2274,12 @@ export interface components {
       title: string;
       description?: string;
       gradeBand?: string;
-      /** @default zh-CN */
+      /**
+       * @description Locale of the course's original learning content.
+       * @default zh-CN
+       */
       locale: string;
+      objectives?: components["schemas"]["BilingualContent"][];
     };
     UpdateCourseDraftRequest: {
       /** Format: date-time */
@@ -2254,8 +2287,9 @@ export interface components {
       title?: string;
       description?: string;
       gradeBand?: string;
+      /** @description Locale of the course's original learning content. */
       locale?: string;
-      objectives?: Record<string, never>[];
+      objectives?: components["schemas"]["BilingualContent"][];
       units?: Record<string, never>[];
     };
     CourseVersionDetail: components["schemas"]["CourseVersionSummary"] & {
@@ -2264,8 +2298,9 @@ export interface components {
       /** Format: uuid */
       authorUserId: string;
       description?: string;
+      /** @description Locale of the course's original learning content. */
       locale: string;
-      objectives: Record<string, never>[];
+      objectives: components["schemas"]["StudentVisibleBilingualContent"][];
       units: Record<string, never>[];
       /** Format: date-time */
       createdAt: string;
@@ -2300,6 +2335,24 @@ export interface components {
       /** Format: uuid */
       enrollmentId?: string;
     };
+    AssignmentSummary: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      schoolId: string;
+      title: string;
+      status: components["schemas"]["AssignmentStatus"];
+      /** Format: date-time */
+      startsAt: string;
+      /** Format: date-time */
+      dueAt: string;
+      revision: number;
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: date-time */
+      updatedAt: string;
+      targets: components["schemas"]["AssignmentTarget"][];
+    };
     CreateAssignmentRequest: {
       /** Format: uuid */
       courseVersionId: string;
@@ -2331,27 +2384,31 @@ export interface components {
       offlineRequired?: boolean;
       targets?: components["schemas"]["AssignmentTarget"][];
     };
+    AssignmentStatsResponse: {
+      data: components["schemas"]["AssignmentStats"];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    AssignmentListResponse: {
+      data: {
+        items: components["schemas"]["AssignmentSummary"][];
+        nextCursor: string | null;
+        hasMore: boolean;
+      };
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    AssignmentStats: {
+      /** Format: uuid */
+      assignmentId: string;
+      totalStudents: number;
+      submittedCount: number;
+      notSubmittedCount: number;
+      reviewedCount: number;
+      needsReviewCount: number;
+      submissionRate: number;
+    };
     AssignmentResponse: {
       data: components["schemas"]["Assignment"];
       meta: components["schemas"]["EnvelopeMeta"];
-    };
-    AssignmentSummary: {
-      /** Format: uuid */
-      id: string;
-      /** Format: uuid */
-      schoolId: string;
-      title: string;
-      status: components["schemas"]["AssignmentStatus"];
-      /** Format: date-time */
-      startsAt: string;
-      /** Format: date-time */
-      dueAt: string;
-      revision: number;
-      /** Format: date-time */
-      createdAt: string;
-      /** Format: date-time */
-      updatedAt: string;
-      targets: components["schemas"]["AssignmentTarget"][];
     };
     TodayTask: components["schemas"]["Assignment"] & {
       /** @enum {string} */
@@ -2384,42 +2441,6 @@ export interface components {
       target: components["schemas"]["StudentTodayTarget"];
     };
     StudentTodayWaiting: {
-    AssignmentStatsResponse: {
-      data: components["schemas"]["AssignmentStats"];
-      meta: components["schemas"]["EnvelopeMeta"];
-    };
-    AssignmentListResponse: {
-      data: {
-        items: components["schemas"]["AssignmentSummary"][];
-        nextCursor: string | null;
-        hasMore: boolean;
-      };
-      meta: components["schemas"]["EnvelopeMeta"];
-    };
-    AssignmentStats: {
-      /** Format: uuid */
-      assignmentId: string;
-      totalStudents: number;
-      submittedCount: number;
-      notSubmittedCount: number;
-      reviewedCount: number;
-      needsReviewCount: number;
-      submissionRate: number;
-    };
-    AssignmentStatsResponse: {
-      data: components["schemas"]["AssignmentStats"];
-      meta: components["schemas"]["EnvelopeMeta"];
-    };
-    AssignmentStats: {
-      /** Format: uuid */
-      assignmentId: string;
-      totalStudents: number;
-      submittedCount: number;
-      notSubmittedCount: number;
-      reviewedCount: number;
-      needsReviewCount: number;
-      submissionRate: number;
-    };
       kind: string;
       title: string;
       reason: string;
@@ -2539,36 +2560,15 @@ export interface components {
       revision: number;
       /** Format: date-time */
       submittedAt: string | null;
+      /** @description 教师有权查看时返回的真实任务标题 */
+      assignmentTitle?: string;
+      /** @description 教师有权查看时返回的真实学生姓名 */
+      studentName?: string;
     };
     SubmissionResponse: {
       data: components["schemas"]["Submission"];
       meta: components["schemas"]["EnvelopeMeta"];
     };
-    ReleaseFeedbackRequest: {
-      /** @enum {string} */
-      decision: "ACCEPT" | "RETURN";
-      comment: string;
-      score?: number | null;
-    };
-    Feedback: {
-      /** Format: uuid */
-      id: string;
-      /** Format: uuid */
-      submissionId: string;
-      /** @enum {string} */
-      decision: "ACCEPT" | "RETURN";
-      comment: string;
-      score?: number | null;
-      /** Format: date-time */
-      releasedAt: string;
-      revision: number;
-    };
-    FeedbackResponse: {
-      data: components["schemas"]["Feedback"];
-      meta: components["schemas"]["EnvelopeMeta"];
-    };
-    SyncOperation: {
-      /** Format: uuid */
     SubmissionListResponse: {
       data: {
         items: {
@@ -2602,15 +2602,36 @@ export interface components {
       };
       meta: components["schemas"]["EnvelopeMeta"];
     };
+    ReleaseFeedbackRequest: {
+      /** @enum {string} */
+      decision: "ACCEPT" | "RETURN";
+      comment: string;
+      score?: number | null;
+    };
+    Feedback: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      submissionId: string;
+      /** @enum {string} */
+      decision: "ACCEPT" | "RETURN";
+      comment: string;
+      score?: number | null;
+      /** Format: date-time */
+      releasedAt: string;
+      revision: number;
+    };
+    FeedbackResponse: {
+      data: components["schemas"]["Feedback"];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    SyncOperation: {
+      /** Format: uuid */
       operationId: string;
       /** @enum {string} */
       entityType: "progress" | "submission" | "feedback";
       entityId: string;
       /** @enum {string} */
-      /** @description 教师有权查看时返回的真实任务标题 */
-      assignmentTitle?: string;
-      /** @description 教师有权查看时返回的真实学生姓名 */
-      studentName?: string;
       action: "upsert" | "delete";
       baseRevision?: number | null;
       payload: components["schemas"]["SyncPayload"];
@@ -3081,27 +3102,6 @@ export interface components {
       };
       meta: components["schemas"]["EnvelopeMeta"];
     };
-    ReadingItemResponse: {
-      data: {
-        /** Format: uuid */
-        itemId: string;
-        targetText: string;
-        prompt?: string;
-        /** Format: uuid */
-        recordingId?: string | null;
-      };
-      meta: components["schemas"]["EnvelopeMeta"];
-    };
-    AttachRecordingRequest: {
-      /** Format: uuid */
-      recordingId: string;
-    };
-    SaveWrittenAnswerRequest: {
-      content: string;
-      wordCount?: number | null;
-      charCount?: number | null;
-    };
-    /** @description 教师复核。scoredScore/reviewerComment 均可选。 */
     AssessmentReviewQueueItem: {
       /** Format: uuid */
       itemId: string;
@@ -3166,6 +3166,27 @@ export interface components {
       };
       meta: components["schemas"]["EnvelopeMeta"];
     };
+    ReadingItemResponse: {
+      data: {
+        /** Format: uuid */
+        itemId: string;
+        targetText: string;
+        prompt?: string;
+        /** Format: uuid */
+        recordingId?: string | null;
+      };
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    AttachRecordingRequest: {
+      /** Format: uuid */
+      recordingId: string;
+    };
+    SaveWrittenAnswerRequest: {
+      content: string;
+      wordCount?: number | null;
+      charCount?: number | null;
+    };
+    /** @description 教师复核。scoredScore/reviewerComment 均可选。 */
     ReviewItemRequest: {
       scoredScore?: number | null;
       reviewerComment?: string | null;
@@ -3263,41 +3284,6 @@ export interface components {
       /** Format: uuid */
       latestPublishedVersionId: string;
     };
-    TeacherQuestionBankDiagnosticDashboardResponse: {
-      data: components["schemas"]["TeacherQuestionBankDiagnosticDashboard"];
-      meta: components["schemas"]["EnvelopeMeta"];
-    };
-    TeacherQuestionBankDiagnosticDashboard: {
-      class: components["schemas"]["TeacherDiagnosticClassIdentity"];
-      practice: components["schemas"]["TeacherDiagnosticPractice"];
-      summary: components["schemas"]["TeacherDiagnosticSummary"];
-      domains: components["schemas"]["TeacherDiagnosticDomain"][];
-      families: components["schemas"]["TeacherDiagnosticFamily"][];
-      commonDifficulties: components["schemas"]["TeacherDiagnosticFamily"][];
-      strengths: components["schemas"]["TeacherDiagnosticFamily"][];
-      students: components["schemas"]["TeacherDiagnosticStudent"][];
-    };
-    TeacherDiagnosticClassIdentity: {
-      /** Format: uuid */
-      classId: string;
-      className: string;
-      grade: string;
-    };
-    TeacherDiagnosticSummary: {
-      eligibleStudents: number;
-      assessedStudents: number;
-      inProgressStudents: number;
-      notAssessedStudents: number;
-      coveragePercentage: number;
-      averageScore: number | null;
-      improvedStudentCount: number;
-      needsAttentionStudentCount: number;
-      pendingReviewItemCount: number;
-      pendingReviewStudentCount: number;
-      dataQualityIssueCount: number;
-      versionMixed: boolean;
-    };
-    TeacherDiagnosticDomain: {
     TeacherDashboardResponse: {
       data: components["schemas"]["TeacherDashboard"];
       meta: components["schemas"]["EnvelopeMeta"];
@@ -3359,6 +3345,41 @@ export interface components {
       /** Format: date-time */
       submittedAt: string;
     };
+    TeacherQuestionBankDiagnosticDashboardResponse: {
+      data: components["schemas"]["TeacherQuestionBankDiagnosticDashboard"];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    TeacherQuestionBankDiagnosticDashboard: {
+      class: components["schemas"]["TeacherDiagnosticClassIdentity"];
+      practice: components["schemas"]["TeacherDiagnosticPractice"];
+      summary: components["schemas"]["TeacherDiagnosticSummary"];
+      domains: components["schemas"]["TeacherDiagnosticDomain"][];
+      families: components["schemas"]["TeacherDiagnosticFamily"][];
+      commonDifficulties: components["schemas"]["TeacherDiagnosticFamily"][];
+      strengths: components["schemas"]["TeacherDiagnosticFamily"][];
+      students: components["schemas"]["TeacherDiagnosticStudent"][];
+    };
+    TeacherDiagnosticClassIdentity: {
+      /** Format: uuid */
+      classId: string;
+      className: string;
+      grade: string;
+    };
+    TeacherDiagnosticSummary: {
+      eligibleStudents: number;
+      assessedStudents: number;
+      inProgressStudents: number;
+      notAssessedStudents: number;
+      coveragePercentage: number;
+      averageScore: number | null;
+      improvedStudentCount: number;
+      needsAttentionStudentCount: number;
+      pendingReviewItemCount: number;
+      pendingReviewStudentCount: number;
+      dataQualityIssueCount: number;
+      versionMixed: boolean;
+    };
+    TeacherDiagnosticDomain: {
       /** @enum {string} */
       domain: "LISTEN" | "SPEAK" | "READ" | "WRITE";
       displayName: string;
@@ -3692,27 +3713,109 @@ export interface components {
       statuses: string[];
       courses: components["schemas"]["StudentCourseCatalogItem"][];
     };
-    StudentCourseAggregateResponse: {
-      assignment: {
-        [key: string]: unknown;
-      };
-      course: {
-        [key: string]: unknown;
-      };
-      courseVersion: {
-        [key: string]: unknown;
-      };
-      units: {
+    StudentCourseActivity: {
+      /** Format: uuid */
+      id: string;
+      type: string;
+      title: string;
+      instruction:
+        components["schemas"]["StudentVisibleBilingualContent"] | null;
+      /** @description Student-safe content projection. Answer keys and formal scoring configuration are omitted. */
+      content:
+        | string
+        | {
+            [key: string]: unknown;
+          }
+        | null;
+      required: boolean;
+      studentNotes:
+        | components["schemas"]["StudentVisibleBilingualContent"]
+        | {
+            /** @enum {boolean} */
+            published: true;
+            items: string[];
+          }
+        | null;
+      personalNotes: {
         [key: string]: unknown;
       }[];
       resources: {
         [key: string]: unknown;
       }[];
-      studentProgress: components["schemas"]["StudentCourseCompletion"];
-      existingSubmission: components["schemas"]["Submission"] | null;
-      nextActivity: {
+      progress: {
         [key: string]: unknown;
       } | null;
+      attempt: {
+        [key: string]: unknown;
+      } | null;
+      practiceReference: {
+        [key: string]: unknown;
+      } | null;
+    };
+    StudentCourseLesson: {
+      /** Format: uuid */
+      id: string;
+      title: string;
+      sortOrder: number;
+      activities: components["schemas"]["StudentCourseActivity"][];
+    };
+    StudentCourseUnit: {
+      /** Format: uuid */
+      id: string;
+      title: string;
+      sortOrder: number;
+      lessons: components["schemas"]["StudentCourseLesson"][];
+    };
+    StudentCourseVersion: {
+      /** Format: uuid */
+      id: string;
+      version: number;
+      status: components["schemas"]["CourseVersionStatus"];
+      title: string;
+      description?: string | null;
+      gradeBand?: string | null;
+      objectives: components["schemas"]["StudentVisibleBilingualContent"][];
+      capabilityTheme?: string | null;
+      difficulty?: string | null;
+      estimatedMinutes?: number | null;
+      coverAsset?: string | null;
+      deviceRequirements?: {
+        [key: string]: unknown;
+      } | null;
+    };
+    StudentCourseAssignment: {
+      /** Format: uuid */
+      id: string;
+      title: string;
+      source: string;
+      /** Format: date-time */
+      startsAt: string;
+      /** Format: date-time */
+      dueAt: string | null;
+    };
+    StudentCourseIdentity: {
+      /** Format: uuid */
+      id: string;
+      stableKey: string;
+      title: string;
+    };
+    StudentCourseNextActivity: {
+      /** Format: uuid */
+      id: string;
+      title: string;
+      type: string;
+    };
+    StudentCourseAggregateResponse: {
+      assignment: components["schemas"]["StudentCourseAssignment"];
+      course: components["schemas"]["StudentCourseIdentity"];
+      courseVersion: components["schemas"]["StudentCourseVersion"];
+      units: components["schemas"]["StudentCourseUnit"][];
+      resources: {
+        [key: string]: unknown;
+      }[];
+      studentProgress: components["schemas"]["StudentCourseCompletion"];
+      existingSubmission: components["schemas"]["Submission"] | null;
+      nextActivity: components["schemas"]["StudentCourseNextActivity"] | null;
       courseCompletion: components["schemas"]["StudentCourseCompletion"];
       practiceReferences: {
         [key: string]: unknown;
@@ -4722,6 +4825,44 @@ export interface operations {
       404: components["responses"]["NotFound"];
     };
   };
+  listAssignments: {
+    parameters: {
+      query?: {
+        /** @description 分页返回数量上限 */
+        limit?: components["parameters"]["Limit"];
+        /** @description 游标， opaque 字符串 */
+        cursor?: components["parameters"]["Cursor"];
+        status?: components["schemas"]["AssignmentStatus"];
+        /** @description 仅返回目标班级包含该班级的任务 */
+        classId?: string;
+        /** @description 按任务标题不区分大小写搜索 */
+        search?: string;
+        dueAtFrom?: string;
+        dueAtTo?: string;
+      };
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 本人授权范围内的任务页和下一页游标 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AssignmentListResponse"];
+        };
+      };
+      400: components["responses"]["BadRequest"];
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+    };
+  };
   createAssignment: {
     parameters: {
       query?: never;
@@ -4808,145 +4949,6 @@ export interface operations {
       };
       cookie?: never;
     };
-    requestBody: {
-      content: {
-        "application/json": {
-          expectedRevision: number;
-        };
-      };
-    };
-    responses: {
-      /** @description Assignment scheduled */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["AssignmentResponse"];
-        };
-      };
-      400: components["responses"]["BadRequest"];
-      401: components["responses"]["Unauthorized"];
-      403: components["responses"]["Forbidden"];
-      404: components["responses"]["NotFound"];
-      409: components["responses"]["Conflict"];
-    };
-  };
-  openAssignment: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description 学校（租户）标识 */
-        schoolId: components["parameters"]["SchoolId"];
-        /** @description 任务 ID */
-        assignmentId: components["parameters"]["AssignmentId"];
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["AssessmentReviewSubmitRequest"];
-      };
-    };
-    responses: {
-  listAssignments: {
-    parameters: {
-      query?: {
-        /** @description 分页返回数量上限 */
-        limit?: components["parameters"]["Limit"];
-        /** @description 游标， opaque 字符串 */
-        cursor?: components["parameters"]["Cursor"];
-        status?: components["schemas"]["AssignmentStatus"];
-        /** @description 仅返回目标班级包含该班级的任务 */
-        classId?: string;
-        /** @description 按任务标题不区分大小写搜索 */
-        search?: string;
-        dueAtFrom?: string;
-        dueAtTo?: string;
-      };
-      header?: never;
-      path: {
-        /** @description 学校（租户）标识 */
-        schoolId: components["parameters"]["SchoolId"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description 本人授权范围内的任务页和下一页游标 */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["AssignmentListResponse"];
-        };
-      };
-      400: components["responses"]["BadRequest"];
-      401: components["responses"]["Unauthorized"];
-      403: components["responses"]["Forbidden"];
-    };
-  };
-      /** @description Assignment opened */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["AssessmentReviewSubmitResponse"];
-        };
-      };
-      400: components["responses"]["BadRequest"];
-      401: components["responses"]["Unauthorized"];
-      403: components["responses"]["Forbidden"];
-      404: components["responses"]["NotFound"];
-      409: components["responses"]["Conflict"];
-    };
-  };
-  getMyTodayTasks: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description 学校（租户）标识 */
-        schoolId: components["parameters"]["SchoolId"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Student today tasks */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["TodayTasksResponse"];
-        };
-      };
-      400: components["responses"]["BadRequest"];
-      401: components["responses"]["Unauthorized"];
-      403: components["responses"]["Forbidden"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getStudentTodayDecision: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description 学校（租户）标识 */
-        schoolId: components["parameters"]["SchoolId"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Server-authoritative Student Today decision view */
-      200: {
-        headers: {
-          [name: string]: unknown;
     requestBody?: never;
     responses: {
       /** @description 本人授权任务的目标人数、提交、未提交和待复核统计 */
@@ -5025,9 +5027,29 @@ export interface operations {
       };
       cookie?: never;
     };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["AssessmentReviewSubmitRequest"];
+      };
+    };
+    responses: {
+      /** @description 评分已保存 */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
         content: {
-  getAssignmentStats: {
+          "application/json": components["schemas"]["AssessmentReviewSubmitResponse"];
+        };
+      };
+      400: components["responses"]["BadRequest"];
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+      409: components["responses"]["Conflict"];
+    };
+  };
+  scheduleAssignment: {
     parameters: {
       query?: never;
       header?: never;
@@ -5039,21 +5061,111 @@ export interface operations {
       };
       cookie?: never;
     };
-    requestBody?: never;
+    requestBody: {
+      content: {
+        "application/json": {
+          expectedRevision: number;
+        };
+      };
+    };
     responses: {
-      /** @description 本人授权任务的目标人数、提交、未提交和待复核统计 */
+      /** @description Assignment scheduled */
       200: {
         headers: {
           [name: string]: unknown;
         };
         content: {
-          "application/json": components["schemas"]["AssignmentStatsResponse"];
+          "application/json": components["schemas"]["AssignmentResponse"];
         };
       };
+      400: components["responses"]["BadRequest"];
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+      409: components["responses"]["Conflict"];
+    };
+  };
+  openAssignment: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 任务 ID */
+        assignmentId: components["parameters"]["AssignmentId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          expectedRevision: number;
+        };
+      };
+    };
+    responses: {
+      /** @description Assignment opened */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AssignmentResponse"];
+        };
+      };
+      400: components["responses"]["BadRequest"];
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+      409: components["responses"]["Conflict"];
+    };
+  };
+  getMyTodayTasks: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Student today tasks */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["TodayTasksResponse"];
+        };
+      };
+      400: components["responses"]["BadRequest"];
+      401: components["responses"]["Unauthorized"];
       403: components["responses"]["Forbidden"];
       404: components["responses"]["NotFound"];
     };
   };
+  getStudentTodayDecision: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Server-authoritative Student Today decision view */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
           "application/json": components["schemas"]["StudentTodayDecisionResponse"];
         };
       };
@@ -5106,6 +5218,47 @@ export interface operations {
       404: components["responses"]["NotFound"];
       409: components["responses"]["Conflict"];
       500: components["responses"]["InternalServerError"];
+    };
+  };
+  listAssignmentSubmissions: {
+    parameters: {
+      query?: {
+        /** @description 分页返回数量上限 */
+        limit?: components["parameters"]["Limit"];
+        /** @description 游标， opaque 字符串 */
+        cursor?: components["parameters"]["Cursor"];
+        status?:
+          | "IN_PROGRESS"
+          | "PENDING_SYNC"
+          | "SUBMITTED"
+          | "PROCESSING"
+          | "NEEDS_REVIEW"
+          | "REVIEWED"
+          | "RETURNED"
+          | "ACCEPTED";
+      };
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 任务 ID */
+        assignmentId: components["parameters"]["AssignmentId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 只包含本人任课班级或学校管理员可见目标的提交页 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SubmissionListResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
     };
   };
   submitAssignment: {
@@ -5220,47 +5373,6 @@ export interface operations {
       content: {
         /**
          * @example {
-  listAssignmentSubmissions: {
-    parameters: {
-      query?: {
-        /** @description 分页返回数量上限 */
-        limit?: components["parameters"]["Limit"];
-        /** @description 游标， opaque 字符串 */
-        cursor?: components["parameters"]["Cursor"];
-        status?:
-          | "IN_PROGRESS"
-          | "PENDING_SYNC"
-          | "SUBMITTED"
-          | "PROCESSING"
-          | "NEEDS_REVIEW"
-          | "REVIEWED"
-          | "RETURNED"
-          | "ACCEPTED";
-      };
-      header?: never;
-      path: {
-        /** @description 学校（租户）标识 */
-        schoolId: components["parameters"]["SchoolId"];
-        /** @description 任务 ID */
-        assignmentId: components["parameters"]["AssignmentId"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description 只包含本人任课班级或学校管理员可见目标的提交页 */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["SubmissionListResponse"];
-        };
-      };
-      403: components["responses"]["Forbidden"];
-      404: components["responses"]["NotFound"];
-    };
-  };
          *       "deviceId": "55555555-5555-5555-5555-555555555555",
          *       "clientOperationId": "66666666-6666-6666-6666-666666666666",
          *       "operations": [
@@ -6111,6 +6223,30 @@ export interface operations {
       409: components["responses"]["Conflict"];
     };
   };
+  getTeacherDashboard: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 当前账号学校身份、本人课程、授权班级任务与待复核提交 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["TeacherDashboardResponse"];
+        };
+      };
+      403: components["responses"]["Forbidden"];
+    };
+  };
   getTeacherQuestionBankDiagnosticCatalog: {
     parameters: {
       query?: never;
@@ -6228,30 +6364,6 @@ export interface operations {
       header?: never;
       path: {
         /** @description 学校（租户）标识 */
-  getTeacherDashboard: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description 学校（租户）标识 */
-        schoolId: components["parameters"]["SchoolId"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description 当前账号学校身份、本人课程、授权班级任务与待复核提交 */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["TeacherDashboardResponse"];
-        };
-      };
-      403: components["responses"]["Forbidden"];
-    };
-  };
         schoolId: components["parameters"]["SchoolId"];
         /** @description 测评会话 ID */
         sessionId: components["parameters"]["SessionId"];

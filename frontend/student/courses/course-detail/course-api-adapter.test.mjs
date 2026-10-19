@@ -7,6 +7,10 @@ const adapterSource = fs.readFileSync(
   new URL("./course-api-adapter.js", import.meta.url),
   "utf8",
 );
+const bilingualSource = fs.readFileSync(
+  new URL("./bilingual-content.js", import.meta.url),
+  "utf8",
+);
 
 function loadAdapter(apiOverrides = {}) {
   const saved = new Map();
@@ -32,7 +36,7 @@ function loadAdapter(apiOverrides = {}) {
     removeItem: (key) => saved.delete(key),
   };
   const window = { YuzanApi: api, location, localStorage };
-  vm.runInNewContext(adapterSource, {
+  const context = {
     window,
     URL,
     URLSearchParams,
@@ -40,7 +44,9 @@ function loadAdapter(apiOverrides = {}) {
     Error,
     Date,
     Math,
-  });
+  };
+  vm.runInNewContext(bilingualSource, context);
+  vm.runInNewContext(adapterSource, context);
   return { adapter: window.CourseApiAdapter, calls, saved, location };
 }
 
@@ -109,13 +115,43 @@ test("normalizes the current nested course aggregate without dropping activity f
     { id: course.submissionId, status: course.submissionStatus, revision: course.submissionRevision },
     { id: "submission-1", status: "IN_PROGRESS", revision: 4 },
   );
-  assert.equal(activity.instruction, "先朗读，再作答");
+  assert.equal(activity.instruction.originalText, "先朗读，再作答");
   assert.equal(activity.content.passage, "春眠不觉晓");
   assert.equal(activity.resources[0].resource.id, "resource-1");
   assert.equal(activity.progress.revision, 3);
   assert.equal(activity.attempt.kind, "COURSE_PRACTICE");
   assert.equal(activity.practiceReference.practiceDefinitionId, "definition-1");
   assert.equal(activity.isCompleted, true);
+});
+
+test("normalizes bilingual course text without coercing incomplete objects", async () => {
+  const valid = {
+    originalText: "TEST_FIXTURE_ONLY 普通话原文",
+    translation: "TEST_FIXTURE_ONLY 辅助文本",
+    locale: "zh-CN",
+    translationLocale: "bo-CN",
+    translationSource: "EXPERT",
+    reviewStatus: "EXPERT_CONFIRMED",
+  };
+  const { adapter } = loadAdapter({
+    getStudentCourse: async () => ({
+      courseVersion: { objectives: [valid, { originalText: {}, translation: { text: "bad" } }] },
+      units: [{ lessons: [{ activities: [{
+        id: "activity-1",
+        instruction: valid,
+        studentNotes: { originalText: "TEST_FIXTURE_ONLY 学生提示" },
+      }] }] }],
+    }),
+  });
+
+  const course = await adapter.loadCourse("assignment-1");
+  const activity = course.units[0].lessons[0].activities[0];
+  assert.equal(course.objectives[0].originalText, valid.originalText);
+  assert.equal(course.objectives[0].translation, valid.translation);
+  assert.equal(course.objectives[1].originalText, "");
+  assert.equal(activity.instruction.originalText, valid.originalText);
+  assert.equal(activity.studentNotes.originalText, "TEST_FIXTURE_ONLY 学生提示");
+  assert.notEqual(activity.instruction.originalText, "[object Object]");
 });
 
 test("preserves the wrapped submission id, status, revision and resumed flag", async () => {

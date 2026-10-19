@@ -6,6 +6,7 @@ import type { CreateStudentActivityNoteDto, ListStudentCoursesQueryDto, SaveActi
 
 const ACTIVE_SUBMISSION_STATUSES = ["IN_PROGRESS", "PENDING_SYNC", "SUBMITTED", "PROCESSING", "NEEDS_REVIEW", "REVIEWED", "ACCEPTED"] as const;
 const FINISHED_PRACTICE_STATUSES = ["SUBMITTED", "PROCESSING", "COMPLETED"] as const;
+const STUDENT_CONTENT_TEXT_KEYS = ["text", "passage", "description", "prompt", "placeholder", "practiceLabel", "targetText", "demoText", "demoAudioUrl", "supportAudioUrl"] as const;
 
 @Injectable()
 export class StudentCoursesService {
@@ -179,10 +180,9 @@ export class StudentCoursesService {
           id: activity.id,
           type: activity.type,
           title: activity.title,
-          instruction: activity.instruction,
-          content: activity.content,
+          instruction: this.studentVisibleBilingualContent(activity.instruction),
+          content: this.studentActivityContent(activity.content),
           required: activity.required,
-          completionRule: activity.completionRule,
           studentNotes: this.publishedStudentNotes(activity.studentNotes),
           personalNotes: notesByActivity.get(activity.id) ?? [],
           resources: activity.resources.map((link) => ({ purpose: link.purpose, meta: link.meta, resource: { ...link.resource, byteSize: String(link.resource.byteSize) } })),
@@ -195,7 +195,7 @@ export class StudentCoursesService {
     const activities = units.flatMap((unit) => unit.lessons.flatMap((lesson) => lesson.activities));
     const nextActivity = activities.find((activity) => !activity.progress?.completed) ?? null;
     return {
-      assignment: { id: assignment.id, title: assignment.title, source: assignment.source, startsAt: assignment.startsAt, dueAt: assignment.dueAt, completionRule: assignment.completionRule },
+      assignment: { id: assignment.id, title: assignment.title, source: assignment.source, startsAt: assignment.startsAt, dueAt: assignment.dueAt },
       course: assignment.courseVersion.course,
       courseVersion: {
         id: assignment.courseVersion.id,
@@ -204,7 +204,11 @@ export class StudentCoursesService {
         title: assignment.courseVersion.title,
         description: assignment.courseVersion.description,
         gradeBand: assignment.courseVersion.gradeBand,
-        objectives: assignment.courseVersion.objectives,
+        objectives: Array.isArray(assignment.courseVersion.objectives)
+          ? assignment.courseVersion.objectives
+              .map((objective) => this.studentVisibleBilingualContent(objective))
+              .filter((objective) => objective !== null)
+          : [],
         capabilityTheme: assignment.courseVersion.capabilityTheme,
         difficulty: assignment.courseVersion.difficulty,
         estimatedMinutes: assignment.courseVersion.estimatedMinutes,
@@ -643,10 +647,115 @@ export class StudentCoursesService {
     return "COMPLETED";
   }
 
+  private studentVisibleBilingualContent(value: unknown): unknown | null {
+    if (typeof value === "string") return value;
+    if (!this.isRecord(value) || typeof value.originalText !== "string") return null;
+
+    const safe: Record<string, unknown> = { originalText: value.originalText };
+    if (typeof value.locale === "string" && value.locale.trim()) safe.locale = value.locale;
+
+    const translation = value.translation;
+    const translationLocale = value.translationLocale;
+    const sourceLocale = value.locale;
+    const approvedTibetan = typeof translation === "string" && translation.trim().length > 0 &&
+      typeof translationLocale === "string" && /^bo(?:-|$)/i.test(translationLocale.trim()) &&
+      typeof sourceLocale === "string" && /^zh(?:-|$)/i.test(sourceLocale.trim()) &&
+      value.reviewStatus === "EXPERT_CONFIRMED" &&
+      (value.translationSource === "EXPERT" || value.translationSource === "COMMUNITY");
+
+    if (approvedTibetan) {
+      safe.translation = translation;
+      safe.translationLocale = translationLocale;
+      safe.translationSource = value.translationSource;
+      safe.reviewStatus = value.reviewStatus;
+    }
+    return safe;
+  }
+
+  private studentSafeText(value: unknown): unknown | undefined {
+    if (typeof value === "string") return value;
+    if (this.isRecord(value) && typeof value.originalText === "string") {
+      return this.studentVisibleBilingualContent(value) ?? undefined;
+    }
+    return undefined;
+  }
+
+  private studentSafeOptions(value: unknown): readonly unknown[] | undefined {
+    if (!Array.isArray(value)) return undefined;
+    const safeOptions: unknown[] = [];
+    for (const option of value as unknown[]) {
+      if (typeof option === "string") {
+        safeOptions.push(option);
+        continue;
+      }
+      if (!this.isRecord(option)) continue;
+      const safe: Record<string, string> = {};
+      if (typeof option.text === "string") safe.text = option.text;
+      if (typeof option.label === "string") safe.label = option.label;
+      if (Object.keys(safe).length) safeOptions.push(safe);
+    }
+    return safeOptions;
+  }
+
+  private studentSafeQuestions(value: unknown): readonly unknown[] | undefined {
+    if (!Array.isArray(value)) return undefined;
+    return value.flatMap((question) => {
+      if (!this.isRecord(question)) return [];
+      const safe: Record<string, unknown> = {};
+      for (const key of ["text", "prompt"] as const) {
+        if (Object.prototype.hasOwnProperty.call(question, key)) {
+          const text = this.studentSafeText(question[key]);
+          if (text !== undefined) safe[key] = text;
+        }
+      }
+      const options = this.studentSafeOptions(question.options);
+      if (options !== undefined) safe.options = options;
+      return Object.keys(safe).length ? [safe] : [];
+    });
+  }
+
+  private studentActivityContent(value: unknown): unknown | null {
+    if (typeof value === "string") return value;
+    if (!this.isRecord(value)) return null;
+
+    const safe: Record<string, unknown> = {};
+    for (const key of STUDENT_CONTENT_TEXT_KEYS) {
+      if (Object.prototype.hasOwnProperty.call(value, key)) {
+        const text = this.studentSafeText(value[key]);
+        if (text !== undefined) safe[key] = text;
+      }
+    }
+    for (const key of ["objectives", "keyPoints"] as const) {
+      const list = value[key];
+      if (!Array.isArray(list)) continue;
+      safe[key] = list.flatMap((item) => {
+        const text = this.studentSafeText(item);
+        return text === undefined ? [] : [text];
+      });
+    }
+    const options = this.studentSafeOptions(value.options);
+    if (options !== undefined) safe.options = options;
+    const questions = this.studentSafeQuestions(value.questions);
+    if (questions !== undefined) safe.questions = questions;
+    return safe;
+  }
+
+  private isRecord(value: unknown): value is Record<string, unknown> {
+    return typeof value === "object" && value !== null && !Array.isArray(value);
+  }
+
   private publishedStudentNotes(value: unknown) {
-    if (!value || typeof value !== "object" || Array.isArray(value)) return null;
-    const notes = value as Record<string, unknown>;
-    return notes.published === true ? notes : null;
+    if (typeof value === "string") return value;
+    if (!this.isRecord(value)) return null;
+    if (typeof value.originalText === "string") {
+      return this.studentVisibleBilingualContent(value);
+    }
+    if (value.published !== true || !Array.isArray(value.items)) return null;
+    const items = value.items.flatMap((item) => {
+      const safe = this.studentSafeText(item);
+      return safe === undefined ? [] : [safe];
+    });
+    return { published: true, items };
   }
 
   private submissionSummary(submission: { id: string; assignmentId: string; enrollmentId: string; attemptNo: number; status: string; revision: number; submittedAt: Date | null; createdAt: Date; updatedAt: Date }) {

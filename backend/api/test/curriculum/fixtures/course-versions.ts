@@ -13,9 +13,10 @@ export function bilingualContent(
   overrides: Partial<BilingualContent> = {},
 ): BilingualContent {
   return {
-    originalText: "原文示例",
-    translation: "Translation example",
+    originalText: "TEST_FIXTURE_ONLY 原文示例",
+    translation: "TEST_FIXTURE_ONLY translation example",
     locale: "zh-CN",
+    translationLocale: "en",
     translationSource: "EXPERT",
     reviewStatus: "EXPERT_CONFIRMED",
     ...overrides,

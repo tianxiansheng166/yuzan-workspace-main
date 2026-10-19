@@ -184,6 +184,11 @@
           </div>
         </section>
 
+        <section class="cp-card cp-section cp-section-student-notes" id="cpSectionStudentNotes" hidden>
+          <h2 class="cp-section-title">本节学习提示</h2>
+          <div id="cpStudentNotesContent"></div>
+        </section>
+
         <!-- 5. Teacher / AI summary -->
         <section class="cp-card cp-section cp-section-summary" id="cpSectionSummary">
           <h2 class="cp-section-title">教师总结 & AI 摘要</h2>
@@ -335,6 +340,7 @@
   <script src="/shared/student-nav.js"></script>
 
   <!-- Course player modules (IIFE, load order matters) -->
+  <script src="bilingual-content.js"></script>
   <script src="course-api-adapter.js"></script>
   <script src="course-player-state.js"></script>
   <script src="media-controller.js"></script>
@@ -442,7 +448,8 @@
         objList.innerHTML = '';
         objectives.forEach(function (o) {
           var li = document.createElement('li');
-          li.textContent = typeof o === 'string' ? o : (o.originalText || '');
+          if (window.CourseBilingualContent) window.CourseBilingualContent.render(li, o, 'cp-objective-translation');
+          else li.textContent = typeof o === 'string' ? o : '';
           objList.appendChild(li);
         });
         if (!objectives.length) {
@@ -453,13 +460,24 @@
         kpList.innerHTML = '';
         (activity.keyPoints || []).forEach(function (k) {
           var li = document.createElement('li');
-          li.textContent = k;
+          li.textContent = window.CourseBilingualContent ? window.CourseBilingualContent.originalText(k) : (typeof k === 'string' ? k : '');
           kpList.appendChild(li);
         });
         if (!activity.keyPoints || !activity.keyPoints.length) {
           kpList.innerHTML = '<li>暂无</li>';
         }
       }
+    }
+
+    function renderStudentNotes(activity) {
+      var section = document.getElementById('cpSectionStudentNotes');
+      var content = document.getElementById('cpStudentNotesContent');
+      var notes = activity && activity.studentNotes;
+      var text = window.CourseBilingualContent ? window.CourseBilingualContent.originalText(notes) : (typeof notes === 'string' ? notes : '');
+      if (!section || !content) return;
+      section.hidden = !text;
+      if (text && window.CourseBilingualContent) window.CourseBilingualContent.render(content, notes, 'cp-student-note-translation');
+      else content.textContent = text;
     }
 
     function renderSummary(course) {
@@ -479,12 +497,16 @@
       var resources = (activity && activity.resources || []).map(function (link) { return link.resource || link; });
       var audioResource = resources.find(function (resource) { return resource && (resource.kind === 'AUDIO' || String(resource.mediaType || '').startsWith('audio/')); });
       var audioUrl = content.demoAudioUrl || content.supportAudioUrl || activity?.demoAudioUrl || '';
-      var demoText = content.demoText || content.targetText || activity?.demoText || '';
+      var demoTextValue = content.demoText || content.targetText || activity?.demoText || '';
+      var demoText = window.CourseBilingualContent ? window.CourseBilingualContent.originalText(demoTextValue) : (typeof demoTextValue === 'string' ? demoTextValue : '');
       var hasRealDemo = Boolean(audioUrl || audioResource || demoText);
       section.hidden = !hasRealDemo;
       if (!hasRealDemo) return;
       text.hidden = !demoText;
-      if (demoText) text.textContent = demoText;
+      if (demoText) {
+        if (window.CourseBilingualContent) window.CourseBilingualContent.render(text, demoTextValue);
+        else text.textContent = demoText;
+      }
       audio.hidden = !audioUrl && !audioResource;
       if (audioUrl) audio.src = audioUrl;
       if (audioResource) {
@@ -506,7 +528,13 @@
       section.hidden = !reference;
       if (!reference) return;
       if (title) title.textContent = reference.title || (activity.content && activity.content.practiceLabel) || activity.title || '朗读训练';
-      if (desc) desc.textContent = activity.instruction || '进入现有统一练习执行器，完成朗读与能力测评。';
+      if (desc) {
+        if (activity.instruction && window.CourseBilingualContent && window.CourseBilingualContent.originalText(activity.instruction)) {
+          window.CourseBilingualContent.render(desc, activity.instruction, 'cp-practice-translation');
+        } else {
+          desc.textContent = '进入现有统一练习执行器，完成朗读与能力测评。';
+        }
+      }
     }
 
     // --- renderDirectory: master template numbered badge + status pill ---
@@ -960,6 +988,7 @@
 
         if (state.currentActivity) {
           renderObjectives(state.currentActivity);
+          renderStudentNotes(state.currentActivity);
           renderOralSection(state.currentActivity);
         }
 
@@ -986,6 +1015,7 @@
 
         if (changedKeys.indexOf('currentActivity') !== -1 && state.currentActivity) {
           renderObjectives(state.currentActivity);
+          renderStudentNotes(state.currentActivity);
           renderOralSection(state.currentActivity);
           loadVideoForActivity(state.currentActivity);
           loadMaterialsForActivity(state.currentActivity);

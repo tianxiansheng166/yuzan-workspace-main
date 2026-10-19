@@ -2,6 +2,36 @@
   'use strict';
 
   var Api = window.YuzanApi;
+  var Bilingual = window.CourseBilingualContent;
+
+  function _normalizeBilingual(value) {
+    if (Bilingual) return Bilingual.normalize(value);
+    if (typeof value === 'string') return { originalText: value, translation: '', locale: '', translationLocale: '', translationSource: '', reviewStatus: '' };
+    if (!value || typeof value !== 'object' || Array.isArray(value)) return { originalText: '', translation: '', locale: '', translationLocale: '', translationSource: '', reviewStatus: '' };
+    return {
+      originalText: typeof value.originalText === 'string' ? value.originalText : '',
+      translation: typeof value.translation === 'string' ? value.translation : '',
+      locale: typeof value.locale === 'string' ? value.locale : '',
+      translationLocale: typeof value.translationLocale === 'string' ? value.translationLocale : '',
+      translationSource: typeof value.translationSource === 'string' ? value.translationSource : '',
+      reviewStatus: typeof value.reviewStatus === 'string' ? value.reviewStatus : ''
+    };
+  }
+
+  function _normalizeBilingualList(value) {
+    return Array.isArray(value) ? value.map(_normalizeBilingual) : [];
+  }
+
+  function _normalizeStudentNotes(value) {
+    if (typeof value === 'string') return _normalizeBilingual(value);
+    if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
+    if (typeof value.originalText === 'string') return _normalizeBilingual(value);
+    if (value.published === true && Array.isArray(value.items)) {
+      var lines = value.items.filter(function (item) { return typeof item === 'string'; });
+      return lines.length ? _normalizeBilingual(lines.join('\n')) : null;
+    }
+    return null;
+  }
 
   function _handleError(err) {
     var status = (err && err.status) || 0;
@@ -80,9 +110,9 @@
             subtitleZhUrl: a.subtitleZhUrl || '',
             subtitleBoUrl: a.subtitleBoUrl || '',
             description: a.description || activityContent.description || '',
-            objectives: a.objectives || activityContent.objectives || [],
-            keyPoints: a.keyPoints || activityContent.keyPoints || [],
-            instruction: a.instruction || '',
+            objectives: _normalizeBilingualList(Array.isArray(a.objectives) ? a.objectives : activityContent.objectives),
+            keyPoints: Array.isArray(a.keyPoints) ? a.keyPoints : (Array.isArray(activityContent.keyPoints) ? activityContent.keyPoints : []),
+            instruction: _normalizeBilingual(a.instruction),
             content: a.content || null,
             resources: Array.isArray(a.resources) ? a.resources : [],
             progress: a.progress || null,
@@ -90,11 +120,11 @@
             practiceReference: practiceReference,
             required: a.required !== false,
             completionRule: a.completionRule || null,
-            studentNotes: a.studentNotes || null,
+            studentNotes: _normalizeStudentNotes(a.studentNotes),
             personalNotes: Array.isArray(a.personalNotes) ? a.personalNotes : [],
             questions: a.questions || activityContent.questions || [],
             name: a.name || (practiceReference && practiceReference.title) || a.title || '',
-            demoText: a.demoText || activityContent.demoText || activityContent.targetText || '',
+            demoText: _normalizeBilingual(a.demoText || activityContent.demoText || activityContent.targetText || '').originalText,
             isCompleted: a.isCompleted === true || !!(a.progress && a.progress.completed)
           };
         });
@@ -144,7 +174,7 @@
       culturalElements: courseVersion.culturalElements || raw.culturalElements || [],
       difficulty: courseVersion.difficulty || raw.difficulty || '',
       tags: courseVersion.tags || raw.tags || [],
-      objectives: courseVersion.objectives || [],
+      objectives: _normalizeBilingualList(courseVersion.objectives),
       units: units,
       progress: normalizedProgress,
       submissionId: existingSubmission ? existingSubmission.id : (raw.submissionId || null),

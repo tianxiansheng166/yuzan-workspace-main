@@ -29,6 +29,20 @@
     };
   }
 
+  function originalText(value) {
+    if (typeof value === 'string') return value;
+    if (value && typeof value === 'object' && typeof value.originalText === 'string') return value.originalText;
+    return '';
+  }
+
+  function renderBilingual(container, value) {
+    var text = originalText(value);
+    if (!container || !text) return false;
+    if (window.CourseBilingualContent) window.CourseBilingualContent.render(container, value);
+    else container.textContent = text;
+    return true;
+  }
+
   function clearExerciseSection() {
     var section = document.getElementById('exerciseSection');
     if (section) section.innerHTML = '';
@@ -130,17 +144,26 @@
 
       var contentDiv = document.createElement('div');
       contentDiv.className = 'cp-exercise-text-content';
+      var instruction = originalText(activity.instruction);
+      var contentValue = '';
       if (activity.content) {
         if (typeof activity.content === 'string') {
-          contentDiv.textContent = activity.content;
+          contentValue = activity.content;
         } else if (activity.content.text) {
-          contentDiv.textContent = activity.content.text;
+          contentValue = activity.content.text;
         } else if (activity.content.passage) {
-          contentDiv.textContent = activity.content.passage;
+          contentValue = activity.content.passage;
         }
       } else if (activity.description) {
-        contentDiv.textContent = activity.description;
+        contentValue = activity.description;
       }
+      if (instruction && instruction !== originalText(contentValue)) {
+        var instructionDiv = document.createElement('div');
+        instructionDiv.className = 'cp-exercise-text-instruction';
+        renderBilingual(instructionDiv, activity.instruction);
+        wrapper.appendChild(instructionDiv);
+      }
+      renderBilingual(contentDiv, contentValue);
       wrapper.appendChild(contentDiv);
 
       if (activity.isCompleted) {
@@ -178,7 +201,7 @@
 
       var instructionDiv = document.createElement('div');
       instructionDiv.className = 'cp-exercise-audio-instruction';
-      instructionDiv.textContent = activity.instruction || '请收听以下音频内容';
+      if (!renderBilingual(instructionDiv, activity.instruction)) instructionDiv.textContent = '请收听以下音频内容';
       wrapper.appendChild(instructionDiv);
 
       var statusDiv = document.createElement('div');
@@ -217,22 +240,32 @@
 
     renderChoiceActivity: function (activity, container) {
       var content = activity.content || {};
-      var prompt = content.prompt || activity.instruction || '';
+      var promptValue = content.prompt || activity.instruction || '';
+      var prompt = originalText(promptValue);
       var options = content.options || [];
 
       if (!options.length && activity.questions && activity.questions.length) {
         var q = activity.questions[0];
-        prompt = q.text || prompt;
+        promptValue = q.text || promptValue;
+        prompt = originalText(promptValue);
         options = q.options || [];
       }
 
       var wrapper = document.createElement('div');
       wrapper.className = 'cp-exercise-choice';
 
+      var instructionText = originalText(activity.instruction);
+      if (content.prompt && instructionText && instructionText !== prompt) {
+        var instructionDiv = document.createElement('div');
+        instructionDiv.className = 'cp-exercise-choice-instruction';
+        renderBilingual(instructionDiv, activity.instruction);
+        wrapper.appendChild(instructionDiv);
+      }
+
       if (prompt) {
         var qText = document.createElement('div');
         qText.className = 'cp-exercise-question-text';
-        qText.textContent = prompt;
+        renderBilingual(qText, promptValue);
         wrapper.appendChild(qText);
       }
 
@@ -324,16 +357,25 @@
 
     renderFillBlankActivity: function (activity, container) {
       var content = activity.content || {};
-      var prompt = content.prompt || activity.instruction || '';
-      var placeholder = content.placeholder || '';
+      var promptValue = content.prompt || activity.instruction || '';
+      var prompt = originalText(promptValue);
+      var placeholder = originalText(content.placeholder);
 
       var wrapper = document.createElement('div');
       wrapper.className = 'cp-exercise-fillblank';
 
+      var instructionText = originalText(activity.instruction);
+      if (content.prompt && instructionText && instructionText !== prompt) {
+        var instructionDiv = document.createElement('div');
+        instructionDiv.className = 'cp-exercise-fillblank-instruction';
+        renderBilingual(instructionDiv, activity.instruction);
+        wrapper.appendChild(instructionDiv);
+      }
+
       if (prompt) {
         var qText = document.createElement('div');
         qText.className = 'cp-exercise-question-text';
-        qText.textContent = prompt;
+        renderBilingual(qText, promptValue);
         wrapper.appendChild(qText);
       }
 
@@ -592,7 +634,7 @@
 
       var instruction = document.createElement('div');
       instruction.className = 'cp-exercise-oral-instruction';
-      instruction.textContent = activity.instruction || '请朗读以下文本';
+      if (!renderBilingual(instruction, activity.instruction)) instruction.textContent = '请朗读以下文本';
       wrapper.appendChild(instruction);
 
       var demoText = document.createElement('div');

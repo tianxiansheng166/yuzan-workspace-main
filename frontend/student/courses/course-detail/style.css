@@ -722,6 +722,36 @@ body.tibetan-language .cp-section-title { line-height: 2; }
   border-radius: 50%;
   background: var(--cp-accent);
 }
+.cp-bilingual-original { white-space: pre-wrap; overflow-wrap: anywhere; }
+.cp-bilingual-toggle {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  margin: 8px 0 0;
+  padding: 6px 12px;
+  border: 1px solid var(--cp-primary);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--cp-primary);
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.4;
+  cursor: pointer;
+}
+.cp-bilingual-toggle:focus-visible { outline: 3px solid rgba(44, 109, 91, .28); outline-offset: 2px; }
+.cp-bilingual-translation:not([hidden]) {
+  margin-top: 8px;
+  padding: 10px 12px;
+  border-left: 3px solid var(--cp-accent);
+  border-radius: 0 8px 8px 0;
+  background: #f5f8f6;
+  color: var(--cp-dark);
+  font-size: 14px;
+  line-height: 1.85;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.cp-section-student-notes #cpStudentNotesContent { line-height: 1.75; }
 .cp-keypoints-list li::before {
   content: '';
   position: absolute;

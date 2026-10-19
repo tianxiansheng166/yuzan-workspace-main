@@ -352,6 +352,57 @@ describe("validateCourseVersionForPublish", () => {
     }
   });
 
+  it("requires an explicit target locale when a translation is present", () => {
+    const version = courseVersion({
+      objectives: [bilingualContent({ translationLocale: undefined })],
+      units: [unit()],
+    });
+
+    const result = validateCourseVersionForPublish(version, { resourcesById: new Map() });
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.errors).toEqual(expect.arrayContaining([
+        expect.objectContaining({ path: "objectives[0].translationLocale", code: "MISSING_TRANSLATION_LANGUAGE" }),
+      ]));
+    }
+  });
+
+  it("allows a Mandarin-only course when its optional translation is empty", () => {
+    const version = courseVersion({
+      objectives: [bilingualContent({ translation: " ", translationLocale: undefined, translationSource: "NONE", reviewStatus: "REVIEWED" })],
+      units: [unit()],
+    });
+
+    const result = validateCourseVersionForPublish(version, { resourcesById: new Map() });
+
+    expect(result.ok).toBe(true);
+  });
+
+  it("reports malformed bilingual fields instead of throwing", () => {
+    const version = courseVersion({
+      objectives: [{
+        originalText: {} as unknown as string,
+        translation: { text: "TEST_FIXTURE_ONLY malformed" } as unknown as string,
+        locale: "zh-CN",
+        translationSource: "EXPERT",
+        reviewStatus: "EXPERT_CONFIRMED",
+      }],
+      units: [unit()],
+    });
+
+    const result = validateCourseVersionForPublish(version, { resourcesById: new Map() });
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.errors).toEqual(expect.arrayContaining([
+        expect.objectContaining({ path: "objectives[0].originalText", code: "MISSING_ORIGINAL_TEXT" }),
+        expect.objectContaining({ path: "objectives[0].originalText", code: "INVALID_ORIGINAL_TEXT" }),
+        expect.objectContaining({ path: "objectives[0].translation", code: "INVALID_TRANSLATION" }),
+      ]));
+    }
+  });
+
   it("fails when image resource lacks alt text", () => {
     const resource = approvedImageResource();
     const version = courseVersion({

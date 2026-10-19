@@ -1,4 +1,6 @@
-import { IsArray, IsNotEmpty, IsOptional, IsString, MaxLength } from "class-validator";
+import { Type } from "class-transformer";
+import { IsArray, IsNotEmpty, IsOptional, IsString, MaxLength, ValidateNested } from "class-validator";
+import { BilingualContentDto } from "./bilingual-content.dto.js";
 
 export class CreateCourseDraftDto {
   @IsString()
@@ -38,7 +40,9 @@ export class CreateCourseDraftDto {
 
   @IsOptional()
   @IsArray()
-  readonly objectives?: readonly Record<string, unknown>[];
+  @ValidateNested({ each: true })
+  @Type(() => BilingualContentDto)
+  readonly objectives?: readonly BilingualContentDto[];
 
   @IsOptional()
   @IsString()

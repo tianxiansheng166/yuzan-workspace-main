@@ -82,7 +82,7 @@ describe("StudentCoursesService security and completion", () => {
       source: "TEACHER_ASSIGNED",
       startsAt: now,
       dueAt: null,
-      completionRule: {},
+      completionRule: { privateScoringRule: "TEST_FIXTURE_ONLY_DO_NOT_RETURN" },
       courseVersionId: "12121212-1212-4212-8212-121212121212",
       courseVersion: {
         id: "12121212-1212-4212-8212-121212121212",
@@ -91,7 +91,20 @@ describe("StudentCoursesService security and completion", () => {
         title: "春晓朗读与理解",
         description: "课程说明",
         gradeBand: "五年级",
-        objectives: ["准确朗读"],
+        objectives: [{
+          originalText: "TEST_FIXTURE_ONLY 普通话原文",
+          translation: "TEST_FIXTURE_ONLY 藏语辅助占位文本",
+          locale: "zh-CN",
+          translationLocale: "bo-CN",
+          translationSource: "EXPERT",
+          reviewStatus: "EXPERT_CONFIRMED",
+        }, {
+          originalText: "TEST_FIXTURE_ONLY locale is not a target-language field",
+          translation: "TEST_FIXTURE_ONLY ambiguous translation",
+          locale: "bo-CN",
+          translationSource: "EXPERT",
+          reviewStatus: "EXPERT_CONFIRMED",
+        }],
         capabilityTheme: "朗读与理解",
         difficulty: "基础",
         estimatedMinutes: 20,
@@ -110,11 +123,33 @@ describe("StudentCoursesService security and completion", () => {
               id: activityId,
               type: "PRACTICE",
               title: "朗读与理解训练",
-              instruction: "先朗读，再作答",
-              content: { passage: "春眠不觉晓" },
+              instruction: {
+                originalText: "TEST_FIXTURE_ONLY 先朗读，再作答",
+                translation: "TEST_FIXTURE_ONLY 藏语辅助占位文本",
+                locale: "zh-CN",
+                translationLocale: "bo-CN",
+                translationSource: "EXPERT",
+                reviewStatus: "EXPERT_CONFIRMED",
+              },
+              content: {
+                passage: "春眠不觉晓",
+                correctAnswer: "A",
+                referenceAnswer: "答案",
+                scoringSpec: { maxScore: 100 },
+                options: ["A", "B"],
+                questions: [{ text: "TEST_FIXTURE_ONLY question", options: [{ text: "A", isAnswer: true }], correctAnswers: ["A"], scoringRule: { maxScore: 5 } }],
+              },
               required: true,
-              completionRule: {},
-              studentNotes: { published: true, items: ["注意停顿"] },
+              completionRule: { privateScoringRule: "TEST_FIXTURE_ONLY_DO_NOT_RETURN" },
+              teacherNotes: { originalText: "TEST_FIXTURE_ONLY 私有教师笔记" },
+              studentNotes: {
+                originalText: "TEST_FIXTURE_ONLY 注意停顿",
+                translation: "TEST_FIXTURE_ONLY pending translation",
+                locale: "zh-CN",
+                translationLocale: "bo-CN",
+                translationSource: "AUTO",
+                reviewStatus: "REVIEWED",
+              },
               resources: [],
               progress: [{ completed: true, revision: 2, position: 1 }],
               attempts: [{ id: "16161616-1616-4616-8616-161616161616", kind: "COURSE_PRACTICE" }],
@@ -154,14 +189,44 @@ describe("StudentCoursesService security and completion", () => {
 
     expect(result.assignment.id).toBe(assignmentId);
     expect(result.existingSubmission).toMatchObject({ id: submissionId, status: "IN_PROGRESS", revision: 4 });
+    expect(result.courseVersion.objectives[0]).toMatchObject({
+      originalText: "TEST_FIXTURE_ONLY 普通话原文",
+      translation: "TEST_FIXTURE_ONLY 藏语辅助占位文本",
+      translationLocale: "bo-CN",
+      reviewStatus: "EXPERT_CONFIRMED",
+    });
+    expect(result.courseVersion.objectives[1]).toEqual({
+      originalText: "TEST_FIXTURE_ONLY locale is not a target-language field",
+      locale: "bo-CN",
+    });
     expect(result.units[0]?.lessons[0]?.activities[0]).toMatchObject({
       id: activityId,
-      instruction: "先朗读，再作答",
-      content: { passage: "春眠不觉晓" },
+      instruction: {
+        originalText: "TEST_FIXTURE_ONLY 先朗读，再作答",
+        translation: "TEST_FIXTURE_ONLY 藏语辅助占位文本",
+        translationLocale: "bo-CN",
+      },
+      content: {
+        passage: "春眠不觉晓",
+        options: ["A", "B"],
+        questions: [{ text: "TEST_FIXTURE_ONLY question", options: [{ text: "A" }] }],
+      },
+      studentNotes: { originalText: "TEST_FIXTURE_ONLY 注意停顿" },
       progress: { completed: true, revision: 2 },
       attempt: { kind: "COURSE_PRACTICE" },
       practiceReference: { practiceDefinitionId: definitionId, required: true },
     });
+    const activityResponse = result.units[0]?.lessons[0]?.activities[0] as Record<string, unknown>;
+    expect(activityResponse.studentNotes).not.toHaveProperty("translation");
+    expect(activityResponse).not.toHaveProperty("teacherNotes");
+    expect(activityResponse).not.toHaveProperty("completionRule");
+    expect(activityResponse.content).not.toHaveProperty("correctAnswer");
+    expect(activityResponse.content).not.toHaveProperty("referenceAnswer");
+    expect(activityResponse.content).not.toHaveProperty("scoringSpec");
+    expect(activityResponse.content.questions[0]).not.toHaveProperty("correctAnswers");
+    expect(activityResponse.content.questions[0]).not.toHaveProperty("scoringRule");
+    expect(activityResponse.content.questions[0].options[0]).not.toHaveProperty("isAnswer");
+    expect(result.assignment).not.toHaveProperty("completionRule");
     expect(result.practiceReferences).toEqual([{
       activityId,
       practiceDefinitionId: definitionId,

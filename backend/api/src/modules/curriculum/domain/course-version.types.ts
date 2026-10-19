@@ -31,7 +31,10 @@ export type TranslationReviewStatus =
 export interface BilingualContent {
   readonly originalText: string;
   readonly translation?: string;
+  /** Locale of originalText. A translation target must be stated separately. */
   readonly locale: string;
+  /** BCP-47 locale of translation, for example bo-CN. */
+  readonly translationLocale?: string | undefined;
   readonly translationSource: TranslationSource;
   readonly reviewStatus: TranslationReviewStatus;
 }
