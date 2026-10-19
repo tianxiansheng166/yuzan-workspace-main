@@ -33,7 +33,7 @@
 - Fictional Teacher C had exactly three ACTIVE STUDENT enrollments in the authorized class. The fixture included progress 100%, 0% and null; formal scores 0, null and 86; and formula-like names containing Unicode, comma, quotes, TAB and line breaks.
 - The browser downloaded the fresh response six times: first export, identical-data repeat, changed-progress export, keyboard activation, post-failure retry and empty-class header-only export. Three CSV rows matched SQL joins across Enrollment/User, ActivityProgress, Assignment/AssignmentTarget/Submission and AssessmentSession/AssessmentReport. Updating a real progress row changed the next download from 0% to 50%.
 - The independent Python CSV parser confirmed 8 headers, 3 data rows, BOM, formula-safe names, null/zero semantics and SQL parity. Download files were read from Chromium temporary paths and not retained. `csv-sample-redacted.csv` is the only CSV sample in evidence. Screenshots contain only fictional `TEST_FIXTURE_ONLY` browser fixtures.
-- Actual API negative controls: anonymous `401`, cross-school `403`, missing class `404`. Teacher B, a same-school teacher assigned to another class, received `404` for this class. The current `ClassesService.requireClassAccess` throws `ClassNotFoundException` when the teacher is not assigned, which intentionally conceals class existence. The task card requires `403`; T032 did not change backend code because that path is outside its authorized source scope. **API_REQUEST / OWNER DECISION:** confirm whether resource-concealing `404` satisfies this negative control, or authorize a separate backend status-contract change.
+- Actual API negative controls: anonymous `401`, cross-school `403`, missing class `404`. Teacher B, a same-school teacher assigned to another class, received `404` for this class. This matches the accepted T028 baseline tests: `classes.teacher-scope.spec.ts` expects `404` for another teacher's `student-summaries`, and `classes.controller.spec.ts` asserts the same `404` for an unauthorized existing class and a missing class to conceal resource existence. `ClassesService.requireClassAccess` throws `ClassNotFoundException` when the teacher is not assigned. The task card instead requires `403`; T032 did not change backend code because that path is outside its authorized source scope. **API_REQUEST / OWNER DECISION:** accept the existing resource-concealing `404` for T032, or authorize a separate backend status-contract change.
 - The native runtime database, MinIO bucket and evidence are retained. No recordings were created. Native process/port evidence is in `native-runtime-evidence.json`; SQL/browser details and sanitized statuses are in `t032-browser-database-evidence.json`.
 
 ## Verification
@@ -46,7 +46,7 @@
 | UI failures: 401/403/404/500/network/15s timeout; retry and stale identity | PASS; 0 failure downloads |
 | Four viewports, keyboard, aria-live, focus-visible, reduced motion | PASS |
 | Frontend suite, including T032 unit tests | PASS 43 / SKIPPED 0 |
-| Classes controller and teacher-scope API tests (read-only) | PASS 29 / SKIPPED 0 |
+| Classes controller and teacher-scope API tests (read-only) | PASS 29 / SKIPPED 0; baseline explicitly codifies 404 concealment for cross-class teacher access |
 | OpenAPI lint and generated-contract tests (read-only) | PASS 6 / SKIPPED 0 |
 | API build in native runtime | PASS |
 | JS syntax, Python compile and `git diff --check` | PASS |
