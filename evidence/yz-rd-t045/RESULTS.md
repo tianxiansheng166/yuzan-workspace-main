@@ -19,7 +19,7 @@ The target checkout's `AGENTS.md` does not contain the `AA-DEV-V2.2` marker. I f
 - **`RECORDING_FILTER`: PASS.** Chromium sent `requiresRecording=true`; every returned item, including the first visible card, had `requiresRecording: true`. The active chip reads `需要录音`. The authorized seeded oral practice `停顿与节奏专项训练` opened from the filtered results.
 - **`SEARCH_AND_CATEGORIES`: PASS.** Searching `停顿与节奏专项训练` returned the matching real item. MOCK and SPECIALIZED tabs sent their server-owned `catalogType` requests and returned matching item types. Ability filtering by keyboard and touch sent the real `abilityCategory=发音基础` request; the disclosure expanded/collapsed by keyboard and touch, and its summary reflected the selected category.
 - **`TEACHER_TASK`: PASS.** A `TEST_FIXTURE_ONLY` teacher-assigned remediation row in the isolated PostgreSQL database was read through the real student API and rendered before category tabs with its dynamic attempt link. This verifies preservation of the task display path; the test did not re-verify teacher-side task creation.
-- **`FOUR_VIEWPORTS`: PASS.** Real API-backed catalog viewport screenshots were reviewed at 390×844, 768×1024, 1280×900, and 1440×1000. `scrollWidth` equaled viewport width at all four sizes. Runner screenshots were also captured at all four widths.
+- **`FOUR_VIEWPORTS`: PASS.** Real API-backed catalog viewport screenshots were reviewed at 390×844, 768×1024, 1280×900, and 1440×1000. `scrollWidth` equaled viewport width at all four sizes. Detail and Runner layouts were also checked at their configured responsive widths.
 
 | Viewport | Catalog viewport screenshot | First card document y | Horizontal overflow |
 | --- | --- | ---: | ---: |
