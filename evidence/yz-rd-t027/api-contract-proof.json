@@ -1,0 +1,30 @@
+{
+  "method": "GET",
+  "path": "/api/v1/schools/{schoolId}/student/courses/{assignmentId}",
+  "status": 200,
+  "courseVersionId": "e5669ac6-0614-4a0a-8f9c-6b824e89fd0b",
+  "courseVersionNumber": 1,
+  "courseVersionStatus": "PUBLISHED",
+  "acceptedT022BaseSha": "e456eac9b02a5abb4851525685cc5bd130d9af91",
+  "objectiveFields": [
+    "locale",
+    "originalText",
+    "reviewStatus",
+    "translationSource"
+  ],
+  "activityInstructionFields": [
+    "locale",
+    "originalText",
+    "reviewStatus",
+    "translationSource"
+  ],
+  "activityBodyFields": [],
+  "translationLocaleInStudentResponse": false,
+  "translationLocaleInAcceptedBilingualType": false,
+  "authorizedSubtitleResources": {
+    "AUDIO": [],
+    "VIDEO": []
+  },
+  "serverBilingualFullE2E": "NOT_RUN / BLOCKED_UPSTREAM_T005_CONTRACT",
+  "apiRequest": "In CourseVersion BilingualContent, declare and validate translationLocale beside originalText, translation, locale, translationSource, and reviewStatus. Return it from GET /api/v1/schools/{schoolId}/student/courses/{assignmentId} for objectives, Activity.instruction, notes, and bilingual content values; T022 currently returns TEXT content.paragraphs as plain strings. For Tibetan subtitle tracks, expose only approved SUBTITLE ResourceRefs with rightsStatus=APPROVED and the same exact zh->bo review metadata; the accepted ResourceRef mapper currently omits it."
+}

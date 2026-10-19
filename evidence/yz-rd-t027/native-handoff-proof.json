@@ -1,0 +1,114 @@
+{
+  "task": "YZ-RD-T027",
+  "sourceCourseVersion": "e5669ac6-0614-4a0a-8f9c-6b824e89fd0b",
+  "assignmentId": "0ddf1ae6-e559-4236-ab20-a12b626e40d4",
+  "submissionId": "a858f49a-b16f-4419-9443-357a2df27b71",
+  "sessionId": "d83cb3a0-abfa-438b-881b-17ab5f7e8607",
+  "studentAEnrollment": "f1111111-1111-4111-8111-111111111111",
+  "studentBEnrollment": "38f8a872-482e-4826-a73d-a9b9af77eeaf",
+  "studentBSubmissionId": null,
+  "activityIds": {
+    "text": "a5a55dae-bafd-497f-9ed9-bb8cddc9ec61",
+    "audio": "5ed7b3bf-d61f-4294-97c3-0520847905fb",
+    "video": "2570ef3b-d598-4b54-af4f-3804725d10af",
+    "choice": "29990626-16fa-490a-a241-a78fad4beb0f",
+    "fill": "961746e8-b052-4f28-8bc7-b659fbd88f25",
+    "speech": "f1748a60-2784-4cf3-b668-b46ae3f5dce6",
+    "practice": "0439fd5b-38be-4adc-9693-c711c390598c"
+  },
+  "courseDetailChooserClick": {
+    "selectedActivityId": "5ed7b3bf-d61f-4294-97c3-0520847905fb",
+    "pathnameRemained": "/student/courses/course-detail/",
+    "nativeRunnerLinkPass": false
+  },
+  "directAuthorizedActivityRoute": "http://127.0.0.1:4297/student/courses/0ddf1ae6-e559-4236-ab20-a12b626e40d4/submissions/a858f49a-b16f-4419-9443-357a2df27b71/activities/a5a55dae-bafd-497f-9ed9-bb8cddc9ec61",
+  "note": {
+    "revision": 9,
+    "content": "T027 native CourseVersion note verification 2026-10-19T01:02:46.923785+00:00"
+  },
+  "progress": {
+    "TEXT": {
+      "completed": true,
+      "position": 1,
+      "revision": 1,
+      "activityId": "a5a55dae-bafd-497f-9ed9-bb8cddc9ec61",
+      "enrollmentId": "f1111111-1111-4111-8111-111111111111"
+    },
+    "AUDIO": {
+      "completed": true,
+      "position": 1,
+      "revision": 3,
+      "activityId": "5ed7b3bf-d61f-4294-97c3-0520847905fb",
+      "enrollmentId": "f1111111-1111-4111-8111-111111111111"
+    },
+    "VIDEO": {
+      "completed": true,
+      "position": 1,
+      "revision": 5,
+      "activityId": "2570ef3b-d598-4b54-af4f-3804725d10af",
+      "enrollmentId": "f1111111-1111-4111-8111-111111111111"
+    },
+    "CHOICE": {
+      "completed": true,
+      "position": 1,
+      "revision": 1,
+      "activityId": "29990626-16fa-490a-a241-a78fad4beb0f",
+      "enrollmentId": "f1111111-1111-4111-8111-111111111111"
+    },
+    "FILL": {
+      "completed": true,
+      "position": 1,
+      "revision": 1,
+      "activityId": "961746e8-b052-4f28-8bc7-b659fbd88f25",
+      "enrollmentId": "f1111111-1111-4111-8111-111111111111"
+    },
+    "SPEECH": {
+      "completed": true,
+      "position": 1,
+      "revision": 2,
+      "activityId": "f1748a60-2784-4cf3-b668-b46ae3f5dce6",
+      "enrollmentId": "f1111111-1111-4111-8111-111111111111"
+    },
+    "PRACTICE": {
+      "completed": true,
+      "position": 1,
+      "revision": 1,
+      "activityId": "0439fd5b-38be-4adc-9693-c711c390598c",
+      "enrollmentId": "f1111111-1111-4111-8111-111111111111"
+    }
+  },
+  "recording": {
+    "id": "4f32b507-a00e-4517-8fb3-2184e0bbccb9",
+    "status": "COMPLETE",
+    "objectKey": "recordings/4f32b507-a00e-4517-8fb3-2184e0bbccb9/full",
+    "mimeType": "audio/webm;codecs=opus",
+    "idempotencyKey": "course:a858f49a-b16f-4419-9443-357a2df27b71:f1748a60-2784-4cf3-b668-b46ae3f5dce6"
+  },
+  "minioHead": {
+    "bytes": 30331,
+    "contentType": "audio/webm;codecs=opus",
+    "etag": "\"8cf1c0c55fac22720eb16653c1f661ed\""
+  },
+  "practiceRunner": {
+    "id": "d83cb3a0-abfa-438b-881b-17ab5f7e8607",
+    "status": "PROCESSING",
+    "courseSubmissionId": "a858f49a-b16f-4419-9443-357a2df27b71",
+    "courseActivityId": "0439fd5b-38be-4adc-9693-c711c390598c"
+  },
+  "automaticRunnerReturn": "FAIL / browser remained on runner after real submit and practice-completion HTTP 201; no CourseDetail click handoff is claimed",
+  "practiceActivityAttempt": {
+    "kind": "COURSE_PRACTICE",
+    "value": {
+      "status": "PROCESSING",
+      "practiceAttemptId": "d83cb3a0-abfa-438b-881b-17ab5f7e8607"
+    }
+  },
+  "studentBIsolation": {
+    "ownSubmissionId": null,
+    "noteContent": "",
+    "submissionARead": "403/404",
+    "activityAProgressRead": 403
+  },
+  "unauthorizedTranslationVisibility": "no toggle for real unilingual API fields; machine/missing-field negatives in UI fixture",
+  "browserErrors": []
+}

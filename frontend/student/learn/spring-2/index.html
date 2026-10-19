@@ -6,6 +6,7 @@
   <meta name="theme-color" content="#f4efe5">
   <title>课程活动｜语赞心声</title>
   <link rel="stylesheet" href="/student/learn/spring-2/style.css">
+  <link rel="stylesheet" href="/student/learn/spring-2/bilingual-renderer.css">
   <script>
     (function () {
       var activityRoute = /^\/student\/courses\/[^/]+\/submissions\/[^/]+\/activities\/[^/]+\/?$/.test(window.location.pathname);
@@ -64,7 +65,7 @@
         <header class="activity-heading">
           <span id="activityType" class="type-label"></span>
           <h2 id="activityTitle"></h2>
-          <p id="activityInstruction"></p>
+          <div id="activityInstruction" class="activity-instruction"></div>
         </header>
         <div id="activityContent" class="activity-content" aria-live="polite"></div>
         <div id="activityAction" class="activity-action"></div>
@@ -78,7 +79,9 @@
       <aside class="learning-aside" aria-label="课程辅助信息">
         <section class="course-points">
           <p class="eyebrow">学习提示</p>
-          <h2>本活动要点</h2>
+          <h2>课程学习目标</h2>
+          <div id="courseObjectives"></div>
+          <h3>本活动要点</h3>
           <div id="coursePoints"></div>
         </section>
         <section class="private-note" aria-labelledby="noteHeading">
@@ -112,6 +115,7 @@
   <script src="/assets/api-client.js"></script>
   <script src="/assets/recorder.js"></script>
   <script src="/global-nav.js"></script>
+  <script src="/student/learn/spring-2/bilingual-renderer.js"></script>
   <script src="/student/learn/spring-2/player.js"></script>
 </body>
 </html>

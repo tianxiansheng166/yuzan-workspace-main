@@ -1,0 +1,33 @@
+{
+  "taskId": "YZ-RD-T027",
+  "baseSha": "e456eac9b02a5abb4851525685cc5bd130d9af91",
+  "status": "FAIL / T022_RUNNER_AUTO_RETURN_NOT_CONFIRMED",
+  "assignmentId": "f1146e9f-1ddc-45e7-91bc-96fbfb080793",
+  "submissionId": "2e92abfa-96f6-4018-a6b6-d478f50fcc6f",
+  "activityId": "4c759190-815e-4700-a35b-a79d281f4d0b",
+  "attemptId": "d3a5edd7-f510-4e8d-aa53-93c05438f468",
+  "expectedBrowserPath": "/student/courses/course-detail/?id=<assignmentId>&activityId=<activityId>&submissionId=<submissionId>&practiceAttemptId=<attemptId>",
+  "observedBrowserPathAfter60Seconds": "/student/practices/attempts/d3a5edd7-f510-4e8d-aa53-93c05438f468/runner/",
+  "submitRequest": {
+    "method": "POST",
+    "path": "/api/v1/schools/{schoolId}/assessments/sessions/{attemptId}/submit",
+    "httpStatus": 201
+  },
+  "coursePracticeCompletionRequest": {
+    "method": "POST",
+    "path": "/api/v1/schools/{schoolId}/student/courses/{assignmentId}/submissions/{submissionId}/activities/{activityId}/practice-attempts/{attemptId}/complete",
+    "httpStatus": 201
+  },
+  "postgres": {
+    "assessmentSessionStatus": "PROCESSING",
+    "activityAttemptKind": "COURSE_PRACTICE",
+    "activityAttemptPracticeAttemptId": "d3a5edd7-f510-4e8d-aa53-93c05438f468",
+    "activityProgressCompleted": true,
+    "activityProgressRevision": 1
+  },
+  "conclusion": "The real submit and server progress sync succeeded, but the Chromium page remained on the Runner route. No CourseDetail return pass is claimed.",
+  "outOfScopeOwnerFiles": [
+    "frontend/assessment/assets/runner.js",
+    "frontend/assets/api-client.js"
+  ]
+}

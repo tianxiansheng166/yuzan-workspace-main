@@ -3,6 +3,7 @@
 
   const $ = (selector, root = document) => root.querySelector(selector);
   const escapeHtml = (value = '') => String(value).replace(/[&<>"']/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]);
+  const bilingual = window.YuzanBilingualRenderer;
   const typeLabels = { TEXT: '阅读', VIDEO: '视频', AUDIO: '听力', CHOICE: '选择', FILL_BLANK: '填空', SPEECH: '口语' };
   const terminalRecordingStates = new Set(['COMPLETE', 'PROCESSING', 'READY']);
   const state = {
@@ -72,10 +73,25 @@
     }))));
   }
 
-  function instructionText(instruction) {
-    if (typeof instruction === 'string') return instruction;
-    if (!instruction || typeof instruction !== 'object') return '';
-    return instruction.text || instruction.originalText || instruction.translation || '';
+  function originalText(value) {
+    return bilingual?.originalText(value) || '';
+  }
+
+  function appendBilingualText(parent, value, options = {}) {
+    return bilingual?.appendBilingualText(parent, value, options) || null;
+  }
+
+  function appendTranslationAssist(parent, value, options = {}) {
+    return bilingual?.appendTranslationAssist(parent, value, options) || null;
+  }
+
+  function contentObject(value) {
+    if (typeof value === 'string') return { text: value };
+    return value && typeof value === 'object' && !Array.isArray(value) ? value : {};
+  }
+
+  function firstTextValue(...values) {
+    return values.find((value) => originalText(value).trim()) ?? null;
   }
 
   async function init() {
@@ -162,16 +178,21 @@
   function render() {
     const detail = state.detail;
     const activity = state.activity;
-    document.title = `${activity.title || '课程活动'}｜${detail.courseVersion.title}｜语赞心声`;
+    document.title = `${originalText(activity.title) || '课程活动'}｜${originalText(detail.courseVersion.title) || '课程'}｜语赞心声`;
     $('#backToCourse').href = courseUrl();
-    $('#courseEyebrow').textContent = [activity.unitTitle, activity.lessonTitle].filter(Boolean).join(' · ');
-    $('#courseTitle').textContent = detail.courseVersion.title;
+    $('#courseEyebrow').textContent = [originalText(activity.unitTitle), originalText(activity.lessonTitle)].filter(Boolean).join(' · ');
+    $('#courseTitle').textContent = originalText(detail.courseVersion.title) || '课程';
     renderCourseCover(detail);
     $('#activityType').textContent = typeLabels[activity.type] || activity.type;
-    $('#activityTitle').textContent = activity.title || '课程活动';
-    $('#activityInstruction').textContent = instructionText(activity.instruction);
+    $('#activityTitle').textContent = originalText(activity.title) || '课程活动';
+    const instruction = firstTextValue(activity.instruction, contentObject(activity.content).instruction);
+    const instructionTarget = $('#activityInstruction');
+    instructionTarget.replaceChildren();
+    const instructionView = appendBilingualText(instructionTarget, instruction, { tagName: 'span' });
+    instructionTarget.hidden = !instructionView;
     renderProgressSummary();
     renderPath();
+    renderCourseObjectives();
     renderPoints();
     renderContent();
     configureNavigation();
@@ -186,15 +207,16 @@
       const link = document.createElement('a');
       const completed = activity.progress?.completed === true;
       const active = activity.id === state.activityId;
+      const titleText = originalText(activity.title) || '未命名活动';
       link.href = activityUrl(activity.id);
       link.className = `activity-link${active ? ' active' : ''}${completed ? ' completed' : ''}`;
       if (active) link.setAttribute('aria-current', 'step');
-      link.setAttribute('aria-label', `第 ${index + 1} 个活动：${activity.title || '未命名活动'}，${completed ? '已完成' : active ? '当前活动' : '未完成'}`);
+      link.setAttribute('aria-label', `第 ${index + 1} 个活动：${titleText}，${completed ? '已完成' : active ? '当前活动' : '未完成'}`);
       const number = document.createElement('span');
       number.className = 'activity-number';
       number.textContent = String(index + 1).padStart(2, '0');
       const title = document.createElement('b');
-      title.textContent = activity.title || '未命名活动';
+      title.textContent = titleText;
       const stateText = document.createElement('small');
       stateText.textContent = completed ? '已完成' : active ? '正在学习' : '未完成';
       link.append(number, title, stateText);
@@ -204,25 +226,50 @@
 
   function renderPoints() {
     const notes = state.activity.studentNotes;
-    const items = notes?.published === true && Array.isArray(notes.items) ? notes.items : [];
     const target = $('#coursePoints');
     target.replaceChildren();
-    if (!items.length) {
+    const items = notes?.published === true && Array.isArray(notes.items) ? notes.items : [];
+    const noteText = originalText(notes).trim() ? notes : null;
+    if (!items.length && !noteText) {
       const empty = document.createElement('p');
       empty.className = 'muted';
       empty.textContent = '本活动暂未发布课程要点。';
       target.appendChild(empty);
       return;
     }
+    if (items.length) {
+      const list = document.createElement('ul');
+      list.className = 'activity-point-list';
+      items.forEach((item) => {
+        const row = document.createElement('li');
+        if (appendBilingualText(row, item, { tagName: 'span' })) list.appendChild(row);
+      });
+      if (list.children.length) target.appendChild(list);
+      const source = document.createElement('small');
+      source.textContent = notes.source === 'AI_AUDITED' ? '已审计课程摘要' : '教师发布内容';
+      target.appendChild(source);
+    }
+    if (noteText) appendBilingualText(target, noteText, { tagName: 'p', className: 'activity-note-text' });
+  }
+
+  function renderCourseObjectives() {
+    const target = $('#courseObjectives');
+    target.replaceChildren();
+    const objectives = Array.isArray(state.detail?.courseVersion?.objectives) ? state.detail.courseVersion.objectives : [];
     const list = document.createElement('ul');
-    items.forEach((item) => {
+    list.className = 'course-objective-list';
+    objectives.forEach((objective) => {
       const row = document.createElement('li');
-      row.textContent = item;
-      list.appendChild(row);
+      if (appendBilingualText(row, objective, { tagName: 'span' })) list.appendChild(row);
     });
-    const source = document.createElement('small');
-    source.textContent = notes.source === 'AI_AUDITED' ? '已审计课程摘要' : '教师发布内容';
-    target.append(list, source);
+    if (list.children.length) {
+      target.appendChild(list);
+      return;
+    }
+    const empty = document.createElement('p');
+    empty.className = 'course-objectives-empty';
+    empty.textContent = '本课程暂未发布学习目标。';
+    target.appendChild(empty);
   }
 
   function renderCourseCover(detail) {
@@ -244,7 +291,7 @@
 
   function renderContent() {
     const activity = state.activity;
-    const content = activity.content && typeof activity.content === 'object' ? activity.content : {};
+    const content = contentObject(activity.content);
     const target = $('#activityContent');
     const action = $('#activityAction');
     target.replaceChildren();
@@ -258,7 +305,14 @@
     if (activity.practiceReference) {
       const callout = document.createElement('section');
       callout.className = 'practice-callout';
-      callout.innerHTML = `<p class="eyebrow">课程练习</p><h3>${escapeHtml(activity.practiceReference.title || '统一练习')}</h3><p>进入现有正式题库执行器。练习 Attempt 由服务器创建，完成后同步回本课程活动。</p>`;
+      const eyebrow = document.createElement('p');
+      eyebrow.className = 'eyebrow';
+      eyebrow.textContent = '课程练习';
+      const title = document.createElement('h3');
+      title.textContent = originalText(activity.practiceReference.title) || '统一练习';
+      const description = document.createElement('p');
+      description.textContent = '进入现有正式题库执行器。练习 Attempt 由服务器创建，完成后同步回本课程活动。';
+      callout.append(eyebrow, title, description);
       target.appendChild(callout);
       const launch = document.createElement('button');
       launch.type = 'button';
@@ -271,18 +325,19 @@
     }
 
     if (activity.type === 'TEXT') {
-      const paragraphs = Array.isArray(content.paragraphs) ? content.paragraphs : typeof content.text === 'string' ? [content.text] : [];
-      if (!paragraphs.length || paragraphs.every((paragraph) => !String(paragraph).trim())) {
+      const paragraphSource = Array.isArray(content.paragraphs)
+        ? content.paragraphs
+        : [firstTextValue(content.body, content.text, content)];
+      const paragraphs = paragraphSource.filter((paragraph) => originalText(paragraph).trim());
+      if (!paragraphs.length) {
         state.activityAvailable = false;
         setContentMessage(target, '此阅读活动没有可显示的正文，暂时不能标记完成。', 'error-copy');
         return;
       }
       paragraphs.forEach((paragraph) => {
-        const element = document.createElement('p');
-        element.className = 'reading-paragraph';
-        element.textContent = paragraph;
-        target.appendChild(element);
+        appendBilingualText(target, paragraph, { tagName: 'p', className: 'reading-paragraph' });
       });
+      appendActivityFeedback(target, content);
       const label = document.createElement('label');
       label.className = 'acknowledgement';
       label.innerHTML = '<input id="textReadAcknowledged" type="checkbox"><span>我已阅读本活动正文</span>';
@@ -293,6 +348,7 @@
 
     if (activity.type === 'AUDIO' || activity.type === 'VIDEO') {
       renderMedia(target, activity, content);
+      appendActivityFeedback(target, content);
       return;
     }
 
@@ -306,10 +362,17 @@
       const fieldset = document.createElement('fieldset');
       fieldset.className = 'answer-field';
       const legend = document.createElement('legend');
-      legend.textContent = content.prompt || instructionText(activity.instruction) || activity.title || '请选择一个答案';
+      const promptValue = firstTextValue(content.prompt, activity.instruction, content.instruction, activity.title);
+      legend.textContent = originalText(promptValue) || '请选择一个答案';
       fieldset.appendChild(legend);
+      appendTranslationAssist(fieldset, promptValue);
       const previousIndex = Number(activity.attempt?.value?.selectedIndex ?? activity.attempt?.value?.answerIndex);
       options.forEach((option, index) => {
+        const optionValue = typeof option === 'string'
+          ? option
+          : firstTextValue(option?.label, option?.text, option?.value, option);
+        const row = document.createElement('div');
+        row.className = 'answer-option-row';
         const label = document.createElement('label');
         const input = document.createElement('input');
         input.type = 'radio';
@@ -317,34 +380,50 @@
         input.value = String(index);
         input.checked = Number.isInteger(previousIndex) && previousIndex === index;
         const text = document.createElement('span');
-        text.textContent = typeof option === 'string' ? option : option.label || option.text || option.value || '';
+        text.className = 'bilingual-option-original';
+        text.textContent = originalText(optionValue);
+        if (bilingual?.normalize(optionValue)?.locale && /^zh(?:-|$)/i.test(bilingual.normalize(optionValue).locale)) {
+          text.lang = bilingual.normalize(optionValue).locale;
+        }
         label.append(input, text);
-        fieldset.appendChild(label);
+        row.appendChild(label);
+        appendTranslationAssist(row, optionValue, { controlsClassName: 'bilingual-option-controls' });
+        fieldset.appendChild(row);
       });
       target.appendChild(fieldset);
+      appendActivityFeedback(target, content);
       target.addEventListener('change', updateCompletionControl, { once: true });
       return;
     }
 
     if (activity.type === 'FILL_BLANK') {
-      const label = document.createElement('label');
-      label.className = 'answer-field fill-answer';
-      const prompt = document.createElement('span');
-      prompt.textContent = content.prompt || instructionText(activity.instruction) || activity.title || '填写答案';
+      const fieldset = document.createElement('fieldset');
+      fieldset.className = 'answer-field fill-answer';
+      const promptValue = firstTextValue(content.prompt, activity.instruction, content.instruction, activity.title);
+      const legend = document.createElement('legend');
+      legend.textContent = originalText(promptValue) || '填写答案';
+      fieldset.append(legend);
+      appendTranslationAssist(fieldset, promptValue);
+      const answerLabel = document.createElement('label');
+      answerLabel.className = 'visually-hidden';
+      answerLabel.htmlFor = 'writtenAnswer';
+      answerLabel.textContent = '填写答案';
       const textarea = document.createElement('textarea');
       textarea.id = 'writtenAnswer';
       textarea.maxLength = 4000;
-      textarea.placeholder = content.placeholder || '填写你的答案';
+      textarea.placeholder = originalText(content.placeholder) || '填写你的答案';
       const previous = activity.attempt?.value?.answers;
       textarea.value = activity.attempt?.value?.answer || (Array.isArray(previous) ? previous.join('\n') : '');
-      label.append(prompt, textarea);
-      target.appendChild(label);
+      fieldset.append(answerLabel, textarea);
+      target.appendChild(fieldset);
+      appendActivityFeedback(target, content);
       textarea.addEventListener('input', updateCompletionControl);
       return;
     }
 
     if (activity.type === 'SPEECH') {
-      const targetText = String(content.targetText || '').trim();
+      const targetTextValue = firstTextValue(content.targetText, content.body, content.text);
+      const targetText = originalText(targetTextValue).trim();
       if (!targetText) {
         state.activityAvailable = false;
         setContentMessage(target, '此口语活动没有真实目标文本，暂时不能录音提交。', 'error-copy');
@@ -352,7 +431,11 @@
       }
       const prompt = document.createElement('section');
       prompt.className = 'speech-target';
-      prompt.innerHTML = `<p class="eyebrow">朗读目标</p><blockquote>${escapeHtml(targetText)}</blockquote>`;
+      const eyebrow = document.createElement('p');
+      eyebrow.className = 'eyebrow';
+      eyebrow.textContent = '朗读目标';
+      prompt.appendChild(eyebrow);
+      appendBilingualText(prompt, targetTextValue, { tagName: 'blockquote' });
       const recorder = document.createElement('div');
       recorder.id = 'courseRecorder';
       recorder.className = 'recorder';
@@ -365,6 +448,7 @@
       help.textContent = '录音保存在本机，点击“上传录音并完成”后才会提交到课程。不会生成自动转写。';
       target.appendChild(help);
       if (window.YuzanVoiceRecorder) recorder.__voiceRecorder = new window.YuzanVoiceRecorder(recorder);
+      appendActivityFeedback(target, content);
       recorder.addEventListener('recorder:state', (event) => {
         if (event.detail.state === 'error') setSync('麦克风不可用，请检查权限后重试。', 'error');
         if (event.detail.state === 'recorded') setSync('录音保存在本机；尚未上传。');
@@ -376,6 +460,22 @@
     setContentMessage(target, '当前活动类型不受支持，无法提交学习记录。', 'error-copy');
   }
 
+  function appendActivityFeedback(target, content) {
+    target.querySelector('#activityFeedback')?.remove();
+    if (state.activity.progress?.completed !== true) return;
+    const feedback = firstTextValue(content.feedback, state.activity.feedback);
+    if (!feedback) return;
+    const section = document.createElement('section');
+    section.className = 'activity-feedback';
+    section.id = 'activityFeedback';
+    section.setAttribute('aria-label', '活动反馈');
+    const heading = document.createElement('h3');
+    heading.textContent = '活动反馈';
+    section.appendChild(heading);
+    if (!appendBilingualText(section, feedback, { tagName: 'p' })) return;
+    target.appendChild(section);
+  }
+
   function imageEntries(activity, content) {
     const entries = [];
     const listed = Array.isArray(content.images) ? content.images : [];
@@ -385,7 +485,8 @@
       if (!item || typeof item !== 'object') return;
       const url = item.url || item.src;
       if (!url) return;
-      entries.push({ url, altText: item.altText || item.alt || content.imageAlt || '课程内容图片', caption: item.caption || '' });
+      const altText = originalText(item.altText) || originalText(item.alt) || originalText(content.imageAlt) || '课程内容图片';
+      entries.push({ url, altText, caption: item.caption || '' });
     });
 
     (Array.isArray(activity.resources) ? activity.resources : []).forEach((link) => {
@@ -397,7 +498,7 @@
       if (!resource.id) return;
       entries.push({
         resourceId: resource.id,
-        altText: resource.altText || link?.meta?.altText || '课程内容图片',
+        altText: originalText(resource.altText) || originalText(link?.meta?.altText) || '课程内容图片',
         caption: resource.caption || link?.meta?.caption || '',
       });
     });
@@ -440,8 +541,9 @@
       retry.textContent = '重新读取图片';
       retry.hidden = true;
       const caption = document.createElement('figcaption');
-      caption.textContent = entry.caption;
-      caption.hidden = !entry.caption;
+      caption.hidden = !originalText(entry.caption).trim();
+      if (caption.hidden) caption.textContent = '';
+      else appendBilingualText(caption, entry.caption, { tagName: 'span' });
       figure.append(image, status, retry, caption);
       gallery.appendChild(figure);
 
@@ -537,13 +639,17 @@
     const figure = document.createElement('figure');
     figure.className = `media-block media-${activity.type.toLowerCase()}`;
     const caption = document.createElement('figcaption');
-    caption.textContent = activity.type === 'AUDIO'
-      ? '听完完整音频后，可保存本活动进度。'
-      : String(content.caption || content.description || '观看完整视频后，可保存本活动进度。');
+    caption.className = 'media-caption';
+    const captionValue = firstTextValue(content.caption, content.description);
+    if (!appendBilingualText(caption, captionValue, { tagName: 'span' })) {
+      caption.textContent = activity.type === 'AUDIO'
+        ? '听完完整音频后，可保存本活动进度。'
+        : '观看完整视频后，可保存本活动进度。';
+    }
     const player = document.createElement(activity.type === 'AUDIO' ? 'audio' : 'video');
     player.controls = true;
     player.preload = 'metadata';
-    player.setAttribute('aria-label', activity.type === 'AUDIO' ? `播放：${activity.title || '课程音频'}` : `播放：${activity.title || '课程视频'}`);
+    player.setAttribute('aria-label', activity.type === 'AUDIO' ? `播放：${originalText(activity.title) || '课程音频'}` : `播放：${originalText(activity.title) || '课程视频'}`);
     if (activity.type === 'VIDEO') player.playsInline = true;
     const stateText = document.createElement('p');
     stateText.className = 'media-state';
@@ -552,6 +658,7 @@
     stateText.textContent = resource?.id ? '正在读取授权媒体…' : '正在准备媒体…';
     figure.append(player, caption, stateText);
     target.appendChild(figure);
+    void loadSubtitleTracks(player, activity);
     state.mediaElement = player;
     player.addEventListener('loadedmetadata', () => {
       state.mediaReady = true;
@@ -603,6 +710,30 @@
     } else {
       loadResourcePlayback(resource.id, player, stateText, activity.id);
     }
+  }
+
+  async function loadSubtitleTracks(player, activity) {
+    const resources = (Array.isArray(activity.resources) ? activity.resources : []).map((entry) => entry?.resource || entry);
+    const tracks = bilingual?.subtitleResources(resources) || [];
+    await Promise.all(tracks.map(async ({ resource, language, translation }) => {
+      const track = document.createElement('track');
+      track.kind = activity.type === 'AUDIO' ? 'captions' : 'subtitles';
+      track.srclang = language;
+      track.label = translation ? '藏语字幕（已审核）' : '中文字幕';
+      if (!translation) track.default = true;
+      player.appendChild(track);
+      try {
+        const playback = await YuzanApi.getResourcePlaybackUrl(resource.id);
+        const url = checkedMediaUrl(playback?.url);
+        if (!url || !track.isConnected) {
+          track.remove();
+          return;
+        }
+        track.src = url;
+      } catch {
+        track.remove();
+      }
+    }));
   }
 
   async function loadResourcePlayback(resourceId, player, status, activityId) {
@@ -730,6 +861,7 @@
       }
       await refreshCourseFromServer();
       if (state.activity.progress?.completed !== true) throw new Error('服务器尚未确认本活动完成，进度保持未完成。');
+      appendActivityFeedback($('#activityContent'), contentObject(state.activity.content));
       renderPath();
       renderProgressSummary();
       setSync('服务器已保存：本活动已完成。', 'success');
@@ -821,7 +953,7 @@
     }
     if (!state.enrollmentId) throw new Error('课程 Submission 缺少 Enrollment ID，无法安全关联录音。');
 
-    const targetText = state.activity.content?.targetText || '';
+    const targetText = originalText(contentObject(state.activity.content).targetText);
     const idempotencyKey = `course:${state.submissionId}:${state.activity.id}`;
     let initialized = await YuzanApi.initSimpleRecording({
       enrollmentId: state.enrollmentId,
