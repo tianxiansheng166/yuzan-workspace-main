@@ -551,8 +551,10 @@ body.tibetan-language .cp-section-title { line-height: 2; }
   transition: background var(--cp-transition);
   color: var(--cp-dark);
   border: 1px solid transparent;
+  text-decoration: none;
 }
 .cp-dir-item:hover { background: #f0ede8; }
+.cp-dir-item:focus-visible { outline: 3px solid rgba(157, 41, 51, .4); outline-offset: 2px; }
 
 /* Numbered badge (master template: w-8 h-8 rounded-full bg-primary text-white) */
 .cp-dir-num {

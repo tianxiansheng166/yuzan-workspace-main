@@ -3,6 +3,15 @@
 Last updated: 2026-10-19
 Repository: `yuzan-workspace-main`
 
+## YZ-RD-T040 course-to-speech player checkpoint (2026-10-19)
+
+- ACCEPTANCE VERIFIED on `feat/yz-rd-t040-course-to-speech-player`, starting at accepted T046 SHA `0f6ea3710797612aa08f37944a9ab9d92f033da1`. The Today authorized course link opens Course Detail; the course directory now routes each server-authorized activity into the focused player with the real assignment, Submission, and activity IDs.
+- Native Chrome 153/API/PostgreSQL 17.11/Redis/MinIO E2E passed 1/1, 0 failed / 0 skipped. The browser played the checked-in course MP3, recovered a deliberately failed course-progress save, captured a `SIMULATED_MIC` speech take, previewed it before upload, recovered a failed MinIO PUT with the same Recording ID, and verified the Recording, ActivityAttempt, ActivityProgress, and SpeechJob from PostgreSQL/MinIO. A formal course practice Attempt submitted once, synchronized course progress, and returned to the same course Submission.
+- The course Recording remained a real WebM/Opus object (32,931 bytes); the linked SpeechJob stayed CREATED with `result=null`, and the formal practice Attempt stayed PROCESSING. No Worker, automatic speech score, transcription, or report was generated. Bilingual renderer gates passed; no Tibetan subtitle or unreviewed translation was published. The 390px speech screenshot has no horizontal overflow or title/progress overlap.
+- Frontend 133/133 passed; runtime verification, API build, JS/Python syntax, and `git diff --check` passed. All five T040 services stopped; isolated DB/MinIO data is retained. Full API lint was not rerun; the accepted T046 checkpoint records the inherited T033 baseline at 1201 errors / 1 warning, unwaived, so `READY_TO_MERGE=NO`.
+- The generic Question Bank importer is not required for this flow. Its read-only preflight passed, but an exploratory apply encountered `PracticeSection_versionId_fkey`; the final T040 E2E used the task-seeded practice version and checked-in audio instead. No original source was modified.
+- The target checkout lacks the AA-DEV-V2.2 marker and the Task Card supplied no Lane policy reference; the user-provided `/home/tian/code/AGENTS.md` baseline governed. No T005 source, shared API contract, schema, shared branch, Worker, Docker/Compose, or L4 access. `L4_OPEN=OPEN`. Full evidence: [evidence/yz-rd-t040/RESULTS.md](evidence/yz-rd-t040/RESULTS.md).
+
 ## YZ-RD-T046 integrated student experience checkpoint (2026-10-19)
 
 - Independent integration from accepted T042 + T043 personalized Today + exact T044 `7f9288521a2f4e486ccf2ea2f49e1d78e9ce7865`; T045 is not an ancestor. No-FF commits preserve T043 (`d6e0328522817be08ab496c5b294b8eaae903afc`) and T044 (`7a2ec1fb3ee7e9b4ea39273b86f0580277a3428f`) with their exact parents recorded in `evidence/yz-rd-t046/RESULTS.md`.

@@ -1,5 +1,13 @@
 # Development status
 
+## YZ-RD-T040 — course-to-speech player (2026-10-19)
+
+ACCEPTANCE VERIFIED / NATIVE CHROME + API + POSTGRESQL + REDIS + MINIO E2E PASS. The Today course card opens its authorized Course Detail; directory activities now lead to the focused student Activity Player with the same server-issued course Submission. Students can play real course audio, complete speaking capture, audition the local recording, submit it, and continue into the course-linked practice Runner.
+
+The isolated browser/API/database E2E passed 1/1 with no skips. It verified retry after a failed activity-progress save and a failed signed MinIO upload, same-Recording idempotency, the persisted SPEECH ActivityAttempt/ActivityProgress, a real WebM/Opus object read back from MinIO, a submitted course-practice Attempt, and return to the same course Submission. The Attempt remained PROCESSING with no result or report; the Worker stayed stopped and speech scoring disabled. The bilingual renderer gate was retained, with no Tibetan subtitle published. Frontend suite passed 133/133; runtime verification, API build, JS/Python syntax, and diff checks passed. See [`evidence/yz-rd-t040/RESULTS.md`](evidence/yz-rd-t040/RESULTS.md).
+
+All runtime content was `TEST_FIXTURE_ONLY`; the real browser recorder used `SIMULATED_MIC`, not a physical microphone. All T040 services stopped and owned ports are free; task-owned PostgreSQL/MinIO evidence remains retained. The optional generic Question Bank apply hit `PracticeSection_versionId_fkey`; the final T040 flow used the seeded course practice and checked-in media without that import. The accepted T046 checkpoint has unresolved API lint debt (1201 errors / 1 warning); it remains unwaived, so `READY_TO_MERGE=NO`. No T005 source, schema, shared API contract, shared branch, Worker, Docker/Compose, or L4 access. The target checkout lacks the V2.2 marker and the Task Card supplied no Lane policy reference; the supplied local baseline governed. `L4_OPEN=OPEN`.
+
 ## YZ-RD-T046 — personalized Today and real speech catalog integrated checkpoint (2026-10-19)
 
 Separate rolling integration of accepted T042 + T043 personalized Today + exact T044 `7f9288521a2f4e486ccf2ea2f49e1d78e9ce7865`; T045 is not merged. T043 and T044 are preserved as no-fast-forward commits `d6e0328522817be08ab496c5b294b8eaae903afc` and `7a2ec1fb3ee7e9b4ea39273b86f0580277a3428f`.

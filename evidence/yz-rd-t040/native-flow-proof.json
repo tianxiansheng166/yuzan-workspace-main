@@ -1,0 +1,313 @@
+{
+  "task": "YZ-RD-T040",
+  "microphone": "SIMULATED_MIC",
+  "authorizedCourse": {
+    "assignmentId": "8f907f11-dfa6-4b67-8f1d-da9654d7e90a",
+    "courseVersionId": "55fea8b5-1065-45bb-9ab1-c2a30da3f9f7",
+    "submissionId": "ae9e6c58-6160-4041-b44e-f8810842cc1b",
+    "todayCourseLink": "/student/courses/course-detail/?id=8f907f11-dfa6-4b67-8f1d-da9654d7e90a",
+    "courseActivityHref": "/student/courses/8f907f11-dfa6-4b67-8f1d-da9654d7e90a/submissions/ae9e6c58-6160-4041-b44e-f8810842cc1b/activities/4b0b1575-1b42-4678-ad9f-6be7258f3293",
+    "wrongSchoolStatus": 403
+  },
+  "listening": {
+    "activityId": "4b0b1575-1b42-4678-ad9f-6be7258f3293",
+    "durationSeconds": 2.063667,
+    "completedProgress": {
+      "completed": true,
+      "position": 1,
+      "revision": 3,
+      "activityId": "4b0b1575-1b42-4678-ad9f-6be7258f3293",
+      "enrollmentId": "f1111111-1111-4111-8111-111111111111"
+    },
+    "activityAttempt": {
+      "kind": "AUDIO",
+      "value": {
+        "acknowledged": true,
+        "listenedToEnd": true
+      }
+    },
+    "failedSaveThenRetry": true
+  },
+  "speechRecording": {
+    "activityId": "cbb7c764-a597-43a0-b121-df7a0a5e5380",
+    "recordingId": "aadcf27f-b0a8-4bf8-8151-1f371f17be1e",
+    "activityAttempt": {
+      "id": "db33a384-2071-4110-90c6-be61b0debbf5",
+      "kind": "SPEECH",
+      "value": {
+        "status": "COMPLETE",
+        "recordingId": "aadcf27f-b0a8-4bf8-8151-1f371f17be1e"
+      }
+    },
+    "progress": {
+      "completed": true,
+      "position": 1,
+      "revision": 1,
+      "activityId": "cbb7c764-a597-43a0-b121-df7a0a5e5380",
+      "enrollmentId": "f1111111-1111-4111-8111-111111111111"
+    },
+    "minioHead": {
+      "bytes": 32931,
+      "contentType": "audio/webm;codecs=opus",
+      "etag": "\"ba0ff7290332a00554681723e7db62bd\""
+    },
+    "speechJobs": [
+      {
+        "status": "CREATED",
+        "result": null,
+        "errorCode": null
+      }
+    ],
+    "micSource": "SIMULATED_MIC / Chromium native MediaRecorder",
+    "previewedBeforeUpload": true,
+    "failedUploadRetriedSameRecording": true,
+    "recordingInitIds": [
+      "aadcf27f-b0a8-4bf8-8151-1f371f17be1e",
+      "aadcf27f-b0a8-4bf8-8151-1f371f17be1e"
+    ]
+  },
+  "practiceSubmission": {
+    "attemptId": "0071c59e-3b81-4be7-8161-fe0228da695c",
+    "attempt": {
+      "id": "0071c59e-3b81-4be7-8161-fe0228da695c",
+      "status": "PROCESSING",
+      "submissionId": "ae9e6c58-6160-4041-b44e-f8810842cc1b",
+      "activityId": "b2944011-9cf5-4a55-9738-dd5bcafa8b51"
+    },
+    "courseActivityAttempt": {
+      "kind": "COURSE_PRACTICE",
+      "value": {
+        "status": "PROCESSING",
+        "practiceAttemptId": "0071c59e-3b81-4be7-8161-fe0228da695c"
+      }
+    },
+    "courseProgress": {
+      "completed": true,
+      "position": 1,
+      "revision": 1,
+      "activityId": "b2944011-9cf5-4a55-9738-dd5bcafa8b51",
+      "enrollmentId": "f1111111-1111-4111-8111-111111111111"
+    },
+    "submitRequests": 1,
+    "runnerResult": {
+      "itemCount": 4,
+      "playedAudio": 1,
+      "recordedAudio": 2,
+      "uploadRetries": 2,
+      "submitPosts": 0,
+      "confirmationDismissals": 0,
+      "duplicateSubmitId": null
+    },
+    "returnedUrl": "http://127.0.0.1:4440/student/courses/course-detail/?id=8f907f11-dfa6-4b67-8f1d-da9654d7e90a&activityId=b2944011-9cf5-4a55-9738-dd5bcafa8b51&submissionId=ae9e6c58-6160-4041-b44e-f8810842cc1b&practiceAttemptId=0071c59e-3b81-4be7-8161-fe0228da695c",
+    "returnedToSameSubmission": true
+  },
+  "bilingualSafety": {
+    "unsafeTibetanSubtitlesPublished": false,
+    "unreviewedToggleCount": 0,
+    "tibetanTrackCount": 0,
+    "scoring": "No automatic speech score or report produced by this flow."
+  },
+  "mobile390": {
+    "width": 390,
+    "documentWidth": 390
+  },
+  "apiResponses": [
+    {
+      "status": 200,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/assessments/sessions"
+    },
+    {
+      "status": 200,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/student/courses"
+    },
+    {
+      "status": 200,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/student/courses/8f907f11-dfa6-4b67-8f1d-da9654d7e90a"
+    },
+    {
+      "status": 201,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/student/courses/8f907f11-dfa6-4b67-8f1d-da9654d7e90a/submissions"
+    },
+    {
+      "status": 200,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/student/courses/8f907f11-dfa6-4b67-8f1d-da9654d7e90a/recommendations"
+    },
+    {
+      "status": 200,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/student/courses-dashboard"
+    },
+    {
+      "status": 200,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/student/courses/8f907f11-dfa6-4b67-8f1d-da9654d7e90a"
+    },
+    {
+      "status": 201,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/student/courses/8f907f11-dfa6-4b67-8f1d-da9654d7e90a/submissions"
+    },
+    {
+      "status": 200,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/student/courses/8f907f11-dfa6-4b67-8f1d-da9654d7e90a/submissions/ae9e6c58-6160-4041-b44e-f8810842cc1b/activities/4b0b1575-1b42-4678-ad9f-6be7258f3293/attempt"
+    },
+    {
+      "status": 200,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/student/courses/8f907f11-dfa6-4b67-8f1d-da9654d7e90a/submissions/ae9e6c58-6160-4041-b44e-f8810842cc1b/activities/4b0b1575-1b42-4678-ad9f-6be7258f3293/attempt"
+    },
+    {
+      "status": 503,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/student/courses/8f907f11-dfa6-4b67-8f1d-da9654d7e90a/submissions/ae9e6c58-6160-4041-b44e-f8810842cc1b/activities/4b0b1575-1b42-4678-ad9f-6be7258f3293/attempt"
+    },
+    {
+      "status": 200,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/student/courses/8f907f11-dfa6-4b67-8f1d-da9654d7e90a/submissions/ae9e6c58-6160-4041-b44e-f8810842cc1b/activities/4b0b1575-1b42-4678-ad9f-6be7258f3293/attempt"
+    },
+    {
+      "status": 200,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/student/courses/8f907f11-dfa6-4b67-8f1d-da9654d7e90a"
+    },
+    {
+      "status": 200,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/student/courses/8f907f11-dfa6-4b67-8f1d-da9654d7e90a"
+    },
+    {
+      "status": 201,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/student/courses/8f907f11-dfa6-4b67-8f1d-da9654d7e90a/submissions"
+    },
+    {
+      "status": 201,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/recordings/simple"
+    },
+    {
+      "status": 400,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/recordings/aadcf27f-b0a8-4bf8-8151-1f371f17be1e/complete"
+    },
+    {
+      "status": 201,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/recordings/simple"
+    },
+    {
+      "status": 400,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/recordings/aadcf27f-b0a8-4bf8-8151-1f371f17be1e/complete"
+    },
+    {
+      "status": 201,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/recordings/aadcf27f-b0a8-4bf8-8151-1f371f17be1e/complete"
+    },
+    {
+      "status": 200,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/recordings/aadcf27f-b0a8-4bf8-8151-1f371f17be1e"
+    },
+    {
+      "status": 201,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/student/courses/8f907f11-dfa6-4b67-8f1d-da9654d7e90a/submissions/ae9e6c58-6160-4041-b44e-f8810842cc1b/activities/cbb7c764-a597-43a0-b121-df7a0a5e5380/recordings/aadcf27f-b0a8-4bf8-8151-1f371f17be1e/link"
+    },
+    {
+      "status": 200,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/student/courses/8f907f11-dfa6-4b67-8f1d-da9654d7e90a"
+    },
+    {
+      "status": 200,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/student/courses/8f907f11-dfa6-4b67-8f1d-da9654d7e90a"
+    },
+    {
+      "status": 201,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/student/courses/8f907f11-dfa6-4b67-8f1d-da9654d7e90a/submissions"
+    },
+    {
+      "status": 200,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/assessments/sessions/0071c59e-3b81-4be7-8161-fe0228da695c/written"
+    },
+    {
+      "status": 201,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/assessments/sessions/0071c59e-3b81-4be7-8161-fe0228da695c/start"
+    },
+    {
+      "status": 200,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/assessments/sessions/0071c59e-3b81-4be7-8161-fe0228da695c/items/5412880c-b86d-48f1-8840-bf7064b791a9/answer"
+    },
+    {
+      "status": 201,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/recordings/simple"
+    },
+    {
+      "status": 201,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/recordings/simple"
+    },
+    {
+      "status": 201,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/recordings/21753f94-d70b-4ca0-bd3f-c576c67992b4/complete"
+    },
+    {
+      "status": 201,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/assessments/sessions/0071c59e-3b81-4be7-8161-fe0228da695c/reading/c1ca71f8-de77-45b2-8203-132712d33c43/recording"
+    },
+    {
+      "status": 201,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/recordings/simple"
+    },
+    {
+      "status": 201,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/recordings/simple"
+    },
+    {
+      "status": 201,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/recordings/c1ab877c-4857-4aae-a98a-e501d226c5a0/complete"
+    },
+    {
+      "status": 201,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/assessments/sessions/0071c59e-3b81-4be7-8161-fe0228da695c/reading/d218daf7-ada1-4798-a740-9deab77bbc04/recording"
+    },
+    {
+      "status": 200,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/assessments/sessions/0071c59e-3b81-4be7-8161-fe0228da695c/items/6662911c-8488-4aba-b7ea-0495bdf20b7d/answer"
+    },
+    {
+      "status": 201,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/assessments/sessions/0071c59e-3b81-4be7-8161-fe0228da695c/items/5412880c-b86d-48f1-8840-bf7064b791a9/answer/finalize"
+    },
+    {
+      "status": 201,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/assessments/sessions/0071c59e-3b81-4be7-8161-fe0228da695c/items/6662911c-8488-4aba-b7ea-0495bdf20b7d/answer/finalize"
+    },
+    {
+      "status": 200,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/assessments/sessions/0071c59e-3b81-4be7-8161-fe0228da695c"
+    },
+    {
+      "status": 201,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/assessments/sessions/0071c59e-3b81-4be7-8161-fe0228da695c/submit"
+    },
+    {
+      "status": 200,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/assessments/sessions/0071c59e-3b81-4be7-8161-fe0228da695c"
+    },
+    {
+      "status": 201,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/student/courses/8f907f11-dfa6-4b67-8f1d-da9654d7e90a/submissions/ae9e6c58-6160-4041-b44e-f8810842cc1b/activities/b2944011-9cf5-4a55-9738-dd5bcafa8b51/practice-attempts/0071c59e-3b81-4be7-8161-fe0228da695c/complete"
+    },
+    {
+      "status": 200,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/assessments/sessions/0071c59e-3b81-4be7-8161-fe0228da695c"
+    },
+    {
+      "status": 200,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/student/courses/8f907f11-dfa6-4b67-8f1d-da9654d7e90a"
+    },
+    {
+      "status": 200,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/student/courses/8f907f11-dfa6-4b67-8f1d-da9654d7e90a"
+    },
+    {
+      "status": 201,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/student/courses/8f907f11-dfa6-4b67-8f1d-da9654d7e90a/submissions"
+    },
+    {
+      "status": 200,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/student/courses/8f907f11-dfa6-4b67-8f1d-da9654d7e90a/recommendations"
+    },
+    {
+      "status": 200,
+      "path": "/schools/11111111-1111-4111-8111-111111111111/student/courses-dashboard"
+    }
+  ],
+  "browserErrors": []
+}

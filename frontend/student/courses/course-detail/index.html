@@ -509,7 +509,14 @@
       if (desc) desc.textContent = activity.instruction || '进入现有统一练习执行器，完成朗读与能力测评。';
     }
 
-    // --- renderDirectory: master template numbered badge + status pill ---
+    function activityPlayerHref(assignmentId, submissionId, activityId) {
+      if (!assignmentId || !submissionId || !activityId) return '';
+      return '/student/courses/' + encodeURIComponent(assignmentId)
+        + '/submissions/' + encodeURIComponent(submissionId)
+        + '/activities/' + encodeURIComponent(activityId);
+    }
+
+    // --- renderDirectory: course activities open in the focused learning player ---
     function renderDirectory(course, currentActivityId) {
       var dirEl = document.getElementById('cpDirectory');
       var progressFill = document.getElementById('cpDirProgressFill');
@@ -518,6 +525,7 @@
 
       if (!dirEl || !course || !course.units) return;
       dirEl.innerHTML = '';
+      var courseState = window.CoursePlayerState.getState();
 
       var total = 0;
       var completed = 0;
@@ -537,8 +545,12 @@
 
             var li = document.createElement('li');
             var state = act.isCompleted ? 'learned' : (act.activityId === currentActivityId ? 'current' : 'locked');
-            li.className = 'cp-dir-item cp-dir-' + state;
-            li.setAttribute('data-activity-id', act.activityId);
+            var link = document.createElement('a');
+            link.className = 'cp-dir-item cp-dir-' + state;
+            link.setAttribute('data-activity-id', act.activityId);
+            link.href = activityPlayerHref(courseState.assignmentId, courseState.submissionId, act.activityId) || '#';
+            link.setAttribute('aria-label', '打开课程活动：' + (act.title || '未命名活动'));
+            if (act.activityId === currentActivityId) link.setAttribute('aria-current', 'step');
 
             // Numbered badge (.cp-dir-num) — colored by state
             var num = document.createElement('span');
@@ -555,15 +567,10 @@
             status.className = 'cp-dir-status cp-dir-status-' + state;
             status.textContent = act.isCompleted ? '已学习' : (act.activityId === currentActivityId ? '当前' : '未学习');
 
-            li.appendChild(num);
-            li.appendChild(title);
-            li.appendChild(status);
-
-            li.addEventListener('click', function () {
-              if (window.CoursePlayerState) {
-                window.CoursePlayerState.setCurrentActivity(act.activityId);
-              }
-            });
+            link.appendChild(num);
+            link.appendChild(title);
+            link.appendChild(status);
+            li.appendChild(link);
 
             dirEl.appendChild(li);
           });
