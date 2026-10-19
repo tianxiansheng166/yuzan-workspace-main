@@ -8,7 +8,7 @@
 |---|---|
 | `TASK_ID` | `YZ-RD-T032` |
 | `STATUS` | `NEEDS_DECISION` |
-| `EXACT_T028_BASE_BRANCH_SHA_PUSH` | Base verified as `feat/yz-rd-t028-teacher-invitation-revocation@bfae13ab315bee532842cffe4fdd6c142cb8a488`; output branch `feat/yz-rd-t032-teacher-roster-csv-export`; implementation commit/push SHA to be recorded after the first task-owned commit. |
+| `EXACT_T028_BASE_BRANCH_SHA_PUSH` | Base verified as `feat/yz-rd-t028-teacher-invitation-revocation@bfae13ab315bee532842cffe4fdd6c142cb8a488`; implementation commit `94a7d7a54c68bc021df2b7b1568f273157470563` pushed to `origin/feat/yz-rd-t032-teacher-roster-csv-export`; no shared merge. |
 | `REAL_CLASS_EXPORT_BUTTON_BROWSER_DOWNLOAD_CSV_SQL_ROWS` | PASS: Teacher C clicked the class detail control; Chromium recorded 6 downloads across repeat, update, keyboard, retry and empty-class checks. Three authorized student rows matched PostgreSQL joins; empty class produced header only. |
 | `AUTHORIZED_PAGING_ZERO_NULL_AND_STALE_SCHOOL_IDENTITY` | PASS: endpoint returned the full unpaginated array; zero score stayed `0`, null score stayed blank, no-progress showed `—`; delayed response after identity change was discarded. |
 | `CSV_FORMULA_INJECTION_QUOTING_UNICODE_SECURITY` | PASS: BOM, RFC 4180 quoting, commas, quotes, CR/LF, tab, multilingual text and dangerous formula prefixes were parsed independently. No Enrollment IDs or student names appear in filenames. |
