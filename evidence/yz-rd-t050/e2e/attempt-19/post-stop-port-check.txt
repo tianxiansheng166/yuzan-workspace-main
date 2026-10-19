@@ -1,0 +1,8 @@
+T050 post-stop listener check
+Command: ss -ltnH "sport = :PORT"
+4261: FREE
+4461: FREE
+55761: FREE
+6561: FREE
+59772: FREE
+59773: FREE

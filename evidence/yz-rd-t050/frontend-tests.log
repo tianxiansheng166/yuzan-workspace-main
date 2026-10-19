@@ -1,0 +1,196 @@
+
+> @yuzan/frontend@4.0.0 test /home/tian/code/work/yuzan-workspace-t050/frontend
+> node --test tests/assessment/*.test.mjs && node scripts/verify-runtime.mjs
+
+✔ assignment creation returns the server-issued assignment ID (8.778844ms)
+✔ assignment list sends real server filters and cursor parameters (1.386354ms)
+✔ assignment detail and submissions use the selected assignment ID (1.341263ms)
+✔ formal report takes precedence over a retained provisional ISE result (27.704216ms)
+✔ student report escapes teacher feedback and does not expose review-only fields (13.234975ms)
+✔ provisional ISE report keeps a non-remediation learning action (11.055686ms)
+✔ teacher reading review renders safe ISE dimensions and keeps formal score independent (10.95787ms)
+✔ teacher open-response detail keeps its local diagnostics path (11.439212ms)
+✔ teacher open-response detail explains unsupported automatic analysis without inventing diagnostics (11.177068ms)
+✔ browser-facing sources do not include provider raw audit fields (0.246452ms)
+✔ unified runner exposes a normal re-record path for a failed historical recording (0.117897ms)
+✔ unsupported local recorder fails visibly without generating demonstration audio (3.247981ms)
+✔ microphone denial does not start a simulated recording (1.19771ms)
+✔ online connectivity alone never marks local audio synchronized (0.891272ms)
+✔ history clears cached prior-student data and combines real in-progress sessions, reports, and feedback by the server-selected enrollment (26.844531ms)
+✔ history load failure is visible and its retry reloads the current student's records (24.263262ms)
+✔ formal zero, missing, and incomplete reports stay distinct and only a complete authorized report is linked (11.776016ms)
+✔ status changes use exact server filters and cursor paging loads the next real page (45.575535ms)
+✔ name search scans cursor pages and discards a slower stale status response (382.986327ms)
+✔ favorites are sibling controls, never nested in the detail link (15.163495ms)
+▶ all persisted Attempt states route to their matching legal action
+  ✔ CREATED (11.329924ms)
+  ✔ IN_PROGRESS (12.49707ms)
+  ✔ SUBMITTED (11.5403ms)
+  ✔ PROCESSING (11.502397ms)
+  ✔ FAILED (10.261538ms)
+  ✔ COMPLETED (10.885306ms)
+✔ all persisted Attempt states route to their matching legal action (72.349997ms)
+✔ completed detail cannot accidentally create a second attempt (11.370717ms)
+✔ Attempt lookup follows real session cursors instead of stopping at page one (11.209498ms)
+✔ runner exposes real confirmation, recovery, and microphone source states (0.404934ms)
+✔ custom visual system uses accessible SVGs and honors reduced motion (1.186936ms)
+▶ practice catalog routes each real attempt status to the matching continuation
+  ✔ CREATED (14.050961ms)
+  ✔ IN_PROGRESS (11.733096ms)
+  ✔ SUBMITTED (10.811031ms)
+  ✔ PROCESSING (10.634225ms)
+  ✔ FAILED (12.396696ms)
+✔ practice catalog routes each real attempt status to the matching continuation (61.534703ms)
+✔ a submitted practice detail links to its real processing state and cannot create another attempt (11.564976ms)
+✔ empty growth state contains no invented score or chart (11.433851ms)
+✔ formal chart appears only with three real dated scores and a generated report (26.368723ms)
+✔ completed record without a report is labeled and never given a score (4.424474ms)
+✔ a report awaiting teacher review never exposes its provisional score (2.107828ms)
+✔ an official report shows only safe teacher comments on Growth (2.624535ms)
+✔ active Attempt shows saved item progress and a dynamic continuation link (3.955284ms)
+✔ feedback and identity switch use current server identity and records (3.127925ms)
+▶ permission and network errors replace the page with a retry state
+  ✔ HTTP 401 (2.107195ms)
+  ✔ HTTP 403 (2.226189ms)
+  ✔ HTTP 404 (3.702303ms)
+  ✔ HTTP 409 (1.882343ms)
+  ✔ network disconnected (1.43178ms)
+✔ permission and network errors replace the page with a retry state (13.098455ms)
+✔ Today uses the server primary action, real school identity, and dynamic Attempt (23.209898ms)
+✔ processing Attempt has a real status destination and does not invent a score (4.289295ms)
+✔ Today reads all authorized Attempt pages before showing an empty state (2.968122ms)
+✔ empty Today is explicit when all current endpoints return no tasks (2.210053ms)
+✔ Today does not report no tasks when supplemental task sources failed (4.644473ms)
+▶ 401, 403, and 404 from Today are visible and never retain the previous student
+  ✔ HTTP 401 (1.92673ms)
+  ✔ HTTP 403 (1.155876ms)
+  ✔ HTTP 404 (1.374153ms)
+✔ 401, 403, and 404 from Today are visible and never retain the previous student (5.836066ms)
+✔ switching the stored account and school rereads and replaces Today data (2.903689ms)
+✔ T025: empty Growth data has no score, report action, or invented practice (11.576268ms)
+✔ T025: a completed linked formal report shows real feedback, candidate content, source IDs, and a scoped action (16.398281ms)
+✔ T025: zero and absent official scores remain different states (5.042383ms)
+▶ T025: only a completed, fully linked, complete report can expose an official score or retry action
+  ✔ IN_PROGRESS source with an otherwise complete fake report (2.534429ms)
+  ✔ PROCESSING source with an otherwise complete fake report (2.025903ms)
+  ✔ completed report still awaiting teacher review (2.012384ms)
+  ✔ score outside the formal 0–100 range (1.556641ms)
+  ✔ source Session belongs to a different school (5.300822ms)
+  ✔ source Session belongs to a different enrollment (4.12006ms)
+  ✔ Report belongs to a different school (6.04733ms)
+  ✔ Report points at a different Session ID (1.440479ms)
+  ✔ source response points at a different Session ID (1.588847ms)
+  ✔ 99 percent complete report (1.656318ms)
+  ✔ null completeness and missing generated time (3.07434ms)
+✔ T025: only a completed, fully linked, complete report can expose an official score or retry action (33.509558ms)
+✔ T025: published Submission feedback is visibly separate from AssessmentReport comments (4.432527ms)
+✔ T025: a late history response from the previous school is discarded (1.480859ms)
+✔ T025: double click creates once, verifies the returned session relation, and routes by its real ID (4.063442ms)
+✔ T025: unknown POST outcome is recovered with GET only and stays pending across refresh (3.018397ms)
+✔ T025: when retry state cannot be persisted, the client does not send a create request (1.359355ms)
+✔ T025: if the server committed before a lost response, the student recovers and opens that session (1.379994ms)
+✔ T025: an existing related session resumes by its returned ID and never posts again (2.79635ms)
+✔ T025: server conflicts show the returned reason and never claim success (1.420415ms)
+✔ T025: open practice status and destinations use server practice and Attempt IDs (2.059054ms)
+✔ plain strings normalize to originalText and never acquire translation metadata (2.538926ms)
+✔ nested body and text values resolve their original independently of translation (0.377601ms)
+✔ only expert-confirmed zh to bo expert or community translations are eligible (1.35572ms)
+✔ unreviewed, machine, wrong-language, or incomplete values keep Chinese only (1.117632ms)
+✔ subtitle tracks require an approved licensed WebVTT resource and exact Tibetan review metadata (0.465732ms)
+✔ revoke control is rendered only for a server-active credential (0.985048ms)
+✔ confirmation warns about retained students and uses a labelled native modal (0.215153ms)
+✔ unknown response performs one list reconciliation and masks the pending credential (0.25942ms)
+✔ inactive cards redact code and keep the bespoke paper cancellation seal (0.176255ms)
+✔ revoke API client posts to the active school and the generated route matches OpenAPI (2.437672ms)
+✔ Runner uses one navigation owner and the API returns server-confirmed course destination (40.25818ms)
+✔ a submit 201 followed by course-sync outage stays pending and retries the same attempt only (4.577957ms)
+✔ a committed course completion with a dropped 201 response is reconciled by GET without a duplicate POST (1.474272ms)
+✔ refresh reconciliation skips submit and course-complete POSTs when server progress is already complete (1.321126ms)
+✔ safe return target requires same-origin exact CourseDetail path and matching dynamic IDs (7.613046ms)
+✔ 401, 403, and 404 access failures clear stale context and cached identity; 409 keeps recovery context (5.336019ms)
+✔ changed identity is cleared before any foreign attempt read (1.066282ms)
+✔ T012 confirmation cancel and Escape remain non-submitting; Runner has safe return and recovery controls (0.50687ms)
+✔ CSV has UTF-8 BOM, stable headers, and supports an authorized empty class (2.867842ms)
+✔ CSV quotes RFC 4180 separators and neutralizes formula-leading student text (1.284181ms)
+✔ zero values remain visible while null progress and score are not converted to zero (15.573055ms)
+✔ filename is based on class scope and time without student names (0.967963ms)
+✔ export makes a fresh scoped request, checks current identity, and never reuses page summaries (0.313112ms)
+✔ export controls and status are keyboard and screen reader discoverable at narrow widths (0.177927ms)
+✔ real-name search normalizes Unicode and keeps distinct same-name enrollment IDs (10.764193ms)
+✔ risk filter accepts only server states and treats absent or future states as neutral unknown (1.134731ms)
+✔ formal score filter preserves score zero separately from null (1.071162ms)
+✔ recent activity and course progress sort descending with nulls last and stable ID ties (1.118103ms)
+✔ query state is allowlisted, preserves unrelated route context, and removes invalid enum values (2.486162ms)
+✔ class page retains only identity-scoped filter state and discards stale async data (0.341062ms)
+✔ filters expose formal-score state and whole-class CSV scope at all sizes (0.331389ms)
+✔ personalized primary task has priority over optional discovery in Today layout (1.30621ms)
+✔ a real authorized recording practice is an optional activity, not a fake task (0.253744ms)
+✔ does not repeat the exact practice or course already selected as the primary step (0.319474ms)
+✔ Today keeps the server-issued BASELINE id when ordinary practice catalog omits SYSTEM definitions (0.164556ms)
+✔ does not recommend the practice behind a real resumed assessment session (0.303066ms)
+✔ API errors and missing authorized work never produce filler buttons or scores (0.195941ms)
+✔ oral practice is a small real server-filter tool, not three promotional navigation cards (3.200717ms)
+✔ recording filter active state is accessible and keeps catalog request controls (0.309054ms)
+✔ mobile ability controls remain available in keyboard-operable native disclosure (1.671008ms)
+✔ catalog filters and real server-owned practice tab requests remain intact (0.238717ms)
+✔ mobile search keeps its action beside the field with a comfortable touch target (0.171047ms)
+✖ mobile first-card hierarchy reflows the tools and preserves a strong cover (1.175812ms)
+✔ empty and whitespace review scores are rejected before numeric conversion (5.146848ms)
+✔ an explicitly entered zero is valid and remains numeric zero (2.994543ms)
+✔ valid positive scores and equivalent trailing zero precision are accepted (2.325724ms)
+✔ invalid, negative, over-maximum, and over-precision scores are rejected (1.6431ms)
+✔ loading → empty and processing remain distinct from errors (14.746164ms)
+✔ 403 is a visible error; retry recovers with newly fetched data (2.156686ms)
+✔ catalog failure and malformed response never masquerade as empty; retry only catalog (1.295557ms)
+✔ primary creation failure preserves page and retries the real action (1.210742ms)
+✔ legacy redirect preserves dynamic assignment and activity IDs (3.03324ms)
+ℹ tests 137
+ℹ suites 0
+ℹ pass 136
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 562.68464
+
+✖ failing tests:
+
+test at tests/assessment/t045-mobile-catalog-hierarchy.test.mjs:32:1
+✖ mobile first-card hierarchy reflows the tools and preserves a strong cover (1.175812ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /\.practice-page \.practice-cover\{height:150px\}/. Input:
+
+  ':root { --catalog-ink:#26382f; --catalog-pine:#234d43; --catalog-ochre:#b77725; --catalog-paper:#f8f4eb; --catalog-line:#ded5c4; --catalog-clay:#b95535; }\n' +
+    '.practice-page { position:relative; max-width:1440px; padding:38px 42px 70px; overflow:hidden; }\n' +
+    '.practice-contours { pointer-events:none; position:absolute; inset:0; opacity:.25; background-image:linear-gradient(145deg,transparent 49.4%,rgba(45,106,93,.16) 49.6%,transparent 50%),radial-gradient(ellipse at 90% 5%,rgba(218,155,37,.14),transparent 33%); background-size:38px 27px,auto; mask-image:linear-gradient(#000,transparent 68%); }\n' +
+    '.practice-catalog-head,.catalog-tabs,.catalog-ability,.catalog-workbench,.practice-detail-hero,.practice-detail-grid { position:relative; z-index:1; }\n' +
+    '.practice-catalog-head { display:flex; gap:32px; justify-content:space-between; align-items:end; margin:12px 0 20px; }\n' +
+    '.catalog-intro { max-width:720px; }.catalog-head-tools{display:grid;gap:13px;justify-items:end}.catalog-archive-nav{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.catalog-archive-nav a{padding:7px 10px;border-bottom:1px solid #d7c49f;color:var(--catalog-pine);font-size:12px;font-weight:700;text-decoration:none}.catalog-archive-nav a:hover{color:var(--catalog-clay);border-color:currentColor}.eyebrow { margin:0 0 8px; color:var(--catalog-clay); font-size:12px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; }.practice-catalog-head h1,.practice-detail-hero h1 { max-width:760px; margin:0; color:var(--catalog-ink); font-family:Georgia,"Noto Serif SC",serif; font-size:clamp(30px,4vw,50px); line-height:1.08; letter-spacing:.02em; }.practice-catalog-head p:not(.eyebrow),.practice-detail-hero p { color:#657168; line-height:1.75; }\n' +
+    '.catalog-search { width:min(420px,100%); }.catalog-search label { display:flex; align-items:center; gap:9px; padding:7px 7px 7px 16px; background:#fffdfa; border:1px solid var(--catalog-line); border-radius:10px; box-shadow:0 12px 24px rgba(53,55,39,.06); }.catalog-search span { color:var(--catalog-ochre); font-size:23px; }.catalog-search input { min-width:0; flex:1; border:0; outline:0; background:transparent; font:inherit; color:var(--catalog-ink); }.catalog-search .btn { padding:10px 15px; }\n' +
+    '.catalog-tabs { display:flex; align-items:center; gap:2px; overflow-x:auto; border-top:1px solid var(--catalog-line); border-bottom:1px solid var(--catalog-line); }.catalog-tabs button { flex:0 0 auto; padding:16px 17px 13px; border:0; border-bottom:3px solid transparent; background:transparent; color:#5c685e; cursor:pointer; font:600 14px/1 inherit; }.catalog-tabs button.active { color:var(--catalog-clay); border-bottom-color:var(--catalog-clay); }\n' +
+    '.assigned-remediations{position:relative;z-index:1;margin:4px 0 22px;padding:18px;border:1px solid #d8c7a5;background:#fff9ec}.assigned-remediation-list{display:grid;gap:9px}.assigned-remediation-list article{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 0;border-top:1px dashed #ddcfb5}.assigned-remediation-list article:first-child{border-top:0}.assigned-remediation-list strong{color:var(--catalog-ink)}.assigned-remediation-list p{margin:5px 0 0;color:#70796f;font-size:13px}.assigned-remediation-list article>div:last-child{display:flex;align-items:center;gap:12px}.assigned-remediation-list .btn{padding:8px 11px;font-size:13px}\n' +
+    '.catalog-ability { padding:28px 0 25px; }.catalog-section-head,.result-toolbar,.filter-heading,.section-title { display:flex; justify-content:space-between; gap:16px; align-items:center; }.catalog-section-head h2,.result-toolbar h2 { margin:0; color:var(--catalog-ink); font-family:Georgia,"Noto Serif SC",serif; font-size:25px; }.text-action { color:var(--catalog-pine); border:0; border-bottom:1px solid currentColor; background:transparent; cursor:pointer; font:inherit; }.text-action.selected { opacity:.55; }\n' +
+    '.ability-rail { display:flex; gap:9px; margin-top:17px; overflow-x:auto; padding-bottom:4px; }.ability-button { min-width:130px; padding:13px 15px; text-align:left; border:1px solid #d8dfd4; border-radius:8px; background:#fcfbf6; color:var(--catalog-pine); cursor:pointer; transition:transform .2s,border-color .2s,background .2s; }.ability-button:hover,.ability-button.selected { transform:translateY(-2px); border-color:var(--catalog-ochre); background:#fff4df; }.ability-button b,.ability-button small { display:block; }.ability-button small { margin-top:5px; color:#7a837a; font-size:12px; }\n' +
+    '.catalog-workbench { display:grid; grid-template-columns:230px minmax(0,1fr); gap:30px; padding-top:25px; border-top:1px solid var(--catalog-line); }.catalog-filters { align-self:start; padding:4px 3px 10px; }.filter-heading h2 { margin:0; color:var(--catalog-ink); font:700 19px Georgia,"Noto Serif SC",serif; }.filter-group { padding:12px 0; border-bottom:1px dashed #d8d0bf; }.filter-group h3 { margin:0 0 6px; color:#56635b; font-size:13px; }.facet-chip { display:flex; justify-content:space-between; width:100%; padding:5px 0; border:0; background:transparent; color:#6d756f; cursor:pointer; text-align:left; font:13px/1.4 inherit; }.facet-chip:hover,.facet-chip.selected { color:var(--catalog-clay); font-weight:700; }.facet-chip small { color:#9b968c; }.more-filters { margin-top:12px; border-top:1px dashed #d8d0bf; }.more-filters summary { display:flex; justify-content:space-between; padding:12px 0; color:var(--catalog-pine); cursor:pointer; font-size:13px; font-weight:700; list-style:none; }.more-filters summary::-webkit-details-marker { display:none; }.more-filters summary span { color:#9b968c; font-weight:400; }.more-filters[open] summary { color:var(--catalog-clay); }.catalog-results { min-width:0; position:relative; }.catalog-results.is-refreshing .practice-grid,.catalog-results.is-refreshing .practice-list { opacity:.72; transition:opacity .14s ease; }.catalog-refreshing { position:absolute; top:3px; right:0; display:inline-flex; align-items:center; gap:6px; color:#9a681e; font-size:12px; }.catalog-refreshing:before { content:""; width:7px; height:7px; border:1px solid #b77725; border-top-color:transparent; border-radius:50%; animation:catalog-spin .7s linear infinite; }@keyframes catalog-spin { to { transform:rotate(360deg); } }.result-toolbar { margin-bottom:20px; }.result-actions { display:flex; align-items:center; gap:12px; }.result-actions select { border:1px solid var(--catalog-line); border-radius:7px; background:#fffdfa; padding:9px; color:#4f5d53; }.view-switch { display:flex; border:1px solid var(--catalog-line); border-radius:7px; overflow:hidden; }.view-switch button { padding:8px 10px; border:0; background:#fffdfa; cursor:pointer; }.view-switch button.active { background:#e8eee7; color:var(--catalog-pine); }.active-filter-row { display:flex; flex-wrap:wrap; gap:7px; margin-top:10px; }.active-filter { padding:5px 9px; border:1px solid #d7b67a; border-radius:99px; background:#fff6e6; color:#8d5d19; cursor:pointer; }\n' +
+    '.practice-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:22px; }.practice-tile { overflow:hidden; border:1px solid var(--catalog-line); background:#fffefa; box-shadow:0 12px 30px rgba(54,51,38,.06); }.practice-cover { position:relative; display:block; height:185px; overflow:hidden; background:#d7dfd4; }.practice-cover img { width:100%; height:100%; object-fit:cover; transition:transform .45s ease; }.practice-tile:hover .practice-cover img { transform:scale(1.05); }.cover-shade { position:absolute; inset:0; background:linear-gradient(180deg,transparent 35%,rgba(29,49,38,.48)); }.practice-kind { position:absolute; left:13px; bottom:11px; padding:5px 8px; background:rgba(255,251,242,.88); color:#386052; font-size:12px; }.favorite-button { position:absolute; top:10px; right:10px; width:32px; height:32px; border:0; border-radius:50%; background:rgba(255,253,248,.9); color:var(--catalog-ochre); cursor:pointer; font-size:18px; }.favorite-button.is-favorite { color:var(--catalog-clay); }.practice-tile-body { padding:16px 17px 14px; }.practice-tile h2,.practice-row h2 { margin:8px 0; font:700 21px/1.25 Georgia,"Noto Serif SC",serif; color:var(--catalog-ink); }.practice-tile h2 a { color:inherit; text-decoration:none; }.practice-tile p,.practice-row p { margin:0; color:#6d766e; font-size:13px; line-height:1.65; }.practice-tile-meta { display:flex; flex-wrap:wrap; align-items:center; gap:7px; color:#8b8272; font-size:12px; }.practice-tile-meta i { width:3px; height:3px; border-radius:50%; background:#b69d79; }.tag-row { display:flex; flex-wrap:wrap; gap:5px; margin-top:12px; }.tag-row span { padding:4px 7px; background:#f1f4ee; color:#526859; font-size:11px; }.practice-tile-foot { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:16px; padding-top:12px; border-top:1px solid #ece6d9; font-size:12px; }.practice-tile-foot a { color:var(--catalog-pine); text-decoration:none; }.practice-state-label { color:#5c775f; font-weight:700; }.practice-state-label.in_progress { color:#aa711e; }.practice-state-label.completed { color:#658176; }\n' +
+    '.practice-list { display:grid; gap:14px; }.practice-row { display:grid; grid-template-columns:145px minmax(0,1fr) 230px; gap:18px; align-items:center; padding:12px; border:1px solid var(--catalog-line); background:#fffefa; }.practice-row>img { width:145px; height:105px; object-fit:cover; }.practice-row-state { text-align:right; }.practice-row-state p { margin-bottom:12px; }.practice-row-state .btn { margin-top:11px; }.load-more { display:block; margin:28px auto 0; border:1px solid var(--catalog-ochre); background:#fffaf0; color:#8d5d19; padding:11px 22px; cursor:pointer; }\n' +
+    '.practice-state { position:relative; z-index:1; display:flex; align-items:center; justify-content:center; gap:28px; min-height:330px; padding:30px; text-align:left; border:1px solid var(--catalog-line); background:#fffdf8; }.practice-state .loading-spinner { margin:0; }.practice-state img { width:min(265px,40%); max-height:220px; object-fit:cover; mix-blend-mode:m'... 7676 more characters
+
+      at TestContext.<anonymous> (file:///home/tian/code/work/yuzan-workspace-t050/frontend/tests/assessment/t045-mobile-catalog-hierarchy.test.mjs:34:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: ':root { --catalog-ink:#26382f; --catalog-pine:#234d43; --catalog-ochre:#b77725; --catalog-paper:#f8f4eb; --catalog-line:#ded5c4; --catalog-clay:#b95535; }\n.practice-page { position:relative; max-width:1440px; padding:38px 42px 70px; overflow:hidden; }\n.practice-contours { pointer-events:none; position:absolute; inset:0; opacity:.25; background-image:linear-gradient(145deg,transparent 49.4%,rgba(45,106,93,.16) 49.6%,transparent 50%),radial-gradient(ellipse at 90% 5%,rgba(218,155,37,.14),transparent 33%); background-size:38px 27px,auto; mask-image:linear-gradient(#000,transparent 68%); }\n.practice-catalog-head,.catalog-tabs,.catalog-ability,.catalog-workbench,.practice-detail-hero,.practice-detail-grid { position:relative; z-index:1; }\n.practice-catalog-head { display:flex; gap:32px; justify-content:space-between; align-items:end; margin:12px 0 20px; }\n.catalog-intro { max-width:720px; }.catalog-head-tools{display:grid;gap:13px;justify-items:end}.catalog-archive-nav{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.catalog-archive-nav a{padding:7px 10px;border-bottom:1px solid #d7c49f;color:var(--catalog-pine);font-size:12px;font-weight:700;text-decoration:none}.catalog-archive-nav a:hover{color:var(--catalog-clay);border-color:currentColor}.eyebrow { margin:0 0 8px; color:var(--catalog-clay); font-size:12px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; }.practice-catalog-head h1,.practice-detail-hero h1 { max-width:760px; margin:0; color:var(--catalog-ink); font-family:Georgia,"Noto Serif SC",serif; font-size:clamp(30px,4vw,50px); line-height:1.08; letter-spacing:.02em; }.practice-catalog-head p:not(.eyebrow),.practice-detail-hero p { color:#657168; line-height:1.75; }\n.catalog-search { width:min(420px,100%); }.catalog-search label { display:flex; align-items:center; gap:9px; padding:7px 7px 7px 16px; background:#fffdfa; border:1px solid var(--catalog-line); border-radius:10px; box-shadow:0 12px 24px rgba(53,55,39,.06); }.catalog-search span { color:var(--catalog-ochre); font-size:23px; }.catalog-search input { min-width:0; flex:1; border:0; outline:0; background:transparent; font:inherit; color:var(--catalog-ink); }.catalog-search .btn { padding:10px 15px; }\n.catalog-tabs { display:flex; align-items:center; gap:2px; overflow-x:auto; border-top:1px solid var(--catalog-line); border-bottom:1px solid var(--catalog-line); }.catalog-tabs button { flex:0 0 auto; padding:16px 17px 13px; border:0; border-bottom:3px solid transparent; background:transparent; color:#5c685e; cursor:pointer; font:600 14px/1 inherit; }.catalog-tabs button.active { color:var(--catalog-clay); border-bottom-color:var(--catalog-clay); }\n.assigned-remediations{position:relative;z-index:1;margin:4px 0 22px;padding:18px;border:1px solid #d8c7a5;background:#fff9ec}.assigned-remediation-list{display:grid;gap:9px}.assigned-remediation-list article{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 0;border-top:1px dashed #ddcfb5}.assigned-remediation-list article:first-child{border-top:0}.assigned-remediation-list strong{color:var(--catalog-ink)}.assigned-remediation-list p{margin:5px 0 0;color:#70796f;font-size:13px}.assigned-remediation-list article>div:last-child{display:flex;align-items:center;gap:12px}.assigned-remediation-list .btn{padding:8px 11px;font-size:13px}\n.catalog-ability { padding:28px 0 25px; }.catalog-section-head,.result-toolbar,.filter-heading,.section-title { display:flex; justify-content:space-between; gap:16px; align-items:center; }.catalog-section-head h2,.result-toolbar h2 { margin:0; color:var(--catalog-ink); font-family:Georgia,"Noto Serif SC",serif; font-size:25px; }.text-action { color:var(--catalog-pine); border:0; border-bottom:1px solid currentColor; background:transparent; cursor:pointer; font:inherit; }.text-action.selected { opacity:.55; }\n.ability-rail { display:flex; gap:9px; margin-top:17px; overflow-x:auto; padding-bottom:4px; }.ability-button { min-width:130px; padding:13px 15px; text-align:left; border:1px solid #d8dfd4; border-radius:8px; background:#fcfbf6; color:var(--catalog-pine); cursor:pointer; transition:transform .2s,border-color .2s,background .2s; }.ability-button:hover,.ability-button.selected { transform:translateY(-2px); border-color:var(--catalog-ochre); background:#fff4df; }.ability-button b,.ability-button small { display:block; }.ability-button small { margin-top:5px; color:#7a837a; font-size:12px; }\n.catalog-workbench { display:grid; grid-template-columns:230px minmax(0,1fr); gap:30px; padding-top:25px; border-top:1px solid var(--catalog-line); }.catalog-filters { align-self:start; padding:4px 3px 10px; }.filter-heading h2 { margin:0; color:var(--catalog-ink); font:700 19px Georgia,"Noto Serif SC",serif; }.filter-group { padding:12px 0; border-bottom:1px dashed #d8d0bf; }.filter-group h3 { margin:0 0 6px; color:#56635b; font-size:13px; }.facet-chip { display:flex; justify-content:space-between; width:100%; padding:5px 0; border:0; background:transparent; color:#6d756f; cursor:pointer; text-align:left; font:13px/1.4 inherit; }.facet-chip:hover,.facet-chip.selected { color:var(--catalog-clay); font-weight:700; }.facet-chip small { color:#9b968c; }.more-filters { margin-top:12px; border-top:1px dashed #d8d0bf; }.more-filters summary { display:flex; justify-content:space-between; padding:12px 0; color:var(--catalog-pine); cursor:pointer; font-size:13px; font-weight:700; list-style:none; }.more-filters summary::-webkit-details-marker { display:none; }.more-filters summary span { color:#9b968c; font-weight:400; }.more-filters[open] summary { color:var(--catalog-clay); }.catalog-results { min-width:0; position:relative; }.catalog-results.is-refreshing .practice-grid,.catalog-results.is-refreshing .practice-list { opacity:.72; transition:opacity .14s ease; }.catalog-refreshing { position:absolute; top:3px; right:0; display:inline-flex; align-items:center; gap:6px; color:#9a681e; font-size:12px; }.catalog-refreshing:before { content:""; width:7px; height:7px; border:1px solid #b77725; border-top-color:transparent; border-radius:50%; animation:catalog-spin .7s linear infinite; }@keyframes catalog-spin { to { transform:rotate(360deg); } }.result-toolbar { margin-bottom:20px; }.result-actions { display:flex; align-items:center; gap:12px; }.result-actions select { border:1px solid var(--catalog-line); border-radius:7px; background:#fffdfa; padding:9px; color:#4f5d53; }.view-switch { display:flex; border:1px solid var(--catalog-line); border-radius:7px; overflow:hidden; }.view-switch button { padding:8px 10px; border:0; background:#fffdfa; cursor:pointer; }.view-switch button.active { background:#e8eee7; color:var(--catalog-pine); }.active-filter-row { display:flex; flex-wrap:wrap; gap:7px; margin-top:10px; }.active-filter { padding:5px 9px; border:1px solid #d7b67a; border-radius:99px; background:#fff6e6; color:#8d5d19; cursor:pointer; }\n.practice-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:22px; }.practice-tile { overflow:hidden; border:1px solid var(--catalog-line); background:#fffefa; box-shadow:0 12px 30px rgba(54,51,38,.06); }.practice-cover { position:relative; display:block; height:185px; overflow:hidden; background:#d7dfd4; }.practice-cover img { width:100%; height:100%; object-fit:cover; transition:transform .45s ease; }.practice-tile:hover .practice-cover img { transform:scale(1.05); }.cover-shade { position:absolute; inset:0; background:linear-gradient(180deg,transparent 35%,rgba(29,49,38,.48)); }.practice-kind { position:absolute; left:13px; bottom:11px; padding:5px 8px; background:rgba(255,251,242,.88); color:#386052; font-size:12px; }.favorite-button { position:absolute; top:10px; right:10px; width:32px; height:32px; border:0; border-radius:50%; background:rgba(255,253,248,.9); color:var(--catalog-ochre); cursor:pointer; font-size:18px; }.favorite-button.is-favorite { color:var(--catalog-clay); }.practice-tile-body { padding:16px 17px 14px; }.practice-tile h2,.practice-row h2 { margin:8px 0; font:700 21px/1.25 Georgia,"Noto Serif SC",serif; color:var(--catalog-ink); }.practice-tile h2 a { color:inherit; text-decoration:none; }.practice-tile p,.practice-row p { margin:0; color:#6d766e; font-size:13px; line-height:1.65; }.practice-tile-meta { display:flex; flex-wrap:wrap; align-items:center; gap:7px; color:#8b8272; font-size:12px; }.practice-tile-meta i { width:3px; height:3px; border-radius:50%; background:#b69d79; }.tag-row { display:flex; flex-wrap:wrap; gap:5px; margin-top:12px; }.tag-row span { padding:4px 7px; background:#f1f4ee; color:#526859; font-size:11px; }.practice-tile-foot { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:16px; padding-top:12px; border-top:1px solid #ece6d9; font-size:12px; }.practice-tile-foot a { color:var(--catalog-pine); text-decoration:none; }.practice-state-label { color:#5c775f; font-weight:700; }.practice-state-label.in_progress { color:#aa711e; }.practice-state-label.completed { color:#658176; }\n.practice-list { display:grid; gap:14px; }.practice-row { display:grid; grid-template-columns:145px minmax(0,1fr) 230px; gap:18px; align-items:center; padding:12px; border:1px solid var(--catalog-line); background:#fffefa; }.practice-row>img { width:145px; height:105px; object-fit:cover; }.practice-row-state { text-align:right; }.practice-row-state p { margin-bottom:12px; }.practice-row-state .btn { margin-top:11px; }.load-more { display:block; margin:28px auto 0; border:1px solid var(--catalog-ochre); background:#fffaf0; color:#8d5d19; padding:11px 22px; cursor:pointer; }\n.practice-state { position:relative; z-index:1; display:flex; align-items:center; justify-content:center; gap:28px; min-height:330px; padding:30px; text-align:left; border:1px solid var(--catalog-line); background:#fffdf8; }.practice-state .loading-spinner { margin:0; }.practice-state img { width:min(265px,40%); max-height:220px; object-fit:cover; mix-blend-mode:m'... 7676 more characters,
+    expected: /\.practice-page \.practice-cover\{height:150px\}/,
+    operator: 'match',
+    diff: 'simple'
+  }
+/home/tian/code/work/yuzan-workspace-t050/frontend:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @yuzan/frontend@4.0.0 test: `node --test tests/assessment/*.test.mjs && node scripts/verify-runtime.mjs`
+Exit status 1
+ WARN   Local package.json exists, but node_modules missing, did you mean to install?
+EXIT_CODE=1

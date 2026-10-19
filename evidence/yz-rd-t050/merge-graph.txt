@@ -1,0 +1,151 @@
+*   383f292 598fd18 23ea9e3 merge(T050): integrate accepted T048 teacher review
+|\
+| * 23ea9e3 0f6ea37 (origin/feat/yz-rd-t048-teacher-speech-review-feedback-ux, feat/yz-rd-t048-teacher-speech-review-feedback-ux) feat(T048): refine teacher speech review experience
+* | 598fd18 1728d15 (origin/feat/yz-rd-t047-mobile-first-unified-product, feat/yz-rd-t047-mobile-first-unified-product) test(T047): add course and oral practice screenshots
+* | 1728d15 8c733f2 test(T047): add desktop Today report screenshots
+* | 8c733f2 3ae856c test(T047): add Today mobile and pending screenshots
+* | 3ae856c 9ead512 test(T047): add speech runner viewport screenshots
+* | 9ead512 67a698d test(T047): add speech detail and processing screenshots
+* | 67a698d 27e6895 test(T047): add 1440px catalog screenshot
+* | 27e6895 9900d74 test(T047): add 1280px catalog screenshot
+* | 9900d74 9cab466 test(T047): add responsive speech catalog results
+* | 9cab466 ec49d49 test(T047): add speech catalog mobile evidence
+* | ec49d49 fb574f0 test(T047): add mobile first-card viewport evidence
+* | fb574f0 b5a5743 feat(T047): add integration runner and acceptance evidence
+* |   b5a5743 0f6ea37 e3a3c54 merge(T047): integrate accepted T045 mobile practice into T046
+|\ \
+| |/
+|/|
+| * e3a3c54 ffb21a7 (origin/feat/yz-rd-t045-mobile-practice-first-card, feat/yz-rd-t045-mobile-practice-first-card) docs: align T045 viewport evidence
+| * ffb21a7 c140214 feat(assessment): verify T045 mobile practice first card
+| * c140214 2de3b66 ux(T045): reveal mobile practice cards sooner with collapsible ability filters
+* | 0f6ea37 7a2ec1f (feat/yz-rd-t046-personalized-speech-ux-integration) test(T046): verify personalized speech integration
+* |   7a2ec1f d6e0328 7f92885 merge(T046): integrate T044 speech practice catalog
+|\ \
+| * | 7f92885 2de3b66 (origin/feat/yz-rd-t044-practice-catalog-ux-hierarchy, feat/yz-rd-t044-practice-catalog-ux-hierarchy) docs(T044): record visual review and replay status
+| |/
+| * 2de3b66 ef3e540 test(T044): verify catalog and speech journey
+| * ef3e540 7c2c8da ux(T044): prioritize real practice catalog and compact speech filter
+| * 7c2c8da 39c0159 (origin/feat/yz-rd-t038-speech-practice-exam-showcase, feat/yz-rd-t038-speech-practice-exam-showcase) test(T038): verify speaking practice native journey
+| * 39c0159 d3ed3f3 fix(T038): oral entry searches across all authorized practice modes
+| * d3ed3f3 d2ed5c8 feat(T038): expose live speaking mock and remediation training modes
+* |   d6e0328 a23232c 6049e10 merge(T046): integrate T043 personalized Today
+|\ \
+| * | 6049e10 fd6648e (origin/feat/yz-rd-t043-personalized-today-ux-restoration, feat/yz-rd-t043-personalized-today-ux-restoration) docs(T043): backfill acceptance result identifiers
+| * | fd6648e 752a6b9 fix(T043): prevent duplicate Today discovery on resume
+| * | 752a6b9 6d3aa67 ux(T043): restore Today primary learning hierarchy and contextual discovery
+* | | a23232c a676c99 (origin/feat/yz-rd-t042-student-showcase-roster-history-integration, feat/yz-rd-t042-student-showcase-roster-history-integration) fix(T042): complete showcase and roster integration gate
+* | | a676c99 c409335 docs(T042): record accepted Today showcase integration and pending native gate
+* | | c409335 7cf4e1b 6d3aa67 Merge commit '6d3aa67c114bd310c2d793caa7bcd5be9166ec3f' into feat/yz-rd-t042-student-showcase-roster-history-integration
+|\| |
+| * | 6d3aa67 724d873 (origin/feat/yz-rd-t037-listen-speak-practice-exam-home, feat/yz-rd-t037-listen-speak-practice-exam-home) test(e2e): verify T037 Today pathways on native runtime
+| * | 724d873 b3a731b feat(T037): make listen speak assessment report pathways visible on Today
+* | | 7cf4e1b 92bd3bd (origin/feat/yz-rd-t039-teacher-history-rolling-integration, feat/yz-rd-t039-teacher-history-rolling-integration) docs(T039): record accepted-source integration and pending native gate
+* | |   92bd3bd 61101b7 d2ed5c8 Merge commit 'd2ed5c8ca7b01f6c955e23cae6a2a9202d815e49' into feat/yz-rd-t039-teacher-history-rolling-integration
+|\ \ \
+| | |/
+| |/|
+| * | d2ed5c8 a06897b (origin/feat/yz-rd-t036-student-history-actionable-ux, feat/yz-rd-t036-student-history-actionable-ux) feat(T036): make student history actionable and report-safe
+| * | a06897b d7b99c8 feat(T036): add loaded-history search and status filters
+* | |   61101b7 b3a731b d21c037 Merge commit 'd21c0373333f19174b7e625f71efc2e2a8068314' into feat/yz-rd-t039-teacher-history-rolling-integration
+|\ \ \
+| |_|/
+|/| |
+| * | d21c037 995d74b (origin/feat/yz-rd-t034-teacher-class-roster-ux, feat/yz-rd-t034-teacher-class-roster-ux) feat(T034): complete class roster filters and detail return
+| * | 995d74b 67bbfda feat(T034): add authorized loaded-roster filters and sorting
+* | | b3a731b 38d36c7 (origin/feat/yz-rd-t033-multirole-web-rolling-integration, feat/yz-rd-t033-multirole-web-rolling-integration) test(t033): verify multi-role platform integration
+* | | 38d36c7 07a9ee1 67bbfda merge(T033): integrate scoped T032 teacher CSV
+|\| |
+| * | 67bbfda 306f57a (origin/feat/yz-rd-t032-teacher-roster-csv-export, feat/yz-rd-t032-teacher-roster-csv-export) docs(evidence): clarify class scope status contract
+| * | 306f57a 94a7d7a docs(evidence): record T032 roster export validation
+| * | 94a7d7a bfae13a feat(teacher): export authorized class roster CSV
+* | |   07a9ee1 83cd264 17108f2 merge(T033): integrate scoped T031 runner return
+|\ \ \
+| * | | 17108f2 deede5b (origin/feat/yz-rd-t031-course-runner-return-reliability, feat/yz-rd-t031-course-runner-return-reliability) fix(student): make course practice return reliable
+| * | | deede5b e456eac (origin/feat/yz-rd-t027-bilingual-activity-runner-parity, feat/yz-rd-t027-bilingual-activity-runner-parity) feat(student): add T027 safe bilingual activity renderer
+| * | | e456eac 37b5ac8 (origin/feat/yz-rd-t022-course-activity-learning-experience, feat/yz-rd-t022-course-activity-learning-experience) feat(student): restore course artwork in activity player
+| * | | 37b5ac8 c81c5ad test(evidence): refresh T022 native browser proof
+| * | | c81c5ad dcac087 test(evidence): finalize T022 recovery proof
+| * | | dcac087 4475f41 feat(student): harden course activity learning saves
+* | | |   83cd264 b492718 d7b99c8 merge(T033): integrate scoped T030 growth regression
+|\ \ \ \
+| | |_|/
+| |/| |
+| * | | d7b99c8 c085ac2 (origin/feat/yz-rd-t030-growth-formal-report-regression, feat/yz-rd-t030-growth-formal-report-regression) test(student-growth): repair formal report fixtures
+| * | | c085ac2 1ebc192 (origin/feat/yz-rd-t025-student-growth-feedback-action, feat/yz-rd-t025-student-growth-feedback-action) feat(student-growth): trace feedback and launch remediation
+* | | | b492718 f292c6b (origin/feat/yz-rd-t029-revoke-onboarding-rollup, feat/yz-rd-t029-revoke-onboarding-rollup) test(e2e): verify T026 T028 revocation rollup (T029)
+* | | |   f292c6b 2416577 bfae13a Merge commit 'bfae13ab315bee532842cffe4fdd6c142cb8a488' into feat/yz-rd-t029-revoke-onboarding-rollup
+|\ \ \ \
+| | |_|/
+| |/| |
+| * | | bfae13a 6801bf7 (origin/feat/yz-rd-t028-teacher-invitation-revocation, feat/yz-rd-t028-teacher-invitation-revocation) docs(evidence): record T028 invitation revocation proof
+| * | | 6801bf7 34af873 feat(teacher-invitations): add safe invitation revocation
+* | | | 2416577 f3a43d0 (origin/feat/yz-rd-t026-onboarding-rolling-web, feat/yz-rd-t026-onboarding-rolling-web) test(e2e): integrate T021 and T023 onboarding (T026)
+* | | | f3a43d0 8f831b6 34af873 Merge commit '34af873837c9cfb74a7be33e94617b94668b4f4d' into feat/yz-rd-t026-onboarding-rolling-web
+|\| | |
+| * | | 34af873 deff564 (origin/feat/yz-rd-t023-teacher-class-invitation-web, feat/yz-rd-t023-teacher-class-invitation-web) docs(evidence): clarify T023 runtime boundary
+| * | | deff564 e6b8e8a feat(teacher): add real class student invitations (T023)
+* | | |   8f831b6 ea1a048 6445dca Merge commit '6445dca34c19fea89c885a3e4085cf47f9d7e5ed' into feat/yz-rd-t026-onboarding-rolling-web
+|\ \ \ \
+| * | | | 6445dca 4475f41 (origin/feat/yz-rd-t021-student-profile-invitation-onboarding, feat/yz-rd-t021-student-profile-invitation-onboarding) feat(student): verify profile invitation bindings
+| | |_|/
+| |/| |
+* | | | ea1a048 ce709b4 (origin/feat/yz-rd-t024-teacher-student-rolling-web, feat/yz-rd-t024-teacher-student-rolling-web) test: complete T024 teacher student native integration
+* | | |   ce709b4 1ebc192 e6b8e8a merge: integrate T020 teacher home with T019 student web
+|\ \ \ \
+| | |/ /
+| |/| /
+| |_|/
+|/| |
+| * | e6b8e8a 73bb949 (origin/feat/yz-rd-t020-teacher-home-action-center, feat/yz-rd-t020-teacher-home-action-center) feat(teacher): build T020 teacher home action center
+| * | 73bb949 0596a9b (origin/feat/yz-rd-t018-teacher-review-queue-ux, feat/yz-rd-t018-teacher-review-queue-ux) feat(teacher): polish authorized review queue
+* | | 1ebc192 538babc (origin/feat/yz-rd-t019-web-rolling-integrated, feat/yz-rd-t019-web-rolling-integrated) fix(student): render course activities in responsive detail cards
+* | | 538babc b81f8b9 feat: integrate teacher remediation and student learning flows for T019
+* | |   b81f8b9 8b1fcdc 392f02a Merge commit '392f02ac01cb8e766e8bd63095053b4879c78bed' into feat/yz-rd-t019-web-rolling-integrated
+|\ \ \
+| * | | 392f02a 4d971c9 (origin/feat/yz-rd-t017-course-catalog-web-experience, feat/yz-rd-t017-course-catalog-web-experience) feat(student): refine course catalog experience (T017)
+* | | |   8b1fcdc 57c9f56 317cb79 Merge commit '317cb79c4d10c2b77529e8b1335b86351e3e32d3' into feat/yz-rd-t019-web-rolling-integrated
+|\ \ \ \
+| * | | | 317cb79 f64c722 (origin/feat/yz-rd-t016-student-navigation-experience, feat/yz-rd-t016-student-navigation-experience) docs(t016): refresh concurrent worktree evidence
+| * | | | f64c722 4d971c9 feat(student): make shared navigation usable (T016)
+| |/ / /
+* | | |   57c9f56 4475f41 0596a9b merge: integrate T014 teacher class remediation into T015
+|\ \ \ \
+| | |/ /
+| |/| /
+| |_|/
+|/| |
+| * | 0596a9b 193b59f (origin/feat/yz-rd-t014-teacher-class-remediation, feat/yz-rd-t014-teacher-class-remediation) docs(handoff): record T014 closure evidence
+| * | 193b59f 4d971c9 feat(teacher): complete class-to-remediation web flow
+| |/
+* | 4475f41 6de3e1b (origin/feat/yz-rd-t015-student-web-rollup, feat/yz-rd-t015-student-web-rollup) docs: record T015 push verification
+* | 6de3e1b 96b0a44 feat(web): roll up student practice and growth for T015
+* | 96b0a44 f15d1aa feat(student): personalize Today and growth pages
+* | f15d1aa 4d971c9 feat(assessment): improve student practice runner UX
+|/
+* 4d971c9 9b43400 (origin/feat/yz-rd-t011-web-review-feedback, feat/yz-rd-t011-web-review-feedback) feat(web): close teacher review feedback loop (YZ-RD-T011)
+* 9b43400 927c557 (origin/feat/yz-rd-t010-native-web-integration, feat/yz-rd-t010-native-web-integration) test: verify T007 and T008 on native T010
+* 927c557 9c77c8c feat(student): close practice history loop (YZ-RD-T008)
+* 9c77c8c 3a5484f (origin/feat/question-bank-v1, feat/question-bank-v1) test(e2e): verify T007 assignment flow on native postgres
+* 3a5484f 1b9b1be feat(dev): add isolated native web runtime
+* 1b9b1be ee77c89 feat(teacher): wire assignment review workflow
+* ee77c89 4d9322f feat(teacher): wire dashboard to scoped live data
+* 4d9322f 7f8ea12 fix(student): verify mobile learning and recover recording uploads
+* 7f8ea12 388874b feat(assignments): close real teacher publication and student Today loop
+* 388874b 0a7b931 fix(student): close Today course navigation and recovery seams
+* 0a7b931 9b09c94 feat(assessment): personalize remediation outcomes
+* 9b09c94 8aa04be feat(assessment): show remediation reference outcome
+* 8aa04be e4e0089 fix(assessment): surface returned speech diagnostics
+* e4e0089 034af20 feat(assessment): show remediation reference report
+* 034af20 eda7dce fix(assessment): avoid processing page poll flicker
+* eda7dce c480330 fix(student): let course directory follow page scroll
+* c480330 15fda04 fix(student): finish course media and visual cover polish
+* 15fda04 6274399 fix(student): unify today page navigation and course path
+* 6274399 5619bdf feat(frontend): add course mind structure view
+* 5619bdf 2db6cd2 fix(assessment): preserve recordings for unsupported speech tasks
+* 2db6cd2 0234618 feat(assessment): close review-to-remediation loop
+* 0234618 6dd5778 feat(course): import one real demonstration lesson
+* 6dd5778 7b28b19 fix(curriculum): persist student catalog course metadata
+* 7b28b19 3b9e7d1 feat(question-bank): activate provided level resources
+* 3b9e7d1 bf279e5 feat(assessment): add ISE diagnostic demo experience
+* bf279e5 (grafted) fix(student): make today multi-enrollment safe

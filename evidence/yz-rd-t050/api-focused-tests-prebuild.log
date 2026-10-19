@@ -1,0 +1,60 @@
+
+ RUN  v3.2.7 /home/tian/code/work/yuzan-workspace-t050/backend/api
+
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/assessment/assessment-review.queue.spec.ts [ test/assessment/assessment-review.queue.spec.ts ]
+ FAIL  test/assessment/assessment-review.service.spec.ts [ test/assessment/assessment-review.service.spec.ts ]
+Error: Failed to resolve entry for package "@yuzan/database". The package may have incorrect main/module/exports specified in its package.json.
+  Plugin: vite:import-analysis
+  File: /home/tian/code/work/yuzan-workspace-t050/backend/api/src/shared/database/prisma.service.ts:9:29
+  14 |  } from "@nestjs/common";
+  15 |  import { PrismaPg } from "@prisma/adapter-pg";
+  16 |  import { PrismaClient } from "@yuzan/database";
+     |                                ^
+  17 |  import { Pool } from "pg";
+  18 |  import {
+ ❯ packageEntryFailure ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:32896:32
+ ❯ resolvePackageEntry ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:32893:2
+ ❯ tryNodeResolve ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:32796:70
+ ❯ ResolveIdContext.handler ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:32635:16
+ ❯ EnvironmentPluginContainer.resolveId ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:28797:56
+ ❯ TransformPluginContext.resolve ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:29009:13
+ ❯ normalizeUrl ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:27191:22
+ ❯ ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:27257:32
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  test/organizations/classes.controller.spec.ts [ test/organizations/classes.controller.spec.ts ]
+ FAIL  test/organizations/classes.teacher-scope.spec.ts [ test/organizations/classes.teacher-scope.spec.ts ]
+Error: Failed to resolve entry for package "@yuzan/database". The package may have incorrect main/module/exports specified in its package.json.
+  Plugin: vite:import-analysis
+  File: /home/tian/code/work/yuzan-workspace-t050/backend/api/src/modules/classes/classes.service.ts:6:23
+  14 |  import { isActive, MembershipRole } from "../../common/security/index.js";
+  15 |  import { PrismaService } from "../../shared/database/prisma.service.js";
+  16 |  import { Prisma } from "@yuzan/database";
+     |                          ^
+  17 |  import {
+  18 |    ClassConflictException,
+ ❯ packageEntryFailure ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:32896:32
+ ❯ resolvePackageEntry ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:32893:2
+ ❯ tryNodeResolve ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:32796:70
+ ❯ ResolveIdContext.handler ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:32635:16
+ ❯ EnvironmentPluginContainer.resolveId ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:28797:56
+ ❯ TransformPluginContext.resolve ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:29009:13
+ ❯ normalizeUrl ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:27191:22
+ ❯ ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:27257:32
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+
+ Test Files  4 failed (4)
+      Tests  no tests
+   Start at  00:21:50
+   Duration  2.37s (transform 2.77s, setup 0ms, collect 0ms, tests 0ms, environment 1ms, prepare 1.20s)
+
+undefined
+/home/tian/code/work/yuzan-workspace-t050/backend/api:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/assessment/assessment-review.service.spec.ts test/assessment/assessment-review.queue.spec.ts test/organizations/classes.teacher-scope.spec.ts test/organizations/classes.controller.spec.ts
+EXIT_CODE=1

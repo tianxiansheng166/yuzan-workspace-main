@@ -1,0 +1,10 @@
+YZ-RD-T050 merge conflict record
+
+Target T047: 598fd18db3ae8d7dc4feaabdd8bc7425c1be6389
+Accepted T048: 23ea9e3f550672b7deb36f690c9c0adb436ebe80
+No-fast-forward merge: 383f2923e551c239acc9a79d2dc279a7a98485a4
+Merge base: 0f6ea3710797612aa08f37944a9ab9d92f033da1
+
+Result: clean merge; no conflicts occurred and no resolution was needed.
+Index check (`git ls-files --unmerged`): empty.
+The complete merged ancestry graph is preserved in `merge-graph.txt`.

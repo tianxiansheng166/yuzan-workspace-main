@@ -22,6 +22,8 @@ The task worktree was created at `/home/tian/code/work/yuzan-workspace-t050` fro
 
 The independent branch was pushed normally; no shared branch was merged or rewritten.
 
+The full merged ancestry graph and clean conflict record are retained in [`merge-graph.txt`](merge-graph.txt) and [`merge-conflicts.txt`](merge-conflicts.txt).
+
 ## Integrated native E2E
 
 Attempt 19 is the final acceptance run. The new T050 suite passed **3/3 tests** in one task-owned native Chrome + Web + NestJS API + PostgreSQL 17 + Redis + MinIO runtime. It did not use Docker. The test covers the integrated student and teacher journey, catalog/mobile regression, and 35-student roster/CSV isolation. The earlier exploratory attempts remain recorded as logs and JSON under `evidence/yz-rd-t050/e2e/attempt-01` through `attempt-18`; the final screenshots and proofs are under `attempt-19`.
@@ -36,16 +38,20 @@ Attempt 19 is the final acceptance run. The new T050 suite passed **3/3 tests** 
 
 Proofs: [integrated flow](e2e/attempt-19/task-summary/t050-integrated-proof.json), [catalog and mobile](e2e/attempt-19/task-summary/t050-catalog-modes-proof.json), [roster and CSV](e2e/attempt-19/task-summary/t050-roster-csv-proof.json), [native E2E log](e2e/attempt-19/t050-native-e2e.log), and [runner/cleanup log](e2e/attempt-19/runner-console.log).
 
+Attempts 01–17 were exploratory iterations and are retained with their per-run logs; they are not included in the acceptance count. Attempt 18 reported three passes, but its console and JSON disagreed on the report score (0 versus 15), so it is excluded from acceptance. Attempt 19 reran the current source in a separate evidence directory; its console and proof both report 15.
+
 ## Responsive and frontend regression
 
 Today, course detail, runner, formal report, oral catalog, teacher review queue/detail, and roster/CSV were captured at **390×844, 768×1024, 1280×900, and 1440×1000**. All checked document/body widths had no horizontal overflow. At 390×844, the first oral card starts at y=614 and its title ends at y=817.5, inside the first screen. Screenshots are in `e2e/attempt-19/task-summary/` and `e2e/attempt-19/teacher-review/`.
 
 The mobile catalog spacing/cover/title sizing keeps the first oral title visible at 390px. The corresponding frontend assertion was updated. Final frontend suite: **137/137 passed**, including runtime verification; raw output is [frontend-tests-final.log](frontend-tests-final.log).
 
+The six focused API test files also passed: **82 passed, 0 failed, 0 skipped**. The full API suite was not run; the focused run is recorded in [api-focused-tests.log](api-focused-tests.log).
+
 ## Full API lint and readiness
 
-`pnpm --filter @yuzan/api lint` was run across `src test` and exited 1 with **1,201 errors and 1 warning** (1,202 problems total). The output includes the existing API typing/lint debt and project-service parsing errors for test files; it is recorded without waiver in [api-lint-final.txt](api-lint-final.txt).
+`pnpm --filter @yuzan/api lint` was run across `src test` and exited 1 with **1,201 errors and 1 warning** (1,202 problems total). The final output includes 164 TypeScript project-service parsing errors for files outside the configured project, plus existing rule debt such as `no-unused-vars` (339), `no-unsafe-member-access` (202), `require-await` (155), `no-unsafe-assignment` (93), and `no-unnecessary-type-assertion` (88). ESLint marks 89 errors and the warning as potentially fixable with `--fix`; no blanket fix or waiver was applied. Full output is recorded in [api-lint-final.log](api-lint-final.log).
 
-`READY_TO_MERGE=NO` until the API owner resolves or explicitly waives that lint debt. No L4 data was opened. All task-owned native services were stopped by the owner-aware cleanup; the final runner's second stop check passed and its allocated ports were free.
+`READY_TO_MERGE=NO` until the API owner resolves or explicitly waives that lint debt. No L4 data was opened. All task-owned native services were stopped by the owner-aware cleanup; the final runner's second stop check passed, and the independent post-stop listener check is retained in [`e2e/attempt-19/post-stop-port-check.txt`](e2e/attempt-19/post-stop-port-check.txt).
 
 The target checkout's `AGENTS.md` lacks the AA-DEV-V2.2 marker and the task card supplied no separate Lane policy path. The user-provided `/home/tian/code/AGENTS.md` safety baseline governed. No T005 edit, Docker use, force Git operation, shared-branch merge, or L4 access occurred.
