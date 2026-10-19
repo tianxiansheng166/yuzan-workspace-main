@@ -40,6 +40,7 @@
       PROCESSING: "处理中",
       COMPLETED: "已完成",
       CANCELLED: "已取消",
+      NOT_STARTED: "未开始",
     })[status] || "状态待确认";
 
   const activeStatuses = new Set(["CREATED", "IN_PROGRESS", "SUBMITTED", "PROCESSING"]);
@@ -64,6 +65,54 @@
 
   let loadVersion = 0;
   let loadedIdentity = null;
+  let loadedEnrollmentId = "";
+  const remediationRequests = new Set();
+
+  function validDate(value) {
+    return Boolean(value && Number.isFinite(new Date(value).getTime()));
+  }
+
+  function validFormalScore(value) {
+    return typeof value === "number" && Number.isFinite(value) && value >= 0 && value <= 100;
+  }
+
+  function isDisplayableRetryCandidate(candidate) {
+    return candidate && typeof candidate === "object" &&
+      (typeof candidate.displayName === "string" || typeof candidate.family === "string");
+  }
+
+  function isActionableRetryCandidate(candidate) {
+    return isDisplayableRetryCandidate(candidate) && typeof candidate.questionVersionId === "string";
+  }
+
+  function sourceLinked(source, sessionId, schoolId, enrollmentId) {
+    return source?.id === sessionId && source.schoolId === schoolId &&
+      source.enrollmentId === enrollmentId && source.purpose === "STANDARD";
+  }
+
+  function remediationPendingKey(sourceSessionId, identity = readIdentity()) {
+    return `yuzan-growth-remediation-pending:${encodeURIComponent(identity.userId)}:${encodeURIComponent(identity.schoolId)}:${encodeURIComponent(sourceSessionId)}`;
+  }
+
+  function hasPendingRemediation(sourceSessionId, identity = readIdentity()) {
+    try {
+      return Boolean(window.sessionStorage) && window.sessionStorage.getItem(remediationPendingKey(sourceSessionId, identity)) === "1";
+    } catch {
+      return false;
+    }
+  }
+
+  function setPendingRemediation(sourceSessionId, pending, identity = readIdentity()) {
+    try {
+      if (!window.sessionStorage) return false;
+      const key = remediationPendingKey(sourceSessionId, identity);
+      if (pending) window.sessionStorage.setItem(key, "1");
+      else window.sessionStorage.removeItem(key);
+      return true;
+    } catch {
+      return false;
+    }
+  }
 
   function readIdentity() {
     const api = window.YuzanApi || YuzanApi;
@@ -103,12 +152,13 @@
     app.querySelector("[data-growth-retry]")?.addEventListener("click", init);
   }
 
-  async function loadSessions() {
+  async function loadSessions(enrollmentId) {
+    if (!enrollmentId) throw new Error("当前学校没有可核实的学生学籍。");
     const items = [];
     const seenCursors = new Set();
     let cursor = "";
     for (let pageNumber = 0; pageNumber < 30; pageNumber += 1) {
-      const page = unwrap(await YuzanApi.listAssessmentSessions({ limit: 100, ...(cursor ? { cursor } : {}) }));
+      const page = unwrap(await YuzanApi.listAssessmentSessions({ enrollmentId, limit: 100, ...(cursor ? { cursor } : {}) }));
       if (!Array.isArray(page?.items)) throw new Error("Attempt 列表响应不可用。");
       items.push(...page.items);
       const nextCursor = page.nextCursor || "";
@@ -160,19 +210,37 @@
     }));
   }
 
-  async function loadReports(historySessions) {
+  async function loadReports(historySessions, identity, enrollmentId) {
     const candidates = historySessions
-      .filter((session) => session.purpose !== "REMEDIATION" && session.sessionId)
+      .filter((session) => session && session.purpose !== "REMEDIATION" && session.sessionId)
       .slice(0, 8);
     const results = await Promise.all(candidates.map(async (session) => {
       try {
-        const report = unwrap(await YuzanApi.getAssessmentReport(session.sessionId));
-        if (!report || typeof report !== "object" || !report.generatedAt) {
+        const [sourceRaw, reportRaw] = await Promise.all([
+          YuzanApi.getAssessmentSession(session.sessionId),
+          YuzanApi.getAssessmentReport(session.sessionId),
+        ]);
+        const source = unwrap(sourceRaw);
+        const report = unwrap(reportRaw);
+        if (!report || typeof report !== "object") {
           return { session, report: null, state: "not-generated" };
         }
+        const reportLinked = typeof report.id === "string" && report.id.length > 0 && report.sessionId === source?.id && report.schoolId === identity.schoolId;
+        if (!sourceLinked(source, session.sessionId, identity.schoolId, enrollmentId) || !reportLinked) {
+          return { session, source, report, state: "incomplete" };
+        }
         const needsReview = report.summary?.requiresTeacherReview === true || report.summary?.scoringState === "NEEDS_REVIEW";
-        const complete = typeof report.dataCompleteness === "number" && report.dataCompleteness >= 100;
-        return { session, report, state: needsReview ? "review-pending" : complete ? "ready" : "incomplete" };
+        if (needsReview || ["SUBMITTED", "PROCESSING"].includes(source.status)) {
+          return { session, source, report, state: "review-pending" };
+        }
+        const sourceComplete = source.status === "COMPLETED" && validDate(source.completedAt);
+        const reportComplete = validDate(report.generatedAt) &&
+          report.dataCompleteness === 100 && Array.isArray(report.teacherFeedback);
+        const validScore = report.overallScore === null || validFormalScore(report.overallScore);
+        if (!sourceComplete || !reportComplete || !validScore) {
+          return { session, source, report, state: "incomplete" };
+        }
+        return { session, source, report, state: "ready" };
       } catch (error) {
         if (error?.status === 404) return { session, report: null, state: "not-generated" };
         if (error?.status === 401 || error?.status === 403) throw error;
@@ -239,11 +307,11 @@
 
   function activeAttemptHref(attempt) {
     if (["SUBMITTED", "PROCESSING"].includes(attempt.status)) {
-      return attempt.purpose === "REMEDIATION"
+      return attempt.isPractice || attempt.purpose === "REMEDIATION"
         ? `/student/practices/attempts/${encodeURIComponent(attempt.id)}/processing/`
         : `/assessment/sessions/${encodeURIComponent(attempt.id)}/processing/`;
     }
-    return attempt.isPractice
+    return attempt.isPractice || attempt.purpose === "REMEDIATION"
       ? `/student/practices/attempts/${encodeURIComponent(attempt.id)}/runner/`
       : `/assessment/sessions/${encodeURIComponent(attempt.id)}/`;
   }
@@ -274,11 +342,58 @@
   }
 
   function reportSummary(report) {
-    if (typeof report.overallScore === "number" && Number.isFinite(report.overallScore)) return `${report.overallScore} 分`;
-    return "报告暂未提供总分";
+    if (validFormalScore(report.overallScore)) return `${report.overallScore} 分`;
+    return "暂无正式得分";
   }
 
-  function renderReports(results) {
+  function relatedRemediation(sessions, sourceSessionId) {
+    return sessions
+      .filter((session) => session.purpose === "REMEDIATION" && session.retestOfSessionId === sourceSessionId)
+      .sort((left, right) => new Date(right.updatedAt || right.createdAt || 0) - new Date(left.updatedAt || left.createdAt || 0))[0] || null;
+  }
+
+  function remediationAttemptHref(attempt) {
+    const attemptId = encodeURIComponent(attempt.id);
+    if (["SUBMITTED", "PROCESSING"].includes(attempt.status)) return `/student/practices/attempts/${attemptId}/processing/`;
+    if (attempt.status === "COMPLETED") return `/student/practices/attempts/${attemptId}/report/`;
+    return `/student/practices/attempts/${attemptId}/runner/`;
+  }
+
+  function remediationAction(sourceSessionId, candidates, candidateCount, sessions) {
+    if (!candidateCount) {
+      return '<p class="growth-remediation-note">本次正式报告没有标记待巩固内容。</p>';
+    }
+    if (!candidates.length) {
+      return '<p class="growth-remediation-note">报告有待巩固提示，但缺少可核实的题目版本关联；当前不能创建专项巩固。</p>';
+    }
+    const existing = relatedRemediation(sessions, sourceSessionId);
+    if (existing) {
+      const action = existing.status === "COMPLETED"
+        ? "查看巩固结果"
+        : existing.status === "SUBMITTED" || existing.status === "PROCESSING"
+          ? "查看处理状态"
+          : existing.status === "CANCELLED"
+            ? "查看已取消记录"
+            : existing.status === "CREATED"
+              ? "开始巩固"
+              : "继续巩固";
+      const message = existing.status === "COMPLETED"
+        ? "本次报告已有已完成的专项巩固记录。"
+        : existing.status === "SUBMITTED" || existing.status === "PROCESSING"
+          ? "本次报告已有一项巩固练习正在处理。"
+          : existing.status === "CANCELLED"
+            ? "本次报告已有一项已取消的巩固记录。"
+            : "本次报告的巩固练习已保存，可以从上次进度继续。";
+      if (existing.status === "CANCELLED") return `<div class="growth-remediation-status"><p>${message}</p></div>`;
+      return `<div class="growth-remediation-status"><p>${message}</p><button class="growth-button growth-button-secondary" type="button" data-growth-resume data-source-session-id="${safe(sourceSessionId)}" data-attempt-id="${safe(existing.id)}">${action}</button></div>`;
+    }
+    if (hasPendingRemediation(sourceSessionId)) {
+      return `<div class="growth-remediation-status" data-remediation-status="${safe(sourceSessionId)}"><p role="status" aria-live="polite">创建状态待核实。再次核实只会读取当前学籍的练习记录，不会重复创建。</p><button class="growth-button growth-button-secondary" type="button" data-growth-verify data-source-session-id="${safe(sourceSessionId)}">重新核实状态</button></div>`;
+    }
+    return `<div class="growth-remediation-status" data-remediation-status="${safe(sourceSessionId)}"><p>只针对这份报告中服务端标记的题型；巩固结果不会计入正式测评分数。</p><button class="growth-button growth-button-primary" type="button" data-growth-remediation data-source-session-id="${safe(sourceSessionId)}">针对本次报告继续巩固</button></div>`;
+  }
+
+  function renderReports(results, sessions) {
     const reportError = results.find((entry) => entry.state === "error");
     if (reportError) {
       return `<section class="growth-card growth-record-card"><div class="growth-section-heading"><div><p class="growth-eyebrow">正式反馈</p><h2>已完成结果与教师反馈</h2></div>${icon("report", "growth-section-icon")}</div><div class="growth-inline-error" role="alert"><p>${safe(failureMessage(reportError.error))}</p><button class="growth-button growth-button-secondary" type="button" data-growth-retry>重试</button></div></section>`;
@@ -287,17 +402,25 @@
     const reviewPending = results.filter((entry) => entry.state === "review-pending");
     const incomplete = results.filter((entry) => entry.state === "incomplete");
     const notGenerated = results.filter((entry) => entry.state === "not-generated");
-    const cards = official.map(({ session, report }) => {
+    const cards = official.map(({ session, source, report }) => {
       const retryCandidates = Array.isArray(report.diagnosis?.retryCandidates) ? report.diagnosis.retryCandidates : [];
-      const candidateRows = retryCandidates.slice(0, 5).map((candidate) => `<li>${safe(candidate.displayName || candidate.family || "待巩固题目")}</li>`).join("");
+      const displayableCandidates = retryCandidates.filter(isDisplayableRetryCandidate);
+      const actionableCandidates = retryCandidates.filter(isActionableRetryCandidate);
+      const candidateRows = displayableCandidates.map((candidate) => `<li>${safe(candidate.displayName || candidate.family || "待巩固题目")}</li>`).join("");
       const teacherComments = Array.isArray(report.teacherFeedback)
         ? report.teacherFeedback
-          .filter((entry) => entry && typeof entry.comment === "string" && entry.comment.trim())
-          .map((entry) => `<li>${safe(entry.comment)}</li>`)
+          .filter((entry) => entry && typeof entry.comment === "string" && entry.comment.trim() && validDate(entry.reviewedAt))
+          .map((entry) => `<li><span>${safe(entry.comment)}</span><time datetime="${safe(new Date(entry.reviewedAt).toISOString())}">${safe(formatDate(entry.reviewedAt, true))}</time></li>`)
           .join("")
         : "";
       const reportPath = `/assessment/sessions/${encodeURIComponent(session.sessionId)}/report/`;
-      return `<article class="growth-report-row"><span class="growth-report-icon">${icon("report")}</span><div class="growth-report-copy"><div class="growth-report-title"><strong>${safe(session.type === "READING" ? "朗读测评" : session.type === "WRITTEN" ? "书面测评" : "综合测评")}</strong><span>${safe(reportSummary(report))}</span></div><p>报告生成于 ${safe(formatDate(report.generatedAt, true))}</p>${candidateRows ? `<div class="growth-retry-focus"><b>报告中标记的待巩固题目</b><ul>${candidateRows}</ul></div>` : ""}${teacherComments ? `<div class="growth-report-feedback"><b>教师评语</b><ul>${teacherComments}</ul></div>` : ""}</div><a class="growth-inline-link" href="${safe(reportPath)}">查看正式报告 ${icon("trend")}</a></article>`;
+      const feedback = teacherComments
+        ? `<div class="growth-report-feedback"><b>正式测评教师评语 · 人工复核</b><ul>${teacherComments}</ul></div>`
+        : '<div class="growth-report-feedback-empty">这份正式报告暂时没有可显示的人工复核评语。</div>';
+      const completedAt = validDate(source.completedAt) ? source.completedAt : null;
+      const remediation = remediationAction(session.sessionId, actionableCandidates, retryCandidates.length, sessions);
+      const sourceReference = `<details class="growth-source-reference"><summary>查看来源记录</summary><code>AssessmentReport ${safe(report.id)}</code><code>AssessmentSession ${safe(source.id)}</code></details>`;
+      return `<article class="growth-report-row"><span class="growth-report-icon">${icon("report")}</span><div class="growth-report-copy"><div class="growth-report-title"><strong>${safe(session.type === "READING" ? "朗读测评" : session.type === "WRITTEN" ? "书面测评" : "综合测评")}</strong><span>${safe(reportSummary(report))}</span></div><p>完成于 ${safe(formatDate(completedAt, true))} · 报告生成于 ${safe(formatDate(report.generatedAt, true))}</p>${sourceReference}${candidateRows ? `<div class="growth-retry-focus"><b>报告中标记的待巩固内容</b><p>这些内容来自本次正式报告，不代表某项开放练习与报告存在系统关联。</p><ul>${candidateRows}</ul></div>` : ""}${feedback}${remediation}</div><a class="growth-inline-link" href="${safe(reportPath)}">查看正式报告 ${icon("trend")}</a></article>`;
     }).join("");
     const missing = notGenerated.length
       ? `<div class="growth-not-generated"><span>${icon("clock")}</span><p><b>${notGenerated.length} 条已完成记录尚未生成正式报告</b><br>这些记录不会显示成绩。</p></div>`
@@ -311,33 +434,35 @@
     const empty = !official.length && !notGenerated.length && !reviewPending.length && !incomplete.length
       ? `<div class="growth-empty-inline">${icon("report")}<p>当前没有已完成的正式测评记录。</p></div>`
       : "";
-    return `<section class="growth-card growth-record-card"><div class="growth-section-heading"><div><p class="growth-eyebrow">正式反馈</p><h2>已完成结果与待巩固内容</h2></div><a class="growth-inline-link" href="/assessment/history/">查看学习历史 ${icon("trend")}</a></div><div class="growth-report-list">${cards}</div>${reviewNotice}${incompleteNotice}${missing}${empty}</section>`;
+    return `<section class="growth-card growth-record-card"><div class="growth-section-heading"><div><p class="growth-eyebrow">正式测评</p><h2>正式报告与待巩固内容</h2><p>总分只来自已完成且完整的本人正式报告。</p></div><a class="growth-inline-link" href="/assessment/history/">查看学习历史 ${icon("trend")}</a></div><div class="growth-report-list">${cards}</div>${reviewNotice}${incompleteNotice}${missing}${empty}</section>`;
   }
 
-  function renderPractices(practices, attempts) {
+  function renderPractices(practices, attempts, sessions) {
     const titleById = new Map(practices.items.map((practice) => [practice.id, practice]));
     const attemptsByDefinition = new Map();
-    attempts.forEach((attempt) => {
+    [...attempts, ...sessions].forEach((attempt) => {
       const id = attempt.practiceDefinitionId;
-      if (id && !attemptsByDefinition.has(id)) attemptsByDefinition.set(id, attempt);
+      if (id && activeStatuses.has(attempt.status) && !attemptsByDefinition.has(id)) attemptsByDefinition.set(id, attempt);
     });
     if (!practices.items.length) {
-      return `<section class="growth-card growth-practice-card"><div class="growth-section-heading"><div><p class="growth-eyebrow">下一步</p><h2>继续练习</h2></div>${icon("book", "growth-section-icon")}</div><div class="growth-empty-inline">${icon("book")}<p>当前学籍没有开放的练习。老师开放任务后会显示在练习中心。</p></div></section>`;
+      return `<section class="growth-card growth-practice-card"><div class="growth-section-heading"><div><p class="growth-eyebrow">当前可参加</p><h2>开放练习</h2></div>${icon("book", "growth-section-icon")}</div><div class="growth-empty-inline">${icon("book")}<p>当前学籍没有开放的练习。开放后会显示服务端提供的真实练习。</p></div></section>`;
     }
     const rows = practices.items.slice(0, 5).map((practice) => {
       const attempt = attemptsByDefinition.get(practice.id);
       const state = attempt?.status || practice.studentState?.completionStatus || "NOT_STARTED";
       const teacher = practice.mode === "ASSIGNMENT";
       const kind = teacher ? "老师开放" : practice.catalogType === "SPECIALIZED" ? "专项训练" : "自主练习";
-      const href = attempt && ["CREATED", "IN_PROGRESS"].includes(attempt.status)
+      const href = attempt && ["CREATED", "IN_PROGRESS", "SUBMITTED", "PROCESSING"].includes(attempt.status)
         ? activeAttemptHref(attempt)
         : `/student/practices/${encodeURIComponent(practice.id)}/`;
-      const action = attempt && ["CREATED", "IN_PROGRESS"].includes(attempt.status)
-        ? "继续练习"
-        : state === "COMPLETED" ? "再次练习" : "查看练习";
-      return `<article class="growth-practice-row"><span class="growth-practice-icon ${teacher ? "teacher" : ""}">${icon(teacher ? "school" : "leaf")}</span><div><small>${safe(kind)} · ${safe(statusLabel(state))}</small><strong>${safe(practice.title)}</strong><p>${safe(practice.summary || "")}</p></div><a class="growth-inline-link" href="${safe(href)}">${action} ${icon("trend")}</a></article>`;
+      const action = attempt && ["SUBMITTED", "PROCESSING"].includes(attempt.status)
+        ? "查看状态"
+        : attempt && ["CREATED", "IN_PROGRESS"].includes(attempt.status)
+          ? "继续练习"
+          : state === "COMPLETED" ? "查看开放练习" : "开始练习";
+      return `<article class="growth-practice-row" data-practice-definition-id="${safe(practice.id)}"><span class="growth-practice-icon ${teacher ? "teacher" : ""}">${icon(teacher ? "school" : "leaf")}</span><div><small>${safe(kind)} · ${safe(statusLabel(state))}</small><strong>${safe(practice.title)}</strong><p>${safe(practice.summary || "")}</p></div><a class="growth-inline-link" href="${safe(href)}">${action} ${icon("trend")}</a></article>`;
     }).join("");
-    return `<section class="growth-card growth-practice-card"><div class="growth-section-heading"><div><p class="growth-eyebrow">下一步</p><h2>继续练习</h2></div><a class="growth-inline-link" href="/student/practices/">练习中心 ${icon("trend")}</a></div><div class="growth-practice-list">${rows}</div></section>`;
+    return `<section class="growth-card growth-practice-card"><div class="growth-section-heading"><div><p class="growth-eyebrow">当前可参加</p><h2>开放练习</h2><p>来自当前学籍可参加列表，与报告中的待巩固内容分别展示。</p></div><a class="growth-inline-link" href="/student/practices/">练习中心 ${icon("trend")}</a></div><div class="growth-practice-list">${rows}</div></section>`;
   }
 
   function renderTimeline(events, progress, sessions) {
@@ -348,7 +473,9 @@
       entries.push({
         id: `${event.type || "event"}-${event.id || occurredAt}`,
         type: event.type === "FEEDBACK" ? "feedback" : "completed",
-        title: event.title || (event.type === "FEEDBACK" ? "老师反馈" : "测评完成"),
+        title: event.type === "FEEDBACK"
+          ? `课程任务反馈 · ${event.title || "已发布"}`
+          : event.title || "测评完成",
         description: event.description || event.summary || "",
         occurredAt,
       });
@@ -386,9 +513,9 @@
       .filter((event) => event.type === "FEEDBACK" && (event.description || event.comment))
       .sort((left, right) => new Date(right.timestamp || right.occurredAt || 0) - new Date(left.timestamp || left.occurredAt || 0));
     if (!feedback.length) {
-      return `<section class="growth-card growth-feedback-card"><div class="growth-section-heading"><div><p class="growth-eyebrow">老师的声音</p><h2>老师反馈</h2></div>${icon("feedback", "growth-section-icon")}</div><div class="growth-empty-inline">${icon("feedback")}<p>当前没有已发布的教师反馈。</p></div></section>`;
+      return `<section class="growth-card growth-feedback-card"><div class="growth-section-heading"><div><p class="growth-eyebrow">课程任务</p><h2>课程任务教师反馈</h2></div>${icon("feedback", "growth-section-icon")}</div><div class="growth-empty-inline">${icon("feedback")}<p>当前没有已发布的教师反馈（课程任务）。</p></div></section>`;
     }
-    return `<section class="growth-card growth-feedback-card"><div class="growth-section-heading"><div><p class="growth-eyebrow">老师的声音</p><h2>老师反馈</h2></div><span class="growth-chart-count">${feedback.length} 条</span></div><div class="growth-feedback-list">${feedback.slice(0, 5).map((entry) => `<article class="growth-feedback-row"><span class="growth-feedback-mark">${icon("feedback")}</span><div><div class="growth-feedback-heading"><strong>${safe(entry.title || "老师反馈")}</strong><time datetime="${safe(new Date(entry.timestamp || entry.occurredAt).toISOString())}">${safe(formatDate(entry.timestamp || entry.occurredAt, true))}</time></div><p>${safe(entry.description || entry.comment)}</p></div></article>`).join("")}</div><a class="growth-inline-link" href="/assessment/history/">查看学习记录 ${icon("trend")}</a></section>`;
+    return `<section class="growth-card growth-feedback-card"><div class="growth-section-heading"><div><p class="growth-eyebrow">课程任务</p><h2>课程任务教师反馈</h2><p>来自已发布的课程任务 Submission，与正式测评评语分开记录。</p></div><span class="growth-chart-count">${feedback.length} 条</span></div><div class="growth-feedback-list">${feedback.slice(0, 5).map((entry) => `<article class="growth-feedback-row"><span class="growth-feedback-mark">${icon("feedback")}</span><div><div class="growth-feedback-heading"><strong>${safe(entry.title || "已发布反馈")}</strong><time datetime="${safe(new Date(entry.timestamp || entry.occurredAt).toISOString())}">${safe(formatDate(entry.timestamp || entry.occurredAt, true))}</time></div><span class="growth-source-tag">课程任务 · 已发布</span><p>${safe(entry.description || entry.comment)}</p><details class="growth-source-reference"><summary>查看反馈来源</summary><code>Feedback ${safe(entry.id || "")}</code></details></div></article>`).join("")}</div><a class="growth-inline-link" href="/assessment/history/">查看学习记录 ${icon("trend")}</a></section>`;
   }
 
   function latestActivityAt(history, events, progress, sessions) {
@@ -403,6 +530,145 @@
     return formatDate(latest, true);
   }
 
+  function remediationErrorMessage(error) {
+    if (error?.status === 401) return "登录状态已失效，请重新登录后读取当前学籍。";
+    if (error?.status === 403) return "当前学生身份无权为这份报告创建或读取专项巩固。";
+    if (error?.status === 404) return "这份报告或对应练习已不可用，请重新读取成长记录。";
+    if (error?.status === 409) return error.message || "当前正式报告暂不满足专项巩固条件。";
+    if (error?.name === "TypeError" || error?.status === 0) return "网络连接失败；服务端创建状态需要核实。";
+    return error?.message || "暂时无法确认专项巩固状态。";
+  }
+
+  function remediationStatusNode(sourceSessionId) {
+    return [...app.querySelectorAll("[data-remediation-status]")]
+      .find((node) => node.dataset.remediationStatus === sourceSessionId) || null;
+  }
+
+  function showRemediationStatus(sourceSessionId, message, mode = "error") {
+    const node = remediationStatusNode(sourceSessionId);
+    if (!node) return;
+    const role = mode === "error" ? "alert" : "status";
+    const action = mode === "pending"
+      ? `<button class="growth-button growth-button-secondary" type="button" data-growth-verify data-source-session-id="${safe(sourceSessionId)}">重新核实状态</button>`
+      : `<button class="growth-button growth-button-secondary" type="button" data-growth-refresh>重新读取成长记录</button>`;
+    node.innerHTML = `<p role="${role}" aria-live="polite">${safe(message)}</p>${action}`;
+  }
+
+  async function verifyRemediationAttempt(attemptId, sourceSessionId, identity, enrollmentId) {
+    const attempt = unwrap(await YuzanApi.getAssessmentSession(attemptId));
+    if (
+      !attempt || attempt.id !== attemptId || attempt.purpose !== "REMEDIATION" ||
+      attempt.retestOfSessionId !== sourceSessionId || attempt.schoolId !== identity.schoolId ||
+      attempt.enrollmentId !== enrollmentId ||
+      !["CREATED", "IN_PROGRESS", "SUBMITTED", "PROCESSING", "COMPLETED", "CANCELLED"].includes(attempt.status)
+    ) {
+      throw new Error("服务端练习与当前报告的来源关系无法确认。");
+    }
+    return attempt;
+  }
+
+  async function findExistingRemediation(sourceSessionId, identity, enrollmentId) {
+    if (!enrollmentId) throw new Error("当前学生学籍无法确认，未查询或创建专项巩固。");
+    const sessions = await loadSessions(enrollmentId);
+    const matches = sessions
+      .filter((session) => session.purpose === "REMEDIATION" && session.retestOfSessionId === sourceSessionId && session.id)
+      .sort((left, right) => {
+        const activeRank = (session) => activeStatuses.has(session.status) ? 0 : session.status === "COMPLETED" ? 1 : 2;
+        return activeRank(left) - activeRank(right) ||
+          new Date(right.updatedAt || right.createdAt || 0) - new Date(left.updatedAt || left.createdAt || 0);
+      });
+    if (!matches.length) return null;
+    return verifyRemediationAttempt(matches[0].id, sourceSessionId, identity, enrollmentId);
+  }
+
+  function openRemediation(attempt, sourceSessionId, identity) {
+    if (!sameIdentity(readIdentity(), identity)) return;
+    setPendingRemediation(sourceSessionId, false, identity);
+    if (attempt.status === "CANCELLED") {
+      showRemediationStatus(sourceSessionId, "服务端记录显示这项专项巩固已取消，未创建新的练习。", "error");
+      return;
+    }
+    location.href = remediationAttemptHref(attempt);
+  }
+
+  async function handleRemediationAction(button, mode) {
+    const sourceSessionId = button.dataset.sourceSessionId;
+    const identity = readIdentity();
+    const enrollmentId = loadedEnrollmentId;
+    if (!sourceSessionId || !identity.hasToken || !identity.schoolId) return;
+    if (!enrollmentId) {
+      showRemediationStatus(sourceSessionId, "当前学生学籍无法确认，未发送创建请求。请重新读取成长记录。", "error");
+      return;
+    }
+    const requestKey = `${identity.userId}|${identity.schoolId}|${sourceSessionId}`;
+    if (remediationRequests.has(requestKey)) return;
+    remediationRequests.add(requestKey);
+    button.disabled = true;
+    button.setAttribute("aria-busy", "true");
+    let creationSent = false;
+    let creationResponseReceived = false;
+    try {
+      const existing = await findExistingRemediation(sourceSessionId, identity, enrollmentId);
+      if (!sameIdentity(readIdentity(), identity)) return;
+      if (existing) {
+        openRemediation(existing, sourceSessionId, identity);
+        return;
+      }
+      if (mode === "verify" || hasPendingRemediation(sourceSessionId, identity)) {
+        setPendingRemediation(sourceSessionId, true, identity);
+        showRemediationStatus(sourceSessionId, "尚未找到可恢复的服务端专项练习。创建结果仍待核实；本次没有再次发送创建请求。", "pending");
+        return;
+      }
+      if (mode === "resume") {
+        showRemediationStatus(sourceSessionId, "当前学籍的练习列表中没有找到这条服务端记录，未发送创建请求。请重新读取成长记录。", "error");
+        return;
+      }
+
+      if (!setPendingRemediation(sourceSessionId, true, identity)) {
+        showRemediationStatus(sourceSessionId, "当前浏览器无法保存创建状态；为避免未知结果后重复创建，本次没有发送请求。", "error");
+        return;
+      }
+      creationSent = true;
+      const creation = unwrap(await YuzanApi.createAssessmentRemediation(sourceSessionId));
+      creationResponseReceived = true;
+      if (creation?.outcome === "NO_REMEDIATION_NEEDED" && creation.attemptId == null) {
+        setPendingRemediation(sourceSessionId, false, identity);
+        showRemediationStatus(sourceSessionId, "服务端确认本次报告当前没有可创建的专项巩固练习。", "error");
+        return;
+      }
+      if (!creation || !["CREATED", "RESUMED"].includes(creation.outcome) || creation.sourceSessionId !== sourceSessionId || typeof creation.attemptId !== "string") {
+        throw new Error("创建响应缺少可核实的服务端练习 ID 或来源信息。");
+      }
+      const attempt = await verifyRemediationAttempt(creation.attemptId, sourceSessionId, identity, enrollmentId);
+      openRemediation(attempt, sourceSessionId, identity);
+    } catch (error) {
+      if (!sameIdentity(readIdentity(), identity)) return;
+      const knownRejection = !creationResponseReceived && Number.isInteger(error?.status) && error.status >= 400 && error.status < 500;
+      const ambiguous = creationSent && !knownRejection;
+      if (ambiguous && hasPendingRemediation(sourceSessionId, identity)) {
+        try {
+          const recovered = await findExistingRemediation(sourceSessionId, identity, enrollmentId);
+          if (!sameIdentity(readIdentity(), identity)) return;
+          if (recovered) {
+            openRemediation(recovered, sourceSessionId, identity);
+            return;
+          }
+        } catch {
+          // Preserve the pending marker; only a later GET may resolve this outcome.
+        }
+        setPendingRemediation(sourceSessionId, true, identity);
+        showRemediationStatus(sourceSessionId, "创建状态待核实。没有找到可确认的练习记录，也没有再次发送创建请求。", "pending");
+      } else {
+        setPendingRemediation(sourceSessionId, false, identity);
+        showRemediationStatus(sourceSessionId, remediationErrorMessage(error), "error");
+      }
+    } finally {
+      remediationRequests.delete(requestKey);
+      button.removeAttribute("aria-busy");
+      button.disabled = false;
+    }
+  }
+
   function render(data) {
     const { profile, history, events, progress, sessions, attempts, practices, reports } = data;
     const completed = Array.isArray(history.sessions) ? history.sessions : [];
@@ -412,12 +678,13 @@
     const title = profile.displayName ? `${safe(profile.displayName)}的成长记录` : "我的成长记录";
     app.dataset.state = completed.length || pendingCount || events.events?.length ? "ready" : "empty";
     app.removeAttribute("aria-busy");
-    app.innerHTML = `<header class="growth-header"><div><p class="growth-overline">${icon("spark")} 记录真实的每一步</p><h1>${title}</h1><p class="growth-school-line">${icon("school")} ${schoolDetails}</p></div><a class="growth-back-link" href="/student/today/">${icon("trend")} 回到今日学习</a></header><section class="growth-summary-grid"><article class="growth-summary-tile"><span>${icon("check")}</span><div><small>已完成记录</small><strong>${completed.length}</strong><p>来自本人已完成的 Attempt</p></div></article><article class="growth-summary-tile"><span>${icon("clock")}</span><div><small>未完成 Attempt</small><strong>${pendingCount}</strong><p>包含进行中与处理中状态</p></div></article><article class="growth-summary-tile"><span>${icon("flag")}</span><div><small>专项巩固轮次</small><strong>${remediationCount}</strong><p>来自已完成的专项记录</p></div></article><article class="growth-summary-tile"><span>${icon("clock")}</span><div><small>最近学习时间</small><strong class="growth-summary-date">${safe(latestActivityAt(history, events, progress, sessions))}</strong><p>按本人最近一次记录更新</p></div></article></section><div class="growth-layout"><div class="growth-main-column">${renderStage(progress, completed.length, pendingCount)}${renderTrend(progress)}${renderAttempts(sessions, attempts, practices)}${renderReports(reports)}${renderTimeline(events, progress, sessions)}</div><aside class="growth-side-column">${renderPractices(practices, attempts)}${renderFeedback(events)}<section class="growth-card growth-note-card"><span>${icon("report")}</span><div><h2>关于正式成绩</h2><p>这里只展示服务端已经生成的正式报告。待审核语音、处理中记录和缺失报告不会显示成分数。</p></div></section></aside></div>`;
+    app.innerHTML = `<header class="growth-header"><div><p class="growth-overline">${icon("spark")} 记录真实的每一步</p><h1>${title}</h1><p class="growth-school-line">${icon("school")} ${schoolDetails}</p></div><a class="growth-back-link" href="/student/today/">${icon("trend")} 回到今日学习</a></header><section class="growth-summary-grid"><article class="growth-summary-tile"><span>${icon("check")}</span><div><small>已完成记录</small><strong>${completed.length}</strong><p>来自本人已完成的 Attempt</p></div></article><article class="growth-summary-tile"><span>${icon("clock")}</span><div><small>未完成 Attempt</small><strong>${pendingCount}</strong><p>包含进行中与处理中状态</p></div></article><article class="growth-summary-tile"><span>${icon("flag")}</span><div><small>专项巩固轮次</small><strong>${remediationCount}</strong><p>来自已完成的专项记录</p></div></article><article class="growth-summary-tile"><span>${icon("clock")}</span><div><small>最近学习时间</small><strong class="growth-summary-date">${safe(latestActivityAt(history, events, progress, sessions))}</strong><p>按本人最近一次记录更新</p></div></article></section><div class="growth-layout"><div class="growth-main-column">${renderStage(progress, completed.length, pendingCount)}${renderTrend(progress)}${renderAttempts(sessions, attempts, practices)}${renderReports(reports, sessions)}${renderTimeline(events, progress, sessions)}</div><aside class="growth-side-column">${renderPractices(practices, attempts, sessions)}${renderFeedback(events)}<section class="growth-card growth-note-card"><span>${icon("report")}</span><div><h2>关于正式成绩</h2><p>这里只展示本人已完成、报告完整且得分合法的正式结果。等待复核、处理中和缺失报告不会显示成分数。</p></div></section></aside></div>`;
     app.querySelector("[data-growth-retry]")?.addEventListener("click", init);
   }
 
   async function init() {
     const version = ++loadVersion;
+    loadedEnrollmentId = "";
     app.dataset.state = "loading";
     app.setAttribute("aria-busy", "true");
     app.innerHTML = `<section class="growth-loading" aria-busy="true"><span class="growth-loading-mark" aria-hidden="true">↗</span><p>正在读取当前学籍的学习记录…</p></section>`;
@@ -432,34 +699,44 @@
       return;
     }
     try {
-      const [profileRaw, historyRaw, eventsRaw, progressRaw, sessions, practiceRaw] = await Promise.all([
+      const [profileRaw, historyRaw, progressRaw, practiceRaw] = await Promise.all([
         YuzanApi.getStudentProfile(),
         YuzanApi.getAssessmentHistory({ range: "all" }),
-        YuzanApi.getAssessmentHistoryEvents(),
         YuzanApi.getQuestionBankProgress(),
-        loadSessions(),
         YuzanApi.listPractices({ sort: "RECOMMENDED" }),
       ]);
       if (version !== loadVersion) return;
       const profileValue = unwrap(profileRaw);
       const profile = profileValue?.profile || profileValue;
       const history = unwrap(historyRaw);
-      const events = unwrap(eventsRaw);
       const progress = unwrap(progressRaw);
       const practiceValue = unwrap(practiceRaw);
       const practices = Array.isArray(practiceValue?.items) ? practiceValue : null;
+      const enrollmentId = history?.enrollmentId || profile?.enrollmentId || "";
       if (!profile || typeof profile.userId !== "string") throw new Error("个人学籍信息响应不可用。");
       if (identity.userId && identity.userId !== profile.userId) throw new Error("登录身份已变化，请刷新后重新读取。");
-      if (!Array.isArray(history?.sessions) || !Array.isArray(events?.events) || !Array.isArray(sessions) || !practices || progress?.version !== "qb-progress-v1") {
+      if (!enrollmentId) throw new Error("当前学校没有可核实的学生学籍。");
+      if (profile.enrollmentId && profile.enrollmentId !== enrollmentId) throw new Error("学生学籍响应不一致，请重新读取。");
+      if (!Array.isArray(history?.sessions) || !practices || progress?.version !== "qb-progress-v1") {
         throw new Error("成长数据响应不完整，请重试。");
       }
       if (!sameIdentity(readIdentity(), identity)) {
         init();
         return;
       }
+      loadedEnrollmentId = enrollmentId;
+      const [eventsRaw, sessions] = await Promise.all([
+        YuzanApi.getAssessmentHistoryEvents(enrollmentId),
+        loadSessions(enrollmentId),
+      ]);
+      if (version !== loadVersion || !sameIdentity(readIdentity(), identity)) return;
+      const events = unwrap(eventsRaw);
+      if (!Array.isArray(events?.events) || !Array.isArray(sessions)) {
+        throw new Error("成长事件或 Attempt 响应不完整，请重试。");
+      }
       const [attempts, reports] = await Promise.all([
         hydrateAttempts(sessions),
-        loadReports(history.sessions),
+        loadReports(history.sessions, identity, enrollmentId),
       ]);
       if (version !== loadVersion || !sameIdentity(readIdentity(), identity)) return;
       render({ profile, history, events, progress, sessions, attempts, practices, reports });
@@ -468,14 +745,28 @@
     }
   }
 
+  app.addEventListener?.("click", (event) => {
+    const button = event.target.closest?.("button");
+    if (!button) return;
+    if (button.matches("[data-growth-remediation]")) {
+      return handleRemediationAction(button, "create");
+    } else if (button.matches("[data-growth-verify]")) {
+      return handleRemediationAction(button, "verify");
+    } else if (button.matches("[data-growth-resume]")) {
+      return handleRemediationAction(button, "resume");
+    } else if (button.matches("[data-growth-refresh]")) {
+      return init();
+    }
+  });
+
   window.addEventListener("storage", (event) => {
     if (["yuzan-access-token", "yuzan-current-user", "yuzan-active-school-id"].includes(event.key)) init();
   });
   window.addEventListener("focus", () => {
     if (loadedIdentity && !sameIdentity(readIdentity(), loadedIdentity)) init();
   });
-  window.addEventListener("pageshow", () => {
-    if (loadedIdentity && !sameIdentity(readIdentity(), loadedIdentity)) init();
+  window.addEventListener("pageshow", (event) => {
+    if (loadedIdentity && (!sameIdentity(readIdentity(), loadedIdentity) || event.persisted)) init();
   });
 
   init();
