@@ -171,6 +171,11 @@ svg{fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-l
 .roster-export-button svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .roster-export-button:disabled{opacity:.6;cursor:wait}
 .roster-export-status{min-height:18px;margin:0 0 10px;color:#667075;font-size:11px;line-height:1.6;overflow-wrap:anywhere}
+.roster-filters{display:flex;flex-wrap:wrap;align-items:end;gap:10px;margin:10px 0 16px;color:#485257;font-size:12px}
+.roster-filters label{display:flex;flex-direction:column;gap:5px;min-width:140px;flex:1 1 155px}
+.roster-filters input,.roster-filters select{width:100%;min-height:39px;padding:7px 10px;border:1px solid #c7c8bc;border-radius:5px;background:#fffef9;color:#293d41;font:inherit}
+.roster-filters :is(input,select):focus-visible{outline:2px solid #426d68;outline-offset:2px}
+.roster-filters [role=status]{padding:0 0 10px;white-space:nowrap}
 .roster-row [data-label]{min-width:0;overflow-wrap:anywhere}
 
 @media(max-width:900px){

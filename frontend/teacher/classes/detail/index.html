@@ -191,6 +191,12 @@
               </button>
             </div>
             <p class="roster-export-status" id="rosterExportStatus" role="status" aria-live="polite">导出时会重新读取本人授权班级名单；无课程进度显示为—，无正式分数留空。</p>
+            <div class="roster-filters" aria-label="筛选已加载学生名单">
+              <label>搜索姓名 <input id="rosterSearch" type="search" autocomplete="off" placeholder="输入学生姓名"></label>
+              <label>风险状态 <select id="rosterRisk"><option value="">全部</option><option value="OK">正常</option><option value="AT_RISK">关注</option><option value="INACTIVE">不活跃</option><option value="UNKNOWN">未知</option></select></label>
+              <label>排序 <select id="rosterSort"><option value="name">姓名</option><option value="activity">最近活跃</option><option value="progress">课程进度</option></select></label>
+              <span id="rosterCount" role="status" aria-live="polite"></span>
+            </div>
             <div class="roster-table-wrap">
               <div class="roster-table" id="rosterTable">
                 <div class="roster-row header">

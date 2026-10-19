@@ -1236,8 +1236,19 @@
       table.innerHTML = '<div class="empty-hint">该授权班级暂无在读学生。</div>';
       return;
     }
+    const search = document.getElementById('rosterSearch')?.value.trim().toLocaleLowerCase() || '';
+    const risk = document.getElementById('rosterRisk')?.value || '';
+    const sort = document.getElementById('rosterSort')?.value || 'name';
+    const visible = summaries.filter(s => (!search || (s.displayName || '').toLocaleLowerCase().includes(search)) && (!risk || (risk === 'UNKNOWN' ? !['OK', 'AT_RISK', 'INACTIVE'].includes(s.riskStatus) : s.riskStatus === risk)));
+    visible.sort((a, b) => {
+      if (sort === 'activity') return (Date.parse(b.lastActiveAt || '') || 0) - (Date.parse(a.lastActiveAt || '') || 0);
+      if (sort === 'progress') return (b.courseProgress ?? -1) - (a.courseProgress ?? -1);
+      return (a.displayName || '').localeCompare(b.displayName || '', 'zh');
+    });
+    const count = document.getElementById('rosterCount');
+    if (count) count.textContent = `当前显示 ${visible.length} / 已加载 ${summaries.length} 人`;
     const header = '<div class="roster-row header"><b><input type="checkbox" id="checkAll" title="全选"></b><b>姓名</b><b>课程进度</b><b>已提交/未交</b><b>最新测评</b><b>得分</b><b>录音数</b><b>主要问题</b><b>最近活跃</b><b>风险状态</b></div>';
-    const rows = summaries.map(s => {
+    const rows = visible.map(s => {
       const riskClass = s.riskStatus === 'OK' ? 'risk-ok' : s.riskStatus === 'AT_RISK' ? 'risk-at' : 'risk-inactive';
       const riskLabel = s.riskStatus === 'OK' ? '正常' : s.riskStatus === 'AT_RISK' ? '关注' : s.riskStatus === 'INACTIVE' ? '不活跃' : '—';
       const enrollmentId = escapeHtml(s.enrollmentId || '');
@@ -1256,7 +1267,7 @@
         <span class="${riskClass}" data-label="风险状态">${riskLabel}</span>
       </div>`;
     }).join('');
-    table.innerHTML = header + rows;
+    table.innerHTML = header + (rows || '<div class="empty-hint">当前筛选没有匹配的学生。</div>');
     // 全选
     const checkAll = document.getElementById('checkAll');
     if (checkAll) {
@@ -1401,6 +1412,10 @@
     drawerBackdrop.dataset.type = 'assignment-answers';
   });
 
+  ['rosterSearch', 'rosterRisk', 'rosterSort'].forEach(id => {
+    const control = document.getElementById(id);
+    control?.addEventListener(id === 'rosterSearch' ? 'input' : 'change', () => renderStudentRoster(studentSummaries));
+  });
   classId = getClassIdFromPath();
   loadClassDetail();
 })();
