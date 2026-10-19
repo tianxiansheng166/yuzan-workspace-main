@@ -3,6 +3,12 @@
 Last updated: 2026-10-19
 Repository: `yuzan-workspace-main`
 
+## YZ-RD-T044 practice catalog UX hierarchy correction (2026-10-19)
+
+- Started from T038 native-accepted `7c2c8da` in an isolated branch. T038's real recording and formal review flow remains untouched, but its three large catalog promotion cards duplicated existing server-backed tabs/filters and pushed actual content down.
+- T044 replaces those cards with a single compact and accessible `requiresRecording=true` facet control inside the original search tools; MOCK/SPECIALIZED remain the original real tabs. Users choose a real exercise instead of scrolling through a second set of feature advertisements.
+- Frontend regression 92 PASS, JS syntax/diffcheck PASS. T044's own real Chrome/API/PG/MinIO E2E and new viewport screenshots remain NOT_RUN; accepted source T038 evidence does not transfer to the new UX. T033 full API lint debt is still unresolved. T005 protected resources and L4 remain untouched.
+
 ## YZ-RD-T038 checkpoint (2026-10-19)
 
 - DONE / WEB_ONLY / NATIVE_CHROMIUM_API_POSTGRESQL17_MINIO_VERIFIED / READY_TO_MERGE. Independent branch: `feat/yz-rd-t038-speech-practice-exam-showcase`, exact start `39c01598e687f020037c82c23e3e0cfd7029ba64`; Git HEAD is authoritative for final SHA. The branch is pushed and not merged.

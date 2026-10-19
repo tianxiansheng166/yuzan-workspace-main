@@ -17,23 +17,13 @@
 @media (max-width:1000px) { .practice-page { padding:30px 24px 55px; }.practice-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }.catalog-workbench { grid-template-columns:185px minmax(0,1fr); gap:20px; }.practice-row { grid-template-columns:110px minmax(0,1fr); }.practice-row>img { width:110px; height:95px; }.practice-row-state { grid-column:2; text-align:left; }.practice-detail-hero { grid-template-columns:290px 1fr; }.practice-detail-grid { grid-template-columns:1fr; } }
 @media (max-width:680px) { .practice-page { padding:20px 16px 45px; }.practice-catalog-head { display:block; }.catalog-head-tools{justify-items:stretch}.catalog-archive-nav{justify-content:flex-start;margin-top:18px}.catalog-search { margin-top:19px; }.catalog-tabs { margin-inline:-16px; padding-inline:8px; }.catalog-ability { padding-top:23px; }.catalog-workbench { display:block; }.catalog-filters { display:none; }.practice-grid { grid-template-columns:1fr; }.result-toolbar { align-items:flex-start; }.result-actions { flex-direction:column; align-items:flex-end; }.practice-row { grid-template-columns:88px minmax(0,1fr); gap:12px; }.practice-row>img { width:88px; height:88px; }.practice-row h2 { font-size:18px; }.practice-detail-hero { grid-template-columns:1fr; gap:20px; }.detail-cover { min-height:205px; }.practice-state { flex-direction:column; text-align:center; }.practice-state img { width:210px; }.catalog-section-head h2,.result-toolbar h2 { font-size:21px; } }
 @media (prefers-reduced-motion:reduce) { .ability-button,.practice-cover img { transition:none; } }
-.practice-journey{margin:24px 0 26px}
-.practice-journey-heading{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-bottom:14px}
-.practice-journey-heading h2{margin:2px 0 0;color:#294639;font:700 clamp(22px,2.6vw,32px)/1.35 Georgia,"Noto Serif SC",serif}
-.practice-journey-heading>a{color:#2b6950;font-size:13px;font-weight:700;text-decoration:underline;text-underline-offset:4px}
-.practice-journey-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
-.practice-journey-lane{display:flex;flex-direction:column;min-width:0;min-height:218px;padding:22px;border:1px solid #cfdecf;background:#f3f8f1}
-.practice-journey-mock{background:#fcf5e6;border-color:#e7d6bb}
-.practice-journey-focus{background:#f2f1ed;border-color:#dcd6c8}
-.practice-journey-code{font-size:11px;font-weight:800;letter-spacing:.14em;color:#748172}
-.practice-journey-signal{display:flex;align-items:center;gap:4px;height:31px;margin:8px 0}
-.practice-journey-signal i{width:5px;height:12px;border-radius:6px;background:#77a381}
-.practice-journey-signal i:nth-child(2),.practice-journey-signal i:nth-child(4){height:24px}
-.practice-journey-signal i:nth-child(3){height:16px;background:#bd925b}
-.practice-journey-lane h3{margin:0;color:#294737;font:700 21px Georgia,"Noto Serif SC",serif}
-.practice-journey-lane p{min-height:46px;margin:9px 0;color:#667168;font-size:12px;line-height:1.7}
-.practice-journey-lane>a,.practice-journey-lane>button{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:40px;width:100%;margin-top:auto;padding:9px 0 0;border:0;background:transparent;color:#226348;font-size:13px;font-weight:700;font-family:inherit;text-align:left;text-decoration:none;cursor:pointer}
-.practice-journey-lane>a span,.practice-journey-lane>button span{font-size:19px}
-.practice-journey-lane :is(a,button):focus-visible{outline:3px solid #aa8444;outline-offset:3px}
-@media (max-width:850px){.practice-journey-grid{grid-template-columns:1fr 1fr}.practice-journey-lane:last-child{grid-column:1/-1}.practice-journey-heading{align-items:start;flex-direction:column}}
-@media (max-width:520px){.practice-journey-grid{grid-template-columns:1fr}.practice-journey-lane{min-height:166px;padding:16px}.practice-journey-lane:last-child{grid-column:auto}.practice-journey-lane p{min-height:0}.practice-journey-heading h2{font-size:23px}}
+/* T044: recording is a lightweight catalog facet, not a second set of hero tiles. */
+.catalog-oral-toolbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:7px;max-width:100%;font-size:11px;color:var(--catalog-pine)}
+.catalog-oral-caption{font-weight:700;color:#718076}
+.catalog-oral-filter{display:inline-flex;align-items:center;gap:7px;min-height:35px;padding:7px 12px;border:1px solid #b5cbb6;border-radius:99px;background:#f1f6ed;color:#255840;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer}
+.catalog-oral-filter.is-active{background:#286b4b;color:white;border-color:#286b4b}
+.catalog-oral-filter:hover{border-color:#60856c}
+.catalog-oral-filter:focus-visible{outline:3px solid #ac8446;outline-offset:2px}
+.catalog-oral-indicator{font-size:16px;line-height:0.6}
+.catalog-oral-help{color:#89938a}
+@media(max-width:680px){.catalog-oral-toolbar{justify-content:flex-start}.catalog-oral-help{width:100%;font-size:10px}}
