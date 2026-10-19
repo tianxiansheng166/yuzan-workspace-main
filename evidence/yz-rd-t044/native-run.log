@@ -1,0 +1,286 @@
+Runtime: /home/tian/.devspace/worktrees/yuzan-workspace-main-bc1fd25b/runtime-local/native-web-t044
+Host: Linux x86_64
+Root .env: 不存在
+Local config: present (0600, values hidden)
+Node.js: v24.20.0 (/home/tian/.nvm/versions/node/v24.20.0/bin/node)
+pnpm: 10.13.1 (/home/tian/.cache/node/corepack/v1/pnpm/10.13.1/bin/pnpm.cjs)
+corepack: 0.35.0 (/home/tian/.nvm/versions/node/v24.20.0/lib/node_modules/corepack/dist/corepack.js)
+PostgreSQL: postgres (PostgreSQL) 17.11 (Ubuntu 17.11-1.pgdg22.04+2) (/home/tian/code/yuzan-workspace-main/runtime-local/native-web/toolchain/pgdg/usr/lib/postgresql/17/bin/postgres)
+psql: psql (PostgreSQL) 17.11 (Ubuntu 17.11-1.pgdg22.04+2) (/home/tian/code/yuzan-workspace-main/runtime-local/native-web/toolchain/pgdg/usr/lib/postgresql/17/bin/psql)
+pg_ctl: pg_ctl (PostgreSQL) 17.11 (Ubuntu 17.11-1.pgdg22.04+2) (/home/tian/code/yuzan-workspace-main/runtime-local/native-web/toolchain/pgdg/usr/lib/postgresql/17/bin/pg_ctl)
+initdb: initdb (PostgreSQL) 17.11 (Ubuntu 17.11-1.pgdg22.04+2) (/home/tian/code/yuzan-workspace-main/runtime-local/native-web/toolchain/pgdg/usr/lib/postgresql/17/bin/initdb)
+pg_isready: pg_isready (PostgreSQL) 17.11 (Ubuntu 17.11-1.pgdg22.04+2) (/home/tian/code/yuzan-workspace-main/runtime-local/native-web/toolchain/pgdg/usr/lib/postgresql/17/bin/pg_isready)
+createdb: createdb (PostgreSQL) 17.11 (Ubuntu 17.11-1.pgdg22.04+2) (/home/tian/code/yuzan-workspace-main/runtime-local/native-web/toolchain/pgdg/usr/lib/postgresql/17/bin/createdb)
+Redis: Redis server v=7.4.10 sha=ee77c899:0 malloc=jemalloc-5.3.0 bits=64 build=f5be641d4f6307e (/home/tian/code/yuzan-workspace-main/runtime-local/native-web/toolchain/redis-7.4.10/src/redis-server)
+redis-cli: redis-cli 7.4.10 (git:ee77c899) (/home/tian/code/yuzan-workspace-main/runtime-local/native-web/toolchain/redis-7.4.10/src/redis-cli)
+MinIO: minio version RELEASE.2025-10-15T17-29-55Z (commit-id=9e49d5e7a648) (/home/tian/code/yuzan-workspace-main/runtime-local/native-web/toolchain/bin/minio)
+mc: MISSING (missing)
+ffmpeg: ffmpeg version 4.4.2-0ubuntu0.22.04.1 Copyright (c) 2000-2021 the FFmpeg developers (/usr/bin/ffmpeg)
+Chromium: Google Chrome 153.0.8010.52
+Python Playwright: pytest=9.1.1
+playwright=1.64.0
+Environment permission: 0600
+PostgreSQL data permission: 0700
+Port PostgreSQL 127.0.0.1:55674: available
+Port API 127.0.0.1:4144: available
+Port Web 127.0.0.1:4344: available
+Port Redis 127.0.0.1:6474: available
+Port MinIO API 127.0.0.1:59272: available
+Port MinIO Console 127.0.0.1:59273: available
+Doctor: PASS for profile assessment
+Python regression environment: reusing existing native-Web venv at /home/tian/code/yuzan-workspace-main/runtime-local/native-web/venv/bin/python
+waiting for server to start..... done
+server started
+PostgreSQL DB check: yuzan_t044_native / yz_t044 / PostgreSQL 17.x
+T044 PostgreSQL: 已有本任务迁移记录；保留数据库并跳过 migrate/seed
+> @yuzan/api@ build /home/tian/.devspace/worktrees/yuzan-workspace-main-bc1fd25b/backend/api
+> nest build
+API live: HTTP 200 http://127.0.0.1:4144/api/v1/health/live
+Teacher Web: HTTP 200 http://127.0.0.1:4344/teacher/
+Redis PING: PONG at 127.0.0.1:6474
+MinIO health: HTTP 200 at http://127.0.0.1:59272/minio/health/live; console port 59273 owned
+MinIO S3 PASS: bucket=yz-t044-native; upload/read-back/signed-GET=38 bytes
+
+Test suite storage: PASS
+Evidence: /home/tian/.devspace/worktrees/yuzan-workspace-main-bc1fd25b/runtime-local/native-web-t044/evidence/t044-storage-20261019T204245-3555706.log
+Start: PASS --task T044 --profile assessment
+Teacher Web: http://127.0.0.1:4344/teacher/
+API live: http://127.0.0.1:4144/api/v1/health/live
+API readiness: HTTP 200; Redis, MinIO connected; worker deliberately stopped
+{
+  "runKey": "9cd5e90b",
+  "fixturePolicy": "TEST_FIXTURE_ONLY; no production account or source data used",
+  "catalogHierarchy": {
+    "extraPromotionCards": 0,
+    "practiceCards": 10,
+    "oralFilterTop": 148,
+    "categoryTabsTop": 379,
+    "abilityRailTop": 434,
+    "catalogTop": 722
+  },
+  "practiceCenter": "http://127.0.0.1:4344/student/practices/",
+  "mockRequest": "http://127.0.0.1:4344/api/v1/schools/11111111-1111-4111-8111-111111111111/practices?sort=RECOMMENDED&catalogType=MOCK",
+  "mockMode": {
+    "query": {
+      "sort": [
+        "RECOMMENDED"
+      ],
+      "catalogType": [
+        "MOCK"
+      ]
+    },
+    "count": 4,
+    "officialExamDisclaimer": true
+  },
+  "specializedRequest": "http://127.0.0.1:4344/api/v1/schools/11111111-1111-4111-8111-111111111111/practices?sort=RECOMMENDED&catalogType=SPECIALIZED",
+  "remediationMode": {
+    "query": {
+      "sort": [
+        "RECOMMENDED"
+      ],
+      "catalogType": [
+        "SPECIALIZED"
+      ]
+    },
+    "practiceId": "70000000-0000-4000-8000-000000000003"
+  },
+  "oralRequest": "http://127.0.0.1:4344/api/v1/schools/11111111-1111-4111-8111-111111111111/practices?requiresRecording=true&sort=RECOMMENDED",
+  "realSpeakingPractice": {
+    "definitionId": "70000000-0000-4000-8000-000000000003",
+    "title": "停顿与节奏专项训练",
+    "requiresRecording": true,
+    "catalogType": "SPECIALIZED"
+  },
+  "fourViewports": [
+    {
+      "viewport": 390,
+      "scrollWidth": 390,
+      "screenshot": "catalog-390.png",
+      "filterPanelDisplay": "none",
+      "oralFilterVisible": true,
+      "firstPracticeCardTop": 1017.5577392578125
+    },
+    {
+      "viewport": 768,
+      "scrollWidth": 768,
+      "screenshot": "catalog-768.png",
+      "filterPanelDisplay": "block",
+      "oralFilterVisible": true,
+      "firstPracticeCardTop": 833
+    },
+    {
+      "viewport": 1280,
+      "scrollWidth": 1280,
+      "screenshot": "catalog-1280.png",
+      "filterPanelDisplay": "block",
+      "oralFilterVisible": true,
+      "firstPracticeCardTop": 835
+    },
+    {
+      "viewport": 1440,
+      "scrollWidth": 1440,
+      "screenshot": "catalog-1440.png",
+      "filterPanelDisplay": "block",
+      "oralFilterVisible": true,
+      "firstPracticeCardTop": 835
+    }
+  ],
+  "detailViewports": [
+    {
+      "viewport": 390,
+      "scrollWidth": 390,
+      "screenshot": "detail-390.png"
+    },
+    {
+      "viewport": 1440,
+      "scrollWidth": 1440,
+      "screenshot": "detail-1440.png"
+    }
+  ],
+  "realRecordingAttempt": {
+    "attemptId": "f886bb44-8386-4edf-bf31-ff643d7c9c8d",
+    "studentUserId": "1c6375de-7c31-4e0d-b2b1-6d8f7d6759d0",
+    "studentEnrollmentId": "e7e11be2-c273-4ee8-819c-013df16d22dd",
+    "practiceDefinitionId": "70000000-0000-4000-8000-000000000003"
+  },
+  "realQuestions": [
+    {
+      "itemId": "9e351d80-f1ca-4688-993c-c1089129bdb2",
+      "type": "CHOICE",
+      "prompt": "{'prompt': '哪一种停顿更自然？', 'options': ['春风 / 又绿江南岸', '春 / 风又绿江南岸'], 'maxScore': 25, 'required': True}"
+    },
+    {
+      "itemId": "ea5b2b0d-487b-425e-8cb4-404432860878",
+      "type": "SPEECH",
+      "prompt": "{'maxScore': 25, 'targetText': '春风又绿江南岸，明月何时照我还。', 'instruction': '听完示范后跟读。', 'demoAudioUrl': '/student/growth/assets/pr"
+    },
+    {
+      "itemId": "cea5769d-946d-4eca-92a7-53626dd70aee",
+      "type": "SPEECH",
+      "prompt": "{'maxScore': 25, 'targetText': '海日生残夜，江春入旧年。', 'instruction': '请独立朗读。'}"
+    },
+    {
+      "itemId": "c0b3c1e4-3f90-45dc-b855-81fa25ae1b6b",
+      "type": "TEXT",
+      "prompt": "{'prompt': '回听自己的朗读后，写下一个准备调整的停顿或语速问题。', 'maxScore': 25, 'required': True}"
+    }
+  ],
+  "authorization": {
+    "anonymous": 401,
+    "foreignSchool": 403,
+    "studentReviewQueue": 403,
+    "missingPractice": 404
+  },
+  "permissionDenied": {
+    "microphone": "denied",
+    "recordingRowsCreated": 0
+  },
+  "recordingAndAudition": {
+    "playedPromptAudio": [
+      {
+        "itemId": "ea5b2b0d-487b-425e-8cb4-404432860878",
+        "sourcePath": "/student/growth/assets/practice-sample.wav"
+      }
+    ],
+    "recordings": [
+      {
+        "itemId": "ea5b2b0d-487b-425e-8cb4-404432860878",
+        "recordingId": "32ceabd0-9291-4c1f-b534-e892c04a5233",
+        "status": "COMPLETE",
+        "objectKey": "recordings/32ceabd0-9291-4c1f-b534-e892c04a5233/full",
+        "bytes": 24446,
+        "contentType": "audio/webm;codecs=opus",
+        "etag": "\"531e251523c8391e11babd40f87e3f2d\""
+      },
+      {
+        "itemId": "cea5769d-946d-4eca-92a7-53626dd70aee",
+        "recordingId": "682236d4-571f-4d3e-8a78-714f5ac9aae4",
+        "status": "COMPLETE",
+        "objectKey": "recordings/682236d4-571f-4d3e-8a78-714f5ac9aae4/full",
+        "bytes": 23480,
+        "contentType": "audio/webm;codecs=opus",
+        "etag": "\"57554270bc8b02d8cc4e4cc263cf5f1b\""
+      }
+    ],
+    "offlineAnswerRetry": true,
+    "offlineUploadRetry": true
+  },
+  "runnerViewports": [
+    {
+      "viewport": 390,
+      "scrollWidth": 390,
+      "screenshot": "runner-390.png"
+    },
+    {
+      "viewport": 768,
+      "scrollWidth": 768,
+      "screenshot": "runner-768.png"
+    },
+    {
+      "viewport": 1280,
+      "scrollWidth": 1280,
+      "screenshot": "runner-1280.png"
+    },
+    {
+      "viewport": 1440,
+      "scrollWidth": 1440,
+      "screenshot": "runner-1440.png"
+    }
+  ],
+  "postSubmitHandling": {
+    "session": "PROCESSING",
+    "reportsBeforeReview": 0,
+    "scoredItems": 0,
+    "speechJobs": 2,
+    "createdJobsWithoutProviderResult": 2,
+    "submitPosts": 1,
+    "automaticSpeechScoring": "disabled; no fabricated score"
+  },
+  "formalReportState": {
+    "apiStatus": 200,
+    "apiBody": null,
+    "databaseRows": 0,
+    "visibleReportLink": false,
+    "status": "unavailable while the real session remains PROCESSING",
+    "scoresGenerated": 0
+  },
+  "identityIsolation": {
+    "studentA": "1c6375de-7c31-4e0d-b2b1-6d8f7d6759d0",
+    "studentB": "f9fba788-5112-4d4c-9001-036e082b0f0e",
+    "sameSchoolDifferentEnrollment": true,
+    "otherStudentAttempt": 404,
+    "otherStudentReport": 403,
+    "otherStudentHistoryContainsAttempt": false
+  },
+  "pageErrors": [],
+  "screenshots": [
+    "catalog-1280.png",
+    "catalog-1440.png",
+    "catalog-390.png",
+    "catalog-768.png",
+    "detail-1440.png",
+    "detail-390.png",
+    "processing-1440.png",
+    "runner-1280.png",
+    "runner-1440.png",
+    "runner-390.png",
+    "runner-768.png"
+  ]
+}
+.
+1 passed in 25.25s
+
+Test suite t044-practice-catalog: PASS
+Evidence: /home/tian/.devspace/worktrees/yuzan-workspace-main-bc1fd25b/runtime-local/native-web-t044/evidence/t044-t044-practice-catalog-20261019T204312-3555873.log
+web: 已停止 (PID 3555447)
+api: 已停止 (PID 3555405)
+minio: 已停止 (PID 3555616)
+redis: 已停止 (PID 3555519)
+postgres: 已停止 (PID 3554158)
+Stop: PASS
+SERVICE  PID     PORT / HEALTH
+postgres -       stopped [NOT_OWNED]
+api      -       stopped [NOT_OWNED]
+web      -       stopped [NOT_OWNED]
+API dependency readiness: HTTP unreachable
+T044 native Chromium/API/PostgreSQL/MinIO acceptance: PASS (all)

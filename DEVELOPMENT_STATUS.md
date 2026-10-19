@@ -20,6 +20,22 @@ Frontend 120/120 passed. Native Chromium 153 + NestJS API + PostgreSQL 17.11 + R
 
 T043's own services are stopped and owned ports are free; its database, MinIO objects, screenshots and proof remain retained. Question Bank source hashes match before/after read-only import. All browser identities/content are `TEST_FIXTURE_ONLY`. No Docker/Compose, Worker, shared-branch merge, T005 protected-source changes or L4 access. Full API lint was not rerun; inherited T033 baseline remains 1201 errors / 1 warning. See [`evidence/yz-rd-t043/RESULTS.md`](evidence/yz-rd-t043/RESULTS.md).
 
+## YZ-RD-T044 — practice catalog UX and real speaking workflow (2026-10-19)
+
+COMPLETE / NATIVE_CHROMIUM_API_POSTGRESQL17_REDIS_MINIO_VERIFIED; NOT MERGED. The isolated branch is `feat/yz-rd-t044-practice-catalog-ux-hierarchy`, starting from `ef3e5404ab43561b89b6bf863f5c7f7a250afa27`. T044 removes the duplicate promotion cards, keeps server-backed MOCK/SPECIALIZED tabs, and exposes the compact oral filter. A T044-owned mobile CSS override keeps the compact filter visible while hiding the tall facet panel at 680px and below.
+
+Native Chrome 153 + NestJS API + PostgreSQL 17.11 + Redis + MinIO passed 1/1 with no skips. The browser opened the seeded authorized `停顿与节奏专项训练`, played prompt audio, recorded and previewed two `SIMULATED_MIC` takes, recovered an interrupted answer save and MinIO upload, and submitted once. PostgreSQL confirmed `PROCESSING`, two unanswered SpeechJobs, zero scores and zero reports. Four catalog and four Runner widths (390/768/1280/1440) had no horizontal overflow; images loaded in captured screenshots. Frontend tests passed 92/92. See [`evidence/yz-rd-t044/RESULTS.md`](evidence/yz-rd-t044/RESULTS.md).
+
+No score or formal report was generated; report GET remained `null` while processing. Physical microphone/device, calibrated speech processing, human review/report creation, school pilot, and production launch are NOT_RUN. `READY_TO_MERGE=NO` because the inherited T033 full API lint debt remains (1201 errors / 1 warning). No Docker/Compose, T005/other task worktree edit, shared-branch merge, or L4 data access occurred. L4 remains OPEN.
+
+## YZ-RD-T038 — speaking practice and mock/specialized catalog closure (2026-10-19)
+
+DONE / WEB_ONLY / NATIVE_CHROMIUM_API_POSTGRESQL17_MINIO_VERIFIED / READY_TO_MERGE; NOT MERGED. The isolated branch is `feat/yz-rd-t038-speech-practice-exam-showcase`, based on exact start `39c01598e687f020037c82c23e3e0cfd7029ba64`. The practice-center portal was verified against the real authorized `停顿与节奏专项训练`: oral requests sent `requiresRecording=true`, mock sent `catalogType=MOCK` with the non-official disclaimer, and specialized sent `catalogType=SPECIALIZED`.
+
+Native Chrome 153 + API + PostgreSQL 17.11 + Redis + MinIO passed 1/1 with no skips. Two browser recordings were auditioned, uploaded, retried after an interrupted MinIO PUT, and read back from MinIO. Submit produced one request; the unscored speech session stayed `PROCESSING` with no report while provider/worker were disabled. A separate dynamic `TEST_FIXTURE_ONLY` Question Bank attempt entered the teacher review queue as `PENDING`; manual review through the existing API generated the complete report, which the student opened from history. No automatic speech score was generated. Frontend tests passed 92/92; four viewport widths and keyboard submission passed. Evidence: [`evidence/yz-rd-t038/RESULTS.md`](evidence/yz-rd-t038/RESULTS.md).
+
+The isolated branch is ready for normal review and integration. Physical microphone/device, calibrated automatic scoring, school pilot, and production launch remain NOT_RUN. T005 and other task worktrees were not edited; no Docker/Compose or L4 data was accessed. L4 remains OPEN.
+
 ## YZ-RD-T037 — Today listening/speaking/practice/assessment acceptance (2026-10-19)
 
 ACCEPTANCE VERIFIED / READY_TO_MERGE=NO pending the inherited API-owner lint resolution or waiver. T037 remains on independent branch `feat/yz-rd-t037-listen-speak-practice-exam-home`; it was not merged into the shared development branch. Native Chromium 153 + NestJS + PostgreSQL 17.11 + Redis + MinIO E2E passed 2/2, 0 failed, 0 skipped. The real student login rendered all four Today entries; authorized course, recording practice and Level 1 assessment links opened their live API-backed records.

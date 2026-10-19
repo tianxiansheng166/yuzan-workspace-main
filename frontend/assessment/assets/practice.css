@@ -17,3 +17,16 @@
 @media (max-width:1000px) { .practice-page { padding:30px 24px 55px; }.practice-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }.catalog-workbench { grid-template-columns:185px minmax(0,1fr); gap:20px; }.practice-row { grid-template-columns:110px minmax(0,1fr); }.practice-row>img { width:110px; height:95px; }.practice-row-state { grid-column:2; text-align:left; }.practice-detail-hero { grid-template-columns:290px 1fr; }.practice-detail-grid { grid-template-columns:1fr; } }
 @media (max-width:680px) { .practice-page { padding:20px 16px 45px; }.practice-catalog-head { display:block; }.catalog-head-tools{justify-items:stretch}.catalog-archive-nav{justify-content:flex-start;margin-top:18px}.catalog-search { margin-top:19px; }.catalog-tabs { margin-inline:-16px; padding-inline:8px; }.catalog-ability { padding-top:23px; }.catalog-workbench { display:block; }.catalog-filters { display:none; }.practice-grid { grid-template-columns:1fr; }.result-toolbar { align-items:flex-start; }.result-actions { flex-direction:column; align-items:flex-end; }.practice-row { grid-template-columns:88px minmax(0,1fr); gap:12px; }.practice-row>img { width:88px; height:88px; }.practice-row h2 { font-size:18px; }.practice-detail-hero { grid-template-columns:1fr; gap:20px; }.detail-cover { min-height:205px; }.practice-state { flex-direction:column; text-align:center; }.practice-state img { width:210px; }.catalog-section-head h2,.result-toolbar h2 { font-size:21px; } }
 @media (prefers-reduced-motion:reduce) { .ability-button,.practice-cover img { transition:none; } }
+/* T044: recording is a lightweight catalog facet, not a second set of hero tiles. */
+.catalog-oral-toolbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:7px;max-width:100%;font-size:11px;color:var(--catalog-pine)}
+.catalog-oral-caption{font-weight:700;color:#718076}
+.catalog-oral-filter{display:inline-flex;align-items:center;gap:7px;min-height:35px;padding:7px 12px;border:1px solid #b5cbb6;border-radius:99px;background:#f1f6ed;color:#255840;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer}
+.catalog-oral-filter.is-active{background:#286b4b;color:white;border-color:#286b4b}
+.catalog-oral-filter:hover{border-color:#60856c}
+.catalog-oral-filter:focus-visible{outline:3px solid #ac8446;outline-offset:2px}
+.catalog-oral-indicator{font-size:16px;line-height:0.6}
+.catalog-oral-help{color:#89938a}
+@media(max-width:680px){.catalog-oral-toolbar{justify-content:flex-start}.catalog-oral-help{width:100%;font-size:10px}}
+/* T012's shared visuals sheet restores the full filter panel for mobile;
+   the compact oral control replaces that tall panel on small screens. */
+@media(max-width:680px){.practice-page .catalog-workbench{display:block}.practice-page .catalog-workbench .catalog-filters{display:none}}
