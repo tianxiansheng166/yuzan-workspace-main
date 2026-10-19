@@ -1,0 +1,67 @@
+{
+  "task": "YZ-RD-T043",
+  "runtime": "native isolated runtime; Docker and Compose not used",
+  "database": "yuzan_t043_native",
+  "databaseRole": "yz_t043",
+  "postgresVersion": "PostgreSQL 17.11 (Ubuntu 17.11-1.pgdg22.04+2)",
+  "node": "v24.20.0",
+  "pnpm": "10.13.1",
+  "chromium": "Google Chrome 153.0.8010.52",
+  "apiHealth": 200,
+  "webHealth": 200,
+  "worker": "NOT_STARTED",
+  "speechScoring": "disabled; Chromium recordings used SIMULATED_MIC only",
+  "questionBankImport": {
+    "sourceDirectory": "/home/tian/code/yuzan-workspace-main/习题课程资源",
+    "mode": "read-only source import into T043 database and bucket",
+    "preflight": {
+      "items": 120,
+      "points": 600,
+      "bound": 120,
+      "missing": 0,
+      "ambiguous": 0,
+      "errors": 0,
+      "warnings": 0
+    },
+    "resourcesCreated": 126,
+    "practiceDefinitionsCreated": 6,
+    "practiceDeliveriesCreated": 6,
+    "originalSourceHashesUnchanged": true
+  },
+  "services": {
+    "postgres": {
+      "pidBeforeStop": 3536591,
+      "port": 55643,
+      "stopped": true,
+      "listenerPidsAfterStop": []
+    },
+    "redis": {
+      "pidBeforeStop": 3536637,
+      "port": 6443,
+      "stopped": true,
+      "listenerPidsAfterStop": []
+    },
+    "minio": {
+      "pidBeforeStop": 3538078,
+      "apiPort": 59443,
+      "consolePort": 59444,
+      "bucket": "yz-t043-native",
+      "stopped": true,
+      "listenerPidsAfterStop": []
+    },
+    "api": {
+      "pidBeforeStop": 3544835,
+      "port": 4143,
+      "stopped": true,
+      "listenerPidsAfterStop": []
+    },
+    "web": {
+      "pidBeforeStop": 3544821,
+      "port": 4343,
+      "stopped": true,
+      "listenerPidsAfterStop": []
+    }
+  },
+  "dataRetained": true,
+  "runtimeDirectory": "/tmp/yz-rd-t043-runtime"
+}

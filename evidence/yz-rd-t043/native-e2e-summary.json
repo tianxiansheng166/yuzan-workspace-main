@@ -1,0 +1,31 @@
+{
+  "runner": "native Google Chrome + NestJS API + PostgreSQL 17.11 + Redis + MinIO",
+  "pythonRuntime": "/home/tian/code/yuzan-workspace-main/runtime-local/native-web/venv/bin/python",
+  "testFiles": [
+    "tests/e2e/assessment/test_yz_rd_t037_today_showcase.py",
+    "tests/e2e/assessment/test_qb017a_student_today.py"
+  ],
+  "finalRun": {
+    "passed": 4,
+    "failed": 0,
+    "skipped": 0,
+    "durationSeconds": 133.46
+  },
+  "verified": [
+    "login form and authenticated Today API",
+    "teacher remediation primary action and multi-enrollment runner",
+    "authorized course Assignment, Course Detail, and database-backed activity",
+    "authorized requiresRecording practice definition and route",
+    "completed formal 0-point report and teacher feedback in Growth",
+    "real CREATED/IN_PROGRESS standard assessment continuation remains on Today",
+    "pending processing session has no report or score",
+    "same-school and cross-school resource isolation",
+    "single Today API failure and retry",
+    "optional catalog network failure and empty response produce no recommendation",
+    "keyboard focus and Enter activation",
+    "ARIA region and named link",
+    "390px touch activation of the main task and authorized optional practice",
+    "390/768/1280/1440 screenshot and horizontal overflow checks"
+  ],
+  "recordings": "SIMULATED_MIC only; no physical microphone or speech scoring claimed"
+}

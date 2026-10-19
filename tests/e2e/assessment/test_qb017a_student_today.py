@@ -52,6 +52,23 @@ def today(page: Page):
     return page.evaluate("window.__studentTodayData")
 
 
+def assert_t043_hierarchy(page: Page, data):
+    target = data["primaryAction"]["target"]
+    assert page.locator(".today-skill-card").count() == 0
+    assert page.locator(".today-primary").get_attribute("data-action-kind") == data["primaryAction"]["kind"]
+    primary_control = page.locator("[data-primary-action]")
+    if data["primaryAction"]["kind"] in ("BASELINE", "START_REMEDIATION"):
+        assert primary_control.evaluate("element => element.tagName") == "BUTTON"
+        assert primary_control.get_attribute("type") == "button"
+    else:
+        assert primary_control.evaluate("element => element.tagName") == "A"
+        assert primary_control.get_attribute("href") == target["href"]
+    assert page.get_by_role("region", name="其他已开放的学习内容").count() <= 1
+    primary = page.locator(".today-primary").bounding_box()
+    optional = page.locator(".today-discover").bounding_box() if page.locator(".today-discover").count() else None
+    assert primary and (optional is None or primary["y"] < optional["y"])
+
+
 def student_enrollment_id():
     enrollment_id = sql(
         f'''SELECT "id" FROM "Enrollment"
@@ -83,6 +100,7 @@ def test_qb017a_student_today_four_real_states():
                 assert baseline["version"] == "student-today-v1"
                 assert baseline["primaryAction"]["kind"] == "BASELINE"
                 assert baseline["primaryAction"]["target"]["practiceDefinitionId"] == delivery["definitionId"]
+                assert_t043_hierarchy(page, baseline)
                 assert "高原上的春天" not in page.locator("body").inner_text()
 
                 # Create a completed formal diagnosis through the same published
@@ -134,6 +152,8 @@ def test_qb017a_student_today_four_real_states():
                 assert teacher_action["primaryAction"]["target"]["href"].endswith(
                     f"/student/practices/attempts/{teacher_attempt_id}/runner/"
                 )
+                assert_t043_hierarchy(page, teacher_action)
+                assert page.locator(".today-primary h2").inner_text() == teacher_action["primaryAction"]["title"]
                 page.locator("[data-primary-action]").click()
                 page.wait_for_url(f"**/student/practices/attempts/{teacher_attempt_id}/runner/", timeout=20_000)
                 page.locator(".question-shell").wait_for(timeout=20_000)
@@ -202,6 +222,7 @@ def test_qb017a_multi_enrollment_teacher_assignment_runner():
                 assert data["primaryAction"]["kind"] == "TEACHER_REMEDIATION"
                 assert "老师布置的" in data["primaryAction"]["title"]
                 assert "专项巩固" in data["primaryAction"]["title"]
+                assert_t043_hierarchy(page, data)
                 page.locator("[data-primary-action]").click()
                 page.wait_for_url(f"**/student/practices/attempts/{teacher_attempt_id}/runner/", timeout=20_000)
                 page.locator(".question-shell").wait_for(timeout=20_000)

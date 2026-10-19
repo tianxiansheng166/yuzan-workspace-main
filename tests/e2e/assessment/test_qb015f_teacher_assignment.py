@@ -16,6 +16,7 @@ import subprocess
 import time
 import uuid
 import wave
+from urllib.parse import urlparse
 
 from playwright.sync_api import sync_playwright
 
@@ -39,6 +40,36 @@ FAMILY_ORDER = list(FAMILY_NAMES)
 
 
 def sql(statement, *, capture=False):
+    native_url = os.environ.get("QB_RELEASE_DATABASE_URL")
+    native_psql = os.environ.get("QB_RELEASE_PSQL")
+    if native_url and native_psql:
+        parsed = urlparse(native_url)
+        if parsed.scheme != "postgresql" or parsed.hostname != "127.0.0.1":
+            raise RuntimeError("native QB_RELEASE_DATABASE_URL must target loopback PostgreSQL")
+        password = parsed.password or ""
+        native_env = {
+            **os.environ,
+            "PGHOST": parsed.hostname,
+            "PGPORT": str(parsed.port),
+            "PGUSER": parsed.username or DB_USER,
+            "PGPASSWORD": password,
+            "PGDATABASE": parsed.path.lstrip("/"),
+            "LD_LIBRARY_PATH": os.pathsep.join(
+                filter(None, [os.environ.get("QB_RELEASE_PG_LIBRARY", ""), os.environ.get("LD_LIBRARY_PATH", "")])
+            ),
+        }
+        result = subprocess.run(
+            [native_psql, "-X", "-v", "ON_ERROR_STOP=1", "-A", "-t", "-F", "\t"],
+            input=statement,
+            check=False,
+            capture_output=True,
+            text=True,
+            env=native_env,
+        )
+        if result.returncode:
+            raise RuntimeError(result.stderr.replace(password, "<redacted>"))
+        return result.stdout.strip() if capture else ""
+
     result = subprocess.run(
         ["docker", "exec", "-i", DB_CONTAINER, "psql", "-U", DB_USER, "-d", DB_NAME, "-At", "-F", "\t", "-v", "ON_ERROR_STOP=1"],
         input=statement,
@@ -289,7 +320,11 @@ def test_qb015f_teacher_assigns_and_student_completes_subset():
             page.wait_for_url("**/processing/**", timeout=30_000)
             page.get_by_role("heading", name="本次巩固已完成").wait_for(timeout=30_000)
             assert "不会改变正式测评结果" in page.locator("body").inner_text()
-            result_response = page.request.get(f"{BASE}/api/v1/schools/{SCHOOL_ID}/assessments/sessions/{student1_assignment}/remediation-result", headers={"Authorization": f"Bearer {page.evaluate('localStorage.getItem(\"yuzan-access-token\")')}"})
+            student_access_token = page.evaluate("localStorage.getItem('yuzan-access-token')")
+            result_response = page.request.get(
+                f"{BASE}/api/v1/schools/{SCHOOL_ID}/assessments/sessions/{student1_assignment}/remediation-result",
+                headers={"Authorization": f"Bearer {student_access_token}"},
+            )
             assert result_response.ok, result_response.text()
             result = payload(result_response)
             assert result["itemCount"] == 3 and result["pendingItemCount"] == 0
@@ -348,7 +383,12 @@ def test_qb015f_teacher_assigns_and_student_completes_subset():
                     break
                 time.sleep(1)
             assert sql(f'''SELECT COUNT(*) FROM "SpeechJob" WHERE "assessmentItemId" IN ('{"','".join(speech_items)}') AND "status" = 'NEEDS_REVIEW';''', capture=True) == "3"
-            speech_payload = payload(page.request.get(f"{BASE}/api/v1/schools/{SCHOOL_ID}/assessments/sessions/{speech_row}/items", headers={"Authorization": f"Bearer {page.evaluate('localStorage.getItem(\"yuzan-access-token\")')}"}))
+            student_access_token = page.evaluate("localStorage.getItem('yuzan-access-token')")
+            speech_response = page.request.get(
+                f"{BASE}/api/v1/schools/{SCHOOL_ID}/assessments/sessions/{speech_row}/items",
+                headers={"Authorization": f"Bearer {student_access_token}"},
+            )
+            speech_payload = payload(speech_response)
             assert all((item.get("autoResult") or {}).get("strategy") == "SPEECH_READING" and item.get("scoredScore") is None for item in speech_payload)
 
             authenticate(page, "teacher.test")

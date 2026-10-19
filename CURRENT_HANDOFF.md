@@ -3,6 +3,10 @@
 Last updated: 2026-10-19
 Repository: `yuzan-workspace-main`
 
+## YZ-RD-T046 integrated student experience checkpoint (2026-10-19)
+
+- New independent integration from accepted T042 + T043 personalized Today + T044 speech catalog. T042 native E2E passed on its own older four-tile page, so T046 must perform fresh native E2E before scoped acceptance. Never merge shared with inherited full API lint FAIL.
+
 ## YZ-RD-T042 isolated showcase integration (2026-10-19)
 
 - ACCEPTANCE VERIFIED on independent branch `feat/yz-rd-t042-student-showcase-roster-history-integration`, starting at `a676c99f81400b950b3de00f98e83dea05622485`; no shared-branch merge. The existing no-fast-forward T039 + T037 integration graph is preserved.
@@ -16,6 +20,15 @@ Repository: `yuzan-workspace-main`
 
 - Own isolated branch integrates accepted T034 and T036 atop T033; preserve both original checkpoint notes below. Native cross-role E2E and full API lint remain unverified on T039 until recorded separately.
 - The preexisting T033 full API lint debt (1201 errors/1 warning) is not a waiver, and no shared-branch merge is authorized.
+
+## YZ-RD-T043 personalized Today UX correction (2026-10-19)
+
+- ACCEPTANCE_VERIFIED on independent branch `feat/yz-rd-t043-personalized-today-ux-restoration`, starting from `752a6b9ec42e6903635ea6cc45d757eb5aa592aa`; not merged to the shared branch.
+- The personalized server-selected primary task and progress remain first. The equal-weight four-card grid is absent. One optional activity appears only when it is authorized, distinct from the primary/resumed Attempt, and the attempt-to-practice link can be resolved; empty or failed catalogs add no recommendation.
+- Final frontend suite: 120 passed / 0 failed / 0 skipped. Native Chromium + NestJS API + PostgreSQL 17.11 + Redis + MinIO E2E: 4 passed / 0 failed / 0 skipped. Evidence includes real login, teacher remediation assignment, dynamic course and activity, authorized `requiresRecording` practice, formal 0-point report and teacher feedback, pending no-score state, isolation, retry, empty/offline behavior, keyboard/ARIA, touch, and 390/768/1280/1440 screenshots with zero horizontal overflow.
+- Current screenshots confirm the main card is fully within the first fold at all four heights; the optional discovery is below the overview. A real active assessment resumed after the first attempt; its Level 1 practice is not repeated as the optional suggestion. Full evidence: [evidence/yz-rd-t043/RESULTS.md](evidence/yz-rd-t043/RESULTS.md).
+- All runtime identities/content are `TEST_FIXTURE_ONLY`. The accepted Question Bank source was imported read-only; source hashes match. T005 protected source files, T042/T044 and other lanes were not modified or stopped. No Docker/Compose, Worker, shared-branch merge, or L4 access. T043 services exited and all owned ports are free; isolated PostgreSQL/MinIO data remains under `/tmp/yz-rd-t043-runtime`.
+- The target checkout `AGENTS.md` has no AA-DEV-V2.2 marker; the user-supplied local safety baseline governed. Full API lint was not rerun; inherited T033 baseline is 1201 errors / 1 warning and is not waived. `READY_TO_MERGE=NO`; `L4_OPEN=OPEN`.
 
 ## YZ-RD-T037 checkpoint (2026-10-19)
 

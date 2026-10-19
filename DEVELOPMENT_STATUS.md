@@ -1,5 +1,9 @@
 # Development status
 
+## YZ-RD-T046 — personalized Today and real speech catalog integrated checkpoint (2026-10-19)
+
+Separate rolling integration of T042 (five native E2Es already scoped-accepted) with T043 personalized Today and T044 compact speech catalog (both separately scoped accepted). T046's own native cross-role E2E is pending and the inherited full API lint debt is not waived.
+
 ## YZ-RD-T042 — Today showcase + teacher roster + student history integration (2026-10-19)
 
 ACCEPTANCE VERIFIED on the independent T042 branch; not merged into the shared development branch. A fresh native Chromium 153/NestJS/PostgreSQL 17.11/Redis/MinIO runtime passed 5/5 cross-module E2Es with 0 skips. Student login reaches Today’s four entries, authorized course/recording/Level 1 detail, a pending no-score state, teacher-reviewed legal 0/100 report, and a same-ID History → Runner continuation. Student A/B and cross-school isolation passed.
@@ -7,6 +11,14 @@ ACCEPTANCE VERIFIED on the independent T042 branch; not merged into the shared d
 Teacher roster covers 35 authorized students, search/filter/sort/detail/return state, 401/403/404, and 3-of-35 filtered display exporting all 35 rows with full PostgreSQL parity. Screenshots and SQL/browser proofs are in [`evidence/yz-rd-t042/RESULTS.md`](evidence/yz-rd-t042/RESULTS.md). Frontend 130/130; full API tests 1109 passed / 64 environment-gated skips; Contracts 6/6; workspace typecheck and build pass.
 
 Full API lint was rerun and remains `1201 errors / 1 warning`, matching the inherited T033 baseline; `READY_TO_MERGE=NO` until the API owner resolves or waives it. All browser and database identities are local `TEST_FIXTURE_ONLY` data; recordings use `SIMULATED_MIC`. Physical mic, calibrated scoring, pilot and production remain NOT_RUN. Services exited and all six T042 ports are free. No Docker/Compose, Worker, shared-branch merge, T005 worktree modification, or L4 access. The target checkout lacks an AA-DEV-V2.2 marker; the supplied `/home/tian/code/AGENTS.md` applied.
+
+## YZ-RD-T043 — Student Today UX acceptance (2026-10-19)
+
+ACCEPTANCE VERIFIED / READY_TO_MERGE=NO pending the inherited API-owner lint resolution or waiver. Independent branch `feat/yz-rd-t043-personalized-today-ux-restoration` starts at accepted T043 `752a6b9ec42e6903635ea6cc45d757eb5aa592aa`; it was not merged into the shared branch.
+
+Frontend 120/120 passed. Native Chromium 153 + NestJS API + PostgreSQL 17.11 + Redis + MinIO passed 4/4 E2Es with 0 failures and 0 skips. Authenticated Today keeps the real server-selected primary action/progress first, has no four-card grid, uses only authorized dynamic course/practice IDs, avoids repeating the practice behind a resumed assessment, and hides optional discovery on empty/failed catalogs. Tests cover teacher-assigned remediation, course activity, recording practice, formal zero-score report and teacher feedback, pending no-score state, identity isolation, retry, keyboard/ARIA, mobile touch and screenshots at 390/768/1280/1440.
+
+T043's own services are stopped and owned ports are free; its database, MinIO objects, screenshots and proof remain retained. Question Bank source hashes match before/after read-only import. All browser identities/content are `TEST_FIXTURE_ONLY`. No Docker/Compose, Worker, shared-branch merge, T005 protected-source changes or L4 access. Full API lint was not rerun; inherited T033 baseline remains 1201 errors / 1 warning. See [`evidence/yz-rd-t043/RESULTS.md`](evidence/yz-rd-t043/RESULTS.md).
 
 ## YZ-RD-T037 — Today listening/speaking/practice/assessment acceptance (2026-10-19)
 

@@ -1,0 +1,41 @@
+{
+  "verification": "VISUAL_FIXTURE_ONLY, NO BACKEND E2E",
+  "results": [
+    {
+      "width": 390,
+      "overflow": 0,
+      "primaryTop": 181.5,
+      "optionalTop": 866.171875,
+      "optionalCount": 1,
+      "fourCardCount": 0,
+      "primaryTitle": "继续老师布置的朗读巩固"
+    },
+    {
+      "width": 768,
+      "overflow": 0,
+      "primaryTop": 194,
+      "optionalTop": 710,
+      "optionalCount": 1,
+      "fourCardCount": 0,
+      "primaryTitle": "继续老师布置的朗读巩固"
+    },
+    {
+      "width": 1280,
+      "overflow": 0,
+      "primaryTop": 202,
+      "optionalTop": 574,
+      "optionalCount": 1,
+      "fourCardCount": 0,
+      "primaryTitle": "继续老师布置的朗读巩固"
+    },
+    {
+      "width": 1440,
+      "overflow": 0,
+      "primaryTop": 202,
+      "optionalTop": 574,
+      "optionalCount": 1,
+      "fourCardCount": 0,
+      "primaryTitle": "继续老师布置的朗读巩固"
+    }
+  ]
+}
