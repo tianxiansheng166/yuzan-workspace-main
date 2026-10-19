@@ -11,6 +11,7 @@ const { suggestion, render } = win.YuzanTodayShowcase;
 
 test("personalized primary task has priority over optional discovery in Today layout", () => {
   assert.match(todaySource, /<section class="today-overview">/);
+  assert.match(todaySource, /showcase\.render\(\{ today, practices, courses, attempts \}\)/);
   assert.match(todaySource, /querySelector\("\.today-overview"\)\?\.insertAdjacentHTML\("afterend", extra\)/);
   assert.doesNotMatch(todaySource, /querySelector\("\.today-header"\)\?\.insertAdjacentHTML/);
   const html = render({ practices: { items: [{ id: "oral-1", title: "跟读", requiresRecording: true }] } });
@@ -46,6 +47,25 @@ test("does not repeat the exact practice or course already selected as the prima
   };
   assert.equal(suggestion(duplicateCourse), null);
   assert.equal(render(duplicateCourse), "");
+});
+
+test("does not recommend the practice behind a real resumed assessment session", () => {
+  const state = {
+    today: { primaryAction: { kind: "RESUME_ASSESSMENT", target: { href: "/assessment/sessions/session-1/" } } },
+    attempts: { items: [{ id: "session-1", practiceAttempt: { practiceDefinitionId: "baseline-1" } }] },
+    practices: { items: [
+      { id: "baseline-1", title: "当前续测", requiresRecording: true },
+      { id: "oral-2", title: "另一项录音练习", requiresRecording: true },
+    ] },
+  };
+  assert.equal(suggestion(state).href, "/student/practices/oral-2/");
+
+  const unresolved = {
+    ...state,
+    attempts: { items: [], error: "offline" },
+    courses: { courses: [{ assignmentId: "course-1", title: "课程" }] },
+  };
+  assert.equal(suggestion(unresolved), null);
 });
 
 test("API errors and missing authorized work never produce filler buttons or scores", () => {

@@ -128,7 +128,7 @@ def open_today(page, *, ready: bool = True) -> dict:
     page.goto(f"{BASE}/student/today/", wait_until="domcontentloaded")
     page.wait_for_function("window.__studentTodayData !== undefined || document.querySelector('#todayApp[data-state=error]')", timeout=40_000)
     if ready:
-        page.wait_for_function("document.querySelectorAll('.today-skill-card').length === 4", timeout=30_000)
+        page.locator(".today-primary").wait_for(timeout=30_000)
     return page.evaluate("window.__studentTodayData || null")
 
 
@@ -152,12 +152,16 @@ def add_test_course_activity(assignment_id: str) -> dict[str, str]:
     )
     assert len(row) == 1 and row[0][2] == "OPEN", row
     version_id, course_title = row[0][:2]
+    unit_sort_order = int(sql(
+        f'''SELECT COALESCE(MAX("sortOrder"), 0) + 1 FROM "Unit"
+             WHERE "courseVersionId"={q(version_id)};''', capture=True
+    ))
     ids = {key: str(uuid.uuid4()) for key in ("unit", "lesson", "activity")}
     activity_title = "TEST_FIXTURE_ONLY T037 课程正文验收段落"
     sql(
         f'''BEGIN;
         INSERT INTO "Unit" (id,"courseVersionId",title,"sortOrder")
-          VALUES ({q(ids['unit'])},{q(version_id)},'TEST_FIXTURE_ONLY T037 学习单元',1);
+          VALUES ({q(ids['unit'])},{q(version_id)},'TEST_FIXTURE_ONLY T037 学习单元',{unit_sort_order});
         INSERT INTO "Lesson" (id,"unitId",title,"sortOrder")
           VALUES ({q(ids['lesson'])},{q(ids['unit'])},'TEST_FIXTURE_ONLY T037 学习课时',1);
         INSERT INTO "LearningActivity" (id,"lessonId",type,title,instruction,"sortOrder",required,"completionRule",content,"studentNotes")
@@ -235,8 +239,11 @@ def test_02_today_showcase_clicks_isolation_retry_and_four_viewports():
     screenshots.mkdir(parents=True, exist_ok=True)
     browser_errors: list[str] = []
     responsive = {}
+    design_review = {}
     click_proof = {}
     isolation = {}
+    keyboard_proof = {}
+    mobile_proof = {}
 
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(
@@ -248,30 +255,51 @@ def test_02_today_showcase_clicks_isolation_retry_and_four_viewports():
         page = context.new_page()
         page.on("pageerror", lambda error: browser_errors.append(str(error)))
         try:
-            # A real login form with an active school/class, then all four dynamic Today cards.
+            # A real login form with an active school/class. The server-authorized
+            # personalized task and progress stay first; optional discovery follows it.
             showcase_session = login_in_browser(page, showcase_login)
             assert showcase_session["activeSchoolId"] == SCHOOL_ID
             today = open_today(page)
             assert today["version"] == "student-today-v1"
-            assert page.locator(".today-skill-card").count() == 4
-            assert page.locator(".today-skill-listen").count() == 1
-            assert page.locator(".today-skill-speak").count() == 1
-            assert page.locator(".today-skill-exam").count() == 1
-            assert page.locator(".today-skill-report").count() == 1
+            assert page.locator(".today-skill-card").count() == 0
+            assert page.locator(".today-discover").count() == 1
+            assert page.get_by_role("region", name="其他已开放的学习内容").count() == 1
+            assert page.get_by_role("heading", level=1).count() == 1
             assert today["primaryAction"]["kind"] == "BASELINE", today["primaryAction"]
+            assert page.locator(".today-primary").get_attribute("data-action-kind") == "BASELINE"
+            primary_target = today["primaryAction"]["target"]
+            baseline_id = primary_target["practiceDefinitionId"]
+            primary_href = f"/student/practices/{baseline_id}/"
+            primary_link = page.locator("[data-primary-action]")
+            if today["primaryAction"]["kind"] == "BASELINE":
+                assert primary_link.evaluate("element => element.tagName") == "BUTTON"
+                assert primary_link.get_attribute("type") == "button"
+            else:
+                assert primary_link.get_attribute("href") == today["primaryAction"]["target"]["href"]
+            hierarchy = page.evaluate("""() => {
+              const primary = document.querySelector('.today-primary').getBoundingClientRect();
+              const optional = document.querySelector('.today-discover').getBoundingClientRect();
+              return { primaryTop: primary.top, primaryBottom: primary.bottom,
+                       optionalTop: optional.top, documentHeight: document.documentElement.scrollHeight,
+                       viewportHeight: window.innerHeight };
+            }""")
+            assert hierarchy["primaryTop"] < hierarchy["optionalTop"], hierarchy
 
             practice_response = page.request.get(f"{API}/schools/{SCHOOL_ID}/practices?sort=RECOMMENDED", headers=auth_headers(showcase_session))
             assert practice_response.ok, practice_response.text()
             practice_catalog = payload(practice_response)["items"]
-            recording_definition = next(item for item in practice_catalog if item.get("requiresRecording") is True)
-            recording_href = page.locator(".today-skill-speak .today-skill-link").get_attribute("href")
+            recording_href = page.locator(".today-discover-link").get_attribute("href")
+            recording_id = urlparse(recording_href).path.rstrip("/").split("/")[-1]
+            recording_definition = next(
+                item for item in practice_catalog
+                if item["id"] == recording_id and item.get("requiresRecording") is True
+            )
             assert recording_href == f"/student/practices/{recording_definition['id']}/", recording_href
-            assert recording_definition["title"] in page.locator(".today-skill-speak").inner_text()
+            assert recording_definition["title"] in page.locator(".today-discover").inner_text()
+            assert recording_href != primary_href
 
-            baseline_id = today["primaryAction"]["target"]["practiceDefinitionId"]
             baseline = next(item for item in practice_catalog if item["id"] == baseline_id)
-            exam_href = page.locator(".today-skill-exam .today-skill-link").get_attribute("href")
-            assert exam_href == f"/student/practices/{baseline_id}/", exam_href
+            assert primary_href == f"/student/practices/{baseline_id}/", primary_href
             assert baseline_id == practice_id, {"todayBaseline": baseline_id, "reportPathPractice": practice_id}
 
             # A dynamic real Assignment, targeted to this student's class, opens Course Detail.
@@ -279,7 +307,8 @@ def test_02_today_showcase_clicks_isolation_retry_and_four_viewports():
             assert course_list_response.ok, course_list_response.text()
             listed_courses = payload(course_list_response)["courses"]
             authorized_course = next(item for item in listed_courses if item["assignmentId"] == assignment_id)
-            course_href = page.locator(".today-skill-listen .today-skill-link").get_attribute("href")
+            course_link = page.locator(f".today-course-item a[href*='{assignment_id}']")
+            course_href = course_link.get_attribute("href")
             assert course_href == f"/student/courses/course-detail/?id={assignment_id}", course_href
             course_detail_response = page.request.get(
                 f"{API}/schools/{SCHOOL_ID}/student/courses/{assignment_id}",
@@ -287,9 +316,15 @@ def test_02_today_showcase_clicks_isolation_retry_and_four_viewports():
             )
             assert course_detail_response.ok, course_detail_response.text()
             detail = payload(course_detail_response)
-            activity = detail["units"][0]["lessons"][0]["activities"][0]
+            activity = next(
+                activity
+                for unit in detail["units"]
+                for lesson in unit["lessons"]
+                for activity in lesson["activities"]
+                if activity["id"] == course["activity"]
+            )
             assert activity["id"] == course["activity"] and activity["title"] == course["activityTitle"]
-            page.locator(".today-skill-listen .today-skill-link").click()
+            course_link.click()
             page.wait_for_url(f"**/student/courses/course-detail/?id={assignment_id}", timeout=20_000)
             page.locator("#cpMain").wait_for(state="visible", timeout=30_000)
             expect(page.locator("#cpHeroTitle")).to_contain_text(course["courseTitle"])
@@ -305,14 +340,15 @@ def test_02_today_showcase_clicks_isolation_retry_and_four_viewports():
                 "apiStatus": course_detail_response.status,
             }
 
-            # Each listening/practice and assessment card lands on its exact authorized definition.
+            # Optional recording discovery and the main assessment task both use
+            # the exact IDs returned by their authorized API responses.
             open_today(page)
             recording_detail = page.request.get(
                 f"{API}/schools/{SCHOOL_ID}/practices/{recording_definition['id']}",
                 headers=auth_headers(showcase_session),
             )
             assert recording_detail.ok, recording_detail.text()
-            page.locator(".today-skill-speak .today-skill-link").click()
+            page.locator(".today-discover-link").click()
             page.wait_for_url(f"**/student/practices/{recording_definition['id']}/", timeout=20_000)
             expect(page.locator("body")).to_contain_text(recording_definition["title"])
             page.screenshot(path=str(screenshots / "recording-practice-definition-1440.png"), full_page=True)
@@ -330,26 +366,77 @@ def test_02_today_showcase_clicks_isolation_retry_and_four_viewports():
                 headers=auth_headers(showcase_session),
             )
             assert assessment_detail.ok, assessment_detail.text()
-            page.locator(".today-skill-exam .today-skill-link").click()
-            page.wait_for_url(f"**/student/practices/{baseline_id}/", timeout=20_000)
-            expect(page.locator("body")).to_contain_text(baseline["title"])
-            page.screenshot(path=str(screenshots / "authorized-assessment-definition-1440.png"), full_page=True)
+            assert page.locator("[data-primary-action]").evaluate("element => element.tagName") == "BUTTON"
             click_proof["assessmentEntry"] = {
                 "practiceDefinitionId": baseline_id,
                 "title": baseline["title"],
                 "baselineAction": today["primaryAction"]["kind"],
                 "detailApiStatus": assessment_detail.status,
-                "browserUrl": page.url,
+                "primaryControl": "keyboard/touch button starts or resumes the real Attempt",
             }
 
             # Capture all requested widths from the same authenticated, DB-backed Today state.
+            # Record first-fold geometry, type scale, spacing and hierarchy alongside screenshots.
             open_today(page)
             for width, height in ((390, 844), (768, 1024), (1280, 900), (1440, 1000)):
                 page.set_viewport_size({"width": width, "height": height})
                 page.wait_for_timeout(100)
                 responsive[str(width)] = assert_no_horizontal_overflow(page, width)
-                page.screenshot(path=str(screenshots / f"today-showcase-{width}.png"), full_page=True)
+                design_review[str(width)] = page.evaluate("""() => {
+                  const box = (selector) => {
+                    const element = document.querySelector(selector);
+                    if (!element) return null;
+                    const rect = element.getBoundingClientRect();
+                    const style = getComputedStyle(element);
+                    return { top: Math.round(rect.top), bottom: Math.round(rect.bottom),
+                      height: Math.round(rect.height), fontSize: style.fontSize,
+                      lineHeight: style.lineHeight, marginTop: style.marginTop,
+                      marginBottom: style.marginBottom };
+                  };
+                  const primary = box('.today-primary');
+                  const optional = box('.today-discover');
+                  return {
+                    viewport: { width: innerWidth, height: innerHeight },
+                    documentHeight: document.documentElement.scrollHeight,
+                    primary, optional,
+                    hierarchy: Boolean(primary && (!optional || primary.top < optional.top)),
+                    primaryVisibleAboveFold: Boolean(primary && primary.bottom <= innerHeight),
+                    pageHeading: box('.today-header h1'),
+                    primaryHeading: box('.today-primary h2'),
+                    primaryReason: box('.today-primary .today-reason'),
+                    discoveryHeading: box('.today-discover h2'),
+                    discoveryLink: box('.today-discover-link'),
+                    overviewGap: getComputedStyle(document.querySelector('.today-overview')).gap,
+                    courseLinkCount: document.querySelectorAll('.today-course-item a[href*="course-detail"]').length,
+                    fourCardCount: document.querySelectorAll('.today-skill-card').length,
+                  };
+                }""")
+                assert design_review[str(width)]["hierarchy"], design_review[str(width)]
+                assert design_review[str(width)]["fourCardCount"] == 0, design_review[str(width)]
+                page.screenshot(path=str(screenshots / f"today-real-{width}.png"), full_page=True)
             assert [int(width) for width in responsive] == [390, 768, 1280, 1440]
+
+            # The original personalized baseline action remains operable from the keyboard.
+            page.evaluate("window.scrollTo(0, 0); document.activeElement?.blur();")
+            for _ in range(60):
+                page.keyboard.press("Tab")
+                if page.evaluate("document.activeElement?.matches('[data-primary-action]')"):
+                    break
+            assert page.evaluate("document.activeElement?.matches('[data-primary-action]')")
+            keyboard_proof = page.evaluate("""() => {
+              const element = document.activeElement;
+              const style = getComputedStyle(element);
+              return { tag: element.tagName, type: element.getAttribute('type'),
+                accessibleText: element.innerText.trim(), keyboardFocused: element.matches(':focus-visible'),
+                outlineStyle: style.outlineStyle, outlineWidth: style.outlineWidth };
+            }""")
+            assert keyboard_proof["tag"] == "BUTTON" and keyboard_proof["type"] == "button"
+            assert keyboard_proof["keyboardFocused"] and keyboard_proof["outlineStyle"] != "none", keyboard_proof
+            page.keyboard.press("Enter")
+            page.wait_for_url("**/student/practices/attempts/*/runner/", timeout=30_000)
+            page.locator(".question-shell").wait_for(timeout=20_000)
+            keyboard_proof["openedRealAttempt"] = True
+            keyboard_proof["browserUrl"] = page.url
 
             # An actual legal completed STANDARD report with 0 points remains visible as 0.
             report_session = login_api(page, report_login)
@@ -377,16 +464,34 @@ def test_02_today_showcase_clicks_isolation_retry_and_four_viewports():
             zero_today = open_today(page)
             latest_formal = zero_today["summary"]["latestFormalAssessment"]
             assert latest_formal and latest_formal["score"] == 0, latest_formal
-            report_card = page.locator(".today-skill-report")
-            expect(report_card).to_contain_text("最近正式成绩 0 分")
+            progress_action = zero_today["primaryAction"]
+            assert progress_action["kind"] == "RESUME_ASSESSMENT", progress_action
+            match = re.search(r"^/assessment/sessions/([^/]+)/?$", progress_action["target"]["href"])
+            assert match, progress_action
+            progress_session = sql_rows(
+                f'''SELECT s.id,e."userId",s.status::text,s.purpose::text
+                      FROM "AssessmentSession" s JOIN "Enrollment" e ON e.id=s."enrollmentId"
+                     WHERE s.id={q(match.group(1))};'''
+            )
+            assert len(progress_session) == 1 and progress_session[0][0] == match.group(1)
+            assert progress_session[0][1] == report_user_id and progress_session[0][2] in ("CREATED", "IN_PROGRESS")
+            assert progress_session[0][3] == "STANDARD", progress_session
+            assert page.locator(".today-primary").get_attribute("data-action-kind") == zero_today["primaryAction"]["kind"]
+            assert page.locator(".today-primary").inner_text().find(zero_today["primaryAction"]["title"]) >= 0
+            expect(page.locator(".today-track-card")).to_contain_text("继续上次进度")
+            expect(page.locator(".today-track-card")).to_contain_text("已有正式结果")
+            report_card = page.locator(".today-summary")
+            expect(report_card).to_contain_text("0 分")
             expect(report_card.get_by_role("link")).to_have_attribute("href", "/student/growth/")
-            page.screenshot(path=str(screenshots / "today-formal-zero-score-1440.png"), full_page=True)
+            page.screenshot(path=str(screenshots / "today-real-formal-zero-score-1440.png"), full_page=True)
             report_card.get_by_role("link").click()
             page.wait_for_url("**/student/growth/", timeout=20_000)
             page.locator("#growthApp[data-state='ready']").wait_for(timeout=30_000)
             zero_row = page.locator(f'.growth-report-row a[href="/assessment/sessions/{zero_session_id}/report/"]').locator("xpath=..")
             zero_row.wait_for(timeout=20_000)
             expect(zero_row).to_contain_text("0 分")
+            teacher_comment = source["teacherFeedbackSource"]["comments"][0]
+            expect(page.locator("#growthApp")).to_contain_text(teacher_comment)
             click_proof["formalReport"] = {
                 "reportId": zero_report_id,
                 "sessionId": zero_session_id,
@@ -425,9 +530,7 @@ def test_02_today_showcase_clicks_isolation_retry_and_four_viewports():
             pending_today = open_today(page)
             assert pending_today["primaryAction"]["kind"] == "BASELINE", pending_today["primaryAction"]
             pending_baseline_id = pending_today["primaryAction"]["target"]["practiceDefinitionId"]
-            page.locator(".today-skill-exam .today-skill-link").click()
-            page.wait_for_url(f"**/student/practices/{pending_baseline_id}/", timeout=20_000)
-            page.locator("[data-start]").click()
+            page.locator("[data-primary-action]").click()
             page.wait_for_url("**/student/practices/attempts/*/runner/", timeout=30_000)
             pending_session_id = page.url.split("/attempts/")[1].split("/")[0]
             page.locator(".question-shell").wait_for(timeout=20_000)
@@ -461,19 +564,105 @@ def test_02_today_showcase_clicks_isolation_retry_and_four_viewports():
             assert injected["count"] == 1
             page.unroute("**/student/today", fail_first_today)
             page.locator("[data-today-retry]").click()
-            page.wait_for_function("document.querySelectorAll('.today-skill-card').length === 4", timeout=40_000)
+            page.locator(".today-primary").wait_for(timeout=40_000)
             pending_after_retry = page.evaluate("window.__studentTodayData")
             assert pending_after_retry["summary"]["latestFormalAssessment"] is None
-            expect(page.locator(".today-skill-report")).to_contain_text("不展示待审或缺失成绩")
-            expect(page.locator(".today-skill-report .today-skill-link")).to_have_attribute("href", "/student/practices/history/")
+            expect(page.locator(".today-summary")).to_contain_text("还没有正式测评结果")
+            expect(page.locator(".today-summary")).not_to_contain_text("0 分")
             expect(page.locator(".today-pending-section")).to_contain_text("正在处理")
-            assert "0 分" not in page.locator(".today-skill-report").inner_text()
+            assert "0 分" not in page.locator(".today-summary").inner_text()
             page.screenshot(path=str(screenshots / "today-pending-no-score-1280.png"), full_page=True)
+
+            # A disconnected optional catalog is never transformed into a fake recommendation.
+            def abort_optional_catalog(route):
+                request_url = route.request.url
+                if "/student/courses?limit=4" in request_url or "/practices?sort=RECOMMENDED" in request_url:
+                    route.abort("internetdisconnected")
+                else:
+                    route.continue_()
+
+            page.route("**/api/v1/**", abort_optional_catalog)
+            page.goto(f"{BASE}/student/today/", wait_until="domcontentloaded")
+            page.locator(".today-primary").wait_for(timeout=40_000)
+            assert page.locator(".today-discover").count() == 0
+            assert page.locator(".today-skill-card").count() == 0
+            assert page.locator(".today-course-wrap [data-course-state='error']").count() == 1
+            page.unroute("**/api/v1/**", abort_optional_catalog)
+
+            # Empty authorized catalogs also render no extra action or four-card fallback.
+            def empty_optional_catalog(route):
+                request_url = route.request.url
+                if "/student/courses?limit=4" in request_url:
+                    route.fulfill(status=200, content_type="application/json", body=json.dumps({"data": {"courses": []}}))
+                elif "/practices?sort=RECOMMENDED" in request_url:
+                    route.fulfill(status=200, content_type="application/json", body=json.dumps({"data": {"items": [], "total": 0}}))
+                else:
+                    route.continue_()
+
+            page.route("**/api/v1/**", empty_optional_catalog)
+            page.goto(f"{BASE}/student/today/", wait_until="domcontentloaded")
+            page.locator(".today-primary").wait_for(timeout=40_000)
+            assert page.locator(".today-discover").count() == 0
+            assert page.locator(".today-course-section[data-course-state='empty']").count() == 1
+            assert page.locator(".today-skill-card").count() == 0
+            page.unroute("**/api/v1/**", empty_optional_catalog)
+
             page.reload(wait_until="domcontentloaded")
-            page.wait_for_function("document.querySelectorAll('.today-skill-card').length === 4", timeout=40_000)
+            page.locator(".today-primary").wait_for(timeout=40_000)
             refreshed = page.evaluate("window.__studentTodayData")
+            retry_four_card_count = page.locator(".today-skill-card").count()
+            retry_optional_count = page.locator(".today-discover").count()
+            assert retry_four_card_count == 0 and retry_optional_count <= 1
             assert refreshed["summary"]["latestFormalAssessment"] is None
             assert sql(f'''SELECT count(*) FROM "AssessmentReport" WHERE "sessionId"={q(pending_session_id)};''', capture=True) == "0"
+
+            # Mobile touch reaches both the retained primary task and the one
+            # authorized recording suggestion without horizontal scrolling.
+            mobile_context = browser.new_context(
+                viewport={"width": 390, "height": 844}, device_scale_factor=1,
+                is_mobile=True, has_touch=True, permissions=["microphone"],
+            )
+            mobile_page = mobile_context.new_page()
+            mobile_page.on("pageerror", lambda error: browser_errors.append(str(error)))
+            try:
+                mobile_session = login_in_browser(mobile_page, showcase_login)
+                mobile_today = open_today(mobile_page)
+                assert mobile_session["activeSchoolId"] == SCHOOL_ID
+                mobile_metrics = assert_no_horizontal_overflow(mobile_page, 390)
+                mobile_primary = mobile_page.locator("[data-primary-action]")
+                mobile_primary_box = mobile_primary.bounding_box()
+                assert mobile_primary_box and mobile_primary_box["height"] >= 44, mobile_primary_box
+                mobile_primary.tap()
+                mobile_action = mobile_today["primaryAction"]
+                if mobile_action["kind"] in ("BASELINE", "START_REMEDIATION"):
+                    mobile_page.wait_for_url("**/student/practices/attempts/*/runner/", timeout=30_000)
+                    mobile_page.locator(".question-shell").wait_for(timeout=20_000)
+                else:
+                    mobile_primary_href = mobile_action["target"]["href"]
+                    mobile_page.wait_for_url(f"**{mobile_primary_href}", timeout=30_000)
+                primary_opened_url = mobile_page.url
+                mobile_page.go_back(wait_until="domcontentloaded")
+                mobile_page.locator(".today-discover-link").wait_for(timeout=30_000)
+                mobile_discover_box = mobile_page.locator(".today-discover-link").bounding_box()
+                assert mobile_discover_box and mobile_discover_box["height"] >= 40, mobile_discover_box
+                mobile_discover_href = mobile_page.locator(".today-discover-link").get_attribute("href")
+                assert mobile_discover_href == recording_href
+                mobile_page.locator(".today-discover-link").tap()
+                mobile_page.wait_for_url(f"**{recording_href}", timeout=20_000)
+                mobile_proof = {
+                    "viewport": 390,
+                    "overflow": mobile_metrics,
+                    "primaryTouchTargetHeight": mobile_primary_box["height"],
+                    "discoveryTouchTargetHeight": mobile_discover_box["height"],
+                    "primaryActionKind": mobile_action["kind"],
+                    "primaryHref": primary_opened_url,
+                    "discoveryHref": mobile_discover_href,
+                    "primaryTapAndDiscoveryTap": True,
+                    "finalUrl": mobile_page.url,
+                }
+            finally:
+                mobile_context.close()
+
             isolation["freshStudentWithPendingReview"] = {
                 "enrollmentId": pending_user["enrollment"],
                 "sessionId": pending_session_id,
@@ -481,7 +670,10 @@ def test_02_today_showcase_clicks_isolation_retry_and_four_viewports():
                 "formalReportCount": 0,
                 "latestFormalAssessment": None,
                 "networkFailureCount": injected["count"],
-                "retryCardsRendered": 4,
+                "retryCardsRendered": retry_four_card_count,
+                "retryOptionalSuggestions": retry_optional_count,
+                "offlineOptionalCatalogNoRecommendation": True,
+                "emptyOptionalCatalogNoRecommendation": True,
                 "refreshRetainedNoReport": True,
                 "recordedAudio": pending_completion["recordedAudio"],
                 "recordingSource": "Chromium fake microphone (SIMULATED_MIC)",
@@ -500,6 +692,9 @@ def test_02_today_showcase_clicks_isolation_retry_and_four_viewports():
         "formalReport": click_proof.get("formalReport"),
         "isolation": isolation,
         "responsive": responsive,
+        "designReview": design_review,
+        "keyboard": keyboard_proof,
+        "mobileTouch": mobile_proof,
         "browserErrors": browser_errors,
         "screenshots": [str(path.relative_to(EVIDENCE)) for path in sorted(screenshots.glob("*.png"))],
     }

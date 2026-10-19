@@ -301,7 +301,7 @@
     if (showcase?.render) {
       // The live primary action and progress must remain ABOVE any optional
       // discovery. Never put a four-button navigation grid in the first fold.
-      const extra = showcase.render({ today, practices, courses });
+      const extra = showcase.render({ today, practices, courses, attempts });
       if (extra) app.querySelector(".today-overview")?.insertAdjacentHTML("afterend", extra);
     }
     const courseWrap = app.querySelector(".today-course-wrap");

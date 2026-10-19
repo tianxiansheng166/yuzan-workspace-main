@@ -1,5 +1,13 @@
 # Development status
 
+## YZ-RD-T043 — Student Today UX acceptance (2026-10-19)
+
+ACCEPTANCE VERIFIED / READY_TO_MERGE=NO pending the inherited API-owner lint resolution or waiver. Independent branch `feat/yz-rd-t043-personalized-today-ux-restoration` starts at accepted T043 `752a6b9ec42e6903635ea6cc45d757eb5aa592aa`; it was not merged into the shared branch.
+
+Frontend 120/120 passed. Native Chromium 153 + NestJS API + PostgreSQL 17.11 + Redis + MinIO passed 4/4 E2Es with 0 failures and 0 skips. Authenticated Today keeps the real server-selected primary action/progress first, has no four-card grid, uses only authorized dynamic course/practice IDs, avoids repeating the practice behind a resumed assessment, and hides optional discovery on empty/failed catalogs. Tests cover teacher-assigned remediation, course activity, recording practice, formal zero-score report and teacher feedback, pending no-score state, identity isolation, retry, keyboard/ARIA, mobile touch and screenshots at 390/768/1280/1440.
+
+T043's own services are stopped and owned ports are free; its database, MinIO objects, screenshots and proof remain retained. Question Bank source hashes match before/after read-only import. All browser identities/content are `TEST_FIXTURE_ONLY`. No Docker/Compose, Worker, shared-branch merge, T005 protected-source changes or L4 access. Full API lint was not rerun; inherited T033 baseline remains 1201 errors / 1 warning. See [`evidence/yz-rd-t043/RESULTS.md`](evidence/yz-rd-t043/RESULTS.md).
+
 ## YZ-RD-T037 — Today listening/speaking/practice/assessment acceptance (2026-10-19)
 
 ACCEPTANCE VERIFIED / READY_TO_MERGE=NO pending the inherited API-owner lint resolution or waiver. T037 remains on independent branch `feat/yz-rd-t037-listen-speak-practice-exam-home`; it was not merged into the shared development branch. Native Chromium 153 + NestJS + PostgreSQL 17.11 + Redis + MinIO E2E passed 2/2, 0 failed, 0 skipped. The real student login rendered all four Today entries; authorized course, recording practice and Level 1 assessment links opened their live API-backed records.

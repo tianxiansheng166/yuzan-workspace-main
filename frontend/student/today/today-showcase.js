@@ -6,13 +6,29 @@
   const safe = (value) => String(value ?? "").replace(/[&<>"']/g, (ch) =>
     ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
 
-  function suggestion({ today = {}, practices = {}, courses = {} } = {}) {
+  function suggestion({ today = {}, practices = {}, courses = {}, attempts = {} } = {}) {
     const primary = today.primaryAction || {};
     const target = primary.target || {};
     const practicesList = Array.isArray(practices.items) ? practices.items : [];
     const coursesList = Array.isArray(courses.courses) ? courses.courses : [];
+    const attemptsList = Array.isArray(attempts.items) ? attempts.items : [];
+    const resumeMatch = typeof target.href === "string"
+      ? target.href.match(/^\/(?:assessment\/sessions\/([^/]+)|student\/practices\/attempts\/([^/]+)\/runner)\/$/)
+      : null;
+    const resumedAttemptId = resumeMatch?.[1] || resumeMatch?.[2] || null;
+    const resumedAttempt = resumedAttemptId
+      ? attemptsList.find((item) => item?.id === resumedAttemptId)
+      : null;
+    const primaryPracticeId = target.practiceDefinitionId
+      || resumedAttempt?.practiceAttempt?.practiceDefinitionId
+      || resumedAttempt?.practiceDefinitionId
+      || null;
+
+    // A continuation route has no trustworthy practice ID until its own
+    // authorized Attempt is loaded. Fail closed instead of guessing.
+    if (resumedAttemptId && !primaryPracticeId) return null;
     const isDuplicate = (id, href) =>
-      (target.practiceDefinitionId && target.practiceDefinitionId === id) ||
+      (primaryPracticeId && primaryPracticeId === id) ||
       (typeof target.href === "string" && target.href === href);
 
     // Show a recording shortcut only when the real authorized catalog says
