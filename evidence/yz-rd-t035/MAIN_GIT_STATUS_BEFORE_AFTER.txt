@@ -1,0 +1,28 @@
+Main worktree status snapshot (NUL-delimited porcelain v1 normalized for display)
+HEAD: 9c77c8cd35ffd45d6a164cc7a4ec616c3345fd15
+Branch: feat/question-bank-v1
+Before SHA256: 4006981329ea738ff267bee044e283e637b4e271892f2707296804d8759359f8
+After SHA256:  4006981329ea738ff267bee044e283e637b4e271892f2707296804d8759359f8
+Entries before/after: 20/20
+Identical: YES
+Entries:
+ M backend/api/src/modules/curriculum/domain/course-version.types.ts
+ M backend/api/src/modules/curriculum/dto/create-course-draft.dto.ts
+ M backend/api/src/modules/curriculum/dto/update-course-draft.dto.ts
+ M backend/api/src/modules/curriculum/publishing/publishing.validator.ts
+ M backend/api/src/modules/student-courses/student-courses.service.ts
+ M backend/api/test/curriculum/fixtures/course-versions.ts
+ M backend/api/test/curriculum/publishing.validator.spec.ts
+ M backend/api/test/student-courses/student-courses.service.spec.ts
+ M frontend/student/courses/course-detail/course-api-adapter.js
+ M frontend/student/courses/course-detail/course-api-adapter.test.mjs
+ M frontend/student/courses/course-detail/exercise-controller.js
+ M frontend/student/courses/course-detail/index.html
+ M frontend/student/courses/course-detail/style.css
+ M packages/contracts/openapi/openapi.yaml
+ M packages/contracts/src/generated.ts
+?? backend/api/src/modules/curriculum/dto/bilingual-content.dto.ts
+?? frontend/student/courses/course-detail/bilingual-content.js
+?? frontend/student/courses/course-detail/bilingual-content.test.mjs
+?? tests/e2e/assessment/test_yz_rd_t005_bilingual.py
+?? 习题课程资源/
