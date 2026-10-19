@@ -147,6 +147,10 @@
     </section>`;
   }
 
+  function hasTextAnswer(answer) {
+    return answer !== null && answer !== undefined && String(answer).trim() !== '';
+  }
+
   function render(detailData) {
     detail = detailData;
     root.setAttribute?.('aria-busy', 'false');
@@ -181,22 +185,23 @@
       <div class="detail-layout">
         <div class="detail-main">
           <section class="detail-card evidence-card">
-            <div class="section-label"><span class="section-index">01</span><span>学生原始作答</span><span class="source-stamp">AssessmentSession · AssessmentItem</span></div>
+            <div class="section-label"><span class="section-index">01</span><span>本次作答证据</span><span class="source-stamp">AssessmentSession · AssessmentItem</span></div>
             <div class="detail-meta"><span class="detail-pill emphasis">${esc(label(strategy))}</span><span class="detail-pill">${maxScore === null ? '满分未提供' : `本题满分 ${esc(maxScore)} 分`}</span><span class="detail-pill">${esc(evidence.speechJobStatus || item.state || '复核待处理')}</span></div>
-            <div class="detail-evidence-strip"><strong>${isReading ? '同一条原始录音' : isPicture ? '图片表达证据' : '题目作答证据'}</strong><span>${isReading ? `${providerLabel(evidence.diagnostic?.provider)} 提供的诊断值不预填得分` : '以下信息来自服务端保存的题目与作答'}</span></div>
-            <h2>${isPicture ? '题目图片与学生表达' : '题目与学生作答'}</h2>
+            <div class="detail-evidence-strip"><strong>${isReading ? '同一条原始录音 · 对照朗读内容' : isPicture ? '看题目图片 · 听学生表达' : '核对题目与学生作答'}</strong><span>${isReading || isPicture ? '正式得分由教师依据原始证据和量表填写' : '题目和作答来自本次已保存 Attempt'}</span></div>
+            <h2>${isPicture ? '题目图片与学生表达' : isReading ? '朗读题目' : '题目内容'}</h2>
             ${isPicture
               ? `<figure class="detail-stimulus"><div class="picture-frame"><div class="picture-state" data-picture-state role="status" aria-live="polite">正在获取图片授权地址…</div><img data-picture alt="复核题目的原始图片" hidden></div><figcaption>${esc(promptText(item) || '服务端未提供图片说明')}</figcaption><button class="media-retry" type="button" data-picture-retry hidden>重新获取图片</button></figure>`
               : `<div class="detail-stimulus text-stimulus">${esc(item.targetText || promptText(item) || '服务端未提供题目文本')}</div>`}
-            ${item.targetText ? `<div class="detail-answer"><b>朗读目标文本</b><p>${esc(item.targetText)}</p></div>` : ''}
-            <div class="detail-answer"><b>学生文字作答</b><p>${answer != null && String(answer) !== '' ? esc(answer) : '该题未保存文字作答内容。'}</p></div>
+            ${isReading && promptText(item) && item.targetText && promptText(item) !== item.targetText ? `<p class="question-instruction">${esc(promptText(item))}</p>` : ''}
+            ${hasTextAnswer(answer) ? `<div class="detail-answer"><b>学生文字作答</b><p>${esc(answer)}</p></div>` : ''}
             <div class="detail-audio" data-audio-panel>
-              <div class="audio-title-row"><div><span class="section-label-small">RECORDING</span><h3>学生原始录音</h3></div><span class="audio-status" data-audio-state role="status" aria-live="polite">${evidence.playbackUrl ? '录音地址已授权，等待加载' : '正在核对录音地址'}</span></div>
+              <div class="audio-title-row"><div><span class="section-label-small">原始作答 · AUDIO</span><h3>学生录音</h3></div><span class="audio-status" id="audio-state" data-audio-state role="status" aria-live="polite">${evidence.playbackUrl ? '录音地址已授权，等待加载' : '正在核对录音地址'}</span></div>
               ${evidence.durationMs != null || evidence.mimeType ? `<p class="audio-meta">${evidence.durationMs != null ? `${esc(Math.round(evidence.durationMs / 1000))} 秒` : ''}${evidence.durationMs != null && evidence.mimeType ? ' · ' : ''}${esc(evidence.mimeType || '')}${evidence.recordingStatus ? ` · ${esc(evidence.recordingStatus)}` : ''}</p>` : ''}
-              <audio data-review-audio controls preload="metadata" aria-label="播放学生原始录音" ${evidence.playbackUrl ? '' : 'hidden'}></audio>
-              <button class="media-retry" type="button" data-audio-retry>${evidence.playbackUrl ? '重新获取播放地址' : '获取录音播放地址'}</button>
+              <audio data-review-audio controls preload="metadata" aria-label="播放学生原始录音" aria-describedby="audio-help audio-state" ${evidence.playbackUrl ? '' : 'hidden'}></audio>
+              <p class="audio-help" id="audio-help">可在播放器中暂停；重听时会从录音开头开始。</p>
+              <div class="audio-actions"><button class="audio-replay" type="button" data-audio-replay aria-label="从头重听学生原始录音" disabled>从头重听</button><button class="media-retry" type="button" data-audio-retry ${evidence.playbackUrl ? 'hidden' : ''}>${evidence.playbackUrl ? '重新获取录音' : '获取录音播放地址'}</button></div>
             </div>
-            <section class="detail-diagnostic"><div class="diagnostic-heading"><div><span class="section-label-small">REVIEW CONTEXT</span><h2>${esc(diagnosticTitle)}</h2></div><p>${esc(diagnosticNote)}</p></div>${formatDiagnostic(evidence.diagnostic, strategy)}${evidence.transcript ? `<div class="transcript"><b>教师可见转写</b><p>${esc(evidence.transcript)}</p></div>` : '<div class="transcript">服务端未提供转写内容。</div>'}</section>
+            <details class="detail-diagnostic diagnostic-disclosure"><summary><span>可选诊断参考</span><small>仅作辅助，不代表正式得分</small></summary><div class="diagnostic-body"><div class="diagnostic-heading"><div><span class="section-label-small">教师复核参考</span><h2>${esc(diagnosticTitle)}</h2></div><p>${esc(diagnosticNote)}</p></div>${formatDiagnostic(evidence.diagnostic, strategy)}${evidence.transcript ? `<div class="transcript"><b>教师可见转写</b><p>${esc(evidence.transcript)}</p></div>` : '<div class="transcript">服务端未提供转写内容。</div>'}</div></details>
           </section>
           ${rubricMarkup(review)}
         </div>
@@ -210,8 +215,11 @@
             <p class="score-hint" id="score-hint">${maxScore === null ? '服务器没有返回有效满分，评分已停用。' : `分值范围 0–${esc(maxScore)} 分，最多保留一位小数。主动输入 0 可合法提交。`}</p>
             <p class="score-preview" id="score-preview" data-score-preview aria-live="polite">${hasSavedScore ? `服务器已保存 ${esc(item.scoredScore)} 分` : '当前未选择分数'}</p>
             <p class="score-error" id="score-error" data-score-error role="alert"></p>
-            <label class="comment-label" for="review-comment">教师评语 <span>选填</span></label>
-            <textarea id="review-comment" class="comment-input" data-review-comment maxlength="2000" placeholder="写下与本次作答相关的反馈…" aria-describedby="comment-hint" ${hasSavedScore ? 'disabled' : ''}>${hasSavedScore ? esc(item.reviewerComment || '') : ''}</textarea><small class="comment-hint" id="comment-hint">评语会随正式结果保存并显示给学生。</small>
+            <label class="comment-label" for="review-comment">给学生的教学反馈 <span>选填</span></label>
+            <div class="feedback-guidance"><strong>把这次表现连到下一步练习</strong><p>写一处你从题目或录音中观察到的具体表现，再给学生一个可马上尝试的练习建议。</p></div>
+            <textarea id="review-comment" class="comment-input" data-review-comment maxlength="2000" placeholder="写下本次作答中的具体表现和下一步练习建议…" aria-describedby="comment-hint comment-count" ${hasSavedScore ? 'disabled' : ''}>${hasSavedScore ? esc(item.reviewerComment || '') : ''}</textarea>
+            <div class="comment-footer"><small class="comment-hint" id="comment-hint">这段反馈会原文显示在学生对应的正式报告中。</small><span class="comment-count" id="comment-count" data-comment-count>${hasSavedScore ? String(item.reviewerComment || '').length : '0'} / 2000</span></div>
+            <div class="feedback-preview" data-feedback-preview ${hasSavedScore && item.reviewerComment ? '' : 'hidden'}><span>学生报告显示预览</span><p data-feedback-preview-text>${hasSavedScore ? esc(item.reviewerComment || '') : ''}</p></div>
             <button class="submit-review" type="submit" data-review-submit ${hasSavedScore || maxScore === null ? 'disabled' : ''}>${hasSavedScore ? '复核已保存' : '确认并提交复核'}</button>
             <div class="review-message" data-review-message role="status" aria-live="polite"></div>
           </form>
@@ -226,8 +234,10 @@
       submit();
     });
     root.querySelector('[data-review-score]')?.addEventListener('input', updateScorePreview);
+    root.querySelector('[data-review-comment]')?.addEventListener('input', updateFeedbackPreview);
     root.querySelector('[data-picture-retry]')?.addEventListener('click', loadPicture);
     root.querySelector('[data-audio-retry]')?.addEventListener('click', refreshAudioAddress);
+    root.querySelector('[data-audio-replay]')?.addEventListener('click', replayAudio);
     root.querySelector('[data-next-review]')?.addEventListener('click', continueNext);
     bindAudioState();
     updateScorePreview();
@@ -282,12 +292,38 @@
     input.setAttribute('aria-invalid', 'false');
   }
 
+  function updateFeedbackPreview() {
+    const input = root.querySelector('[data-review-comment]');
+    const count = root.querySelector('[data-comment-count]');
+    const preview = root.querySelector('[data-feedback-preview]');
+    const previewText = root.querySelector('[data-feedback-preview-text]');
+    if (!input) return;
+    const comment = input.value || '';
+    if (count) {
+      count.textContent = `${comment.length} / 2000`;
+      count.classList.toggle('is-near-limit', comment.length >= 1800);
+    }
+    if (preview) preview.hidden = !comment.trim();
+    if (previewText) previewText.textContent = comment;
+  }
+
   function bindAudioState() {
     const audio = root.querySelector('[data-review-audio]');
     const state = root.querySelector('[data-audio-state]');
     if (!audio || !state) return;
-    audio.addEventListener('loadstart', () => { state.textContent = '正在连接录音…'; state.dataset.state = 'loading'; });
-    audio.addEventListener('canplay', () => { state.textContent = '录音已就绪'; state.dataset.state = 'ready'; });
+    const replay = root.querySelector('[data-audio-replay]');
+    const retry = root.querySelector('[data-audio-retry]');
+    audio.addEventListener('loadstart', () => {
+      state.textContent = '正在连接录音…';
+      state.dataset.state = 'loading';
+      if (replay) replay.disabled = true;
+    });
+    audio.addEventListener('canplay', () => {
+      state.textContent = '录音已就绪';
+      state.dataset.state = 'ready';
+      if (replay) replay.disabled = false;
+      if (retry) retry.hidden = true;
+    });
     audio.addEventListener('playing', () => { state.textContent = '正在播放录音'; state.dataset.state = 'playing'; });
     audio.addEventListener('pause', () => {
       if (audio.ended) return;
@@ -297,8 +333,11 @@
     audio.addEventListener('error', () => {
       state.textContent = mediaErrorText(audio.error);
       state.dataset.state = 'error';
-      const retry = root.querySelector('[data-audio-retry]');
-      if (retry) retry.textContent = '重新获取播放地址并重试';
+      if (replay) replay.disabled = true;
+      if (retry) {
+        retry.textContent = '重新获取录音并重试';
+        retry.hidden = false;
+      }
     });
   }
 
@@ -311,6 +350,7 @@
     const audio = root.querySelector('[data-review-audio]');
     const state = root.querySelector('[data-audio-state]');
     const retry = root.querySelector('[data-audio-retry]');
+    const replay = root.querySelector('[data-audio-replay]');
     if (!audio || !state) return;
     const playbackUrl = detail?.evidence?.playbackUrl;
     if (typeof playbackUrl !== 'string' || !playbackUrl) {
@@ -320,6 +360,7 @@
       state.dataset.state = 'missing';
       audio.hidden = true;
       if (retry) retry.hidden = !detail?.evidence?.recordingId;
+      if (replay) replay.disabled = true;
       return;
     }
     audio.src = playbackUrl;
@@ -327,6 +368,23 @@
     audio.load();
     state.textContent = '录音地址已授权，正在加载…';
     state.dataset.state = 'loading';
+    if (retry) retry.hidden = true;
+  }
+
+  async function replayAudio() {
+    const audio = root.querySelector('[data-review-audio]');
+    const state = root.querySelector('[data-audio-state]');
+    if (!audio || audio.hidden || !audio.src) return;
+    try {
+      audio.pause();
+      audio.currentTime = 0;
+      await audio.play();
+    } catch {
+      if (state) {
+        state.textContent = '无法开始播放录音。请使用播放器的播放键，或重新获取授权地址。';
+        state.dataset.state = 'error';
+      }
+    }
   }
 
   async function refreshAudioAddress() {
@@ -355,10 +413,10 @@
       audio.hidden = false;
       audio.load();
       if (state) { state.textContent = '授权地址已更新，正在加载录音…'; state.dataset.state = 'loading'; }
-      if (button) button.textContent = '重试播放';
+      if (button) { button.textContent = '重新获取录音'; button.hidden = true; }
     } catch (error) {
       if (state) { state.textContent = `录音地址获取失败：${error?.message || '网络错误'}。录音尚未播放。`; state.dataset.state = 'error'; }
-      if (button) button.textContent = '重试获取播放地址';
+      if (button) { button.textContent = '重试获取录音'; button.hidden = false; }
     } finally {
       audioLoading = false;
       if (button) button.disabled = false;
@@ -432,6 +490,8 @@
     const banner = root.querySelector('.saved-review-banner');
     const statusChip = root.querySelector('.detail-status-chip');
     const actualComment = typeof savedItem.reviewerComment === 'string' ? savedItem.reviewerComment : '';
+    if (commentField) commentField.value = actualComment;
+    updateFeedbackPreview();
     if (form) form.classList.add('is-confirmed');
     if (input) input.disabled = true;
     if (commentField) commentField.disabled = true;

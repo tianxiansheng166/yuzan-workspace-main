@@ -166,8 +166,10 @@
 .picture-state[data-state="missing"] { color: #a84231; }
 .detail-stimulus figcaption { margin-top: 9px; color: #828982; font-size: 11px; line-height: 1.55; }
 .media-retry { min-height: 36px; margin-top: 10px; padding: 0 12px; border: 1px solid #d8d0c5; color: #5e6961; background: #fff; font-size: 11px; cursor: pointer; }
+.media-retry[hidden] { display: none; }
 .media-retry:hover:not(:disabled) { border-color: #ba8e76; background: #fff8f2; }
 .media-retry:disabled { opacity: .55; cursor: wait; }
+.question-instruction { margin-top: 9px !important; color: #727c75; font-size: 11px; line-height: 1.6; }
 .detail-answer { margin-top: 12px; padding: 12px 14px; border-left: 3px solid #d8a27e; color: #4f5a54; background: #faf9f6; }
 .detail-answer b { display: block; margin-bottom: 4px; color: #9d5740; font-size: 10px; }
 .detail-answer p { white-space: pre-wrap; font-size: 12px; line-height: 1.7; }
@@ -182,6 +184,23 @@
 .audio-meta { margin-top: 8px !important; color: #8a948c; font-size: 10px; }
 .detail-audio audio { display: block; width: 100%; max-width: 100%; margin-top: 12px; }
 .detail-audio audio[hidden] { display: none; }
+.audio-help { margin-top: 8px !important; color: #68766c; font-size: 10px; line-height: 1.5; }
+.audio-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 10px; }
+.audio-replay { display: inline-flex; min-height: 42px; align-items: center; justify-content: center; gap: 8px; padding: 0 14px; border: 1px solid #b9d0bd; border-radius: 10px; color: #225a40; background: #fff; font-size: 11px; font-weight: 800; cursor: pointer; }
+.audio-replay::before { color: #327452; content: "↻"; font-size: 17px; line-height: 1; }
+.audio-replay:hover:not(:disabled) { border-color: #81ad8d; background: #eef7ef; }
+.audio-replay:disabled { opacity: .5; cursor: wait; }
+.audio-replay:focus-visible { outline: 3px solid var(--review-focus); outline-offset: 3px; }
+.audio-actions .media-retry { min-height: 42px; margin-top: 0; }
+.diagnostic-disclosure { overflow: hidden; border-radius: 10px; }
+.diagnostic-disclosure > summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 13px; border: 1px solid #eee7df; border-radius: 10px; color: #59675e; background: #faf9f6; font-size: 11px; font-weight: 800; cursor: pointer; list-style: none; }
+.diagnostic-disclosure > summary::-webkit-details-marker { display: none; }
+.diagnostic-disclosure > summary::after { color: #7b847d; content: "＋"; font-size: 16px; line-height: 1; }
+.diagnostic-disclosure[open] > summary { border-bottom-right-radius: 0; border-bottom-left-radius: 0; }
+.diagnostic-disclosure[open] > summary::after { content: "−"; }
+.diagnostic-disclosure > summary small { margin-left: auto; color: #8b827a; font-size: 9px; font-weight: 600; }
+.diagnostic-body { padding: 14px; border: 1px solid #eee7df; border-top: 0; border-radius: 0 0 10px 10px; }
+.diagnostic-body .diagnostic-heading { margin-bottom: 11px; }
 .detail-diagnostic { margin-top: 17px; padding-top: 16px; border-top: 1px solid #eee9e1; }
 .diagnostic-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 15px; margin-bottom: 11px; }
 .diagnostic-heading h2 { margin: 4px 0 0; font-size: 14px; }
@@ -212,7 +231,7 @@
 .rubric-block ul { margin: 0; padding-left: 19px; }
 .rubric-missing { padding: 12px; border: 1px dashed #d8cabc; border-radius: 10px; color: #786c5d; background: #fdfaf5; font-size: 11px; line-height: 1.65; }
 
-.review-form-card { position: sticky; top: 20px; }
+.review-form-card { position: sticky; top: 84px; }
 .review-form-card > h2 { margin-bottom: 7px; font-size: 20px; }
 .score-intro { margin-bottom: 17px !important; color: #78817b; font-size: 11px; line-height: 1.65; }
 .score-label,
@@ -250,7 +269,17 @@
 .comment-label { margin-top: 18px; }
 .comment-input { display: block; width: 100%; min-height: 112px; padding: 11px 12px; resize: vertical; border: 1px solid #ddd5ca; border-radius: 10px; color: #364039; background: #fff; font-size: 12px !important; line-height: 1.65; }
 .comment-input::placeholder { color: #a1a69f; }
-.comment-hint { display: block; margin-top: 6px; color: #9a9c96; font-size: 9px; }
+.feedback-guidance { display: grid; gap: 5px; margin: 9px 0 8px; padding: 11px 12px; border-left: 3px solid #81aa8a; border-radius: 0 9px 9px 0; color: #4d6253; background: #f3f8f2; }
+.feedback-guidance strong { font-size: 10px; }
+.feedback-guidance p { color: #647269; font-size: 10px; line-height: 1.55; }
+.comment-footer { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-top: 5px; }
+.comment-hint { display: block; color: #7c857e; font-size: 9px; line-height: 1.5; }
+.comment-count { flex: 0 0 auto; color: #929790; font-size: 9px; font-variant-numeric: tabular-nums; }
+.comment-count.is-near-limit { color: #9c4a32; font-weight: 800; }
+.feedback-preview { margin-top: 10px; padding: 10px 11px; border: 1px solid #e6e7df; border-radius: 9px; background: #fbfcf9; }
+.feedback-preview[hidden] { display: none; }
+.feedback-preview > span { display: block; margin-bottom: 5px; color: #777f77; font-size: 9px; font-weight: 800; }
+.feedback-preview p { color: #3f5145; font-size: 11px; line-height: 1.65; white-space: pre-wrap; overflow-wrap: anywhere; }
 .submit-review { width: 100%; min-height: 51px; margin-top: 15px; border: 1px solid var(--review-rust); color: #fff; background: var(--review-rust); font-size: 13px; cursor: pointer; }
 .submit-review:hover:not(:disabled) { border-color: var(--review-rust-dark); background: var(--review-rust-dark); transform: translateY(-1px); }
 .submit-review:disabled { opacity: .55; cursor: not-allowed; }
@@ -363,6 +392,9 @@
   .picture-frame img { max-height: 250px; }
   .audio-title-row { align-items: flex-start; }
   .audio-status { max-width: 52%; }
+  .audio-actions { align-items: stretch; }
+  .audio-actions .audio-replay,
+  .audio-actions .media-retry { flex: 1 1 auto; }
   .diagnostic-heading { display: grid; gap: 6px; }
   .diagnostic-heading p { max-width: none; text-align: left; }
   .diagnostic-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }

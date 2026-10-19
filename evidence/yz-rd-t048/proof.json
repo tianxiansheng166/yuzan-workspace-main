@@ -1,0 +1,79 @@
+{
+  "attemptId": "f0001147-105b-49ad-bd25-a3381c3acb7b",
+  "studentId": "240b2764-ab23-4daa-82a2-8a9f0dcc2e4b",
+  "reviewItemIds": [
+    "6f6f0430-0aa2-4abe-a391-f114ee892069",
+    "f222deba-f1b6-4f7d-b8b0-5356573917d8",
+    "12678fbc-7fad-4d3f-9328-70878139b16c",
+    "d4528841-653a-4919-b517-ee57e8bcaef0",
+    "34ef5599-1ec1-47ff-9550-715fc5808f8c",
+    "b71eb7bc-2214-44a7-824d-22ba3a50ba63"
+  ],
+  "dynamicImageClick": {
+    "itemId": "d4528841-653a-4919-b517-ee57e8bcaef0",
+    "authorizedRetry": true,
+    "naturalWidth": "positive"
+  },
+  "dynamicAudioClick": {
+    "itemId": "6f6f0430-0aa2-4abe-a391-f114ee892069",
+    "authorizedRetry": true,
+    "playedSeconds": ">0.2",
+    "pause": true,
+    "replayFromStart": true
+  },
+  "emptyScore": {
+    "uiRequests": 0,
+    "databaseRows": 0
+  },
+  "explicitZero": [
+    "0",
+    "33333333-3333-4333-8333-333333333333",
+    "具体观察：这次朗读停顿自然，句尾收得清楚。\n下一步练习：试试把第二句读慢半拍，留出句间停顿。",
+    "2",
+    "REVIEWED"
+  ],
+  "positiveScore": true,
+  "nextItem": "f222deba-f1b6-4f7d-b8b0-5356573917d8",
+  "queueAfterReview": "all reviewed item IDs absent",
+  "reportId": "69d9a26b-0db6-4115-9408-104d0028deab",
+  "studentReportHref": "/student/practices/attempts/f0001147-105b-49ad-bd25-a3381c3acb7b/report/",
+  "studentReportScore": 57,
+  "recordingsInMinIO": [
+    {
+      "itemId": "6f6f0430-0aa2-4abe-a391-f114ee892069",
+      "recordingId": "f0f2bfd0-6168-47f7-a1fe-60b6feefbe13",
+      "bytes": 22514
+    },
+    {
+      "itemId": "f222deba-f1b6-4f7d-b8b0-5356573917d8",
+      "recordingId": "895bcedc-d0ff-405d-b2e9-849d6c7934fb",
+      "bytes": 22514
+    },
+    {
+      "itemId": "12678fbc-7fad-4d3f-9328-70878139b16c",
+      "recordingId": "fe6a27e6-4097-4152-a9c3-746673399197",
+      "bytes": 22514
+    },
+    {
+      "itemId": "d4528841-653a-4919-b517-ee57e8bcaef0",
+      "recordingId": "a90e25bd-c7ed-426e-95a8-9bde1df9a536",
+      "bytes": 22514
+    }
+  ],
+  "sessionBeforeReview": "PROCESSING",
+  "apiStatuses": {
+    "unauthenticated": 401,
+    "studentQueue": 403,
+    "studentReview": 403,
+    "missingItem": 404,
+    "scoreOverMax": 400,
+    "negativeScore": 400,
+    "crossClass": 403,
+    "crossSchool": 403,
+    "changedDuplicate": 409,
+    "studentOtherReport": 403,
+    "studentOtherHistory": 403
+  },
+  "reportGate": "report count 0 through penultimate review; 1 after last",
+  "microphoneSource": "SIMULATED_MIC; real recording upload and MinIO playback"
+}
