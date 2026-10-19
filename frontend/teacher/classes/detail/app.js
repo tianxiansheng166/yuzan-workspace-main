@@ -19,6 +19,7 @@
   let schoolId = '';
   let classDetail = null;
   let studentSummaries = [];
+  let rosterExportInFlight = false;
   let publishedCourseVersions = null;
   let pendingRequestKey = '';
   let teacherInvitations = [];
@@ -527,6 +528,169 @@
     toastTimer = setTimeout(() => toast.classList.remove("show"), 2200);
   }
 
+  function rosterExportIdentity() {
+    return {
+      token: YuzanApi.getToken(),
+      userId: YuzanApi.getStoredUser()?.id || '',
+      activeSchoolId: YuzanApi.getActiveSchoolId(),
+      schoolId,
+      classId,
+    };
+  }
+
+  function rosterExportIdentityMatches(identity) {
+    if (typeof YuzanApi === 'undefined' || !identity) return false;
+    return Boolean(
+      identity.token
+      && YuzanApi.getToken() === identity.token
+      && (YuzanApi.getStoredUser()?.id || '') === identity.userId
+      && YuzanApi.getActiveSchoolId() === identity.activeSchoolId
+      && identity.activeSchoolId === identity.schoolId
+      && identity.schoolId === schoolId
+      && identity.classId === classId
+      && getClassIdFromPath() === identity.classId
+      && classDetail?.classId === identity.classId,
+    );
+  }
+
+  function setRosterExportStatus(message) {
+    const status = document.getElementById('rosterExportStatus');
+    if (status) status.textContent = message;
+  }
+
+  function clearRosterAfterAuthorizationFailure(message) {
+    studentSummaries = [];
+    const table = document.getElementById('rosterTable');
+    if (table) {
+      table.replaceChildren();
+      const hint = document.createElement('div');
+      hint.className = 'empty-hint';
+      hint.setAttribute('role', 'alert');
+      hint.textContent = message;
+      table.append(hint);
+    }
+  }
+
+  function summariesFromExportResponse(response) {
+    if (Array.isArray(response)) return response;
+    const summaries = Array.isArray(response?.items)
+      ? response.items
+      : Array.isArray(response?.data)
+        ? response.data
+        : null;
+    if (!summaries) throw new Error('名单接口没有返回完整数组');
+
+    const hasMore = response.hasMore ?? response.meta?.hasMore;
+    const nextCursor = response.nextCursor ?? response.meta?.nextCursor;
+    const total = response.total ?? response.meta?.total;
+    const paginationIsIncomplete = hasMore === true
+      || (nextCursor !== undefined && nextCursor !== null && nextCursor !== '')
+      || (typeof total === 'number' && Number.isFinite(total) && total > summaries.length);
+    if (paginationIsIncomplete || (hasMore !== false && nextCursor === undefined && total !== summaries.length)) {
+      throw new Error(`服务端名单可能未完整加载，当前已加载名单 ${summaries.length} 人`);
+    }
+    return summaries;
+  }
+
+  function validateRosterForExport(summaries) {
+    if (!Array.isArray(summaries)) throw new Error('学生名单响应格式不可用');
+    const enrollmentIds = summaries.map((student) => student?.enrollmentId);
+    if (enrollmentIds.some((id) => typeof id !== 'string' || !id.trim())
+      || new Set(enrollmentIds).size !== enrollmentIds.length) {
+      throw new Error('名单学籍标识缺失或重复，未生成文件');
+    }
+    const expectedCount = classDetail?.studentCount;
+    if (typeof expectedCount === 'number' && Number.isInteger(expectedCount) && expectedCount !== summaries.length) {
+      throw new Error(`当前已加载名单 ${summaries.length} 人，与班级概况 ${expectedCount} 人不一致，请刷新后重试`);
+    }
+    return summaries;
+  }
+
+  async function exportClassRosterCsv() {
+    if (rosterExportInFlight) return;
+    const exportButtons = [...document.querySelectorAll('[data-action="export"]')];
+    const identity = typeof YuzanApi === 'undefined' ? null : rosterExportIdentity();
+    if (!identity?.token) {
+      setRosterExportStatus('登录状态不可用，请重新登录后导出。');
+      showToast('请先登录教师账号');
+      return;
+    }
+    if (!identity.schoolId || !identity.classId || identity.activeSchoolId !== identity.schoolId
+      || classDetail?.classId !== identity.classId) {
+      setRosterExportStatus('当前学校或班级尚未核实，请从本人授权班级重新进入。');
+      showToast('学校或班级信息不可用，未导出');
+      return;
+    }
+
+    rosterExportInFlight = true;
+    exportButtons.forEach((button) => { button.disabled = true; });
+    setRosterExportStatus('正在从当前授权班级重新读取学生名单…');
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), 15000);
+    let objectUrl = '';
+    try {
+      const response = await YuzanApi.request(
+        `/schools/${encodeURIComponent(identity.schoolId)}/classes/${encodeURIComponent(identity.classId)}/student-summaries`,
+        { method: 'GET', signal: controller.signal },
+      );
+      if (!rosterExportIdentityMatches(identity)) {
+        clearRosterAfterAuthorizationFailure('账号或学校已切换，旧班级学生名单已清除。');
+        setRosterExportStatus('账号或学校已切换，未下载文件。请重新进入当前授权班级。');
+        return;
+      }
+
+      const summaries = validateRosterForExport(summariesFromExportResponse(response));
+      const className = classDetail?.className || classDetail?.name;
+      if (typeof className !== 'string' || !className.trim()) throw new Error('班级名称不可用，未生成文件');
+      const csv = window.YuzanRosterExport.buildCsv(className, summaries);
+      const confirmation = window.confirm(
+        `将下载“${className}”的 ${summaries.length} 名在读学生名单与学情，包含课程进度、提交完成/未交数、最近正式分、风险和最近活跃时间。请妥善保管。继续下载 CSV 吗？`,
+      );
+      if (!confirmation) {
+        setRosterExportStatus('已取消导出，未下载文件。');
+        return;
+      }
+      if (!rosterExportIdentityMatches(identity)) {
+        clearRosterAfterAuthorizationFailure('账号或学校已切换，旧班级学生名单已清除。');
+        setRosterExportStatus('账号或学校已切换，未下载文件。请重新进入当前授权班级。');
+        return;
+      }
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+      objectUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = objectUrl;
+      link.download = window.YuzanRosterExport.fileName(identity.classId);
+      link.hidden = true;
+      document.body.append(link);
+      link.click();
+      link.remove();
+      setRosterExportStatus(`已生成并开始下载本班 CSV（${summaries.length} 名学生）。`);
+      showToast('本班名单/学情 CSV 已开始下载');
+    } catch (error) {
+      if (error?.status === 401 || error?.status === 403 || error?.status === 404) {
+        const message = error.status === 401
+          ? '登录已过期，学生名单已清除，请重新登录。'
+          : error.status === 403
+            ? '当前教师无权访问此班级，学生名单已清除。'
+            : '该班级不存在或已不可用，学生名单已清除。';
+        clearRosterAfterAuthorizationFailure(message);
+        setRosterExportStatus(`导出失败、重试。${message}`);
+      } else {
+        const reason = error?.name === 'AbortError'
+          ? '读取超时'
+          : error?.message || '服务器或网络读取失败';
+        setRosterExportStatus(`导出失败、重试。${reason}；没有下载旧名单。`);
+        showToast('导出失败，请重试');
+      }
+    } finally {
+      window.clearTimeout(timeoutId);
+      if (objectUrl) window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+      rosterExportInFlight = false;
+      exportButtons.forEach((button) => { button.disabled = false; });
+    }
+  }
+
   function openDrawer(key) {
     const name = classDetail?.className || classDetail?.name || '未命名班级';
     const count = classDetail?.studentCount ?? '—';
@@ -684,9 +848,8 @@
   // ── data-action 按钮分类 ──
   // LIVE_ROUTE: course → /teacher/courses/
   // LIVE_API: practice actions open a real Assignment creation form.
-  // UNSUPPORTED: export, analysis, group, volunteer, report
+  // UNSUPPORTED: analysis, group, volunteer
   const actionUnsupported = {
-    export: '导出班级报表功能暂未开通',
     analysis: '问题分析详情功能暂未开通',
     group: '创建小组任务功能暂未开通',
     volunteer: '志愿者协作功能暂未开放',
@@ -695,7 +858,9 @@
 
   document.querySelectorAll("[data-action]").forEach(btn => {
     const action = btn.dataset.action;
-    if (action === 'report') {
+    if (action === 'export') {
+      btn.addEventListener('click', () => { void exportClassRosterCsv(); });
+    } else if (action === 'report') {
       btn.addEventListener("click", () => {
         const query = new URLSearchParams({ classId, schoolId });
         location.href = `/teacher/diagnostics/?${query}`;
@@ -863,6 +1028,9 @@
   window.addEventListener('storage', (event) => {
     if (!['yuzan-access-token', 'yuzan-active-school-id', 'yuzan-current-user'].includes(event.key)) return;
     clearTeacherInvitations('账号或学校已切换，旧凭证已清除。');
+    classDetail = null;
+    clearRosterAfterAuthorizationFailure('账号或学校已切换，旧班级学生名单已清除。');
+    setRosterExportStatus('账号或学校已切换，未下载文件。请重新进入当前授权班级。');
     if (invitationDialog.open) {
       setInvitationScopeLabel(!invitationCurrentIdentityMatches());
       void loadTeacherInvitations();
@@ -1076,16 +1244,16 @@
       const selected = requestedStudentId && s.enrollmentId === requestedStudentId;
       const studentQuery = new URLSearchParams({ schoolId, classId });
       return `<div class="roster-row ${selected ? 'selected-student' : ''}" data-enrollment-id="${enrollmentId}" data-risk="${escapeHtml(s.riskStatus || '')}">
-        <b><input type="checkbox" class="roster-check" data-enrollment-id="${enrollmentId}" ${selected ? 'checked' : ''} aria-label="选择 ${escapeHtml(s.displayName || '学生')}"></b>
-        <b><a class="student-detail-link" href="/teacher/students/${encodeURIComponent(s.enrollmentId)}?${studentQuery}">${escapeHtml(s.displayName || '未命名学生')}</a></b>
-        <span>${s.courseProgress != null ? `${Math.round(s.courseProgress)}%` : '—'}</span>
-        <span>${s.submittedAssignmentCount ?? '—'} / ${s.missingAssignmentCount ?? '—'}</span>
-        <span>${escapeHtml(s.latestAssessmentStatus || '—')}</span>
-        <span>${s.latestAssessmentScore != null ? escapeHtml(s.latestAssessmentScore) : '—'}</span>
-        <span>${s.recordingCount ?? '—'}</span>
-        <span>${escapeHtml(s.topIssue || '—')}</span>
-        <span>${escapeHtml(formatActivityDate(s.lastActiveAt))}</span>
-        <span class="${riskClass}">${riskLabel}</span>
+        <b data-label="选择学生"><input type="checkbox" class="roster-check" data-enrollment-id="${enrollmentId}" ${selected ? 'checked' : ''} aria-label="选择 ${escapeHtml(s.displayName || '学生')}"></b>
+        <b data-label="姓名"><a class="student-detail-link" href="/teacher/students/${encodeURIComponent(s.enrollmentId)}?${studentQuery}">${escapeHtml(s.displayName || '未命名学生')}</a></b>
+        <span data-label="课程进度">${s.courseProgress != null ? `${Math.round(s.courseProgress)}%` : '—'}</span>
+        <span data-label="已提交/未交">${s.submittedAssignmentCount ?? '—'} / ${s.missingAssignmentCount ?? '—'}</span>
+        <span data-label="最近测评">${escapeHtml(s.latestAssessmentStatus || '—')}</span>
+        <span data-label="最近正式分">${s.latestAssessmentScore != null ? escapeHtml(s.latestAssessmentScore) : '—'}</span>
+        <span data-label="录音数">${s.recordingCount ?? '—'}</span>
+        <span data-label="主要问题">${escapeHtml(s.topIssue || '—')}</span>
+        <span data-label="最近活跃">${escapeHtml(formatActivityDate(s.lastActiveAt))}</span>
+        <span class="${riskClass}" data-label="风险状态">${riskLabel}</span>
       </div>`;
     }).join('');
     table.innerHTML = header + rows;

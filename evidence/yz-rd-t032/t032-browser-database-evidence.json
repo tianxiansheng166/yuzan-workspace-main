@@ -1,0 +1,236 @@
+{
+  "database": {
+    "name": "yuzan_t032_native",
+    "user": "yz_t032",
+    "version": "PostgreSQL 17"
+  },
+  "schoolId": "f7996d7b-11eb-447a-8218-18e9a921f7f6",
+  "classId": "8bda530a-0f0a-4b40-848e-09eae98f7fdd",
+  "className": "[TEST_FIXTURE_ONLY 班级名已脱敏]",
+  "activeStudentEnrollmentCount": 3,
+  "studentNames": "[三条 TEST_FIXTURE_ONLY 学生姓名已脱敏]",
+  "apiStatuses": {
+    "dashboard": 200,
+    "studentSummaries": 200,
+    "teacher_b_other_class": 404,
+    "cross_school": 403,
+    "anonymous": 401,
+    "missing_class": 404,
+    "teacher_b_expected_by_card": 403
+  },
+  "studentSummariesArrayLength": 3,
+  "studentSummariesPagination": "raw array; controller/service define no cursor, total, or limit",
+  "browserActions": [
+    "Teacher C clicked the class detail roster CSV button; Chromium emitted a download event",
+    "Repeated download produced byte-identical CSV from the same server rows",
+    "Changed one real ActivityProgress row; next download showed 50% rather than the prior 0%",
+    "Keyboard Enter activated the focused export button"
+  ],
+  "downloadEvents": [
+    {
+      "filenameContainsStudentName": false,
+      "csvBytes": "omitted",
+      "rows": 3
+    },
+    {
+      "filenameContainsStudentName": false,
+      "csvBytes": "omitted",
+      "rows": 3
+    },
+    {
+      "filenameContainsStudentName": false,
+      "csvBytes": "omitted",
+      "rows": 3
+    },
+    {
+      "filenameContainsStudentName": false,
+      "csvBytes": "omitted",
+      "rows": 3
+    },
+    {
+      "filenameContainsStudentName": false,
+      "csvBytes": "omitted",
+      "rows": 3
+    },
+    {
+      "filenameContainsStudentName": false,
+      "csvBytes": "omitted",
+      "rows": 0
+    }
+  ],
+  "apiEvents": [
+    {
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "status": 403
+    },
+    {
+      "method": "GET",
+      "status": 404
+    },
+    {
+      "method": "GET",
+      "status": 500
+    },
+    {
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "status": 200
+    }
+  ],
+  "responsive": [
+    {
+      "width": 390,
+      "height": 844,
+      "documentScrollWidth": 390,
+      "rosterScrollWidth": 342,
+      "keyboardFocusVisible": true,
+      "ariaLive": "polite",
+      "reducedMotion": true,
+      "screenshot": "roster-export-390.png"
+    },
+    {
+      "width": 768,
+      "height": 900,
+      "documentScrollWidth": 768,
+      "rosterScrollWidth": 618,
+      "keyboardFocusVisible": true,
+      "ariaLive": "polite",
+      "reducedMotion": true,
+      "screenshot": "roster-export-768.png"
+    },
+    {
+      "width": 1280,
+      "height": 900,
+      "documentScrollWidth": 1280,
+      "rosterScrollWidth": 707,
+      "keyboardFocusVisible": true,
+      "ariaLive": "polite",
+      "reducedMotion": true,
+      "screenshot": "roster-export-1280.png"
+    },
+    {
+      "width": 1440,
+      "height": 1000,
+      "documentScrollWidth": 1440,
+      "rosterScrollWidth": 824,
+      "keyboardFocusVisible": true,
+      "ariaLive": "polite",
+      "reducedMotion": true,
+      "screenshot": "roster-export-1440.png"
+    }
+  ],
+  "pageErrors": [],
+  "confirmationCount": 6,
+  "sqlParity": [
+    {
+      "headerColumns": 8,
+      "studentRows": 3,
+      "sqlRows": 3,
+      "parity": "PASS"
+    },
+    {
+      "headerColumns": 8,
+      "studentRows": 3,
+      "sqlRows": 3,
+      "parity": "PASS"
+    },
+    {
+      "headerColumns": 8,
+      "studentRows": 3,
+      "sqlRows": 3,
+      "parity": "PASS"
+    }
+  ],
+  "uiFailureAndRetry": {
+    "failures": [
+      {
+        "case": "unauthorized",
+        "status": 401,
+        "downloadEvents": 0,
+        "retryMessage": true
+      },
+      {
+        "case": "forbidden",
+        "status": 403,
+        "downloadEvents": 0,
+        "retryMessage": true
+      },
+      {
+        "case": "missing-class",
+        "status": 404,
+        "downloadEvents": 0,
+        "retryMessage": true
+      },
+      {
+        "case": "server-error",
+        "status": 500,
+        "downloadEvents": 0,
+        "retryMessage": true
+      },
+      {
+        "case": "network-failure",
+        "status": null,
+        "downloadEvents": 0,
+        "retryMessage": true
+      },
+      {
+        "case": "request-timeout",
+        "timeoutMs": 15000,
+        "downloadEvents": 0,
+        "retryMessage": true
+      }
+    ],
+    "realRetry": "PASS",
+    "oldDataDownload": false
+  },
+  "staleIdentity": {
+    "lateResponseDiscarded": true,
+    "oldRosterCleared": true,
+    "downloadEvents": 0
+  },
+  "emptyClass": {
+    "dashboardStudentCount": 0,
+    "csvDataRows": 0,
+    "headerColumns": 8,
+    "result": "PASS"
+  },
+  "browserDownloadEventCount": 6,
+  "unpaginatedSqlParity": "PASS: three CSV rows match three ACTIVE STUDENT Enrollment joins",
+  "formulaCells": "all downloaded dangerous prefixes are stored as apostrophe-prefixed plain text; sample names omitted",
+  "testFixtureOnly": true
+}
