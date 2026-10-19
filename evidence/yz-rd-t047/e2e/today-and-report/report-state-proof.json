@@ -1,0 +1,51 @@
+{
+  "source": "existing T030 student Runner + teacher review flow, run on isolated T037 native services",
+  "databaseVersion": "PostgreSQL 17.11 (Ubuntu 17.11-1.pgdg22.04+2) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0, 64-bit",
+  "testDataBoundary": "TEST_FIXTURE_ONLY identities and authored test course; no pilot/production student data",
+  "processingBeforeReview": {
+    "sourceSessionId": "6697475c-ac3e-40c6-ac0a-92e2590fa748",
+    "reportCountBeforeTeacherReview": 0
+  },
+  "zeroScoreFormalReport": {
+    "sessionId": "e41c6f12-8808-4c43-92c8-48f84e496a3e",
+    "reportSQL": [
+      "812749b1-d122-4752-bed6-2f41e75cac3d",
+      "e41c6f12-8808-4c43-92c8-48f84e496a3e",
+      "0",
+      "100",
+      "COMPLETED",
+      "STANDARD",
+      "2026-10-19 15:48:14.951"
+    ],
+    "allItemScoresZero": true
+  },
+  "studentA": {
+    "userId": "dd283575-a3c3-4546-a3c9-92a3b3d7542a",
+    "schoolId": "11111111-1111-4111-8111-111111111111",
+    "classId": "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee",
+    "enrollmentId": "2ef4ef50-7fd8-4385-8da8-aa0cc0d50ada"
+  },
+  "sameSchoolStudentB": {
+    "userId": "ae3d793b-fc57-4140-b52b-a76ec9277fd2",
+    "schoolId": "11111111-1111-4111-8111-111111111111",
+    "classId": "6477a5b4-cf3e-4b6f-be41-dec4b1ccc526",
+    "enrollmentId": "9c3912f0-9bdc-49bb-b80c-a16f11a394ba"
+  },
+  "crossSchoolStudentC": {
+    "userId": "e91fdfb9-d44a-4124-b473-c8a19788ebc3",
+    "schoolId": "5b02d00d-07fe-416e-85b8-3340db79f6d5",
+    "classId": "99b57444-78ea-4ab4-ba52-c8b7b146be8b",
+    "enrollmentId": "b7d8dd35-992c-4d0c-ba80-f785552a6e14"
+  },
+  "practiceDefinitionId": "fd27364a-18a5-4258-a64a-bd8993a23459",
+  "courseAssignmentId": "613bcb5f-3bb1-4cb0-ba17-1d13f4d78e73",
+  "isolationStatuses": {
+    "unauthenticated": 401,
+    "sameSchoolOtherStudentReport": 403,
+    "sameSchoolOtherStudentRemediationPost": 403,
+    "sameSchoolOtherStudentHistory": 403,
+    "crossSchoolReport": 403,
+    "missingReport": 404,
+    "ineligibleRemediation": 409
+  }
+}

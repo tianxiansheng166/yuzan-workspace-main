@@ -1,0 +1,20 @@
+> yuzan-next@0.1.0 qb:source:apply /home/tian/code/work/yuzan-workspace-t047
+> pnpm --filter @yuzan/api exec tsc -p tsconfig.json && node backend/api/dist/scripts/question-bank-apply.js -- --all --school-id 11111111-1111-4111-8111-111111111111 --class-id eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee --source-dir '/home/tian/code/yuzan-workspace-main/习题课程资源'
+
+QB source validator
+DRY RUN — NO DATABASE WRITE — NO MINIO WRITE
+Parsed items: 120
+Media: 126 files (90 images, 36 audio)
+Selected: 120 items, 600 points, scoring binding 120/120 (missing 0, ambiguous 0)
+Validation: errors 0, warnings 0
+{
+  "mode": "DRY RUN — NO DATABASE WRITE — NO MINIO WRITE",
+  "level": "all",
+  "preflight": {
+    "items": 120,
+    "points": 600,
+    "bound": 120,
+    "missing": 0,
+    "ambiguous": 0
+  }
+}

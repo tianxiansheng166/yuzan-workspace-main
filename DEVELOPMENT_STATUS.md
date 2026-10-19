@@ -1,5 +1,15 @@
 # Development status
 
+## YZ-RD-T047 — T045 mobile-first practice merged into T046 (2026-10-19)
+
+COMPLETE / `READY_TO_MERGE=NO` due the inherited API lint baseline. No-FF merge commit `b5a57430d03d8f92b1419c08b871abc19a415d5d` has exact parents BASE `0f6ea3710797612aa08f37944a9ab9d92f033da1` and T045 `e3a3c544bb990904212f5ad518a6dc46ae68916c`.
+
+T047-owned Chrome 153/API/PostgreSQL 17.11/Redis/MinIO verification confirms the first real oral practice card and title enter 390×844 at y=624 / 813.8–838.8; catalog, Runner and Today have no horizontal overflow at 390/768/1280/1440. The real two-recording workflow stores and reads WebM/Opus objects, submits once to PROCESSING with no premature score/report, and recovers interrupted answer/audio upload. Teacher-assigned task navigation, six manual assessment reviews, legal formal 0/100 and 55/100 reports, student feedback, keyboard and same-school/cross-school isolation are covered.
+
+The full integrated browser run initially reported 4 passed / 2 failed because T037's legacy selector timed out; T047 enabled its existing API-ID integrated path and replayed the two affected cases successfully. All six cases pass cumulatively. Frontend 137/137 and runtime verification pass. Full API lint remains 1201 errors / 1 warning (exit 1), same as T046/T033 and not waived. See [T047 results](evidence/yz-rd-t047/RESULTS.md) and the raw [lint output](evidence/yz-rd-t047/api-lint.txt).
+
+All T047 service listeners are stopped; T047 database and MinIO evidence remain retained. No Docker/Compose, Worker, T005/shared-branch changes or L4 access. L4 remains OPEN. The target checkout lacks the AA-DEV-V2.2 marker and the Task Card supplied no Lane policy file; root `/home/tian/code/AGENTS.md` applied.
+
 ## YZ-RD-T046 — personalized Today and real speech catalog integrated checkpoint (2026-10-19)
 
 Separate rolling integration of accepted T042 + T043 personalized Today + exact T044 `7f9288521a2f4e486ccf2ea2f49e1d78e9ce7865`; T045 is not merged. T043 and T044 are preserved as no-fast-forward commits `d6e0328522817be08ab496c5b294b8eaae903afc` and `7a2ec1fb3ee7e9b4ea39273b86f0580277a3428f`.

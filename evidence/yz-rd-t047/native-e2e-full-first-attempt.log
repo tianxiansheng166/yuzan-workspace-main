@@ -1,0 +1,582 @@
+FF..{
+  "runKey": "d5b68ad8",
+  "fixturePolicy": "TEST_FIXTURE_ONLY; no production account or source data used",
+  "catalogHierarchy": {
+    "extraPromotionCards": 0,
+    "practiceCards": 8,
+    "oralFilterTop": 138,
+    "categoryTabsTop": 369,
+    "abilityRailTop": 424,
+    "catalogTop": 712
+  },
+  "practiceCenter": "http://127.0.0.1:4447/student/practices/",
+  "mockRequest": "http://127.0.0.1:4447/api/v1/schools/11111111-1111-4111-8111-111111111111/practices?sort=RECOMMENDED&catalogType=MOCK",
+  "mockMode": {
+    "query": {
+      "sort": [
+        "RECOMMENDED"
+      ],
+      "catalogType": [
+        "MOCK"
+      ]
+    },
+    "count": 1,
+    "officialExamDisclaimer": true
+  },
+  "specializedRequest": "http://127.0.0.1:4447/api/v1/schools/11111111-1111-4111-8111-111111111111/practices?sort=RECOMMENDED&catalogType=SPECIALIZED",
+  "remediationMode": {
+    "query": {
+      "sort": [
+        "RECOMMENDED"
+      ],
+      "catalogType": [
+        "SPECIALIZED"
+      ]
+    },
+    "practiceId": "70000000-0000-4000-8000-000000000003",
+    "deliveryId": "375cb77a-c33c-4359-8d99-32a852965144",
+    "createdForT046": true
+  },
+  "oralRequest": "http://127.0.0.1:4447/api/v1/schools/11111111-1111-4111-8111-111111111111/practices?requiresRecording=true&sort=RECOMMENDED",
+  "realSpeakingPractice": {
+    "definitionId": "70000000-0000-4000-8000-000000000003",
+    "title": "停顿与节奏专项训练",
+    "requiresRecording": true,
+    "catalogType": "SPECIALIZED"
+  },
+  "fourViewports": [
+    {
+      "viewport": 390,
+      "scrollWidth": 390,
+      "screenshot": "catalog-390.png",
+      "filterPanelDisplay": "none",
+      "oralFilterVisible": true,
+      "firstPracticeCardTop": 620.5
+    },
+    {
+      "viewport": 768,
+      "scrollWidth": 768,
+      "screenshot": "catalog-768.png",
+      "filterPanelDisplay": "block",
+      "oralFilterVisible": true,
+      "firstPracticeCardTop": 833
+    },
+    {
+      "viewport": 1280,
+      "scrollWidth": 1280,
+      "screenshot": "catalog-1280.png",
+      "filterPanelDisplay": "block",
+      "oralFilterVisible": true,
+      "firstPracticeCardTop": 835
+    },
+    {
+      "viewport": 1440,
+      "scrollWidth": 1440,
+      "screenshot": "catalog-1440.png",
+      "filterPanelDisplay": "block",
+      "oralFilterVisible": true,
+      "firstPracticeCardTop": 835
+    }
+  ],
+  "detailViewports": [
+    {
+      "viewport": 390,
+      "scrollWidth": 390,
+      "screenshot": "detail-390.png"
+    },
+    {
+      "viewport": 1440,
+      "scrollWidth": 1440,
+      "screenshot": "detail-1440.png"
+    }
+  ],
+  "realRecordingAttempt": {
+    "attemptId": "10a47b5a-72cc-4bbb-b475-3a1f6309eb53",
+    "studentUserId": "7d64bcc2-0849-44ce-9e80-6267493d85bd",
+    "studentEnrollmentId": "47904b94-95d3-4fd8-ae7d-027278fb687e",
+    "practiceDefinitionId": "70000000-0000-4000-8000-000000000003"
+  },
+  "realQuestions": [
+    {
+      "itemId": "392f1018-3e55-49de-84d3-280f5050c40b",
+      "type": "CHOICE",
+      "prompt": "{'prompt': '哪一种停顿更自然？', 'options': ['春风 / 又绿江南岸', '春 / 风又绿江南岸'], 'maxScore': 25, 'required': True}"
+    },
+    {
+      "itemId": "8d0293f4-231a-4d20-9145-98dad6db2743",
+      "type": "SPEECH",
+      "prompt": "{'maxScore': 25, 'targetText': '春风又绿江南岸，明月何时照我还。', 'instruction': '听完示范后跟读。', 'demoAudioUrl': '/student/growth/assets/pr"
+    },
+    {
+      "itemId": "1d892ce4-7ee4-4f28-8fec-d73c9fc39801",
+      "type": "SPEECH",
+      "prompt": "{'maxScore': 25, 'targetText': '海日生残夜，江春入旧年。', 'instruction': '请独立朗读。'}"
+    },
+    {
+      "itemId": "e77b045f-0559-4f2f-b0e7-1984c3c889d9",
+      "type": "TEXT",
+      "prompt": "{'prompt': '回听自己的朗读后，写下一个准备调整的停顿或语速问题。', 'maxScore': 25, 'required': True}"
+    }
+  ],
+  "authorization": {
+    "anonymous": 401,
+    "foreignSchool": 403,
+    "studentReviewQueue": 403,
+    "missingPractice": 404
+  },
+  "permissionDenied": {
+    "microphone": "denied",
+    "recordingRowsCreated": 0
+  },
+  "recordingAndAudition": {
+    "playedPromptAudio": [
+      {
+        "itemId": "8d0293f4-231a-4d20-9145-98dad6db2743",
+        "sourcePath": "/student/growth/assets/practice-sample.wav"
+      }
+    ],
+    "recordings": [
+      {
+        "itemId": "8d0293f4-231a-4d20-9145-98dad6db2743",
+        "recordingId": "dda52b8a-2f98-450e-99c5-4dfb13d3801b",
+        "status": "COMPLETE",
+        "objectKey": "recordings/dda52b8a-2f98-450e-99c5-4dfb13d3801b/full",
+        "bytes": 24446,
+        "contentType": "audio/webm;codecs=opus",
+        "etag": "\"5d4efd2ca5a542bb518512ed4b6ffcab\""
+      },
+      {
+        "itemId": "1d892ce4-7ee4-4f28-8fec-d73c9fc39801",
+        "recordingId": "6da2775c-2a20-4037-a837-61c52b45be2d",
+        "status": "COMPLETE",
+        "objectKey": "recordings/6da2775c-2a20-4037-a837-61c52b45be2d/full",
+        "bytes": 24446,
+        "contentType": "audio/webm;codecs=opus",
+        "etag": "\"7e3a3c8a4d62b4c3d9f164b21973a224\""
+      }
+    ],
+    "offlineAnswerRetry": true,
+    "offlineUploadRetry": true
+  },
+  "runnerViewports": [
+    {
+      "viewport": 390,
+      "scrollWidth": 390,
+      "screenshot": "runner-390.png"
+    },
+    {
+      "viewport": 768,
+      "scrollWidth": 768,
+      "screenshot": "runner-768.png"
+    },
+    {
+      "viewport": 1280,
+      "scrollWidth": 1280,
+      "screenshot": "runner-1280.png"
+    },
+    {
+      "viewport": 1440,
+      "scrollWidth": 1440,
+      "screenshot": "runner-1440.png"
+    }
+  ],
+  "postSubmitHandling": {
+    "session": "PROCESSING",
+    "reportsBeforeReview": 0,
+    "scoredItems": 0,
+    "speechJobs": 2,
+    "createdJobsWithoutProviderResult": 2,
+    "submitPosts": 1,
+    "automaticSpeechScoring": "disabled; no fabricated score"
+  },
+  "formalReportState": {
+    "apiStatus": 200,
+    "apiBody": null,
+    "databaseRows": 0,
+    "visibleReportLink": false,
+    "status": "unavailable while the real session remains PROCESSING",
+    "scoresGenerated": 0
+  },
+  "identityIsolation": {
+    "studentA": "7d64bcc2-0849-44ce-9e80-6267493d85bd",
+    "studentB": "86a3f42a-d294-460e-a1ca-5fe02895ed73",
+    "sameSchoolDifferentEnrollment": true,
+    "otherStudentAttempt": 404,
+    "otherStudentReport": 403,
+    "otherStudentHistoryContainsAttempt": false
+  },
+  "pageErrors": [],
+  "screenshots": [
+    "catalog-1280.png",
+    "catalog-1440.png",
+    "catalog-390.png",
+    "catalog-768.png",
+    "detail-1440.png",
+    "detail-390.png",
+    "processing-1440.png",
+    "runner-1280.png",
+    "runner-1440.png",
+    "runner-390.png",
+    "runner-768.png"
+  ]
+}
+.{
+  "runKey": "96f561ae",
+  "fixturePolicy": "TEST_FIXTURE_ONLY; no production account or source data used",
+  "catalogHierarchy": {
+    "extraPromotionCards": 0,
+    "practiceCards": 9,
+    "oralFilterTop": 138,
+    "categoryTabsTop": 369,
+    "abilityRailTop": 424,
+    "catalogTop": 712
+  },
+  "practiceCenter": "http://127.0.0.1:4447/student/practices/",
+  "search": {
+    "query": [
+      "停顿与节奏专项训练"
+    ],
+    "resultCount": 1,
+    "resultVisible": true
+  },
+  "mockRequest": "http://127.0.0.1:4447/api/v1/schools/11111111-1111-4111-8111-111111111111/practices?sort=RECOMMENDED&catalogType=MOCK",
+  "mockMode": {
+    "query": {
+      "sort": [
+        "RECOMMENDED"
+      ],
+      "catalogType": [
+        "MOCK"
+      ]
+    },
+    "count": 2,
+    "officialExamDisclaimer": true
+  },
+  "specializedRequest": "http://127.0.0.1:4447/api/v1/schools/11111111-1111-4111-8111-111111111111/practices?sort=RECOMMENDED&catalogType=SPECIALIZED",
+  "remediationMode": {
+    "query": {
+      "sort": [
+        "RECOMMENDED"
+      ],
+      "catalogType": [
+        "SPECIALIZED"
+      ]
+    },
+    "practiceId": "70000000-0000-4000-8000-000000000003"
+  },
+  "oralRequest": "http://127.0.0.1:4447/api/v1/schools/11111111-1111-4111-8111-111111111111/practices?requiresRecording=true&sort=RECOMMENDED",
+  "realSpeakingPractice": {
+    "definitionId": "70000000-0000-4000-8000-000000000003",
+    "title": "停顿与节奏专项训练",
+    "requiresRecording": true,
+    "catalogType": "SPECIALIZED"
+  },
+  "mobileAbilityInteraction": {
+    "keyboardExpandCollapse": "PASS",
+    "touchExpandCollapse": "PASS",
+    "touchFacetValue": "听辨训练",
+    "facetRequest": "http://127.0.0.1:4447/api/v1/schools/11111111-1111-4111-8111-111111111111/practices?requiresRecording=true&abilityCategory=%E5%90%AC%E8%BE%A8%E8%AE%AD%E7%BB%83&sort=RECOMMENDED",
+    "clearRequest": "http://127.0.0.1:4447/api/v1/schools/11111111-1111-4111-8111-111111111111/practices?requiresRecording=true&sort=RECOMMENDED",
+    "summaryReflectsSelectedFacet": true,
+    "recordingFilterChip": "需要录音"
+  },
+  "fourViewports": [
+    {
+      "viewport": 390,
+      "scrollWidth": 390,
+      "screenshot": "catalog-390.png",
+      "filterPanelDisplay": "none",
+      "oralFilterVisible": true,
+      "mobileAbilityVisible": true,
+      "mobileAbilityExpanded": false,
+      "firstPracticeCardTop": 623.7608642578125,
+      "firstPracticeCardDocumentY": 624,
+      "firstPracticeCardId": "70000000-0000-4000-8000-000000000003",
+      "firstPracticeCardTitle": "停顿与节奏专项训练",
+      "firstPracticeTitleTop": 813.7608642578125,
+      "firstPracticeTitleBottom": 838.7608642578125,
+      "firstPracticeTitleVisible": true,
+      "firstPracticeCardRequiresRecording": true
+    },
+    {
+      "viewport": 768,
+      "scrollWidth": 768,
+      "screenshot": "catalog-768.png",
+      "filterPanelDisplay": "block",
+      "oralFilterVisible": true,
+      "mobileAbilityVisible": false,
+      "mobileAbilityExpanded": false,
+      "firstPracticeCardTop": 833.020263671875,
+      "firstPracticeCardDocumentY": 833,
+      "firstPracticeCardId": "70000000-0000-4000-8000-000000000003",
+      "firstPracticeCardTitle": "停顿与节奏专项训练",
+      "firstPracticeTitleTop": 1070.020263671875,
+      "firstPracticeTitleBottom": 1095.020263671875,
+      "firstPracticeTitleVisible": false,
+      "firstPracticeCardRequiresRecording": true
+    },
+    {
+      "viewport": 1280,
+      "scrollWidth": 1280,
+      "screenshot": "catalog-1280.png",
+      "filterPanelDisplay": "block",
+      "oralFilterVisible": true,
+      "mobileAbilityVisible": false,
+      "mobileAbilityExpanded": false,
+      "firstPracticeCardTop": 835,
+      "firstPracticeCardDocumentY": 835,
+      "firstPracticeCardId": "70000000-0000-4000-8000-000000000003",
+      "firstPracticeCardTitle": "停顿与节奏专项训练",
+      "firstPracticeTitleTop": 1072,
+      "firstPracticeTitleBottom": 1097,
+      "firstPracticeTitleVisible": false,
+      "firstPracticeCardRequiresRecording": true
+    },
+    {
+      "viewport": 1440,
+      "scrollWidth": 1440,
+      "screenshot": "catalog-1440.png",
+      "filterPanelDisplay": "block",
+      "oralFilterVisible": true,
+      "mobileAbilityVisible": false,
+      "mobileAbilityExpanded": false,
+      "firstPracticeCardTop": 835,
+      "firstPracticeCardDocumentY": 835,
+      "firstPracticeCardId": "70000000-0000-4000-8000-000000000003",
+      "firstPracticeCardTitle": "停顿与节奏专项训练",
+      "firstPracticeTitleTop": 1072,
+      "firstPracticeTitleBottom": 1097,
+      "firstPracticeTitleVisible": false,
+      "firstPracticeCardRequiresRecording": true
+    }
+  ],
+  "detailViewports": [
+    {
+      "viewport": 390,
+      "scrollWidth": 390
+    },
+    {
+      "viewport": 1440,
+      "scrollWidth": 1440
+    }
+  ],
+  "realRecordingAttempt": {
+    "attemptId": "c51bd302-673e-4b00-bcfe-c8c49277a4ef",
+    "studentUserId": "e1ed8433-a639-45d6-afc8-2e8354a7b32e",
+    "studentEnrollmentId": "08445e7b-fd00-4bea-a176-5524549b20ae",
+    "practiceDefinitionId": "70000000-0000-4000-8000-000000000003"
+  },
+  "realQuestions": [
+    {
+      "itemId": "2f70bd4f-5c4e-4b3f-a3cc-0c707cfdacf4",
+      "type": "CHOICE",
+      "prompt": "{'prompt': '哪一种停顿更自然？', 'options': ['春风 / 又绿江南岸', '春 / 风又绿江南岸'], 'maxScore': 25, 'required': True}"
+    },
+    {
+      "itemId": "010b0250-06b6-4b08-8066-09f5848eecf1",
+      "type": "SPEECH",
+      "prompt": "{'maxScore': 25, 'targetText': '春风又绿江南岸，明月何时照我还。', 'instruction': '听完示范后跟读。', 'demoAudioUrl': '/student/growth/assets/pr"
+    },
+    {
+      "itemId": "0f9522e8-047b-47a3-b9d5-c3e6a82b5491",
+      "type": "SPEECH",
+      "prompt": "{'maxScore': 25, 'targetText': '海日生残夜，江春入旧年。', 'instruction': '请独立朗读。'}"
+    },
+    {
+      "itemId": "49270ba8-4b74-49c4-bbf8-5f9b0faa7c03",
+      "type": "TEXT",
+      "prompt": "{'prompt': '回听自己的朗读后，写下一个准备调整的停顿或语速问题。', 'maxScore': 25, 'required': True}"
+    }
+  ],
+  "authorization": {
+    "anonymous": 401,
+    "foreignSchool": 403,
+    "studentReviewQueue": 403,
+    "missingPractice": 404
+  },
+  "permissionDenied": {
+    "microphone": "denied",
+    "recordingRowsCreated": 0
+  },
+  "recordingAndAudition": {
+    "playedPromptAudio": [
+      {
+        "itemId": "010b0250-06b6-4b08-8066-09f5848eecf1",
+        "sourcePath": "/student/growth/assets/practice-sample.wav"
+      }
+    ],
+    "recordings": [
+      {
+        "itemId": "010b0250-06b6-4b08-8066-09f5848eecf1",
+        "recordingId": "a9e28b2d-f655-45e1-a624-5be35e75c420",
+        "status": "COMPLETE",
+        "objectKey": "recordings/a9e28b2d-f655-45e1-a624-5be35e75c420/full",
+        "bytes": 24446,
+        "contentType": "audio/webm;codecs=opus",
+        "etag": "\"4b89af62e9152a9940c41cf95c57db02\""
+      },
+      {
+        "itemId": "0f9522e8-047b-47a3-b9d5-c3e6a82b5491",
+        "recordingId": "b736556c-7486-4acf-af32-c734d824ce7c",
+        "status": "COMPLETE",
+        "objectKey": "recordings/b736556c-7486-4acf-af32-c734d824ce7c/full",
+        "bytes": 24446,
+        "contentType": "audio/webm;codecs=opus",
+        "etag": "\"d9ebdd087bdf3050a9daa23029852294\""
+      }
+    ],
+    "offlineAnswerRetry": true,
+    "offlineUploadRetry": true
+  },
+  "runnerViewports": [
+    {
+      "viewport": 390,
+      "scrollWidth": 390
+    },
+    {
+      "viewport": 768,
+      "scrollWidth": 768
+    },
+    {
+      "viewport": 1280,
+      "scrollWidth": 1280
+    },
+    {
+      "viewport": 1440,
+      "scrollWidth": 1440
+    }
+  ],
+  "postSubmitHandling": {
+    "session": "PROCESSING",
+    "reportsBeforeReview": 0,
+    "scoredItems": 0,
+    "speechJobs": 2,
+    "createdJobsWithoutProviderResult": 2,
+    "submitPosts": 1,
+    "automaticSpeechScoring": "disabled; no fabricated score"
+  },
+  "formalReportState": {
+    "apiStatus": 200,
+    "apiBody": null,
+    "databaseRows": 0,
+    "visibleReportLink": false,
+    "status": "unavailable while the real session remains PROCESSING",
+    "scoresGenerated": 0
+  },
+  "teacherTask": {
+    "apiBackedSectionVisible": true,
+    "activeTaskCount": 1,
+    "entryHref": "/student/practices/attempts/fe3dcff3-6638-4bda-b506-8452f8f809c1/runner/",
+    "keptBeforeCatalogCategories": true
+  },
+  "identityIsolation": {
+    "studentA": "e1ed8433-a639-45d6-afc8-2e8354a7b32e",
+    "studentB": "80a8518e-b693-48bf-a75e-8012e80ae284",
+    "sameSchoolDifferentEnrollment": true,
+    "otherStudentAttempt": 404,
+    "otherStudentReport": 403,
+    "otherStudentHistoryContainsAttempt": false
+  },
+  "pageErrors": [],
+  "screenshots": [
+    "ability-expanded-390.png",
+    "catalog-1280.png",
+    "catalog-1440.png",
+    "catalog-390.png",
+    "catalog-768.png"
+  ]
+}
+.
+=================================== FAILURES ===================================
+____________ test_01_real_app_report_states_and_authorized_reviews _____________
+
+    def test_01_real_app_report_states_and_authorized_reviews():
+        """Reuse the existing complete API/teacher-review flow for legal 0 and pending states."""
+        verify_database()
+        original_verifier = t030.verify_resource_identity
+    
+        def verify_t037_runtime():
+            version = verify_database()
+            assert urlparse(t030.S3_ENDPOINT).hostname == "127.0.0.1"
+            assert t030.S3_BUCKET == os.environ["YZ_T037_S3_BUCKET"]
+    
+        t030.verify_resource_identity = verify_t037_runtime
+        try:
+>           t030.test_growth_feedback_remediation_recovery_and_identity_isolation()
+
+tests/e2e/assessment/test_yz_rd_t037_today_showcase.py:213: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/e2e/assessment/test_yz_rd_t030_student_growth.py:344: in test_growth_feedback_remediation_recovery_and_identity_isolation
+    page.locator(".practice-tile").filter(has_text=t008.PRACTICE_TITLE).locator("h2 a").click()
+../../yuzan-workspace-main/runtime-local/native-web/venv/lib/python3.10/site-packages/playwright/sync_api/_generated.py:11021: in click
+    self._sync(
+../../yuzan-workspace-main/runtime-local/native-web/venv/lib/python3.10/site-packages/playwright/_impl/_locator.py:174: in click
+    return await self._frame._click(self._selector, strict=True, **params)
+../../yuzan-workspace-main/runtime-local/native-web/venv/lib/python3.10/site-packages/playwright/_impl/_frame.py:598: in _click
+    await self._channel.send("click", self._timeout, locals_to_params(locals()))
+../../yuzan-workspace-main/runtime-local/native-web/venv/lib/python3.10/site-packages/playwright/_impl/_connection.py:78: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x71133a0bfdc0>
+cb = <function Channel.send.<locals>.<lambda> at 0x711338e42b00>
+is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        parsed_st = _attach_api_call_information(
+            getattr(task, "__pw_stack__", None) or _capture_stack_trace(),
+            is_internal,
+            title,
+        )
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.
+E           Call log:
+E             - waiting for locator(".practice-tile").filter(has_text="国家通用语言文字能力｜水平一级综合测评").locator("h2 a")
+E               - locator resolved to <a href="/student/practices/fd27364a-18a5-4258-a64a-bd8993a23459/">国家通用语言文字能力｜水平一级综合测评</a>
+E             - attempting click action
+E               - waiting for element to be visible, enabled and stable
+E               - element is visible, enabled and stable
+E               - scrolling into view if needed
+
+../../yuzan-workspace-main/runtime-local/native-web/venv/lib/python3.10/site-packages/playwright/_impl/_connection.py:636: TimeoutError
+_______ test_02_today_showcase_clicks_isolation_retry_and_four_viewports _______
+
+    def test_02_today_showcase_clicks_isolation_retry_and_four_viewports():
+        assert verify_database().startswith("PostgreSQL 17.")
+>       proof = json.loads((EVIDENCE / "report-state-proof.json").read_text(encoding="utf-8"))
+
+tests/e2e/assessment/test_yz_rd_t037_today_showcase.py:243: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/lib/python3.10/pathlib.py:1134: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/home/tian/code/work/yuzan-workspace-t047/evidence/yz-rd-t047/e2e/today-and-report/report-state-proof.json')
+mode = 'r', buffering = -1, encoding = 'utf-8', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return self._accessor.open(self, mode, buffering, encoding, errors,
+                                   newline)
+E       FileNotFoundError: [Errno 2] No such file or directory: '/home/tian/code/work/yuzan-workspace-t047/evidence/yz-rd-t047/e2e/today-and-report/report-state-proof.json'
+
+/usr/lib/python3.10/pathlib.py:1119: FileNotFoundError
+=========================== short test summary info ============================
+FAILED tests/e2e/assessment/test_yz_rd_t037_today_showcase.py::test_01_real_app_report_states_and_authorized_reviews
+FAILED tests/e2e/assessment/test_yz_rd_t037_today_showcase.py::test_02_today_showcase_clicks_isolation_retry_and_four_viewports
+2 failed, 4 passed in 227.01s (0:03:47)

@@ -1,0 +1,432 @@
+{
+  "databaseVersion": "PostgreSQL 17.11 (Ubuntu 17.11-1.pgdg22.04+2) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0, 64-bit",
+  "testDataBoundary": "TEST_FIXTURE_ONLY database identities/content; accepted authored Question Bank source files were imported read-only",
+  "studentId": "e29641a3-e77c-4bc8-93ac-5dae556f21e8",
+  "authorizedCourse": {
+    "assignmentId": "613bcb5f-3bb1-4cb0-ba17-1d13f4d78e73",
+    "courseVersionId": "f4444444-4444-4444-8444-444444444444",
+    "status": "OPEN",
+    "authorizedEnrollmentId": "acead9c4-4c0e-4a1e-8e5d-501a55f269ec",
+    "activityId": "5813cd04-4b3e-4b55-817f-59a4836ee0fe",
+    "browserUrl": "http://127.0.0.1:4447/student/courses/course-detail/?id=613bcb5f-3bb1-4cb0-ba17-1d13f4d78e73",
+    "apiStatus": 200
+  },
+  "recordingPractice": {
+    "practiceDefinitionId": "39e34b66-375e-46f3-8589-8e6832e28c86",
+    "title": "国家通用语言文字能力｜水平二级综合测评",
+    "requiresRecording": true,
+    "detailApiStatus": 200,
+    "browserUrl": "http://127.0.0.1:4447/student/practices/39e34b66-375e-46f3-8589-8e6832e28c86/"
+  },
+  "assessmentEntry": {
+    "practiceDefinitionId": "fd27364a-18a5-4258-a64a-bd8993a23459",
+    "title": "国家通用语言文字能力｜水平一级综合测评",
+    "baselineAction": "BASELINE",
+    "detailApiStatus": 200,
+    "primaryControl": "keyboard/touch button starts or resumes the real Attempt"
+  },
+  "formalReport": {
+    "reportId": "812749b1-d122-4752-bed6-2f41e75cac3d",
+    "sessionId": "e41c6f12-8808-4c43-92c8-48f84e496a3e",
+    "overallScore": 0,
+    "sql": [
+      "812749b1-d122-4752-bed6-2f41e75cac3d",
+      "0",
+      "COMPLETED",
+      "STANDARD",
+      "true"
+    ],
+    "apiStatus": 200,
+    "growthHref": "/assessment/sessions/e41c6f12-8808-4c43-92c8-48f84e496a3e/report/"
+  },
+  "isolation": {
+    "sameSchoolOtherStudent": {
+      "courseStatus": 404,
+      "practiceStatus": 404,
+      "reportStatus": 403
+    },
+    "crossSchoolStudent": {
+      "courseStatus": 403,
+      "practiceStatus": 403,
+      "reportStatus": 403
+    },
+    "freshStudentWithPendingReview": {
+      "enrollmentId": "b5200caa-1a9d-42c9-82cf-a840c90ca6a1",
+      "sessionId": "59f927a6-be4e-448f-acc1-b0ebbd928de5",
+      "sessionSQL": [
+        "PROCESSING",
+        "STANDARD"
+      ],
+      "formalReportCount": 0,
+      "latestFormalAssessment": null,
+      "networkFailureCount": 1,
+      "retryCardsRendered": 0,
+      "retryOptionalSuggestions": 1,
+      "offlineOptionalCatalogNoRecommendation": true,
+      "emptyOptionalCatalogNoRecommendation": true,
+      "refreshRetainedNoReport": true,
+      "recordedAudio": 4,
+      "recordingSource": "Chromium fake microphone (SIMULATED_MIC)"
+    }
+  },
+  "responsive": {
+    "390": {
+      "viewport": 390,
+      "document": 390,
+      "body": 390
+    },
+    "768": {
+      "viewport": 768,
+      "document": 768,
+      "body": 768
+    },
+    "1280": {
+      "viewport": 1280,
+      "document": 1280,
+      "body": 1280
+    },
+    "1440": {
+      "viewport": 1440,
+      "document": 1440,
+      "body": 1440
+    }
+  },
+  "designReview": {
+    "390": {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "documentHeight": 3816,
+      "primary": {
+        "top": 254,
+        "bottom": 574,
+        "height": 320,
+        "fontSize": "16px",
+        "lineHeight": "normal",
+        "marginTop": "0px",
+        "marginBottom": "0px"
+      },
+      "optional": {
+        "top": 938,
+        "bottom": 1110,
+        "height": 172,
+        "fontSize": "16px",
+        "lineHeight": "normal",
+        "marginTop": "2px",
+        "marginBottom": "22px"
+      },
+      "hierarchy": true,
+      "primaryVisibleAboveFold": true,
+      "pageHeading": {
+        "top": 124,
+        "bottom": 206,
+        "height": 82,
+        "fontSize": "29px",
+        "lineHeight": "normal",
+        "marginTop": "0px",
+        "marginBottom": "0px"
+      },
+      "primaryHeading": {
+        "top": 335,
+        "bottom": 370,
+        "height": 36,
+        "fontSize": "25px",
+        "lineHeight": "35.5px",
+        "marginTop": "0px",
+        "marginBottom": "0px"
+      },
+      "primaryReason": {
+        "top": 380,
+        "bottom": 427,
+        "height": 47,
+        "fontSize": "13px",
+        "lineHeight": "23.4px",
+        "marginTop": "10px",
+        "marginBottom": "0px"
+      },
+      "discoveryHeading": {
+        "top": 972,
+        "bottom": 1039,
+        "height": 67,
+        "fontSize": "16px",
+        "lineHeight": "22.4px",
+        "marginTop": "0px",
+        "marginBottom": "4px"
+      },
+      "discoveryLink": {
+        "top": 1004,
+        "bottom": 1044,
+        "height": 40,
+        "fontSize": "12px",
+        "lineHeight": "normal",
+        "marginTop": "0px",
+        "marginBottom": "0px"
+      },
+      "overviewGap": "12px",
+      "courseLinkCount": 2,
+      "fourCardCount": 0
+    },
+    "768": {
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "documentHeight": 2842,
+      "primary": {
+        "top": 279,
+        "bottom": 599,
+        "height": 320,
+        "fontSize": "16px",
+        "lineHeight": "normal",
+        "marginTop": "0px",
+        "marginBottom": "0px"
+      },
+      "optional": {
+        "top": 795,
+        "bottom": 890,
+        "height": 95,
+        "fontSize": "16px",
+        "lineHeight": "normal",
+        "marginTop": "2px",
+        "marginBottom": "22px"
+      },
+      "hierarchy": true,
+      "primaryVisibleAboveFold": true,
+      "pageHeading": {
+        "top": 129,
+        "bottom": 221,
+        "height": 92,
+        "fontSize": "32px",
+        "lineHeight": "normal",
+        "marginTop": "0px",
+        "marginBottom": "0px"
+      },
+      "primaryHeading": {
+        "top": 373,
+        "bottom": 410,
+        "height": 37,
+        "fontSize": "26px",
+        "lineHeight": "36.92px",
+        "marginTop": "0px",
+        "marginBottom": "0px"
+      },
+      "primaryReason": {
+        "top": 424,
+        "bottom": 451,
+        "height": 27,
+        "fontSize": "15px",
+        "lineHeight": "27px",
+        "marginTop": "14px",
+        "marginBottom": "0px"
+      },
+      "discoveryHeading": {
+        "top": 830,
+        "bottom": 852,
+        "height": 22,
+        "fontSize": "16px",
+        "lineHeight": "22.4px",
+        "marginTop": "0px",
+        "marginBottom": "4px"
+      },
+      "discoveryLink": {
+        "top": 823,
+        "bottom": 863,
+        "height": 40,
+        "fontSize": "12px",
+        "lineHeight": "normal",
+        "marginTop": "0px",
+        "marginBottom": "0px"
+      },
+      "overviewGap": "18px",
+      "courseLinkCount": 2,
+      "fourCardCount": 0
+    },
+    "1280": {
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "documentHeight": 2020,
+      "primary": {
+        "top": 335,
+        "bottom": 685,
+        "height": 350,
+        "fontSize": "16px",
+        "lineHeight": "normal",
+        "marginTop": "0px",
+        "marginBottom": "0px"
+      },
+      "optional": {
+        "top": 707,
+        "bottom": 802,
+        "height": 95,
+        "fontSize": "16px",
+        "lineHeight": "normal",
+        "marginTop": "2px",
+        "marginBottom": "22px"
+      },
+      "hierarchy": true,
+      "primaryVisibleAboveFold": true,
+      "pageHeading": {
+        "top": 153,
+        "bottom": 277,
+        "height": 124,
+        "fontSize": "43.52px",
+        "lineHeight": "normal",
+        "marginTop": "0px",
+        "marginBottom": "0px"
+      },
+      "primaryHeading": {
+        "top": 429,
+        "bottom": 480,
+        "height": 51,
+        "fontSize": "36px",
+        "lineHeight": "51.12px",
+        "marginTop": "0px",
+        "marginBottom": "0px"
+      },
+      "primaryReason": {
+        "top": 494,
+        "bottom": 521,
+        "height": 27,
+        "fontSize": "15px",
+        "lineHeight": "27px",
+        "marginTop": "14px",
+        "marginBottom": "0px"
+      },
+      "discoveryHeading": {
+        "top": 742,
+        "bottom": 764,
+        "height": 22,
+        "fontSize": "16px",
+        "lineHeight": "22.4px",
+        "marginTop": "0px",
+        "marginBottom": "4px"
+      },
+      "discoveryLink": {
+        "top": 735,
+        "bottom": 775,
+        "height": 40,
+        "fontSize": "12px",
+        "lineHeight": "normal",
+        "marginTop": "0px",
+        "marginBottom": "0px"
+      },
+      "overviewGap": "18px",
+      "courseLinkCount": 2,
+      "fourCardCount": 0
+    },
+    "1440": {
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "documentHeight": 1947,
+      "primary": {
+        "top": 343,
+        "bottom": 693,
+        "height": 350,
+        "fontSize": "16px",
+        "lineHeight": "normal",
+        "marginTop": "0px",
+        "marginBottom": "0px"
+      },
+      "optional": {
+        "top": 715,
+        "bottom": 810,
+        "height": 95,
+        "fontSize": "16px",
+        "lineHeight": "normal",
+        "marginTop": "2px",
+        "marginBottom": "22px"
+      },
+      "hierarchy": true,
+      "primaryVisibleAboveFold": true,
+      "pageHeading": {
+        "top": 153,
+        "bottom": 285,
+        "height": 132,
+        "fontSize": "46px",
+        "lineHeight": "normal",
+        "marginTop": "0px",
+        "marginBottom": "0px"
+      },
+      "primaryHeading": {
+        "top": 437,
+        "bottom": 488,
+        "height": 51,
+        "fontSize": "36px",
+        "lineHeight": "51.12px",
+        "marginTop": "0px",
+        "marginBottom": "0px"
+      },
+      "primaryReason": {
+        "top": 502,
+        "bottom": 529,
+        "height": 27,
+        "fontSize": "15px",
+        "lineHeight": "27px",
+        "marginTop": "14px",
+        "marginBottom": "0px"
+      },
+      "discoveryHeading": {
+        "top": 750,
+        "bottom": 772,
+        "height": 22,
+        "fontSize": "16px",
+        "lineHeight": "22.4px",
+        "marginTop": "0px",
+        "marginBottom": "4px"
+      },
+      "discoveryLink": {
+        "top": 743,
+        "bottom": 783,
+        "height": 40,
+        "fontSize": "12px",
+        "lineHeight": "normal",
+        "marginTop": "0px",
+        "marginBottom": "0px"
+      },
+      "overviewGap": "18px",
+      "courseLinkCount": 2,
+      "fourCardCount": 0
+    }
+  },
+  "keyboard": {
+    "tag": "BUTTON",
+    "type": "button",
+    "accessibleText": "开始第一次测评",
+    "keyboardFocused": true,
+    "outlineStyle": "solid",
+    "outlineWidth": "3px",
+    "openedRealAttempt": true,
+    "browserUrl": "http://127.0.0.1:4447/student/practices/attempts/72c71cb8-0855-4e78-ad21-6fc25c9cd1b3/runner/"
+  },
+  "mobileTouch": {
+    "viewport": 390,
+    "overflow": {
+      "viewport": 390,
+      "document": 390,
+      "body": 390
+    },
+    "primaryTouchTargetHeight": 47,
+    "discoveryTouchTargetHeight": 40,
+    "primaryActionKind": "RESUME_ASSESSMENT",
+    "primaryHref": "http://127.0.0.1:4447/assessment/sessions/72c71cb8-0855-4e78-ad21-6fc25c9cd1b3/",
+    "discoveryHref": "/student/practices/39e34b66-375e-46f3-8589-8e6832e28c86/",
+    "primaryTapAndDiscoveryTap": true,
+    "finalUrl": "http://127.0.0.1:4447/student/practices/39e34b66-375e-46f3-8589-8e6832e28c86/"
+  },
+  "browserErrors": [],
+  "screenshots": [
+    "screenshots/authorized-course-detail-1440.png",
+    "screenshots/recording-practice-definition-1440.png",
+    "screenshots/today-pending-no-score-1280.png",
+    "screenshots/today-real-1280.png",
+    "screenshots/today-real-1440.png",
+    "screenshots/today-real-390.png",
+    "screenshots/today-real-768.png",
+    "screenshots/today-real-formal-zero-score-1440.png"
+  ]
+}

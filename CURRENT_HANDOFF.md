@@ -3,6 +3,13 @@
 Last updated: 2026-10-19
 Repository: `yuzan-workspace-main`
 
+## YZ-RD-T047 mobile-first unified product integration (2026-10-19)
+
+- COMPLETE on independent branch `feat/yz-rd-t047-mobile-first-unified-product`. No-FF merge `b5a57430d03d8f92b1419c08b871abc19a415d5d` preserves BASE T046 `0f6ea3710797612aa08f37944a9ab9d92f033da1` and accepted T045 `e3a3c544bb990904212f5ad518a6dc46ae68916c` as its exact parents.
+- T047 native Chromium/API/PostgreSQL/Redis/MinIO E2E verified the server-backed first oral practice at 390×844: card y=624, title y=813.8–838.8, fully visible; 390/768/1280/1440 have zero horizontal overflow. T045 task rendering, T046 personalized Today, teacher assignment, real speech upload/PROCESSING state, review isolation, six manual reviews and student formal 0/100 + 55/100 reports passed. The first full suite had two legacy-selector failures; the existing integrated route was enabled and both affected cases replayed PASS. Detailed evidence: [evidence/yz-rd-t047/RESULTS.md](evidence/yz-rd-t047/RESULTS.md).
+- Frontend 137/137 and runtime verification pass. Full API lint remains FAIL at 1201 errors / 1 warning (exit 1), unchanged from T046/T033 and not waived; `READY_TO_MERGE=NO`. Raw output is in `evidence/yz-rd-t047/api-lint.txt`.
+- All T047-owned services exited and ports are free. Data and MinIO objects are retained in the task-owned runtime. No Docker/Compose, Worker, T005 modification, shared-branch merge, or L4 access; `L4_OPEN=OPEN`. Target `AGENTS.md` lacks the V2.2 marker and the card supplied no Lane-policy path; root `/home/tian/code/AGENTS.md` governed.
+
 ## YZ-RD-T046 integrated student experience checkpoint (2026-10-19)
 
 - Independent integration from accepted T042 + T043 personalized Today + exact T044 `7f9288521a2f4e486ccf2ea2f49e1d78e9ce7865`; T045 is not an ancestor. No-FF commits preserve T043 (`d6e0328522817be08ab496c5b294b8eaae903afc`) and T044 (`7a2ec1fb3ee7e9b4ea39273b86f0580277a3428f`) with their exact parents recorded in `evidence/yz-rd-t046/RESULTS.md`.

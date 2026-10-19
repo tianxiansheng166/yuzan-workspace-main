@@ -23,6 +23,8 @@ EVIDENCE = Path(os.environ.get("YZ_T045_EVIDENCE_DIR", "/tmp/yz-rd-t045"))
 PSQL = os.environ.get("YZ_T045_PSQL", "psql")
 API_PACKAGE = os.environ.get("YZ_T045_API_PACKAGE", "")
 BUCKET = os.environ.get("YZ_T045_S3_BUCKET", "")
+EXPECTED_DATABASE = os.environ.get("YZ_T045_EXPECTED_DATABASE", "yuzan_t045_native")
+EXPECTED_DATABASE_USER = os.environ.get("YZ_T045_EXPECTED_DATABASE_USER", "yz_t045")
 SCHOOL_ID = "11111111-1111-4111-8111-111111111111"
 CLASS_ID = "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee"
 SEED_STUDENT_ID = "22222222-2222-4222-8222-222222222222"
@@ -40,9 +42,9 @@ def sql(statement, *, capture=False):
     parsed = urlparse(DATABASE_URL)
     assert parsed.scheme == "postgresql"
     assert parsed.hostname == "127.0.0.1"
-    assert parsed.username == os.environ["YZ_T045_POSTGRES_USER"] == "yz_t045"
+    assert parsed.username == os.environ["YZ_T045_POSTGRES_USER"] == EXPECTED_DATABASE_USER
     assert parsed.port == int(os.environ["YZ_T045_POSTGRES_PORT"])
-    assert parsed.path.lstrip("/") == os.environ["YZ_T045_POSTGRES_DB"] == "yuzan_t045_native"
+    assert parsed.path.lstrip("/") == os.environ["YZ_T045_POSTGRES_DB"] == EXPECTED_DATABASE
     password = unquote(parsed.password or "")
     assert password
     env = {
@@ -72,7 +74,7 @@ def sql_rows(statement):
 
 def verify_database_identity():
     identity = sql("SELECT current_database() || '|' || current_user || '|' || version();", capture=True)
-    assert identity.startswith("yuzan_t045_native|yz_t045|PostgreSQL 17."), identity.split("|", 2)[:2]
+    assert identity.startswith(f"{EXPECTED_DATABASE}|{EXPECTED_DATABASE_USER}|PostgreSQL 17."), identity.split("|", 2)[:2]
 
 
 def authenticate(page, identifier):
