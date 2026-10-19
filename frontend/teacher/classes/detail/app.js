@@ -20,6 +20,14 @@
   let classDetail = null;
   let studentSummaries = [];
   let rosterExportInFlight = false;
+  let rosterExportAbortController = null;
+  let rosterRequestController = null;
+  let pageIdentity = null;
+  let pageIdentityWatch = null;
+  let pageLoadEpoch = 0;
+  let pageIdentityInvalidated = false;
+  let rosterResponseLoaded = false;
+  let rosterFilterState = { search: '', risk: '', score: '', sort: 'name' };
   let publishedCourseVersions = null;
   let pendingRequestKey = '';
   let teacherInvitations = [];
@@ -33,6 +41,7 @@
   const invitationPendingVerification = new Map();
   const requestedStudentId = new URLSearchParams(location.search).get('studentId') || '';
   const requestedSchoolId = new URLSearchParams(location.search).get('schoolId') || '';
+  const rosterFilterStorageKey = 'yz.t034.class-roster-filter.v1';
 
   const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, char => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
@@ -49,6 +58,142 @@
     if (error?.status === 403) return '当前账号没有该班级数据的访问权限。';
     if (error?.status === 404) return '班级或目标记录不存在。';
     return `${error?.message || fallback}。请检查网络后重试。`;
+  }
+
+  function capturePageIdentity() {
+    if (typeof YuzanApi === 'undefined') return null;
+    return {
+      token: YuzanApi.getToken() || '',
+      userId: YuzanApi.getStoredUser()?.id || '',
+      activeSchoolId: YuzanApi.getActiveSchoolId() || '',
+      schoolId,
+      classId,
+    };
+  }
+
+  function pageIdentityMatches(identity) {
+    if (pageIdentityInvalidated || !identity || typeof YuzanApi === 'undefined') return false;
+    return Boolean(
+      identity.token
+      && YuzanApi.getToken() === identity.token
+      && (YuzanApi.getStoredUser()?.id || '') === identity.userId
+      && YuzanApi.getActiveSchoolId() === identity.activeSchoolId
+      && identity.activeSchoolId === identity.schoolId
+      && identity.schoolId === schoolId
+      && identity.classId === classId
+      && getClassIdFromPath() === identity.classId
+      && (!requestedSchoolId || requestedSchoolId === identity.schoolId),
+    );
+  }
+
+  function rosterFilterApi() {
+    return window.YuzanRosterFilter;
+  }
+
+  function applyRosterFilterState(value) {
+    rosterFilterState = rosterFilterApi().sanitizeState(value);
+    document.getElementById('rosterSearch').value = rosterFilterState.search;
+    document.getElementById('rosterRisk').value = rosterFilterState.risk;
+    document.getElementById('rosterScore').value = rosterFilterState.score;
+    document.getElementById('rosterSort').value = rosterFilterState.sort;
+  }
+
+  function persistRosterFilterState() {
+    if (!pageIdentity?.userId || !pageIdentity.schoolId || !pageIdentity.classId) return;
+    try {
+      window.sessionStorage.setItem(rosterFilterStorageKey, JSON.stringify({
+        userId: pageIdentity.userId,
+        schoolId: pageIdentity.schoolId,
+        classId: pageIdentity.classId,
+        state: rosterFilterState,
+      }));
+    } catch {}
+  }
+
+  function updateRosterFilterUrl() {
+    const params = rosterFilterApi().writeParams(new URLSearchParams(location.search), rosterFilterState);
+    const query = params.toString();
+    const nextUrl = `${location.pathname}${query ? `?${query}` : ''}${location.hash}`;
+    window.history.replaceState(window.history.state, '', nextUrl);
+  }
+
+  function restoreRosterFilterState() {
+    const filter = rosterFilterApi();
+    const params = new URLSearchParams(location.search);
+    let state = filter.stateFromParams(params);
+    if (requestedStudentId && !filter.hasLegalStateParam(params)) {
+      try {
+        const saved = JSON.parse(window.sessionStorage.getItem(rosterFilterStorageKey) || 'null');
+        if (saved?.userId === pageIdentity?.userId
+          && saved?.schoolId === schoolId
+          && saved?.classId === classId) {
+          state = filter.sanitizeState(saved.state);
+        }
+      } catch {}
+    }
+    applyRosterFilterState(state);
+    updateRosterFilterUrl();
+    persistRosterFilterState();
+  }
+
+  function setRosterFilterFromControls() {
+    applyRosterFilterState({
+      search: document.getElementById('rosterSearch').value,
+      risk: document.getElementById('rosterRisk').value,
+      score: document.getElementById('rosterScore').value,
+      sort: document.getElementById('rosterSort').value,
+    });
+    updateRosterFilterUrl();
+    persistRosterFilterState();
+    if (rosterResponseLoaded) renderStudentRoster(studentSummaries);
+  }
+
+  function clearClassPageForIdentity(message, rosterStatus = message) {
+    if (!pageIdentityInvalidated) {
+      pageIdentityInvalidated = true;
+      pageLoadEpoch += 1;
+      if (rosterRequestController) rosterRequestController.abort();
+      if (rosterExportAbortController) rosterExportAbortController.abort();
+      clearInterval(pageIdentityWatch);
+      pageIdentityWatch = null;
+      studentSummaries = [];
+      rosterResponseLoaded = false;
+      classDetail = null;
+      clearTeacherInvitations(message);
+      const pageGrid = document.querySelector('.page-grid');
+      const exportStatus = document.getElementById('rosterExportStatus');
+      const boundary = document.createElement('section');
+      boundary.className = 'class-identity-boundary';
+      boundary.setAttribute('role', 'alert');
+      const heading = document.createElement('h1');
+      heading.textContent = '班级数据已清除';
+      const detail = document.createElement('p');
+      detail.textContent = message;
+      const returnLink = document.createElement('a');
+      returnLink.href = '/teacher/classes/';
+      returnLink.textContent = '返回当前学校的班级列表';
+      boundary.append(heading, detail, returnLink);
+      if (exportStatus) boundary.append(exportStatus);
+      pageGrid?.replaceChildren(boundary);
+    }
+    setRosterExportStatus(rosterStatus);
+  }
+
+  function startPageIdentityWatch() {
+    clearInterval(pageIdentityWatch);
+    pageIdentityWatch = window.setInterval(() => {
+      if (!pageIdentityMatches(pageIdentity)) {
+        const message = '账号或学校已切换，旧班级数据已清除。请从当前学校的班级列表重新进入。';
+        const exportStatus = rosterExportInFlight
+          ? '导出失败、重试。账号或学校已切换，旧名单已清除，未生成文件。'
+          : message;
+        clearClassPageForIdentity(message, exportStatus);
+      }
+    }, 400);
+  }
+
+  function isCurrentPageRequest(identity, epoch) {
+    return epoch === pageLoadEpoch && pageIdentityMatches(identity);
   }
 
   const invitationStatusLabels = {
@@ -539,7 +684,7 @@
   }
 
   function rosterExportIdentityMatches(identity) {
-    if (typeof YuzanApi === 'undefined' || !identity) return false;
+    if (typeof YuzanApi === 'undefined' || !identity || !pageIdentityMatches(identity)) return false;
     return Boolean(
       identity.token
       && YuzanApi.getToken() === identity.token
@@ -560,6 +705,9 @@
 
   function clearRosterAfterAuthorizationFailure(message) {
     studentSummaries = [];
+    rosterResponseLoaded = false;
+    const count = document.getElementById('rosterCount');
+    if (count) count.textContent = '名单已清除';
     const table = document.getElementById('rosterTable');
     if (table) {
       table.replaceChildren();
@@ -624,8 +772,9 @@
 
     rosterExportInFlight = true;
     exportButtons.forEach((button) => { button.disabled = true; });
-    setRosterExportStatus('正在从当前授权班级重新读取学生名单…');
+    setRosterExportStatus('正在重新读取当前授权班级全班名单；当前搜索和筛选不会改变导出范围…');
     const controller = new AbortController();
+    rosterExportAbortController = controller;
     const timeoutId = window.setTimeout(() => controller.abort(), 15000);
     let objectUrl = '';
     try {
@@ -634,7 +783,7 @@
         { method: 'GET', signal: controller.signal },
       );
       if (!rosterExportIdentityMatches(identity)) {
-        clearRosterAfterAuthorizationFailure('账号或学校已切换，旧班级学生名单已清除。');
+        clearClassPageForIdentity('账号或学校已切换，旧班级数据已清除。请从当前学校的班级列表重新进入。');
         setRosterExportStatus('账号或学校已切换，未下载文件。请重新进入当前授权班级。');
         return;
       }
@@ -644,14 +793,14 @@
       if (typeof className !== 'string' || !className.trim()) throw new Error('班级名称不可用，未生成文件');
       const csv = window.YuzanRosterExport.buildCsv(className, summaries);
       const confirmation = window.confirm(
-        `将下载“${className}”的 ${summaries.length} 名在读学生名单与学情，包含课程进度、提交完成/未交数、最近正式分、风险和最近活跃时间。请妥善保管。继续下载 CSV 吗？`,
+        `将下载“${className}”全班 ${summaries.length} 名在读学生名单与学情，包含课程进度、提交完成/未交数、最近正式分、风险和最近活跃时间；不受当前搜索和筛选影响。请妥善保管。继续下载 CSV 吗？`,
       );
       if (!confirmation) {
         setRosterExportStatus('已取消导出，未下载文件。');
         return;
       }
       if (!rosterExportIdentityMatches(identity)) {
-        clearRosterAfterAuthorizationFailure('账号或学校已切换，旧班级学生名单已清除。');
+        clearClassPageForIdentity('账号或学校已切换，旧班级数据已清除。请从当前学校的班级列表重新进入。');
         setRosterExportStatus('账号或学校已切换，未下载文件。请重新进入当前授权班级。');
         return;
       }
@@ -665,8 +814,8 @@
       document.body.append(link);
       link.click();
       link.remove();
-      setRosterExportStatus(`已生成并开始下载本班 CSV（${summaries.length} 名学生）。`);
-      showToast('本班名单/学情 CSV 已开始下载');
+      setRosterExportStatus(`已生成并开始下载全班名单 CSV（${summaries.length} 名学生；未使用当前筛选结果）。`);
+      showToast('全班名单 CSV 已开始下载');
     } catch (error) {
       if (error?.status === 401 || error?.status === 403 || error?.status === 404) {
         const message = error.status === 401
@@ -686,6 +835,7 @@
     } finally {
       window.clearTimeout(timeoutId);
       if (objectUrl) window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+      if (rosterExportAbortController === controller) rosterExportAbortController = null;
       rosterExportInFlight = false;
       exportButtons.forEach((button) => { button.disabled = false; });
     }
@@ -1172,10 +1322,48 @@
       return;
     }
     schoolId = requestedSchoolId || activeSchoolId;
+    if (schoolId !== activeSchoolId) {
+      clearClassPageForIdentity('当前页面所属学校与已选学校不一致，旧班级数据未显示。请从当前学校的班级列表重新进入。');
+      return;
+    }
+    pageIdentity = capturePageIdentity();
+    if (!pageIdentity?.token) {
+      showToast('请先登录教师账号');
+      location.href = '/login/';
+      return;
+    }
+    pageIdentityInvalidated = false;
+    restoreRosterFilterState();
+    startPageIdentityWatch();
+    const epoch = ++pageLoadEpoch;
+    const controller = new AbortController();
+    rosterRequestController = controller;
+    studentSummaries = [];
+    const rosterTable = document.getElementById('rosterTable');
+    if (rosterTable) rosterTable.innerHTML = '<div class="empty-hint" role="status">正在读取本人授权班级学生名单…</div>';
+    const rosterCount = document.getElementById('rosterCount');
+    if (rosterCount) rosterCount.textContent = '正在读取已授权名单';
     try {
-      const detail = await YuzanApi.request(`/schools/${schoolId}/classes/${classId}/dashboard`);
+      const detail = await YuzanApi.request(
+        `/schools/${encodeURIComponent(schoolId)}/classes/${encodeURIComponent(classId)}/dashboard`,
+        { signal: controller.signal },
+      );
+      if (!isCurrentPageRequest(pageIdentity, epoch)) {
+        clearClassPageForIdentity('账号或学校已切换，旧班级数据已清除。请从当前学校的班级列表重新进入。');
+        return;
+      }
+      if (!detail || detail.classId !== classId) {
+        const error = new Error('班级响应与当前路由不一致');
+        error.status = 404;
+        throw error;
+      }
       applyClassDetail(detail);
     } catch (err) {
+      if (pageIdentityInvalidated) return;
+      if (!isCurrentPageRequest(pageIdentity, epoch)) {
+        clearClassPageForIdentity('账号或学校已切换，旧班级数据已清除。请从当前学校的班级列表重新进入。');
+        return;
+      }
       const title = document.querySelector('.class-title h1');
       const description = document.querySelector('.class-title p');
       if (title) title.textContent = '班级数据暂不可用';
@@ -1199,11 +1387,15 @@
     // 并行加载 student-summaries、assignment-summaries、assessment-summaries
     const basePath = `/schools/${schoolId}/classes/${classId}`;
     const [studentRes, assignmentRes, assessmentRes, pendingRes] = await Promise.allSettled([
-      YuzanApi.request(`${basePath}/student-summaries`),
-      YuzanApi.request(`${basePath}/assignment-summaries`),
-      YuzanApi.request(`${basePath}/assessment-summaries`),
-      YuzanApi.request(`${basePath}/pending-stats`),
+      YuzanApi.request(`${basePath}/student-summaries`, { signal: controller.signal }),
+      YuzanApi.request(`${basePath}/assignment-summaries`, { signal: controller.signal }),
+      YuzanApi.request(`${basePath}/assessment-summaries`, { signal: controller.signal }),
+      YuzanApi.request(`${basePath}/pending-stats`, { signal: controller.signal }),
     ]);
+    if (!isCurrentPageRequest(pageIdentity, epoch)) {
+      clearClassPageForIdentity('账号或学校已切换，旧班级数据已清除。请从当前学校的班级列表重新进入。');
+      return;
+    }
     if (studentRes.status === 'fulfilled') renderStudentRoster(studentRes.value);
     else renderStudentRoster(null, studentRes.reason);
     if (assignmentRes.status === 'fulfilled') renderAssignmentList(assignmentRes.value);
@@ -1215,6 +1407,7 @@
       pendingRes.status === 'fulfilled' ? pendingRes.value : null,
       pendingRes.status === 'rejected' ? pendingRes.reason : null,
     );
+    if (rosterRequestController === controller) rosterRequestController = null;
   }
 
   // ── 渲染：学生名单 ──
@@ -1224,39 +1417,60 @@
     if (error) {
       table.innerHTML = `<div class="empty-hint" role="alert">${escapeHtml(apiErrorLabel(error, '学生名单加载失败'))}</div>`;
       studentSummaries = [];
+      rosterResponseLoaded = false;
+      const count = document.getElementById('rosterCount');
+      if (count) count.textContent = '名单读取失败';
       return;
     }
     if (!Array.isArray(summaries)) {
       table.innerHTML = '<div class="empty-hint" role="alert">学生名单暂无可用响应，请刷新重试。</div>';
       studentSummaries = [];
+      rosterResponseLoaded = false;
+      const count = document.getElementById('rosterCount');
+      if (count) count.textContent = '名单响应不可用';
+      return;
+    }
+    const enrollmentIds = summaries.map((student) => student?.enrollmentId);
+    if (enrollmentIds.some((id) => typeof id !== 'string' || !id.trim())
+      || new Set(enrollmentIds).size !== enrollmentIds.length) {
+      table.innerHTML = '<div class="empty-hint" role="alert">学生学籍标识缺失或重复，名单暂不可用，请刷新重试。</div>';
+      studentSummaries = [];
+      rosterResponseLoaded = false;
+      const count = document.getElementById('rosterCount');
+      if (count) count.textContent = '名单响应不可用';
       return;
     }
     studentSummaries = summaries;
+    rosterResponseLoaded = true;
+    const count = document.getElementById('rosterCount');
+    const visible = rosterFilterApi().filterAndSort(summaries, rosterFilterState);
+    if (count) count.textContent = `当前显示 ${visible.length} / 已加载 ${summaries.length} 人`;
     if (summaries.length === 0) {
       table.innerHTML = '<div class="empty-hint">该授权班级暂无在读学生。</div>';
       return;
     }
     const header = '<div class="roster-row header"><b><input type="checkbox" id="checkAll" title="全选"></b><b>姓名</b><b>课程进度</b><b>已提交/未交</b><b>最新测评</b><b>得分</b><b>录音数</b><b>主要问题</b><b>最近活跃</b><b>风险状态</b></div>';
-    const rows = summaries.map(s => {
-      const riskClass = s.riskStatus === 'OK' ? 'risk-ok' : s.riskStatus === 'AT_RISK' ? 'risk-at' : 'risk-inactive';
-      const riskLabel = s.riskStatus === 'OK' ? '正常' : s.riskStatus === 'AT_RISK' ? '关注' : s.riskStatus === 'INACTIVE' ? '不活跃' : '—';
+    const rows = visible.map(s => {
+      const riskGroup = rosterFilterApi().riskGroup(s.riskStatus);
+      const riskClass = riskGroup === 'OK' ? 'risk-ok' : riskGroup === 'AT_RISK' ? 'risk-at' : riskGroup === 'INACTIVE' ? 'risk-inactive' : 'risk-unknown';
+      const riskLabel = riskGroup === 'OK' ? '正常' : riskGroup === 'AT_RISK' ? '关注' : riskGroup === 'INACTIVE' ? '不活跃' : '未知';
       const enrollmentId = escapeHtml(s.enrollmentId || '');
       const selected = requestedStudentId && s.enrollmentId === requestedStudentId;
       const studentQuery = new URLSearchParams({ schoolId, classId });
       return `<div class="roster-row ${selected ? 'selected-student' : ''}" data-enrollment-id="${enrollmentId}" data-risk="${escapeHtml(s.riskStatus || '')}">
         <b data-label="选择学生"><input type="checkbox" class="roster-check" data-enrollment-id="${enrollmentId}" ${selected ? 'checked' : ''} aria-label="选择 ${escapeHtml(s.displayName || '学生')}"></b>
         <b data-label="姓名"><a class="student-detail-link" href="/teacher/students/${encodeURIComponent(s.enrollmentId)}?${studentQuery}">${escapeHtml(s.displayName || '未命名学生')}</a></b>
-        <span data-label="课程进度">${s.courseProgress != null ? `${Math.round(s.courseProgress)}%` : '—'}</span>
+        <span data-label="课程进度">${typeof s.courseProgress === 'number' && Number.isFinite(s.courseProgress) ? `${Math.round(s.courseProgress)}%` : '—'}</span>
         <span data-label="已提交/未交">${s.submittedAssignmentCount ?? '—'} / ${s.missingAssignmentCount ?? '—'}</span>
         <span data-label="最近测评">${escapeHtml(s.latestAssessmentStatus || '—')}</span>
-        <span data-label="最近正式分">${s.latestAssessmentScore != null ? escapeHtml(s.latestAssessmentScore) : '—'}</span>
+        <span data-label="最近正式分">${rosterFilterApi().hasFormalScore(s.latestAssessmentScore) ? escapeHtml(s.latestAssessmentScore) : '—'}</span>
         <span data-label="录音数">${s.recordingCount ?? '—'}</span>
         <span data-label="主要问题">${escapeHtml(s.topIssue || '—')}</span>
         <span data-label="最近活跃">${escapeHtml(formatActivityDate(s.lastActiveAt))}</span>
         <span class="${riskClass}" data-label="风险状态">${riskLabel}</span>
       </div>`;
     }).join('');
-    table.innerHTML = header + rows;
+    table.innerHTML = header + (rows || '<div class="empty-hint" role="status">当前筛选没有匹配的学生。</div>');
     // 全选
     const checkAll = document.getElementById('checkAll');
     if (checkAll) {
@@ -1401,6 +1615,12 @@
     drawerBackdrop.dataset.type = 'assignment-answers';
   });
 
+  ['rosterSearch', 'rosterRisk', 'rosterScore', 'rosterSort'].forEach(id => {
+    const control = document.getElementById(id);
+    control?.addEventListener(id === 'rosterSearch' ? 'input' : 'change', setRosterFilterFromControls);
+  });
   classId = getClassIdFromPath();
+  schoolId = requestedSchoolId || (typeof YuzanApi === 'undefined' ? '' : YuzanApi.getActiveSchoolId() || '');
   loadClassDetail();
+  window.addEventListener('pagehide', () => clearInterval(pageIdentityWatch), { once: true });
 })();
