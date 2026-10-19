@@ -1458,6 +1458,26 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/schools/{schoolId}/teacher-invitations/{invitationId}/revoke": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 撤销当前教师本人仍有效的学生邀请码
+     * @description 已撤销的重复请求幂等返回 REVOKED；已过期或耗尽的邀请码返回 409。撤销不会移除已入班学生。
+     */
+    post: operations["revokeTeacherInvitation"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/student/teacher-invitations/bind": {
     parameters: {
       query?: never;
@@ -2236,7 +2256,8 @@ export interface components {
     TeacherInvitationResponse: {
       /** Format: uuid */
       id: string;
-      code: string;
+      /** @description Present only while status is ACTIVE; inactive invitation codes are redacted. */
+      code: string | null;
       class: components["schemas"]["TeacherInvitationClass"];
       maxUses: number;
       usedCount: number;
@@ -7486,6 +7507,34 @@ export interface operations {
         };
       };
       403: components["responses"]["Forbidden"];
+    };
+  };
+  revokeTeacherInvitation: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        invitationId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Server-confirmed revoked invitation; the secret code is omitted. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["TeacherInvitationResponse"];
+        };
+      };
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+      409: components["responses"]["Conflict"];
     };
   };
   bindTeacherInvitation: {

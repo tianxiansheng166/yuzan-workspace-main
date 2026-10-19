@@ -675,6 +675,11 @@
   async function listMyTeacherInvitations() {
     return request(`/schools/${getActiveSchoolId()}/teacher-invitations/mine`);
   }
+  async function revokeTeacherInvitation(invitationId) {
+    return request(`/schools/${getActiveSchoolId()}/teacher-invitations/${encodeURIComponent(invitationId)}/revoke`, {
+      method: 'POST',
+    });
+  }
   async function bindTeacherInvitation(code) {
     return request('/student/teacher-invitations/bind', {
       method: 'POST',
@@ -1340,6 +1345,7 @@
     getInviteCode,
     createTeacherInvitation,
     listMyTeacherInvitations,
+    revokeTeacherInvitation,
     bindTeacherInvitation,
     /* Student Dashboard */
     getStudentProfile,

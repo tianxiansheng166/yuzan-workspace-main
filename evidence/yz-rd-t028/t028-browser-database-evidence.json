@@ -1,0 +1,335 @@
+{
+  "database": {
+    "name": "yuzan_t028_native",
+    "user": "yz_t028",
+    "version": "PostgreSQL 17"
+  },
+  "schoolId": "0f027bb0-890d-4737-bf30-099f84306df1",
+  "otherSchoolId": "c6814c0d-f372-416a-bb3f-7990fb482bec",
+  "teacherClassId": "0d1dcd6d-8269-44d2-8d0a-42a692d64034",
+  "teacherBOtherClassId": "4ea374b5-4566-4ca3-8e67-061fc7030110",
+  "fictionalUserIds": {
+    "teacher_c": "ef84c6f1-9292-48d5-8494-7e854a41cd64",
+    "teacher_b": "53507668-4059-4e5c-8d1c-f094a53f5954",
+    "teacher_x": "ea7d8201-541a-4ffd-ae99-9c34edfe6c56",
+    "student_a": "4918030b-d24e-4667-af3a-f2f1ab937dac",
+    "student_b": "39d4d754-a737-4d30-a400-6553c8b12811",
+    "student_c": "dec72e22-4fe7-4b7f-9670-012800313ab5",
+    "student_d": "a7f80de9-b8a5-48d3-916e-c48bc0b01b27"
+  },
+  "browserActions": [
+    "Teacher C authenticated through the real browser login form",
+    "Teacher C opened their authorized Class Detail from the real teacher class list",
+    "Teacher created an active code from Class Detail; its token stayed in process memory only",
+    "Teacher tested a denied Clipboard write and successful real copy without exposing the code in evidence",
+    "Student A used the existing Profile form to bind before revocation",
+    "Teacher clicked revoke and confirmed; the committed response was dropped and GET mine confirmed REVOKED",
+    "Student B received Profile 409 for the revoked code without enrollment/use changes, then bound the UI-created replacement code"
+  ],
+  "apiStatuses": [
+    {
+      "case": "unauthenticated-revoke",
+      "status": 401
+    },
+    {
+      "case": "student-revoke",
+      "status": 403
+    },
+    {
+      "case": "teacher-B-other-class-revoke",
+      "status": 403
+    },
+    {
+      "case": "cross-school-revoke",
+      "status": 403
+    },
+    {
+      "case": "unknown-invitation-revoke",
+      "status": 404
+    },
+    {
+      "case": "expired_invitation-revoke",
+      "status": 409
+    },
+    {
+      "case": "exhausted_invitation-revoke",
+      "status": 409
+    },
+    {
+      "case": "initial-list-failure-retry",
+      "abortedGets": 1,
+      "retry": "GET only"
+    },
+    {
+      "case": "revoke",
+      "status": 200,
+      "browserResponseDropped": true
+    },
+    {
+      "case": "get-mine-revoked",
+      "status": 200,
+      "code": "redacted"
+    },
+    {
+      "case": "repeated-revoke",
+      "status": 200,
+      "auditCount": "1"
+    },
+    {
+      "case": "student-B-old-code-profile-bind",
+      "status": 409,
+      "membershipChanged": false,
+      "enrollmentCreated": false,
+      "usedCountChanged": false
+    },
+    {
+      "case": "student-B-replacement-profile-bind",
+      "status": 201,
+      "usedCount": "1",
+      "bindAuditCount": "1"
+    }
+  ],
+  "apiEvents": [
+    {
+      "method": "GET",
+      "operation": "student-today",
+      "status": 301
+    },
+    {
+      "method": "GET",
+      "operation": "student-today",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "operation": "student-today",
+      "status": 301
+    },
+    {
+      "method": "GET",
+      "operation": "student-today",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "operation": "student-today",
+      "status": 301
+    },
+    {
+      "method": "GET",
+      "operation": "student-today",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "operation": "student-today",
+      "status": 301
+    },
+    {
+      "method": "GET",
+      "operation": "student-today",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "operation": "list-mine",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "operation": "list-mine",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "operation": "teacher-create",
+      "status": 201
+    },
+    {
+      "method": "GET",
+      "operation": "list-mine",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "operation": "list-mine",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "operation": "list-mine",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "operation": "student-bind",
+      "status": 201
+    },
+    {
+      "method": "GET",
+      "operation": "list-mine",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "operation": "list-mine",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "operation": "student-bind",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "operation": "list-mine",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "operation": "list-mine",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "operation": "teacher-create",
+      "status": 201
+    },
+    {
+      "method": "GET",
+      "operation": "list-mine",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "operation": "student-bind",
+      "status": 201
+    },
+    {
+      "method": "GET",
+      "operation": "list-mine",
+      "status": 200
+    }
+  ],
+  "responsive": [
+    {
+      "width": 390,
+      "height": 844,
+      "documentScrollWidth": 390,
+      "revokedCards": 1,
+      "codeInputs": 0,
+      "copyButtons": 0,
+      "revokeButtons": 0,
+      "screenshot": "revoke-class-detail-390.png"
+    },
+    {
+      "width": 768,
+      "height": 900,
+      "documentScrollWidth": 768,
+      "revokedCards": 1,
+      "codeInputs": 0,
+      "copyButtons": 0,
+      "revokeButtons": 0,
+      "screenshot": "revoke-class-detail-768.png"
+    },
+    {
+      "width": 1280,
+      "height": 900,
+      "documentScrollWidth": 1280,
+      "revokedCards": 1,
+      "codeInputs": 0,
+      "copyButtons": 0,
+      "revokeButtons": 0,
+      "screenshot": "revoke-class-detail-1280.png"
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "documentScrollWidth": 1440,
+      "revokedCards": 1,
+      "codeInputs": 0,
+      "copyButtons": 0,
+      "revokeButtons": 0,
+      "screenshot": "revoke-class-detail-1440.png"
+    }
+  ],
+  "clipboard": {
+    "writeTextResolved": true,
+    "failedWriteSelectedInput": true,
+    "token": "TC-•••••-•••••"
+  },
+  "networkUncommittedFailure": {
+    "postCount": 1,
+    "serverCommitted": false,
+    "getReconciliation": "ACTIVE",
+    "falseSuccess": false
+  },
+  "accessibility": {
+    "warningExact": true,
+    "labelledDialog": true,
+    "focusLoop": true,
+    "escapeCancels": true,
+    "reducedMotion": "Chromium emulated reduce"
+  },
+  "network": {
+    "revokeResponseDropped": true,
+    "upstreamStatus": 200,
+    "postCount": 1,
+    "reconciliation": "GET mine confirmed REVOKED; no POST retry"
+  },
+  "postgresRevoke": {
+    "teacherInvitationId": "2eaebaf8-97b4-40a2-9f4a-2052d21a8115",
+    "revokedAt": "2026-10-19 00:44:14.395",
+    "auditLogId": "7dfd7a13-a874-4cea-ae4b-db1283046458",
+    "auditCount": "1",
+    "auditAction": "TEACHER_INVITATION_REVOKED",
+    "auditClassId": "0d1dcd6d-8269-44d2-8d0a-42a692d64034",
+    "auditSummaryRevokedAtUtc": "2026-10-19T00:44:14.395Z",
+    "requestId": "71426907-f99d-4fac-b9ee-dc72e207bb33",
+    "usedCountAfterRevoke": 1
+  },
+  "concurrency": {
+    "bindBeforeRevoke": {
+      "firstLockOwner": "bind",
+      "invitationId": "0f67c198-b7ac-4098-8387-bc76b017d38a",
+      "bindStatus": 201,
+      "revokeStatus": 200,
+      "studentCEnrollmentId": "7173549f-1e85-487d-8bbe-91364ddbbfe9",
+      "studentCEnrollmentStatus": "ACTIVE"
+    },
+    "revokeBeforeBind": {
+      "firstLockOwner": "revoke",
+      "invitationId": "5aebfd38-5616-4492-898e-c40ad362ceee",
+      "bindStatus": 409,
+      "revokeStatus": 200,
+      "studentDEnrollmentCount": "0",
+      "usedCount": "0",
+      "revokeAuditCount": "1"
+    }
+  },
+  "studentB": {
+    "oldCodeBindStatus": 409,
+    "membershipBefore": "f5e5ef01-71f0-48a8-ba17-4c226f167239|ACTIVE",
+    "membershipAfter": "f5e5ef01-71f0-48a8-ba17-4c226f167239|ACTIVE",
+    "oldCodeEnrollmentBefore": "0",
+    "oldCodeEnrollmentAfter": "0",
+    "oldCodeUsedCountAfterAttempt": "1",
+    "replacementInvitationId": "f0d05920-0d0b-413f-9cff-2abdc9073373",
+    "replacementCode": "TC-•••••-•••••",
+    "replacementBindStatus": 201,
+    "replacementUsedCount": "1",
+    "replacementEnrollmentId": "b562439c-9755-45e8-8402-0d38976392af",
+    "replacementEnrollmentStatus": "ACTIVE",
+    "replacementBindAuditCount": "1"
+  },
+  "postgresStudentA": {
+    "membership": "3a32ca6a-a543-412e-9b75-f590cdfccea2|ACTIVE",
+    "enrollment": "ea633a8a-d6de-4574-ab5f-11335bf3401b|ACTIVE",
+    "stillActiveAfterRevoke": true
+  },
+  "identitySwitch": {
+    "teacherAccountSwitchCleared": true,
+    "schoolSwitchCleared": true
+  },
+  "browserErrors": []
+}
