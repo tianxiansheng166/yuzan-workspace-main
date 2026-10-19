@@ -1,5 +1,13 @@
 # Development status
 
+## YZ-RD-T037 — Today listening/speaking/practice/assessment acceptance (2026-10-19)
+
+ACCEPTANCE VERIFIED / READY_TO_MERGE=NO pending the inherited API-owner lint resolution or waiver. T037 remains on independent branch `feat/yz-rd-t037-listen-speak-practice-exam-home`; it was not merged into the shared development branch. Native Chromium 153 + NestJS + PostgreSQL 17.11 + Redis + MinIO E2E passed 2/2, 0 failed, 0 skipped. The real student login rendered all four Today entries; authorized course, recording practice and Level 1 assessment links opened their live API-backed records.
+
+Database and browser evidence verifies the server-generated formal `STANDARD` report at 0 points, no report before manual review, a separate submitted `PROCESSING` attempt with no report or displayed score, a deliberately aborted Today request followed by successful retry and refresh, same-school and cross-school authorization, and 390/768/1280/1440 screenshots with no horizontal overflow. Accepted Question Bank files imported with 120 items, 600 points and 126 media objects; their recorded file hashes were unchanged. All generated users, assignments, course text and recordings are tagged `TEST_FIXTURE_ONLY`, and are not school/pilot business data. See [`evidence/yz-rd-t037/RESULTS.md`](evidence/yz-rd-t037/RESULTS.md).
+
+T037 native services exited and all owned ports are free; database, MinIO objects and evidence remain retained. No Docker/Compose, Worker, shared branch, T005 main worktree modification, or L4 access occurred. The starting checkpoint's frontend 119/119 was not rerun. Full API lint remains the inherited T033 baseline (1201 errors / 1 warning) and was not rerun.
+
 ## YZ-RD-T033 — V5.14 multi-role platform integration (2026-10-19)
 
 ACCEPTANCE VERIFIED / MERGE BLOCKED BY THE UNCHANGED API LINT BASELINE. The independent branch feat/yz-rd-t033-multirole-web-rolling-integration preserves the accepted T029→T030→T031→T032 first-parent sequence with three no-fast-forward integrations. The merge graph and exact source commits are recorded in [evidence/yz-rd-t033/RESULTS.md](evidence/yz-rd-t033/RESULTS.md).

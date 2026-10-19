@@ -3,10 +3,23 @@
 Last updated: 2026-10-19
 Repository: `yuzan-workspace-main`
 
+## YZ-RD-T042 isolated showcase integration (2026-10-19)
+
+- Scope: T039 accepted-source rolling integration + accepted T037 Today four-step visual entry. This is a development merge checkpoint; T039 still requires new native cross-role E2E and inherited API full lint is unresolved.
+- Preserve both source checkpoints; do not claim shared-merge readiness from source-branch E2Es alone.
+
 ## YZ-RD-T039 rolling integration checkpoint (2026-10-19)
 
 - Own isolated branch integrates accepted T034 and T036 atop T033; preserve both original checkpoint notes below. Native cross-role E2E and full API lint remain unverified on T039 until recorded separately.
 - The preexisting T033 full API lint debt (1201 errors/1 warning) is not a waiver, and no shared-branch merge is authorized.
+
+## YZ-RD-T037 checkpoint (2026-10-19)
+
+- ACCEPTANCE VERIFIED on independent branch `feat/yz-rd-t037-listen-speak-practice-exam-home`, starting at `724d873a09e195c9e598ffd8d8714e481cebedaf`; no shared-branch merge. Final pushed SHA is in the task return.
+- Native Chromium 153 + NestJS API + PostgreSQL 17.11 + Redis + MinIO passed 2/2 E2Es, 0 failures and 0 skips. Student Today showed four dynamic entries; real authorized test Assignment opened Course Detail; recording-practice and Level 1 BASELINE entries opened their actual published PracticeDefinitions. Screenshots at 390/768/1280/1440 have no horizontal overflow.
+- The app/API generated a `COMPLETED` `STANDARD` report with 0/100 after authorized teacher review; Today preserved the legal `0 分` and linked to Growth. A separate submitted `PROCESSING` attempt had no report and no score; Today stayed on the history route. Network abort→retry and refresh passed. Same-school other-student and cross-school access to course, practice and report were denied.
+- All browser identities, the authored course activity, assignments and recordings are `TEST_FIXTURE_ONLY`. Accepted Question Bank material was imported read-only (120 items, 600 points, 126 media objects, zero validation errors/warnings); source hashes matched before/after. T005's protected main worktree was not modified. Worker, automatic scoring, Docker/Compose and L4 were not used. T037 services exited; all owned ports are free; DB/MinIO evidence remains retained.
+- The T037 checkout's `AGENTS.md` has no AA-DEV-V2.2 marker; the user-supplied local safety baseline governed. The 119 frontend tests from the starting checkpoint were not rerun. Full API lint remains the inherited T033 baseline (1201 errors/1 warning); `READY_TO_MERGE=NO` pending API-owner resolution or waiver. Full evidence: [evidence/yz-rd-t037/RESULTS.md](evidence/yz-rd-t037/RESULTS.md).
 
 ## YZ-RD-T033 checkpoint (2026-10-19)
 
