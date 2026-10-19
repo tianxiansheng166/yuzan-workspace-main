@@ -1,5 +1,13 @@
 # Development status
 
+## YZ-RD-T048 — teacher speech review and feedback UX (2026-10-19)
+
+VERIFIED on isolated branch `feat/yz-rd-t048-teacher-speech-review-feedback-ux`, from exact base `0f6ea3710797612aa08f37944a9ab9d92f033da1`; not merged. The teacher review detail now puts the returned question, original recording, and rubric first; the authorized player has an explicit replay-from-start action, and the desktop score panel remains available while reviewing. Duplicate target text and empty written-answer placeholders are removed. The existing score/comment contract is unchanged; feedback guidance, character count, and a line-preserving student-report preview improve teaching feedback entry.
+
+Native Google Chrome 153 + NestJS API + PostgreSQL 17.11 + Redis + MinIO passed 1/1 E2E, 0 failed / 0 skipped. The dynamic student Attempt was completed with `SIMULATED_MIC` recordings, verified in the T048 MinIO bucket, then manually reviewed. Play/pause/replay, authorized media retry, score blank vs 0, safe save retry, report gating, student report/history access, cross-class/cross-school isolation, and four responsive widths passed. The server generated one official report after all required items were reviewed; the student opened the same Attempt's report and saw the multiline feedback. No automatic score was generated; physical microphone and calibrated scoring remain NOT_RUN.
+
+Frontend suite and runtime verifier: 133/133. Database client generation/build, migrations, and API build passed; API full Vitest and full lint were not rerun because backend source/contracts were unchanged. Inherited full API lint debt is 1201 errors / 1 warning without waiver, so `READY_TO_MERGE=NO`. T048 services exited and all owned ports are free; local test DB and MinIO evidence are retained. No Docker/Compose, Worker, shared-branch merge, T005 modification, or L4 access; `L4_OPEN=OPEN`. Evidence: [`evidence/yz-rd-t048/RESULTS.md`](evidence/yz-rd-t048/RESULTS.md).
+
 ## YZ-RD-T046 — personalized Today and real speech catalog integrated checkpoint (2026-10-19)
 
 Separate rolling integration of accepted T042 + T043 personalized Today + exact T044 `7f9288521a2f4e486ccf2ea2f49e1d78e9ce7865`; T045 is not merged. T043 and T044 are preserved as no-fast-forward commits `d6e0328522817be08ab496c5b294b8eaae903afc` and `7a2ec1fb3ee7e9b4ea39273b86f0580277a3428f`.

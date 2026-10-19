@@ -3,6 +3,15 @@
 Last updated: 2026-10-19
 Repository: `yuzan-workspace-main`
 
+## YZ-RD-T048 teacher speech review and feedback UX (2026-10-19)
+
+- Verified on isolated branch `feat/yz-rd-t048-teacher-speech-review-feedback-ux`, starting from exact accepted base `0f6ea3710797612aa08f37944a9ab9d92f033da1`; not merged to the shared branch. Existing review queue, manual score/comment contract, API, and formal-report generation were reused without contract or backend changes.
+- Native Chromium 153 + NestJS API + PostgreSQL 17.11 + Redis + MinIO E2E passed 1/1, 0 failed / 0 skipped. The teacher opened the authorized Attempt item, saw the actual prompt/rubric, retried a failed recording URL, played/paused/replayed the stored audio, wrote multiline teaching feedback, and saved an explicit 0. Empty input sent no score request; a separate PROCESSING Attempt had no score/report until review. The final required review generated one formal report, which the same student opened from History with feedback line breaks intact.
+- Cross-class and cross-school teacher detail access, student review access, other-student report/history access, invalid scores, duplicate save and report gating passed. Four simulated-microphone recordings were uploaded to and read back from the T048-owned MinIO bucket; physical microphone and calibrated automatic scoring remain NOT_RUN. Worker stayed stopped and `SPEECH_PROVIDER=disabled`.
+- Frontend suite: 133/133. Database client generation/build, migrations, and API build passed. Full API Vitest and lint were not rerun; inherited T033/T046 lint baseline remains 1201 errors / 1 warning and is not waived, so `READY_TO_MERGE=NO`.
+- T048 services exited and ports 4148/4348/55648/6448/59248/59249 are free. Test database, MinIO objects, proof, and screenshots remain under the T048 worktree. No Docker/Compose, shared-branch merge, T005 edit, or L4 access occurred. `L4_OPEN=OPEN`.
+- Target checkout `AGENTS.md` lacks the AA-DEV-V2.2 marker; the Task Card supplied no separate Lane policy reference. The user-provided `/home/tian/code/AGENTS.md` safety baseline governed. Full evidence: [`evidence/yz-rd-t048/RESULTS.md`](evidence/yz-rd-t048/RESULTS.md).
+
 ## YZ-RD-T046 integrated student experience checkpoint (2026-10-19)
 
 - Independent integration from accepted T042 + T043 personalized Today + exact T044 `7f9288521a2f4e486ccf2ea2f49e1d78e9ce7865`; T045 is not an ancestor. No-FF commits preserve T043 (`d6e0328522817be08ab496c5b294b8eaae903afc`) and T044 (`7a2ec1fb3ee7e9b4ea39273b86f0580277a3428f`) with their exact parents recorded in `evidence/yz-rd-t046/RESULTS.md`.
