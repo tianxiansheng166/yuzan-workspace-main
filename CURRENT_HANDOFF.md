@@ -5,7 +5,11 @@ Repository: `yuzan-workspace-main`
 
 ## YZ-RD-T046 integrated student experience checkpoint (2026-10-19)
 
-- New independent integration from accepted T042 + T043 personalized Today + T044 speech catalog. T042 native E2E passed on its own older four-tile page, so T046 must perform fresh native E2E before scoped acceptance. Never merge shared with inherited full API lint FAIL.
+- Independent integration from accepted T042 + T043 personalized Today + exact T044 `7f9288521a2f4e486ccf2ea2f49e1d78e9ce7865`; T045 is not an ancestor. No-FF commits preserve T043 (`d6e0328522817be08ab496c5b294b8eaae903afc`) and T044 (`7a2ec1fb3ee7e9b4ea39273b86f0580277a3428f`) with their exact parents recorded in `evidence/yz-rd-t046/RESULTS.md`.
+- T046 native Chromium 153 + NestJS + PostgreSQL 17.11 + Redis + MinIO passed 5/5 E2Es, 0 failed / 0 skipped. Student Today keeps the authorized server-selected primary action/progress first, omits the four old cards, and starts SYSTEM BASELINE from its Today-issued definition ID. Two teacher-assignment flows reached the same authorized Student Today/Runner path. A teacher reviewed the real assessment flow and the API generated a legal 0/100 report; a separate speech submission stayed PROCESSING with no score/report.
+- T044 browser journey retained server-backed MOCK and SPECIALIZED modes and the `requiresRecording=true` filter. It recorded two `SIMULATED_MIC` WebM/Opus takes, read them back from T046 MinIO, recovered an interrupted answer save and upload, then submitted once. Both Today, practice catalog and Runner passed 390/768/1280/1440 with no horizontal overflow; Today primary stayed above the fold. T044's first mobile catalog card starts around y=1017px and requires a short scroll.
+- PASS: frontend 133/133, full API tests 1109 passed / 64 environment-gated skips, Contracts 6/6, workspace TypeScript and builds. Full API lint was run and recorded: 1201 errors / 1 warning, matching the inherited T033 baseline; it is not waived, so `READY_TO_MERGE=NO`.
+- T046 native services exited and all six owned ports are free. PostgreSQL/MinIO evidence remains in the task-owned runtime. The accepted Question Bank source was read-only and its pre/post hashes match. No Docker/Compose, Worker, T005 modification, shared-branch merge or L4 access; `L4_OPEN=OPEN`. Physical microphone/calibrated speech scoring remain NOT_RUN. Full evidence: [evidence/yz-rd-t046/RESULTS.md](evidence/yz-rd-t046/RESULTS.md).
 
 ## YZ-RD-T042 isolated showcase integration (2026-10-19)
 

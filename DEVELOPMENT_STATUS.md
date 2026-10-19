@@ -2,7 +2,11 @@
 
 ## YZ-RD-T046 — personalized Today and real speech catalog integrated checkpoint (2026-10-19)
 
-Separate rolling integration of T042 (five native E2Es already scoped-accepted) with T043 personalized Today and T044 compact speech catalog (both separately scoped accepted). T046's own native cross-role E2E is pending and the inherited full API lint debt is not waived.
+Separate rolling integration of accepted T042 + T043 personalized Today + exact T044 `7f9288521a2f4e486ccf2ea2f49e1d78e9ce7865`; T045 is not merged. T043 and T044 are preserved as no-fast-forward commits `d6e0328522817be08ab496c5b294b8eaae903afc` and `7a2ec1fb3ee7e9b4ea39273b86f0580277a3428f`.
+
+Native T046 Chromium/API/PostgreSQL 17.11/Redis/MinIO passed 5/5 E2Es, 0 failed / 0 skipped. Personalized Today keeps the server-selected primary task first and follows its SYSTEM BASELINE ID directly, with no four-card fallback. Two teacher-assigned remediation journeys reached the correct student Today/Runner. Teacher review generated a real legal 0/100 report; the separate T044 speech submission stayed PROCESSING without a report or score after two `SIMULATED_MIC` recordings were uploaded and read back from MinIO. Today, catalog and Runner have no horizontal overflow at 390/768/1280/1440.
+
+Frontend 133/133; full API tests 1109 passed / 64 environment-gated skips; Contracts 6/6; workspace TypeScript and builds pass. Full API lint reports 1201 errors / 1 warning, identical to the inherited T033 baseline and not waived; `READY_TO_MERGE=NO`. T046 services stopped and all six ports are free. Question Bank source hashes match before/after read-only import. No Docker/Compose, Worker, T005 edit, shared-branch merge or L4 access; `L4_OPEN=OPEN`. Details and raw logs: [`evidence/yz-rd-t046/RESULTS.md`](evidence/yz-rd-t046/RESULTS.md).
 
 ## YZ-RD-T042 — Today showcase + teacher roster + student history integration (2026-10-19)
 

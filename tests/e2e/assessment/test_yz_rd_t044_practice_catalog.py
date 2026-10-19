@@ -23,6 +23,8 @@ EVIDENCE = Path(os.environ.get("YZ_T044_EVIDENCE_DIR", "/tmp/yz-rd-t044"))
 PSQL = os.environ.get("YZ_T044_PSQL", "psql")
 API_PACKAGE = os.environ.get("YZ_T044_API_PACKAGE", "")
 BUCKET = os.environ.get("YZ_T044_S3_BUCKET", "")
+EXPECTED_DATABASE = os.environ.get("YZ_T044_EXPECTED_DATABASE", "yuzan_t044_native")
+EXPECTED_DATABASE_USER = os.environ.get("YZ_T044_EXPECTED_DATABASE_USER", "yz_t044")
 SCHOOL_ID = "11111111-1111-4111-8111-111111111111"
 CLASS_ID = "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee"
 SEED_STUDENT_ID = "22222222-2222-4222-8222-222222222222"
@@ -40,9 +42,9 @@ def sql(statement, *, capture=False):
     parsed = urlparse(DATABASE_URL)
     assert parsed.scheme == "postgresql"
     assert parsed.hostname == "127.0.0.1"
-    assert parsed.username == os.environ["YZ_T044_POSTGRES_USER"] == "yz_t044"
+    assert parsed.username == os.environ["YZ_T044_POSTGRES_USER"] == EXPECTED_DATABASE_USER
     assert parsed.port == int(os.environ["YZ_T044_POSTGRES_PORT"])
-    assert parsed.path.lstrip("/") == os.environ["YZ_T044_POSTGRES_DB"] == "yuzan_t044_native"
+    assert parsed.path.lstrip("/") == os.environ["YZ_T044_POSTGRES_DB"] == EXPECTED_DATABASE
     password = unquote(parsed.password or "")
     assert password
     env = {
@@ -72,7 +74,7 @@ def sql_rows(statement):
 
 def verify_database_identity():
     identity = sql("SELECT current_database() || '|' || current_user || '|' || version();", capture=True)
-    assert identity.startswith("yuzan_t044_native|yz_t044|PostgreSQL 17."), identity.split("|", 2)[:2]
+    assert identity.startswith(f"{EXPECTED_DATABASE}|{EXPECTED_DATABASE_USER}|PostgreSQL 17."), identity.split("|", 2)[:2]
 
 
 def authenticate(page, identifier):
@@ -154,6 +156,43 @@ def create_mock_catalog_fixture(run_key):
         item_versions=[(SEED_CHOICE_VERSION_ID, "CHOICE")],
         description="TEST_FIXTURE_ONLY：仅验证真实服务端 MOCK 分类，不代表官方考试。",
     )
+
+
+def ensure_rhythm_practice_delivery():
+    practice = sql_rows(
+        f'''SELECT definition.id,version.id
+              FROM "PracticeDefinition" definition
+              JOIN "PracticeVersion" version ON version."definitionId"=definition.id
+             WHERE definition."schoolId"='{SCHOOL_ID}'
+               AND definition.title='停顿与节奏专项训练'
+               AND definition."catalogType"='SPECIALIZED'
+               AND definition."requiresRecording"=true
+               AND definition.status='PUBLISHED'
+               AND version.status='PUBLISHED'
+             ORDER BY version.version DESC LIMIT 1;'''
+    )
+    if not practice:
+        raise RuntimeError("The isolated seed is missing the authorized published rhythm practice definition")
+    definition_id, version_id = practice[0]
+    deliveries = sql_rows(
+        f'''SELECT id FROM "PracticeDelivery"
+             WHERE "practiceVersionId"='{version_id}' AND "schoolId"='{SCHOOL_ID}'
+               AND "classId"='{CLASS_ID}' AND mode='SELF_PRACTICE' AND status='OPEN'
+             ORDER BY "createdAt",id LIMIT 1;'''
+    )
+    if deliveries:
+        return {"definitionId": definition_id, "versionId": version_id, "deliveryId": deliveries[0][0], "createdForT046": False}
+
+    # The read-only Question Bank import deliberately closes legacy seeded
+    # deliveries. Give this isolated run one new TEST_FIXTURE_ONLY delivery
+    # for the already-published seed version instead of reopening that record.
+    delivery_id = str(uuid.uuid4())
+    sql(
+        f'''INSERT INTO "PracticeDelivery" ("id","practiceVersionId","schoolId","classId","mode","reRecordPolicy","mobilePolicy","status","createdAt","updatedAt")
+              VALUES ('{delivery_id}','{version_id}','{SCHOOL_ID}','{CLASS_ID}','SELF_PRACTICE',
+                      '{{"maxAttempts":2}}'::jsonb,'{{"allowed":true}}'::jsonb,'OPEN',NOW(),NOW());'''
+    )
+    return {"definitionId": definition_id, "versionId": version_id, "deliveryId": delivery_id, "createdForT046": True}
 
 
 def create_attempt(page, headers, definition_id):
@@ -394,6 +433,7 @@ def test_t044_student_catalog_speech_recording_processing_and_authorization():
     student_a = create_student_fixture("A")
     student_b = create_student_fixture("B")
     mock_fixture = create_mock_catalog_fixture(run_key)
+    rhythm_fixture = ensure_rhythm_practice_delivery()
     page_errors = []
     summary = {"runKey": run_key, "fixturePolicy": "TEST_FIXTURE_ONLY; no production account or source data used"}
 
@@ -471,8 +511,14 @@ def test_t044_student_catalog_speech_recording_processing_and_authorization():
             specialized_items = payload(specialized_response)["items"]
             assert specialized_items and all(item["catalogType"] == "SPECIALIZED" for item in specialized_items)
             rhythm = next(item for item in specialized_items if item["title"] == "停顿与节奏专项训练")
+            assert rhythm["id"] == rhythm_fixture["definitionId"]
             page.locator(f'[data-practice-detail="{rhythm["id"]}"]').wait_for(timeout=20_000)
-            summary["remediationMode"] = {"query": parse_qs(urlparse(specialized_request.value.url).query), "practiceId": rhythm["id"]}
+            summary["remediationMode"] = {
+                "query": parse_qs(urlparse(specialized_request.value.url).query),
+                "practiceId": rhythm["id"],
+                "deliveryId": rhythm_fixture["deliveryId"],
+                "createdForT046": rhythm_fixture["createdForT046"],
+            }
 
             page.locator('.catalog-tabs button[data-tab="MOCK"]').click()
             page.wait_for_function("document.querySelector('.catalog-tabs button[data-tab=MOCK]')?.getAttribute('aria-pressed') === 'true'")
