@@ -65,9 +65,9 @@
             <span id="dateRangeText">日期范围筛选暂未开放</span>
             <svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>
           </button>
-          <button class="toolbar-btn" data-action="export" aria-label="导出名单/学情CSV" title="导出名单/学情CSV">
+          <button class="toolbar-btn" data-action="export" aria-label="导出名单/学情CSV" aria-describedby="rosterExportStatus" title="导出全班名单CSV，不受当前筛选影响">
             <svg viewBox="0 0 24 24"><path d="M12 3v11M8 7l4-4 4 4M5 12v7h14v-7"/></svg>
-            导出名单/学情CSV
+            导出全班名单CSV
           </button>
           <i class="toolbar-divider"></i>
           <button class="icon-text-btn">
@@ -185,16 +185,17 @@
                 <h2>学生名单</h2>
                 <p>查看班级全部学生的详细学习情况</p>
               </div>
-              <button class="roster-export-button" type="button" data-action="export" aria-label="导出名单/学情CSV">
+              <button class="roster-export-button" type="button" data-action="export" aria-label="导出名单/学情CSV" aria-describedby="rosterExportStatus" title="导出全班名单CSV，不受当前筛选影响">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v11M8 7l4-4 4 4M5 12v7h14v-7"/></svg>
-                导出名单/学情CSV
+                导出全班名单CSV
               </button>
             </div>
-            <p class="roster-export-status" id="rosterExportStatus" role="status" aria-live="polite">导出时会重新读取本人授权班级名单；无课程进度显示为—，无正式分数留空。</p>
+            <p class="roster-export-status" id="rosterExportStatus" role="status" aria-live="polite">导出时重新读取本人授权班级全部在读学生，不受当前搜索和筛选影响；无课程进度显示为—，无正式分数留空。</p>
             <div class="roster-filters" aria-label="筛选已加载学生名单">
-              <label>搜索姓名 <input id="rosterSearch" type="search" autocomplete="off" placeholder="输入学生姓名"></label>
-              <label>风险状态 <select id="rosterRisk"><option value="">全部</option><option value="OK">正常</option><option value="AT_RISK">关注</option><option value="INACTIVE">不活跃</option><option value="UNKNOWN">未知</option></select></label>
-              <label>排序 <select id="rosterSort"><option value="name">姓名</option><option value="activity">最近活跃</option><option value="progress">课程进度</option></select></label>
+              <label>搜索姓名 <input id="rosterSearch" type="search" maxlength="80" autocomplete="off" placeholder="输入学生姓名" aria-label="按姓名搜索已加载学生"></label>
+              <label>风险状态 <select id="rosterRisk" aria-label="按服务端风险状态筛选"><option value="">全部风险状态</option><option value="OK">正常</option><option value="AT_RISK">关注</option><option value="INACTIVE">不活跃</option><option value="UNKNOWN">未知或未返回</option></select></label>
+              <label>正式成绩 <select id="rosterScore" aria-label="按正式测评成绩是否存在筛选"><option value="">全部成绩状态</option><option value="SCORED">有正式分数</option><option value="NO_SCORE">暂无正式分数</option></select></label>
+              <label>排序 <select id="rosterSort" aria-label="名单排序方式"><option value="name">姓名</option><option value="activity">最近活跃</option><option value="progress">课程进度</option></select></label>
               <span id="rosterCount" role="status" aria-live="polite"></span>
             </div>
             <div class="roster-table-wrap">
@@ -380,6 +381,7 @@
 
   <script src="/assets/api-client.js"></script>
   <script src="/teacher/classes/detail/roster-export.js"></script>
+  <script src="/teacher/classes/detail/roster-filter.js"></script>
   <script src="/teacher/classes/detail/app.js"></script>
   <script src="/shared/teacher-shell.js" defer></script>
 

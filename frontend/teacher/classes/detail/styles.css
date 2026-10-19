@@ -178,6 +178,10 @@ svg{fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-l
 .roster-filters [role=status]{padding:0 0 10px;white-space:nowrap}
 .roster-row [data-label]{min-width:0;overflow-wrap:anywhere}
 
+@media(min-width:901px){
+  .roster-row{grid-template-columns:28px minmax(118px,1.4fr) minmax(72px,.8fr) minmax(75px,.85fr) minmax(72px,.8fr) minmax(48px,.55fr) minmax(46px,.5fr) minmax(76px,.9fr) minmax(86px,1fr) minmax(55px,.65fr)}
+}
+
 @media(max-width:900px){
   .roster-table-wrap{overflow:visible}
   .roster-table{min-width:0}
@@ -202,6 +206,31 @@ svg{fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-l
   .course-detail{grid-column:1/-1;grid-row:auto}
   .roster-section .roster-section-heading{flex-direction:column;align-items:stretch;gap:10px}
   .roster-export-button{align-self:flex-start;max-width:100%;min-height:40px}
+}
+
+.risk-unknown{display:inline-block;width:max-content;max-width:100%;padding:1px 6px;border:1px solid #d9d6ce;border-radius:999px;background:#f2f1ed;color:#5e625f;font-size:9px;font-weight:600}
+.class-identity-boundary{grid-column:1/-1;min-height:220px;padding:clamp(20px,5vw,52px);border:1px solid #e8ded4;border-radius:10px;background:rgba(255,253,250,.98);color:#344347}
+.class-identity-boundary h1{margin:0 0 12px;font-family:"Noto Serif CJK SC",STKaiti,KaiTi,serif;font-size:clamp(22px,4vw,30px)}
+.class-identity-boundary p{max-width:60ch;color:#626c6f;line-height:1.8;overflow-wrap:anywhere}
+.class-identity-boundary a{display:inline-flex;min-height:42px;align-items:center;padding:0 14px;border:1px solid #b68a4c;border-radius:6px;background:#fffaf1;color:#76531f;font-weight:700}
+
+@media(max-width:900px){
+  .roster-filters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;gap:10px}
+  .roster-filters label{min-width:0;width:100%;flex:none}
+  .roster-filters [role=status]{grid-column:1/-1;white-space:normal;overflow-wrap:anywhere}
+  .roster-row:not(.header){grid-template-columns:repeat(2,minmax(0,1fr));border:1px solid #e7ded2;border-radius:7px;background:#fffdf8;box-shadow:0 2px 4px rgba(78,58,34,.035)}
+  .roster-row:not(.header)>b:nth-child(2){grid-column:1/-1;justify-self:start;font-size:14px;font-weight:700}
+  .roster-row:not(.header)>b:first-child{grid-column:2;grid-row:1;justify-self:end}
+  .roster-row:not(.header)>b:first-child::before{display:none}
+  .roster-row:not(.header)>b:nth-child(2)::before{display:block;margin-bottom:2px;color:#7c8489;font-size:10px;font-weight:400;content:attr(data-label)}
+}
+
+@media(max-width:430px){
+  .roster-filters{grid-template-columns:minmax(0,1fr)}
+  .roster-filters label,.roster-filters [role=status]{grid-column:1}
+  .roster-section .roster-section-heading h2{font-size:18px}
+  .roster-export-button{width:100%;white-space:normal;line-height:1.4}
+  .roster-row:not(.header){gap:9px 12px;padding:12px}
 }
 
 .supplementary-form {
