@@ -4,49 +4,53 @@ import test from "node:test";
 import vm from "node:vm";
 
 const source = readFileSync(new URL("../../student/today/today-showcase.js", import.meta.url), "utf8");
+const todaySource = readFileSync(new URL("../../student/today/today.js", import.meta.url), "utf8");
 const win = {};
 vm.runInNewContext(source, { window: win });
-const { cards, render } = win.YuzanTodayShowcase;
+const { suggestion, render } = win.YuzanTodayShowcase;
 
-test("the first screen distinguishes learning, speaking, assessment and feedback", () => {
-  const model = cards({
-    today: { summary: { latestFormalAssessment: null } },
-    practices: { items: [] }, courses: { courses: [] },
-  });
-  assert.deepEqual(Array.from(model, ({ key }) => key), ["listen", "speak", "exam", "report"]);
-  assert.equal(model[1].href, "/student/practices/");
-  assert.match(model[1].status, /暂无已开放录音练习/);
-  assert.doesNotMatch(render({ practices: { items: [] }, courses: { courses: [] } }), /正式成绩 \d+ 分/);
-  assert.match(render({}), /aria-labelledby="today-skill-title"/);
+test("personalized primary task has priority over optional discovery in Today layout", () => {
+  assert.match(todaySource, /<section class="today-overview">/);
+  assert.match(todaySource, /querySelector\("\.today-overview"\)\?\.insertAdjacentHTML\("afterend", extra\)/);
+  assert.doesNotMatch(todaySource, /querySelector\("\.today-header"\)\?\.insertAdjacentHTML/);
+  const html = render({ practices: { items: [{ id: "oral-1", title: "跟读", requiresRecording: true }] } });
+  assert.match(html, /today-discover/);
+  assert.doesNotMatch(html, /today-skill-grid|today-skill-card|听 · 课程学习/);
+  assert.equal((html.match(/<a /g) || []).length, 1);
 });
 
-test("only an authorized practice with requiresRecording opens the speaking route", () => {
-  const model = cards({
+test("a real authorized recording practice is an optional activity, not a fake task", () => {
+  const entry = suggestion({
+    today: { primaryAction: { kind: "BASELINE", target: { practiceDefinitionId: "base-one" } } },
     practices: { items: [
-      { id: "id-no-audio", title: "书面作答", requiresRecording: false },
-      { id: "id-oral&one", title: "<真实朗读>", requiresRecording: true },
+      { id: "base-one", title: "首次测评", requiresRecording: false },
+      { id: "oral&two", title: "<朗读与跟读>", requiresRecording: true },
     ] },
+    courses: { courses: [{ assignmentId: "real-course", title: "已开放课程" }] },
   });
-  assert.equal(model[1].href, "/student/practices/id-oral%26one/");
-  assert.match(model[1].detail, /&lt;真实朗读&gt;/);
-  assert.doesNotMatch(render({ practices: { items: [{ id: "x", title: "写作" }] } }), /录音练习已开放/);
+  assert.equal(entry.type, "speak");
+  assert.equal(entry.href, "/student/practices/oral%26two/");
+  assert.match(render({ practices: { items: [{ id: "oral&two", title: "<朗读>", requiresRecording: true }] } }), /&lt;朗读&gt;/);
 });
 
-test("course and first assessment destination use dynamic server identifiers", () => {
-  const model = cards({
-    courses: { courses: [{ assignmentId: "course-live", title: "听读课程" }] },
-    today: { primaryAction: { kind: "BASELINE", target: { practiceDefinitionId: "baseline-live" } } },
-    practices: { items: [{ id: "baseline-live", title: "第一次测评", requiresRecording: false }] },
-  });
-  assert.equal(model[0].href, "/student/courses/course-detail/?id=course-live");
-  assert.equal(model[2].href, "/student/practices/baseline-live/");
-  assert.match(model[2].status, /首次测评已开放/);
+test("does not repeat the exact practice or course already selected as the primary step", () => {
+  const state = {
+    today: { primaryAction: { target: { practiceDefinitionId: "oral-1" } } },
+    practices: { items: [{ id: "oral-1", title: "当前口语", requiresRecording: true }] },
+    courses: { courses: [{ assignmentId: "assignment-1", title: "独立课程" }] },
+  };
+  assert.equal(suggestion(state).href, "/student/courses/course-detail/?id=assignment-1");
+  const duplicateCourse = {
+    today: { primaryAction: { target: { href: "/student/courses/course-detail/?id=assignment-1" } } },
+    courses: state.courses,
+  };
+  assert.equal(suggestion(duplicateCourse), null);
+  assert.equal(render(duplicateCourse), "");
 });
 
-test("only server-provided numeric formal score is shown, preserving a real zero", () => {
-  const formal = (score) => cards({ today: { summary: { latestFormalAssessment: { score } } } })[3];
-  assert.match(formal(0).detail, /正式成绩 0 分/);
-  assert.equal(formal(0).href, "/student/growth/");
-  assert.doesNotMatch(formal(null).detail, /正式成绩 0 分/);
-  assert.equal(formal(null).href, "/student/practices/history/");
+test("API errors and missing authorized work never produce filler buttons or scores", () => {
+  assert.equal(suggestion({ practices: { error: "offline" }, courses: { error: "offline" } }), null);
+  assert.equal(render({ today: { summary: { latestFormalAssessment: { score: 0 } } } }), "");
+  assert.equal(render({ today: { summary: { latestFormalAssessment: { score: null } } } }), "");
+  assert.equal(render({ practices: { items: [{ id: "unknown", title: "阅读", requiresRecording: false }] } }), "");
 });

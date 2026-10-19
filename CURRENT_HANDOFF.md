@@ -3,6 +3,13 @@
 Last updated: 2026-10-19
 Repository: `yuzan-workspace-main`
 
+## YZ-RD-T043 personalized Today UX correction (2026-10-19)
+
+- T037 had successfully verified dynamic course, recording practice, Level 1 baseline and formal zero-score navigation, but Commander reviewed real 1440/390 screenshots and identified an unacceptable information-hierarchy regression: four equal navigation cards were inserted above the real personalized Today task.
+- T043 independently restores Today `primaryAction` to the top, preserves all original authorized teacher tasks/feedback/course/progress/history, and renders at most one legitimate non-duplicate optional recording/course suggestion **after** the main overview. No fake AI recommendation, student score, course or assessment is invented.
+- Frontend 119 PASS; 390/768/1280/1440 visual-only fixture Chrome PASS (0 overflow, optionalBelowPrimary, 0 four-card tiles), but new real API/PG native E2E and independent design review remain NOT_RUN. The known API full lint baseline is not waived and this branch is NOT ready to merge shared.
+- Upstream branch integration T042, T038 accepted speaker flow, protected T005 main/178 source assets and historical L4 data remain untouched.
+
 ## YZ-RD-T037 checkpoint (2026-10-19)
 
 - ACCEPTANCE VERIFIED on independent branch `feat/yz-rd-t037-listen-speak-practice-exam-home`, starting at `724d873a09e195c9e598ffd8d8714e481cebedaf`; no shared-branch merge. Final pushed SHA is in the task return.
