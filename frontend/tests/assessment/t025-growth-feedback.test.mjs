@@ -220,27 +220,80 @@ test("T025: zero and absent official scores remain different states", async () =
   assert.doesNotMatch(absent.app.innerHTML, /<span>0 分<\/span>/);
 });
 
-test("T025: PROCESSING and incomplete or mismatched reports never expose a score or a retry action", async (t) => {
-  await t.test("processing report awaiting review", async () => {
+test("T025: only a completed, fully linked, complete report can expose an official score or retry action", async (t) => {
+  const rejectsFormalReport = async (view, score) => {
+    await flush();
+    assert.doesNotMatch(view.app.innerHTML, new RegExp(`${score} 分|data-growth-remediation`));
+  };
+
+  await t.test("IN_PROGRESS source with an otherwise complete fake report", async () => {
+    const view = mount({
+      sourceRecord: formalSource({ status: "IN_PROGRESS", completedAt: null }),
+      reportRecord: formalReport({ overallScore: 91 }),
+    });
+    await rejectsFormalReport(view, 91);
+    assert.match(view.app.innerHTML, /数据尚未完整/);
+  });
+  await t.test("PROCESSING source with an otherwise complete fake report", async () => {
     const view = mount({
       sourceRecord: formalSource({ status: "PROCESSING", completedAt: null }),
-      reportRecord: formalReport({ overallScore: 91, summary: { scoringState: "NEEDS_REVIEW", requiresTeacherReview: true } }),
+      reportRecord: formalReport({ overallScore: 90 }),
     });
-    await flush();
+    await rejectsFormalReport(view, 90);
     assert.match(view.app.innerHTML, /等待教师复核/);
-    assert.doesNotMatch(view.app.innerHTML, /91 分|data-growth-remediation/);
   });
-  await t.test("report session mismatch", async () => {
-    const view = mount({ reportRecord: formalReport({ sessionId: "other-session", overallScore: 88 }) });
-    await flush();
+  await t.test("completed report still awaiting teacher review", async () => {
+    const view = mount({
+      reportRecord: formalReport({
+        overallScore: 89,
+        summary: { scoringState: "NEEDS_REVIEW", requiresTeacherReview: true },
+      }),
+    });
+    await rejectsFormalReport(view, 89);
+    assert.match(view.app.innerHTML, /等待教师复核/);
+  });
+  await t.test("score outside the formal 0–100 range", async () => {
+    const view = mount({ reportRecord: formalReport({ overallScore: 101 }) });
+    await rejectsFormalReport(view, 101);
     assert.match(view.app.innerHTML, /数据尚未完整/);
-    assert.doesNotMatch(view.app.innerHTML, /88 分|data-growth-remediation/);
   });
-  await t.test("incomplete score data", async () => {
+  await t.test("source Session belongs to a different school", async () => {
+    const view = mount({ sourceRecord: formalSource({ schoolId: "school-b" }), reportRecord: formalReport({ overallScore: 88 }) });
+    await rejectsFormalReport(view, 88);
+    assert.match(view.app.innerHTML, /数据尚未完整/);
+  });
+  await t.test("source Session belongs to a different enrollment", async () => {
+    const view = mount({ sourceRecord: formalSource({ enrollmentId: "enrollment-b" }), reportRecord: formalReport({ overallScore: 87 }) });
+    await rejectsFormalReport(view, 87);
+    assert.match(view.app.innerHTML, /数据尚未完整/);
+  });
+  await t.test("Report belongs to a different school", async () => {
+    const view = mount({ reportRecord: formalReport({ schoolId: "school-b", overallScore: 86 }) });
+    await rejectsFormalReport(view, 86);
+    assert.match(view.app.innerHTML, /数据尚未完整/);
+  });
+  await t.test("Report points at a different Session ID", async () => {
+    const view = mount({ reportRecord: formalReport({ sessionId: "other-session", overallScore: 85 }) });
+    await rejectsFormalReport(view, 85);
+    assert.match(view.app.innerHTML, /数据尚未完整/);
+  });
+  await t.test("source response points at a different Session ID", async () => {
+    const view = mount({ sourceRecord: formalSource({ id: "other-session" }), reportRecord: formalReport({ overallScore: 84 }) });
+    await rejectsFormalReport(view, 84);
+    assert.match(view.app.innerHTML, /数据尚未完整/);
+  });
+  await t.test("99 percent complete report", async () => {
     const view = mount({ reportRecord: formalReport({ dataCompleteness: 99, overallScore: 66 }) });
-    await flush();
+    await rejectsFormalReport(view, 66);
     assert.match(view.app.innerHTML, /数据尚未完整/);
-    assert.doesNotMatch(view.app.innerHTML, /66 分|data-growth-remediation/);
+  });
+  await t.test("null completeness and missing generated time", async () => {
+    const incomplete = mount({ reportRecord: formalReport({ dataCompleteness: null, overallScore: 65 }) });
+    const noGenerationTime = mount({ reportRecord: formalReport({ generatedAt: null, overallScore: 64 }) });
+    await rejectsFormalReport(incomplete, 65);
+    await rejectsFormalReport(noGenerationTime, 64);
+    assert.match(incomplete.app.innerHTML, /数据尚未完整/);
+    assert.match(noGenerationTime.app.innerHTML, /数据尚未完整/);
   });
 });
 
@@ -260,6 +313,35 @@ test("T025: published Submission feedback is visibly separate from AssessmentRep
   assert.match(view.app.innerHTML, /请补充朗读练习/);
   assert.match(view.app.innerHTML, /正式测评教师评语 · 人工复核/);
   assert.doesNotMatch(view.app.innerHTML, /private-teacher-id/);
+});
+
+test("T025: a late history response from the previous school is discarded", async () => {
+  let releaseOldHistory;
+  let historyCalls = 0;
+  const oldHistory = new Promise((resolve) => { releaseOldHistory = resolve; });
+  const view = mount({ overrides: {
+    getAssessmentHistory: async () => {
+      historyCalls += 1;
+      if (historyCalls === 1) return oldHistory;
+      return { enrollmentId: "enrollment-b", sessions: [] };
+    },
+  } });
+
+  await flush();
+  assert.equal(historyCalls, 1);
+  view.identity.schoolId = "school-b";
+  view.current.enrollmentId = "enrollment-b";
+  view.windowListeners.storage({ key: "yuzan-active-school-id" });
+  await flush();
+  await flush();
+  assert.match(view.app.innerHTML, /学校school-b/);
+  assert.doesNotMatch(view.app.innerHTML, /72 分|assessment-source-a/);
+
+  releaseOldHistory({ enrollmentId: "enrollment-a", sessions: [{ sessionId: SOURCE_ID, purpose: "STANDARD" }] });
+  await flush();
+  await flush();
+  assert.match(view.app.innerHTML, /学校school-b/);
+  assert.doesNotMatch(view.app.innerHTML, /72 分|朗读清楚，请继续练习自然停顿。|assessment-source-a/);
 });
 
 test("T025: double click creates once, verifies the returned session relation, and routes by its real ID", async () => {

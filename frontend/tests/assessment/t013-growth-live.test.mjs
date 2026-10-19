@@ -9,6 +9,32 @@ const source = readFileSync(
 );
 const flush = () => new Promise((resolve) => setImmediate(resolve));
 
+function formalSource(sessionId, overrides = {}) {
+  return {
+    id: sessionId,
+    purpose: "STANDARD",
+    status: "COMPLETED",
+    completedAt: "2026-10-12T09:00:00.000Z",
+    enrollmentId: "enrollment-a",
+    schoolId: "school-a",
+    ...overrides,
+  };
+}
+
+function formalReport(sessionId, overrides = {}) {
+  return {
+    id: `report-${sessionId}`,
+    sessionId,
+    schoolId: "school-a",
+    overallScore: 72,
+    dataCompleteness: 100,
+    generatedAt: "2026-10-12T09:05:00.000Z",
+    summary: {},
+    teacherFeedback: [],
+    ...overrides,
+  };
+}
+
 const emptyProgress = () => ({
   version: "qb-progress-v1",
   state: "EMPTY_STATE",
@@ -41,6 +67,7 @@ function mount(overrides = {}) {
     sessions: { items: [], nextCursor: null },
     practices: { items: [] },
     reports: new Map(),
+    sources: new Map(),
   };
   const windowListeners = {};
   const api = {
@@ -54,7 +81,14 @@ function mount(overrides = {}) {
     listAssessmentSessions: async () => current.sessions,
     listPractices: async () => current.practices,
     getPracticeAttempt: async (id) => { throw Object.assign(new Error("not a practice attempt"), { status: 404, id }); },
-    getAssessmentSession: async (id) => ({ id, status: "IN_PROGRESS", purpose: "STANDARD", updatedAt: "2026-10-11T09:30:00.000Z" }),
+    getAssessmentSession: async (id) => current.sources.get(id) ?? ({
+      id,
+      status: "IN_PROGRESS",
+      purpose: "STANDARD",
+      schoolId: identity.schoolId,
+      enrollmentId: current.history.enrollmentId,
+      updatedAt: "2026-10-11T09:30:00.000Z",
+    }),
     listAssessmentItems: async () => ({ items: [{ status: "ANSWERED" }, { status: "PENDING" }] }),
     getPracticeAttemptItems: async () => ({ items: [{ status: "ANSWERED" }, { status: "PENDING" }] }),
     getAssessmentReport: async (id) => current.reports.get(id) ?? null,
@@ -118,13 +152,21 @@ test("formal chart appears only with three real dated scores and a generated rep
     latest: { level: "水平一级", formal: { sessionId: "formal-3", overallScore: 10, completedAt: attempts.at(-1).completedAt, comparisonState: "COMPARABLE", latestVsPrevious: 1 }, remediation: null },
   });
   for (const item of attempts) {
-    view.current.reports.set(item.sessionId, {
-      sessionId: item.sessionId,
+    view.current.sources.set(item.sessionId, formalSource(item.sessionId, { completedAt: item.completedAt }));
+    view.current.reports.set(item.sessionId, formalReport(item.sessionId, {
       overallScore: item.overallScore,
-      dataCompleteness: 100,
       generatedAt: item.completedAt,
-      diagnosis: { retryCandidates: item.sessionId === "formal-3" ? [{ displayName: "句子理解" }] : [] },
-    });
+      diagnosis: { retryCandidates: item.sessionId === "formal-3" ? [{
+        assessmentItemId: "item-formal-3",
+        questionVersionId: "question-version-formal-3",
+        family: "句子理解",
+        displayName: "句子理解",
+        domain: "READ",
+        domainDisplayName: "读",
+        earned: 0,
+        max: 5,
+      }] : [] },
+    }));
   }
   await flush();
   assert.match(view.app.innerHTML, /role="img"/);
@@ -136,6 +178,9 @@ test("formal chart appears only with three real dated scores and a generated rep
 
 test("completed record without a report is labeled and never given a score", async () => {
   const view = mount();
+  view.current.sources.set("completed-no-report", formalSource("completed-no-report", {
+    completedAt: "2026-10-01T00:00:00.000Z",
+  }));
   view.current.history.sessions = [{
     sessionId: "completed-no-report",
     type: "MIXED",
@@ -160,13 +205,11 @@ test("a report awaiting teacher review never exposes its provisional score", asy
     metrics: { overall: 88 },
     remediation: null,
   }];
-  view.current.reports.set("speech-needs-review", {
-    sessionId: "speech-needs-review",
+  view.current.sources.set("speech-needs-review", formalSource("speech-needs-review"));
+  view.current.reports.set("speech-needs-review", formalReport("speech-needs-review", {
     overallScore: 88,
-    dataCompleteness: 100,
-    generatedAt: "2026-10-01T00:00:00.000Z",
     summary: { requiresTeacherReview: true, scoringState: "NEEDS_REVIEW" },
-  });
+  }));
   await flush();
   assert.match(view.app.innerHTML, /报告正在等待教师复核/);
   assert.match(view.app.innerHTML, /未审核的语音题不会显示正式成绩/);
@@ -183,10 +226,9 @@ test("an official report shows only safe teacher comments on Growth", async () =
     metrics: { overall: 72 },
     remediation: null,
   }];
-  view.current.reports.set("reviewed-report", {
-    sessionId: "reviewed-report",
+  view.current.sources.set("reviewed-report", formalSource("reviewed-report", { completedAt: "2026-10-12T09:00:00.000Z" }));
+  view.current.reports.set("reviewed-report", formalReport("reviewed-report", {
     overallScore: 72,
-    dataCompleteness: 100,
     generatedAt: "2026-10-12T09:00:00.000Z",
     teacherFeedback: [{
       comment: "朗读清楚，继续保持自然停顿。",
@@ -194,7 +236,7 @@ test("an official report shows only safe teacher comments on Growth", async () =
       reviewerUserId: "private-reviewer-id",
       scoringSpec: { answerKey: "private-answer" },
     }],
-  });
+  }));
   await flush();
   assert.match(view.app.innerHTML, /72 分/);
   assert.match(view.app.innerHTML, /教师评语/);

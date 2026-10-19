@@ -1,0 +1,22 @@
+✔ empty growth state contains no invented score or chart (5.25467ms)
+✔ formal chart appears only with three real dated scores and a generated report (11.423044ms)
+✔ completed record without a report is labeled and never given a score (1.234899ms)
+✔ a report awaiting teacher review never exposes its provisional score (1.077143ms)
+✔ an official report shows only safe teacher comments on Growth (1.527252ms)
+✔ active Attempt shows saved item progress and a dynamic continuation link (2.699024ms)
+✔ feedback and identity switch use current server identity and records (1.429459ms)
+▶ permission and network errors replace the page with a retry state
+  ✔ HTTP 401 (0.916491ms)
+  ✔ HTTP 403 (0.742887ms)
+  ✔ HTTP 404 (0.74995ms)
+  ✔ HTTP 409 (0.687927ms)
+  ✔ network disconnected (0.568171ms)
+✔ permission and network errors replace the page with a retry state (4.305825ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 90.914418
