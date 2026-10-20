@@ -1,0 +1,2 @@
+284149 bytes written to file evidence/yz-rd-t084/teacher-create-1440.png
+Exit code: 0

@@ -1,0 +1,4 @@
+VISUAL_FIXTURE_ONLY static server; API disabled; bound 127.0.0.1; port 34905
+Served /teacher/assessments/create/ from the task worktree's frontend files only.
+The server returned 404 for /api, question-bank, local_sources, and the T005 course-detail path before opening files. Screenshots include a visible VISUAL_FIXTURE_ONLY / API NOT RUN watermark.
+Stopped by this task after capturing both screenshots; no shared service was stopped.
