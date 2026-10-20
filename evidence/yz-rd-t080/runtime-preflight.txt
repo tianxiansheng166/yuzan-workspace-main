@@ -1,0 +1,30 @@
+PRECHECK_UTC=2026-10-20T12:59:19Z
+WORKTREE=/home/tian/code/work/yuzan-workspace-t080
+BRANCH=feat/yz-rd-t080-student-speech-media-native-review-e2e
+BASE_HEAD=d6fbf670bb6997cae0e841d8f9a397f0da785a42
+STATUS_START
+## feat/yz-rd-t080-student-speech-media-native-review-e2e
+?? evidence/yz-rd-t080/
+BRANCH_REMOTE_INITIAL=ABSENT (prior git ls-remote returned no ref)
+SERVICES
+node=/home/tian/.nvm/versions/node/v24.20.0/bin/node
+pnpm=/home/tian/.local/bin/pnpm
+google-chrome=/usr/bin/google-chrome
+postgres=ABSENT
+initdb=ABSENT
+pg_ctl=ABSENT
+pg_isready=ABSENT
+psql=ABSENT
+redis-server=ABSENT
+redis-cli=ABSENT
+minio=ABSENT
+mc=ABSENT
+v24.20.0
+10.13.1
+Google Chrome 153.0.8010.52 
+PORT_LISTENERS
+State  Recv-Q Send-Q Local Address:Port  Peer Address:PortProcess                                        
+SERVICE_PROCESSES
+DEPENDENCIES
+root_node_modules=ABSENT
+api_node_modules=ABSENT

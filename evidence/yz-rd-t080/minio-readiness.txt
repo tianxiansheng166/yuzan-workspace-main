@@ -1,0 +1,10 @@
+TASK_ID=YZ-RD-T080
+CHECK=MinIO read-only readiness probe; no bucket/object requests
+TARGET=http://127.0.0.1:59000/minio/health/ready (from BASE .env.example S3_ENDPOINT)
+curl: (7) Failed to connect to 127.0.0.1 port 59000 after 0 ms: 连接被拒绝
+HTTP_STATUS=000
+CURL_EXIT=7
+SECONDARY_DEFAULT_PROBE=http://127.0.0.1:9000/minio/health/ready
+curl: (7) Failed to connect to 127.0.0.1 port 9000 after 0 ms: 连接被拒绝
+HTTP_STATUS=000
+CURL_EXIT=7

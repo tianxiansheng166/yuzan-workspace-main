@@ -960,3 +960,10 @@ Do not modify or stage `pnpm-workspace.yaml`, `infra/database/prisma/seed.ts`,
 `tests/e2e/assessment/question-bank-runner.spec.py`, or
 `frontend/assessment/assets/question-bank/`. Never modify original files under
 `local_sources/`.
+
+## YZ-RD-T080 checkpoint (2026-10-20)
+
+- `BLOCKED_RUNTIME_DEPENDENCY` on exact BASE `d6fbf670bb6997cae0e841d8f9a397f0da785a42`. The T080 output worktree was created independently; launcher checkout changes were left untouched.
+- Read-only preflight found no task-owned PostgreSQL, Redis, MinIO, NestJS API, or web service; required PostgreSQL/Redis/MinIO binaries and worktree dependencies are absent. The BASE MinIO readiness endpoint `127.0.0.1:59000/minio/health/ready` refused the connection (HTTP `000`, curl exit `7`). No service started, no bucket opened, and no test executed.
+- Existing T050 native runner depends on copying retained T047 PostgreSQL/MinIO data and its helper reads/writes/deletes objects in the cloned T047 bucket; it was not reused. No question fixture, course link, recording, Attempt, Review, or report was created. The detailed matrix and raw probe outputs are in [`evidence/yz-rd-t080/RESULTS.md`](evidence/yz-rd-t080/RESULTS.md).
+- Safety: `L4_SOURCE_READ=NO`, `L4_IMPORT_APPLIED=NO`, `L4_RUNTIME_OPENED=NO`, `HISTORICAL_L4_INCIDENT_OPEN=YES`. `READY_TO_MERGE=NO`.
