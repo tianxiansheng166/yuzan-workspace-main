@@ -1,10 +1,35 @@
 import { describe, expect, it, vi } from "vitest";
 import { AssessmentService } from "../../src/modules/assessment/assessment.service.js";
-import type { AssessmentSession } from "../../src/modules/assessment/domain/assessment.types.js";
+import type { AssessmentReport, AssessmentSession } from "../../src/modules/assessment/domain/assessment.types.js";
+import type { AssessmentItemRepositoryPort } from "../../src/modules/assessment/ports/assessment-item-repository.port.js";
+import type { CreateAssessmentReportData } from "../../src/modules/assessment/ports/assessment-report-repository.port.js";
+import type { AssessmentSessionRepositoryPort } from "../../src/modules/assessment/ports/assessment-session-repository.port.js";
+import type { WrittenAnswerRepositoryPort } from "../../src/modules/assessment/ports/written-answer-repository.port.js";
 import { toAssessmentItemResponse } from "../../src/modules/assessment/dto/assessment-session.response.js";
 import { buildQuestionBankDiagnosis } from "../../src/modules/assessment/question-bank-diagnosis.js";
+import { QuestionBankDeterministicScoringService } from "../../src/modules/assessment/question-bank-deterministic-scoring.service.js";
+import type { PrismaService } from "../../src/shared/database/prisma.service.js";
 
 const now = new Date("2026-08-23T00:00:00.000Z");
+
+type QuestionBankItemFixture = {
+  id: string;
+  questionVersionId: string;
+  itemType: string;
+  sortOrder: number;
+  maxScore: number;
+  scoredScore: number | null;
+  recordingId: string | null;
+  speechJobs: Array<{ recordingId: string; status: string }>;
+  questionVersion: {
+    item: { domain: string; questionType: string; level: string };
+  };
+};
+
+type ScoringItemFixture = Omit<QuestionBankItemFixture, "questionVersion" | "questionVersionId"> & {
+  questionVersionId: string | null;
+  questionVersion: QuestionBankItemFixture["questionVersion"] | null;
+};
 
 function session(status: AssessmentSession["status"]): AssessmentSession {
   return {
@@ -25,49 +50,49 @@ function session(status: AssessmentSession["status"]): AssessmentSession {
   };
 }
 
-function makeService(rawItems: unknown[]) {
+function makeService(rawItems: ScoringItemFixture[]) {
   const current = session("SUBMITTED");
   const sessionRepo = {
-    findByIdAndSchool: vi.fn(async () => current),
-    updateStatus: vi.fn(async (_id: string, status: AssessmentSession["status"], extra?: Partial<AssessmentSession>) => ({ ...current, ...extra, status })),
+    findByIdAndSchool: vi.fn(() => Promise.resolve(current)),
+    updateStatus: vi.fn((_id: string, status: AssessmentSession["status"], extra?: Partial<AssessmentSession>) => Promise.resolve({ ...current, ...extra, status })),
   };
   const reportRepo = {
-    findBySessionId: vi.fn(async () => null),
-    create: vi.fn(async (data: Record<string, unknown>) => ({
+    findBySessionId: vi.fn(() => Promise.resolve(null)),
+    create: vi.fn((data: CreateAssessmentReportData): Promise<AssessmentReport> => Promise.resolve({
       id: "report-qb-005",
-      sessionId: data.sessionId as string,
-      schoolId: data.schoolId as string,
-      overallScore: (data.overallScore as number | undefined) ?? null,
-      readingScore: (data.readingScore as number | undefined) ?? null,
-      writtenScore: (data.writtenScore as number | undefined) ?? null,
-      summary: (data.summary as Record<string, unknown>) ?? null,
-      recommendations: null,
-      dataCompleteness: data.dataCompleteness as number,
+      sessionId: data.sessionId,
+      schoolId: data.schoolId,
+      overallScore: data.overallScore ?? null,
+      readingScore: data.readingScore ?? null,
+      writtenScore: data.writtenScore ?? null,
+      summary: data.summary ?? null,
+      recommendations: data.recommendations ?? null,
+      dataCompleteness: data.dataCompleteness ?? 0,
       generatedAt: now,
-      generatedByUserId: null,
+      generatedByUserId: data.generatedByUserId ?? null,
       createdAt: now,
       updatedAt: now,
     })),
   };
   const prisma = {
-    assessmentItem: { findMany: vi.fn(async () => rawItems) },
+    assessmentItem: { findMany: vi.fn(() => Promise.resolve(rawItems)) },
   };
-  const scorer = { scoreSession: vi.fn(async () => undefined) };
+  const scorer = { scoreSession: vi.fn(() => Promise.resolve(undefined)) };
   const service = new AssessmentService(
-    sessionRepo as any,
-    {} as any,
-    {} as any,
-    reportRepo as any,
-    prisma as any,
-    scorer as any,
+    sessionRepo as unknown as AssessmentSessionRepositoryPort,
+    {} as unknown as AssessmentItemRepositoryPort,
+    {} as unknown as WrittenAnswerRepositoryPort,
+    reportRepo,
+    prisma as unknown as PrismaService,
+    scorer as unknown as QuestionBankDeterministicScoringService,
   );
   return { service, sessionRepo, reportRepo, scorer };
 }
 
-function qbItem(overrides: Record<string, unknown> = {}) {
-  const itemType = (overrides.itemType as string | undefined) ?? "TEXT";
-  const family = (overrides.family as string | undefined) ?? (itemType === "SPEECH" ? "READ_ALOUD" : "DICTATION");
-  const domain = family === "READ_ALOUD" ? "SPEAK" : "LISTEN";
+function qbItem(overrides: Partial<Omit<QuestionBankItemFixture, "questionVersion">> & { family?: string; domain?: string } = {}): QuestionBankItemFixture {
+  const itemType = overrides.itemType ?? "TEXT";
+  const family = overrides.family ?? (itemType === "SPEECH" ? "READ_ALOUD" : "DICTATION");
+  const domain = overrides.domain ?? (family === "READ_ALOUD" ? "SPEAK" : "LISTEN");
   return {
     id: "item-qb-005",
     questionVersionId: "version-qb-005",
@@ -82,7 +107,7 @@ function qbItem(overrides: Record<string, unknown> = {}) {
   };
 }
 
-function completeQuestionBankItems() {
+function completeQuestionBankItems(): QuestionBankItemFixture[] {
   return Array.from({ length: 20 }, (_unused, index) => qbItem({
     id: `item-qb-${index + 1}`,
     questionVersionId: `version-qb-${index + 1}`,
@@ -178,13 +203,17 @@ describe("Question Bank assessment scoring integration", () => {
 
     const response = await service.finalizeAutomaticReportFromSpeechJob("school-qb-005", "session-qb-005");
     expect(response).toMatchObject({ overallScore: 95, readingScore: 3, writtenScore: 92 });
-    expect(reportRepo.create).toHaveBeenCalledWith(expect.objectContaining({
-      overallScore: 95,
-      summary: expect.objectContaining({ aggregation: "POINTS", awardedPoints: 95, totalMaxPoints: 100 }),
-    }));
-    const reportData = reportRepo.create.mock.calls[0]?.[0] as Record<string, any>;
-    expect(reportData.summary.diagnosis).toMatchObject({ version: "qb-diagnosis-v1", overall: { earnedPoints: 95, maxPoints: 100 } });
-    expect(sessionRepo.updateStatus).toHaveBeenCalledWith("session-qb-005", "COMPLETED", expect.objectContaining({ completedAt: expect.any(Date) }));
+    expect(reportRepo.create).toHaveBeenCalledTimes(1);
+    const reportData = reportRepo.create.mock.calls[0]?.[0];
+    expect(reportData?.overallScore).toBe(95);
+    expect(reportData?.summary).toMatchObject({ aggregation: "POINTS", awardedPoints: 95, totalMaxPoints: 100 });
+    expect(reportData?.summary).toMatchObject({ diagnosis: { version: "qb-diagnosis-v1", overall: { earnedPoints: 95, maxPoints: 100 } } });
+    const completedUpdate = sessionRepo.updateStatus.mock.calls.find(
+      ([, status]) => status === "COMPLETED",
+    );
+    expect(completedUpdate?.[0]).toBe("session-qb-005");
+    expect(completedUpdate?.[1]).toBe("COMPLETED");
+    expect(completedUpdate?.[2]?.completedAt).toBeInstanceOf(Date);
   });
 
   it("reuses the persisted diagnosis when Question Bank finalization is repeated", async () => {
@@ -220,14 +249,16 @@ describe("Question Bank assessment scoring integration", () => {
 
   it("keeps legacy report aggregation behavior when no question version is present", async () => {
     const { service, reportRepo } = makeService([
-      { id: "legacy-1", questionVersionId: null, itemType: "READING", maxScore: 100, scoredScore: 80, recordingId: "recording-legacy", speechJobs: [{ recordingId: "recording-legacy", status: "AUTO_RESULT" }] },
-      { id: "legacy-2", questionVersionId: null, itemType: "READING", maxScore: 100, scoredScore: 60, recordingId: "recording-legacy-2", speechJobs: [{ recordingId: "recording-legacy-2", status: "AUTO_RESULT" }] },
+      { id: "legacy-1", questionVersionId: null, itemType: "READING", sortOrder: 1, maxScore: 100, scoredScore: 80, recordingId: "recording-legacy", speechJobs: [{ recordingId: "recording-legacy", status: "AUTO_RESULT" }], questionVersion: null },
+      { id: "legacy-2", questionVersionId: null, itemType: "READING", sortOrder: 2, maxScore: 100, scoredScore: 60, recordingId: "recording-legacy-2", speechJobs: [{ recordingId: "recording-legacy-2", status: "AUTO_RESULT" }], questionVersion: null },
     ]);
 
     const response = await service.finalizeAutomaticReportFromSpeechJob("school-qb-005", "session-qb-005");
     expect(response).toMatchObject({ overallScore: 70, readingScore: 70 });
     expect(reportRepo.create).toHaveBeenCalledWith(expect.objectContaining({ overallScore: 70 }));
-    const data = reportRepo.create.mock.calls[0]?.[0] as Record<string, unknown>;
-    expect((data.summary as Record<string, unknown>).aggregation).toBeUndefined();
+    const reportInput = reportRepo.create.mock.calls[0]?.[0];
+    expect(reportInput).toBeDefined();
+    expect(reportInput?.summary).toBeDefined();
+    expect(reportInput?.summary).not.toHaveProperty("aggregation");
   });
 });

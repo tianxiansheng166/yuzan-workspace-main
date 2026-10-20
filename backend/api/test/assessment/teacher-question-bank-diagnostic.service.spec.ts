@@ -5,6 +5,8 @@ import {
   MembershipStatus,
   type AuthContext,
 } from "../../src/common/security/auth.types.js";
+import type { AssessmentReviewService } from "../../src/modules/assessment/assessment-review.service.js";
+import type { PrismaService } from "../../src/shared/database/prisma.service.js";
 
 const SCHOOL_ID = "school-dashboard";
 const CLASS_ID = "class-dashboard";
@@ -12,6 +14,12 @@ const OTHER_CLASS_ID = "class-other";
 const PRACTICE_ID = "practice-level-one";
 const VERSION_ONE = "practice-version-one";
 const VERSION_TWO = "practice-version-two";
+
+type DiagnosticItemFixture = {
+  questionVersionId: string;
+  maxScore: number;
+  scoredScore: number;
+};
 
 function auth(roles: MembershipRole[] = [MembershipRole.TEACHER]): AuthContext {
   return {
@@ -93,7 +101,7 @@ function formal(
   overallScore: number,
   completedAt: string,
   versionId = VERSION_ONE,
-  items: any[] = [],
+  items: DiagnosticItemFixture[] = [],
 ) {
   return {
     id,
@@ -178,25 +186,27 @@ function harness() {
     questionVersionId: `published-question-${index}`,
     questionVersion: { status: "PUBLISHED" },
   }));
-  const prisma: any = {
+  const prisma = {
     class: {
-      findFirst: vi.fn(async ({ where }: any) =>
-        where.id === CLASS_ID && where.schoolId === SCHOOL_ID
-          ? { id: CLASS_ID, name: "一年级一班", grade: "一年级" }
-          : null,
+      findFirst: vi.fn((args: { where: { id: string; schoolId: string } }) =>
+        Promise.resolve(
+          args.where.id === CLASS_ID && args.where.schoolId === SCHOOL_ID
+            ? { id: CLASS_ID, name: "一年级一班", grade: "一年级" }
+            : null,
+        ),
       ),
-      findMany: vi.fn(async () => [
+      findMany: vi.fn().mockResolvedValue([
         { id: CLASS_ID, name: "一年级一班", grade: "一年级" },
       ]),
     },
     enrollment: {
-      findMany: vi.fn(async () => students),
-      groupBy: vi.fn(async () => [
+      findMany: vi.fn().mockResolvedValue(students),
+      groupBy: vi.fn().mockResolvedValue([
         { classId: CLASS_ID, _count: { _all: students.length } },
       ]),
     },
     practiceDefinition: {
-      findMany: vi.fn(async () => [
+      findMany: vi.fn().mockResolvedValue([
         {
           id: PRACTICE_ID,
           title: "国家通用语言文字能力｜水平一级综合测评",
@@ -206,18 +216,24 @@ function harness() {
       ]),
     },
     assessmentSession: {
-      findMany: vi.fn(async ({ where }: any) =>
-        sessions.filter((entry) => {
-          if (Array.isArray(where.enrollmentId?.in))
-            return where.enrollmentId.in.includes(entry.enrollmentId);
-          return (
-            !where.enrollmentId || where.enrollmentId === entry.enrollmentId
-          );
-        }),
+      findMany: vi.fn((args: {
+        where: { enrollmentId?: string | { in?: string[] } };
+      }) =>
+        Promise.resolve(sessions.filter((entry) => {
+          const enrollmentFilter = args.where.enrollmentId;
+          if (
+            typeof enrollmentFilter === "object" &&
+            enrollmentFilter !== null &&
+            Array.isArray(enrollmentFilter.in)
+          ) {
+            return enrollmentFilter.in.includes(entry.enrollmentId);
+          }
+          return !enrollmentFilter || enrollmentFilter === entry.enrollmentId;
+        })),
       ),
     },
     assessmentItem: {
-      findMany: vi.fn(async () => [
+      findMany: vi.fn().mockResolvedValue([
         {
           session: { enrollmentId: "student-a" },
           questionVersion: { scoringSpec: { strategy: "SPEECH_READING" } },
@@ -225,17 +241,24 @@ function harness() {
       ]),
     },
   };
-  const reviewService: any = {
-    authorizedClassIds: vi.fn(async () => [CLASS_ID]),
+  const reviewService = {
+    authorizedClassIds: vi.fn((): Promise<string[] | null> =>
+      Promise.resolve([CLASS_ID]),
+    ),
     assertAuthorizedClass: vi.fn(
-      async (_auth: any, schoolId: string, classId: string) => {
-        if (schoolId !== SCHOOL_ID || classId !== CLASS_ID)
-          throw new Error("无权访问该测评");
+      (_auth: AuthContext, schoolId: string, classId: string): Promise<void> => {
+        if (schoolId !== SCHOOL_ID || classId !== CLASS_ID) {
+          return Promise.reject(new Error("无权访问该测评"));
+        }
+        return Promise.resolve();
       },
     ),
   };
   return {
-    service: new TeacherQuestionBankDiagnosticService(prisma, reviewService),
+    service: new TeacherQuestionBankDiagnosticService(
+      prisma as unknown as PrismaService,
+      reviewService as unknown as AssessmentReviewService,
+    ),
     prisma,
     reviewService,
   };

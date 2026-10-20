@@ -1,0 +1,20 @@
+
+ RUN  v3.2.7 /home/tian/code/work/yuzan-workspace-t051/backend/api
+
+ ✓ test/assessment/teacher-question-bank-diagnostic.service.spec.ts (4 tests) 11ms
+ ✓ test/assessment/question-bank-assessment-scoring.spec.ts (7 tests) 5ms
+ ✓ test/assessment/question-bank-progress.service.spec.ts (6 tests) 4ms
+ ✓ test/assessment/question-bank.security.spec.ts (2 tests) 2ms
+ ✓ test/assessment/assessment-review.queue.spec.ts (1 test) 1ms
+ ↓ test/assessment/qb015f.teacher-assignment.runtime.integration.spec.ts (2 tests | 2 skipped)
+ ↓ test/assessment/question-bank-deterministic.integration.spec.ts (1 test | 1 skipped)
+ ↓ test/assessment/question-bank-progress.runtime.integration.spec.ts (1 test | 1 skipped)
+ ↓ test/assessment/question-bank.runtime.integration.spec.ts (2 tests | 2 skipped)
+ ↓ test/assessment/remediation.runtime.integration.spec.ts (1 test | 1 skipped)
+
+ Test Files  5 passed | 5 skipped (10)
+      Tests  20 passed | 7 skipped (27)
+   Start at  00:48:40
+   Duration  909ms (transform 315ms, setup 0ms, collect 734ms, tests 23ms, environment 0ms, prepare 44ms)
+
+EXIT_CODE=0

@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { PracticeService } from "../../src/modules/assessment/practice.service.js";
 import { MembershipRole } from "../../src/common/security/membership-role.js";
 import { MembershipStatus, type AuthContext } from "../../src/common/security/auth.types.js";
+import type { PrismaService } from "../../src/shared/database/prisma.service.js";
 
 const schoolId = "11111111-1111-4111-8111-111111111111";
 const studentId = "22222222-2222-4222-8222-222222222222";
@@ -89,7 +90,7 @@ function fakePrisma(overrides: Record<string, unknown> = {}) {
 describe("Question Bank student delivery boundary", () => {
   it("snapshots deliverySpec and never returns scoringSpec or its marker", async () => {
     const prisma = fakePrisma();
-    const service = new PracticeService(prisma as any);
+    const service = new PracticeService(prisma as unknown as PrismaService);
 
     await service.createOrResume(auth, schoolId, definitionId);
     const snapshot = (prisma.__tx.assessmentItem.createMany.mock.calls[0][0] as { data: Array<Record<string, unknown>> }).data[0];
@@ -109,7 +110,7 @@ describe("Question Bank student delivery boundary", () => {
 
   it("fails closed when authored deliverySpec contains a protected scoring key", async () => {
     const prisma = fakePrisma();
-    const service = new PracticeService(prisma as any);
+    const service = new PracticeService(prisma as unknown as PrismaService);
     const unsafeVersion = {
       id: questionVersionId,
       status: "PUBLISHED",
