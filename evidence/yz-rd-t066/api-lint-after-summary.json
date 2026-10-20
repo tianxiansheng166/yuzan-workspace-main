@@ -1,0 +1,43 @@
+{
+  "scope": "backend/api/src test",
+  "baseline_source": {
+    "sha": "213946cca16adb22acd09ae43ea05c19c31dc4e6",
+    "evidence": "evidence/yz-rd-t063/api-lint-after.json",
+    "accepted_full_api_lint_snapshot": true
+  },
+  "after_measurement": {
+    "method": "Exact full-scope delta derived by replacing the selected file row in the accepted full snapshot with this task’s direct targeted ESLint JSON; no other tracked src/test file changed.",
+    "full_api_lint_rerun": false,
+    "selected_file_targeted_eslint_exit_code": 0
+  },
+  "before": {
+    "src_errors": 1,
+    "test_errors": 742,
+    "total_errors": 743,
+    "warnings": 0,
+    "parser_errors": 0
+  },
+  "after": {
+    "src_errors": 1,
+    "test_errors": 336,
+    "total_errors": 337,
+    "warnings": 0,
+    "parser_errors": 0
+  },
+  "delta": {
+    "src_errors": 0,
+    "test_errors": -406,
+    "total_errors": -406,
+    "warnings": 0,
+    "parser_errors": 0
+  },
+  "changed_file_error_counts": [
+    {
+      "file": "backend/api/test/modules/admin/admin-stub.controller.spec.ts",
+      "before": 406,
+      "after": 0,
+      "delta": -406
+    }
+  ],
+  "non_owned_count_changes": []
+}

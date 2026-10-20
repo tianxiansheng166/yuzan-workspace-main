@@ -1,0 +1,11 @@
+{
+  "command": "pnpm --filter @yuzan/api exec eslint --format json src test",
+  "exit_code": 1,
+  "files": 589,
+  "src_errors": 1,
+  "test_errors": 742,
+  "total_errors": 743,
+  "warnings": 0,
+  "parser_errors": 0,
+  "unchanged_source_finding": "backend/api/src/modules/curriculum/ports/prisma-course-version.repository.ts \u2014 @typescript-eslint/no-empty-object-type"
+}

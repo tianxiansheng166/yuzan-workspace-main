@@ -1,0 +1,9 @@
+
+ RUN  v3.2.7 /home/tian/code/work/yuzan-workspace-t066/backend/api
+
+ ✓ test/modules/admin/admin-stub.controller.spec.ts (38 tests) 153ms
+
+ Test Files  1 passed (1)
+      Tests  38 passed (38)
+   Start at  17:01:58
+   Duration  5.35s (transform 1.01s, setup 0ms, collect 4.71s, tests 153ms, environment 0ms, prepare 283ms)
