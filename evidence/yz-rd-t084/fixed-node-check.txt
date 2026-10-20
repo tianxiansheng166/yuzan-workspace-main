@@ -1,0 +1,1 @@
+PASS: node --check frontend/teacher/assessments/create/app.js

@@ -1,0 +1,20 @@
+
+> @yuzan/frontend@4.0.0 check:business-js /home/tian/code/work/yuzan-workspace-t084/frontend
+> node scripts/check-business-js-syntax.mjs
+
+FAIL frontend/teacher/assessments/create/app.js
+/home/tian/code/work/yuzan-workspace-t084/frontend/teacher/assessments/create/app.js:86
+      dimension: ["自定义能力维度", "输入新的能力维度后，可在当前测评中单独启用。此演示会添加"朗读感染力"。", "＋"],
+                                                           ^^^^^
+
+SyntaxError: Unexpected identifier '朗读感染力'
+    at checkSyntax (node:internal/main/check_syntax:72:5)
+
+Node.js v24.20.0
+
+Business JS syntax check failed: 1 of 100 checked files.
+/home/tian/code/work/yuzan-workspace-t084/frontend:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @yuzan/frontend@4.0.0 check:business-js: `node scripts/check-business-js-syntax.mjs`
+Exit status 1
+ WARN   Local package.json exists, but node_modules missing, did you mean to install?
+Exit code: 1

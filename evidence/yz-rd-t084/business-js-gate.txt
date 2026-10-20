@@ -1,0 +1,6 @@
+
+> @yuzan/frontend@4.0.0 check:business-js /home/tian/code/work/yuzan-workspace-t084/frontend
+> node scripts/check-business-js-syntax.mjs
+
+Business JS syntax check passed: 100 JS/MJS files checked.
+Exit code: 0
