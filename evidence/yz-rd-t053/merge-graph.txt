@@ -1,0 +1,12 @@
+YZ-RD-T053 no-fast-forward merge graph
+
+Task branch: feat/yz-rd-t053-course-authoring-unified-student-teacher
+BASE: 69eff46965b5c0bdd418a490319275aa7acfc4ab
+MERGE_SOURCE (T049): 0d9dca9765b37c8817c0a2bbebfa918fdbd64494
+Merge commit: 3de27d667c65b8f3d9dafb98ce2c53aa001b5162
+Merge parents, in order:
+  first  69eff46965b5c0bdd418a490319275aa7acfc4ab (T050 base; preserves T050 Today and mobile work)
+  second 0d9dca9765b37c8817c0a2bbebfa918fdbd64494 (accepted T049 course-practice API)
+
+The merge commit is `--no-ff`. Both supplied revisions are ancestors of the merge.
+The task branch remains independent; no shared branch was merged or rewritten.

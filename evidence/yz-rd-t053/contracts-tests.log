@@ -1,0 +1,19 @@
+✔ the production generator succeeds without leaking machine-specific output (1827.950611ms)
+✔ two production runs produce identical hashes (3548.721145ms)
+✔ generated types satisfy Prettier (830.084183ms)
+✔ contract sources and documentation satisfy Prettier (803.537091ms)
+✔ generator failures make the command fail (43.770739ms)
+✔ formatter failures make the command fail (43.437112ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7169.977379
+$ redocly lint openapi/openapi.yaml && node --test scripts/generate-types.test.mjs
+validating openapi/openapi.yaml...
+openapi/openapi.yaml: validated in 112ms
+
+Woohoo! Your API description is valid. 🎉

@@ -1,0 +1,10 @@
+{
+  "command": "pnpm --filter @yuzan/api lint",
+  "exitCode": 1,
+  "files": 589,
+  "scopes": {
+    "src": { "errors": 1037, "warnings": 1 },
+    "test": { "errors": 164, "warnings": 0 }
+  },
+  "total": { "errors": 1201, "warnings": 1 }
+}

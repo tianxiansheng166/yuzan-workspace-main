@@ -1,0 +1,26 @@
+
+ RUN  v3.2.7 /home/tian/code/work/yuzan-workspace-t053/backend/api
+
+ ✓ test/assessment/assessment.service.spec.ts (30 tests) 44ms
+stdout | test/curriculum/curriculum.controller.spec.ts > CurriculumController > rejects unknown role via AuthenticationGuard
+{"type":"SECURITY","requestId":"req-1","code":"UNKNOWN_ROLE","method":"GET","path":"/schools/school-a/course-versions","event":"AUTHORIZATION_DENIED"}
+
+stdout | test/curriculum/curriculum.controller.spec.ts > CurriculumController > rejects client-forged schoolId via TenantAuthorizationGuard
+{"type":"SECURITY","requestId":"req-1","code":"FORBIDDEN_TENANT","schoolId":"school-a","method":"GET","path":"/schools/school-b/course-versions","userId":"teacher-1","event":"AUTHORIZATION_DENIED"}
+
+ ✓ test/curriculum/curriculum.controller.spec.ts (10 tests) 30ms
+ ✓ test/student-courses/student-courses.service.spec.ts (32 tests) 12ms
+ ✓ test/assessment/practice.service.spec.ts (20 tests) 8ms
+ ✓ test/assessment/student-dashboard.today.service.spec.ts (9 tests) 6ms
+ ✓ test/curriculum/curriculum.service.spec.ts (26 tests) 6ms
+ ✓ test/assessment/assessment-review.service.spec.ts (2 tests) 4ms
+ ✓ test/curriculum/publishing.validator.spec.ts (13 tests) 2ms
+ ✓ test/assessment/student-today-decision.spec.ts (9 tests) 1ms
+ ✓ test/assessment/assessment-review.queue.spec.ts (1 test) 1ms
+ ✓ test/curriculum/curriculum.policy.spec.ts (6 tests) 1ms
+ ↓ test/integration/curriculum/prisma-course-version.repository.spec.ts (15 tests | 15 skipped)
+
+ Test Files  11 passed | 1 skipped (12)
+      Tests  158 passed | 15 skipped (173)
+   Start at  11:23:24
+   Duration  1.20s (transform 408ms, setup 0ms, collect 916ms, tests 115ms, environment 0ms, prepare 42ms)

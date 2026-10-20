@@ -1,0 +1,907 @@
+{
+  "task": "YZ-RD-T053",
+  "fixturePolicy": "TEST_FIXTURE_ONLY; no real student records",
+  "teacherUserId": "33333333-3333-4333-8333-333333333333",
+  "teacherAuthoring": {
+    "courseVersionId": "99b37dcc-1021-4bf4-aa2f-2d2bc075f6cb",
+    "courseVersionTitle": "TEST_FIXTURE_ONLY T053 听说课程 d7b53083",
+    "courseActivityIds": {
+      "speech": "f86d2a04-ab1c-4f9a-8b59-5425cdff30a3",
+      "practice": "b646941e-f12d-4e35-be73-02d04197e78f"
+    },
+    "createdThroughStudioUi": true,
+    "savedThroughCourseVersionPatch": 200,
+    "practiceDefinitionId": "b0e8d0d5-4b7d-45fb-94c2-4346d9704d07",
+    "practiceTitle": "国家通用语言文字能力｜水平一级综合测评",
+    "practiceRelationStatus": 200,
+    "practiceRelationDatabaseRow": {
+      "id": "7824ec1b-74e8-439e-b4af-8b0d0f545cce",
+      "schoolId": "11111111-1111-4111-8111-111111111111",
+      "activityId": "b646941e-f12d-4e35-be73-02d04197e78f",
+      "practiceDefinitionId": "b0e8d0d5-4b7d-45fb-94c2-4346d9704d07",
+      "required": true,
+      "relationCount": 1
+    },
+    "publishStatus": "PUBLISHED"
+  },
+  "publication": {
+    "assignmentId": "42091b7b-f412-45b1-a0f0-496a01285bf4",
+    "assignmentStatus": "OPEN",
+    "authorizedClassId": "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee",
+    "teacherUiCreatedAndOpened": true
+  },
+  "authorizationStatuses": {
+    "anonymousPracticeLinkWrite": 401,
+    "studentPracticeLinkWrite": 403,
+    "studentPracticeOptions": 403,
+    "crossSchoolPracticeLinkWrite": 403,
+    "missingActivityPracticeLinkWrite": 404,
+    "stalePracticeLinkWrite": 409,
+    "publishedPracticeLinkWrite": 409,
+    "otherClassStudentCourseRead": 404
+  },
+  "student": {
+    "userId": "d7eb9c6c-57e6-465c-88d5-6f0228f49eeb",
+    "enrollmentId": "d27cf1df-fb61-4ee5-9a15-e8b47b0e5f30",
+    "todayCourseAssignmentId": "42091b7b-f412-45b1-a0f0-496a01285bf4",
+    "submissionId": "6b5f16ca-2328-4056-98fd-864d6b10d223",
+    "courseRecordingId": "26d38c3a-12dc-494f-8bad-177c3771c38b",
+    "courseRecording": {
+      "id": "26d38c3a-12dc-494f-8bad-177c3771c38b",
+      "objectKey": "recordings/26d38c3a-12dc-494f-8bad-177c3771c38b/full",
+      "mimeType": "audio/webm;codecs=opus",
+      "status": "COMPLETE"
+    },
+    "courseRecordingMinioHead": {
+      "bytes": 25171,
+      "contentType": "audio/webm;codecs=opus"
+    },
+    "practiceAttemptId": "4d950dc4-e480-4834-81ef-fc48cbd7e0b0",
+    "attemptContext": {
+      "id": "4d950dc4-e480-4834-81ef-fc48cbd7e0b0",
+      "schoolId": "11111111-1111-4111-8111-111111111111",
+      "enrollmentId": "d27cf1df-fb61-4ee5-9a15-e8b47b0e5f30",
+      "classId": "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee",
+      "initiatorUserId": "d7eb9c6c-57e6-465c-88d5-6f0228f49eeb",
+      "type": "MIXED",
+      "purpose": "STANDARD",
+      "remediationOrigin": null,
+      "remediationFocus": null,
+      "status": "CREATED",
+      "startedAt": null,
+      "submittedAt": null,
+      "completedAt": null,
+      "retestOfSessionId": null,
+      "practiceDefinitionId": "b0e8d0d5-4b7d-45fb-94c2-4346d9704d07",
+      "practiceVersionId": "7513ed6d-7448-47ef-b58d-0204468cbe50",
+      "deliveryId": "92170568-9c0a-4ca2-9ad2-95e3629b6d39",
+      "courseActivityId": "b646941e-f12d-4e35-be73-02d04197e78f",
+      "courseSubmissionId": "6b5f16ca-2328-4056-98fd-864d6b10d223",
+      "revision": 1,
+      "createdAt": "2026-10-20T03:17:31.663Z",
+      "updatedAt": "2026-10-20T03:17:31.663Z"
+    },
+    "attemptStateBeforeReview": "PROCESSING",
+    "practiceRecordingObjects": [
+      {
+        "itemId": "2cf549fd-f177-4900-9e84-daab1ad2fc46",
+        "recordingId": "48c2ceb4-f427-4139-b0c6-44f9479c460d",
+        "bytes": 22514,
+        "contentType": "audio/webm;codecs=opus"
+      },
+      {
+        "itemId": "911a4245-6482-4c3f-8e76-1b0b8f4ee059",
+        "recordingId": "c139828b-968e-4204-9a4e-13856f09ccbd",
+        "bytes": 22514,
+        "contentType": "audio/webm;codecs=opus"
+      },
+      {
+        "itemId": "420b3f9b-07c0-48f5-8902-6f4b8beac506",
+        "recordingId": "28c5597e-d6e0-4207-99a7-bb246bba685e",
+        "bytes": 22514,
+        "contentType": "audio/webm;codecs=opus"
+      },
+      {
+        "itemId": "edecc285-f5d5-4a38-bdbb-3aceadcba877",
+        "recordingId": "289dcbc0-bb57-43cc-95ac-e7cc56e4f20d",
+        "bytes": 22514,
+        "contentType": "audio/webm;codecs=opus"
+      }
+    ],
+    "runnerCompletion": {
+      "itemCount": 20,
+      "playedAudio": 6,
+      "recordedAudio": 4,
+      "uploadRetries": 4,
+      "submitPosts": 1,
+      "confirmationDismissals": 0,
+      "duplicateSubmitId": "4d950dc4-e480-4834-81ef-fc48cbd7e0b0"
+    },
+    "reportBeforeReview": null
+  },
+  "viewports": {
+    "teacherCourseStudio": [
+      {
+        "width": 390,
+        "height": 844,
+        "viewport": 390,
+        "document": 390,
+        "body": 390,
+        "overflowNodes": [
+          {
+            "tag": "A",
+            "id": "",
+            "className": "ts-nav-item ",
+            "left": 372,
+            "right": 426,
+            "width": 54,
+            "position": "static"
+          },
+          {
+            "tag": "svg",
+            "id": "",
+            "className": "[object SVGAnimatedString]",
+            "left": 379,
+            "right": 394,
+            "width": 15,
+            "position": "static"
+          },
+          {
+            "tag": "SPAN",
+            "id": "",
+            "className": "",
+            "left": 399,
+            "right": 419,
+            "width": 20,
+            "position": "static"
+          },
+          {
+            "tag": "A",
+            "id": "",
+            "className": "ts-nav-item ",
+            "left": 429,
+            "right": 483,
+            "width": 54,
+            "position": "static"
+          },
+          {
+            "tag": "svg",
+            "id": "",
+            "className": "[object SVGAnimatedString]",
+            "left": 436,
+            "right": 451,
+            "width": 15,
+            "position": "static"
+          },
+          {
+            "tag": "circle",
+            "id": "",
+            "className": "[object SVGAnimatedString]",
+            "left": 441.625,
+            "right": 445.375,
+            "width": 3.75,
+            "position": "static"
+          },
+          {
+            "tag": "path",
+            "id": "",
+            "className": "[object SVGAnimatedString]",
+            "left": 439.125,
+            "right": 447.875,
+            "width": 8.75,
+            "position": "static"
+          },
+          {
+            "tag": "SPAN",
+            "id": "",
+            "className": "",
+            "left": 456,
+            "right": 476,
+            "width": 20,
+            "position": "static"
+          },
+          {
+            "tag": "A",
+            "id": "",
+            "className": "ts-nav-item ",
+            "left": 486,
+            "right": 552.9375,
+            "width": 66.9375,
+            "position": "static"
+          },
+          {
+            "tag": "svg",
+            "id": "",
+            "className": "[object SVGAnimatedString]",
+            "left": 493,
+            "right": 508,
+            "width": 15,
+            "position": "static"
+          },
+          {
+            "tag": "path",
+            "id": "",
+            "className": "[object SVGAnimatedString]",
+            "left": 494.25,
+            "right": 506.75,
+            "width": 12.5,
+            "position": "static"
+          },
+          {
+            "tag": "SPAN",
+            "id": "",
+            "className": "",
+            "left": 513,
+            "right": 545.9375,
+            "width": 32.9375,
+            "position": "static"
+          }
+        ],
+        "horizontalOverflow": false
+      },
+      {
+        "width": 768,
+        "height": 1024,
+        "viewport": 768,
+        "document": 768,
+        "body": 768,
+        "overflowNodes": [],
+        "horizontalOverflow": false
+      },
+      {
+        "width": 1280,
+        "height": 900,
+        "viewport": 1280,
+        "document": 1280,
+        "body": 1280,
+        "overflowNodes": [],
+        "horizontalOverflow": false
+      },
+      {
+        "width": 1440,
+        "height": 1000,
+        "viewport": 1440,
+        "document": 1440,
+        "body": 1440,
+        "overflowNodes": [],
+        "horizontalOverflow": false
+      }
+    ],
+    "teacherAssignments": [
+      {
+        "width": 390,
+        "height": 844,
+        "viewport": 390,
+        "document": 390,
+        "body": 390,
+        "overflowNodes": [
+          {
+            "tag": "A",
+            "id": "",
+            "className": "ts-nav-item ",
+            "left": 372,
+            "right": 426,
+            "width": 54,
+            "position": "static"
+          },
+          {
+            "tag": "svg",
+            "id": "",
+            "className": "[object SVGAnimatedString]",
+            "left": 379,
+            "right": 394,
+            "width": 15,
+            "position": "static"
+          },
+          {
+            "tag": "SPAN",
+            "id": "",
+            "className": "",
+            "left": 399,
+            "right": 419,
+            "width": 20,
+            "position": "static"
+          },
+          {
+            "tag": "A",
+            "id": "",
+            "className": "ts-nav-item ",
+            "left": 429,
+            "right": 483,
+            "width": 54,
+            "position": "static"
+          },
+          {
+            "tag": "svg",
+            "id": "",
+            "className": "[object SVGAnimatedString]",
+            "left": 436,
+            "right": 451,
+            "width": 15,
+            "position": "static"
+          },
+          {
+            "tag": "circle",
+            "id": "",
+            "className": "[object SVGAnimatedString]",
+            "left": 441.625,
+            "right": 445.375,
+            "width": 3.75,
+            "position": "static"
+          },
+          {
+            "tag": "path",
+            "id": "",
+            "className": "[object SVGAnimatedString]",
+            "left": 439.125,
+            "right": 447.875,
+            "width": 8.75,
+            "position": "static"
+          },
+          {
+            "tag": "SPAN",
+            "id": "",
+            "className": "",
+            "left": 456,
+            "right": 476,
+            "width": 20,
+            "position": "static"
+          },
+          {
+            "tag": "A",
+            "id": "",
+            "className": "ts-nav-item ",
+            "left": 486,
+            "right": 552.9375,
+            "width": 66.9375,
+            "position": "static"
+          },
+          {
+            "tag": "svg",
+            "id": "",
+            "className": "[object SVGAnimatedString]",
+            "left": 493,
+            "right": 508,
+            "width": 15,
+            "position": "static"
+          },
+          {
+            "tag": "path",
+            "id": "",
+            "className": "[object SVGAnimatedString]",
+            "left": 494.25,
+            "right": 506.75,
+            "width": 12.5,
+            "position": "static"
+          },
+          {
+            "tag": "SPAN",
+            "id": "",
+            "className": "",
+            "left": 513,
+            "right": 545.9375,
+            "width": 32.9375,
+            "position": "static"
+          }
+        ],
+        "horizontalOverflow": false
+      },
+      {
+        "width": 768,
+        "height": 1024,
+        "viewport": 768,
+        "document": 768,
+        "body": 768,
+        "overflowNodes": [],
+        "horizontalOverflow": false
+      },
+      {
+        "width": 1280,
+        "height": 900,
+        "viewport": 1280,
+        "document": 1280,
+        "body": 1280,
+        "overflowNodes": [],
+        "horizontalOverflow": false
+      },
+      {
+        "width": 1440,
+        "height": 1000,
+        "viewport": 1440,
+        "document": 1440,
+        "body": 1440,
+        "overflowNodes": [],
+        "horizontalOverflow": false
+      }
+    ],
+    "studentToday": [
+      {
+        "width": 390,
+        "height": 844,
+        "viewport": 390,
+        "document": 390,
+        "body": 390,
+        "overflowNodes": [],
+        "horizontalOverflow": false
+      },
+      {
+        "width": 768,
+        "height": 1024,
+        "viewport": 768,
+        "document": 768,
+        "body": 768,
+        "overflowNodes": [
+          {
+            "tag": "SPAN",
+            "id": "",
+            "className": "today-orbit today-orbit-one",
+            "left": 521.7160034179688,
+            "right": 769.0027465820312,
+            "width": 247.2867431640625,
+            "position": "absolute"
+          },
+          {
+            "tag": "SPAN",
+            "id": "",
+            "className": "today-orbit today-orbit-two",
+            "left": 510.02362060546875,
+            "right": 780.6951293945312,
+            "width": 270.6715087890625,
+            "position": "absolute"
+          }
+        ],
+        "horizontalOverflow": false
+      },
+      {
+        "width": 1280,
+        "height": 900,
+        "viewport": 1280,
+        "document": 1280,
+        "body": 1280,
+        "overflowNodes": [],
+        "horizontalOverflow": false
+      },
+      {
+        "width": 1440,
+        "height": 1000,
+        "viewport": 1440,
+        "document": 1440,
+        "body": 1440,
+        "overflowNodes": [],
+        "horizontalOverflow": false
+      }
+    ],
+    "studentCourseDetail": [
+      {
+        "width": 390,
+        "height": 844,
+        "viewport": 390,
+        "document": 390,
+        "body": 390,
+        "overflowNodes": [],
+        "horizontalOverflow": false
+      },
+      {
+        "width": 768,
+        "height": 1024,
+        "viewport": 768,
+        "document": 768,
+        "body": 768,
+        "overflowNodes": [],
+        "horizontalOverflow": false
+      },
+      {
+        "width": 1280,
+        "height": 900,
+        "viewport": 1280,
+        "document": 1280,
+        "body": 1280,
+        "overflowNodes": [],
+        "horizontalOverflow": false
+      },
+      {
+        "width": 1440,
+        "height": 1000,
+        "viewport": 1440,
+        "document": 1440,
+        "body": 1440,
+        "overflowNodes": [],
+        "horizontalOverflow": false
+      }
+    ],
+    "courseSpeech": [
+      {
+        "width": 390,
+        "height": 844,
+        "viewport": 390,
+        "document": 390,
+        "body": 390,
+        "overflowNodes": [
+          {
+            "tag": "svg",
+            "id": "",
+            "className": "[object SVGAnimatedString]",
+            "left": -13.59375,
+            "right": 301,
+            "width": 314.59375,
+            "position": "absolute"
+          },
+          {
+            "tag": "path",
+            "id": "",
+            "className": "[object SVGAnimatedString]",
+            "left": -12.470200538635254,
+            "right": 299.87647914886475,
+            "width": 312.3466796875,
+            "position": "static"
+          },
+          {
+            "tag": "path",
+            "id": "",
+            "className": "[object SVGAnimatedString]",
+            "left": -12.470200538635254,
+            "right": 299.87647914886475,
+            "width": 312.3466796875,
+            "position": "static"
+          },
+          {
+            "tag": "DIV",
+            "id": "",
+            "className": "vr-main",
+            "left": 263,
+            "right": 763,
+            "width": 500,
+            "position": "relative"
+          },
+          {
+            "tag": "DIV",
+            "id": "",
+            "className": "vr-pipeline",
+            "left": 288,
+            "right": 738,
+            "width": 450,
+            "position": "static"
+          },
+          {
+            "tag": "SPAN",
+            "id": "",
+            "className": "",
+            "left": 288,
+            "right": 438,
+            "width": 150,
+            "position": "relative"
+          },
+          {
+            "tag": "B",
+            "id": "",
+            "className": "",
+            "left": 288,
+            "right": 438,
+            "width": 150,
+            "position": "static"
+          },
+          {
+            "tag": "SPAN",
+            "id": "",
+            "className": "",
+            "left": 438,
+            "right": 588,
+            "width": 150,
+            "position": "relative"
+          },
+          {
+            "tag": "B",
+            "id": "",
+            "className": "",
+            "left": 438,
+            "right": 588,
+            "width": 150,
+            "position": "static"
+          },
+          {
+            "tag": "SPAN",
+            "id": "",
+            "className": "",
+            "left": 588,
+            "right": 738,
+            "width": 150,
+            "position": "relative"
+          },
+          {
+            "tag": "B",
+            "id": "",
+            "className": "",
+            "left": 588,
+            "right": 738,
+            "width": 150,
+            "position": "static"
+          },
+          {
+            "tag": "DIV",
+            "id": "",
+            "className": "vr-bottom",
+            "left": 288,
+            "right": 738,
+            "width": 450,
+            "position": "absolute"
+          }
+        ],
+        "horizontalOverflow": false
+      },
+      {
+        "width": 768,
+        "height": 1024,
+        "viewport": 768,
+        "document": 768,
+        "body": 768,
+        "overflowNodes": [
+          {
+            "tag": "DIV",
+            "id": "",
+            "className": "vr-main",
+            "left": 292,
+            "right": 792,
+            "width": 500,
+            "position": "relative"
+          }
+        ],
+        "horizontalOverflow": false
+      },
+      {
+        "width": 1280,
+        "height": 900,
+        "viewport": 1280,
+        "document": 1280,
+        "body": 1280,
+        "overflowNodes": [],
+        "horizontalOverflow": false
+      },
+      {
+        "width": 1440,
+        "height": 1000,
+        "viewport": 1440,
+        "document": 1440,
+        "body": 1440,
+        "overflowNodes": [],
+        "horizontalOverflow": false
+      }
+    ],
+    "coursePracticeRunner": [
+      {
+        "width": 390,
+        "height": 844,
+        "viewport": 390,
+        "document": 390,
+        "body": 390,
+        "overflowNodes": [
+          {
+            "tag": "BUTTON",
+            "id": "",
+            "className": " ",
+            "left": 398,
+            "right": 438,
+            "width": 40,
+            "position": "static"
+          },
+          {
+            "tag": "BUTTON",
+            "id": "",
+            "className": " ",
+            "left": 446,
+            "right": 486,
+            "width": 40,
+            "position": "static"
+          },
+          {
+            "tag": "BUTTON",
+            "id": "",
+            "className": " ",
+            "left": 494,
+            "right": 534,
+            "width": 40,
+            "position": "static"
+          },
+          {
+            "tag": "BUTTON",
+            "id": "",
+            "className": " ",
+            "left": 542,
+            "right": 582,
+            "width": 40,
+            "position": "static"
+          },
+          {
+            "tag": "BUTTON",
+            "id": "",
+            "className": " ",
+            "left": 590,
+            "right": 630,
+            "width": 40,
+            "position": "static"
+          },
+          {
+            "tag": "BUTTON",
+            "id": "",
+            "className": " ",
+            "left": 638,
+            "right": 678,
+            "width": 40,
+            "position": "static"
+          },
+          {
+            "tag": "BUTTON",
+            "id": "",
+            "className": " ",
+            "left": 686,
+            "right": 726,
+            "width": 40,
+            "position": "static"
+          },
+          {
+            "tag": "BUTTON",
+            "id": "",
+            "className": " ",
+            "left": 734,
+            "right": 774,
+            "width": 40,
+            "position": "static"
+          },
+          {
+            "tag": "BUTTON",
+            "id": "",
+            "className": " ",
+            "left": 782,
+            "right": 822,
+            "width": 40,
+            "position": "static"
+          },
+          {
+            "tag": "BUTTON",
+            "id": "",
+            "className": " ",
+            "left": 830,
+            "right": 870,
+            "width": 40,
+            "position": "static"
+          },
+          {
+            "tag": "BUTTON",
+            "id": "",
+            "className": " ",
+            "left": 878,
+            "right": 918,
+            "width": 40,
+            "position": "static"
+          },
+          {
+            "tag": "BUTTON",
+            "id": "",
+            "className": " ",
+            "left": 926,
+            "right": 966,
+            "width": 40,
+            "position": "static"
+          }
+        ],
+        "horizontalOverflow": false
+      },
+      {
+        "width": 768,
+        "height": 1024,
+        "viewport": 768,
+        "document": 768,
+        "body": 768,
+        "overflowNodes": [],
+        "horizontalOverflow": false
+      },
+      {
+        "width": 1280,
+        "height": 900,
+        "viewport": 1280,
+        "document": 1280,
+        "body": 1280,
+        "overflowNodes": [],
+        "horizontalOverflow": false
+      },
+      {
+        "width": 1440,
+        "height": 1000,
+        "viewport": 1440,
+        "document": 1440,
+        "body": 1440,
+        "overflowNodes": [],
+        "horizontalOverflow": false
+      }
+    ]
+  },
+  "pageErrors": [],
+  "manualReview": {
+    "queueItemCount": 6,
+    "teacherHeardRecording": true,
+    "teacherReplayedRecording": true,
+    "reviewedItems": [
+      {
+        "itemId": "2cf549fd-f177-4900-9e84-daab1ad2fc46",
+        "score": 0,
+        "reviewerUserId": "33333333-3333-4333-8333-333333333333"
+      },
+      {
+        "itemId": "911a4245-6482-4c3f-8e76-1b0b8f4ee059",
+        "score": 0,
+        "reviewerUserId": "33333333-3333-4333-8333-333333333333"
+      },
+      {
+        "itemId": "420b3f9b-07c0-48f5-8902-6f4b8beac506",
+        "score": 0,
+        "reviewerUserId": "33333333-3333-4333-8333-333333333333"
+      },
+      {
+        "itemId": "edecc285-f5d5-4a38-bdbb-3aceadcba877",
+        "score": 0,
+        "reviewerUserId": "33333333-3333-4333-8333-333333333333"
+      },
+      {
+        "itemId": "81da1bf6-3eef-47e3-9d16-d2d9148b4e57",
+        "score": 0,
+        "reviewerUserId": "33333333-3333-4333-8333-333333333333"
+      },
+      {
+        "itemId": "6b89bed5-aa0e-4206-8c94-3169472182a3",
+        "score": 0,
+        "reviewerUserId": "33333333-3333-4333-8333-333333333333"
+      }
+    ],
+    "reportCountBeforeReview": 0,
+    "reportId": "d062252e-0a56-4481-b23a-429eb8d13568",
+    "reportOverallScore": 19,
+    "studentOpenedSameReportFromHistory": true,
+    "studentReportViewports": [
+      {
+        "width": 390,
+        "height": 844,
+        "viewport": 390,
+        "document": 390,
+        "body": 390,
+        "overflowNodes": [],
+        "horizontalOverflow": false
+      },
+      {
+        "width": 768,
+        "height": 1024,
+        "viewport": 768,
+        "document": 768,
+        "body": 768,
+        "overflowNodes": [],
+        "horizontalOverflow": false
+      },
+      {
+        "width": 1280,
+        "height": 900,
+        "viewport": 1280,
+        "document": 1280,
+        "body": 1280,
+        "overflowNodes": [],
+        "horizontalOverflow": false
+      },
+      {
+        "width": 1440,
+        "height": 1000,
+        "viewport": 1440,
+        "document": 1440,
+        "body": 1440,
+        "overflowNodes": [],
+        "horizontalOverflow": false
+      }
+    ],
+    "authorizationStatuses": {
+      "anonymousReviewQueue": 401,
+      "studentReviewQueue": 403,
+      "studentReviewWrite": 403,
+      "missingReviewDetail": 404,
+      "crossClassTeacherReview": 403,
+      "crossSchoolTeacherReview": 403,
+      "otherStudentReport": 403,
+      "otherStudentHistory": 403
+    }
+  }
+}
