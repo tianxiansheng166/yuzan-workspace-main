@@ -25,8 +25,10 @@ import {
   RecordingNotFoundException,
   RecordingStatusException,
 } from "../../src/modules/recordings/domain/recording.errors.js";
-import type { Recording } from "../../src/modules/recordings/domain/recording.types.js";
-import { createFakePrismaService, createFakeDatabaseModule } from "../helpers/fake-prisma.service.js";
+import type { CompleteRecordingInput, InitRecordingInput, Recording, RecordingStatus } from "../../src/modules/recordings/domain/recording.types.js";
+import type { RecordingRepositoryPort } from "../../src/modules/recordings/ports/recording-repository.port.js";
+import type { HeadObjectResult, StoragePort } from "../../src/shared/storage/storage.port.js";
+import { createFakePrismaService, createFakeDatabaseModule, type FakePrismaServiceOverrides } from "../helpers/fake-prisma.service.js";
 import type { AuthContext, Principal, TenantContext } from "../../src/common/security/auth.types.js";
 import { MembershipStatus } from "../../src/common/security/auth.types.js";
 import { MembershipRole } from "../../src/common/security/membership-role.js";
@@ -76,66 +78,92 @@ function makeRecording(overrides: Partial<Recording> = {}): Recording {
 
 // ─── Fakes ──────────────────────────────────────────────
 
-function createFakeRecordingRepo(initialRecording: Recording | null = null) {
+function createFakeRecordingRepo(initialRecording: Recording | null = null): RecordingRepositoryPort & { _setRecording(recording: Recording | null): void } {
   let recording = initialRecording;
 
   return {
     _setRecording(r: Recording | null) { recording = r; },
-    findById: async (_schoolId: string, id: string) =>
-      recording && recording.id === id ? recording : null,
-    findByIdempotencyKey: async () => null,
-    findBySubmissionId: async () => [],
-    listByEnrollment: async () => ({ items: recording ? [recording] : [], nextCursor: null, hasMore: false }),
-    save: async (input: any) => {
+    findById: (_schoolId: string, id: string) =>
+      Promise.resolve(recording && recording.id === id ? recording : null),
+    findByIdempotencyKey: () => Promise.resolve(null),
+    findBySubmissionId: () => Promise.resolve([]),
+    listByEnrollment: () => Promise.resolve({ items: recording ? [recording] : [], nextCursor: null, hasMore: false }),
+    save: (input: InitRecordingInput) => {
       recording = makeRecording({
         id: RECORDING_ID,
         schoolId: input.schoolId,
         enrollmentId: input.enrollmentId,
         partCount: input.partCount ?? 1,
-        mimeType: input.mimeType,
+        ...(input.mimeType ? { mimeType: input.mimeType } : {}),
       });
-      return recording;
+      return Promise.resolve(recording);
     },
-    updateStatus: async (_schoolId: string, id: string, status: any) => {
-      if (recording) recording = { ...recording, status } as Recording;
-      return recording!;
+    updateStatus: (_schoolId: string, id: string, status: RecordingStatus): Promise<Recording> => {
+      if (!recording) return Promise.reject(new Error("recording fixture is missing"));
+      const updated: Recording = { ...recording, id, status };
+      recording = updated;
+      return Promise.resolve(updated);
     },
-    updateUploadedParts: async () => {
-      if (recording) recording = { ...recording, uploadedParts: [1] } as Recording;
-      return recording!;
+    updateUploadedParts: (_schoolId: string, id: string, partNumber: number): Promise<Recording> => {
+      if (!recording) return Promise.reject(new Error("recording fixture is missing"));
+      const updated: Recording = { ...recording, id, uploadedParts: [partNumber] };
+      recording = updated;
+      return Promise.resolve(updated);
     },
-    completeRecording: async (_schoolId: string, id: string, input: any, _rev: number) => {
-      if (recording) recording = { ...recording, status: "COMPLETE", objectKey: input.objectKey ?? recording.objectKey } as Recording;
-      return recording!;
+    completeRecording: (_schoolId: string, id: string, input: CompleteRecordingInput, expectedRevision: number): Promise<Recording> => {
+      if (!recording) return Promise.reject(new Error("recording fixture is missing"));
+      if (recording.revision !== expectedRevision) return Promise.reject(new Error("recording revision does not match"));
+      const updated: Recording = {
+        ...recording,
+        id,
+        status: "COMPLETE",
+        ...(input.objectKey ? { objectKey: input.objectKey } : {}),
+      };
+      recording = updated;
+      return Promise.resolve(updated);
     },
   };
 }
 
-function createFakeStorage() {
+function createFakeStorage(): StoragePort {
   return {
-    generateUploadUrl: async (objectKey: string, _contentType?: string) => ({
+    putObject: () => Promise.resolve(),
+    generateUploadUrl: (objectKey: string) => Promise.resolve({
       url: `https://storage.example.com/upload/${objectKey}?sig=fake`,
       objectKey,
       expiresInSeconds: 3600,
     }),
-    generateDownloadUrl: async (objectKey: string) => ({
+    generateDownloadUrl: (objectKey: string) => Promise.resolve({
       url: `https://storage.example.com/download/${objectKey}?sig=fake`,
       objectKey,
       expiresInSeconds: 3600,
     }),
-    headObject: async (_objectKey: string) => ({ exists: true, contentLength: 1024 }),
-    deleteObject: async () => {},
+    headObject: () => Promise.resolve({ exists: true, contentLength: 1024 }),
+    deleteObject: () => Promise.resolve(),
   };
 }
 
 // ─── Module builder ─────────────────────────────────────
 
 interface BuildOptions {
-  prismaOverrides?: Record<string, any>;
+  prismaOverrides?: FakePrismaServiceOverrides;
   recordingRepo?: ReturnType<typeof createFakeRecordingRepo>;
   storage?: ReturnType<typeof createFakeStorage>;
-  headObjectResult?: { exists: boolean; contentLength?: number };
-  speechJobService?: Pick<SpeechJobService, "triggerSpeechProcessing">;
+  headObjectResult?: HeadObjectResult;
+  speechJobService?: {
+    triggerSpeechProcessing: (recordingId: string, assessmentItemId: string, targetText: string | undefined, schoolId: string) => Promise<{ id: string }>;
+  };
+}
+
+interface EnrollmentLookupArgs {
+  where: {
+    role?: string;
+    id?: string;
+    schoolId?: string;
+    userId?: string;
+    classId?: string;
+    status?: string;
+  };
 }
 
 async function buildService(opts: BuildOptions = {}) {
@@ -144,35 +172,35 @@ async function buildService(opts: BuildOptions = {}) {
 
   // If headObjectResult is specified, override storage.headObject
   if (opts.headObjectResult) {
-    const origStorage = storage;
-    origStorage.headObject = async () => opts.headObjectResult!;
+    const headObjectResult = opts.headObjectResult;
+    storage.headObject = () => Promise.resolve(headObjectResult);
   }
 
   const fakePrisma = createFakePrismaService({
     enrollment: {
-      findFirst: async () => ({
+      findFirst: () => Promise.resolve({
         id: ENROLLMENT_ID,
         userId: STUDENT_ID,
         classId: "class-0000-0000-0000-000000000001",
       }),
     },
     recording: {
-      findUnique: async () => recordingRepo["_setRecording"] ? makeRecording() : null,
-      update: async () => ({}),
+      findUnique: () => Promise.resolve(makeRecording()),
+      update: () => Promise.resolve({}),
     },
     assessmentItem: {
-      findFirst: async () => ({ prompt: { targetText: "万里赴戎机" } }),
+      findFirst: () => Promise.resolve({ prompt: { targetText: "万里赴戎机" } }),
     },
     speechJob: {
-      create: async () => ({ id: "job-001", status: "CREATED" }),
-      findUnique: async () => ({ id: "job-001", status: "CREATED" }),
-      update: async () => ({ id: "job-001", status: "PROCESSING" }),
+      create: () => Promise.resolve({ id: "job-001", status: "CREATED" }),
+      findUnique: () => Promise.resolve({ id: "job-001", status: "CREATED" }),
+      update: () => Promise.resolve({ id: "job-001", status: "PROCESSING" }),
     },
     ...opts.prismaOverrides,
   });
 
   const fakeConfig = {
-    get: (_key: string, defaultValue?: any) => defaultValue,
+    get: (_key: string, defaultValue?: unknown) => defaultValue,
     getOrThrow: (key: string) => { throw new Error(`Config ${key} not set`); },
   };
 
@@ -202,6 +230,7 @@ describe("RecordingsService", () => {
     it("initializes recording when student owns the enrollment", async () => {
       const { service } = await buildService();
       const result = await service.initRecording(studentAuthA, SCHOOL_A, {
+        schoolId: SCHOOL_A,
         enrollmentId: ENROLLMENT_ID,
         partCount: 3,
         mimeType: "audio/webm",
@@ -214,12 +243,13 @@ describe("RecordingsService", () => {
     it("rejects when enrollment does not belong to the student", async () => {
       const { service } = await buildService({
         prismaOverrides: {
-          enrollment: { findFirst: async () => null },
+          enrollment: { findFirst: () => null },
         },
       });
 
       await expect(
         service.initRecording(studentAuthA, SCHOOL_A, {
+          schoolId: SCHOOL_A,
           enrollmentId: "other-enrollment",
           partCount: 1,
         }),
@@ -230,6 +260,7 @@ describe("RecordingsService", () => {
       const { service } = await buildService();
       await expect(
         service.initRecording(teacherAuthA, SCHOOL_A, {
+          schoolId: SCHOOL_A,
           enrollmentId: ENROLLMENT_ID,
           partCount: 1,
         }),
@@ -241,6 +272,7 @@ describe("RecordingsService", () => {
       // studentAuthB has tenant.schoolId = SCHOOL_B, but we pass SCHOOL_A
       await expect(
         service.initRecording(studentAuthB, SCHOOL_A, {
+          schoolId: SCHOOL_A,
           enrollmentId: ENROLLMENT_ID,
           partCount: 1,
         }),
@@ -255,10 +287,11 @@ describe("RecordingsService", () => {
       const existing = makeRecording({ idempotencyKey: "key-123" });
       const fakeRepo = createFakeRecordingRepo(existing);
       // Override findByIdempotencyKey to return the existing recording
-      fakeRepo.findByIdempotencyKey = async () => existing;
+      fakeRepo.findByIdempotencyKey = () => Promise.resolve(existing);
 
       const { service } = await buildService({ recordingRepo: fakeRepo });
       const result = await service.initRecording(studentAuthA, SCHOOL_A, {
+        schoolId: SCHOOL_A,
         enrollmentId: ENROLLMENT_ID,
         partCount: 3,
         idempotencyKey: "key-123",
@@ -274,6 +307,7 @@ describe("RecordingsService", () => {
     it("initializes simple recording for owning student", async () => {
       const { service } = await buildService();
       const result = await service.initSimpleRecording(studentAuthA, SCHOOL_A, {
+        schoolId: SCHOOL_A,
         enrollmentId: ENROLLMENT_ID,
         mimeType: "audio/webm",
       });
@@ -285,12 +319,13 @@ describe("RecordingsService", () => {
     it("rejects when enrollment does not belong to the student", async () => {
       const { service } = await buildService({
         prismaOverrides: {
-          enrollment: { findFirst: async () => null },
+          enrollment: { findFirst: () => null },
         },
       });
 
       await expect(
         service.initSimpleRecording(studentAuthA, SCHOOL_A, {
+          schoolId: SCHOOL_A,
           enrollmentId: "other-enrollment",
         }),
       ).rejects.toThrow(RecordingForbiddenException);
@@ -360,14 +395,11 @@ describe("RecordingsService", () => {
     it("recovers a missing SpeechJob using the canonical AssessmentItem target text", async () => {
       const recording = makeRecording({ status: "COMPLETE" });
       const fakeRepo = createFakeRecordingRepo(recording);
-      const triggerSpeechProcessing = vi.fn(async () => ({ id: "job-recovered" }));
+      const triggerSpeechProcessing = vi.fn(() => Promise.resolve({ id: "job-recovered" }));
 
       const { service } = await buildService({
         recordingRepo: fakeRepo,
-        speechJobService: { triggerSpeechProcessing } as Pick<
-          SpeechJobService,
-          "triggerSpeechProcessing"
-        >,
+        speechJobService: { triggerSpeechProcessing },
       });
 
       await service.completeRecording(studentAuthA, SCHOOL_A, RECORDING_ID, {
@@ -386,13 +418,13 @@ describe("RecordingsService", () => {
     it("uses the nested canonical delivery stimulus for a question-bank read-aloud item", async () => {
       const recording = makeRecording({ status: "COMPLETE" });
       const fakeRepo = createFakeRecordingRepo(recording);
-      const triggerSpeechProcessing = vi.fn(async () => ({ id: "job-from-delivery-spec" }));
+      const triggerSpeechProcessing = vi.fn(() => Promise.resolve({ id: "job-from-delivery-spec" }));
 
       const { service } = await buildService({
         recordingRepo: fakeRepo,
         prismaOverrides: {
           assessmentItem: {
-            findFirst: async () => ({
+            findFirst: () => Promise.resolve({
               prompt: {
                 stimulus: {
                   type: "TEXT",
@@ -403,10 +435,7 @@ describe("RecordingsService", () => {
             }),
           },
         },
-        speechJobService: { triggerSpeechProcessing } as Pick<
-          SpeechJobService,
-          "triggerSpeechProcessing"
-        >,
+        speechJobService: { triggerSpeechProcessing },
       });
 
       await service.completeRecording(studentAuthA, SCHOOL_A, RECORDING_ID, {
@@ -429,7 +458,7 @@ describe("RecordingsService", () => {
       const { service } = await buildService({
         recordingRepo: fakeRepo,
         prismaOverrides: {
-          enrollment: { findFirst: async () => null },
+          enrollment: { findFirst: () => null },
         },
       });
 
@@ -467,7 +496,7 @@ describe("RecordingsService", () => {
       const { service } = await buildService({
         recordingRepo: fakeRepo,
         prismaOverrides: {
-          enrollment: { findFirst: async () => null },
+          enrollment: { findFirst: () => null },
         },
       });
 
@@ -485,7 +514,7 @@ describe("RecordingsService", () => {
         recordingRepo: fakeRepo,
         prismaOverrides: {
           enrollment: {
-            findFirst: async ({ where }: any) =>
+            findFirst: ({ where }: EnrollmentLookupArgs) => Promise.resolve(
               where.role === "TEACHER"
                 ? { id: "teacher-enrollment" }
                 : {
@@ -493,6 +522,7 @@ describe("RecordingsService", () => {
                     userId: STUDENT_ID,
                     classId: "class-0000-0000-0000-000000000001",
                   },
+            ),
           },
         },
       });
@@ -516,7 +546,7 @@ describe("RecordingsService", () => {
         storage,
         prismaOverrides: {
           enrollment: {
-            findFirst: async ({ where }: any) =>
+            findFirst: ({ where }: EnrollmentLookupArgs) => Promise.resolve(
               where.role === "TEACHER"
                 ? null
                 : {
@@ -524,6 +554,7 @@ describe("RecordingsService", () => {
                     userId: STUDENT_ID,
                     classId: "class-0000-0000-0000-000000000001",
                   },
+            ),
           },
         },
       });
@@ -542,6 +573,7 @@ describe("RecordingsService", () => {
       const { service } = await buildService();
       await expect(
         service.initRecording(studentAuthB, SCHOOL_A, {
+          schoolId: SCHOOL_A,
           enrollmentId: ENROLLMENT_ID,
           partCount: 1,
         }),

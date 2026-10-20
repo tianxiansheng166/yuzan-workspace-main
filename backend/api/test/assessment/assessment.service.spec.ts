@@ -23,8 +23,12 @@ import { AssessmentModule } from "../../src/modules/assessment/assessment.module
 import { AssessmentNotFoundException } from "../../src/modules/assessment/domain/assessment.errors.js";
 import { AssessmentForbiddenException } from "../../src/modules/assessment/domain/assessment.errors.js";
 import { AssessmentConflictException } from "../../src/modules/assessment/domain/assessment.errors.js";
-import type { AssessmentSession, AssessmentItem } from "../../src/modules/assessment/domain/assessment.types.js";
-import { createFakePrismaService, createFakeDatabaseModule } from "../helpers/fake-prisma.service.js";
+import type { AssessmentSession, AssessmentItem, AssessmentItemStatus, AssessmentSessionStatus, AssessmentReport } from "../../src/modules/assessment/domain/assessment.types.js";
+import type { AssessmentSessionRepositoryPort, CreateAssessmentSessionData } from "../../src/modules/assessment/ports/assessment-session-repository.port.js";
+import type { AssessmentItemRepositoryPort, CreateAssessmentItemData } from "../../src/modules/assessment/ports/assessment-item-repository.port.js";
+import type { WrittenAnswerRepositoryPort, SaveWrittenAnswerData } from "../../src/modules/assessment/ports/written-answer-repository.port.js";
+import type { AssessmentReportRepositoryPort, CreateAssessmentReportData } from "../../src/modules/assessment/ports/assessment-report-repository.port.js";
+import { createFakePrismaService, createFakeDatabaseModule, type FakePrismaServiceOverrides } from "../helpers/fake-prisma.service.js";
 import type { AuthContext, Principal, TenantContext } from "../../src/common/security/auth.types.js";
 import { MembershipStatus } from "../../src/common/security/auth.types.js";
 import { MembershipRole } from "../../src/common/security/membership-role.js";
@@ -67,6 +71,7 @@ function makeSession(overrides: Partial<AssessmentSession> = {}): AssessmentSess
     classId: CLASS_ID,
     initiatorUserId: TEACHER_ID,
     type: "READING",
+    purpose: "STANDARD",
     status: "CREATED",
     startedAt: null,
     submittedAt: null,
@@ -105,18 +110,17 @@ function makeItem(overrides: Partial<AssessmentItem> = {}): AssessmentItem {
 
 // ─── Fake repositories ───────────────────────────────────
 
-function createFakeSessionRepo(initialSession: AssessmentSession | null = null) {
+function createFakeSessionRepo(initialSession: AssessmentSession | null = null): AssessmentSessionRepositoryPort & { _setSession(session: AssessmentSession | null): void } {
   let session = initialSession;
 
   return {
     _setSession(s: AssessmentSession | null) { session = s; },
-    findById: async () => session,
-    findByIdAndSchool: async (id: string, schoolId: string) => {
-      if (session && session.id === id && session.schoolId === schoolId) return session;
-      return null;
+    findById: () => Promise.resolve(session),
+    findByIdAndSchool: (id: string, schoolId: string) => {
+      return Promise.resolve(session && session.id === id && session.schoolId === schoolId ? session : null);
     },
-    list: async () => ({ items: session ? [session] : [], nextCursor: null, hasMore: false }),
-    create: async (data: any) => {
+    list: () => Promise.resolve({ items: session ? [session] : [], nextCursor: null, hasMore: false }),
+    create: (data: CreateAssessmentSessionData) => {
       session = makeSession({
         id: SESSION_ID,
         schoolId: data.schoolId,
@@ -126,49 +130,46 @@ function createFakeSessionRepo(initialSession: AssessmentSession | null = null) 
         type: data.type,
         retestOfSessionId: data.retestOfSessionId ?? null,
       });
-      return session;
+      return Promise.resolve(session);
     },
-    updateStatus: async (id: string, status: any, extra?: Partial<AssessmentSession>) => {
-      if (session) {
-        session = { ...session, ...extra, id, status, updatedAt: new Date() } as AssessmentSession;
-      }
-      return session!;
+    updateStatus: (id: string, status: AssessmentSessionStatus, extra?: Partial<AssessmentSession>) => {
+      if (!session) return Promise.reject(new Error("cannot update a missing fake session"));
+      session = { ...session, ...extra, id, status, updatedAt: new Date() };
+      return Promise.resolve(session);
     },
   };
 }
 
-function createFakeItemRepo(initialItems: AssessmentItem[] | null = null) {
+function createFakeItemRepo(initialItems: AssessmentItem[] | null = null): AssessmentItemRepositoryPort & { _setItems(items: AssessmentItem[]): void } {
   let items = initialItems ?? [makeItem()];
 
   return {
     _setItems(i: AssessmentItem[]) { items = i; },
-    findBySessionId: async () => items,
-    findById: async (id: string) => items.find((i) => i.id === id) ?? null,
-    findByIdAndSession: async (id: string, sessionId: string) =>
-      items.find((i) => i.id === id && i.sessionId === sessionId) ?? null,
-    createMany: async (data: any[]) => {
+    findBySessionId: () => Promise.resolve(items),
+    findById: (id: string) => Promise.resolve(items.find((i) => i.id === id) ?? null),
+    findByIdAndSession: (id: string, sessionId: string) =>
+      Promise.resolve(items.find((i) => i.id === id && i.sessionId === sessionId) ?? null),
+    createMany: (data: CreateAssessmentItemData[]) => {
       items = data.map((d, idx) => makeItem({ id: `item-${idx}`, ...d }));
-      return items;
+      return Promise.resolve(items);
     },
-    updateRecordingId: async (itemId: string, recordingId: string) => {
+    updateRecordingId: (itemId: string, recordingId: string) => {
       const item = items.find((i) => i.id === itemId);
-      if (item) return { ...item, recordingId } as AssessmentItem;
-      return makeItem({ recordingId });
+      return Promise.resolve(item ? { ...item, recordingId } : makeItem({ recordingId }));
     },
-    updateStatus: async (itemId: string, status: any) => {
+    updateStatus: (itemId: string, status: AssessmentItemStatus) => {
       const item = items.find((i) => i.id === itemId);
-      if (item) return { ...item, status } as AssessmentItem;
-      return makeItem({ status });
+      return Promise.resolve(item ? { ...item, status } : makeItem({ status }));
     },
-    updateScore: async () => makeItem(),
+    updateScore: () => Promise.resolve(makeItem()),
   };
 }
 
-function createFakeAnswerRepo() {
+function createFakeAnswerRepo(): WrittenAnswerRepositoryPort {
   return {
-    findByItemId: async () => null,
-    findBySessionId: async () => [],
-    upsert: async (data: any) => ({
+    findByItemId: () => Promise.resolve(null),
+    findBySessionId: () => Promise.resolve([]),
+    upsert: (data: SaveWrittenAnswerData) => Promise.resolve({
       id: "answer-001",
       itemId: data.itemId,
       content: data.content,
@@ -180,7 +181,7 @@ function createFakeAnswerRepo() {
       createdAt: now,
       updatedAt: now,
     }),
-    finalize: async (itemId: string) => ({
+    finalize: (itemId: string) => Promise.resolve({
       id: "answer-001",
       itemId,
       content: { text: "answer" },
@@ -195,10 +196,10 @@ function createFakeAnswerRepo() {
   };
 }
 
-function createFakeReportRepo() {
+function createFakeReportRepo(): AssessmentReportRepositoryPort {
   return {
-    findBySessionId: async () => null,
-    create: async (data: any) => ({
+    findBySessionId: () => Promise.resolve(null),
+    create: (data: CreateAssessmentReportData): Promise<AssessmentReport> => Promise.resolve({
       id: "report-001",
       sessionId: data.sessionId,
       schoolId: data.schoolId,
@@ -221,7 +222,7 @@ function createFakeReportRepo() {
 // fake overrides it needs — no shared mutable state.
 
 interface BuildOptions {
-  prismaOverrides?: Record<string, any>;
+  prismaOverrides?: FakePrismaServiceOverrides;
   sessionRepo?: ReturnType<typeof createFakeSessionRepo>;
   itemRepo?: ReturnType<typeof createFakeItemRepo>;
 }
@@ -238,18 +239,18 @@ async function buildService(opts: BuildOptions = {}): Promise<{
 
   const fakePrisma = createFakePrismaService({
     enrollment: {
-      findFirst: async () => ({ id: ENROLLMENT_ID }),
-      findMany: async () => [{ id: ENROLLMENT_ID }],
+      findFirst: () => ({ id: ENROLLMENT_ID }),
+      findMany: () => [{ id: ENROLLMENT_ID }],
     },
     recording: {
-      findFirst: async () => ({ id: RECORDING_ID }),
+      findFirst: () => ({ id: RECORDING_ID }),
     },
     question: {
-      findUnique: async () => ({ prompt: { text: "question" } }),
+      findUnique: () => ({ prompt: { text: "question" } }),
     },
-    auditLog: { create: async () => ({}) },
-    deviceCheckLog: { create: async () => ({}) },
-    assessmentItem: { update: async () => ({}) },
+    auditLog: { create: () => ({}) },
+    deviceCheckLog: { create: () => ({}) },
+    assessmentItem: { update: () => ({}) },
     ...opts.prismaOverrides,
   });
 
@@ -297,7 +298,7 @@ describe("AssessmentService", () => {
       const { service } = await buildService({
         // Admin has no teacher enrollment but should still pass
         prismaOverrides: {
-          enrollment: { findFirst: async () => null, findMany: async () => [] },
+          enrollment: { findFirst: () => null, findMany: () => [] },
         },
       });
       const result = await service.createSession(adminAuthA, SCHOOL_A, {
@@ -325,7 +326,7 @@ describe("AssessmentService", () => {
       const { service } = await buildService({
         // No enrollment found for this teacher, and user is not admin
         prismaOverrides: {
-          enrollment: { findFirst: async () => null, findMany: async () => [] },
+          enrollment: { findFirst: () => null, findMany: () => [] },
         },
       });
       const unassignedTeacher = makeAuth("unassigned-teacher", [MembershipRole.TEACHER], SCHOOL_A);
@@ -461,7 +462,7 @@ describe("AssessmentService", () => {
     it("allows submit when uploaded evidence is not blocked by unsupported analysis", async () => {
       const { service, sessionRepo } = await buildService({
         itemRepo: createFakeItemRepo([makeItem({ recordingId: RECORDING_ID })]),
-        prismaOverrides: { recording: { count: async () => 0 } },
+        prismaOverrides: { recording: { count: () => 0 } },
       });
       sessionRepo._setSession(makeSession({ status: "IN_PROGRESS" }));
 
@@ -473,7 +474,7 @@ describe("AssessmentService", () => {
     it("still blocks submit when a recording has a genuine upload failure", async () => {
       const { service, sessionRepo } = await buildService({
         itemRepo: createFakeItemRepo([makeItem({ recordingId: RECORDING_ID })]),
-        prismaOverrides: { recording: { count: async () => 1 } },
+        prismaOverrides: { recording: { count: () => 1 } },
       });
       sessionRepo._setSession(makeSession({ status: "IN_PROGRESS" }));
 
@@ -522,7 +523,7 @@ describe("AssessmentService", () => {
       sessionRepo._setSession(makeSession({ status: "PROCESSING" }));
       const completed = await sessionRepo.updateStatus(SESSION_ID, "COMPLETED", {
         completedAt: new Date(),
-      } as Partial<AssessmentSession>);
+      });
       expect(completed.status).toBe("COMPLETED");
     });
 
@@ -552,7 +553,7 @@ describe("AssessmentService", () => {
     it("rejects recording not belonging to the student", async () => {
       const { service, sessionRepo } = await buildService({
         prismaOverrides: {
-          recording: { findFirst: async () => null },
+          recording: { findFirst: () => null },
         },
       });
       sessionRepo._setSession(makeSession({ status: "IN_PROGRESS" }));
@@ -565,7 +566,7 @@ describe("AssessmentService", () => {
     it("rejects when student does not own the session", async () => {
       const { service, sessionRepo } = await buildService({
         prismaOverrides: {
-          enrollment: { findFirst: async () => null, findMany: async () => [] },
+          enrollment: { findFirst: () => null, findMany: () => [] },
         },
       });
       sessionRepo._setSession(makeSession({ status: "IN_PROGRESS" }));
@@ -614,7 +615,7 @@ describe("AssessmentService", () => {
     it("returns empty list for student with no enrollments", async () => {
       const { service } = await buildService({
         prismaOverrides: {
-          enrollment: { findFirst: async () => null, findMany: async () => [] },
+          enrollment: { findFirst: () => null, findMany: () => [] },
         },
       });
       const result = await service.listSessions(studentAuthA, SCHOOL_A, { limit: 10 });

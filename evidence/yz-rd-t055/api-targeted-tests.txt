@@ -1,0 +1,17 @@
+
+ RUN  v3.2.7 /home/tian/code/work/yuzan-workspace-t055/backend/api
+
+ ✓ test/assessment/practice.service.spec.ts (20 tests) 24ms
+ ✓ test/speech-job/speech-job.result-policy.spec.ts (5 tests) 17ms
+ ✓ test/speech-job/speech-job.service.spec.ts (19 tests) 33ms
+ ✓ test/assessment/assessment-review.service.spec.ts (2 tests) 10ms
+ ✓ test/assessment/remediation.service.spec.ts (6 tests) 14ms
+ ✓ test/reporting/reporting.service.spec.ts (9 tests) 25ms
+ ✓ test/assessment/student-dashboard.today.service.spec.ts (9 tests) 19ms
+ ✓ test/recordings/recordings.service.spec.ts (21 tests) 61ms
+ ✓ test/assessment/assessment.service.spec.ts (30 tests) 59ms
+
+ Test Files  9 passed (9)
+      Tests  121 passed (121)
+   Start at  12:46:49
+   Duration  1.11s (transform 1.18s, setup 0ms, collect 4.85s, tests 262ms, environment 1ms, prepare 736ms)
