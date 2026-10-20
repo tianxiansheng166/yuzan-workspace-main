@@ -1,0 +1,153 @@
+{
+  "baseline_source": {
+    "sha": "213946cca16adb22acd09ae43ea05c19c31dc4e6",
+    "evidence": "evidence/yz-rd-t063/api-lint-after.json",
+    "accepted_full_api_lint_snapshot": true
+  },
+  "after_measurement": {
+    "method": "Exact full-scope delta derived by replacing the selected file row in the accepted full snapshot with this task’s direct targeted ESLint JSON; no other tracked src/test file changed.",
+    "full_api_lint_rerun": false,
+    "selected_file_targeted_eslint_exit_code": 0
+  },
+  "owned_files": [
+    "backend/api/test/modules/admin/admin-stub.controller.spec.ts"
+  ],
+  "target_file": {
+    "before_errors": 406,
+    "after_errors": 0,
+    "delta": -406,
+    "before_by_rule": {
+      "@typescript-eslint/no-explicit-any": 13,
+      "@typescript-eslint/no-unsafe-argument": 43,
+      "@typescript-eslint/no-unsafe-assignment": 65,
+      "@typescript-eslint/no-unsafe-call": 105,
+      "@typescript-eslint/no-unsafe-member-access": 175,
+      "@typescript-eslint/no-unsafe-return": 2,
+      "@typescript-eslint/no-unused-vars": 2,
+      "@typescript-eslint/require-await": 1
+    },
+    "after_by_rule": {}
+  },
+  "before": {
+    "src_errors": 1,
+    "test_errors": 742,
+    "total_errors": 743,
+    "warnings": 0,
+    "parser_errors": 0
+  },
+  "after": {
+    "src_errors": 1,
+    "test_errors": 336,
+    "total_errors": 337,
+    "warnings": 0,
+    "parser_errors": 0
+  },
+  "delta": {
+    "src_errors": 0,
+    "test_errors": -406,
+    "total_errors": -406,
+    "warnings": 0,
+    "parser_errors": 0
+  },
+  "per_rule": [
+    {
+      "rule": "@typescript-eslint/no-empty-object-type",
+      "before": 1,
+      "removed": 0,
+      "after": 1,
+      "delta": 0
+    },
+    {
+      "rule": "@typescript-eslint/no-explicit-any",
+      "before": 48,
+      "removed": 13,
+      "after": 35,
+      "delta": -13
+    },
+    {
+      "rule": "@typescript-eslint/no-redundant-type-constituents",
+      "before": 1,
+      "removed": 0,
+      "after": 1,
+      "delta": 0
+    },
+    {
+      "rule": "@typescript-eslint/no-unnecessary-type-assertion",
+      "before": 8,
+      "removed": 0,
+      "after": 8,
+      "delta": 0
+    },
+    {
+      "rule": "@typescript-eslint/no-unsafe-argument",
+      "before": 70,
+      "removed": 43,
+      "after": 27,
+      "delta": -43
+    },
+    {
+      "rule": "@typescript-eslint/no-unsafe-assignment",
+      "before": 96,
+      "removed": 65,
+      "after": 31,
+      "delta": -65
+    },
+    {
+      "rule": "@typescript-eslint/no-unsafe-call",
+      "before": 116,
+      "removed": 105,
+      "after": 11,
+      "delta": -105
+    },
+    {
+      "rule": "@typescript-eslint/no-unsafe-enum-comparison",
+      "before": 1,
+      "removed": 0,
+      "after": 1,
+      "delta": 0
+    },
+    {
+      "rule": "@typescript-eslint/no-unsafe-member-access",
+      "before": 204,
+      "removed": 175,
+      "after": 29,
+      "delta": -175
+    },
+    {
+      "rule": "@typescript-eslint/no-unsafe-return",
+      "before": 4,
+      "removed": 2,
+      "after": 2,
+      "delta": -2
+    },
+    {
+      "rule": "@typescript-eslint/no-unused-vars",
+      "before": 34,
+      "removed": 2,
+      "after": 32,
+      "delta": -2
+    },
+    {
+      "rule": "@typescript-eslint/require-await",
+      "before": 144,
+      "removed": 1,
+      "after": 143,
+      "delta": -1
+    },
+    {
+      "rule": "@typescript-eslint/unbound-method",
+      "before": 13,
+      "removed": 0,
+      "after": 13,
+      "delta": 0
+    },
+    {
+      "rule": "prefer-const",
+      "before": 3,
+      "removed": 0,
+      "after": 3,
+      "delta": 0
+    }
+  ],
+  "non_owned_count_changes": []
+}

@@ -1,0 +1,21 @@
+Runtime:
+- PATH=/home/tian/.nvm/versions/node/v24.20.0/bin:$PATH node --version -> v24.20.0
+- PATH=/home/tian/.nvm/versions/node/v24.20.0/bin:$PATH corepack pnpm@10.13.1 --version -> 10.13.1
+
+Offline dependency preparation:
+- PATH=/home/tian/.nvm/versions/node/v24.20.0/bin:$PATH corepack pnpm@10.13.1 install --offline --filter @yuzan/api...
+- PATH=/home/tian/.nvm/versions/node/v24.20.0/bin:$PATH DATABASE_URL=postgresql://unused:unused@127.0.0.1:1/unused corepack pnpm@10.13.1 --filter @yuzan/database generate
+- PATH=/home/tian/.nvm/versions/node/v24.20.0/bin:$PATH corepack pnpm@10.13.1 --filter @yuzan/database build
+
+Baseline:
+- Exact T063 BASE full ESLint JSON and Test TypeScript output were reused from evidence/yz-rd-t063/api-lint-after.json and evidence/yz-rd-t063/test-typecheck-after.txt.
+- The T063 accepted baseline reports 1 src / 742 test / 743 total ESLint errors and 230 Test TypeScript diagnostics.
+
+T066 verification:
+- From backend/api: PATH=/home/tian/.nvm/versions/node/v24.20.0/bin:$PATH ./node_modules/.bin/eslint --format json test/modules/admin/admin-stub.controller.spec.ts
+- From backend/api with DATABASE_URL and QB_RUNTIME_DATABASE_URL unset: PATH=/home/tian/.nvm/versions/node/v24.20.0/bin:$PATH ./node_modules/.bin/vitest run --passWithNoTests --pool=forks --poolOptions.forks.singleFork test/modules/admin/admin-stub.controller.spec.ts
+- From backend/api: PATH=/home/tian/.nvm/versions/node/v24.20.0/bin:$PATH ./node_modules/.bin/tsc -p test/tsconfig.json --noEmit
+- git diff --check
+
+Full lint accounting:
+- No full src/test ESLint rerun was made. The exact full-scope after count and rule deltas in lint-count-comparison.json are calculated by applying the direct post-change ESLint result for the only changed test file to the accepted full T063 JSON snapshot. No other tracked src/test file changed.
