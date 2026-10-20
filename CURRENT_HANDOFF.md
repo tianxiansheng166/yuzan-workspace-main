@@ -3,6 +3,13 @@
 Last updated: 2026-10-20
 Repository: `yuzan-workspace-main`
 
+## YZ-RD-T059 API test lint third slice (2026-10-20)
+
+- `PARTIAL_WITH_DEBT` on `feat/yz-rd-t059-api-test-lint-third-slice`, from exact T055 BASE `04eda78af4e8230d0b26d054c13f7f6781a2bf20`, in an isolated worktree. Eight unremediated test files were cleaned; none overlap T051/T055. T053's active `curriculum` and `modules/admin` test paths were excluded. T058 was checked at its current T057 commit and had no tracked code changes.
+- Full API lint changed from 1,213 errors (1 source / 1,212 test) to 926 (1 source / 925 test), with zero warnings and parser errors. The only source finding remains the unchanged T049 `no-empty-object-type` in `curriculum/ports/prisma-course-version.repository.ts`. All eight owned files pass targeted ESLint; API Vitest passed 94/94 with no skips.
+- Test-project TypeScript remains at 248 diagnostics with 0 new diagnostic identities. Evidence: [`evidence/yz-rd-t059/RESULTS.md`](evidence/yz-rd-t059/RESULTS.md). `READY_TO_MERGE=NO` while full API lint debt remains; `L4_OPEN=OPEN`.
+- No API source, T005, raw mixed question-bank source, `local_sources/`, database runtime, Docker, or L4 path was changed or accessed.
+
 ## YZ-RD-T054 API lint slice integration (2026-10-20)
 
 - `PARTIAL_WITH_DEBT` on `feat/yz-rd-t054-api-lint-slices-rolling-integration`, from exact BASE `987e7321157033001b8548e0c0b4318d9f14e503`. Dedicated worktree. T051 `7a0ed80dc94ccd0932cf5026a262db5856b48eea` was merged no-FF first (`a934926c945ddce6a8a4a3465738fa388478a3da`); T052 `1a1706d765cbd5b67c0e2f18ed58a6a84e06b0ec` was merged no-FF second (`2fdf04d48ca1b64b7595ef11e9ee859fabeff93a`).

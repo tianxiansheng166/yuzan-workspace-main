@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, type DeeplyAllowMatchers, vi } from "vitest";
 import { Test } from "@nestjs/testing";
 import {
   MembershipRole,
@@ -16,6 +16,38 @@ import {
 import { FakeAssignmentRepository } from "./fakes/fake-assignment.repository.js";
 import { assignment } from "./fixtures/assignments.js";
 
+type EnrollmentFindManyArgs = {
+  where: { userId?: string; id?: { in: string[] } };
+};
+type EnrollmentRow = { id?: string; classId: string };
+type SubmissionRow = {
+  enrollmentId: string;
+  status: "NEEDS_REVIEW" | "REVIEWED" | "IN_PROGRESS";
+  attemptNo: number;
+};
+
+function createTargetEnrollmentsFindMany() {
+  return vi.fn((args: EnrollmentFindManyArgs): Promise<EnrollmentRow[]> => {
+    if (args.where.userId === "teacher-1") {
+      return Promise.resolve([{ classId: "class-1" }]);
+    }
+    return Promise.resolve(
+      args.where.id?.in.map((id) => ({ id, classId: "class-1" })) ?? [],
+    );
+  });
+}
+
+function createAssignmentSubmissionsFindMany() {
+  return vi.fn((): Promise<SubmissionRow[]> =>
+    Promise.resolve([]),
+  );
+}
+
+function typedObjectContaining<T extends object>(sample: DeeplyAllowMatchers<T>): T {
+  const matcher: unknown = expect.objectContaining(sample);
+  return matcher as T;
+}
+
 function auth(userId: string, schoolId: string, roles: MembershipRole[]) {
   return createAuthContext(
     "req-1",
@@ -32,26 +64,22 @@ function auth(userId: string, schoolId: string, roles: MembershipRole[]) {
 describe("AssignmentsService", () => {
   let service: AssignmentsService;
   let repo: FakeAssignmentRepository;
-  let targetEnrollmentsFindMany: ReturnType<typeof vi.fn>;
-  let assignmentSubmissionsFindMany: ReturnType<typeof vi.fn>;
+  let targetEnrollmentsFindMany: ReturnType<typeof createTargetEnrollmentsFindMany>;
+  let assignmentSubmissionsFindMany: ReturnType<typeof createAssignmentSubmissionsFindMany>;
 
   beforeEach(async () => {
     repo = new FakeAssignmentRepository();
-    targetEnrollmentsFindMany = vi.fn().mockImplementation(async ({ where }: any) => {
-      if (where.userId === "teacher-1") return [{ classId: "class-1" }];
-      if (where.id?.in) return where.id.in.map((id: string) => ({ id, classId: "class-1" }));
-      return [];
-    });
-    assignmentSubmissionsFindMany = vi.fn().mockResolvedValue([]);
+    targetEnrollmentsFindMany = createTargetEnrollmentsFindMany();
+    assignmentSubmissionsFindMany = createAssignmentSubmissionsFindMany();
 
     const moduleRef = await Test.createTestingModule({
       imports: [
         createFakeDatabaseModule(
           createFakePrismaService({
-            courseVersion: { findFirst: async () => ({ id: "cv-1" }) },
-            class: { findFirst: async () => ({ id: "class-1" }) },
+            courseVersion: { findFirst: () => ({ id: "cv-1" }) },
+            class: { findFirst: () => ({ id: "class-1" }) },
             enrollment: {
-              findFirst: async () => ({
+              findFirst: () => ({
                 id: "teacher-enrollment",
                 classId: "class-1",
               }),
@@ -67,9 +95,9 @@ describe("AssignmentsService", () => {
       .useValue(repo)
       .overrideProvider(ASSIGNMENT_LOOKUP)
       .useValue({
-        findSummaryById: async () => null,
-        isOpen: async () => false,
-        listByEnrollment: async () => [],
+        findSummaryById: () => Promise.resolve(null),
+        isOpen: () => Promise.resolve(false),
+        listByEnrollment: () => Promise.resolve([]),
       })
       .compile();
 
@@ -151,12 +179,14 @@ describe("AssignmentsService", () => {
           },
         ],
       });
-      targetEnrollmentsFindMany.mockImplementation(async ({ where }: any) => {
-        if (where.userId === "teacher-1") return [{ classId: "class-1" }];
-        return [
+      targetEnrollmentsFindMany.mockImplementation((args) => {
+        if (args.where.userId === "teacher-1") {
+          return Promise.resolve([{ classId: "class-1" }]);
+        }
+        return Promise.resolve([
           { id: "student-enrollment-1", classId: "class-1" },
           { id: "student-enrollment-2", classId: "class-1" },
-        ];
+        ]);
       });
       assignmentSubmissionsFindMany.mockResolvedValue([
         { enrollmentId: "student-enrollment-1", status: "NEEDS_REVIEW", attemptNo: 2 },
@@ -174,8 +204,8 @@ describe("AssignmentsService", () => {
         needsReviewCount: 1,
         submissionRate: 50,
       });
-      expect(assignmentSubmissionsFindMany).toHaveBeenCalledWith(expect.objectContaining({
-        where: expect.objectContaining({ enrollmentId: { in: ["student-enrollment-1", "student-enrollment-2"] } }),
+      expect(assignmentSubmissionsFindMany).toHaveBeenCalledWith(typedObjectContaining({
+        where: typedObjectContaining({ enrollmentId: { in: ["student-enrollment-1", "student-enrollment-2"] } }),
       }));
     });
   });

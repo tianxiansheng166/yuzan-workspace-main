@@ -1,0 +1,10 @@
+{
+  "command": "corepack pnpm --filter @yuzan/api exec tsc -p test/tsconfig.json --noEmit",
+  "identity_scheme": "file path + TypeScript diagnostic code + first-line message",
+  "baselineDiagnostics": 248,
+  "finalDiagnostics": 248,
+  "baselineUniqueIdentities": 140,
+  "finalUniqueIdentities": 140,
+  "addedIdentities": [],
+  "removedIdentities": []
+}

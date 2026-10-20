@@ -16,9 +16,6 @@ import { CLASS_REPOSITORY } from "../../src/modules/classes/ports/class-reposito
 import { createFakeDatabaseModule, createFakePrismaService } from "../helpers/fake-prisma.service.js";
 import { FakeClassRepository } from "./fakes/fake-class.repository.js";
 import { classEntity, studentEnrollment } from "./fixtures/classes.js";
-import { school } from "./fixtures/schools.js";
-import { FakeSchoolRepository } from "./fakes/fake-school.repository.js";
-import { SCHOOL_REPOSITORY } from "../../src/modules/organizations/ports/school-repository.port.js";
 
 interface CapturedError {
   status: number;
@@ -49,11 +46,9 @@ async function expectClassNotFound(promise: Promise<unknown>): Promise<void> {
 describe("ClassesController", () => {
   let controller: ClassesController;
   let classRepo: FakeClassRepository;
-  let schoolRepo: FakeSchoolRepository;
 
   beforeEach(async () => {
     classRepo = new FakeClassRepository();
-    schoolRepo = new FakeSchoolRepository();
 
     const moduleRef = await Test.createTestingModule({
       imports: [createFakeDatabaseModule(createFakePrismaService()), ClassesModule],
@@ -324,9 +319,16 @@ describe("ClassesController", () => {
         .overrideProvider(AUTH_CONTEXT_SOURCE)
         .useValue(new StubAuthContextSource())
         .compile();
-      const ctrl = moduleRef.get(ClassesController);
+      void moduleRef.get(ClassesController);
 
-      const roles = reflector.get("requiredRoles", ctrl.listClassMembers);
+      const listClassMembersHandler: unknown = Object.getOwnPropertyDescriptor(
+        ClassesController.prototype,
+        "listClassMembers",
+      )?.value;
+      if (typeof listClassMembersHandler !== "function") {
+        throw new Error("expected the listClassMembers handler");
+      }
+      const roles = reflector.get<MembershipRole[]>("requiredRoles", listClassMembersHandler);
       expect(roles).not.toContain(MembershipRole.STUDENT);
     });
 
@@ -591,7 +593,7 @@ describe("ClassesController", () => {
 
     it("fails closed when repository is unavailable", async () => {
       const moduleRef = await Test.createTestingModule({
-        imports: [createFakeDatabaseModule(createFakePrismaService({ class: { findFirst: async () => { throw new Error("DB unavailable"); } } })), ClassesModule],
+        imports: [createFakeDatabaseModule(createFakePrismaService({ class: { findFirst: () => { throw new Error("DB unavailable"); } } })), ClassesModule],
       })
         .overrideProvider(AUTH_CONTEXT_SOURCE)
         .useValue(new StubAuthContextSource())
@@ -609,9 +611,10 @@ describe("ClassesController", () => {
         { schoolId: "school-a" },
       );
 
-      await expect(
+      const error = await captureError(
         service.listClassMembers(auth, "school-a", "class-1"),
-      ).rejects.toThrow(expect.objectContaining({ status: 503 }));
+      );
+      expect(error.status).toBe(503);
     });
 
     it("does not leak classId or member details in not-found response", async () => {
