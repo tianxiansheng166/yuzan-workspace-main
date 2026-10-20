@@ -1,0 +1,38 @@
+TASK_ID=YZ-RD-T058
+WORKTREE=/home/tian/code/work/yuzan-workspace-t058
+BASE=6f0eaa37daf03ddb7fcbb2f8846688ae1e60cac5
+MERGE_SOURCE=04eda78af4e8230d0b26d054c13f7f6781a2bf20
+
+Pre-merge API lint (cwd: backend/api):
+  ./node_modules/.bin/eslint src test --format json
+
+Post-merge API lint (cwd: backend/api):
+  ./node_modules/.bin/eslint src test --format json
+
+Test-project TypeScript baseline and post-merge (cwd: backend/api):
+  ./node_modules/.bin/tsc -p test/tsconfig.json --noEmit --pretty false
+
+T055 affected API tests (cwd: backend/api, via local Vitest binary):
+  ./node_modules/.bin/vitest run --pool=forks --poolOptions.forks.singleFork --passWithNoTests \
+    test/assessment/assessment-review.service.spec.ts \
+    test/assessment/assessment.service.spec.ts \
+    test/assessment/practice.service.spec.ts \
+    test/assessment/remediation.service.spec.ts \
+    test/assessment/student-dashboard.today.service.spec.ts \
+    test/recordings/recordings.service.spec.ts \
+    test/reporting/reporting.service.spec.ts \
+    test/speech-job/speech-job.result-policy.spec.ts \
+    test/speech-job/speech-job.service.spec.ts
+
+Course-practice and student-course API tests (cwd: backend/api):
+  ./node_modules/.bin/vitest run --pool=forks --poolOptions.forks.singleFork --passWithNoTests \
+    test/curriculum test/student-courses/student-courses.service.spec.ts
+
+Contracts (repository pnpm shim 10.13.1):
+  pnpm --filter @yuzan/contracts test
+
+An initial Contracts invocation through Corepack failed because the nested
+generator test resolved pnpm 11.7.0. Repeating it through the repository pnpm
+shim resolved the declared pnpm 10.13.1 and passed 6/6.
+
+No E2E, importer, corpus-scan, Level 4, Docker, or runtime command was run.

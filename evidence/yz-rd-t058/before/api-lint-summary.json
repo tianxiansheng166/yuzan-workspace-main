@@ -1,0 +1,20 @@
+{
+  "src": {
+    "files": 426,
+    "errors": 0,
+    "warnings": 0,
+    "parserErrors": 0
+  },
+  "test": {
+    "files": 164,
+    "errors": 1771,
+    "warnings": 0,
+    "parserErrors": 0
+  },
+  "total": {
+    "files": 590,
+    "errors": 1771,
+    "warnings": 0,
+    "parserErrors": 0
+  }
+}

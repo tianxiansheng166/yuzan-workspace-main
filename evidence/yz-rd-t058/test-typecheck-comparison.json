@@ -1,0 +1,31 @@
+{
+  "command": "./node_modules/.bin/tsc -p test/tsconfig.json --noEmit --pretty false",
+  "identity": "relative file + TypeScript diagnostic code + message (line/column excluded)",
+  "before": 268,
+  "after": 248,
+  "new": 0,
+  "resolved": 20,
+  "new_diagnostics": [],
+  "resolved_diagnostics": [
+    "test/assessment/assessment-review.service.spec.ts|TS2741|Property 'purpose' is missing in type '{ id: string; schoolId: string; enrollmentId: string; classId: string; initiatorUserId: string; type: \"MIXED\"; status: \"PROCESSING\"; startedAt: Date; submittedAt: Date; completedAt: null; retestOfSessionId: null; revision: number; createdAt: Date; updatedAt: Date; }' but required in type 'AssessmentSession'.",
+    "test/assessment/assessment.service.spec.ts|TS2375|Type '{ id: string; schoolId: string; enrollmentId: string; classId: string; initiatorUserId: string; type: AssessmentType; purpose?: AssessmentSessionPurpose; ... 9 more ...; updatedAt: Date; }' is not assignable to type 'AssessmentSession' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.",
+    "test/assessment/practice.service.spec.ts|TS2532|Object is possibly 'undefined'.",
+    "test/assessment/practice.service.spec.ts|TS2532|Object is possibly 'undefined'.",
+    "test/assessment/remediation.service.spec.ts|TS2532|Object is possibly 'undefined'.",
+    "test/assessment/remediation.service.spec.ts|TS2532|Object is possibly 'undefined'.",
+    "test/recordings/recordings.service.spec.ts|TS2322|Type 'Promise<{ exists: boolean; contentLength?: number; }>' is not assignable to type 'Promise<{ exists: boolean; contentLength: number; }>'.",
+    "test/recordings/recordings.service.spec.ts|TS2345|Argument of type '{ enrollmentId: string; partCount: number; mimeType: string; }' is not assignable to parameter of type 'InitRecordingInput'.",
+    "test/recordings/recordings.service.spec.ts|TS2345|Argument of type '{ enrollmentId: string; partCount: number; }' is not assignable to parameter of type 'InitRecordingInput'.",
+    "test/recordings/recordings.service.spec.ts|TS2345|Argument of type '{ enrollmentId: string; partCount: number; }' is not assignable to parameter of type 'InitRecordingInput'.",
+    "test/recordings/recordings.service.spec.ts|TS2345|Argument of type '{ enrollmentId: string; partCount: number; }' is not assignable to parameter of type 'InitRecordingInput'.",
+    "test/recordings/recordings.service.spec.ts|TS2345|Argument of type '{ enrollmentId: string; partCount: number; }' is not assignable to parameter of type 'InitRecordingInput'.",
+    "test/recordings/recordings.service.spec.ts|TS2322|Type 'Promise<Recording>' is not assignable to type 'Promise<null>'.",
+    "test/recordings/recordings.service.spec.ts|TS2345|Argument of type '{ enrollmentId: string; partCount: number; idempotencyKey: string; }' is not assignable to parameter of type 'InitRecordingInput'.",
+    "test/recordings/recordings.service.spec.ts|TS2345|Argument of type '{ enrollmentId: string; mimeType: string; }' is not assignable to parameter of type 'Omit<InitRecordingInput, \"partCount\">'.",
+    "test/recordings/recordings.service.spec.ts|TS2345|Argument of type '{ enrollmentId: string; }' is not assignable to parameter of type 'Omit<InitRecordingInput, \"partCount\">'.",
+    "test/recordings/recordings.service.spec.ts|TS2352|Conversion of type '{ triggerSpeechProcessing: Mock<() => Promise<{ id: string; }>>; }' to type 'Pick<SpeechJobService, \"triggerSpeechProcessing\">' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.",
+    "test/recordings/recordings.service.spec.ts|TS2352|Conversion of type '{ triggerSpeechProcessing: Mock<() => Promise<{ id: string; }>>; }' to type 'Pick<SpeechJobService, \"triggerSpeechProcessing\">' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.",
+    "test/reporting/reporting.service.spec.ts|TS2416|Property 'create' in type 'FakeReportRepository' is not assignable to the same property in base type 'ReportRepositoryPort'.",
+    "test/speech-job/speech-job.service.spec.ts|TS18048|'fakePrisma.speechJob' is possibly 'undefined'."
+  ]
+}

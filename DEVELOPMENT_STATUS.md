@@ -1,5 +1,12 @@
 # Development status
 
+## YZ-RD-T058 — unified product and test-quality integration (2026-10-20)
+
+- COMPLETE on independent branch `feat/yz-rd-t058-unified-product-test-quality-integration`, based on exact T057 `6f0eaa37daf03ddb7fcbb2f8846688ae1e60cac5`. No-FF merge `ee2bb39e8bf7d1a44cd926f96bdd0f56cfdff22b` has T057 as first parent and T055 `04eda78af4e8230d0b26d054c13f7f6781a2bf20` as second parent. The merge adds only the nine T055 API test repairs and T055 evidence; no app, contract, or ESLint config changes.
+- Actual API lint counts with the unified config: `src 0 / test 1,203 / total 1,203` after merge, down from `0 / 1,771 / 1,771`; no warnings or parser errors. Test TypeScript diagnostics fell from 268 to 248, with zero new and 20 resolved. Focused API tests passed 208/208 across 14 files; Contracts passed 6/6.
+- T049 course-practice write contract and T057 teaching platform remain intact. `READY_TO_MERGE=NO` because 1,203 API test lint errors remain and T056 still awaits the Owner-approved isolated Level 1 source package. `E2E_NOT_RUN_SAFETY_GATE`; this task ran no E2E, importer, corpus scan, Level 4 read, or runtime flow. No T005 protected path changed.
+- Full evidence: [`evidence/yz-rd-t058/RESULTS.md`](evidence/yz-rd-t058/RESULTS.md), including the actual merge graph and zero-conflict inspection.
+
 ## YZ-RD-T053 — unified course authoring and speech loop (2026-10-20)
 
 COMPLETE / NATIVE CROSS-ROLE E2E PASS / `READY_TO_MERGE=NO` due the unwaived full API lint gate. Independent branch `feat/yz-rd-t053-course-authoring-unified-student-teacher` starts from T050 `69eff46965b5c0bdd418a490319275aa7acfc4ab`; no-FF merge `3de27d667c65b8f3d9dafb98ce2c53aa001b5162` has accepted T049 `0d9dca9765b37c8817c0a2bbebfa918fdbd64494` as its second parent.

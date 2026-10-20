@@ -1,0 +1,44 @@
+Graph command: git log --graph --oneline --decorate --boundary --max-count=24 ee2bb39e8bf7d1a44cd926f96bdd0f56cfdff22b
+
+*   ee2bb39 (HEAD -> feat/yz-rd-t058-unified-product-test-quality-integration) merge: integrate T055 API test lint fixes into T057
+|\
+| * 04eda78 (origin/feat/yz-rd-t055-api-test-lint-second-slice, feat/yz-rd-t059-api-test-lint-third-slice, feat/yz-rd-t055-api-test-lint-second-slice) fix(api-test): type second lint slice
+* | 6f0eaa3 (origin/feat/yz-rd-t057-course-product-quality-convergence, feat/yz-rd-t057-course-product-quality-convergence) docs(T057): record lint merge and safety evidence
+* | 6230336 fix(api): clear T057 course lint regressions
+* | 6570346 Merge commit '03cd9661651cedff18a0b12c564e1b843643724e' into feat/yz-rd-t057-course-product-quality-convergence
+|\|
+| * 03cd966 (origin/feat/yz-rd-t054-api-lint-slices-rolling-integration, feat/yz-rd-t054-api-lint-slices-rolling-integration) fix(api): complete T054 lint slice integration evidence
+| *   2fdf04d merge: integrate T052 API source lint slice
+| |\
+| | * 1a1706d (origin/feat/yz-rd-t052-api-source-lint-remaining-60, feat/yz-rd-t052-api-source-lint-remaining-60) fix(api): clear remaining source lint debt
+| * |   a934926 merge: integrate T051 API test lint slice
+| |\ \
+| | |/
+| |/|
+| | * 7a0ed80 (origin/feat/yz-rd-t051-api-test-lint-first-slice, feat/yz-rd-t051-api-test-lint-first-slice) test(api): type assessment test fixtures
+| |/
+| * 987e732 (origin/feat/yz-rd-t041-api-lint-debt-first-slice, feat/yz-rd-t041-api-lint-debt-first-slice) fix(api): reduce lint debt with typed project slice
+* | bd49ce3 (origin/feat/yz-rd-t053-course-authoring-unified-student-teacher, feat/yz-rd-t053-course-authoring-unified-student-teacher) docs(T053): add formal report viewport captures
+* | 6947913 docs(T053): add Today and practice runner captures
+* | a1ab54e docs(T053): add course viewport captures
+* | 310cd6c docs(T053): add teacher viewport captures
+* | 7ffbd21 docs(T053): add native evidence and API lint gate
+* | 6138ed6 feat(T053): enable unified teacher course authoring
+* |   3de27d6 Merge commit '0d9dca9765b37c8817c0a2bbebfa918fdbd64494' into feat/yz-rd-t053-course-authoring-unified-student-teacher
+|\ \
+| * | 0d9dca9 (origin/feat/yz-rd-t049-teacher-course-practice-authoring-contract, feat/yz-rd-t049-teacher-course-practice-authoring-contract) feat(curriculum): add course practice authoring contract
+| * | cd17360 (origin/feat/yz-rd-t040-course-to-speech-player, feat/yz-rd-t040-course-to-speech-player) feat(student): connect course activities to speech player
+* | | 69eff46 (origin/feat/yz-rd-t050-integrated-teacher-speech-review, feat/yz-rd-t050-integrated-teacher-speech-review) docs(T050): complete acceptance evidence
+* | | 7b7780b feat(T050): integrate teacher speech review and verify cross-role flow
+* | |   383f292 merge(T050): integrate accepted T048 teacher review
+|\ \ \
+| * | | 23ea9e3 (origin/feat/yz-rd-t048-teacher-speech-review-feedback-ux, feat/yz-rd-t048-teacher-speech-review-feedback-ux) feat(T048): refine teacher speech review experience
+| |/ /
+o | | 598fd18 (origin/feat/yz-rd-t047-mobile-first-unified-product, feat/yz-rd-t047-mobile-first-unified-product) test(T047): add course and oral practice screenshots
+| o | 0f6ea37 (feat/yz-rd-t046-personalized-speech-ux-integration) test(T046): verify personalized speech integration
+| | o b3a731b (origin/feat/yz-rd-t033-multirole-web-rolling-integration, feat/yz-rd-t033-multirole-web-rolling-integration) test(t033): verify multi-role platform integration
+
+Merge object fields:
+commit=ee2bb39e8bf7d1a44cd926f96bdd0f56cfdff22b
+parents=6f0eaa37daf03ddb7fcbb2f8846688ae1e60cac5 04eda78af4e8230d0b26d054c13f7f6781a2bf20
+subject=merge: integrate T055 API test lint fixes into T057
