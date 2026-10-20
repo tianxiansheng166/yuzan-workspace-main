@@ -1,0 +1,29 @@
+
+ RUN  v3.2.7 /home/tian/code/work/yuzan-workspace-t062/backend/api
+
+ ✓ test/assessment/assessment.service.spec.ts (30 tests) 44ms
+ ✓ test/student-courses/student-courses.service.spec.ts (32 tests) 12ms
+ ✓ test/curriculum/curriculum.service.spec.ts (26 tests) 7ms
+ ✓ test/assessment/remediation.service.spec.ts (6 tests) 5ms
+ ✓ test/recordings/recordings.service.spec.ts (21 tests) 14ms
+ ✓ test/assessment/practice.service.spec.ts (20 tests) 6ms
+ ✓ test/speech-job/speech-job.service.spec.ts (19 tests) 11ms
+ ✓ test/assessment/student-dashboard.today.service.spec.ts (9 tests) 5ms
+ ✓ test/assessment/assessment-review.service.spec.ts (2 tests) 3ms
+ ✓ test/curriculum/publishing.validator.spec.ts (13 tests) 2ms
+stdout | test/curriculum/curriculum.controller.spec.ts > CurriculumController > rejects unknown role via AuthenticationGuard
+{"type":"SECURITY","requestId":"req-1","code":"UNKNOWN_ROLE","method":"GET","path":"/schools/school-a/course-versions","event":"AUTHORIZATION_DENIED"}
+
+stdout | test/curriculum/curriculum.controller.spec.ts > CurriculumController > rejects client-forged schoolId via TenantAuthorizationGuard
+{"type":"SECURITY","requestId":"req-1","code":"FORBIDDEN_TENANT","schoolId":"school-a","method":"GET","path":"/schools/school-b/course-versions","userId":"teacher-1","event":"AUTHORIZATION_DENIED"}
+
+ ✓ test/curriculum/curriculum.controller.spec.ts (10 tests) 32ms
+ ✓ test/speech-job/speech-job.result-policy.spec.ts (5 tests) 4ms
+ ✓ test/reporting/reporting.service.spec.ts (9 tests) 7ms
+ ✓ test/curriculum/curriculum.policy.spec.ts (6 tests) 1ms
+
+ Test Files  14 passed (14)
+      Tests  208 passed (208)
+   Start at  14:26:16
+   Duration  1.28s (transform 431ms, setup 0ms, collect 957ms, tests 153ms, environment 0ms, prepare 42ms)
+

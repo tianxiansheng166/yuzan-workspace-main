@@ -1,5 +1,13 @@
 # Development status
 
+## YZ-RD-T062 — T059 third API test lint slice integration (2026-10-20)
+
+COMPLETE on independent branch `feat/yz-rd-t062-unified-product-lint-third-slice-integration`. No-FF merge `860c740394183e275853b3598ce4cf63655a80b7` preserves exact parents T058 BASE `736cb9bdc98866f15be586a7410749182ace0d29` and T059 `f147138b570971d44815eebf769215a6ade5a08e`. The accepted T058 application tree remains intact; the merge changes the eight T059 API tests and their evidence only.
+
+With the unified ESLint config, API lint fell from `src 0 / test 1,203 / total 1,203` to `src 0 / test 916 / total 916`, with zero warnings and parser errors. T059 raw JSON showed its own post-slice result was `src 1 / test 925 / total 926`; the T059 RESULTS report's 901/900 arithmetic was corrected. Test TypeScript remains at 248 diagnostics with zero new identities. T059 API tests passed 94/94, existing course/student-course/review/recording/SpeechJob/report API tests passed 208/208 across 14 files, and Contracts passed 6/6.
+
+`READY_TO_MERGE=NO` while 916 API test lint errors remain; the separate T056 owner source gate is also still open. No question-bank source, importer, Level 4, Docker, E2E, or runtime was accessed. Full evidence: [evidence/yz-rd-t062/RESULTS.md](evidence/yz-rd-t062/RESULTS.md).
+
 ## YZ-RD-T058 — unified product and test-quality integration (2026-10-20)
 
 - COMPLETE on independent branch `feat/yz-rd-t058-unified-product-test-quality-integration`, based on exact T057 `6f0eaa37daf03ddb7fcbb2f8846688ae1e60cac5`. No-FF merge `ee2bb39e8bf7d1a44cd926f96bdd0f56cfdff22b` has T057 as first parent and T055 `04eda78af4e8230d0b26d054c13f7f6781a2bf20` as second parent. The merge adds only the nine T055 API test repairs and T055 evidence; no app, contract, or ESLint config changes.

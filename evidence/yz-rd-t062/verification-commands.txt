@@ -1,0 +1,46 @@
+Task-owned worktree: /home/tian/code/work/yuzan-workspace-t062
+BASE: 736cb9bdc98866f15be586a7410749182ace0d29
+MERGE_SOURCE: f147138b570971d44815eebf769215a6ade5a08e
+
+Offline dependency installation:
+  pnpm install --offline --frozen-lockfile
+  DATABASE_URL=postgresql://placeholder:placeholder@127.0.0.1:1/placeholder pnpm --filter @yuzan/database generate
+  pnpm --filter @yuzan/database build
+
+Unified API ESLint (cwd: backend/api):
+  ./node_modules/.bin/eslint src test --format json
+
+Test TypeScript (cwd: backend/api):
+  ./node_modules/.bin/tsc -p test/tsconfig.json --noEmit --pretty false
+
+T059 changed API tests (cwd: backend/api; database variables unset):
+  env -u DATABASE_URL -u QB_RUNTIME_DATABASE_URL ./node_modules/.bin/vitest run --pool=forks --poolOptions.forks.singleFork --passWithNoTests \
+    test/classes/classes.supplementary-practice.spec.ts \
+    test/modules/assignments/assignments.service.spec.ts \
+    test/modules/assignments/publishing.spec.ts \
+    test/modules/submissions/submissions.service.spec.ts \
+    test/organizations/classes.controller.spec.ts \
+    test/organizations/classes.teacher-scope.spec.ts \
+    test/teacher-invitations/teacher-invitations.service.spec.ts \
+    test/teacher/teacher-dashboard.service.spec.ts
+
+Product-contract API regressions (cwd: backend/api; database variables unset):
+  env -u DATABASE_URL -u QB_RUNTIME_DATABASE_URL ./node_modules/.bin/vitest run --pool=forks --poolOptions.forks.singleFork --passWithNoTests \
+    test/assessment/assessment-review.service.spec.ts \
+    test/assessment/assessment.service.spec.ts \
+    test/assessment/practice.service.spec.ts \
+    test/assessment/remediation.service.spec.ts \
+    test/assessment/student-dashboard.today.service.spec.ts \
+    test/recordings/recordings.service.spec.ts \
+    test/reporting/reporting.service.spec.ts \
+    test/speech-job/speech-job.result-policy.spec.ts \
+    test/speech-job/speech-job.service.spec.ts \
+    test/curriculum \
+    test/student-courses/student-courses.service.spec.ts
+
+Contracts (repository pnpm 10.13.1):
+  pnpm --filter @yuzan/contracts test
+
+Additional inspection:
+  git diff --check 736cb9bdc98866f15be586a7410749182ace0d29
+  git diff --quiet 736cb9bdc98866f15be586a7410749182ace0d29 HEAD -- backend/api/src backend/api/eslint.config.mjs frontend packages/contracts infra/database

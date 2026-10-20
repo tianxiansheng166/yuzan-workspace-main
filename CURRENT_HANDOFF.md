@@ -3,6 +3,14 @@
 Last updated: 2026-10-20
 Repository: `yuzan-workspace-main`
 
+## YZ-RD-T062 — T059 third API test lint slice integration (2026-10-20)
+
+- COMPLETE on independent branch `feat/yz-rd-t062-unified-product-lint-third-slice-integration`. No-FF merge `860c740394183e275853b3598ce4cf63655a80b7` has exact T058 BASE `736cb9bdc98866f15be586a7410749182ace0d29` as first parent and T059 `f147138b570971d44815eebf769215a6ade5a08e` as second parent.
+- T059's original lint JSON confirms 287 errors removed: `src 1 / test 1,212 / total 1,213` before and `src 1 / test 925 / total 926` after, with zero warnings/parser errors. Corrected the T059 report's inconsistent 901/900 counts to 926 total (925 test + 1 source).
+- Unified API lint after integration: `src 0 / test 916 / total 916`, zero warnings/parser errors. Test-project TypeScript remains at 248 diagnostics with zero new identities. T059's eight API tests pass 94/94; 14 existing course/student-course/review/recording/SpeechJob/report tests pass 208/208; Contracts pass 6/6.
+- Application, Contracts, database, frontend, and ESLint configuration source remain unchanged from T058 BASE. `READY_TO_MERGE=NO` while 916 test lint errors and the separate T056 owner source gate remain. No raw question-bank source, importer, L4, E2E, Docker, or runtime was used; `L4_OPEN=NO` for this task.
+- Target `AGENTS.md` lacks the `AA-DEV-V2.2` marker and this task card supplied no separate Lane policy reference; the root `/home/tian/code/AGENTS.md` baseline and explicit task limits governed. Full evidence: [`evidence/yz-rd-t062/RESULTS.md`](evidence/yz-rd-t062/RESULTS.md).
+
 ## YZ-RD-T058 — unified product and test-quality integration (2026-10-20)
 
 - COMPLETE on independent branch `feat/yz-rd-t058-unified-product-test-quality-integration`, based on exact T057 `6f0eaa37daf03ddb7fcbb2f8846688ae1e60cac5`. No-FF merge `ee2bb39e8bf7d1a44cd926f96bdd0f56cfdff22b` has T057 as first parent and T055 `04eda78af4e8230d0b26d054c13f7f6781a2bf20` as second parent. The merge adds only the nine T055 API test repairs and T055 evidence; no app, contract, or ESLint config changes.

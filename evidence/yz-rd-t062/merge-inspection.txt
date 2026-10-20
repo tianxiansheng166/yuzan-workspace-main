@@ -1,0 +1,13 @@
+Merge command: git merge --no-ff --no-commit f147138b570971d44815eebf769215a6ade5a08e
+Result: one documentation conflict in CURRENT_HANDOFF.md; both independent T058 and T059 task records were retained. No application or test source conflict remained.
+
+The final merge is commit 860c740394183e275853b3598ce4cf63655a80b7 with exact parents recorded in merge-graph.txt.
+
+Product/source comparison against BASE 736cb9bdc98866f15be586a7410749182ace0d29 is clean for:
+- backend/api/src
+- backend/api/eslint.config.mjs
+- frontend
+- packages/contracts
+- infra/database
+
+The merge delta contains the eight T059 API test repairs, T059's original evidence, and handoff history. T005 protected paths were not modified.

@@ -1,0 +1,86 @@
+{
+  "T059 before": {
+    "files": 589,
+    "src": {
+      "files": 425,
+      "errors": 1,
+      "warnings": 0,
+      "fatal": 0,
+      "parserErrors": 0
+    },
+    "test": {
+      "files": 164,
+      "errors": 1212,
+      "warnings": 0,
+      "fatal": 0,
+      "parserErrors": 0
+    },
+    "other": {
+      "files": 0,
+      "errors": 0,
+      "warnings": 0,
+      "fatal": 0,
+      "parserErrors": 0
+    },
+    "errors": 1213,
+    "warnings": 0,
+    "fatal": 0,
+    "parserErrors": 0
+  },
+  "T059 after": {
+    "files": 589,
+    "src": {
+      "files": 425,
+      "errors": 1,
+      "warnings": 0,
+      "fatal": 0,
+      "parserErrors": 0
+    },
+    "test": {
+      "files": 164,
+      "errors": 925,
+      "warnings": 0,
+      "fatal": 0,
+      "parserErrors": 0
+    },
+    "other": {
+      "files": 0,
+      "errors": 0,
+      "warnings": 0,
+      "fatal": 0,
+      "parserErrors": 0
+    },
+    "errors": 926,
+    "warnings": 0,
+    "fatal": 0,
+    "parserErrors": 0
+  },
+  "T062 after": {
+    "files": 590,
+    "src": {
+      "files": 426,
+      "errors": 0,
+      "warnings": 0,
+      "fatal": 0,
+      "parserErrors": 0
+    },
+    "test": {
+      "files": 164,
+      "errors": 916,
+      "warnings": 0,
+      "fatal": 0,
+      "parserErrors": 0
+    },
+    "other": {
+      "files": 0,
+      "errors": 0,
+      "warnings": 0,
+      "fatal": 0,
+      "parserErrors": 0
+    },
+    "errors": 916,
+    "warnings": 0,
+    "fatal": 0,
+    "parserErrors": 0
+  }
+}

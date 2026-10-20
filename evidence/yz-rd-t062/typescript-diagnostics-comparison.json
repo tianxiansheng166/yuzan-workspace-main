@@ -1,0 +1,16 @@
+{
+  "command": "./node_modules/.bin/tsc -p test/tsconfig.json --noEmit --pretty false",
+  "baseline": "T058 accepted BASE 736cb9bdc98866f15be586a7410749182ace0d29, evidence/yz-rd-t058/after-test-typecheck.txt",
+  "identity_scheme": "relative file path + TypeScript diagnostic code + first-line message (line/column excluded)",
+  "baselineDiagnostics": 248,
+  "finalDiagnostics": 248,
+  "baselineUniqueIdentities": 140,
+  "finalUniqueIdentities": 140,
+  "addedIdentityCount": 0,
+  "resolvedIdentityCount": 0,
+  "addedDiagnosticOccurrences": 0,
+  "resolvedDiagnosticOccurrences": 0,
+  "addedIdentities": [],
+  "resolvedIdentities": [],
+  "tscExitCode": 2
+}
