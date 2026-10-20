@@ -1,0 +1,5 @@
+node=v24.20.0
+pnpm=10.13.1 (Corepack repository pin)
+dependency_install=offline --frozen-lockfile --ignore-scripts; 783 packages reused from local store
+database_runtime=NOT_STARTED
+docker_compose=NOT_USED

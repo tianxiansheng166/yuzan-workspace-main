@@ -1,0 +1,25 @@
+{
+  "source": {
+    "files": 426,
+    "errors": 0,
+    "warnings": 0,
+    "parserErrors": 0
+  },
+  "test": {
+    "files": 165,
+    "errors": 327,
+    "warnings": 0,
+    "parserErrors": 0
+  },
+  "total": {
+    "files": 591,
+    "errors": 327,
+    "warnings": 0,
+    "parserErrors": 0
+  },
+  "exitCode": 1,
+  "comparisonToT083": {
+    "added": 0,
+    "removed": 0
+  }
+}

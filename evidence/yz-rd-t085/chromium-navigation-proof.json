@@ -1,0 +1,114 @@
+{
+  "label": "TEST_FIXTURE_ONLY",
+  "browser": "Chromium through Google Chrome headless",
+  "api": "not connected; static frontend proxy targets unreachable 127.0.0.1:1",
+  "data": "no production or student data; browser local storage uses TEST_FIXTURE_ONLY identity",
+  "widths": [
+    {
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "width": 1440,
+      "height": 1000
+    }
+  ],
+  "pages": [
+    {
+      "path": "/student/today/",
+      "title": "今天的学习｜语赞心声",
+      "marker": true,
+      "navCount": 6,
+      "active": "今日学习",
+      "viewport": 1280,
+      "scrollWidth": 1280,
+      "label": "今日学习",
+      "screenshot": "chromium-1280-today.png",
+      "fixtureWatermark": true
+    },
+    {
+      "path": "/student/courses/",
+      "title": "课程中心｜语赞心声",
+      "marker": true,
+      "navCount": 6,
+      "active": "课程中心",
+      "viewport": 1280,
+      "scrollWidth": 1280,
+      "label": "课程中心",
+      "screenshot": "chromium-1280-courses.png",
+      "fixtureWatermark": true
+    },
+    {
+      "path": "/student/practices/",
+      "title": "语赞心声 · 练习中心",
+      "marker": true,
+      "navCount": 6,
+      "active": "练习中心",
+      "viewport": 1280,
+      "scrollWidth": 1265,
+      "label": "练习中心",
+      "screenshot": "chromium-1280-practice.png",
+      "fixtureWatermark": true
+    },
+    {
+      "path": "/student/growth/",
+      "title": "我的成长｜语赞心声",
+      "marker": true,
+      "navCount": 6,
+      "active": "我的成长",
+      "viewport": 1280,
+      "scrollWidth": 1280,
+      "label": "我的成长",
+      "screenshot": "chromium-1280-growth.png",
+      "fixtureWatermark": true
+    },
+    {
+      "path": "/student/today/",
+      "title": "今天的学习｜语赞心声",
+      "marker": true,
+      "navCount": 6,
+      "active": "今日学习",
+      "viewport": 1440,
+      "scrollWidth": 1440,
+      "label": "今日学习",
+      "screenshot": "chromium-1440-today.png",
+      "fixtureWatermark": true
+    },
+    {
+      "path": "/student/courses/",
+      "title": "课程中心｜语赞心声",
+      "marker": true,
+      "navCount": 6,
+      "active": "课程中心",
+      "viewport": 1440,
+      "scrollWidth": 1440,
+      "label": "课程中心",
+      "screenshot": "chromium-1440-courses.png",
+      "fixtureWatermark": true
+    },
+    {
+      "path": "/student/practices/",
+      "title": "语赞心声 · 练习中心",
+      "marker": true,
+      "navCount": 6,
+      "active": "练习中心",
+      "viewport": 1440,
+      "scrollWidth": 1425,
+      "label": "练习中心",
+      "screenshot": "chromium-1440-practice.png",
+      "fixtureWatermark": true
+    },
+    {
+      "path": "/student/growth/",
+      "title": "我的成长｜语赞心声",
+      "marker": true,
+      "navCount": 6,
+      "active": "我的成长",
+      "viewport": 1440,
+      "scrollWidth": 1440,
+      "label": "我的成长",
+      "screenshot": "chromium-1440-growth.png",
+      "fixtureWatermark": true
+    }
+  ]
+}

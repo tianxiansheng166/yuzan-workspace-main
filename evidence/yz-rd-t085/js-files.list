@@ -1,0 +1,12 @@
+frontend/assessment/assets/practice.js
+frontend/assessment/assets/runner.js
+frontend/student/courses/course-detail/course-api-adapter.js
+frontend/student/courses/course-detail/course-api-adapter.test.mjs
+frontend/student/courses/course-detail/course-player-state.js
+frontend/student/courses/course-detail/course-player-state.test.mjs
+frontend/student/courses/course-detail/exercise-controller.js
+frontend/student/courses/course-detail/media-controller.js
+frontend/student/courses/course-detail/media-controller.test.mjs
+frontend/student/courses/courses.js
+frontend/student/growth/assets/growth-live.js
+frontend/student/today/today.js

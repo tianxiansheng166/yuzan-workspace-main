@@ -1,0 +1,346 @@
+test/ai-lesson-planning/vitest.config.ts(5,46): error TS1470: The 'import.meta' meta-property is not allowed in files which will build into CommonJS output.
+test/assessment/qb015f.teacher-assignment.runtime.integration.spec.ts(164,9): error TS2322: Type '{ sessionId: string; questionVersionId: string; prompt: JsonValue; itemConfig: JsonValue; itemType: string; sectionTitle: string; sectionOrder: number; sortOrder: number; maxScore: number; scoredScore: number; }[]' is not assignable to type 'AssessmentItemCreateManyInput | AssessmentItemCreateManyInput[]'.
+  Type '{ sessionId: string; questionVersionId: string; prompt: JsonValue; itemConfig: JsonValue; itemType: string; sectionTitle: string; sectionOrder: number; sortOrder: number; maxScore: number; scoredScore: number; }[]' is not assignable to type 'AssessmentItemCreateManyInput[]'.
+    Type '{ sessionId: string; questionVersionId: string; prompt: JsonValue; itemConfig: JsonValue; itemType: string; sectionTitle: string; sectionOrder: number; sortOrder: number; maxScore: number; scoredScore: number; }' is not assignable to type 'AssessmentItemCreateManyInput'.
+      Types of property 'prompt' are incompatible.
+        Type 'JsonValue' is not assignable to type 'InputJsonValue | JsonNullClass'.
+          Type 'null' is not assignable to type 'InputJsonValue | JsonNullClass'.
+test/assessment/question-bank-assessment-scoring.spec.ts(35,3): error TS2741: Property 'purpose' is missing in type '{ id: string; schoolId: string; enrollmentId: string; classId: string; initiatorUserId: string; type: "MIXED"; status: AssessmentSessionStatus; startedAt: Date; ... 5 more ...; updatedAt: Date; }' but required in type 'AssessmentSession'.
+test/assessment/question-bank-deterministic.integration.spec.ts(89,11): error TS2322: Type 'JsonValue' is not assignable to type 'InputJsonValue | JsonNullClass'.
+  Type 'null' is not assignable to type 'InputJsonValue | JsonNullClass'.
+test/assessment/question-bank-progress.runtime.integration.spec.ts(121,9): error TS2322: Type '{ sessionId: string; questionVersionId: string; prompt: JsonValue; itemConfig: JsonValue; itemType: string; sectionTitle: string; sectionOrder: number; sortOrder: number; maxScore: number; scoredScore: number; }[]' is not assignable to type 'AssessmentItemCreateManyInput | AssessmentItemCreateManyInput[]'.
+  Type '{ sessionId: string; questionVersionId: string; prompt: JsonValue; itemConfig: JsonValue; itemType: string; sectionTitle: string; sectionOrder: number; sortOrder: number; maxScore: number; scoredScore: number; }[]' is not assignable to type 'AssessmentItemCreateManyInput[]'.
+    Type '{ sessionId: string; questionVersionId: string; prompt: JsonValue; itemConfig: JsonValue; itemType: string; sectionTitle: string; sectionOrder: number; sortOrder: number; maxScore: number; scoredScore: number; }' is not assignable to type 'AssessmentItemCreateManyInput'.
+      Types of property 'prompt' are incompatible.
+        Type 'JsonValue' is not assignable to type 'InputJsonValue | JsonNullClass'.
+          Type 'null' is not assignable to type 'InputJsonValue | JsonNullClass'.
+test/assessment/question-bank-progress.service.spec.ts(173,78): error TS2375: Type '{ id: string; status: string; purpose: AssessmentSessionPurpose; remediationOrigin?: AssessmentRemediationOrigin | null; ... 6 more ...; items: Array<{ questionVersionId: string | null; maxScore: number | null; scoredScore: number | null; }>; }' is not assignable to type 'QuestionBankProgressSession' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+  Types of property 'status' are incompatible.
+    Type 'string' is not assignable to type 'AssessmentSessionStatus'.
+test/assessment/question-bank.runtime.integration.spec.ts(60,66): error TS18048: 'legacy' is possibly 'undefined'.
+test/assessment/question-bank.security.spec.ts(96,23): error TS2532: Object is possibly 'undefined'.
+test/assessment/remediation.runtime.integration.spec.ts(91,7): error TS2322: Type '{ sessionId: string; questionVersionId: string; prompt: JsonValue; itemConfig: JsonValue; itemType: string; sectionTitle: string; sectionOrder: number; sortOrder: number; maxScore: number; scoredScore: number; }[]' is not assignable to type 'AssessmentItemCreateManyInput | AssessmentItemCreateManyInput[]'.
+  Type '{ sessionId: string; questionVersionId: string; prompt: JsonValue; itemConfig: JsonValue; itemType: string; sectionTitle: string; sectionOrder: number; sortOrder: number; maxScore: number; scoredScore: number; }[]' is not assignable to type 'AssessmentItemCreateManyInput[]'.
+    Type '{ sessionId: string; questionVersionId: string; prompt: JsonValue; itemConfig: JsonValue; itemType: string; sectionTitle: string; sectionOrder: number; sortOrder: number; maxScore: number; scoredScore: number; }' is not assignable to type 'AssessmentItemCreateManyInput'.
+      Types of property 'prompt' are incompatible.
+        Type 'JsonValue' is not assignable to type 'InputJsonValue | JsonNullClass'.
+          Type 'null' is not assignable to type 'InputJsonValue | JsonNullClass'.
+test/assessment/teacher-question-bank-diagnostic.service.spec.ts(360,42): error TS2554: Expected 2 arguments, but got 1.
+test/assessment/teacher-question-bank-diagnostic.service.spec.ts(370,40): error TS2554: Expected 2 arguments, but got 1.
+test/assessment/vitest.config.ts(5,46): error TS1470: The 'import.meta' meta-property is not allowed in files which will build into CommonJS output.
+test/auth/fixtures/users.ts(55,5): error TS2353: Object literal may only specify known properties, and 'userId' does not exist in type 'UserMembership'.
+test/auth/fixtures/users.ts(69,5): error TS2353: Object literal may only specify known properties, and 'userId' does not exist in type 'UserMembership'.
+test/auth/fixtures/users.ts(80,5): error TS2353: Object literal may only specify known properties, and 'userId' does not exist in type 'UserMembership'.
+test/auth/fixtures/users.ts(93,5): error TS2353: Object literal may only specify known properties, and 'userId' does not exist in type 'UserMembership'.
+test/auth/fixtures/users.ts(104,5): error TS2353: Object literal may only specify known properties, and 'userId' does not exist in type 'UserMembership'.
+test/auth/fixtures/users.ts(117,5): error TS2353: Object literal may only specify known properties, and 'userId' does not exist in type 'UserMembership'.
+test/auth/fixtures/users.ts(128,5): error TS2353: Object literal may only specify known properties, and 'userId' does not exist in type 'UserMembership'.
+test/auth/helpers/create-identity-service.ts(39,19): error TS2554: Expected 7 arguments, but got 6.
+test/auth/helpers/fake-adapters.ts(43,45): error TS2339: Property 'userId' does not exist on type 'UserMembership'.
+test/auth/helpers/fake-adapters.ts(52,18): error TS2339: Property 'userId' does not exist on type 'UserMembership'.
+test/auth/helpers/fake-adapters.ts(58,14): error TS2420: Class 'FakePasswordVerifier' incorrectly implements interface 'PasswordVerifier'.
+  Property 'hash' is missing in type 'FakePasswordVerifier' but required in type 'PasswordVerifier'.
+test/auth/helpers/fake-adapters.ts(142,15): error TS2540: Cannot assign to 'revokedAt' because it is a read-only property.
+test/auth/helpers/fake-adapters.ts(171,13): error TS2540: Cannot assign to 'revokedAt' because it is a read-only property.
+test/auth/identity.service.spec.ts(151,12): error TS2532: Object is possibly 'undefined'.
+test/auth/identity.service.spec.ts(161,7): error TS2353: Object literal may only specify known properties, and 'userId' does not exist in type 'UserMembership'.
+test/auth/identity.service.spec.ts(180,7): error TS2353: Object literal may only specify known properties, and 'userId' does not exist in type 'UserMembership'.
+test/auth/identity.service.spec.ts(205,12): error TS2532: Object is possibly 'undefined'.
+test/auth/identity.service.spec.ts(554,21): error TS2554: Expected 7 arguments, but got 6.
+test/auth/vitest.config.ts(5,46): error TS1470: The 'import.meta' meta-property is not allowed in files which will build into CommonJS output.
+test/bootstrap/vitest.config.ts(5,46): error TS1470: The 'import.meta' meta-property is not allowed in files which will build into CommonJS output.
+test/contracts/vitest.config.ts(5,46): error TS1470: The 'import.meta' meta-property is not allowed in files which will build into CommonJS output.
+test/curriculum/curriculum.controller.spec.ts(168,7): error TS2345: Argument of type '{ userId: string; roles: MembershipRole[]; membershipStatus: "ACTIVE"; source: string; }' is not assignable to parameter of type 'Principal'.
+  Types of property 'membershipStatus' are incompatible.
+    Type '"ACTIVE"' is not assignable to type 'MembershipStatus'.
+test/curriculum/curriculum.controller.spec.ts(212,7): error TS2345: Argument of type '{ userId: string; roles: MembershipRole[]; membershipStatus: "ACTIVE"; source: string; }' is not assignable to parameter of type 'Principal'.
+  Types of property 'membershipStatus' are incompatible.
+    Type '"ACTIVE"' is not assignable to type 'MembershipStatus'.
+test/curriculum/curriculum.controller.spec.ts(216,12): error TS2532: Object is possibly 'undefined'.
+test/curriculum/curriculum.controller.spec.ts(270,7): error TS2345: Argument of type '{ userId: string; roles: MembershipRole[]; membershipStatus: "ACTIVE"; source: string; }' is not assignable to parameter of type 'Principal'.
+  Types of property 'membershipStatus' are incompatible.
+    Type '"ACTIVE"' is not assignable to type 'MembershipStatus'.
+test/curriculum/curriculum.service.spec.ts(131,73): error TS2345: Argument of type '{ title: string; }' is not assignable to parameter of type 'UpdateCourseDraftDto'.
+  Property 'expectedUpdatedAt' is missing in type '{ title: string; }' but required in type 'UpdateCourseDraftDto'.
+test/curriculum/curriculum.service.spec.ts(172,55): error TS2345: Argument of type '{ title: string; }' is not assignable to parameter of type 'UpdateCourseDraftDto'.
+  Property 'expectedUpdatedAt' is missing in type '{ title: string; }' but required in type 'UpdateCourseDraftDto'.
+test/curriculum/vitest.config.ts(5,46): error TS1470: The 'import.meta' meta-property is not allowed in files which will build into CommonJS output.
+test/database/database-runtime.integration.spec.ts(109,12): error TS2532: Object is possibly 'undefined'.
+test/database/vitest.config.ts(5,46): error TS1470: The 'import.meta' meta-property is not allowed in files which will build into CommonJS output.
+test/database/vitest.config.ts(22,5): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Object literal may only specify known properties, and 'dotenv' does not exist in type 'InlineConfig'.
+test/helpers/fake-storage.port.ts(24,23): error TS2379: Argument of type '{ objectKey: string; contentType: string | undefined; }' is not assignable to parameter of type '{ objectKey: string; contentType?: string; }' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+  Types of property 'contentType' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+test/identity/vitest.config.ts(5,46): error TS1470: The 'import.meta' meta-property is not allowed in files which will build into CommonJS output.
+test/integration/curriculum/prisma-course-version.repository.spec.ts(93,46): error TS2345: Argument of type 'PrismaClient' is not assignable to parameter of type 'PrismaService'.
+  Type 'PrismaClient<never, GlobalOmitConfig | undefined, DefaultArgs>' is missing the following properties from type 'PrismaService': logger, pool, _shuttingDown, _destroyed, and 4 more.
+test/integration/curriculum/prisma-course-version.repository.spec.ts(282,14): error TS2532: Object is possibly 'undefined'.
+test/integration/curriculum/prisma-course-version.repository.spec.ts(282,14): error TS2532: Object is possibly 'undefined'.
+test/integration/curriculum/prisma-course-version.repository.spec.ts(282,14): error TS2532: Object is possibly 'undefined'.
+test/integration/curriculum/prisma-course-version.repository.spec.ts(283,9): error TS2532: Object is possibly 'undefined'.
+test/integration/curriculum/prisma-course-version.repository.spec.ts(283,9): error TS2532: Object is possibly 'undefined'.
+test/integration/curriculum/prisma-course-version.repository.spec.ts(283,9): error TS2532: Object is possibly 'undefined'.
+test/integration/curriculum/prisma-course-version.repository.spec.ts(285,14): error TS2532: Object is possibly 'undefined'.
+test/integration/curriculum/prisma-course-version.repository.spec.ts(285,14): error TS2532: Object is possibly 'undefined'.
+test/integration/curriculum/prisma-course-version.repository.spec.ts(285,14): error TS2532: Object is possibly 'undefined'.
+test/integration/curriculum/prisma-course-version.repository.spec.ts(285,14): error TS2532: Object is possibly 'undefined'.
+test/integration/curriculum/prisma-course-version.repository.spec.ts(327,14): error TS2532: Object is possibly 'undefined'.
+test/integration/curriculum/vitest.config.ts(5,46): error TS1470: The 'import.meta' meta-property is not allowed in files which will build into CommonJS output.
+test/integration/curriculum/vitest.config.ts(22,5): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Object literal may only specify known properties, and 'dotenv' does not exist in type 'InlineConfig'.
+test/integration/identity/vitest.config.ts(5,46): error TS1470: The 'import.meta' meta-property is not allowed in files which will build into CommonJS output.
+test/integration/identity/vitest.config.ts(28,5): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Object literal may only specify known properties, and 'dotenv' does not exist in type 'InlineConfig'.
+test/modules/admin/assessment-link.controller.spec.ts(26,115): error TS2322: Type '"ACTIVE"' is not assignable to type 'MembershipStatus'.
+test/modules/admin/assessment-link.controller.spec.ts(38,107): error TS2322: Type '"ACTIVE"' is not assignable to type 'MembershipStatus'.
+test/modules/admin/audit-stub.controller.spec.ts(12,50): error TS2322: Type '10' is not assignable to type '50'.
+test/modules/admin/audit-stub.controller.spec.ts(22,82): error TS2322: Type '10' is not assignable to type '50'.
+test/modules/admin/audit-stub.controller.spec.ts(32,79): error TS2322: Type '10' is not assignable to type '50'.
+test/modules/admin/plans-stub.controller.spec.ts(10,12): error TS2532: Object is possibly 'undefined'.
+test/modules/admin/vitest.config.ts(5,46): error TS1470: The 'import.meta' meta-property is not allowed in files which will build into CommonJS output.
+test/modules/assignments/fakes/fake-assignment.repository.ts(10,3): error TS2305: Module '"../../../../src/modules/assignments/ports/assignment-repository.port.js"' has no exported member 'FindVisibleClassOptions'.
+test/modules/assignments/fakes/fake-assignment.repository.ts(149,3): error TS2741: Property 'targets' is missing in type '{ id: string; schoolId: string; title: string; status: AssignmentStatus; startsAt: Date; dueAt: Date; revision: number; createdAt: Date; updatedAt: Date; }' but required in type 'AssignmentSummary'.
+test/modules/assignments/publishing.spec.ts(92,12): error TS2532: Object is possibly 'undefined'.
+test/modules/assignments/vitest.config.ts(5,46): error TS1470: The 'import.meta' meta-property is not allowed in files which will build into CommonJS output.
+test/modules/community/fakes/fake-community.repository.ts(105,11): error TS2375: Type '{ id: string; schoolId: string; authorUserId: string; title: string; contentType: ContentType; content: string; attachmentObjectKey: string | undefined; status: CommunityPost["status"]; visibilityScope: string; createdAt: Date; updatedAt: Date; revision: number; }' is not assignable to type 'CommunityPost' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+  Types of property 'attachmentObjectKey' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+test/modules/community/fakes/fake-community.repository.ts(152,11): error TS2375: Type '{ status: ContentStatus; reviewedBy: string | undefined; reviewNote: string | undefined; publishedAt: Date | undefined; updatedAt: Date; revision: number; ... 9 more ...; createdAt: Date; }' is not assignable to type 'CommunityPost' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+  Types of property 'publishedAt' are incompatible.
+    Type 'Date | undefined' is not assignable to type 'Date'.
+      Type 'undefined' is not assignable to type 'Date'.
+test/modules/community/fakes/fake-community.repository.ts(204,11): error TS2375: Type '{ id: string; schoolId: string; postId: string; reporterUserId: string; reason: ReportReason; description: string | undefined; status: ContentReport["status"]; createdAt: Date; }' is not assignable to type 'ContentReport' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+  Types of property 'description' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+test/modules/community/vitest.config.ts(5,46): error TS1470: The 'import.meta' meta-property is not allowed in files which will build into CommonJS output.
+test/modules/cooperation/cooperation.service.spec.ts(467,14): error TS2532: Object is possibly 'undefined'.
+test/modules/cooperation/cooperation.service.spec.ts(674,14): error TS2532: Object is possibly 'undefined'.
+test/modules/cooperation/fakes/fake-cooperation.repository.ts(62,49): error TS2532: Object is possibly 'undefined'.
+test/modules/cooperation/fakes/fake-cooperation.repository.ts(125,49): error TS2532: Object is possibly 'undefined'.
+test/modules/cooperation/fakes/fake-cooperation.repository.ts(138,11): error TS2375: Type '{ status: ApplicationStatus; reviewedBy: string | undefined; reviewedAt: Date; reviewNote: string | undefined; updatedAt: Date; id: string; schoolId?: string; ... 6 more ...; createdAt: Date; }' is not assignable to type 'SupportApplication' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+  Types of property 'reviewedBy' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+test/modules/cooperation/fakes/fake-cooperation.repository.ts(191,49): error TS2532: Object is possibly 'undefined'.
+test/modules/cooperation/fakes/fake-cooperation.repository.ts(203,11): error TS2375: Type '{ status: VolunteerAppStatus; reviewedBy: string | undefined; reviewedAt: Date; updatedAt: Date; id: string; applicantName: string; contactInfo: string; ... 4 more ...; createdAt: Date; }' is not assignable to type 'VolunteerApplication' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+  Types of property 'reviewedBy' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+test/modules/cooperation/fixtures/cooperation.ts(31,3): error TS2375: Type '{ id: string; organizationName: string; contactName: string; contactChannel: string; region: string; schoolType: string; interestedPlan: string; needs: string; consent: boolean; status: LeadStatus; assignedOperatorId: string; createdAt: Date; updatedAt: Date; }' is not assignable to type 'CooperationLead' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+  Types of property 'region' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+test/modules/cooperation/fixtures/cooperation.ts(53,3): error TS2375: Type '{ id: string; schoolId: string; organizationName: string; guardianName: string; guardianContact: string; needCategory: string; description: string; consent: boolean; status: ApplicationStatus; ... 4 more ...; updatedAt: Date; }' is not assignable to type 'SupportApplication' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+  Types of property 'schoolId' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+test/modules/cooperation/fixtures/cooperation.ts(76,3): error TS2375: Type '{ id: string; applicantName: string; contactInfo: string; experience: string; availability: string; motivation: string; consent: boolean; status: VolunteerAppStatus; reviewedBy: string; reviewedAt: Date; createdAt: Date; updatedAt: Date; }' is not assignable to type 'VolunteerApplication' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+  Types of property 'experience' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+test/modules/cooperation/vitest.config.ts(5,46): error TS1470: The 'import.meta' meta-property is not allowed in files which will build into CommonJS output.
+test/modules/feedback/fakes/fake-feedback.repository.ts(8,14): error TS2420: Class 'FakeFeedbackRepository' incorrectly implements interface 'FeedbackRepositoryPort'.
+  Property 'findByStudentEnrollments' is missing in type 'FakeFeedbackRepository' but required in type 'FeedbackRepositoryPort'.
+test/modules/feedback/vitest.config.ts(5,46): error TS1470: The 'import.meta' meta-property is not allowed in files which will build into CommonJS output.
+test/modules/learning/vitest.config.ts(5,46): error TS1470: The 'import.meta' meta-property is not allowed in files which will build into CommonJS output.
+test/modules/pilot/pilot-health.spec.ts(35,80): error TS2345: Argument of type '{ checkBucket: Mock<Procedure>; }' is not assignable to parameter of type 'StoragePort'.
+  Type '{ checkBucket: Mock<Procedure>; }' is missing the following properties from type 'StoragePort': putObject, generateUploadUrl, generateDownloadUrl, headObject, deleteObject
+test/modules/pilot/pilot-health.spec.ts(49,80): error TS2345: Argument of type '{ checkBucket: Mock<Procedure>; }' is not assignable to parameter of type 'StoragePort'.
+  Type '{ checkBucket: Mock<Procedure>; }' is missing the following properties from type 'StoragePort': putObject, generateUploadUrl, generateDownloadUrl, headObject, deleteObject
+test/modules/pilot/vitest.config.ts(5,46): error TS1470: The 'import.meta' meta-property is not allowed in files which will build into CommonJS output.
+test/modules/submissions/vitest.config.ts(5,46): error TS1470: The 'import.meta' meta-property is not allowed in files which will build into CommonJS output.
+test/modules/support-pairings/fakes/fake-support-pairing.repository.ts(53,39): error TS2532: Object is possibly 'undefined'.
+test/modules/support-pairings/fakes/fake-support-pairing.repository.ts(140,11): error TS2375: Type '{ id: string; pairingId: string; scheduledAt: Date; summary: undefined; nextStep: undefined; riskLevel: RiskLevel.LOW; teacherReviewStatus: TeacherReviewStatus.PENDING; createdAt: Date; updatedAt: Date; }' is not assignable to type 'SupportSession' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+  Types of property 'summary' are incompatible.
+    Type 'undefined' is not assignable to type 'string'.
+test/modules/support-pairings/fixtures/support-pairings.ts(36,3): error TS2375: Type '{ id: string; pairingId: string; scheduledAt: Date; summary: string; nextStep: string; riskLevel: RiskLevel; teacherReviewStatus: TeacherReviewStatus; createdAt: Date; updatedAt: Date; }' is not assignable to type 'SupportSession' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+  Types of property 'summary' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+test/modules/support-pairings/support-pairings.service.spec.ts(371,21): error TS2339: Property 'schoolId' does not exist on type 'SupportPairingResponse | VolunteerPairingResponse'.
+  Property 'schoolId' does not exist on type 'VolunteerPairingResponse'.
+test/modules/support-pairings/support-pairings.service.spec.ts(459,27): error TS2532: Object is possibly 'undefined'.
+test/modules/support-pairings/vitest.config.ts(5,46): error TS1470: The 'import.meta' meta-property is not allowed in files which will build into CommonJS output.
+test/modules/tools/fakes/fake-tool.repository.ts(155,39): error TS2532: Object is possibly 'undefined'.
+test/modules/tools/fixtures/tools.ts(34,5): error TS2783: 'schoolId' is specified more than once, so this usage will be overwritten.
+test/modules/tools/fixtures/tools.ts(54,5): error TS2783: 'schoolId' is specified more than once, so this usage will be overwritten.
+test/modules/tools/fixtures/tools.ts(55,5): error TS2783: 'configId' is specified more than once, so this usage will be overwritten.
+test/modules/tools/fixtures/tools.ts(76,5): error TS2783: 'schoolId' is specified more than once, so this usage will be overwritten.
+test/modules/tools/fixtures/tools.ts(77,5): error TS2783: 'integrationKey' is specified more than once, so this usage will be overwritten.
+test/modules/tools/fixtures/tools.ts(78,5): error TS2783: 'userId' is specified more than once, so this usage will be overwritten.
+test/modules/tools/tools.service.spec.ts(28,21): error TS2554: Expected 2 arguments, but got 1.
+test/modules/tools/tools.service.spec.ts(573,23): error TS2554: Expected 2 arguments, but got 1.
+test/modules/tools/tools.service.spec.ts(582,23): error TS2554: Expected 2 arguments, but got 1.
+test/modules/tools/tools.service.spec.ts(591,23): error TS2554: Expected 2 arguments, but got 1.
+test/modules/tools/tools.service.spec.ts(602,23): error TS2554: Expected 2 arguments, but got 1.
+test/modules/tools/tools.service.spec.ts(611,23): error TS2554: Expected 2 arguments, but got 1.
+test/modules/tools/tools.service.spec.ts(620,23): error TS2554: Expected 2 arguments, but got 1.
+test/modules/tools/tools.service.spec.ts(629,23): error TS2554: Expected 2 arguments, but got 1.
+test/modules/tools/vitest.config.ts(5,46): error TS1470: The 'import.meta' meta-property is not allowed in files which will build into CommonJS output.
+test/modules/training/fakes/fake-training.repository.ts(55,49): error TS2532: Object is possibly 'undefined'.
+test/modules/training/fakes/fake-training.repository.ts(102,49): error TS2532: Object is possibly 'undefined'.
+test/modules/training/fakes/fake-training.repository.ts(129,49): error TS2532: Object is possibly 'undefined'.
+test/modules/training/fixtures/training.ts(38,3): error TS2375: Type '{ id: string; programId: string; title: string; description: string; sortOrder: number; required: boolean; durationMinutes: number; createdAt: Date; }' is not assignable to type 'TrainingModule' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+  Types of property 'description' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+test/modules/training/fixtures/training.ts(54,3): error TS2375: Type '{ id: string; schoolId: string; title: string; description: string; objectives: readonly string[]; locale: string; dialect: string; status: TrainingProgramStatus; modules: readonly TrainingModule[]; createdAt: Date; updatedAt: Date; }' is not assignable to type 'TrainingProgram' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+  Types of property 'description' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+test/modules/training/fixtures/training.ts(77,3): error TS2375: Type '{ id: string; schoolId: string; programId: string; volunteerUserId: string; status: TrainingEnrollmentStatus; enrolledAt: Date; completedAt: Date; examReady: boolean; createdAt: Date; updatedAt: Date; }' is not assignable to type 'TrainingEnrollment' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+  Types of property 'completedAt' are incompatible.
+    Type 'Date | undefined' is not assignable to type 'Date'.
+      Type 'undefined' is not assignable to type 'Date'.
+test/modules/training/fixtures/training.ts(96,3): error TS2375: Type '{ id: string; enrollmentId: string; moduleId: string; completed: boolean; completedAt: Date; score: number; createdAt: Date; updatedAt: Date; }' is not assignable to type 'TrainingProgress' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+  Types of property 'completedAt' are incompatible.
+    Type 'Date | undefined' is not assignable to type 'Date'.
+      Type 'undefined' is not assignable to type 'Date'.
+test/modules/training/vitest.config.ts(5,46): error TS1470: The 'import.meta' meta-property is not allowed in files which will build into CommonJS output.
+test/modules/translations/fakes/fake-translation.repository.ts(169,5): error TS2322: Type '{ id: string; term: string; sourceLanguage: SupportedLanguage; targetLanguage: SupportedLanguage; translation: string; category: string; version: number; createdAt: Date; }[]' is not assignable to type 'readonly GlossaryEntry[]'.
+  Property 'schoolId' is missing in type '{ id: string; term: string; sourceLanguage: SupportedLanguage; targetLanguage: SupportedLanguage; translation: string; category: string; version: number; createdAt: Date; }' but required in type 'GlossaryEntry'.
+test/modules/translations/fakes/fake-translation.repository.ts(178,5): error TS2322: Type '{ id: string; term: string; sourceLanguage: SupportedLanguage; targetLanguage: SupportedLanguage; translation: string; category: string; version: number; createdAt: Date; }[]' is not assignable to type 'readonly GlossaryEntry[]'.
+  Property 'schoolId' is missing in type '{ id: string; term: string; sourceLanguage: SupportedLanguage; targetLanguage: SupportedLanguage; translation: string; category: string; version: number; createdAt: Date; }' but required in type 'GlossaryEntry'.
+test/modules/translations/translations.service.spec.ts(224,10): error TS2352: Conversion of type 'TranslationJobResponse' to type 'Record<string, unknown>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Index signature for type 'string' is missing in type 'TranslationJobResponse'.
+test/modules/translations/translations.service.spec.ts(350,10): error TS2352: Conversion of type 'TranslationJobResponse' to type 'Record<string, unknown>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Index signature for type 'string' is missing in type 'TranslationJobResponse'.
+test/modules/translations/vitest.config.ts(5,46): error TS1470: The 'import.meta' meta-property is not allowed in files which will build into CommonJS output.
+test/modules/volunteers/fakes/fake-volunteer.repository.ts(4,14): error TS2420: Class 'FakeVolunteerRepository' incorrectly implements interface 'VolunteerRepositoryPort'.
+  Property 'updateServiceTaskStatus' is missing in type 'FakeVolunteerRepository' but required in type 'VolunteerRepositoryPort'.
+test/modules/volunteers/fakes/fake-volunteer.repository.ts(45,49): error TS2532: Object is possibly 'undefined'.
+test/modules/volunteers/fakes/fake-volunteer.repository.ts(52,11): error TS2375: Type '{ id: string; schoolId: string; userId: string; displayName: string; phone: string; email: string | undefined; experience: string | undefined; status: VolunteerStatus; qualifications: never[]; appliedAt: Date; revision: number; createdAt: Date; updatedAt: Date; }' is not assignable to type 'Volunteer' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+  Types of property 'email' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+test/modules/volunteers/fakes/fake-volunteer.repository.ts(107,11): error TS2375: Type '{ id: string; schoolId: string; type: string; severity: string; description: string; immediateAction: string | undefined; studentRef: string | undefined; status: string; reportedBy: string; createdAt: Date; updatedAt: Date; }' is not assignable to type 'IncidentReport' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+  Types of property 'immediateAction' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+test/modules/volunteers/fixtures/volunteers.ts(21,3): error TS2375: Type '{ id: string; schoolId: string; userId: string; status: VolunteerStatus; displayName: string; phone: string; email: string; experience: string; qualifications: readonly string[]; appliedAt: Date; ... 4 more ...; updatedAt: Date; }' is not assignable to type 'Volunteer' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+  Types of property 'email' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+test/modules/volunteers/fixtures/volunteers.ts(53,3): error TS2375: Type '{ id: string; schoolId: string; title: string; serviceType: ServiceType; classId: string; studentScope: string; supervisorTeacherId: string; requiredQualification: string; assignedVolunteerId: string; status: string; createdAt: Date; updatedAt: Date; }' is not assignable to type 'VolunteerServiceTask' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+  Types of property 'classId' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+test/modules/volunteers/fixtures/volunteers.ts(71,3): error TS2375: Type '{ id: string; schoolId: string; type: string; severity: string; description: string; immediateAction: string; studentRef: string; assignedReviewerId: string; status: string; resolution: string; reportedBy: string; createdAt: Date; updatedAt: Date; }' is not assignable to type 'IncidentReport' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+  Types of property 'immediateAction' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+test/modules/volunteers/vitest.config.ts(5,46): error TS1470: The 'import.meta' meta-property is not allowed in files which will build into CommonJS output.
+test/modules/volunteers/volunteers.service.spec.ts(28,43): error TS2345: Argument of type 'FakeVolunteerRepository' is not assignable to parameter of type 'VolunteerRepositoryPort'.
+  Property 'updateServiceTaskStatus' is missing in type 'FakeVolunteerRepository' but required in type 'VolunteerRepositoryPort'.
+test/offline/offline.service.spec.ts(20,3): error TS2741: Property 'manifest' is missing in type '{ id: string; schoolId: string; courseVersionId: string; version: number; checksum: string; byteSize: bigint; downloadRequired: false; expiresAt: null; revision: number; createdAt: Date; updatedAt: Date; }' but required in type 'OfflineContentPackage'.
+test/offline/vitest.config.ts(5,46): error TS1470: The 'import.meta' meta-property is not allowed in files which will build into CommonJS output.
+test/operations/__mocks__/@yuzan/database.ts(2,21): error TS2304: Cannot find name 'vi'.
+test/operations/__mocks__/@yuzan/database.ts(3,14): error TS2304: Cannot find name 'vi'.
+test/operations/__mocks__/@yuzan/database.ts(4,17): error TS2304: Cannot find name 'vi'.
+test/operations/vitest.config.ts(5,46): error TS1470: The 'import.meta' meta-property is not allowed in files which will build into CommonJS output.
+test/organizations/classes.controller.spec.ts(90,9): error TS2345: Argument of type '{ userId: string; roles: MembershipRole[]; membershipStatus: "ACTIVE"; source: string; }' is not assignable to parameter of type 'Principal'.
+  Types of property 'membershipStatus' are incompatible.
+    Type '"ACTIVE"' is not assignable to type 'MembershipStatus'.
+test/organizations/classes.controller.spec.ts(93,14): error TS2532: Object is possibly 'undefined'.
+test/organizations/classes.controller.spec.ts(130,9): error TS2345: Argument of type '{ userId: string; roles: MembershipRole[]; membershipStatus: "ACTIVE"; source: string; }' is not assignable to parameter of type 'Principal'.
+  Types of property 'membershipStatus' are incompatible.
+    Type '"ACTIVE"' is not assignable to type 'MembershipStatus'.
+test/organizations/classes.controller.spec.ts(133,14): error TS2532: Object is possibly 'undefined'.
+test/organizations/classes.controller.spec.ts(162,9): error TS2345: Argument of type '{ userId: string; roles: MembershipRole[]; membershipStatus: "ACTIVE"; source: string; }' is not assignable to parameter of type 'Principal'.
+  Types of property 'membershipStatus' are incompatible.
+    Type '"ACTIVE"' is not assignable to type 'MembershipStatus'.
+test/organizations/classes.controller.spec.ts(188,60): error TS2345: Argument of type '{ userId: string; roles: MembershipRole[]; membershipStatus: "ACTIVE"; source: string; }' is not assignable to parameter of type 'Principal'.
+  Types of property 'membershipStatus' are incompatible.
+    Type '"ACTIVE"' is not assignable to type 'MembershipStatus'.
+test/organizations/classes.controller.spec.ts(219,9): error TS2345: Argument of type '{ userId: string; roles: MembershipRole[]; membershipStatus: "ACTIVE"; source: string; }' is not assignable to parameter of type 'Principal'.
+  Types of property 'membershipStatus' are incompatible.
+    Type '"ACTIVE"' is not assignable to type 'MembershipStatus'.
+test/organizations/classes.controller.spec.ts(248,60): error TS2345: Argument of type '{ userId: string; roles: MembershipRole[]; membershipStatus: "ACTIVE"; source: string; }' is not assignable to parameter of type 'Principal'.
+  Types of property 'membershipStatus' are incompatible.
+    Type '"ACTIVE"' is not assignable to type 'MembershipStatus'.
+test/organizations/classes.controller.spec.ts(282,9): error TS2345: Argument of type '{ userId: string; roles: MembershipRole[]; membershipStatus: "ACTIVE"; source: string; }' is not assignable to parameter of type 'Principal'.
+  Types of property 'membershipStatus' are incompatible.
+    Type '"ACTIVE"' is not assignable to type 'MembershipStatus'.
+test/organizations/classes.controller.spec.ts(308,68): error TS2345: Argument of type '{ userId: string; roles: MembershipRole[]; membershipStatus: "ACTIVE"; source: string; }' is not assignable to parameter of type 'Principal'.
+  Types of property 'membershipStatus' are incompatible.
+    Type '"ACTIVE"' is not assignable to type 'MembershipStatus'.
+test/organizations/classes.controller.spec.ts(363,9): error TS2345: Argument of type '{ userId: string; roles: MembershipRole[]; membershipStatus: "ACTIVE"; source: string; }' is not assignable to parameter of type 'Principal'.
+  Types of property 'membershipStatus' are incompatible.
+    Type '"ACTIVE"' is not assignable to type 'MembershipStatus'.
+test/organizations/classes.controller.spec.ts(389,68): error TS2345: Argument of type '{ userId: string; roles: MembershipRole[]; membershipStatus: "ACTIVE"; source: string; }' is not assignable to parameter of type 'Principal'.
+  Types of property 'membershipStatus' are incompatible.
+    Type '"ACTIVE"' is not assignable to type 'MembershipStatus'.
+test/organizations/classes.controller.spec.ts(407,11): error TS2345: Argument of type '{ userId: string; roles: MembershipRole[]; membershipStatus: "ACTIVE"; source: string; }' is not assignable to parameter of type 'Principal'.
+  Types of property 'membershipStatus' are incompatible.
+    Type '"ACTIVE"' is not assignable to type 'MembershipStatus'.
+test/organizations/classes.controller.spec.ts(433,68): error TS2345: Argument of type '{ userId: string; roles: MembershipRole[]; membershipStatus: "ACTIVE"; source: string; }' is not assignable to parameter of type 'Principal'.
+  Types of property 'membershipStatus' are incompatible.
+    Type '"ACTIVE"' is not assignable to type 'MembershipStatus'.
+test/organizations/classes.controller.spec.ts(440,11): error TS2345: Argument of type '{ userId: string; roles: MembershipRole[]; membershipStatus: "ACTIVE"; source: string; }' is not assignable to parameter of type 'Principal'.
+  Types of property 'membershipStatus' are incompatible.
+    Type '"ACTIVE"' is not assignable to type 'MembershipStatus'.
+test/organizations/classes.controller.spec.ts(554,68): error TS2345: Argument of type '{ userId: string; roles: MembershipRole[]; membershipStatus: "ACTIVE"; source: string; }' is not assignable to parameter of type 'Principal'.
+  Types of property 'membershipStatus' are incompatible.
+    Type '"ACTIVE"' is not assignable to type 'MembershipStatus'.
+test/organizations/classes.controller.spec.ts(590,62): error TS2345: Argument of type '{ userId: string; roles: MembershipRole[]; membershipStatus: "ACTIVE"; source: string; }' is not assignable to parameter of type 'Principal'.
+  Types of property 'membershipStatus' are incompatible.
+    Type '"ACTIVE"' is not assignable to type 'MembershipStatus'.
+test/organizations/classes.controller.spec.ts(645,68): error TS2345: Argument of type '{ userId: string; roles: MembershipRole[]; membershipStatus: "ACTIVE"; source: string; }' is not assignable to parameter of type 'Principal'.
+  Types of property 'membershipStatus' are incompatible.
+    Type '"ACTIVE"' is not assignable to type 'MembershipStatus'.
+test/organizations/classes.controller.spec.ts(683,9): error TS2345: Argument of type '{ userId: string; roles: MembershipRole[]; membershipStatus: "ACTIVE"; source: string; }' is not assignable to parameter of type 'Principal'.
+  Types of property 'membershipStatus' are incompatible.
+    Type '"ACTIVE"' is not assignable to type 'MembershipStatus'.
+test/organizations/classes.controller.spec.ts(714,9): error TS2345: Argument of type '{ userId: string; roles: MembershipRole[]; membershipStatus: "ACTIVE"; source: string; }' is not assignable to parameter of type 'Principal'.
+  Types of property 'membershipStatus' are incompatible.
+    Type '"ACTIVE"' is not assignable to type 'MembershipStatus'.
+test/organizations/fakes/fake-class.repository.ts(15,14): error TS2420: Class 'FakeClassRepository' incorrectly implements interface 'ClassRepositoryPort'.
+  Type 'FakeClassRepository' is missing the following properties from type 'ClassRepositoryPort': save, update, softDelete, addEnrollment, and 2 more.
+test/organizations/fakes/fake-class.repository.ts(115,11): error TS2322: Type '{ userId: string; displayName: string; roleInClass: "TEACHER"; status: "ACTIVE"; }[]' is not assignable to type 'ClassMember[]'.
+  Type '{ userId: string; displayName: string; roleInClass: "TEACHER"; status: "ACTIVE"; }' is not assignable to type 'ClassMember'.
+    Types of property 'roleInClass' are incompatible.
+      Type '"TEACHER"' is not assignable to type 'MembershipRole.STUDENT | MembershipRole.TEACHER'.
+test/organizations/fakes/fake-class.repository.ts(128,9): error TS2322: Type '"ACTIVE"' is not assignable to type 'MembershipStatus'.
+test/organizations/fixtures/classes.ts(11,3): error TS2375: Type '{ id: string; schoolId: string; termId?: string; campusId?: string; name: string; grade: string; teacherUserIds: readonly string[]; studentCount: number; createdAt: Date; updatedAt: Date; }' is not assignable to type 'Class' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+  Property 'termId' is optional in type '{ id: string; schoolId: string; termId?: string; campusId?: string; name: string; grade: string; teacherUserIds: readonly string[]; studentCount: number; createdAt: Date; updatedAt: Date; }' but required in type 'Class'.
+test/organizations/fixtures/classes.ts(25,3): error TS2739: Type '{ classId: string; schoolId: string; userId: string; roleInClass: MembershipRole.STUDENT; }' is missing the following properties from type 'ClassEnrollment': id, status
+test/organizations/fixtures/classes.ts(38,3): error TS2739: Type '{ classId: string; schoolId: string; userId: string; roleInClass: MembershipRole.TEACHER; }' is missing the following properties from type 'ClassEnrollment': id, status
+test/organizations/organizations.controller.spec.ts(59,69): error TS2345: Argument of type '{ userId: string; roles: MembershipRole[]; membershipStatus: "ACTIVE"; source: string; }' is not assignable to parameter of type 'Principal'.
+  Types of property 'membershipStatus' are incompatible.
+    Type '"ACTIVE"' is not assignable to type 'MembershipStatus'.
+test/organizations/organizations.controller.spec.ts(74,50): error TS2345: Argument of type '{ userId: string; roles: MembershipRole[]; membershipStatus: "ACTIVE"; source: string; }' is not assignable to parameter of type 'Principal'.
+  Types of property 'membershipStatus' are incompatible.
+    Type '"ACTIVE"' is not assignable to type 'MembershipStatus'.
+test/organizations/organizations.controller.spec.ts(88,50): error TS2345: Argument of type '{ userId: string; roles: MembershipRole[]; membershipStatus: "ACTIVE"; source: string; }' is not assignable to parameter of type 'Principal'.
+  Types of property 'membershipStatus' are incompatible.
+    Type '"ACTIVE"' is not assignable to type 'MembershipStatus'.
+test/organizations/organizations.controller.spec.ts(125,9): error TS2345: Argument of type '{ userId: string; roles: MembershipRole[]; membershipStatus: "ACTIVE"; source: string; }' is not assignable to parameter of type 'Principal'.
+  Types of property 'membershipStatus' are incompatible.
+    Type '"ACTIVE"' is not assignable to type 'MembershipStatus'.
+test/organizations/organizations.controller.spec.ts(160,9): error TS2345: Argument of type '{ userId: string; roles: MembershipRole[]; membershipStatus: "ACTIVE"; source: string; }' is not assignable to parameter of type 'Principal'.
+  Types of property 'membershipStatus' are incompatible.
+    Type '"ACTIVE"' is not assignable to type 'MembershipStatus'.
+test/organizations/organizations.controller.spec.ts(176,56): error TS2345: Argument of type '{ userId: string; roles: MembershipRole[]; membershipStatus: "ACTIVE"; source: string; }' is not assignable to parameter of type 'Principal'.
+  Types of property 'membershipStatus' are incompatible.
+    Type '"ACTIVE"' is not assignable to type 'MembershipStatus'.
+test/organizations/vitest.config.ts(5,46): error TS1470: The 'import.meta' meta-property is not allowed in files which will build into CommonJS output.
+test/pilot/pilot.runtime.integration.spec.ts(67,46): error TS2322: Type '{ sessionId: string; questionVersionId: string; prompt: JsonValue; itemType: string; sortOrder: number; maxScore: number; scoredScore: number | null; }[]' is not assignable to type 'AssessmentItemCreateManyInput | AssessmentItemCreateManyInput[]'.
+  Type '{ sessionId: string; questionVersionId: string; prompt: JsonValue; itemType: string; sortOrder: number; maxScore: number; scoredScore: number | null; }[]' is not assignable to type 'AssessmentItemCreateManyInput[]'.
+    Type '{ sessionId: string; questionVersionId: string; prompt: JsonValue; itemType: string; sortOrder: number; maxScore: number; scoredScore: number | null; }' is not assignable to type 'AssessmentItemCreateManyInput'.
+      Types of property 'prompt' are incompatible.
+        Type 'JsonValue' is not assignable to type 'InputJsonValue | JsonNullClass'.
+          Type 'null' is not assignable to type 'InputJsonValue | JsonNullClass'.
+test/recordings/vitest.config.ts(5,46): error TS1470: The 'import.meta' meta-property is not allowed in files which will build into CommonJS output.
+test/reporting/vitest.config.ts(5,46): error TS1470: The 'import.meta' meta-property is not allowed in files which will build into CommonJS output.
+test/root/app-composition.spec.ts(119,63): error TS2345: Argument of type '{}' is not assignable to parameter of type 'ListCourseVersionsOptions'.
+  Property 'limit' is missing in type '{}' but required in type 'ListCourseVersionsOptions'.
+test/root/vitest.config.ts(5,46): error TS1470: The 'import.meta' meta-property is not allowed in files which will build into CommonJS output.
+test/speech-job/vitest.config.ts(5,46): error TS1470: The 'import.meta' meta-property is not allowed in files which will build into CommonJS output.
+test/vitest.config.ts(5,46): error TS1470: The 'import.meta' meta-property is not allowed in files which will build into CommonJS output.

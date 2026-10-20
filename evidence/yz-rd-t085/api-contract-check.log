@@ -1,0 +1,1 @@
+PASS: GET 200 -> data/meta.requestId; required non-null identity; required nullable course scope; generated Types aligned.
