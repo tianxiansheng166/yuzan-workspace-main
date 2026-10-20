@@ -69,3 +69,7 @@ Application tests were `NOT_RUN` because Stage A failed and pnpm 10 was not avai
 Make authorized, already-installed native PostgreSQL 17 (`postgres`, `initdb`, `pg_ctl`, client), Redis (`redis-server`, `redis-cli`), and MinIO (`minio`) binaries available to this task runner, then rerun T089 Stage A before creating any data. Do not use T047/T050 data or bucket. Once resources and port ownership are proven, T089 can establish task-owned empty stores and start/stop health scripts; T080 must then independently run its two real Chrome `SIMULATED_MIC` → MinIO read-back → teacher six-item review → same-Attempt report E2Es. This result does not satisfy those E2Es.
 
 `FINAL_SHA`, remote push verification, and final clean worktree status are reported in the task return after commit/push.
+
+## Git verification
+
+The initial evidence commit `aa50ff810d658ef2e3fa978d9132019e6012382b` contains only the three T089 evidence files listed above. Before that commit, `git diff --cached --check` and `git diff --check` both exited `0`; the preserved MinIO readiness artifact compared byte-for-byte equal to the T080 BASE artifact. The branch was pushed with a normal non-force push. Remote ref readback matched `aa50ff810d658ef2e3fa978d9132019e6012382b`, and the T089 worktree was clean at that readback. The final branch HEAD after this verification note is reported in the task return.
