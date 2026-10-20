@@ -12,7 +12,7 @@ export class ListVolunteersQueryDto {
   readonly cursor?: string;
 
   @IsOptional()
-  @Transform(({ value }) =>
+  @Transform(({ value }): unknown =>
     typeof value === "string" ? Number.parseInt(value, 10) : value,
   )
   @IsInt()
@@ -56,7 +56,7 @@ export class ListServiceTasksQueryDto {
   readonly cursor?: string;
 
   @IsOptional()
-  @Transform(({ value }) =>
+  @Transform(({ value }): unknown =>
     typeof value === "string" ? Number.parseInt(value, 10) : value,
   )
   @IsInt()
@@ -103,7 +103,7 @@ export class ListIncidentsQueryDto {
   readonly cursor?: string;
 
   @IsOptional()
-  @Transform(({ value }) =>
+  @Transform(({ value }): unknown =>
     typeof value === "string" ? Number.parseInt(value, 10) : value,
   )
   @IsInt()

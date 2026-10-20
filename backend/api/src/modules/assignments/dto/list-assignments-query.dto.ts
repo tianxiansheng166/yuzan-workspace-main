@@ -7,7 +7,7 @@ export class ListAssignmentsQueryDto {
   readonly cursor?: string;
 
   @IsOptional()
-  @Transform(({ value }) =>
+  @Transform(({ value }): unknown =>
     typeof value === "string" ? Number.parseInt(value, 10) : value,
   )
   @IsInt()
@@ -30,7 +30,7 @@ export class ListAssignmentsQueryDto {
   readonly classId?: string;
 
   @IsOptional()
-  @Transform(({ value }) => typeof value === "string" ? value.trim() : value)
+  @Transform(({ value }): unknown => typeof value === "string" ? value.trim() : value)
   @IsString()
   @MaxLength(100)
   readonly search?: string;

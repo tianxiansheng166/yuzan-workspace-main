@@ -65,7 +65,8 @@ export function redact<T>(value: T): T {
   }
 
   if (Array.isArray(value)) {
-    return value.map((item) => redact(item)) as unknown as T;
+    const items: readonly unknown[] = value;
+    return items.map((item) => redact(item)) as unknown as T;
   }
 
   if (typeof value === "object") {

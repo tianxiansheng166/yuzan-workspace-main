@@ -200,20 +200,12 @@ export class LearningService {
             progress = progressRecord ?? undefined;
           }
 
+          const instructionText = learningInstructionText(activity.instruction);
           activities.push({
             activityId: activity.id,
             title: activity.title,
             type: activity.type,
-            ...(activity.instruction
-              ? {
-                  instruction:
-                    typeof activity.instruction === "object" &&
-                    activity.instruction !== null &&
-                    "originalText" in activity.instruction
-                      ? (activity.instruction as { originalText: string }).originalText
-                      : String(activity.instruction),
-                }
-              : {}),
+            ...(instructionText ? { instruction: instructionText } : {}),
             sortOrder: activity.sortOrder,
             required: activity.required,
             ...(progress ? { progress } : {}),
@@ -297,4 +289,13 @@ export class LearningService {
 
     return toActivityProgressResponse(result);
   }
+}
+
+function learningInstructionText(value: unknown): string | undefined {
+  if (typeof value === "string") return value;
+  if (typeof value !== "object" || value === null || Array.isArray(value)) {
+    return undefined;
+  }
+  const originalText = (value as Record<string, unknown>).originalText;
+  return typeof originalText === "string" ? originalText : undefined;
 }

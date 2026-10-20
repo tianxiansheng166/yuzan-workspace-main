@@ -10,6 +10,13 @@ Repository: `yuzan-workspace-main`
 - Selected tests: 20 passed, 0 failed, 7 database-gated skips. Full raw lint, targeted lint and test logs are in evidence/yz-rd-t051/RESULTS.md. READY_TO_MERGE=NO; L4_OPEN=OPEN.
 - The checkout AGENTS.md has no AA-DEV-V2.2 marker and the task card supplied no Lane policy reference. The user-provided /home/tian/code/AGENTS.md safety baseline governed. No API source, database service or L4 runtime was accessed.
 
+## YZ-RD-T052 API source lint remainder (2026-10-20)
+
+- `PARTIAL_WITH_DEBT` on `feat/yz-rd-t052-api-source-lint-remaining-60`, based on exact `987e7321157033001b8548e0c0b4318d9f14e503`. Independent worktree; the dirty shared checkout was not edited.
+- Full API lint moved from 1,960 errors (60 source / 1,900 test) to 1,901 (1 source / 1,900 test), with zero warnings. Fifty-nine source findings were fixed. The sole remaining source finding is in `curriculum/ports/prisma-course-version.repository.ts`, which T049 is actively editing; T052 has zero changed-path overlap with T049.
+- PASS: API source typecheck; API Vitest 1,109 passed / 64 environment-gated skips; `git diff --check`. Test-project typecheck retains the same 269 baseline diagnostics with no new errors. Full evidence: [`evidence/yz-rd-t052/RESULTS.md`](evidence/yz-rd-t052/RESULTS.md).
+- `READY_TO_MERGE=NO`; the 1,900 test lint findings and T049-owned source finding remain. `L4_OPEN=OPEN`. Target checkout has no `AA-DEV-V2.2` marker and the card supplied no Lane policy reference; user-provided safety baseline governed. No runtime or L4 access.
+
 ## YZ-RD-T041 API lint debt slice (2026-10-20)
 
 - `PARTIAL_WITH_DEBT` on `feat/yz-rd-t041-api-lint-debt-first-slice`, based on exact `b3a731bb32f404f4a55f4d4f56d265514d324d40`. The T046 baseline was verified at `0f6ea3710797612aa08f37944a9ab9d92f033da1`: full API lint 1,201 errors / 1 warning (1,037 source findings plus 164 test TypeScript project-service parsing errors).

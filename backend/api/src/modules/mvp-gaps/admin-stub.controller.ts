@@ -33,7 +33,10 @@ import {
 } from "class-validator";
 import { Type } from "class-transformer";
 import { createHash, randomBytes } from "node:crypto";
-import { Prisma } from "@yuzan/database";
+import {
+  MembershipRole as PrismaMembershipRole,
+  Prisma,
+} from "@yuzan/database";
 import {
   CurrentPrincipal,
   CurrentTenant,
@@ -63,6 +66,10 @@ export class CreateSchoolDto {
   @IsOptional()
   @IsString()
   readonly regionCode?: string;
+}
+
+function stringField(value: unknown): string {
+  return typeof value === "string" ? value : "";
 }
 
 export class UpdateSchoolDto {
@@ -940,19 +947,26 @@ export class AdminStubController {
     const seen = new Set<string>();
     const candidates: Array<{ code: string; name: string; timezone: string; regionCode?: string }> = [];
     for (const [index, input] of rows.entries()) {
-      const code = String(input.code ?? "").trim().toUpperCase();
-      const name = String(input.name ?? "").trim();
+      const code = stringField(input.code).trim().toUpperCase();
+      const name = stringField(input.name).trim();
       if (seen.has(code)) { rowErrors.push({ row: index + 1, code, message: "文件内编码重复" }); continue; }
       seen.add(code);
       if (!name || !/^[A-Z0-9][A-Z0-9_-]{1,63}$/.test(code)) { rowErrors.push({ row: index + 1, code, message: !name ? "学校名称不能为空" : "编码格式无效" }); continue; }
-      candidates.push({ code, name, timezone: String(input.timezone ?? "Asia/Shanghai").trim() || "Asia/Shanghai", ...(String(input.regionCode ?? "").trim() ? { regionCode: String(input.regionCode).trim() } : {}) });
+      const timezone = stringField(input.timezone).trim() || "Asia/Shanghai";
+      const regionCode = stringField(input.regionCode).trim();
+      candidates.push({
+        code,
+        name,
+        timezone,
+        ...(regionCode ? { regionCode } : {}),
+      });
     }
     try {
       const existing = candidates.length ? await this.prisma.school.findMany({ where: { code: { in: candidates.map((item) => item.code) } }, select: { code: true } }) : [];
       const existingCodes = new Set(existing.map((item) => item.code));
       const valid = candidates.filter((item) => {
         if (!existingCodes.has(item.code)) return true;
-        rowErrors.push({ code: item.code, row: rows.findIndex((row) => String(row.code ?? "").trim().toUpperCase() === item.code) + 1, message: "学校编码已存在" });
+        rowErrors.push({ code: item.code, row: rows.findIndex((row) => stringField(row.code).trim().toUpperCase() === item.code) + 1, message: "学校编码已存在" });
         return false;
       });
       const inserted = valid.length ? (await this.prisma.school.createMany({ data: valid })).count : 0;
@@ -1521,7 +1535,7 @@ export class AdminStubController {
     const schoolId = this.scopeSchoolId(principal, tenant) ?? tenant.schoolId;
     const before = await this.prisma.membership.findFirst({ where: { id, schoolId }, include: { user: { select: { id: true, displayName: true } } } });
     if (!before) throw new NotFoundException("成员关系不存在");
-    if (principal.roles.includes(MembershipRole.SCHOOL_ADMIN) && before.role === MembershipRole.PLATFORM_ADMIN) throw new ForbiddenException("学校管理员不能修改平台管理员");
+    if (principal.roles.includes(MembershipRole.SCHOOL_ADMIN) && before.role === PrismaMembershipRole.PLATFORM_ADMIN) throw new ForbiddenException("学校管理员不能修改平台管理员");
     if (dto.role === MembershipRole.PLATFORM_ADMIN && !principal.roles.includes(MembershipRole.PLATFORM_ADMIN)) throw new ForbiddenException("只有平台管理员可以授予平台角色");
     const after = await this.prisma.$transaction(async (tx) => {
       const updated = await tx.membership.update({ where: { id }, data: { ...(dto.role ? { role: dto.role } : {}), ...(dto.status ? { status: dto.status } : {}) } });

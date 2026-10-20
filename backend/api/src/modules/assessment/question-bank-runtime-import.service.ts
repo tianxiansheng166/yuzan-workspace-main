@@ -426,7 +426,10 @@ export class QuestionBankRuntimeImportService {
     let resourcesReused = 0;
 
     for (const entry of media) {
-      const result = await this.ensureResource(entry, input.readMedia);
+      const result = await this.ensureResource(
+        entry,
+        (zipPath) => input.readMedia(zipPath),
+      );
       resourceIds.set(mediaKey(entry.kind, entry.sha256), result.id);
       if (result.created) resourcesCreated += 1;
       else resourcesReused += 1;
