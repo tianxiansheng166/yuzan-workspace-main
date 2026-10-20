@@ -1,0 +1,51 @@
+
+ RUN  v3.2.7 /home/tian/code/work/yuzan-workspace-t064/backend/api
+
+ ✓ test/modules/training/training.service.spec.ts (58 tests) 12ms
+[Nest] 1367425  - 10/20/2026, 4:31:44 PM     LOG [TranslationsService] Creating translation job for user=teacher-1 school=school-1 hash=642a22c4...
+[Nest] 1367425  - 10/20/2026, 4:31:44 PM     LOG [TranslationsService] Creating translation job for user=student-1 school=school-1 hash=fe96a492...
+[Nest] 1367425  - 10/20/2026, 4:31:44 PM     LOG [TranslationsService] Creating translation job for user=teacher-1 school=school-1 hash=c526c622...
+[Nest] 1367425  - 10/20/2026, 4:31:44 PM     LOG [TranslationsService] Creating translation job for user=teacher-1 school=school-1 hash=486a2d2a...
+[Nest] 1367425  - 10/20/2026, 4:31:44 PM     LOG [TranslationsService] Creating translation job for user=teacher-1 school=school-1 hash=9f86d081...
+[Nest] 1367425  - 10/20/2026, 4:31:44 PM     LOG [TranslationsService] Creating translation job for user=teacher-1 school=school-1 hash=9f86d081...
+[Nest] 1367425  - 10/20/2026, 4:31:44 PM    WARN [TranslationsService] Translation job job-1 failed: provider not configured
+[Nest] 1367425  - 10/20/2026, 4:31:44 PM     LOG [TranslationsService] Creating translation job for user=platform-admin-1 school=school-1 hash=0ccbe3ba...
+ ✓ test/modules/translations/translations.service.spec.ts (45 tests) 10ms
+ ✓ test/assessment/assessment.service.spec.ts (30 tests) 62ms
+ ✓ test/curriculum/curriculum.service.spec.ts (26 tests) 8ms
+ ✓ test/assessment/remediation.service.spec.ts (6 tests) 6ms
+ ↓ test/integration/identity/prisma-identity.repository.spec.ts (21 tests | 21 skipped)
+ ✓ test/recordings/recordings.service.spec.ts (21 tests) 15ms
+ ✓ test/ai-lesson-planning/ai-lesson-planning.spec.ts (23 tests) 20ms
+ ✓ test/assessment/practice.service.spec.ts (20 tests) 7ms
+ ✓ test/speech-job/speech-job.service.spec.ts (19 tests) 13ms
+ ✓ test/assessment/student-dashboard.today.service.spec.ts (9 tests) 5ms
+ ✓ test/assessment/assessment-review.service.spec.ts (2 tests) 4ms
+ ✓ test/curriculum/publishing.validator.spec.ts (13 tests) 2ms
+stdout | test/curriculum/curriculum.controller.spec.ts > CurriculumController > rejects unknown role via AuthenticationGuard
+{"type":"SECURITY","requestId":"req-1","code":"UNKNOWN_ROLE","method":"GET","path":"/schools/school-a/course-versions","event":"AUTHORIZATION_DENIED"}
+
+stdout | test/curriculum/curriculum.controller.spec.ts > CurriculumController > rejects client-forged schoolId via TenantAuthorizationGuard
+{"type":"SECURITY","requestId":"req-1","code":"FORBIDDEN_TENANT","schoolId":"school-a","method":"GET","path":"/schools/school-b/course-versions","userId":"teacher-1","event":"AUTHORIZATION_DENIED"}
+
+ ✓ test/curriculum/curriculum.controller.spec.ts (10 tests) 137ms
+stdout | test/organizations/organizations.controller.spec.ts > OrganizationsController > security guards > rejects unknown role via AuthenticationGuard
+{"type":"SECURITY","requestId":"req-1","code":"UNKNOWN_ROLE","method":"GET","path":"/schools/school-a","event":"AUTHORIZATION_DENIED"}
+
+stdout | test/organizations/organizations.controller.spec.ts > OrganizationsController > security guards > rejects client-forged schoolId via TenantAuthorizationGuard
+{"type":"SECURITY","requestId":"req-1","code":"FORBIDDEN_TENANT","schoolId":"school-a","method":"GET","path":"/schools/school-b","userId":"teacher-1","event":"AUTHORIZATION_DENIED"}
+
+stdout | test/organizations/organizations.controller.spec.ts > OrganizationsController > security guards > rejects suspended membership
+{"type":"SECURITY","requestId":"req-1","code":"UNAUTHENTICATED","method":"GET","path":"/schools/school-a","event":"AUTHORIZATION_DENIED"}
+
+ ✓ test/organizations/organizations.controller.spec.ts (11 tests) 15ms
+ ✓ test/speech-job/speech-job.result-policy.spec.ts (5 tests) 6ms
+ ✓ test/reporting/reporting.service.spec.ts (9 tests) 6ms
+ ✓ test/modules/learning/learning.service.spec.ts (6 tests) 17ms
+ ✓ test/curriculum/curriculum.policy.spec.ts (6 tests) 1ms
+
+ Test Files  18 passed | 1 skipped (19)
+      Tests  319 passed | 21 skipped (340)
+   Start at  16:31:40
+   Duration  9.90s (transform 3.29s, setup 0ms, collect 8.81s, tests 345ms, environment 0ms, prepare 187ms)
+

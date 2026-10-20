@@ -1,0 +1,43 @@
+Task-owned worktree: /home/tian/code/work/yuzan-workspace-t064
+BASE: d3d2623747eda173aeea71d8bdb2cf52630e98c0
+MERGE_SOURCE: 213946cca16adb22acd09ae43ea05c19c31dc4e6
+Node: v24.20.0; pnpm: 10.13.1
+
+Offline setup:
+  pnpm install --offline --frozen-lockfile
+  DATABASE_URL=postgresql://placeholder:placeholder@127.0.0.1:1/placeholder pnpm --filter @yuzan/database generate
+  pnpm --filter @yuzan/database build
+
+Unified full API lint (cwd: backend/api):
+  ./node_modules/.bin/eslint src test --format json
+
+Test TypeScript (cwd: backend/api):
+  ./node_modules/.bin/tsc -p test/tsconfig.json --noEmit --pretty false
+  Compare with evidence/yz-rd-t062/test-typecheck-after.txt using relative path + TS code + first-line message identities.
+
+Safe targeted API tests (cwd: backend/api; both database variables unset):
+  ./node_modules/.bin/vitest run --passWithNoTests --pool=forks --poolOptions.forks.singleFork \
+    test/assessment/assessment-review.service.spec.ts \
+    test/assessment/assessment.service.spec.ts \
+    test/assessment/practice.service.spec.ts \
+    test/assessment/remediation.service.spec.ts \
+    test/assessment/student-dashboard.today.service.spec.ts \
+    test/recordings/recordings.service.spec.ts \
+    test/reporting/reporting.service.spec.ts \
+    test/speech-job/speech-job.result-policy.spec.ts \
+    test/speech-job/speech-job.service.spec.ts \
+    test/curriculum \
+    test/integration/identity/prisma-identity.repository.spec.ts \
+    test/ai-lesson-planning/ai-lesson-planning.spec.ts \
+    test/modules/translations/translations.service.spec.ts \
+    test/organizations/organizations.controller.spec.ts \
+    test/modules/learning/learning.service.spec.ts \
+    test/modules/training/training.service.spec.ts
+
+Contracts:
+  pnpm --filter @yuzan/contracts test
+  Initial nested pnpm 11.7.0 PATH failure preserved; final pass used cached pnpm 10.13.1 PATH shim.
+
+Integrity checks:
+  git diff --check
+  git diff --quiet d3d2623747eda173aeea71d8bdb2cf52630e98c0 HEAD -- backend/api/src backend/api/eslint.config.mjs frontend packages/contracts infra/database

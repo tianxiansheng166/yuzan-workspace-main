@@ -1,5 +1,12 @@
 # Development status
 
+
+## YZ-RD-T064 — T063 fourth API test lint slice integration (2026-10-20)
+
+COMPLETE_WITH_UNWAIVED_LINT_DEBT on the independent T064 branch. No-FF merge `d4e7190b1e5cc2b50e095963ad6dc208b18dd7d4` preserves exact T062 BASE `d3d2623747eda173aeea71d8bdb2cf52630e98c0` as first parent and T063 `213946cca16adb22acd09ae43ea05c19c31dc4e6` as second parent.
+
+The complete API lint measured `src 0 / test 733 / total 733` versus `0 / 916 / 916` at BASE. Test TypeScript has 230 diagnostics, zero new identities, and 18 resolved against the 248-diagnostic BASE. Focused safe API regressions passed 319 tests with 21 database-gated skips; Contracts passed 6/6. Curriculum publishing, recordings, review, and report tests passed. Product API, ESLint rules/configuration, frontend, Contracts, and database source are unchanged from BASE. Evidence and original logs: [evidence/yz-rd-t064/RESULTS.md](evidence/yz-rd-t064/RESULTS.md). `READY_TO_MERGE=NO` due remaining unwaived lint debt. No T005 or Level 4 source content, importer, Docker, or database runtime was used; `L4_OPEN=NO`.
+
 ## YZ-RD-T063 — API test lint fourth slice (2026-10-20)
 
 PARTIAL_WITH_DEBT / `READY_TO_MERGE=NO`. On the isolated `feat/yz-rd-t063-api-test-lint-fourth-slice` branch from exact T059 `f147138b570971d44815eebf769215a6ade5a08e`, six previously unremediated API tests were cleaned without overlap with T051/T055/T059 or active T005/T053/T060 paths. The owned files moved from 183 lint errors to zero. Full API lint moved from 926 errors (1 source / 925 test) to 743 (1 source / 742 test), with zero warnings/parser errors; the remaining source finding is unchanged and T049-owned.

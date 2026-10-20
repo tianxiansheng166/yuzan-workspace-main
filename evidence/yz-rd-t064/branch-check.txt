@@ -1,0 +1,2 @@
+Before worktree creation: git branch -a --list '*yz-rd-t064*' had no results; git worktree list had no T064 worktree; /home/tian/code/work/yuzan-workspace-t064 did not exist.
+After creating the output branch and before push: git ls-remote --heads origin refs/heads/feat/yz-rd-t064-unified-product-lint-fourth-slice-integration had no results (exit 0); local branch is feat/yz-rd-t064-unified-product-lint-fourth-slice-integration.

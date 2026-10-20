@@ -1,0 +1,154 @@
+
+> @yuzan/contracts@ test /home/tian/code/work/yuzan-workspace-t064/packages/contracts
+> redocly lint openapi/openapi.yaml && node --test scripts/generate-types.test.mjs
+
+validating openapi/openapi.yaml...
+openapi/openapi.yaml: validated in 237ms
+
+Woohoo! Your API description is valid. 🎉
+
+✖ the production generator succeeds without leaking machine-specific output (38787.439891ms)
+✖ two production runs produce identical hashes (285.1535ms)
+✖ generated types satisfy Prettier (260.940131ms)
+✖ contract sources and documentation satisfy Prettier (264.879734ms)
+✔ generator failures make the command fail (115.215722ms)
+✔ formatter failures make the command fail (116.779155ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 2
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 39951.65546
+
+✖ failing tests:
+
+test at scripts/generate-types.test.mjs:79:1
+✖ the production generator succeeds without leaking machine-specific output (38787.439891ms)
+  AssertionError [ERR_ASSERTION]: [ERROR] This project is configured to use 10.13.1 of pnpm. Your current pnpm is v11.7.0
+  Corepack invoked pnpm with this version, and pnpm does not switch versions when running under corepack.
+  Align the "packageManager" field in package.json with "devEngines.packageManager", or invoke pnpm directly (without corepack) so it can switch versions automatically.
+  If you want to bypass this version check, you can set the "pmOnFail" configuration to "warn" or "ignore" (e.g. via --pm-on-fail=ignore). If using "devEngines.packageManager", you can set its "onFail" to "warn" or "ignore"
+  file:///home/tian/code/work/yuzan-workspace-t064/packages/contracts/scripts/generate-types.mjs:24
+      throw new Error(`${label} exited with status ${String(result.status)}`);
+            ^
+  
+  Error: OpenAPI type generator exited with status 1
+      at runChecked (file:///home/tian/code/work/yuzan-workspace-t064/packages/contracts/scripts/generate-types.mjs:24:11)
+      at runGenerateTypes (file:///home/tian/code/work/yuzan-workspace-t064/packages/contracts/scripts/generate-types.mjs:38:5)
+      at file:///home/tian/code/work/yuzan-workspace-t064/packages/contracts/scripts/generate-types.mjs:63:3
+      at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+      at async node:internal/modules/esm/loader:647:26
+      at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+  
+  Node.js v24.20.0
+  
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///home/tian/code/work/yuzan-workspace-t064/packages/contracts/scripts/generate-types.test.mjs:83:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.start (node:internal/test_runner/test:1257:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/generate-types.test.mjs:109:1
+✖ two production runs produce identical hashes (285.1535ms)
+  AssertionError [ERR_ASSERTION]: [ERROR] This project is configured to use 10.13.1 of pnpm. Your current pnpm is v11.7.0
+  Corepack invoked pnpm with this version, and pnpm does not switch versions when running under corepack.
+  Align the "packageManager" field in package.json with "devEngines.packageManager", or invoke pnpm directly (without corepack) so it can switch versions automatically.
+  If you want to bypass this version check, you can set the "pmOnFail" configuration to "warn" or "ignore" (e.g. via --pm-on-fail=ignore). If using "devEngines.packageManager", you can set its "onFail" to "warn" or "ignore"
+  file:///home/tian/code/work/yuzan-workspace-t064/packages/contracts/scripts/generate-types.mjs:24
+      throw new Error(`${label} exited with status ${String(result.status)}`);
+            ^
+  
+  Error: OpenAPI type generator exited with status 1
+      at runChecked (file:///home/tian/code/work/yuzan-workspace-t064/packages/contracts/scripts/generate-types.mjs:24:11)
+      at runGenerateTypes (file:///home/tian/code/work/yuzan-workspace-t064/packages/contracts/scripts/generate-types.mjs:38:5)
+      at file:///home/tian/code/work/yuzan-workspace-t064/packages/contracts/scripts/generate-types.mjs:63:3
+      at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+      at async node:internal/modules/esm/loader:647:26
+      at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+  
+  Node.js v24.20.0
+  
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///home/tian/code/work/yuzan-workspace-t064/packages/contracts/scripts/generate-types.test.mjs:111:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/generate-types.test.mjs:119:1
+✖ generated types satisfy Prettier (260.940131ms)
+  AssertionError [ERR_ASSERTION]: 
+  [ERROR] This project is configured to use 10.13.1 of pnpm. Your current pnpm is v11.7.0
+  Corepack invoked pnpm with this version, and pnpm does not switch versions when running under corepack.
+  Align the "packageManager" field in package.json with "devEngines.packageManager", or invoke pnpm directly (without corepack) so it can switch versions automatically.
+  If you want to bypass this version check, you can set the "pmOnFail" configuration to "warn" or "ignore" (e.g. via --pm-on-fail=ignore). If using "devEngines.packageManager", you can set its "onFail" to "warn" or "ignore"
+  
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///home/tian/code/work/yuzan-workspace-t064/packages/contracts/scripts/generate-types.test.mjs:121:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/generate-types.test.mjs:124:1
+✖ contract sources and documentation satisfy Prettier (264.879734ms)
+  AssertionError [ERR_ASSERTION]: 
+  [ERROR] This project is configured to use 10.13.1 of pnpm. Your current pnpm is v11.7.0
+  Corepack invoked pnpm with this version, and pnpm does not switch versions when running under corepack.
+  Align the "packageManager" field in package.json with "devEngines.packageManager", or invoke pnpm directly (without corepack) so it can switch versions automatically.
+  If you want to bypass this version check, you can set the "pmOnFail" configuration to "warn" or "ignore" (e.g. via --pm-on-fail=ignore). If using "devEngines.packageManager", you can set its "onFail" to "warn" or "ignore"
+  
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///home/tian/code/work/yuzan-workspace-t064/packages/contracts/scripts/generate-types.test.mjs:132:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+/home/tian/code/work/yuzan-workspace-t064/packages/contracts:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @yuzan/contracts@ test: `redocly lint openapi/openapi.yaml && node --test scripts/generate-types.test.mjs`
+Exit status 1

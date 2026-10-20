@@ -1,0 +1,94 @@
+{
+  "command": "./node_modules/.bin/tsc -p test/tsconfig.json --noEmit --pretty false",
+  "baseline": "T064 exact BASE d3d2623747eda173aeea71d8bdb2cf52630e98c0; reused T062 actual raw diagnostics evidence/yz-rd-t062/test-typecheck-after.txt",
+  "final": "T064 merge d4e7190b1e5cc2b50e095963ad6dc208b18dd7d4; evidence/yz-rd-t064/test-typecheck-after.txt",
+  "identity_scheme": "relative file path + TypeScript diagnostic code + first-line message (line/column excluded)",
+  "baselineDiagnostics": 248,
+  "finalDiagnostics": 230,
+  "baselineUniqueIdentities": 140,
+  "finalUniqueIdentities": 122,
+  "addedIdentityCount": 0,
+  "resolvedIdentityCount": 18,
+  "addedDiagnosticOccurrences": 0,
+  "resolvedDiagnosticOccurrences": 18,
+  "addedIdentities": [],
+  "resolvedIdentities": [
+    {
+      "identity": "test/ai-lesson-planning/ai-lesson-planning.spec.ts | TS1309 | The current file is a CommonJS module and cannot use 'await' at the top level.",
+      "occurrences": 1
+    },
+    {
+      "identity": "test/ai-lesson-planning/ai-lesson-planning.spec.ts | TS2345 | Argument of type '{ add: Mock<Procedure>; getJob: Mock<Procedure>; } | null' is not assignable to parameter of type 'Queue<any, any, string, any, any, string> | null'.",
+      "occurrences": 1
+    },
+    {
+      "identity": "test/integration/identity/prisma-identity.repository.spec.ts | TS18048 | 'prisma.campus' is possibly 'undefined'.",
+      "occurrences": 1
+    },
+    {
+      "identity": "test/integration/identity/prisma-identity.repository.spec.ts | TS18048 | 'prisma.class' is possibly 'undefined'.",
+      "occurrences": 1
+    },
+    {
+      "identity": "test/integration/identity/prisma-identity.repository.spec.ts | TS18048 | 'prisma.course' is possibly 'undefined'.",
+      "occurrences": 1
+    },
+    {
+      "identity": "test/integration/identity/prisma-identity.repository.spec.ts | TS18048 | 'prisma.courseVersion' is possibly 'undefined'.",
+      "occurrences": 1
+    },
+    {
+      "identity": "test/integration/identity/prisma-identity.repository.spec.ts | TS18048 | 'prisma.enrollment' is possibly 'undefined'.",
+      "occurrences": 1
+    },
+    {
+      "identity": "test/integration/identity/prisma-identity.repository.spec.ts | TS18048 | 'prisma.membership' is possibly 'undefined'.",
+      "occurrences": 1
+    },
+    {
+      "identity": "test/integration/identity/prisma-identity.repository.spec.ts | TS18048 | 'prisma.school' is possibly 'undefined'.",
+      "occurrences": 1
+    },
+    {
+      "identity": "test/integration/identity/prisma-identity.repository.spec.ts | TS18048 | 'prisma.session' is possibly 'undefined'.",
+      "occurrences": 1
+    },
+    {
+      "identity": "test/integration/identity/prisma-identity.repository.spec.ts | TS18048 | 'prisma.sessionPair' is possibly 'undefined'.",
+      "occurrences": 1
+    },
+    {
+      "identity": "test/integration/identity/prisma-identity.repository.spec.ts | TS18048 | 'prisma.term' is possibly 'undefined'.",
+      "occurrences": 1
+    },
+    {
+      "identity": "test/integration/identity/prisma-identity.repository.spec.ts | TS18048 | 'prisma.user' is possibly 'undefined'.",
+      "occurrences": 1
+    },
+    {
+      "identity": "test/integration/identity/prisma-identity.repository.spec.ts | TS2677 | A type predicate's type must be assignable to its parameter's type.",
+      "occurrences": 1
+    },
+    {
+      "identity": "test/integration/identity/prisma-identity.repository.spec.ts | TS7006 | Parameter 'r' implicitly has an 'any' type.",
+      "occurrences": 1
+    },
+    {
+      "identity": "test/integration/identity/prisma-identity.repository.spec.ts | TS7006 | Parameter 's' implicitly has an 'any' type.",
+      "occurrences": 1
+    },
+    {
+      "identity": "test/modules/translations/translations.service.spec.ts | TS2322 | Type 'UnavailableProvider' is not assignable to type 'TranslationProviderPort'.",
+      "occurrences": 1
+    },
+    {
+      "identity": "test/modules/translations/translations.service.spec.ts | TS2416 | Property 'translate' in type 'UnavailableProvider' is not assignable to the same property in base type 'TranslationProviderPort'.",
+      "occurrences": 1
+    }
+  ],
+  "unmatchedNonemptyLines": {
+    "baseline": 174,
+    "final": 164
+  },
+  "tscExitCode": 2
+}

@@ -3,6 +3,15 @@
 Last updated: 2026-10-20
 Repository: `yuzan-workspace-main`
 
+
+## YZ-RD-T064 — T063 fourth API test lint slice integration (2026-10-20)
+
+- COMPLETE_WITH_UNWAIVED_LINT_DEBT on independent branch `feat/yz-rd-t064-unified-product-lint-fourth-slice-integration`. No-FF merge `d4e7190b1e5cc2b50e095963ad6dc208b18dd7d4` has exact BASE `d3d2623747eda173aeea71d8bdb2cf52630e98c0` first and T063 `213946cca16adb22acd09ae43ea05c19c31dc4e6` second.
+- Unified API lint measured `src 0 / test 733 / total 733`, down from exact-BASE `0 / 916 / 916`; zero warnings/parser errors. Test TypeScript is 230 diagnostics versus 248 at BASE, with zero new identities and 18 removed. Safe targeted API regressions passed 319 with 21 database-gated skips; Contracts passed 6/6.
+- Application API, ESLint configuration, frontend, Contracts, and database source are byte-for-byte unchanged from BASE. Curriculum publishing, recordings, manual review, and reporting regressions passed. `READY_TO_MERGE=NO` while 733 test lint findings remain unwaived.
+- Node 24.20.0 and pnpm 10.13.1 were used. No T005 or Level 4 source, importer, raw question-bank corpus, Docker, or database runtime was opened or used; `L4_OPEN=NO`.
+- Full logs and merge evidence: [`evidence/yz-rd-t064/RESULTS.md`](evidence/yz-rd-t064/RESULTS.md).
+
 ## YZ-RD-T063 API test lint fourth slice (2026-10-20)
 
 - `PARTIAL_WITH_DEBT` on `feat/yz-rd-t063-api-test-lint-fourth-slice`, from exact T059 BASE `f147138b570971d44815eebf769215a6ade5a08e`, in an independent worktree. Six unremediated API test files were selected from the T059 remaining-debt snapshot; 183 lint findings were fixed. No API source changed.

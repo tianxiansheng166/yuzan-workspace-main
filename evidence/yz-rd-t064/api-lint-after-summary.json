@@ -1,0 +1,30 @@
+{
+  "src": {
+    "files": 426,
+    "errors": 0,
+    "warnings": 0,
+    "fatal": 0,
+    "parserErrors": 0
+  },
+  "test": {
+    "files": 164,
+    "errors": 733,
+    "warnings": 0,
+    "fatal": 0,
+    "parserErrors": 0
+  },
+  "other": {
+    "files": 0,
+    "errors": 0,
+    "warnings": 0,
+    "fatal": 0,
+    "parserErrors": 0
+  },
+  "errors": 733,
+  "warnings": 0,
+  "fatal": 0,
+  "parserErrors": 0,
+  "raw": "evidence/yz-rd-t064/api-lint-after.json",
+  "command": "cd backend/api && ./node_modules/.bin/eslint src test --format json",
+  "exitCode": 1
+}
