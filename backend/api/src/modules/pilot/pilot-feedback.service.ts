@@ -1,4 +1,5 @@
 import { ConflictException, ForbiddenException, Inject, Injectable, Logger, NotFoundException } from "@nestjs/common";
+import { MembershipRole as PrismaMembershipRole } from "@yuzan/database";
 import type { AuthContext } from "../../common/security/auth.types.js";
 import { MembershipRole } from "../../common/security/membership-role.js";
 import { PrismaService } from "../../shared/database/prisma.service.js";
@@ -142,7 +143,7 @@ export class PilotFeedbackService {
     });
     if (!session) throw new NotFoundException({ code: "ASSESSMENT_SESSION_NOT_FOUND", message: "测评不存在" });
     const isAdmin = auth.principal.roles.some((role) => role === MembershipRole.SCHOOL_ADMIN || role === MembershipRole.PLATFORM_ADMIN);
-    const isOwner = session.enrollment.userId === auth.principal.userId && session.enrollment.role === MembershipRole.STUDENT && session.enrollment.status === "ACTIVE";
+    const isOwner = session.enrollment.userId === auth.principal.userId && session.enrollment.role === PrismaMembershipRole.STUDENT && session.enrollment.status === "ACTIVE";
     const isTeacher = auth.principal.roles.includes(MembershipRole.TEACHER) && await this.prisma.enrollment.count({ where: { schoolId, classId: session.classId, userId: auth.principal.userId, role: MembershipRole.TEACHER, status: "ACTIVE" } }) > 0;
     if (!isAdmin && !isOwner && !isTeacher) throw new ForbiddenException({ code: "PILOT_CONTEXT_FORBIDDEN", message: "无权关联该测评上下文" });
     return {

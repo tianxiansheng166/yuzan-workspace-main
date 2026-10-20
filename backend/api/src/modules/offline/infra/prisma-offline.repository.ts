@@ -46,7 +46,7 @@ export class PrismaOfflineRepository implements OfflineRepositoryPort {
 
   async findPackageById(schoolId: string, packageId: string): Promise<OfflineContentPackage | null> {
     const row = await this.prisma.offlineContentPackage.findFirst({ where: { schoolId, id: packageId } });
-    return row ? toPackageDomain(row as unknown as Record<string, unknown>) : null;
+    return row ? toPackageDomain(row) : null;
   }
 
   async listPackages(schoolId: string, options: ListOfflinePackagesOptions): Promise<PaginatedResult<OfflineContentPackage>> {
@@ -81,17 +81,17 @@ export class PrismaOfflineRepository implements OfflineRepositoryPort {
         downloadRequired: data.downloadRequired ?? false,
       },
     });
-    return toPackageDomain(row as unknown as Record<string, unknown>);
+    return toPackageDomain(row);
   }
 
   async findBatchById(schoolId: string, batchId: string): Promise<SyncBatch | null> {
     const row = await this.prisma.syncBatch.findFirst({ where: { schoolId, id: batchId } });
-    return row ? toBatchDomain(row as unknown as Record<string, unknown>) : null;
+    return row ? toBatchDomain(row) : null;
   }
 
   async findBatchByClientBatchId(clientBatchId: string): Promise<SyncBatch | null> {
     const row = await this.prisma.syncBatch.findUnique({ where: { clientBatchId } });
-    return row ? toBatchDomain(row as unknown as Record<string, unknown>) : null;
+    return row ? toBatchDomain(row) : null;
   }
 
   async createBatch(data: CreateSyncBatchData): Promise<SyncBatch> {
@@ -104,10 +104,11 @@ export class PrismaOfflineRepository implements OfflineRepositoryPort {
         acceptedCount: data.operationCount,
       },
     });
-    return toBatchDomain(row as unknown as Record<string, unknown>);
+    return toBatchDomain(row);
   }
 
   async authorizeDownload(schoolId: string, packageId: string, _userId: string): Promise<OfflineDownloadAuthorization> {
+    void _userId;
     const pkg = await this.findPackageById(schoolId, packageId);
     if (!pkg) return { packageId, authorized: false, authorizedAt: new Date(), downloadUrl: null };
 

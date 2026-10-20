@@ -2,7 +2,8 @@ import { Inject, Injectable } from "@nestjs/common";
 import type { Prisma } from "@yuzan/database";
 import { PrismaService } from "../../shared/database/prisma.service.js";
 
-export const QUESTION_BANK_DETERMINISTIC_SCORER_VERSION = "qb-deterministic-v1" as const;
+export const QUESTION_BANK_DETERMINISTIC_SCORER_VERSION =
+  "qb-deterministic-v1" as const;
 
 const CHOICE_KEYS = new Set(["A", "B", "C", "D"]);
 const SPEECH_STRATEGIES = new Set(["SPEECH_READING", "SPEECH_OPEN_RESPONSE"]);
@@ -56,8 +57,15 @@ interface AssessmentItemForScoring {
   readonly reviewerUserId: string | null;
   readonly reviewedAt: Date | null;
   readonly questionVersionId: string | null;
-  readonly questionVersion: { status: string; deliverySpec: unknown; scoringSpec: unknown } | null;
-  readonly writtenAnswer: { content: unknown; finalSubmittedAt: Date | null } | null;
+  readonly questionVersion: {
+    status: string;
+    deliverySpec: unknown;
+    scoringSpec: unknown;
+  } | null;
+  readonly writtenAnswer: {
+    content: unknown;
+    finalSubmittedAt: Date | null;
+  } | null;
 }
 
 export interface QuestionBankScoringSummary {
@@ -75,16 +83,27 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 function asScoringSpec(value: unknown): ScoringSpecRecord | null {
-  return isRecord(value) ? value as ScoringSpecRecord : null;
+  return isRecord(value) ? value : null;
 }
 
 function finiteNonNegativeNumber(value: unknown): number | null {
-  return typeof value === "number" && Number.isFinite(value) && value >= 0 ? value : null;
+  return typeof value === "number" && Number.isFinite(value) && value >= 0
+    ? value
+    : null;
 }
 
 function safeStrategy(value: unknown): string {
   if (typeof value !== "string") return "UNSUPPORTED";
-  if (["EXACT_CHOICE", "DICTATION_ALIGNMENT", "ACCEPTED_TEXT", "RUBRIC_TEXT", ...SPEECH_STRATEGIES].includes(value)) return value;
+  if (
+    [
+      "EXACT_CHOICE",
+      "DICTATION_ALIGNMENT",
+      "ACCEPTED_TEXT",
+      "RUBRIC_TEXT",
+      ...SPEECH_STRATEGIES,
+    ].includes(value)
+  )
+    return value;
   return "UNSUPPORTED";
 }
 
@@ -114,7 +133,14 @@ function needsReview(
   reasonCode: string,
   metrics?: Record<string, number | boolean>,
 ): DeterministicScoreResult {
-  return safeResult(strategy, maxScore, "NEEDS_REVIEW", null, reasonCode, metrics);
+  return safeResult(
+    strategy,
+    maxScore,
+    "NEEDS_REVIEW",
+    null,
+    reasonCode,
+    metrics,
+  );
 }
 
 function autoScore(
@@ -123,12 +149,23 @@ function autoScore(
   score: number,
   metrics?: Record<string, number | boolean>,
 ): DeterministicScoreResult {
-  const bounded = Math.min(maxScore, Math.max(0, Number.isFinite(score) ? score : 0));
-  return safeResult(strategy, maxScore, "AUTO_SCORED", bounded, undefined, metrics);
+  const bounded = Math.min(
+    maxScore,
+    Math.max(0, Number.isFinite(score) ? score : 0),
+  );
+  return safeResult(
+    strategy,
+    maxScore,
+    "AUTO_SCORED",
+    bounded,
+    undefined,
+    metrics,
+  );
 }
 
 function answerValue(answer: unknown): unknown {
-  if (isRecord(answer) && "content" in answer) return answerValue(answer.content);
+  if (isRecord(answer) && "content" in answer)
+    return answerValue(answer.content);
   if (!isRecord(answer)) return answer;
   if ("value" in answer) return answer.value;
   if ("text" in answer) return answer.text;
@@ -140,10 +177,19 @@ function answerText(answer: unknown): string {
   return typeof value === "string" ? value : "";
 }
 
-function configuredMaxScore(spec: ScoringSpecRecord, maxScore: unknown): number | null {
+function configuredMaxScore(
+  spec: ScoringSpecRecord,
+  maxScore: unknown,
+): number | null {
   const itemMaxScore = finiteNonNegativeNumber(maxScore);
   const specMaxScore = finiteNonNegativeNumber(spec.maxScore);
-  if (itemMaxScore === null || specMaxScore === null || itemMaxScore !== specMaxScore || itemMaxScore <= 0) return null;
+  if (
+    itemMaxScore === null ||
+    specMaxScore === null ||
+    itemMaxScore !== specMaxScore ||
+    itemMaxScore <= 0
+  )
+    return null;
   return itemMaxScore;
 }
 
@@ -152,13 +198,21 @@ function normalizedChoice(value: unknown): string {
 }
 
 function configuredChoiceKeys(deliverySpec: unknown): string[] | null {
-  if (!isRecord(deliverySpec) || !isRecord(deliverySpec.response) || deliverySpec.response.type !== "CHOICE") return null;
+  if (
+    !isRecord(deliverySpec) ||
+    !isRecord(deliverySpec.response) ||
+    deliverySpec.response.type !== "CHOICE"
+  )
+    return null;
   const options = deliverySpec.response.options;
   if (!Array.isArray(options) || options.length === 0) return null;
-  const keys = options.map((option) => (
-    isRecord(option) && typeof option.key === "string" ? normalizedChoice(option.key) : ""
-  ));
-  if (keys.some((key) => !key) || new Set(keys).size !== keys.length) return null;
+  const keys = options.map((option) =>
+    isRecord(option) && typeof option.key === "string"
+      ? normalizedChoice(option.key)
+      : "",
+  );
+  if (keys.some((key) => !key) || new Set(keys).size !== keys.length)
+    return null;
   return keys;
 }
 
@@ -168,8 +222,14 @@ function normalizedAcceptedText(value: string): string {
 
 function compileAcceptedAnswers(spec: ScoringSpecRecord): string[] | null {
   if ("acceptedAnswers" in spec) {
-    if (!Array.isArray(spec.acceptedAnswers) || spec.acceptedAnswers.length === 0) return null;
-    const answers = spec.acceptedAnswers.map((value) => typeof value === "string" ? normalizedAcceptedText(value) : "");
+    if (
+      !Array.isArray(spec.acceptedAnswers) ||
+      spec.acceptedAnswers.length === 0
+    )
+      return null;
+    const answers = spec.acceptedAnswers.map((value) =>
+      typeof value === "string" ? normalizedAcceptedText(value) : "",
+    );
     return answers.every(Boolean) ? [...new Set(answers)] : null;
   }
 
@@ -180,7 +240,10 @@ function compileAcceptedAnswers(spec: ScoringSpecRecord): string[] | null {
   // The canonical PICTURE_WORD source explicitly stores alternatives with `/`.
   // Splitting that authored list preserves source authority; it does not add
   // synonyms, translations, or inferred answers.
-  const alternatives = reference.split("/").map((value) => value.trim()).filter(Boolean);
+  const alternatives = reference
+    .split("/")
+    .map((value) => value.trim())
+    .filter(Boolean);
   return alternatives.length ? [...new Set(alternatives)] : null;
 }
 
@@ -192,14 +255,26 @@ function parsePenalty(value: string): number | null {
 }
 
 function compileDictationRule(spec: ScoringSpecRecord): DictationRule | null {
-  if (typeof spec.referenceAnswer !== "string" || !spec.referenceAnswer) return null;
-  if (!Array.isArray(spec.deductionRules) || spec.deductionRules.some((rule) => typeof rule !== "string")) return null;
+  if (typeof spec.referenceAnswer !== "string" || !spec.referenceAnswer)
+    return null;
+  if (
+    !Array.isArray(spec.deductionRules) ||
+    spec.deductionRules.some((rule) => typeof rule !== "string")
+  )
+    return null;
 
   const rules = spec.deductionRules as string[];
-  const characterRule = rules.find((rule) => /扣\s*\d+(?:\.\d+)?\s*分\s*[\/／]\s*字/.test(rule));
-  const zeroMatch = characterRule?.match(/错\s*(\d+)\s*个字[^。；;]*本题不得分/);
-  const orderRule = rules.find((rule) => /语序/.test(rule) && /扣\s*\d+(?:\.\d+)?\s*分/.test(rule));
-  if (!characterRule || !zeroMatch || !orderRule || rules.length !== 2) return null;
+  const characterRule = rules.find((rule) =>
+    /扣\s*\d+(?:\.\d+)?\s*分\s*[/／]\s*字/.test(rule),
+  );
+  const zeroMatch = characterRule?.match(
+    /错\s*(\d+)\s*个字[^。；;]*本题不得分/,
+  );
+  const orderRule = rules.find(
+    (rule) => /语序/.test(rule) && /扣\s*\d+(?:\.\d+)?\s*分/.test(rule),
+  );
+  if (!characterRule || !zeroMatch || !orderRule || rules.length !== 2)
+    return null;
 
   const characterPenalty = parsePenalty(characterRule);
   const orderPenalty = parsePenalty(orderRule);
@@ -210,7 +285,8 @@ function compileDictationRule(spec: ScoringSpecRecord): DictationRule | null {
     orderPenalty === null ||
     !Number.isInteger(zeroAtCharacterErrors) ||
     zeroAtCharacterErrors <= 0
-  ) return null;
+  )
+    return null;
 
   return {
     characterPenalty,
@@ -232,13 +308,18 @@ function align(reference: string, answer: string): AlignmentMetrics {
   const actual = graphemes(answer);
   const rows = expected.length + 1;
   const columns = actual.length + 1;
-  const costs = Array.from({ length: rows }, () => Array<number>(columns).fill(0));
+  const costs = Array.from({ length: rows }, () =>
+    Array<number>(columns).fill(0),
+  );
   for (let row = 0; row < rows; row += 1) costs[row]![0] = row;
-  for (let column = 0; column < columns; column += 1) costs[0]![column] = column;
+  for (let column = 0; column < columns; column += 1)
+    costs[0]![column] = column;
 
   for (let row = 1; row < rows; row += 1) {
     for (let column = 1; column < columns; column += 1) {
-      const substitution = costs[row - 1]![column - 1]! + (expected[row - 1] === actual[column - 1] ? 0 : 1);
+      const substitution =
+        costs[row - 1]![column - 1]! +
+        (expected[row - 1] === actual[column - 1] ? 0 : 1);
       const deletion = costs[row - 1]![column]! + 1;
       const insertion = costs[row]![column - 1]! + 1;
       costs[row]![column] = Math.min(substitution, deletion, insertion);
@@ -256,7 +337,9 @@ function align(reference: string, answer: string): AlignmentMetrics {
     if (
       row > 0 &&
       column > 0 &&
-      current === costs[row - 1]![column - 1]! + (expected[row - 1] === actual[column - 1] ? 0 : 1)
+      current ===
+        costs[row - 1]![column - 1]! +
+          (expected[row - 1] === actual[column - 1] ? 0 : 1)
     ) {
       if (expected[row - 1] === actual[column - 1]) correct += 1;
       else substitution += 1;
@@ -278,66 +361,108 @@ function align(reference: string, answer: string): AlignmentMetrics {
 function sameCharacterMultiset(left: string, right: string): boolean {
   const counts = (value: string) => {
     const result = new Map<string, number>();
-    for (const character of graphemes(value)) result.set(character, (result.get(character) ?? 0) + 1);
+    for (const character of graphemes(value))
+      result.set(character, (result.get(character) ?? 0) + 1);
     return result;
   };
   const leftCounts = counts(left);
   const rightCounts = counts(right);
   if (leftCounts.size !== rightCounts.size) return false;
-  for (const [character, count] of leftCounts) if (rightCounts.get(character) !== count) return false;
+  for (const [character, count] of leftCounts)
+    if (rightCounts.get(character) !== count) return false;
   return true;
 }
 
-function scoreExactChoice(spec: ScoringSpecRecord, deliverySpec: unknown, answer: unknown, maxScore: number): DeterministicScoreResult {
-  if (typeof spec.referenceAnswer !== "string") return needsReview("EXACT_CHOICE", maxScore, "SCORING_CONFIG_INVALID");
+function scoreExactChoice(
+  spec: ScoringSpecRecord,
+  deliverySpec: unknown,
+  answer: unknown,
+  maxScore: number,
+): DeterministicScoreResult {
+  if (typeof spec.referenceAnswer !== "string")
+    return needsReview("EXACT_CHOICE", maxScore, "SCORING_CONFIG_INVALID");
   const optionKeys = configuredChoiceKeys(deliverySpec);
-  if (!optionKeys) return needsReview("EXACT_CHOICE", maxScore, "SCORING_CONFIG_INVALID");
+  if (!optionKeys)
+    return needsReview("EXACT_CHOICE", maxScore, "SCORING_CONFIG_INVALID");
   const expected = spec.referenceAnswer.trim().toUpperCase();
-  if (!CHOICE_KEYS.has(expected) || !optionKeys.includes(expected)) return needsReview("EXACT_CHOICE", maxScore, "SCORING_CONFIG_INVALID");
+  if (!CHOICE_KEYS.has(expected) || !optionKeys.includes(expected))
+    return needsReview("EXACT_CHOICE", maxScore, "SCORING_CONFIG_INVALID");
   const actual = normalizedChoice(answerValue(answer));
   const matched = actual === expected && optionKeys.includes(actual);
-  return autoScore("EXACT_CHOICE", maxScore, matched ? maxScore : 0, { matched });
+  return autoScore("EXACT_CHOICE", maxScore, matched ? maxScore : 0, {
+    matched,
+  });
 }
 
-function scoreAcceptedText(spec: ScoringSpecRecord, answer: unknown, maxScore: number): DeterministicScoreResult {
+function scoreAcceptedText(
+  spec: ScoringSpecRecord,
+  answer: unknown,
+  maxScore: number,
+): DeterministicScoreResult {
   const acceptedAnswers = compileAcceptedAnswers(spec);
-  if (!acceptedAnswers) return needsReview("ACCEPTED_TEXT", maxScore, "SCORING_CONFIG_INVALID");
+  if (!acceptedAnswers)
+    return needsReview("ACCEPTED_TEXT", maxScore, "SCORING_CONFIG_INVALID");
   const actual = normalizedAcceptedText(answerText(answer));
   const matched = acceptedAnswers.includes(actual);
-  return autoScore("ACCEPTED_TEXT", maxScore, matched ? maxScore : 0, { matched });
+  return autoScore("ACCEPTED_TEXT", maxScore, matched ? maxScore : 0, {
+    matched,
+  });
 }
 
-function scoreDictation(spec: ScoringSpecRecord, answer: unknown, maxScore: number): DeterministicScoreResult {
+function scoreDictation(
+  spec: ScoringSpecRecord,
+  answer: unknown,
+  maxScore: number,
+): DeterministicScoreResult {
   const rule = compileDictationRule(spec);
-  if (!rule) return needsReview("DICTATION_ALIGNMENT", maxScore, "SCORING_RULE_UNSUPPORTED");
+  if (!rule)
+    return needsReview(
+      "DICTATION_ALIGNMENT",
+      maxScore,
+      "SCORING_RULE_UNSUPPORTED",
+    );
 
   const reference = spec.referenceAnswer as string;
   const actual = answerText(answer);
   const alignment = align(reference, actual);
-  const characterErrors = alignment.substitution + alignment.deletion + alignment.insertion;
-  const orderError = actual !== reference && sameCharacterMultiset(reference, actual);
+  const characterErrors =
+    alignment.substitution + alignment.deletion + alignment.insertion;
+  const orderError =
+    actual !== reference && sameCharacterMultiset(reference, actual);
 
   // The authored rule names wrong and omitted characters, but does not name
   // extra characters. Do not silently assign a penalty to an unsupported
   // category; keep that response reviewable instead of inventing a rule.
   if (alignment.insertion > 0) {
-    return needsReview("DICTATION_ALIGNMENT", maxScore, "SCORING_RULE_UNSUPPORTED", {
+    return needsReview(
+      "DICTATION_ALIGNMENT",
+      maxScore,
+      "SCORING_RULE_UNSUPPORTED",
+      {
       characterErrors,
       correct: alignment.correct,
       substitution: alignment.substitution,
       deletion: alignment.deletion,
       insertion: alignment.insertion,
       orderError,
-    });
+      },
+    );
   }
 
-  const characterScore = characterErrors >= rule.zeroAtCharacterErrors
+  const characterScore =
+    characterErrors >= rule.zeroAtCharacterErrors
     ? 0
     : maxScore - characterErrors * rule.characterPenalty;
-  const orderDeduction = orderError && (rule.orderNoDoubleDeductionAt === null || characterErrors < rule.orderNoDoubleDeductionAt)
+  const orderDeduction =
+    orderError &&
+    (rule.orderNoDoubleDeductionAt === null ||
+      characterErrors < rule.orderNoDoubleDeductionAt)
     ? rule.orderPenalty
     : 0;
-  const score = Math.min(maxScore, Math.max(0, characterScore - orderDeduction));
+  const score = Math.min(
+    maxScore,
+    Math.max(0, characterScore - orderDeduction),
+  );
   return autoScore("DICTATION_ALIGNMENT", maxScore, score, {
     characterErrors,
     correct: alignment.correct,
@@ -348,11 +473,16 @@ function scoreDictation(spec: ScoringSpecRecord, answer: unknown, maxScore: numb
   });
 }
 
-export function scoreQuestionBankResponse(input: DeterministicScoreInput): DeterministicScoreResult {
+export function scoreQuestionBankResponse(
+  input: DeterministicScoreInput,
+): DeterministicScoreResult {
   const spec = asScoringSpec(input.scoringSpec);
   const strategy = safeStrategy(spec?.strategy);
-  const maxScore = spec ? configuredMaxScore(spec, input.maxScore) : finiteNonNegativeNumber(input.maxScore);
-  if (!spec || maxScore === null) return needsReview(strategy, maxScore, "SCORING_CONFIG_INVALID");
+  const maxScore = spec
+    ? configuredMaxScore(spec, input.maxScore)
+    : finiteNonNegativeNumber(input.maxScore);
+  if (!spec || maxScore === null)
+    return needsReview(strategy, maxScore, "SCORING_CONFIG_INVALID");
 
   switch (strategy) {
     case "EXACT_CHOICE":
@@ -384,7 +514,7 @@ export class QuestionBankDeterministicScoringService {
   }
 
   async scoreSession(sessionId: string): Promise<QuestionBankScoringSummary> {
-    const rows = await this.prisma.assessmentItem.findMany({
+    const rows = (await this.prisma.assessmentItem.findMany({
       where: { sessionId, questionVersionId: { not: null } },
       select: {
         id: true,
@@ -394,11 +524,13 @@ export class QuestionBankDeterministicScoringService {
         autoResult: true,
         reviewerUserId: true,
         reviewedAt: true,
-        questionVersion: { select: { status: true, deliverySpec: true, scoringSpec: true } },
+        questionVersion: {
+          select: { status: true, deliverySpec: true, scoringSpec: true },
+        },
         writtenAnswer: { select: { content: true, finalSubmittedAt: true } },
       },
       orderBy: { sortOrder: "asc" },
-    }) as AssessmentItemForScoring[];
+    })) as AssessmentItemForScoring[];
 
     let autoScoredItems = 0;
     let needsReviewItems = 0;
@@ -431,7 +563,8 @@ export class QuestionBankDeterministicScoringService {
         continue;
       }
 
-      const result = item.questionVersion?.status === "PUBLISHED"
+      const result =
+        item.questionVersion?.status === "PUBLISHED"
         ? this.score({
           scoringSpec: item.questionVersion.scoringSpec,
           deliverySpec: item.questionVersion.deliverySpec,
@@ -440,7 +573,8 @@ export class QuestionBankDeterministicScoringService {
         })
         : needsReview(strategy, itemMaxScore, "SCORING_CONFIG_INVALID");
       const nextScore = result.state === "AUTO_SCORED" ? result.score : null;
-      const shouldPersist = item.scoredScore !== nextScore || !sameJson(item.autoResult, result);
+      const shouldPersist =
+        item.scoredScore !== nextScore || !sameJson(item.autoResult, result);
       if (shouldPersist) {
         await this.prisma.assessmentItem.update({
           where: { id: item.id },

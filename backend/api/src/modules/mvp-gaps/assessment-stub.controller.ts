@@ -38,6 +38,7 @@ export class AssessmentStubController {
   )
   @HttpCode(HttpStatus.SERVICE_UNAVAILABLE)
   findById(@Param("id", ParseUUIDPipe) _id: string) {
+    void _id;
     return mvpGapResponse(
       "assessment",
       "PERSISTENCE_PENDING",
@@ -49,6 +50,7 @@ export class AssessmentStubController {
   @RequireRoles(MembershipRole.STUDENT)
   @HttpCode(HttpStatus.SERVICE_UNAVAILABLE)
   submitResponse(@Param("id", ParseUUIDPipe) _id: string) {
+    void _id;
     return mvpGapResponse(
       "assessment",
       "PERSISTENCE_PENDING",
@@ -64,6 +66,7 @@ export class AssessmentStubController {
   )
   @HttpCode(HttpStatus.SERVICE_UNAVAILABLE)
   getResults(@Param("id", ParseUUIDPipe) _id: string) {
+    void _id;
     return mvpGapResponse(
       "assessment",
       "PERSISTENCE_PENDING",

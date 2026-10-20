@@ -2,7 +2,10 @@ import { Injectable } from "@nestjs/common";
 import type { Prisma } from "@yuzan/database";
 import { PrismaService } from "../../../shared/database/prisma.service.js";
 import { sanitizeDriverError } from "../../../shared/database/database.errors.js";
-import type { Feedback, CreateFeedbackInput } from "../domain/feedback.types.js";
+import type {
+  Feedback,
+  CreateFeedbackInput,
+} from "../domain/feedback.types.js";
 import {
   FeedbackConflictException,
   FeedbackUnavailableException,
@@ -86,9 +89,7 @@ export class PrismaFeedbackRepository implements FeedbackRepositoryPort {
         orderBy: { releasedAt: "desc" },
       });
 
-      const nextCursor = hasMore
-        ? items[items.length - 1]?.id ?? null
-        : null;
+      const nextCursor = hasMore ? (items[items.length - 1]?.id ?? null) : null;
 
       return {
         items: feedbackRows.map(toFeedback),
@@ -157,9 +158,7 @@ export class PrismaFeedbackRepository implements FeedbackRepositoryPort {
       const hasMore = rows.length > limit;
       const items = hasMore ? rows.slice(0, -1) : rows;
 
-      const nextCursor = hasMore
-        ? items[items.length - 1]?.id ?? null
-        : null;
+      const nextCursor = hasMore ? (items[items.length - 1]?.id ?? null) : null;
 
       return {
         items: items.map(toFeedback),
@@ -180,9 +179,11 @@ function toFeedback(
     schoolId: row.schoolId,
     submissionId: row.submissionId,
     authorUserId: row.authorUserId,
-    decision: row.decision as "ACCEPT" | "RETURN",
+    decision: row.decision,
     comment: row.comment,
-    ...(row.score !== null && row.score !== undefined ? { score: row.score } : {}),
+    ...(row.score !== null && row.score !== undefined
+      ? { score: row.score }
+      : {}),
     revision: row.revision,
     releasedAt: row.releasedAt,
     ...(row.deletedAt ? { deletedAt: row.deletedAt } : {}),

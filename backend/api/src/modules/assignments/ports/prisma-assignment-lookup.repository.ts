@@ -24,10 +24,7 @@ export class PrismaAssignmentLookupRepository implements AssignmentLookupPort {
     }
   }
 
-  async isOpen(
-    schoolId: string,
-    assignmentId: string,
-  ): Promise<boolean> {
+  async isOpen(schoolId: string, assignmentId: string): Promise<boolean> {
     try {
       const count = await this.prisma.assignment.count({
         where: { id: assignmentId, schoolId, status: "OPEN", deletedAt: null },
@@ -71,7 +68,7 @@ function toAssignmentSummary(
     id: row.id,
     schoolId: row.schoolId,
     title: row.title,
-    status: row.status as AssignmentSummary["status"],
+    status: row.status,
     startsAt: row.startsAt,
     dueAt: row.dueAt,
     revision: row.revision,
@@ -81,7 +78,7 @@ function toAssignmentSummary(
       id: t.id,
       schoolId: t.schoolId,
       assignmentId: t.assignmentId,
-      targetType: t.targetType as "CLASS" | "STUDENT",
+      targetType: t.targetType,
       ...(t.classId ? { classId: t.classId } : {}),
       ...(t.enrollmentId ? { enrollmentId: t.enrollmentId } : {}),
     })),

@@ -24,7 +24,7 @@ export class ListProgramsQueryDto {
   readonly status?: TrainingProgramStatus;
 
   @IsOptional()
-  @Transform(({ value }) =>
+  @Transform(({ value }): unknown =>
     typeof value === "string" ? Number.parseInt(value, 10) : value,
   )
   @IsInt()

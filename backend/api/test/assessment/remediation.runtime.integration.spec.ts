@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { Pool } from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@yuzan/database";
+import type { PrismaService } from "../../src/shared/database/prisma.service.js";
 import { AssessmentService } from "../../src/modules/assessment/assessment.service.js";
 import { PrismaAssessmentSessionRepository } from "../../src/modules/assessment/infra/prisma-assessment-session.repository.js";
 import { PrismaAssessmentItemRepository } from "../../src/modules/assessment/infra/prisma-assessment-item.repository.js";
@@ -25,10 +26,10 @@ const auth: AuthContext = {
 let pool: Pool;
 let prisma: PrismaClient;
 let sourceSessionId: string | undefined;
-let remediationIds: string[] = [];
+const remediationIds: string[] = [];
 
 describe.skipIf(!databaseUrl)("Question Bank remediation — PostgreSQL integration", () => {
-  beforeAll(async () => {
+  beforeAll(() => {
     pool = new Pool({ connectionString: databaseUrl });
     prisma = new PrismaClient({ adapter: new PrismaPg(pool) });
   });
@@ -129,12 +130,12 @@ describe.skipIf(!databaseUrl)("Question Bank remediation — PostgreSQL integrat
     });
 
     const service = new AssessmentService(
-      new PrismaAssessmentSessionRepository(prisma as any),
-      new PrismaAssessmentItemRepository(prisma as any),
-      new PrismaWrittenAnswerRepository(prisma as any),
-      new PrismaAssessmentReportRepository(prisma as any),
-      prisma as any,
-      new QuestionBankDeterministicScoringService(prisma as any),
+      new PrismaAssessmentSessionRepository(prisma as unknown as PrismaService),
+      new PrismaAssessmentItemRepository(prisma as unknown as PrismaService),
+      new PrismaWrittenAnswerRepository(prisma as unknown as PrismaService),
+      new PrismaAssessmentReportRepository(prisma as unknown as PrismaService),
+      prisma as unknown as PrismaService,
+      new QuestionBankDeterministicScoringService(prisma as unknown as PrismaService),
     );
     const first = await service.createOrResumeRemediation(auth, schoolId, source.id);
     const second = await service.createOrResumeRemediation(auth, schoolId, source.id);

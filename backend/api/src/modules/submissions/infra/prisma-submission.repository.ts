@@ -22,9 +22,7 @@ import type {
 type SubmissionRow = Prisma.SubmissionGetPayload<Record<string, never>>;
 
 @Injectable()
-export class PrismaSubmissionRepository
-  implements SubmissionRepositoryPort
-{
+export class PrismaSubmissionRepository implements SubmissionRepositoryPort {
   constructor(private readonly prisma: PrismaService) {}
 
   async findById(
@@ -65,7 +63,9 @@ export class PrismaSubmissionRepository
         schoolId,
         assignmentId,
         deletedAt: null,
-        ...(options.enrollmentIds ? { enrollmentId: { in: [...options.enrollmentIds] } } : {}),
+        ...(options.enrollmentIds
+          ? { enrollmentId: { in: [...options.enrollmentIds] } }
+          : {}),
       };
 
       if (options.status) {
@@ -81,9 +81,7 @@ export class PrismaSubmissionRepository
 
       const hasMore = rows.length > options.limit;
       const items = hasMore ? rows.slice(0, -1) : rows;
-      const nextCursor = hasMore
-        ? items[items.length - 1]?.id ?? null
-        : null;
+      const nextCursor = hasMore ? (items[items.length - 1]?.id ?? null) : null;
 
       return {
         items: items.map(toSubmissionSummary),
@@ -213,7 +211,6 @@ export class PrismaSubmissionRepository
       throw new SubmissionUnavailableException();
     }
   }
-
 }
 
 function toSubmission(row: SubmissionRow): Submission {
@@ -223,7 +220,7 @@ function toSubmission(row: SubmissionRow): Submission {
     assignmentId: row.assignmentId,
     enrollmentId: row.enrollmentId,
     attemptNo: row.attemptNo,
-    status: row.status as SubmissionStatus,
+    status: row.status,
     idempotencyKey: row.idempotencyKey,
     ...(row.deviceId ? { deviceId: row.deviceId } : {}),
     revision: row.revision,
@@ -241,25 +238,9 @@ function toSubmissionSummary(row: SubmissionRow): SubmissionSummary {
     assignmentId: row.assignmentId,
     enrollmentId: row.enrollmentId,
     attemptNo: row.attemptNo,
-    status: row.status as SubmissionStatus,
+    status: row.status,
     revision: row.revision,
     ...(row.submittedAt ? { submittedAt: row.submittedAt } : {}),
     createdAt: row.createdAt,
-  };
-}
-
-function toSubmissionSummaryFromSubmission(
-  submission: Submission,
-): SubmissionSummary {
-  return {
-    id: submission.id,
-    schoolId: submission.schoolId,
-    assignmentId: submission.assignmentId,
-    enrollmentId: submission.enrollmentId,
-    attemptNo: submission.attemptNo,
-    status: submission.status,
-    revision: submission.revision,
-    ...(submission.submittedAt ? { submittedAt: submission.submittedAt } : {}),
-    createdAt: submission.createdAt,
   };
 }

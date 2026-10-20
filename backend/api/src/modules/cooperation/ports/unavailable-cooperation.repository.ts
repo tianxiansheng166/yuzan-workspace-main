@@ -22,78 +22,105 @@ import type {
 
 @Injectable()
 export class UnavailableCooperationRepository implements CooperationRepositoryPort {
-  async createLead(
+  createLead(
     _lead: Omit<CooperationLead, "id" | "status" | "createdAt" | "updatedAt">,
   ): Promise<CooperationLead> {
-    throw new LeadUnavailableException();
+    void _lead;
+    return Promise.reject(new LeadUnavailableException());
   }
 
-  async findLeadById(_leadId: string): Promise<CooperationLead | null> {
-    throw new LeadUnavailableException();
+  findLeadById(_leadId: string): Promise<CooperationLead | null> {
+    void _leadId;
+    return Promise.reject(new LeadUnavailableException());
   }
 
-  async listLeads(_options: ListLeadsOptions): Promise<PaginatedResult<CooperationLead>> {
-    throw new LeadUnavailableException();
+  listLeads(
+    _options: ListLeadsOptions,
+  ): Promise<PaginatedResult<CooperationLead>> {
+    void _options;
+    return Promise.reject(new LeadUnavailableException());
   }
 
-  async updateLeadStatus(
+  updateLeadStatus(
     _leadId: string,
     _status: LeadStatus,
     _assignedOperatorId?: string,
   ): Promise<CooperationLead> {
-    throw new LeadUnavailableException();
+    void _leadId;
+    void _status;
+    void _assignedOperatorId;
+    return Promise.reject(new LeadUnavailableException());
   }
 
-  async createSupportApplication(
-    _application: Omit<SupportApplication, "id" | "status" | "createdAt" | "updatedAt">,
+  createSupportApplication(
+    _application: Omit<
+      SupportApplication,
+      "id" | "status" | "createdAt" | "updatedAt"
+    >,
   ): Promise<SupportApplication> {
-    throw new SupportApplicationUnavailableException();
+    void _application;
+    return Promise.reject(new SupportApplicationUnavailableException());
   }
 
-  async findSupportApplicationById(
+  findSupportApplicationById(
     _applicationId: string,
   ): Promise<SupportApplication | null> {
-    throw new SupportApplicationUnavailableException();
+    void _applicationId;
+    return Promise.reject(new SupportApplicationUnavailableException());
   }
 
-  async listSupportApplications(
+  listSupportApplications(
     _options: ListSupportApplicationsOptions,
   ): Promise<PaginatedResult<SupportApplication>> {
-    throw new SupportApplicationUnavailableException();
+    void _options;
+    return Promise.reject(new SupportApplicationUnavailableException());
   }
 
-  async updateSupportApplicationStatus(
+  updateSupportApplicationStatus(
     _applicationId: string,
     _status: ApplicationStatus,
     _reviewedBy?: string,
     _reviewNote?: string,
   ): Promise<SupportApplication> {
-    throw new SupportApplicationUnavailableException();
+    void _applicationId;
+    void _status;
+    void _reviewedBy;
+    void _reviewNote;
+    return Promise.reject(new SupportApplicationUnavailableException());
   }
 
-  async createVolunteerApplication(
-    _application: Omit<VolunteerApplication, "id" | "status" | "createdAt" | "updatedAt">,
+  createVolunteerApplication(
+    _application: Omit<
+      VolunteerApplication,
+      "id" | "status" | "createdAt" | "updatedAt"
+    >,
   ): Promise<VolunteerApplication> {
-    throw new VolunteerApplicationUnavailableException();
+    void _application;
+    return Promise.reject(new VolunteerApplicationUnavailableException());
   }
 
-  async findVolunteerApplicationById(
+  findVolunteerApplicationById(
     _applicationId: string,
   ): Promise<VolunteerApplication | null> {
-    throw new VolunteerApplicationUnavailableException();
+    void _applicationId;
+    return Promise.reject(new VolunteerApplicationUnavailableException());
   }
 
-  async listVolunteerApplications(
+  listVolunteerApplications(
     _options: ListVolunteerApplicationsOptions,
   ): Promise<PaginatedResult<VolunteerApplication>> {
-    throw new VolunteerApplicationUnavailableException();
+    void _options;
+    return Promise.reject(new VolunteerApplicationUnavailableException());
   }
 
-  async updateVolunteerApplicationStatus(
+  updateVolunteerApplicationStatus(
     _applicationId: string,
     _status: VolunteerAppStatus,
     _reviewedBy?: string,
   ): Promise<VolunteerApplication> {
-    throw new VolunteerApplicationUnavailableException();
+    void _applicationId;
+    void _status;
+    void _reviewedBy;
+    return Promise.reject(new VolunteerApplicationUnavailableException());
   }
 }

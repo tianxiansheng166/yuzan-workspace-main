@@ -18,75 +18,100 @@ import type {
 
 @Injectable()
 export class UnavailableClassRepository implements ClassRepositoryPort {
-  async findById(_schoolId: string, _classId: string): Promise<Class | null> {
-    throw new ClassUnavailableException();
+  findById(_schoolId: string, _classId: string): Promise<Class | null> {
+    void _schoolId;
+    void _classId;
+    return Promise.reject(new ClassUnavailableException());
   }
 
-  async findVisibleClassById(
+  findVisibleClassById(
     _options: FindVisibleClassOptions,
   ): Promise<Class | null> {
-    throw new ClassUnavailableException();
+    void _options;
+    return Promise.reject(new ClassUnavailableException());
   }
 
-  async list(
+  list(
     _schoolId: string,
     _options: ListClassesOptions,
   ): Promise<PaginatedResult<ClassSummary>> {
-    throw new ClassUnavailableException();
+    void _schoolId;
+    void _options;
+    return Promise.reject(new ClassUnavailableException());
   }
 
-  async listMembers(
+  listMembers(
     _schoolId: string,
     _classId: string,
   ): Promise<readonly ClassMember[]> {
-    throw new ClassUnavailableException();
+    void _schoolId;
+    void _classId;
+    return Promise.reject(new ClassUnavailableException());
   }
 
-  async listEnrollmentsByUser(
+  listEnrollmentsByUser(
     _schoolId: string,
     _userId: string,
   ): Promise<readonly ClassEnrollment[]> {
-    throw new ClassUnavailableException();
+    void _schoolId;
+    void _userId;
+    return Promise.reject(new ClassUnavailableException());
   }
 
-  async save(_input: CreateClassInput): Promise<Class> {
-    throw new ClassUnavailableException();
+  save(_input: CreateClassInput): Promise<Class> {
+    void _input;
+    return Promise.reject(new ClassUnavailableException());
   }
 
-  async update(
+  update(
     _schoolId: string,
     _classId: string,
     _data: UpdateClassInput,
     _expectedUpdatedAt: Date,
   ): Promise<Class> {
-    throw new ClassUnavailableException();
+    void _schoolId;
+    void _classId;
+    void _data;
+    void _expectedUpdatedAt;
+    return Promise.reject(new ClassUnavailableException());
   }
 
-  async softDelete(_schoolId: string, _classId: string): Promise<void> {
-    throw new ClassUnavailableException();
+  softDelete(_schoolId: string, _classId: string): Promise<void> {
+    void _schoolId;
+    void _classId;
+    return Promise.reject(new ClassUnavailableException());
   }
 
-  async addEnrollment(
+  addEnrollment(
     _schoolId: string,
     _classId: string,
     _userId: string,
     _role: MembershipRole,
   ): Promise<ClassEnrollment> {
-    throw new ClassUnavailableException();
+    void _schoolId;
+    void _classId;
+    void _userId;
+    void _role;
+    return Promise.reject(new ClassUnavailableException());
   }
 
-  async removeEnrollment(
+  removeEnrollment(
     _schoolId: string,
     _classId: string,
     _enrollmentId: string,
   ): Promise<void> {
-    throw new ClassUnavailableException();
+    void _schoolId;
+    void _classId;
+    void _enrollmentId;
+    return Promise.reject(new ClassUnavailableException());
   }
 
-  async listEnrollmentsByClass(
+  listEnrollmentsByClass(
     _schoolId: string,
     _classId: string,
   ): Promise<readonly ClassEnrollment[]> {
-    throw new ClassUnavailableException();
+    void _schoolId;
+    void _classId;
+    return Promise.reject(new ClassUnavailableException());
   }
 }

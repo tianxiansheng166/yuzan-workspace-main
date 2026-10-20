@@ -114,11 +114,15 @@ export class PrismaAssignmentRepository implements AssignmentRepositoryPort {
         });
       }
       if (targetFilters.length > 0) {
-        const targetFilter = targetFilters.length === 1 ? targetFilters[0]! : { AND: targetFilters };
+        const targetFilter =
+          targetFilters.length === 1
+            ? targetFilters[0]!
+            : { AND: targetFilters };
         where.targets = { some: targetFilter };
       }
 
-      const visibleTargetFilter = targetFilters.length === 0
+      const visibleTargetFilter =
+        targetFilters.length === 0
         ? undefined
         : targetFilters.length === 1
           ? targetFilters[0]!
@@ -129,7 +133,9 @@ export class PrismaAssignmentRepository implements AssignmentRepositoryPort {
         ...(options.cursor ? { cursor: { id: options.cursor }, skip: 1 } : {}),
         orderBy: [{ createdAt: "desc" }, { id: "desc" }],
         take: options.limit + 1,
-        include: { targets: visibleTargetFilter ? { where: visibleTargetFilter } : true },
+        include: {
+          targets: visibleTargetFilter ? { where: visibleTargetFilter } : true,
+        },
       });
 
       const hasMore = rows.length > options.limit;
@@ -185,7 +191,7 @@ export class PrismaAssignmentRepository implements AssignmentRepositoryPort {
             ...(input.completionRule !== undefined &&
             input.completionRule !== null
               ? {
-                  completionRule: input.completionRule as Prisma.InputJsonValue,
+                  completionRule: input.completionRule,
                 }
               : {}),
             revision: 1,
@@ -209,7 +215,7 @@ export class PrismaAssignmentRepository implements AssignmentRepositoryPort {
           include: { targets: true },
         });
       });
-      return toAssignment(row as AssignmentRow);
+      return toAssignment(row);
     } catch (err) {
       const safe = sanitizeDriverError(err);
       if (safe.code === "DATABASE_CONFLICT") {
@@ -241,7 +247,7 @@ export class PrismaAssignmentRepository implements AssignmentRepositoryPort {
             ? { offlineRequired: data.offlineRequired }
             : {}),
           ...(data.completionRule !== undefined && data.completionRule !== null
-            ? { completionRule: data.completionRule as Prisma.InputJsonValue }
+            ? { completionRule: data.completionRule }
             : {}),
           revision: { increment: 1 },
         },
@@ -325,7 +331,7 @@ function toAssignment(row: AssignmentRow): Assignment {
     courseVersionId: row.courseVersionId,
     createdByUserId: row.createdByUserId,
     title: row.title,
-    status: row.status as AssignmentStatus,
+    status: row.status,
     startsAt: row.startsAt,
     dueAt: row.dueAt,
     offlineRequired: row.offlineRequired,
@@ -349,7 +355,7 @@ function toAssignmentSummary(
     id: row.id,
     schoolId: row.schoolId,
     title: row.title,
-    status: row.status as AssignmentStatus,
+    status: row.status,
     startsAt: row.startsAt,
     dueAt: row.dueAt,
     revision: row.revision,
@@ -366,7 +372,7 @@ function toAssignmentTarget(
     id: row.id,
     schoolId: row.schoolId,
     assignmentId: row.assignmentId,
-    targetType: row.targetType as "CLASS" | "STUDENT",
+    targetType: row.targetType,
     ...(row.classId ? { classId: row.classId } : {}),
     ...(row.enrollmentId ? { enrollmentId: row.enrollmentId } : {}),
   };

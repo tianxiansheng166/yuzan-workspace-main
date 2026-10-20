@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { Pool } from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@yuzan/database";
+import type { PrismaService } from "../../src/shared/database/prisma.service.js";
 import { QuestionBankDeterministicScoringService } from "../../src/modules/assessment/question-bank-deterministic-scoring.service.js";
 
 const databaseUrl = process.env.QB_RUNTIME_DATABASE_URL ?? process.env.DATABASE_URL;
@@ -14,7 +15,7 @@ let prisma: PrismaClient;
 describe.skipIf(!databaseUrl)("Question Bank deterministic scoring — canonical Level 1 integration", () => {
   let sessionId: string | undefined;
 
-  beforeAll(async () => {
+  beforeAll(() => {
     pool = new Pool({ connectionString: databaseUrl });
     prisma = new PrismaClient({ adapter: new PrismaPg(pool) });
   });
@@ -108,7 +109,7 @@ describe.skipIf(!databaseUrl)("Question Bank deterministic scoring — canonical
       }
     }
 
-    const scorer = new QuestionBankDeterministicScoringService(prisma as any);
+    const scorer = new QuestionBankDeterministicScoringService(prisma as unknown as PrismaService);
     const first = await scorer.scoreSession(session.id);
     const second = await scorer.scoreSession(session.id);
     expect(first).toEqual({

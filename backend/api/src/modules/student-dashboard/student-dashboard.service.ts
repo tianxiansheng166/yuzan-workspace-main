@@ -3,9 +3,9 @@ import type { AuthContext } from "../../common/security/auth.types.js";
 import { PrismaService } from "../../shared/database/prisma.service.js";
 import { StudentDashboardPolicy } from "./student-dashboard.policy.js";
 import { StudentDashboardForbiddenException } from "./domain/student-dashboard.errors.js";
-import type { FeedbackRepositoryPort, PaginatedResult } from "../feedback/ports/feedback-repository.port.js";
+import type { FeedbackRepositoryPort } from "../feedback/ports/feedback-repository.port.js";
 import { FEEDBACK_REPOSITORY } from "../feedback/ports/feedback-repository.port.js";
-import type { Feedback } from "../feedback/domain/feedback.types.js";
+
 import type {
   CourseDashboardItem,
   TeacherAdviceItem,
@@ -39,7 +39,12 @@ export class StudentDashboardService {
 
     // 1. Get student enrollments
     const enrollments = await this.prisma.enrollment.findMany({
-      where: { userId: auth.principal.userId, schoolId, status: "ACTIVE", role: "STUDENT" },
+      where: {
+        userId: auth.principal.userId,
+        schoolId,
+        status: "ACTIVE",
+        role: "STUDENT",
+      },
       select: { id: true, classId: true },
     });
     const enrollmentIds = enrollments.map((e) => e.id);
@@ -77,7 +82,9 @@ export class StudentDashboardService {
     });
 
     // 4. Group by courseVersionId and calculate progress
-    const courseVersionIds = [...new Set(assignments.map((a) => a.courseVersionId))];
+    const courseVersionIds = [
+      ...new Set(assignments.map((a) => a.courseVersionId)),
+    ];
     const courses: CourseDashboardItem[] = [];
 
     for (const cvId of courseVersionIds) {
@@ -87,10 +94,17 @@ export class StudentDashboardService {
       // Count activities and completed progress
       const [totalProgress, completedProgress] = await Promise.all([
         this.prisma.activityProgress.count({
-          where: { enrollmentId: { in: enrollmentIds }, activity: { lesson: { unit: { courseVersionId: cvId } } } },
+          where: {
+            enrollmentId: { in: enrollmentIds },
+            activity: { lesson: { unit: { courseVersionId: cvId } } },
+          },
         }),
         this.prisma.activityProgress.count({
-          where: { enrollmentId: { in: enrollmentIds }, completed: true, activity: { lesson: { unit: { courseVersionId: cvId } } } },
+          where: {
+            enrollmentId: { in: enrollmentIds },
+            completed: true,
+            activity: { lesson: { unit: { courseVersionId: cvId } } },
+          },
         }),
       ]);
 
@@ -101,7 +115,14 @@ export class StudentDashboardService {
 
       // Check for latest feedback
       const latestFeedback = await this.prisma.feedback.findFirst({
-        where: { schoolId, submission: { enrollmentId: { in: enrollmentIds }, assignment: { courseVersionId: cvId } }, deletedAt: null },
+        where: {
+          schoolId,
+          submission: {
+            enrollmentId: { in: enrollmentIds },
+            assignment: { courseVersionId: cvId },
+          },
+          deletedAt: null,
+        },
         orderBy: { releasedAt: "desc" },
         select: { releasedAt: true },
       });
@@ -110,7 +131,10 @@ export class StudentDashboardService {
         courseVersionId: cvId,
         courseTitle: assignment.courseVersion.title,
         gradeBand: assignment.courseVersion.gradeBand,
-        progressPercent: totalProgress > 0 ? Math.round((completedProgress / totalProgress) * 100) : 0,
+        progressPercent:
+          totalProgress > 0
+            ? Math.round((completedProgress / totalProgress) * 100)
+            : 0,
         latestFeedbackAt: latestFeedback?.releasedAt?.toISOString() ?? null,
         hasOfflinePackage: offlineCount > 0,
       });
@@ -119,13 +143,15 @@ export class StudentDashboardService {
     return { courses };
   }
 
-  async getRecommendations(auth: AuthContext, schoolId: string) {
-    if (!this.policy.canAccessDashboard(auth, schoolId)) {
-      throw new StudentDashboardForbiddenException();
-    }
+  getRecommendations(auth: AuthContext, schoolId: string) {
+    return Promise.resolve().then(() => {
+      if (!this.policy.canAccessDashboard(auth, schoolId)) {
+        throw new StudentDashboardForbiddenException();
+      }
 
-    // AI recommendation engine is not yet implemented
-    return { items: [] };
+      // AI recommendation engine is not yet implemented
+      return { items: [] };
+    });
   }
 
   async getTeacherAdvice(
@@ -139,7 +165,12 @@ export class StudentDashboardService {
 
     // 1. Get student enrollments
     const enrollments = await this.prisma.enrollment.findMany({
-      where: { userId: auth.principal.userId, schoolId, status: "ACTIVE", role: "STUDENT" },
+      where: {
+        userId: auth.principal.userId,
+        schoolId,
+        status: "ACTIVE",
+        role: "STUDENT",
+      },
       select: { id: true },
     });
     const enrollmentIds = enrollments.map((e) => e.id);
@@ -197,7 +228,12 @@ export class StudentDashboardService {
 
     const now = new Date();
     const enrollments = await this.prisma.enrollment.findMany({
-      where: { userId: auth.principal.userId, schoolId, status: "ACTIVE", role: "STUDENT" },
+      where: {
+        userId: auth.principal.userId,
+        schoolId,
+        status: "ACTIVE",
+        role: "STUDENT",
+      },
       select: { id: true, classId: true },
       orderBy: [{ classId: "asc" }, { id: "asc" }],
     });
@@ -409,8 +445,23 @@ export class StudentDashboardService {
     const legacyTasks: StudentTodayLegacyTask[] = [];
     for (const assignment of assignments) {
       const [totalProgress, completedProgress] = await Promise.all([
-        this.prisma.activityProgress.count({ where: { enrollmentId: { in: enrollmentIds }, activity: { lesson: { unit: { courseVersionId: assignment.courseVersionId } } } } }),
-        this.prisma.activityProgress.count({ where: { enrollmentId: { in: enrollmentIds }, completed: true, activity: { lesson: { unit: { courseVersionId: assignment.courseVersionId } } } } }),
+        this.prisma.activityProgress.count({
+          where: {
+            enrollmentId: { in: enrollmentIds },
+            activity: {
+              lesson: { unit: { courseVersionId: assignment.courseVersionId } },
+            },
+          },
+        }),
+        this.prisma.activityProgress.count({
+          where: {
+            enrollmentId: { in: enrollmentIds },
+            completed: true,
+            activity: {
+              lesson: { unit: { courseVersionId: assignment.courseVersionId } },
+            },
+          },
+        }),
       ]);
       const offlineCount = await this.prisma.offlineContentPackage.count({
         where: { schoolId, courseVersionId: assignment.courseVersionId ?? "" },
@@ -421,7 +472,10 @@ export class StudentDashboardService {
         courseTitle: assignment.courseVersion?.title ?? "",
         dueAt: assignment.dueAt.toISOString(),
         status: assignment.status,
-        progressPercent: totalProgress > 0 ? Math.round((completedProgress / totalProgress) * 100) : 0,
+        progressPercent:
+          totalProgress > 0
+            ? Math.round((completedProgress / totalProgress) * 100)
+            : 0,
         hasOfflinePackage: offlineCount > 0,
       });
     }

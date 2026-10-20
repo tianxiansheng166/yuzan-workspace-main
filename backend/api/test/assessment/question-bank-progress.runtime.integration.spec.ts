@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { Pool } from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@yuzan/database";
+import type { PrismaService } from "../../src/shared/database/prisma.service.js";
 import { buildQuestionBankDiagnosis } from "../../src/modules/assessment/question-bank-diagnosis.js";
 import { QuestionBankProgressService } from "../../src/modules/assessment/question-bank-progress.service.js";
 import { MembershipRole } from "../../src/common/security/membership-role.js";
@@ -53,7 +54,7 @@ function scoredPoints(maxScores: number[], totalLoss: number, splitAcross = 0) {
 }
 
 describe.skipIf(!databaseUrl)("Question Bank progress — PostgreSQL integration", () => {
-  beforeAll(async () => {
+  beforeAll(() => {
     pool = new Pool({ connectionString: databaseUrl });
     prisma = new PrismaClient({ adapter: new PrismaPg(pool) });
   });
@@ -205,7 +206,7 @@ describe.skipIf(!databaseUrl)("Question Bank progress — PostgreSQL integration
     expect(levelTwoBaseline.diagnosis.overall.earnedPoints).toBe(78);
 
     const sourceScoresBefore = await prisma.assessmentItem.findMany({ where: { sessionId: baseline.session.id }, select: { id: true, scoredScore: true }, orderBy: { id: "asc" } });
-    const progress = await new QuestionBankProgressService(prisma as any).getForCurrentStudent(auth, schoolId);
+    const progress = await new QuestionBankProgressService(prisma as unknown as PrismaService).getForCurrentStudent(auth, schoolId);
     const levelOneProgress = progress.formalLevels.find((entry) => entry.practiceDefinitionId === levelOne!.practiceVersion.definitionId)!;
     const levelTwoProgress = progress.formalLevels.find((entry) => entry.practiceDefinitionId === levelTwo!.practiceVersion.definitionId)!;
     const remediationProgress = progress.remediation.find((entry) => entry.sourceSessionId === baseline.session.id)!;

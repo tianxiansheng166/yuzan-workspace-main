@@ -143,7 +143,7 @@ function extractTeachingDesign(file: string, fallbackName: string) {
     .join(" ")
     .replace(/^.*?教学目标\s*/, "");
   const goals = [...goalText.matchAll(/[^。！？!?]+[。！？!?]/g)]
-    .map((match) => cleanText(match[0]!))
+    .map((match) => cleanText(match[0]))
     .filter((line) => line.length > 8)
     .slice(0, 3);
   if (goals.length === 0)
@@ -191,9 +191,7 @@ function extractQuestions(file: string): ParsedQuestion[] {
   return questions;
 }
 
-async function findSourceFiles(
-  sourceDir: string,
-): Promise<{
+async function findSourceFiles(sourceDir: string): Promise<{
   video: SourceFile;
   pptx: string;
   teaching: string;
@@ -307,7 +305,7 @@ async function ensureResource(
       });
   return {
     id: resource.id,
-    kind: resource.kind as ResourceRef["kind"],
+    kind: resource.kind,
     objectKey: resource.objectKey,
     mediaType: resource.mediaType,
     byteSize: Number(resource.byteSize),

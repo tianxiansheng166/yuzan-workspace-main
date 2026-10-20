@@ -126,6 +126,16 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
+function isBoundedStringArray(value: unknown): value is string[] {
+  return (
+    Array.isArray(value) &&
+    value.every(
+      (entry: unknown): entry is string =>
+        typeof entry === "string" && entry.length <= 100,
+    )
+  );
+}
+
 function requiredString(value: unknown, field: string): string {
   if (
     typeof value !== "string" ||
@@ -326,10 +336,7 @@ export function validateSpeechProviderResult(
   const reasonCodes =
     value.reasonCodes === undefined
       ? []
-      : Array.isArray(value.reasonCodes) &&
-          value.reasonCodes.every(
-            (reason) => typeof reason === "string" && reason.length <= 100,
-          )
+      : isBoundedStringArray(value.reasonCodes)
         ? value.reasonCodes
         : (() => {
             throw new SpeechResultPolicyException(
@@ -591,10 +598,7 @@ function validateOpenResponseProviderResult(
   const reasonCodes =
     value.reasonCodes === undefined
       ? undefined
-      : Array.isArray(value.reasonCodes) &&
-          value.reasonCodes.every(
-            (reason) => typeof reason === "string" && reason.length <= 100,
-          )
+      : isBoundedStringArray(value.reasonCodes)
         ? value.reasonCodes
         : (() => {
             throw new SpeechResultPolicyException(

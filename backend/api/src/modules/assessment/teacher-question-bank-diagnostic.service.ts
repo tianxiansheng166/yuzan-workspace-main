@@ -1,7 +1,10 @@
 import { Inject, Injectable, Optional } from "@nestjs/common";
 import type { AuthContext } from "../../common/security/auth.types.js";
 import { PrismaService } from "../../shared/database/prisma.service.js";
-import { AssessmentForbiddenException, AssessmentValidationFailedException } from "./domain/assessment.errors.js";
+import {
+  AssessmentForbiddenException,
+  AssessmentValidationFailedException,
+} from "./domain/assessment.errors.js";
 import { AssessmentService } from "./assessment.service.js";
 import type { CreateTeacherRemediationAssignmentDto } from "./dto/teacher-remediation-assignment.dto.js";
 import {
@@ -17,7 +20,6 @@ import {
   isQuestionBankDiagnosis,
   QUESTION_BANK_DOMAIN_ORDER,
   QUESTION_BANK_FAMILY_ORDER,
-  type QuestionBankDiagnosis,
   type QuestionBankDomain,
   type QuestionBankFamily,
 } from "./question-bank-diagnosis.js";
@@ -85,7 +87,7 @@ function finitePercentage(value: unknown): value is number {
  */
 function safeDiagnosis(value: unknown): SafeDiagnosis | null {
   if (!isQuestionBankDiagnosis(value)) return null;
-  const diagnosis = value as QuestionBankDiagnosis;
+  const diagnosis = value;
   const domains = QUESTION_BANK_DOMAIN_ORDER.flatMap((domain) => {
     const matches = diagnosis.domains.filter(
       (entry) => entry.domain === domain,
@@ -191,18 +193,39 @@ function remediationSummary(
   };
 }
 
-function assignedRemediationSummary(sessions: Array<{ remediationOrigin?: string | null; status: string; createdAt: Date; remediationFocus?: unknown }>) {
-  const assigned = sessions.filter((session) => session.remediationOrigin === "TEACHER_ASSIGNED");
+function assignedRemediationSummary(
+  sessions: Array<{
+    remediationOrigin?: string | null;
+    status: string;
+    createdAt: Date;
+    remediationFocus?: unknown;
+  }>,
+) {
+  const assigned = sessions.filter(
+    (session) => session.remediationOrigin === "TEACHER_ASSIGNED",
+  );
   if (!assigned.length) return null;
-  const active = assigned.filter((session) => ["CREATED", "IN_PROGRESS", "SUBMITTED", "PROCESSING"].includes(session.status));
-  const latest = [...assigned].sort((left, right) => right.createdAt.getTime() - left.createdAt.getTime())[0]!;
-  const focus = latest.remediationFocus && typeof latest.remediationFocus === "object" && !Array.isArray(latest.remediationFocus)
-    ? latest.remediationFocus as Record<string, unknown>
+  const active = assigned.filter((session) =>
+    ["CREATED", "IN_PROGRESS", "SUBMITTED", "PROCESSING"].includes(
+      session.status,
+    ),
+  );
+  const latest = [...assigned].sort(
+    (left, right) => right.createdAt.getTime() - left.createdAt.getTime(),
+  )[0]!;
+  const focus =
+    latest.remediationFocus &&
+    typeof latest.remediationFocus === "object" &&
+    !Array.isArray(latest.remediationFocus)
+      ? (latest.remediationFocus as Record<string, unknown>)
     : {};
   return {
     activeCount: active.length,
     latestStatus: latest.status,
-    latestFocus: focus.mode === "FAMILY" && typeof focus.family === "string" && QUESTION_BANK_FAMILY_ORDER.includes(focus.family as QuestionBankFamily)
+    latestFocus:
+      focus.mode === "FAMILY" &&
+      typeof focus.family === "string" &&
+      QUESTION_BANK_FAMILY_ORDER.includes(focus.family as QuestionBankFamily)
       ? focus.family
       : "ALL_RETRY",
     latestAssignedAt: latest.createdAt.toISOString(),
@@ -215,7 +238,8 @@ export class TeacherQuestionBankDiagnosticService {
     @Inject(PrismaService) private readonly prisma: PrismaService,
     @Inject(AssessmentReviewService)
     private readonly reviewService: AssessmentReviewService,
-    @Optional() @Inject(AssessmentService)
+    @Optional()
+    @Inject(AssessmentService)
     private readonly assessmentService?: AssessmentService,
   ) {}
 
@@ -226,10 +250,19 @@ export class TeacherQuestionBankDiagnosticService {
     dto: CreateTeacherRemediationAssignmentDto,
   ) {
     await this.reviewService.assertAuthorizedClass(auth, schoolId, classId);
-    if (!dto.focus || (dto.focus.mode !== "ALL_RETRY" && dto.focus.mode !== "FAMILY")) {
+    if (
+      !dto.focus ||
+      (dto.focus.mode !== "ALL_RETRY" && dto.focus.mode !== "FAMILY")
+    ) {
       throw new AssessmentValidationFailedException("专项巩固范围无效");
     }
-    if (dto.focus.mode === "FAMILY" && (!dto.focus.family || !QUESTION_BANK_FAMILY_ORDER.includes(dto.focus.family as QuestionBankFamily))) {
+    if (
+      dto.focus.mode === "FAMILY" &&
+      (!dto.focus.family ||
+        !QUESTION_BANK_FAMILY_ORDER.includes(
+          dto.focus.family as QuestionBankFamily,
+        ))
+    ) {
       throw new AssessmentValidationFailedException("专项巩固题型无效");
     }
     const enrollmentIds = [...new Set(dto.enrollmentIds)];
@@ -237,19 +270,35 @@ export class TeacherQuestionBankDiagnosticService {
       throw new AssessmentValidationFailedException("学生名单不能重复");
     }
     const targets = await this.prisma.enrollment.findMany({
-      where: { id: { in: enrollmentIds }, schoolId, classId, role: "STUDENT", status: "ACTIVE" },
-      select: { id: true, classId: true, user: { select: { displayName: true } } },
+      where: {
+        id: { in: enrollmentIds },
+        schoolId,
+        classId,
+        role: "STUDENT",
+        status: "ACTIVE",
+      },
+      select: {
+        id: true,
+        classId: true,
+        user: { select: { displayName: true } },
+      },
       orderBy: [{ user: { displayName: "asc" } }, { id: "asc" }],
     });
     // A target mismatch is an authorization/scope problem, not a partial
     // business skip: never silently drop another class or inactive enrollment.
-    if (targets.length !== enrollmentIds.length) throw new AssessmentForbiddenException("学生不属于当前班级的有效学生名单");
+    if (targets.length !== enrollmentIds.length)
+      throw new AssessmentForbiddenException(
+        "学生不属于当前班级的有效学生名单",
+      );
     if (!this.assessmentService) throw new AssessmentForbiddenException();
-    const focus = dto.focus.mode === "FAMILY"
+    const focus =
+      dto.focus.mode === "FAMILY"
       ? { mode: "FAMILY" as const, family: dto.focus.family! }
       : { mode: "ALL_RETRY" as const };
-    const outcomes = await Promise.all(targets.map(async (target) => {
-      const result = await this.assessmentService!.createTeacherAssignedRemediation({
+    const outcomes = await Promise.all(
+      targets.map(async (target) => {
+        const result =
+          await this.assessmentService!.createTeacherAssignedRemediation({
         schoolId,
         enrollment: { id: target.id, classId: target.classId },
         actorUserId: auth.principal.userId,
@@ -263,12 +312,17 @@ export class TeacherQuestionBankDiagnosticService {
         attemptId: result.attemptId,
         itemCount: result.itemCount,
       };
-    }));
+      }),
+    );
     return {
       requested: enrollmentIds.length,
       assigned: outcomes.filter((entry) => entry.outcome === "CREATED").length,
       resumed: outcomes.filter((entry) => entry.outcome === "RESUMED").length,
-      skipped: outcomes.filter((entry) => entry.outcome === "NO_COMPLETED_ASSESSMENT" || entry.outcome === "NO_MATCHING_RETRY_CANDIDATES").length,
+      skipped: outcomes.filter(
+        (entry) =>
+          entry.outcome === "NO_COMPLETED_ASSESSMENT" ||
+          entry.outcome === "NO_MATCHING_RETRY_CANDIDATES",
+      ).length,
       targets: outcomes,
     };
   }
@@ -737,10 +791,7 @@ export class TeacherQuestionBankDiagnosticService {
       percentage: number;
     }> = [];
     try {
-      const fullProgress = deriveQuestionBankProgress(
-        sessions as unknown as DashboardSession[],
-        [definition],
-      );
+      const fullProgress = deriveQuestionBankProgress(sessions, [definition]);
       remediationRounds = fullProgress.remediation
         .filter((entry) => entry.practiceDefinitionId === practiceDefinitionId)
         .flatMap((entry) =>

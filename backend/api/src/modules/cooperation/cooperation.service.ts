@@ -1,6 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
 import type { AuthContext } from "../../common/security/auth.types.js";
-import { MembershipRole } from "../../common/security/index.js";
+
 import {
   LeadNotFoundException,
   LeadForbiddenException,
@@ -10,11 +10,7 @@ import {
   VolunteerApplicationForbiddenException,
   ConsentRequiredException,
 } from "./domain/cooperation.errors.js";
-import type {
-  CooperationLead,
-  SupportApplication,
-  VolunteerApplication,
-} from "./domain/cooperation.types.js";
+
 import {
   ApplicationStatus,
   LeadStatus,
@@ -68,7 +64,9 @@ export class CooperationService {
       contactChannel: dto.contactChannel,
       ...(dto.region !== undefined ? { region: dto.region } : {}),
       ...(dto.schoolType !== undefined ? { schoolType: dto.schoolType } : {}),
-      ...(dto.interestedPlan !== undefined ? { interestedPlan: dto.interestedPlan } : {}),
+      ...(dto.interestedPlan !== undefined
+        ? { interestedPlan: dto.interestedPlan }
+        : {}),
       ...(dto.needs !== undefined ? { needs: dto.needs } : {}),
       consent: dto.consent,
     });
@@ -91,7 +89,9 @@ export class CooperationService {
     }
 
     const application = await this.repo.createSupportApplication({
-      ...(dto.organizationName !== undefined ? { organizationName: dto.organizationName } : {}),
+      ...(dto.organizationName !== undefined
+        ? { organizationName: dto.organizationName }
+        : {}),
       guardianName: dto.guardianName,
       guardianContact: dto.guardianContact,
       needCategory: dto.needCategory,
@@ -120,7 +120,9 @@ export class CooperationService {
       applicantName: dto.applicantName,
       contactInfo: dto.contactInfo,
       ...(dto.experience !== undefined ? { experience: dto.experience } : {}),
-      ...(dto.availability !== undefined ? { availability: dto.availability } : {}),
+      ...(dto.availability !== undefined
+        ? { availability: dto.availability }
+        : {}),
       ...(dto.motivation !== undefined ? { motivation: dto.motivation } : {}),
       consent: dto.consent,
     });
@@ -202,7 +204,8 @@ export class CooperationService {
       throw new SupportApplicationForbiddenException();
     }
 
-    const application = await this.repo.findSupportApplicationById(applicationId);
+    const application =
+      await this.repo.findSupportApplicationById(applicationId);
     if (!application) {
       throw new SupportApplicationNotFoundException();
     }
@@ -226,7 +229,9 @@ export class CooperationService {
     }
 
     const status: ApplicationStatus =
-      action === "approve" ? ApplicationStatus.APPROVED : ApplicationStatus.REJECTED;
+      action === "approve"
+        ? ApplicationStatus.APPROVED
+        : ApplicationStatus.REJECTED;
 
     const reviewedBy = auth.principal.userId;
     const updated = await this.repo.updateSupportApplicationStatus(
@@ -261,7 +266,8 @@ export class CooperationService {
       throw new VolunteerApplicationForbiddenException();
     }
 
-    const application = await this.repo.findVolunteerApplicationById(applicationId);
+    const application =
+      await this.repo.findVolunteerApplicationById(applicationId);
     if (!application) {
       throw new VolunteerApplicationNotFoundException();
     }
@@ -278,13 +284,16 @@ export class CooperationService {
       throw new VolunteerApplicationForbiddenException();
     }
 
-    const existing = await this.repo.findVolunteerApplicationById(applicationId);
+    const existing =
+      await this.repo.findVolunteerApplicationById(applicationId);
     if (!existing) {
       throw new VolunteerApplicationNotFoundException();
     }
 
     const status: VolunteerAppStatus =
-      action === "approve" ? VolunteerAppStatus.ACCEPTED : VolunteerAppStatus.REJECTED;
+      action === "approve"
+        ? VolunteerAppStatus.ACCEPTED
+        : VolunteerAppStatus.REJECTED;
 
     const reviewedBy = auth.principal.userId;
     const updated = await this.repo.updateVolunteerApplicationStatus(

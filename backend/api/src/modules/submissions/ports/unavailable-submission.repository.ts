@@ -17,69 +17,91 @@ import type { SubmissionLookupPort } from "./submission-lookup.port.js";
 export class UnavailableSubmissionRepository
   implements SubmissionRepositoryPort, SubmissionLookupPort
 {
-  async findById(
+  findById(
     _schoolId: string,
     _submissionId: string,
   ): Promise<Submission | null> {
-    throw new SubmissionUnavailableException();
+    void _schoolId;
+    void _submissionId;
+    return Promise.reject(new SubmissionUnavailableException());
   }
 
-  async findByEnrollmentAndIdempotencyKey(
+  findByEnrollmentAndIdempotencyKey(
     _enrollmentId: string,
     _idempotencyKey: string,
   ): Promise<Submission | null> {
-    throw new SubmissionUnavailableException();
+    void _enrollmentId;
+    void _idempotencyKey;
+    return Promise.reject(new SubmissionUnavailableException());
   }
 
-  async listByAssignment(
+  listByAssignment(
     _schoolId: string,
     _assignmentId: string,
     _options: ListSubmissionsOptions,
   ): Promise<PaginatedResult<SubmissionSummary>> {
-    throw new SubmissionUnavailableException();
+    void _schoolId;
+    void _assignmentId;
+    void _options;
+    return Promise.reject(new SubmissionUnavailableException());
   }
 
-  async listByEnrollment(
+  listByEnrollment(
     _schoolId: string,
     _enrollmentId: string,
   ): Promise<readonly SubmissionSummary[]> {
-    throw new SubmissionUnavailableException();
+    void _schoolId;
+    void _enrollmentId;
+    return Promise.reject(new SubmissionUnavailableException());
   }
 
-  async save(_input: CreateSubmissionInput): Promise<Submission> {
-    throw new SubmissionUnavailableException();
+  save(_input: CreateSubmissionInput): Promise<Submission> {
+    void _input;
+    return Promise.reject(new SubmissionUnavailableException());
   }
 
-  async updateStatus(
+  updateStatus(
     _schoolId: string,
     _submissionId: string,
     _status: SubmissionStatus,
     _expectedRevision: number,
   ): Promise<Submission> {
-    throw new SubmissionUnavailableException();
+    void _schoolId;
+    void _submissionId;
+    void _status;
+    void _expectedRevision;
+    return Promise.reject(new SubmissionUnavailableException());
   }
 
-  async getNextAttemptNo(
+  getNextAttemptNo(
     _assignmentId: string,
     _enrollmentId: string,
   ): Promise<number> {
-    throw new SubmissionUnavailableException();
+    void _assignmentId;
+    void _enrollmentId;
+    return Promise.reject(new SubmissionUnavailableException());
   }
 
   // SubmissionLookupPort implementation
-  async findSummaryById(
+  findSummaryById(
     _schoolId: string,
     _submissionId: string,
   ): Promise<SubmissionSummary | null> {
-    throw new SubmissionUnavailableException();
+    void _schoolId;
+    void _submissionId;
+    return Promise.reject(new SubmissionUnavailableException());
   }
 
-  async transitionStatus(
+  transitionStatus(
     _schoolId: string,
     _submissionId: string,
     _to: SubmissionStatus,
     _expectedRevision: number,
   ): Promise<SubmissionSummary> {
-    throw new SubmissionUnavailableException();
+    void _schoolId;
+    void _submissionId;
+    void _to;
+    void _expectedRevision;
+    return Promise.reject(new SubmissionUnavailableException());
   }
 }

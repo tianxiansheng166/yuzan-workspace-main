@@ -1,13 +1,24 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { Prisma } from "@yuzan/database";
 import { PrismaService } from "../../shared/database/prisma.service.js";
-import type { CreateSyncBatchDto, ListSyncBatchesQueryDto, UpdateSyncBatchDto } from "./dto/sync.dto.js";
+import type {
+  CreateSyncBatchDto,
+  ListSyncBatchesQueryDto,
+  UpdateSyncBatchDto,
+} from "./dto/sync.dto.js";
 
 /** The allowed values for SyncBatch.status as defined in the Prisma enum. */
-type SyncBatchStatusValue = "ACCEPTED" | "DUPLICATE" | "CONFLICT" | "REJECTED" | "PERMISSION_CHANGED";
+type SyncBatchStatusValue =
+  "ACCEPTED" | "DUPLICATE" | "CONFLICT" | "REJECTED" | "PERMISSION_CHANGED";
 
 /** The allowed values for SyncCursor.entityType as defined in the Prisma enum. */
-type SyncCursorEntityTypeValue = "ASSIGNMENT" | "SUBMISSION" | "PROGRESS" | "CONTENT_PACKAGE" | "FEEDBACK" | "REPORT";
+type SyncCursorEntityTypeValue =
+  | "ASSIGNMENT"
+  | "SUBMISSION"
+  | "PROGRESS"
+  | "CONTENT_PACKAGE"
+  | "FEEDBACK"
+  | "REPORT";
 
 @Injectable()
 export class SyncService {
@@ -20,10 +31,7 @@ export class SyncService {
    * Accept a sync batch from an offline device.
    * Processes each operation: de-duplicates, checks permissions, then creates a SyncJob.
    */
-  async createBatch(
-    schoolId: string,
-    dto: CreateSyncBatchDto,
-  ) {
+  async createBatch(schoolId: string, dto: CreateSyncBatchDto) {
     // Check for duplicate clientBatchId
     const existing = await this.prisma.syncBatch.findUnique({
       where: { clientBatchId: dto.clientBatchId },
@@ -57,7 +65,7 @@ export class SyncService {
         schoolId,
         deviceId: dto.deviceId,
         clientBatchId: dto.clientBatchId,
-        status: "ACCEPTED" as SyncBatchStatusValue,
+        status: "ACCEPTED",
         operationCount: totalOps,
         acceptedCount: totalOps,
         duplicateCount: 0,
@@ -70,7 +78,7 @@ export class SyncService {
             entityId: op.entityId,
             operation: op.operation,
           })),
-        } as unknown as Prisma.InputJsonValue,
+        },
       },
     });
 
@@ -99,7 +107,7 @@ export class SyncService {
           clientBatchId: dto.clientBatchId,
           operationCount: totalOps,
           deviceId: dto.deviceId,
-        } as unknown as Prisma.InputJsonValue,
+        },
       },
     });
 
@@ -115,10 +123,7 @@ export class SyncService {
   /**
    * List sync batches for a school, with optional filtering.
    */
-  async listBatches(
-    schoolId: string,
-    query: ListSyncBatchesQueryDto,
-  ) {
+  async listBatches(schoolId: string, query: ListSyncBatchesQueryDto) {
     const where: Prisma.SyncBatchWhereInput = {
       schoolId,
       ...(query.deviceId ? { deviceId: query.deviceId } : {}),
@@ -156,7 +161,7 @@ export class SyncService {
       page: {
         limit: query.limit,
         hasMore,
-        nextCursor: hasMore ? items.at(-1)?.id ?? null : null,
+        nextCursor: hasMore ? (items.at(-1)?.id ?? null) : null,
       },
     };
   }
@@ -206,7 +211,9 @@ export class SyncService {
       where: { id: batchId },
       data: {
         status: dto.status as SyncBatchStatusValue,
-        ...(dto.summary ? { summary: dto.summary as unknown as Prisma.InputJsonValue } : {}),
+        ...(dto.summary
+          ? { summary: dto.summary as unknown as Prisma.InputJsonValue }
+          : {}),
         ...(dto.errorCode ? { errorCode: dto.errorCode } : {}),
       },
       select: {
@@ -259,7 +266,10 @@ export class SyncService {
   ) {
     const row = await this.prisma.syncCursor.upsert({
       where: {
-        deviceId_entityType: { deviceId, entityType: entityType as SyncCursorEntityTypeValue },
+        deviceId_entityType: {
+          deviceId,
+          entityType: entityType as SyncCursorEntityTypeValue,
+        },
       },
       create: {
         schoolId,

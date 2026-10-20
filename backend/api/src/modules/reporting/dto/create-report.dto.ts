@@ -1,4 +1,4 @@
-import { IsDateString, IsEnum, IsOptional, IsString, IsUUID } from "class-validator";
+import { IsDateString, IsEnum, IsOptional, IsUUID } from "class-validator";
 
 export class CreateReportDto {
   @IsEnum(["STUDENT_GROWTH", "CLASS_SUMMARY", "SCHOOL_OVERVIEW"])

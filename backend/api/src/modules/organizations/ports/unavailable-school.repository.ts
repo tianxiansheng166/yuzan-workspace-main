@@ -5,11 +5,12 @@ import type { SchoolRepositoryPort } from "./school-repository.port.js";
 
 @Injectable()
 export class UnavailableSchoolRepository implements SchoolRepositoryPort {
-  async findById(_schoolId: string): Promise<School | null> {
-    throw new OrganizationUnavailableException();
+  findById(_schoolId: string): Promise<School | null> {
+    void _schoolId;
+    return Promise.reject(new OrganizationUnavailableException());
   }
 
-  async listActive(): Promise<readonly SchoolSummary[]> {
-    throw new OrganizationUnavailableException();
+  listActive(): Promise<readonly SchoolSummary[]> {
+    return Promise.reject(new OrganizationUnavailableException());
   }
 }

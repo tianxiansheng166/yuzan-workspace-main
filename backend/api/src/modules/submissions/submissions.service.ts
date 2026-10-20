@@ -2,11 +2,9 @@ import { Inject, Injectable } from "@nestjs/common";
 import type { AuthContext } from "../../common/security/auth.types.js";
 import { MembershipRole } from "../../common/security/index.js";
 import {
-  SubmissionConflictException,
   SubmissionForbiddenException,
   SubmissionNotFoundException,
   SubmissionStatusException,
-  SubmissionUnavailableException,
 } from "./domain/submission.errors.js";
 import { canTransition } from "./domain/submission.state-machine.js";
 import type {
@@ -21,7 +19,6 @@ import {
 } from "./dto/submission.response.js";
 import type {
   ListSubmissionsOptions,
-  PaginatedResult,
   SubmissionRepositoryPort,
 } from "./ports/submission-repository.port.js";
 import { SUBMISSION_REPOSITORY } from "./ports/submission-repository.port.js";
@@ -58,7 +55,8 @@ export class SubmissionsService {
 
     // Idempotent: if a submission with this idempotencyKey already exists,
     // return the existing one.
-    const existing = await this.submissionRepo.findByEnrollmentAndIdempotencyKey(
+    const existing =
+      await this.submissionRepo.findByEnrollmentAndIdempotencyKey(
       input.enrollmentId,
       input.idempotencyKey,
     );
@@ -83,7 +81,10 @@ export class SubmissionsService {
       throw new SubmissionForbiddenException();
     }
 
-    const submission = await this.submissionRepo.findById(schoolId, submissionId);
+    const submission = await this.submissionRepo.findById(
+      schoolId,
+      submissionId,
+    );
     if (!submission) {
       throw new SubmissionNotFoundException();
     }
@@ -130,7 +131,7 @@ export class SubmissionsService {
         schoolId,
         enrollmentId,
       );
-      allSubmissions.push(...subs as Submission[]);
+      allSubmissions.push(...(subs as Submission[]));
     }
 
     return allSubmissions.map(toSubmissionSummaryResponse);
@@ -164,11 +165,17 @@ export class SubmissionsService {
 
     const assignment = await this.prisma.assignment.findFirst({
       where: { id: assignmentId, schoolId, deletedAt: null },
-      select: { targets: { select: { targetType: true, classId: true, enrollmentId: true } } },
+      select: {
+        targets: {
+          select: { targetType: true, classId: true, enrollmentId: true },
+        },
+      },
     });
     if (!assignment) throw new SubmissionNotFoundException("作业不存在");
 
-    const isSchoolAdmin = auth.principal.roles.includes(MembershipRole.SCHOOL_ADMIN);
+    const isSchoolAdmin = auth.principal.roles.includes(
+      MembershipRole.SCHOOL_ADMIN,
+    );
     const classIds = new Set<string>();
     const explicitlyTargetedEnrollmentIds = new Set<string>();
     let hasAuthorizedTarget = isSchoolAdmin;
@@ -177,7 +184,12 @@ export class SubmissionsService {
       let targetEnrollmentId: string | undefined;
       if (target.targetType === "STUDENT" && target.enrollmentId) {
         const enrollment = await this.prisma.enrollment.findFirst({
-          where: { id: target.enrollmentId, schoolId, role: "STUDENT", status: "ACTIVE" },
+          where: {
+            id: target.enrollmentId,
+            schoolId,
+            role: "STUDENT",
+            status: "ACTIVE",
+          },
           select: { id: true, classId: true },
         });
         if (!enrollment) continue;
@@ -187,16 +199,24 @@ export class SubmissionsService {
       if (!classId) continue;
       if (!isSchoolAdmin) {
         const teacherEnrollment = await this.prisma.enrollment.findFirst({
-          where: { schoolId, classId, userId: auth.principal.userId, role: "TEACHER", status: "ACTIVE" },
+          where: {
+            schoolId,
+            classId,
+            userId: auth.principal.userId,
+            role: "TEACHER",
+            status: "ACTIVE",
+          },
           select: { id: true },
         });
         if (!teacherEnrollment) continue;
       }
       hasAuthorizedTarget = true;
-      if (targetEnrollmentId) explicitlyTargetedEnrollmentIds.add(targetEnrollmentId);
+      if (targetEnrollmentId)
+        explicitlyTargetedEnrollmentIds.add(targetEnrollmentId);
       if (target.targetType === "CLASS") classIds.add(classId);
     }
-    if (!hasAuthorizedTarget) throw new SubmissionForbiddenException("无权访问该作业的目标班级");
+    if (!hasAuthorizedTarget)
+      throw new SubmissionForbiddenException("无权访问该作业的目标班级");
     const targetEnrollments = await this.prisma.enrollment.findMany({
       where: {
         schoolId,
@@ -204,12 +224,16 @@ export class SubmissionsService {
         status: "ACTIVE",
         OR: [
           ...(classIds.size ? [{ classId: { in: [...classIds] } }] : []),
-          ...(explicitlyTargetedEnrollmentIds.size ? [{ id: { in: [...explicitlyTargetedEnrollmentIds] } }] : []),
+          ...(explicitlyTargetedEnrollmentIds.size
+            ? [{ id: { in: [...explicitlyTargetedEnrollmentIds] } }]
+            : []),
         ],
       },
       select: { id: true },
     });
-    const enrollmentIds = [...new Set(targetEnrollments.map((enrollment) => enrollment.id))];
+    const enrollmentIds = [
+      ...new Set(targetEnrollments.map((enrollment) => enrollment.id)),
+    ];
 
     const result = await this.submissionRepo.listByAssignment(
       schoolId,
@@ -228,19 +252,27 @@ export class SubmissionsService {
     schoolId: string,
     submissionId: string,
   ) {
-    const submission = await this.submissionRepo.findById(schoolId, submissionId);
+    const submission = await this.submissionRepo.findById(
+      schoolId,
+      submissionId,
+    );
     if (!submission) {
       throw new SubmissionNotFoundException();
     }
 
-    const isSchoolAdmin = auth.principal.roles.includes(MembershipRole.SCHOOL_ADMIN);
+    const isSchoolAdmin = auth.principal.roles.includes(
+      MembershipRole.SCHOOL_ADMIN,
+    );
     const isTeacher = auth.principal.roles.includes(MembershipRole.TEACHER);
     const isStudent = auth.principal.roles.includes(MembershipRole.STUDENT);
     if (isTeacher || isSchoolAdmin) {
       if (!this.policy.canReadAssignmentSubmissions(auth, schoolId)) {
         throw new SubmissionForbiddenException();
       }
-    } else if (!this.policy.canReadOwnSubmissions(auth, schoolId) || !isStudent) {
+    } else if (
+      !this.policy.canReadOwnSubmissions(auth, schoolId) ||
+      !isStudent
+    ) {
       throw new SubmissionForbiddenException();
     }
 
@@ -251,11 +283,21 @@ export class SubmissionsService {
         role: "STUDENT",
         status: "ACTIVE",
       },
-      select: { id: true, classId: true, userId: true, user: { select: { displayName: true } } },
+      select: {
+        id: true,
+        classId: true,
+        userId: true,
+        user: { select: { displayName: true } },
+      },
     });
     if (!enrollment) throw new SubmissionNotFoundException();
 
-    if (isStudent && !isTeacher && !isSchoolAdmin && enrollment.userId !== auth.principal.userId) {
+    if (
+      isStudent &&
+      !isTeacher &&
+      !isSchoolAdmin &&
+      enrollment.userId !== auth.principal.userId
+    ) {
       throw new SubmissionNotFoundException();
     }
 
@@ -294,7 +336,10 @@ export class SubmissionsService {
       throw new SubmissionForbiddenException();
     }
 
-    const submission = await this.submissionRepo.findById(schoolId, submissionId);
+    const submission = await this.submissionRepo.findById(
+      schoolId,
+      submissionId,
+    );
     if (!submission) {
       throw new SubmissionNotFoundException();
     }
@@ -314,7 +359,10 @@ export class SubmissionsService {
       throw new SubmissionForbiddenException();
     }
 
-    if (submission.status !== "IN_PROGRESS" && submission.status !== "PENDING_SYNC") {
+    if (
+      submission.status !== "IN_PROGRESS" &&
+      submission.status !== "PENDING_SYNC"
+    ) {
       throw new SubmissionStatusException("当前状态不允许上传");
     }
 

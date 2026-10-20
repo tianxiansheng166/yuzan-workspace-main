@@ -22,32 +22,41 @@ function teacherAuth(): AuthContext {
 describe("AssessmentReviewService.listQueue", () => {
   it("returns real item, assignment and submission IDs only within the teacher's class scope", async () => {
     const enrollmentFindMany = vi.fn().mockResolvedValue([{ classId: "class-1" }]);
-    const assessmentItemFindMany = vi.fn().mockResolvedValue([{
-      id: "item-1",
-      sessionId: "session-1",
-      itemType: "READ_ALOUD",
-      maxScore: 10,
-      status: "PENDING",
-      sortOrder: 0,
-      session: {
-        status: "PROCESSING",
-        classId: "class-1",
-        enrollmentId: "student-enrollment-1",
-        practiceDefinitionId: null,
-        courseSubmissionId: "submission-1",
-        courseSubmission: {
-          id: "submission-1",
-          assignmentId: "assignment-1",
-          enrollmentId: "student-enrollment-1",
-          assignment: { targets: [{ targetType: "CLASS", classId: "class-1", enrollmentId: null }] },
+    type AssessmentItemQueueQuery = {
+      where: { session: { classId: { in: string[] } } };
+    };
+    const assessmentItemQueries: AssessmentItemQueueQuery[] = [];
+    const assessmentItemFindMany = vi.fn((args: AssessmentItemQueueQuery) => {
+      assessmentItemQueries.push(args);
+      return Promise.resolve([
+        {
+          id: "item-1",
+          sessionId: "session-1",
+          itemType: "READ_ALOUD",
+          maxScore: 10,
+          status: "PENDING",
+          sortOrder: 0,
+          session: {
+            status: "PROCESSING",
+            classId: "class-1",
+            enrollmentId: "student-enrollment-1",
+            practiceDefinitionId: null,
+            courseSubmissionId: "submission-1",
+            courseSubmission: {
+              id: "submission-1",
+              assignmentId: "assignment-1",
+              enrollmentId: "student-enrollment-1",
+              assignment: { targets: [{ targetType: "CLASS", classId: "class-1", enrollmentId: null }] },
+            },
+            enrollment: { user: { displayName: "测试学生" } },
+          },
+          questionVersion: {
+            scoringSpec: { strategy: "SPEECH_READING" },
+            item: { domain: "SPEAK", stableKey: "item-1", itemType: "READ_ALOUD" },
+          },
         },
-        enrollment: { user: { displayName: "测试学生" } },
-      },
-      questionVersion: {
-        scoringSpec: { strategy: "SPEECH_READING" },
-        item: { domain: "SPEAK", stableKey: "item-1", itemType: "READ_ALOUD" },
-      },
-    }]);
+      ]);
+    });
     const service = new AssessmentReviewService({
       enrollment: { findMany: enrollmentFindMany },
       assessmentItem: { findMany: assessmentItemFindMany },
@@ -56,7 +65,7 @@ describe("AssessmentReviewService.listQueue", () => {
 
     const result = await service.listQueue(teacherAuth(), SCHOOL_ID);
 
-    expect(assessmentItemFindMany.mock.calls[0]?.[0].where.session.classId).toEqual({ in: ["class-1"] });
+    expect(assessmentItemQueries[0]?.where.session.classId).toEqual({ in: ["class-1"] });
     expect(result).toMatchObject({
       total: 1,
       items: [{

@@ -9,6 +9,12 @@ const PUBLISH_ROUTE = ":courseVersionId/publish";
  * safely correct its controller in a separately approved change.
  */
 export function applyRootRouteCompatibility(): void {
-  const handler = CurriculumController.prototype.publishCourseVersion;
+  const handler: unknown = Object.getOwnPropertyDescriptor(
+    CurriculumController.prototype,
+    "publishCourseVersion",
+  )?.value;
+  if (typeof handler !== "function") {
+    throw new TypeError("Curriculum publish handler is unavailable");
+  }
   Reflect.defineMetadata(PATH_METADATA, PUBLISH_ROUTE, handler);
 }

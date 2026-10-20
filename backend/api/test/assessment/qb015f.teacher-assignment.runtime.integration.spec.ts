@@ -3,6 +3,8 @@ import { randomUUID } from "node:crypto";
 import { Pool } from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@yuzan/database";
+import { ConfigService } from "@nestjs/config";
+import type { PrismaService } from "../../src/shared/database/prisma.service.js";
 import { AssessmentService } from "../../src/modules/assessment/assessment.service.js";
 import { AssessmentReviewService } from "../../src/modules/assessment/assessment-review.service.js";
 import { TeacherQuestionBankDiagnosticService } from "../../src/modules/assessment/teacher-question-bank-diagnostic.service.js";
@@ -55,9 +57,9 @@ describe.skipIf(!databaseUrl)("QB-015F teacher assignment — isolated PostgreSQ
   let teacherBId: string;
   let studentIds: string[] = [];
   let enrollmentIds: string[] = [];
-  let createdSessionIds: string[] = [];
+  const createdSessionIds: string[] = [];
   let practiceDefinitionId: string;
-  let sourceByEnrollment = new Map<string, { id: string; reportSummary: unknown; itemScores: Map<string, number | null> }>();
+  const sourceByEnrollment = new Map<string, { id: string; reportSummary: unknown; itemScores: Map<string, number | null> }>();
   let service: AssessmentService;
   let diagnosticService: TeacherQuestionBankDiagnosticService;
   let reviewService: AssessmentReviewService;
@@ -210,15 +212,15 @@ describe.skipIf(!databaseUrl)("QB-015F teacher assignment — isolated PostgreSQ
     }
 
     service = new AssessmentService(
-      new PrismaAssessmentSessionRepository(prisma as any),
-      new PrismaAssessmentItemRepository(prisma as any),
-      new PrismaWrittenAnswerRepository(prisma as any),
-      new PrismaAssessmentReportRepository(prisma as any),
-      prisma as any,
-      new QuestionBankDeterministicScoringService(prisma as any),
+      new PrismaAssessmentSessionRepository(prisma as unknown as PrismaService),
+      new PrismaAssessmentItemRepository(prisma as unknown as PrismaService),
+      new PrismaWrittenAnswerRepository(prisma as unknown as PrismaService),
+      new PrismaAssessmentReportRepository(prisma as unknown as PrismaService),
+      prisma as unknown as PrismaService,
+      new QuestionBankDeterministicScoringService(prisma as unknown as PrismaService),
     );
-    reviewService = new AssessmentReviewService(prisma as any, service);
-    diagnosticService = new TeacherQuestionBankDiagnosticService(prisma as any, reviewService, service);
+    reviewService = new AssessmentReviewService(prisma as unknown as PrismaService, service);
+    diagnosticService = new TeacherQuestionBankDiagnosticService(prisma as unknown as PrismaService, reviewService, service);
   });
 
   afterAll(async () => {
@@ -349,7 +351,7 @@ describe.skipIf(!databaseUrl)("QB-015F teacher assignment — isolated PostgreSQ
 
     const items = await prisma.assessmentItem.findMany({ where: { sessionId }, orderBy: { sortOrder: "asc" }, include: { questionVersion: true } });
     expect(items.length).toBeGreaterThan(0);
-    const speechService = new SpeechJobService(prisma as any, { get: (key: string) => key === "SPEECH_PROVIDER" ? "local" : undefined } as any, null);
+    const speechService = new SpeechJobService(prisma as unknown as PrismaService, new ConfigService({ SPEECH_PROVIDER: "local" }), null);
     for (const item of items) {
       const recording = await prisma.recording.create({
         data: {

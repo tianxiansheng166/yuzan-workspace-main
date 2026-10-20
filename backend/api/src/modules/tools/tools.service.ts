@@ -1,13 +1,13 @@
 import { Inject, Injectable } from "@nestjs/common";
 import type { AuthContext } from "../../common/security/auth.types.js";
 import { PrismaService } from "../../shared/database/prisma.service.js";
-import { Prisma } from "@yuzan/database";
+import { toPrismaJsonObject } from "../../shared/database/prisma-json.js";
+
 import type {
-  IntegrationConfig,
   IntegrationKey,
   MindGraphJobStatus,
 } from "./domain/tool.types.js";
-import { IntegrationMode } from "./domain/tool.types.js";
+import { IntegrationMode, IntegrationStatus } from "./domain/tool.types.js";
 import {
   IntegrationForbiddenException,
   IntegrationNotFoundException,
@@ -80,7 +80,9 @@ export class ToolsService {
 
     const updated = await this.toolRepo.updateConfig(schoolId, key, {
       ...(patch.enabled !== undefined ? { enabled: patch.enabled } : {}),
-      ...(patch.mode !== undefined ? { mode: patch.mode as IntegrationMode } : {}),
+      ...(patch.mode !== undefined
+        ? { mode: patch.mode as IntegrationMode }
+        : {}),
       ...(patch.publicUrl !== undefined ? { publicUrl: patch.publicUrl } : {}),
     });
     return toIntegrationConfigResponse(updated);
@@ -105,8 +107,8 @@ export class ToolsService {
 
     // When provider is NOT connected, MUST NOT fake "AI has generated" results
     if (
-      config.status === "PROVIDER_UNAVAILABLE" ||
-      config.status === "OFFLINE"
+      config.status === IntegrationStatus.PROVIDER_UNAVAILABLE ||
+      config.status === IntegrationStatus.OFFLINE
     ) {
       throw new MindGraphProviderUnavailableException();
     }
@@ -123,11 +125,7 @@ export class ToolsService {
     return toMindGraphJobResponse(job);
   }
 
-  async getJobStatus(
-    auth: AuthContext,
-    schoolId: string,
-    jobId: string,
-  ) {
+  async getJobStatus(auth: AuthContext, schoolId: string, jobId: string) {
     const job = await this.toolRepo.findJobById(jobId);
     if (!job) {
       throw new MindGraphJobNotFoundException();
@@ -216,7 +214,11 @@ export class ToolsService {
     }));
 
     // Get recent usage from click audits (simplified)
-    const recentUsage: { toolKey: string; lastUsedAt: string; action: string }[] = [];
+    const recentUsage: {
+      toolKey: string;
+      lastUsedAt: string;
+      action: string;
+    }[] = [];
 
     // Get drafts
     const drafts = await this.prisma.teacherDraft.findMany({
@@ -288,7 +290,10 @@ export class ToolsService {
       };
     }
 
-    if (config.status === "PROVIDER_UNAVAILABLE" || config.status === "OFFLINE") {
+    if (
+      config.status === IntegrationStatus.PROVIDER_UNAVAILABLE ||
+      config.status === IntegrationStatus.OFFLINE
+    ) {
       return {
         status: "PROVIDER_NOT_CONFIGURED" as const,
         jobId: null,
@@ -352,7 +357,11 @@ export class ToolsService {
   async saveDraft(
     auth: AuthContext,
     schoolId: string,
-    dto: { toolSource: string; title: string; content: Record<string, unknown> },
+    dto: {
+      toolSource: string;
+      title: string;
+      content: Record<string, unknown>;
+    },
   ) {
     if (!this.policy.canManageIntegrations(auth, schoolId)) {
       throw new IntegrationForbiddenException();
@@ -362,9 +371,10 @@ export class ToolsService {
       data: {
         schoolId,
         authorUserId: auth.principal.userId,
-        toolSource: dto.toolSource as "MINDMATE" | "MINDGRAPH" | "LESSON_PLAN" | "WORKSHEET",
+        toolSource: dto.toolSource as
+          "MINDMATE" | "MINDGRAPH" | "LESSON_PLAN" | "WORKSHEET",
         title: dto.title,
-        content: JSON.parse(JSON.stringify(dto.content)),
+        content: toPrismaJsonObject(dto.content),
       },
     });
 

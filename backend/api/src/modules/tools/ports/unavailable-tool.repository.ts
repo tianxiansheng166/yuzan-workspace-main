@@ -16,29 +16,28 @@ import type {
 
 @Injectable()
 export class UnavailableToolRepository implements ToolRepositoryPort {
-  async findConfigByKey(
+  findConfigByKey(
     _schoolId: string,
     _key: IntegrationKey,
   ): Promise<IntegrationConfig | null> {
-    throw new IntegrationUnavailableException();
+    void _schoolId;
+    void _key;
+    return Promise.reject(new IntegrationUnavailableException());
   }
 
-  async listConfigs(
-    _schoolId: string,
-  ): Promise<readonly IntegrationConfig[]> {
-    throw new IntegrationUnavailableException();
+  listConfigs(_schoolId: string): Promise<readonly IntegrationConfig[]> {
+    void _schoolId;
+    return Promise.reject(new IntegrationUnavailableException());
   }
 
-  async createConfig(
-    _config: Omit<
-      IntegrationConfig,
-      "id" | "createdAt" | "updatedAt"
-    >,
+  createConfig(
+    _config: Omit<IntegrationConfig, "id" | "createdAt" | "updatedAt">,
   ): Promise<IntegrationConfig> {
-    throw new IntegrationUnavailableException();
+    void _config;
+    return Promise.reject(new IntegrationUnavailableException());
   }
 
-  async updateConfig(
+  updateConfig(
     _schoolId: string,
     _key: IntegrationKey,
     _patch: Partial<
@@ -48,45 +47,59 @@ export class UnavailableToolRepository implements ToolRepositoryPort {
       >
     >,
   ): Promise<IntegrationConfig> {
-    throw new IntegrationUnavailableException();
+    void _schoolId;
+    void _key;
+    void _patch;
+    return Promise.reject(new IntegrationUnavailableException());
   }
 
-  async createMindGraphJob(
+  createMindGraphJob(
     _job: Omit<MindGraphJob, "id" | "createdAt" | "updatedAt">,
   ): Promise<MindGraphJob> {
-    throw new IntegrationUnavailableException();
+    void _job;
+    return Promise.reject(new IntegrationUnavailableException());
   }
 
-  async findJobById(_jobId: string): Promise<MindGraphJob | null> {
-    throw new IntegrationUnavailableException();
+  findJobById(_jobId: string): Promise<MindGraphJob | null> {
+    void _jobId;
+    return Promise.reject(new IntegrationUnavailableException());
   }
 
-  async updateJobStatus(
+  updateJobStatus(
     _jobId: string,
     _status: MindGraphJobStatus,
     _patch?: Partial<Pick<MindGraphJob, "resultPayload" | "errorCode">>,
   ): Promise<MindGraphJob> {
-    throw new IntegrationUnavailableException();
+    void _jobId;
+    void _status;
+    void _patch;
+    return Promise.reject(new IntegrationUnavailableException());
   }
 
-  async listJobsByConfig(
+  listJobsByConfig(
     _schoolId: string,
     _configId: string,
     _options: ListJobsOptions,
   ): Promise<PaginatedResult<MindGraphJob>> {
-    throw new IntegrationUnavailableException();
+    void _schoolId;
+    void _configId;
+    void _options;
+    return Promise.reject(new IntegrationUnavailableException());
   }
 
-  async createClickAudit(
+  createClickAudit(
     _entry: Omit<ClickAuditEntry, "id" | "createdAt">,
   ): Promise<ClickAuditEntry> {
-    throw new IntegrationUnavailableException();
+    void _entry;
+    return Promise.reject(new IntegrationUnavailableException());
   }
 
-  async listClickAudits(
+  listClickAudits(
     _schoolId: string,
     _options: ListClickAuditsOptions,
   ): Promise<PaginatedResult<ClickAuditEntry>> {
-    throw new IntegrationUnavailableException();
+    void _schoolId;
+    void _options;
+    return Promise.reject(new IntegrationUnavailableException());
   }
 }

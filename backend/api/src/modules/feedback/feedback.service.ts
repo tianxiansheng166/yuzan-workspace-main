@@ -1,6 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
 import type { AuthContext } from "../../common/security/auth.types.js";
-import { MembershipRole } from "../../common/security/index.js";
+
 import { PrismaService } from "../../shared/database/prisma.service.js";
 import {
   FeedbackForbiddenException,
@@ -35,13 +35,19 @@ export class FeedbackService {
     auth: AuthContext,
     schoolId: string,
     submissionId: string,
-    input: Omit<CreateFeedbackInput, "schoolId" | "submissionId" | "authorUserId">,
+    input: Omit<
+      CreateFeedbackInput,
+      "schoolId" | "submissionId" | "authorUserId"
+    >,
   ) {
     if (!this.policy.canCreateFeedback(auth, schoolId)) {
       throw new FeedbackForbiddenException();
     }
 
-    const submission = await this.submissionLookup.findSummaryById(schoolId, submissionId);
+    const submission = await this.submissionLookup.findSummaryById(
+      schoolId,
+      submissionId,
+    );
     if (!submission) {
       throw new SubmissionNotReviewableException("提交不存在");
     }
@@ -80,9 +86,11 @@ export class FeedbackService {
         schoolId: row.schoolId,
         submissionId: row.submissionId,
         authorUserId: row.authorUserId,
-        decision: row.decision as "ACCEPT" | "RETURN",
+        decision: row.decision,
         comment: row.comment,
-        ...(row.score !== null && row.score !== undefined ? { score: row.score } : {}),
+        ...(row.score !== null && row.score !== undefined
+          ? { score: row.score }
+          : {}),
         revision: row.revision,
         releasedAt: row.releasedAt,
         ...(row.deletedAt ? { deletedAt: row.deletedAt } : {}),
@@ -97,7 +105,10 @@ export class FeedbackService {
     schoolId: string,
     submissionId: string,
   ) {
-    const submission = await this.submissionLookup.findSummaryById(schoolId, submissionId);
+    const submission = await this.submissionLookup.findSummaryById(
+      schoolId,
+      submissionId,
+    );
     if (!submission) {
       return [];
     }
@@ -112,11 +123,7 @@ export class FeedbackService {
     });
 
     if (
-      !this.policy.canReadOwnFeedback(
-        auth,
-        schoolId,
-        enrollment?.userId ?? "",
-      )
+      !this.policy.canReadOwnFeedback(auth, schoolId, enrollment?.userId ?? "")
     ) {
       throw new FeedbackForbiddenException();
     }

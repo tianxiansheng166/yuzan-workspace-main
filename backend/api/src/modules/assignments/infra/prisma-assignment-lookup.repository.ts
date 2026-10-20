@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import type { Prisma } from "@yuzan/database";
 import { PrismaService } from "../../../shared/database/prisma.service.js";
 import type { AssignmentSummary } from "../domain/assignment.types.js";
-import type { AssignmentStatus } from "../domain/assignment.types.js";
+
 import { AssignmentUnavailableException } from "../domain/assignment.errors.js";
 import type { AssignmentLookupPort } from "../ports/assignment-lookup.port.js";
 
@@ -65,7 +65,7 @@ function toAssignmentSummary(
     id: row.id,
     schoolId: row.schoolId,
     title: row.title,
-    status: row.status as AssignmentStatus,
+    status: row.status,
     startsAt: row.startsAt,
     dueAt: row.dueAt,
     revision: row.revision,
@@ -75,7 +75,7 @@ function toAssignmentSummary(
       id: t.id,
       schoolId: t.schoolId,
       assignmentId: t.assignmentId,
-      targetType: t.targetType as "CLASS" | "STUDENT",
+      targetType: t.targetType,
       ...(t.classId ? { classId: t.classId } : {}),
       ...(t.enrollmentId ? { enrollmentId: t.enrollmentId } : {}),
     })),

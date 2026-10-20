@@ -98,13 +98,40 @@ export function toWrittenAnswerResponse(answer: WrittenAnswer) {
 function finiteNumber(value: unknown) { return typeof value === "number" && Number.isFinite(value) ? value : null; }
 function text(value: unknown) { return typeof value === "string" ? value : null; }
 
+type DiagnosisScoreFields = Pick<
+  QuestionBankDiagnosis["overall"],
+  "earnedPoints" | "maxPoints" | "percentage" | "proficiency"
+>;
+type DiagnosisDomain = QuestionBankDiagnosis["domains"][number];
+type DiagnosisFamily = QuestionBankDiagnosis["families"][number];
+
 /** Project a strict allowlist from the persisted JSON snapshot for student safety. */
 function studentSafeDiagnosis(value: unknown) {
   if (!isQuestionBankDiagnosis(value)) return null;
-  const diagnosis = value as QuestionBankDiagnosis;
-  const score = (entry: any) => ({ earnedPoints: finiteNumber(entry?.earnedPoints), maxPoints: finiteNumber(entry?.maxPoints), percentage: finiteNumber(entry?.percentage), proficiency: text(entry?.proficiency) });
-  const domain = (entry: any) => ({ domain: text(entry?.domain), displayName: text(entry?.displayName), ...score(entry), itemCount: finiteNumber(entry?.itemCount), lostPoints: finiteNumber(entry?.lostPoints) });
-  const family = (entry: any) => ({ family: text(entry?.family), displayName: text(entry?.displayName), domain: text(entry?.domain), domainDisplayName: text(entry?.domainDisplayName), levels: Array.isArray(entry?.levels) ? entry.levels.filter((level: unknown) => typeof level === "string") : [], ...score(entry), itemCount: finiteNumber(entry?.itemCount), lostPoints: finiteNumber(entry?.lostPoints) });
+  const diagnosis = value;
+  const score = (entry: DiagnosisScoreFields) => ({
+    earnedPoints: finiteNumber(entry.earnedPoints),
+    maxPoints: finiteNumber(entry.maxPoints),
+    percentage: finiteNumber(entry.percentage),
+    proficiency: text(entry.proficiency),
+  });
+  const domain = (entry: DiagnosisDomain) => ({
+    domain: text(entry.domain),
+    displayName: text(entry.displayName),
+    ...score(entry),
+    itemCount: finiteNumber(entry.itemCount),
+    lostPoints: finiteNumber(entry.lostPoints),
+  });
+  const family = (entry: DiagnosisFamily) => ({
+    family: text(entry.family),
+    displayName: text(entry.displayName),
+    domain: text(entry.domain),
+    domainDisplayName: text(entry.domainDisplayName),
+    levels: Array.isArray(entry.levels) ? entry.levels.filter((level) => typeof level === "string") : [],
+    ...score(entry),
+    itemCount: finiteNumber(entry.itemCount),
+    lostPoints: finiteNumber(entry.lostPoints),
+  });
   return {
     version: diagnosis.version,
     overall: score(diagnosis.overall),

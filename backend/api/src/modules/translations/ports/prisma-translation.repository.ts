@@ -8,7 +8,6 @@ import type {
 import {
   ReviewStatus,
   SupportedLanguage,
-  TranslationStatus as TS,
 } from "../domain/translation.types.js";
 import type {
   ListJobsOptions,
@@ -89,7 +88,7 @@ export class PrismaTranslationRepository implements TranslationRepositoryPort {
         errorCode: job.errorCode,
       },
     });
-    return toDomainJob(raw as unknown as Record<string, unknown>);
+    return toDomainJob(raw);
   }
 
   async findJobById(
@@ -100,7 +99,7 @@ export class PrismaTranslationRepository implements TranslationRepositoryPort {
       where: { id: jobId, schoolId },
     });
     if (!raw) return null;
-    return toDomainJob(raw as unknown as Record<string, unknown>);
+    return toDomainJob(raw);
   }
 
   async findJobByIdOnly(jobId: string): Promise<TranslationJob | null> {
@@ -108,7 +107,7 @@ export class PrismaTranslationRepository implements TranslationRepositoryPort {
       where: { id: jobId },
     });
     if (!raw) return null;
-    return toDomainJob(raw as unknown as Record<string, unknown>);
+    return toDomainJob(raw);
   }
 
   async listJobsBySchool(
@@ -142,10 +141,11 @@ export class PrismaTranslationRepository implements TranslationRepositoryPort {
     const items = hasMore ? rows.slice(0, -1) : rows;
 
     return {
-      items: items.map(
-        (r) => toDomainJob(r as unknown as Record<string, unknown>),
+      items: items.map((r) =>
+        toDomainJob(r as unknown as Record<string, unknown>),
       ),
-      nextCursor: hasMore && items.length > 0 ? items[items.length - 1]!.id : null,
+      nextCursor:
+        hasMore && items.length > 0 ? items[items.length - 1]!.id : null,
       hasMore,
     };
   }
@@ -169,7 +169,7 @@ export class PrismaTranslationRepository implements TranslationRepositoryPort {
     });
     if (!existing) return null;
     if (existing.reviewStatus === ReviewStatus.APPROVED) {
-      return toDomainJob(existing as unknown as Record<string, unknown>);
+      return toDomainJob(existing);
     }
 
     const raw = await this.prisma.translationJob.update({
@@ -189,12 +189,10 @@ export class PrismaTranslationRepository implements TranslationRepositoryPort {
         ...(data.providerLatencyMs !== undefined
           ? { providerLatencyMs: data.providerLatencyMs }
           : {}),
-        ...(data.errorCode !== undefined
-          ? { errorCode: data.errorCode }
-          : {}),
+        ...(data.errorCode !== undefined ? { errorCode: data.errorCode } : {}),
       },
     });
-    return toDomainJob(raw as unknown as Record<string, unknown>);
+    return toDomainJob(raw);
   }
 
   async updateJobRevision(
@@ -233,7 +231,7 @@ export class PrismaTranslationRepository implements TranslationRepositoryPort {
       where: { id: jobId, schoolId },
     });
     if (!raw) return null;
-    return toDomainJob(raw as unknown as Record<string, unknown>);
+    return toDomainJob(raw);
   }
 
   async listGlossary(
@@ -245,8 +243,8 @@ export class PrismaTranslationRepository implements TranslationRepositoryPort {
       where.version = version;
     }
     const rows = await this.prisma.translationGlossary.findMany({ where });
-    return rows.map(
-      (r) => toDomainGlossary(r as unknown as Record<string, unknown>),
+    return rows.map((r) =>
+      toDomainGlossary(r as unknown as Record<string, unknown>),
     );
   }
 
@@ -256,8 +254,8 @@ export class PrismaTranslationRepository implements TranslationRepositoryPort {
     const rows = await this.prisma.translationGlossary.findMany({
       where: { version },
     });
-    return rows.map(
-      (r) => toDomainGlossary(r as unknown as Record<string, unknown>),
+    return rows.map((r) =>
+      toDomainGlossary(r as unknown as Record<string, unknown>),
     );
   }
 }

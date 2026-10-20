@@ -11,7 +11,6 @@ import { AiLessonPlanningService } from "./ai-lesson-planning.service.js";
 const bullMqAiGenerationFactory = {
   provide: "BULLMQ_AI_GENERATION",
   useFactory: (config: ConfigService): Queue | null => {
-    const redisUrl = config.get<string>("REDIS_URL");
     const redisHost = config.get<string>("REDIS_HOST") ?? "127.0.0.1";
     const redisPort = parseInt(config.get<string>("REDIS_PORT") ?? "6379", 10);
 

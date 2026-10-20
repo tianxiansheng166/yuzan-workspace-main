@@ -59,8 +59,6 @@ export class SpeechJobController {
   async createSpeechJob(
     @Param("schoolId", ParseUUIDPipe) schoolId: string,
     @Body() dto: CreateSpeechJobDto,
-    @CurrentTenant() _tenant: TenantContext,
-    @CurrentPrincipal() _principal: Principal,
   ) {
     return this.service.triggerSpeechProcessing(
       dto.recordingId,
@@ -90,6 +88,7 @@ export class SpeechJobController {
     @CurrentTenant() _tenant: TenantContext,
     @CurrentPrincipal() principal: Principal,
   ) {
+    void _tenant;
     const isStudent = principal.roles.includes(MembershipRole.STUDENT);
     const job = await this.service.getSpeechJob(jobId, {
       includeResult: !isStudent,

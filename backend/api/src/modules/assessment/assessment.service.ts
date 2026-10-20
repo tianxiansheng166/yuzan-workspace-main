@@ -6,7 +6,7 @@ import { PrismaService } from "../../shared/database/prisma.service.js";
 import { AssessmentPolicy } from "./assessment.policy.js";
 import { canTransition } from "./domain/assessment.state-machine.js";
 import { AssessmentNotFoundException, AssessmentForbiddenException, AssessmentConflictException, AssessmentItemNotFoundException, AssessmentValidationFailedException } from "./domain/assessment.errors.js";
-import type { AssessmentSession, AssessmentSessionStatus } from "./domain/assessment.types.js";
+import type { AssessmentSession } from "./domain/assessment.types.js";
 import type { AssessmentSessionRepositoryPort, CreateAssessmentSessionData, ListSessionsOptions } from "./ports/assessment-session-repository.port.js";
 import { ASSESSMENT_SESSION_REPOSITORY } from "./ports/assessment-session-repository.port.js";
 import type { AssessmentItemRepositoryPort, CreateAssessmentItemData } from "./ports/assessment-item-repository.port.js";
@@ -30,6 +30,48 @@ const REMEDIATION_PRACTICE_TAGS: Record<string, readonly string[]> = {
   PICTURE_WORD: ["书面表达"],
   SENTENCE_COMPLETION: ["书面表达"],
 };
+const REMEDIATION_SOURCE_SELECT = {
+  id: true,
+  enrollmentId: true,
+  classId: true,
+  type: true,
+  status: true,
+  purpose: true,
+  practiceDefinitionId: true,
+  practiceVersionId: true,
+  deliveryId: true,
+  report: { select: { summary: true } },
+  items: {
+    orderBy: { sortOrder: "asc" },
+    select: {
+      id: true,
+      questionVersionId: true,
+      itemType: true,
+      sectionTitle: true,
+      sectionOrder: true,
+      sortOrder: true,
+      maxScore: true,
+      scoredScore: true,
+      questionVersion: {
+        select: {
+          id: true,
+          status: true,
+          deliverySpec: true,
+          item: { select: { domain: true, questionType: true } },
+        },
+      },
+    },
+  },
+} satisfies Prisma.AssessmentSessionSelect;
+type RemediationSource = Prisma.AssessmentSessionGetPayload<{
+  select: typeof REMEDIATION_SOURCE_SELECT;
+}>;
+const ACTIVE_REMEDIATION_SELECT = {
+  id: true,
+  status: true,
+  remediationFocus: true,
+  items: { select: { questionVersionId: true } },
+} satisfies Prisma.AssessmentSessionSelect;
 
 @Injectable()
 export class AssessmentService {
@@ -61,7 +103,11 @@ export class AssessmentService {
     const teacherEnrollment = await this.prisma.enrollment.findFirst({
       where: { userId: auth.principal.userId, schoolId, classId: dto.classId, role: "TEACHER", status: "ACTIVE" },
     });
-    const isAdmin = auth.principal.roles.some((r) => r === "SCHOOL_ADMIN" || r === "PLATFORM_ADMIN");
+    const isAdmin = auth.principal.roles.some(
+      (r) =>
+        r === MembershipRole.SCHOOL_ADMIN ||
+        r === MembershipRole.PLATFORM_ADMIN,
+    );
     if (!teacherEnrollment && !isAdmin) {
       throw new AssessmentForbiddenException("您不是该班级的任课教师");
     }
@@ -150,10 +196,13 @@ export class AssessmentService {
         purpose: "STANDARD",
         status: "COMPLETED",
       }, { completedAt: "desc" });
-      if (!source || !this.persistedDiagnosis(source.report?.summary) || source.items.length !== 20) {
+      if (!source || source.items.length !== 20) {
         return { outcome: "NO_COMPLETED_ASSESSMENT" as const, attemptId: null, status: null, itemCount: 0, resumed: false };
       }
-      const diagnosis = this.persistedDiagnosis(source.report.summary)!;
+      const diagnosis = this.persistedDiagnosis(source.report?.summary);
+      if (!diagnosis) {
+        return { outcome: "NO_COMPLETED_ASSESSMENT" as const, attemptId: null, status: null, itemCount: 0, resumed: false };
+      }
       const candidates = this.validatedRetryCandidates(diagnosis.retryCandidates, source.items)
         .filter((candidate) => input.focus.mode === "ALL_RETRY" || candidate.family === input.focus.family);
       const result = await this.createOrResumeRemediationFromCandidates(tx, {
@@ -302,7 +351,7 @@ export class AssessmentService {
       throw new AssessmentConflictException(`无法从 ${session.status} 转换为 IN_PROGRESS`);
     }
 
-    const updated = await this.sessionRepo.updateStatus(sessionId, "IN_PROGRESS", { startedAt: new Date() } as Partial<AssessmentSession>);
+    const updated = await this.sessionRepo.updateStatus(sessionId, "IN_PROGRESS", { startedAt: new Date() });
     return toAssessmentSessionResponse(updated);
   }
 
@@ -354,7 +403,7 @@ export class AssessmentService {
       throw new AssessmentConflictException(`无法从 ${session.status} 转换为 SUBMITTED`);
     }
 
-    const updated = await this.sessionRepo.updateStatus(sessionId, "SUBMITTED", { submittedAt: new Date() } as Partial<AssessmentSession>);
+    const updated = await this.sessionRepo.updateStatus(sessionId, "SUBMITTED", { submittedAt: new Date() });
     await this.finalizeAutomaticReportFromSpeechJob(schoolId, sessionId);
     const current = await this.sessionRepo.findByIdAndSchool(sessionId, schoolId);
     return toAssessmentSessionResponse(current ?? updated);
@@ -377,7 +426,7 @@ export class AssessmentService {
 
     // Get question details if available
     let questionPrompt: Record<string, unknown> | undefined;
-    let demoAudioUrl: string | null = typeof item.prompt.demoAudioUrl === "string" ? item.prompt.demoAudioUrl : null;
+    const demoAudioUrl: string | null = typeof item.prompt.demoAudioUrl === "string" ? item.prompt.demoAudioUrl : null;
     if (item.questionId) {
       const question = await this.prisma.question.findUnique({
         where: { id: item.questionId },
@@ -925,7 +974,7 @@ export class AssessmentService {
     const report = await this.reportRepo.create(reportData);
 
     // Update session to COMPLETED
-    await this.sessionRepo.updateStatus(sessionId, "COMPLETED", { completedAt: new Date() } as Partial<AssessmentSession>);
+    await this.sessionRepo.updateStatus(sessionId, "COMPLETED", { completedAt: new Date() });
 
     return toAssessmentReportResponse(report, { includeDiagnosis: Boolean(diagnosis) });
   }
@@ -998,7 +1047,7 @@ export class AssessmentService {
       reviewerUserId: result.item.reviewerUserId,
       reviewerComment: result.item.reviewerComment,
       reviewedAt: result.item.reviewedAt,
-      status: result.item.status as "PENDING" | "ANSWERED" | "REVIEWED",
+      status: result.item.status,
       revision: result.item.revision,
     });
   }
@@ -1177,47 +1226,19 @@ export class AssessmentService {
       return null;
     }
 
-    await this.sessionRepo.updateStatus(sessionId, "COMPLETED", { completedAt: new Date() } as Partial<AssessmentSession>);
+    await this.sessionRepo.updateStatus(sessionId, "COMPLETED", { completedAt: new Date() });
     return null;
   }
 
-  private async remediationSource(tx: any, where: Record<string, unknown>, orderBy?: Record<string, "asc" | "desc">) {
+  private remediationSource(
+    tx: Prisma.TransactionClient,
+    where: Prisma.AssessmentSessionWhereInput,
+    orderBy?: Prisma.AssessmentSessionOrderByWithRelationInput,
+  ): Promise<RemediationSource | null> {
     return tx.assessmentSession.findFirst({
       where,
       ...(orderBy ? { orderBy } : {}),
-      select: {
-        id: true,
-        enrollmentId: true,
-        classId: true,
-        type: true,
-        status: true,
-        purpose: true,
-        practiceDefinitionId: true,
-        practiceVersionId: true,
-        deliveryId: true,
-        report: { select: { summary: true } },
-        items: {
-          orderBy: { sortOrder: "asc" },
-          select: {
-            id: true,
-            questionVersionId: true,
-            itemType: true,
-            sectionTitle: true,
-            sectionOrder: true,
-            sortOrder: true,
-            maxScore: true,
-            scoredScore: true,
-            questionVersion: {
-              select: {
-                id: true,
-                status: true,
-                deliverySpec: true,
-                item: { select: { domain: true, questionType: true } },
-              },
-            },
-          },
-        },
-      },
+      select: REMEDIATION_SOURCE_SELECT,
     });
   }
 
@@ -1226,11 +1247,11 @@ export class AssessmentService {
    * It is intentionally given only source assessment items and validated
    * diagnosis candidates, never client question ids or answer-bearing data.
    */
-  private async createOrResumeRemediationFromCandidates(tx: any, input: {
+  private async createOrResumeRemediationFromCandidates(tx: Prisma.TransactionClient, input: {
     schoolId: string;
     enrollment: { id: string; classId: string };
     actorUserId: string;
-    source: any;
+    source: RemediationSource;
     origin: "SELF_INITIATED" | "TEACHER_ASSIGNED";
     focus: { mode: "ALL_RETRY" } | { mode: "FAMILY"; family: string };
     candidates: readonly QuestionBankRetryCandidate[];
@@ -1257,7 +1278,7 @@ export class AssessmentService {
     if (typeof tx.$executeRaw === "function") {
       await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${assignmentKey}))`;
     }
-    const remediationOriginScope = origin === "SELF_INITIATED"
+    const remediationOriginScope: Prisma.AssessmentSessionWhereInput = origin === "SELF_INITIATED"
       ? { OR: [{ remediationOrigin: "SELF_INITIATED" }, { remediationOrigin: null }] }
       : { remediationOrigin: "TEACHER_ASSIGNED" };
     const active = await tx.assessmentSession.findMany({
@@ -1271,15 +1292,10 @@ export class AssessmentService {
         status: { in: ["CREATED", "IN_PROGRESS", "SUBMITTED", "PROCESSING"] },
       },
       orderBy: { updatedAt: "desc" },
-      select: {
-        id: true,
-        status: true,
-        remediationFocus: true,
-        items: { select: { questionVersionId: true } },
-      },
+      select: ACTIVE_REMEDIATION_SELECT,
     });
     const focusKey = JSON.stringify(focus);
-    const existing = active.find((attempt: any) => {
+    const existing = active.find((attempt) => {
       const versions = attempt.items
         .map((item: { questionVersionId: string | null }) => item.questionVersionId)
         .filter((id: string | null): id is string => Boolean(id))
@@ -1298,7 +1314,7 @@ export class AssessmentService {
     }
 
     const candidateIds = new Set(candidates.map((candidate) => candidate.assessmentItemId));
-    const selected = source.items.filter((item: any) => candidateIds.has(item.id));
+    const selected = source.items.filter((item) => candidateIds.has(item.id));
     if (selected.length !== candidates.length) {
       throw new AssessmentConflictException("巩固题目引用与正式诊断不一致");
     }
@@ -1311,7 +1327,7 @@ export class AssessmentService {
         type: source.type,
         purpose: "REMEDIATION",
         remediationOrigin: origin,
-        remediationFocus: focus as Prisma.InputJsonValue,
+        remediationFocus: focus,
         retestOfSessionId: source.id,
         practiceDefinitionId: source.practiceDefinitionId,
         practiceVersionId: source.practiceVersionId,
@@ -1320,7 +1336,7 @@ export class AssessmentService {
       select: { id: true, status: true },
     });
     await tx.assessmentItem.createMany({
-      data: selected.map((item: any) => {
+      data: selected.map((item) => {
         if (
           !item.questionVersionId ||
           !item.questionVersion ||
@@ -1549,7 +1565,11 @@ export class AssessmentService {
 
   private async verifyAccess(auth: AuthContext, schoolId: string, session: AssessmentSession) {
     const userId = auth.principal.userId;
-    const isAdmin = auth.principal.roles.some((r) => r === "SCHOOL_ADMIN" || r === "PLATFORM_ADMIN");
+    const isAdmin = auth.principal.roles.some(
+      (r) =>
+        r === MembershipRole.SCHOOL_ADMIN ||
+        r === MembershipRole.PLATFORM_ADMIN,
+    );
 
     // Student can access own sessions
     const enrollment = await this.prisma.enrollment.findFirst({
@@ -1605,7 +1625,9 @@ export class AssessmentService {
 
     const isSelf = targetEnrollment.userId === userId;
     const isAdmin = auth.principal.roles.some(
-      (r) => r === "SCHOOL_ADMIN" || r === "PLATFORM_ADMIN",
+      (r) =>
+        r === MembershipRole.SCHOOL_ADMIN ||
+        r === MembershipRole.PLATFORM_ADMIN,
     );
     let isTeacherOfClass = false;
     if (!isSelf && !isAdmin) {
@@ -1771,7 +1793,11 @@ export class AssessmentService {
     }
 
     const isSelf = targetEnrollment.userId === userId;
-    const isAdmin = auth.principal.roles.some((r) => r === "SCHOOL_ADMIN" || r === "PLATFORM_ADMIN");
+    const isAdmin = auth.principal.roles.some(
+      (r) =>
+        r === MembershipRole.SCHOOL_ADMIN ||
+        r === MembershipRole.PLATFORM_ADMIN,
+    );
     const isTeacherOfClass = !!(await this.prisma.enrollment.findFirst({
       where: { userId, schoolId, classId: targetEnrollment.classId, role: "TEACHER", status: "ACTIVE" },
       select: { id: true },
@@ -1899,7 +1925,11 @@ export class AssessmentService {
     }
 
     const isSelf = auth.principal.userId === enrollment.userId;
-    const isAdmin = auth.principal.roles.some((r) => r === "SCHOOL_ADMIN" || r === "PLATFORM_ADMIN");
+    const isAdmin = auth.principal.roles.some(
+      (r) =>
+        r === MembershipRole.SCHOOL_ADMIN ||
+        r === MembershipRole.PLATFORM_ADMIN,
+    );
     const isTeacherOfClass = !!(await this.prisma.enrollment.findFirst({
       where: { userId: auth.principal.userId, schoolId, classId: enrollment.classId, role: "TEACHER", status: "ACTIVE" },
       select: { id: true },
@@ -1987,7 +2017,7 @@ export class AssessmentService {
           isSelf,
           isTeacher: isTeacherOfClass,
           isAdmin,
-        } as unknown as import("@yuzan/database").Prisma.InputJsonValue,
+        },
       },
     });
 

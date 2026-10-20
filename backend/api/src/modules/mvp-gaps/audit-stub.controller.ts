@@ -231,6 +231,17 @@ export class AuditStubController {
 }
 
 function csvCell(value: unknown): string {
-  const text = value == null ? "" : String(value);
+  const text =
+    value == null
+      ? ""
+      : typeof value === "string"
+        ? value
+        : typeof value === "number" ||
+            typeof value === "boolean" ||
+            typeof value === "bigint"
+          ? String(value)
+          : value instanceof Date
+            ? value.toISOString()
+            : JSON.stringify(value) ?? "";
   return /[",\r\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
 }

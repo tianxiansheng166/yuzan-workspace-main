@@ -2,8 +2,14 @@ import { Injectable } from "@nestjs/common";
 import type { Prisma } from "@yuzan/database";
 import { PrismaService } from "../../../shared/database/prisma.service.js";
 import { sanitizeDriverError } from "../../../shared/database/database.errors.js";
-import { SubmissionConflictException, SubmissionUnavailableException } from "../domain/submission.errors.js";
-import type { SubmissionStatus, SubmissionSummary } from "../domain/submission.types.js";
+import {
+  SubmissionConflictException,
+  SubmissionUnavailableException,
+} from "../domain/submission.errors.js";
+import type {
+  SubmissionStatus,
+  SubmissionSummary,
+} from "../domain/submission.types.js";
 import type { SubmissionLookupPort } from "./submission-lookup.port.js";
 
 @Injectable()
@@ -32,7 +38,12 @@ export class PrismaSubmissionLookupRepository implements SubmissionLookupPort {
   ): Promise<SubmissionSummary> {
     try {
       const result = await this.prisma.submission.updateMany({
-        where: { id: submissionId, schoolId, revision: expectedRevision, deletedAt: null },
+        where: {
+          id: submissionId,
+          schoolId,
+          revision: expectedRevision,
+          deletedAt: null,
+        },
         data: {
           status: to,
           revision: { increment: 1 },
@@ -71,7 +82,7 @@ function toSubmissionSummary(
     assignmentId: row.assignmentId,
     enrollmentId: row.enrollmentId,
     attemptNo: row.attemptNo,
-    status: row.status as SubmissionStatus,
+    status: row.status,
     revision: row.revision,
     ...(row.submittedAt ? { submittedAt: row.submittedAt } : {}),
     createdAt: row.createdAt,

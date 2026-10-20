@@ -377,8 +377,14 @@ export class IdentityService {
     // Choose a stable student tenant; the invitation bind response can still
     // switch the active session to the newly joined school explicitly.
     if (memberships.length === 1) return memberships[0]!.schoolId;
-    if (memberships.every((membership) => membership.role === MembershipRole.STUDENT)) {
-      return [...memberships].sort((left, right) => left.schoolId.localeCompare(right.schoolId))[0]!.schoolId;
+    if (
+      memberships.every(
+        (membership) => membership.role === MembershipRole.STUDENT,
+      )
+    ) {
+      return [...memberships].sort((left, right) =>
+        left.schoolId.localeCompare(right.schoolId),
+      )[0]!.schoolId;
     }
     // Staff with multiple schools still make an explicit tenant choice.
     return null;
@@ -454,7 +460,8 @@ export class IdentityService {
     }
 
     // 5. Create User + Membership in a transaction
-    const createdUser = await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+    const createdUser = await this.prisma.$transaction(
+      async (tx: Prisma.TransactionClient) => {
       const user = await tx.user.create({
         data: {
           loginIdentifier: normalizedIdentifier,
@@ -467,7 +474,7 @@ export class IdentityService {
 
       await tx.membership.create({
         data: {
-          schoolId: school!.id,
+            schoolId: school.id,
           userId: user.id,
           role,
           status: "ACTIVE",
@@ -475,7 +482,8 @@ export class IdentityService {
       });
 
       return user;
-    });
+      },
+    );
 
     // 6. Reload user and memberships through the repository
     const user = await this.users.findById(createdUser.id);
@@ -483,8 +491,9 @@ export class IdentityService {
       throw new IdentityException("AUTH_SERVICE_UNAVAILABLE");
     }
 
-    const allMemberships =
-      await this.memberships.findActiveMembershipsByUser(user.id);
+    const allMemberships = await this.memberships.findActiveMembershipsByUser(
+      user.id,
+    );
     const activeMemberships = allMemberships.filter(
       (m) => m.status === MembershipStatus.ACTIVE,
     );

@@ -21,75 +21,98 @@ import type {
 
 @Injectable()
 export class UnavailableCommunityRepository implements CommunityRepositoryPort {
-  async findPostById(
+  findPostById(
     _schoolId: string,
     _postId: string,
   ): Promise<CommunityPost | null> {
-    throw new CommunityUnavailableException();
+    void _schoolId;
+    void _postId;
+    return Promise.reject(new CommunityUnavailableException());
   }
 
-  async listPosts(
+  listPosts(
     _schoolId: string,
     _options: ListPostsOptions,
   ): Promise<PaginatedResult<CommunityPost>> {
-    throw new CommunityUnavailableException();
+    void _schoolId;
+    void _options;
+    return Promise.reject(new CommunityUnavailableException());
   }
 
-  async createPost(_data: CreatePostData): Promise<CommunityPost> {
-    throw new CommunityUnavailableException();
+  createPost(_data: CreatePostData): Promise<CommunityPost> {
+    void _data;
+    return Promise.reject(new CommunityUnavailableException());
   }
 
-  async updatePost(
+  updatePost(
     _schoolId: string,
     _postId: string,
     _data: UpdatePostData,
   ): Promise<CommunityPost> {
-    throw new CommunityUnavailableException();
+    void _schoolId;
+    void _postId;
+    void _data;
+    return Promise.reject(new CommunityUnavailableException());
   }
 
-  async updatePostStatus(
+  updatePostStatus(
     _schoolId: string,
     _postId: string,
     _data: UpdatePostStatusData,
   ): Promise<CommunityPost> {
-    throw new CommunityUnavailableException();
+    void _schoolId;
+    void _postId;
+    void _data;
+    return Promise.reject(new CommunityUnavailableException());
   }
 
-  async listComments(
+  listComments(
     _schoolId: string,
     _postId: string,
     _options: ListCommentsOptions,
   ): Promise<PaginatedResult<PostComment>> {
-    throw new CommunityUnavailableException();
+    void _schoolId;
+    void _postId;
+    void _options;
+    return Promise.reject(new CommunityUnavailableException());
   }
 
-  async createComment(_data: CreateCommentData): Promise<PostComment> {
-    throw new CommunityUnavailableException();
+  createComment(_data: CreateCommentData): Promise<PostComment> {
+    void _data;
+    return Promise.reject(new CommunityUnavailableException());
   }
 
-  async createReport(_data: CreateReportData): Promise<ContentReport> {
-    throw new CommunityUnavailableException();
+  createReport(_data: CreateReportData): Promise<ContentReport> {
+    void _data;
+    return Promise.reject(new CommunityUnavailableException());
   }
 
-  async listReports(
+  listReports(
     _schoolId: string,
     _options: ListReportsOptions,
   ): Promise<PaginatedResult<ContentReport>> {
-    throw new CommunityUnavailableException();
+    void _schoolId;
+    void _options;
+    return Promise.reject(new CommunityUnavailableException());
   }
 
-  async updateReportStatus(
+  updateReportStatus(
     _schoolId: string,
     _reportId: string,
     _data: UpdateReportStatusData,
   ): Promise<ContentReport> {
-    throw new CommunityUnavailableException();
+    void _schoolId;
+    void _reportId;
+    void _data;
+    return Promise.reject(new CommunityUnavailableException());
   }
 
-  async findReportById(
+  findReportById(
     _schoolId: string,
     _reportId: string,
   ): Promise<ContentReport | null> {
-    throw new CommunityUnavailableException();
+    void _schoolId;
+    void _reportId;
+    return Promise.reject(new CommunityUnavailableException());
   }
 }

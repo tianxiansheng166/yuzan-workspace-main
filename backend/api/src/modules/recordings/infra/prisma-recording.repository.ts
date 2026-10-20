@@ -96,9 +96,7 @@ export class PrismaRecordingRepository implements RecordingRepositoryPort {
 
       const hasMore = rows.length > limit;
       const items = hasMore ? rows.slice(0, -1) : rows;
-      const nextCursor = hasMore
-        ? items[items.length - 1]?.id ?? null
-        : null;
+      const nextCursor = hasMore ? (items[items.length - 1]?.id ?? null) : null;
 
       return {
         items: items.map(toRecording),
@@ -120,7 +118,9 @@ export class PrismaRecordingRepository implements RecordingRepositoryPort {
           status: "INITIALIZED",
           partCount: input.partCount,
           ...(input.mimeType ? { mimeType: input.mimeType } : {}),
-          ...(input.idempotencyKey ? { idempotencyKey: input.idempotencyKey } : {}),
+          ...(input.idempotencyKey
+            ? { idempotencyKey: input.idempotencyKey }
+            : {}),
           revision: 1,
         },
       });
@@ -277,7 +277,7 @@ function toRecording(row: RecordingRow): Recording {
     schoolId: row.schoolId,
     enrollmentId: row.enrollmentId,
     ...(row.submissionId ? { submissionId: row.submissionId } : {}),
-    status: row.status as RecordingStatus,
+    status: row.status,
     partCount: row.partCount,
     uploadedParts: row.uploadedParts,
     ...(row.durationMs ? { durationMs: row.durationMs } : {}),

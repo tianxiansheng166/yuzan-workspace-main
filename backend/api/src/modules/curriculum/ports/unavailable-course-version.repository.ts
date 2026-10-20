@@ -16,47 +16,59 @@ import type {
 
 @Injectable()
 export class UnavailableCourseVersionRepository implements CourseVersionRepositoryPort {
-  private fail(): never {
-    throw new CurriculumRepositoryUnavailableException();
+  private fail(): Promise<never> {
+    return Promise.reject(new CurriculumRepositoryUnavailableException());
   }
 
-  async nextVersion(_schoolId: string, _courseId: string): Promise<number> {
-    this.fail();
+  nextVersion(_schoolId: string, _courseId: string): Promise<number> {
+    void _schoolId;
+    void _courseId;
+    return this.fail();
   }
 
-  async save(
+  save(
     _version: CourseVersion,
     _options?: SaveCourseVersionOptions,
   ): Promise<CourseVersion> {
-    this.fail();
+    void _version;
+    void _options;
+    return this.fail();
   }
 
-  async findById(
+  findById(
     _schoolId: string,
     _courseVersionId: string,
   ): Promise<CourseVersion | null> {
-    this.fail();
+    void _schoolId;
+    void _courseVersionId;
+    return this.fail();
   }
 
-  async list(
+  list(
     _schoolId: string,
     _options: ListCourseVersionsOptions,
   ): Promise<PaginatedResult<CourseVersionSummary>> {
-    this.fail();
+    void _schoolId;
+    void _options;
+    return this.fail();
   }
 
-  async findPublishedByCourseId(
+  findPublishedByCourseId(
     _schoolId: string,
     _courseId: string,
   ): Promise<CourseVersion | null> {
-    this.fail();
+    void _schoolId;
+    void _courseId;
+    return this.fail();
   }
 
-  async findDraftsByCourseId(
+  findDraftsByCourseId(
     _schoolId: string,
     _courseId: string,
   ): Promise<readonly CourseVersion[]> {
-    this.fail();
+    void _schoolId;
+    void _courseId;
+    return this.fail();
   }
 
   listCoursePracticeOptions(
@@ -73,19 +85,25 @@ export class UnavailableCourseVersionRepository implements CourseVersionReposito
     return this.fail();
   }
 
-  async publish(
+  publish(
     _schoolId: string,
     _courseVersionId: string,
     _publishedAt: Date,
   ): Promise<CourseVersion | null> {
-    this.fail();
+    void _schoolId;
+    void _courseVersionId;
+    void _publishedAt;
+    return this.fail();
   }
 
-  async retire(
+  retire(
     _schoolId: string,
     _courseVersionId: string,
     _retiredAt: Date,
   ): Promise<CourseVersion | null> {
-    this.fail();
+    void _schoolId;
+    void _courseVersionId;
+    void _retiredAt;
+    return this.fail();
   }
 }

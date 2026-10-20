@@ -1,6 +1,6 @@
 import { IsEnum, IsInt, IsOptional, IsString, Max, Min } from "class-validator";
 import { Transform } from "class-transformer";
-import { VolunteerStatus, ServiceType } from "../domain/volunteer.types.js";
+import { VolunteerStatus } from "../domain/volunteer.types.js";
 
 export class ListVolunteersQueryDto {
   @IsOptional()
@@ -12,7 +12,9 @@ export class ListVolunteersQueryDto {
   readonly cursor?: string;
 
   @IsOptional()
-  @Transform(({ value }) => (typeof value === "string" ? Number.parseInt(value, 10) : value))
+  @Transform(({ value }): unknown =>
+    typeof value === "string" ? Number.parseInt(value, 10) : value,
+  )
   @IsInt()
   @Min(1)
   @Max(100)
@@ -54,7 +56,9 @@ export class ListServiceTasksQueryDto {
   readonly cursor?: string;
 
   @IsOptional()
-  @Transform(({ value }) => (typeof value === "string" ? Number.parseInt(value, 10) : value))
+  @Transform(({ value }): unknown =>
+    typeof value === "string" ? Number.parseInt(value, 10) : value,
+  )
   @IsInt()
   @Min(1)
   @Max(100)
@@ -99,7 +103,9 @@ export class ListIncidentsQueryDto {
   readonly cursor?: string;
 
   @IsOptional()
-  @Transform(({ value }) => (typeof value === "string" ? Number.parseInt(value, 10) : value))
+  @Transform(({ value }): unknown =>
+    typeof value === "string" ? Number.parseInt(value, 10) : value,
+  )
   @IsInt()
   @Min(1)
   @Max(100)

@@ -286,7 +286,7 @@ function validateActivity(
     activity.content !== undefined &&
     activity.content !== null &&
     (typeof activity.content !== "object" ||
-      Object.keys(activity.content as object).length > 0);
+      Object.keys(activity.content).length > 0);
   const hasResources = activity.resources.length > 0;
   const hasInstruction =
     activity.instruction && activity.instruction.originalText.trim().length > 0;

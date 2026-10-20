@@ -16,6 +16,7 @@ import type {
  */
 export class DenyAllAuthContextSource implements AuthContextSource {
   resolve(_context: ExecutionContext): AuthContext | null {
+    void _context;
     return null;
   }
 }

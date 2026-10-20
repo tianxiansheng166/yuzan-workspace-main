@@ -30,7 +30,7 @@ export class ScryptPasswordVerifier implements PasswordVerifier {
         return false;
       }
       const expectedBytes = Buffer.from(expected, "base64");
-      const actual = (await derive(
+      const actual = await derive(
         password,
         Buffer.from(salt, "base64"),
         expectedBytes.length,
@@ -40,7 +40,7 @@ export class ScryptPasswordVerifier implements PasswordVerifier {
           p: Number(p),
           maxmem: 64 * 1024 * 1024,
         },
-      )) as Buffer;
+      );
       return (
         actual.length === expectedBytes.length &&
         timingSafeEqual(actual, expectedBytes)
@@ -57,12 +57,12 @@ export class ScryptPasswordVerifier implements PasswordVerifier {
 
   async hash(password: string): Promise<string> {
     const salt = randomBytes(16);
-    const derived = (await derive(password, salt, KEY_LENGTH, {
+    const derived = await derive(password, salt, KEY_LENGTH, {
       N: SCRYPT_N,
       r: SCRYPT_R,
       p: SCRYPT_P,
       maxmem: 64 * 1024 * 1024,
-    })) as Buffer;
+    });
     return `$scrypt$${SCRYPT_N}$${SCRYPT_R}$${SCRYPT_P}$${salt.toString("base64")}$${derived.toString("base64")}`;
   }
 }

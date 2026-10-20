@@ -6,6 +6,7 @@ import {
   QuestionBankProgressService,
   type QuestionBankProgressSession,
 } from "../../src/modules/assessment/question-bank-progress.service.js";
+import type { PrismaService } from "../../src/shared/database/prisma.service.js";
 
 const SCHOOL_ID = "school-progress";
 const STUDENT_ID = "student-progress";
@@ -75,7 +76,7 @@ function formal(input: {
     practiceDefinitionId: input.definitionId,
     practiceVersionId: input.versionId,
     retestOfSessionId: null,
-    report: { overallScore: input.overallScore, summary: { diagnosis: input.diagnosis ?? diagnosis([80, 80, 80, 80], Array(8).fill(80)) } },
+    report: { overallScore: input.overallScore, summary: { diagnosis: input.diagnosis ?? diagnosis([80, 80, 80, 80], Array<number>(8).fill(80)) } },
     items: input.items ?? [],
   };
 }
@@ -106,7 +107,7 @@ function fixtures() {
     overallScore: 91,
     diagnosis: diagnosis([92, 80, 90, 100], [95, 90, 80, 80, 95, 85, 100, 100]),
   });
-  const levelTwo = formal({ id: "l2-baseline", definitionId: LEVEL_TWO, versionId: "practice-v1-level-two", completedAt: new Date("2026-08-14T10:00:00.000Z"), overallScore: 78, diagnosis: diagnosis([78, 78, 78, 78], Array(8).fill(78), "水平二级") });
+  const levelTwo = formal({ id: "l2-baseline", definitionId: LEVEL_TWO, versionId: "practice-v1-level-two", completedAt: new Date("2026-08-14T10:00:00.000Z"), overallScore: 78, diagnosis: diagnosis([78, 78, 78, 78], Array<number>(8).fill(78), "水平二级") });
   return {
     baseline,
     followUp,
@@ -167,7 +168,8 @@ describe("Question Bank learning progress", () => {
   it("excludes processing history and ignores any provider-shaped item data", () => {
     const data = fixtures();
     const processing = { ...data.followUp, id: "processing-formal", status: "PROCESSING" };
-    (data.followUp.items as any).push({ questionVersionId: "provider-only", maxScore: 4, scoredScore: 4, autoResult: { candidatePoints: 999, rawResponse: "must-not-read" } });
+    const providerShapedItem = { questionVersionId: "provider-only", maxScore: 4, scoredScore: 4, autoResult: { candidatePoints: 999, rawResponse: "must-not-read" } };
+    data.followUp.items.push(providerShapedItem);
     const result = deriveQuestionBankProgress([data.baseline, data.followUp, processing, data.firstRound], definitions);
     const levelOne = result.formalLevels.find((entry) => entry.practiceDefinitionId === LEVEL_ONE)!;
     expect(levelOne.attempts.map((attempt) => attempt.sessionId)).toEqual(["l1-baseline", "l1-follow-up"]);
@@ -178,15 +180,29 @@ describe("Question Bank learning progress", () => {
   });
 
   it("enforces student ownership and returns a stable EMPTY_STATE for a student with no Question Bank history", async () => {
-    const prisma: any = {
-      enrollment: { findFirst: vi.fn(async () => ({ id: "enrollment-progress" })) },
-      assessmentSession: { findMany: vi.fn(async () => []) },
-      practiceDefinition: { findMany: vi.fn(async () => []) },
+    type SessionFindManyQuery = {
+      where?: { schoolId?: string; enrollmentId?: string; status?: string };
     };
-    const service = new QuestionBankProgressService(prisma);
+    const sessionQueries: SessionFindManyQuery[] = [];
+    const prisma = {
+      enrollment: { findFirst: vi.fn().mockResolvedValue({ id: "enrollment-progress" }) },
+      assessmentSession: {
+        findMany: vi.fn((args: SessionFindManyQuery) => {
+          sessionQueries.push(args);
+          return Promise.resolve([]);
+        }),
+      },
+      practiceDefinition: { findMany: vi.fn().mockResolvedValue([]) },
+    };
+    const service = new QuestionBankProgressService(prisma as unknown as PrismaService);
     await expect(service.getForCurrentStudent(auth(), SCHOOL_ID)).resolves.toMatchObject({ state: "EMPTY_STATE", formalLevels: [], remediation: [] });
     await expect(service.getForCurrentStudent(auth(), "other-school")).rejects.toThrow(/无权访问/);
-    expect(prisma.assessmentSession.findMany).toHaveBeenCalledWith(expect.objectContaining({ where: expect.objectContaining({ schoolId: SCHOOL_ID, enrollmentId: "enrollment-progress", status: "COMPLETED" }) }));
+    expect(prisma.assessmentSession.findMany).toHaveBeenCalledTimes(1);
+    expect(sessionQueries[0]?.where).toMatchObject({
+      schoolId: SCHOOL_ID,
+      enrollmentId: "enrollment-progress",
+      status: "COMPLETED",
+    });
   });
 
   it("excludes legacy completed assessments that have neither a diagnosis nor a complete Question Bank snapshot", () => {
