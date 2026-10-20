@@ -1,0 +1,7 @@
+T082 merged JS/MJS paths from BASE..four-merge integration tip:
+  node --check on each path via git diff --name-only -z ... | xargs -0 -n1 node --check
+  PASS (exit 0)
+
+New T082 browser fixture script:
+  node --check evidence/yz-rd-t082/chromium-navigation-test-fixture.mjs
+  PASS (exit 0)

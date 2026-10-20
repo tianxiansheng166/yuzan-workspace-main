@@ -1,0 +1,2 @@
+Command: git diff --cached --check
+Result: PASS (exit 0); rerun after staging this evidence file.

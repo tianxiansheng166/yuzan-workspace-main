@@ -3,6 +3,14 @@
 Last updated: 2026-10-20
 Repository: `yuzan-workspace-main`
 
+## YZ-RD-T082 unified student web integration (2026-10-20)
+
+- Integrated T074 Today → T075 Course → T081 Practice (including T076 by ancestry) → T077 Growth on isolated branch `feat/yz-rd-t082-student-web-core-unified-integration`, from exact BASE `d6fbf670bb6997cae0e841d8f9a397f0da785a42`. Four real No-FF merges have exact dual parents; the fourth merge checkpoint is `48cc7587072e28e9c9e9d6f1edea71132ef21849`. No merge conflicts occurred.
+- Complete frontend suite passes 190/190 with runtime verification. New T082 Chromium route/navigation smoke passes at 1280×900 and 1440×1000 with visible `TEST_FIXTURE_ONLY` watermarks; API proxy was deliberately unreachable. Native Chrome + NestJS + PostgreSQL E2E is `NOT_RUN` because no isolated PostgreSQL runtime was available; Docker/Compose was not used.
+- Changed T082 JS/MJS syntax checks pass. A broader frontend syntax scan finds an unchanged BASE parse error at `frontend/teacher/assessments/create/app.js:86`; this teacher file was not changed. Full API lint was not run or waived. `READY_TO_MERGE=NO`.
+- API contract follow-ups: T075 `nextActivity` versus required-practice completion and T081 Practice Attempt GET 200 scope types go to T083; T076 formal QuestionVersion learning authorization goes to the T072 question-bank Owner. The client does not guess these rules. Historical L4 incident remains `OPEN`.
+- Full results, merge parents, logs, new screenshots, and safety notes: [`evidence/yz-rd-t082/RESULTS.md`](evidence/yz-rd-t082/RESULTS.md).
+
 ## YZ-RD-T081 standalone practice Attempt scope fix (2026-10-20)
 
 - Fixed practice catalog resume selection to require a current school/student identity, matching definition and enrollment, and explicit null `courseSubmissionId` plus `courseActivityId`. Recency ranks eligible standalone Attempts only; course continuation rules are unchanged.

@@ -1,0 +1,9 @@
+/home/tian/code/work/yuzan-workspace-t082/frontend/teacher/assessments/create/app.js:86
+      dimension: ["自定义能力维度", "输入新的能力维度后，可在当前测评中单独启用。此演示会添加"朗读感染力"。", "＋"],
+                                                           ^^^^^
+
+SyntaxError: Unexpected identifier '朗读感染力'
+    at checkSyntax (node:internal/main/check_syntax:72:5)
+
+Node.js v24.20.0
+exit=123

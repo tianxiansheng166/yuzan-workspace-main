@@ -1,5 +1,11 @@
 # Development status
 
+## YZ-RD-T082 — unified student web integration (2026-10-20)
+
+Integrated the accepted T074 Today, T075 Course, T081 Practice (including T076 through ancestry), and T077 Growth commits in four ordered, real No-FF merges from exact BASE `d6fbf670bb6997cae0e841d8f9a397f0da785a42`. The fourth merge checkpoint is `48cc7587072e28e9c9e9d6f1edea71132ef21849`; there were no conflicts. The frontend suite passes 190/190, runtime verification passes, and changed JS/MJS checks pass.
+
+Fresh Chromium route/navigation captures at 1280×900 and 1440×1000 are `TEST_FIXTURE_ONLY` with the API intentionally unavailable. Native API/PostgreSQL E2E and full API lint were not run; an all-frontend JS syntax scan found an unchanged BASE teacher-page syntax error. `READY_TO_MERGE=NO`. T075 next-activity/completion and T081 GET Attempt scope contracts are assigned to T083; formal QuestionVersion learning authorization remains with the T072 question-bank Owner. Historical L4 incident remains `OPEN`. Full proof: [`evidence/yz-rd-t082/RESULTS.md`](evidence/yz-rd-t082/RESULTS.md).
+
 ## YZ-RD-T068 — unified teacher studio mobile UX integration (2026-10-20)
 
 INTEGRATED / FRONTEND_VERIFIED on independent branch `feat/yz-rd-t068-unified-teacher-studio-mobile-ux-integration`. No-FF merge `579b2178e251c1afaac02422f01d98a6869887ef` preserves exact BASE `5422af364c32c1feffe1e995884f71a4271488d3` first and T067 `e4cf946b107e2fe30b57f7e6200b4ed7f45112d1` second.
