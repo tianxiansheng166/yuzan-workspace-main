@@ -1,0 +1,8 @@
+BASE: 8fb479e82c08a67a900650ebeb200bb17b7a27d6
+WORKTREE: /home/tian/code/work/yuzan-workspace-t083
+BRANCH: feat/yz-rd-t083-student-course-attempt-read-contract
+T049: accepted T049 commit is already an ancestor of BASE; T049 worktree clean; no T049 file changed.
+T075: accepted T075 RESULTS confirms its course nextActivity contract request; T075 worktree clean; no T075 file changed.
+T005 conflict: BASE handoff identifies student-courses as T005-protected. The canonical checkout currently has backend/api/src/modules/student-courses/student-courses.service.ts modified. That dirty T005 diff was not read. Course nextActivity would require changing that same service/projection path, so course parity is SCOPE_CONFLICT.
+T082: no T082 frontend worktree or files were changed.
+Restricted inputs: no T005 raw task/source corpus, mixed question-bank DOCX/ZIP, Level 4 source, historical accident data, Docker, or SQL relation writes were accessed.

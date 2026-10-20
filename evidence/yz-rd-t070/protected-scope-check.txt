@@ -1,0 +1,51 @@
+Changes from exact BASE to current T070 merge commit:
+M	backend/api/test/modules/admin/admin-stub.controller.spec.ts
+A	evidence/yz-rd-t066/RESULTS.md
+A	evidence/yz-rd-t066/api-lint-after-summary.json
+A	evidence/yz-rd-t066/api-lint-before-summary.json
+A	evidence/yz-rd-t066/api-lint-before.exit-code
+A	evidence/yz-rd-t066/api-lint-before.json
+A	evidence/yz-rd-t066/baseline-source.txt
+A	evidence/yz-rd-t066/lint-count-comparison.json
+A	evidence/yz-rd-t066/scope-check.md
+A	evidence/yz-rd-t066/targeted-lint-after-summary.json
+A	evidence/yz-rd-t066/targeted-lint-after.exit-code
+A	evidence/yz-rd-t066/targeted-lint-after.json
+A	evidence/yz-rd-t066/targeted-lint-after.stderr
+A	evidence/yz-rd-t066/targeted-lint-before.json
+A	evidence/yz-rd-t066/targeted-vitest.exit-code
+A	evidence/yz-rd-t066/targeted-vitest.txt
+A	evidence/yz-rd-t066/test-typecheck-after.exit-code
+A	evidence/yz-rd-t066/test-typecheck-after.txt
+A	evidence/yz-rd-t066/test-typecheck-before.exit-code
+A	evidence/yz-rd-t066/test-typecheck-before.txt
+A	evidence/yz-rd-t066/typescript-diagnostics-comparison.json
+A	evidence/yz-rd-t066/verification-commands.txt
+
+Protected paths check (API src, ESLint config, Contracts, frontend, database):
+PASS: unchanged from BASE
+
+T066 target delta from common base:
+ .../modules/admin/admin-stub.controller.spec.ts    |   469 +-
+ evidence/yz-rd-t066/RESULTS.md                     |    57 +
+ evidence/yz-rd-t066/api-lint-after-summary.json    |    43 +
+ evidence/yz-rd-t066/api-lint-before-summary.json   |    11 +
+ evidence/yz-rd-t066/api-lint-before.exit-code      |     1 +
+ evidence/yz-rd-t066/api-lint-before.json           | 18402 +++++++++++++++++++
+ evidence/yz-rd-t066/baseline-source.txt            |     1 +
+ evidence/yz-rd-t066/lint-count-comparison.json     |   153 +
+ evidence/yz-rd-t066/scope-check.md                 |     7 +
+ .../yz-rd-t066/targeted-lint-after-summary.json    |     6 +
+ evidence/yz-rd-t066/targeted-lint-after.exit-code  |     1 +
+ evidence/yz-rd-t066/targeted-lint-after.json       |     1 +
+ evidence/yz-rd-t066/targeted-lint-after.stderr     |     0
+ evidence/yz-rd-t066/targeted-lint-before.json      |  4806 +++++
+ evidence/yz-rd-t066/targeted-vitest.exit-code      |     1 +
+ evidence/yz-rd-t066/targeted-vitest.txt            |     9 +
+ evidence/yz-rd-t066/test-typecheck-after.exit-code |     1 +
+ evidence/yz-rd-t066/test-typecheck-after.txt       |   346 +
+ .../yz-rd-t066/test-typecheck-before.exit-code     |     1 +
+ evidence/yz-rd-t066/test-typecheck-before.txt      |   398 +
+ .../typescript-diagnostics-comparison.json         |    54 +
+ evidence/yz-rd-t066/verification-commands.txt      |    21 +
+ 22 files changed, 24622 insertions(+), 167 deletions(-)

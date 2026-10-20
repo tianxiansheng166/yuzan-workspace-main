@@ -1,0 +1,33 @@
+{
+  "baselineScopes": {
+    "src": {
+      "files": 426,
+      "errors": 0,
+      "warnings": 0
+    },
+    "test": {
+      "files": 164,
+      "errors": 327,
+      "warnings": 0
+    }
+  },
+  "afterScopes": {
+    "src": {
+      "files": 426,
+      "errors": 0,
+      "warnings": 0
+    },
+    "test": {
+      "files": 165,
+      "errors": 327,
+      "warnings": 0
+    }
+  },
+  "addedDiagnosticIdentities": 0,
+  "removedDiagnosticIdentities": 0,
+  "afterExitCode": 1,
+  "touchedTestFiles": {
+    "assessment/practice.service.spec.ts": 0,
+    "assessment/practice.controller.security.spec.ts": 0
+  }
+}

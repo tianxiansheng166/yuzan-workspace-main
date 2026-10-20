@@ -1,0 +1,3 @@
+The initial setup-only call through the host pnpm shim reached the ignored-build prompt and exited 1. PNPM also inserted allowBuilds placeholders into pnpm-workspace.yaml; that exact setup-generated diff was inspected and restored before verification.
+A later host-shim installation log reported pnpm v11.25.0; it was not used for verification. The repository-pinned pnpm 10.13.1 was invoked explicitly through Corepack for database generate/build and Contracts. Node 24.20.0 was used for all validation commands.
+No tracked workspace/package configuration change remains. The preserved logs and exit codes are dependency-install.log, dependency-install-ignore-scripts.log, dependency-install-pnpm10.log and their corresponding .exit-code files.
