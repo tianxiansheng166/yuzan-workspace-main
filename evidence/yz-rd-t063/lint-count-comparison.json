@@ -1,0 +1,314 @@
+{
+  "baseline_from_T059_after": {
+    "src_errors": 1,
+    "test_errors": 925,
+    "total_errors": 926,
+    "warnings": 0,
+    "parser_errors": 0
+  },
+  "after_T063": {
+    "src_errors": 1,
+    "test_errors": 742,
+    "total_errors": 743,
+    "warnings": 0,
+    "parser_errors": 0
+  },
+  "delta": {
+    "src_errors": 0,
+    "test_errors": -183,
+    "total_errors": -183
+  },
+  "owned_files": [
+    {
+      "file": "backend/api/test/ai-lesson-planning/ai-lesson-planning.spec.ts",
+      "before": 42,
+      "after": 0
+    },
+    {
+      "file": "backend/api/test/integration/identity/prisma-identity.repository.spec.ts",
+      "before": 103,
+      "after": 0
+    },
+    {
+      "file": "backend/api/test/modules/learning/learning.service.spec.ts",
+      "before": 8,
+      "after": 0
+    },
+    {
+      "file": "backend/api/test/modules/training/training.service.spec.ts",
+      "before": 7,
+      "after": 0
+    },
+    {
+      "file": "backend/api/test/modules/translations/translations.service.spec.ts",
+      "before": 14,
+      "after": 0
+    },
+    {
+      "file": "backend/api/test/organizations/organizations.controller.spec.ts",
+      "before": 9,
+      "after": 0
+    }
+  ],
+  "changed_file_error_counts": [
+    {
+      "file": "backend/api/test/ai-lesson-planning/ai-lesson-planning.spec.ts",
+      "before": 42,
+      "after": 0,
+      "delta": -42
+    },
+    {
+      "file": "backend/api/test/integration/identity/prisma-identity.repository.spec.ts",
+      "before": 103,
+      "after": 0,
+      "delta": -103
+    },
+    {
+      "file": "backend/api/test/modules/learning/learning.service.spec.ts",
+      "before": 8,
+      "after": 0,
+      "delta": -8
+    },
+    {
+      "file": "backend/api/test/modules/training/training.service.spec.ts",
+      "before": 7,
+      "after": 0,
+      "delta": -7
+    },
+    {
+      "file": "backend/api/test/modules/translations/translations.service.spec.ts",
+      "before": 14,
+      "after": 0,
+      "delta": -14
+    },
+    {
+      "file": "backend/api/test/organizations/organizations.controller.spec.ts",
+      "before": 9,
+      "after": 0,
+      "delta": -9
+    }
+  ],
+  "non_owned_count_changes": [],
+  "baseline_rules": [
+    [
+      "@typescript-eslint/no-unsafe-member-access",
+      249
+    ],
+    [
+      "@typescript-eslint/require-await",
+      159
+    ],
+    [
+      "@typescript-eslint/no-unsafe-call",
+      152
+    ],
+    [
+      "@typescript-eslint/no-unsafe-assignment",
+      121
+    ],
+    [
+      "@typescript-eslint/no-unsafe-argument",
+      99
+    ],
+    [
+      "@typescript-eslint/no-explicit-any",
+      54
+    ],
+    [
+      "@typescript-eslint/no-unused-vars",
+      49
+    ],
+    [
+      "@typescript-eslint/unbound-method",
+      17
+    ],
+    [
+      "@typescript-eslint/no-unnecessary-type-assertion",
+      10
+    ],
+    [
+      "@typescript-eslint/no-unsafe-return",
+      9
+    ],
+    [
+      "prefer-const",
+      3
+    ],
+    [
+      "@typescript-eslint/no-empty-object-type",
+      1
+    ],
+    [
+      "@typescript-eslint/no-unsafe-function-type",
+      1
+    ],
+    [
+      "@typescript-eslint/no-redundant-type-constituents",
+      1
+    ],
+    [
+      "@typescript-eslint/no-unsafe-enum-comparison",
+      1
+    ]
+  ],
+  "after_rules": [
+    [
+      "@typescript-eslint/no-unsafe-member-access",
+      204
+    ],
+    [
+      "@typescript-eslint/require-await",
+      144
+    ],
+    [
+      "@typescript-eslint/no-unsafe-call",
+      116
+    ],
+    [
+      "@typescript-eslint/no-unsafe-assignment",
+      96
+    ],
+    [
+      "@typescript-eslint/no-unsafe-argument",
+      70
+    ],
+    [
+      "@typescript-eslint/no-explicit-any",
+      48
+    ],
+    [
+      "@typescript-eslint/no-unused-vars",
+      34
+    ],
+    [
+      "@typescript-eslint/unbound-method",
+      13
+    ],
+    [
+      "@typescript-eslint/no-unnecessary-type-assertion",
+      8
+    ],
+    [
+      "@typescript-eslint/no-unsafe-return",
+      4
+    ],
+    [
+      "prefer-const",
+      3
+    ],
+    [
+      "@typescript-eslint/no-empty-object-type",
+      1
+    ],
+    [
+      "@typescript-eslint/no-redundant-type-constituents",
+      1
+    ],
+    [
+      "@typescript-eslint/no-unsafe-enum-comparison",
+      1
+    ]
+  ],
+  "remaining_top_test_files": [
+    {
+      "errors": 406,
+      "file": "backend/api/test/modules/admin/admin-stub.controller.spec.ts"
+    },
+    {
+      "errors": 62,
+      "file": "backend/api/test/student-courses/student-courses.service.spec.ts"
+    },
+    {
+      "errors": 21,
+      "file": "backend/api/test/modules/admin/assessment-link.controller.spec.ts"
+    },
+    {
+      "errors": 16,
+      "file": "backend/api/test/modules/training/fakes/fake-training.repository.ts"
+    },
+    {
+      "errors": 13,
+      "file": "backend/api/test/modules/admin/audit-stub.controller.spec.ts"
+    },
+    {
+      "errors": 13,
+      "file": "backend/api/test/curriculum/curriculum.controller.spec.ts"
+    },
+    {
+      "errors": 13,
+      "file": "backend/api/test/auth/helpers/fake-adapters.ts"
+    },
+    {
+      "errors": 12,
+      "file": "backend/api/test/modules/cooperation/fakes/fake-cooperation.repository.ts"
+    },
+    {
+      "errors": 12,
+      "file": "backend/api/test/modules/community/fakes/fake-community.repository.ts"
+    },
+    {
+      "errors": 11,
+      "file": "backend/api/test/modules/volunteers/fakes/fake-volunteer.repository.ts"
+    },
+    {
+      "errors": 11,
+      "file": "backend/api/test/modules/admin/invite-redeem.controller.spec.ts"
+    },
+    {
+      "errors": 10,
+      "file": "backend/api/test/modules/translations/fakes/fake-translation.repository.ts"
+    },
+    {
+      "errors": 9,
+      "file": "backend/api/test/operations/__mocks__/@yuzan/database.ts"
+    },
+    {
+      "errors": 9,
+      "file": "backend/api/test/modules/tools/fakes/fake-tool.repository.ts"
+    },
+    {
+      "errors": 9,
+      "file": "backend/api/test/modules/support-pairings/fakes/fake-support-pairing.repository.ts"
+    },
+    {
+      "errors": 9,
+      "file": "backend/api/test/modules/assignments/fakes/fake-assignment.repository.ts"
+    },
+    {
+      "errors": 6,
+      "file": "backend/api/test/modules/volunteers/volunteers.service.spec.ts"
+    },
+    {
+      "errors": 6,
+      "file": "backend/api/test/modules/submissions/fakes/fake-submission.repository.ts"
+    },
+    {
+      "errors": 6,
+      "file": "backend/api/test/helpers/fake-prisma.service.ts"
+    },
+    {
+      "errors": 5,
+      "file": "backend/api/test/organizations/fakes/fake-membership.repository.ts"
+    },
+    {
+      "errors": 5,
+      "file": "backend/api/test/organizations/fakes/fake-class.repository.ts"
+    },
+    {
+      "errors": 5,
+      "file": "backend/api/test/modules/community/community.service.spec.ts"
+    },
+    {
+      "errors": 5,
+      "file": "backend/api/test/modules/admin/plans-stub.controller.spec.ts"
+    },
+    {
+      "errors": 5,
+      "file": "backend/api/test/helpers/fake-storage.port.ts"
+    },
+    {
+      "errors": 5,
+      "file": "backend/api/test/curriculum/fakes/fake-course-version.repository.ts"
+    }
+  ]
+}

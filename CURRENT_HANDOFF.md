@@ -3,6 +3,13 @@
 Last updated: 2026-10-20
 Repository: `yuzan-workspace-main`
 
+## YZ-RD-T063 API test lint fourth slice (2026-10-20)
+
+- `PARTIAL_WITH_DEBT` on `feat/yz-rd-t063-api-test-lint-fourth-slice`, from exact T059 BASE `f147138b570971d44815eebf769215a6ade5a08e`, in an independent worktree. Six unremediated API test files were selected from the T059 remaining-debt snapshot; 183 lint findings were fixed. No API source changed.
+- Full API lint changed from 926 errors (1 source / 925 test) to 743 (1 source / 742 test), with zero warnings/parser errors. The sole source finding is unchanged and T049-owned. All six owned files pass targeted ESLint. Safe targeted Vitest passed 143/143 runnable tests; the 21 PostgreSQL integration tests were environment-gated skips.
+- Test-project TypeScript changed from 248 to 230 diagnostics, with zero new diagnostic identities. Evidence: [`evidence/yz-rd-t063/RESULTS.md`](evidence/yz-rd-t063/RESULTS.md). `READY_TO_MERGE=NO` while full lint debt remains; `L4_OPEN=OPEN`.
+- T051/T055/T059 repaired paths, T053 active `curriculum`/`modules/admin`, T005 `student-courses`, and T060 protected acceptance paths were excluded. No mixed raw question-bank content, `local_sources/`, database runtime, Docker, or L4 path was opened or changed.
+
 ## YZ-RD-T062 — T059 third API test lint slice integration (2026-10-20)
 
 - COMPLETE on independent branch `feat/yz-rd-t062-unified-product-lint-third-slice-integration`. No-FF merge `860c740394183e275853b3598ce4cf63655a80b7` has exact T058 BASE `736cb9bdc98866f15be586a7410749182ace0d29` as first parent and T059 `f147138b570971d44815eebf769215a6ade5a08e` as second parent.
@@ -123,6 +130,7 @@ Repository: `yuzan-workspace-main`
 - The app/API generated a `COMPLETED` `STANDARD` report with 0/100 after authorized teacher review; Today preserved the legal `0 分` and linked to Growth. A separate submitted `PROCESSING` attempt had no report and no score; Today stayed on the history route. Network abort→retry and refresh passed. Same-school other-student and cross-school access to course, practice and report were denied.
 - All browser identities, the authored course activity, assignments and recordings are `TEST_FIXTURE_ONLY`. Accepted Question Bank material was imported read-only (120 items, 600 points, 126 media objects, zero validation errors/warnings); source hashes matched before/after. T005's protected main worktree was not modified. Worker, automatic scoring, Docker/Compose and L4 were not used. T037 services exited; all owned ports are free; DB/MinIO evidence remains retained.
 - The T037 checkout's `AGENTS.md` has no AA-DEV-V2.2 marker; the user-supplied local safety baseline governed. The 119 frontend tests from the starting checkpoint were not rerun. Full API lint remains the inherited T033 baseline (1201 errors/1 warning); `READY_TO_MERGE=NO` pending API-owner resolution or waiver. Full evidence: [evidence/yz-rd-t037/RESULTS.md](evidence/yz-rd-t037/RESULTS.md).
+
 ## YZ-RD-T059 API test lint third slice (2026-10-20)
 
 - `PARTIAL_WITH_DEBT` on `feat/yz-rd-t059-api-test-lint-third-slice`, from exact T055 BASE `04eda78af4e8230d0b26d054c13f7f6781a2bf20`, in an isolated worktree. Eight unremediated test files were cleaned; none overlap T051/T055. T053's active `curriculum` and `modules/admin` test paths were excluded. T058 was checked at its current T057 commit and had no tracked code changes.

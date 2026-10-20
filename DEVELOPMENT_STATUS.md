@@ -1,5 +1,11 @@
 # Development status
 
+## YZ-RD-T063 — API test lint fourth slice (2026-10-20)
+
+PARTIAL_WITH_DEBT / `READY_TO_MERGE=NO`. On the isolated `feat/yz-rd-t063-api-test-lint-fourth-slice` branch from exact T059 `f147138b570971d44815eebf769215a6ade5a08e`, six previously unremediated API tests were cleaned without overlap with T051/T055/T059 or active T005/T053/T060 paths. The owned files moved from 183 lint errors to zero. Full API lint moved from 926 errors (1 source / 925 test) to 743 (1 source / 742 test), with zero warnings/parser errors; the remaining source finding is unchanged and T049-owned.
+
+Targeted ESLint passed for all six files. Safe targeted Vitest passed 143 tests with no failures; 21 PostgreSQL integration cases were skipped because database variables were unset. Test TypeScript reports 230 diagnostics versus 248 at BASE, zero new identities, and 18 removed identities. Full evidence, exact file ownership, command logs, and remaining concentration analysis are in [`evidence/yz-rd-t063/RESULTS.md`](evidence/yz-rd-t063/RESULTS.md). L4 remains OPEN.
+
 ## YZ-RD-T062 — T059 third API test lint slice integration (2026-10-20)
 
 COMPLETE on independent branch `feat/yz-rd-t062-unified-product-lint-third-slice-integration`. No-FF merge `860c740394183e275853b3598ce4cf63655a80b7` preserves exact parents T058 BASE `736cb9bdc98866f15be586a7410749182ace0d29` and T059 `f147138b570971d44815eebf769215a6ade5a08e`. The accepted T058 application tree remains intact; the merge changes the eight T059 API tests and their evidence only.

@@ -24,47 +24,60 @@
  *   - Internal proxy auth (X-Internal-Key header)
  */
 
+import type { ConfigService } from "@nestjs/config";
+import type { Queue } from "bullmq";
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import {
+  createAuthContext,
+  MembershipRole,
+  MembershipStatus,
+} from "../../src/common/security/index.js";
+import type { PrismaService } from "../../src/shared/database/prisma.service.js";
+import { AiLessonPlanningService } from "../../src/modules/ai-lesson-planning/ai-lesson-planning.service.js";
 
 // ── Mock setup ──────────────────────────────────────────────────────────────
 
+type AsyncMock = (...args: unknown[]) => Promise<unknown>;
+type MockTransactionCallback = (transaction: unknown) => Promise<unknown>;
+type MockTransaction = (callback: MockTransactionCallback) => Promise<unknown>;
+
 const mockPrisma = {
   aiGenerationJob: {
-    create: vi.fn(),
-    findFirst: vi.fn(),
-    findUnique: vi.fn(),
-    update: vi.fn(),
+    create: vi.fn<AsyncMock>(),
+    findFirst: vi.fn<AsyncMock>(),
+    findUnique: vi.fn<AsyncMock>(),
+    update: vi.fn<AsyncMock>(),
   },
   lessonPlanDraft: {
-    create: vi.fn(),
-    findUnique: vi.fn(),
-    findFirst: vi.fn(),
-    findMany: vi.fn(),
-    update: vi.fn(),
+    create: vi.fn<AsyncMock>(),
+    findUnique: vi.fn<AsyncMock>(),
+    findFirst: vi.fn<AsyncMock>(),
+    findMany: vi.fn<AsyncMock>(),
+    update: vi.fn<AsyncMock>(),
   },
   lessonPlanRevision: {
-    create: vi.fn(),
+    create: vi.fn<AsyncMock>(),
   },
   aiWorkflowDefinition: {
-    findUnique: vi.fn(),
-    upsert: vi.fn(),
+    findUnique: vi.fn<AsyncMock>(),
+    upsert: vi.fn<AsyncMock>(),
   },
   courseVersion: {
-    findUnique: vi.fn(),
+    findUnique: vi.fn<AsyncMock>(),
   },
   lesson: {
-    findUnique: vi.fn(),
+    findUnique: vi.fn<AsyncMock>(),
   },
-  $transaction: vi.fn((fn) => fn()),
+  $transaction: vi.fn<MockTransaction>(() => Promise.resolve(undefined)),
 };
 
 const mockQueue = {
-  add: vi.fn(),
-  getJob: vi.fn(),
+  add: vi.fn<AsyncMock>(),
+  getJob: vi.fn<AsyncMock>(),
 };
 
 const mockConfig = {
-  get: vi.fn((key: string) => {
+  get: vi.fn<(key: string) => string | undefined>((key) => {
     const env: Record<string, string | undefined> = {
       AI_BASE_URL: "http://localhost:11434",
       AI_API_KEY: "test-key",
@@ -77,25 +90,35 @@ const mockConfig = {
   }),
 };
 
-// ── Import service ──────────────────────────────────────────────────────────
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
 
-// We need to construct the service manually since we can't use NestJS testing module easily
-// Import the class directly
-const { AiLessonPlanningService } = await import(
-  "../../src/modules/ai-lesson-planning/ai-lesson-planning.service.js"
-);
+function expectCallData(
+  calls: readonly unknown[][],
+  expectedData: Readonly<Record<string, unknown>>,
+): void {
+  const found = calls.some(([argument]) => {
+    if (!isRecord(argument) || !isRecord(argument.data)) return false;
+    const data = argument.data;
+    return Object.entries(expectedData).every(
+      ([key, value]) => data[key] === value,
+    );
+  });
+  expect(found).toBe(true);
+}
 
 function createService(providerConfigured = true, queueAvailable = true) {
   // Override config to control provider configured state
   if (!providerConfigured) {
-    mockConfig.get = vi.fn((key: string) => {
+    mockConfig.get = vi.fn<(key: string) => string | undefined>((key) => {
       if (key === "AI_BASE_URL") return undefined;
       if (key === "AI_API_KEY") return undefined;
       if (key === "AI_MODEL") return undefined;
       return "http://127.0.0.1:4300";
     });
   } else {
-    mockConfig.get = vi.fn((key: string) => {
+    mockConfig.get = vi.fn<(key: string) => string | undefined>((key) => {
       const env: Record<string, string | undefined> = {
         AI_BASE_URL: "http://localhost:11434",
         AI_API_KEY: "test-key",
@@ -109,9 +132,9 @@ function createService(providerConfigured = true, queueAvailable = true) {
   }
 
   return new AiLessonPlanningService(
-    mockPrisma as any,
-    queueAvailable ? mockQueue : null,
-    mockConfig as any,
+    mockPrisma as unknown as PrismaService,
+    queueAvailable ? (mockQueue as unknown as Queue) : null,
+    mockConfig as unknown as ConfigService,
   );
 }
 
@@ -119,23 +142,20 @@ function createService(providerConfigured = true, queueAvailable = true) {
 
 const SCHOOL_ID = "00000000-0000-0000-0000-000000000001";
 const TEACHER_ID = "00000000-0000-0000-0000-000000000002";
-const OTHER_TEACHER_ID = "00000000-0000-0000-0000-000000000003";
-const OTHER_SCHOOL_ID = "00000000-0000-0000-0000-000000000010";
 const WORKFLOW_DEF_ID = "00000000-0000-0000-0000-000000000100";
 const JOB_ID = "00000000-0000-0000-0000-000000000200";
 const DRAFT_ID = "00000000-0000-0000-0000-000000000300";
 
-const mockAuth = {
-  requestId: "test-req",
-  principal: { userId: TEACHER_ID, roles: ["TEACHER"] },
-  tenant: { schoolId: SCHOOL_ID },
-} as any;
-
-const mockOtherTeacherAuth = {
-  requestId: "test-req",
-  principal: { userId: OTHER_TEACHER_ID, roles: ["TEACHER"] },
-  tenant: { schoolId: SCHOOL_ID },
-} as any;
+const mockAuth = createAuthContext(
+  "test-req",
+  {
+    userId: TEACHER_ID,
+    roles: [MembershipRole.TEACHER],
+    membershipStatus: MembershipStatus.ACTIVE,
+    source: "test",
+  },
+  { schoolId: SCHOOL_ID },
+);
 
 function makeJob(overrides: Record<string, unknown> = {}) {
   return {
@@ -204,11 +224,9 @@ describe("AiLessonPlanningService", () => {
       const result = await service.createJob(mockAuth, SCHOOL_ID, { goal: "test" });
 
       expect(result.status).toBe("PROVIDER_NOT_CONFIGURED");
-      expect(mockPrisma.aiGenerationJob.create).toHaveBeenCalledWith(
-        expect.objectContaining({
-          data: expect.objectContaining({ status: "PROVIDER_NOT_CONFIGURED" }),
-        }),
-      );
+      expectCallData(mockPrisma.aiGenerationJob.create.mock.calls, {
+        status: "PROVIDER_NOT_CONFIGURED",
+      });
       expect(mockQueue.add).not.toHaveBeenCalled();
     });
 
@@ -289,11 +307,9 @@ describe("AiLessonPlanningService", () => {
       const result = await service.cancelJob(mockAuth, SCHOOL_ID, JOB_ID);
 
       expect(result.status).toBe("CANCELLED");
-      expect(mockPrisma.aiGenerationJob.update).toHaveBeenCalledWith(
-        expect.objectContaining({
-          data: expect.objectContaining({ status: "CANCELLED" }),
-        }),
-      );
+      expectCallData(mockPrisma.aiGenerationJob.update.mock.calls, {
+        status: "CANCELLED",
+      });
     });
 
     it("should cancel RUNNING job", async () => {
@@ -369,11 +385,10 @@ describe("AiLessonPlanningService", () => {
       });
 
       expect(result.revision).toBe(2);
-      expect(mockPrisma.lessonPlanRevision.create).toHaveBeenCalledWith(
-        expect.objectContaining({
-          data: expect.objectContaining({ source: "TEACHER_EDIT", revision: 2 }),
-        }),
-      );
+      expectCallData(mockPrisma.lessonPlanRevision.create.mock.calls, {
+        source: "TEACHER_EDIT",
+        revision: 2,
+      });
     });
 
     it("should reject update with wrong expectedRevision (revision conflict)", async () => {
@@ -415,11 +430,9 @@ describe("AiLessonPlanningService", () => {
       const result = await service.approveDraft(mockAuth, SCHOOL_ID, DRAFT_ID);
 
       expect(result.status).toBe("APPROVED");
-      expect(mockPrisma.lessonPlanRevision.create).toHaveBeenCalledWith(
-        expect.objectContaining({
-          data: expect.objectContaining({ source: "TEACHER_APPROVE" }),
-        }),
-      );
+      expectCallData(mockPrisma.lessonPlanRevision.create.mock.calls, {
+        source: "TEACHER_APPROVE",
+      });
     });
 
     it("should be idempotent for already-approved draft", async () => {
@@ -518,10 +531,12 @@ describe("AiLessonPlanningService", () => {
 
       // $transaction callback receives a mock tx with draft.create and revision.create
       const mockTx = {
-        lessonPlanDraft: { create: vi.fn().mockResolvedValue(makeDraft()) },
-        lessonPlanRevision: { create: vi.fn().mockResolvedValue({}) },
+        lessonPlanDraft: {
+          create: vi.fn<AsyncMock>().mockResolvedValue(makeDraft()),
+        },
+        lessonPlanRevision: { create: vi.fn<AsyncMock>().mockResolvedValue({}) },
       };
-      mockPrisma.$transaction.mockImplementation(async (fn: Function) => fn(mockTx));
+      mockPrisma.$transaction.mockImplementation((fn) => fn(mockTx));
 
       await service.updateJobResult(JOB_ID, {
         status: "SUCCEEDED",
@@ -532,11 +547,9 @@ describe("AiLessonPlanningService", () => {
       expect(mockPrisma.aiGenerationJob.update).toHaveBeenCalled();
       // Draft + revision created in transaction
       expect(mockPrisma.$transaction).toHaveBeenCalled();
-      expect(mockTx.lessonPlanDraft.create).toHaveBeenCalledWith(
-        expect.objectContaining({
-          data: expect.objectContaining({ generationJobId: JOB_ID }),
-        }),
-      );
+      expectCallData(mockTx.lessonPlanDraft.create.mock.calls, {
+        generationJobId: JOB_ID,
+      });
       expect(mockTx.lessonPlanRevision.create).toHaveBeenCalled();
     });
   });

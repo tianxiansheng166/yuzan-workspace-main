@@ -8,6 +8,7 @@ import {
   expect,
   it,
 } from "vitest";
+import type { PrismaClient as DatabasePrismaClient } from "@yuzan/database";
 import { PrismaIdentityRepository } from "../../../src/modules/identity/adapters/prisma-identity.repository.js";
 import { PrismaService } from "../../../src/shared/database/prisma.service.js";
 
@@ -32,13 +33,29 @@ const { PrismaClient } = require(
     process.cwd(),
     "../../infra/database/dist/generated/client/client.js",
   ),
-);
+) as Pick<typeof import("@yuzan/database"), "PrismaClient">;
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const { PrismaPg } = require("@prisma/adapter-pg");
+const { PrismaPg } = require("@prisma/adapter-pg") as Pick<
+  typeof import("@prisma/adapter-pg"),
+  "PrismaPg"
+>;
 
-async function clearTables(prisma: {
-  [key: string]: { deleteMany: (args?: unknown) => Promise<unknown> };
-}): Promise<void> {
+type IdentityPrismaClient = Pick<
+  DatabasePrismaClient,
+  | "session"
+  | "sessionPair"
+  | "membership"
+  | "enrollment"
+  | "class"
+  | "term"
+  | "campus"
+  | "courseVersion"
+  | "course"
+  | "school"
+  | "user"
+>;
+
+async function clearTables(prisma: IdentityPrismaClient): Promise<void> {
   await prisma.session.deleteMany();
   await prisma.sessionPair.deleteMany();
   await prisma.membership.deleteMany();
@@ -57,7 +74,7 @@ describe.skipIf(!hasDb)("PrismaIdentityRepository PostgreSQL integration", () =>
   let repository: PrismaIdentityRepository;
   let runtime: PrismaService;
 
-  function createPrisma() {
+  function createPrisma(): DatabasePrismaClient {
     return new PrismaClient({
       adapter: new PrismaPg({ connectionString: TEST_DATABASE_URL }),
       log: ["error"],
@@ -96,9 +113,9 @@ describe.skipIf(!hasDb)("PrismaIdentityRepository PostgreSQL integration", () =>
         "postgresql://user:password@127.0.0.1:65432/identity_secret",
       );
       const repo = new PrismaIdentityRepository(invalidRuntime);
-      await expect(repo.findByIdentifier("x")).rejects.toThrow(
-        expect.objectContaining({ code: "AUTH_SERVICE_UNAVAILABLE" }),
-      );
+      await expect(repo.findByIdentifier("x")).rejects.toMatchObject({
+        code: "AUTH_SERVICE_UNAVAILABLE",
+      });
       await invalidRuntime.onModuleDestroy();
     });
   });
@@ -339,8 +356,7 @@ describe.skipIf(!hasDb)("PrismaIdentityRepository PostgreSQL integration", () =>
 
       const results = await Promise.allSettled([rotate(), rotate()]);
       const successful = results.filter(
-        (r): r is PromiseFulfilledResult<unknown> =>
-          r.status === "fulfilled" && r.value !== null,
+        (r) => r.status === "fulfilled" && r.value !== null,
       );
       expect(successful).toHaveLength(1);
 
@@ -350,8 +366,12 @@ describe.skipIf(!hasDb)("PrismaIdentityRepository PostgreSQL integration", () =>
         orderBy: { createdAt: "asc" },
       });
       expect(pairs).toHaveLength(2);
-      expect(pairs[0].revokedAt).not.toBeNull();
-      expect(pairs[1].predecessorPairId).toBe(pairs[0].id);
+      const [firstPair, secondPair] = pairs;
+      if (!firstPair || !secondPair) {
+        throw new Error("Expected the original and successor session pairs");
+      }
+      expect(firstPair.revokedAt).not.toBeNull();
+      expect(secondPair.predecessorPairId).toBe(firstPair.id);
     });
   });
 
@@ -650,9 +670,7 @@ describe.skipIf(!hasDb)("PrismaIdentityRepository PostgreSQL integration", () =>
           accessExpiresAt: new Date(now.getTime() + 60_000),
           refreshExpiresAt: new Date(now.getTime() + 120_000),
         }),
-      ).rejects.toThrow(
-        expect.objectContaining({ code: "AUTH_SERVICE_UNAVAILABLE" }),
-      );
+      ).rejects.toMatchObject({ code: "AUTH_SERVICE_UNAVAILABLE" });
 
       const pairs = await prisma.sessionPair.findMany({ where: { userId } });
       expect(pairs).toHaveLength(1);

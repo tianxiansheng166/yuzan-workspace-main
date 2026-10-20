@@ -15,7 +15,6 @@ import {
   trainingEnrollment,
   trainingProgress,
   trainingExam,
-  trainingModule,
 } from "./fixtures/training.js";
 import {
   studentAuth,
@@ -27,7 +26,7 @@ import {
 
 function createService(repo?: FakeTrainingRepository) {
   const r = repo ?? new FakeTrainingRepository();
-  return { service: new TrainingService(r as any), repo: r };
+  return { service: new TrainingService(r), repo: r };
 }
 
 const schoolId = "school-1";
@@ -953,7 +952,7 @@ describe("TrainingService", () => {
   describe("fail-closes when repository is unavailable", () => {
     it("throws unavailable for all operations", async () => {
       const service = new TrainingService(
-        new UnavailableTrainingRepository() as any,
+        new UnavailableTrainingRepository(),
       );
       const auth = teacherAuth(schoolId);
 
