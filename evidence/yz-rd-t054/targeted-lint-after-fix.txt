@@ -1,0 +1,2 @@
+Command: ./node_modules/.bin/eslint test/assessment/question-bank-assessment-scoring.spec.ts
+Result: PASS (exit 0; no diagnostics)

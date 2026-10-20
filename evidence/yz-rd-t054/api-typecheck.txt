@@ -1,0 +1,2 @@
+Command: ./node_modules/.bin/tsc -p tsconfig.json --noEmit --pretty false
+Result: PASS (exit 0; no diagnostics)

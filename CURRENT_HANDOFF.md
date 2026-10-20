@@ -3,6 +3,13 @@
 Last updated: 2026-10-20
 Repository: `yuzan-workspace-main`
 
+## YZ-RD-T054 API lint slice integration (2026-10-20)
+
+- `PARTIAL_WITH_DEBT` on `feat/yz-rd-t054-api-lint-slices-rolling-integration`, from exact BASE `987e7321157033001b8548e0c0b4318d9f14e503`. Dedicated worktree. T051 `7a0ed80dc94ccd0932cf5026a262db5856b48eea` was merged no-FF first (`a934926c945ddce6a8a4a3465738fa388478a3da`); T052 `1a1706d765cbd5b67c0e2f18ed58a6a84e06b0ec` was merged no-FF second (`2fdf04d48ca1b64b7595ef11e9ee859fabeff93a`).
+- Full API lint: 1,781 errors (1 source / 1,780 test), 0 warnings, 0 parser errors; BASE was 1,960 (60 source / 1,900 test). API Vitest 1,109 passed / 64 environment-gated skipped; Contracts 6/6; API source typecheck PASS. Test-project TypeScript baseline 269, final 268, 0 new unique diagnostics. Evidence: [`evidence/yz-rd-t054/RESULTS.md`](evidence/yz-rd-t054/RESULTS.md).
+- The only source finding is T049-owned in `curriculum/ports/prisma-course-version.repository.ts`; the file is unchanged from BASE. T054 did not include T049/T053 commits or alter formal course-write logic. Remaining test lint debt is not waived; `READY_TO_MERGE=NO`, `L4_OPEN=OPEN`.
+- Target `AGENTS.md` lacks `AA-DEV-V2.2` and the card supplied no separate Lane policy reference. The user-provided local safety baseline and task constraints governed. No L4 or runtime services were accessed.
+
 ## YZ-RD-T051 API test lint first slice (2026-10-20)
 
 - PARTIAL_WITH_DEBT on feat/yz-rd-t051-api-test-lint-first-slice, based on exact 987e7321157033001b8548e0c0b4318d9f14e503. The bounded assessment-module slice owns 10 test files and removes 120 findings.

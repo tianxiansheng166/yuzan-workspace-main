@@ -57,7 +57,7 @@ function makeService(rawItems: ScoringItemFixture[]) {
     updateStatus: vi.fn((_id: string, status: AssessmentSession["status"], extra?: Partial<AssessmentSession>) => Promise.resolve({ ...current, ...extra, status })),
   };
   const reportRepo = {
-    findBySessionId: vi.fn(() => Promise.resolve(null)),
+    findBySessionId: vi.fn(() => Promise.resolve<AssessmentReport | null>(null)),
     create: vi.fn((data: CreateAssessmentReportData): Promise<AssessmentReport> => Promise.resolve({
       id: "report-qb-005",
       sessionId: data.sessionId,
