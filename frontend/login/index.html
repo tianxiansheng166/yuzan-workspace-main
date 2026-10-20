@@ -95,7 +95,7 @@
 
       <div class="journey-note">
         <span class="journey-note__line"></span>
-        <p><strong>声音坐标已连接</strong><br />高原学习网络正在响应</p>
+        <p><strong>声音坐标待连接</strong><br />登录后进入学习网络</p>
       </div>
     </section>
 
@@ -119,7 +119,7 @@
       </div>
 
       <div class="gate__body">
-        <form class="auth-panel is-active" id="loginPanel" role="tabpanel" aria-labelledby="loginTab" novalidate>
+        <form class="auth-panel is-active" id="loginPanel" role="tabpanel" aria-labelledby="loginTab" aria-describedby="loginMessage" novalidate>
           <div class="field-group">
             <label for="loginAccount">账号坐标</label>
             <div class="field">
@@ -157,12 +157,13 @@
 
           <div class="connection-status">
             <span class="connection-status__wave"><i></i><i></i><i></i><i></i><i></i></span>
-            <p>正在连接声音旅程</p>
+            <p>登录将由服务端验证身份</p>
             <span class="connection-status__dot"></span>
           </div>
+          <div class="connection-status auth-feedback" id="loginMessage" role="alert" aria-live="assertive" aria-atomic="true" tabindex="-1" hidden style="display:none;height:auto;min-height:48px;padding:8px 18px;text-align:center;line-height:1.5"></div>
         </form>
 
-        <form class="auth-panel" id="registerPanel" role="tabpanel" aria-labelledby="registerTab" hidden novalidate>
+        <form class="auth-panel" id="registerPanel" role="tabpanel" aria-labelledby="registerTab" aria-describedby="registerMessage" hidden novalidate>
           <div class="field-row">
             <div class="field-group">
               <label for="registerPhone">手机号</label>
@@ -226,6 +227,7 @@
             <p id="roleStatus">学生坐标已选定</p>
             <span class="connection-status__dot"></span>
           </div>
+          <div class="connection-status auth-feedback" id="registerMessage" role="alert" aria-live="assertive" aria-atomic="true" tabindex="-1" hidden style="display:none;height:auto;min-height:48px;padding:8px 18px;text-align:center;line-height:1.5"></div>
         </form>
       </div>
 
@@ -244,14 +246,6 @@
       <small id="transitionDetail">声音坐标正在与学习网络建立连接</small>
     </div>
   </div>
-
-  <dialog class="dialog" id="dialog">
-    <button class="dialog__close" type="button" aria-label="关闭">×</button>
-    <span class="dialog__mark"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 4 42 12v13c0 10-6 17-18 23C12 42 6 35 6 25V12L24 4Z"/><path d="m15 25 6 6 13-15"/></svg></span>
-    <h3>演示转场已完成</h3>
-    <p>当前压缩包为独立前端视觉版本。接入项目时，可在 <code>app.js</code> 的 <code>AUTH_ENDPOINTS</code> 中配置真实登录与注册接口，并在成功回调里跳转对应工作台。</p>
-    <button class="dialog__primary" type="button">返回入口</button>
-  </dialog>
 
   <script src="/assets/app-core.js"></script>
   <script src="/assets/api-client.js"></script>
