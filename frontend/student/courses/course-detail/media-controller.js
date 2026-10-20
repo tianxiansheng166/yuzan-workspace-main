@@ -30,6 +30,12 @@
   var controlsTimeout = null;
   var duration = 0;
   var lastSavedPosition = 0;
+  var pendingPositionSave = null;
+  var positionSaveInFlight = false;
+  var lastQueuedPositionSave = null;
+  var loadedActivityId = '';
+  var loadedActivityKind = '';
+  var ignoreNextPauseSave = false;
   var POSITION_SAVE_INTERVAL = 10;
 
   // Bound handler references for cleanup
@@ -86,15 +92,60 @@
     duration = video.duration;
     if (totalTimeEl) totalTimeEl.textContent = formatTime(duration);
     if (progressBar) progressBar.max = duration;
+    if (duration > 0 && typeof CoursePlayerState !== 'undefined') {
+      var state = CoursePlayerState.getState();
+      var saved = state.activityProgressMap && state.activityProgressMap[loadedActivityId || state.currentActivityId];
+      var position = saved && Number(saved.position);
+      if (Number.isFinite(position) && position > 0 && position < 1) {
+        video.currentTime = Math.min(duration, duration * position);
+        lastSavedPosition = video.currentTime;
+      }
+    }
   }
 
-  function _saveVideoPosition(position) {
+  function _saveVideoPosition(position, completed, activityId, activityKind) {
     if (typeof CoursePlayerState === 'undefined') return;
     var s = CoursePlayerState.getState();
-    if (!s.currentActivityId || !s.submissionId) return;
+    var targetActivityId = activityId || loadedActivityId || s.currentActivityId;
+    if (!targetActivityId || !s.submissionId) return;
     if (s.submissionStatus && ['SUBMITTED', 'PROCESSING', 'NEEDS_REVIEW', 'REVIEWED', 'ACCEPTED'].indexOf(s.submissionStatus) !== -1) return;
-    var activityKind = s.currentActivity ? s.currentActivity.activityType : 'VIDEO';
-    CoursePlayerState.saveActivityAttempt(s.currentActivityId, activityKind, { videoPosition: duration > 0 ? position / duration : 0 }, false).catch(function () {});
+    var targetActivityKind = activityKind || loadedActivityKind || (s.currentActivity ? s.currentActivity.activityType : 'VIDEO');
+    if (targetActivityKind !== 'VIDEO' && targetActivityKind !== 'AUDIO') return;
+    var nextSave = {
+      activityId: targetActivityId,
+      activityKind: targetActivityKind,
+      position: duration > 0 ? Math.max(0, Math.min(1, position / duration)) : 0,
+      completed: completed === true
+    };
+    if (lastQueuedPositionSave
+      && lastQueuedPositionSave.activityId === nextSave.activityId
+      && lastQueuedPositionSave.position === nextSave.position
+      && lastQueuedPositionSave.completed === nextSave.completed) return;
+    lastQueuedPositionSave = nextSave;
+    pendingPositionSave = nextSave;
+    flushPositionSave();
+  }
+
+  function flushPositionSave() {
+    if (positionSaveInFlight || !pendingPositionSave) return;
+    var save = pendingPositionSave;
+    pendingPositionSave = null;
+    positionSaveInFlight = true;
+    CoursePlayerState.saveActivityAttempt(
+      save.activityId,
+      save.activityKind,
+      { videoPosition: save.position },
+      save.completed,
+    ).then(function () {
+      positionSaveInFlight = false;
+      flushPositionSave();
+    }).catch(function () {
+      // A 409 already reloads server progress in CoursePlayerState. Do not
+      // automatically repeat that write; a learner can confirm and save again.
+      positionSaveInFlight = false;
+      lastQueuedPositionSave = null;
+      pendingPositionSave = null;
+    });
   }
 
   function onTimeUpdate() {
@@ -108,7 +159,7 @@
     }
     if (cur - lastSavedPosition >= POSITION_SAVE_INTERVAL) {
       lastSavedPosition = cur;
-      _saveVideoPosition(cur);
+      _saveVideoPosition(cur, false, loadedActivityId, loadedActivityKind);
     }
   }
 
@@ -118,15 +169,23 @@
 
   function onPause() {
     updatePlayPauseUI();
+    if (ignoreNextPauseSave) {
+      ignoreNextPauseSave = false;
+      return;
+    }
     if (video && video.currentTime > 0) {
-      _saveVideoPosition(video.currentTime);
+      _saveVideoPosition(video.currentTime, video.ended, loadedActivityId, loadedActivityKind);
     }
   }
 
   function onEnded() {
     updatePlayPauseUI();
-    if (progressBar) progressBar.value = 0;
-    if (currentTimeEl) currentTimeEl.textContent = formatTime(0);
+    if (video) {
+      lastSavedPosition = video.duration || video.currentTime;
+      _saveVideoPosition(lastSavedPosition, true, loadedActivityId, loadedActivityKind);
+    }
+    if (progressBar) progressBar.value = duration;
+    if (currentTimeEl) currentTimeEl.textContent = formatTime(duration);
   }
 
   function onProgressInput() {
@@ -256,11 +315,29 @@
       updateVolumeUI();
     },
 
-    loadSource: function (videoUrl, posterUrl, subtitleZhUrl, subtitleBoUrl) {
+    loadSource: function (videoUrl, posterUrl, subtitleZhUrl, subtitleBoUrl, activityId) {
       if (!video) return;
 
+      var playerState = typeof CoursePlayerState !== 'undefined' ? CoursePlayerState.getState() : {};
+      var nextActivityId = activityId || playerState.currentActivityId || '';
+      var nextActivityKind = playerState.currentActivity ? playerState.currentActivity.activityType : '';
+      if (loadedActivityId && video.currentTime > 0) {
+        _saveVideoPosition(video.currentTime, video.ended, loadedActivityId, loadedActivityKind);
+      }
+      if (!video.paused) {
+        ignoreNextPauseSave = true;
+        video.pause();
+      }
+      loadedActivityId = nextActivityId;
+      loadedActivityKind = nextActivityKind;
       lastSavedPosition = 0;
-      video.src = videoUrl || '';
+      if (videoUrl) {
+        video.src = videoUrl;
+      } else {
+        video.pause();
+        video.removeAttribute('src');
+        video.load();
+      }
       video.poster = posterUrl || '';
 
       // Remove existing tracks

@@ -1,0 +1,31 @@
+{
+  "scope": "TEST_FIXTURE_ONLY",
+  "nativeApiPostgresE2e": "NOT_RUN_RUNTIME_NOT_READY",
+  "dataBoundary": "Synthetic in-memory browser data; no student or production course data.",
+  "desktopScreenshots": [
+    {
+      "viewport": "1280x900",
+      "path": "desktop-course-1280x900.png"
+    },
+    {
+      "viewport": "1440x1000",
+      "path": "desktop-course-1440x1000.png"
+    }
+  ],
+  "continuityCheck": {
+    "result": "PASS_FIXTURE_ONLY",
+    "initialActivityId": "fixture-text",
+    "activityProgressWrites": 1,
+    "serverReturnedProgressPercent": 25,
+    "serverConfirmedActivityCompleted": true,
+    "resumedActivityId": "fixture-speech",
+    "resumedChapter": "TEST_FIXTURE_ONLY Unit 1 / TEST_FIXTURE_ONLY Lesson 1",
+    "urlActivityId": "fixture-speech"
+  },
+  "submissionCheck": {
+    "result": "PASS_FIXTURE_ONLY",
+    "initialServerProgressPercent": 100,
+    "submitRequests": 1,
+    "returnedSubmissionStatus": "SUBMITTED"
+  }
+}

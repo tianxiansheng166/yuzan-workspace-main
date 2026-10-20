@@ -118,6 +118,52 @@ test("normalizes the current nested course aggregate without dropping activity f
   assert.equal(activity.isCompleted, true);
 });
 
+test("does not invent zero progress or promote a page-local completion flag", async () => {
+  const { adapter } = loadAdapter({
+    getStudentCourse: async () => ({
+      assignment: { id: "assignment-1" },
+      course: { id: "course-1" },
+      courseVersion: { id: "version-1", title: "Server course" },
+      units: [{
+        id: "unit-1",
+        title: "Unit 1",
+        lessons: [{
+          id: "lesson-1",
+          title: "Lesson 1",
+          activities: [{
+            id: "activity-1",
+            type: "TEXT",
+            title: "Read",
+            instruction: { originalText: "Read this" },
+            isCompleted: true,
+            progress: { completed: false, revision: 0, position: 0 },
+          }],
+        }],
+      }],
+      studentProgress: {
+        progressPercent: 0,
+        completedRequiredCount: 0,
+        requiredActivityCount: 1,
+        completedActivityIds: [],
+      },
+    }),
+  });
+
+  const course = await adapter.loadCourse("assignment-1");
+  const activity = course.units[0].lessons[0].activities[0];
+  assert.equal(course.progress.percent, 0);
+  assert.equal(course.progress.completedActivities, 0);
+  assert.equal(activity.instruction, "Read this");
+  assert.equal(activity.isCompleted, false);
+
+  const { adapter: noProgressAdapter } = loadAdapter({
+    getStudentCourse: async () => ({ assignment: { id: "assignment-1" }, units: [] }),
+  });
+  const noProgressCourse = await noProgressAdapter.loadCourse("assignment-1");
+  assert.equal(noProgressCourse.progress.percent, null);
+  assert.equal(noProgressCourse.progress.completedActivities, null);
+});
+
 test("preserves the wrapped submission id, status, revision and resumed flag", async () => {
   const { adapter } = loadAdapter({
     createOrResumeCourseSubmission: async () => ({
@@ -134,12 +180,51 @@ test("preserves the wrapped submission id, status, revision and resumed flag", a
   assert.equal(submission.resumed, true);
 });
 
+test("normalizes the formal course submission response instead of guessing from the request", async () => {
+  const { adapter } = loadAdapter({
+    submitStudentCourse: async (_assignmentId, _submissionId, revision) => ({
+      submission: { id: "submission-1", status: "SUBMITTED", revision: revision + 1, submittedAt: "2026-10-20T00:00:00Z" },
+      courseCompletion: { progressPercent: 100, completedRequiredCount: 2, requiredActivityCount: 2 },
+    }),
+  });
+
+  const result = await adapter.submitCourse("assignment-1", "submission-1", 4);
+  assert.equal(result.id, "submission-1");
+  assert.equal(result.status, "SUBMITTED");
+  assert.equal(result.revision, 5);
+  assert.equal(result.courseCompletion.progressPercent, 100);
+});
+
+test("does not fill missing dashboard counters or weekly goals with display defaults", async () => {
+  const { adapter } = loadAdapter({
+    getStudentCoursesDashboard: async () => ({ totalLearningMinutes: 0, consecutiveDays: 0 }),
+  });
+
+  const dashboard = await adapter.loadDashboard();
+  assert.equal(dashboard.totalMinutes, null);
+  assert.equal(dashboard.consecutiveDays, 0);
+  assert.equal(dashboard.weeklyMinutes, null);
+  assert.equal(dashboard.weeklyGoalHours, null);
+  assert.equal(dashboard.coursesLearned, null);
+  assert.equal(dashboard.recentDays, null);
+});
+
 test("propagates permission and network failures instead of returning success-shaped data", async () => {
   const forbidden = Object.assign(new Error("forbidden"), { status: 403, code: "FORBIDDEN" });
   const { adapter } = loadAdapter({ getStudentCourse: async () => { throw forbidden; } });
 
   await assert.rejects(
     adapter.loadCourse("assignment-1"),
+    (error) => error.status === 403 && error.code === "FORBIDDEN",
+  );
+});
+
+test("preserves 403 when an authorized media URL cannot be issued", async () => {
+  const forbidden = Object.assign(new Error("resource access denied"), { status: 403, code: "FORBIDDEN" });
+  const { adapter } = loadAdapter({ getResourcePlaybackUrl: async () => { throw forbidden; } });
+
+  await assert.rejects(
+    adapter.getResourcePlaybackUrl("resource-1"),
     (error) => error.status === 403 && error.code === "FORBIDDEN",
   );
 });
