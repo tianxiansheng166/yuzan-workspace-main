@@ -1,0 +1,42 @@
+{
+  "classification": "TEST_FIXTURE_ONLY",
+  "browser": "Chrome/153.0.8010.52",
+  "baseUrl": "http://127.0.0.1:41777",
+  "source": "Growth page served from the T077 worktree with in-browser API fixture data.",
+  "screenshots": [
+    {
+      "fileName": "growth-fixture-1280x900.png",
+      "title": "测试学生（合成数据）的成长记录",
+      "viewportWidth": 1280,
+      "layoutWidth": 1265,
+      "documentWidth": 1265,
+      "pageHeight": 2316,
+      "zeroScoreVisible": true,
+      "nullScoreVisible": true,
+      "partialReportErrorVisible": true,
+      "feedbackVisible": true,
+      "reportLinks": [
+        "/assessment/sessions/assessment-t077-zero/report/",
+        "/assessment/sessions/assessment-t077-null/report/"
+      ],
+      "remediationButtons": 1
+    },
+    {
+      "fileName": "growth-fixture-1440x1000.png",
+      "title": "测试学生（合成数据）的成长记录",
+      "viewportWidth": 1440,
+      "layoutWidth": 1425,
+      "documentWidth": 1425,
+      "pageHeight": 2316,
+      "zeroScoreVisible": true,
+      "nullScoreVisible": true,
+      "partialReportErrorVisible": true,
+      "feedbackVisible": true,
+      "reportLinks": [
+        "/assessment/sessions/assessment-t077-zero/report/",
+        "/assessment/sessions/assessment-t077-null/report/"
+      ],
+      "remediationButtons": 1
+    }
+  ]
+}
