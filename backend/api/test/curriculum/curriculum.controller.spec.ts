@@ -32,11 +32,30 @@ import {
 import { FakeCourseVersionRepository } from "./fakes/fake-course-version.repository.js";
 import { FakeResourceLookupAdapter } from "./fakes/fake-resource-lookup.adapter.js";
 
+type ControllerHandler = (...args: never[]) => unknown;
+
+function isControllerHandler(value: unknown): value is ControllerHandler {
+  return typeof value === "function";
+}
+
 describe("CurriculumController", () => {
   let controller: CurriculumController;
   let repo: FakeCourseVersionRepository;
   let resourceRepo: FakeResourceLookupAdapter;
   let reflector: Reflector;
+
+  function getControllerHandler(
+    name: keyof CurriculumController,
+  ): ControllerHandler {
+    const candidate: unknown = Object.getOwnPropertyDescriptor(
+      CurriculumController.prototype,
+      name,
+    )?.value;
+    if (!isControllerHandler(candidate)) {
+      throw new Error(`Controller handler ${String(name)} was not found`);
+    }
+    return candidate;
+  }
 
   beforeEach(async () => {
     repo = new FakeCourseVersionRepository();
@@ -58,66 +77,78 @@ describe("CurriculumController", () => {
   });
 
   it("has required role metadata on create draft", () => {
-    const roles = reflector.get("requiredRoles", controller.createCourseDraft);
+    const roles = reflector.get<readonly MembershipRole[] | undefined>(
+      "requiredRoles",
+      getControllerHandler("createCourseDraft"),
+    );
     expect(roles).toContain(MembershipRole.TEACHER);
     expect(roles).toContain(MembershipRole.SCHOOL_ADMIN);
   });
 
   it("has required role metadata on publish", () => {
-    const roles = reflector.get(
+    const roles = reflector.get<readonly MembershipRole[] | undefined>(
       "requiredRoles",
-      controller.publishCourseVersion,
+      getControllerHandler("publishCourseVersion"),
     );
     expect(roles).toContain(MembershipRole.TEACHER);
     expect(roles).toContain(MembershipRole.SCHOOL_ADMIN);
     expect(
       Reflect.getMetadata(
         PATH_METADATA,
-        CurriculumController.prototype.publishCourseVersion,
+        getControllerHandler("publishCourseVersion"),
       ),
     ).toBe(":courseVersionId/publish");
     expect(
       Reflect.getMetadata(
         METHOD_METADATA,
-        CurriculumController.prototype.publishCourseVersion,
+        getControllerHandler("publishCourseVersion"),
       ),
     ).toBe(RequestMethod.POST);
     expect(
       Reflect.getMetadata(
         HTTP_CODE_METADATA,
-        CurriculumController.prototype.publishCourseVersion,
+        getControllerHandler("publishCourseVersion"),
       ),
     ).toBe(HttpStatus.OK);
   });
 
   it("restricts course practice discovery and writes to teachers and school admins", () => {
-    for (const handler of [controller.listCoursePracticeOptions, controller.saveActivityPractice]) {
-      const roles = reflector.get("requiredRoles", handler);
+    for (const handler of [
+      getControllerHandler("listCoursePracticeOptions"),
+      getControllerHandler("saveActivityPractice"),
+    ]) {
+      const roles = reflector.get<readonly MembershipRole[] | undefined>(
+        "requiredRoles",
+        handler,
+      );
       expect(roles).toContain(MembershipRole.TEACHER);
       expect(roles).toContain(MembershipRole.SCHOOL_ADMIN);
     }
     expect(
       Reflect.getMetadata(
         PATH_METADATA,
-        CurriculumController.prototype.saveActivityPractice,
+        getControllerHandler("saveActivityPractice"),
       ),
     ).toBe(":courseVersionId/activities/:activityId/practice");
     expect(
       Reflect.getMetadata(
         METHOD_METADATA,
-        CurriculumController.prototype.saveActivityPractice,
+        getControllerHandler("saveActivityPractice"),
       ),
     ).toBe(RequestMethod.PUT);
     expect(
       Reflect.getMetadata(
         HTTP_CODE_METADATA,
-        CurriculumController.prototype.saveActivityPractice,
+        getControllerHandler("saveActivityPractice"),
       ),
     ).toBe(HttpStatus.OK);
   });
 
   it("allows student role on list endpoint", () => {
-    const roles = reflector.get("requiredRoles", controller.listCourseVersions);
+    const roles = reflector.get<readonly MembershipRole[] | undefined>(
+      "requiredRoles",
+      getControllerHandler("listCourseVersions"),
+    );
     expect(roles).toContain(MembershipRole.STUDENT);
   });
 

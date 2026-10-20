@@ -56,13 +56,9 @@ const fullCourseVersionInclude = {
   },
 } as const satisfies Prisma.CourseVersionInclude;
 
-const courseVersionWithCourseAndUnitsArgs = {
-  include: fullCourseVersionInclude,
-} as const;
-
-type CourseVersionWithCourseAndUnits = Prisma.CourseVersionGetPayload<
-  typeof courseVersionWithCourseAndUnitsArgs
->;
+type CourseVersionWithCourseAndUnits = Prisma.CourseVersionGetPayload<{
+  include: typeof fullCourseVersionInclude;
+}>;
 type CourseUnitRow = CourseVersionWithCourseAndUnits["units"][number];
 type CourseLessonRow = CourseUnitRow["lessons"][number];
 type CourseActivityRow = CourseLessonRow["activities"][number];

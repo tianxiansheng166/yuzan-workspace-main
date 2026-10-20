@@ -124,8 +124,11 @@ export class FakeCourseVersionRepository implements CourseVersionRepositoryPort 
     );
   }
 
-  async listCoursePracticeOptions(_schoolId: string): Promise<readonly CoursePracticeOption[]> {
-    return [...this.practiceOptions.values()];
+  listCoursePracticeOptions(
+    _schoolId: string,
+  ): Promise<readonly CoursePracticeOption[]> {
+    void _schoolId;
+    return Promise.resolve([...this.practiceOptions.values()]);
   }
 
   async saveActivityPractice(
