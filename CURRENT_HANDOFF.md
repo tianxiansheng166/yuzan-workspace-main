@@ -3,6 +3,14 @@
 Last updated: 2026-10-20
 Repository: `yuzan-workspace-main`
 
+## YZ-RD-T069 student speech floating navigation overlap fix (2026-10-20)
+
+- Implemented on independent branch `feat/yz-rd-t069-student-speech-floating-nav-overlap-fix`, based on exact accepted T067 `e4cf946b107e2fe30b57f7e6200b4ed7f45112d1`. T053's real 390px Chromium capture and a fresh T069 baseline fixture both show the bottom-right global navigation covering the speech recorder's capture-status row. The T069 baseline also found the recorder action clipped outside its panel.
+- Speech activities now place the global navigation in the page's reserved top area with safe-area insets; other pages keep the original global navigation behavior. The recorder and its finish/preview controls now sit inside their responsive target wrapper, and the pipeline fits the 768px / 1280px recorder widths. Course back/chapter links remain available. Visible controls retain 44px targets and keyboard focus rings; mobile page padding includes the bottom safe area.
+- Fresh isolated Chromium proof at 390×844, 768×1024, 1280×900 and 1440×1000 reports no horizontal overflow or navigation/control overlap. Scroll checks show state, timer, error, record, finish, preview and upload controls. Browser data is `VISUAL_FIXTURE_ONLY`, with no real API contact or E2E claim. The other student course top navigation and generic global navigation retain their existing layouts.
+- Frontend tests pass 144/144 with runtime verification; `git diff --check` passes. Full evidence: [`evidence/yz-rd-t069/RESULTS.md`](evidence/yz-rd-t069/RESULTS.md). `READY_TO_MERGE=NO` due the inherited 1,203 API test lint findings; `L4_OPEN=OPEN`. No Teacher Studio, API/database contract, T005, L4, original course material, Docker or shared-branch merge was used.
+- The target checkout `AGENTS.md` lacks the AA-DEV-V2.2 marker; the supplied root `/home/tian/code/AGENTS.md` baseline governed.
+
 ## YZ-RD-T067 studio mobile visual verification (2026-10-20)
 
 - Verified accepted T061 BASE `9a1a8b741d0eacfc304dfd72006558848b8bf6e4` on independent branch `feat/yz-rd-t067-studio-mobile-visual-verification`. New Chromium captures from the modified page cover 390×844, 768×1024, 1280×900 and 1440×1000; no T053 screenshot was used as new acceptance evidence.

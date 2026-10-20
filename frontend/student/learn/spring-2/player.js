@@ -178,6 +178,7 @@
   function render() {
     const detail = state.detail;
     const activity = state.activity;
+    document.body.classList.toggle('student-speech-activity', activity.type === 'SPEECH');
     document.title = `${originalText(activity.title) || '课程活动'}｜${originalText(detail.courseVersion.title) || '课程'}｜语赞心声`;
     $('#backToCourse').href = courseUrl();
     $('#courseEyebrow').textContent = [originalText(activity.unitTitle), originalText(activity.lessonTitle)].filter(Boolean).join(' · ');
@@ -458,11 +459,11 @@
       previewRecording.setAttribute('aria-label', '试听自己的课程录音');
       previewRecording.hidden = true;
       recordingControls.append(finishRecording, previewRecording);
-      target.append(prompt, recorder, recordingControls);
       const help = document.createElement('p');
       help.className = 'note-help recorder-help';
       help.textContent = '先完成录音并试听；确认后再上传到本课程作答。不会生成自动转写或 AI 语音评分。';
-      target.appendChild(help);
+      prompt.append(recorder, recordingControls, help);
+      target.appendChild(prompt);
       if (window.YuzanVoiceRecorder) recorder.__voiceRecorder = new window.YuzanVoiceRecorder(recorder);
       const updateRecordingControls = () => {
         const voice = recorder.__voiceRecorder;

@@ -1,0 +1,1347 @@
+{
+  "taskId": "YZ-RD-T069",
+  "fixture": "VISUAL_FIXTURE_ONLY",
+  "realApiConnected": false,
+  "browser": "Google Chrome/Chromium, isolated headless process, ephemeral DevTools port",
+  "sharedBrowserService9222Touched": false,
+  "prefix": "after",
+  "checks": {
+    "currentSpeechRouteMarked": true,
+    "pageScopedNavLeavesReservedTopArea": true,
+    "noHorizontalOverflow": true,
+    "navDoesNotOverlapRecorderStateOrControls": [
+      {
+        "width": 390,
+        "overlaps": []
+      },
+      {
+        "width": 768,
+        "overlaps": []
+      },
+      {
+        "width": 1280,
+        "overlaps": []
+      },
+      {
+        "width": 1440,
+        "overlaps": []
+      }
+    ],
+    "recordActionInsideRecorder": [
+      {
+        "width": 390,
+        "inside": true
+      },
+      {
+        "width": 768,
+        "inside": true
+      },
+      {
+        "width": 1280,
+        "inside": true
+      },
+      {
+        "width": 1440,
+        "inside": true
+      }
+    ],
+    "pipelineInsideRecorder": [
+      {
+        "width": 390,
+        "inside": true,
+        "hidden": true
+      },
+      {
+        "width": 768,
+        "inside": true,
+        "hidden": false
+      },
+      {
+        "width": 1280,
+        "inside": true,
+        "hidden": false
+      },
+      {
+        "width": 1440,
+        "inside": true,
+        "hidden": false
+      }
+    ],
+    "controlTargetsAtLeast44": true,
+    "courseNavigationRetained": true,
+    "pageCanScroll": true
+  },
+  "viewports": [
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "requestedWidth": 390,
+        "requestedHeight": 844,
+        "scrollY": 0
+      },
+      "document": {
+        "htmlWidth": 390,
+        "bodyWidth": 390,
+        "scrollHeight": 2008
+      },
+      "nav": {
+        "box": {
+          "x": 328,
+          "y": 12,
+          "width": 48,
+          "height": 48
+        },
+        "position": "absolute",
+        "classScope": true
+      },
+      "recorder": {
+        "box": {
+          "x": 64,
+          "y": 756,
+          "width": 266,
+          "height": 340
+        },
+        "state": "idle",
+        "targets": {
+          "pipeline": {
+            "box": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "inViewport": false,
+            "label": "采集麦克风输入识别语音声场分析保存本地安全存储",
+            "hidden": true,
+            "disabled": false
+          },
+          "recordingState": {
+            "box": {
+              "x": 158.8,
+              "y": 864.9,
+              "width": 76.3,
+              "height": 26
+            },
+            "inViewport": false,
+            "label": "点击开始",
+            "hidden": false,
+            "disabled": false
+          },
+          "timer": {
+            "box": {
+              "x": 80,
+              "y": 1047,
+              "width": 55.4,
+              "height": 22
+            },
+            "inViewport": false,
+            "label": "00:00",
+            "hidden": false,
+            "disabled": false
+          },
+          "errorCopy": {
+            "box": {
+              "x": 148,
+              "y": 902.9,
+              "width": 97.9,
+              "height": 18
+            },
+            "inViewport": false,
+            "label": "录音仅在本机处理",
+            "hidden": false,
+            "disabled": false
+          },
+          "errorToast": {
+            "box": {
+              "x": 182,
+              "y": 763,
+              "width": 30,
+              "height": 16
+            },
+            "inViewport": true,
+            "label": "",
+            "hidden": false,
+            "disabled": false
+          },
+          "micButton": {
+            "box": {
+              "x": 156.6,
+              "y": 772.2,
+              "width": 80.7,
+              "height": 80.7
+            },
+            "inViewport": false,
+            "label": "开始录音",
+            "hidden": false,
+            "disabled": false
+          },
+          "recordAction": {
+            "box": {
+              "x": 145.4,
+              "y": 1034.5,
+              "width": 108.1,
+              "height": 47
+            },
+            "inViewport": false,
+            "label": "●\n开始录音",
+            "hidden": false,
+            "disabled": false
+          },
+          "finish": {
+            "box": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "inViewport": false,
+            "label": "完成录音",
+            "hidden": true,
+            "disabled": false
+          },
+          "preview": {
+            "box": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "inViewport": false,
+            "label": "试听录音",
+            "hidden": true,
+            "disabled": true
+          },
+          "upload": {
+            "box": {
+              "x": 256,
+              "y": 1293.2,
+              "width": 102,
+              "height": 44
+            },
+            "inViewport": false,
+            "label": "上传录音并完成",
+            "hidden": false,
+            "disabled": true
+          },
+          "courseBack": {
+            "box": {
+              "x": 14,
+              "y": 104,
+              "width": 362,
+              "height": 44
+            },
+            "inViewport": true,
+            "label": "←\n返回课程",
+            "hidden": false,
+            "disabled": false
+          },
+          "coursePath": {
+            "box": {
+              "x": 14,
+              "y": 287.1,
+              "width": 171.6,
+              "height": 86.9
+            },
+            "inViewport": true,
+            "label": "01\n朗读春日观察句\n正在学习",
+            "hidden": false,
+            "disabled": false
+          },
+          "syncStatus": {
+            "box": {
+              "x": 32,
+              "y": 1262.2,
+              "width": 326,
+              "height": 22
+            },
+            "inViewport": false,
+            "label": "服务器记录：尚未完成本活动",
+            "hidden": false,
+            "disabled": false
+          }
+        },
+        "navOverlaps": [],
+        "recordActionInsideRecorder": true,
+        "pipelineInsideRecorder": true,
+        "touchTargetsUnder44": []
+      },
+      "courseNav": {
+        "back": {
+          "box": {
+            "x": 14,
+            "y": 104,
+            "width": 362,
+            "height": 44
+          },
+          "inViewport": true,
+          "label": "←\n返回课程",
+          "hidden": false,
+          "disabled": false
+        },
+        "activeActivity": {
+          "box": {
+            "x": 14,
+            "y": 287.1,
+            "width": 171.6,
+            "height": 86.9
+          },
+          "inViewport": true,
+          "label": "01\n朗读春日观察句\n正在学习",
+          "hidden": false,
+          "disabled": false
+        },
+        "menuLinks": [
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      "scroll": {
+        "canScroll": true
+      }
+    },
+    {
+      "viewport": {
+        "width": 768,
+        "height": 1024,
+        "requestedWidth": 768,
+        "requestedHeight": 1024,
+        "scrollY": 0
+      },
+      "document": {
+        "htmlWidth": 768,
+        "bodyWidth": 768,
+        "scrollHeight": 1775
+      },
+      "nav": {
+        "box": {
+          "x": 706,
+          "y": 12,
+          "width": 48,
+          "height": 48
+        },
+        "position": "absolute",
+        "classScope": true
+      },
+      "recorder": {
+        "box": {
+          "x": 93,
+          "y": 805.3,
+          "width": 586,
+          "height": 250
+        },
+        "state": "idle",
+        "targets": {
+          "pipeline": {
+            "box": {
+              "x": 349,
+              "y": 827.3,
+              "width": 304,
+              "height": 38
+            },
+            "inViewport": true,
+            "label": "采集\n麦克风输入\n识别\n语音声场分析\n保存\n本地安全存储",
+            "hidden": false,
+            "disabled": false
+          },
+          "recordingState": {
+            "box": {
+              "x": 170.3,
+              "y": 958.1,
+              "width": 76.3,
+              "height": 26
+            },
+            "inViewport": true,
+            "label": "点击开始",
+            "hidden": false,
+            "disabled": false
+          },
+          "timer": {
+            "box": {
+              "x": 349,
+              "y": 997.3,
+              "width": 72,
+              "height": 28
+            },
+            "inViewport": false,
+            "label": "00:00",
+            "hidden": false,
+            "disabled": false
+          },
+          "errorCopy": {
+            "box": {
+              "x": 159.5,
+              "y": 996.1,
+              "width": 97.9,
+              "height": 18
+            },
+            "inViewport": true,
+            "label": "录音仅在本机处理",
+            "hidden": false,
+            "disabled": false
+          },
+          "errorToast": {
+            "box": {
+              "x": 371,
+              "y": 812.3,
+              "width": 30,
+              "height": 16
+            },
+            "inViewport": true,
+            "label": "",
+            "hidden": false,
+            "disabled": false
+          },
+          "micButton": {
+            "box": {
+              "x": 158.6,
+              "y": 846.4,
+              "width": 99.7,
+              "height": 99.7
+            },
+            "inViewport": true,
+            "label": "开始录音",
+            "hidden": false,
+            "disabled": false
+          },
+          "recordAction": {
+            "box": {
+              "x": 521,
+              "y": 987.8,
+              "width": 129.6,
+              "height": 47
+            },
+            "inViewport": false,
+            "label": "●\n开始录音",
+            "hidden": false,
+            "disabled": false
+          },
+          "finish": {
+            "box": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "inViewport": false,
+            "label": "完成录音",
+            "hidden": true,
+            "disabled": false
+          },
+          "preview": {
+            "box": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "inViewport": false,
+            "label": "试听录音",
+            "hidden": true,
+            "disabled": true
+          },
+          "upload": {
+            "box": {
+              "x": 573.7,
+              "y": 1208.4,
+              "width": 133.3,
+              "height": 44
+            },
+            "inViewport": false,
+            "label": "上传录音并完成",
+            "hidden": false,
+            "disabled": true
+          },
+          "courseBack": {
+            "box": {
+              "x": 26,
+              "y": 189.1,
+              "width": 180,
+              "height": 44
+            },
+            "inViewport": true,
+            "label": "←\n返回课程",
+            "hidden": false,
+            "disabled": false
+          },
+          "coursePath": {
+            "box": {
+              "x": 26,
+              "y": 313.3,
+              "width": 358,
+              "height": 92.9
+            },
+            "inViewport": true,
+            "label": "01\n朗读春日观察句\n正在学习",
+            "hidden": false,
+            "disabled": false
+          },
+          "syncStatus": {
+            "box": {
+              "x": 255.9,
+              "y": 1221.4,
+              "width": 256.1,
+              "height": 18
+            },
+            "inViewport": false,
+            "label": "服务器记录：尚未完成本活动",
+            "hidden": false,
+            "disabled": false
+          }
+        },
+        "navOverlaps": [],
+        "recordActionInsideRecorder": true,
+        "pipelineInsideRecorder": true,
+        "touchTargetsUnder44": []
+      },
+      "courseNav": {
+        "back": {
+          "box": {
+            "x": 26,
+            "y": 189.1,
+            "width": 180,
+            "height": 44
+          },
+          "inViewport": true,
+          "label": "←\n返回课程",
+          "hidden": false,
+          "disabled": false
+        },
+        "activeActivity": {
+          "box": {
+            "x": 26,
+            "y": 313.3,
+            "width": 358,
+            "height": 92.9
+          },
+          "inViewport": true,
+          "label": "01\n朗读春日观察句\n正在学习",
+          "hidden": false,
+          "disabled": false
+        },
+        "menuLinks": [
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      "scroll": {
+        "canScroll": true
+      }
+    },
+    {
+      "viewport": {
+        "width": 1280,
+        "height": 900,
+        "requestedWidth": 1280,
+        "requestedHeight": 900,
+        "scrollY": 0
+      },
+      "document": {
+        "htmlWidth": 1265,
+        "bodyWidth": 1265,
+        "scrollHeight": 1361
+      },
+      "nav": {
+        "box": {
+          "x": 1203,
+          "y": 12,
+          "width": 48,
+          "height": 48
+        },
+        "position": "absolute",
+        "classScope": true
+      },
+      "recorder": {
+        "box": {
+          "x": 148.2,
+          "y": 816.3,
+          "width": 588.6,
+          "height": 250
+        },
+        "state": "idle",
+        "targets": {
+          "pipeline": {
+            "box": {
+              "x": 404.2,
+              "y": 838.3,
+              "width": 306.6,
+              "height": 38
+            },
+            "inViewport": true,
+            "label": "采集\n麦克风输入\n识别\n语音声场分析\n保存\n本地安全存储",
+            "hidden": false,
+            "disabled": false
+          },
+          "recordingState": {
+            "box": {
+              "x": 225.5,
+              "y": 969.8,
+              "width": 76.3,
+              "height": 26
+            },
+            "inViewport": false,
+            "label": "点击开始",
+            "hidden": false,
+            "disabled": false
+          },
+          "timer": {
+            "box": {
+              "x": 404.2,
+              "y": 1008.3,
+              "width": 72,
+              "height": 28
+            },
+            "inViewport": false,
+            "label": "00:00",
+            "hidden": false,
+            "disabled": false
+          },
+          "errorCopy": {
+            "box": {
+              "x": 214.7,
+              "y": 1007.8,
+              "width": 97.9,
+              "height": 18
+            },
+            "inViewport": false,
+            "label": "录音仅在本机处理",
+            "hidden": false,
+            "disabled": false
+          },
+          "errorToast": {
+            "box": {
+              "x": 427.5,
+              "y": 823.3,
+              "width": 30,
+              "height": 16
+            },
+            "inViewport": true,
+            "label": "",
+            "hidden": false,
+            "disabled": false
+          },
+          "micButton": {
+            "box": {
+              "x": 213.2,
+              "y": 856.8,
+              "width": 101,
+              "height": 101
+            },
+            "inViewport": false,
+            "label": "开始录音",
+            "hidden": false,
+            "disabled": false
+          },
+          "recordAction": {
+            "box": {
+              "x": 576.2,
+              "y": 998.8,
+              "width": 130,
+              "height": 47
+            },
+            "inViewport": false,
+            "label": "●\n开始录音",
+            "hidden": false,
+            "disabled": false
+          },
+          "finish": {
+            "box": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "inViewport": false,
+            "label": "完成录音",
+            "hidden": true,
+            "disabled": false
+          },
+          "preview": {
+            "box": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "inViewport": false,
+            "label": "试听录音",
+            "hidden": true,
+            "disabled": true
+          },
+          "upload": {
+            "box": {
+              "x": 631.5,
+              "y": 1219.4,
+              "width": 133.3,
+              "height": 44
+            },
+            "inViewport": false,
+            "label": "上传录音并完成",
+            "hidden": false,
+            "disabled": true
+          },
+          "courseBack": {
+            "box": {
+              "x": 51.2,
+              "y": 176.6,
+              "width": 180,
+              "height": 44
+            },
+            "inViewport": true,
+            "label": "←\n返回课程",
+            "hidden": false,
+            "disabled": false
+          },
+          "coursePath": {
+            "box": {
+              "x": 51.2,
+              "y": 288.3,
+              "width": 581.3,
+              "height": 92.9
+            },
+            "inViewport": true,
+            "label": "01\n朗读春日观察句\n正在学习",
+            "hidden": false,
+            "disabled": false
+          },
+          "syncStatus": {
+            "box": {
+              "x": 311.9,
+              "y": 1232.4,
+              "width": 257.2,
+              "height": 18
+            },
+            "inViewport": false,
+            "label": "服务器记录：尚未完成本活动",
+            "hidden": false,
+            "disabled": false
+          }
+        },
+        "navOverlaps": [],
+        "recordActionInsideRecorder": true,
+        "pipelineInsideRecorder": true,
+        "touchTargetsUnder44": []
+      },
+      "courseNav": {
+        "back": {
+          "box": {
+            "x": 51.2,
+            "y": 176.6,
+            "width": 180,
+            "height": 44
+          },
+          "inViewport": true,
+          "label": "←\n返回课程",
+          "hidden": false,
+          "disabled": false
+        },
+        "activeActivity": {
+          "box": {
+            "x": 51.2,
+            "y": 288.3,
+            "width": 581.3,
+            "height": 92.9
+          },
+          "inViewport": true,
+          "label": "01\n朗读春日观察句\n正在学习",
+          "hidden": false,
+          "disabled": false
+        },
+        "menuLinks": [
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      "scroll": {
+        "canScroll": true
+      }
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "requestedWidth": 1440,
+        "requestedHeight": 1000,
+        "scrollY": 0
+      },
+      "document": {
+        "htmlWidth": 1425,
+        "bodyWidth": 1425,
+        "scrollHeight": 1323
+      },
+      "nav": {
+        "box": {
+          "x": 1363,
+          "y": 12,
+          "width": 48,
+          "height": 48
+        },
+        "position": "absolute",
+        "classScope": true
+      },
+      "recorder": {
+        "box": {
+          "x": 162.6,
+          "y": 778.8,
+          "width": 719.8,
+          "height": 250
+        },
+        "state": "idle",
+        "targets": {
+          "pipeline": {
+            "box": {
+              "x": 418.6,
+              "y": 800.8,
+              "width": 437.8,
+              "height": 38
+            },
+            "inViewport": true,
+            "label": "采集\n麦克风输入\n识别\n语音声场分析\n保存\n本地安全存储",
+            "hidden": false,
+            "disabled": false
+          },
+          "recordingState": {
+            "box": {
+              "x": 239.9,
+              "y": 932.3,
+              "width": 76.3,
+              "height": 26
+            },
+            "inViewport": true,
+            "label": "点击开始",
+            "hidden": false,
+            "disabled": false
+          },
+          "timer": {
+            "box": {
+              "x": 418.6,
+              "y": 970.8,
+              "width": 72,
+              "height": 28
+            },
+            "inViewport": true,
+            "label": "00:00",
+            "hidden": false,
+            "disabled": false
+          },
+          "errorCopy": {
+            "box": {
+              "x": 229.1,
+              "y": 970.3,
+              "width": 97.9,
+              "height": 18
+            },
+            "inViewport": true,
+            "label": "录音仅在本机处理",
+            "hidden": false,
+            "disabled": false
+          },
+          "errorToast": {
+            "box": {
+              "x": 507.5,
+              "y": 785.8,
+              "width": 30,
+              "height": 16
+            },
+            "inViewport": true,
+            "label": "",
+            "hidden": false,
+            "disabled": false
+          },
+          "micButton": {
+            "box": {
+              "x": 227.6,
+              "y": 819.3,
+              "width": 101,
+              "height": 101
+            },
+            "inViewport": true,
+            "label": "开始录音",
+            "hidden": false,
+            "disabled": false
+          },
+          "recordAction": {
+            "box": {
+              "x": 590.6,
+              "y": 961.3,
+              "width": 130,
+              "height": 47
+            },
+            "inViewport": false,
+            "label": "●\n开始录音",
+            "hidden": false,
+            "disabled": false
+          },
+          "finish": {
+            "box": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "inViewport": false,
+            "label": "完成录音",
+            "hidden": true,
+            "disabled": false
+          },
+          "preview": {
+            "box": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "inViewport": false,
+            "label": "试听录音",
+            "hidden": true,
+            "disabled": true
+          },
+          "upload": {
+            "box": {
+              "x": 777.1,
+              "y": 1181.9,
+              "width": 133.3,
+              "height": 44
+            },
+            "inViewport": false,
+            "label": "上传录音并完成",
+            "hidden": false,
+            "disabled": true
+          },
+          "courseBack": {
+            "box": {
+              "x": 57.6,
+              "y": 179.1,
+              "width": 180,
+              "height": 44
+            },
+            "inViewport": true,
+            "label": "←\n返回课程",
+            "hidden": false,
+            "disabled": false
+          },
+          "coursePath": {
+            "box": {
+              "x": 57.6,
+              "y": 293.3,
+              "width": 654.9,
+              "height": 92.9
+            },
+            "inViewport": true,
+            "label": "01\n朗读春日观察句\n正在学习",
+            "hidden": false,
+            "disabled": false
+          },
+          "syncStatus": {
+            "box": {
+              "x": 364.9,
+              "y": 1194.9,
+              "width": 311.2,
+              "height": 18
+            },
+            "inViewport": false,
+            "label": "服务器记录：尚未完成本活动",
+            "hidden": false,
+            "disabled": false
+          }
+        },
+        "navOverlaps": [],
+        "recordActionInsideRecorder": true,
+        "pipelineInsideRecorder": true,
+        "touchTargetsUnder44": []
+      },
+      "courseNav": {
+        "back": {
+          "box": {
+            "x": 57.6,
+            "y": 179.1,
+            "width": 180,
+            "height": 44
+          },
+          "inViewport": true,
+          "label": "←\n返回课程",
+          "hidden": false,
+          "disabled": false
+        },
+        "activeActivity": {
+          "box": {
+            "x": 57.6,
+            "y": 293.3,
+            "width": 654.9,
+            "height": 92.9
+          },
+          "inViewport": true,
+          "label": "01\n朗读春日观察句\n正在学习",
+          "hidden": false,
+          "disabled": false
+        },
+        "menuLinks": [
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      "scroll": {
+        "canScroll": true
+      }
+    }
+  ],
+  "stateVisibility": {
+    "responsiveScroll": [
+      {
+        "width": 390,
+        "navOverlaps": [],
+        "pipelineHidden": true,
+        "state": true,
+        "timer": true,
+        "errorCopy": true,
+        "micButton": true,
+        "recordAction": true,
+        "recorder": {
+          "x": 64,
+          "y": 18,
+          "width": 266,
+          "height": 340
+        }
+      },
+      {
+        "width": 768,
+        "navOverlaps": [],
+        "pipelineHidden": false,
+        "state": true,
+        "timer": true,
+        "errorCopy": true,
+        "micButton": true,
+        "recordAction": true,
+        "recorder": {
+          "x": 93,
+          "y": 54.3,
+          "width": 586,
+          "height": 250
+        }
+      }
+    ],
+    "recorderInView": {
+      "navOverlaps": [],
+      "recorder": {
+        "x": 64,
+        "y": 18,
+        "width": 266,
+        "height": 340
+      },
+      "nav": {
+        "x": 328,
+        "y": -726,
+        "width": 48,
+        "height": 48
+      }
+    },
+    "recording": {
+      "navOverlaps": [],
+      "state": {
+        "box": {
+          "x": 158.8,
+          "y": 127,
+          "width": 76.3,
+          "height": 26
+        },
+        "inViewport": true,
+        "label": "正在聆听",
+        "hidden": false,
+        "disabled": false
+      },
+      "timer": {
+        "box": {
+          "x": 80,
+          "y": 309,
+          "width": 55,
+          "height": 22
+        },
+        "inViewport": true,
+        "label": "00:08",
+        "hidden": false,
+        "disabled": false
+      },
+      "finish": {
+        "box": {
+          "x": 64,
+          "y": 370,
+          "width": 86,
+          "height": 44
+        },
+        "inViewport": true,
+        "label": "完成录音",
+        "hidden": false,
+        "disabled": false
+      },
+      "action": {
+        "box": {
+          "x": 205.7,
+          "y": 296.5,
+          "width": 108.3,
+          "height": 47
+        },
+        "inViewport": true,
+        "label": "Ⅱ\n暂停",
+        "hidden": false,
+        "disabled": false
+      }
+    },
+    "error": {
+      "navOverlaps": [],
+      "state": {
+        "box": {
+          "x": 158.8,
+          "y": 126.8,
+          "width": 76.3,
+          "height": 26
+        },
+        "inViewport": true,
+        "label": "无法录音",
+        "hidden": false,
+        "disabled": false
+      },
+      "errorCopy": {
+        "box": {
+          "x": 148,
+          "y": 164.8,
+          "width": 97.9,
+          "height": 18
+        },
+        "inViewport": true,
+        "label": "请检查麦克风权限",
+        "hidden": false,
+        "disabled": false
+      },
+      "errorToast": {
+        "box": {
+          "x": 131,
+          "y": 25,
+          "width": 132,
+          "height": 67
+        },
+        "inViewport": true,
+        "label": "麦克风权限被拒绝，请允许后重试；尚未录音",
+        "hidden": false,
+        "disabled": false
+      },
+      "timer": {
+        "box": {
+          "x": 80,
+          "y": 309,
+          "width": 55.4,
+          "height": 22
+        },
+        "inViewport": true,
+        "label": "00:00",
+        "hidden": false,
+        "disabled": false
+      }
+    },
+    "recorded": {
+      "navOverlaps": [],
+      "state": {
+        "box": {
+          "x": 149.3,
+          "y": 126.8,
+          "width": 95.4,
+          "height": 26
+        },
+        "inViewport": true,
+        "label": "录音已保存",
+        "hidden": false,
+        "disabled": false
+      },
+      "timer": {
+        "box": {
+          "x": 80,
+          "y": 309,
+          "width": 55,
+          "height": 22
+        },
+        "inViewport": true,
+        "label": "00:08",
+        "hidden": false,
+        "disabled": false
+      },
+      "preview": {
+        "box": {
+          "x": 64,
+          "y": 370,
+          "width": 86,
+          "height": 44
+        },
+        "inViewport": true,
+        "label": "试听录音",
+        "hidden": false,
+        "disabled": false
+      },
+      "upload": {
+        "box": {
+          "x": 256,
+          "y": 599.2,
+          "width": 102,
+          "height": 44
+        },
+        "inViewport": true,
+        "label": "上传录音并完成",
+        "hidden": false,
+        "disabled": false
+      }
+    }
+  },
+  "keyboardFocus": {
+    "focusVisible": true,
+    "outlineStyle": "solid",
+    "outlineWidth": "3px",
+    "box": {
+      "x": 328,
+      "y": 12,
+      "width": 48,
+      "height": 48
+    }
+  },
+  "openNavigation": {
+    "box": {
+      "x": 156,
+      "y": 90,
+      "width": 220,
+      "height": 539
+    },
+    "visible": true,
+    "links": [
+      {
+        "label": "01\n公共首页",
+        "height": 44,
+        "visible": true
+      },
+      {
+        "label": "02\n登录",
+        "height": 44,
+        "visible": true
+      },
+      {
+        "label": "03\n选择学校",
+        "height": 44,
+        "visible": true
+      },
+      {
+        "label": "04\n管理驾驶舱",
+        "height": 44,
+        "visible": true
+      },
+      {
+        "label": "05\n教师工作台",
+        "height": 44,
+        "visible": true
+      },
+      {
+        "label": "06\n学生课程中心",
+        "height": 44,
+        "visible": true
+      },
+      {
+        "label": "07\n志愿者工作台",
+        "height": 44,
+        "visible": true
+      },
+      {
+        "label": "08\n教研中心",
+        "height": 44,
+        "visible": true
+      },
+      {
+        "label": "09\n产品套餐",
+        "height": 44,
+        "visible": true
+      },
+      {
+        "label": "10\n教师工具箱",
+        "height": 44,
+        "visible": true
+      },
+      {
+        "label": "↩\n返回上一页",
+        "height": 44,
+        "visible": true
+      }
+    ]
+  },
+  "otherStudentPage": {
+    "path": "/student/courses/",
+    "hasSpeechScope": false,
+    "hasStudentNav": true,
+    "navLinks": 6
+  },
+  "genericGlobalNavigation": {
+    "path": "/plans/",
+    "hasSpeechScope": false,
+    "position": "fixed",
+    "right": "22px",
+    "bottom": "22px"
+  },
+  "apiEvents": [
+    {
+      "method": "GET",
+      "route": "student-course"
+    },
+    {
+      "method": "POST",
+      "route": "course-submission"
+    },
+    {
+      "method": "GET",
+      "route": "student-activity-note"
+    },
+    {
+      "method": "GET",
+      "route": "/api/v1/schools/t069-visual-school/student/profile",
+      "status": 404
+    },
+    {
+      "method": "GET",
+      "route": "/api/v1/schools/t069-visual-school/student/courses",
+      "status": 404
+    },
+    {
+      "method": "GET",
+      "route": "/api/v1/schools/t069-visual-school/student/profile",
+      "status": 404
+    }
+  ]
+}

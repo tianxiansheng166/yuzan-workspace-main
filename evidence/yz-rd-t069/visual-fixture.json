@@ -1,0 +1,83 @@
+{
+  "label": "VISUAL_FIXTURE_ONLY",
+  "apiE2e": false,
+  "school": {
+    "id": "t069-visual-school",
+    "name": "T069 学校样例"
+  },
+  "assignment": {
+    "id": "t069-visual-assignment",
+    "submissionId": "t069-visual-submission",
+    "enrollmentId": "t069-visual-enrollment",
+    "courseVersionId": "t069-visual-course"
+  },
+  "course": {
+    "assignment": {
+      "id": "t069-visual-assignment",
+      "status": "OPEN"
+    },
+    "courseVersion": {
+      "id": "t069-visual-course",
+      "title": "T069 口语录音布局样例",
+      "status": "PUBLISHED",
+      "learningObjectives": ["听辨示范音频，朗读目标文本，并完成关联的正式听说练习。"]
+    },
+    "existingSubmission": {
+      "id": "t069-visual-submission",
+      "enrollmentId": "t069-visual-enrollment",
+      "revision": 1
+    },
+    "courseCompletion": {
+      "progressPercent": 25,
+      "attainmentStatus": "PENDING"
+    },
+    "units": [
+      {
+        "title": "听说单元 1",
+        "lessons": [
+          {
+            "title": "课时 1",
+            "activities": [
+              {
+                "id": "t069-visual-speech-activity",
+                "title": "朗读春日观察句",
+                "type": "SPEECH",
+                "instruction": "先听辨句子节奏，再录下自己的朗读并试听。",
+                "content": {
+                  "targetText": "春风沿着山脊吹向河谷，雪水在石间汇成清亮的小溪。"
+                },
+                "progress": {
+                  "completed": false,
+                  "revision": 0
+                }
+              },
+              {
+                "id": "t069-visual-reading-activity",
+                "title": "本课正式听说练习",
+                "type": "TEXT",
+                "instruction": "完成正式听说练习。",
+                "content": {
+                  "text": "请从课程页进入本课正式听说练习。"
+                },
+                "progress": {
+                  "completed": false,
+                  "revision": 0
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "submission": {
+    "id": "t069-visual-submission",
+    "enrollmentId": "t069-visual-enrollment",
+    "revision": 1,
+    "status": "IN_PROGRESS"
+  },
+  "student": {
+    "id": "t069-visual-user",
+    "displayName": "T069 样例学生"
+  }
+}

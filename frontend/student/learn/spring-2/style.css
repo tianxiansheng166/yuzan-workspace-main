@@ -741,9 +741,56 @@ body {
   max-width: 780px;
   border-radius: 2px;
 }
+body.student-speech-activity #yuzan-global-nav {
+  position: absolute;
+  top: max(12px, env(safe-area-inset-top));
+  right: max(14px, env(safe-area-inset-right));
+  bottom: auto;
+}
+body.student-speech-activity #yuzan-global-nav .nav-panel {
+  top: var(--nav-height, 90px);
+  bottom: auto;
+  max-height: calc(100dvh - var(--nav-height, 90px) - 20px);
+  transform-origin: top right;
+}
+body.student-speech-activity #yuzan-global-nav .nav-toggle:focus-visible,
+body.student-speech-activity #yuzan-global-nav .nav-panel a:focus-visible,
+body.student-speech-activity .back-link:focus-visible,
+body.student-speech-activity .chapter-path a:focus-visible,
+body.student-speech-activity #courseRecorder button:focus-visible,
+body.student-speech-activity .activity-footer button:focus-visible {
+  outline: 3px solid #285f46;
+  outline-offset: 3px;
+}
+body.student-speech-activity #yuzan-global-nav .nav-panel a {
+  min-height: 44px;
+}
+body.student-speech-activity .back-link {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+}
+body.student-speech-activity .chapter-path a,
+body.student-speech-activity .activity-footer button {
+  min-height: 44px;
+}
+body.student-speech-activity .learning-page {
+  padding-bottom: calc(64px + env(safe-area-inset-bottom));
+}
 .speech-target .voice-recorder {
   height: 250px;
   min-height: 230px;
+}
+.speech-target .vr-pipeline span {
+  min-width: 0;
+  flex: 1 1 0;
+}
+.speech-target .vr-pipeline span:not(:last-child)::after {
+  left: 55%;
+  width: calc(45% - 12px);
+}
+.speech-target .vr-pipeline span:not(:last-child)::before {
+  left: calc(100% - 8px);
 }
 .speech-recording-controls {
   display: flex;
@@ -922,6 +969,9 @@ body {
   }
 }
 @media (max-width: 600px) {
+  body.student-speech-activity .learning-page {
+    padding-bottom: calc(36px + env(safe-area-inset-bottom));
+  }
   .speech-target .voice-recorder {
     height: 340px;
     min-height: 340px;
