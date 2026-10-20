@@ -1,0 +1,42 @@
+{
+  "command": "corepack pnpm --filter @yuzan/api exec eslint src test --format json --output-file /home/tian/code/work/yuzan-workspace-t057/evidence/yz-rd-t057/api-lint-full.json",
+  "scope": "The same unmodified unified ESLint config and src/test scope used by @yuzan/api lint",
+  "config": "backend/api/eslint.config.mjs",
+  "exitCode": 1,
+  "counts": {
+    "src": {
+      "files": 426,
+      "errors": 0,
+      "warnings": 0,
+      "parserErrors": 0
+    },
+    "test": {
+      "files": 164,
+      "errors": 1771,
+      "warnings": 0,
+      "parserErrors": 0
+    },
+    "total": {
+      "files": 590,
+      "errors": 1771,
+      "warnings": 0,
+      "parserErrors": 0
+    }
+  },
+  "comparisonToT054": {
+    "baseline": {
+      "srcErrors": 1,
+      "testErrors": 1780,
+      "totalErrors": 1781
+    },
+    "current": {
+      "srcErrors": 0,
+      "testErrors": 1771,
+      "totalErrors": 1771
+    },
+    "newDiagnostics": 0,
+    "resolvedDiagnostics": 10
+  },
+  "rulesChanged": false,
+  "notes": "ESLint exits 1 for the 1771 remaining test findings. The parser completed without parser errors; no warning or rule suppression was introduced."
+}

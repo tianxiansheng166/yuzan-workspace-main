@@ -1,0 +1,4 @@
+Command: `corepack pnpm --filter @yuzan/api typecheck`
+Result: PASS (exit 0; `tsc -p tsconfig.json --noEmit`).
+
+Prisma Client 7.8.0 was generated from the schema using a command-scoped loopback placeholder `DATABASE_URL`; no database connection or migration was run. The database package TypeScript output was built before API typecheck.

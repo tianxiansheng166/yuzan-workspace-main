@@ -1,0 +1,12 @@
+{
+  "command": "corepack pnpm --filter @yuzan/api exec tsc -p test/tsconfig.json --noEmit",
+  "baselineFile": "evidence/yz-rd-t054/test-typecheck-current.txt",
+  "currentFile": "evidence/yz-rd-t057/test-typecheck.txt",
+  "baselineDiagnostics": 268,
+  "currentDiagnostics": 268,
+  "newDiagnosticSignatures": 0,
+  "resolvedDiagnosticSignatures": 0,
+  "comparisonKey": "file path + TypeScript diagnostic code + message",
+  "exitCode": 1,
+  "notes": "The test project retains its existing 268 diagnostics; this comparison found no new or resolved signatures."
+}

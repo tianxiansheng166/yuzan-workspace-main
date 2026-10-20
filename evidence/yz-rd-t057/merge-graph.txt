@@ -1,0 +1,179 @@
+*   6570346f8eefcb9dee94cf822de0d074e125604c bd49ce3dbc0259c862cdc15353a0ae417d016687 03cd9661651cedff18a0b12c564e1b843643724e Merge commit '03cd9661651cedff18a0b12c564e1b843643724e' into feat/yz-rd-t057-course-product-quality-convergence
+|\
+| * 03cd9661651cedff18a0b12c564e1b843643724e 2fdf04d48ca1b64b7595ef11e9ee859fabeff93a fix(api): complete T054 lint slice integration evidence
+| *   2fdf04d48ca1b64b7595ef11e9ee859fabeff93a a934926c945ddce6a8a4a3465738fa388478a3da 1a1706d765cbd5b67c0e2f18ed58a6a84e06b0ec merge: integrate T052 API source lint slice
+| |\
+| | * 1a1706d765cbd5b67c0e2f18ed58a6a84e06b0ec 987e7321157033001b8548e0c0b4318d9f14e503 fix(api): clear remaining source lint debt
+| * |   a934926c945ddce6a8a4a3465738fa388478a3da 987e7321157033001b8548e0c0b4318d9f14e503 7a0ed80dc94ccd0932cf5026a262db5856b48eea merge: integrate T051 API test lint slice
+| |\ \
+| | |/
+| |/|
+| | * 7a0ed80dc94ccd0932cf5026a262db5856b48eea 987e7321157033001b8548e0c0b4318d9f14e503 test(api): type assessment test fixtures
+| |/
+| * 987e7321157033001b8548e0c0b4318d9f14e503 b3a731bb32f404f4a55f4d4f56d265514d324d40 fix(api): reduce lint debt with typed project slice
+* | bd49ce3dbc0259c862cdc15353a0ae417d016687 69479131b022199b2ca8d91f933aa68e0a29fb95 docs(T053): add formal report viewport captures
+* | 69479131b022199b2ca8d91f933aa68e0a29fb95 a1ab54e3a5cb689cd05ccb1aaab8b4dad14a2f88 docs(T053): add Today and practice runner captures
+* | a1ab54e3a5cb689cd05ccb1aaab8b4dad14a2f88 310cd6cdd6c9582eca94d0a31bfed7f5595ffb79 docs(T053): add course viewport captures
+* | 310cd6cdd6c9582eca94d0a31bfed7f5595ffb79 7ffbd21995ef350ed881b0c85d39749d4f102ec6 docs(T053): add teacher viewport captures
+* | 7ffbd21995ef350ed881b0c85d39749d4f102ec6 6138ed66be999ae844ec6859d15e0eb10ca303b9 docs(T053): add native evidence and API lint gate
+* | 6138ed66be999ae844ec6859d15e0eb10ca303b9 3de27d667c65b8f3d9dafb98ce2c53aa001b5162 feat(T053): enable unified teacher course authoring
+* |   3de27d667c65b8f3d9dafb98ce2c53aa001b5162 69eff46965b5c0bdd418a490319275aa7acfc4ab 0d9dca9765b37c8817c0a2bbebfa918fdbd64494 Merge commit '0d9dca9765b37c8817c0a2bbebfa918fdbd64494' into feat/yz-rd-t053-course-authoring-unified-student-teacher
+|\ \
+| * | 0d9dca9765b37c8817c0a2bbebfa918fdbd64494 cd17360e67356dcdd04062b69b94e253ef5a7468 feat(curriculum): add course practice authoring contract
+| * | cd17360e67356dcdd04062b69b94e253ef5a7468 0f6ea3710797612aa08f37944a9ab9d92f033da1 feat(student): connect course activities to speech player
+* | | 69eff46965b5c0bdd418a490319275aa7acfc4ab 7b7780bcbf024a8aafe6770f511a9974855a189e docs(T050): complete acceptance evidence
+* | | 7b7780bcbf024a8aafe6770f511a9974855a189e 383f2923e551c239acc9a79d2dc279a7a98485a4 feat(T050): integrate teacher speech review and verify cross-role flow
+* | |   383f2923e551c239acc9a79d2dc279a7a98485a4 598fd18db3ae8d7dc4feaabdd8bc7425c1be6389 23ea9e3f550672b7deb36f690c9c0adb436ebe80 merge(T050): integrate accepted T048 teacher review
+|\ \ \
+| * | | 23ea9e3f550672b7deb36f690c9c0adb436ebe80 0f6ea3710797612aa08f37944a9ab9d92f033da1 feat(T048): refine teacher speech review experience
+| |/ /
+* | | 598fd18db3ae8d7dc4feaabdd8bc7425c1be6389 1728d15f2c0bb8fc4875f0e1a3ddeeb7511e0863 test(T047): add course and oral practice screenshots
+* | | 1728d15f2c0bb8fc4875f0e1a3ddeeb7511e0863 8c733f22bfd2c00c5cf79e6c7a3f6d235c9db07e test(T047): add desktop Today report screenshots
+* | | 8c733f22bfd2c00c5cf79e6c7a3f6d235c9db07e 3ae856c83f18dbf8f58997dc2d47cf05334554df test(T047): add Today mobile and pending screenshots
+* | | 3ae856c83f18dbf8f58997dc2d47cf05334554df 9ead5129bf3b8bf7a48954b97eb6f143f3d50e9e test(T047): add speech runner viewport screenshots
+* | | 9ead5129bf3b8bf7a48954b97eb6f143f3d50e9e 67a698d38e9ce15dea06949b13bac2e15f06ae81 test(T047): add speech detail and processing screenshots
+* | | 67a698d38e9ce15dea06949b13bac2e15f06ae81 27e68958d33cc87a5f64be7b265f0e416f3efe5e test(T047): add 1440px catalog screenshot
+* | | 27e68958d33cc87a5f64be7b265f0e416f3efe5e 9900d742435cece1ac567d23824728090af906a7 test(T047): add 1280px catalog screenshot
+* | | 9900d742435cece1ac567d23824728090af906a7 9cab4662ca0edfcc39b55b9e80c323d50906d545 test(T047): add responsive speech catalog results
+* | | 9cab4662ca0edfcc39b55b9e80c323d50906d545 ec49d49f4d6e064842ca80caad0af94c8bc9ba47 test(T047): add speech catalog mobile evidence
+* | | ec49d49f4d6e064842ca80caad0af94c8bc9ba47 fb574f09259c829299e9986dd079846aa763ee1a test(T047): add mobile first-card viewport evidence
+* | | fb574f09259c829299e9986dd079846aa763ee1a b5a57430d03d8f92b1419c08b871abc19a415d5d feat(T047): add integration runner and acceptance evidence
+* | |   b5a57430d03d8f92b1419c08b871abc19a415d5d 0f6ea3710797612aa08f37944a9ab9d92f033da1 e3a3c544bb990904212f5ad518a6dc46ae68916c merge(T047): integrate accepted T045 mobile practice into T046
+|\ \ \
+| |/ /
+|/| |
+| * | e3a3c544bb990904212f5ad518a6dc46ae68916c ffb21a7f57e6948dffbdd18d7ee37ba9d92bc850 docs: align T045 viewport evidence
+| * | ffb21a7f57e6948dffbdd18d7ee37ba9d92bc850 c1402145b132306adcc077555d641b2c0c4eaf83 feat(assessment): verify T045 mobile practice first card
+| * | c1402145b132306adcc077555d641b2c0c4eaf83 2de3b6636a3ef8febca42d973a7c8edd0e8e86bb ux(T045): reveal mobile practice cards sooner with collapsible ability filters
+* | | 0f6ea3710797612aa08f37944a9ab9d92f033da1 7a2ec1fb3ee7e9b4ea39273b86f0580277a3428f test(T046): verify personalized speech integration
+* | |   7a2ec1fb3ee7e9b4ea39273b86f0580277a3428f d6e0328522817be08ab496c5b294b8eaae903afc 7f9288521a2f4e486ccf2ea2f49e1d78e9ce7865 merge(T046): integrate T044 speech practice catalog
+|\ \ \
+| * | | 7f9288521a2f4e486ccf2ea2f49e1d78e9ce7865 2de3b6636a3ef8febca42d973a7c8edd0e8e86bb docs(T044): record visual review and replay status
+| |/ /
+| * | 2de3b6636a3ef8febca42d973a7c8edd0e8e86bb ef3e5404ab43561b89b6bf863f5c7f7a250afa27 test(T044): verify catalog and speech journey
+| * | ef3e5404ab43561b89b6bf863f5c7f7a250afa27 7c2c8daa338b22286bab05d3d99c19c6f01a1b4d ux(T044): prioritize real practice catalog and compact speech filter
+| * | 7c2c8daa338b22286bab05d3d99c19c6f01a1b4d 39c01598e687f020037c82c23e3e0cfd7029ba64 test(T038): verify speaking practice native journey
+| * | 39c01598e687f020037c82c23e3e0cfd7029ba64 d3ed3f31fd68c13d312522d4213ba6689d10fe12 fix(T038): oral entry searches across all authorized practice modes
+| * | d3ed3f31fd68c13d312522d4213ba6689d10fe12 d2ed5c8ca7b01f6c955e23cae6a2a9202d815e49 feat(T038): expose live speaking mock and remediation training modes
+* | |   d6e0328522817be08ab496c5b294b8eaae903afc a23232c582647f6f0222fe46414105bc03d5a651 6049e107f586fe4ca87158608c297b10908b05f1 merge(T046): integrate T043 personalized Today
+|\ \ \
+| * | | 6049e107f586fe4ca87158608c297b10908b05f1 fd6648ee8b4686b6cec8f8e320ea65214a6df63c docs(T043): backfill acceptance result identifiers
+| * | | fd6648ee8b4686b6cec8f8e320ea65214a6df63c 752a6b9ec42e6903635ea6cc45d757eb5aa592aa fix(T043): prevent duplicate Today discovery on resume
+| * | | 752a6b9ec42e6903635ea6cc45d757eb5aa592aa 6d3aa67c114bd310c2d793caa7bcd5be9166ec3f ux(T043): restore Today primary learning hierarchy and contextual discovery
+* | | | a23232c582647f6f0222fe46414105bc03d5a651 a676c99f81400b950b3de00f98e83dea05622485 fix(T042): complete showcase and roster integration gate
+* | | | a676c99f81400b950b3de00f98e83dea05622485 c409335c62aebcc9a5ad7b9e41c7ae9696b3d46f docs(T042): record accepted Today showcase integration and pending native gate
+* | | | c409335c62aebcc9a5ad7b9e41c7ae9696b3d46f 7cf4e1b33f02c14c0849743ac21afbc8f01bafa3 6d3aa67c114bd310c2d793caa7bcd5be9166ec3f Merge commit '6d3aa67c114bd310c2d793caa7bcd5be9166ec3f' into feat/yz-rd-t042-student-showcase-roster-history-integration
+|\| | |
+| * | | 6d3aa67c114bd310c2d793caa7bcd5be9166ec3f 724d873a09e195c9e598ffd8d8714e481cebedaf test(e2e): verify T037 Today pathways on native runtime
+| * | | 724d873a09e195c9e598ffd8d8714e481cebedaf b3a731bb32f404f4a55f4d4f56d265514d324d40 feat(T037): make listen speak assessment report pathways visible on Today
+| | |/
+| |/|
+* | | 7cf4e1b33f02c14c0849743ac21afbc8f01bafa3 92bd3bd650b4ee9f65fcfc4b14cd24b9b6647f7b docs(T039): record accepted-source integration and pending native gate
+* | |   92bd3bd650b4ee9f65fcfc4b14cd24b9b6647f7b 61101b7f43a26203aee25b00ec890af82acf0ac5 d2ed5c8ca7b01f6c955e23cae6a2a9202d815e49 Merge commit 'd2ed5c8ca7b01f6c955e23cae6a2a9202d815e49' into feat/yz-rd-t039-teacher-history-rolling-integration
+|\ \ \
+| | |/
+| |/|
+| * | d2ed5c8ca7b01f6c955e23cae6a2a9202d815e49 a06897b5c2490097c99c2b4dc1205e4abfcd0956 feat(T036): make student history actionable and report-safe
+| * | a06897b5c2490097c99c2b4dc1205e4abfcd0956 d7b99c889c949110b2a29e3ca75535e81b5bbcca feat(T036): add loaded-history search and status filters
+* | |   61101b7f43a26203aee25b00ec890af82acf0ac5 b3a731bb32f404f4a55f4d4f56d265514d324d40 d21c0373333f19174b7e625f71efc2e2a8068314 Merge commit 'd21c0373333f19174b7e625f71efc2e2a8068314' into feat/yz-rd-t039-teacher-history-rolling-integration
+|\ \ \
+| |_|/
+|/| |
+| * | d21c0373333f19174b7e625f71efc2e2a8068314 995d74b4c0a4c1e634253ebc2a990d30b29a3b50 feat(T034): complete class roster filters and detail return
+| * | 995d74b4c0a4c1e634253ebc2a990d30b29a3b50 67bbfda3f13b3dbcbb3e9a5e256ac3c6a7ab32ec feat(T034): add authorized loaded-roster filters and sorting
+* | | b3a731bb32f404f4a55f4d4f56d265514d324d40 38d36c7255568a5bcc7af3200ce2b23b9de758bc test(t033): verify multi-role platform integration
+* | | 38d36c7255568a5bcc7af3200ce2b23b9de758bc 07a9ee1e05a0d843772a1b5bee8e1d437b53988d 67bbfda3f13b3dbcbb3e9a5e256ac3c6a7ab32ec merge(T033): integrate scoped T032 teacher CSV
+|\| |
+| * | 67bbfda3f13b3dbcbb3e9a5e256ac3c6a7ab32ec 306f57a9d3c450cf62a68e5f5e3da4b6595d6837 docs(evidence): clarify class scope status contract
+| * | 306f57a9d3c450cf62a68e5f5e3da4b6595d6837 94a7d7a54c68bc021df2b7b1568f273157470563 docs(evidence): record T032 roster export validation
+| * | 94a7d7a54c68bc021df2b7b1568f273157470563 bfae13ab315bee532842cffe4fdd6c142cb8a488 feat(teacher): export authorized class roster CSV
+* | |   07a9ee1e05a0d843772a1b5bee8e1d437b53988d 83cd26452d72d842567dde682773e96142b1fa71 17108f24f6f525275c53ef600e51075669eb5e7c merge(T033): integrate scoped T031 runner return
+|\ \ \
+| * | | 17108f24f6f525275c53ef600e51075669eb5e7c deede5b767da8b067c6b51d754039e265e55fe34 fix(student): make course practice return reliable
+| * | | deede5b767da8b067c6b51d754039e265e55fe34 e456eac9b02a5abb4851525685cc5bd130d9af91 feat(student): add T027 safe bilingual activity renderer
+| * | | e456eac9b02a5abb4851525685cc5bd130d9af91 37b5ac8deded4d2ddb5a2997a127590806d1db32 feat(student): restore course artwork in activity player
+| * | | 37b5ac8deded4d2ddb5a2997a127590806d1db32 c81c5addc861b79e56e38a57999a93d4fda09bb9 test(evidence): refresh T022 native browser proof
+| * | | c81c5addc861b79e56e38a57999a93d4fda09bb9 dcac087416f9cd00a8f86105f118eb81a26a1710 test(evidence): finalize T022 recovery proof
+| * | | dcac087416f9cd00a8f86105f118eb81a26a1710 4475f418078e5800678a55b05d418d216962732e feat(student): harden course activity learning saves
+* | | |   83cd26452d72d842567dde682773e96142b1fa71 b49271805899f267354d03e3f6cb8f7d416bbf53 d7b99c889c949110b2a29e3ca75535e81b5bbcca merge(T033): integrate scoped T030 growth regression
+|\ \ \ \
+| | |_|/
+| |/| |
+| * | | d7b99c889c949110b2a29e3ca75535e81b5bbcca c085ac2f15df90ddfdf0ccde7600e53aa31e860f test(student-growth): repair formal report fixtures
+| * | | c085ac2f15df90ddfdf0ccde7600e53aa31e860f 1ebc1923d44dcf238f3441552b7eda946b6c0b44 feat(student-growth): trace feedback and launch remediation
+* | | | b49271805899f267354d03e3f6cb8f7d416bbf53 f292c6bfa5d753ecab9e3dc316c1459fbe97e2dc test(e2e): verify T026 T028 revocation rollup (T029)
+* | | |   f292c6bfa5d753ecab9e3dc316c1459fbe97e2dc 2416577aeddcca7ebd45ff9c64ff702adb69c79d bfae13ab315bee532842cffe4fdd6c142cb8a488 Merge commit 'bfae13ab315bee532842cffe4fdd6c142cb8a488' into feat/yz-rd-t029-revoke-onboarding-rollup
+|\ \ \ \
+| | |_|/
+| |/| |
+| * | | bfae13ab315bee532842cffe4fdd6c142cb8a488 6801bf7a33a9c8b5f59a7aa92a3a7b50dc6cda0e docs(evidence): record T028 invitation revocation proof
+| * | | 6801bf7a33a9c8b5f59a7aa92a3a7b50dc6cda0e 34af873837c9cfb74a7be33e94617b94668b4f4d feat(teacher-invitations): add safe invitation revocation
+* | | | 2416577aeddcca7ebd45ff9c64ff702adb69c79d f3a43d0170a43ab1a5127f8517202ac0aebb29bd test(e2e): integrate T021 and T023 onboarding (T026)
+* | | | f3a43d0170a43ab1a5127f8517202ac0aebb29bd 8f831b6e1547f14d79e623b981a1ab65b68c27d3 34af873837c9cfb74a7be33e94617b94668b4f4d Merge commit '34af873837c9cfb74a7be33e94617b94668b4f4d' into feat/yz-rd-t026-onboarding-rolling-web
+|\| | |
+| * | | 34af873837c9cfb74a7be33e94617b94668b4f4d deff5646cc31bf271fa21357ec1a7d62d6a84225 docs(evidence): clarify T023 runtime boundary
+| * | | deff5646cc31bf271fa21357ec1a7d62d6a84225 e6b8e8aa0b2f8cfe9a3bed894f264c73f64e1f3c feat(teacher): add real class student invitations (T023)
+* | | |   8f831b6e1547f14d79e623b981a1ab65b68c27d3 ea1a048966d3eb5e17d9ba1c24d565e4616499de 6445dca34c19fea89c885a3e4085cf47f9d7e5ed Merge commit '6445dca34c19fea89c885a3e4085cf47f9d7e5ed' into feat/yz-rd-t026-onboarding-rolling-web
+|\ \ \ \
+| * | | | 6445dca34c19fea89c885a3e4085cf47f9d7e5ed 4475f418078e5800678a55b05d418d216962732e feat(student): verify profile invitation bindings
+| | |_|/
+| |/| |
+* | | | ea1a048966d3eb5e17d9ba1c24d565e4616499de ce709b4539ae0502e4f1a7de216a8d7ba66adb0f test: complete T024 teacher student native integration
+* | | |   ce709b4539ae0502e4f1a7de216a8d7ba66adb0f 1ebc1923d44dcf238f3441552b7eda946b6c0b44 e6b8e8aa0b2f8cfe9a3bed894f264c73f64e1f3c merge: integrate T020 teacher home with T019 student web
+|\ \ \ \
+| | |/ /
+| |/| /
+| |_|/
+|/| |
+| * | e6b8e8aa0b2f8cfe9a3bed894f264c73f64e1f3c 73bb949b22f38b66f92edaa741aa042e504d2d7f feat(teacher): build T020 teacher home action center
+| * | 73bb949b22f38b66f92edaa741aa042e504d2d7f 0596a9b8256c1d674b93eb2afd4de7306c768129 feat(teacher): polish authorized review queue
+* | | 1ebc1923d44dcf238f3441552b7eda946b6c0b44 538babca9d35327d6fbbdd9216e2b37f8d5cdcff fix(student): render course activities in responsive detail cards
+* | | 538babca9d35327d6fbbdd9216e2b37f8d5cdcff b81f8b95d97cf6cddd3371e7615974d8c04cffe2 feat: integrate teacher remediation and student learning flows for T019
+* | |   b81f8b95d97cf6cddd3371e7615974d8c04cffe2 8b1fcdc96090199923fc6ef5419ac529b0087e58 392f02ac01cb8e766e8bd63095053b4879c78bed Merge commit '392f02ac01cb8e766e8bd63095053b4879c78bed' into feat/yz-rd-t019-web-rolling-integrated
+|\ \ \
+| * | | 392f02ac01cb8e766e8bd63095053b4879c78bed 4d971c9683664c09e533069ec001b00d0dc239af feat(student): refine course catalog experience (T017)
+* | | |   8b1fcdc96090199923fc6ef5419ac529b0087e58 57c9f56c6c86c1f8c563fffff90d8d24b0ca289b 317cb79c4d10c2b77529e8b1335b86351e3e32d3 Merge commit '317cb79c4d10c2b77529e8b1335b86351e3e32d3' into feat/yz-rd-t019-web-rolling-integrated
+|\ \ \ \
+| * | | | 317cb79c4d10c2b77529e8b1335b86351e3e32d3 f64c72284258b03c9158375f4d4b144d65f3bfcc docs(t016): refresh concurrent worktree evidence
+| * | | | f64c72284258b03c9158375f4d4b144d65f3bfcc 4d971c9683664c09e533069ec001b00d0dc239af feat(student): make shared navigation usable (T016)
+| |/ / /
+* | | |   57c9f56c6c86c1f8c563fffff90d8d24b0ca289b 4475f418078e5800678a55b05d418d216962732e 0596a9b8256c1d674b93eb2afd4de7306c768129 merge: integrate T014 teacher class remediation into T015
+|\ \ \ \
+| | |/ /
+| |/| /
+| |_|/
+|/| |
+| * | 0596a9b8256c1d674b93eb2afd4de7306c768129 193b59f75410233e829aaeed7b1a5c46d8ee57c8 docs(handoff): record T014 closure evidence
+| * | 193b59f75410233e829aaeed7b1a5c46d8ee57c8 4d971c9683664c09e533069ec001b00d0dc239af feat(teacher): complete class-to-remediation web flow
+| |/
+* | 4475f418078e5800678a55b05d418d216962732e 6de3e1be9e06a92e9436012ac6b6fafb59e08e45 docs: record T015 push verification
+* | 6de3e1be9e06a92e9436012ac6b6fafb59e08e45 96b0a44ab6d20e7d0f8fb27b21f3450848d21116 feat(web): roll up student practice and growth for T015
+* | 96b0a44ab6d20e7d0f8fb27b21f3450848d21116 f15d1aac376adcb662d13d74ef995ba383cf2f26 feat(student): personalize Today and growth pages
+* | f15d1aac376adcb662d13d74ef995ba383cf2f26 4d971c9683664c09e533069ec001b00d0dc239af feat(assessment): improve student practice runner UX
+|/
+* 4d971c9683664c09e533069ec001b00d0dc239af 9b4340081e7d330007368062a898f4c11d29a14f feat(web): close teacher review feedback loop (YZ-RD-T011)
+* 9b4340081e7d330007368062a898f4c11d29a14f 927c5572fcc62869799fb5c78e6ccc090346e3ba test: verify T007 and T008 on native T010
+* 927c5572fcc62869799fb5c78e6ccc090346e3ba 9c77c8cd35ffd45d6a164cc7a4ec616c3345fd15 feat(student): close practice history loop (YZ-RD-T008)
+* 9c77c8cd35ffd45d6a164cc7a4ec616c3345fd15 3a5484f890f4d990382f9b49d5963769b73e05f8 test(e2e): verify T007 assignment flow on native postgres
+* 3a5484f890f4d990382f9b49d5963769b73e05f8 1b9b1be6a65092587a793595d9eb35cd1a256d8b feat(dev): add isolated native web runtime
+* 1b9b1be6a65092587a793595d9eb35cd1a256d8b ee77c899aa36effc3b661f7ce5bde48dbdb574dc feat(teacher): wire assignment review workflow
+* ee77c899aa36effc3b661f7ce5bde48dbdb574dc 4d9322fc9494e284eb028e032694b0572692489f feat(teacher): wire dashboard to scoped live data
+* 4d9322fc9494e284eb028e032694b0572692489f 7f8ea126b4da4f26a0ab8f59d20207c8808c5292 fix(student): verify mobile learning and recover recording uploads
+* 7f8ea126b4da4f26a0ab8f59d20207c8808c5292 388874b8251946726aed68c438a396836946f345 feat(assignments): close real teacher publication and student Today loop
+* 388874b8251946726aed68c438a396836946f345 0a7b931a8dfd005eb7ba97aa0fe68e81169d61e8 fix(student): close Today course navigation and recovery seams
+* 0a7b931a8dfd005eb7ba97aa0fe68e81169d61e8 9b09c94143c2bf719ae6732c9a5279ac4ee21b3b feat(assessment): personalize remediation outcomes
+* 9b09c94143c2bf719ae6732c9a5279ac4ee21b3b 8aa04be905791764e18adf5fe085e67877f97e21 feat(assessment): show remediation reference outcome
+* 8aa04be905791764e18adf5fe085e67877f97e21 e4e0089417f1f22ee9a6740fde54d39749bdc604 fix(assessment): surface returned speech diagnostics
+* e4e0089417f1f22ee9a6740fde54d39749bdc604 034af203d5d301f81c20be94d5f98197ee328816 feat(assessment): show remediation reference report
+* 034af203d5d301f81c20be94d5f98197ee328816 eda7dce661eb63cb8c42ed926e4dd9b51abf30f2 fix(assessment): avoid processing page poll flicker
+* eda7dce661eb63cb8c42ed926e4dd9b51abf30f2 c480330c373e89b5a61371dce4af737e37fe91b4 fix(student): let course directory follow page scroll
+* c480330c373e89b5a61371dce4af737e37fe91b4 15fda045b734525e8f6ad390a6a2290039576a1d fix(student): finish course media and visual cover polish
+* 15fda045b734525e8f6ad390a6a2290039576a1d 6274399dfb811ef3623b99ca82c3eadbd5b4e0e6 fix(student): unify today page navigation and course path
+* 6274399dfb811ef3623b99ca82c3eadbd5b4e0e6 5619bdf48638a455692389d352ba1dad1a62658b feat(frontend): add course mind structure view
+* 5619bdf48638a455692389d352ba1dad1a62658b 2db6cd27f3542f108d9ca3ee6b20a745b5b4840c fix(assessment): preserve recordings for unsupported speech tasks
+* 2db6cd27f3542f108d9ca3ee6b20a745b5b4840c 0234618809580509153c2e239c9438d5b90abdd3 feat(assessment): close review-to-remediation loop
+* 0234618809580509153c2e239c9438d5b90abdd3 6dd57785385d391f68f0c8660b5fd2b35f7a0b2c feat(course): import one real demonstration lesson
+* 6dd57785385d391f68f0c8660b5fd2b35f7a0b2c 7b28b19599cb0915629dfa44a0eec5b76ccde524 fix(curriculum): persist student catalog course metadata
+* 7b28b19599cb0915629dfa44a0eec5b76ccde524 3b9e7d1ae654de86f8fc7dd79d43f61e865e2d70 feat(question-bank): activate provided level resources
+* 3b9e7d1ae654de86f8fc7dd79d43f61e865e2d70 bf279e523b3b12334195085493abaa4444b53d0c feat(assessment): add ISE diagnostic demo experience
+* bf279e523b3b12334195085493abaa4444b53d0c  fix(student): make today multi-enrollment safe

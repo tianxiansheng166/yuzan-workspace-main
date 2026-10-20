@@ -1,0 +1,9 @@
+
+ RUN  v3.2.7 /home/tian/code/work/yuzan-workspace-t057
+
+ ✓ backend/api/test/assessment/question-bank-assessment-scoring.spec.ts (7 tests) 11ms
+
+ Test Files  1 passed (1)
+      Tests  7 passed (7)
+   Start at  12:39:58
+   Duration  1.56s (transform 589ms, setup 0ms, collect 1.03s, tests 11ms, environment 0ms, prepare 189ms)

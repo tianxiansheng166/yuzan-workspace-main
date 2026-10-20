@@ -1,0 +1,13 @@
+T057 no-fast-forward merge conflict record
+
+Merge command: `git merge --no-ff --no-edit 03cd9661651cedff18a0b12c564e1b843643724e`
+Merge commit: `6570346f8eefcb9dee94cf822de0d074e125604c`
+Parents, in order: T053 `bd49ce3dbc0259c862cdc15353a0ae417d016687`; T054 `03cd9661651cedff18a0b12c564e1b843643724e`.
+
+Git reported conflicts in three files:
+
+1. `CURRENT_HANDOFF.md` — retained both the T053/T050/... history and the T054/T051/T052/T041 notes. No accepted handoff section was dropped.
+2. `backend/api/src/modules/curriculum/ports/prisma-course-version.repository.ts` — retained T053's T049 course-practice option and write methods and typed nested activity rows; kept T054's direct Prisma activity type mapping. Replaced the empty resource payload generic with an explicit `select` for `resourceId` and `meta`, and used an inline typed include for the course-version payload. These are type-only changes; query scope, write behavior, permission checks, and version rules remain unchanged.
+3. `backend/api/src/modules/curriculum/ports/unavailable-course-version.repository.ts` — retained T049's practice discovery and write methods; kept T054's unused-parameter handling and non-async `publish` implementation.
+
+All three paths were resolved and staged before the merge commit. No unresolved paths or conflict markers remain. No T055-only commit was merged.

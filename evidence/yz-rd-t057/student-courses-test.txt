@@ -1,0 +1,9 @@
+
+ RUN  v3.2.7 /home/tian/code/work/yuzan-workspace-t057/backend/api
+
+ ✓ test/student-courses/student-courses.service.spec.ts (32 tests) 29ms
+
+ Test Files  1 passed (1)
+      Tests  32 passed (32)
+   Start at  12:39:58
+   Duration  1.17s (transform 262ms, setup 0ms, collect 391ms, tests 29ms, environment 0ms, prepare 365ms)
