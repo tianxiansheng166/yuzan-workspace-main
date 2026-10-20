@@ -142,6 +142,11 @@ body.growth-body { min-width: 320px; }
 .growth-view-more { margin-top: 11px; }
 
 .growth-report-title span { color: #2b5d3e; font-family: var(--growth-serif); font-size: 14px; font-weight: 600; }
+.growth-report-row-error { border-radius: 10px; background: #fbf8f1; }
+.growth-report-row-error .growth-report-icon { color: #8b6a2f; background: #f5eedf; }
+.growth-report-row-error .growth-report-title span { color: #826a3d; font-family: var(--growth-sans); font-size: 11px; }
+.growth-report-row-error .growth-button { margin-top: 9px; }
+.growth-report-history-note { margin: 7px 0 0; color: var(--growth-muted); font-size: 11px; line-height: 1.6; }
 .growth-retry-focus { margin-top: 9px; padding: 8px 10px; border-left: 2px solid #bd9b58; background: #faf7ee; }
 .growth-retry-focus b { color: #7b693f; font-size: 9px; }
 .growth-retry-focus ul { display: flex; flex-wrap: wrap; gap: 5px; margin: 6px 0 0; padding: 0; list-style: none; }

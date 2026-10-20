@@ -209,6 +209,75 @@ test("T025: a completed linked formal report shows real feedback, candidate cont
   assert.doesNotMatch(view.app.innerHTML, /private-reviewer-a|private-rubric|private-answer|scoringSpec/);
 });
 
+test("T077: one report read failure keeps other formal reports visible and offers recovery", async () => {
+  const secondSessionId = "assessment-source-b";
+  const historySessions = [
+    { sessionId: SOURCE_ID, purpose: "STANDARD", type: "MIXED", completedAt: formalSource().completedAt },
+    { sessionId: secondSessionId, purpose: "STANDARD", type: "READING", completedAt: formalSource().completedAt },
+  ];
+  const reportFailure = Object.assign(new Error("report service unavailable"), { status: 503 });
+  const view = mount({
+    historySessions,
+    overrides: {
+      getAssessmentSession: async (id) => formalSource({ id }),
+      getAssessmentReport: async (id) => {
+        if (id === secondSessionId) throw reportFailure;
+        return formalReport();
+      },
+    },
+  });
+
+  await flush();
+
+  assert.match(view.app.innerHTML, /72 分/);
+  assert.match(view.app.innerHTML, /正式报告/);
+  assert.match(view.app.innerHTML, /暂时无法读取/);
+  assert.match(view.app.innerHTML, /data-growth-refresh/);
+  assert.match(view.app.innerHTML, /report service unavailable/);
+  await click(view, "refresh");
+  assert.equal(view.calls.listSessions, 2, "Retry should reload current server data");
+});
+
+test("T077: blank retry candidate versions do not expose a remediation action", async () => {
+  const view = mount({
+    reportRecord: formalReport({
+      diagnosis: { retryCandidates: [{ questionVersionId: "  ", displayName: "版本缺失题目" }] },
+    }),
+  });
+
+  await flush();
+
+  assert.match(view.app.innerHTML, /缺少可核实的题目版本关联/);
+  assert.doesNotMatch(view.app.innerHTML, /data-growth-remediation/);
+});
+
+test("T077: a capped report list says older reports are available in full history", async () => {
+  const historySessions = Array.from({ length: 9 }, (_, index) => ({
+    sessionId: `assessment-source-${index + 1}`,
+    purpose: "STANDARD",
+    type: "MIXED",
+    completedAt: formalSource().completedAt,
+  }));
+  const requestedReportIds = [];
+  const view = mount({
+    historySessions,
+    overrides: {
+      getAssessmentSession: async (id) => formalSource({ id }),
+      getAssessmentReport: async (id) => {
+        requestedReportIds.push(id);
+        return formalReport({ id: `report-${id}`, sessionId: id });
+      },
+    },
+  });
+
+  await flush();
+
+  assert.equal(requestedReportIds.length, 8);
+  assert.equal(requestedReportIds.includes("assessment-source-9"), false);
+  assert.match(view.app.innerHTML, /这里只显示最近 8 条正式测评/);
+  assert.match(view.app.innerHTML, /查看完整学习历史/);
+});
+
 test("T025: zero and absent official scores remain different states", async () => {
   const zero = mount({ reportRecord: formalReport({ overallScore: 0 }) });
   await flush();

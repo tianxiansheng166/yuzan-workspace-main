@@ -82,7 +82,8 @@
   }
 
   function isActionableRetryCandidate(candidate) {
-    return isDisplayableRetryCandidate(candidate) && typeof candidate.questionVersionId === "string";
+    return isDisplayableRetryCandidate(candidate) &&
+      typeof candidate.questionVersionId === "string" && candidate.questionVersionId.trim().length > 0;
   }
 
   function sourceLinked(source, sessionId, schoolId, enrollmentId) {
@@ -211,9 +212,9 @@
   }
 
   async function loadReports(historySessions, identity, enrollmentId) {
-    const candidates = historySessions
-      .filter((session) => session && session.purpose !== "REMEDIATION" && session.sessionId)
-      .slice(0, 8);
+    const allCandidates = historySessions
+      .filter((session) => session && session.purpose !== "REMEDIATION" && session.sessionId);
+    const candidates = allCandidates.slice(0, 8);
     const results = await Promise.all(candidates.map(async (session) => {
       try {
         const [sourceRaw, reportRaw] = await Promise.all([
@@ -247,7 +248,7 @@
         return { session, report: null, state: "error", error };
       }
     }));
-    return results;
+    return { items: results, hasMore: allCandidates.length > candidates.length };
   }
 
   function trendSeries(progress) {
@@ -393,12 +394,9 @@
     return `<div class="growth-remediation-status" data-remediation-status="${safe(sourceSessionId)}"><p>只针对这份报告中服务端标记的题型；巩固结果不会计入正式测评分数。</p><button class="growth-button growth-button-primary" type="button" data-growth-remediation data-source-session-id="${safe(sourceSessionId)}">针对本次报告继续巩固</button></div>`;
   }
 
-  function renderReports(results, sessions) {
-    const reportError = results.find((entry) => entry.state === "error");
-    if (reportError) {
-      return `<section class="growth-card growth-record-card"><div class="growth-section-heading"><div><p class="growth-eyebrow">正式反馈</p><h2>已完成结果与教师反馈</h2></div>${icon("report", "growth-section-icon")}</div><div class="growth-inline-error" role="alert"><p>${safe(failureMessage(reportError.error))}</p><button class="growth-button growth-button-secondary" type="button" data-growth-retry>重试</button></div></section>`;
-    }
+  function renderReports(results, sessions, hasMore = false) {
     const official = results.filter((entry) => entry.state === "ready");
+    const reportErrors = results.filter((entry) => entry.state === "error");
     const reviewPending = results.filter((entry) => entry.state === "review-pending");
     const incomplete = results.filter((entry) => entry.state === "incomplete");
     const notGenerated = results.filter((entry) => entry.state === "not-generated");
@@ -422,6 +420,7 @@
       const sourceReference = `<details class="growth-source-reference"><summary>查看来源记录</summary><code>AssessmentReport ${safe(report.id)}</code><code>AssessmentSession ${safe(source.id)}</code></details>`;
       return `<article class="growth-report-row"><span class="growth-report-icon">${icon("report")}</span><div class="growth-report-copy"><div class="growth-report-title"><strong>${safe(session.type === "READING" ? "朗读测评" : session.type === "WRITTEN" ? "书面测评" : "综合测评")}</strong><span>${safe(reportSummary(report))}</span></div><p>完成于 ${safe(formatDate(completedAt, true))} · 报告生成于 ${safe(formatDate(report.generatedAt, true))}</p>${sourceReference}${candidateRows ? `<div class="growth-retry-focus"><b>报告中标记的待巩固内容</b><p>这些内容来自本次正式报告，不代表某项开放练习与报告存在系统关联。</p><ul>${candidateRows}</ul></div>` : ""}${feedback}${remediation}</div><a class="growth-inline-link" href="${safe(reportPath)}">查看正式报告 ${icon("trend")}</a></article>`;
     }).join("");
+    const failedCards = reportErrors.map(({ session, error }) => `<article class="growth-report-row growth-report-row-error"><span class="growth-report-icon">${icon("clock")}</span><div class="growth-report-copy"><div class="growth-report-title"><strong>${safe(session.type === "READING" ? "朗读测评" : session.type === "WRITTEN" ? "书面测评" : "综合测评")}正式报告</strong><span>暂时无法读取</span></div><p role="alert">${safe(failureMessage(error))}</p><button class="growth-button growth-button-secondary" type="button" data-growth-refresh>重试读取</button></div></article>`).join("");
     const missing = notGenerated.length
       ? `<div class="growth-not-generated"><span>${icon("clock")}</span><p><b>${notGenerated.length} 条已完成记录尚未生成正式报告</b><br>这些记录不会显示成绩。</p></div>`
       : "";
@@ -431,10 +430,12 @@
     const incompleteNotice = incomplete.length
       ? `<div class="growth-not-generated"><span>${icon("clock")}</span><p><b>${incomplete.length} 条报告的数据尚未完整</b><br>数据完整前不会展示总分。</p></div>`
       : "";
-    const empty = !official.length && !notGenerated.length && !reviewPending.length && !incomplete.length
+    const empty = !official.length && !reportErrors.length && !notGenerated.length && !reviewPending.length && !incomplete.length
       ? `<div class="growth-empty-inline">${icon("report")}<p>当前没有已完成的正式测评记录。</p></div>`
       : "";
-    return `<section class="growth-card growth-record-card"><div class="growth-section-heading"><div><p class="growth-eyebrow">正式测评</p><h2>正式报告与待巩固内容</h2><p>总分只来自已完成且完整的本人正式报告。</p></div><a class="growth-inline-link" href="/assessment/history/">查看学习历史 ${icon("trend")}</a></div><div class="growth-report-list">${cards}</div>${reviewNotice}${incompleteNotice}${missing}${empty}</section>`;
+    const historyNote = hasMore ? '<p class="growth-report-history-note">这里只显示最近 8 条正式测评；更早的结果可在完整学习历史中查看。</p>' : "";
+    const historyLabel = hasMore ? "查看完整学习历史" : "查看学习历史";
+    return `<section class="growth-card growth-record-card"><div class="growth-section-heading"><div><p class="growth-eyebrow">正式测评</p><h2>正式报告与待巩固内容</h2><p>总分只来自已完成且完整的本人正式报告。</p></div><a class="growth-inline-link" href="/assessment/history/">${historyLabel} ${icon("trend")}</a></div>${historyNote}<div class="growth-report-list">${cards}${failedCards}</div>${reviewNotice}${incompleteNotice}${missing}${empty}</section>`;
   }
 
   function renderPractices(practices, attempts, sessions) {
@@ -670,7 +671,7 @@
   }
 
   function render(data) {
-    const { profile, history, events, progress, sessions, attempts, practices, reports } = data;
+    const { profile, history, events, progress, sessions, attempts, practices, reports, moreReports } = data;
     const completed = Array.isArray(history.sessions) ? history.sessions : [];
     const pendingCount = sessions.filter((session) => activeStatuses.has(session.status)).length;
     const remediationCount = (progress.remediation || []).reduce((sum, entry) => sum + (entry.rounds?.length || 0), 0);
@@ -678,7 +679,7 @@
     const title = profile.displayName ? `${safe(profile.displayName)}的成长记录` : "我的成长记录";
     app.dataset.state = completed.length || pendingCount || events.events?.length ? "ready" : "empty";
     app.removeAttribute("aria-busy");
-    app.innerHTML = `<header class="growth-header"><div><p class="growth-overline">${icon("spark")} 记录真实的每一步</p><h1>${title}</h1><p class="growth-school-line">${icon("school")} ${schoolDetails}</p></div><a class="growth-back-link" href="/student/today/">${icon("trend")} 回到今日学习</a></header><section class="growth-summary-grid"><article class="growth-summary-tile"><span>${icon("check")}</span><div><small>已完成记录</small><strong>${completed.length}</strong><p>来自本人已完成的 Attempt</p></div></article><article class="growth-summary-tile"><span>${icon("clock")}</span><div><small>未完成 Attempt</small><strong>${pendingCount}</strong><p>包含进行中与处理中状态</p></div></article><article class="growth-summary-tile"><span>${icon("flag")}</span><div><small>专项巩固轮次</small><strong>${remediationCount}</strong><p>来自已完成的专项记录</p></div></article><article class="growth-summary-tile"><span>${icon("clock")}</span><div><small>最近学习时间</small><strong class="growth-summary-date">${safe(latestActivityAt(history, events, progress, sessions))}</strong><p>按本人最近一次记录更新</p></div></article></section><div class="growth-layout"><div class="growth-main-column">${renderStage(progress, completed.length, pendingCount)}${renderTrend(progress)}${renderAttempts(sessions, attempts, practices)}${renderReports(reports, sessions)}${renderTimeline(events, progress, sessions)}</div><aside class="growth-side-column">${renderPractices(practices, attempts, sessions)}${renderFeedback(events)}<section class="growth-card growth-note-card"><span>${icon("report")}</span><div><h2>关于正式成绩</h2><p>这里只展示本人已完成、报告完整且得分合法的正式结果。等待复核、处理中和缺失报告不会显示成分数。</p></div></section></aside></div>`;
+    app.innerHTML = `<header class="growth-header"><div><p class="growth-overline">${icon("spark")} 记录真实的每一步</p><h1>${title}</h1><p class="growth-school-line">${icon("school")} ${schoolDetails}</p></div><a class="growth-back-link" href="/student/today/">${icon("trend")} 回到今日学习</a></header><section class="growth-summary-grid"><article class="growth-summary-tile"><span>${icon("check")}</span><div><small>已完成记录</small><strong>${completed.length}</strong><p>来自本人已完成的 Attempt</p></div></article><article class="growth-summary-tile"><span>${icon("clock")}</span><div><small>未完成 Attempt</small><strong>${pendingCount}</strong><p>包含进行中与处理中状态</p></div></article><article class="growth-summary-tile"><span>${icon("flag")}</span><div><small>专项巩固轮次</small><strong>${remediationCount}</strong><p>来自已完成的专项记录</p></div></article><article class="growth-summary-tile"><span>${icon("clock")}</span><div><small>最近学习时间</small><strong class="growth-summary-date">${safe(latestActivityAt(history, events, progress, sessions))}</strong><p>按本人最近一次记录更新</p></div></article></section><div class="growth-layout"><div class="growth-main-column">${renderStage(progress, completed.length, pendingCount)}${renderTrend(progress)}${renderAttempts(sessions, attempts, practices)}${renderReports(reports, sessions, moreReports)}${renderTimeline(events, progress, sessions)}</div><aside class="growth-side-column">${renderPractices(practices, attempts, sessions)}${renderFeedback(events)}<section class="growth-card growth-note-card"><span>${icon("report")}</span><div><h2>关于正式成绩</h2><p>这里只展示本人已完成、报告完整且得分合法的正式结果。等待复核、处理中和缺失报告不会显示成分数。</p></div></section></aside></div>`;
     app.querySelector("[data-growth-retry]")?.addEventListener("click", init);
   }
 
@@ -734,12 +735,12 @@
       if (!Array.isArray(events?.events) || !Array.isArray(sessions)) {
         throw new Error("成长事件或 Attempt 响应不完整，请重试。");
       }
-      const [attempts, reports] = await Promise.all([
+      const [attempts, reportList] = await Promise.all([
         hydrateAttempts(sessions),
         loadReports(history.sessions, identity, enrollmentId),
       ]);
       if (version !== loadVersion || !sameIdentity(readIdentity(), identity)) return;
-      render({ profile, history, events, progress, sessions, attempts, practices, reports });
+      render({ profile, history, events, progress, sessions, attempts, practices, reports: reportList.items, moreReports: reportList.hasMore });
     } catch (error) {
       if (version === loadVersion && sameIdentity(readIdentity(), identity)) renderError(error);
     }
