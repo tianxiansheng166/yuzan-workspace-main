@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#fbfaf7" />
+    <title>题目管理｜语赞心声</title>
+    <link rel="stylesheet" href="/assets/common.css" />
+    <link rel="stylesheet" href="/teacher/question-bank/styles.css" />
+    <link rel="stylesheet" href="/shared/teacher-shell.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <main class="main-wrap">
+        <section class="question-bank-page" id="question-bank-page">
+          <header class="qb-heading">
+            <div>
+              <span class="qb-kicker">TEACHER · QUESTION BANK</span>
+              <h1>题目管理</h1>
+              <p>编写并保存本人学校的题目草稿，修改记录会按版本号校验。</p>
+            </div>
+            <button class="qb-primary" type="button" data-new-draft>
+              ＋ 新建题目
+            </button>
+          </header>
+
+          <div
+            class="qb-feedback"
+            id="qb-feedback"
+            role="alert"
+            aria-live="assertive"
+            hidden
+          ></div>
+
+          <aside class="qb-review-gate" aria-label="审核与发布状态说明">
+            <span class="qb-gate-icon" aria-hidden="true">i</span>
+            <div>
+              <strong>当前只保存 DRAFT 草稿</strong>
+              <p>
+                题目审核角色和发布权限尚未获得 Owner
+                批准。此页面不会提交审核或直接发布，保存的内容不会进入学生练习。
+              </p>
+            </div>
+            <span class="qb-gate-state">提交审核暂不可用</span>
+          </aside>
+
+          <div class="qb-workspace">
+            <aside class="qb-library" aria-label="本人可管理的题目">
+              <div class="qb-library-heading">
+                <div>
+                  <span class="qb-section-label">MY QUESTION BANK</span>
+                  <h2>本人题目</h2>
+                </div>
+                <div class="qb-library-tools">
+                  <span class="qb-count" id="qb-count">—</span
+                  ><button class="qb-refresh" type="button" data-refresh>
+                    刷新
+                  </button>
+                </div>
+              </div>
+              <label class="qb-search">
+                <span class="sr-only">搜索本人题目</span>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="10.8" cy="10.8" r="6.5" />
+                  <path d="m16 16 4.5 4.5" />
+                </svg>
+                <input
+                  id="qb-search"
+                  type="search"
+                  placeholder="搜索标题或题干"
+                  autocomplete="off"
+                />
+              </label>
+              <div class="qb-list" id="qb-list" aria-live="polite">
+                <p class="qb-list-state">正在读取本人题目…</p>
+              </div>
+              <p class="qb-list-footnote">
+                列表来自当前登录账号和当前学校的真实题目版本。
+              </p>
+            </aside>
+
+            <section class="qb-editor" aria-label="题目草稿编辑器">
+              <header class="qb-editor-heading">
+                <div>
+                  <span class="qb-section-label">DRAFT WORKSPACE</span>
+                  <h2 id="qb-editor-title">开始编写题目</h2>
+                </div>
+                <div class="qb-statuses">
+                  <span class="qb-status-pill" id="qb-draft-status"
+                    >尚未保存</span
+                  >
+                  <span class="qb-review-status" id="qb-review-status"
+                    >审核：未提交</span
+                  >
+                </div>
+              </header>
+
+              <div class="qb-editor-empty" id="qb-editor-empty">
+                <div class="qb-empty-mark" aria-hidden="true">✎</div>
+                <h3>选择一份草稿，或新建题目</h3>
+                <p>
+                  保存后会生成真实题目版本和
+                  revision。下次可从左侧重新打开继续编辑。
+                </p>
+                <button class="qb-secondary" type="button" data-new-draft>
+                  新建 DRAFT
+                </button>
+              </div>
+
+              <form id="qb-form" class="qb-form" hidden>
+                <div class="qb-field-grid">
+                  <label class="qb-field qb-wide">
+                    <span>题目标题 <i>*</i></span>
+                    <input
+                      name="title"
+                      maxlength="160"
+                      required
+                      placeholder="例如：辨认句子中的关键词"
+                    />
+                  </label>
+                  <label class="qb-field">
+                    <span>作答方式 <i>*</i></span>
+                    <select name="itemType" required>
+                      <option value="CHOICE">选择题</option>
+                      <option value="TEXT">文字作答</option>
+                    </select>
+                  </label>
+                  <label class="qb-field">
+                    <span>能力方向 <i>*</i></span>
+                    <select name="domain" required>
+                      <option value="READ">读</option>
+                      <option value="LISTEN">听</option>
+                      <option value="SPEAK">说</option>
+                      <option value="WRITE">写</option>
+                    </select>
+                  </label>
+                  <label class="qb-field">
+                    <span>难度 <i>*</i></span>
+                    <select name="difficulty" required>
+                      <option value="EASY">基础</option>
+                      <option value="MEDIUM">进阶</option>
+                      <option value="HARD">挑战</option>
+                    </select>
+                  </label>
+                  <label class="qb-field">
+                    <span>年级范围</span>
+                    <input
+                      name="gradeBand"
+                      maxlength="80"
+                      placeholder="如：四年级"
+                    />
+                  </label>
+                  <label class="qb-field">
+                    <span>能力水平</span>
+                    <input
+                      name="level"
+                      maxlength="80"
+                      placeholder="如：水平一级"
+                    />
+                  </label>
+                  <label class="qb-field">
+                    <span>能力标签</span>
+                    <input
+                      name="abilityCategory"
+                      maxlength="80"
+                      placeholder="如：词语理解"
+                    />
+                  </label>
+                  <label class="qb-field qb-score-field">
+                    <span>本题分值 <i>*</i></span>
+                    <div>
+                      <input
+                        name="maxScore"
+                        type="number"
+                        min="1"
+                        max="100"
+                        value="5"
+                        required
+                      /><small>分</small>
+                    </div>
+                  </label>
+                  <label class="qb-field qb-wide">
+                    <span>题干 <i>*</i></span>
+                    <textarea
+                      name="prompt"
+                      rows="4"
+                      maxlength="4000"
+                      required
+                      placeholder="写下学生将看到的题目内容"
+                    ></textarea>
+                  </label>
+                </div>
+
+                <section class="qb-answer-section" id="qb-choice-fields">
+                  <div class="qb-answer-heading">
+                    <div>
+                      <span class="qb-section-label">ANSWER OPTIONS</span>
+                      <h3>选项与正确答案</h3>
+                    </div>
+                    <span>至少填写 2 项</span>
+                  </div>
+                  <div class="qb-option-grid">
+                    <label class="qb-field"
+                      ><span>选项 A</span
+                      ><input name="optionA" maxlength="240" autocomplete="off"
+                    /></label>
+                    <label class="qb-field"
+                      ><span>选项 B</span
+                      ><input name="optionB" maxlength="240" autocomplete="off"
+                    /></label>
+                    <label class="qb-field"
+                      ><span>选项 C</span
+                      ><input name="optionC" maxlength="240" autocomplete="off"
+                    /></label>
+                    <label class="qb-field"
+                      ><span>选项 D</span
+                      ><input name="optionD" maxlength="240" autocomplete="off"
+                    /></label>
+                  </div>
+                  <label class="qb-field qb-correct-answer"
+                    ><span>正确选项 <i>*</i></span
+                    ><select name="correctOption">
+                      <option value="A">A</option>
+                      <option value="B">B</option>
+                      <option value="C">C</option>
+                      <option value="D">D</option>
+                    </select></label
+                  >
+                </section>
+
+                <section class="qb-answer-section" id="qb-text-fields" hidden>
+                  <div class="qb-answer-heading">
+                    <div>
+                      <span class="qb-section-label">ACCEPTED ANSWERS</span>
+                      <h3>标准答案</h3>
+                    </div>
+                    <span>每行一个答案</span>
+                  </div>
+                  <label class="qb-field"
+                    ><span>可接受答案 <i>*</i></span
+                    ><textarea
+                      name="acceptedAnswers"
+                      rows="3"
+                      placeholder="每行填写一个答案"
+                    ></textarea>
+                  </label>
+                </section>
+
+                <footer class="qb-form-footer">
+                  <p id="qb-save-status" role="status" aria-live="polite">
+                    尚未保存
+                  </p>
+                  <button class="qb-primary qb-save" type="submit">
+                    保存草稿
+                  </button>
+                </footer>
+              </form>
+            </section>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script src="/assets/api-client.js"></script>
+    <script src="/teacher/question-bank/app.js"></script>
+    <script src="/shared/teacher-shell.js" defer></script>
+  </body>
+</html>

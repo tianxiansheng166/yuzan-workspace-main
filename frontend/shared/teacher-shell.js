@@ -12,6 +12,7 @@
       { id: 'home', label: '首页', route: '/teacher', icon: '<svg viewBox="0 0 24 24"><path d="M3 10 12 3l9 7M5 9v11h14V9M9 20v-6h6v6"/></svg>' },
       { id: 'course', label: '课程', route: '/teacher/courses/spring/studio', icon: '<svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M8 9h8M8 13h5M7 3v4M17 3v4"/></svg>' },
       { id: 'task', label: '任务', route: '/teacher/assignments', icon: '<svg viewBox="0 0 24 24"><path d="M6 5h12l2 4v10H4V9zM8 5V3h8v2M8 11h8M8 15h5"/></svg>' },
+      { id: 'question-bank', label: '题目管理', route: '/teacher/question-bank/', icon: '<svg viewBox="0 0 24 24"><path d="M5 4.5A2.5 2.5 0 0 1 7.5 2H20v18H7.5A2.5 2.5 0 0 0 5 22zM5 4.5V22M9 7h7M9 11h7M9 15h4"/></svg>' },
       { id: 'research', label: '教研', route: '/research', icon: '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4 4"/></svg>' },
       { id: 'review', label: '复核', route: '/teacher/reviews/', icon: '<svg viewBox="0 0 24 24"><path d="M4 5h16v14H4zM7 15l3-3 2 2 3-4 2 3"/></svg>' },
       { id: 'diagnostics', label: '学情诊断', route: '/teacher/diagnostics/', icon: '<svg viewBox="0 0 24 24"><path d="M4 19V9m5 10V5m5 14v-7m5 7V3"/><path d="M3 20h18"/></svg>' },
@@ -29,6 +30,7 @@
       if (path === '/teacher') return 'home';
       if (path.startsWith('/teacher/courses')) return 'course';
       if (path.startsWith('/teacher/assignments')) return 'task';
+      if (path.startsWith('/teacher/question-bank')) return 'question-bank';
       if (path.startsWith('/teacher/reviews')) return 'review';
       if (path.startsWith('/teacher/diagnostics')) return 'diagnostics';
       if (path === '/research' || path.startsWith('/research/')) return 'research';

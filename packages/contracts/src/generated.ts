@@ -1138,6 +1138,42 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/schools/{schoolId}/teacher/question-bank/items": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 列出当前教师本人可管理的题目版本 */
+    get: operations["listTeacherQuestionBankDrafts"];
+    put?: never;
+    /** 创建教师本人题目 DRAFT */
+    post: operations["createTeacherQuestionBankDraft"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/teacher/question-bank/items/versions/{versionId}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 重新打开教师本人题目版本 */
+    get: operations["getTeacherQuestionBankDraft"];
+    /** 使用乐观并发 revision 更新本人 DRAFT */
+    put: operations["updateTeacherQuestionBankDraft"];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/schools/{schoolId}/assessments/sessions/{sourceSessionId}/remediation": {
     parameters: {
       query?: never;
@@ -3948,6 +3984,98 @@ export interface components {
       itemCount: number;
       masteredCount: number;
       percentage: number;
+    };
+    TeacherQuestionBankDraftChoice: {
+      /** @enum {string} */
+      key: "A" | "B" | "C" | "D";
+      text: string;
+    };
+    /** @description CHOICE 题需提供 2–4 个 options 和 correctOption；TEXT 题需提供 acceptedAnswers。 */
+    TeacherQuestionBankDraftInput: {
+      title: string;
+      prompt: string;
+      /** @enum {string} */
+      itemType: "CHOICE" | "TEXT";
+      /** @enum {string} */
+      domain: "LISTEN" | "SPEAK" | "READ" | "WRITE";
+      /** @enum {string} */
+      difficulty: "EASY" | "MEDIUM" | "HARD";
+      gradeBand?: string;
+      level?: string;
+      abilityCategory?: string;
+      maxScore: number;
+      options?: components["schemas"]["TeacherQuestionBankDraftChoice"][];
+      /** @enum {string} */
+      correctOption?: "A" | "B" | "C" | "D";
+      acceptedAnswers?: string[];
+    };
+    /** @description DRAFT 全量替换；expectedRevision 与数据库当前 revision 不一致时返回 409。 */
+    TeacherQuestionBankDraftUpdateInput: {
+      expectedRevision: number;
+      title: string;
+      prompt: string;
+      /** @enum {string} */
+      itemType: "CHOICE" | "TEXT";
+      /** @enum {string} */
+      domain: "LISTEN" | "SPEAK" | "READ" | "WRITE";
+      /** @enum {string} */
+      difficulty: "EASY" | "MEDIUM" | "HARD";
+      gradeBand?: string;
+      level?: string;
+      abilityCategory?: string;
+      maxScore: number;
+      options?: components["schemas"]["TeacherQuestionBankDraftChoice"][];
+      /** @enum {string} */
+      correctOption?: "A" | "B" | "C" | "D";
+      acceptedAnswers?: string[];
+    };
+    TeacherQuestionBankDraft: {
+      /** Format: uuid */
+      questionVersionId: string;
+      /** Format: uuid */
+      itemId: string;
+      version: number;
+      revision: number;
+      /** @enum {string} */
+      status: "DRAFT" | "PUBLISHED" | "RETIRED";
+      /**
+       * @description DRAFT 未提交审核；其他状态不由本作者接口管理审核状态。
+       * @enum {string}
+       */
+      reviewStatus: "NOT_SUBMITTED" | "NOT_TRACKED";
+      /** Format: date-time */
+      publishedAt: string | null;
+      title: string;
+      prompt: string;
+      /** @enum {string} */
+      itemType: "CHOICE" | "TEXT";
+      /** @enum {string|null} */
+      domain: "LISTEN" | "SPEAK" | "READ" | "WRITE" | null;
+      questionType: string | null;
+      gradeBand: string | null;
+      level: string | null;
+      difficulty: string | null;
+      abilityCategory: string | null;
+      options: components["schemas"]["TeacherQuestionBankDraftChoice"][];
+      /** @enum {string|null} */
+      correctOption: "A" | "B" | "C" | "D" | null;
+      acceptedAnswers: string[];
+      maxScore: number | null;
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: date-time */
+      updatedAt: string;
+    };
+    TeacherQuestionBankDraftList: {
+      items: components["schemas"]["TeacherQuestionBankDraft"][];
+    };
+    TeacherQuestionBankDraftListResponse: {
+      data: components["schemas"]["TeacherQuestionBankDraftList"];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    TeacherQuestionBankDraftResponse: {
+      data: components["schemas"]["TeacherQuestionBankDraft"];
+      meta: components["schemas"]["EnvelopeMeta"];
     };
     QuestionBankProgressResponse: {
       data: components["schemas"]["QuestionBankProgress"];
@@ -7058,6 +7186,121 @@ export interface operations {
       };
       400: components["responses"]["BadRequest"];
       403: components["responses"]["Forbidden"];
+    };
+  };
+  listTeacherQuestionBankDrafts: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 当前教师本人在当前学校的题目版本，最多返回最近更新的 100 条 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["TeacherQuestionBankDraftListResponse"];
+        };
+      };
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+    };
+  };
+  createTeacherQuestionBankDraft: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["TeacherQuestionBankDraftInput"];
+      };
+    };
+    responses: {
+      /** @description 已持久化的 DRAFT 题目版本 */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["TeacherQuestionBankDraftResponse"];
+        };
+      };
+      400: components["responses"]["BadRequest"];
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+    };
+  };
+  getTeacherQuestionBankDraft: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        versionId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 本人题目版本及当前 revision */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["TeacherQuestionBankDraftResponse"];
+        };
+      };
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  updateTeacherQuestionBankDraft: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        versionId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["TeacherQuestionBankDraftUpdateInput"];
+      };
+    };
+    responses: {
+      /** @description 已保存的新 revision */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["TeacherQuestionBankDraftResponse"];
+        };
+      };
+      400: components["responses"]["BadRequest"];
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+      409: components["responses"]["Conflict"];
     };
   };
   createAssessmentRemediation: {

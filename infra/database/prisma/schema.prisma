@@ -398,6 +398,7 @@ model User {
   lessonPlanDrafts         LessonPlanDraft[]
   pilotFeedbackReported    PilotFeedback[]       @relation("PilotFeedbackReporter")
   pilotFeedbackHandled     PilotFeedback[]       @relation("PilotFeedbackHandler")
+  authoredQuestionVersions  QuestionBankItemVersion[] @relation("QuestionBankVersionAuthor")
 
   @@index([status])
 }
@@ -830,13 +831,16 @@ enum QuestionBankItemVersionStatus {
   RETIRED
 }
 
-/// Immutable authored content for one reusable question version. scoringSpec
+/// One authored content version. DRAFT rows can be revised by their author;
+/// published delivery content is treated as an immutable snapshot. scoringSpec
 /// is intentionally separate from deliverySpec and is never selected by a
 /// student-facing query.
 model QuestionBankItemVersion {
   id           String                        @id @default(uuid()) @db.Uuid
   itemId       String                        @db.Uuid
   version      Int
+  revision     Int                           @default(1)
+  authorUserId String?                       @db.Uuid
   deliverySpec Json
   scoringSpec  Json
   /// Server-only provenance for the canonical authoring pipeline. It is kept
@@ -849,12 +853,14 @@ model QuestionBankItemVersion {
   updatedAt    DateTime                      @updatedAt
 
   item             QuestionBankItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  author           User?             @relation("QuestionBankVersionAuthor", fields: [authorUserId], references: [id], onDelete: SetNull)
   practiceItemRefs PracticeItemRef[]
   assessmentItems  AssessmentItem[]
   pilotFeedback    PilotFeedback[]
 
   @@unique([itemId, version])
   @@index([status, publishedAt])
+  @@index([authorUserId, status, updatedAt])
 }
 
 model ActivityAttempt {

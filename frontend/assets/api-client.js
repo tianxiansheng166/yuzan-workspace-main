@@ -956,6 +956,28 @@
     const params = new URLSearchParams({ practiceDefinitionId });
     return request(`/schools/${getActiveSchoolId()}/teacher/question-bank-diagnostics/classes/${encodeURIComponent(classId)}/students/${encodeURIComponent(enrollmentId)}?${params.toString()}`);
   }
+  async function listTeacherQuestionBankDrafts() {
+    const schoolId = await requireActiveSchoolId();
+    return request(`/schools/${schoolId}/teacher/question-bank/items`);
+  }
+  async function createTeacherQuestionBankDraft(payload) {
+    const schoolId = await requireActiveSchoolId();
+    return request(`/schools/${schoolId}/teacher/question-bank/items`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  }
+  async function getTeacherQuestionBankDraft(versionId) {
+    const schoolId = await requireActiveSchoolId();
+    return request(`/schools/${schoolId}/teacher/question-bank/items/versions/${encodeURIComponent(versionId)}`);
+  }
+  async function updateTeacherQuestionBankDraft(versionId, payload) {
+    const schoolId = await requireActiveSchoolId();
+    return request(`/schools/${schoolId}/teacher/question-bank/items/versions/${encodeURIComponent(versionId)}`, {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+    });
+  }
   async function createTeacherQuestionBankRemediationAssignments(classId, payload) {
     return request(`/schools/${getActiveSchoolId()}/teacher/question-bank-diagnostics/classes/${encodeURIComponent(classId)}/remediation-assignments`, {
       method: 'POST',
@@ -1641,6 +1663,10 @@
     getTeacherQuestionBankDiagnosticCatalog,
     getTeacherQuestionBankDiagnosticDashboard,
     getTeacherQuestionBankDiagnosticStudentDetail,
+    listTeacherQuestionBankDrafts,
+    createTeacherQuestionBankDraft,
+    getTeacherQuestionBankDraft,
+    updateTeacherQuestionBankDraft,
     createTeacherQuestionBankRemediationAssignments,
     createAssessmentSession,
     startAssessmentSession,
