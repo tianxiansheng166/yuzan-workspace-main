@@ -13,7 +13,7 @@
     ['RECOMMENDED', '推荐给我'], ['ALL', '全部练习'], ['SPECIALIZED', '专项训练'],
     ['COMPREHENSIVE', '综合练习'], ['MOCK', '模拟练习'], ['FAVORITE', '我的收藏'],
   ];
-  const state = { query: '', tab: 'RECOMMENDED', filters: {}, sort: 'RECOMMENDED', view: 'grid', cursor: null, catalog: null, assignedRemediations: null, practiceAttemptsByDefinition: null, practiceAttemptStatusPromise: null, loadingMore: false, requestSerial: 0, message: '', messageRole: 'status' };
+  const state = { query: '', tab: 'RECOMMENDED', filters: {}, sort: 'RECOMMENDED', view: 'grid', cursor: null, catalog: null, assignedRemediations: null, practiceAttemptsByDefinition: null, practiceAttemptsIdentityKey: null, practiceAttemptStatusPromise: null, loadingMore: false, requestSerial: 0, message: '', messageRole: 'status' };
   const safe = value => String(value ?? '').replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character]));
   const shell = body => `<div class="shell practice-${page}"><main class="page practice-page"><div class="practice-contours"></div>${body}</main></div>`;
   const icon = name => Visuals?.icon(name) || `<span class="practice-icon-fallback" aria-hidden="true">${({ search: '⌕', filter: '≡', grid: '▦', list: '☷', arrow: '→', star: '☆', filledStar: '★', clock: '◷', mic: '◉', close: '×', book: '▤' }[name] || '•')}</span>`;
@@ -161,10 +161,25 @@
     }));
     return output;
   }
+  function currentPracticeIdentity() {
+    const schoolId = Api?.getActiveSchoolId?.() || '';
+    const studentId = Api?.getStoredUser?.()?.id || '';
+    const token = Api?.getToken?.() || '';
+    if (!schoolId || !studentId || !token) return null;
+    return { schoolId, studentId, key: JSON.stringify([schoolId, studentId, token]) };
+  }
   async function loadPracticeAttemptStates() {
+    const identity = currentPracticeIdentity();
+    const identityKey = identity?.key || '';
+    if (state.practiceAttemptsIdentityKey !== identityKey) {
+      state.practiceAttemptsByDefinition = null;
+      state.practiceAttemptStatusPromise = null;
+      state.practiceAttemptsIdentityKey = identityKey;
+    }
+    if (!identity) return new Map();
     if (state.practiceAttemptsByDefinition) return state.practiceAttemptsByDefinition;
     if (state.practiceAttemptStatusPromise) return state.practiceAttemptStatusPromise;
-    state.practiceAttemptStatusPromise = (async () => {
+    const statusPromise = (async () => {
       const sessions = [];
       const seenCursors = new Set();
       let cursor;
@@ -182,19 +197,32 @@
         try { return await Api.getPracticeAttempt(session.id); }
         catch (err) { if (err.status === 404) return null; throw err; }
       });
+      if (currentPracticeIdentity()?.key !== identity.key) return new Map();
       const byDefinition = new Map();
       for (const attempt of attempts) {
-        if (!attempt?.practiceDefinitionId) continue;
+        // The session list is a general assessment history. Only a fully
+        // identified student Attempt with explicit null course scope is a
+        // legal resume target for this standalone practice catalog.
+        if (!attempt?.practiceDefinitionId
+          || attempt.schoolId !== identity.schoolId
+          || attempt.initiatorUserId !== identity.studentId
+          || !attempt.enrollmentId
+          || attempt.courseSubmissionId !== null
+          || attempt.courseActivityId !== null) continue;
         const current = byDefinition.get(attempt.practiceDefinitionId);
         const updatedAt = Date.parse(attempt.updatedAt || attempt.createdAt || '') || 0;
         const currentUpdatedAt = current ? Date.parse(current.updatedAt || current.createdAt || '') || 0 : -1;
         if (!current || updatedAt > currentUpdatedAt) byDefinition.set(attempt.practiceDefinitionId, attempt);
       }
+      if (currentPracticeIdentity()?.key !== identity.key) return new Map();
       state.practiceAttemptsByDefinition = byDefinition;
       return byDefinition;
     })();
-    try { return await state.practiceAttemptStatusPromise; }
-    finally { state.practiceAttemptStatusPromise = null; }
+    state.practiceAttemptStatusPromise = statusPromise;
+    try { return await statusPromise; }
+    finally {
+      if (state.practiceAttemptStatusPromise === statusPromise) state.practiceAttemptStatusPromise = null;
+    }
   }
   async function toggleFavorite(id, button) {
     button.disabled = true;

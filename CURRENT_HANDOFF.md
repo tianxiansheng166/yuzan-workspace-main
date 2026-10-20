@@ -3,6 +3,13 @@
 Last updated: 2026-10-20
 Repository: `yuzan-workspace-main`
 
+## YZ-RD-T081 standalone practice Attempt scope fix (2026-10-20)
+
+- Fixed practice catalog resume selection to require a current school/student identity, matching definition and enrollment, and explicit null `courseSubmissionId` plus `courseActivityId`. Recency ranks eligible standalone Attempts only; course continuation rules are unchanged.
+- Baseline regression reproduced the issue before the source edit: 3 failing scope cases and 1 passing standalone-only case. Final T081 regressions pass 6/6, focused practice tests pass 33/33, and the full frontend suite passes 155/155 with runtime verification.
+- Native API/PostgreSQL E2E is `NOT_RUN`; no T081-authorized isolated runtime was available and Docker/Compose was not used. The formal QuestionVersion gate remains open. API lint was not rerun; the T076 capsule records 733 inherited unwaived API test-lint findings, so `READY_TO_MERGE=NO`.
+- The current `getPracticeAttempt` handler returns the persisted Attempt row with course scope fields, while its OpenAPI 200 response has no schema. Exact API/Contracts documentation request and detailed evidence: [`evidence/yz-rd-t081/RESULTS.md`](evidence/yz-rd-t081/RESULTS.md). Historical L4 incident remains `OPEN`.
+
 ## YZ-RD-T068 unified teacher studio mobile UX integration (2026-10-20)
 
 - INTEGRATED / FRONTEND_VERIFIED on independent branch `feat/yz-rd-t068-unified-teacher-studio-mobile-ux-integration`, from exact T064 BASE `5422af364c32c1feffe1e995884f71a4271488d3`. No-FF merge `579b2178e251c1afaac02422f01d98a6869887ef` has T064 as first parent and T067 `e4cf946b107e2fe30b57f7e6200b4ed7f45112d1` as second parent.
