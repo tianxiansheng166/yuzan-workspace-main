@@ -8,7 +8,6 @@ import {
   QuestionBankRuntimeImportService,
   type CanonicalManifest,
 } from "../modules/assessment/question-bank-runtime-import.service.js";
-import { QuestionBankApplyModule } from "./question-bank-apply.module.js";
 
 type CommandArguments = {
   apply: boolean;
@@ -17,14 +16,32 @@ type CommandArguments = {
   schoolId?: string;
   classId?: string;
   sourceDir?: string;
+  sourceManifest?: string;
+  sourceManifestSha256?: string;
 };
 
+type SourceRead = { path: string; role: "questions" | "answers" | "media"; level: number; sha256: string; bytes: number };
+type SourcePaths = { questions: string; answers: string; media: string };
+
 type SourceImporterModule = {
-  defaultOptions: { questions: string; answers: string; media: string };
+  defaultOptions: { questions: string; answers: string; media: string; sourceRoot: string };
   readZipEntry(file: string, entry: string): Promise<Uint8Array>;
+  cleanupSourceWorkspace(workspace: string): Promise<void>;
   run(values?: readonly string[] | Record<string, unknown>): Promise<{
-    report: { selectedLevel: number | null; summary: { items: number; points: number; bound: number; missing: number; ambiguous: number }; validation: { errors: number } };
+    report: {
+      selectedLevel: number | null;
+      summary: { items: number; points: number; bound: number; missing: number; ambiguous: number };
+      validation: { errors: number };
+      sourceReadAudit?: {
+        manifest: { path: string; sha256: string };
+        openedFiles: SourceRead[];
+        archiveEntries: Array<{ path: string; level: number | null; sha256: string; mediaType: string; bytes: number }>;
+      };
+    };
     manifest: CanonicalManifest;
+    sourceReads?: SourceRead[];
+    sourcePaths?: SourcePaths;
+    sourceWorkspace?: string;
   }>;
 };
 
@@ -65,6 +82,18 @@ function parseArguments(values: readonly string[]): CommandArguments {
       const sourceDir = values[++index];
       if (!sourceDir) fail("--source-dir requires a directory path");
       result.sourceDir = path.resolve(sourceDir);
+      continue;
+    }
+    if (value === "--source-manifest") {
+      const sourceManifest = values[++index];
+      if (!sourceManifest) fail("--source-manifest requires a path");
+      result.sourceManifest = path.resolve(sourceManifest);
+      continue;
+    }
+    if (value === "--source-manifest-sha256") {
+      const sourceManifestSha256 = values[++index];
+      if (!sourceManifestSha256) fail("--source-manifest-sha256 requires the owner-approved digest");
+      result.sourceManifestSha256 = sourceManifestSha256;
       continue;
     }
     fail(`unknown command argument ${value}`);
@@ -141,6 +170,9 @@ async function main(): Promise<void> {
     questions: path.join(sourceDir, "题库【三改】.docx"),
     answers: path.join(sourceDir, "答案及评分细则.docx"),
     media: path.join(sourceDir, "题库音频及图片.zip"),
+    sourceRoot: sourceDir,
+    sourceManifest: arguments_.sourceManifest,
+    sourceManifestSha256: arguments_.sourceManifestSha256,
     contentRepairs: path.join(process.cwd(), "tools/question-bank-importer/content-repairs.json"),
     output: path.join(process.env.TMPDIR ?? "/tmp", "yuzan-question-bank-generated"),
   };
@@ -148,56 +180,74 @@ async function main(): Promise<void> {
   // database connection, MinIO call, or source-to-runtime conversion exists.
   const preflight = await sourceImporter.run({
     ...sourceOptions,
+    keepSourceWorkspace: arguments_.apply,
     ...(arguments_.all ? { all: true } : { level: arguments_.level }),
   });
-  const expectedLevels = arguments_.all ? 6 : 1;
-  const expectedItems = expectedLevels * 20;
-  const expectedPoints = expectedLevels * 100;
-  if (
-    (arguments_.all ? preflight.report.selectedLevel !== null : preflight.report.selectedLevel !== arguments_.level)
-    || preflight.report.summary.items !== expectedItems
-    || preflight.report.summary.points !== expectedPoints
-    || preflight.report.summary.bound !== expectedItems
-    || preflight.report.summary.missing !== 0
-    || preflight.report.summary.ambiguous !== 0
-    || preflight.report.validation.errors !== 0
-  ) {
-    fail(`canonical preflight did not satisfy the required ${expectedItems}-item, ${expectedPoints}-point, zero-error gate`);
-  }
-  if (!arguments_.apply) {
-    console.log(JSON.stringify({
-      mode: "DRY RUN — NO DATABASE WRITE — NO MINIO WRITE",
-      level: arguments_.all ? "all" : arguments_.level,
-      preflight: preflight.report.summary,
-    }, null, 2));
-    return;
-  }
-
-  const sourceDocuments = {
-    questionDocx: await sourceIdentity(sourceOptions.questions),
-    answerDocx: await sourceIdentity(sourceOptions.answers),
-    mediaArchive: await sourceIdentity(sourceOptions.media),
-  };
-  const app = await NestFactory.createApplicationContext(QuestionBankApplyModule, { logger: ["error", "warn"] });
   try {
-    const prisma = app.get(PrismaService);
-    const service = app.get(QuestionBankRuntimeImportService);
-    const target = await resolveTarget(prisma, arguments_);
-    const result = await service.apply({
-      ...target,
-      manifest: preflight.manifest,
-      sourceDocuments,
-      readMedia: (zipPath) => sourceImporter.readZipEntry(sourceOptions.media, zipPath),
-    });
-    console.log(JSON.stringify({
-      mode: "APPLY",
-      level: arguments_.all ? "all" : arguments_.level,
-      target,
-      preflight: preflight.report.summary,
-      result,
-    }, null, 2));
+    const expectedLevels = arguments_.all ? 6 : 1;
+    const expectedItems = expectedLevels * 20;
+    const expectedPoints = expectedLevels * 100;
+    if (
+      (arguments_.all ? preflight.report.selectedLevel !== null : preflight.report.selectedLevel !== arguments_.level)
+      || preflight.report.summary.items !== expectedItems
+      || preflight.report.summary.points !== expectedPoints
+      || preflight.report.summary.bound !== expectedItems
+      || preflight.report.summary.missing !== 0
+      || preflight.report.summary.ambiguous !== 0
+      || preflight.report.validation.errors !== 0
+    ) {
+      fail(`canonical preflight did not satisfy the required ${expectedItems}-item, ${expectedPoints}-point, zero-error gate`);
+    }
+    if (!arguments_.apply) {
+      console.log(JSON.stringify({
+        mode: "DRY RUN — NO DATABASE WRITE — NO MINIO WRITE",
+        level: arguments_.all ? "all" : arguments_.level,
+        preflight: preflight.report.summary,
+      }, null, 2));
+      return;
+    }
+
+    const sourcePaths = preflight.sourcePaths ?? {
+      questions: sourceOptions.questions,
+      answers: sourceOptions.answers,
+      media: sourceOptions.media,
+    };
+    const sourceForRole = async (role: SourceRead["role"], fallback: string) => {
+      const sourceRead = preflight.sourceReads?.find((entry) => entry.role === role);
+      return sourceRead
+        ? { fileName: path.basename(sourceRead.path), sha256: sourceRead.sha256 }
+        : await sourceIdentity(fallback);
+    };
+    const [questionDocx, answerDocx, mediaArchive] = await Promise.all([
+      sourceForRole("questions", sourceOptions.questions),
+      sourceForRole("answers", sourceOptions.answers),
+      sourceForRole("media", sourceOptions.media),
+    ]);
+    const { QuestionBankApplyModule } = await import("./question-bank-apply.module.js");
+    const app = await NestFactory.createApplicationContext(QuestionBankApplyModule, { logger: ["error", "warn"] });
+    try {
+      const prisma = app.get(PrismaService);
+      const service = app.get(QuestionBankRuntimeImportService);
+      const target = await resolveTarget(prisma, arguments_);
+      const result = await service.apply({
+        ...target,
+        manifest: preflight.manifest,
+        sourceDocuments: { questionDocx, answerDocx, mediaArchive },
+        readMedia: (zipPath) => sourceImporter.readZipEntry(sourcePaths.media, zipPath),
+      });
+      console.log(JSON.stringify({
+        mode: "APPLY",
+        level: arguments_.all ? "all" : arguments_.level,
+        target,
+        preflight: preflight.report.summary,
+        sourceReadAudit: preflight.report.sourceReadAudit,
+        result,
+      }, null, 2));
+    } finally {
+      await app.close();
+    }
   } finally {
-    await app.close();
+    if (preflight.sourceWorkspace) await sourceImporter.cleanupSourceWorkspace(preflight.sourceWorkspace);
   }
 }
 

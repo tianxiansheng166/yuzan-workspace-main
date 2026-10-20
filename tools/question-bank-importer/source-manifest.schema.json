@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yuzan.example/schemas/question-bank-source-manifest-v1.json",
+  "title": "Question bank level-isolated source manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "files"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "files": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["role", "level", "path", "sha256"],
+        "properties": {
+          "role": { "enum": ["questions", "answers", "media"] },
+          "level": { "type": "integer", "minimum": 1, "maximum": 6 },
+          "path": { "type": "string", "minLength": 1 },
+          "sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" }
+        }
+      }
+    }
+  }
+}

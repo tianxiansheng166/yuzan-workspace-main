@@ -1,0 +1,4 @@
+COMMAND=node backend/api/dist/scripts/question-bank-apply.js -- --level 1 --source-dir '/home/tian/code/yuzan-workspace-main/习题课程资源'
+Question Bank source boundary rejected input: an owner-approved source manifest is required before source files can be opened
+EXPECTED_EXIT=1
+ACTUAL_EXIT=1

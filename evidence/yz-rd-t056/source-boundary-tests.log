@@ -1,0 +1,32 @@
+✔ numbered blocks retain authored text, ordinal, and paragraph source trace (3.144315ms)
+✔ unnumbered blocks use paragraph boundaries and exclude instruction paragraphs (1.010331ms)
+✔ generic completion grammar splits two unnumbered authored blocks without a level pivot (0.550543ms)
+✔ the same completion grammar handles both level-three and level-five source blocks (0.339114ms)
+✔ answer groups bind by level, canonical family, and source ordinal (1.634042ms)
+✔ answer binding fails closed for missing, ambiguous, and invalid answers (0.385992ms)
+✔ image matching is exact, perceptual, ZIP-order independent, and fail-closed (0.299841ms)
+✔ audio mapping is unique-only and does not silently choose a file (0.260688ms)
+✔ structural validation catches counts, points, and delivery scoring leaks (0.332204ms)
+✔ EXACT_CHOICE validation rejects an answer key absent from authored options (0.400128ms)
+✔ generic structural recovery promotes one unlabeled candidate before B/C/D to A (0.318942ms)
+✔ structural recovery fails closed when two unlabeled candidates are ambiguous (0.235047ms)
+✔ generic structural recovery promotes two unlabeled candidates before C/D to A/B (0.259256ms)
+✔ structural recovery does not infer A from an incomplete C/D suffix (0.21743ms)
+✔ existing A/B/C/D choices are never rewritten by recovery (0.146773ms)
+✔ content repair ledger adds a derived item without a fake Word paragraph trace (5.058104ms)
+✔ level filtering isolates the selected manifest (0.126044ms)
+✔ Level 1 allowlist opens and hashes only Level 1 files; Level 4 paths stay unopened (7.988207ms)
+✔ production source opener stages a pinned Level 1 package and hashes the opened bytes (3.094496ms)
+✔ Level 1 request fails before opening any source when its allowlist is incomplete (1.197735ms)
+✔ missing owner-pinned manifest rejects before source-open callback (0.202715ms)
+✔ owner manifest digest mismatch rejects before source-open callback (1.714669ms)
+✔ Level 1 importer rejects missing manifest before touching mixed source paths (0.689758ms)
+✔ Level mode must be explicit and cannot combine a Level 1 request with --all (0.42183ms)
+ℹ tests 24
+ℹ suites 0
+ℹ pass 24
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 105.37151

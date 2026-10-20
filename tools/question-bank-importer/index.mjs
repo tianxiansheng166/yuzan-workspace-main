@@ -6,6 +6,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
 import sharp from "sharp";
+import { cleanupSourceWorkspace, materializeLevelSources } from "./source-read-boundary.mjs";
 
 const exec = promisify(execFile);
 const root = path.resolve(import.meta.dirname, "../..");
@@ -13,6 +14,7 @@ export const defaultOptions = Object.freeze({
   questions: path.join(root, "local_sources/question-bank/题库【三改】.docx"),
   answers: path.join(root, "local_sources/question-bank/答案及评分细则.docx"),
   media: path.join(root, "local_sources/question-bank/题库音频及图片.zip"),
+  sourceRoot: path.join(root, "local_sources/question-bank"),
   contentRepairs: path.join(import.meta.dirname, "content-repairs.json"),
   output: path.join(root, "local_sources/question-bank/.generated"),
 });
@@ -966,9 +968,14 @@ function args(values) {
     else if (values[index] === "--level") result.level = Number(values[++index]);
     else if (values[index] === "--source-dir") {
       const sourceDir = path.resolve(values[++index] || "");
+      result.sourceRoot = sourceDir;
       result.questions = path.join(sourceDir, "题库【三改】.docx");
       result.answers = path.join(sourceDir, "答案及评分细则.docx");
       result.media = path.join(sourceDir, "题库音频及图片.zip");
+    } else if (values[index] === "--source-manifest") {
+      result.sourceManifest = path.resolve(values[++index] || "");
+    } else if (values[index] === "--source-manifest-sha256") {
+      result.sourceManifestSha256 = values[++index];
     } else if (values[index] === "--output") {
       result.output = path.resolve(values[++index] || "");
     }
@@ -981,73 +988,145 @@ function filteredIssues(issues, level) {
 }
 
 export async function run(values = process.argv.slice(2)) {
-  const options = Array.isArray(values) ? args(values) : values;
-  const issues = [];
-  const [questionDoc, answerDoc, media, repairLedger] = await Promise.all([
-    readDocx(options.questions),
-    readDocx(options.answers),
-    inventory(options.media),
-    readContentRepairLedger(options.contentRepairs),
-  ]);
-  const allLevels = parseQuestionDocument(questionDoc, issues);
-  applyContentRepairs(allLevels, repairLedger, issues);
-  const parsedAnswers = parseAnswerDocument(answerDoc);
-  bindAnswerGroups(allLevels, parsedAnswers, issues);
-  await bindMedia(allLevels, questionDoc, options, media, issues);
-  validateQuestions(allLevels, issues);
-  const chosenLevels = selectLevels(allLevels, options.level);
-  const relevant = filteredIssues(issues, options.level);
-  const summary = scoringSummary(chosenLevels);
-  const report = {
-    mode: "DRY RUN — NO DATABASE WRITE — NO MINIO WRITE",
-    questionDocx: {
-      levels: allLevels.length,
-      embeddedImages: questionDoc.occurrences.length,
-      parsedItems: allLevels.reduce((sum, level) => sum + level.questions.length, 0),
-      contentRepairs: repairLedger.repairs?.length ?? 0,
-    },
-    answerDocx: {
-      levels: parsedAnswers.levels.length,
-      groups: parsedAnswers.groups.length,
-    },
-    media: {
-      totalFiles: media.length,
-      images: media.filter((entry) => entry.mediaType === "IMAGE").length,
-      audio: media.filter((entry) => entry.mediaType === "AUDIO").length,
-      byLevel: Object.fromEntries([1, 2, 3, 4, 5, 6].map((level) => [level, {
-        images: media.filter((entry) => entry.level === level && entry.mediaType === "IMAGE").length,
-        audio: media.filter((entry) => entry.level === level && entry.mediaType === "AUDIO").length,
-      }])),
-    },
-    selectedLevel: options.level ?? null,
-    summary,
-    validation: {
-      errors: relevant.filter((issue) => issue.severity === "ERROR").length,
-      warnings: relevant.filter((issue) => issue.severity === "WARNING").length,
-      levels: chosenLevels.map((level) => validationLevelSummary(level, issues)),
-    },
-    issues: relevant,
-  };
-  await mkdir(options.output, { recursive: true });
-  await Promise.all([
-    writeFile(path.join(options.output, "manifest.json"), JSON.stringify({
-      schemaVersion: 1,
-      source: { questions: options.questions, answers: options.answers, media: options.media, contentRepairs: options.contentRepairs },
-      levels: chosenLevels,
-      issues: relevant,
-    }, null, 2)),
-    writeFile(path.join(options.output, "validation-report.json"), JSON.stringify(report, null, 2)),
-    writeFile(path.join(options.output, "media-inventory.json"), JSON.stringify(media, null, 2)),
-  ]);
-  console.log(`QB source validator\n${report.mode}`);
-  console.log(`Parsed items: ${report.questionDocx.parsedItems}`);
-  console.log(`Media: ${report.media.totalFiles} files (${report.media.images} images, ${report.media.audio} audio)`);
-  console.log(`Selected: ${summary.items} items, ${summary.points} points, scoring binding ${summary.bound}/${summary.items} (missing ${summary.missing}, ambiguous ${summary.ambiguous})`);
-  console.log(`Validation: errors ${report.validation.errors}, warnings ${report.validation.warnings}`);
-  for (const issue of relevant.filter((entry) => entry.severity === "ERROR")) {
-    console.log(`ERROR L${issue.level ?? "?"} / ${issue.family ?? "SOURCE"} ${issue.code}${issue.expected !== undefined ? ` expected ${issue.expected} actual ${issue.actual}` : ""}`);
+  let options = Array.isArray(values) ? args(values) : values;
+  if (options.all && options.level !== undefined) {
+    throw new Error("Question Bank source boundary rejected input: use either --all or one --level, not both");
   }
-  return { report, manifest: { levels: chosenLevels, issues: relevant }, issues };
+  if (options.all && (options.sourceManifest || options.sourceManifestSha256)) {
+    throw new Error("Question Bank source boundary rejected input: a level manifest cannot be combined with --all");
+  }
+  if (options.level === undefined && !options.all) {
+    throw new Error("Question Bank source boundary rejected input: pass one --level with an owner-approved manifest or explicitly pass --all");
+  }
+  if (options.level !== undefined && (!Number.isInteger(options.level) || options.level < 1 || options.level > 6)) {
+    throw new Error("Question Bank source boundary rejected input: --level must be an integer from 1 through 6");
+  }
+  const stagedSources = Number.isInteger(options.level) && !options.all
+    ? await materializeLevelSources({
+      sourceRoot: options.sourceRoot ?? path.dirname(options.questions),
+      manifestPath: options.sourceManifest,
+      manifestSha256: options.sourceManifestSha256,
+      requestedLevel: options.level,
+    })
+    : null;
+  let completed = false;
+  if (stagedSources) {
+    options = {
+      ...options,
+      questions: stagedSources.sourcePaths.questions,
+      answers: stagedSources.sourcePaths.answers,
+      media: stagedSources.sourcePaths.media,
+    };
+  }
+
+  try {
+    const issues = [];
+    await mkdir(options.output, { recursive: true });
+    if (stagedSources) {
+      await writeFile(path.join(options.output, "source-read-audit.json"), JSON.stringify({
+        manifest: stagedSources.manifest,
+        openedFiles: stagedSources.openedFiles,
+      }, null, 2));
+    }
+    const [questionDoc, answerDoc, media, repairLedger] = await Promise.all([
+      readDocx(options.questions),
+      readDocx(options.answers),
+      inventory(options.media),
+      readContentRepairLedger(options.contentRepairs),
+    ]);
+    const sourceReadAudit = stagedSources ? {
+      manifest: stagedSources.manifest,
+      openedFiles: stagedSources.openedFiles,
+      archiveEntries: media.map((entry) => ({
+        path: `${stagedSources.openedFiles.find((file) => file.role === "media").path}!/${entry.zipPath}`,
+        level: entry.level ?? null,
+        sha256: entry.sha256,
+        mediaType: entry.mediaType,
+        bytes: entry.size,
+      })),
+    } : null;
+    if (sourceReadAudit) {
+      await writeFile(path.join(options.output, "source-read-audit.json"), JSON.stringify(sourceReadAudit, null, 2));
+    }
+    const allLevels = parseQuestionDocument(questionDoc, issues);
+    applyContentRepairs(allLevels, repairLedger, issues);
+    const parsedAnswers = parseAnswerDocument(answerDoc);
+    bindAnswerGroups(allLevels, parsedAnswers, issues);
+    await bindMedia(allLevels, questionDoc, options, media, issues);
+    validateQuestions(allLevels, issues);
+    const chosenLevels = selectLevels(allLevels, options.level);
+    const relevant = filteredIssues(issues, options.level);
+    const summary = scoringSummary(chosenLevels);
+    const report = {
+      mode: "DRY RUN — NO DATABASE WRITE — NO MINIO WRITE",
+      questionDocx: {
+        levels: allLevels.length,
+        embeddedImages: questionDoc.occurrences.length,
+        parsedItems: allLevels.reduce((sum, level) => sum + level.questions.length, 0),
+        contentRepairs: repairLedger.repairs?.length ?? 0,
+      },
+      answerDocx: {
+        levels: parsedAnswers.levels.length,
+        groups: parsedAnswers.groups.length,
+      },
+      media: {
+        totalFiles: media.length,
+        images: media.filter((entry) => entry.mediaType === "IMAGE").length,
+        audio: media.filter((entry) => entry.mediaType === "AUDIO").length,
+        byLevel: Object.fromEntries([1, 2, 3, 4, 5, 6].map((level) => [level, {
+          images: media.filter((entry) => entry.level === level && entry.mediaType === "IMAGE").length,
+          audio: media.filter((entry) => entry.level === level && entry.mediaType === "AUDIO").length,
+        }])),
+      },
+      selectedLevel: options.level ?? null,
+      ...(sourceReadAudit ? { sourceReadAudit } : {}),
+      summary,
+      validation: {
+        errors: relevant.filter((issue) => issue.severity === "ERROR").length,
+        warnings: relevant.filter((issue) => issue.severity === "WARNING").length,
+        levels: chosenLevels.map((level) => validationLevelSummary(level, issues)),
+      },
+      issues: relevant,
+    };
+    await Promise.all([
+      writeFile(path.join(options.output, "manifest.json"), JSON.stringify({
+        schemaVersion: 1,
+        source: sourceReadAudit ?? {
+          questions: options.questions,
+          answers: options.answers,
+          media: options.media,
+          contentRepairs: options.contentRepairs,
+        },
+        levels: chosenLevels,
+        issues: relevant,
+      }, null, 2)),
+      writeFile(path.join(options.output, "validation-report.json"), JSON.stringify(report, null, 2)),
+      writeFile(path.join(options.output, "media-inventory.json"), JSON.stringify(media, null, 2)),
+    ]);
+    console.log(`QB source validator\n${report.mode}`);
+    console.log(`Parsed items: ${report.questionDocx.parsedItems}`);
+    console.log(`Media: ${report.media.totalFiles} files (${report.media.images} images, ${report.media.audio} audio)`);
+    console.log(`Selected: ${summary.items} items, ${summary.points} points, scoring binding ${summary.bound}/${summary.items} (missing ${summary.missing}, ambiguous ${summary.ambiguous})`);
+    console.log(`Validation: errors ${report.validation.errors}, warnings ${report.validation.warnings}`);
+    for (const issue of relevant.filter((entry) => entry.severity === "ERROR")) {
+      console.log(`ERROR L${issue.level ?? "?"} / ${issue.family ?? "SOURCE"} ${issue.code}${issue.expected !== undefined ? ` expected ${issue.expected} actual ${issue.actual}` : ""}`);
+    }
+    completed = true;
+    return {
+      report,
+      manifest: { levels: chosenLevels, issues: relevant },
+      issues,
+      ...(stagedSources ? {
+        sourceReads: stagedSources.openedFiles,
+        sourcePaths: stagedSources.sourcePaths,
+        ...(options.keepSourceWorkspace ? { sourceWorkspace: stagedSources.workspace } : {}),
+      } : {}),
+    };
+  } finally {
+    if (stagedSources && (!options.keepSourceWorkspace || !completed)) {
+      await cleanupSourceWorkspace(stagedSources.workspace);
+    }
+  }
 }
 
 if (import.meta.main) {
