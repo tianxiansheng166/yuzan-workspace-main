@@ -21,7 +21,7 @@
 
 | Check | Result |
 | --- | --- |
-| Feedback service and policy suite | **PASS 36 / FAIL 0 / SKIP 0** (30 service cases, 6 policy cases) |
+| Feedback service, repository, and policy suite | **PASS 36 / FAIL 0 / SKIP 0** (30 service/repository cases, 6 policy cases) |
 | Submission read/list neighboring regression suite | **FAIL 13 / 13** during Nest test-module setup: `SpeechJobModule` requires a `ConfigService` provider that the existing `SubmissionsService` fixture does not provide. No assertions ran; those files/modules are outside T095 ownership and were not changed. |
 | API source typecheck | **PASS** |
 | Target lint for all seven T095-owned source/test files | **PASS**, zero findings |
