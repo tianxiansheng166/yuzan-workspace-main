@@ -1,0 +1,9 @@
+YZ-RD-T065 task-owned runtime shutdown verification
+All owned service records absent: True
+Service records: postgres=False, redis=False, minio=False, api=False, web=False, worker=False, test=False
+127.0.0.1:4265: free
+127.0.0.1:4465: free
+127.0.0.1:55765: free
+127.0.0.1:6565: free
+127.0.0.1:59765: free
+127.0.0.1:59766: free

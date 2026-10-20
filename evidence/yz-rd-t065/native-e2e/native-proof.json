@@ -1,0 +1,173 @@
+{
+  "task": "YZ-RD-T065",
+  "fixturePolicy": "TEST_FIXTURE_ONLY",
+  "workflow": "student browser attempt with API-saved/finalized test answers and submit -> teacher review queue -> explicit zero and nonzero manual review -> server-generated AssessmentReport -> same student report",
+  "database": "yuzan_t065_native@127.0.0.1:55765",
+  "apiReadyStatus": "503",
+  "objectStorage": "NOT_RUN: local MinIO remained in filesystem page I/O wait and did not open its port; this written fixture makes no object-storage request",
+  "databaseAndRedisRuntime": "PASS",
+  "practiceDefinitionId": "b2842c09-74de-4e39-a5dc-9b097cd12a24",
+  "questionVersionIds": [
+    "5fedeedb-8a00-44bf-8c9a-0fcae013bcd0",
+    "89e5ab56-a202-4dc3-a773-d0a01a38654f",
+    "bfc2efa6-d5af-444e-bf15-480d668785b2",
+    "e9d33c29-f2d3-45a7-8f0c-be9c0cce2dad",
+    "d3c8cec8-5386-42c7-be69-459376ea35e2",
+    "a00c4270-897f-4e58-963f-3bacb654839e",
+    "e53717a6-2824-444f-9770-7ac057c16983",
+    "1c53ed52-95e4-4b3a-b4d6-e2078208c4c0",
+    "64849802-da70-4ab1-ac67-0d49e4e0ebb5",
+    "0a4479d7-d3ff-45a5-a8ed-5caf5a92bf00",
+    "b8a9b321-7060-416c-8eb2-fc0fcb76d8ff",
+    "17f9071e-501a-4e02-a00a-8e1c57d4f076",
+    "a1c99c50-74e9-46e6-afac-28f98948ca87",
+    "f9624873-bbcd-4472-a822-21817634b175",
+    "f22c53a3-8b4e-45eb-ab8b-b9ff5cf8eb15",
+    "9785d33f-cb0b-4bdb-8e0a-80cf71bf9773",
+    "41f3718c-720e-4745-aa2f-e7ee216c2c01",
+    "1f7ef3cd-6636-44d5-a04f-f437e3a27d68",
+    "ccdc6b37-56c4-4f35-bfc2-db0b68eb1c39",
+    "ed0efaa8-5627-4a9c-9ac7-bd15633f0301"
+  ],
+  "practiceItemRefs": [
+    {
+      "id": "96330f1f-404d-4605-8d00-9e7e09e5b2e3",
+      "questionVersionId": "5fedeedb-8a00-44bf-8c9a-0fcae013bcd0",
+      "sortOrder": 1
+    },
+    {
+      "id": "82064478-a3d8-4a76-bb01-4b2d533077e2",
+      "questionVersionId": "89e5ab56-a202-4dc3-a773-d0a01a38654f",
+      "sortOrder": 2
+    },
+    {
+      "id": "a352a25c-ce5d-4fc0-be98-9f089c90c16e",
+      "questionVersionId": "bfc2efa6-d5af-444e-bf15-480d668785b2",
+      "sortOrder": 3
+    },
+    {
+      "id": "0685440d-8ad0-489c-aaf0-64b99566421c",
+      "questionVersionId": "e9d33c29-f2d3-45a7-8f0c-be9c0cce2dad",
+      "sortOrder": 4
+    },
+    {
+      "id": "b7b0257d-b6f9-4e12-a60b-0ec819530810",
+      "questionVersionId": "d3c8cec8-5386-42c7-be69-459376ea35e2",
+      "sortOrder": 5
+    },
+    {
+      "id": "e72de38e-f463-438f-b8b4-be5a1ac850ba",
+      "questionVersionId": "a00c4270-897f-4e58-963f-3bacb654839e",
+      "sortOrder": 6
+    },
+    {
+      "id": "575f9d14-6c2a-42d2-9a0d-c492e0a8018c",
+      "questionVersionId": "e53717a6-2824-444f-9770-7ac057c16983",
+      "sortOrder": 7
+    },
+    {
+      "id": "fcc32e84-a07b-4d6e-b49d-3c45087f70b7",
+      "questionVersionId": "1c53ed52-95e4-4b3a-b4d6-e2078208c4c0",
+      "sortOrder": 8
+    },
+    {
+      "id": "a3bfa1b4-1602-4654-a1e3-5eb51883f7b4",
+      "questionVersionId": "64849802-da70-4ab1-ac67-0d49e4e0ebb5",
+      "sortOrder": 9
+    },
+    {
+      "id": "ea629131-55cc-4764-baa1-1526d6c8f842",
+      "questionVersionId": "0a4479d7-d3ff-45a5-a8ed-5caf5a92bf00",
+      "sortOrder": 10
+    },
+    {
+      "id": "af78c026-d33d-47b2-a39a-585a11fcc07d",
+      "questionVersionId": "b8a9b321-7060-416c-8eb2-fc0fcb76d8ff",
+      "sortOrder": 11
+    },
+    {
+      "id": "0a147925-8a5f-4a51-8ef8-c99e2ad53ac7",
+      "questionVersionId": "17f9071e-501a-4e02-a00a-8e1c57d4f076",
+      "sortOrder": 12
+    },
+    {
+      "id": "a592b27e-ad92-41ff-95b4-8630ad3ace53",
+      "questionVersionId": "a1c99c50-74e9-46e6-afac-28f98948ca87",
+      "sortOrder": 13
+    },
+    {
+      "id": "cb3bc60a-79be-413a-96f6-d8dc5b823419",
+      "questionVersionId": "f9624873-bbcd-4472-a822-21817634b175",
+      "sortOrder": 14
+    },
+    {
+      "id": "88cebdfe-0a99-417c-a800-562877fdf828",
+      "questionVersionId": "f22c53a3-8b4e-45eb-ab8b-b9ff5cf8eb15",
+      "sortOrder": 15
+    },
+    {
+      "id": "6bafaf94-d0e1-4002-816d-86e5ebd2b388",
+      "questionVersionId": "9785d33f-cb0b-4bdb-8e0a-80cf71bf9773",
+      "sortOrder": 16
+    },
+    {
+      "id": "d4e8c9d9-6f8b-4661-a985-30036dc30b34",
+      "questionVersionId": "41f3718c-720e-4745-aa2f-e7ee216c2c01",
+      "sortOrder": 17
+    },
+    {
+      "id": "758faa39-e946-4499-948c-5840085ee4f3",
+      "questionVersionId": "1f7ef3cd-6636-44d5-a04f-f437e3a27d68",
+      "sortOrder": 18
+    },
+    {
+      "id": "7e0c9569-7d68-485f-bc39-465647d6265a",
+      "questionVersionId": "ccdc6b37-56c4-4f35-bfc2-db0b68eb1c39",
+      "sortOrder": 19
+    },
+    {
+      "id": "e2e552bf-f452-4cf8-89e1-efde6290caae",
+      "questionVersionId": "ed0efaa8-5627-4a9c-9ac7-bd15633f0301",
+      "sortOrder": 20
+    }
+  ],
+  "attemptId": "fa6e6223-6dc6-44b4-9ae4-8196bf59c289",
+  "assessmentItemIds": [
+    "fefd660b-0cdc-4d6d-99af-95c641a783a7",
+    "73c07996-5d75-4902-affd-397228cf9a50",
+    "d9b21ac2-e162-4a7a-94b9-14859df54395",
+    "98a303cb-30bb-4bd0-91ba-69b56ae6d33e",
+    "371d8e0d-65f9-4d1b-9c60-dd1e498ddc6d",
+    "92d74ba5-6cef-45ad-a8ef-d1ea4de4bbd9",
+    "26738c55-8d2e-40c6-b100-f6f3e6660130",
+    "f4566bc0-cab9-4602-ba14-7c5d3e4e5257",
+    "7bfc1de2-f082-4be4-bcfc-bda1948330fe",
+    "38290087-8014-48bc-84a4-2262dc3582f7",
+    "42c1579c-6e0d-47fe-9755-60e93ab2e183",
+    "5ca63e0b-07a8-4f76-b24e-7978fe4999b3",
+    "f80e1430-c75e-42eb-b4e6-5d2f91a29e3f",
+    "e7991ebf-c51d-4d8b-a374-2c777d48781b",
+    "4c9600f1-35df-407d-8f4c-ee0c87d2ab12",
+    "5934d05a-7b69-4be5-a943-d17b7c2f75b5",
+    "a53fe368-db4c-486e-8fd8-aa4b1eab2af3",
+    "ea96cf54-1b94-4089-9753-bad779254db4",
+    "db259a88-e857-4f5b-8353-89ba3fb9815c",
+    "d8538286-38c0-40a9-beb7-19d11a235a64"
+  ],
+  "reportId": "b4936109-d25b-4cd9-8d15-bcacd7494353",
+  "reportSessionId": "fa6e6223-6dc6-44b4-9ae4-8196bf59c289",
+  "reportOverallScore": "57",
+  "preSubmitStatus": "IN_PROGRESS",
+  "postSubmitStatus": "PROCESSING",
+  "postReviewStatus": "COMPLETED",
+  "scoredScoreBeforeReview": null,
+  "firstReviewedScore": 0,
+  "secondReviewedScore": 3,
+  "fullyReviewedItemCount": 20,
+  "crossClassTeacherStatus": 403,
+  "crossSchoolTeacherStatus": 403,
+  "otherStudentReportStatus": 403,
+  "studentAnswersFinalizedViaAPI": 20,
+  "automaticScoring": "NOT_USED",
+  "pageErrors": []
+}

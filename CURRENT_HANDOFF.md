@@ -3,6 +3,14 @@
 Last updated: 2026-10-20
 Repository: `yuzan-workspace-main`
 
+## YZ-RD-T065 — reviewable practice fixture authority gate (2026-10-20)
+
+- `PASS_TEST_FIXTURE_FLOW; REAL_TEACHING_AUTHORITY_GAP_OPEN` on independent branch `feat/yz-rd-t065-reviewable-practice-fixture-authority-gate`, based on exact T062 SHA `d3d2623747eda173aeea71d8bdb2cf52630e98c0`. The branch verifies the existing manual review/report path with 20 `TEST_FIXTURE_ONLY` versions in a T065-owned PostgreSQL 17 database; it does not alter the existing `停顿与节奏专项训练` data.
+- Native Chrome 153/API/PostgreSQL flow passed 1/1: student submission is `IN_PROGRESS` → `PROCESSING`, teacher queue has 20 linked published test versions, explicit 0 persists separately from 19 `NULL` scores, and the final teacher review generates one server report for the same Attempt. Cross-class, cross-school, and other-student report access are denied.
+- The schema already has nullable `PracticeItemRef.questionVersionId`; the existing seed practice remains unlinked. No public Question Bank author/publish API exists in the inspected controllers. The task-only Prisma fixture is disclosed as synthetic, not formal education or Tibetan classroom content. Evidence: [evidence/yz-rd-t065/RESULTS.md](evidence/yz-rd-t065/RESULTS.md).
+- API liveness/Web passed and the requested APIs/PG flow passed. Readiness is `503` because task-local MinIO remained in filesystem page-I/O wait; object storage, audio, and media playback are `NOT_RUN`. `SPEECH_PROVIDER=disabled`; no Worker, Docker, seed helper, importer, raw mixed DOCX/ZIP, L4 data, T005 data, or shared DB was used. All owned services stopped and ports are free.
+- `READY_TO_MERGE=NO` for real teaching: the named practice has no authorized published version, and the authoring API contract is absent. Proceed for real content only after an Owner-authorized reviewable source/version or formal authoring contract is available; keep this synthetic evidence test-only.
+
 ## YZ-RD-T062 — T059 third API test lint slice integration (2026-10-20)
 
 - COMPLETE on independent branch `feat/yz-rd-t062-unified-product-lint-third-slice-integration`. No-FF merge `860c740394183e275853b3598ce4cf63655a80b7` has exact T058 BASE `736cb9bdc98866f15be586a7410749182ace0d29` as first parent and T059 `f147138b570971d44815eebf769215a6ade5a08e` as second parent.
