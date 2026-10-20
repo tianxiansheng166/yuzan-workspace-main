@@ -1,0 +1,18 @@
+Environment:
+  node -v -> v24.20.0
+  pnpm -v -> 10.13.1
+
+Frontend suite:
+  pnpm --filter @yuzan/frontend test
+  Result: 141 passed, 0 failed, 0 skipped; frontend runtime verifier passed.
+
+Fresh merged-HEAD visual fixture replay:
+  CAPTURE_PREFIX=studio-t068 node evidence/yz-rd-t068/verify-studio.mjs
+  Fixture label: VISUAL_FIXTURE_ONLY
+  Result: 390x844, 768x1024, 1280x900, 1440x1000 passed; zero assertion failures/runtime exceptions.
+
+Contract scope:
+  git diff 5422af364c32c1feffe1e995884f71a4271488d3..579b2178e251c1afaac02422f01d98a6869887ef -- backend/api/src packages/contracts
+  Result: empty.
+
+Full API lint and real API E2E were not run. API lint remains the T064-inherited 733 test findings; real API E2E remains assigned to the T065 business acceptance line.

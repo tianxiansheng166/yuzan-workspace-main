@@ -3,6 +3,13 @@
 Last updated: 2026-10-20
 Repository: `yuzan-workspace-main`
 
+## YZ-RD-T068 unified teacher studio mobile UX integration (2026-10-20)
+
+- INTEGRATED / FRONTEND_VERIFIED on independent branch `feat/yz-rd-t068-unified-teacher-studio-mobile-ux-integration`, from exact T064 BASE `5422af364c32c1feffe1e995884f71a4271488d3`. No-FF merge `579b2178e251c1afaac02422f01d98a6869887ef` has T064 as first parent and T067 `e4cf946b107e2fe30b57f7e6200b4ed7f45112d1` as second parent.
+- Fresh Node 24.20.0 / pnpm 10.13.1 frontend suite passed 141/141 with runtime verification. Fresh isolated Chromium fixture captures at 390×844, 768×1024, 1280×900 and 1440×1000 passed: native-scale mobile flow, readable text, 44px controls, visible keyboard focus, polite status announcement, and save-before-review ordering. The visual run is `VISUAL_FIXTURE_ONLY`, not a real API E2E.
+- T064 course/practice, student Today/course, recording and manual review paths remain intact. No API source, Contracts, score rules, or student route changed relative to BASE. Full API lint was not rerun; T064's 733 API test lint findings remain inherited and unwaived, so `READY_TO_MERGE=NO`. Real API E2E remains assigned to the T065 business acceptance line. No Docker, T005, or Level 4 resources were used; `L4_OPEN=NO`.
+- Full evidence and new T068 screenshots: [`evidence/yz-rd-t068/RESULTS.md`](evidence/yz-rd-t068/RESULTS.md).
+
 
 ## YZ-RD-T064 — T063 fourth API test lint slice integration (2026-10-20)
 

@@ -1,5 +1,13 @@
 # Development status
 
+## YZ-RD-T068 — unified teacher studio mobile UX integration (2026-10-20)
+
+INTEGRATED / FRONTEND_VERIFIED on independent branch `feat/yz-rd-t068-unified-teacher-studio-mobile-ux-integration`. No-FF merge `579b2178e251c1afaac02422f01d98a6869887ef` preserves exact BASE `5422af364c32c1feffe1e995884f71a4271488d3` first and T067 `e4cf946b107e2fe30b57f7e6200b4ed7f45112d1` second.
+
+Node 24.20.0 frontend suite passed 141/141 and runtime verification. Fresh isolated `VISUAL_FIXTURE_ONLY` Chromium replay passed all four requested viewports and verified native-scale flow, readable mobile text, 44px controls, focus visibility, polite live status, and save-before-review request ordering. It did not contact the real API.
+
+No API source, Contracts, scoring rules, or student routes changed relative to BASE; T064 course/practice and the student recording/manual-review workflows remain. T064's 733 API test lint findings are inherited and full API lint was not rerun. `READY_TO_MERGE=NO` until that debt is resolved or waived. Real API E2E remains assigned to T065. No Docker, T005, or Level 4 resource was used. Evidence: [`evidence/yz-rd-t068/RESULTS.md`](evidence/yz-rd-t068/RESULTS.md).
+
 
 ## YZ-RD-T064 — T063 fourth API test lint slice integration (2026-10-20)
 

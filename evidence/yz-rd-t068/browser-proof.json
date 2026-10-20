@@ -1,0 +1,902 @@
+{
+  "taskId": "YZ-RD-T068",
+  "fixture": "VISUAL_FIXTURE_ONLY",
+  "realApiConnected": false,
+  "browser": "Google Chrome/Chromium, isolated headless process, ephemeral DevTools port",
+  "sharedBrowserService9222Touched": false,
+  "viewports": [
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "requestedWidth": 390,
+        "requestedHeight": 844
+      },
+      "documentWidth": {
+        "html": 390,
+        "body": 390
+      },
+      "text": {
+        "titlePx": 27.3,
+        "structurePx": 14,
+        "editorHeadingPx": 15,
+        "workflowPx": 12,
+        "activityText": "△　范读与停顿练习"
+      },
+      "canvas": {
+        "host": {
+          "x": 0,
+          "y": 155,
+          "width": 390,
+          "height": 2407.4
+        },
+        "root": {
+          "x": 0,
+          "y": 155,
+          "width": 390,
+          "height": 2407.4
+        },
+        "transform": "none"
+      },
+      "panels": {
+        "columns": "362px",
+        "boxes": [
+          {
+            "x": 14,
+            "y": 539.4,
+            "width": 362,
+            "height": 282
+          },
+          {
+            "x": 14,
+            "y": 833.4,
+            "width": 362,
+            "height": 988
+          },
+          {
+            "x": 14,
+            "y": 1833.4,
+            "width": 362,
+            "height": 641
+          }
+        ]
+      },
+      "buttons": {
+        "main": [
+          {
+            "label": "＋ 新建课程",
+            "height": 44,
+            "disabled": false
+          },
+          {
+            "label": "◉　预览",
+            "height": 44,
+            "disabled": false
+          },
+          {
+            "label": "保存草稿",
+            "height": 44,
+            "disabled": true
+          },
+          {
+            "label": "➤　提交审核",
+            "height": 44,
+            "disabled": false
+          },
+          {
+            "label": "发布课程",
+            "height": 44,
+            "disabled": false
+          }
+        ],
+        "otherActions": [
+          {
+            "name": "rename",
+            "x": 14,
+            "y": 208.9,
+            "width": 44,
+            "height": 44
+          },
+          {
+            "name": "add-unit",
+            "x": 254.3,
+            "y": 543.9,
+            "width": 106.7,
+            "height": 44
+          },
+          {
+            "name": "add-activity",
+            "x": 29,
+            "y": 762.4,
+            "width": 332,
+            "height": 44
+          }
+        ],
+        "allPageButtons": [
+          {
+            "label": "重命名课程",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "＋ 新建课程",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "◉ 预览",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "保存草稿",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "➤ 提交审核",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "发布课程",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "＋ 添加单元",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "＋ 添加活动",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "本节目标",
+            "height": 45,
+            "visible": true
+          },
+          {
+            "label": "视频与字幕",
+            "height": 45,
+            "visible": true
+          },
+          {
+            "label": "互动与练习",
+            "height": 45,
+            "visible": true
+          },
+          {
+            "label": "教学支持",
+            "height": 45,
+            "visible": true
+          },
+          {
+            "label": "离线资源",
+            "height": 45,
+            "visible": true
+          },
+          {
+            "label": "MIND 结构",
+            "height": 45,
+            "visible": true
+          },
+          {
+            "label": "＋ 添加目标",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "＋ 添加要点",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "课堂教学",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "小组活动",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "自主学习",
+            "height": 44,
+            "visible": true
+          }
+        ]
+      },
+      "saveStatus": {
+        "text": "课程草稿",
+        "live": "polite"
+      },
+      "screenshot": "studio-t068-390x844-chromium.png"
+    },
+    {
+      "viewport": {
+        "width": 768,
+        "height": 1024,
+        "requestedWidth": 768,
+        "requestedHeight": 1024
+      },
+      "documentWidth": {
+        "html": 768,
+        "body": 768
+      },
+      "text": {
+        "titlePx": 30,
+        "structurePx": 14,
+        "editorHeadingPx": 15,
+        "workflowPx": 12,
+        "activityText": "△　范读与停顿练习"
+      },
+      "canvas": {
+        "host": {
+          "x": 0,
+          "y": 155,
+          "width": 768,
+          "height": 2382
+        },
+        "root": {
+          "x": 0,
+          "y": 155,
+          "width": 768,
+          "height": 2382
+        },
+        "transform": "none"
+      },
+      "panels": {
+        "columns": "740px",
+        "boxes": [
+          {
+            "x": 14,
+            "y": 523,
+            "width": 740,
+            "height": 282
+          },
+          {
+            "x": 14,
+            "y": 817,
+            "width": 740,
+            "height": 979
+          },
+          {
+            "x": 14,
+            "y": 1808,
+            "width": 740,
+            "height": 641
+          }
+        ]
+      },
+      "buttons": {
+        "main": [
+          {
+            "label": "＋ 新建课程",
+            "height": 44,
+            "disabled": false
+          },
+          {
+            "label": "◉　预览",
+            "height": 44,
+            "disabled": false
+          },
+          {
+            "label": "保存草稿",
+            "height": 44,
+            "disabled": true
+          },
+          {
+            "label": "➤　提交审核",
+            "height": 44,
+            "disabled": false
+          },
+          {
+            "label": "发布课程",
+            "height": 44,
+            "disabled": false
+          }
+        ],
+        "otherActions": [
+          {
+            "name": "rename",
+            "x": 14,
+            "y": 212.4,
+            "width": 44,
+            "height": 44
+          },
+          {
+            "name": "add-unit",
+            "x": 632.3,
+            "y": 527.5,
+            "width": 106.7,
+            "height": 44
+          },
+          {
+            "name": "add-activity",
+            "x": 29,
+            "y": 746,
+            "width": 710,
+            "height": 44
+          }
+        ],
+        "allPageButtons": [
+          {
+            "label": "重命名课程",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "＋ 新建课程",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "◉ 预览",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "保存草稿",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "➤ 提交审核",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "发布课程",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "＋ 添加单元",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "＋ 添加活动",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "本节目标",
+            "height": 45,
+            "visible": true
+          },
+          {
+            "label": "视频与字幕",
+            "height": 45,
+            "visible": true
+          },
+          {
+            "label": "互动与练习",
+            "height": 45,
+            "visible": true
+          },
+          {
+            "label": "教学支持",
+            "height": 45,
+            "visible": true
+          },
+          {
+            "label": "离线资源",
+            "height": 45,
+            "visible": true
+          },
+          {
+            "label": "MIND 结构",
+            "height": 45,
+            "visible": true
+          },
+          {
+            "label": "＋ 添加目标",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "＋ 添加要点",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "课堂教学",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "小组活动",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "自主学习",
+            "height": 44,
+            "visible": true
+          }
+        ]
+      },
+      "saveStatus": {
+        "text": "课程草稿",
+        "live": "polite"
+      },
+      "screenshot": "studio-t068-768x1024-chromium.png"
+    },
+    {
+      "viewport": {
+        "width": 1280,
+        "height": 900,
+        "requestedWidth": 1280,
+        "requestedHeight": 900
+      },
+      "documentWidth": {
+        "html": 1280,
+        "body": 1265
+      },
+      "text": {
+        "titlePx": 30.72,
+        "structurePx": 14,
+        "editorHeadingPx": 15,
+        "workflowPx": 12,
+        "activityText": "△　范读与停顿练习"
+      },
+      "canvas": {
+        "host": {
+          "x": 190,
+          "y": 69,
+          "width": 1075,
+          "height": 973.3
+        },
+        "root": {
+          "x": 190,
+          "y": 69,
+          "width": 1075,
+          "height": 973.3
+        },
+        "transform": "none"
+      },
+      "panels": {
+        "columns": "241.953px 512.375px 284.672px",
+        "boxes": [
+          {
+            "x": 202,
+            "y": 270.3,
+            "width": 242,
+            "height": 680
+          },
+          {
+            "x": 450,
+            "y": 270.3,
+            "width": 512.4,
+            "height": 680
+          },
+          {
+            "x": 968.3,
+            "y": 270.3,
+            "width": 284.7,
+            "height": 680
+          }
+        ]
+      },
+      "buttons": {
+        "main": [
+          {
+            "label": "＋ 新建课程",
+            "height": 44,
+            "disabled": false
+          },
+          {
+            "label": "◉　预览",
+            "height": 44,
+            "disabled": false
+          },
+          {
+            "label": "保存草稿",
+            "height": 44,
+            "disabled": true
+          },
+          {
+            "label": "➤　提交审核",
+            "height": 44,
+            "disabled": false
+          },
+          {
+            "label": "发布课程",
+            "height": 44,
+            "disabled": false
+          }
+        ],
+        "otherActions": [
+          {
+            "name": "rename",
+            "x": 212,
+            "y": 134.3,
+            "width": 44,
+            "height": 44
+          },
+          {
+            "name": "add-unit",
+            "x": 316.2,
+            "y": 278.3,
+            "width": 106.7,
+            "height": 44
+          },
+          {
+            "name": "add-activity",
+            "x": 221,
+            "y": 887.3,
+            "width": 204,
+            "height": 44
+          }
+        ],
+        "allPageButtons": [
+          {
+            "label": "重命名课程",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "＋ 新建课程",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "◉ 预览",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "保存草稿",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "➤ 提交审核",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "发布课程",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "＋ 添加单元",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "＋ 添加活动",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "本节目标",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "视频与字幕",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "互动与练习",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "教学支持",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "离线资源",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "MIND 结构",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "＋ 添加目标",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "＋ 添加要点",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "课堂教学",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "小组活动",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "自主学习",
+            "height": 44,
+            "visible": true
+          }
+        ]
+      },
+      "saveStatus": {
+        "text": "课程草稿",
+        "live": "polite"
+      },
+      "screenshot": "studio-t068-1280x900-chromium.png"
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "requestedWidth": 1440,
+        "requestedHeight": 1000
+      },
+      "documentWidth": {
+        "html": 1440,
+        "body": 1425
+      },
+      "text": {
+        "titlePx": 34.56,
+        "structurePx": 14,
+        "editorHeadingPx": 15,
+        "workflowPx": 12,
+        "activityText": "△　范读与停顿练习"
+      },
+      "canvas": {
+        "host": {
+          "x": 190,
+          "y": 69,
+          "width": 1235,
+          "height": 952.6
+        },
+        "root": {
+          "x": 190,
+          "y": 69,
+          "width": 1235,
+          "height": 952.6
+        },
+        "transform": "none"
+      },
+      "panels": {
+        "columns": "279.219px 591.281px 328.484px",
+        "boxes": [
+          {
+            "x": 202,
+            "y": 249.6,
+            "width": 279.2,
+            "height": 680
+          },
+          {
+            "x": 487.2,
+            "y": 249.6,
+            "width": 591.3,
+            "height": 680
+          },
+          {
+            "x": 1084.5,
+            "y": 249.6,
+            "width": 328.5,
+            "height": 680
+          }
+        ]
+      },
+      "buttons": {
+        "main": [
+          {
+            "label": "＋ 新建课程",
+            "height": 44,
+            "disabled": false
+          },
+          {
+            "label": "◉　预览",
+            "height": 44,
+            "disabled": false
+          },
+          {
+            "label": "保存草稿",
+            "height": 44,
+            "disabled": true
+          },
+          {
+            "label": "➤　提交审核",
+            "height": 44,
+            "disabled": false
+          },
+          {
+            "label": "发布课程",
+            "height": 44,
+            "disabled": false
+          }
+        ],
+        "otherActions": [
+          {
+            "name": "rename",
+            "x": 611.2,
+            "y": 95,
+            "width": 44,
+            "height": 44
+          },
+          {
+            "name": "add-unit",
+            "x": 353.5,
+            "y": 257.6,
+            "width": 106.7,
+            "height": 44
+          },
+          {
+            "name": "add-activity",
+            "x": 221,
+            "y": 866.6,
+            "width": 241.2,
+            "height": 44
+          }
+        ],
+        "allPageButtons": [
+          {
+            "label": "重命名课程",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "＋ 新建课程",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "◉ 预览",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "保存草稿",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "➤ 提交审核",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "发布课程",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "＋ 添加单元",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "＋ 添加活动",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "本节目标",
+            "height": 45,
+            "visible": true
+          },
+          {
+            "label": "视频与字幕",
+            "height": 45,
+            "visible": true
+          },
+          {
+            "label": "互动与练习",
+            "height": 45,
+            "visible": true
+          },
+          {
+            "label": "教学支持",
+            "height": 45,
+            "visible": true
+          },
+          {
+            "label": "离线资源",
+            "height": 45,
+            "visible": true
+          },
+          {
+            "label": "MIND 结构",
+            "height": 45,
+            "visible": true
+          },
+          {
+            "label": "＋ 添加目标",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "＋ 添加要点",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "课堂教学",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "小组活动",
+            "height": 44,
+            "visible": true
+          },
+          {
+            "label": "自主学习",
+            "height": 44,
+            "visible": true
+          }
+        ]
+      },
+      "saveStatus": {
+        "text": "课程草稿",
+        "live": "polite"
+      },
+      "screenshot": "studio-t068-1440x1000-chromium.png"
+    }
+  ],
+  "interactions": {
+    "dirtyStatus": {
+      "text": "未保存",
+      "live": "polite"
+    },
+    "keyboardFocus": {
+      "label": "保存草稿",
+      "selector": "save-course",
+      "focusVisible": true,
+      "outlineStyle": "solid",
+      "outlineWidth": "3px",
+      "boxShadow": "none",
+      "height": 44
+    },
+    "afterExplicitSave": {
+      "title": "未保存课程标题",
+      "status": "课程草稿",
+      "disabled": true
+    },
+    "afterFailedSave": {
+      "patchCount": 2,
+      "reviewCount": 0,
+      "status": "未保存",
+      "saveDisabled": false
+    },
+    "orderedEvents": [
+      {
+        "method": "PATCH",
+        "path": "course-version",
+        "title": "未保存课程标题"
+      },
+      {
+        "method": "PATCH",
+        "path": "course-version",
+        "title": "未保存课程标题"
+      },
+      {
+        "method": "PATCH",
+        "path": "course-version",
+        "title": "未保存课程标题"
+      },
+      {
+        "method": "POST",
+        "path": "submit-review"
+      }
+    ]
+  },
+  "runtimeExceptions": [],
+  "assertionFailures": []
+}

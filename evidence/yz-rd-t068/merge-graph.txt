@@ -1,0 +1,7 @@
+*   579b2178e251c1afaac02422f01d98a6869887ef merge(T068): integrate T067 teacher studio mobile UX
+|\
+| * e4cf946b107e2fe30b57f7e6200b4ed7f45112d1 T067 merge source (second parent)
+* | 5422af364c32c1feffe1e995884f71a4271488d3 T064 exact BASE (first parent)
+
+Conflicts: CURRENT_HANDOFF.md, DEVELOPMENT_STATUS.md only.
+Resolution: retain T064 current state and inherited lint count; append T067 verified UX summary. No product/API/Contracts paths conflicted.
