@@ -1,5 +1,11 @@
 # Development status
 
+## YZ-RD-T067 — studio mobile visual verification (2026-10-20)
+
+VISUAL VERIFICATION PASS on branch `feat/yz-rd-t067-studio-mobile-visual-verification`, based on accepted T061 `9a1a8b741d0eacfc304dfd72006558848b8bf6e4`. Fresh Chromium screenshots from the modified page cover 390/768/1280/1440. Evidence found and fixed the 768px canvas scaling gap and mobile controls below 44px. The studio now flows at native size, stacks through 960px and retains fluid three-column desktop panels. All 19 rendered studio buttons meet 44px at all four tested widths.
+
+Save Draft, save-before-review, failed-save blocking review, visible keyboard focus and polite save-state announcements passed with explicit `VISUAL_FIXTURE_ONLY` synthetic data. No real API was contacted; this run is not an API E2E. The 9222 shared browser service, Docker, T005 and Level 4 data/runtime were not used. Frontend tests and runtime verification pass 141/141. `READY_TO_MERGE=NO` remains due the inherited 1,203 API-test lint findings; `L4_OPEN=OPEN`. Full evidence: [evidence/yz-rd-t067/RESULTS.md](evidence/yz-rd-t067/RESULTS.md).
+
 ## YZ-RD-T058 — unified product and test-quality integration (2026-10-20)
 
 - COMPLETE on independent branch `feat/yz-rd-t058-unified-product-test-quality-integration`, based on exact T057 `6f0eaa37daf03ddb7fcbb2f8846688ae1e60cac5`. No-FF merge `ee2bb39e8bf7d1a44cd926f96bdd0f56cfdff22b` has T057 as first parent and T055 `04eda78af4e8230d0b26d054c13f7f6781a2bf20` as second parent. The merge adds only the nine T055 API test repairs and T055 evidence; no app, contract, or ESLint config changes.

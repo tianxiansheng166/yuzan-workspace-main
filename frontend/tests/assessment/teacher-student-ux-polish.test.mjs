@@ -6,19 +6,21 @@ import test from 'node:test';
 const read = (path) => readFile(resolve(process.cwd(), path), 'utf8');
 
 test('teacher studio uses a readable stacked layout on small screens', async () => {
-  const [shellJs, shellCss, studioCss, studioHtml] = await Promise.all([
+  const [shellJs, responsiveCss, studioCss, studioHtml] = await Promise.all([
     read('shared/teacher-shell.js'),
-    read('shared/teacher-shell.css'),
+    read('teacher/courses/spring/studio/responsive-studio.css'),
     read('teacher/courses/spring/studio/style.css'),
     read('teacher/courses/spring/studio/index.html'),
   ]);
 
   assert.match(shellJs, /classList\.contains\('responsive-studio'\)/);
   assert.match(shellJs, /ts-design-host--responsive-studio/);
-  assert.match(shellCss, /\.ts-design-host\.ts-design-host--responsive-studio\{height:auto;overflow:visible\}/);
-  assert.match(shellCss, /main\.design\.responsive-studio\{[\s\S]*?transform:none!important/);
+  assert.match(responsiveCss, /\.ts-design-host\.ts-design-host--responsive-studio\s*\{[\s\S]*?height:\s*auto/);
+  assert.match(responsiveCss, /main\.design\.responsive-studio\s*\{[\s\S]*?transform:\s*none\s*!important/);
+  assert.match(responsiveCss, /@media\s*\(max-width:\s*960px\)/);
+  assert.match(responsiveCss, /grid-template-columns:\s*minmax\(0,\s*1fr\)/);
   assert.match(studioCss, /@media\(max-width:760px\)\{[\s\S]*?\.panels\{height:auto;display:grid;grid-template-columns:minmax\(0,1fr\)/);
-  assert.match(studioCss, /\.title-actions button\{flex:1 1 calc\(50% - 8px\);min-width:0/);
+  assert.match(responsiveCss, /\.title-actions button\s*\{[\s\S]*?flex:\s*1 1 calc\(50% - 8px\);\s*min-width:\s*0/);
   assert.match(studioHtml, /data-action="save-course"/);
   assert.match(studioHtml, /role="group" aria-label="课程操作"/);
   assert.match(studioHtml, /保存草稿后，可提交审核或发布课程；发布成功后/);

@@ -1,0 +1,75 @@
+{
+  "label": "VISUAL_FIXTURE_ONLY",
+  "apiE2e": false,
+  "school": {
+    "id": "11111111-1111-4111-8111-111111111111",
+    "name": "VISUAL_FIXTURE_ONLY 示例学校"
+  },
+  "teacher": {
+    "id": "22222222-2222-4222-8222-222222222222",
+    "displayName": "演示教师"
+  },
+  "courseVersion": {
+    "id": "33333333-3333-4333-8333-333333333333",
+    "title": "高原春声｜家乡朗读课程",
+    "status": "DRAFT",
+    "gradeBand": "七年级",
+    "locale": "zh-CN",
+    "version": 1,
+    "updatedAt": "2026-10-20T05:00:00.000Z",
+    "objectives": ["读准重点词语，理解课文描写的高原风光。"],
+    "units": [
+      {
+        "id": "44444444-4444-4444-8444-444444444444",
+        "title": "第一单元 · 山河里的声音",
+        "sortOrder": 0,
+        "lessons": [
+          {
+            "id": "55555555-5555-4555-8555-555555555555",
+            "title": "第一课 · 认识家乡",
+            "sortOrder": 0,
+            "activities": [
+              {
+                "id": "66666666-6666-4666-8666-666666666666",
+                "type": "SPEECH",
+                "title": "范读与停顿练习",
+                "instruction": "先听教师范读，再按句子停顿朗读。完成后检查自己的发音和节奏。",
+                "sortOrder": 0,
+                "required": true,
+                "completionRule": "SUBMIT_RECORDING",
+                "objectives": ["听辨长句中的自然停顿。"],
+                "keyPoints": ["读清地名", "停顿自然"],
+                "coreQuestion": "作者怎样写出清晨的安静？",
+                "keyContent": "山路从村口延伸到河边，远处传来清亮的鸟鸣。",
+                "teacherSummary": "指导学生先读准词语，再练习停顿。",
+                "teacherNotes": "可先示范朗读，再请学生分句练习。",
+                "studentNotes": "遇到长句时，先找出逗号和句号。",
+                "content": {
+                  "targetText": "山路从村口延伸到河边，远处传来清亮的鸟鸣。",
+                  "coreQuestion": "作者怎样写出清晨的安静？",
+                  "keyContent": "山路从村口延伸到河边，远处传来清亮的鸟鸣。",
+                  "teacherSummary": "指导学生先读准词语，再练习停顿。"
+                },
+                "resources": [],
+                "practiceReference": null
+              },
+              {
+                "id": "77777777-7777-4777-8777-777777777777",
+                "type": "TEXT",
+                "title": "回顾本课要点",
+                "instruction": "用自己的话说一说这节课读到的内容。",
+                "sortOrder": 1,
+                "required": false,
+                "teacherNotes": "鼓励学生联系生活经验。",
+                "studentNotes": "",
+                "content": {},
+                "resources": [],
+                "practiceReference": null
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -146,10 +146,17 @@
         host.className = 'ts-design-host';
         if (designRoot.classList.contains('responsive-studio')) {
           host.classList.add('ts-design-host--responsive-studio');
+          shell.classList.add('ts-app-shell--responsive-studio');
         }
         pageRoot.appendChild(host);
         host.appendChild(designRoot);
         fitDesign = () => {
+          if (designRoot.classList.contains('responsive-studio')) {
+            designRoot.style.width = '100%';
+            designRoot.style.height = 'auto';
+            designRoot.style.transform = 'none';
+            return;
+          }
           const dw = Number(designRoot.dataset.width || designRoot.offsetWidth);
           const dh = Number(designRoot.dataset.height || designRoot.offsetHeight);
           designRoot.style.width = `${dw}px`;

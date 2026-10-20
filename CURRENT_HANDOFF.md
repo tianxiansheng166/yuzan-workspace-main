@@ -3,6 +3,13 @@
 Last updated: 2026-10-20
 Repository: `yuzan-workspace-main`
 
+## YZ-RD-T067 studio mobile visual verification (2026-10-20)
+
+- Verified accepted T061 BASE `9a1a8b741d0eacfc304dfd72006558848b8bf6e4` on independent branch `feat/yz-rd-t067-studio-mobile-visual-verification`. New Chromium captures from the modified page cover 390×844, 768×1024, 1280×900 and 1440×1000; no T053 screenshot was used as new acceptance evidence.
+- The 768px capture exposed the remaining 1536px canvas shrink (scale 0.453125), and the 390px capture measured 39px rename / 35px Add Unit controls. The studio now uses an unscaled flow layout, stacks through 960px, uses fluid three-column desktop panels, and gives all 19 rendered studio buttons at least 44px height. Four final screenshots and a keyboard-focus capture are in [`evidence/yz-rd-t067/RESULTS.md`](evidence/yz-rd-t067/RESULTS.md).
+- Chromium exercised Save Draft, dirty-state announcement, forced save failure (no review request), and successful save-before-review. The browser used clearly marked `VISUAL_FIXTURE_ONLY` data and a local fixture API shim; this was not a real API E2E. No authorized API endpoint was supplied, no real API was contacted, and the shared 9222 browser service was untouched. Formal APIs, teacher review rules and student Today/course flow were not changed.
+- Frontend suite: 141/141, including two new responsive-studio tests; runtime verification, JS syntax checks and `git diff --check` pass. `READY_TO_MERGE=NO` remains due the inherited 1,203 API test lint findings recorded by T058. `L4_OPEN=OPEN`; no Level 4 data/runtime, T005 path, Docker or shared-branch merge was used. Root `/home/tian/code` safety baseline governed because target `AGENTS.md` lacks the V2.2 marker.
+
 ## YZ-RD-T061 teacher studio + student course UX polish (2026-10-20)
 
 - Implemented on independent branch `feat/yz-rd-t061-teacher-studio-student-course-ux-polish`, based on exact accepted T058 BASE `736cb9bdc98866f15be586a7410749182ace0d29`. The course studio now switches from the fixed desktop canvas to a readable, scrollable stacked layout on small screens. Its actions expose Save Draft, explain review/publish/assignment sequence, and save dirty work before review submission. Existing course, review, publish, assignment, score and database contracts remain unchanged.

@@ -1,0 +1,514 @@
+{
+  "taskId": "YZ-RD-T067",
+  "fixture": "VISUAL_FIXTURE_ONLY",
+  "realApiConnected": false,
+  "browser": "Google Chrome/Chromium, isolated headless process, ephemeral DevTools port",
+  "sharedBrowserService9222Touched": false,
+  "viewports": [
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "requestedWidth": 390,
+        "requestedHeight": 844
+      },
+      "documentWidth": {
+        "html": 390,
+        "body": 390
+      },
+      "text": {
+        "titlePx": 27.3,
+        "structurePx": 14,
+        "editorHeadingPx": 15,
+        "workflowPx": 12,
+        "activityText": "△　范读与停顿练习"
+      },
+      "canvas": {
+        "host": {
+          "x": 0,
+          "y": 155,
+          "width": 390,
+          "height": 1459.3
+        },
+        "root": {
+          "x": 0,
+          "y": 155,
+          "width": 390,
+          "height": 1459.3
+        },
+        "transform": "none"
+      },
+      "panels": {
+        "columns": "220px 360px 260px",
+        "boxes": [
+          {
+            "x": 14,
+            "y": 574.3,
+            "width": 220,
+            "height": 952
+          },
+          {
+            "x": 246,
+            "y": 574.3,
+            "width": 360,
+            "height": 952
+          },
+          {
+            "x": 618,
+            "y": 574.3,
+            "width": 260,
+            "height": 952
+          }
+        ]
+      },
+      "buttons": {
+        "main": [
+          {
+            "label": "＋ 新建课程",
+            "height": 44,
+            "disabled": false
+          },
+          {
+            "label": "◉　预览",
+            "height": 44,
+            "disabled": false
+          },
+          {
+            "label": "保存草稿",
+            "height": 44,
+            "disabled": true
+          },
+          {
+            "label": "➤　提交审核",
+            "height": 44,
+            "disabled": false
+          },
+          {
+            "label": "发布课程",
+            "height": 44,
+            "disabled": false
+          }
+        ],
+        "otherActions": [
+          {
+            "name": "rename",
+            "x": 14,
+            "y": 243.9,
+            "width": 44,
+            "height": 44
+          },
+          {
+            "name": "add-unit",
+            "x": 112.3,
+            "y": 578.8,
+            "width": 106.7,
+            "height": 44
+          },
+          {
+            "name": "add-activity",
+            "x": 29,
+            "y": 797.3,
+            "width": 190,
+            "height": 44
+          }
+        ]
+      },
+      "saveStatus": {
+        "text": "课程草稿",
+        "live": "polite"
+      },
+      "screenshot": "studio-390x844-chromium.png"
+    },
+    {
+      "viewport": {
+        "width": 768,
+        "height": 1024,
+        "requestedWidth": 768,
+        "requestedHeight": 1024
+      },
+      "documentWidth": {
+        "html": 768,
+        "body": 768
+      },
+      "text": {
+        "titlePx": 30,
+        "structurePx": 14,
+        "editorHeadingPx": 15,
+        "workflowPx": 12,
+        "activityText": "△　范读与停顿练习"
+      },
+      "canvas": {
+        "host": {
+          "x": 0,
+          "y": 155,
+          "width": 768,
+          "height": 1408
+        },
+        "root": {
+          "x": 0,
+          "y": 155,
+          "width": 768,
+          "height": 1408
+        },
+        "transform": "none"
+      },
+      "panels": {
+        "columns": "220px 360px 260px",
+        "boxes": [
+          {
+            "x": 14,
+            "y": 523,
+            "width": 220,
+            "height": 952
+          },
+          {
+            "x": 246,
+            "y": 523,
+            "width": 360,
+            "height": 952
+          },
+          {
+            "x": 618,
+            "y": 523,
+            "width": 260,
+            "height": 952
+          }
+        ]
+      },
+      "buttons": {
+        "main": [
+          {
+            "label": "＋ 新建课程",
+            "height": 44,
+            "disabled": false
+          },
+          {
+            "label": "◉　预览",
+            "height": 44,
+            "disabled": false
+          },
+          {
+            "label": "保存草稿",
+            "height": 44,
+            "disabled": true
+          },
+          {
+            "label": "➤　提交审核",
+            "height": 44,
+            "disabled": false
+          },
+          {
+            "label": "发布课程",
+            "height": 44,
+            "disabled": false
+          }
+        ],
+        "otherActions": [
+          {
+            "name": "rename",
+            "x": 14,
+            "y": 212.4,
+            "width": 44,
+            "height": 44
+          },
+          {
+            "name": "add-unit",
+            "x": 112.3,
+            "y": 527.5,
+            "width": 106.7,
+            "height": 44
+          },
+          {
+            "name": "add-activity",
+            "x": 29,
+            "y": 746,
+            "width": 190,
+            "height": 44
+          }
+        ]
+      },
+      "saveStatus": {
+        "text": "课程草稿",
+        "live": "polite"
+      },
+      "screenshot": "studio-768x1024-chromium.png"
+    },
+    {
+      "viewport": {
+        "width": 1280,
+        "height": 900,
+        "requestedWidth": 1280,
+        "requestedHeight": 900
+      },
+      "documentWidth": {
+        "html": 1280,
+        "body": 1265
+      },
+      "text": {
+        "titlePx": 34.56,
+        "structurePx": 14,
+        "editorHeadingPx": 15,
+        "workflowPx": 12,
+        "activityText": "△　范读与停顿练习"
+      },
+      "canvas": {
+        "host": {
+          "x": 190,
+          "y": 69,
+          "width": 1075,
+          "height": 1017.5
+        },
+        "root": {
+          "x": 190,
+          "y": 69,
+          "width": 1075,
+          "height": 1017.5
+        },
+        "transform": "none"
+      },
+      "panels": {
+        "columns": "241.953px 512.375px 284.672px",
+        "boxes": [
+          {
+            "x": 202,
+            "y": 314.5,
+            "width": 242,
+            "height": 680
+          },
+          {
+            "x": 450,
+            "y": 314.5,
+            "width": 512.4,
+            "height": 680
+          },
+          {
+            "x": 968.3,
+            "y": 314.5,
+            "width": 284.7,
+            "height": 680
+          }
+        ]
+      },
+      "buttons": {
+        "main": [
+          {
+            "label": "＋ 新建课程",
+            "height": 44,
+            "disabled": false
+          },
+          {
+            "label": "◉　预览",
+            "height": 44,
+            "disabled": false
+          },
+          {
+            "label": "保存草稿",
+            "height": 44,
+            "disabled": true
+          },
+          {
+            "label": "➤　提交审核",
+            "height": 44,
+            "disabled": false
+          },
+          {
+            "label": "发布课程",
+            "height": 44,
+            "disabled": false
+          }
+        ],
+        "otherActions": [
+          {
+            "name": "rename",
+            "x": 212,
+            "y": 178.5,
+            "width": 44,
+            "height": 44
+          },
+          {
+            "name": "add-unit",
+            "x": 316.2,
+            "y": 322.5,
+            "width": 106.7,
+            "height": 44
+          },
+          {
+            "name": "add-activity",
+            "x": 221,
+            "y": 931.5,
+            "width": 204,
+            "height": 44
+          }
+        ]
+      },
+      "saveStatus": {
+        "text": "课程草稿",
+        "live": "polite"
+      },
+      "screenshot": "studio-1280x900-chromium.png"
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "requestedWidth": 1440,
+        "requestedHeight": 1000
+      },
+      "documentWidth": {
+        "html": 1440,
+        "body": 1425
+      },
+      "text": {
+        "titlePx": 38.88,
+        "structurePx": 14,
+        "editorHeadingPx": 15,
+        "workflowPx": 12,
+        "activityText": "△　范读与停顿练习"
+      },
+      "canvas": {
+        "host": {
+          "x": 190,
+          "y": 69,
+          "width": 1235,
+          "height": 1027.4
+        },
+        "root": {
+          "x": 190,
+          "y": 69,
+          "width": 1235,
+          "height": 1027.4
+        },
+        "transform": "none"
+      },
+      "panels": {
+        "columns": "279.219px 591.281px 328.484px",
+        "boxes": [
+          {
+            "x": 202,
+            "y": 324.4,
+            "width": 279.2,
+            "height": 680
+          },
+          {
+            "x": 487.2,
+            "y": 324.4,
+            "width": 591.3,
+            "height": 680
+          },
+          {
+            "x": 1084.5,
+            "y": 324.4,
+            "width": 328.5,
+            "height": 680
+          }
+        ]
+      },
+      "buttons": {
+        "main": [
+          {
+            "label": "＋ 新建课程",
+            "height": 44,
+            "disabled": false
+          },
+          {
+            "label": "◉　预览",
+            "height": 44,
+            "disabled": false
+          },
+          {
+            "label": "保存草稿",
+            "height": 44,
+            "disabled": true
+          },
+          {
+            "label": "➤　提交审核",
+            "height": 44,
+            "disabled": false
+          },
+          {
+            "label": "发布课程",
+            "height": 44,
+            "disabled": false
+          }
+        ],
+        "otherActions": [
+          {
+            "name": "rename",
+            "x": 212,
+            "y": 188.4,
+            "width": 44,
+            "height": 44
+          },
+          {
+            "name": "add-unit",
+            "x": 353.5,
+            "y": 332.4,
+            "width": 106.7,
+            "height": 44
+          },
+          {
+            "name": "add-activity",
+            "x": 221,
+            "y": 941.4,
+            "width": 241.2,
+            "height": 44
+          }
+        ]
+      },
+      "saveStatus": {
+        "text": "课程草稿",
+        "live": "polite"
+      },
+      "screenshot": "studio-1440x1000-chromium.png"
+    }
+  ],
+  "interactions": {
+    "dirtyStatus": {
+      "text": "未保存",
+      "live": "polite"
+    },
+    "keyboardFocus": {
+      "label": "保存草稿",
+      "selector": "save-course",
+      "focusVisible": true,
+      "outlineStyle": "solid",
+      "outlineWidth": "3px",
+      "boxShadow": "none",
+      "height": 44
+    },
+    "afterExplicitSave": {
+      "title": "VISUAL_FIXTURE_ONLY｜待保存课程标题",
+      "status": "课程草稿",
+      "disabled": true
+    },
+    "afterFailedSave": {
+      "patchCount": 2,
+      "reviewCount": 0,
+      "status": "未保存",
+      "saveDisabled": false
+    },
+    "orderedEvents": [
+      {
+        "method": "PATCH",
+        "path": "course-version",
+        "title": "VISUAL_FIXTURE_ONLY｜待保存课程标题"
+      },
+      {
+        "method": "PATCH",
+        "path": "course-version",
+        "title": "VISUAL_FIXTURE_ONLY｜待保存课程标题"
+      },
+      {
+        "method": "PATCH",
+        "path": "course-version",
+        "title": "VISUAL_FIXTURE_ONLY｜待保存课程标题"
+      },
+      {
+        "method": "POST",
+        "path": "submit-review"
+      }
+    ]
+  },
+  "runtimeExceptions": [],
+  "assertionFailures": []
+}

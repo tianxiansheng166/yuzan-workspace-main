@@ -147,6 +147,27 @@ svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-l
 @media(min-width:761px) and (max-width:899px){
   .ts-app-shell{min-width:0}
 }
+@media(min-width:761px) and (max-width:960px){
+  .ts-app-shell--responsive-studio{grid-template-columns:minmax(0,1fr);width:100%;min-width:0}
+  .ts-app-shell--responsive-studio .ts-sidebar{position:relative;inset:auto;width:100%;height:auto;border-right:0;border-bottom:1px solid #e8e0d8;overflow:visible}
+  .ts-app-shell--responsive-studio .ts-brand{width:100%;min-width:0;height:48px;justify-content:flex-start;padding:6px 12px}
+  .ts-app-shell--responsive-studio .ts-brand-copy{display:grid}
+  .ts-app-shell--responsive-studio .ts-nav{width:100%;max-width:100%;min-width:0;height:auto;display:flex;gap:3px;padding:4px 8px;overflow-x:auto}
+  .ts-app-shell--responsive-studio .ts-nav-item{flex:0 0 auto;min-height:40px;justify-content:center;gap:5px;padding:0 7px;font-size:10px}
+  .ts-app-shell--responsive-studio .ts-nav-item span:not(.ts-nav-circle){display:inline;white-space:nowrap;font-size:10px}
+  .ts-app-shell--responsive-studio .ts-nav-item svg{width:15px;height:15px}
+  .ts-app-shell--responsive-studio .ts-sidebar-footer,.ts-app-shell--responsive-studio .ts-collapse-btn{display:none}
+  .ts-app-shell--responsive-studio .ts-main{grid-column:1/-1;width:100%;min-width:0}
+  .ts-app-shell--responsive-studio .ts-topbar{width:100%;min-width:0;height:auto;min-height:58px;gap:8px;padding:8px}
+  .ts-app-shell--responsive-studio #ts-page-root{width:100%;min-width:0;overflow-x:hidden}
+  .ts-app-shell--responsive-studio .ts-context{min-width:0;flex:1;overflow:hidden}
+  .ts-app-shell--responsive-studio .ts-context-btn{min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 8px}
+  .ts-app-shell--responsive-studio .ts-sync-pill{display:none}
+  .ts-app-shell--responsive-studio .ts-top-actions{gap:4px}
+  .ts-app-shell--responsive-studio .ts-profile-btn{gap:6px;padding:0 2px}
+  .ts-app-shell--responsive-studio .ts-profile-btn>span:nth-child(2){max-width:96px;overflow:hidden}
+  .ts-app-shell--responsive-studio .ts-profile-btn strong,.ts-app-shell--responsive-studio .ts-profile-btn small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+}
 @media(max-width:760px){
   :root{--ts-sidebar:100%}
   .ts-app-shell{grid-template-columns:minmax(0,1fr);width:100%;min-width:0}
@@ -170,15 +191,3 @@ svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-l
   .ts-profile-btn strong,.ts-profile-btn small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 }
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
-
-/* The course studio has a dedicated, scrollable small-screen layout. */
-@media(max-width:760px){
-  .ts-design-host.ts-design-host--responsive-studio{height:auto;overflow:visible}
-  .ts-design-host.ts-design-host--responsive-studio>main.design.responsive-studio{
-    position:relative!important;left:auto!important;top:auto!important;transform:none!important;
-    width:100%!important;height:auto!important;overflow:visible!important
-  }
-  .ts-design-host.ts-design-host--responsive-studio .workspace{
-    position:static!important;left:auto!important;top:auto!important;width:auto!important;height:auto!important
-  }
-}
