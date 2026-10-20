@@ -14,6 +14,7 @@
   let dirty = false;
   let activeTab = 'goals';
   let coursePracticeOptions = [];
+  const unsavedActivityIds = new Set();
 
   // ── DOM 引用 ──
   const $ = (sel) => document.querySelector(sel);
@@ -33,6 +34,10 @@
   const mindNodesEl = $('[data-bind="mind-nodes"]');
   const mindEmptyEl = $('[data-bind="mind-empty"]');
   const mindDetailEl = $('[data-bind="mind-detail"]');
+  const createCourseDialog = $('#createCourseDialog');
+  const createCourseForm = $('#createCourseForm');
+  const createActivityDialog = $('#createActivityDialog');
+  const createActivityForm = $('#createActivityForm');
 
   // ── 常量映射 ──
   const STATUS_LABEL = {
@@ -107,6 +112,27 @@
     return window.YuzanApi?.getToken?.() || null;
   }
 
+  function canEditCourse() {
+    return ['DRAFT', 'CHANGES_REQUESTED'].includes(courseVersion?.status);
+  }
+
+  function toBilingual(text) {
+    return {
+      originalText: text.trim(),
+      locale: courseVersion?.locale || 'zh-CN',
+      translationSource: 'NONE',
+      reviewStatus: 'REVIEWED',
+    };
+  }
+
+  function createId() {
+    if (window.crypto?.randomUUID) return window.crypto.randomUUID();
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (character) => {
+      const random = Math.random() * 16 | 0;
+      return (character === 'x' ? random : (random & 0x3 | 0x8)).toString(16);
+    });
+  }
+
   function hydrateStudioActivityFields(version) {
     (version?.units || []).forEach((unit) => (unit.lessons || []).forEach((lesson) =>
       (lesson.activities || []).forEach((activity) => {
@@ -148,11 +174,16 @@
     stepsEl.querySelectorAll('.line').forEach((line, i) => {
       line.classList.toggle('active', i < currentIndex);
     });
+    const publishButton = $('[data-action="publish-course-version"]');
+    const submitButton = $('.submit');
+    if (publishButton) publishButton.disabled = !canEditCourse();
+    if (submitButton) submitButton.disabled = !canEditCourse();
   }
 
   // ── 课程结构渲染 ──
-  function renderStructure() {
+  function renderStructure(preferredActivityId) {
     if (!courseVersion || !treeEl) return;
+    const selectedActivityId = preferredActivityId || selectedActivity?.id || '';
     const units = courseVersion.units || [];
     if (units.length === 0) {
       treeEl.innerHTML = '<div class="tree-empty">暂无章节，点击右上角 ＋ 添加</div>';
@@ -164,7 +195,7 @@
       const lessonsHtml = lessons.length ? lessons.map((lesson, lIndex) => {
         const activities = lesson.activities || [];
         const activitiesHtml = activities.map((activity, aIndex) =>
-          `<p class="activity" data-unit="${uIndex}" data-lesson="${lIndex}" data-activity="${aIndex}">△　${escapeHtml(activity.title || '未命名活动')}</p>`
+          `<p class="activity" data-unit="${uIndex}" data-lesson="${lIndex}" data-activity="${aIndex}" data-activity-id="${escapeHtml(activity.id)}">△　${escapeHtml(activity.title || '未命名活动')}</p>`
         ).join('');
         return `<p data-unit="${uIndex}" data-lesson="${lIndex}" data-activity="-1">○　${escapeHtml(lesson.title || `课时 ${lIndex + 1}`)}</p>` + activitiesHtml;
       }).join('') : '<p class="tree-empty-lesson">（暂无课时）</p>';
@@ -185,14 +216,108 @@
       });
     });
 
-    // 默认选中第一个活动
-    const firstActivityP = treeEl.querySelector('p.activity');
+    // Keep the authored activity selected after structure changes and saves.
+    const preferredActivity = selectedActivityId
+      ? [...treeEl.querySelectorAll('p.activity')].find((item) => item.dataset.activityId === selectedActivityId)
+      : null;
+    const firstActivityP = preferredActivity || treeEl.querySelector('p.activity');
     if (firstActivityP) {
       firstActivityP.click();
     } else {
       const firstP = treeEl.querySelector('p[data-unit]');
       if (firstP) firstP.click();
     }
+  }
+
+  function addUnitToCourse() {
+    if (!canEditCourse()) {
+      toast('已发布或审核中的课程不能修改结构', 'warning');
+      return null;
+    }
+    if (!Array.isArray(courseVersion.units)) courseVersion.units = [];
+    const unit = {
+      id: createId(),
+      title: `听说单元 ${courseVersion.units.length + 1}`,
+      sortOrder: courseVersion.units.length,
+      lessons: [],
+    };
+    const lesson = {
+      id: createId(),
+      title: '课时 1',
+      sortOrder: 0,
+      activities: [],
+    };
+    unit.lessons.push(lesson);
+    courseVersion.units.push(unit);
+    selectedUnit = unit;
+    selectedLesson = lesson;
+    selectedActivity = null;
+    setDirty(true);
+    renderStructure();
+    const unitIndex = courseVersion.units.indexOf(unit);
+    const lessonNode = treeEl?.querySelector(`p[data-unit="${unitIndex}"][data-lesson="0"][data-activity="-1"]`);
+    selectNode(unit, lesson, null, lessonNode);
+    return { unit, lesson };
+  }
+
+  function ensureSelectedLesson() {
+    if (!Array.isArray(courseVersion.units)) courseVersion.units = [];
+    if (selectedUnit && selectedLesson && selectedUnit.lessons?.includes(selectedLesson)) {
+      return { unit: selectedUnit, lesson: selectedLesson };
+    }
+    let unit = courseVersion.units[0];
+    if (!unit) return addUnitToCourse();
+    if (!Array.isArray(unit.lessons)) unit.lessons = [];
+    let lesson = unit.lessons[0];
+    if (!lesson) {
+      lesson = { id: createId(), title: '课时 1', sortOrder: 0, activities: [] };
+      unit.lessons.push(lesson);
+      selectedUnit = unit;
+      selectedLesson = lesson;
+      setDirty(true);
+    }
+    return { unit, lesson };
+  }
+
+  function addActivityToSelectedLesson(values) {
+    if (!canEditCourse()) {
+      toast('已发布或审核中的课程不能添加活动', 'warning');
+      return null;
+    }
+    const target = ensureSelectedLesson();
+    if (!target) return null;
+    const { unit, lesson } = target;
+    if (!Array.isArray(lesson.activities)) lesson.activities = [];
+    const type = values.type;
+    const instruction = values.instruction.trim();
+    let content = {};
+    if (type === 'SPEECH') content = { targetText: values.targetText.trim() };
+    else if (type === 'CHOICE') content = { prompt: instruction, options: ['开始正式听说练习'] };
+    else if (type === 'TEXT') content = { paragraphs: [instruction] };
+    else if (type === 'AUDIO') content = { audioUrl: '' };
+    else if (type === 'VIDEO') content = { videoUrl: '' };
+    else if (type === 'FILL_BLANK') content = { prompt: instruction, placeholder: '填写你的回答' };
+
+    const activity = {
+      id: createId(),
+      type,
+      title: values.title.trim(),
+      instruction: toBilingual(instruction),
+      sortOrder: lesson.activities.length,
+      required: true,
+      content,
+      resources: [],
+      teacherNotes: toBilingual(values.teacherNotes),
+      studentNotes: toBilingual(values.studentNotes),
+    };
+    lesson.activities.push(activity);
+    unsavedActivityIds.add(activity.id);
+    selectedUnit = unit;
+    selectedLesson = lesson;
+    selectedActivity = activity;
+    setDirty(true);
+    renderStructure(activity.id);
+    return activity;
   }
 
   // ── 选中节点 ──
@@ -681,7 +806,7 @@
         requiresRecording: false,
       });
     }
-    const editablePractice = ['DRAFT', 'CHANGES_REQUESTED'].includes(courseVersion?.status);
+    const editablePractice = canEditCourse() && !unsavedActivityIds.has(a.id);
 
     return `
       <h3>视频中互动题</h3>
@@ -736,7 +861,9 @@
       </label>
       <p class="form-hint" data-bind="course-practice-current">${practiceReference ? `当前关联：${escapeHtml(practiceReference.title)}` : '当前活动尚未关联正式练习。'}</p>
       <button class="btn-add-item" data-action="save-course-practice" ${editablePractice && availablePractices.length ? '' : 'disabled'}>保存练习关联</button>
-      ${editablePractice ? '' : '<p class="form-hint">已发布课程版本不可直接修改。请创建新的草稿版本后编辑。</p>'}
+      ${unsavedActivityIds.has(a.id)
+        ? '<p class="form-hint">请先保存新活动，再绑定正式练习。</p>'
+        : editablePractice ? '' : '<p class="form-hint">已发布或审核中的课程版本不可直接修改。请创建新的草稿版本后编辑。</p>'}
     `;
   }
 
@@ -1113,6 +1240,10 @@
       // 加载课程版本，包含 units/lessons/activities/resources
       courseVersion = await apiRequest(`/schools/${schoolId}/course-versions/${courseVersionId}`, { method: 'GET' });
       if (!courseVersion) throw new Error('课程版本为空');
+      selectedUnit = null;
+      selectedLesson = null;
+      selectedActivity = null;
+      unsavedActivityIds.clear();
       const optionsResult = await apiRequest(
         `/schools/${schoolId}/course-versions/${courseVersionId}/practice-options`,
         { method: 'GET' },
@@ -1144,12 +1275,16 @@
   async function saveCourse() {
     if (!courseVersion?.id) {
       toast('课程版本未加载', 'warning');
-      return;
+      return false;
+    }
+    if (!canEditCourse()) {
+      toast('当前课程版本不可编辑', 'warning');
+      return false;
     }
     const schoolId = getActiveSchoolId();
     if (!schoolId) {
       toast('请先选择学校', 'warning');
-      return;
+      return false;
     }
 
     try {
@@ -1191,15 +1326,18 @@
         })
       });
       courseVersion = savedVersion;
+      unsavedActivityIds.clear();
       if (titleEl) titleEl.textContent = courseVersion.title || '未命名课程';
       if (crumbEl) crumbEl.textContent = courseVersion.title || '课程详情';
       renderSteps();
-      renderStructure();
+      renderStructure(selectedActivity?.id);
       setDirty(false);
       toast('课程草稿已保存', 'success');
+      return true;
     } catch (err) {
       console.error('[studio] 保存失败:', err);
       toast(err.message || '保存失败，请检查网络', 'error');
+      return false;
     }
   }
 
@@ -1262,13 +1400,148 @@
     }
   });
 
-  // ── 添加活动（暂未开通，符合现有约定）──
-  $('[data-action="add-activity"]')?.addEventListener('click', () => {
-    toast('课程结构管理功能暂未开通');
+  // ── 教师课程草稿与活动结构创建 ──
+  $('[data-action="new-course"]')?.addEventListener('click', () => {
+    if (dirty) {
+      toast('请先保存当前课程草稿，再创建新课程', 'warning');
+      return;
+    }
+    createCourseForm?.reset();
+    createCourseForm?.querySelector('.dialog-error')?.replaceChildren();
+    createCourseDialog?.showModal();
+    createCourseForm?.elements.namedItem('title')?.focus();
+  });
+
+  createCourseForm?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (!createCourseForm.reportValidity()) return;
+    const schoolId = getActiveSchoolId();
+    if (!schoolId) {
+      toast('请先选择学校', 'warning');
+      return;
+    }
+    const submit = createCourseForm.querySelector('[type="submit"]');
+    const error = createCourseForm.querySelector('.dialog-error');
+    const title = createCourseForm.elements.namedItem('title').value.trim();
+    const objective = createCourseForm.elements.namedItem('objective').value.trim();
+    submit.disabled = true;
+    submit.textContent = '正在创建…';
+    error.textContent = '';
+    try {
+      const created = await apiRequest(`/schools/${schoolId}/course-versions`, {
+        method: 'POST',
+        body: JSON.stringify({
+          title,
+          description: `由教师工作台创建：${title}`,
+          gradeBand: createCourseForm.elements.namedItem('gradeBand').value.trim(),
+          objectives: [{
+            originalText: objective,
+            locale: 'zh-CN',
+            translationSource: 'NONE',
+            reviewStatus: 'REVIEWED',
+          }],
+        }),
+      });
+      if (!created?.id) throw new Error('服务端未返回课程版本 ID');
+      const url = new URL(location.href);
+      url.searchParams.set('courseVersionId', created.id);
+      history.replaceState(null, '', `${url.pathname}${url.search}${url.hash}`);
+      createCourseDialog.close();
+      await loadCourseDetails(created.id);
+      toast('课程草稿已创建', 'success');
+    } catch (err) {
+      error.textContent = err.message || '创建课程失败，请检查网络后重试';
+    } finally {
+      submit.disabled = false;
+      submit.textContent = '创建课程';
+    }
   });
 
   $('[data-action="add-unit"]')?.addEventListener('click', () => {
-    toast('课程结构管理功能暂未开通');
+    const result = addUnitToCourse();
+    if (result) toast('已添加单元和首个课时，请添加课程活动', 'success');
+  });
+
+  $('[data-action="add-activity"]')?.addEventListener('click', () => {
+    if (!courseVersion?.id) {
+      toast('请先创建或打开一门课程', 'warning');
+      return;
+    }
+    if (!canEditCourse()) {
+      toast('已发布或审核中的课程不能添加活动', 'warning');
+      return;
+    }
+    createActivityForm?.reset();
+    createActivityForm.elements.namedItem('type').value = 'SPEECH';
+    createActivityForm.querySelector('.dialog-error').textContent = '';
+    const targetLabel = createActivityForm.querySelector('[data-speech-target-label]');
+    targetLabel.hidden = false;
+    createActivityForm.elements.namedItem('targetText').required = true;
+    createActivityDialog?.showModal();
+    createActivityForm.elements.namedItem('title')?.focus();
+  });
+
+  createActivityForm?.elements.namedItem('type')?.addEventListener('change', (event) => {
+    const isSpeech = event.currentTarget.value === 'SPEECH';
+    const targetLabel = createActivityForm.querySelector('[data-speech-target-label]');
+    targetLabel.hidden = !isSpeech;
+    createActivityForm.elements.namedItem('targetText').required = isSpeech;
+  });
+
+  createActivityForm?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    if (!createActivityForm.reportValidity()) return;
+    const form = createActivityForm.elements;
+    const values = {
+      type: form.namedItem('type').value,
+      title: form.namedItem('title').value,
+      instruction: form.namedItem('instruction').value,
+      targetText: form.namedItem('targetText').value,
+      teacherNotes: form.namedItem('teacherNotes').value,
+      studentNotes: form.namedItem('studentNotes').value,
+    };
+    const activity = addActivityToSelectedLesson(values);
+    if (!activity) return;
+    createActivityDialog.close();
+    toast('活动已加入课程草稿，请保存后再绑定正式练习', 'success');
+  });
+
+  document.querySelectorAll('[data-close-dialog]').forEach((button) => {
+    button.addEventListener('click', () => document.getElementById(button.dataset.closeDialog)?.close());
+  });
+
+  [createCourseDialog, createActivityDialog].forEach((dialog) => {
+    dialog?.addEventListener('click', (event) => {
+      const box = dialog.getBoundingClientRect();
+      if (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom) dialog.close();
+    });
+  });
+
+  $('[data-action="publish-course-version"]')?.addEventListener('click', async (event) => {
+    const button = event.currentTarget;
+    if (!courseVersion?.id || !canEditCourse()) {
+      toast('只有可编辑的课程草稿可以发布', 'warning');
+      return;
+    }
+    if (dirty && !(await saveCourse())) return;
+    const schoolId = getActiveSchoolId();
+    button.disabled = true;
+    button.textContent = '正在发布…';
+    try {
+      const published = await apiRequest(`/schools/${schoolId}/course-versions/${courseVersion.id}/publish`, { method: 'POST' });
+      courseVersion.status = published.status;
+      courseVersion.version = published.version;
+      courseVersion.updatedAt = published.updatedAt || courseVersion.updatedAt;
+      if (draftEl) draftEl.textContent = STATUS_LABEL[courseVersion.status] || '已发布';
+      renderSteps();
+      switchTab(activeTab);
+      toast('课程版本已发布，可在教学任务中投放给授权班级', 'success');
+    } catch (err) {
+      toast(err.message || '课程发布失败，请根据校验提示完善课程后重试', 'error');
+    } finally {
+      button.textContent = '发布课程';
+      button.disabled = !canEditCourse();
+    }
   });
 
   $('[data-action="switch-activity"]')?.addEventListener('click', () => {

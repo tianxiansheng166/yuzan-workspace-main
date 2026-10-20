@@ -53,7 +53,9 @@
         <button class="edit" aria-label="重命名课程">✎</button>
         <span class="draft" data-bind="status-label">加载中…</span>
         <div class="title-actions">
+          <button class="new-course" type="button" data-action="new-course">＋ 新建课程</button>
           <button class="preview">◉　预览</button>
+          <button class="publish-course" type="button" data-action="publish-course-version">发布课程</button>
           <button class="submit">➤　提交审核</button>
         </div>
       </div>
@@ -74,7 +76,7 @@
 
         <!-- Structure panel: course tree (dynamic) -->
         <section class="structure panel">
-          <header><b>课程结构</b><span data-action="add-unit" title="添加章节">＋</span></header>
+          <header><b>课程结构</b><button type="button" data-action="add-unit" title="添加单元">＋ 添加单元</button></header>
           <div class="tree" data-bind="structure-tree">
             <div class="tree-loading">正在加载课程结构…</div>
           </div>
@@ -146,6 +148,43 @@
     <div class="status-footer"></div>
   </main>
 </div>
+
+<dialog class="studio-dialog" id="createCourseDialog" aria-labelledby="createCourseTitle">
+  <form id="createCourseForm">
+    <button class="studio-dialog-close" type="button" data-close-dialog="createCourseDialog" aria-label="关闭">×</button>
+    <h2 id="createCourseTitle">新建课程草稿</h2>
+    <label>课程名称<input name="title" required maxlength="160" autocomplete="off"></label>
+    <label>课程目标<textarea name="objective" required rows="3" maxlength="500"></textarea></label>
+    <label>适用年级<input name="gradeBand" maxlength="100" value="七年级"></label>
+    <p class="dialog-hint">创建后可在课程结构中添加单元、课时与活动，再关联本校已发布的正式练习。</p>
+    <p class="dialog-error" role="alert"></p>
+    <button class="studio-dialog-submit" type="submit">创建课程</button>
+  </form>
+</dialog>
+
+<dialog class="studio-dialog" id="createActivityDialog" aria-labelledby="createActivityTitle">
+  <form id="createActivityForm">
+    <button class="studio-dialog-close" type="button" data-close-dialog="createActivityDialog" aria-label="关闭">×</button>
+    <h2 id="createActivityTitle">添加课程活动</h2>
+    <label>活动类型
+      <select name="type" required>
+        <option value="SPEECH">朗读录音</option>
+        <option value="CHOICE">正式练习入口</option>
+        <option value="AUDIO">听力活动</option>
+        <option value="TEXT">文本学习</option>
+        <option value="VIDEO">视频学习</option>
+        <option value="FILL_BLANK">书面练习</option>
+      </select>
+    </label>
+    <label>活动名称<input name="title" required maxlength="160" autocomplete="off"></label>
+    <label>学生任务说明<textarea name="instruction" required rows="2" maxlength="500"></textarea></label>
+    <label data-speech-target-label>朗读文本<textarea name="targetText" rows="2" maxlength="1000"></textarea></label>
+    <label>教师教学提示<textarea name="teacherNotes" required rows="2" maxlength="500"></textarea></label>
+    <label>学生学习提示<textarea name="studentNotes" required rows="2" maxlength="500"></textarea></label>
+    <p class="dialog-error" role="alert"></p>
+    <button class="studio-dialog-submit" type="submit">添加活动</button>
+  </form>
+</dialog>
 
 <script src="/assets/app-core.js"></script>
 <script src="/assets/api-client.js"></script>

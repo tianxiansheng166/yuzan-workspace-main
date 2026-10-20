@@ -1,5 +1,15 @@
 # Development status
 
+## YZ-RD-T053 — unified course authoring and speech loop (2026-10-20)
+
+COMPLETE / NATIVE CROSS-ROLE E2E PASS / `READY_TO_MERGE=NO` due the unwaived full API lint gate. Independent branch `feat/yz-rd-t053-course-authoring-unified-student-teacher` starts from T050 `69eff46965b5c0bdd418a490319275aa7acfc4ab`; no-FF merge `3de27d667c65b8f3d9dafb98ce2c53aa001b5162` has accepted T049 `0d9dca9765b37c8817c0a2bbebfa918fdbd64494` as its second parent.
+
+Two native Chromium cross-role E2Es passed. Teacher studio created/saved a course and activities, the formal-practice relation was written through the T049 API, and the version/class assignment was published via teacher UI. Student Today → assigned course → speech recording/preview/MinIO upload → linked practice recording/submit → course return passed. Teacher audio listen/replay and six manual reviews generated one official API report; the same student opened the same report from History. Authorization/isolation 401/403/404/409 cases passed. No automatic speech score was generated.
+
+Frontend 137/137, Contracts 6/6, focused API 158 passed / 15 environment-gated skipped, and API typecheck passed. Full API lint remains 1,201 errors / 1 warning: `src` 1,037 errors / 1 warning and `test` 164 errors (exit 1); no rules were disabled or waived, so `READY_TO_MERGE=NO`. Four viewport captures cover 390/768/1280/1440. Full evidence: [evidence/yz-rd-t053/RESULTS.md](evidence/yz-rd-t053/RESULTS.md).
+
+Task-owned native services stopped cleanly. No Docker/Compose, SQL relation insert, Worker, shared-branch merge, or T005 edit. The Level 1-only importer applied no Level 4 runtime rows, but its full-source preflight scanned 120 source items before selecting 20 Level 1 items; this source-read boundary is recorded in T053 RESULTS. The target `AGENTS.md` lacks the AA-DEV-V2.2 marker and the card supplied no Lane policy path; `/home/tian/code/AGENTS.md` applied.
+
 ## YZ-RD-T050 — integrated teacher speech review (2026-10-20)
 
 COMPLETE / NATIVE_E2E_PASS / `READY_TO_MERGE=NO` due the unwaived API lint debt. The independent branch starts from formally accepted T047 `598fd18db3ae8d7dc4feaabdd8bc7425c1be6389`; no-FF merge `383f2923e551c239acc9a79d2dc279a7a98485a4` has exact parents T047 and accepted T048 `23ea9e3f550672b7deb36f690c9c0adb436ebe80`.

@@ -3,6 +3,15 @@
 Last updated: 2026-10-20
 Repository: `yuzan-workspace-main`
 
+## YZ-RD-T053 unified course authoring + student/teacher speech loop (2026-10-20)
+
+- COMPLETE on independent branch `feat/yz-rd-t053-course-authoring-unified-student-teacher`, based on T050 `69eff46965b5c0bdd418a490319275aa7acfc4ab`. No-FF merge `3de27d667c65b8f3d9dafb98ce2c53aa001b5162` preserves T049 `0d9dca9765b37c8817c0a2bbebfa918fdbd64494` as second parent; T050 Today/mobile remains first-parent history.
+- Two new native cross-role E2Es passed. Teacher created a course and activities in the real studio, bound the formal practice through the T049 API, published the version and opened an authorized class assignment. Student entered from personalized Today, recorded/previewed/uploaded course and assessment audio to MinIO, submitted once, and returned to the same course. Teacher manually listened/replayed and reviewed six items; the same student opened the resulting official report from History.
+- Permission/identity assertions cover 401/403/404/409. 390/768/1280/1440 screenshots and page width measurements cover Today, course, practice, studio, assignment, review, and report. API focused 158 passed / 15 environment-gated skipped; frontend 137/137; Contracts 6/6; API typecheck pass.
+- Full API lint was run: `src` 1,037 errors / 1 warning, `test` 164 errors, total 1,201 errors / 1 warning (exit 1), no rule suppression or waiver. `READY_TO_MERGE=NO`. Results and raw evidence: [evidence/yz-rd-t053/RESULTS.md](evidence/yz-rd-t053/RESULTS.md). Native owned services are stopped. No Docker/Compose, SQL relation insertion, Worker, fake speech scoring, or shared-branch merge.
+- Level 1 importer selected/applied 20 Level 1 items only. Its source preflight reports 120 parsed items before selection, so it scanned the source corpus; no Level 4 row was applied or opened in a browser. This parser-read scope is disclosed in T053 RESULTS. T005 source hashes match before/after; no T005 files were edited.
+- Target `AGENTS.md` lacks the AA-DEV-V2.2 marker; root `/home/tian/code/AGENTS.md` governed. `L4_OPEN` remains a source-preflight caveat; see T053 RESULTS.
+
 ## YZ-RD-T050 integrated teacher speech review (2026-10-20)
 
 - COMPLETE on independent branch `feat/yz-rd-t050-integrated-teacher-speech-review`, created from formally accepted T047 `598fd18db3ae8d7dc4feaabdd8bc7425c1be6389`. No-FF merge `383f2923e551c239acc9a79d2dc279a7a98485a4` preserves accepted T048 `23ea9e3f550672b7deb36f690c9c0adb436ebe80` as its second parent; branch was pushed and remains unmerged to the shared branch.

@@ -144,6 +144,9 @@ svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-l
   .ts-sidebar-art{display:none}
   .ts-collapse-btn{display:none}
 }
+@media(min-width:761px) and (max-width:899px){
+  .ts-app-shell{min-width:0}
+}
 @media(max-width:760px){
   :root{--ts-sidebar:100%}
   .ts-app-shell{grid-template-columns:minmax(0,1fr);width:100%;min-width:0}
