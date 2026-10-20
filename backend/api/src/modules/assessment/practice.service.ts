@@ -204,7 +204,7 @@ export class PracticeService {
                     orderBy: { sortOrder: "asc" },
                     include: {
                       questionVersion: {
-                        select: { id: true, status: true, deliverySpec: true, scoringSpec: true, item: { select: { schoolId: true } } },
+                        select: { id: true, status: true, publishedAt: true, deliverySpec: true, scoringSpec: true, item: { select: { schoolId: true } } },
                       },
                     },
                   },
@@ -221,6 +221,43 @@ export class PracticeService {
 
       const courseContext = await this.validateCourseContext(tx, schoolId, enrollment.id, definitionId, context);
 
+      // Validate every required item *before* consulting a legacy open session
+      // or writing an AssessmentSession. An OPEN attempt never grants an
+      // exemption from current publication and tenant eligibility.
+      const snapshot = delivery.practiceVersion.sections.flatMap((section) =>
+        section.items.map((item) => ({ section, item })),
+      );
+      if (snapshot.length === 0) throw new BadRequestException("已发布练习没有可执行题目");
+      const validatedItems = snapshot.map(({ section, item }, index) => {
+        const version = item.questionVersion;
+        if (
+          !item.questionVersionId ||
+          !version ||
+          version.id !== item.questionVersionId ||
+          version.status !== "PUBLISHED" ||
+          !(version.publishedAt instanceof Date) ||
+          !Number.isFinite(version.publishedAt.getTime()) ||
+          version.publishedAt.getTime() > Date.now()
+        ) {
+          throw new BadRequestException("练习引用的题库题目版本不可用");
+        }
+        // Unapproved global (null-school) versions must not be inherited.
+        if (version.item?.schoolId !== schoolId) {
+          throw new ForbiddenException("练习引用的题库题目版本不可用");
+        }
+        const deliverySpec = assertSafeQuestionDeliverySpec(version.deliverySpec);
+        return {
+          questionVersionId: version.id,
+          prompt: deliverySpec as Prisma.InputJsonValue,
+          itemConfig: deliverySpec as Prisma.InputJsonValue,
+          itemType: item.itemType,
+          sectionTitle: section.title,
+          sectionOrder: section.sortOrder,
+          sortOrder: index + 1,
+          maxScore: this.numericMaxScore(version.scoringSpec),
+        };
+      });
+
       const existing = await tx.assessmentSession.findFirst({
         where: {
           schoolId,
@@ -233,11 +270,6 @@ export class PracticeService {
         orderBy: { updatedAt: "desc" },
       });
       if (existing) return { attempt: existing, resumed: true };
-
-      const snapshot = delivery.practiceVersion.sections.flatMap((section) =>
-        section.items.map((item) => ({ section, item })),
-      );
-      if (snapshot.length === 0) throw new BadRequestException("已发布练习没有可执行题目");
 
       const attempt = await tx.assessmentSession.create({
         data: {
@@ -253,40 +285,13 @@ export class PracticeService {
         },
       });
       await tx.assessmentItem.createMany({
-        data: snapshot.map(({ section, item }, index) => {
-          const questionVersion = item.questionVersion;
-          if (item.questionVersionId && (!questionVersion || questionVersion.status !== "PUBLISHED")) {
-            throw new BadRequestException("练习引用的题库题目版本不可用");
-          }
-          if (questionVersion?.item?.schoolId && questionVersion.item.schoolId !== schoolId) {
-            throw new ForbiddenException("练习引用的题库题目不属于当前学校");
-          }
-
-          const deliverySpec = questionVersion
-            ? assertSafeQuestionDeliverySpec(questionVersion.deliverySpec)
-            : (item.config as Record<string, unknown>);
-          const scoringSpec = questionVersion?.scoringSpec;
-          const maxScore = questionVersion
-            ? this.numericMaxScore(scoringSpec)
-            : this.numericMaxScore(item.config);
-
-          return {
-            sessionId: attempt.id,
-            // PracticeItemRef preserves the authored question reference, while
-            // AssessmentItem is a self-contained execution snapshot. For a
-            // question-bank item, only deliverySpec is copied; scoringSpec is
-            // retained behind the backend-only version relation.
-            questionId: null,
-            ...(questionVersion ? { questionVersionId: questionVersion.id } : {}),
-            prompt: deliverySpec as Prisma.InputJsonValue,
-            itemConfig: deliverySpec as Prisma.InputJsonValue,
-            itemType: item.itemType,
-            sectionTitle: section.title,
-            sectionOrder: section.sortOrder,
-            sortOrder: index + 1,
-            maxScore,
-          };
-        }),
+        // Only deliverySpec is exposed in the student snapshot. scoringSpec
+        // remains server-side and is used only to derive maxScore.
+        data: validatedItems.map((item) => ({
+          ...item,
+          sessionId: attempt.id,
+          questionId: null,
+        })),
       });
       return { attempt, resumed: false };
     });
