@@ -17,6 +17,7 @@ const flush = () => new Promise((resolve) => setImmediate(resolve));
 
 function mount(api = {}) {
   const elements = new Map();
+  const windowListeners = new Map();
   const element = () => ({
     dataset: {},
     listeners: {},
@@ -58,13 +59,17 @@ function mount(api = {}) {
       ...api,
     },
     location: {},
-    window: {},
+    window: {
+      addEventListener(name, fn) {
+        windowListeners.set(name, fn);
+      },
+    },
     Date,
     URL,
     console,
   };
   vm.runInNewContext(source, context);
-  return { app, wrap, context, elements };
+  return { app, wrap, context, elements, windowListeners };
 }
 
 test("loading → empty and processing remain distinct from errors", async () => {
@@ -160,6 +165,71 @@ test("primary creation failure preserves page and retries the real action", asyn
     view.context.location.href,
     "/student/practices/attempts/dynamic-attempt/runner/",
   );
+});
+
+test("a same-school BFCache return reloads the authoritative Today action", async () => {
+  let reads = 0;
+  const view = mount({
+    getStudentToday: async () => {
+      reads += 1;
+      return reads === 1
+        ? decision
+        : {
+            ...decision,
+            primaryAction: {
+              kind: "BASELINE",
+              title: "返回后出现的已授权任务",
+              cta: "开始",
+              target: { practiceDefinitionId: "returned-definition" },
+            },
+          };
+    },
+  });
+  await flush();
+  assert.equal(reads, 1);
+
+  view.windowListeners.get("pageshow")({ persisted: true });
+  await flush();
+
+  assert.equal(reads, 2);
+  assert.match(view.app.innerHTML, /返回后出现的已授权任务/);
+});
+
+test("a successful create response cannot navigate after the active school changes", async () => {
+  let activeSchool = "school-a";
+  let resolveCreate;
+  let todayReads = 0;
+  const view = mount({
+    getActiveSchoolId: () => activeSchool,
+    getStudentToday: async () => {
+      todayReads += 1;
+      return {
+        ...decision,
+        primaryAction: {
+          kind: "BASELINE",
+          title: "当前学校的首次测评",
+          cta: "开始",
+          target: { practiceDefinitionId: "school-a-definition" },
+        },
+      };
+    },
+    createOrResumePractice: () =>
+      new Promise((resolve) => {
+        resolveCreate = resolve;
+      }),
+  });
+  await flush();
+  const button = view.elements.get("[data-primary-action]");
+  const click = button.listeners.click({ currentTarget: button });
+  await flush();
+  activeSchool = "school-b";
+  resolveCreate({ attemptId: "school-a-attempt" });
+  await click;
+  await flush();
+
+  assert.equal(view.context.location.href, undefined);
+  assert.equal(todayReads, 2);
+  assert.match(view.app.innerHTML, /当前学校的首次测评/);
 });
 
 test("legacy redirect preserves dynamic assignment and activity IDs", () => {

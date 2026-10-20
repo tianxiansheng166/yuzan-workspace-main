@@ -361,6 +361,10 @@
       if (action.kind === "START_REMEDIATION") {
         if (!action.target?.sourceSessionId) throw new Error("缺少正式测评来源，无法准备专项巩固");
         const result = unwrap(await YuzanApi.createAssessmentRemediation(action.target.sourceSessionId));
+        if (!sameIdentity(readIdentity(), identity)) {
+          init();
+          return;
+        }
         if (!result?.attemptId) throw new Error("专项巩固练习未能准备完成");
         location.href = `/student/practices/attempts/${encodeURIComponent(result.attemptId)}/runner/`;
         return;
@@ -368,6 +372,10 @@
       if (action.kind === "BASELINE") {
         if (!action.target?.practiceDefinitionId) throw new Error("缺少练习定义，无法准备第一次测评");
         const result = unwrap(await YuzanApi.createOrResumePractice(action.target.practiceDefinitionId));
+        if (!sameIdentity(readIdentity(), identity)) {
+          init();
+          return;
+        }
         if (!result?.attemptId) throw new Error("第一次测评未能准备完成");
         location.href = `/student/practices/attempts/${encodeURIComponent(result.attemptId)}/runner/`;
         return;
@@ -525,8 +533,8 @@
   window.addEventListener?.("focus", () => {
     if (loadedIdentity && !sameIdentity(readIdentity(), loadedIdentity)) init();
   });
-  window.addEventListener?.("pageshow", () => {
-    if (loadedIdentity && !sameIdentity(readIdentity(), loadedIdentity)) init();
+  window.addEventListener?.("pageshow", (event) => {
+    if (event?.persisted || (loadedIdentity && !sameIdentity(readIdentity(), loadedIdentity))) init();
   });
 
   init();
