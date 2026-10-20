@@ -12,6 +12,11 @@ Repository: `yuzan-workspace-main`
 - Node 24.20.0 and pnpm 10.13.1 were used. No T005 or Level 4 source, importer, raw question-bank corpus, Docker, or database runtime was opened or used; `L4_OPEN=NO`.
 - Full logs and merge evidence: [`evidence/yz-rd-t064/RESULTS.md`](evidence/yz-rd-t064/RESULTS.md).
 
+## YZ-RD-T067 studio mobile visual verification (2026-10-20)
+
+- Verified accepted T061 BASE `9a1a8b741d0eacfc304dfd72006558848b8bf6e4` on independent branch `feat/yz-rd-t067-studio-mobile-visual-verification`. Fresh Chromium captures cover 390×844, 768×1024, 1280×900 and 1440×1000. The studio uses an unscaled flow layout, stacks through 960px, keeps three desktop panels, and gives rendered controls at least 44px touch height.
+- Save Draft, dirty-state announcement, failed-save blocking review, and save-before-review passed with `VISUAL_FIXTURE_ONLY` synthetic data. This was not a real API E2E. Frontend tests passed 141/141; full details are in [`evidence/yz-rd-t067/RESULTS.md`](evidence/yz-rd-t067/RESULTS.md).
+
 ## YZ-RD-T063 API test lint fourth slice (2026-10-20)
 
 - `PARTIAL_WITH_DEBT` on `feat/yz-rd-t063-api-test-lint-fourth-slice`, from exact T059 BASE `f147138b570971d44815eebf769215a6ade5a08e`, in an independent worktree. Six unremediated API test files were selected from the T059 remaining-debt snapshot; 183 lint findings were fixed. No API source changed.

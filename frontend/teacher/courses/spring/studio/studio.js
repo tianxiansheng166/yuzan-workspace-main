@@ -161,6 +161,8 @@
     if (draftEl) {
       draftEl.textContent = dirty ? '未保存' : STATUS_LABEL[courseVersion?.status || 'DRAFT'];
     }
+    const saveButton = $('[data-action="save-course"]');
+    if (saveButton) saveButton.disabled = !dirty || !canEditCourse();
   }
 
   function renderSteps() {
@@ -176,8 +178,10 @@
     });
     const publishButton = $('[data-action="publish-course-version"]');
     const submitButton = $('.submit');
+    const saveButton = $('[data-action="save-course"]');
     if (publishButton) publishButton.disabled = !canEditCourse();
     if (submitButton) submitButton.disabled = !canEditCourse();
+    if (saveButton) saveButton.disabled = !dirty || !canEditCourse();
   }
 
   // ── 课程结构渲染 ──
@@ -1544,6 +1548,19 @@
     }
   });
 
+  $('[data-action="save-course"]')?.addEventListener('click', async (event) => {
+    const button = event.currentTarget;
+    if (!courseVersion?.id || !canEditCourse() || !dirty) return;
+    button.disabled = true;
+    button.textContent = '正在保存…';
+    try {
+      await saveCourse();
+    } finally {
+      button.textContent = '保存草稿';
+      button.disabled = !dirty || !canEditCourse();
+    }
+  });
+
   $('[data-action="switch-activity"]')?.addEventListener('click', () => {
     toast('前后活动切换功能暂未开通');
   });
@@ -1584,6 +1601,11 @@
     btn.disabled = true;
     btn.textContent = '正在提交…';
     try {
+      if (dirty && !(await saveCourse())) {
+        btn.disabled = false;
+        btn.textContent = '➤　提交审核';
+        return;
+      }
       const schoolId = getActiveSchoolId();
       if (schoolId && window.YuzanApi?.submitForReview) {
         await YuzanApi.submitForReview(courseVersion.id, courseVersion.updatedAt || new Date().toISOString());

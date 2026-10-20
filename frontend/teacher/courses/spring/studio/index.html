@@ -8,10 +8,11 @@
   <link rel="stylesheet" href="/teacher/courses/spring/studio/style.css">
   <link rel="stylesheet" href="/teacher/courses/spring/studio/course-practice-editor.css">
   <link rel="stylesheet" href="/shared/teacher-shell.css">
+  <link rel="stylesheet" href="/teacher/courses/spring/studio/responsive-studio.css">
 </head>
 <body>
 <div class="viewport">
-  <main class="design studio" data-width="1536" data-height="1024">
+  <main class="design studio responsive-studio" data-width="1536" data-height="1024">
 
     <!-- Sidebar navigation (static, links only) -->
     <aside class="sidebar">
@@ -49,14 +50,20 @@
 
       <!-- Title row -->
       <div class="title-row">
-        <h1 data-bind="course-title">加载中…</h1>
-        <button class="edit" aria-label="重命名课程">✎</button>
-        <span class="draft" data-bind="status-label">加载中…</span>
-        <div class="title-actions">
-          <button class="new-course" type="button" data-action="new-course">＋ 新建课程</button>
-          <button class="preview">◉　预览</button>
-          <button class="publish-course" type="button" data-action="publish-course-version">发布课程</button>
-          <button class="submit">➤　提交审核</button>
+        <div class="title-copy">
+          <h1 data-bind="course-title">加载中…</h1>
+          <button class="edit" aria-label="重命名课程">✎</button>
+          <span class="draft" data-bind="status-label" aria-live="polite">加载中…</span>
+        </div>
+        <div class="title-action-area">
+          <div class="title-actions" role="group" aria-label="课程操作">
+            <button class="new-course" type="button" data-action="new-course">＋ 新建课程</button>
+            <button class="preview" type="button">◉　预览</button>
+            <button class="save-course" type="button" data-action="save-course" aria-keyshortcuts="Control+S Meta+S" title="保存课程草稿（Ctrl/Cmd + S）" disabled>保存草稿</button>
+            <button class="submit" type="button">➤　提交审核</button>
+            <button class="publish-course" type="button" data-action="publish-course-version">发布课程</button>
+          </div>
+          <p class="workflow-hint">保存草稿后，可提交审核或发布课程；发布成功后，到 <a href="/teacher/assignments/">任务</a> 中布置给班级。</p>
         </div>
       </div>
 
