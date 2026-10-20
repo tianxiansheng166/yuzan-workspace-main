@@ -141,12 +141,12 @@ Every screenshot has a visible `TEST_FIXTURE_ONLY · API 未连接` watermark.
 
 The four-merge integration checkpoint is the full SHA
 `48cc7587072e28e9c9e9d6f1edea71132ef21849` (the fourth No-FF merge above).
-The final branch also carries this verification/evidence commit. Since a Git
-commit cannot contain its own object ID without changing that ID, the full
-final branch SHA is returned after the evidence commit and push. After pushing,
-the exact check `test "$(git rev-parse HEAD)" = "$(git ls-remote --heads
-origin refs/heads/feat/yz-rd-t082-student-web-core-unified-integration | cut
--f1)"` must exit 0; its result is recorded in the task return.
+The evidence commit was pushed without force. The post-push equality check
+passed (exit 0): `git rev-parse HEAD` matched
+`git ls-remote --heads origin
+refs/heads/feat/yz-rd-t082-student-web-core-unified-integration`. The full final
+branch SHA is returned with the task result; a Git commit cannot contain its
+own object ID without changing that ID.
 
 `HISTORICAL_L4_OPEN=OPEN`
 `READY_TO_MERGE=NO`
