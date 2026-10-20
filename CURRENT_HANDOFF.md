@@ -3,6 +3,12 @@
 Last updated: 2026-10-20
 Repository: `yuzan-workspace-main`
 
+## YZ-RD-T060 — existing runtime content native E2E (2026-10-20)
+
+- BLOCKED as `BLOCKED_NO_AUTHORIZED_RUNTIME_FIXTURE` on independent branch `feat/yz-rd-t060-existing-runtime-content-native-e2e`, based on exact T058 `736cb9bdc98866f15be586a7410749182ace0d29`.
+- Read-only audit found the reusable dev/test `停顿与节奏专项训练` seed and accepted T049 API/DB evidence, but its seeded items have no published `questionVersionId`; the existing teacher review queue requires one, so this practice cannot produce the requested manual-review report. The alternative T053 fixture depends on an importer whose preflight parsed 120 mixed-source items; T058 records the Level 1 owner gate as held.
+- T060 did not start Chrome/API/PostgreSQL/Redis/MinIO, run an importer, create course/runtime rows, or capture screenshots. Two new cross-role E2Es and all four viewports are NOT_RUN. Details and the static-seed-read disclosure are in [`evidence/yz-rd-t060/RESULTS.md`](evidence/yz-rd-t060/RESULTS.md). `READY_TO_MERGE=NO`.
+
 ## YZ-RD-T058 — unified product and test-quality integration (2026-10-20)
 
 - COMPLETE on independent branch `feat/yz-rd-t058-unified-product-test-quality-integration`, based on exact T057 `6f0eaa37daf03ddb7fcbb2f8846688ae1e60cac5`. No-FF merge `ee2bb39e8bf7d1a44cd926f96bdd0f56cfdff22b` has T057 as first parent and T055 `04eda78af4e8230d0b26d054c13f7f6781a2bf20` as second parent. The merge adds only the nine T055 API test repairs and T055 evidence; no app, contract, or ESLint config changes.
