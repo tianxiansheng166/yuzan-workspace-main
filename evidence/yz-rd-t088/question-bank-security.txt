@@ -1,0 +1,49 @@
+
+ RUN  v3.2.7 /home/tian/.devspace/worktrees/yuzan-workspace-t088
+
+ ❯ backend/api/test/assessment/question-bank.security.spec.ts (2 tests | 2 failed) 11ms
+   × Question Bank student delivery boundary > snapshots deliverySpec and never returns scoringSpec or its marker 6ms
+     → 练习引用的题库题目版本不可用
+   × Question Bank student delivery boundary > fails closed when authored deliverySpec contains a protected scoring key 4ms
+     → expected [Function] to throw error including '受保护的评分字段' but got '练习引用的题库题目版本不可用'
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  backend/api/test/assessment/question-bank.security.spec.ts > Question Bank student delivery boundary > snapshots deliverySpec and never returns scoringSpec or its marker
+BadRequestException: 练习引用的题库题目版本不可用
+ ❯ backend/api/src/modules/assessment/practice.service.ts:242:17
+    240|           version.publishedAt.getTime() > Date.now()
+    241|         ) {
+    242|           throw new BadRequestException("练习引用的题库题目版本不可用");
+       |                 ^
+    243|         }
+    244|         // Unapproved global (null-school) versions must not be inheri…
+ ❯ backend/api/src/modules/assessment/practice.service.ts:231:39
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  backend/api/test/assessment/question-bank.security.spec.ts > Question Bank student delivery boundary > fails closed when authored deliverySpec contains a protected scoring key
+AssertionError: expected [Function] to throw error including '受保护的评分字段' but got '练习引用的题库题目版本不可用'
+
+Expected: "受保护的评分字段"
+Received: "练习引用的题库题目版本不可用"
+
+ ❯ backend/api/test/assessment/question-bank.security.spec.ts:126:5
+    124|     });
+    125|
+    126|     await expect(service.createOrResume(auth, schoolId, definitionId))…
+       |     ^
+    127|     expect(prisma.__tx.assessmentItem.createMany).not.toHaveBeenCalled…
+    128|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  21:46:45
+   Duration  431ms (transform 85ms, setup 0ms, collect 193ms, tests 11ms, environment 0ms, prepare 54ms)
+
+undefined
+/home/tian/.devspace/worktrees/yuzan-workspace-t088/backend/api:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run --config test/assessment/vitest.config.ts test/assessment/question-bank.security.spec.ts

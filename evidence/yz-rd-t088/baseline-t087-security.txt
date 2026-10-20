@@ -1,0 +1,9 @@
+
+ RUN  v3.2.7 /home/tian/.devspace/worktrees/yuzan-workspace-t088
+
+ ✓ backend/api/test/assessment/t087-practice-eligibility.spec.ts (30 tests) 22ms
+
+ Test Files  1 passed (1)
+      Tests  30 passed (30)
+   Start at  21:44:11
+   Duration  498ms (transform 115ms, setup 0ms, collect 242ms, tests 22ms, environment 0ms, prepare 76ms)

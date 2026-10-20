@@ -1,0 +1,9 @@
+
+ RUN  v3.2.7 /home/tian/.devspace/worktrees/yuzan-workspace-t088
+
+ ✓ backend/api/test/assessment/practice.service.spec.ts (26 tests) 15ms
+
+ Test Files  1 passed (1)
+      Tests  26 passed (26)
+   Start at  21:45:01
+   Duration  555ms (transform 89ms, setup 0ms, collect 202ms, tests 15ms, environment 0ms, prepare 52ms)

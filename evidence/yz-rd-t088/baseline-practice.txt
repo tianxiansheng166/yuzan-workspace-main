@@ -1,0 +1,85 @@
+
+ RUN  v3.2.7 /home/tian/.devspace/worktrees/yuzan-workspace-t088
+
+ ❯ backend/api/test/assessment/practice.service.spec.ts (20 tests | 10 failed) 15ms
+   × PracticeService > atomically snapshots every published item into a new AssessmentSession 7ms
+     → promise rejected "BadRequestException: 练习引用的题库题目版本不可用 { …(3) }" instead of resolving
+   × PracticeService > restores an unfinished attempt instead of copying a second snapshot 0ms
+     → 练习引用的题库题目版本不可用
+   ✓ PracticeService > rejects a published version with zero items 1ms
+   ✓ PracticeService > fails closed before querying another school 1ms
+   ✓ PracticeService > requires assignment, submission and activity IDs together 0ms
+   × PracticeService > validates the scoped course context and persists both course foreign keys 0ms
+     → 练习引用的题库题目版本不可用
+   ✓ PracticeService > rejects another student's submission or an unrelated practice reference 0ms
+   × PracticeService > resumes the same scoped course attempt without a duplicate snapshot 0ms
+     → 练习引用的题库题目版本不可用
+   × PracticeService – independent practice (no course context) > creates a SELF_PRACTICE attempt when no course context is provided 0ms
+     → 练习引用的题库题目版本不可用
+   × PracticeService – independent practice (no course context) > resumes an existing independent attempt idempotently 0ms
+     → 练习引用的题库题目版本不可用
+   × PracticeService – independent practice (no course context) > does not set courseSubmissionId or courseActivityId on independent attempt 0ms
+     → 练习引用的题库题目版本不可用
+   ✓ PracticeService – independent practice (no course context) > rejects a partial course context (only assignmentId) as invalid 0ms
+   ✓ PracticeService – independent practice (no course context) > rejects a partial course context (only submissionId and activityId) as invalid 0ms
+   ✓ PracticeService – independent practice (no course context) > rejects cross-school access for independent practice 0ms
+   × PracticeService – independent practice (no course context) > does not call submission or courseActivity validators for independent practice 0ms
+     → 练习引用的题库题目版本不可用
+   × Today multi-enrollment practice creation > creates in the later authorized delivery class and resumes that same attempt 0ms
+     → 练习引用的题库题目版本不可用
+   ✓ Today multi-enrollment practice creation > rejects a student with no active enrollment without reading deliveries 0ms
+   ✓ Today multi-enrollment practice creation > does not create an attempt when no authorized delivery exists 0ms
+   × Today multi-enrollment practice creation > binds a course attempt to its own active submission enrollment 0ms
+     → 练习引用的题库题目版本不可用
+   ✓ Today multi-enrollment practice creation > denies a foreign submission before preparing a course attempt 0ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 10 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  backend/api/test/assessment/practice.service.spec.ts > PracticeService > atomically snapshots every published item into a new AssessmentSession
+AssertionError: promise rejected "BadRequestException: 练习引用的题库题目版本不可用 { …(3) }" instead of resolving
+ ❯ backend/api/test/assessment/practice.service.spec.ts:107:96
+    105|     const prisma = fakePrisma();
+    106|     const service = createPracticeService(prisma);
+    107|     await expect(service.createOrResume(auth, schoolId, "f1111111-1111…
+       |                                                                                                ^
+    108|     expect(prisma.__tx.assessmentItem.createMany).toHaveBeenCalledWith…
+    109|   });
+
+Caused by: BadRequestException: 练习引用的题库题目版本不可用
+ ❯ backend/api/src/modules/assessment/practice.service.ts:242:17
+ ❯ backend/api/src/modules/assessment/practice.service.ts:231:39
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { response: { message: '练习引用的题库题目版本不可用', error: 'Bad Request', statusCode: 400 }, status: 400, options: {}, initCause: 'Function<initCause>', initMessage: 'Function<initMessage>', initName: 'Function<initName>', getResponse: 'Function<getResponse>', getStatus: 'Function<getStatus>' }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/10]⎯
+
+ FAIL  backend/api/test/assessment/practice.service.spec.ts > PracticeService > restores an unfinished attempt instead of copying a second snapshot
+ FAIL  backend/api/test/assessment/practice.service.spec.ts > PracticeService > validates the scoped course context and persists both course foreign keys
+ FAIL  backend/api/test/assessment/practice.service.spec.ts > PracticeService > resumes the same scoped course attempt without a duplicate snapshot
+ FAIL  backend/api/test/assessment/practice.service.spec.ts > PracticeService – independent practice (no course context) > creates a SELF_PRACTICE attempt when no course context is provided
+ FAIL  backend/api/test/assessment/practice.service.spec.ts > PracticeService – independent practice (no course context) > resumes an existing independent attempt idempotently
+ FAIL  backend/api/test/assessment/practice.service.spec.ts > PracticeService – independent practice (no course context) > does not set courseSubmissionId or courseActivityId on independent attempt
+ FAIL  backend/api/test/assessment/practice.service.spec.ts > PracticeService – independent practice (no course context) > does not call submission or courseActivity validators for independent practice
+ FAIL  backend/api/test/assessment/practice.service.spec.ts > Today multi-enrollment practice creation > creates in the later authorized delivery class and resumes that same attempt
+ FAIL  backend/api/test/assessment/practice.service.spec.ts > Today multi-enrollment practice creation > binds a course attempt to its own active submission enrollment
+BadRequestException: 练习引用的题库题目版本不可用
+ ❯ backend/api/src/modules/assessment/practice.service.ts:242:17
+    240|           version.publishedAt.getTime() > Date.now()
+    241|         ) {
+    242|           throw new BadRequestException("练习引用的题库题目版本不可用");
+       |                 ^
+    243|         }
+    244|         // Unapproved global (null-school) versions must not be inheri…
+ ❯ backend/api/src/modules/assessment/practice.service.ts:231:39
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/10]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  10 failed | 10 passed (20)
+   Start at  21:44:04
+   Duration  569ms (transform 102ms, setup 0ms, collect 301ms, tests 15ms, environment 0ms, prepare 61ms)
+
+undefined
+/home/tian/.devspace/worktrees/yuzan-workspace-t088/backend/api:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run --config test/assessment/vitest.config.ts test/assessment/practice.service.spec.ts

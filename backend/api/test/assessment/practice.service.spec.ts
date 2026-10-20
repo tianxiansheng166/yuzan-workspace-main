@@ -12,6 +12,14 @@ const studentId = "22222222-2222-4222-8222-222222222222";
 const enrollment = { id: "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee", classId: "dddddddd-dddd-4ddd-8ddd-dddddddddddd" };
 type PracticeEnrollment = typeof enrollment;
 type PracticeAttempt = Pick<DatabaseAssessmentSession, "id" | "status" | "courseSubmissionId" | "courseActivityId">;
+type PracticeQuestionVersion = {
+  id: string;
+  status: string;
+  publishedAt: Date | null;
+  item: { schoolId: string | null };
+  deliverySpec: Prisma.InputJsonValue;
+  scoringSpec: Prisma.InputJsonValue;
+};
 type PracticeSessionCreateData = Pick<
   Prisma.AssessmentSessionUncheckedCreateInput,
   "schoolId" | "enrollmentId" | "classId" | "initiatorUserId" | "type" |
@@ -29,6 +37,8 @@ type PracticeDelivery = {
       title: string;
       items: Array<{
         questionId: string | null;
+        questionVersionId: string | null;
+        questionVersion: PracticeQuestionVersion | null;
         itemType: string;
         sortOrder: number;
         config: Prisma.InputJsonValue;
@@ -43,12 +53,53 @@ const auth: AuthContext = {
   principal: { userId: studentId, roles: [MembershipRole.STUDENT], membershipStatus: MembershipStatus.ACTIVE, source: "session" },
 };
 
-const delivery: PracticeDelivery = {
-  id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", practiceVersionId: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
-  practiceVersion: { definitionId: "f1111111-1111-4111-8111-111111111111", sections: [{ sortOrder: 1, title: "跟读", items: [{ questionId: null, itemType: "LISTEN_REPEAT", sortOrder: 1, config: { targetText: "春风又绿江南岸" } }] }] },
-};
+const questionVersionId = "99999999-9999-4999-8999-999999999999";
 
-function fakePrisma() {
+function publishedQuestionVersion(overrides: Partial<PracticeQuestionVersion> = {}): PracticeQuestionVersion {
+  return {
+    id: questionVersionId,
+    status: "PUBLISHED",
+    publishedAt: new Date("2026-01-01T00:00:00.000Z"),
+    item: { schoolId },
+    deliverySpec: { targetText: "春风又绿江南岸" },
+    scoringSpec: { maxScore: 10, correctAnswer: "backend-only-answer" },
+    ...overrides,
+  };
+}
+
+function deliveryWithQuestionVersion(
+  ref: string | null = questionVersionId,
+  version: PracticeQuestionVersion | null = publishedQuestionVersion(),
+): PracticeDelivery {
+  return {
+    id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+    practiceVersionId: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+    practiceVersion: {
+      definitionId: "f1111111-1111-4111-8111-111111111111",
+      sections: [{
+        sortOrder: 1,
+        title: "跟读",
+        items: [{
+          questionId: null,
+          questionVersionId: ref,
+          questionVersion: version,
+          itemType: "LISTEN_REPEAT",
+          sortOrder: 1,
+          config: { targetText: "LEGACY CONFIG MUST NEVER CREATE AN ATTEMPT", maxScore: 999 },
+        }],
+      }],
+    },
+  };
+}
+
+const delivery = deliveryWithQuestionVersion();
+
+function expectNoPracticeWrites(prisma: ReturnType<typeof fakePrisma>) {
+  expect(prisma.__tx.assessmentSession.create).not.toHaveBeenCalled();
+  expect(prisma.__tx.assessmentItem.createMany).not.toHaveBeenCalled();
+}
+
+function fakePrisma(initialDelivery: PracticeDelivery = delivery) {
   const assessmentSession = {
     findFirst: vi.fn<(args: PracticeQueryArgs) => Promise<PracticeAttempt | null>>().mockResolvedValue(null),
     create: vi.fn<(args: { data: PracticeSessionCreateData }) => Promise<PracticeAttempt>>().mockResolvedValue({
@@ -59,7 +110,7 @@ function fakePrisma() {
     }),
   };
   const practiceDelivery = {
-    findFirst: vi.fn<(args: PracticeQueryArgs) => Promise<PracticeDelivery | null>>().mockResolvedValue(delivery),
+    findFirst: vi.fn<(args: PracticeQueryArgs) => Promise<PracticeDelivery | null>>().mockResolvedValue(initialDelivery),
   };
   const submission = {
     findFirst: vi.fn<(args: PracticeQueryArgs) => Promise<{ id: string; enrollmentId: string } | null>>().mockResolvedValue({
@@ -105,7 +156,20 @@ describe("PracticeService", () => {
     const prisma = fakePrisma();
     const service = createPracticeService(prisma);
     await expect(service.createOrResume(auth, schoolId, "f1111111-1111-4111-8111-111111111111")).resolves.toMatchObject({ attemptId: "cccccccc-cccc-4ccc-8ccc-cccccccccccc", resumed: false });
-    expect(prisma.__tx.assessmentItem.createMany).toHaveBeenCalledWith(expect.objectContaining({ data: [expect.objectContaining({ itemType: "LISTEN_REPEAT", sectionTitle: "跟读", sortOrder: 1 })] }));
+    expect(prisma.__tx.assessmentItem.createMany).toHaveBeenCalledWith(expect.objectContaining({
+      data: [expect.objectContaining({
+        questionVersionId,
+        itemType: "LISTEN_REPEAT",
+        sectionTitle: "跟读",
+        sortOrder: 1,
+        prompt: { targetText: "春风又绿江南岸" },
+        itemConfig: { targetText: "春风又绿江南岸" },
+        maxScore: 10,
+      })],
+    }));
+    const snapshot = JSON.stringify(prisma.__tx.assessmentItem.createMany.mock.calls);
+    expect(snapshot).not.toContain("backend-only-answer");
+    expect(snapshot).not.toContain("LEGACY CONFIG MUST NEVER CREATE AN ATTEMPT");
   });
 
   it("restores an unfinished attempt instead of copying a second snapshot", async () => {
@@ -385,5 +449,69 @@ describe("Today multi-enrollment practice creation", () => {
       assignmentId: "foreign-assignment", submissionId: "foreign-submission", activityId: "foreign-activity",
     })).rejects.toBeInstanceOf(ForbiddenException);
     expect(prisma.__tx.assessmentSession.create).not.toHaveBeenCalled();
+  });
+});
+
+describe("PracticeService – legacy version eligibility", () => {
+  const ineligibleCases: Array<{
+    label: string;
+    delivery: PracticeDelivery;
+    error: typeof BadRequestException | typeof ForbiddenException;
+  }> = [
+    {
+      label: "legacy item with no questionVersionId",
+      delivery: deliveryWithQuestionVersion(null, null),
+      error: BadRequestException,
+    },
+    {
+      label: "referenced version relation missing",
+      delivery: deliveryWithQuestionVersion(questionVersionId, null),
+      error: BadRequestException,
+    },
+    {
+      label: "DRAFT question version",
+      delivery: deliveryWithQuestionVersion(questionVersionId, publishedQuestionVersion({ status: "DRAFT" })),
+      error: BadRequestException,
+    },
+    {
+      label: "question item owned by another school",
+      delivery: deliveryWithQuestionVersion(questionVersionId, publishedQuestionVersion({ item: { schoolId: otherSchoolId } })),
+      error: ForbiddenException,
+    },
+    {
+      label: "unapproved NULL-school question item",
+      delivery: deliveryWithQuestionVersion(questionVersionId, publishedQuestionVersion({ item: { schoolId: null } })),
+      error: ForbiddenException,
+    },
+  ];
+
+  for (const testCase of ineligibleCases) {
+    it(`rejects ${testCase.label} before checking an attempt or writing`, async () => {
+      const prisma = fakePrisma(testCase.delivery);
+      await expect(createPracticeService(prisma).createOrResume(
+        auth, schoolId, "f1111111-1111-4111-8111-111111111111",
+      )).rejects.toBeInstanceOf(testCase.error);
+      expect(prisma.__tx.assessmentSession.findFirst).not.toHaveBeenCalled();
+      expectNoPracticeWrites(prisma);
+    });
+  }
+
+  it("does not resume a stored OPEN attempt when its question version is invalid", async () => {
+    const prisma = fakePrisma(deliveryWithQuestionVersion(
+      questionVersionId,
+      publishedQuestionVersion({ status: "DRAFT" }),
+    ));
+    prisma.__tx.assessmentSession.findFirst.mockResolvedValue({
+      id: "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+      status: "IN_PROGRESS",
+      courseSubmissionId: null,
+      courseActivityId: null,
+    });
+
+    await expect(createPracticeService(prisma).createOrResume(
+      auth, schoolId, "f1111111-1111-4111-8111-111111111111",
+    )).rejects.toBeInstanceOf(BadRequestException);
+    expect(prisma.__tx.assessmentSession.findFirst).not.toHaveBeenCalled();
+    expectNoPracticeWrites(prisma);
   });
 });
