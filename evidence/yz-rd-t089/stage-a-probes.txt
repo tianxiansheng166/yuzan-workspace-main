@@ -1,0 +1,59 @@
+TASK_ID=YZ-RD-T089
+DATE=2026-10-20
+
+COMMAND: node --version
+EXIT=0
+OUTPUT=v24.20.0
+COMMAND: pnpm --version
+EXIT=0
+OUTPUT=11.25.0
+
+COMMANDS: command -v postgres / initdb / pg_ctl / psql / redis-server / redis-cli / minio / mc
+EXIT=1 for each; no path printed.
+COMMAND: dpkg-query -W postgresql-17 postgresql-client-17 redis-server minio
+EXIT=1
+OUTPUT: no matching installed package for each requested package.
+COMMAND: ls -ld /usr/lib/postgresql /usr/lib/postgresql/17/bin
+EXIT=2
+OUTPUT: both paths absent.
+COMMAND: whereis postgres initdb pg_ctl redis-server redis-cli minio
+EXIT=0
+OUTPUT: no paths for any requested binary.
+COMMAND: find /opt /usr/local/bin /home/tian/.local/bin -maxdepth 3 -type f with the six runtime binary names
+EXIT=1
+OUTPUT: find: '/opt/containerd': Permission denied. No sudo was used; that subtree was not inspected.
+
+COMMANDS: pgrep -x postgres; pgrep -x redis-server; pgrep -x minio
+EXIT=1 for each; no PID printed.
+COMMAND: ss -ltnp '( sport = :4000 or sport = :4175 or sport = :5432 or sport = :55432 or sport = :6379 or sport = :6380 or sport = :9000 or sport = :9001 or sport = :56379 or sport = :59000 or sport = :59001 )'
+EXIT=0
+OUTPUT:
+State Recv-Q Send-Q Local Address:Port Peer Address:Port Process
+
+COMMAND: exclusive IPv4/IPv6 bind + listen probes on ports 4000,4175,5432,55432,6379,6380,9000,9001,56379,59000,59001; each socket closed immediately.
+EXIT=0
+OUTPUT:
+4000 v4=FREE bind/listen exclusive
+4000 v6=FREE bind/listen exclusive
+4175 v4=FREE bind/listen exclusive
+4175 v6=FREE bind/listen exclusive
+5432 v4=FREE bind/listen exclusive
+5432 v6=FREE bind/listen exclusive
+55432 v4=FREE bind/listen exclusive
+55432 v6=FREE bind/listen exclusive
+6379 v4=FREE bind/listen exclusive
+6379 v6=FREE bind/listen exclusive
+6380 v4=FREE bind/listen exclusive
+6380 v6=FREE bind/listen exclusive
+9000 v4=FREE bind/listen exclusive
+9000 v6=FREE bind/listen exclusive
+9001 v4=FREE bind/listen exclusive
+9001 v6=FREE bind/listen exclusive
+56379 v4=FREE bind/listen exclusive
+56379 v6=FREE bind/listen exclusive
+59000 v4=FREE bind/listen exclusive
+59000 v6=FREE bind/listen exclusive
+59001 v4=FREE bind/listen exclusive
+59001 v6=FREE bind/listen exclusive
+
+No HTTP, database, Redis, MinIO, Docker/Compose, or T050 runner request was performed by T089.
