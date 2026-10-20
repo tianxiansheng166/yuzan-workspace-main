@@ -4,12 +4,55 @@ import { ConfigService } from "@nestjs/config";
 import { SpeechJobService } from "../../src/modules/speech-job/speech-job.service.js";
 import { SPEECH_QUEUE } from "../../src/modules/speech-job/speech-job.tokens.js";
 import { PrismaService } from "../../src/shared/database/prisma.service.js";
+import type { SpeechJobStatus } from "@yuzan/database";
 
 const JOB_ID = "job-00000-0000-0000-000000000001";
 const RECORDING_ID = "rec-00000-0000-0000-000000000001";
 const ITEM_ID = "item-0000-0000-0000-000000000001";
 const SCHOOL_ID = "school-a-0000-0000-000000000000";
 const SESSION_ID = "session-0000-0000-0000-000000000001";
+
+interface PolicyTestJob {
+  id: string;
+  recordingId: string;
+  assessmentItemId: string;
+  schoolId: string;
+  targetText: string | null;
+  scorerVersion: string;
+  status: SpeechJobStatus;
+  provider: string | null;
+  providerModel: string | null;
+  result: unknown;
+  confidence: number | null;
+  processingMs: number | null;
+  retryCount: number;
+  errorCode: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface PolicyTestItem {
+  id: string;
+  recordingId: string | null;
+  maxScore: number;
+  scoredScore: number | null;
+  questionVersionId: string | null;
+  session: { id: string; schoolId: string };
+  questionVersion: { status: string; scoringSpec: Record<string, unknown> };
+  autoResult?: unknown;
+}
+
+interface PolicyTestRecording {
+  id: string;
+  schoolId: string;
+  status?: string;
+}
+
+interface PolicyTestState {
+  job: PolicyTestJob;
+  item: PolicyTestItem;
+  recording: PolicyTestRecording;
+}
 
 const providerResult = {
   provider: "local",
@@ -55,8 +98,12 @@ const openProviderResult = {
   processingMs: 15,
 };
 
-function buildState(overrides: Record<string, unknown> = {}) {
-  const defaultJob = {
+function buildState(overrides: {
+  job?: Partial<PolicyTestJob>;
+  item?: Partial<PolicyTestItem>;
+  recording?: Partial<PolicyTestRecording>;
+} = {}): PolicyTestState {
+  const defaultJob: PolicyTestJob = {
     id: JOB_ID,
     recordingId: RECORDING_ID,
     assessmentItemId: ITEM_ID,
@@ -90,57 +137,55 @@ function buildState(overrides: Record<string, unknown> = {}) {
       },
     },
   };
-  const state: any = {
+  const state: PolicyTestState = {
     job: {
       ...defaultJob,
-      ...((overrides.job as Record<string, unknown> | undefined) ?? {}),
+      ...overrides.job,
     },
     item: {
       ...defaultItem,
-      ...((overrides.item as Record<string, unknown> | undefined) ?? {}),
+      ...overrides.item,
     },
     recording: {
       id: RECORDING_ID,
       schoolId: SCHOOL_ID,
-      ...((overrides.recording as Record<string, unknown> | undefined) ?? {}),
+      ...overrides.recording,
     },
   };
   return state;
 }
 
-async function buildService(state: any) {
-  const prisma: any = {
+async function buildService(state: PolicyTestState) {
+  const prisma = {
     speechJob: {
-      findUnique: vi.fn(async () => ({
+      findUnique: vi.fn(() => Promise.resolve({
         ...state.job,
         recording: state.recording,
         assessmentItem: state.item,
       })),
-      update: vi.fn(async ({ data }: any) => {
+      update: vi.fn((args: { data: Partial<PolicyTestJob> }) => {
         state.job = {
           ...state.job,
-          ...data,
+          ...args.data,
           updatedAt: new Date("2026-01-02T00:00:00Z"),
         };
-        return state.job;
+        return Promise.resolve(state.job);
       }),
     },
     assessmentItem: {
-      update: vi.fn(async ({ data }: any) => {
-        state.item = { ...state.item, ...data };
-        return state.item;
+      update: vi.fn((args: { data: Partial<PolicyTestItem> }) => {
+        state.item = { ...state.item, ...args.data };
+        return Promise.resolve(state.item);
       }),
     },
     recording: {
-      update: vi.fn(async ({ data }: any) => {
-        state.recording = { ...state.recording, ...data };
-        return state.recording;
+      update: vi.fn((args: { data: Partial<PolicyTestRecording> }) => {
+        state.recording = { ...state.recording, ...args.data };
+        return Promise.resolve(state.recording);
       }),
     },
   };
-  prisma.$transaction = vi.fn(async (callback: (tx: any) => Promise<unknown>) =>
-    callback(prisma),
-  );
+  Reflect.set(prisma, "$transaction", vi.fn((callback: (tx: typeof prisma) => Promise<unknown>) => callback(prisma)));
 
   const moduleRef = await Test.createTestingModule({
     providers: [
@@ -185,7 +230,6 @@ describe("SpeechJobService read-aloud result policy", () => {
 
   it("rejects a callback for a picture-speaking strategy before writing", async () => {
     const state = buildState();
-    state.item.questionVersion.questionVersion = undefined;
     state.item.questionVersion.scoringSpec = {
       strategy: "SPEECH_OPEN_RESPONSE",
       maxScore: 4,

@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { Test } from "@nestjs/testing";
 import { ReportingService } from "../../src/modules/reporting/reporting.service.js";
-import type { ReportRepositoryPort } from "../../src/modules/reporting/ports/report-repository.port.js";
+import type { CreateReportData, ReportRepositoryPort } from "../../src/modules/reporting/ports/report-repository.port.js";
 import { REPORT_REPOSITORY } from "../../src/modules/reporting/ports/report-repository.port.js";
 import type { LearningPlanRepositoryPort } from "../../src/modules/reporting/ports/learning-plan-repository.port.js";
 import { LEARNING_PLAN_REPOSITORY } from "../../src/modules/reporting/ports/learning-plan-repository.port.js";
@@ -50,38 +50,38 @@ function makeReport(overrides: Partial<Report> = {}): Report {
 class FakeReportRepository implements ReportRepositoryPort {
   private reports: Report[] = [];
 
-  async list(schoolId: string) {
-    return {
+  list(schoolId: string) {
+    return Promise.resolve({
       items: this.reports.filter((r) => r.schoolId === schoolId),
       nextCursor: null,
       hasMore: false,
-    };
+    });
   }
 
-  async findById(schoolId: string, reportId: string) {
-    return this.reports.find((r) => r.id === reportId && r.schoolId === schoolId) ?? null;
+  findById(schoolId: string, reportId: string) {
+    return Promise.resolve(this.reports.find((r) => r.id === reportId && r.schoolId === schoolId) ?? null);
   }
 
-  async create(params: Record<string, unknown>) {
-    const report = makeReport({ schoolId: params.schoolId as string, type: params.type as Report["type"], status: "PENDING" });
+  create(params: CreateReportData) {
+    const report = makeReport({ schoolId: params.schoolId, type: params.type, status: "PENDING" });
     this.reports.push(report);
-    return report;
+    return Promise.resolve(report);
   }
 
-  async updateStatus() {
-    return makeReport();
+  updateStatus() {
+    return Promise.resolve(makeReport());
   }
 }
 
 class FakeLearningPlanRepository implements LearningPlanRepositoryPort {
-  async findByEnrollmentId(): Promise<null> {
-    return null;
+  findByEnrollmentId(): Promise<null> {
+    return Promise.resolve(null);
   }
-  async create(): Promise<never> {
-    throw new Error("not implemented in fake");
+  create(): Promise<never> {
+    return Promise.reject(new Error("not implemented in fake"));
   }
-  async updateWithRevision(): Promise<null> {
-    return null;
+  updateWithRevision(): Promise<null> {
+    return Promise.resolve(null);
   }
 }
 
@@ -105,7 +105,7 @@ describe("ReportingService", () => {
   describe("listReports", () => {
     it("returns mapped reports for authorized user", async () => {
       const auth = makeAuth("school-1");
-      await repo.create({ schoolId: "school-1", type: "STUDENT_GROWTH" });
+      await repo.create({ schoolId: "school-1", type: "STUDENT_GROWTH", periodStart: new Date("2026-01-01"), periodEnd: new Date("2026-06-30"), generatedByUserId: "user-1" });
       const result = await service.listReports(auth, "school-1", {});
       expect(result.items).toHaveLength(1);
     });
@@ -140,7 +140,7 @@ describe("ReportingService", () => {
   describe("getReport", () => {
     it("returns report detail for authorized user", async () => {
       const auth = makeAuth("school-1");
-      await repo.create({ schoolId: "school-1", type: "STUDENT_GROWTH" });
+      await repo.create({ schoolId: "school-1", type: "STUDENT_GROWTH", periodStart: new Date("2026-01-01"), periodEnd: new Date("2026-06-30"), generatedByUserId: "user-1" });
       const result = await service.getReport(auth, "school-1", "report-1");
       expect(result.id).toBe("report-1");
     });
@@ -168,7 +168,7 @@ describe("ReportingService", () => {
 
     it("rejects getReport from wrong school", async () => {
       const auth = makeAuth("school-2");
-      await repo.create({ schoolId: "school-1", type: "STUDENT_GROWTH" });
+      await repo.create({ schoolId: "school-1", type: "STUDENT_GROWTH", periodStart: new Date("2026-01-01"), periodEnd: new Date("2026-06-30"), generatedByUserId: "user-1" });
       await expect(service.getReport(auth, "school-1", "report-1")).rejects.toThrow();
     });
   });

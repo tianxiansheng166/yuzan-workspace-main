@@ -17,9 +17,11 @@ import { Test } from "@nestjs/testing";
 import { ConfigService } from "@nestjs/config";
 import { SpeechJobService } from "../../src/modules/speech-job/speech-job.service.js";
 import { SPEECH_QUEUE } from "../../src/modules/speech-job/speech-job.tokens.js";
+import type { SpeechJobStatus } from "@yuzan/database";
 import {
   createFakePrismaService,
   createFakeDatabaseModule,
+  type FakePrismaServiceOverrides,
 } from "../helpers/fake-prisma.service.js";
 
 // ─── Fixtures ───────────────────────────────────────────
@@ -31,8 +33,28 @@ const SCHOOL_ID = "school-a-0000-0000-000000000000";
 
 const now = new Date("2026-01-01T00:00:00Z");
 
-function makeJob(overrides: Record<string, any> = {}) {
-  return {
+interface FakeSpeechJob {
+  id: string;
+  recordingId: string;
+  assessmentItemId: string;
+  schoolId: string;
+  targetText: string | null;
+  scorerVersion: string;
+  status: SpeechJobStatus;
+  provider: string | null;
+  providerModel: string | null;
+  result: unknown;
+  confidence: number | null;
+  processingMs: number | null;
+  retryCount: number;
+  errorCode: string | null;
+  recording: { id: string };
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+function makeJob(overrides: Partial<FakeSpeechJob> = {}): FakeSpeechJob {
+  const defaultJob: FakeSpeechJob = {
     id: JOB_ID,
     recordingId: RECORDING_ID,
     assessmentItemId: ASSESSMENT_ITEM_ID,
@@ -50,14 +72,14 @@ function makeJob(overrides: Record<string, any> = {}) {
     recording: { id: RECORDING_ID },
     createdAt: now,
     updatedAt: now,
-    ...overrides,
   };
+  return { ...defaultJob, ...overrides };
 }
 
 // ─── Module builder ─────────────────────────────────────
 
 interface BuildOptions {
-  prismaOverrides?: Record<string, any>;
+  prismaOverrides?: FakePrismaServiceOverrides;
   existingSpeechJob?: ReturnType<typeof makeJob> | null;
   speechProvider?: string;
 }
@@ -67,23 +89,23 @@ async function buildService(opts: BuildOptions = {}) {
 
   const fakePrisma = createFakePrismaService({
     speechJob: {
-      findFirst: async () => opts.existingSpeechJob ?? null,
-      create: vi.fn(async (args: any) => {
+      findFirst: () => Promise.resolve(opts.existingSpeechJob ?? null),
+      create: vi.fn((args: { data: Partial<FakeSpeechJob> }) => {
         createdJob = makeJob({ ...args.data, id: JOB_ID });
-        return createdJob;
+        return Promise.resolve(createdJob);
       }),
-      findUnique: async (args: any) => {
-        if (args.where.id === JOB_ID) return createdJob;
-        return null;
+      findUnique: (args: { where: { id: string } }) => {
+        if (args.where.id === JOB_ID) return Promise.resolve(createdJob);
+        return Promise.resolve(null);
       },
-      findMany: async () => [createdJob],
-      update: async (args: any) => {
+      findMany: () => Promise.resolve([createdJob]),
+      update: (args: { data: Partial<Omit<FakeSpeechJob, "retryCount">> & { retryCount?: number | { increment: number } } }) => {
         // Handle Prisma atomic operations before spreading
         const { retryCount, ...restData } = args.data;
         let nextRetryCount = createdJob.retryCount ?? 0;
-        if (retryCount?.increment) {
+        if (typeof retryCount === "object" && retryCount !== null) {
           nextRetryCount += retryCount.increment;
-        } else if (retryCount !== undefined) {
+        } else if (typeof retryCount === "number") {
           nextRetryCount = retryCount;
         }
         createdJob = {
@@ -92,18 +114,18 @@ async function buildService(opts: BuildOptions = {}) {
           retryCount: nextRetryCount,
           updatedAt: new Date(),
         };
-        return createdJob;
+        return Promise.resolve(createdJob);
       },
     },
     recording: {
-      findUnique: async () => ({
+      findUnique: () => Promise.resolve({
         id: RECORDING_ID,
         objectKey: "recordings/rec/full",
       }),
-      update: async () => ({}),
+      update: () => Promise.resolve({}),
     },
     assessmentItem: {
-      findFirst: async () => ({
+      findFirst: () => Promise.resolve({
         recordingId: null,
         prompt: {},
         questionVersion: null,
@@ -111,17 +133,18 @@ async function buildService(opts: BuildOptions = {}) {
     },
     ...opts.prismaOverrides,
   });
-  (fakePrisma as any).$transaction = async (callback: (tx: any) => unknown) =>
-    callback(fakePrisma);
+  Reflect.set(fakePrisma, "$transaction", (callback: (tx: typeof fakePrisma) => unknown) =>
+    callback(fakePrisma),
+  );
 
   const fakeConfig = {
-    get: vi.fn((key: string, defaultValue?: any) => {
+    get: (key: string, defaultValue?: unknown) => {
       if (key === "SPEECH_PROVIDER") return opts.speechProvider ?? "disabled";
       return defaultValue;
-    }),
-    getOrThrow: vi.fn((key: string) => {
+    },
+    getOrThrow: (key: string) => {
       throw new Error(`Config ${key} not set`);
-    }),
+    },
   };
 
   const moduleRef = await Test.createTestingModule({
@@ -208,7 +231,7 @@ describe("SpeechJobService", () => {
     });
 
     it("keeps uploaded recording READY for unsupported provider task", async () => {
-      const recordingUpdate = vi.fn(async () => ({
+      const recordingUpdate = vi.fn(() => ({
         id: RECORDING_ID,
         status: "READY",
       }));
@@ -237,7 +260,7 @@ describe("SpeechJobService", () => {
     });
 
     it("keeps genuine processing failures fail closed on the recording", async () => {
-      const recordingUpdate = vi.fn(async () => ({
+      const recordingUpdate = vi.fn(() => ({
         id: RECORDING_ID,
         status: "FAILED",
       }));
@@ -349,7 +372,7 @@ describe("SpeechJobService", () => {
       const { service } = await buildService({
         speechProvider: "disabled",
         prismaOverrides: {
-          assessmentItem: { findFirst: async () => questionBankItem },
+          assessmentItem: { findFirst: () => questionBankItem },
         },
       });
 
@@ -365,7 +388,7 @@ describe("SpeechJobService", () => {
         speechProvider: "local",
         prismaOverrides: {
           assessmentItem: {
-            findFirst: async () => ({
+            findFirst: () => ({
               ...questionBankItem,
               questionVersion: {
                 status: "PUBLISHED",
@@ -404,9 +427,9 @@ describe("SpeechJobService", () => {
       const { service } = await buildService({
         speechProvider: "iflytek",
         prismaOverrides: {
-          assessmentItem: { findFirst: async () => questionBankItem },
+          assessmentItem: { findFirst: () => questionBankItem },
           recording: {
-            findUnique: async (args: any) => ({
+            findUnique: (args: { where: { id: string } }) => ({
               id: args.where.id,
               status:
                 args.where.id === previousRecordingId ? "FAILED" : "READY",
@@ -440,9 +463,9 @@ describe("SpeechJobService", () => {
       const { service } = await buildService({
         speechProvider: "iflytek",
         prismaOverrides: {
-          assessmentItem: { findFirst: async () => questionBankItem },
+          assessmentItem: { findFirst: () => questionBankItem },
           recording: {
-            findUnique: async (args: any) => ({
+            findUnique: (args: { where: { id: string } }) => ({
               id: args.where.id,
               status: "READY",
               objectKey: "recordings/new-open-response/full",
@@ -505,7 +528,9 @@ describe("SpeechJobService", () => {
 
       expect(result.id).toBe(JOB_ID);
       expect(result.status).toBe("PROCESSING");
-      expect(fakePrisma.speechJob.create).not.toHaveBeenCalled();
+      const speechJobModel = fakePrisma.speechJob;
+      if (!speechJobModel) throw new Error("speech job fake was not configured");
+      expect(speechJobModel.create).not.toHaveBeenCalled();
     });
   });
 
