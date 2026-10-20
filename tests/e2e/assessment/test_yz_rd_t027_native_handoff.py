@@ -149,23 +149,19 @@ def test_yz_rd_t027_native_authorized_handoff_and_course_state():
         assert anonymous.get(f"{API}/api/v1/schools/{SCHOOL}/student/courses/{assignment_id}").status == 401
         anonymous.dispose()
 
-        # The in-page chooser updates its selected activity and remains on the
-        # CourseDetail shell. T027 does not wire that click to the T022 route.
+        # The authorized course directory opens the focused Activity Player
+        # with the same server-created Course Submission.
         helper["login_ui"](page, "student.test")
         page.goto(f"{BASE}/student/courses/course-detail/?id={assignment_id}", wait_until="domcontentloaded")
         expect(page.locator("#cpHeroTitle")).not_to_have_text("", timeout=20_000)
+        submission_id = page.evaluate("window.CoursePlayerState.getState().submissionId")
+        assert submission_id
         page.locator(f'.cp-dir-item[data-activity-id="{activity_ids["audio"]}"]').click()
-        page.wait_for_function(
-            "activityId => window.CoursePlayerState.getState().currentActivityId === activityId",
-            arg=activity_ids["audio"],
-            timeout=10_000,
-        )
-        assert page.evaluate("location.pathname") == "/student/courses/course-detail/"
-        assert page.evaluate("new URLSearchParams(location.search).get('activityId')") == activity_ids["audio"]
-        assert "/submissions/" not in page.url and "/activities/" not in page.url
-        assert page.evaluate("window.CoursePlayerState.getState().currentActivityId") == activity_ids["audio"]
-        assert page.evaluate("window.CoursePlayerState.getState().submissionId") == submission_id
-        page.screenshot(path=str(screenshots / "chooser-remains-in-page-1280.png"), full_page=True)
+        expected_audio_url = f"{BASE}/student/courses/{assignment_id}/submissions/{submission_id}/activities/{activity_ids['audio']}"
+        page.wait_for_url(expected_audio_url, timeout=20_000)
+        expect(page.locator("#learningShell")).to_be_visible(timeout=20_000)
+        assert page.locator("#activityType").inner_text() == "听力"
+        page.screenshot(path=str(screenshots / "course-directory-opens-activity-1280.png"), full_page=True)
 
         text_url = f"{BASE}/student/courses/{assignment_id}/submissions/{submission_id}/activities/{activity_ids['text']}"
         page.goto(text_url, wait_until="domcontentloaded")
@@ -295,14 +291,14 @@ def test_yz_rd_t027_native_authorized_handoff_and_course_state():
             "studentBEnrollment": student_b["enrollmentId"],
             "studentBSubmissionId": submission_b_id,
             "activityIds": activity_ids,
-            "courseDetailChooserClick": {"selectedActivityId": activity_ids["audio"], "pathnameRemained": "/student/courses/course-detail/", "nativeRunnerLinkPass": False},
+            "courseDetailChooserClick": {"selectedActivityId": activity_ids["audio"], "pathname": f"/student/courses/{assignment_id}/submissions/{submission_id}/activities/{activity_ids['audio']}", "nativeRunnerLinkPass": True},
             "directAuthorizedActivityRoute": text_url,
             "note": {"revision": saved_note["revision"], "content": saved_note["content"]},
             "progress": {kind.upper(): progress for kind, progress in activity_progress.items()},
             "recording": speech_recording,
             "minioHead": s3_head,
             "practiceRunner": runner_attempt_row,
-            "automaticRunnerReturn": "FAIL / browser remained on runner after real submit and practice-completion HTTP 201; no CourseDetail click handoff is claimed",
+            "automaticRunnerReturn": "Not asserted by this native handoff case; covered by YZ-RD-T040 course submission E2E",
             "practiceActivityAttempt": course_practice_attempt,
             "studentBIsolation": {"ownSubmissionId": submission_b_id, "noteContent": note_b["content"], "submissionARead": "403/404", "activityAProgressRead": 403},
             "unauthorizedTranslationVisibility": "no toggle for real unilingual API fields; machine/missing-field negatives in UI fixture",

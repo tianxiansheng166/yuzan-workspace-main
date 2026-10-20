@@ -1,0 +1,57 @@
+.editor.panel {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+}
+
+.editor.panel > header,
+.editor.panel > .tabs {
+  flex: 0 0 auto;
+}
+
+.editor.panel > .editor-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.editor-body [data-course-practice-definition] {
+  width: 100%;
+  min-height: 42px;
+  padding: 8px 11px;
+  border: 1px solid #d9d5cf;
+  border-radius: 4px;
+  background: #fff;
+  color: #282c28;
+  font: inherit;
+}
+
+.editor-body .practice-required-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.editor-body .practice-required-row input {
+  width: 16px;
+  height: 16px;
+  accent-color: #277044;
+}
+
+.editor-body [data-action="save-course-practice"] {
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid #85a98c;
+  border-radius: 4px;
+  background: #fff;
+  color: #277044;
+  cursor: pointer;
+}
+
+.editor-body [data-action="save-course-practice"]:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}

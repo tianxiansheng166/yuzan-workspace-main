@@ -245,6 +245,43 @@ export interface paths {
     patch: operations["updateCourseDraft"];
     trace?: never;
   };
+  "/schools/{schoolId}/course-versions/{courseVersionId}/practice-options": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 列出课程可关联的已发布练习 */
+    get: operations["listCoursePracticeOptions"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/schools/{schoolId}/course-versions/{courseVersionId}/activities/{activityId}/practice": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /**
+     * 将已发布练习关联到课程活动
+     * @description Only editable course versions can be changed. Repeated writes of the same relation are idempotent. A stale course version or a learning activity with existing student state returns 409.
+     */
+    put: operations["saveCourseActivityPractice"];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/schools/{schoolId}/classes": {
     parameters: {
       query?: never;
@@ -2425,7 +2462,7 @@ export interface components {
       description?: string;
       locale: string;
       objectives: Record<string, never>[];
-      units: Record<string, never>[];
+      units: components["schemas"]["CourseUnitDetail"][];
       /** Format: date-time */
       createdAt: string;
     };
@@ -2435,6 +2472,65 @@ export interface components {
     };
     CourseVersionResponse: {
       data: components["schemas"]["CourseVersionSummary"];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    CourseUnitDetail: {
+      lessons?: components["schemas"]["CourseLessonDetail"][];
+    } & {
+      [key: string]: unknown;
+    };
+    CourseLessonDetail: {
+      activities?: components["schemas"]["CourseActivityDetail"][];
+    } & {
+      [key: string]: unknown;
+    };
+    CourseActivityDetail: {
+      practiceReference?:
+        components["schemas"]["CourseActivityPracticeReference"] | null;
+    } & {
+      [key: string]: unknown;
+    };
+    CourseActivityPracticeReference: {
+      /** Format: uuid */
+      practiceDefinitionId: string;
+      title: string;
+      required: boolean;
+    };
+    CoursePracticeOption: {
+      /** Format: uuid */
+      id: string;
+      title: string;
+      summary: string;
+      difficulty: string;
+      requiresRecording: boolean;
+    };
+    CoursePracticeOptionListResponse: {
+      data: components["schemas"]["CoursePracticeOption"][];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
+    SaveCourseActivityPracticeRequest: {
+      /** Format: uuid */
+      practiceDefinitionId: string;
+      required: boolean;
+      /** Format: date-time */
+      expectedUpdatedAt: string;
+    };
+    CourseActivityPracticeWriteResult: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      courseVersionId: string;
+      /** Format: uuid */
+      activityId: string;
+      /** Format: uuid */
+      practiceDefinitionId: string;
+      title: string;
+      required: boolean;
+      /** Format: date-time */
+      courseVersionUpdatedAt: string;
+    };
+    CourseActivityPracticeResponse: {
+      data: components["schemas"]["CourseActivityPracticeWriteResult"];
       meta: components["schemas"]["EnvelopeMeta"];
     };
     ClassSummary: {
@@ -5115,6 +5211,70 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["CourseVersionDetailResponse"];
+        };
+      };
+      400: components["responses"]["BadRequest"];
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+      409: components["responses"]["Conflict"];
+    };
+  };
+  listCoursePracticeOptions: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 课程版本 ID */
+        courseVersionId: components["parameters"]["CourseVersionId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description School-visible published practice definitions */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CoursePracticeOptionListResponse"];
+        };
+      };
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
+      404: components["responses"]["NotFound"];
+    };
+  };
+  saveCourseActivityPractice: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 学校（租户）标识 */
+        schoolId: components["parameters"]["SchoolId"];
+        /** @description 课程版本 ID */
+        courseVersionId: components["parameters"]["CourseVersionId"];
+        /** @description 学习活动 ID */
+        activityId: components["parameters"]["ActivityId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["SaveCourseActivityPracticeRequest"];
+      };
+    };
+    responses: {
+      /** @description Saved course activity practice relation */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CourseActivityPracticeResponse"];
         };
       };
       400: components["responses"]["BadRequest"];

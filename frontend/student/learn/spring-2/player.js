@@ -442,12 +442,59 @@
       recorder.dataset.voiceRecorder = '';
       recorder.dataset.storageKey = `yuzan:course:${state.enrollmentId}:${state.submissionId}:${activity.id}`;
       recorder.dataset.minSeconds = '2';
-      target.append(prompt, recorder);
+      const recordingControls = document.createElement('div');
+      recordingControls.className = 'speech-recording-controls';
+      const finishRecording = document.createElement('button');
+      finishRecording.type = 'button';
+      finishRecording.id = 'finishCourseRecording';
+      finishRecording.className = 'quiet-button speech-recording-control';
+      finishRecording.textContent = '完成录音';
+      finishRecording.hidden = true;
+      const previewRecording = document.createElement('button');
+      previewRecording.type = 'button';
+      previewRecording.id = 'previewCourseRecording';
+      previewRecording.className = 'quiet-button speech-recording-control';
+      previewRecording.textContent = '试听录音';
+      previewRecording.setAttribute('aria-label', '试听自己的课程录音');
+      previewRecording.hidden = true;
+      recordingControls.append(finishRecording, previewRecording);
+      target.append(prompt, recorder, recordingControls);
       const help = document.createElement('p');
       help.className = 'note-help recorder-help';
-      help.textContent = '录音保存在本机，点击“上传录音并完成”后才会提交到课程。不会生成自动转写。';
+      help.textContent = '先完成录音并试听；确认后再上传到本课程作答。不会生成自动转写或 AI 语音评分。';
       target.appendChild(help);
       if (window.YuzanVoiceRecorder) recorder.__voiceRecorder = new window.YuzanVoiceRecorder(recorder);
+      const updateRecordingControls = () => {
+        const voice = recorder.__voiceRecorder;
+        const hasRecording = Boolean(voice?.blob?.size);
+        finishRecording.hidden = !['recording', 'paused'].includes(voice?.state);
+        previewRecording.hidden = !hasRecording;
+        previewRecording.disabled = !hasRecording;
+        previewRecording.textContent = voice?.state === 'playing' ? '停止试听' : '试听录音';
+        previewRecording.setAttribute('aria-pressed', voice?.state === 'playing' ? 'true' : 'false');
+      };
+      finishRecording.addEventListener('click', async () => {
+        const voice = recorder.__voiceRecorder;
+        if (!voice) return;
+        const finished = await voice.complete();
+        updateRecordingControls();
+        if (finished) setSync('录音已保存在本机，可以试听后再上传。');
+        else setSync('录音至少需要 2 秒；可以继续录制后再完成。', 'error');
+      });
+      previewRecording.addEventListener('click', async () => {
+        const voice = recorder.__voiceRecorder;
+        if (!voice?.blob?.size) return;
+        if (voice.state === 'playing') voice.stopPlayback();
+        else await voice.play();
+        updateRecordingControls();
+      });
+      recorder.addEventListener('recorder:state', updateRecordingControls);
+      recorder.addEventListener('recorder:blob-ready', () => {
+        updateRecordingControls();
+        updateCompletionControl();
+      });
+      recorder.addEventListener('recorder:sync', updateRecordingControls);
+      updateRecordingControls();
       appendActivityFeedback(target, content);
       recorder.addEventListener('recorder:state', (event) => {
         if (event.detail.state === 'error') setSync('麦克风不可用，请检查权限后重试。', 'error');
@@ -808,7 +855,7 @@
     if (activity.type === 'AUDIO' || activity.type === 'VIDEO') ready = state.mediaReady && state.mediaEnded;
     if (activity.type === 'SPEECH') {
       const recorder = $('#courseRecorder')?.__voiceRecorder;
-      ready = Boolean(recorder && (recorder.blob || ['recording', 'paused', 'recorded'].includes(recorder.state)));
+      ready = Boolean(recorder?.blob?.size);
     }
     button.disabled = !ready || state.completing;
   }

@@ -50,6 +50,30 @@ export interface ResourceRef {
   readonly rightsNote?: string | undefined;
 }
 
+export interface CoursePracticeReference {
+  readonly practiceDefinitionId: string;
+  readonly title: string;
+  readonly required: boolean;
+}
+
+export interface CoursePracticeOption {
+  readonly id: string;
+  readonly title: string;
+  readonly summary: string;
+  readonly difficulty: string;
+  readonly requiresRecording: boolean;
+}
+
+export interface CourseActivityPracticeWriteResult {
+  readonly id: string;
+  readonly courseVersionId: string;
+  readonly activityId: string;
+  readonly practiceDefinitionId: string;
+  readonly title: string;
+  readonly required: boolean;
+  readonly courseVersionUpdatedAt: Date;
+}
+
 export interface Activity {
   readonly id: string;
   readonly type: ActivityType;
@@ -59,6 +83,7 @@ export interface Activity {
   readonly required: boolean;
   readonly completionRule?: unknown;
   readonly content?: unknown;
+  readonly practiceReference?: CoursePracticeReference | null | undefined;
   readonly resources: readonly ResourceRef[];
   readonly teacherNotes?: BilingualContent | undefined;
   readonly studentNotes?: BilingualContent | undefined;

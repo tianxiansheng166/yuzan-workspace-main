@@ -238,6 +238,7 @@
       if (!mimeType) { this.setState('error'); this.notify('无法确定实际录音格式，请重新录制'); return; }
       this.blob = new Blob(this.chunks, { type: mimeType });
       await this.persist();
+      this.emit('blob-ready', { size: this.blob.size, mimeType: this.blob.type });
     }
 
     async persist() {

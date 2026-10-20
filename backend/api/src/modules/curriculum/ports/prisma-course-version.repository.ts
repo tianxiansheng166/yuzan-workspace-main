@@ -5,6 +5,8 @@ import type {
   Activity,
   ActivityType,
   BilingualContent,
+  CourseActivityPracticeWriteResult,
+  CoursePracticeOption,
   CourseVersion,
   CourseVersionStatus,
   CourseVersionSummary,
@@ -22,6 +24,7 @@ import type {
   CourseVersionRepositoryPort,
   ListCourseVersionsOptions,
   PaginatedResult,
+  SaveCourseActivityPracticeInput,
   SaveCourseVersionOptions,
 } from "./course-version-repository.port.js";
 
@@ -41,7 +44,12 @@ const fullCourseVersionInclude = {
         include: {
           activities: {
             orderBy: { sortOrder: "asc" as const },
-            include: { resources: true },
+            include: {
+              resources: true,
+              coursePractice: {
+                include: { practiceDefinition: { select: { id: true, title: true } } },
+              },
+            },
           },
         },
       },
@@ -56,6 +64,9 @@ const courseVersionWithCourseAndUnitsArgs = {
 type CourseVersionWithCourseAndUnits = Prisma.CourseVersionGetPayload<
   typeof courseVersionWithCourseAndUnitsArgs
 >;
+type CourseUnitRow = CourseVersionWithCourseAndUnits["units"][number];
+type CourseLessonRow = CourseUnitRow["lessons"][number];
+type CourseActivityRow = CourseLessonRow["activities"][number];
 
 function handleDbError(error: unknown): never {
   if (
@@ -171,14 +182,35 @@ export class PrismaCourseVersionRepository
               "Course draft changed or is no longer editable",
             );
           }
-          await tx.unit.deleteMany({ where: { courseVersionId: version.id } });
-          if (version.units.length > 0) {
-            await tx.courseVersion.update({
-              where: { id: version.id },
-              data: {
-                units: { create: this.buildUnitsCreateInput(version.units) },
+          if (options?.replaceUnits !== false) {
+            const activityWithStudentState = await tx.learningActivity.findFirst({
+              where: {
+                lesson: { unit: { courseVersionId: version.id } },
+                OR: [
+                  { attempts: { some: {} } },
+                  { progress: { some: {} } },
+                  { privateNotes: { some: {} } },
+                  { practiceSessions: { some: {} } },
+                ],
               },
+              select: { id: true },
             });
+            if (activityWithStudentState) {
+              throw new CurriculumConflictException(
+                "课程活动已有学习记录，不能整体替换课程结构",
+              );
+            }
+            await tx.unit.deleteMany({ where: { courseVersionId: version.id } });
+            if (version.units.length > 0) {
+              await tx.courseVersion.update({
+                where: { id: version.id },
+                data: {
+                  units: {
+                    create: this.buildUnitsCreateInput(version.units, version.schoolId),
+                  },
+                },
+              });
+            }
           }
           await tx.course.updateMany({
             where: {
@@ -227,7 +259,9 @@ export class PrismaCourseVersionRepository
               retiredAt: this.toNullable(version.retiredAt),
               createdAt: version.createdAt,
               updatedAt: version.updatedAt,
-              units: { create: this.buildUnitsCreateInput(version.units) },
+              units: {
+                create: this.buildUnitsCreateInput(version.units, version.schoolId),
+              },
             },
           });
         }
@@ -340,6 +374,200 @@ export class PrismaCourseVersionRepository
         include: fullCourseVersionInclude,
       });
       return rows.map((row) => this.mapToDomain(row));
+    } catch (error) {
+      handleDbError(error);
+    }
+  }
+
+  async listCoursePracticeOptions(
+    schoolId: string,
+  ): Promise<readonly CoursePracticeOption[]> {
+    try {
+      return await this.prisma.practiceDefinition.findMany({
+        where: {
+          status: "PUBLISHED",
+          OR: [{ schoolId }, { schoolId: null }],
+          versions: { some: { status: "PUBLISHED" } },
+        },
+        select: {
+          id: true,
+          title: true,
+          summary: true,
+          difficulty: true,
+          requiresRecording: true,
+        },
+        orderBy: [{ title: "asc" }, { id: "asc" }],
+      });
+    } catch (error) {
+      handleDbError(error);
+    }
+  }
+
+  async saveActivityPractice(
+    input: SaveCourseActivityPracticeInput,
+  ): Promise<CourseActivityPracticeWriteResult> {
+    try {
+      return await this.prisma.$transaction(async (tx) => {
+        const version = await tx.courseVersion.findFirst({
+          where: {
+            id: input.courseVersionId,
+            schoolId: input.schoolId,
+            course: {
+              schoolId: input.schoolId,
+              authorUserId: input.courseAuthorUserId,
+              deletedAt: null,
+              school: { isActive: true, deletedAt: null },
+            },
+          },
+          select: { id: true, status: true, updatedAt: true },
+        });
+        if (!version) throw new CurriculumNotFoundException();
+        if (version.status !== "DRAFT" && version.status !== "CHANGES_REQUESTED") {
+          throw new CurriculumConflictException(
+            `状态为 ${version.status} 的版本不可编辑课程练习，只能编辑 DRAFT 或 CHANGES_REQUESTED`,
+          );
+        }
+
+        const activity = await tx.learningActivity.findFirst({
+          where: {
+            id: input.activityId,
+            lesson: { unit: { courseVersionId: input.courseVersionId } },
+          },
+          select: { id: true },
+        });
+        if (!activity) {
+          throw new CurriculumNotFoundException("课程活动不存在");
+        }
+
+        const definition = await tx.practiceDefinition.findFirst({
+          where: {
+            id: input.practiceDefinitionId,
+            status: "PUBLISHED",
+            OR: [{ schoolId: input.schoolId }, { schoolId: null }],
+            versions: { some: { status: "PUBLISHED" } },
+          },
+          select: { id: true, title: true },
+        });
+        if (!definition) {
+          throw new CurriculumNotFoundException("可用课程练习不存在");
+        }
+
+        const existing = await tx.courseActivityPractice.findUnique({
+          where: { activityId: input.activityId },
+          select: {
+            id: true,
+            schoolId: true,
+            activityId: true,
+            practiceDefinitionId: true,
+            required: true,
+          },
+        });
+        if (
+          existing?.schoolId === input.schoolId &&
+          existing.practiceDefinitionId === input.practiceDefinitionId &&
+          existing.required === input.required
+        ) {
+          return {
+            id: existing.id,
+            activityId: existing.activityId,
+            practiceDefinitionId: existing.practiceDefinitionId,
+            required: existing.required,
+            courseVersionId: input.courseVersionId,
+            title: definition.title,
+            courseVersionUpdatedAt: version.updatedAt,
+          };
+        }
+
+        if (version.updatedAt.getTime() !== input.expectedUpdatedAt.getTime()) {
+          throw new CurriculumConflictException(
+            "课程版本已被其他修改更新，请重新载入后再保存",
+          );
+        }
+
+        const activityWithStudentState = await tx.learningActivity.findFirst({
+          where: {
+            id: input.activityId,
+            OR: [
+              { attempts: { some: {} } },
+              { progress: { some: {} } },
+              { privateNotes: { some: {} } },
+              { practiceSessions: { some: {} } },
+            ],
+          },
+          select: { id: true },
+        });
+        if (activityWithStudentState) {
+          throw new CurriculumConflictException(
+            "课程活动已有学习记录，不能更改其关联练习",
+          );
+        }
+
+        const courseVersionUpdatedAt = new Date(
+          Math.max(Date.now(), version.updatedAt.getTime() + 1),
+        );
+        const claimed = await tx.courseVersion.updateMany({
+          where: {
+            id: input.courseVersionId,
+            schoolId: input.schoolId,
+            updatedAt: input.expectedUpdatedAt,
+            status: { in: ["DRAFT", "CHANGES_REQUESTED"] },
+            course: {
+              schoolId: input.schoolId,
+              authorUserId: input.courseAuthorUserId,
+              deletedAt: null,
+              school: { isActive: true, deletedAt: null },
+            },
+          },
+          data: { updatedAt: courseVersionUpdatedAt },
+        });
+        if (claimed.count !== 1) {
+          throw new CurriculumConflictException(
+            "课程版本已被其他修改更新，请重新载入后再保存",
+          );
+        }
+
+        const link = existing
+          ? await tx.courseActivityPractice.update({
+              where: { activityId: input.activityId },
+              data: {
+                schoolId: input.schoolId,
+                practiceDefinitionId: input.practiceDefinitionId,
+                required: input.required,
+              },
+              select: {
+                id: true,
+                schoolId: true,
+                activityId: true,
+                practiceDefinitionId: true,
+                required: true,
+              },
+            })
+          : await tx.courseActivityPractice.create({
+              data: {
+                schoolId: input.schoolId,
+                activityId: input.activityId,
+                practiceDefinitionId: input.practiceDefinitionId,
+                required: input.required,
+              },
+              select: {
+                id: true,
+                schoolId: true,
+                activityId: true,
+                practiceDefinitionId: true,
+                required: true,
+              },
+            });
+
+        return {
+          id: link.id,
+          activityId: link.activityId,
+          practiceDefinitionId: link.practiceDefinitionId,
+          required: link.required,
+          courseVersionId: input.courseVersionId,
+          title: definition.title,
+          courseVersionUpdatedAt,
+        };
+      });
     } catch (error) {
       handleDbError(error);
     }
@@ -500,12 +728,14 @@ export class PrismaCourseVersionRepository
 
   private buildUnitsCreateInput(
     units: readonly Unit[],
+    schoolId: string,
   ): Prisma.UnitCreateWithoutCourseVersionInput[] {
-    return units.map((unit) => this.buildUnitCreateInput(unit));
+    return units.map((unit) => this.buildUnitCreateInput(unit, schoolId));
   }
 
   private buildUnitCreateInput(
     unit: Unit,
+    schoolId: string,
   ): Prisma.UnitCreateWithoutCourseVersionInput {
     return {
       id: unit.id,
@@ -513,7 +743,7 @@ export class PrismaCourseVersionRepository
       sortOrder: unit.sortOrder,
       lessons: {
         create: unit.lessons.map((lesson) =>
-          this.buildLessonCreateInput(lesson),
+          this.buildLessonCreateInput(lesson, schoolId),
         ),
       },
     };
@@ -521,6 +751,7 @@ export class PrismaCourseVersionRepository
 
   private buildLessonCreateInput(
     lesson: Lesson,
+    schoolId: string,
   ): Prisma.LessonCreateWithoutUnitInput {
     return {
       id: lesson.id,
@@ -528,7 +759,7 @@ export class PrismaCourseVersionRepository
       sortOrder: lesson.sortOrder,
       activities: {
         create: lesson.activities.map((activity) =>
-          this.buildActivityCreateInput(activity),
+          this.buildActivityCreateInput(activity, schoolId),
         ),
       },
     };
@@ -536,6 +767,7 @@ export class PrismaCourseVersionRepository
 
   private buildActivityCreateInput(
     activity: Activity,
+    schoolId: string,
   ): Prisma.LearningActivityCreateWithoutLessonInput {
     return {
       id: activity.id,
@@ -553,6 +785,18 @@ export class PrismaCourseVersionRepository
           this.buildResourceCreateInput(resource),
         ),
       },
+      ...(activity.practiceReference
+        ? {
+            coursePractice: {
+              create: {
+                schoolId,
+                practiceDefinitionId:
+                  activity.practiceReference.practiceDefinitionId,
+                required: activity.practiceReference.required,
+              },
+            },
+          }
+        : {}),
     };
   }
 
@@ -615,19 +859,7 @@ export class PrismaCourseVersionRepository
     };
   }
 
-  private mapUnit(
-    unit: Prisma.UnitGetPayload<{
-      include: {
-        lessons: {
-          include: {
-            activities: {
-              include: { resources: true };
-            };
-          };
-        };
-      };
-    }>,
-  ): Unit {
+  private mapUnit(unit: CourseUnitRow): Unit {
     return {
       id: unit.id,
       title: unit.title,
@@ -636,15 +868,7 @@ export class PrismaCourseVersionRepository
     };
   }
 
-  private mapLesson(
-    lesson: Prisma.LessonGetPayload<{
-      include: {
-        activities: {
-          include: { resources: true };
-        };
-      };
-    }>,
-  ): Lesson {
+  private mapLesson(lesson: CourseLessonRow): Lesson {
     return {
       id: lesson.id,
       title: lesson.title,
@@ -655,11 +879,7 @@ export class PrismaCourseVersionRepository
     };
   }
 
-  private mapActivity(
-    activity: Prisma.LearningActivityGetPayload<{
-      include: { resources: true };
-    }>,
-  ): Activity {
+  private mapActivity(activity: CourseActivityRow): Activity {
     return {
       id: activity.id,
       type: activity.type as ActivityType,
@@ -671,6 +891,14 @@ export class PrismaCourseVersionRepository
       required: activity.required,
       completionRule: activity.completionRule ?? undefined,
       content: activity.content ?? undefined,
+      practiceReference: activity.coursePractice
+        ? {
+            practiceDefinitionId:
+              activity.coursePractice.practiceDefinitionId,
+            title: activity.coursePractice.practiceDefinition.title,
+            required: activity.coursePractice.required,
+          }
+        : null,
       teacherNotes: activity.teacherNotes
         ? (activity.teacherNotes as unknown as BilingualContent)
         : undefined,

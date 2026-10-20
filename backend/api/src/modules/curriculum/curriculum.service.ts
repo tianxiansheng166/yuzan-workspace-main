@@ -8,6 +8,8 @@ import {
 } from "../resources/ports/resource-lookup.port.js";
 import type {
   BilingualContent,
+  CourseActivityPracticeWriteResult,
+  CoursePracticeOption,
   CourseVersion,
   CourseVersionSummary,
 } from "./domain/course-version.types.js";
@@ -27,6 +29,7 @@ import { executePublish } from "./publishing/publishing.workflow.js";
 import type { CreateCourseDraftDto } from "./dto/create-course-draft.dto.js";
 import type { ListCourseVersionsQueryDto } from "./dto/list-course-versions-query.dto.js";
 import type { UpdateCourseDraftDto } from "./dto/update-course-draft.dto.js";
+import type { SaveCourseActivityPracticeDto } from "./dto/save-course-activity-practice.dto.js";
 
 @Injectable()
 export class CurriculumService {
@@ -188,6 +191,7 @@ export class CurriculumService {
     const saved = await this.courseRepo.save(updated, {
       generateVersion: false,
       expectedUpdatedAt: new Date(update.expectedUpdatedAt),
+      replaceUnits: update.units !== undefined,
     });
     return saved;
   }
@@ -223,6 +227,7 @@ export class CurriculumService {
     const saved = await this.courseRepo.save(updated, {
       generateVersion: false,
       expectedUpdatedAt: version.updatedAt,
+      replaceUnits: false,
     });
     return toSummary(saved);
   }
@@ -327,6 +332,60 @@ export class CurriculumService {
     return version;
   }
 
+  async listCoursePracticeOptions(
+    auth: AuthContext,
+    schoolId: string,
+    courseVersionId: string,
+  ): Promise<readonly CoursePracticeOption[]> {
+    const version = await this.courseRepo.findById(schoolId, courseVersionId);
+    if (!version) {
+      throw new CurriculumNotFoundException();
+    }
+    if (!this.policy.canManage(auth, version)) {
+      throw new CurriculumForbiddenException();
+    }
+    return this.courseRepo.listCoursePracticeOptions(schoolId);
+  }
+
+  async saveActivityPractice(
+    auth: AuthContext,
+    schoolId: string,
+    courseVersionId: string,
+    activityId: string,
+    dto: SaveCourseActivityPracticeDto,
+  ): Promise<CourseActivityPracticeWriteResult> {
+    const version = await this.courseRepo.findById(schoolId, courseVersionId);
+    if (!version) {
+      throw new CurriculumNotFoundException();
+    }
+    if (!this.policy.canManage(auth, version)) {
+      throw new CurriculumForbiddenException();
+    }
+    if (version.status !== "DRAFT" && version.status !== "CHANGES_REQUESTED") {
+      throw new CurriculumConflictException(
+        `状态为 ${version.status} 的版本不可编辑课程练习，只能编辑 DRAFT 或 CHANGES_REQUESTED`,
+      );
+    }
+    const activityExists = version.units.some((unit) =>
+      unit.lessons.some((lesson) =>
+        lesson.activities.some((activity) => activity.id === activityId),
+      ),
+    );
+    if (!activityExists) {
+      throw new CurriculumNotFoundException("课程活动不存在");
+    }
+
+    return this.courseRepo.saveActivityPractice({
+      schoolId,
+      courseVersionId,
+      courseAuthorUserId: version.authorUserId,
+      activityId,
+      practiceDefinitionId: dto.practiceDefinitionId,
+      required: dto.required,
+      expectedUpdatedAt: new Date(dto.expectedUpdatedAt),
+    });
+  }
+
   private isStudentOnly(auth: AuthContext): boolean {
     return (
       auth.principal.roles.length === 1 && hasRole(auth, MembershipRole.STUDENT)
@@ -381,7 +440,11 @@ export class CurriculumService {
       newResource,
     ];
 
-    await this.courseRepo.save(updated, { generateVersion: false });
+    await this.courseRepo.save(updated, {
+      generateVersion: false,
+      expectedUpdatedAt: version.updatedAt,
+      replaceUnits: false,
+    });
     return newResource;
   }
 

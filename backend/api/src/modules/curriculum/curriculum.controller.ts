@@ -9,6 +9,7 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
+  Put,
   Query,
 } from "@nestjs/common";
 import {
@@ -28,6 +29,7 @@ import { UpdateCourseDraftDto } from "./dto/update-course-draft.dto.js";
 import { SubmitReviewDto } from "./dto/submit-review.dto.js";
 import { AttachResourceDto } from "./dto/attach-resource.dto.js";
 import { AttachOfflinePackageDto } from "./dto/attach-offline-package.dto.js";
+import { SaveCourseActivityPracticeDto } from "./dto/save-course-activity-practice.dto.js";
 
 @Controller("schools/:schoolId/course-versions")
 export class CurriculumController {
@@ -86,6 +88,41 @@ export class CurriculumController {
       createAuthContext("request-id", principal, tenant),
       schoolId,
       courseVersionId,
+    );
+  }
+
+  @Get(":courseVersionId/practice-options")
+  @RequireRoles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
+  async listCoursePracticeOptions(
+    @Param("schoolId", ParseUUIDPipe) schoolId: string,
+    @Param("courseVersionId", ParseUUIDPipe) courseVersionId: string,
+    @CurrentTenant() tenant: TenantContext,
+    @CurrentPrincipal() principal: Principal,
+  ) {
+    return this.service.listCoursePracticeOptions(
+      createAuthContext("request-id", principal, tenant),
+      schoolId,
+      courseVersionId,
+    );
+  }
+
+  @Put(":courseVersionId/activities/:activityId/practice")
+  @HttpCode(HttpStatus.OK)
+  @RequireRoles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
+  async saveActivityPractice(
+    @Param("schoolId", ParseUUIDPipe) schoolId: string,
+    @Param("courseVersionId", ParseUUIDPipe) courseVersionId: string,
+    @Param("activityId", ParseUUIDPipe) activityId: string,
+    @Body() dto: SaveCourseActivityPracticeDto,
+    @CurrentTenant() tenant: TenantContext,
+    @CurrentPrincipal() principal: Principal,
+  ) {
+    return this.service.saveActivityPractice(
+      createAuthContext("request-id", principal, tenant),
+      schoolId,
+      courseVersionId,
+      activityId,
+      dto,
     );
   }
 

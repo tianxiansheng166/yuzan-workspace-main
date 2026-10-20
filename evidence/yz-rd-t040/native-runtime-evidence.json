@@ -1,0 +1,50 @@
+{
+  "task": "T040",
+  "runtime": "native; Docker and Compose not used",
+  "database": "yuzan_t040_native",
+  "databaseRole": "yz_t040",
+  "postgresVersion": "postgres (PostgreSQL) 17.11 (Ubuntu 17.11-1.pgdg22.04+2)",
+  "minioBucket": "yz-t040-native",
+  "node": "v24.20.0",
+  "pnpm": "10.13.1",
+  "chromium": "Google Chrome 153.0.8010.52",
+  "startExitCode": 0,
+  "questionBankImport": "NOT_REQUIRED_FOR_T040",
+  "e2eExitCode": 0,
+  "stopExitCode": 0,
+  "services": {
+    "postgres": {
+      "pidBeforeStop": 3941120,
+      "port": 55740,
+      "listenerPidsAfterStop": [],
+      "stopped": true
+    },
+    "redis": {
+      "pidBeforeStop": 3941804,
+      "port": 6540,
+      "listenerPidsAfterStop": [],
+      "stopped": true
+    },
+    "minio": {
+      "pidBeforeStop": 3941819,
+      "port": 62140,
+      "listenerPidsAfterStop": [],
+      "stopped": true
+    },
+    "api": {
+      "pidBeforeStop": 3941862,
+      "port": 4240,
+      "listenerPidsAfterStop": [],
+      "stopped": true
+    },
+    "web": {
+      "pidBeforeStop": 3941944,
+      "port": 4440,
+      "listenerPidsAfterStop": [],
+      "stopped": true
+    }
+  },
+  "evidenceGeneratedAt": "2026-10-19T15:51:24.452361+00:00",
+  "dataRetained": true,
+  "worker": "NOT_STARTED; speech scorer disabled; fake Chromium microphone only"
+}

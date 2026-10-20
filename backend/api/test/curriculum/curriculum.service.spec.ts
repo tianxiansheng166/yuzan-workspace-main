@@ -4,6 +4,7 @@ import type { CreateCourseDraftDto } from "../../src/modules/curriculum/dto/crea
 import {
   CurriculumConflictException,
   CurriculumForbiddenException,
+  CurriculumNotFoundException,
   CurriculumRepositoryUnavailableException,
   CurriculumValidationException,
 } from "../../src/modules/curriculum/domain/curriculum.errors.js";
@@ -201,6 +202,122 @@ describe("CurriculumService", () => {
     expect(nextVersion.status).toBe("DRAFT");
     expect(nextVersion.version).toBe(2);
     expect(nextVersion.courseId).toBe(published.courseId);
+  });
+
+  it("lists school-visible published practices only for the course owner", async () => {
+    const repo = new FakeCourseVersionRepository();
+    const service = createService(repo, new FakeResourceLookupAdapter());
+    const principal = teacherPrincipal();
+    const auth = createAuthContext("req-1", principal, { schoolId });
+    const version = courseVersion({ schoolId, authorUserId: principal.userId });
+    const option = {
+      id: "practice-definition-1",
+      title: "已发布练习",
+      summary: "课程练习选项",
+      difficulty: "MEDIUM",
+      requiresRecording: true,
+    };
+    repo.add(version);
+    repo.addPracticeOptions(option);
+
+    await expect(
+      service.listCoursePracticeOptions(auth, schoolId, version.id),
+    ).resolves.toEqual([option]);
+
+    const otherTeacher = createAuthContext("req-2", teacherPrincipal(), { schoolId });
+    await expect(
+      service.listCoursePracticeOptions(otherTeacher, schoolId, version.id),
+    ).rejects.toThrow(CurriculumForbiddenException);
+  });
+
+  it("saves an activity practice relation and safely replays the same write", async () => {
+    const repo = new FakeCourseVersionRepository();
+    const service = createService(repo, new FakeResourceLookupAdapter());
+    const principal = teacherPrincipal();
+    const auth = createAuthContext("req-1", principal, { schoolId });
+    const targetActivity = activity({ id: "activity-to-link" });
+    const version = courseVersion({
+      schoolId,
+      authorUserId: principal.userId,
+      units: [unit({ lessons: [{ id: "lesson-a", title: "课次一", sortOrder: 0, activities: [targetActivity] }] })],
+    });
+    const option = {
+      id: "practice-definition-1",
+      title: "已发布练习",
+      summary: "课程练习选项",
+      difficulty: "MEDIUM",
+      requiresRecording: true,
+    };
+    repo.add(version);
+    repo.addPracticeOptions(option);
+
+    const input = {
+      practiceDefinitionId: option.id,
+      required: true,
+      expectedUpdatedAt: version.updatedAt.toISOString(),
+    };
+    const first = await service.saveActivityPractice(
+      auth,
+      schoolId,
+      version.id,
+      targetActivity.id,
+      input,
+    );
+    const replay = await service.saveActivityPractice(
+      auth,
+      schoolId,
+      version.id,
+      targetActivity.id,
+      input,
+    );
+    const reread = await service.findById(auth, schoolId, version.id);
+
+    expect(replay.id).toBe(first.id);
+    expect(replay.courseVersionUpdatedAt).toEqual(first.courseVersionUpdatedAt);
+    expect(reread.units[0]?.lessons[0]?.activities[0]?.practiceReference).toEqual({
+      practiceDefinitionId: option.id,
+      title: option.title,
+      required: true,
+    });
+  });
+
+  it("rejects practice links on published versions and unknown course activities", async () => {
+    const repo = new FakeCourseVersionRepository();
+    const service = createService(repo, new FakeResourceLookupAdapter());
+    const principal = teacherPrincipal();
+    const auth = createAuthContext("req-1", principal, { schoolId });
+    const version = courseVersion({
+      schoolId,
+      authorUserId: principal.userId,
+      status: "PUBLISHED",
+    });
+    const option = {
+      id: "practice-definition-1",
+      title: "已发布练习",
+      summary: "课程练习选项",
+      difficulty: "MEDIUM",
+      requiresRecording: false,
+    };
+    repo.add(version);
+    repo.addPracticeOptions(option);
+
+    await expect(
+      service.saveActivityPractice(auth, schoolId, version.id, "missing-activity", {
+        practiceDefinitionId: option.id,
+        required: true,
+        expectedUpdatedAt: version.updatedAt.toISOString(),
+      }),
+    ).rejects.toThrow(CurriculumConflictException);
+
+    const draft = courseVersion({ schoolId, authorUserId: principal.userId });
+    repo.add(draft);
+    await expect(
+      service.saveActivityPractice(auth, schoolId, draft.id, "missing-activity", {
+        practiceDefinitionId: option.id,
+        required: true,
+        expectedUpdatedAt: draft.updatedAt.toISOString(),
+      }),
+    ).rejects.toThrow(CurriculumNotFoundException);
   });
 
   it("publishes a valid version", async () => {

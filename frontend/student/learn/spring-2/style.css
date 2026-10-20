@@ -741,6 +741,39 @@ body {
   max-width: 780px;
   border-radius: 2px;
 }
+.speech-target .voice-recorder {
+  height: 250px;
+  min-height: 230px;
+}
+.speech-recording-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+.speech-recording-control {
+  min-height: 44px;
+  padding: 9px 16px;
+  border: 1px solid var(--green);
+  background: var(--surface);
+  color: var(--green);
+  font: 600 13px/1.4 "Microsoft YaHei", sans-serif;
+  cursor: pointer;
+}
+.speech-recording-control:hover:not(:disabled) {
+  background: #edf2eb;
+}
+.speech-recording-control:focus-visible {
+  outline: 3px solid rgba(40, 95, 70, .25);
+  outline-offset: 2px;
+}
+.speech-recording-control:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+.speech-recording-control[hidden] {
+  display: none !important;
+}
 .speech-target blockquote {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
@@ -889,6 +922,56 @@ body {
   }
 }
 @media (max-width: 600px) {
+  .speech-target .voice-recorder {
+    height: 340px;
+    min-height: 340px;
+  }
+  .speech-target .vr-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: 180px 1fr;
+  }
+  .speech-target .vr-control {
+    border-right: 0;
+    border-bottom: 1px solid rgba(228, 188, 108, .2);
+  }
+  .speech-target .vr-orbits {
+    width: 148px;
+    height: 148px;
+  }
+  .speech-target .vr-mic {
+    width: 80px;
+    height: 80px;
+  }
+  .speech-target .vr-main {
+    padding: 12px 15px 14px;
+  }
+  .speech-target .vr-pipeline {
+    display: none;
+  }
+  .speech-target .vr-canvas-wrap {
+    left: 15px;
+    right: 15px;
+    top: 10px;
+    height: 80px;
+  }
+  .speech-target .vr-bottom {
+    left: 15px;
+    right: 15px;
+    bottom: 14px;
+    gap: 10px;
+  }
+  .speech-target .vr-time {
+    min-width: 54px;
+    font-size: 20px;
+  }
+  .speech-target .vr-quality,
+  .speech-target .vr-bars {
+    display: none;
+  }
+  .speech-target .vr-action {
+    min-width: 108px;
+    font-size: 14px;
+  }
   .course-header {
     grid-template-columns: minmax(0, 1fr) 64px;
     gap: 10px;
@@ -903,8 +986,18 @@ body {
     grid-row: 2;
     padding: 12px 12px 10px;
   }
+  .course-header > div.course-heading:nth-child(2) {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .course-header > .course-status {
+    grid-column: 2;
+    grid-row: 2;
+  }
   .course-heading h1 {
-    font-size: clamp(24px, 7vw, 32px);
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    font-size: clamp(22px, 6.3vw, 28px);
     line-height: 1.3;
   }
   .highland-art {
