@@ -3,6 +3,13 @@
 Last updated: 2026-10-20
 Repository: `yuzan-workspace-main`
 
+## YZ-RD-T061 teacher studio + student course UX polish (2026-10-20)
+
+- Implemented on independent branch `feat/yz-rd-t061-teacher-studio-student-course-ux-polish`, based on exact accepted T058 BASE `736cb9bdc98866f15be586a7410749182ace0d29`. The course studio now switches from the fixed desktop canvas to a readable, scrollable stacked layout on small screens. Its actions expose Save Draft, explain review/publish/assignment sequence, and save dirty work before review submission. Existing course, review, publish, assignment, score and database contracts remain unchanged.
+- Existing T053 native-Chromium screenshots were the real-render evidence; T043 `visual-fixture-*` screenshots were identified as `VISUAL_FIXTURE_ONLY, NO BACKEND E2E`. No new browser screenshot or cross-role E2E was run to avoid T060's browser resource. Frontend 139/139 plus runtime verification passes; `git diff --check` and JS syntax checks pass.
+- `READY_TO_MERGE=NO`: post-change Chromium visual capture is deferred under the T060 resource boundary, and the accepted T058 branch carries unresolved 1,203 API-test lint errors. `L4_OPEN=OPEN`; no Level 4 data was read. Target `AGENTS.md` lacks the AA-DEV-V2.2 marker; the supplied root safety baseline governed.
+- Full audit, evidence types and findings: [`evidence/yz-rd-t061/RESULTS.md`](evidence/yz-rd-t061/RESULTS.md).
+
 ## YZ-RD-T058 — unified product and test-quality integration (2026-10-20)
 
 - COMPLETE on independent branch `feat/yz-rd-t058-unified-product-test-quality-integration`, based on exact T057 `6f0eaa37daf03ddb7fcbb2f8846688ae1e60cac5`. No-FF merge `ee2bb39e8bf7d1a44cd926f96bdd0f56cfdff22b` has T057 as first parent and T055 `04eda78af4e8230d0b26d054c13f7f6781a2bf20` as second parent. The merge adds only the nine T055 API test repairs and T055 evidence; no app, contract, or ESLint config changes.

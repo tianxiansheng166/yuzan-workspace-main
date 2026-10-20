@@ -144,6 +144,9 @@
         designRoot.dataset.fit = 'managed';
         const host = document.createElement('div');
         host.className = 'ts-design-host';
+        if (designRoot.classList.contains('responsive-studio')) {
+          host.classList.add('ts-design-host--responsive-studio');
+        }
         pageRoot.appendChild(host);
         host.appendChild(designRoot);
         fitDesign = () => {
