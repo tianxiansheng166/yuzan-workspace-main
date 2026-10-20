@@ -1,0 +1,17 @@
+Base and ownership checks:
+- git status --short --branch
+- git rev-parse HEAD
+- Read T059 raw before/after full-lint JSON and evidence/yz-rd-t059/RESULTS.md
+- Read T051, T055, T059 evidence ownership lists; inspect T060 checkout and protected paths
+
+Workspace setup (offline; no database connection):
+- pnpm install --offline --filter @yuzan/api...
+- DATABASE_URL=postgresql://unused:unused@127.0.0.1:5432/unused pnpm --filter @yuzan/database generate
+- pnpm --filter @yuzan/database build
+
+Verification:
+- pnpm --filter @yuzan/api exec eslint --format json <six owned files>
+- pnpm --filter @yuzan/api exec eslint --format json src test
+- pnpm --filter @yuzan/api exec tsc -p test/tsconfig.json --noEmit
+- env -u DATABASE_URL -u QB_RUNTIME_DATABASE_URL pnpm --filter @yuzan/api exec vitest run --passWithNoTests --pool=forks --poolOptions.forks.singleFork <six owned files>
+- git diff --check

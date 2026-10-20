@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import {
   TranslationConflictException,
   TranslationForbiddenException,
@@ -33,44 +33,45 @@ import {
 // ---------------------------------------------------------------------------
 
 class FakeCrypto implements TranslationCryptoPort {
-  async encrypt(plaintext: string): Promise<string> {
-    return `enc:${plaintext}`;
+  encrypt(plaintext: string): Promise<string> {
+    return Promise.resolve(`enc:${plaintext}`);
   }
-  async decrypt(ciphertext: string): Promise<string> {
-    return ciphertext.replace(/^enc:/, "");
+  decrypt(ciphertext: string): Promise<string> {
+    return Promise.resolve(ciphertext.replace(/^enc:/, ""));
   }
 }
 
 class FakeRateLimiter implements TranslationRateLimiterPort {
-  async checkRateLimit(_userId: string): Promise<void> {
+  checkRateLimit(userId: string): Promise<void> {
     // No-op by default; tests can override via subclass or flag
+    void userId;
+    return Promise.resolve();
   }
 }
 
 class ThrowingRateLimiter implements TranslationRateLimiterPort {
-  async checkRateLimit(_userId: string): Promise<void> {
-    throw new TranslationRateLimitedException();
+  checkRateLimit(userId: string): Promise<void> {
+    void userId;
+    return Promise.reject(new TranslationRateLimitedException());
   }
 }
 
 class FakeProvider implements TranslationProviderPort {
-  async translate(
-    _sourceLang: SupportedLanguage,
-    _targetLang: SupportedLanguage,
-    _text: string,
-  ) {
-    return {
+  translate(): ReturnType<TranslationProviderPort["translate"]> {
+    return Promise.resolve({
       resultText: "mock-translation",
       requestId: "req-1",
       model: "fake-model",
       latencyMs: 100,
-    };
+    });
   }
 }
 
 class UnavailableProvider implements TranslationProviderPort {
-  async translate() {
-    throw new TranslationUnavailableException("provider not configured");
+  translate(): ReturnType<TranslationProviderPort["translate"]> {
+    return Promise.reject(
+      new TranslationUnavailableException("provider not configured"),
+    );
   }
 }
 
@@ -603,7 +604,7 @@ describe("TranslationsService", () => {
     });
 
     it("never returns fake completed results when provider is unavailable", async () => {
-      const { service, repo } = createService({
+      const { service } = createService({
         provider: new UnavailableProvider(),
       });
       const auth = teacherAuth(schoolId);
@@ -682,7 +683,7 @@ describe("TranslationsService", () => {
   // Rate limiting
   // -------------------------------------------------------------------------
   describe("rate limiting", () => {
-    it("throws TranslationRateLimitedException when rate limit is exceeded", async () => {
+    it("throws TranslationRateLimitedException when rate limit is exceeded", () => {
       const error = new TranslationRateLimitedException();
       expect(error).toBeInstanceOf(TranslationRateLimitedException);
       expect(error.getStatus()).toBe(429);
@@ -797,8 +798,6 @@ describe("TranslationsService", () => {
         revision: 1,
       });
       repo.addJob(job);
-      const auth = teacherAuth(schoolId);
-
       // Try to update via the internal method (simulating provider retry)
       const result = await service.updateJobResultFromWorker(job.id, {
         status: TranslationStatus.COMPLETED,

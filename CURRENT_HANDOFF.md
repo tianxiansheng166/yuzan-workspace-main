@@ -3,6 +3,13 @@
 Last updated: 2026-10-20
 Repository: `yuzan-workspace-main`
 
+## YZ-RD-T063 API test lint fourth slice (2026-10-20)
+
+- `PARTIAL_WITH_DEBT` on `feat/yz-rd-t063-api-test-lint-fourth-slice`, from exact T059 BASE `f147138b570971d44815eebf769215a6ade5a08e`, in an independent worktree. Six unremediated API test files were selected from the T059 remaining-debt snapshot; 183 lint findings were fixed. No API source changed.
+- Full API lint changed from 926 errors (1 source / 925 test) to 743 (1 source / 742 test), with zero warnings/parser errors. The sole source finding is unchanged and T049-owned. All six owned files pass targeted ESLint. Safe targeted Vitest passed 143/143 runnable tests; the 21 PostgreSQL integration tests were environment-gated skips.
+- Test-project TypeScript changed from 248 to 230 diagnostics, with zero new diagnostic identities. Evidence: [`evidence/yz-rd-t063/RESULTS.md`](evidence/yz-rd-t063/RESULTS.md). `READY_TO_MERGE=NO` while full lint debt remains; `L4_OPEN=OPEN`.
+- T051/T055/T059 repaired paths, T053 active `curriculum`/`modules/admin`, T005 `student-courses`, and T060 protected acceptance paths were excluded. No mixed raw question-bank content, `local_sources/`, database runtime, Docker, or L4 path was opened or changed.
+
 ## YZ-RD-T059 API test lint third slice (2026-10-20)
 
 - `PARTIAL_WITH_DEBT` on `feat/yz-rd-t059-api-test-lint-third-slice`, from exact T055 BASE `04eda78af4e8230d0b26d054c13f7f6781a2bf20`, in an isolated worktree. Eight unremediated test files were cleaned; none overlap T051/T055. T053's active `curriculum` and `modules/admin` test paths were excluded. T058 was checked at its current T057 commit and had no tracked code changes.

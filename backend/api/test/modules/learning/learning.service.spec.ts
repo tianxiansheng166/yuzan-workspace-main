@@ -37,16 +37,16 @@ describe("LearningService", () => {
       .useValue(learningRepo)
       .overrideProvider(CLASS_ENROLLMENT_LOOKUP)
       .useValue({
-        classExistsAndBelongsToSchool: async () => true,
-        isUserEnrolledInClass: async () => true,
-        listStudentEnrollmentIds: async () => [],
-        findEnrollmentId: async () => null,
+        classExistsAndBelongsToSchool: () => Promise.resolve(true),
+        isUserEnrolledInClass: () => Promise.resolve(true),
+        listStudentEnrollmentIds: () => Promise.resolve([]),
+        findEnrollmentId: () => Promise.resolve(null),
       })
       .overrideProvider(ASSIGNMENT_LOOKUP)
       .useValue({
-        findSummaryById: async () => null,
-        isOpen: async () => false,
-        listByEnrollment: async () => [],
+        findSummaryById: () => Promise.resolve(null),
+        isOpen: () => Promise.resolve(false),
+        listByEnrollment: () => Promise.resolve([]),
       })
       .compile();
 
@@ -54,7 +54,6 @@ describe("LearningService", () => {
   });
 
   const schoolId = "school-a";
-  const studentAuth = auth("student-1", schoolId, [MembershipRole.STUDENT]);
   const teacherAuth = auth("teacher-1", schoolId, [MembershipRole.TEACHER]);
 
   describe("listTasks", () => {

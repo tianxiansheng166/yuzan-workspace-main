@@ -8,7 +8,6 @@ import {
   createAuthContext,
   MembershipRole,
   MembershipStatus,
-  PolicyGuard,
   TenantAuthorizationGuard,
 } from "../../src/common/security/index.js";
 import { StubAuthContextSource } from "../../src/modules/auth/stub-auth-context.source.js";
@@ -128,17 +127,9 @@ describe("OrganizationsController", () => {
       expect(result.items).toHaveLength(2);
     });
 
-    it("rejects student listing members", async () => {
-      schoolRepo.add(school({ id: "school-a" }));
-      const principal = {
-        userId: "student-1",
-        roles: [MembershipRole.STUDENT],
-        membershipStatus: "ACTIVE" as const,
-        source: "stub",
-      };
-      const tenant = { schoolId: "school-a" };
-
-      const roles = reflector.get("requiredRoles", controller.listMembers);
+    it("does not grant students access to listing members", () => {
+      const roles =
+        reflector.get<MembershipRole[]>("requiredRoles", controller["listMembers"]) ?? [];
       expect(roles).not.toContain(MembershipRole.STUDENT);
     });
   });
@@ -207,7 +198,7 @@ describe("OrganizationsController", () => {
           }),
           getResponse: () => ({ getHeader: () => "req-1" }),
         }),
-        getHandler: () => controller.getSchool,
+        getHandler: () => controller["getSchool"],
         getClass: () => OrganizationsController,
       } as never;
 
@@ -237,7 +228,7 @@ describe("OrganizationsController", () => {
           getRequest: () => request,
           getResponse: () => ({ getHeader: () => "req-1" }),
         }),
-        getHandler: () => controller.getSchool,
+        getHandler: () => controller["getSchool"],
         getClass: () => OrganizationsController,
       } as never;
 
@@ -271,7 +262,7 @@ describe("OrganizationsController", () => {
           }),
           getResponse: () => ({ getHeader: () => "req-1" }),
         }),
-        getHandler: () => controller.getSchool,
+        getHandler: () => controller["getSchool"],
         getClass: () => OrganizationsController,
       } as never;
 

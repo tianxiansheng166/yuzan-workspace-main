@@ -1,5 +1,11 @@
 # Development status
 
+## YZ-RD-T063 — API test lint fourth slice (2026-10-20)
+
+PARTIAL_WITH_DEBT / `READY_TO_MERGE=NO`. On the isolated `feat/yz-rd-t063-api-test-lint-fourth-slice` branch from exact T059 `f147138b570971d44815eebf769215a6ade5a08e`, six previously unremediated API tests were cleaned without overlap with T051/T055/T059 or active T005/T053/T060 paths. The owned files moved from 183 lint errors to zero. Full API lint moved from 926 errors (1 source / 925 test) to 743 (1 source / 742 test), with zero warnings/parser errors; the remaining source finding is unchanged and T049-owned.
+
+Targeted ESLint passed for all six files. Safe targeted Vitest passed 143 tests with no failures; 21 PostgreSQL integration cases were skipped because database variables were unset. Test TypeScript reports 230 diagnostics versus 248 at BASE, zero new identities, and 18 removed identities. Full evidence, exact file ownership, command logs, and remaining concentration analysis are in [`evidence/yz-rd-t063/RESULTS.md`](evidence/yz-rd-t063/RESULTS.md). L4 remains OPEN.
+
 ## YZ-RD-T033 — V5.14 multi-role platform integration (2026-10-19)
 
 ACCEPTANCE VERIFIED / MERGE BLOCKED BY THE UNCHANGED API LINT BASELINE. The independent branch feat/yz-rd-t033-multirole-web-rolling-integration preserves the accepted T029→T030→T031→T032 first-parent sequence with three no-fast-forward integrations. The merge graph and exact source commits are recorded in [evidence/yz-rd-t033/RESULTS.md](evidence/yz-rd-t033/RESULTS.md).
