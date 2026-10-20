@@ -1,0 +1,3 @@
+$ corepack pnpm --dir /home/tian/.devspace/worktrees/yuzan-workspace-t091 --filter @yuzan/api exec eslint test/assessment/question-bank.security.spec.ts
+
+exit_code=0

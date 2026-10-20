@@ -1,0 +1,3 @@
+$ corepack pnpm install --frozen-lockfile --filter @yuzan/api...
+exit_code=1
+See dependency-install-attempt.md for working directory, outcome, and resolution.

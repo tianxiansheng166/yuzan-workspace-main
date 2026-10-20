@@ -56,7 +56,14 @@ function fakePrisma(overrides: Record<string, unknown> = {}) {
               itemType: "CHOICE",
               sortOrder: 1,
               config: { legacyFallback: true },
-              questionVersion: { id: questionVersionId, status: "PUBLISHED", deliverySpec, scoringSpec, item: { stableKey, schoolId } },
+              questionVersion: {
+                id: questionVersionId,
+                status: "PUBLISHED",
+                publishedAt: new Date("2026-01-01T00:00:00.000Z"),
+                deliverySpec,
+                scoringSpec,
+                item: { stableKey, schoolId },
+              },
             }],
           }],
         },
@@ -114,8 +121,10 @@ describe("Question Bank student delivery boundary", () => {
     const unsafeVersion = {
       id: questionVersionId,
       status: "PUBLISHED",
+      publishedAt: new Date("2026-01-01T00:00:00.000Z"),
       deliverySpec: { ...deliverySpec, correctAnswer: "B" },
       scoringSpec,
+      item: { stableKey, schoolId },
     };
     prisma.__tx.practiceDelivery.findFirst.mockResolvedValue({
       id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",

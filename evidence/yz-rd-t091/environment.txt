@@ -1,0 +1,4 @@
+packageManager=pnpm@10.13.1
+node=v24.20.0
+pnpm_global=11.25.0
+corepack_pnpm=10.13.1

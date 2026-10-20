@@ -1,0 +1,14 @@
+.../web-app                              |  WARN  The field "resolutions" was found in /home/tian/code/yuzan-workspace-main/runtime-local/native-web/go/pkg/mod/github.com/minio/console@v1.7.7-0.20250905210349-2017f33b26e1/web-app/package.json. This will not take effect. You should configure "resolutions" at the root of the workspace instead.
+Scope: 65 of 841 projects
+undefined
+/home/tian/code/work/yuzan-workspace-t035/packages/contracts:
+ ERR_PNPM_NO_LOCKFILE  Cannot install with "frozen-lockfile" because pnpm-lock.yaml is absent
+
+Note that in CI environments this setting is true by default. If you still need to run install in such cases, use "pnpm install --no-frozen-lockfile"
+undefined
+undefined
+undefined
+undefined
+undefined
+undefined
+undefined

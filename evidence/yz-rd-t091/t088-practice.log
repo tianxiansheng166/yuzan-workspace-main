@@ -1,0 +1,13 @@
+$ corepack pnpm --dir /home/tian/.devspace/worktrees/yuzan-workspace-t091 --filter @yuzan/api exec vitest run --config test/assessment/vitest.config.ts test/assessment/practice.service.spec.ts
+
+ RUN  v3.2.7 /home/tian/.devspace/worktrees/yuzan-workspace-t091
+
+ ✓ backend/api/test/assessment/practice.service.spec.ts (26 tests) 20ms
+
+ Test Files  1 passed (1)
+      Tests  26 passed (26)
+   Start at  22:01:31
+   Duration  547ms (transform 127ms, setup 0ms, collect 258ms, tests 20ms, environment 0ms, prepare 108ms)
+
+
+exit_code=0

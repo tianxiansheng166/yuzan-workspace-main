@@ -1,0 +1,7 @@
+$ corepack pnpm --dir /home/tian/.devspace/worktrees/yuzan-workspace-t091 --filter @yuzan/api typecheck
+
+> @yuzan/api@ typecheck /home/tian/.devspace/worktrees/yuzan-workspace-t091/backend/api
+> tsc -p tsconfig.json --noEmit
+
+
+exit_code=0
