@@ -19,6 +19,7 @@ import {
   type TenantContext,
 } from "../../common/security/index.js";
 import { SubmissionsService } from "./submissions.service.js";
+import { RecordingsService } from "../recordings/recordings.service.js";
 import { CreateSubmissionDto } from "./dto/create-submission.dto.js";
 import { SubmitSubmissionDto } from "./dto/submit-submission.dto.js";
 import { ListSubmissionsQueryDto } from "./dto/list-submissions-query.dto.js";
@@ -28,6 +29,8 @@ export class SubmissionsController {
   constructor(
     @Inject(SubmissionsService)
     private readonly service: SubmissionsService,
+    @Inject(RecordingsService)
+    private readonly recordingsService: RecordingsService,
   ) {}
 
   @Post()
@@ -80,6 +83,33 @@ export class SubmissionsController {
       createAuthContext("request-id", principal, tenant),
       schoolId,
       submissionId,
+    );
+  }
+
+  @Get(":submissionId/recording-playback")
+  @RequireRoles(
+    MembershipRole.STUDENT,
+    MembershipRole.TEACHER,
+    MembershipRole.SCHOOL_ADMIN,
+  )
+  async getSubmissionRecordingPlayback(
+    @Param("schoolId", ParseUUIDPipe) schoolId: string,
+    @Param("submissionId", ParseUUIDPipe) submissionId: string,
+    @CurrentTenant() tenant: TenantContext,
+    @CurrentPrincipal() principal: Principal,
+  ) {
+    const auth = createAuthContext("request-id", principal, tenant);
+    const submission = await this.service.getSubmission(
+      auth,
+      schoolId,
+      submissionId,
+    );
+
+    return this.recordingsService.getSubmissionRecordingPlayback(
+      auth,
+      schoolId,
+      submission.id,
+      submission.enrollmentId,
     );
   }
 

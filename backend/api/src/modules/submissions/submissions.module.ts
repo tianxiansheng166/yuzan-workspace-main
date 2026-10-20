@@ -9,9 +9,10 @@ import { SUBMISSION_LOOKUP } from "./ports/submission-lookup.port.js";
 import { PrismaSubmissionRepository } from "./infra/prisma-submission.repository.js";
 import { PrismaSubmissionLookupRepository } from "./ports/prisma-submission-lookup.repository.js";
 import { StorageModule } from "../../shared/storage/storage.module.js";
+import { RecordingsModule } from "../recordings/recordings.module.js";
 
 @Module({
-  imports: [StorageModule],
+  imports: [StorageModule, RecordingsModule],
   controllers: [SubmissionsController, AssignmentSubmissionsController],
   providers: [
     SubmissionsService,

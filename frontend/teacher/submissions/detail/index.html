@@ -83,15 +83,16 @@
       </section>
 
       <!-- 录音播放 -->
-      <section class="card" id="recordingSection" style="display:none">
-        <h2>录音</h2>
+      <section class="card" id="recordingSection" aria-labelledby="recordingHeading">
+        <h2 id="recordingHeading">录音</h2>
         <div class="recording-player">
-          <button class="play-btn" id="playBtn">▶</button>
           <div class="recording-info">
             <strong id="recordingTitle">朗读录音</strong>
             <span id="recordingDuration">—</span>
           </div>
+          <audio id="submissionAudio" controls preload="none" hidden aria-label="学生提交录音"></audio>
         </div>
+        <p id="recordingStatus" class="recording-status" role="status" aria-live="polite">正在查询录音…</p>
       </section>
 
       <!-- 自动评分 -->

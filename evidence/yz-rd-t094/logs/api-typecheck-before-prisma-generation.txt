@@ -1,0 +1,1215 @@
+
+> @yuzan/api@ typecheck /home/tian/.devspace/worktrees/yuzan-workspace-t094/backend/api
+> tsc -p tsconfig.json --noEmit
+
+src/modules/ai-lesson-planning/ai-lesson-planning.service.ts(19,42): error TS2307: Cannot find module '@yuzan/database' or its corresponding type declarations.
+src/modules/ai-lesson-planning/ai-lesson-planning.service.ts(71,37): error TS2339: Property 'aiGenerationJob' does not exist on type 'PrismaService'.
+src/modules/ai-lesson-planning/ai-lesson-planning.service.ts(87,42): error TS2339: Property 'aiGenerationJob' does not exist on type 'PrismaService'.
+src/modules/ai-lesson-planning/ai-lesson-planning.service.ts(91,41): error TS2339: Property 'lessonPlanDraft' does not exist on type 'PrismaService'.
+src/modules/ai-lesson-planning/ai-lesson-planning.service.ts(102,43): error TS2339: Property 'aiWorkflowDefinition' does not exist on type 'PrismaService'.
+src/modules/ai-lesson-planning/ai-lesson-planning.service.ts(111,35): error TS2339: Property 'aiGenerationJob' does not exist on type 'PrismaService'.
+src/modules/ai-lesson-planning/ai-lesson-planning.service.ts(169,35): error TS2339: Property 'aiGenerationJob' does not exist on type 'PrismaService'.
+src/modules/ai-lesson-planning/ai-lesson-planning.service.ts(178,37): error TS2339: Property 'lessonPlanDraft' does not exist on type 'PrismaService'.
+src/modules/ai-lesson-planning/ai-lesson-planning.service.ts(193,35): error TS2339: Property 'aiGenerationJob' does not exist on type 'PrismaService'.
+src/modules/ai-lesson-planning/ai-lesson-planning.service.ts(208,39): error TS2339: Property 'aiGenerationJob' does not exist on type 'PrismaService'.
+src/modules/ai-lesson-planning/ai-lesson-planning.service.ts(244,38): error TS2339: Property 'lessonPlanDraft' does not exist on type 'PrismaService'.
+src/modules/ai-lesson-planning/ai-lesson-planning.service.ts(250,24): error TS7006: Parameter 'draft' implicitly has an 'any' type.
+src/modules/ai-lesson-planning/ai-lesson-planning.service.ts(261,37): error TS2339: Property 'lessonPlanDraft' does not exist on type 'PrismaService'.
+src/modules/ai-lesson-planning/ai-lesson-planning.service.ts(281,37): error TS2339: Property 'lessonPlanDraft' does not exist on type 'PrismaService'.
+src/modules/ai-lesson-planning/ai-lesson-planning.service.ts(309,23): error TS2339: Property 'lessonPlanRevision' does not exist on type 'PrismaService'.
+src/modules/ai-lesson-planning/ai-lesson-planning.service.ts(320,39): error TS2339: Property 'lessonPlanDraft' does not exist on type 'PrismaService'.
+src/modules/ai-lesson-planning/ai-lesson-planning.service.ts(340,37): error TS2339: Property 'lessonPlanDraft' does not exist on type 'PrismaService'.
+src/modules/ai-lesson-planning/ai-lesson-planning.service.ts(355,23): error TS2339: Property 'lessonPlanRevision' does not exist on type 'PrismaService'.
+src/modules/ai-lesson-planning/ai-lesson-planning.service.ts(365,39): error TS2339: Property 'lessonPlanDraft' does not exist on type 'PrismaService'.
+src/modules/ai-lesson-planning/ai-lesson-planning.service.ts(391,40): error TS2339: Property 'aiWorkflowDefinition' does not exist on type 'PrismaService'.
+src/modules/ai-lesson-planning/ai-lesson-planning.service.ts(452,39): error TS2339: Property 'aiGenerationJob' does not exist on type 'PrismaService'.
+src/modules/ai-lesson-planning/ai-lesson-planning.service.ts(465,23): error TS2339: Property 'aiGenerationJob' does not exist on type 'PrismaService'.
+src/modules/ai-lesson-planning/ai-lesson-planning.service.ts(487,37): error TS2339: Property 'aiGenerationJob' does not exist on type 'PrismaService'.
+src/modules/ai-lesson-planning/ai-lesson-planning.service.ts(493,47): error TS2339: Property 'lessonPlanDraft' does not exist on type 'PrismaService'.
+src/modules/ai-lesson-planning/ai-lesson-planning.service.ts(503,25): error TS2339: Property '$transaction' does not exist on type 'PrismaService'.
+src/modules/ai-lesson-planning/ai-lesson-planning.service.ts(503,45): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+src/modules/ai-lesson-planning/ai-lesson-planning.service.ts(563,38): error TS2339: Property 'aiWorkflowDefinition' does not exist on type 'PrismaService'.
+src/modules/ai-lesson-planning/ai-lesson-planning.service.ts(567,36): error TS2339: Property 'aiWorkflowDefinition' does not exist on type 'PrismaService'.
+src/modules/ai-lesson-planning/ai-lesson-planning.service.ts(615,38): error TS2339: Property 'courseVersion' does not exist on type 'PrismaService'.
+src/modules/ai-lesson-planning/ai-lesson-planning.service.ts(642,42): error TS2339: Property 'lesson' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment-review.service.ts(80,36): error TS2339: Property 'assessmentItem' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment-review.service.ts(137,17): error TS7006: Parameter 'row' implicitly has an 'any' type.
+src/modules/assessment/assessment-review.service.ts(140,33): error TS7006: Parameter 'row' implicitly has an 'any' type.
+src/modules/assessment/assessment-review.service.ts(150,12): error TS7006: Parameter 'target' implicitly has an 'any' type.
+src/modules/assessment/assessment-review.service.ts(187,35): error TS2339: Property 'assessmentItem' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment-review.service.ts(271,29): error TS2339: Property 'practiceDefinition' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment-review.service.ts(341,36): error TS2339: Property 'assessmentItem' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment-review.service.ts(398,36): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment-review.service.ts(407,22): error TS7006: Parameter 'row' implicitly has an 'any' type.
+src/modules/assessment/assessment-review.service.ts(416,42): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment-review.service.ts(435,36): error TS2339: Property 'practiceDefinition' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment-review.service.ts(442,30): error TS7006: Parameter 'row' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(3,29): error TS2307: Cannot find module '@yuzan/database' or its corresponding type declarations.
+src/modules/assessment/assessment.service.ts(103,49): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(138,42): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(149,24): error TS2339: Property '$transaction' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(149,44): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(190,24): error TS2339: Property '$transaction' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(190,44): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(228,45): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(232,46): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(257,42): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(262,40): error TS2339: Property 'assessmentSession' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(280,47): error TS7006: Parameter 'session' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(282,27): error TS2339: Property 'user' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(284,53): error TS7006: Parameter 'session' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(284,103): error TS7006: Parameter 'id' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(286,27): error TS2339: Property 'practiceDefinition' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(288,48): error TS7006: Parameter 'teacher' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(289,53): error TS7006: Parameter 'definition' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(293,16): error TS7006: Parameter 'left' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(293,22): error TS7006: Parameter 'right' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(294,15): error TS7006: Parameter 'session' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(296,51): error TS7006: Parameter 'total' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(296,58): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(297,54): error TS7006: Parameter 'total' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(297,61): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(300,40): error TS2339: Property 'title' does not exist on type '{}'.
+src/modules/assessment/assessment.service.ts(301,32): error TS2339: Property 'difficulty' does not exist on type '{}'.
+src/modules/assessment/assessment.service.ts(343,42): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(368,42): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(392,41): error TS2339: Property 'writtenAnswer' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(393,49): error TS7006: Parameter 'answer' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(393,90): error TS7006: Parameter 'answer' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(398,40): error TS2339: Property 'recording' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(431,42): error TS2339: Property 'question' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(475,42): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(484,41): error TS2339: Property 'recording' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(526,42): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(553,42): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(584,47): error TS2339: Property 'assessmentItem' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(591,49): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(651,37): error TS2339: Property 'assessmentItem' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(664,38): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(677,46): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(679,40): error TS7006: Parameter 'total' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(679,47): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(680,37): error TS7006: Parameter 'total' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(680,44): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(681,39): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(682,57): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(683,64): error TS7006: Parameter 'total' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(683,71): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(684,61): error TS7006: Parameter 'total' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(684,68): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(730,42): error TS2339: Property 'practiceDelivery' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(751,43): error TS7031: Binding element 'practiceVersion' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(754,46): error TS7006: Parameter 'category' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(789,25): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(818,37): error TS2339: Property 'assessmentItem' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(826,45): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(835,37): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(841,40): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(842,29): error TS7006: Parameter 'job' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(844,47): error TS7006: Parameter 'job' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(850,53): error TS7006: Parameter 'job' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(861,25): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(984,37): error TS2339: Property 'assessmentItem' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(989,23): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(1074,36): error TS2339: Property 'assessmentItem' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(1123,38): error TS2339: Property 'assessmentItem' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(1135,41): error TS2339: Property 'assessmentItem' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(1145,39): error TS2339: Property 'assessmentItem' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(1165,37): error TS2339: Property 'assessmentItem' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(1190,27): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(1219,37): error TS2339: Property 'assessmentItem' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(1298,35): error TS7006: Parameter 'attempt' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(1317,43): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(1339,27): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(1470,49): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(1551,23): error TS2339: Property 'deviceCheckLog' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(1575,42): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(1581,49): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(1607,44): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(1618,48): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(1634,51): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(1653,40): error TS2339: Property 'assessmentSession' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(1683,18): error TS7006: Parameter 'session' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(1684,15): error TS7006: Parameter 'session' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(1687,27): error TS2339: Property 'practiceDefinition' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(1692,70): error TS7006: Parameter 'definition' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(1695,40): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(1708,109): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(1714,50): error TS7006: Parameter 'total' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(1714,57): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(1715,47): error TS7006: Parameter 'total' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(1715,54): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/modules/assessment/assessment.service.ts(1776,44): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(1787,48): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(1801,51): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(1811,41): error TS2339: Property 'feedback' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(1838,49): error TS2339: Property 'assessmentSession' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(1918,42): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(1933,51): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(1961,39): error TS2339: Property 'user' does not exist on type 'PrismaService'.
+src/modules/assessment/assessment.service.ts(2006,23): error TS2339: Property 'auditLog' does not exist on type 'PrismaService'.
+src/modules/assessment/infra/prisma-assessment-item.repository.ts(3,29): error TS2307: Cannot find module '@yuzan/database' or its corresponding type declarations.
+src/modules/assessment/infra/prisma-assessment-item.repository.ts(12,36): error TS2339: Property 'assessmentItem' does not exist on type 'PrismaService'.
+src/modules/assessment/infra/prisma-assessment-item.repository.ts(16,22): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/modules/assessment/infra/prisma-assessment-item.repository.ts(20,35): error TS2339: Property 'assessmentItem' does not exist on type 'PrismaService'.
+src/modules/assessment/infra/prisma-assessment-item.repository.ts(25,35): error TS2339: Property 'assessmentItem' does not exist on type 'PrismaService'.
+src/modules/assessment/infra/prisma-assessment-item.repository.ts(41,37): error TS2339: Property 'assessmentItem' does not exist on type 'PrismaService'.
+src/modules/assessment/infra/prisma-assessment-item.repository.ts(48,35): error TS2339: Property 'assessmentItem' does not exist on type 'PrismaService'.
+src/modules/assessment/infra/prisma-assessment-item.repository.ts(56,35): error TS2339: Property 'assessmentItem' does not exist on type 'PrismaService'.
+src/modules/assessment/infra/prisma-assessment-item.repository.ts(68,35): error TS2339: Property 'assessmentItem' does not exist on type 'PrismaService'.
+src/modules/assessment/infra/prisma-assessment-report.repository.ts(3,29): error TS2307: Cannot find module '@yuzan/database' or its corresponding type declarations.
+src/modules/assessment/infra/prisma-assessment-report.repository.ts(12,35): error TS2339: Property 'assessmentReport' does not exist on type 'PrismaService'.
+src/modules/assessment/infra/prisma-assessment-report.repository.ts(29,35): error TS2339: Property 'assessmentReport' does not exist on type 'PrismaService'.
+src/modules/assessment/infra/prisma-assessment-session.repository.ts(3,29): error TS2307: Cannot find module '@yuzan/database' or its corresponding type declarations.
+src/modules/assessment/infra/prisma-assessment-session.repository.ts(23,35): error TS2339: Property 'assessmentSession' does not exist on type 'PrismaService'.
+src/modules/assessment/infra/prisma-assessment-session.repository.ts(33,35): error TS2339: Property 'assessmentSession' does not exist on type 'PrismaService'.
+src/modules/assessment/infra/prisma-assessment-session.repository.ts(50,47): error TS2339: Property 'assessmentSession' does not exist on type 'PrismaService'.
+src/modules/assessment/infra/prisma-assessment-session.repository.ts(58,37): error TS2339: Property 'assessmentSession' does not exist on type 'PrismaService'.
+src/modules/assessment/infra/prisma-assessment-session.repository.ts(68,27): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/modules/assessment/infra/prisma-assessment-session.repository.ts(88,35): error TS2339: Property 'assessmentSession' does not exist on type 'PrismaService'.
+src/modules/assessment/infra/prisma-assessment-session.repository.ts(107,35): error TS2339: Property 'assessmentSession' does not exist on type 'PrismaService'.
+src/modules/assessment/infra/prisma-written-answer.repository.ts(3,29): error TS2307: Cannot find module '@yuzan/database' or its corresponding type declarations.
+src/modules/assessment/infra/prisma-written-answer.repository.ts(12,35): error TS2339: Property 'writtenAnswer' does not exist on type 'PrismaService'.
+src/modules/assessment/infra/prisma-written-answer.repository.ts(17,36): error TS2339: Property 'writtenAnswer' does not exist on type 'PrismaService'.
+src/modules/assessment/infra/prisma-written-answer.repository.ts(20,22): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/modules/assessment/infra/prisma-written-answer.repository.ts(24,35): error TS2339: Property 'writtenAnswer' does not exist on type 'PrismaService'.
+src/modules/assessment/infra/prisma-written-answer.repository.ts(44,35): error TS2339: Property 'writtenAnswer' does not exist on type 'PrismaService'.
+src/modules/assessment/practice.service.ts(7,29): error TS2307: Cannot find module '@yuzan/database' or its corresponding type declarations.
+src/modules/assessment/practice.service.ts(79,42): error TS2339: Property 'practiceDelivery' does not exist on type 'PrismaService'.
+src/modules/assessment/practice.service.ts(90,40): error TS2339: Property 'assessmentSession' does not exist on type 'PrismaService'.
+src/modules/assessment/practice.service.ts(95,41): error TS2339: Property 'practiceFavorite' does not exist on type 'PrismaService'.
+src/modules/assessment/practice.service.ts(96,48): error TS7006: Parameter 'favorite' implicitly has an 'any' type.
+src/modules/assessment/practice.service.ts(104,40): error TS7006: Parameter 'delivery' implicitly has an 'any' type.
+src/modules/assessment/practice.service.ts(106,41): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+src/modules/assessment/practice.service.ts(125,40): error TS2339: Property 'assessmentSession' does not exist on type 'PrismaService'.
+src/modules/assessment/practice.service.ts(130,42): error TS2339: Property 'practiceFavorite' does not exist on type 'PrismaService'.
+src/modules/assessment/practice.service.ts(135,56): error TS7006: Parameter 'section' implicitly has an 'any' type.
+src/modules/assessment/practice.service.ts(143,65): error TS7006: Parameter 'section' implicitly has an 'any' type.
+src/modules/assessment/practice.service.ts(143,100): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/modules/assessment/practice.service.ts(144,68): error TS7006: Parameter 'section' implicitly has an 'any' type.
+src/modules/assessment/practice.service.ts(144,103): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/modules/assessment/practice.service.ts(154,23): error TS2339: Property 'practiceFavorite' does not exist on type 'PrismaService'.
+src/modules/assessment/practice.service.ts(160,23): error TS2339: Property 'practiceFavorite' does not exist on type 'PrismaService'.
+src/modules/assessment/practice.service.ts(166,43): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/assessment/practice.service.ts(172,38): error TS2339: Property '$transaction' does not exist on type 'PrismaService'.
+src/modules/assessment/practice.service.ts(172,58): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+src/modules/assessment/practice.service.ts(178,52): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+src/modules/assessment/practice.service.ts(183,29): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+src/modules/assessment/practice.service.ts(193,104): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+src/modules/assessment/practice.service.ts(219,29): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+src/modules/assessment/practice.service.ts(237,67): error TS7006: Parameter 'section' implicitly has an 'any' type.
+src/modules/assessment/practice.service.ts(238,28): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/modules/assessment/practice.service.ts(256,31): error TS7031: Binding element 'section' implicitly has an 'any' type.
+src/modules/assessment/practice.service.ts(256,40): error TS7031: Binding element 'item' implicitly has an 'any' type.
+src/modules/assessment/practice.service.ts(256,48): error TS7006: Parameter 'index' implicitly has an 'any' type.
+src/modules/assessment/practice.service.ts(321,39): error TS2339: Property 'assessmentSession' does not exist on type 'PrismaService'.
+src/modules/assessment/practice.service.ts(334,37): error TS2339: Property 'assessmentItem' does not exist on type 'PrismaService'.
+src/modules/assessment/practice.service.ts(344,25): error TS7031: Binding element 'autoResult' implicitly has an 'any' type.
+src/modules/assessment/practice.service.ts(367,42): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/assessment/practice.service.ts(376,24): error TS2339: Property 'practiceDelivery' does not exist on type 'PrismaService'.
+src/modules/assessment/practice.service.ts(393,78): error TS7006: Parameter 'section' implicitly has an 'any' type.
+src/modules/assessment/practice.service.ts(393,109): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/modules/assessment/question-bank-deterministic-scoring.service.ts(2,29): error TS2307: Cannot find module '@yuzan/database' or its corresponding type declarations.
+src/modules/assessment/question-bank-deterministic-scoring.service.ts(517,37): error TS2339: Property 'assessmentItem' does not exist on type 'PrismaService'.
+src/modules/assessment/question-bank-deterministic-scoring.service.ts(579,27): error TS2339: Property 'assessmentItem' does not exist on type 'PrismaService'.
+src/modules/assessment/question-bank-progress.service.ts(698,42): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/assessment/question-bank-progress.service.ts(710,40): error TS2339: Property 'assessmentSession' does not exist on type 'PrismaService'.
+src/modules/assessment/question-bank-progress.service.ts(740,17): error TS7006: Parameter 'session' implicitly has an 'any' type.
+src/modules/assessment/question-bank-progress.service.ts(741,20): error TS7006: Parameter 'id' implicitly has an 'any' type.
+src/modules/assessment/question-bank-progress.service.ts(745,27): error TS2339: Property 'practiceDefinition' does not exist on type 'PrismaService'.
+src/modules/assessment/question-bank-runtime-import.service.ts(4,29): error TS2307: Cannot find module '@yuzan/database' or its corresponding type declarations.
+src/modules/assessment/question-bank-runtime-import.service.ts(439,24): error TS2339: Property '$transaction' does not exist on type 'PrismaService'.
+src/modules/assessment/question-bank-runtime-import.service.ts(439,44): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+src/modules/assessment/question-bank-runtime-import.service.ts(552,40): error TS2339: Property 'resource' does not exist on type 'PrismaService'.
+src/modules/assessment/question-bank-runtime-import.service.ts(560,43): error TS2339: Property 'resource' does not exist on type 'PrismaService'.
+src/modules/assessment/question-bank-runtime-import.service.ts(582,41): error TS2339: Property 'resource' does not exist on type 'PrismaService'.
+src/modules/assessment/question-bank-runtime-import.service.ts(597,44): error TS2339: Property 'resource' does not exist on type 'PrismaService'.
+src/modules/assessment/question-bank-runtime-import.service.ts(708,52): error TS7006: Parameter 'version' implicitly has an 'any' type.
+src/modules/assessment/teacher-question-bank-diagnostic.service.ts(272,39): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/assessment/teacher-question-bank-diagnostic.service.ts(299,26): error TS7006: Parameter 'target' implicitly has an 'any' type.
+src/modules/assessment/teacher-question-bank-diagnostic.service.ts(319,34): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+src/modules/assessment/teacher-question-bank-diagnostic.service.ts(320,33): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+src/modules/assessment/teacher-question-bank-diagnostic.service.ts(322,10): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+src/modules/assessment/teacher-question-bank-diagnostic.service.ts(335,39): error TS2339: Property 'class' does not exist on type 'PrismaService'.
+src/modules/assessment/teacher-question-bank-diagnostic.service.ts(344,27): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/assessment/teacher-question-bank-diagnostic.service.ts(348,41): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+src/modules/assessment/teacher-question-bank-diagnostic.service.ts(363,38): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+src/modules/assessment/teacher-question-bank-diagnostic.service.ts(381,19): error TS2339: Property 'class' does not exist on type 'PrismaService'.
+src/modules/assessment/teacher-question-bank-diagnostic.service.ts(389,8): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+src/modules/assessment/teacher-question-bank-diagnostic.service.ts(396,40): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/assessment/teacher-question-bank-diagnostic.service.ts(401,41): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+src/modules/assessment/teacher-question-bank-diagnostic.service.ts(403,27): error TS2339: Property 'assessmentSession' does not exist on type 'PrismaService'.
+src/modules/assessment/teacher-question-bank-diagnostic.service.ts(435,27): error TS2339: Property 'assessmentItem' does not exist on type 'PrismaService'.
+src/modules/assessment/teacher-question-bank-diagnostic.service.ts(489,32): error TS7006: Parameter 'student' implicitly has an 'any' type.
+src/modules/assessment/teacher-question-bank-diagnostic.service.ts(645,8): error TS7006: Parameter 'row' implicitly has an 'any' type.
+src/modules/assessment/teacher-question-bank-diagnostic.service.ts(648,8): error TS7006: Parameter 'row' implicitly has an 'any' type.
+src/modules/assessment/teacher-question-bank-diagnostic.service.ts(677,50): error TS7006: Parameter 'row' implicitly has an 'any' type.
+src/modules/assessment/teacher-question-bank-diagnostic.service.ts(706,8): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+src/modules/assessment/teacher-question-bank-diagnostic.service.ts(722,40): error TS2339: Property 'assessmentSession' does not exist on type 'PrismaService'.
+src/modules/assessment/teacher-question-bank-diagnostic.service.ts(822,43): error TS2339: Property 'practiceDefinition' does not exist on type 'PrismaService'.
+src/modules/assessment/teacher-question-bank-diagnostic.service.ts(852,17): error TS7006: Parameter 'definition' implicitly has an 'any' type.
+src/modules/assessment/teacher-question-bank-diagnostic.service.ts(853,53): error TS7006: Parameter 'version' implicitly has an 'any' type.
+src/modules/assessment/teacher-question-bank-diagnostic.service.ts(854,50): error TS7006: Parameter 'section' implicitly has an 'any' type.
+src/modules/assessment/teacher-question-bank-diagnostic.service.ts(858,16): error TS7006: Parameter 'ref' implicitly has an 'any' type.
+src/modules/assessment/teacher-question-bank-diagnostic.service.ts(876,10): error TS7006: Parameter 'left' implicitly has an 'any' type.
+src/modules/assessment/teacher-question-bank-diagnostic.service.ts(876,16): error TS7006: Parameter 'right' implicitly has an 'any' type.
+src/modules/assignments/assignments.service.ts(154,47): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/assignments/assignments.service.ts(163,48): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/modules/assignments/assignments.service.ts(165,46): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/assignments/assignments.service.ts(183,25): error TS2339: Property 'notification' does not exist on type 'PrismaService'.
+src/modules/assignments/assignments.service.ts(220,38): error TS2339: Property 'courseVersion' does not exist on type 'PrismaService'.
+src/modules/assignments/assignments.service.ts(242,31): error TS2339: Property 'class' does not exist on type 'PrismaService'.
+src/modules/assignments/assignments.service.ts(253,46): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/assignments/assignments.service.ts(271,29): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/assignments/assignments.service.ts(486,52): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/assignments/assignments.service.ts(498,71): error TS7006: Parameter 'row' implicitly has an 'any' type.
+src/modules/assignments/assignments.service.ts(503,45): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/assignments/assignments.service.ts(551,46): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/assignments/assignments.service.ts(555,60): error TS7006: Parameter 'enrollment' implicitly has an 'any' type.
+src/modules/assignments/assignments.service.ts(560,27): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/assignments/assignments.service.ts(565,76): error TS7006: Parameter 'enrollment' implicitly has an 'any' type.
+src/modules/assignments/infra/prisma-assignment-lookup.repository.ts(2,29): error TS2307: Cannot find module '@yuzan/database' or its corresponding type declarations.
+src/modules/assignments/infra/prisma-assignment-lookup.repository.ts(18,37): error TS2339: Property 'assignment' does not exist on type 'PrismaService'.
+src/modules/assignments/infra/prisma-assignment-lookup.repository.ts(30,37): error TS2339: Property 'assignment' does not exist on type 'PrismaService'.
+src/modules/assignments/infra/prisma-assignment-lookup.repository.ts(45,38): error TS2339: Property 'assignment' does not exist on type 'PrismaService'.
+src/modules/assignments/infra/prisma-assignment-lookup.repository.ts(74,31): error TS7006: Parameter 't' implicitly has an 'any' type.
+src/modules/assignments/infra/prisma-assignment.repository.ts(2,29): error TS2307: Cannot find module '@yuzan/database' or its corresponding type declarations.
+src/modules/assignments/infra/prisma-assignment.repository.ts(36,37): error TS2339: Property 'assignment' does not exist on type 'PrismaService'.
+src/modules/assignments/infra/prisma-assignment.repository.ts(131,38): error TS2339: Property 'assignment' does not exist on type 'PrismaService'.
+src/modules/assignments/infra/prisma-assignment.repository.ts(160,38): error TS2339: Property 'assignment' does not exist on type 'PrismaService'.
+src/modules/assignments/infra/prisma-assignment.repository.ts(180,37): error TS2339: Property '$transaction' does not exist on type 'PrismaService'.
+src/modules/assignments/infra/prisma-assignment.repository.ts(180,57): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+src/modules/assignments/infra/prisma-assignment.repository.ts(235,40): error TS2339: Property 'assignment' does not exist on type 'PrismaService'.
+src/modules/assignments/infra/prisma-assignment.repository.ts(290,40): error TS2339: Property 'assignment' does not exist on type 'PrismaService'.
+src/modules/assignments/infra/prisma-assignment.repository.ts(317,25): error TS2339: Property 'assignment' does not exist on type 'PrismaService'.
+src/modules/assignments/ports/prisma-assignment-lookup.repository.ts(2,29): error TS2307: Cannot find module '@yuzan/database' or its corresponding type declarations.
+src/modules/assignments/ports/prisma-assignment-lookup.repository.ts(17,37): error TS2339: Property 'assignment' does not exist on type 'PrismaService'.
+src/modules/assignments/ports/prisma-assignment-lookup.repository.ts(29,39): error TS2339: Property 'assignment' does not exist on type 'PrismaService'.
+src/modules/assignments/ports/prisma-assignment-lookup.repository.ts(43,38): error TS2339: Property 'assignment' does not exist on type 'PrismaService'.
+src/modules/assignments/ports/prisma-assignment-lookup.repository.ts(77,31): error TS7006: Parameter 't' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(6,24): error TS2307: Cannot find module '@yuzan/database' or its corresponding type declarations.
+src/modules/classes/classes.service.ts(268,51): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(272,62): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(280,50): error TS2339: Property 'user' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(291,54): error TS2339: Property 'membership' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(306,45): error TS2339: Property 'user' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(316,29): error TS2339: Property 'membership' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(326,56): error TS2339: Property 'membership' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(330,31): error TS2339: Property 'membership' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(348,46): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(370,23): error TS2339: Property 'auditLog' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(431,19): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(436,19): error TS2339: Property 'assignment' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(453,19): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(462,19): error TS2339: Property 'activityProgress' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(470,19): error TS2339: Property 'speechJob' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(489,52): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(490,59): error TS7006: Parameter 'p' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(492,56): error TS7006: Parameter 'p' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(497,25): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(506,16): error TS7006: Parameter 'rows' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(506,35): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(510,25): error TS2339: Property 'recording' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(518,16): error TS7006: Parameter 'rows' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(518,35): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(522,25): error TS2339: Property 'assessmentSession' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(530,16): error TS7006: Parameter 'rows' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(530,35): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(538,87): error TS7006: Parameter 'p' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(636,19): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(645,19): error TS2339: Property 'assignment' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(655,19): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(660,19): error TS2339: Property 'assessmentSession' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(667,50): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(671,53): error TS2339: Property 'activityProgress' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(680,58): error TS7006: Parameter 'p' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(681,50): error TS7006: Parameter 'id' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(685,48): error TS7006: Parameter 'a' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(688,56): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(698,64): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(699,59): error TS7006: Parameter 'id' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(721,19): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(731,19): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(749,23): error TS2339: Property 'auditLog' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(762,39): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(776,49): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(798,42): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(822,21): error TS2339: Property 'activityProgress' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(826,21): error TS2339: Property 'assignment' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(871,21): error TS2339: Property 'assessmentSession' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(887,21): error TS2339: Property 'recording' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(907,54): error TS7006: Parameter 'row' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(909,8): error TS7006: Parameter 'latest' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(909,16): error TS7006: Parameter 'row' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(937,40): error TS7006: Parameter 'assignment' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(960,40): error TS7006: Parameter 'session' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(974,38): error TS7006: Parameter 'recording' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(1014,52): error TS2339: Property 'assignment' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(1037,45): error TS2339: Property 'courseVersion' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(1061,51): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(1102,26): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(1106,42): error TS2339: Property '$transaction' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(1106,62): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(1223,40): error TS7006: Parameter 'target' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(1261,48): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(1265,43): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(1273,48): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(1294,45): error TS2339: Property 'question' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(1306,51): error TS7006: Parameter 'q' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(1315,50): error TS2339: Property 'assignment' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(1329,50): error TS2339: Property 'question' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(1387,25): error TS2339: Property 'assessmentItem' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(1391,39): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(1395,23): error TS2339: Property 'notification' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(1396,26): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(1407,23): error TS2339: Property 'auditLog' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(1449,19): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(1453,19): error TS2339: Property 'assignment' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(1480,19): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(1483,19): error TS2339: Property 'activityProgress' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(1487,19): error TS2339: Property 'speechJob' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(1492,19): error TS2339: Property 'assessmentSession' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(1496,19): error TS2339: Property 'activityProgress' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(1509,52): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(1510,59): error TS7006: Parameter 'p' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(1511,56): error TS7006: Parameter 'p' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(1518,25): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(1522,16): error TS7006: Parameter 'rows' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(1522,35): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(1530,25): error TS2339: Property 'assessmentSession' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(1534,16): error TS7006: Parameter 'rows' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(1534,35): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(1544,48): error TS2339: Property 'activityProgress' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(1549,53): error TS7006: Parameter 'p' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(1573,25): error TS2339: Property 'recording' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(1577,16): error TS7006: Parameter 'rows' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(1577,35): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(1580,141): error TS7006: Parameter 'p' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(1631,43): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(1637,44): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(1642,19): error TS2339: Property 'activityProgress' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(1647,19): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(1652,19): error TS2339: Property 'assessmentSession' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(1663,19): error TS2339: Property 'recording' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(1672,19): error TS2339: Property 'speechJob' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(1677,19): error TS2339: Property 'activityProgress' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(1694,48): error TS2339: Property 'assignment' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(1723,10): error TS7006: Parameter 'target' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(1727,39): error TS7006: Parameter 'target' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(1785,29): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(1794,14): error TS7006: Parameter 'row' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(1799,17): error TS7006: Parameter 'row' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(1832,19): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(1836,19): error TS2339: Property 'assignment' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(1879,44): error TS7006: Parameter 'a' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(1880,46): error TS7006: Parameter 'student' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(1883,27): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(1901,29): error TS7006: Parameter 'a' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(1902,41): error TS7006: Parameter 'target' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(1905,30): error TS7006: Parameter 'target' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(1908,48): error TS7006: Parameter 'id' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(1909,52): error TS7006: Parameter 'id' implicitly has an 'any' type.
+src/modules/classes/classes.service.ts(1929,40): error TS2339: Property 'assessmentSession' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(1948,53): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/classes/classes.service.ts(1970,53): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/modules/classes/infra/prisma-class.repository.ts(2,29): error TS2307: Cannot find module '@yuzan/database' or its corresponding type declarations.
+src/modules/classes/infra/prisma-class.repository.ts(40,37): error TS2339: Property 'class' does not exist on type 'PrismaService'.
+src/modules/classes/infra/prisma-class.repository.ts(89,38): error TS2339: Property 'class' does not exist on type 'PrismaService'.
+src/modules/classes/infra/prisma-class.repository.ts(103,27): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/modules/classes/infra/prisma-class.repository.ts(117,45): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/classes/infra/prisma-class.repository.ts(132,38): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/classes/infra/prisma-class.repository.ts(143,37): error TS2339: Property 'class' does not exist on type 'PrismaService'.
+src/modules/classes/infra/prisma-class.repository.ts(170,40): error TS2339: Property 'class' does not exist on type 'PrismaService'.
+src/modules/classes/infra/prisma-class.repository.ts(195,25): error TS2339: Property 'class' does not exist on type 'PrismaService'.
+src/modules/classes/infra/prisma-class.repository.ts(210,37): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/classes/infra/prisma-class.repository.ts(235,25): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/classes/infra/prisma-class.repository.ts(249,38): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/classes/infra/prisma-class.repository.ts(264,39): error TS2339: Property 'class' does not exist on type 'PrismaService'.
+src/modules/classes/infra/prisma-class.repository.ts(279,39): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/classes/infra/prisma-class.repository.ts(293,38): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/classes/infra/prisma-class.repository.ts(297,24): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/modules/classes/infra/prisma-class.repository.ts(309,37): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/classes/infra/prisma-class.repository.ts(322,14): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/modules/classes/infra/prisma-class.repository.ts(323,11): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/modules/classes/infra/prisma-class.repository.ts(325,6): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/modules/curriculum/ports/prisma-course-version.repository.ts(2,24): error TS2307: Cannot find module '@yuzan/database' or its corresponding type declarations.
+src/modules/curriculum/ports/prisma-course-version.repository.ts(74,9): error TS18046: 'error' is of type 'unknown'.
+src/modules/curriculum/ports/prisma-course-version.repository.ts(87,40): error TS2339: Property 'courseVersion' does not exist on type 'PrismaService'.
+src/modules/curriculum/ports/prisma-course-version.repository.ts(114,32): error TS2339: Property '$transaction' does not exist on type 'PrismaService'.
+src/modules/curriculum/ports/prisma-course-version.repository.ts(114,52): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+src/modules/curriculum/ports/prisma-course-version.repository.ts(283,37): error TS2339: Property 'courseVersion' does not exist on type 'PrismaService'.
+src/modules/curriculum/ports/prisma-course-version.repository.ts(319,38): error TS2339: Property 'courseVersion' does not exist on type 'PrismaService'.
+src/modules/curriculum/ports/prisma-course-version.repository.ts(327,46): error TS7006: Parameter 'row' implicitly has an 'any' type.
+src/modules/curriculum/ports/prisma-course-version.repository.ts(349,37): error TS2339: Property 'courseVersion' does not exist on type 'PrismaService'.
+src/modules/curriculum/ports/prisma-course-version.repository.ts(372,38): error TS2339: Property 'courseVersion' does not exist on type 'PrismaService'.
+src/modules/curriculum/ports/prisma-course-version.repository.ts(384,24): error TS7006: Parameter 'row' implicitly has an 'any' type.
+src/modules/curriculum/ports/prisma-course-version.repository.ts(394,32): error TS2339: Property 'practiceDefinition' does not exist on type 'PrismaService'.
+src/modules/curriculum/ports/prisma-course-version.repository.ts(418,32): error TS2339: Property '$transaction' does not exist on type 'PrismaService'.
+src/modules/curriculum/ports/prisma-course-version.repository.ts(418,52): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+src/modules/curriculum/ports/prisma-course-version.repository.ts(590,42): error TS2339: Property 'courseVersion' does not exist on type 'PrismaService'.
+src/modules/curriculum/ports/prisma-course-version.repository.ts(607,40): error TS2339: Property 'courseVersion' does not exist on type 'PrismaService'.
+src/modules/curriculum/ports/prisma-course-version.repository.ts(636,40): error TS2339: Property 'courseVersion' does not exist on type 'PrismaService'.
+src/modules/curriculum/ports/prisma-course-version.repository.ts(865,29): error TS7006: Parameter 'unit' implicitly has an 'any' type.
+src/modules/curriculum/ports/prisma-course-version.repository.ts(880,34): error TS7006: Parameter 'lesson' implicitly has an 'any' type.
+src/modules/curriculum/ports/prisma-course-version.repository.ts(889,42): error TS7006: Parameter 'activity' implicitly has an 'any' type.
+src/modules/curriculum/ports/prisma-course-version.repository.ts(921,42): error TS7006: Parameter 'resource' implicitly has an 'any' type.
+src/modules/feedback/feedback.service.ts(65,40): error TS2339: Property '$transaction' does not exist on type 'PrismaService'.
+src/modules/feedback/feedback.service.ts(65,60): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+src/modules/feedback/feedback.service.ts(116,42): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/feedback/infra/prisma-feedback.repository.ts(2,29): error TS2307: Cannot find module '@yuzan/database' or its corresponding type declarations.
+src/modules/feedback/infra/prisma-feedback.repository.ts(28,37): error TS2339: Property 'feedback' does not exist on type 'PrismaService'.
+src/modules/feedback/infra/prisma-feedback.repository.ts(42,38): error TS2339: Property 'feedback' does not exist on type 'PrismaService'.
+src/modules/feedback/infra/prisma-feedback.repository.ts(67,45): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/feedback/infra/prisma-feedback.repository.ts(77,40): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/modules/feedback/infra/prisma-feedback.repository.ts(83,46): error TS2339: Property 'feedback' does not exist on type 'PrismaService'.
+src/modules/feedback/infra/prisma-feedback.repository.ts(106,37): error TS2339: Property 'feedback' does not exist on type 'PrismaService'.
+src/modules/feedback/infra/prisma-feedback.repository.ts(152,38): error TS2339: Property 'feedback' does not exist on type 'PrismaService'.
+src/modules/health/health.service.ts(46,32): error TS2339: Property '$queryRawUnsafe' does not exist on type 'PrismaService'.
+src/modules/identity/adapters/prisma-identity.repository.ts(58,27): error TS2339: Property 'user' does not exist on type 'PrismaService'.
+src/modules/identity/adapters/prisma-identity.repository.ts(68,27): error TS2339: Property 'user' does not exist on type 'PrismaService'.
+src/modules/identity/adapters/prisma-identity.repository.ts(78,27): error TS2339: Property 'membership' does not exist on type 'PrismaService'.
+src/modules/identity/adapters/prisma-identity.repository.ts(86,14): error TS7006: Parameter 'row' implicitly has an 'any' type.
+src/modules/identity/adapters/prisma-identity.repository.ts(95,37): error TS2339: Property 'membership' does not exist on type 'PrismaService'.
+src/modules/identity/adapters/prisma-identity.repository.ts(112,19): error TS2339: Property '$transaction' does not exist on type 'PrismaService'.
+src/modules/identity/adapters/prisma-identity.repository.ts(112,39): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+src/modules/identity/adapters/prisma-identity.repository.ts(156,37): error TS2339: Property 'session' does not exist on type 'PrismaService'.
+src/modules/identity/adapters/prisma-identity.repository.ts(167,25): error TS2339: Property 'sessionPair' does not exist on type 'PrismaService'.
+src/modules/identity/adapters/prisma-identity.repository.ts(178,19): error TS2339: Property '$transaction' does not exist on type 'PrismaService'.
+src/modules/identity/adapters/prisma-identity.repository.ts(178,39): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+src/modules/identity/identity.service.ts(10,24): error TS2307: Cannot find module '@yuzan/database' or its corresponding type declarations.
+src/modules/identity/identity.service.ts(448,36): error TS2339: Property 'school' does not exist on type 'PrismaService'.
+src/modules/identity/identity.service.ts(452,34): error TS2339: Property 'school' does not exist on type 'PrismaService'.
+src/modules/identity/identity.service.ts(463,43): error TS2339: Property '$transaction' does not exist on type 'PrismaService'.
+src/modules/internal/internal.controller.ts(155,39): error TS2339: Property 'speechJob' does not exist on type 'PrismaService'.
+src/modules/internal/internal.controller.ts(187,36): error TS2339: Property 'assessmentItem' does not exist on type 'PrismaService'.
+src/modules/internal/internal.controller.ts(219,39): error TS2339: Property 'assessmentItem' does not exist on type 'PrismaService'.
+src/modules/internal/internal.controller.ts(250,39): error TS2339: Property 'recording' does not exist on type 'PrismaService'.
+src/modules/learning/infra/prisma-learning.repository.ts(2,29): error TS2307: Cannot find module '@yuzan/database' or its corresponding type declarations.
+src/modules/learning/infra/prisma-learning.repository.ts(24,37): error TS2339: Property 'activityProgress' does not exist on type 'PrismaService'.
+src/modules/learning/infra/prisma-learning.repository.ts(45,44): error TS2339: Property 'activityProgress' does not exist on type 'PrismaService'.
+src/modules/learning/infra/prisma-learning.repository.ts(58,37): error TS2339: Property 'activityProgress' does not exist on type 'PrismaService'.
+src/modules/learning/infra/prisma-learning.repository.ts(90,38): error TS2339: Property 'activityProgress' does not exist on type 'PrismaService'.
+src/modules/learning/learning.service.ts(45,43): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/learning/learning.service.ts(55,44): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/modules/learning/learning.service.ts(67,50): error TS2339: Property 'assignment' does not exist on type 'PrismaService'.
+src/modules/learning/learning.service.ts(75,51): error TS2339: Property 'courseVersion' does not exist on type 'PrismaService'.
+src/modules/learning/learning.service.ts(111,46): error TS2339: Property 'assignment' does not exist on type 'PrismaService'.
+src/modules/learning/learning.service.ts(117,38): error TS2339: Property 'assignmentTarget' does not exist on type 'PrismaService'.
+src/modules/learning/learning.service.ts(154,45): error TS2339: Property 'courseVersion' does not exist on type 'PrismaService'.
+src/modules/learning/learning.service.ts(178,42): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/learning/learning.service.ts(231,42): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/learning/learning.service.ts(268,42): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(39,8): error TS2307: Cannot find module '@yuzan/database' or its corresponding type declarations.
+src/modules/mvp-gaps/admin-stub.controller.ts(552,21): error TS2339: Property 'school' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(553,21): error TS2339: Property 'membership' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(554,21): error TS2339: Property 'membership' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(555,21): error TS2339: Property 'membership' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(556,21): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(557,21): error TS2339: Property 'courseVersion' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(558,21): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(559,21): error TS2339: Property 'membership' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(560,21): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(565,19): error TS2339: Property 'membership' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(570,19): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(585,18): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/modules/mvp-gaps/admin-stub.controller.ts(586,18): error TS7006: Parameter 'sum' implicitly has an 'any' type.
+src/modules/mvp-gaps/admin-stub.controller.ts(586,23): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/modules/mvp-gaps/admin-stub.controller.ts(588,18): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/modules/mvp-gaps/admin-stub.controller.ts(589,18): error TS7006: Parameter 'sum' implicitly has an 'any' type.
+src/modules/mvp-gaps/admin-stub.controller.ts(589,23): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/modules/mvp-gaps/admin-stub.controller.ts(607,36): error TS2339: Property 'school' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(619,31): error TS7006: Parameter 'row' implicitly has an 'any' type.
+src/modules/mvp-gaps/admin-stub.controller.ts(629,39): error TS2339: Property 'dataPolicyVersion' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(635,40): error TS2339: Property 'dataPolicyVersion' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(637,35): error TS2339: Property 'dataPolicyVersion' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(645,38): error TS2339: Property 'dataPolicyVersion' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(647,35): error TS2339: Property '$transaction' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(647,55): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+src/modules/mvp-gaps/admin-stub.controller.ts(659,39): error TS2339: Property 'privacyRetentionJob' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(667,38): error TS2339: Property 'dataPolicyVersion' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(670,45): error TS2339: Property 'school' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(672,35): error TS2339: Property 'privacyRetentionJob' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(680,38): error TS2339: Property 'privacyRetentionJob' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(683,42): error TS2339: Property 'recording' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(685,37): error TS2339: Property 'privacyRetentionJob' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(691,43): error TS7006: Parameter 'recording' implicitly has an 'any' type.
+src/modules/mvp-gaps/admin-stub.controller.ts(691,104): error TS7006: Parameter 'chunk' implicitly has an 'any' type.
+src/modules/mvp-gaps/admin-stub.controller.ts(691,141): error TS7006: Parameter 'key' implicitly has an 'any' type.
+src/modules/mvp-gaps/admin-stub.controller.ts(693,63): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
+src/modules/mvp-gaps/admin-stub.controller.ts(694,37): error TS2339: Property 'privacyRetentionJob' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(698,25): error TS2339: Property 'privacyRetentionJob' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(707,36): error TS2339: Property 'assessmentLink' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(708,31): error TS7006: Parameter 'row' implicitly has an 'any' type.
+src/modules/mvp-gaps/admin-stub.controller.ts(715,38): error TS2339: Property 'school' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(720,40): error TS2339: Property 'class' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(723,40): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(728,35): error TS2339: Property 'assessmentLink' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(737,38): error TS2339: Property 'assessmentLink' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(740,35): error TS2339: Property 'assessmentLink' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(749,36): error TS2339: Property 'assessmentLink' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(751,39): error TS2339: Property 'assessmentLinkAccess' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(757,36): error TS2339: Property 'productPlan' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(769,38): error TS2339: Property 'productPlan' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(773,35): error TS2339: Property 'productPlan' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(781,40): error TS2339: Property 'productPlan' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(786,35): error TS2339: Property '$transaction' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(786,55): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+src/modules/mvp-gaps/admin-stub.controller.ts(800,35): error TS2339: Property 'schoolSubscription' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(808,44): error TS2339: Property 'schoolSubscription' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(811,19): error TS2339: Property 'membership' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(812,19): error TS2339: Property 'membership' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(813,19): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(814,19): error TS2339: Property 'recording' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(815,19): error TS2339: Property 'subscriptionEvent' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(825,179): error TS7006: Parameter 'entitlement' implicitly has an 'any' type.
+src/modules/mvp-gaps/admin-stub.controller.ts(831,44): error TS2339: Property 'schoolSubscription' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(834,40): error TS2339: Property 'subscriptionEvent' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(836,37): error TS2339: Property 'subscriptionEvent' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(844,59): error TS2339: Property 'school' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(844,147): error TS2339: Property 'productPlan' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(849,35): error TS2339: Property '$transaction' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(849,55): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+src/modules/mvp-gaps/admin-stub.controller.ts(862,38): error TS2339: Property 'schoolSubscription' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(864,35): error TS2339: Property '$transaction' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(864,55): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+src/modules/mvp-gaps/admin-stub.controller.ts(876,38): error TS2339: Property 'schoolSubscription' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(882,35): error TS2339: Property '$transaction' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(882,55): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+src/modules/mvp-gaps/admin-stub.controller.ts(894,39): error TS2339: Property 'schoolImportJob' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(901,41): error TS2339: Property 'schoolImportJob' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(903,35): error TS2339: Property 'schoolImportJob' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(918,60): error TS2339: Property 'school' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(919,49): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/modules/mvp-gaps/admin-stub.controller.ts(927,55): error TS2339: Property 'school' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(928,40): error TS2339: Property 'schoolImportJob' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(932,25): error TS2339: Property 'schoolImportJob' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(940,35): error TS2339: Property 'schoolImportJob' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(945,23): error TS2339: Property 'schoolImportJob' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(965,62): error TS2339: Property 'school' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(966,51): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/modules/mvp-gaps/admin-stub.controller.ts(972,58): error TS2339: Property 'school' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(973,40): error TS2339: Property 'schoolImportJob' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(977,25): error TS2339: Property 'schoolImportJob' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(986,38): error TS2339: Property 'school' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(988,35): error TS2339: Property 'school' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(999,35): error TS2339: Property 'school' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1008,38): error TS2339: Property 'school' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1011,19): error TS2339: Property 'membership' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1012,19): error TS2339: Property 'membership' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1013,19): error TS2339: Property 'membership' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1014,19): error TS2339: Property 'membership' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1015,19): error TS2339: Property 'class' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1016,19): error TS2339: Property 'course' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1017,19): error TS2339: Property 'courseVersion' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1018,19): error TS2339: Property 'courseVersion' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1019,19): error TS2339: Property 'assignment' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1020,19): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1021,19): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1022,19): error TS2339: Property 'auditLog' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1031,36): error TS2339: Property 'courseVersion' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1053,35): error TS2339: Property 'courseVersion' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1096,39): error TS2339: Property 'courseVersion' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1099,36): error TS2339: Property 'learningActivity' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1102,38): error TS2339: Property '$transaction' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1102,58): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+src/modules/mvp-gaps/admin-stub.controller.ts(1114,39): error TS2339: Property 'courseVersion' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1117,40): error TS2339: Property 'learningActivity' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1131,39): error TS2339: Property 'courseVersion' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1134,40): error TS2339: Property 'learningActivity' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1147,39): error TS2339: Property 'courseVersion' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1150,39): error TS2339: Property 'learningActivity' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1152,23): error TS2339: Property '$transaction' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1152,43): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+src/modules/mvp-gaps/admin-stub.controller.ts(1165,39): error TS2339: Property 'courseVersion' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1168,40): error TS2339: Property 'learningActivity' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1171,23): error TS2339: Property 'learningActivity' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1180,39): error TS2339: Property 'courseVersion' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1183,40): error TS2339: Property 'question' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1195,39): error TS2339: Property 'courseVersion' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1198,39): error TS2339: Property 'question' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1200,23): error TS2339: Property '$transaction' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1200,43): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+src/modules/mvp-gaps/admin-stub.controller.ts(1213,39): error TS2339: Property 'courseVersion' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1216,40): error TS2339: Property 'question' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1219,23): error TS2339: Property 'question' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1231,39): error TS2339: Property 'courseVersion' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1234,36): error TS2339: Property 'question' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1237,38): error TS2339: Property '$transaction' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1237,58): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+src/modules/mvp-gaps/admin-stub.controller.ts(1249,39): error TS2339: Property 'courseVersion' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1252,40): error TS2339: Property 'question' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1266,38): error TS2339: Property 'courseVersion' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1270,37): error TS2339: Property 'courseVersion' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1284,38): error TS2339: Property 'courseVersion' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1287,37): error TS2339: Property 'courseVersion' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1299,39): error TS2339: Property 'courseVersion' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1307,19): error TS2339: Property 'class' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1308,19): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1311,42): error TS2339: Property 'assignment' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1326,38): error TS2339: Property 'school' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1330,43): error TS2339: Property 'school' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1333,37): error TS2339: Property 'school' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1346,38): error TS2339: Property 'school' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1348,37): error TS2339: Property 'school' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1358,27): error TS2339: Property 'user' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1360,43): error TS2339: Property 'membership' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1361,186): error TS7006: Parameter 'user' implicitly has an 'any' type.
+src/modules/mvp-gaps/admin-stub.controller.ts(1364,49): error TS2339: Property 'user' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1364,101): error TS7006: Parameter 'membership' implicitly has an 'any' type.
+src/modules/mvp-gaps/admin-stub.controller.ts(1365,42): error TS2339: Property 'school' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1365,96): error TS7006: Parameter 'membership' implicitly has an 'any' type.
+src/modules/mvp-gaps/admin-stub.controller.ts(1366,44): error TS7006: Parameter 'user' implicitly has an 'any' type.
+src/modules/mvp-gaps/admin-stub.controller.ts(1367,48): error TS7006: Parameter 'school' implicitly has an 'any' type.
+src/modules/mvp-gaps/admin-stub.controller.ts(1368,42): error TS7006: Parameter 'membership' implicitly has an 'any' type.
+src/modules/mvp-gaps/admin-stub.controller.ts(1377,35): error TS2339: Property 'inviteCode' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1386,36): error TS2339: Property 'inviteCode' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1387,31): error TS7006: Parameter 'row' implicitly has an 'any' type.
+src/modules/mvp-gaps/admin-stub.controller.ts(1394,38): error TS2339: Property 'inviteCode' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1398,38): error TS2339: Property 'inviteCode' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1400,41): error TS2339: Property 'inviteCode' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1412,43): error TS2339: Property 'membership' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1414,36): error TS2339: Property 'user' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1417,19): error TS2339: Property 'school' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1417,73): error TS7006: Parameter 'membership' implicitly has an 'any' type.
+src/modules/mvp-gaps/admin-stub.controller.ts(1418,19): error TS2339: Property 'sessionPair' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1419,19): error TS2339: Property 'auditLog' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1421,45): error TS7006: Parameter 'school' implicitly has an 'any' type.
+src/modules/mvp-gaps/admin-stub.controller.ts(1422,50): error TS7006: Parameter 'membership' implicitly has an 'any' type.
+src/modules/mvp-gaps/admin-stub.controller.ts(1429,43): error TS2339: Property 'membership' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1431,36): error TS2339: Property 'user' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1435,19): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1436,19): error TS2339: Property 'assessmentSession' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1437,19): error TS2339: Property 'recording' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1438,19): error TS2339: Property 'feedback' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1456,37): error TS2339: Property 'privacyRequest' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1464,42): error TS2339: Property 'membership' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1467,40): error TS2339: Property 'privacyRequest' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1469,35): error TS2339: Property 'privacyRequest' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1478,38): error TS2339: Property 'privacyRequest' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1484,37): error TS2339: Property 'privacyRequest' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1492,38): error TS2339: Property 'privacyRequest' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1496,38): error TS2339: Property '$transaction' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1496,58): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+src/modules/mvp-gaps/admin-stub.controller.ts(1516,38): error TS2339: Property 'privacyRequest' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1521,38): error TS2339: Property '$transaction' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1521,58): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+src/modules/mvp-gaps/admin-stub.controller.ts(1536,38): error TS2339: Property 'membership' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1540,37): error TS2339: Property '$transaction' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1540,57): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+src/modules/mvp-gaps/admin-stub.controller.ts(1555,36): error TS2339: Property 'courseVersion' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1574,19): error TS2339: Property 'assessmentSession' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1575,19): error TS2339: Property 'assessmentSession' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1576,19): error TS2339: Property 'assessmentSession' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1577,19): error TS2339: Property 'assessmentSession' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1578,19): error TS2339: Property 'assessmentSession' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1579,19): error TS2339: Property 'assessmentSession' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1580,19): error TS2339: Property 'assessmentReport' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1581,19): error TS2339: Property 'assessmentItem' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1589,35): error TS2339: Property 'courseVersion' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1598,38): error TS2339: Property 'courseVersion' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1603,37): error TS2339: Property '$transaction' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/admin-stub.controller.ts(1603,57): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+src/modules/mvp-gaps/admin-stub.controller.ts(1621,23): error TS2339: Property 'auditLog' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/assessment-link.controller.ts(25,36): error TS2339: Property 'assessmentLink' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/assessment-link.controller.ts(39,25): error TS2339: Property 'assessmentLink' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/assessment-link.controller.ts(48,27): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/assessment-link.controller.ts(49,27): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/assessment-link.controller.ts(54,38): error TS2339: Property '$transaction' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/assessment-link.controller.ts(54,58): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+src/modules/mvp-gaps/assessment-link.controller.ts(64,23): error TS2339: Property 'assessmentLinkAccess' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/audit-stub.controller.ts(12,85): error TS2307: Cannot find module '@yuzan/database' or its corresponding type declarations.
+src/modules/mvp-gaps/audit-stub.controller.ts(116,49): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/modules/mvp-gaps/audit-stub.controller.ts(128,35): error TS2339: Property 'auditLog' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/audit-stub.controller.ts(136,78): error TS2307: Cannot find module '@yuzan/database' or its corresponding type declarations.
+src/modules/mvp-gaps/audit-stub.controller.ts(137,75): error TS2307: Cannot find module '@yuzan/database' or its corresponding type declarations.
+src/modules/mvp-gaps/audit-stub.controller.ts(157,36): error TS2339: Property 'auditLog' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/audit-stub.controller.ts(182,36): error TS2339: Property 'providerConfig' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/audit-stub.controller.ts(187,33): error TS7031: Binding element 'secretRef' implicitly has an 'any' type.
+src/modules/mvp-gaps/audit-stub.controller.ts(193,35): error TS2339: Property '$transaction' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/audit-stub.controller.ts(193,55): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+src/modules/mvp-gaps/audit-stub.controller.ts(205,40): error TS2339: Property 'providerConfig' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/audit-stub.controller.ts(208,37): error TS2339: Property 'providerHealthCheck' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/audit-stub.controller.ts(209,74): error TS2339: Property 'providerConfig' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/audit-stub.controller.ts(217,40): error TS2339: Property 'providerConfig' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/audit-stub.controller.ts(219,35): error TS2339: Property '$transaction' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/audit-stub.controller.ts(219,55): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+src/modules/mvp-gaps/audit-stub.controller.ts(229,23): error TS2339: Property 'auditLog' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/invite-redeem.controller.ts(30,38): error TS2339: Property '$transaction' does not exist on type 'PrismaService'.
+src/modules/mvp-gaps/invite-redeem.controller.ts(30,58): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+src/modules/mvp-gaps/plans-stub.controller.ts(14,36): error TS2339: Property 'productPlan' does not exist on type 'PrismaService'.
+src/modules/offline/infra/prisma-offline.repository.ts(48,35): error TS2339: Property 'offlineContentPackage' does not exist on type 'PrismaService'.
+src/modules/offline/infra/prisma-offline.repository.ts(57,36): error TS2339: Property 'offlineContentPackage' does not exist on type 'PrismaService'.
+src/modules/offline/infra/prisma-offline.repository.ts(68,25): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/modules/offline/infra/prisma-offline.repository.ts(75,35): error TS2339: Property 'offlineContentPackage' does not exist on type 'PrismaService'.
+src/modules/offline/infra/prisma-offline.repository.ts(88,35): error TS2339: Property 'syncBatch' does not exist on type 'PrismaService'.
+src/modules/offline/infra/prisma-offline.repository.ts(93,35): error TS2339: Property 'syncBatch' does not exist on type 'PrismaService'.
+src/modules/offline/infra/prisma-offline.repository.ts(98,35): error TS2339: Property 'syncBatch' does not exist on type 'PrismaService'.
+src/modules/operations/operations.service.ts(16,41): error TS2339: Property 'school' does not exist on type 'PrismaService'.
+src/modules/organizations/infra/prisma-membership.repository.ts(2,29): error TS2307: Cannot find module '@yuzan/database' or its corresponding type declarations.
+src/modules/organizations/infra/prisma-membership.repository.ts(22,37): error TS2339: Property 'membership' does not exist on type 'PrismaService'.
+src/modules/organizations/infra/prisma-membership.repository.ts(42,38): error TS2339: Property 'membership' does not exist on type 'PrismaService'.
+src/modules/organizations/infra/prisma-membership.repository.ts(56,50): error TS7006: Parameter 'row' implicitly has an 'any' type.
+src/modules/organizations/infra/prisma-membership.repository.ts(72,38): error TS2339: Property 'membership' does not exist on type 'PrismaService'.
+src/modules/organizations/infra/prisma-membership.repository.ts(80,27): error TS7006: Parameter 'row' implicitly has an 'any' type.
+src/modules/organizations/infra/prisma-school.repository.ts(2,29): error TS2307: Cannot find module '@yuzan/database' or its corresponding type declarations.
+src/modules/organizations/infra/prisma-school.repository.ts(16,37): error TS2339: Property 'school' does not exist on type 'PrismaService'.
+src/modules/organizations/infra/prisma-school.repository.ts(27,38): error TS2339: Property 'school' does not exist on type 'PrismaService'.
+src/modules/pilot/pilot-feedback.service.ts(2,56): error TS2307: Cannot find module '@yuzan/database' or its corresponding type declarations.
+src/modules/pilot/pilot-feedback.service.ts(26,35): error TS2339: Property 'pilotFeedback' does not exist on type 'PrismaService'.
+src/modules/pilot/pilot-feedback.service.ts(45,36): error TS2339: Property 'pilotFeedback' does not exist on type 'PrismaService'.
+src/modules/pilot/pilot-feedback.service.ts(51,31): error TS7006: Parameter 'row' implicitly has an 'any' type.
+src/modules/pilot/pilot-feedback.service.ts(57,36): error TS2339: Property 'pilotFeedback' does not exist on type 'PrismaService'.
+src/modules/pilot/pilot-feedback.service.ts(69,24): error TS7006: Parameter 'row' implicitly has an 'any' type.
+src/modules/pilot/pilot-feedback.service.ts(81,39): error TS2339: Property 'pilotFeedback' does not exist on type 'PrismaService'.
+src/modules/pilot/pilot-feedback.service.ts(89,35): error TS2339: Property 'pilotFeedback' does not exist on type 'PrismaService'.
+src/modules/pilot/pilot-feedback.service.ts(128,27): error TS2339: Property 'assessmentItem' does not exist on type 'PrismaService'.
+src/modules/pilot/pilot-feedback.service.ts(140,61): error TS2339: Property 'assessmentSession' does not exist on type 'PrismaService'.
+src/modules/pilot/pilot-feedback.service.ts(147,98): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/pilot/pilot-observability.service.ts(38,19): error TS2339: Property 'assessmentSession' does not exist on type 'PrismaService'.
+src/modules/pilot/pilot-observability.service.ts(39,19): error TS2339: Property 'assessmentSession' does not exist on type 'PrismaService'.
+src/modules/pilot/pilot-observability.service.ts(40,19): error TS2339: Property 'assessmentSession' does not exist on type 'PrismaService'.
+src/modules/pilot/pilot-observability.service.ts(41,19): error TS2339: Property 'assessmentSession' does not exist on type 'PrismaService'.
+src/modules/pilot/pilot-observability.service.ts(42,19): error TS2339: Property 'assessmentItem' does not exist on type 'PrismaService'.
+src/modules/pilot/pilot-observability.service.ts(55,19): error TS2339: Property 'speechJob' does not exist on type 'PrismaService'.
+src/modules/pilot/pilot-observability.service.ts(56,19): error TS2339: Property 'recording' does not exist on type 'PrismaService'.
+src/modules/pilot/pilot-observability.service.ts(57,19): error TS2339: Property 'pilotFeedback' does not exist on type 'PrismaService'.
+src/modules/pilot/pilot-observability.service.ts(62,35): error TS7006: Parameter 'total' implicitly has an 'any' type.
+src/modules/pilot/pilot-observability.service.ts(62,42): error TS7006: Parameter 'row' implicitly has an 'any' type.
+src/modules/pilot/pilot-observability.service.ts(70,43): error TS7006: Parameter 'row' implicitly has an 'any' type.
+src/modules/pilot/pilot-observability.service.ts(71,62): error TS7006: Parameter 'oldest' implicitly has an 'any' type.
+src/modules/pilot/pilot-observability.service.ts(71,70): error TS7006: Parameter 'row' implicitly has an 'any' type.
+src/modules/pilot/pilot-observability.service.ts(105,56): error TS7006: Parameter 'row' implicitly has an 'any' type.
+src/modules/recordings/infra/prisma-recording.repository.ts(2,29): error TS2307: Cannot find module '@yuzan/database' or its corresponding type declarations.
+src/modules/recordings/infra/prisma-recording.repository.ts(32,37): error TS2339: Property 'recording' does not exist on type 'PrismaService'.
+src/modules/recordings/infra/prisma-recording.repository.ts(46,37): error TS2339: Property 'recording' does not exist on type 'PrismaService'.
+src/modules/recordings/infra/prisma-recording.repository.ts(60,38): error TS2339: Property 'recording' does not exist on type 'PrismaService'.
+src/modules/recordings/infra/prisma-recording.repository.ts(91,38): error TS2339: Property 'recording' does not exist on type 'PrismaService'.
+src/modules/recordings/infra/prisma-recording.repository.ts(113,37): error TS2339: Property 'recording' does not exist on type 'PrismaService'.
+src/modules/recordings/infra/prisma-recording.repository.ts(144,40): error TS2339: Property 'recording' does not exist on type 'PrismaService'.
+src/modules/recordings/infra/prisma-recording.repository.ts(199,40): error TS2339: Property 'recording' does not exist on type 'PrismaService'.
+src/modules/recordings/infra/prisma-recording.repository.ts(239,40): error TS2339: Property 'recording' does not exist on type 'PrismaService'.
+src/modules/recordings/recordings.service.ts(55,42): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/recordings/recordings.service.ts(122,42): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/recordings/recordings.service.ts(352,38): error TS2339: Property 'assessmentItem' does not exist on type 'PrismaService'.
+src/modules/recordings/recordings.service.ts(523,42): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/recordings/recordings.service.ts(534,37): error TS2339: Property 'assessmentItem' does not exist on type 'PrismaService'.
+src/modules/recordings/recordings.service.ts(566,27): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/modules/recordings/recordings.service.ts(668,7): error TS18048: 'selected' is possibly 'undefined'.
+src/modules/recordings/recordings.service.ts(669,7): error TS18048: 'selected' is possibly 'undefined'.
+src/modules/recordings/recordings.service.ts(670,7): error TS18048: 'selected' is possibly 'undefined'.
+src/modules/recordings/recordings.service.ts(673,17): error TS18048: 'selected' is possibly 'undefined'.
+src/modules/recordings/recordings.service.ts(677,16): error TS18048: 'selected' is possibly 'undefined'.
+src/modules/recordings/recordings.service.ts(677,52): error TS18048: 'selected' is possibly 'undefined'.
+src/modules/recordings/recordings.service.ts(682,7): error TS18048: 'selected' is possibly 'undefined'.
+src/modules/recordings/recordings.service.ts(684,40): error TS2345: Argument of type 'Recording | undefined' is not assignable to parameter of type 'Recording'.
+  Type 'undefined' is not assignable to type 'Recording'.
+src/modules/recordings/recordings.service.ts(694,42): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/recordings/recordings.service.ts(713,42): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/recordings/recordings.service.ts(729,51): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/reporting/infra/prisma-learning-plan.repository.ts(3,29): error TS2307: Cannot find module '@yuzan/database' or its corresponding type declarations.
+src/modules/reporting/infra/prisma-learning-plan.repository.ts(12,35): error TS2339: Property 'learningPlan' does not exist on type 'PrismaService'.
+src/modules/reporting/infra/prisma-learning-plan.repository.ts(28,35): error TS2339: Property 'learningPlan' does not exist on type 'PrismaService'.
+src/modules/reporting/infra/prisma-learning-plan.repository.ts(38,38): error TS2339: Property 'learningPlan' does not exist on type 'PrismaService'.
+src/modules/reporting/infra/prisma-report.repository.ts(3,29): error TS2307: Cannot find module '@yuzan/database' or its corresponding type declarations.
+src/modules/reporting/infra/prisma-report.repository.ts(19,46): error TS2339: Property 'report' does not exist on type 'PrismaService'.
+src/modules/reporting/infra/prisma-report.repository.ts(25,37): error TS2339: Property 'report' does not exist on type 'PrismaService'.
+src/modules/reporting/infra/prisma-report.repository.ts(35,27): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/modules/reporting/infra/prisma-report.repository.ts(42,35): error TS2339: Property 'report' does not exist on type 'PrismaService'.
+src/modules/reporting/infra/prisma-report.repository.ts(68,35): error TS2339: Property 'report' does not exist on type 'PrismaService'.
+src/modules/reporting/infra/prisma-report.repository.ts(88,35): error TS2339: Property 'report' does not exist on type 'PrismaService'.
+src/modules/reporting/reporting.service.ts(26,24): error TS2307: Cannot find module '@yuzan/database' or its corresponding type declarations.
+src/modules/reporting/reporting.service.ts(117,42): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/reporting/reporting.service.ts(134,51): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/reporting/reporting.service.ts(163,19): error TS2339: Property 'activityProgress' does not exist on type 'PrismaService'.
+src/modules/reporting/reporting.service.ts(168,19): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/reporting/reporting.service.ts(181,19): error TS2339: Property 'feedback' does not exist on type 'PrismaService'.
+src/modules/reporting/reporting.service.ts(208,19): error TS2339: Property 'recording' does not exist on type 'PrismaService'.
+src/modules/reporting/reporting.service.ts(231,19): error TS2339: Property 'speechJob' does not exist on type 'PrismaService'.
+src/modules/reporting/reporting.service.ts(244,8): error TS7006: Parameter 'p' implicitly has an 'any' type.
+src/modules/reporting/reporting.service.ts(254,16): error TS7006: Parameter 'p' implicitly has an 'any' type.
+src/modules/reporting/reporting.service.ts(255,13): error TS7006: Parameter 'p' implicitly has an 'any' type.
+src/modules/reporting/reporting.service.ts(296,13): error TS7006: Parameter 'f' implicitly has an 'any' type.
+src/modules/reporting/reporting.service.ts(297,16): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/modules/reporting/reporting.service.ts(301,40): error TS7006: Parameter 'a' implicitly has an 'any' type.
+src/modules/reporting/reporting.service.ts(301,43): error TS7006: Parameter 'b' implicitly has an 'any' type.
+src/modules/reporting/reporting.service.ts(307,70): error TS7006: Parameter 'f' implicitly has an 'any' type.
+src/modules/reporting/reporting.service.ts(324,50): error TS2339: Property 'assessmentSession' does not exist on type 'PrismaService'.
+src/modules/reporting/reporting.service.ts(330,8): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/modules/reporting/reporting.service.ts(333,16): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/modules/reporting/reporting.service.ts(335,10): error TS7006: Parameter 'a' implicitly has an 'any' type.
+src/modules/reporting/reporting.service.ts(335,13): error TS7006: Parameter 'b' implicitly has an 'any' type.
+src/modules/reporting/reporting.service.ts(369,38): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/modules/reporting/reporting.service.ts(405,72): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/modules/reporting/reporting.service.ts(450,42): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/reporting/reporting.service.ts(466,51): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/reporting/reporting.service.ts(501,42): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/reporting/reporting.service.ts(516,51): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/resources/ports/prisma-resource-lookup.adapter.ts(11,40): error TS2339: Property 'resource' does not exist on type 'PrismaService'.
+src/modules/resources/ports/prisma-resource-lookup.adapter.ts(26,41): error TS2339: Property 'resource' does not exist on type 'PrismaService'.
+src/modules/resources/ports/prisma-resource-lookup.adapter.ts(29,27): error TS7006: Parameter 'resource' implicitly has an 'any' type.
+src/modules/resources/resources.service.ts(47,40): error TS2339: Property 'resource' does not exist on type 'PrismaService'.
+src/modules/resources/resources.service.ts(77,40): error TS2339: Property 'resource' does not exist on type 'PrismaService'.
+src/modules/resources/resources.service.ts(93,39): error TS2339: Property 'resource' does not exist on type 'PrismaService'.
+src/modules/resources/resources.service.ts(111,40): error TS2339: Property 'resource' does not exist on type 'PrismaService'.
+src/modules/resources/resources.service.ts(143,40): error TS2339: Property 'resource' does not exist on type 'PrismaService'.
+src/modules/resources/resources.service.ts(164,40): error TS2339: Property 'resource' does not exist on type 'PrismaService'.
+src/modules/resources/resources.service.ts(179,41): error TS2339: Property 'resource' does not exist on type 'PrismaService'.
+src/modules/resources/resources.service.ts(182,27): error TS7006: Parameter 'resource' implicitly has an 'any' type.
+src/modules/speech-job/dto/speech-job.response.ts(1,32): error TS2307: Cannot find module '@yuzan/database' or its corresponding type declarations.
+src/modules/speech-job/speech-job.controller.ts(110,43): error TS2339: Property 'recording' does not exist on type 'PrismaService'.
+src/modules/speech-job/speech-job.controller.ts(144,36): error TS2339: Property 'assessmentItem' does not exist on type 'PrismaService'.
+src/modules/speech-job/speech-job.controller.ts(172,51): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/speech-job/speech-job.controller.ts(223,43): error TS2339: Property 'speechJob' does not exist on type 'PrismaService'.
+src/modules/speech-job/speech-job.service.ts(4,38): error TS2307: Cannot find module '@yuzan/database' or its corresponding type declarations.
+src/modules/speech-job/speech-job.service.ts(107,35): error TS2339: Property 'speechJob' does not exist on type 'PrismaService'.
+src/modules/speech-job/speech-job.service.ts(130,35): error TS2339: Property 'speechJob' does not exist on type 'PrismaService'.
+src/modules/speech-job/speech-job.service.ts(144,36): error TS2339: Property 'speechJob' does not exist on type 'PrismaService'.
+src/modules/speech-job/speech-job.service.ts(148,22): error TS7006: Parameter 'job' implicitly has an 'any' type.
+src/modules/speech-job/speech-job.service.ts(161,35): error TS2339: Property 'speechJob' does not exist on type 'PrismaService'.
+src/modules/speech-job/speech-job.service.ts(271,39): error TS2339: Property '$transaction' does not exist on type 'PrismaService'.
+src/modules/speech-job/speech-job.service.ts(271,59): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+src/modules/speech-job/speech-job.service.ts(328,35): error TS2339: Property 'speechJob' does not exist on type 'PrismaService'.
+src/modules/speech-job/speech-job.service.ts(353,35): error TS2339: Property 'speechJob' does not exist on type 'PrismaService'.
+src/modules/speech-job/speech-job.service.ts(365,39): error TS2339: Property '$transaction' does not exist on type 'PrismaService'.
+src/modules/speech-job/speech-job.service.ts(365,59): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+src/modules/speech-job/speech-job.service.ts(422,36): error TS2339: Property 'assessmentItem' does not exist on type 'PrismaService'.
+src/modules/speech-job/speech-job.service.ts(433,51): error TS2339: Property 'recording' does not exist on type 'PrismaService'.
+src/modules/speech-job/speech-job.service.ts(519,33): error TS2339: Property 'speechJob' does not exist on type 'PrismaService'.
+src/modules/speech-job/speech-job.service.ts(530,31): error TS2339: Property 'speechJob' does not exist on type 'PrismaService'.
+src/modules/speech-job/speech-job.service.ts(570,43): error TS2339: Property 'recording' does not exist on type 'PrismaService'.
+src/modules/speech-job/speech-job.service.ts(600,31): error TS2339: Property 'speechJob' does not exist on type 'PrismaService'.
+src/modules/speech-job/speech-job.service.ts(605,25): error TS2339: Property 'recording' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(2,29): error TS2307: Cannot find module '@yuzan/database' or its corresponding type declarations.
+src/modules/student-courses/student-courses.service.ts(16,43): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(21,44): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+src/modules/student-courses/student-courses.service.ts(22,39): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+src/modules/student-courses/student-courses.service.ts(47,50): error TS2339: Property 'assignment' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(64,19): error TS2339: Property 'assignment' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(81,19): error TS2339: Property 'assignment' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(89,44): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+src/modules/student-courses/student-courses.service.ts(89,79): error TS7006: Parameter 'target' implicitly has an 'any' type.
+src/modules/student-courses/student-courses.service.ts(91,41): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+src/modules/student-courses/student-courses.service.ts(93,55): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+src/modules/student-courses/student-courses.service.ts(94,66): error TS7006: Parameter 'unit' implicitly has an 'any' type.
+src/modules/student-courses/student-courses.service.ts(94,97): error TS7006: Parameter 'lesson' implicitly has an 'any' type.
+src/modules/student-courses/student-courses.service.ts(98,45): error TS7006: Parameter 'activity' implicitly has an 'any' type.
+src/modules/student-courses/student-courses.service.ts(121,46): error TS2339: Property 'courseVersion' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(126,46): error TS2339: Property 'courseVersion' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(131,52): error TS2339: Property 'courseVersion' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(138,39): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/modules/student-courses/student-courses.service.ts(139,39): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/modules/student-courses/student-courses.service.ts(140,47): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/modules/student-courses/student-courses.service.ts(153,42): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(157,65): error TS7006: Parameter 'u' implicitly has an 'any' type.
+src/modules/student-courses/student-courses.service.ts(157,90): error TS7006: Parameter 'l' implicitly has an 'any' type.
+src/modules/student-courses/student-courses.service.ts(157,114): error TS7006: Parameter 'a' implicitly has an 'any' type.
+src/modules/student-courses/student-courses.service.ts(158,45): error TS2339: Property 'studentActivityNote' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(170,55): error TS7006: Parameter 'unit' implicitly has an 'any' type.
+src/modules/student-courses/student-courses.service.ts(174,34): error TS7006: Parameter 'lesson' implicitly has an 'any' type.
+src/modules/student-courses/student-courses.service.ts(178,44): error TS7006: Parameter 'activity' implicitly has an 'any' type.
+src/modules/student-courses/student-courses.service.ts(188,46): error TS7006: Parameter 'link' implicitly has an 'any' type.
+src/modules/student-courses/student-courses.service.ts(195,39): error TS7006: Parameter 'unit' implicitly has an 'any' type.
+src/modules/student-courses/student-courses.service.ts(195,70): error TS7006: Parameter 'lesson' implicitly has an 'any' type.
+src/modules/student-courses/student-courses.service.ts(196,43): error TS7006: Parameter 'activity' implicitly has an 'any' type.
+src/modules/student-courses/student-courses.service.ts(215,33): error TS7006: Parameter 'unit' implicitly has an 'any' type.
+src/modules/student-courses/student-courses.service.ts(215,64): error TS7006: Parameter 'lesson' implicitly has an 'any' type.
+src/modules/student-courses/student-courses.service.ts(215,102): error TS7006: Parameter 'activity' implicitly has an 'any' type.
+src/modules/student-courses/student-courses.service.ts(220,47): error TS7006: Parameter 'activity' implicitly has an 'any' type.
+src/modules/student-courses/student-courses.service.ts(227,40): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(233,38): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(235,39): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(281,42): error TS2339: Property 'activityProgress' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(285,38): error TS2339: Property '$transaction' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(285,58): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+src/modules/student-courses/student-courses.service.ts(308,41): error TS2339: Property 'recording' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(312,39): error TS2339: Property '$transaction' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(312,59): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+src/modules/student-courses/student-courses.service.ts(334,47): error TS2339: Property 'assessmentSession' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(347,38): error TS2339: Property '$transaction' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(347,58): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+src/modules/student-courses/student-courses.service.ts(371,39): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(373,37): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(380,24): error TS2339: Property 'studentActivityNote' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(391,36): error TS2339: Property 'studentActivityNote' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(401,24): error TS2339: Property 'studentActivityNote' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(410,40): error TS2339: Property 'studentActivityNote' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(416,26): error TS2339: Property 'studentActivityNote' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(419,24): error TS2339: Property 'studentActivityNote' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(424,40): error TS2339: Property 'studentActivityNote' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(427,24): error TS2339: Property 'studentActivityNote' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(435,40): error TS2339: Property 'studentActivityNote' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(437,23): error TS2339: Property 'studentActivityNote' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(446,40): error TS2339: Property 'courseFavorite' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(451,25): error TS2339: Property 'courseFavorite' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(455,23): error TS2339: Property 'courseFavorite' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(467,25): error TS2339: Property 'courseFavorite' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(471,23): error TS2339: Property 'courseFavorite' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(481,43): error TS2339: Property 'assignment' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(505,29): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/modules/student-courses/student-courses.service.ts(513,41): error TS2339: Property 'courseFavorite' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(518,27): error TS7006: Parameter 'fav' implicitly has an 'any' type.
+src/modules/student-courses/student-courses.service.ts(527,45): error TS2339: Property 'assignment' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(530,42): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(533,41): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(536,45): error TS2339: Property 'courseFavorite' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(539,52): error TS2339: Property 'activityProgress' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(564,42): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(579,24): error TS2339: Property 'assignment' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(598,40): error TS2339: Property 'learningActivity' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(606,62): error TS7006: Parameter 'unit' implicitly has an 'any' type.
+src/modules/student-courses/student-courses.service.ts(606,93): error TS7006: Parameter 'lesson' implicitly has an 'any' type.
+src/modules/student-courses/student-courses.service.ts(606,130): error TS7006: Parameter 'candidate' implicitly has an 'any' type.
+src/modules/student-courses/student-courses.service.ts(612,42): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(618,50): error TS2339: Property 'learningActivity' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(619,40): error TS2339: Property 'activityProgress' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(619,150): error TS7006: Parameter 'activity' implicitly has an 'any' type.
+src/modules/student-courses/student-courses.service.ts(620,48): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/modules/student-courses/student-courses.service.ts(621,60): error TS7006: Parameter 'activity' implicitly has an 'any' type.
+src/modules/student-courses/student-courses.service.ts(621,113): error TS7006: Parameter 'activity' implicitly has an 'any' type.
+src/modules/student-courses/student-courses.service.ts(627,50): error TS2339: Property 'assessmentSession' does not exist on type 'PrismaService'.
+src/modules/student-courses/student-courses.service.ts(632,60): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/modules/student-courses/student-courses.service.ts(636,63): error TS7006: Parameter 'activity' implicitly has an 'any' type.
+src/modules/student-courses/student-courses.service.ts(640,57): error TS2339: Property 'speechJob' does not exist on type 'PrismaService'.
+src/modules/student-dashboard/student-dashboard.service.ts(41,43): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/student-dashboard/student-dashboard.service.ts(50,44): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/modules/student-dashboard/student-dashboard.service.ts(51,39): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/modules/student-dashboard/student-dashboard.service.ts(58,39): error TS2339: Property 'assignmentTarget' does not exist on type 'PrismaService'.
+src/modules/student-dashboard/student-dashboard.service.ts(68,52): error TS7006: Parameter 't' implicitly has an 'any' type.
+src/modules/student-dashboard/student-dashboard.service.ts(75,43): error TS2339: Property 'assignment' does not exist on type 'PrismaService'.
+src/modules/student-dashboard/student-dashboard.service.ts(86,35): error TS7006: Parameter 'a' implicitly has an 'any' type.
+src/modules/student-dashboard/student-dashboard.service.ts(91,44): error TS7006: Parameter 'a' implicitly has an 'any' type.
+src/modules/student-dashboard/student-dashboard.service.ts(96,21): error TS2339: Property 'activityProgress' does not exist on type 'PrismaService'.
+src/modules/student-dashboard/student-dashboard.service.ts(102,21): error TS2339: Property 'activityProgress' does not exist on type 'PrismaService'.
+src/modules/student-dashboard/student-dashboard.service.ts(112,46): error TS2339: Property 'offlineContentPackage' does not exist on type 'PrismaService'.
+src/modules/student-dashboard/student-dashboard.service.ts(117,48): error TS2339: Property 'feedback' does not exist on type 'PrismaService'.
+src/modules/student-dashboard/student-dashboard.service.ts(131,9): error TS2322: Type 'unknown' is not assignable to type 'string'.
+src/modules/student-dashboard/student-dashboard.service.ts(167,43): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/student-dashboard/student-dashboard.service.ts(176,44): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/modules/student-dashboard/student-dashboard.service.ts(193,44): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/student-dashboard/student-dashboard.service.ts(230,43): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/student-dashboard/student-dashboard.service.ts(240,44): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/modules/student-dashboard/student-dashboard.service.ts(241,51): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/modules/student-dashboard/student-dashboard.service.ts(256,19): error TS2339: Property 'assessmentSession' does not exist on type 'PrismaService'.
+src/modules/student-dashboard/student-dashboard.service.ts(286,19): error TS2339: Property 'assignment' does not exist on type 'PrismaService'.
+src/modules/student-dashboard/student-dashboard.service.ts(315,19): error TS2339: Property 'practiceDelivery' does not exist on type 'PrismaService'.
+src/modules/student-dashboard/student-dashboard.service.ts(350,17): error TS7006: Parameter 'session' implicitly has an 'any' type.
+src/modules/student-dashboard/student-dashboard.service.ts(351,20): error TS7006: Parameter 'id' implicitly has an 'any' type.
+src/modules/student-dashboard/student-dashboard.service.ts(355,27): error TS2339: Property 'practiceDefinition' does not exist on type 'PrismaService'.
+src/modules/student-dashboard/student-dashboard.service.ts(365,24): error TS7006: Parameter 'definition' implicitly has an 'any' type.
+src/modules/student-dashboard/student-dashboard.service.ts(374,8): error TS7006: Parameter 'session' implicitly has an 'any' type.
+src/modules/student-dashboard/student-dashboard.service.ts(378,8): error TS7006: Parameter 'session' implicitly has an 'any' type.
+src/modules/student-dashboard/student-dashboard.service.ts(391,62): error TS2339: Property 'title' does not exist on type '{}'.
+src/modules/student-dashboard/student-dashboard.service.ts(398,10): error TS7006: Parameter 'session' implicitly has an 'any' type.
+src/modules/student-dashboard/student-dashboard.service.ts(404,17): error TS7006: Parameter 'session' implicitly has an 'any' type.
+src/modules/student-dashboard/student-dashboard.service.ts(424,66): error TS2339: Property 'difficulty' does not exist on type '{}'.
+src/modules/student-dashboard/student-dashboard.service.ts(440,10): error TS7006: Parameter 'left' implicitly has an 'any' type.
+src/modules/student-dashboard/student-dashboard.service.ts(440,16): error TS7006: Parameter 'right' implicitly has an 'any' type.
+src/modules/student-dashboard/student-dashboard.service.ts(448,21): error TS2339: Property 'activityProgress' does not exist on type 'PrismaService'.
+src/modules/student-dashboard/student-dashboard.service.ts(456,21): error TS2339: Property 'activityProgress' does not exist on type 'PrismaService'.
+src/modules/student-dashboard/student-dashboard.service.ts(466,46): error TS2339: Property 'offlineContentPackage' does not exist on type 'PrismaService'.
+src/modules/student-dashboard/student-dashboard.service.ts(486,12): error TS7006: Parameter 'session' implicitly has an 'any' type.
+src/modules/student-dashboard/student-dashboard.service.ts(493,12): error TS7006: Parameter 'session' implicitly has an 'any' type.
+src/modules/student-dashboard/student-dashboard.service.ts(500,12): error TS7006: Parameter 'session' implicitly has an 'any' type.
+src/modules/student-dashboard/student-dashboard.service.ts(536,36): error TS2339: Property 'user' does not exist on type 'PrismaService'.
+src/modules/student-dashboard/student-dashboard.service.ts(546,42): error TS2339: Property 'membership' does not exist on type 'PrismaService'.
+src/modules/student-dashboard/student-dashboard.service.ts(552,43): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/student-dashboard/student-dashboard.service.ts(556,44): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/modules/student-dashboard/student-dashboard.service.ts(560,19): error TS2339: Property 'activityProgress' does not exist on type 'PrismaService'.
+src/modules/student-dashboard/student-dashboard.service.ts(563,19): error TS2339: Property 'activityProgress' does not exist on type 'PrismaService'.
+src/modules/student-dashboard/student-dashboard.service.ts(569,51): error TS2339: Property 'offlineContentPackage' does not exist on type 'PrismaService'.
+src/modules/submissions/infra/prisma-submission.repository.ts(2,29): error TS2307: Cannot find module '@yuzan/database' or its corresponding type declarations.
+src/modules/submissions/infra/prisma-submission.repository.ts(33,37): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/submissions/infra/prisma-submission.repository.ts(47,37): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/submissions/infra/prisma-submission.repository.ts(75,38): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/submissions/infra/prisma-submission.repository.ts(101,38): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/submissions/infra/prisma-submission.repository.ts(118,37): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/submissions/infra/prisma-submission.repository.ts(170,40): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/submissions/infra/prisma-submission.repository.ts(205,40): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/submissions/ports/prisma-submission-lookup.repository.ts(2,29): error TS2307: Cannot find module '@yuzan/database' or its corresponding type declarations.
+src/modules/submissions/ports/prisma-submission-lookup.repository.ts(24,37): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/submissions/ports/prisma-submission-lookup.repository.ts(40,40): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/submissions/ports/prisma-submission-lookup.repository.ts(58,41): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/submissions/submissions.service.ts(116,46): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/submissions/submissions.service.ts(125,45): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/modules/submissions/submissions.service.ts(166,42): error TS2339: Property 'assignment' does not exist on type 'PrismaService'.
+src/modules/submissions/submissions.service.ts(186,46): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/submissions/submissions.service.ts(201,53): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/submissions/submissions.service.ts(220,49): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/submissions/submissions.service.ts(235,41): error TS7006: Parameter 'enrollment' implicitly has an 'any' type.
+src/modules/submissions/submissions.service.ts(241,21): error TS2322: Type 'unknown[]' is not assignable to type 'readonly string[]'.
+  Type 'unknown' is not assignable to type 'string'.
+src/modules/submissions/submissions.service.ts(279,42): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/submissions/submissions.service.ts(305,51): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/submissions/submissions.service.ts(318,42): error TS2339: Property 'assignment' does not exist on type 'PrismaService'.
+src/modules/submissions/submissions.service.ts(348,42): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/support-pairings/infra/prisma-support-pairing.repository.ts(25,35): error TS2339: Property 'supportPairing' does not exist on type 'PrismaService'.
+src/modules/support-pairings/infra/prisma-support-pairing.repository.ts(35,36): error TS2339: Property 'supportPairing' does not exist on type 'PrismaService'.
+src/modules/support-pairings/infra/prisma-support-pairing.repository.ts(60,35): error TS2339: Property 'supportPairing' does not exist on type 'PrismaService'.
+src/modules/support-pairings/infra/prisma-support-pairing.repository.ts(100,35): error TS2339: Property 'supportSession' does not exist on type 'PrismaService'.
+src/modules/support-pairings/infra/prisma-support-pairing.repository.ts(110,36): error TS2339: Property 'supportSession' does not exist on type 'PrismaService'.
+src/modules/support-pairings/infra/prisma-support-pairing.repository.ts(127,35): error TS2339: Property 'supportSession' does not exist on type 'PrismaService'.
+src/modules/support-pairings/infra/prisma-support-pairing.repository.ts(146,38): error TS2339: Property 'supportSession' does not exist on type 'PrismaService'.
+src/modules/support-pairings/infra/prisma-support-pairing.repository.ts(161,38): error TS2339: Property 'supportPairing' does not exist on type 'PrismaService'.
+src/modules/sync/sync.service.ts(2,24): error TS2307: Cannot find module '@yuzan/database' or its corresponding type declarations.
+src/modules/sync/sync.service.ts(36,40): error TS2339: Property 'syncBatch' does not exist on type 'PrismaService'.
+src/modules/sync/sync.service.ts(49,38): error TS2339: Property 'device' does not exist on type 'PrismaService'.
+src/modules/sync/sync.service.ts(63,37): error TS2339: Property 'syncBatch' does not exist on type 'PrismaService'.
+src/modules/sync/sync.service.ts(87,25): error TS2339: Property 'syncJob' does not exist on type 'PrismaService'.
+src/modules/sync/sync.service.ts(98,23): error TS2339: Property 'auditLog' does not exist on type 'PrismaService'.
+src/modules/sync/sync.service.ts(133,36): error TS2339: Property 'syncBatch' does not exist on type 'PrismaService'.
+src/modules/sync/sync.service.ts(173,35): error TS2339: Property 'syncBatch' does not exist on type 'PrismaService'.
+src/modules/sync/sync.service.ts(204,40): error TS2339: Property 'syncBatch' does not exist on type 'PrismaService'.
+src/modules/sync/sync.service.ts(210,35): error TS2339: Property 'syncBatch' does not exist on type 'PrismaService'.
+src/modules/sync/sync.service.ts(244,36): error TS2339: Property 'syncCursor' does not exist on type 'PrismaService'.
+src/modules/sync/sync.service.ts(267,35): error TS2339: Property 'syncCursor' does not exist on type 'PrismaService'.
+src/modules/teacher-invitations/teacher-invitations.service.ts(11,29): error TS2307: Cannot find module '@yuzan/database' or its corresponding type declarations.
+src/modules/teacher-invitations/teacher-invitations.service.ts(21,39): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/teacher-invitations/teacher-invitations.service.ts(33,42): error TS2339: Property 'teacherInvitation' does not exist on type 'PrismaService'.
+src/modules/teacher-invitations/teacher-invitations.service.ts(53,43): error TS2339: Property 'teacherInvitation' does not exist on type 'PrismaService'.
+src/modules/teacher-invitations/teacher-invitations.service.ts(59,38): error TS7006: Parameter 'invitation' implicitly has an 'any' type.
+src/modules/teacher-invitations/teacher-invitations.service.ts(65,24): error TS2339: Property '$transaction' does not exist on type 'PrismaService'.
+src/modules/teacher-invitations/teacher-invitations.service.ts(65,44): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+src/modules/teacher-invitations/teacher-invitations.service.ts(152,42): error TS2339: Property 'teacherInvitation' does not exist on type 'PrismaService'.
+src/modules/teacher-invitations/teacher-invitations.service.ts(158,40): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/teacher-invitations/teacher-invitations.service.ts(171,47): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/teacher-invitations/teacher-invitations.service.ts(183,38): error TS2339: Property '$transaction' does not exist on type 'PrismaService'.
+src/modules/teacher-invitations/teacher-invitations.service.ts(183,58): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+src/modules/teacher-invitations/teacher-invitations.service.ts(262,40): error TS2339: Property 'teacherInvitation' does not exist on type 'PrismaService'.
+src/modules/teacher-invitations/teacher-invitations.service.ts(269,23): error TS2339: Property 'auditLog' does not exist on type 'PrismaService'.
+src/modules/teacher-tools/teacher-tools.service.ts(35,19): error TS2339: Property 'teacherDraft' does not exist on type 'PrismaService'.
+src/modules/teacher-tools/teacher-tools.service.ts(48,19): error TS2339: Property 'inviteCode' does not exist on type 'PrismaService'.
+src/modules/teacher-tools/teacher-tools.service.ts(66,19): error TS2339: Property 'teacherDraft' does not exist on type 'PrismaService'.
+src/modules/teacher-tools/teacher-tools.service.ts(83,33): error TS7006: Parameter 'g' implicitly has an 'any' type.
+src/modules/teacher-tools/teacher-tools.service.ts(93,33): error TS7006: Parameter 'g' implicitly has an 'any' type.
+src/modules/teacher-tools/teacher-tools.service.ts(103,33): error TS7006: Parameter 'g' implicitly has an 'any' type.
+src/modules/teacher-tools/teacher-tools.service.ts(113,33): error TS7006: Parameter 'g' implicitly has an 'any' type.
+src/modules/teacher-tools/teacher-tools.service.ts(127,39): error TS7006: Parameter 'd' implicitly has an 'any' type.
+src/modules/teacher-tools/teacher-tools.service.ts(160,38): error TS2339: Property 'teacherDraft' does not exist on type 'PrismaService'.
+src/modules/teacher-tools/teacher-tools.service.ts(179,24): error TS7006: Parameter 'd' implicitly has an 'any' type.
+src/modules/teacher-tools/teacher-tools.service.ts(204,37): error TS2339: Property 'teacherDraft' does not exist on type 'PrismaService'.
+src/modules/teacher-tools/teacher-tools.service.ts(212,44): error TS2307: Cannot find module '@yuzan/database' or its corresponding type declarations.
+src/modules/teacher-tools/teacher-tools.service.ts(234,40): error TS2339: Property 'inviteCode' does not exist on type 'PrismaService'.
+src/modules/teacher-tools/teacher-tools.service.ts(258,42): error TS2339: Property 'inviteCode' does not exist on type 'PrismaService'.
+src/modules/teacher-tools/teacher-tools.service.ts(332,23): error TS2339: Property 'teacherDraft' does not exist on type 'PrismaService'.
+src/modules/teacher/teacher.service.ts(5,24): error TS2307: Cannot find module '@yuzan/database' or its corresponding type declarations.
+src/modules/teacher/teacher.service.ts(37,50): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/teacher/teacher.service.ts(46,58): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/modules/teacher/teacher.service.ts(48,27): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/teacher/teacher.service.ts(58,54): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/modules/teacher/teacher.service.ts(85,21): error TS2339: Property 'user' does not exist on type 'PrismaService'.
+src/modules/teacher/teacher.service.ts(89,21): error TS2339: Property 'school' does not exist on type 'PrismaService'.
+src/modules/teacher/teacher.service.ts(93,21): error TS2339: Property 'courseVersion' does not exist on type 'PrismaService'.
+src/modules/teacher/teacher.service.ts(101,25): error TS2339: Property 'assignment' does not exist on type 'PrismaService'.
+src/modules/teacher/teacher.service.ts(104,25): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/teacher/teacher.service.ts(168,25): error TS2339: Property 'courseVersion' does not exist on type 'PrismaService'.
+src/modules/teacher/teacher.service.ts(178,12): error TS7006: Parameter 'course' implicitly has an 'any' type.
+src/modules/teacher/teacher.service.ts(187,23): error TS2339: Property 'assignment' does not exist on type 'PrismaService'.
+src/modules/teacher/teacher.service.ts(202,23): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/teacher/teacher.service.ts(228,47): error TS7006: Parameter 'assignment' implicitly has an 'any' type.
+src/modules/teacher/teacher.service.ts(253,29): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/teacher/teacher.service.ts(271,56): error TS7006: Parameter 'assignment' implicitly has an 'any' type.
+src/modules/teacher/teacher.service.ts(303,56): error TS7006: Parameter 'submission' implicitly has an 'any' type.
+src/modules/teacher/teacher.service.ts(322,50): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/teacher/teacher.service.ts(331,46): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/modules/teacher/teacher.service.ts(334,50): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/teacher/teacher.service.ts(349,13): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/modules/teacher/teacher.service.ts(351,46): error TS7006: Parameter 'p' implicitly has an 'any' type.
+src/modules/teacher/teacher.service.ts(370,16): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/modules/teacher/teacher.service.ts(371,14): error TS7006: Parameter 'a' implicitly has an 'any' type.
+src/modules/teacher/teacher.service.ts(371,17): error TS7006: Parameter 'b' implicitly has an 'any' type.
+src/modules/teacher/teacher.service.ts(390,52): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/teacher/teacher.service.ts(399,42): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/modules/teacher/teacher.service.ts(408,25): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/modules/teacher/teacher.service.ts(417,12): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/modules/teacher/teacher.service.ts(426,42): error TS2339: Property 'speechJob' does not exist on type 'PrismaService'.
+src/modules/teacher/teacher.service.ts(432,31): error TS2339: Property 'submission' does not exist on type 'PrismaService'.
+src/modules/teacher/teacher.service.ts(439,18): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/modules/teacher/teacher.service.ts(523,19): error TS2339: Property 'notification' does not exist on type 'PrismaService'.
+src/modules/teacher/teacher.service.ts(542,19): error TS2339: Property 'notification' does not exist on type 'PrismaService'.
+src/modules/teacher/teacher.service.ts(549,27): error TS7006: Parameter 'n' implicitly has an 'any' type.
+src/modules/teacher/teacher.service.ts(577,44): error TS2339: Property 'notification' does not exist on type 'PrismaService'.
+src/modules/teacher/teacher.service.ts(589,23): error TS2339: Property 'notification' does not exist on type 'PrismaService'.
+src/modules/tools/tools.service.ts(224,38): error TS2339: Property 'teacherDraft' does not exist on type 'PrismaService'.
+src/modules/tools/tools.service.ts(232,42): error TS2339: Property 'inviteCode' does not exist on type 'PrismaService'.
+src/modules/tools/tools.service.ts(253,27): error TS7006: Parameter 'd' implicitly has an 'any' type.
+src/modules/tools/tools.service.ts(330,38): error TS2339: Property 'teacherDraft' does not exist on type 'PrismaService'.
+src/modules/tools/tools.service.ts(345,26): error TS7006: Parameter 'd' implicitly has an 'any' type.
+src/modules/tools/tools.service.ts(370,37): error TS2339: Property 'teacherDraft' does not exist on type 'PrismaService'.
+src/modules/tools/tools.service.ts(415,40): error TS2339: Property 'inviteCode' does not exist on type 'PrismaService'.
+src/modules/tools/tools.service.ts(438,39): error TS2339: Property 'inviteCode' does not exist on type 'PrismaService'.
+src/modules/training/infra/prisma-training.repository.ts(31,35): error TS2339: Property 'trainingProgram' does not exist on type 'PrismaService'.
+src/modules/training/infra/prisma-training.repository.ts(42,36): error TS2339: Property 'trainingProgram' does not exist on type 'PrismaService'.
+src/modules/training/infra/prisma-training.repository.ts(62,35): error TS2339: Property 'trainingProgram' does not exist on type 'PrismaService'.
+src/modules/training/infra/prisma-training.repository.ts(95,38): error TS2339: Property 'trainingProgram' does not exist on type 'PrismaService'.
+src/modules/training/infra/prisma-training.repository.ts(116,35): error TS2339: Property 'trainingEnrollment' does not exist on type 'PrismaService'.
+src/modules/training/infra/prisma-training.repository.ts(144,35): error TS2339: Property 'trainingEnrollment' does not exist on type 'PrismaService'.
+src/modules/training/infra/prisma-training.repository.ts(169,38): error TS2339: Property 'trainingEnrollment' does not exist on type 'PrismaService'.
+src/modules/training/infra/prisma-training.repository.ts(187,36): error TS2339: Property 'trainingProgress' does not exist on type 'PrismaService'.
+src/modules/training/infra/prisma-training.repository.ts(195,42): error TS2339: Property 'trainingEnrollment' does not exist on type 'PrismaService'.
+src/modules/training/infra/prisma-training.repository.ts(199,38): error TS2339: Property 'trainingModule' does not exist on type 'PrismaService'.
+src/modules/training/infra/prisma-training.repository.ts(207,35): error TS2339: Property 'trainingProgress' does not exist on type 'PrismaService'.
+src/modules/training/infra/prisma-training.repository.ts(239,35): error TS2339: Property 'trainingExam' does not exist on type 'PrismaService'.
+src/modules/training/infra/prisma-training.repository.ts(249,36): error TS2339: Property 'trainingExam' does not exist on type 'PrismaService'.
+src/modules/training/infra/prisma-training.repository.ts(257,35): error TS2339: Property 'trainingExam' does not exist on type 'PrismaService'.
+src/modules/training/infra/prisma-training.repository.ts(266,38): error TS2339: Property 'trainingExam' does not exist on type 'PrismaService'.
+src/modules/training/infra/prisma-training.repository.ts(279,36): error TS2339: Property 'trainingExam' does not exist on type 'PrismaService'.
+src/modules/training/infra/prisma-training.repository.ts(283,35): error TS2339: Property 'trainingExamAttempt' does not exist on type 'PrismaService'.
+src/modules/training/infra/prisma-training.repository.ts(293,36): error TS2339: Property 'trainingEnrollment' does not exist on type 'PrismaService'.
+src/modules/translations/ports/prisma-translation.repository.ts(68,35): error TS2339: Property 'translationJob' does not exist on type 'PrismaService'.
+src/modules/translations/ports/prisma-translation.repository.ts(98,35): error TS2339: Property 'translationJob' does not exist on type 'PrismaService'.
+src/modules/translations/ports/prisma-translation.repository.ts(106,35): error TS2339: Property 'translationJob' does not exist on type 'PrismaService'.
+src/modules/translations/ports/prisma-translation.repository.ts(128,36): error TS2339: Property 'translationJob' does not exist on type 'PrismaService'.
+src/modules/translations/ports/prisma-translation.repository.ts(144,25): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/modules/translations/ports/prisma-translation.repository.ts(167,40): error TS2339: Property 'translationJob' does not exist on type 'PrismaService'.
+src/modules/translations/ports/prisma-translation.repository.ts(175,35): error TS2339: Property 'translationJob' does not exist on type 'PrismaService'.
+src/modules/translations/ports/prisma-translation.repository.ts(210,38): error TS2339: Property 'translationJob' does not exist on type 'PrismaService'.
+src/modules/translations/ports/prisma-translation.repository.ts(230,35): error TS2339: Property 'translationJob' does not exist on type 'PrismaService'.
+src/modules/translations/ports/prisma-translation.repository.ts(245,36): error TS2339: Property 'translationGlossary' does not exist on type 'PrismaService'.
+src/modules/translations/ports/prisma-translation.repository.ts(246,22): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/modules/translations/ports/prisma-translation.repository.ts(254,36): error TS2339: Property 'translationGlossary' does not exist on type 'PrismaService'.
+src/modules/translations/ports/prisma-translation.repository.ts(257,22): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/modules/volunteers/infra/prisma-volunteer.repository.ts(29,35): error TS2339: Property 'volunteerProfile' does not exist on type 'PrismaService'.
+src/modules/volunteers/infra/prisma-volunteer.repository.ts(39,35): error TS2339: Property 'volunteerProfile' does not exist on type 'PrismaService'.
+src/modules/volunteers/infra/prisma-volunteer.repository.ts(49,36): error TS2339: Property 'volunteerProfile' does not exist on type 'PrismaService'.
+src/modules/volunteers/infra/prisma-volunteer.repository.ts(61,25): error TS7006: Parameter 'row' implicitly has an 'any' type.
+src/modules/volunteers/infra/prisma-volunteer.repository.ts(78,35): error TS2339: Property 'volunteerProfile' does not exist on type 'PrismaService'.
+src/modules/volunteers/infra/prisma-volunteer.repository.ts(99,38): error TS2339: Property 'volunteerProfile' does not exist on type 'PrismaService'.
+src/modules/volunteers/infra/prisma-volunteer.repository.ts(120,36): error TS2339: Property 'volunteerServiceTask' does not exist on type 'PrismaService'.
+src/modules/volunteers/infra/prisma-volunteer.repository.ts(145,35): error TS2339: Property 'volunteerServiceTask' does not exist on type 'PrismaService'.
+src/modules/volunteers/infra/prisma-volunteer.repository.ts(156,38): error TS2339: Property 'volunteerServiceTask' does not exist on type 'PrismaService'.
+src/modules/volunteers/infra/prisma-volunteer.repository.ts(172,38): error TS2339: Property 'volunteerServiceTask' does not exist on type 'PrismaService'.
+src/modules/volunteers/infra/prisma-volunteer.repository.ts(186,35): error TS2339: Property 'volunteerIncident' does not exist on type 'PrismaService'.
+src/modules/volunteers/infra/prisma-volunteer.repository.ts(196,35): error TS2339: Property 'volunteerIncident' does not exist on type 'PrismaService'.
+src/modules/volunteers/infra/prisma-volunteer.repository.ts(211,36): error TS2339: Property 'volunteerIncident' does not exist on type 'PrismaService'.
+src/scripts/course-import.ts(7,24): error TS2307: Cannot find module '@yuzan/database' or its corresponding type declarations.
+src/scripts/course-import.ts(261,31): error TS2339: Property 'resource' does not exist on type 'PrismaService'.
+src/scripts/course-import.ts(265,29): error TS2339: Property 'resource' does not exist on type 'PrismaService'.
+src/scripts/course-import.ts(282,20): error TS2339: Property 'resource' does not exist on type 'PrismaService'.
+src/scripts/course-import.ts(293,20): error TS2339: Property 'resource' does not exist on type 'PrismaService'.
+src/scripts/course-import.ts(323,33): error TS2339: Property 'school' does not exist on type 'PrismaService'.
+src/scripts/course-import.ts(330,32): error TS2339: Property 'school' does not exist on type 'PrismaService'.
+src/scripts/course-import.ts(349,37): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/scripts/course-import.ts(365,37): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/scripts/course-import.ts(378,32): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/scripts/course-import.ts(392,35): error TS2339: Property 'membership' does not exist on type 'PrismaService'.
+src/scripts/course-import.ts(433,36): error TS2339: Property 'practiceDefinition' does not exist on type 'PrismaService'.
+src/scripts/course-import.ts(439,35): error TS2339: Property 'practiceDelivery' does not exist on type 'PrismaService'.
+src/scripts/course-import.ts(651,35): error TS2339: Property 'courseVersion' does not exist on type 'PrismaService'.
+src/scripts/course-import.ts(657,20): error TS2339: Property 'courseVersion' does not exist on type 'PrismaService'.
+src/scripts/course-import.ts(702,18): error TS2339: Property 'courseActivityPractice' does not exist on type 'PrismaService'.
+src/scripts/course-import.ts(716,45): error TS2339: Property 'assignment' does not exist on type 'PrismaService'.
+src/scripts/course-import.ts(727,18): error TS2339: Property 'assignment' does not exist on type 'PrismaService'.
+src/scripts/course-import.ts(749,18): error TS2339: Property 'assignmentTarget' does not exist on type 'PrismaService'.
+src/scripts/question-bank-apply.ts(94,34): error TS2339: Property 'school' does not exist on type 'PrismaService'.
+src/scripts/question-bank-apply.ts(107,33): error TS2339: Property 'school' does not exist on type 'PrismaService'.
+src/scripts/question-bank-apply.ts(113,34): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/scripts/question-bank-apply.ts(123,37): error TS2339: Property 'enrollment' does not exist on type 'PrismaService'.
+src/scripts/question-bank-apply.ts(129,12): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/scripts/question-bank-apply.ts(129,22): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/shared/database/prisma-json.ts(2,29): error TS2307: Cannot find module '@yuzan/database' or its corresponding type declarations.
+src/shared/database/prisma.service.ts(9,30): error TS2307: Cannot find module '@yuzan/database' or its corresponding type declarations.
+/home/tian/.devspace/worktrees/yuzan-workspace-t094/backend/api:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @yuzan/api@ typecheck: `tsc -p tsconfig.json --noEmit`
+Exit status 2

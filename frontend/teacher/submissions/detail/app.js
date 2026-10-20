@@ -2,6 +2,8 @@
   'use strict';
 
   const toast = document.getElementById('toast');
+  const playbackAudio = document.getElementById('submissionAudio');
+  const playbackStatus = document.getElementById('recordingStatus');
   let timer;
   const showToast = (msg) => {
     toast.textContent = msg;
@@ -28,15 +30,18 @@
   async function loadSubmissionDetail() {
     if (!submissionId) {
       showToast('缺少提交标识，无法加载');
+      setPlaybackStatus('提交标识缺失，无法查询录音。', 'error');
       return;
     }
     if (typeof YuzanApi === 'undefined' || !YuzanApi.getToken()) {
+      setPlaybackStatus('请先登录后查看录音。', 'authorization-error');
       showToast('请先登录');
       location.href = '/login';
       return;
     }
     schoolId = YuzanApi.getActiveSchoolId();
     if (!schoolId) {
+      setPlaybackStatus('请先选择学校后查看录音。', 'authorization-error');
       showToast('请先选择学校');
       location.href = '/select-school';
       return;
@@ -46,9 +51,74 @@
       const data = await YuzanApi.request(`/schools/${schoolId}/submissions/${submissionId}`);
       submissionData = data;
       applySubmissionDetail(data);
+      await loadSubmissionRecordingPlayback();
     } catch (err) {
       showToast(err.message || '加载提交详情失败');
       applyEmptyState();
+      showPlaybackFailure(err);
+    }
+  }
+
+  function setPlaybackStatus(message, state) {
+    playbackStatus.textContent = message;
+    playbackStatus.dataset.state = state;
+  }
+
+  function clearPlaybackSource() {
+    playbackAudio.pause();
+    playbackAudio.removeAttribute('src');
+    playbackAudio.hidden = true;
+    playbackAudio.load();
+  }
+
+  function showPlaybackFailure(err) {
+    clearPlaybackSource();
+    if (err?.status === 401 || err?.status === 403) {
+      setPlaybackStatus('无权查看或播放此提交的录音。', 'authorization-error');
+    } else if (err?.status === 404) {
+      setPlaybackStatus('当前提交没有可播放的录音。', 'no-recording');
+    } else {
+      setPlaybackStatus('录音暂时无法加载，请稍后重试。', 'load-error');
+    }
+  }
+
+  function isHttpMediaUrl(value) {
+    try {
+      const url = new URL(value, location.origin);
+      return url.protocol === 'http:' || url.protocol === 'https:';
+    } catch {
+      return false;
+    }
+  }
+
+  async function loadSubmissionRecordingPlayback() {
+    const section = document.getElementById('recordingSection');
+    section.style.display = '';
+    clearPlaybackSource();
+    setPlaybackStatus('正在检查此提交的录音权限…', 'loading');
+
+    try {
+      const path = `/schools/${encodeURIComponent(schoolId)}/submissions/${encodeURIComponent(submissionId)}/recording-playback`;
+      const evidence = await YuzanApi.request(path);
+      const downloadUrl = typeof evidence?.downloadUrl === 'string'
+        ? evidence.downloadUrl.trim()
+        : '';
+      if (!downloadUrl || !isHttpMediaUrl(downloadUrl)) {
+        setPlaybackStatus('当前提交没有可播放的录音。', 'no-recording');
+        return;
+      }
+
+      const assignmentTitle = submissionData?.assignmentTitle || submissionData?.title;
+      document.getElementById('recordingTitle').textContent = assignmentTitle || '朗读录音';
+      const durationMs = Number(evidence.durationMs);
+      document.getElementById('recordingDuration').textContent = Number.isFinite(durationMs) && durationMs > 0
+        ? `时长：${Math.floor(durationMs / 60000)}:${String(Math.floor(durationMs / 1000) % 60).padStart(2, '0')}`
+        : '时长：—';
+      playbackAudio.src = downloadUrl;
+      playbackAudio.hidden = false;
+      setPlaybackStatus('录音已授权。使用播放器控件开始播放。', 'ready');
+    } catch (err) {
+      showPlaybackFailure(err);
     }
   }
 
@@ -91,19 +161,6 @@
     // 书面答案
     const answer = data.writtenAnswer || data.answer || data.textResponse || '';
     document.getElementById('writtenAnswer').textContent = answer || '数据不足';
-
-    // 录音
-    const recordingUrl = data.recordingUrl || data.recording || '';
-    if (recordingUrl) {
-      const section = document.getElementById('recordingSection');
-      section.style.display = '';
-      const title = data.recordingTitle || assignmentTitle || '朗读录音';
-      document.getElementById('recordingTitle').textContent = title;
-      const duration = data.recordingDuration || data.duration || 0;
-      document.getElementById('recordingDuration').textContent = duration > 0
-        ? `${Math.floor(duration / 60)}:${String(duration % 60).padStart(2, '0')}`
-        : '—';
-    }
 
     // 自动评分
     const autoScores = data.autoScores || data.scores || data.machineScores || null;
@@ -227,12 +284,22 @@
     }
   });
 
-  // ── 播放按钮 ──
-  document.getElementById('playBtn').addEventListener('click', () => {
-    const btn = document.getElementById('playBtn');
-    btn.classList.toggle('playing');
-    btn.textContent = btn.classList.contains('playing') ? '❚❚' : '▶';
-    showToast(btn.classList.contains('playing') ? '开始播放录音' : '暂停播放录音');
+  // Playback status follows native media events; only "playing" confirms playback started.
+  playbackAudio.addEventListener('playing', () => {
+    setPlaybackStatus('正在播放录音。', 'playing');
+  });
+  playbackAudio.addEventListener('pause', () => {
+    if (playbackAudio.getAttribute('src') && playbackAudio.currentTime > 0 && !playbackAudio.ended) {
+      setPlaybackStatus('播放已暂停。', 'paused');
+    }
+  });
+  playbackAudio.addEventListener('ended', () => {
+    if (playbackAudio.getAttribute('src')) setPlaybackStatus('录音播放完成。', 'ended');
+  });
+  playbackAudio.addEventListener('error', () => {
+    if (!playbackAudio.getAttribute('src')) return;
+    clearPlaybackSource();
+    setPlaybackStatus('录音媒体加载失败，请稍后重试。', 'media-error');
   });
 
   // ── 侧栏不支持导航 ──

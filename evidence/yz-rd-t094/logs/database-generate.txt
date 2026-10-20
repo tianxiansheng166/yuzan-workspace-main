@@ -1,0 +1,9 @@
+
+> @yuzan/database@ generate /home/tian/.devspace/worktrees/yuzan-workspace-t094/infra/database
+> prisma generate
+
+Loaded Prisma config from prisma.config.ts.
+
+Prisma schema loaded from prisma/schema.prisma.
+
+✔ Generated Prisma Client (7.8.0) to ./generated/client in 523ms

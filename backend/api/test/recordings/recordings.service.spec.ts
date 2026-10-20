@@ -40,6 +40,7 @@ const SCHOOL_B = "school-b-0000-0000-000000000000";
 const STUDENT_ID = "student-000-0000-0000-000000000001";
 const ENROLLMENT_ID = "enroll-000-0000-0000-000000000001";
 const RECORDING_ID = "rec-00000-0000-0000-000000000001";
+const SUBMISSION_ID = "submission-000-0000-0000-000000000001";
 const ASSESSMENT_ITEM_ID = "item-0000-0000-0000-000000000001";
 
 function makeAuth(userId: string, roles: MembershipRole[], schoolId: string): AuthContext {
@@ -277,6 +278,44 @@ describe("RecordingsService", () => {
           partCount: 1,
         }),
       ).rejects.toThrow(RecordingForbiddenException);
+    });
+
+    it("rejects a supplied submission unless it belongs to this school and enrollment", async () => {
+      const repo = createFakeRecordingRepo();
+      const save = vi.spyOn(repo, "save");
+      const submissionFindFirst = vi.fn().mockResolvedValue(null);
+      const { service } = await buildService({
+        recordingRepo: repo,
+        prismaOverrides: {
+          submission: { findFirst: submissionFindFirst },
+        },
+      });
+      const input = {
+        schoolId: SCHOOL_A,
+        enrollmentId: ENROLLMENT_ID,
+        submissionId: SUBMISSION_ID,
+      };
+
+      await expect(
+        service.initRecording(studentAuthA, SCHOOL_A, {
+          ...input,
+          partCount: 1,
+        }),
+      ).rejects.toThrow(RecordingForbiddenException);
+      await expect(
+        service.initSimpleRecording(studentAuthA, SCHOOL_A, input),
+      ).rejects.toThrow(RecordingForbiddenException);
+
+      expect(submissionFindFirst).toHaveBeenCalledWith({
+        where: {
+          id: SUBMISSION_ID,
+          schoolId: SCHOOL_A,
+          enrollmentId: ENROLLMENT_ID,
+          deletedAt: null,
+        },
+        select: { id: true },
+      });
+      expect(save).not.toHaveBeenCalled();
     });
   });
 
@@ -563,6 +602,222 @@ describe("RecordingsService", () => {
         service.getRecordingEvidence(teacherAuthA, SCHOOL_A, RECORDING_ID),
       ).rejects.toThrow(RecordingForbiddenException);
       expect(downloadUrl).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("getSubmissionRecordingPlayback — exact submission binding", () => {
+    function playbackRecording(overrides: Partial<Recording> = {}) {
+      return makeRecording({
+        status: "READY",
+        submissionId: SUBMISSION_ID,
+        objectKey: "persisted/submission-audio.webm",
+        ...overrides,
+      });
+    }
+
+    function recordingsFor(items: readonly Recording[]) {
+      const repo = createFakeRecordingRepo();
+      const findBySubmissionId = vi.fn().mockResolvedValue(items);
+      repo.findBySubmissionId = findBySubmissionId;
+      return { repo, findBySubmissionId };
+    }
+
+    it("returns safe evidence for the teacher assigned to the same class", async () => {
+      const recording = playbackRecording({ durationMs: 3200 });
+      const { repo, findBySubmissionId } = recordingsFor([recording]);
+      const storage = createFakeStorage();
+      const generateDownloadUrl = vi.spyOn(storage, "generateDownloadUrl");
+      const { service } = await buildService({ recordingRepo: repo, storage });
+
+      const result = await service.getSubmissionRecordingPlayback(
+        teacherAuthA,
+        SCHOOL_A,
+        SUBMISSION_ID,
+        ENROLLMENT_ID,
+      );
+
+      expect(findBySubmissionId).toHaveBeenCalledWith(SCHOOL_A, SUBMISSION_ID);
+      expect(generateDownloadUrl).toHaveBeenCalledOnce();
+      expect(generateDownloadUrl).toHaveBeenCalledWith(recording.objectKey);
+      expect(result).toMatchObject({
+        id: RECORDING_ID,
+        durationMs: 3200,
+        mimeType: "audio/webm",
+        downloadUrl: `https://storage.example.com/download/${recording.objectKey}?sig=fake`,
+        createdAt: recording.createdAt,
+        updatedAt: recording.updatedAt,
+      });
+      expect(result).not.toHaveProperty("objectKey");
+    });
+
+    it("allows the school-admin path after the target enrollment is verified", async () => {
+      const adminAuth = makeAuth("admin-1", [MembershipRole.SCHOOL_ADMIN], SCHOOL_A);
+      const storage = createFakeStorage();
+      const generateDownloadUrl = vi.spyOn(storage, "generateDownloadUrl");
+      const { service } = await buildService({
+        recordingRepo: recordingsFor([playbackRecording()]).repo,
+        storage,
+      });
+
+      const result = await service.getSubmissionRecordingPlayback(
+        adminAuth,
+        SCHOOL_A,
+        SUBMISSION_ID,
+        ENROLLMENT_ID,
+      );
+
+      expect(result.id).toBe(RECORDING_ID);
+      expect(generateDownloadUrl).toHaveBeenCalledOnce();
+    });
+
+    it("rejects a teacher outside the enrollment class before signing", async () => {
+      const storage = createFakeStorage();
+      const generateDownloadUrl = vi.spyOn(storage, "generateDownloadUrl");
+      const { service } = await buildService({
+        recordingRepo: recordingsFor([playbackRecording()]).repo,
+        storage,
+        prismaOverrides: {
+          enrollment: {
+            findFirst: ({ where }: EnrollmentLookupArgs) => Promise.resolve(
+              where.role === "TEACHER"
+                ? null
+                : {
+                    id: ENROLLMENT_ID,
+                    userId: STUDENT_ID,
+                    classId: "class-0000-0000-0000-000000000001",
+                  },
+            ),
+          },
+        },
+      });
+
+      await expect(
+        service.getSubmissionRecordingPlayback(
+          teacherAuthA,
+          SCHOOL_A,
+          SUBMISSION_ID,
+          ENROLLMENT_ID,
+        ),
+      ).rejects.toThrow(RecordingForbiddenException);
+      expect(generateDownloadUrl).not.toHaveBeenCalled();
+    });
+
+    it("rejects a cross-school request before reading or signing", async () => {
+      const { repo, findBySubmissionId } = recordingsFor([playbackRecording()]);
+      const storage = createFakeStorage();
+      const generateDownloadUrl = vi.spyOn(storage, "generateDownloadUrl");
+      const { service } = await buildService({ recordingRepo: repo, storage });
+
+      await expect(
+        service.getSubmissionRecordingPlayback(
+          studentAuthB,
+          SCHOOL_A,
+          SUBMISSION_ID,
+          ENROLLMENT_ID,
+        ),
+      ).rejects.toThrow(RecordingForbiddenException);
+      expect(findBySubmissionId).not.toHaveBeenCalled();
+      expect(generateDownloadUrl).not.toHaveBeenCalled();
+    });
+
+    it.each([
+      ["another enrollment", { enrollmentId: "other-enrollment" }],
+      ["another school", { schoolId: SCHOOL_B }],
+      ["another submission relation", { submissionId: "other-submission" }],
+    ])("rejects a recording associated with %s before signing", async (_label, overrides) => {
+      const storage = createFakeStorage();
+      const generateDownloadUrl = vi.spyOn(storage, "generateDownloadUrl");
+      const { service } = await buildService({
+        recordingRepo: recordingsFor([playbackRecording(overrides)]).repo,
+        storage,
+      });
+
+      await expect(
+        service.getSubmissionRecordingPlayback(
+          teacherAuthA,
+          SCHOOL_A,
+          SUBMISSION_ID,
+          ENROLLMENT_ID,
+        ),
+      ).rejects.toThrow(RecordingForbiddenException);
+      expect(generateDownloadUrl).not.toHaveBeenCalled();
+    });
+
+    it("rejects a missing recording without signing", async () => {
+      const storage = createFakeStorage();
+      const generateDownloadUrl = vi.spyOn(storage, "generateDownloadUrl");
+      const { service } = await buildService({
+        recordingRepo: recordingsFor([]).repo,
+        storage,
+      });
+
+      await expect(
+        service.getSubmissionRecordingPlayback(
+          teacherAuthA,
+          SCHOOL_A,
+          SUBMISSION_ID,
+          ENROLLMENT_ID,
+        ),
+      ).rejects.toThrow(RecordingNotFoundException);
+      expect(generateDownloadUrl).not.toHaveBeenCalled();
+    });
+
+    it.each([
+      ["unavailable status", { status: "INITIALIZED" as const }],
+      ["missing persisted object key", { objectKey: undefined }],
+      ["empty persisted object key", { objectKey: "  " }],
+    ])("rejects %s without signing", async (_label, overrides) => {
+      const storage = createFakeStorage();
+      const generateDownloadUrl = vi.spyOn(storage, "generateDownloadUrl");
+      const { service } = await buildService({
+        recordingRepo: recordingsFor([playbackRecording(overrides)]).repo,
+        storage,
+      });
+
+      await expect(
+        service.getSubmissionRecordingPlayback(
+          teacherAuthA,
+          SCHOOL_A,
+          SUBMISSION_ID,
+          ENROLLMENT_ID,
+        ),
+      ).rejects.toThrow(RecordingStatusException);
+      expect(generateDownloadUrl).not.toHaveBeenCalled();
+    });
+
+    it("selects the newest persisted recording, with ID as a stable tie-breaker", async () => {
+      const older = playbackRecording({
+        id: "rec-older",
+        objectKey: "persisted/older.webm",
+        createdAt: new Date(now.getTime() + 1000),
+      });
+      const newest = playbackRecording({
+        id: "rec-newer",
+        objectKey: "persisted/newer.webm",
+        createdAt: new Date(now.getTime() + 2000),
+      });
+      const tieWinner = playbackRecording({
+        id: "rec-z-tie",
+        objectKey: "persisted/tie-winner.webm",
+        createdAt: new Date(now.getTime() + 2000),
+      });
+      const storage = createFakeStorage();
+      const generateDownloadUrl = vi.spyOn(storage, "generateDownloadUrl");
+      const { service } = await buildService({
+        recordingRepo: recordingsFor([older, newest, tieWinner]).repo,
+        storage,
+      });
+
+      const result = await service.getSubmissionRecordingPlayback(
+        teacherAuthA,
+        SCHOOL_A,
+        SUBMISSION_ID,
+        ENROLLMENT_ID,
+      );
+
+      expect(result.id).toBe("rec-z-tie");
+      expect(generateDownloadUrl).toHaveBeenCalledOnce();
+      expect(generateDownloadUrl).toHaveBeenCalledWith("persisted/tie-winner.webm");
     });
   });
 

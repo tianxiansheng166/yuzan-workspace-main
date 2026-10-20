@@ -21,9 +21,11 @@
 .header-copy h1{margin:0 0 8px;font-size:24px;font-family:STKaiti,KaiTi,serif}
 .header-copy p{margin:4px 0;font-size:14px;color:#535a60}
 .answer-content{font-size:14px;line-height:1.8;color:var(--text);white-space:pre-wrap;min-height:60px}
-.recording-player{display:flex;align-items:center;gap:16px;padding:12px 0}
-.play-btn{width:44px;height:44px;border:1px solid #e2d6c9;border-radius:50%;background:#fff;color:#cba579;font-size:18px;transition:.15s ease}.play-btn:hover{background:#faf7f3}
+.recording-player{display:grid;gap:12px;padding:8px 0 4px}
 .recording-info{display:flex;flex-direction:column;gap:4px}.recording-info strong{font-size:15px}.recording-info span{font-size:13px;color:var(--muted)}
+.recording-player audio{display:block;width:100%;min-height:44px}
+.recording-player audio[hidden]{display:none}
+.recording-status{margin:8px 0 0;color:var(--muted);font-size:14px;line-height:1.6}.recording-status[data-state="authorization-error"],.recording-status[data-state="media-error"],.recording-status[data-state="load-error"],.recording-status[data-state="error"]{color:#a51d24}
 .score-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
 .score-item{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px;border:1px solid #f0ebe4;border-radius:10px;background:#fefdfb}
 .score-item .label{font-size:13px;color:var(--muted)}

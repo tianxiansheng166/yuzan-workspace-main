@@ -1,0 +1,221 @@
+
+> @yuzan/api@ test /home/tian/.devspace/worktrees/yuzan-workspace-t094/backend/api
+> vitest run --passWithNoTests --pool=forks --poolOptions.forks.singleFork -- test/recordings/recordings.service.spec.ts test/modules/submissions/submission-recording-playback.controller.spec.ts
+
+
+ RUN  v3.2.7 /home/tian/.devspace/worktrees/yuzan-workspace-t094/backend/api
+
+ ✓ test/modules/cooperation/cooperation.service.spec.ts (72 tests) 12ms
+ ✓ test/modules/training/training.service.spec.ts (58 tests) 12ms
+ ✓ test/modules/community/community.service.spec.ts (92 tests) 15ms
+[Nest] 2425792  - 10/21/2026, 12:03:10 AM     LOG [TranslationsService] Creating translation job for user=teacher-1 school=school-1 hash=642a22c4...
+[Nest] 2425792  - 10/21/2026, 12:03:10 AM     LOG [TranslationsService] Creating translation job for user=student-1 school=school-1 hash=fe96a492...
+[Nest] 2425792  - 10/21/2026, 12:03:10 AM     LOG [TranslationsService] Creating translation job for user=teacher-1 school=school-1 hash=c526c622...
+[Nest] 2425792  - 10/21/2026, 12:03:10 AM     LOG [TranslationsService] Creating translation job for user=teacher-1 school=school-1 hash=486a2d2a...
+[Nest] 2425792  - 10/21/2026, 12:03:10 AM     LOG [TranslationsService] Creating translation job for user=teacher-1 school=school-1 hash=9f86d081...
+[Nest] 2425792  - 10/21/2026, 12:03:10 AM     LOG [TranslationsService] Creating translation job for user=teacher-1 school=school-1 hash=9f86d081...
+[Nest] 2425792  - 10/21/2026, 12:03:10 AM    WARN [TranslationsService] Translation job job-1 failed: provider not configured
+[Nest] 2425792  - 10/21/2026, 12:03:10 AM     LOG [TranslationsService] Creating translation job for user=platform-admin-1 school=school-1 hash=0ccbe3ba...
+ ✓ test/modules/translations/translations.service.spec.ts (45 tests) 18ms
+ ✓ test/student-courses/student-courses.service.spec.ts (32 tests) 26ms
+ ✓ test/curriculum/curriculum.service.spec.ts (26 tests) 13ms
+ ✓ test/assessment/practice.service.spec.ts (25 tests) 13ms
+ ✓ test/modules/support-pairings/support-pairings.service.spec.ts (42 tests) 7ms
+ ✓ test/contracts/p0-golden-flow.contract.spec.ts (38 tests) 7ms
+ ✓ test/teacher-invitations/teacher-invitations.service.spec.ts (11 tests) 7ms
+ ✓ test/modules/volunteers/volunteers.service.spec.ts (22 tests) 5ms
+ ✓ test/curriculum/publishing.validator.spec.ts (13 tests) 3ms
+stdout | test/organizations/organizations.controller.spec.ts > OrganizationsController > security guards > rejects unknown role via AuthenticationGuard
+{"type":"SECURITY","requestId":"req-1","code":"UNKNOWN_ROLE","method":"GET","path":"/schools/school-a","event":"AUTHORIZATION_DENIED"}
+
+stdout | test/organizations/organizations.controller.spec.ts > OrganizationsController > security guards > rejects client-forged schoolId via TenantAuthorizationGuard
+{"type":"SECURITY","requestId":"req-1","code":"FORBIDDEN_TENANT","schoolId":"school-a","method":"GET","path":"/schools/school-b","userId":"teacher-1","event":"AUTHORIZATION_DENIED"}
+
+stdout | test/organizations/organizations.controller.spec.ts > OrganizationsController > security guards > rejects suspended membership
+{"type":"SECURITY","requestId":"req-1","code":"UNAUTHENTICATED","method":"GET","path":"/schools/school-a","event":"AUTHORIZATION_DENIED"}
+
+ ✓ test/organizations/organizations.controller.spec.ts (11 tests) 25ms
+ ✓ test/assessment/question-bank-diagnosis.spec.ts (11 tests) 6ms
+ ✓ test/assessment/student-today-decision.spec.ts (9 tests) 4ms
+ ✓ test/speech-job/speech-result.policy.spec.ts (10 tests) 3ms
+ ✓ test/assessment/question-bank.security.spec.ts (2 tests) 1ms
+ ✓ test/organizations/organizations.service.spec.ts (7 tests) 5ms
+ ✓ test/modules/volunteers/volunteer-state-machine.spec.ts (25 tests) 1ms
+ ✓ test/offline/offline.service.spec.ts (5 tests) 4ms
+ ✓ test/assessment/question-bank-runtime-import.service.spec.ts (2 tests) 1ms
+ ✓ test/modules/assignments/assignments.policy.spec.ts (11 tests) 2ms
+ ✓ test/assessment/question-bank-diagnosis.security.spec.ts (3 tests) 1ms
+ ✓ test/curriculum/curriculum.policy.spec.ts (6 tests) 1ms
+ ✓ test/modules/submissions/submissions.policy.spec.ts (12 tests) 1ms
+ ✓ test/modules/feedback/feedback.policy.spec.ts (12 tests) 1ms
+ ✓ test/modules/submissions/submission.state-machine.spec.ts (35 tests) 1ms
+ ✓ test/modules/assignments/assignment.state-machine.spec.ts (34 tests) 1ms
+ ✓ test/modules/admin/assessment-link.controller.spec.ts (2 tests) 2ms
+ ✓ test/modules/admin/invite-redeem.controller.spec.ts (2 tests) 1ms
+ ✓ test/auth/identity.controller.spec.ts (9 tests) 1ms
+ ✓ test/volunteer-persistence-tenant.spec.ts (2 tests) 1ms
+ ↓ test/bootstrap/startup.spec.ts (3 tests | 3 skipped)
+ ✓ test/modules/learning/learning.policy.spec.ts (7 tests) 1ms
+ ✓ test/modules/assignments/prisma-assignment.repository.spec.ts (1 test) 1ms
+ ✓ test/bootstrap/environment.spec.ts (3 tests) 1ms
+ ✓ test/reporting/error-sanitization.spec.ts (3 tests) 1ms
+ ✓ test/operations/operations.service.spec.ts (4 tests) 0ms
+ ✓ test/identity/prisma-adapters.spec.ts (2 tests) 122ms
+ ✓ test/modules/admin/plans-stub.controller.spec.ts (1 test) 0ms
+ ✓ test/modules/submissions/list-submissions-query.dto.spec.ts (1 test) 0ms
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 44 ⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/ai-lesson-planning/ai-lesson-planning.spec.ts [ test/ai-lesson-planning/ai-lesson-planning.spec.ts ]
+ FAIL  test/auth/identity.service.spec.ts [ test/auth/identity.service.spec.ts ]
+ FAIL  test/auth/session-auth-context.source.spec.ts [ test/auth/session-auth-context.source.spec.ts ]
+ FAIL  test/assessment/assessment-review.queue.spec.ts [ test/assessment/assessment-review.queue.spec.ts ]
+ FAIL  test/assessment/assessment-review.service.spec.ts [ test/assessment/assessment-review.service.spec.ts ]
+ FAIL  test/assessment/assessment.service.spec.ts [ test/assessment/assessment.service.spec.ts ]
+ FAIL  test/assessment/practice.controller.security.spec.ts [ test/assessment/practice.controller.security.spec.ts ]
+ FAIL  test/assessment/question-bank-assessment-scoring.spec.ts [ test/assessment/question-bank-assessment-scoring.spec.ts ]
+ FAIL  test/assessment/question-bank-deterministic-scoring.service.spec.ts [ test/assessment/question-bank-deterministic-scoring.service.spec.ts ]
+ FAIL  test/assessment/question-bank-progress.service.spec.ts [ test/assessment/question-bank-progress.service.spec.ts ]
+ FAIL  test/assessment/remediation.service.spec.ts [ test/assessment/remediation.service.spec.ts ]
+ FAIL  test/assessment/student-dashboard.today.service.spec.ts [ test/assessment/student-dashboard.today.service.spec.ts ]
+ FAIL  test/assessment/teacher-question-bank-diagnostic.service.spec.ts [ test/assessment/teacher-question-bank-diagnostic.service.spec.ts ]
+ FAIL  test/recordings/recordings.service.spec.ts [ test/recordings/recordings.service.spec.ts ]
+ FAIL  test/root/app-composition.spec.ts [ test/root/app-composition.spec.ts ]
+ FAIL  test/speech-job/speech-job.result-policy.spec.ts [ test/speech-job/speech-job.result-policy.spec.ts ]
+ FAIL  test/speech-job/speech-job.service.spec.ts [ test/speech-job/speech-job.service.spec.ts ]
+ FAIL  test/integration/identity/prisma-identity.repository.spec.ts [ test/integration/identity/prisma-identity.repository.spec.ts ]
+ FAIL  test/modules/admin/audit-stub.controller.spec.ts [ test/modules/admin/audit-stub.controller.spec.ts ]
+ FAIL  test/modules/assignments/assignments.service.spec.ts [ test/modules/assignments/assignments.service.spec.ts ]
+ FAIL  test/modules/assignments/publishing.spec.ts [ test/modules/assignments/publishing.spec.ts ]
+ FAIL  test/modules/feedback/feedback.service.spec.ts [ test/modules/feedback/feedback.service.spec.ts ]
+ FAIL  test/modules/learning/learning.service.spec.ts [ test/modules/learning/learning.service.spec.ts ]
+ FAIL  test/modules/pilot/pilot-health.spec.ts [ test/modules/pilot/pilot-health.spec.ts ]
+ FAIL  test/modules/pilot/pilot-observability.service.spec.ts [ test/modules/pilot/pilot-observability.service.spec.ts ]
+ FAIL  test/modules/submissions/submission-recording-playback.controller.spec.ts [ test/modules/submissions/submission-recording-playback.controller.spec.ts ]
+ FAIL  test/modules/submissions/submissions.service.spec.ts [ test/modules/submissions/submissions.service.spec.ts ]
+ FAIL  test/modules/tools/tools.service.spec.ts [ test/modules/tools/tools.service.spec.ts ]
+Error: Failed to resolve entry for package "@yuzan/database". The package may have incorrect main/module/exports specified in its package.json.
+  Plugin: vite:import-analysis
+  File: /home/tian/.devspace/worktrees/yuzan-workspace-t094/backend/api/src/shared/database/prisma.service.ts:9:29
+  14 |  } from "@nestjs/common";
+  15 |  import { PrismaPg } from "@prisma/adapter-pg";
+  16 |  import { PrismaClient } from "@yuzan/database";
+     |                                ^
+  17 |  import { Pool } from "pg";
+  18 |  import {
+ ❯ packageEntryFailure ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:32896:32
+ ❯ resolvePackageEntry ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:32893:2
+ ❯ tryNodeResolve ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:32796:70
+ ❯ ResolveIdContext.handler ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:32635:16
+ ❯ EnvironmentPluginContainer.resolveId ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:28797:56
+ ❯ TransformPluginContext.resolve ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:29009:13
+ ❯ normalizeUrl ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:27191:22
+ ❯ ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:27257:32
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/44]⎯
+
+ FAIL  test/assessment/qb015f.teacher-assignment.runtime.integration.spec.ts [ test/assessment/qb015f.teacher-assignment.runtime.integration.spec.ts ]
+ FAIL  test/assessment/question-bank.runtime.integration.spec.ts [ test/assessment/question-bank.runtime.integration.spec.ts ]
+ FAIL  test/classes/classes.supplementary-practice.spec.ts [ test/classes/classes.supplementary-practice.spec.ts ]
+ FAIL  test/database/database-runtime.integration.spec.ts [ test/database/database-runtime.integration.spec.ts ]
+ FAIL  test/organizations/classes.controller.spec.ts [ test/organizations/classes.controller.spec.ts ]
+ FAIL  test/organizations/classes.teacher-scope.spec.ts [ test/organizations/classes.teacher-scope.spec.ts ]
+ FAIL  test/pilot/pilot.runtime.integration.spec.ts [ test/pilot/pilot.runtime.integration.spec.ts ]
+ FAIL  test/modules/admin/admin-stub.controller.spec.ts [ test/modules/admin/admin-stub.controller.spec.ts ]
+Error: Failed to resolve entry for package "@yuzan/database". The package may have incorrect main/module/exports specified in its package.json.
+  Plugin: vite:import-analysis
+  File: /home/tian/.devspace/worktrees/yuzan-workspace-t094/backend/api/test/assessment/qb015f.teacher-assignment.runtime.integration.spec.ts:5:29
+  3  |  import { Pool } from "pg";
+  4  |  import { PrismaPg } from "@prisma/adapter-pg";
+  5  |  import { PrismaClient } from "@yuzan/database";
+     |                                ^
+  6  |  import { ConfigService } from "@nestjs/config";
+  7  |  import { AssessmentService } from "../../src/modules/assessment/assessment.service.js";
+ ❯ packageEntryFailure ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:32896:32
+ ❯ resolvePackageEntry ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:32893:2
+ ❯ tryNodeResolve ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:32796:70
+ ❯ ResolveIdContext.handler ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:32635:16
+ ❯ EnvironmentPluginContainer.resolveId ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:28797:56
+ ❯ TransformPluginContext.resolve ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:29009:13
+ ❯ normalizeUrl ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:27191:22
+ ❯ ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:27257:32
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/44]⎯
+
+ FAIL  test/assessment/question-bank-deterministic.integration.spec.ts [ test/assessment/question-bank-deterministic.integration.spec.ts ]
+ FAIL  test/assessment/question-bank-progress.runtime.integration.spec.ts [ test/assessment/question-bank-progress.runtime.integration.spec.ts ]
+ FAIL  test/assessment/remediation.runtime.integration.spec.ts [ test/assessment/remediation.runtime.integration.spec.ts ]
+ FAIL  test/teacher/teacher-dashboard.service.spec.ts [ test/teacher/teacher-dashboard.service.spec.ts ]
+Error: Failed to resolve entry for package "@yuzan/database". The package may have incorrect main/module/exports specified in its package.json.
+  Plugin: vite:import-analysis
+  File: /home/tian/.devspace/worktrees/yuzan-workspace-t094/backend/api/test/assessment/question-bank-deterministic.integration.spec.ts:4:29
+  2  |  import { Pool } from "pg";
+  3  |  import { PrismaPg } from "@prisma/adapter-pg";
+  4  |  import { PrismaClient } from "@yuzan/database";
+     |                                ^
+  5  |  import { QuestionBankDeterministicScoringService } from "../../src/modules/assessment/question-bank-deterministic-sco...
+  6  |  const databaseUrl = process.env.QB_RUNTIME_DATABASE_URL ?? process.env.DATABASE_URL;
+ ❯ packageEntryFailure ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:32896:32
+ ❯ resolvePackageEntry ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:32893:2
+ ❯ tryNodeResolve ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:32796:70
+ ❯ ResolveIdContext.handler ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:32635:16
+ ❯ EnvironmentPluginContainer.resolveId ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:28797:56
+ ❯ TransformPluginContext.resolve ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:29009:13
+ ❯ normalizeUrl ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:27191:22
+ ❯ ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:27257:32
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/44]⎯
+
+ FAIL  test/curriculum/curriculum.controller.spec.ts [ test/curriculum/curriculum.controller.spec.ts ]
+ FAIL  test/integration/curriculum/prisma-course-version.repository.spec.ts [ test/integration/curriculum/prisma-course-version.repository.spec.ts ]
+ FAIL  test/modules/pilot/pilot-feedback.service.spec.ts [ test/modules/pilot/pilot-feedback.service.spec.ts ]
+Error: Failed to resolve entry for package "@yuzan/database". The package may have incorrect main/module/exports specified in its package.json.
+  Plugin: vite:import-analysis
+  File: /home/tian/.devspace/worktrees/yuzan-workspace-t094/backend/api/src/modules/curriculum/ports/prisma-course-version.repository.ts:2:23
+  10 |  };
+  11 |  import { Injectable } from "@nestjs/common";
+  12 |  import { Prisma } from "@yuzan/database";
+     |                          ^
+  13 |  import {
+  14 |    CurriculumConflictException,
+ ❯ packageEntryFailure ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:32896:32
+ ❯ resolvePackageEntry ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:32893:2
+ ❯ tryNodeResolve ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:32796:70
+ ❯ ResolveIdContext.handler ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:32635:16
+ ❯ EnvironmentPluginContainer.resolveId ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:28797:56
+ ❯ TransformPluginContext.resolve ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:29009:13
+ ❯ normalizeUrl ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:27191:22
+ ❯ ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:27257:32
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/44]⎯
+
+ FAIL  test/reporting/reporting.service.spec.ts [ test/reporting/reporting.service.spec.ts ]
+Error: Failed to resolve entry for package "@yuzan/database". The package may have incorrect main/module/exports specified in its package.json.
+  Plugin: vite:import-analysis
+  File: /home/tian/.devspace/worktrees/yuzan-workspace-t094/backend/api/src/modules/reporting/reporting.service.ts:26:23
+  25 |  } from "./dto/report-response.js";
+  26 |  import { PrismaService } from "../../shared/database/prisma.service.js";
+  27 |  import { Prisma } from "@yuzan/database";
+     |                          ^
+  28 |  import { MembershipRole } from "../../common/security/membership-role.js";
+  29 |  const ERROR_TYPE_LABEL_MAP = {
+ ❯ packageEntryFailure ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:32896:32
+ ❯ resolvePackageEntry ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:32893:2
+ ❯ tryNodeResolve ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:32796:70
+ ❯ ResolveIdContext.handler ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:32635:16
+ ❯ EnvironmentPluginContainer.resolveId ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:28797:56
+ ❯ TransformPluginContext.resolve ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:29009:13
+ ❯ normalizeUrl ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:27191:22
+ ❯ ../../node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:27257:32
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/44]⎯
+
+
+ Test Files  44 failed | 40 passed | 1 skipped (85)
+      Tests  708 passed | 3 skipped (711)
+   Start at  00:03:09
+   Duration  3.58s (transform 1.21s, setup 0ms, collect 1.65s, tests 328ms, environment 0ms, prepare 62ms)
+
+/home/tian/.devspace/worktrees/yuzan-workspace-t094/backend/api:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @yuzan/api@ test: `vitest run --passWithNoTests --pool=forks --poolOptions.forks.singleFork -- test/recordings/recordings.service.spec.ts test/modules/submissions/submission-recording-playback.controller.spec.ts`
+Exit status 1

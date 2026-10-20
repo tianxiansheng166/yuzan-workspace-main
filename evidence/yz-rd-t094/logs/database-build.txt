@@ -1,0 +1,3 @@
+
+> @yuzan/database@ build /home/tian/.devspace/worktrees/yuzan-workspace-t094/infra/database
+> tsc -p tsconfig.json

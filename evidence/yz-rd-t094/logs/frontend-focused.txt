@@ -1,0 +1,18 @@
+✔ loads playback only from the dynamic school and submission scoped response (2.649315ms)
+▶ does not use legacy recordingUrl or invalid server playback URLs
+  ✔ rejects  (0.721805ms)
+  ✔ rejects     (0.629538ms)
+  ✔ rejects javascript:alert(1) (1.431817ms)
+  ✔ rejects undefined (0.613894ms)
+✔ does not use legacy recordingUrl or invalid server playback URLs (4.017624ms)
+✔ shows an accessible authorization state and clears any previous source (0.722613ms)
+✔ native playback events report playback and media failure clears the source (0.682982ms)
+✔ renders native audio controls and a live status for assistive technology (0.190981ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 71.581413

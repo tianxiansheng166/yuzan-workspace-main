@@ -65,6 +65,12 @@ export class RecordingsService {
       throw new RecordingForbiddenException();
     }
 
+    await this.validateSubmissionBinding(
+      schoolId,
+      input.enrollmentId,
+      input.submissionId,
+    );
+
     // Idempotent: if a recording with this idempotencyKey already exists,
     // return the existing one with upload URLs
     if (input.idempotencyKey) {
@@ -73,6 +79,12 @@ export class RecordingsService {
         input.idempotencyKey,
       );
       if (existing) {
+        if (
+          existing.schoolId !== schoolId ||
+          existing.submissionId !== input.submissionId
+        ) {
+          throw new RecordingForbiddenException();
+        }
         const uploadUrls = await this.generateUploadUrls(
           existing.id,
           existing.partCount,
@@ -120,6 +132,12 @@ export class RecordingsService {
       throw new RecordingForbiddenException();
     }
 
+    await this.validateSubmissionBinding(
+      schoolId,
+      input.enrollmentId,
+      input.submissionId,
+    );
+
     // Idempotent: if a recording with this idempotencyKey already exists,
     // return the existing one with upload URL
     if (input.idempotencyKey) {
@@ -128,6 +146,12 @@ export class RecordingsService {
         input.idempotencyKey,
       );
       if (existing) {
+        if (
+          existing.schoolId !== schoolId ||
+          existing.submissionId !== input.submissionId
+        ) {
+          throw new RecordingForbiddenException();
+        }
         const objectKey = `recordings/${existing.id}/full`;
         const uploadUrl = await this.storage.generateUploadUrl(
           objectKey,
@@ -598,6 +622,90 @@ export class RecordingsService {
     const downloadUrl = await this.storage.generateDownloadUrl(objectKey);
 
     return toRecordingEvidenceResponse(recording, downloadUrl.url);
+  }
+
+  async getSubmissionRecordingPlayback(
+    auth: AuthContext,
+    schoolId: string,
+    submissionId: string,
+    enrollmentId: string,
+  ) {
+    if (!this.policy.canViewEvidence(auth, schoolId)) {
+      throw new RecordingForbiddenException();
+    }
+
+    // The caller obtains this enrollmentId only from the authorized submission
+    // detail lookup. Recheck its active school/class scope before signing.
+    await this.verifyEnrollmentOwnership(auth, schoolId, enrollmentId);
+
+    const recordings = await this.recordingRepo.findBySubmissionId(
+      schoolId,
+      submissionId,
+    );
+    if (recordings.length === 0) {
+      throw new RecordingNotFoundException("该提交没有关联录音");
+    }
+
+    if (
+      recordings.some(
+        (recording) =>
+          recording.schoolId !== schoolId ||
+          recording.submissionId !== submissionId ||
+          recording.enrollmentId !== enrollmentId,
+      )
+    ) {
+      throw new RecordingForbiddenException();
+    }
+
+    // Always select the newest persisted recording. An unavailable newest
+    // attempt fails closed instead of silently replaying an older attempt.
+    const selected = [...recordings].sort(
+      (left, right) =>
+        right.createdAt.getTime() - left.createdAt.getTime() ||
+        right.id.localeCompare(left.id),
+    )[0];
+    if (!selected) {
+      throw new RecordingNotFoundException("该提交没有关联录音");
+    }
+    if (
+      selected.status !== "COMPLETE" &&
+      selected.status !== "PROCESSING" &&
+      selected.status !== "READY"
+    ) {
+      throw new RecordingStatusException(
+        `当前状态 ${selected.status} 不允许播放`,
+      );
+    }
+
+    if (typeof selected.objectKey !== "string" || !selected.objectKey.trim()) {
+      throw new RecordingStatusException("录音文件尚未就绪，无法播放");
+    }
+
+    const downloadUrl = await this.storage.generateDownloadUrl(
+      selected.objectKey,
+    );
+    return toRecordingEvidenceResponse(selected, downloadUrl.url);
+  }
+
+  private async validateSubmissionBinding(
+    schoolId: string,
+    enrollmentId: string,
+    submissionId: string | undefined,
+  ): Promise<void> {
+    if (!submissionId) return;
+
+    const submission = await this.prisma.submission.findFirst({
+      where: {
+        id: submissionId,
+        schoolId,
+        enrollmentId,
+        deletedAt: null,
+      },
+      select: { id: true },
+    });
+    if (!submission) {
+      throw new RecordingForbiddenException();
+    }
   }
 
   private async verifyEnrollmentOwnership(
