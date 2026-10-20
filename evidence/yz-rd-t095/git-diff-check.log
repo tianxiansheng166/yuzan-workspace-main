@@ -1,0 +1,3 @@
+Command: git diff --cached --check
+Stdout/stderr: empty.
+COMMAND_EXIT=0

@@ -1,0 +1,3 @@
+Command: ./node_modules/.bin/eslint src/modules/feedback/feedback.service.ts src/modules/feedback/feedback.policy.ts src/modules/feedback/ports/feedback-repository.port.ts src/modules/feedback/infra/prisma-feedback.repository.ts test/modules/feedback/feedback.service.spec.ts test/modules/feedback/feedback.policy.spec.ts test/modules/feedback/fakes/fake-feedback.repository.ts (from backend/api)
+Stdout/stderr: empty; no findings.
+COMMAND_EXIT=0

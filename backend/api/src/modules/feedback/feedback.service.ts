@@ -56,6 +56,35 @@ export class FeedbackService {
       throw new FeedbackForbiddenException();
     }
 
+    const studentEnrollment = await this.prisma.enrollment.findFirst({
+      where: {
+        id: submission.enrollmentId,
+        schoolId,
+        role: "STUDENT",
+        status: "ACTIVE",
+      },
+      select: { classId: true, userId: true },
+    });
+    if (!studentEnrollment?.classId || !studentEnrollment.userId) {
+      throw new FeedbackForbiddenException();
+    }
+
+    if (!this.policy.isSchoolAdmin(auth, schoolId)) {
+      const teacherEnrollment = await this.prisma.enrollment.findFirst({
+        where: {
+          schoolId,
+          classId: studentEnrollment.classId,
+          userId: auth.principal.userId,
+          role: "TEACHER",
+          status: "ACTIVE",
+        },
+        select: { id: true },
+      });
+      if (!teacherEnrollment) {
+        throw new FeedbackForbiddenException();
+      }
+    }
+
     if (submission.status !== "NEEDS_REVIEW") {
       throw new SubmissionNotReviewableException();
     }
@@ -63,6 +92,25 @@ export class FeedbackService {
     const newStatus = input.decision === "ACCEPT" ? "ACCEPTED" : "RETURNED";
 
     const feedback = await this.prisma.$transaction(async (tx) => {
+      const transition = await tx.submission.updateMany({
+        where: {
+          id: submissionId,
+          schoolId,
+          deletedAt: null,
+          status: "NEEDS_REVIEW",
+          revision: submission.revision,
+        },
+        data: {
+          status: newStatus,
+          revision: { increment: 1 },
+        },
+      });
+      if (transition.count !== 1) {
+        throw new SubmissionNotReviewableException(
+          "提交审核状态或版本已变化，请刷新后重试",
+        );
+      }
+
       const row = await tx.feedback.create({
         data: {
           schoolId,
@@ -74,11 +122,6 @@ export class FeedbackService {
           revision: 1,
           releasedAt: new Date(),
         },
-      });
-
-      await tx.submission.updateMany({
-        where: { id: submissionId, schoolId },
-        data: { status: newStatus },
       });
 
       return {
@@ -105,6 +148,10 @@ export class FeedbackService {
     schoolId: string,
     submissionId: string,
   ) {
+    if (!this.policy.canReadFeedback(auth, schoolId)) {
+      throw new FeedbackForbiddenException();
+    }
+
     const submission = await this.submissionLookup.findSummaryById(
       schoolId,
       submissionId,
@@ -112,20 +159,54 @@ export class FeedbackService {
     if (!submission) {
       return [];
     }
+    if (submission.schoolId !== schoolId) {
+      return [];
+    }
+
+    if (this.policy.isSchoolAdmin(auth, schoolId)) {
+      const feedbacks = await this.feedbackRepo.findBySubmissionId(
+        schoolId,
+        submissionId,
+      );
+      return feedbacks.map(toFeedbackResponse);
+    }
 
     const enrollment = await this.prisma.enrollment.findFirst({
       where: {
         id: submission.enrollmentId,
         schoolId,
+        role: "STUDENT",
         status: "ACTIVE",
       },
-      select: { userId: true },
+      select: { userId: true, classId: true },
     });
+    if (!enrollment?.userId || !enrollment.classId) {
+      return [];
+    }
 
-    if (
-      !this.policy.canReadOwnFeedback(auth, schoolId, enrollment?.userId ?? "")
-    ) {
+    const canReadOwnFeedback = this.policy.canReadOwnFeedback(
+      auth,
+      schoolId,
+      enrollment.userId,
+    );
+    if (!canReadOwnFeedback && !this.policy.canReadAsTeacher(auth, schoolId)) {
       throw new FeedbackForbiddenException();
+    }
+
+    if (!canReadOwnFeedback) {
+      const teacherEnrollment = await this.prisma.enrollment.findFirst({
+        where: {
+          schoolId,
+          classId: enrollment.classId,
+          userId: auth.principal.userId,
+          role: "TEACHER",
+          status: "ACTIVE",
+        },
+        select: { id: true },
+      });
+      if (!teacherEnrollment) {
+        throw new FeedbackForbiddenException();
+      }
     }
 
     const feedbacks = await this.feedbackRepo.findBySubmissionId(
@@ -144,9 +225,30 @@ export class FeedbackService {
       throw new FeedbackForbiddenException();
     }
 
+    let authorizedClassIds: readonly string[] | undefined;
+    if (!this.policy.isSchoolAdmin(auth, schoolId)) {
+      const teacherEnrollments = await this.prisma.enrollment.findMany({
+        where: {
+          schoolId,
+          userId: auth.principal.userId,
+          role: "TEACHER",
+          status: "ACTIVE",
+        },
+        select: { classId: true },
+      });
+      authorizedClassIds = [
+        ...new Set(teacherEnrollments.map((row) => row.classId)),
+      ];
+      if (authorizedClassIds.length === 0) {
+        return { items: [], nextCursor: null, hasMore: false };
+      }
+    }
+
     const result = await this.feedbackRepo.findPendingBySchool(
       schoolId,
-      options,
+      authorizedClassIds === undefined
+        ? options
+        : { ...options, authorizedClassIds },
     );
 
     return {

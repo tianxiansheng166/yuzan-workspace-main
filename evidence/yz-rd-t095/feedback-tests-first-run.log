@@ -1,0 +1,33 @@
+
+ RUN  v3.2.7 /home/tian/.devspace/worktrees/yuzan-workspace-t095
+
+ ✓ backend/api/test/modules/feedback/feedback.policy.spec.ts (6 tests) 2ms
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  backend/api/test/modules/feedback/feedback.service.spec.ts [ backend/api/test/modules/feedback/feedback.service.spec.ts ]
+Error: Failed to resolve entry for package "@yuzan/database". The package may have incorrect main/module/exports specified in its package.json.
+  Plugin: vite:import-analysis
+  File: /home/tian/.devspace/worktrees/yuzan-workspace-t095/backend/api/src/shared/database/prisma.service.ts:9:29
+  14 |  } from "@nestjs/common";
+  15 |  import { PrismaPg } from "@prisma/adapter-pg";
+  16 |  import { PrismaClient } from "@yuzan/database";
+     |                                ^
+  17 |  import { Pool } from "pg";
+  18 |  import {
+ ❯ packageEntryFailure ../yuzan-workspace-t094/node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:32896:32
+ ❯ resolvePackageEntry ../yuzan-workspace-t094/node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:32893:2
+ ❯ tryNodeResolve ../yuzan-workspace-t094/node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:32796:70
+ ❯ ResolveIdContext.handler ../yuzan-workspace-t094/node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:32635:16
+ ❯ EnvironmentPluginContainer.resolveId ../yuzan-workspace-t094/node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:28797:56
+ ❯ TransformPluginContext.resolve ../yuzan-workspace-t094/node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:29009:13
+ ❯ normalizeUrl ../yuzan-workspace-t094/node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:27191:22
+ ❯ ../yuzan-workspace-t094/node_modules/.pnpm/vite@7.3.6_@types+node@24.13.3_jiti@2.7.0_terser@5.48.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:27257:32
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  6 passed (6)
+   Start at  00:49:35
+   Duration  60.83s (transform 1.91s, setup 0ms, collect 13ms, tests 2ms, environment 0ms, prepare 651ms)

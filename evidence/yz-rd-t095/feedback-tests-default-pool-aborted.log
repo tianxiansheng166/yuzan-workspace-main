@@ -1,0 +1,3 @@
+Command: vitest run --config test/modules/feedback/vitest.config.ts
+Outcome: first invocation used Vitest's default worker pool; 15 task-owned workers were observed and no tests reported before termination.
+Action: terminated only the task-owned Vitest parent process (exit 143); reran with the package script's --pool=forks --poolOptions.forks.singleFork settings.
