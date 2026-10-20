@@ -5,7 +5,7 @@
   const app = document.querySelector('#app');
   const parts = location.pathname.split('/').filter(Boolean);
   const attemptId = parts[3] || '';
-  const state = { attempt: null, items: [], currentIndex: 0, save: 'IDLE', error: '', composing: false, submitting: false, submitConfirm: false, courseSyncPending: null, courseSyncComplete: false, courseReturnTo: '', returnToCatalog: false, recoveryOnly: false, timers: new Map(), saves: new Map(), pendingAnswers: new Map(), media: null, blob: null, blobUrl: null, recordingIdempotencyKey: null, elapsed: 0, resourceUrls: new Map(), resourceErrors: new Map(), resolvingResources: new Set(), feedbackOpen: false, feedbackMessage: '', feedbackHistory: [] };
+  const state = { attempt: null, items: [], currentIndex: 0, save: 'IDLE', error: '', composing: false, submitting: false, submitVerificationPending: false, submitConfirm: false, courseSyncPending: null, courseSyncComplete: false, courseReturnTo: '', returnToCatalog: false, recoveryOnly: false, timers: new Map(), saves: new Map(), pendingAnswers: new Map(), media: null, blob: null, blobUrl: null, recordingIdempotencyKey: null, elapsed: 0, resourceUrls: new Map(), resourceErrors: new Map(), resolvingResources: new Set(), feedbackOpen: false, feedbackMessage: '', feedbackHistory: [] };
   const safe = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const icon = name => Visuals?.icon(name) || `<span class="runner-icon-fallback" aria-hidden="true">${({ play: '▶', pause: 'Ⅱ', stop: '■', mic: '●', arrow: '→', check: '✓', retry: '↻', upload: '↑', clock: '◷' })[name] || '•'}</span>`;
   const waveform = (kind, extraClass = '') => Visuals?.waveform({ kind, className: extraClass }) || '<span class="runner-waveform-fallback" aria-hidden="true">〰</span>';
@@ -148,8 +148,41 @@
     if (state.courseSyncPending) return;
     if (message && !state.submitConfirm) {
       message.hidden = !state.error;
-      message.innerHTML = state.error ? `<span>${safe(state.error)}</span>${state.pendingAnswers.has(current()?.id) ? `<button type="button" class="runner-quiet-button" data-retry-save>${icon('retry')} 重试保存</button>` : ''}` : '';
+      const retryAction = state.submitVerificationPending
+        ? `<button type="button" class="runner-quiet-button" data-retry-attempt-check>${icon('retry')} 重试核实交卷状态</button>`
+        : state.pendingAnswers.has(current()?.id)
+          ? `<button type="button" class="runner-quiet-button" data-retry-save>${icon('retry')} 重试保存</button>`
+          : '';
+      message.innerHTML = state.error ? `<span>${safe(state.error)}</span>${retryAction}` : '';
     }
+  }
+  function accessFailureMessage(error, action) {
+    if (error?.status === 401) return `登录状态已过期，无法${action}本次练习。请重新登录后再试。`;
+    if (error?.status === 403) return `当前身份无权访问本次练习，无法${action}。请返回练习中心确认学生学籍。`;
+    if (error?.status === 404) return `本次练习不存在或已不可访问，无法${action}。请从练习历史重新打开。`;
+    return '';
+  }
+  function routeForAttempt(attempt) {
+    if (!attempt || attempt.id !== attemptId) throw new Error('服务器返回的 Attempt 与当前页面编号不一致。');
+    state.attempt = attempt;
+    if (attempt.status === 'COMPLETED') {
+      location.assign(`/student/practices/attempts/${encodeURIComponent(attemptId)}/report/`);
+      return true;
+    }
+    if (['SUBMITTED', 'PROCESSING', 'FAILED'].includes(attempt.status)) {
+      location.assign(`/student/practices/attempts/${encodeURIComponent(attemptId)}/processing/`);
+      return true;
+    }
+    return false;
+  }
+  async function readAttemptAndItems() {
+    const attempt = await Api.getPracticeAttempt(attemptId);
+    if (routeForAttempt(attempt)) return { routed: true, attempt, items: [] };
+    if (!['CREATED', 'IN_PROGRESS'].includes(attempt.status)) return { routed: false, closed: true, attempt, items: [] };
+    const response = await Api.getPracticeAttemptItems(attemptId);
+    const items = Array.isArray(response) ? response : response?.items;
+    if (!Array.isArray(items)) throw new Error('服务器没有返回可核实的本次答案。');
+    return { routed: false, closed: false, attempt, items };
   }
   function resetTransientMedia() {
     if (state.media?.clock) clearInterval(state.media.clock);
@@ -331,6 +364,7 @@
     textarea?.addEventListener('input', () => { state.error = ''; state.save = 'DIRTY'; updateSaveStatus(); scheduleTextSave(); });
     document.querySelector('[data-runner-message]')?.addEventListener('click', async event => {
       if (event.target.closest('[data-retry-course-sync]')) { void retryCourseSync(); return; }
+      if (event.target.closest('[data-retry-attempt-check]')) { void verifySubmitOutcome(); return; }
       if (!event.target.closest('[data-retry-save]')) return;
       const item = current();
       const value = document.querySelector('[data-text]')?.value ?? state.pendingAnswers.get(item?.id);
@@ -431,13 +465,13 @@
     const count = state.items.length;
     const completed = progressCount();
     const incomplete = state.items.filter(entry => !complete(entry));
-    const currentLocked = Boolean(state.courseSyncPending || state.submitting || (state.media && (state.media.state !== 'REVIEW' || !state.media.cached)));
+    const currentLocked = Boolean(state.courseSyncPending || state.submitting || state.submitVerificationPending || (state.media && (state.media.state !== 'REVIEW' || !state.media.cached)));
     const feedbackPanel = state.feedbackOpen ? `<div class="runner-feedback-modal" role="presentation"><div class="runner-feedback-card" role="dialog" aria-modal="true" aria-labelledby="runner-feedback-title"><button type="button" class="runner-feedback-close" data-feedback-close aria-label="关闭反馈">×</button><h2 id="runner-feedback-title">反馈问题</h2><p>请描述遇到的问题，不要填写手机号等敏感信息。不会提交你的答案、录音或评分细节。</p><label>问题类型<select data-feedback-category><option value="CONTENT">题目内容</option><option value="MEDIA">图片/音频</option><option value="RECORDING">录音</option><option value="SCORING">评分结果</option><option value="USABILITY">使用体验</option><option value="TECHNICAL">系统问题</option><option value="OTHER">其他</option></select></label><label for="runner-feedback-message">问题描述</label><textarea id="runner-feedback-message" data-feedback-message minlength="5" maxlength="1000" placeholder="至少输入 5 个字">${safe(state.feedbackMessage)}</textarea><button type="button" class="btn primary" data-feedback-submit>提交反馈</button><div class="runner-feedback-history"><b>我的反馈</b>${state.feedbackHistory.length ? state.feedbackHistory.map(entry => `<p>${safe(entry.category)} · ${safe({ OPEN: '待处理', ACKNOWLEDGED: '已知悉', RESOLVED: '已解决' }[entry.status] || entry.status)}${entry.resolutionNote ? `：${safe(entry.resolutionNote)}` : ''}</p>`).join('') : '<p>暂无反馈。</p>'}</div></div></div>` : '';
     const courseContext = Api.getCoursePracticeContext?.(attemptId);
     const courseReturn = courseContext || state.returnToCatalog ? courseReturnHref() : null;
     const courseSyncMessage = state.courseSyncPending
       ? `<span>${state.courseSyncPending.submitted ? '练习已交卷，课程同步待核实。' : '交卷状态待核实。'} ${safe(state.error)}</span><button type="button" class="runner-quiet-button" data-retry-course-sync ${state.courseSyncPending.running ? 'disabled' : ''}>${icon('retry')} 安全重试课程同步</button>`
-      : state.error ? `<span>${safe(state.error)}</span>${state.pendingAnswers.has(item.id) ? `<button type="button" class="runner-quiet-button" data-retry-save>${icon('retry')} 重试保存</button>` : ''}` : '';
+      : state.error ? `<span>${safe(state.error)}</span>${state.submitVerificationPending ? `<button type="button" class="runner-quiet-button" data-retry-attempt-check>${icon('retry')} 重试核实交卷状态</button>` : state.pendingAnswers.has(item.id) ? `<button type="button" class="runner-quiet-button" data-retry-save>${icon('retry')} 重试保存</button>` : ''}` : '';
     const questionMap = state.items.map((entry, index) => {
       const status = saved(entry) ? '已保存' : complete(entry) ? '无需作答' : '未完成';
       return `<button type="button" data-go="${index}" class="${index === state.currentIndex ? 'current' : ''} ${saved(entry) ? 'answered' : ''}" aria-current="${index === state.currentIndex ? 'step' : 'false'}" aria-label="第 ${index + 1} 题，${status}" ${currentLocked ? 'disabled' : ''}>${index + 1}</button>`;
@@ -446,6 +480,40 @@
     const submitDialog = state.submitConfirm ? `<div class="runner-confirm-modal" role="presentation"><section class="runner-confirm-card" role="dialog" aria-modal="true" aria-labelledby="runner-confirm-title" aria-describedby="runner-confirm-copy"><span class="runner-confirm-icon">${icon(incomplete.length ? 'clock' : 'check')}</span><h2 id="runner-confirm-title">${incomplete.length ? '还有题目未完成' : '确认交卷'}</h2><p id="runner-confirm-copy">${incomplete.length ? `当前有 ${incomplete.length} 道题尚未保存答案或录音。` : `已完成 ${completed} / ${count} 题。提交后将进入服务器处理流程。`}</p><p class="runner-confirm-note">交卷不会生成未校准的语音分数；处理结果以服务器为准。</p><div class="runner-confirm-actions">${incomplete.length ? `<button type="button" class="btn primary" data-fix-incomplete>返回第 ${firstIncomplete + 1} 题继续作答</button>` : `<button type="button" class="btn primary" data-confirm-submit>${icon('check')} 确认交卷</button>`}<button type="button" class="btn" data-cancel-submit>${incomplete.length ? '留在本次练习' : '再检查一下'}</button></div></section></div>` : '';
     app.innerHTML = `<main class="runner-page" ${state.submitConfirm ? 'inert' : ''}><header class="runner-header"><a class="runner-back" href="${safe(courseReturn || '/student/practices/')}">${icon('arrow')} ${courseReturn ? safe(courseReturnLabel()) : '返回练习中心'}</a><div class="runner-title"><b>听说训练台</b><span class="runner-attempt-state">${safe(state.attempt?.status || 'IN_PROGRESS')}</span></div><button type="button" class="btn runner-feedback-open" data-feedback-open>反馈问题</button></header><section class="runner-progress"><span class="runner-current-position">第 <b>${state.currentIndex + 1}</b> / ${count} 题</span><div class="runner-progress-track" role="progressbar" aria-label="已完成题目" aria-valuemin="0" aria-valuemax="${count}" aria-valuenow="${completed}"><i data-progress-bar style="width:${count ? (completed / count) * 100 : 0}%"></i></div><span data-progress-copy>${completed} / ${count} 题已完成</span></section><nav class="runner-map" aria-label="题目导航">${questionMap}</nav><article class="question-shell"><div class="runner-question-heading"><p class="runner-section">${safe(item.sectionTitle || '练习题')}</p><span>第 ${state.currentIndex + 1} 题</span></div>${renderStimulus(spec.stimulus)}<section class="runner-response">${renderResponse(item, spec)}</section><div data-runner-message class="runner-message" role="alert" aria-live="assertive" ${state.error || state.courseSyncPending ? '' : 'hidden'}>${courseSyncMessage}</div></article><footer class="runner-footer"><button type="button" class="btn" data-prev ${state.currentIndex && !currentLocked ? '' : 'disabled'}>${icon('arrow')} 上一题</button><span data-save-state aria-live="polite">${safe(statusText())}</span>${state.currentIndex === count - 1 ? `<button type="button" class="btn primary runner-submit-button" data-submit ${currentLocked ? 'disabled' : ''}>检查并交卷 ${icon('arrow')}</button>` : `<button type="button" class="btn primary runner-next-button" data-next ${currentLocked ? 'disabled' : ''}>下一题 ${icon('arrow')}</button>`}</footer></main>${feedbackPanel}${submitDialog}`;
     bind();
+  }
+  async function reconcileAnswerSave(item, value, requestError) {
+    const directAccessMessage = accessFailureMessage(requestError, '保存');
+    if (directAccessMessage) {
+      state.error = directAccessMessage;
+      state.save = 'ERROR';
+      return;
+    }
+    try {
+      const snapshot = await readAttemptAndItems();
+      if (snapshot.routed) return;
+      if (snapshot.closed) {
+        state.error = '本次练习已不能修改答案；服务器状态已更新，请从练习历史查看。';
+        state.save = 'ERROR';
+        return;
+      }
+      const savedItem = snapshot.items.find(candidate => candidate.id === item.id);
+      if (!savedItem) throw new Error('服务器没有返回当前题目的答案状态。');
+      item.studentAnswer = savedItem.studentAnswer;
+      if (String(storedAnswer(item) ?? '') === String(value)) {
+        state.pendingAnswers.delete(item.id);
+        state.error = '';
+        state.save = 'SAVED';
+        return;
+      }
+      state.error = requestError?.status === 409
+        ? '服务器答案状态发生变化（409）。当前输入仍保留；请检查后重试保存。'
+        : '答案保存结果尚未在服务器确认。当前输入仍保留，请重试保存。';
+      state.save = 'ERROR';
+    } catch (readError) {
+      state.error = accessFailureMessage(readError, '核实答案')
+        || `答案保存结果暂未核实${requestError?.status === 409 ? '（409）' : ''}。当前输入仍保留，请稍后重试。`;
+      state.save = 'ERROR';
+    }
   }
   async function save(item, value) {
     state.pendingAnswers.set(item.id, value);
@@ -466,8 +534,12 @@
         state.save = 'SAVED';
         refreshProgress();
       } catch (error) {
-        state.error = error.message || '网络错误';
-        state.save = 'ERROR';
+        if (error?.status === 409 || !error?.status || error.status >= 500) {
+          await reconcileAnswerSave(item, value, error);
+        } else {
+          state.error = accessFailureMessage(error, '保存') || error.message || '网络错误';
+          state.save = 'ERROR';
+        }
       } finally {
         state.saves.delete(item.id);
         updateSaveStatus();
@@ -650,6 +722,37 @@
       render();
     }
   }
+  async function verifySubmitOutcome(failedRequest) {
+    state.submitting = false;
+    state.submitVerificationPending = true;
+    state.error = failedRequest
+      ? `交卷响应未确认（${failedRequest.message || '网络错误'}），正在核实本次 Attempt 的服务器状态…`
+      : '正在核实本次 Attempt 的服务器交卷状态…';
+    state.save = 'ERROR';
+    render();
+    try {
+      const attempt = await Api.getPracticeAttempt(attemptId);
+      if (routeForAttempt(attempt)) return true;
+      if (!['CREATED', 'IN_PROGRESS'].includes(attempt.status)) {
+        state.submitVerificationPending = false;
+        state.error = '本次练习状态已变化，服务器未确认交卷。请返回练习中心核对状态。';
+      } else {
+        state.submitVerificationPending = false;
+        state.error = '服务器确认本次练习仍可作答，尚未确认交卷。请检查答案后重新确认交卷。';
+      }
+    } catch (error) {
+      const accessMessage = accessFailureMessage(error, '核实交卷状态');
+      if (accessMessage) {
+        bootFailure(accessMessage);
+        return true;
+      }
+      state.submitVerificationPending = true;
+      state.error = `交卷状态暂未确认（${error.message || '网络错误'}）。请重试核实；核实前不会再次发送交卷请求。`;
+    }
+    state.save = 'ERROR';
+    render();
+    return false;
+  }
   async function submit() {
     if (state.submitting) return;
     state.submitting = true;
@@ -709,7 +812,15 @@
         state.courseSyncPending = { submitted: error.submitted !== false };
         state.error = error.message || (error.submitted === false ? '交卷状态待核实。' : '练习已交卷，课程同步待核实。');
       } else {
-        state.error = error.message || '提交失败';
+        const accessMessage = accessFailureMessage(error, '提交');
+        if (accessMessage) {
+          state.error = accessMessage;
+          state.save = 'ERROR';
+          render();
+          return;
+        }
+        await verifySubmitOutcome(error);
+        return;
       }
       state.save = 'ERROR';
       render();
@@ -755,7 +866,7 @@
       if (!state.items.length) { bootFailure('服务器没有返回可执行题目，请返回练习中心重试。'); return; }
       await restoreDraft();
       render();
-    } catch (error) { bootFailure('加载练习失败：' + (error.message || '网络错误')); }
+    } catch (error) { bootFailure(accessFailureMessage(error, '打开') || '加载练习失败：' + (error.message || '网络错误')); }
   }
   addEventListener('pagehide', resetTransientMedia);
   addEventListener('beforeunload', event => { if (state.media || state.blob) { event.preventDefault(); event.returnValue = ''; } });

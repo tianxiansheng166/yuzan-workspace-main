@@ -34,10 +34,22 @@ async function mount({ status = "PROCESSING", page = "catalog" } = {}) {
   let createCount = 0;
   const api = {
     getToken: () => "student-a-token",
+    getActiveSchoolId: () => "school-a",
+    getStoredUser: () => ({ id: "student-a" }),
     listPractices: async () => ({ items: [practice], facets: {}, total: 1, availableCount: 1, nextCursor: null }),
     listAssignedRemediations: async () => ({ items: [] }),
     listAssessmentSessions: async () => ({ items: [{ id: "attempt-a", enrollmentId: "enrollment-a", status }] }),
-    getPracticeAttempt: async (id) => ({ id, practiceDefinitionId: "definition-a", status, updatedAt: "2026-10-18T01:00:00.000Z" }),
+    getPracticeAttempt: async (id) => ({
+      id,
+      schoolId: "school-a",
+      enrollmentId: "enrollment-a",
+      initiatorUserId: "student-a",
+      practiceDefinitionId: "definition-a",
+      courseSubmissionId: null,
+      courseActivityId: null,
+      status,
+      updatedAt: "2026-10-18T01:00:00.000Z",
+    }),
     getPractice: async () => practice,
     createOrResumePractice: async () => { createCount += 1; return { attemptId: "duplicate-attempt" }; },
   };

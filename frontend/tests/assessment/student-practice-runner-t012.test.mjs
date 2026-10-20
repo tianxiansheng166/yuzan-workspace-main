@@ -50,6 +50,8 @@ async function mountPractice(status, { page = "catalog", pages } = {}) {
   const root = { innerHTML: "" };
   const api = {
     getToken: () => "student-a-token",
+    getActiveSchoolId: () => "school-a",
+    getStoredUser: () => ({ id: "student-a" }),
     listPractices: async () => ({
       items: [practiceFixture],
       facets: { abilityCategory: [{ value: "听辨训练", count: 1 }] },
@@ -71,7 +73,12 @@ async function mountPractice(status, { page = "catalog", pages } = {}) {
       }
       return {
         id,
+        schoolId: "school-a",
+        enrollmentId: "enrollment-a",
+        initiatorUserId: "student-a",
         practiceDefinitionId: "definition-t012",
+        courseSubmissionId: null,
+        courseActivityId: null,
         status,
         updatedAt: "2026-10-18T01:00:00.000Z",
       };
