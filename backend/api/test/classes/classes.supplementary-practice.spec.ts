@@ -5,6 +5,9 @@ import {
   MembershipStatus,
 } from "../../src/common/security/index.js";
 import { ClassesService } from "../../src/modules/classes/classes.service.js";
+import type { ClassRepositoryPort } from "../../src/modules/classes/ports/class-repository.port.js";
+import type { PrismaService } from "../../src/shared/database/prisma.service.js";
+import { AssessmentService } from "../../src/modules/assessment/assessment.service.js";
 import {
   ClassConflictException,
   ClassForbiddenException,
@@ -30,6 +33,69 @@ const validEnrollments = [studentA, studentB, studentC].map((id) => ({
   status: "ACTIVE",
 }));
 
+type ExistingAssignment = {
+  id: string;
+  schoolId: string;
+  courseVersionId: string;
+  title: string;
+  status: string;
+  startsAt: Date;
+  dueAt: Date;
+  targets: Array<{
+    id: string;
+    targetType: string;
+    classId: string | null;
+    enrollmentId: string | null;
+  }>;
+};
+
+type EnrollmentQuery = {
+  where: {
+    id: { in: string[] };
+    schoolId: string;
+    classId: string;
+    role: string;
+    status: string;
+  };
+};
+
+type AssignmentCreateArgs = {
+  data: {
+    schoolId: string;
+    courseVersionId: string;
+    title: string;
+    startsAt: Date;
+    dueAt: Date;
+  };
+};
+
+type AssignmentTargetCreateArgs = {
+  data: {
+    targetType: "CLASS" | "STUDENT";
+    classId?: string | null;
+    enrollmentId?: string | null;
+  };
+};
+
+type AuditCreateArgs = {
+  data: {
+    action: string;
+    resourceType: string;
+    resourceId: string;
+    requestId: string;
+    afterSummary: {
+      classId: string;
+      targetEnrollmentIds?: string[];
+      requestHash?: string;
+    };
+  };
+};
+type AuditSummary = {
+  classId: string;
+  targetEnrollmentIds?: string[];
+  requestHash?: string;
+};
+
 function makeAuth(overrides: { userId?: string; schoolId?: string; roles?: MembershipRole[] } = {}) {
   return createAuthContext(
     "test-request",
@@ -49,8 +115,8 @@ function setup(options: {
   courseVersion?: { id: string; status: string; publishedAt: Date | null; retiredAt: Date | null } | null;
   existingCourseAssignment?: { courseVersionId: string } | null;
   enrollments?: typeof validEnrollments;
-  existingAudit?: { resourceId: string; afterSummary: { requestHash?: string } } | null;
-  existingAssignment?: any;
+  existingAudit?: { resourceId: string; afterSummary: AuditSummary } | null;
+  existingAssignment?: ExistingAssignment;
 } = {}) {
   const classItem = {
     id: classId,
@@ -64,9 +130,9 @@ function setup(options: {
     updatedAt: new Date("2026-01-01T00:00:00.000Z"),
   };
   const classRepo = {
-    findById: vi.fn().mockResolvedValue(options.classExists === false ? null : classItem),
+    findById: vi.fn(() => Promise.resolve(options.classExists === false ? null : classItem)),
   };
-  const assignmentCreate = vi.fn(async ({ data }: any) => ({
+  const assignmentCreate = vi.fn(({ data }: AssignmentCreateArgs) => Promise.resolve({
     id: assignmentId,
     schoolId,
     courseVersionId: data.courseVersionId,
@@ -75,39 +141,38 @@ function setup(options: {
     startsAt: data.startsAt,
     dueAt: data.dueAt,
   }));
-  const assignmentTargetCreate = vi.fn(async ({ data }: any) => ({
+  const assignmentTargetCreate = vi.fn(({ data }: AssignmentTargetCreateArgs) => Promise.resolve({
     id: `target-${data.targetType}-${data.enrollmentId ?? "class"}`,
     targetType: data.targetType,
     classId: data.classId ?? null,
     enrollmentId: data.enrollmentId ?? null,
   }));
-  const auditCreate = vi.fn(async ({ data }: any) => data);
-  const auditFindFirst = vi.fn().mockResolvedValue(options.existingAudit ?? null);
-  const assignmentFindFirst = vi.fn().mockResolvedValue(options.existingAssignment ?? null);
+  const auditCreate = vi.fn(({ data }: AuditCreateArgs) => Promise.resolve(data));
+  const auditFindFirst = vi.fn(() => Promise.resolve(options.existingAudit ?? null));
+  const assignmentFindFirst = vi.fn(() => Promise.resolve(options.existingAssignment ?? null));
+  const courseAssignmentFindFirst = vi.fn(() => Promise.resolve(options.existingCourseAssignment ?? null));
   const tx = {
-    $queryRaw: vi.fn().mockResolvedValue([]),
+    $queryRaw: vi.fn(() => Promise.resolve([])),
     assignment: { create: assignmentCreate, findFirst: assignmentFindFirst },
     assignmentTarget: { create: assignmentTargetCreate },
     auditLog: { findFirst: auditFindFirst, create: auditCreate },
   };
-  const prisma: any = {
-    $transaction: vi.fn(async (callback: (transaction: any) => unknown) => callback(tx)),
+  const transactionClient = {
     enrollment: {
-      findMany: vi.fn(async ({ where }: any) => {
-        const requested = where.id?.in as string[] | undefined;
-        return (options.enrollments ?? validEnrollments).filter(
+      findMany: vi.fn(({ where }: EnrollmentQuery) => Promise.resolve(
+        (options.enrollments ?? validEnrollments).filter(
           (enrollment) =>
-            requested?.includes(enrollment.id) &&
+            where.id.in.includes(enrollment.id) &&
             enrollment.schoolId === where.schoolId &&
             enrollment.classId === where.classId &&
             enrollment.role === where.role &&
             enrollment.status === where.status,
-        );
-      }),
-      count: vi.fn().mockResolvedValue(3),
+        ),
+      )),
+      count: vi.fn(() => Promise.resolve(3)),
     },
     courseVersion: {
-      findFirst: vi.fn().mockResolvedValue(
+      findFirst: vi.fn((): Promise<unknown> => Promise.resolve(
         options.courseVersion === undefined
           ? {
               id: courseVersionId,
@@ -116,13 +181,21 @@ function setup(options: {
               retiredAt: null,
             }
           : options.courseVersion,
-      ),
+      )),
     },
     assignment: {
-      findFirst: vi.fn().mockResolvedValue(options.existingCourseAssignment ?? null),
+      findFirst: courseAssignmentFindFirst,
     },
   };
-  const service = new ClassesService(classRepo as any, prisma, {} as any);
+  const prisma = {
+    ...transactionClient,
+    $transaction: vi.fn((callback: (transaction: typeof tx) => Promise<unknown>) => callback(tx)),
+  };
+  const service = new ClassesService(
+    classRepo as unknown as ClassRepositoryPort,
+    prisma as unknown as PrismaService,
+    {} as unknown as AssessmentService,
+  );
   return { service, classRepo, prisma, tx, assignmentCreate, assignmentTargetCreate, auditCreate, auditFindFirst, assignmentFindFirst };
 }
 
@@ -240,11 +313,13 @@ describe("ClassesService.createSupplementaryPractice", () => {
   });
 
   it("reuses the existing Assignment for an identical idempotent request", async () => {
-    const { service, assignmentCreate, auditCreate, assignmentFindFirst } = setup();
+    const { service, assignmentCreate, auditCreate } = setup();
     const body = request([studentA]);
     const key = "t014-replay-1";
     await service.createSupplementaryPractice(makeAuth(), schoolId, classId, body, key);
-    const audit = auditCreate.mock.calls[0]?.[0].data;
+    const auditCall = auditCreate.mock.calls[0];
+    if (!auditCall) throw new Error("expected the supplementary practice audit call");
+    const audit = auditCall[0].data;
     const existing = {
       id: assignmentId,
       schoolId,
@@ -272,7 +347,9 @@ describe("ClassesService.createSupplementaryPractice", () => {
     const key = "t014-conflict-1";
     const first = request([studentA]);
     await service.createSupplementaryPractice(makeAuth(), schoolId, classId, first, key);
-    const afterSummary = auditCreate.mock.calls[0]?.[0].data.afterSummary;
+    const auditCall = auditCreate.mock.calls[0];
+    if (!auditCall) throw new Error("expected the idempotency audit call");
+    const afterSummary = auditCall[0].data.afterSummary;
     const replay = setup({ existingAudit: { resourceId: assignmentId, afterSummary } });
     await expect(replay.service.createSupplementaryPractice(
       makeAuth(), schoolId, classId, request([studentB]), key,

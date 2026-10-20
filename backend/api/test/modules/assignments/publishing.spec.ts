@@ -21,22 +21,24 @@ function setup(
   } = {},
 ) {
   const repo = new FakeAssignmentRepository();
-  const notify = vi.fn(async (_payload: { data: { actionUrl: string }[] }) => {
+  const notify = vi.fn((payload: { data: { actionUrl: string }[] }) => {
     if (options.failNotification) throw new Error("notification unavailable");
-    return { count: 1 };
+    return { count: payload.data.length };
   });
   const prisma = createFakePrismaService({
     courseVersion: {
-      findFirst: async () => (options.course === false ? null : { id: "cv-1" }),
+      findFirst: () => Promise.resolve(options.course === false ? null : { id: "cv-1" }),
     },
-    class: { findFirst: async () => ({ id: "class-1" }) },
+    class: { findFirst: () => Promise.resolve({ id: "class-1" }) },
     enrollment: {
-      findFirst: async (query) =>
-        (query.where.role === "TEACHER" ? options.teacher : options.student) ===
-        false
-          ? null
-          : { id: "enrollment", classId: "class-1", userId: "student" },
-      findMany: async () => [{ userId: "student" }, { userId: "student" }],
+      findFirst: (query: { where: { role?: string } }) =>
+        Promise.resolve(
+          (query.where.role === "TEACHER" ? options.teacher : options.student) ===
+          false
+            ? null
+            : { id: "enrollment", classId: "class-1", userId: "student" },
+        ),
+      findMany: () => Promise.resolve([{ userId: "student" }, { userId: "student" }]),
     },
     notification: { createMany: notify },
   });

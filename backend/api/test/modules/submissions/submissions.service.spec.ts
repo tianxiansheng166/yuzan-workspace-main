@@ -16,6 +16,9 @@ import { FakeSubmissionRepository } from "./fakes/fake-submission.repository.js"
 import { FakeSubmissionLookupRepository } from "./fakes/fake-submission-lookup.repository.js";
 import { submission } from "./fixtures/submissions.js";
 
+type EnrollmentFindFirstArgs = { where: { role?: string } };
+type AssignmentFindFirstArgs = { select?: { targets?: unknown } };
+
 function auth(userId: string, schoolId: string, roles: MembershipRole[]) {
   return createAuthContext("req-1", {
     userId,
@@ -36,11 +39,15 @@ describe("SubmissionsService", () => {
   beforeEach(async () => {
     repo = new FakeSubmissionRepository();
     lookup = new FakeSubmissionLookupRepository();
-    enrollmentFindFirst = vi.fn().mockImplementation(async ({ where }: any) => where.role === "TEACHER" ? { id: "teacher-enrollment" } : null);
+    enrollmentFindFirst = vi.fn((args: EnrollmentFindFirstArgs) =>
+      Promise.resolve(args.where.role === "TEACHER" ? { id: "teacher-enrollment" } : null),
+    );
     enrollmentFindMany = vi.fn().mockResolvedValue([]);
-    assignmentFindFirst = vi.fn().mockImplementation(async (args: any) => args.select?.targets
-      ? { targets: [{ targetType: "CLASS", classId: "class-1", enrollmentId: null }] }
-      : null);
+    assignmentFindFirst = vi.fn((args: AssignmentFindFirstArgs) =>
+      Promise.resolve(args.select?.targets
+        ? { targets: [{ targetType: "CLASS", classId: "class-1", enrollmentId: null }] }
+        : null),
+    );
 
     const moduleRef = await Test.createTestingModule({
       imports: [createFakeDatabaseModule(createFakePrismaService({

@@ -1,6 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
+import type { AuthContext } from "../../src/common/security/auth.types.js";
 import { createAuthContext, MembershipRole, MembershipStatus } from "../../src/common/security/index.js";
 import { ClassesService } from "../../src/modules/classes/classes.service.js";
+import type { ClassRepositoryPort } from "../../src/modules/classes/ports/class-repository.port.js";
+import { AssessmentService } from "../../src/modules/assessment/assessment.service.js";
+import { PrismaService } from "../../src/shared/database/prisma.service.js";
 
 const schoolId = "11111111-1111-4111-8111-111111111111";
 const classId = "22222222-2222-4222-8222-222222222222";
@@ -18,15 +22,19 @@ function setup() {
     createdAt: new Date(),
     updatedAt: new Date(),
   };
-  const classRepo: any = { findById: vi.fn().mockResolvedValue(classItem) };
-  const prisma: any = {
-    enrollment: { findMany: vi.fn() },
-    assignment: { findMany: vi.fn() },
-    submission: { findMany: vi.fn(), count: vi.fn() },
-    assessmentSession: { findMany: vi.fn(), count: vi.fn() },
-    activityProgress: { findMany: vi.fn() },
+  const classRepo = { findById: vi.fn(() => Promise.resolve(classItem)) };
+  const prisma = {
+    enrollment: { findMany: vi.fn(() => Promise.resolve([])) },
+    assignment: { findMany: vi.fn(() => Promise.resolve([])) },
+    submission: { findMany: vi.fn(() => Promise.resolve([])), count: vi.fn(() => Promise.resolve(0)) },
+    assessmentSession: { findMany: vi.fn(() => Promise.resolve([])), count: vi.fn(() => Promise.resolve(0)) },
+    activityProgress: { findMany: vi.fn(() => Promise.resolve([])) },
   };
-  const service = new ClassesService(classRepo, prisma, {} as any);
+  const service = new ClassesService(
+    classRepo as unknown as ClassRepositoryPort,
+    prisma as unknown as PrismaService,
+    {} as unknown as AssessmentService,
+  );
   const auth = createAuthContext(
     "request-id",
     {
@@ -40,15 +48,22 @@ function setup() {
   return { service, classRepo, prisma, auth };
 }
 
+type ScopeCall = (
+  service: ClassesService,
+  auth: AuthContext,
+) => Promise<unknown>;
+
+const scopedReads: Array<[string, ScopeCall]> = [
+  ["class dashboard", (service, auth) => service.getClassDashboard(auth, schoolId, classId)],
+  ["student summaries", (service, auth) => service.getStudentSummaries(auth, schoolId, classId)],
+  ["assignment summaries", (service, auth) => service.getAssignmentSummaries(auth, schoolId, classId)],
+  ["assessment summaries", (service, auth) => service.getAssessmentSummaries(auth, schoolId, classId)],
+  ["pending statistics", (service, auth) => service.getClassPendingStats(auth, schoolId, classId)],
+  ["class members", (service, auth) => service.listClassMembers(auth, schoolId, classId)],
+];
+
 describe("ClassesService teacher class scope", () => {
-  it.each([
-    ["class dashboard", (service: ClassesService, auth: any) => service.getClassDashboard(auth, schoolId, classId)],
-    ["student summaries", (service: ClassesService, auth: any) => service.getStudentSummaries(auth, schoolId, classId)],
-    ["assignment summaries", (service: ClassesService, auth: any) => service.getAssignmentSummaries(auth, schoolId, classId)],
-    ["assessment summaries", (service: ClassesService, auth: any) => service.getAssessmentSummaries(auth, schoolId, classId)],
-    ["pending statistics", (service: ClassesService, auth: any) => service.getClassPendingStats(auth, schoolId, classId)],
-    ["class members", (service: ClassesService, auth: any) => service.listClassMembers(auth, schoolId, classId)],
-  ])("does not expose %s for another teacher's class", async (_label, invoke) => {
+  it.each(scopedReads)("does not expose %s for another teacher's class", async (_label, invoke) => {
     const { service, prisma, auth } = setup();
     await expect(invoke(service, auth)).rejects.toMatchObject({ status: 404 });
     expect(prisma.enrollment.findMany).not.toHaveBeenCalled();

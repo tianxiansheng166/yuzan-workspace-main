@@ -1,0 +1,16 @@
+
+ RUN  v3.2.7 /home/tian/code/work/yuzan-workspace-t059/backend/api
+
+ ✓ test/organizations/classes.controller.spec.ts (23 tests) 83ms
+ ✓ test/modules/assignments/assignments.service.spec.ts (12 tests) 14ms
+ ✓ test/teacher-invitations/teacher-invitations.service.spec.ts (11 tests) 12ms
+ ✓ test/classes/classes.supplementary-practice.spec.ts (13 tests) 11ms
+ ✓ test/modules/submissions/submissions.service.spec.ts (13 tests) 20ms
+ ✓ test/teacher/teacher-dashboard.service.spec.ts (3 tests) 3ms
+ ✓ test/modules/assignments/publishing.spec.ts (13 tests) 4ms
+ ✓ test/organizations/classes.teacher-scope.spec.ts (6 tests) 3ms
+
+ Test Files  8 passed (8)
+      Tests  94 passed (94)
+   Start at  13:30:11
+   Duration  1.65s (transform 540ms, setup 0ms, collect 1.33s, tests 150ms, environment 0ms, prepare 43ms)
