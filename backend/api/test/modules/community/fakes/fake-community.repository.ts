@@ -61,14 +61,14 @@ export class FakeCommunityRepository implements CommunityRepositoryPort {
 
   /* ---------- CommunityRepositoryPort ---------- */
 
-  async findPostById(
+  findPostById(
     _schoolId: string,
     postId: string,
   ): Promise<CommunityPost | null> {
-    return this.posts.get(postId) ?? null;
+    return Promise.resolve(this.posts.get(postId) ?? null);
   }
 
-  async listPosts(
+  listPosts(
     schoolId: string,
     options: ListPostsOptions,
   ): Promise<PaginatedResult<CommunityPost>> {
@@ -92,14 +92,14 @@ export class FakeCommunityRepository implements CommunityRepositoryPort {
     const nextOffset = cursor + options.limit;
     const hasMore = nextOffset < items.length;
 
-    return {
+    return Promise.resolve({
       items: sliced,
       nextCursor: hasMore ? String(nextOffset) : null,
       hasMore,
-    };
+    });
   }
 
-  async createPost(data: CreatePostData): Promise<CommunityPost> {
+  createPost(data: CreatePostData): Promise<CommunityPost> {
     const now = new Date();
     const id = `post-${this.nextId++}`;
     const post: CommunityPost = {
@@ -117,17 +117,17 @@ export class FakeCommunityRepository implements CommunityRepositoryPort {
       revision: 1,
     };
     this.posts.set(id, post);
-    return post;
+    return Promise.resolve(post);
   }
 
-  async updatePost(
+  updatePost(
     _schoolId: string,
     postId: string,
     data: UpdatePostData,
   ): Promise<CommunityPost> {
     const existing = this.posts.get(postId);
     if (!existing) {
-      throw new Error(`Post ${postId} not found`);
+      return Promise.reject(new Error(`Post ${postId} not found`));
     }
     const updated: CommunityPost = {
       ...existing,
@@ -137,17 +137,17 @@ export class FakeCommunityRepository implements CommunityRepositoryPort {
       revision: existing.revision + 1,
     };
     this.posts.set(postId, updated);
-    return updated;
+    return Promise.resolve(updated);
   }
 
-  async updatePostStatus(
+  updatePostStatus(
     _schoolId: string,
     postId: string,
     data: UpdatePostStatusData,
   ): Promise<CommunityPost> {
     const existing = this.posts.get(postId);
     if (!existing) {
-      throw new Error(`Post ${postId} not found`);
+      return Promise.reject(new Error(`Post ${postId} not found`));
     }
     const updated: CommunityPost = {
       ...existing,
@@ -159,15 +159,15 @@ export class FakeCommunityRepository implements CommunityRepositoryPort {
       revision: existing.revision + 1,
     };
     this.posts.set(postId, updated);
-    return updated;
+    return Promise.resolve(updated);
   }
 
-  async listComments(
+  listComments(
     _schoolId: string,
     postId: string,
     options: ListCommentsOptions,
   ): Promise<PaginatedResult<PostComment>> {
-    let items = [...this.comments.values()].filter(
+    const items = [...this.comments.values()].filter(
       (c) => c.postId === postId,
     );
 
@@ -176,14 +176,14 @@ export class FakeCommunityRepository implements CommunityRepositoryPort {
     const nextOffset = cursor + options.limit;
     const hasMore = nextOffset < items.length;
 
-    return {
+    return Promise.resolve({
       items: sliced,
       nextCursor: hasMore ? String(nextOffset) : null,
       hasMore,
-    };
+    });
   }
 
-  async createComment(data: CreateCommentData): Promise<PostComment> {
+  createComment(data: CreateCommentData): Promise<PostComment> {
     const now = new Date();
     const id = `comment-${this.nextId++}`;
     const comment: PostComment = {
@@ -195,10 +195,10 @@ export class FakeCommunityRepository implements CommunityRepositoryPort {
       updatedAt: now,
     };
     this.comments.set(id, comment);
-    return comment;
+    return Promise.resolve(comment);
   }
 
-  async createReport(data: CreateReportData): Promise<ContentReport> {
+  createReport(data: CreateReportData): Promise<ContentReport> {
     const now = new Date();
     const id = `report-${this.nextId++}`;
     const report: ContentReport = {
@@ -212,10 +212,10 @@ export class FakeCommunityRepository implements CommunityRepositoryPort {
       createdAt: now,
     };
     this.reports.set(id, report);
-    return report;
+    return Promise.resolve(report);
   }
 
-  async listReports(
+  listReports(
     schoolId: string,
     options: ListReportsOptions,
   ): Promise<PaginatedResult<ContentReport>> {
@@ -232,21 +232,21 @@ export class FakeCommunityRepository implements CommunityRepositoryPort {
     const nextOffset = cursor + options.limit;
     const hasMore = nextOffset < items.length;
 
-    return {
+    return Promise.resolve({
       items: sliced,
       nextCursor: hasMore ? String(nextOffset) : null,
       hasMore,
-    };
+    });
   }
 
-  async updateReportStatus(
+  updateReportStatus(
     _schoolId: string,
     reportId: string,
     data: UpdateReportStatusData,
   ): Promise<ContentReport> {
     const existing = this.reports.get(reportId);
     if (!existing) {
-      throw new Error(`Report ${reportId} not found`);
+      return Promise.reject(new Error(`Report ${reportId} not found`));
     }
     const updated: ContentReport = {
       ...existing,
@@ -255,13 +255,13 @@ export class FakeCommunityRepository implements CommunityRepositoryPort {
       reviewedAt: data.reviewedAt,
     };
     this.reports.set(reportId, updated);
-    return updated;
+    return Promise.resolve(updated);
   }
 
-  async findReportById(
+  findReportById(
     _schoolId: string,
     reportId: string,
   ): Promise<ContentReport | null> {
-    return this.reports.get(reportId) ?? null;
+    return Promise.resolve(this.reports.get(reportId) ?? null);
   }
 }

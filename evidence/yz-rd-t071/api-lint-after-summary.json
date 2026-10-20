@@ -1,0 +1,22 @@
+{
+  "command": "PATH=/home/tian/.nvm/versions/node/v24.20.0/bin:$PATH ./node_modules/.bin/eslint --format json src test",
+  "run_count": 1,
+  "exit_code": 1,
+  "files": 589,
+  "src_errors": 1,
+  "test_errors": 272,
+  "total_errors": 273,
+  "warnings": 0,
+  "parser_errors": 0,
+  "baseline": {
+    "src_errors": 1,
+    "test_errors": 336,
+    "total_errors": 337,
+    "source": "T066 accepted derived result from T063 full lint JSON plus T066 direct targeted lint JSON; no complete baseline rerun"
+  },
+  "delta_vs_derived_baseline": {
+    "src_errors": 0,
+    "test_errors": -64,
+    "total_errors": -64
+  }
+}

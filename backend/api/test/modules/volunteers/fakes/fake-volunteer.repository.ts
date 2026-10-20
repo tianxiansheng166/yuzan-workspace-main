@@ -7,19 +7,19 @@ export class FakeVolunteerRepository implements VolunteerRepositoryPort {
   private incidents: Map<string, IncidentReport> = new Map();
   private nextId = 1;
 
-  async findById(schoolId: string, volunteerId: string): Promise<Volunteer | null> {
+  findById(schoolId: string, volunteerId: string): Promise<Volunteer | null> {
     const v = this.volunteers.get(volunteerId);
-    return v && v.schoolId === schoolId ? v : null;
+    return Promise.resolve(v && v.schoolId === schoolId ? v : null);
   }
 
-  async findByUserId(schoolId: string, userId: string): Promise<Volunteer | null> {
+  findByUserId(schoolId: string, userId: string): Promise<Volunteer | null> {
     for (const v of this.volunteers.values()) {
-      if (v.schoolId === schoolId && v.userId === userId) return v;
+      if (v.schoolId === schoolId && v.userId === userId) return Promise.resolve(v);
     }
-    return null;
+    return Promise.resolve(null);
   }
 
-  async list(schoolId: string, options: ListVolunteersOptions): Promise<PaginatedResult<VolunteerSummary>> {
+  list(schoolId: string, options: ListVolunteersOptions): Promise<PaginatedResult<VolunteerSummary>> {
     let items = [...this.volunteers.values()]
       .filter((v) => v.schoolId === schoolId)
       .map((v): VolunteerSummary => ({
@@ -40,14 +40,14 @@ export class FakeVolunteerRepository implements VolunteerRepositoryPort {
     const slice = items.slice(start, start + limit);
     const hasMore = start + limit < items.length;
 
-    return {
+    return Promise.resolve({
       items: slice,
       nextCursor: hasMore && slice.length > 0 ? slice[slice.length - 1].id : null,
       hasMore,
-    };
+    });
   }
 
-  async create(schoolId: string, data: CreateVolunteerData): Promise<Volunteer> {
+  create(schoolId: string, data: CreateVolunteerData): Promise<Volunteer> {
     const now = new Date();
     const v: Volunteer = {
       id: `vol-${this.nextId++}`,
@@ -65,18 +65,18 @@ export class FakeVolunteerRepository implements VolunteerRepositoryPort {
       updatedAt: now,
     };
     this.volunteers.set(v.id, v);
-    return v;
+    return Promise.resolve(v);
   }
 
-  async updateStatus(schoolId: string, volunteerId: string, status: VolunteerStatus, _revision: number, extra?: { suspendedReason?: string; qualifiedAt?: Date }): Promise<Volunteer> {
+  updateStatus(schoolId: string, volunteerId: string, status: VolunteerStatus, _revision: number, extra?: { suspendedReason?: string; qualifiedAt?: Date }): Promise<Volunteer> {
     const v = this.volunteers.get(volunteerId);
-    if (!v || v.schoolId !== schoolId) throw new Error("not found");
+    if (!v || v.schoolId !== schoolId) return Promise.reject(new Error("not found"));
     const updated = { ...v, status, updatedAt: new Date(), ...extra };
     this.volunteers.set(volunteerId, updated);
-    return updated;
+    return Promise.resolve(updated);
   }
 
-  async listServiceTasks(schoolId: string, options: ListServiceTasksOptions): Promise<PaginatedResult<VolunteerServiceTask>> {
+  listServiceTasks(schoolId: string, options: ListServiceTasksOptions): Promise<PaginatedResult<VolunteerServiceTask>> {
     let items = [...this.serviceTasks.values()].filter((t) => t.schoolId === schoolId);
     if (options.assignedVolunteerId) {
       items = items.filter((t) => t.assignedVolunteerId === options.assignedVolunteerId);
@@ -86,23 +86,23 @@ export class FakeVolunteerRepository implements VolunteerRepositoryPort {
     }
     const limit = options.limit;
     const slice = items.slice(0, limit);
-    return { items: slice, nextCursor: null, hasMore: false };
+    return Promise.resolve({ items: slice, nextCursor: null, hasMore: false });
   }
 
-  async findServiceTaskById(schoolId: string, taskId: string): Promise<VolunteerServiceTask | null> {
+  findServiceTaskById(schoolId: string, taskId: string): Promise<VolunteerServiceTask | null> {
     const t = this.serviceTasks.get(taskId);
-    return t && t.schoolId === schoolId ? t : null;
+    return Promise.resolve(t && t.schoolId === schoolId ? t : null);
   }
 
-  async assignServiceTask(schoolId: string, taskId: string, volunteerId: string): Promise<VolunteerServiceTask> {
+  assignServiceTask(schoolId: string, taskId: string, volunteerId: string): Promise<VolunteerServiceTask> {
     const t = this.serviceTasks.get(taskId);
-    if (!t || t.schoolId !== schoolId) throw new Error("not found");
+    if (!t || t.schoolId !== schoolId) return Promise.reject(new Error("not found"));
     const updated = { ...t, assignedVolunteerId: volunteerId, status: "ASSIGNED", updatedAt: new Date() };
     this.serviceTasks.set(taskId, updated);
-    return updated;
+    return Promise.resolve(updated);
   }
 
-  async createIncidentReport(schoolId: string, data: CreateIncidentData): Promise<IncidentReport> {
+  createIncidentReport(schoolId: string, data: CreateIncidentData): Promise<IncidentReport> {
     const now = new Date();
     const inc: IncidentReport = {
       id: `inc-${this.nextId++}`,
@@ -118,20 +118,20 @@ export class FakeVolunteerRepository implements VolunteerRepositoryPort {
       updatedAt: now,
     };
     this.incidents.set(inc.id, inc);
-    return inc;
+    return Promise.resolve(inc);
   }
 
-  async findIncidentById(schoolId: string, incidentId: string): Promise<IncidentReport | null> {
+  findIncidentById(schoolId: string, incidentId: string): Promise<IncidentReport | null> {
     const i = this.incidents.get(incidentId);
-    return i && i.schoolId === schoolId ? i : null;
+    return Promise.resolve(i && i.schoolId === schoolId ? i : null);
   }
 
-  async listIncidents(schoolId: string, options: { severity?: string; status?: string; limit: number; cursor?: string }): Promise<PaginatedResult<IncidentReport>> {
+  listIncidents(schoolId: string, options: { severity?: string; status?: string; limit: number; cursor?: string }): Promise<PaginatedResult<IncidentReport>> {
     let items = [...this.incidents.values()].filter((i) => i.schoolId === schoolId);
     if (options.severity) items = items.filter((i) => i.severity === options.severity);
     if (options.status) items = items.filter((i) => i.status === options.status);
     const slice = items.slice(0, options.limit);
-    return { items: slice, nextCursor: null, hasMore: false };
+    return Promise.resolve({ items: slice, nextCursor: null, hasMore: false });
   }
 
   addVolunteer(v: Volunteer): void {

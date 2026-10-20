@@ -3,6 +3,13 @@
 Last updated: 2026-10-20
 Repository: `yuzan-workspace-main`
 
+## YZ-RD-T071 API test lint fifth slice (2026-10-20)
+
+- `PARTIAL_WITH_DEBT` on `feat/yz-rd-t071-api-test-lint-fifth-small-slice`, from exact T066 BASE `ae3d7cfa43b730d4966649208e80c2a883f78d65`, in an isolated worktree. Five safe API test fakes were updated; no API source or contract changed.
+- The five selected files had 64 directly measured lint errors (63 `@typescript-eslint/require-await`, 1 `prefer-const`) and now pass targeted ESLint with 0 errors and 0 warnings. The one complete full API lint run measured 1 src / 272 test / 273 total errors. Against T066's derived 1 / 336 / 337 baseline, the net decrease is 64; the baseline was not fully rerun.
+- Test TypeScript remains at 184 diagnostics with 0 new diagnostic identities. The safe targeted Vitest run passed 262/262 tests across six files. Node `v24.20.0`; pnpm `10.13.1`.
+- `SOURCE_READ_GUARD=PASS`; no raw question bank, Level 4 seed helper, T005 worktree/data, historical L4 incident data, database runtime, or Docker was accessed. `READY_TO_MERGE=NO` while full API lint debt remains; `HISTORICAL_L4_OPEN=OPEN` and unchanged. Evidence: [`evidence/yz-rd-t071/RESULTS.md`](evidence/yz-rd-t071/RESULTS.md).
+
 ## YZ-RD-T063 API test lint fourth slice (2026-10-20)
 
 - `PARTIAL_WITH_DEBT` on `feat/yz-rd-t063-api-test-lint-fourth-slice`, from exact T059 BASE `f147138b570971d44815eebf769215a6ade5a08e`, in an independent worktree. Six unremediated API test files were selected from the T059 remaining-debt snapshot; 183 lint findings were fixed. No API source changed.

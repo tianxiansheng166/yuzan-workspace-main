@@ -1,0 +1,23 @@
+
+ RUN  v3.2.7 /home/tian/code/work/yuzan-workspace-t071/backend/api
+
+ ✓ test/modules/cooperation/cooperation.service.spec.ts (72 tests) 11ms
+ ✓ test/modules/training/training.service.spec.ts (58 tests) 8ms
+ ✓ test/modules/community/community.service.spec.ts (92 tests) 8ms
+ ✓ test/modules/volunteers/volunteers.service.spec.ts (22 tests) 4ms
+stdout | test/organizations/organizations.controller.spec.ts > OrganizationsController > security guards > rejects unknown role via AuthenticationGuard
+{"type":"SECURITY","requestId":"req-1","code":"UNKNOWN_ROLE","method":"GET","path":"/schools/school-a","event":"AUTHORIZATION_DENIED"}
+
+stdout | test/organizations/organizations.controller.spec.ts > OrganizationsController > security guards > rejects client-forged schoolId via TenantAuthorizationGuard
+{"type":"SECURITY","requestId":"req-1","code":"FORBIDDEN_TENANT","schoolId":"school-a","method":"GET","path":"/schools/school-b","userId":"teacher-1","event":"AUTHORIZATION_DENIED"}
+
+stdout | test/organizations/organizations.controller.spec.ts > OrganizationsController > security guards > rejects suspended membership
+{"type":"SECURITY","requestId":"req-1","code":"UNAUTHENTICATED","method":"GET","path":"/schools/school-a","event":"AUTHORIZATION_DENIED"}
+
+ ✓ test/organizations/organizations.controller.spec.ts (11 tests) 132ms
+ ✓ test/organizations/organizations.service.spec.ts (7 tests) 6ms
+
+ Test Files  6 passed (6)
+      Tests  262 passed (262)
+   Start at  17:38:28
+   Duration  959ms (transform 279ms, setup 0ms, collect 600ms, tests 169ms, environment 0ms, prepare 67ms)

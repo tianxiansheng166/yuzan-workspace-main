@@ -21,12 +21,12 @@ export class FakeUserIdentityRepository implements UserIdentityRepository {
     this.users.set(user.loginIdentifier, user);
   }
 
-  async findByIdentifier(identifier: string): Promise<UserIdentity | null> {
-    return this.users.get(identifier) ?? null;
+  findByIdentifier(identifier: string): Promise<UserIdentity | null> {
+    return Promise.resolve(this.users.get(identifier) ?? null);
   }
 
-  async findById(userId: string): Promise<UserIdentity | null> {
-    return this.users.get(userId) ?? null;
+  findById(userId: string): Promise<UserIdentity | null> {
+    return Promise.resolve(this.users.get(userId) ?? null);
   }
 }
 
@@ -37,20 +37,20 @@ export class FakeMembershipRepository implements MembershipRepository {
     this.memberships.push(...memberships);
   }
 
-  async findActiveMembershipsByUser(
+  findActiveMembershipsByUser(
     userId: string,
   ): Promise<readonly UserMembership[]> {
-    return this.memberships.filter((m) => m.userId === userId);
+    return Promise.resolve(this.memberships.filter((m) => m.userId === userId));
   }
 
-  async findByUserAndSchool(
+  findByUserAndSchool(
     userId: string,
     schoolId: string,
   ): Promise<UserMembership | null> {
-    return (
+    return Promise.resolve(
       this.memberships.find(
         (m) => m.userId === userId && m.schoolId === schoolId,
-      ) ?? null
+      ) ?? null,
     );
   }
 }
@@ -63,34 +63,34 @@ export class FakePasswordVerifier implements PasswordVerifier {
     this.passwords.set(userId, password);
   }
 
-  async verify(password: string, hash: string): Promise<boolean> {
+  verify(password: string, hash: string): Promise<boolean> {
     this.calls.push({ kind: "real", password });
     // In tests, the "hash" is the userId placeholder recorded by fixtures.
     const expected = this.passwords.get(hash);
-    return expected === password;
+    return Promise.resolve(expected === password);
   }
 
-  async verifyDummy(password: string): Promise<boolean> {
+  verifyDummy(password: string): Promise<boolean> {
     this.calls.push({ kind: "dummy", password });
-    return false;
+    return Promise.resolve(false);
   }
 }
 
 export class FakeSessionTokenService implements SessionTokenService {
   private counter = 0;
 
-  async generatePair(): Promise<{
+  generatePair(): Promise<{
     accessToken: string;
     refreshToken: string;
   }> {
     this.counter += 1;
     const accessToken = `access-token-${this.counter}-${randomBytes(8).toString("hex")}`;
     const refreshToken = `refresh-token-${this.counter}-${randomBytes(8).toString("hex")}`;
-    return { accessToken, refreshToken };
+    return Promise.resolve({ accessToken, refreshToken });
   }
 
-  async hash(token: string): Promise<string> {
-    return createHash("sha256").update(token).digest("hex");
+  hash(token: string): Promise<string> {
+    return Promise.resolve(createHash("sha256").update(token).digest("hex"));
   }
 }
 
@@ -101,7 +101,7 @@ export class FakeSessionRepository implements SessionRepository {
   private nextId = 1;
   private failNextRotation = false;
 
-  async create(
+  create(
     params: Readonly<{
       userId: string;
       activeSchoolId: string | null;
@@ -119,31 +119,32 @@ export class FakeSessionRepository implements SessionRepository {
       lastUsedAt: new Date(),
     };
     this.store(session);
-    return session;
+    return Promise.resolve(session);
   }
 
-  async findByAccessTokenHash(
+  findByAccessTokenHash(
     accessTokenHash: string,
   ): Promise<UserSession | null> {
     const id = this.accessIndex.get(accessTokenHash);
-    return id ? (this.sessionsById.get(id) ?? null) : null;
+    return Promise.resolve(id ? (this.sessionsById.get(id) ?? null) : null);
   }
 
-  async findByRefreshTokenHash(
+  findByRefreshTokenHash(
     refreshTokenHash: string,
   ): Promise<UserSession | null> {
     const id = this.refreshIndex.get(refreshTokenHash);
-    return id ? (this.sessionsById.get(id) ?? null) : null;
+    return Promise.resolve(id ? (this.sessionsById.get(id) ?? null) : null);
   }
 
-  async revoke(sessionId: string): Promise<void> {
+  revoke(sessionId: string): Promise<void> {
     const session = this.sessionsById.get(sessionId);
     if (session) {
       session.revokedAt = new Date();
     }
+    return Promise.resolve();
   }
 
-  async compareAndRotateRefreshSession(
+  compareAndRotateRefreshSession(
     params: Readonly<{
       sessionId: string;
       expectedRefreshTokenHash: string;
@@ -166,7 +167,7 @@ export class FakeSessionRepository implements SessionRepository {
       session.refreshExpiresAt <= params.now
     ) {
       this.failNextRotation = false;
-      return null;
+      return Promise.resolve(null);
     }
     session.revokedAt = params.now;
     const successor: UserSession = {
@@ -178,7 +179,7 @@ export class FakeSessionRepository implements SessionRepository {
       lastUsedAt: params.now,
     };
     this.store(successor);
-    return successor;
+    return Promise.resolve(successor);
   }
 
   sessionCount(): number {

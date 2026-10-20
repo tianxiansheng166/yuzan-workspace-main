@@ -1,0 +1,90 @@
+{
+  "targeted": {
+    "before_errors_measured": 64,
+    "after_errors_measured": 0,
+    "warnings_before": 0,
+    "warnings_after": 0,
+    "removed_by_rule": {
+      "@typescript-eslint/require-await": 63,
+      "prefer-const": 1
+    },
+    "files": [
+      {
+        "file": "backend/api/test/auth/helpers/fake-adapters.ts",
+        "before": 13,
+        "after": 0,
+        "delta": -13,
+        "before_by_rule": {
+          "@typescript-eslint/require-await": 13
+        },
+        "after_by_rule": {}
+      },
+      {
+        "file": "backend/api/test/modules/community/fakes/fake-community.repository.ts",
+        "before": 12,
+        "after": 0,
+        "delta": -12,
+        "before_by_rule": {
+          "@typescript-eslint/require-await": 11,
+          "prefer-const": 1
+        },
+        "after_by_rule": {}
+      },
+      {
+        "file": "backend/api/test/modules/cooperation/fakes/fake-cooperation.repository.ts",
+        "before": 12,
+        "after": 0,
+        "delta": -12,
+        "before_by_rule": {
+          "@typescript-eslint/require-await": 12
+        },
+        "after_by_rule": {}
+      },
+      {
+        "file": "backend/api/test/modules/training/fakes/fake-training.repository.ts",
+        "before": 16,
+        "after": 0,
+        "delta": -16,
+        "before_by_rule": {
+          "@typescript-eslint/require-await": 16
+        },
+        "after_by_rule": {}
+      },
+      {
+        "file": "backend/api/test/modules/volunteers/fakes/fake-volunteer.repository.ts",
+        "before": 11,
+        "after": 0,
+        "delta": -11,
+        "before_by_rule": {
+          "@typescript-eslint/require-await": 11
+        },
+        "after_by_rule": {}
+      }
+    ]
+  },
+  "full_api": {
+    "before": {
+      "src": 1,
+      "test": 336,
+      "total": 337,
+      "measurement": "derived from accepted T066 result; no complete before-run at this task base"
+    },
+    "after": {
+      "src": 1,
+      "test": 272,
+      "total": 273,
+      "measurement": "one complete full API lint run in T071"
+    },
+    "net_change_vs_derived_baseline": {
+      "src": 0,
+      "test": -64,
+      "total": -64
+    },
+    "remaining_src_findings": [
+      {
+        "file": "backend/api/src/modules/curriculum/ports/prisma-course-version.repository.ts",
+        "rule": "@typescript-eslint/no-empty-object-type"
+      }
+    ]
+  }
+}

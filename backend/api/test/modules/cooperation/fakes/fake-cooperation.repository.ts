@@ -24,7 +24,7 @@ export class FakeCooperationRepository implements CooperationRepositoryPort {
 
   // ---------- Leads ----------
 
-  async createLead(
+  createLead(
     data: Omit<CooperationLead, "id" | "status" | "createdAt" | "updatedAt">,
   ): Promise<CooperationLead> {
     const now = new Date();
@@ -36,14 +36,14 @@ export class FakeCooperationRepository implements CooperationRepositoryPort {
       updatedAt: now,
     };
     this.leads.set(lead.id, lead);
-    return lead;
+    return Promise.resolve(lead);
   }
 
-  async findLeadById(leadId: string): Promise<CooperationLead | null> {
-    return this.leads.get(leadId) ?? null;
+  findLeadById(leadId: string): Promise<CooperationLead | null> {
+    return Promise.resolve(this.leads.get(leadId) ?? null);
   }
 
-  async listLeads(options: ListLeadsOptions): Promise<PaginatedResult<CooperationLead>> {
+  listLeads(options: ListLeadsOptions): Promise<PaginatedResult<CooperationLead>> {
     let items = [...this.leads.values()];
 
     if (options.status) {
@@ -57,20 +57,20 @@ export class FakeCooperationRepository implements CooperationRepositoryPort {
     const slice = items.slice(start, start + limit);
     const hasMore = start + limit < items.length;
 
-    return {
+    return Promise.resolve({
       items: slice,
       nextCursor: hasMore && slice.length > 0 ? slice[slice.length - 1].id : null,
       hasMore,
-    };
+    });
   }
 
-  async updateLeadStatus(
+  updateLeadStatus(
     leadId: string,
     status: LeadStatus,
     assignedOperatorId?: string,
   ): Promise<CooperationLead> {
     const existing = this.leads.get(leadId);
-    if (!existing) throw new Error(`Lead ${leadId} not found`);
+    if (!existing) return Promise.reject(new Error(`Lead ${leadId} not found`));
     const updated: CooperationLead = {
       ...existing,
       status,
@@ -78,12 +78,12 @@ export class FakeCooperationRepository implements CooperationRepositoryPort {
       updatedAt: new Date(),
     };
     this.leads.set(leadId, updated);
-    return updated;
+    return Promise.resolve(updated);
   }
 
   // ---------- Support Applications ----------
 
-  async createSupportApplication(
+  createSupportApplication(
     data: Omit<SupportApplication, "id" | "status" | "createdAt" | "updatedAt">,
   ): Promise<SupportApplication> {
     const now = new Date();
@@ -95,16 +95,16 @@ export class FakeCooperationRepository implements CooperationRepositoryPort {
       updatedAt: now,
     };
     this.supportApplications.set(application.id, application);
-    return application;
+    return Promise.resolve(application);
   }
 
-  async findSupportApplicationById(
+  findSupportApplicationById(
     applicationId: string,
   ): Promise<SupportApplication | null> {
-    return this.supportApplications.get(applicationId) ?? null;
+    return Promise.resolve(this.supportApplications.get(applicationId) ?? null);
   }
 
-  async listSupportApplications(
+  listSupportApplications(
     options: ListSupportApplicationsOptions,
   ): Promise<PaginatedResult<SupportApplication>> {
     let items = [...this.supportApplications.values()];
@@ -120,21 +120,21 @@ export class FakeCooperationRepository implements CooperationRepositoryPort {
     const slice = items.slice(start, start + limit);
     const hasMore = start + limit < items.length;
 
-    return {
+    return Promise.resolve({
       items: slice,
       nextCursor: hasMore && slice.length > 0 ? slice[slice.length - 1].id : null,
       hasMore,
-    };
+    });
   }
 
-  async updateSupportApplicationStatus(
+  updateSupportApplicationStatus(
     applicationId: string,
     status: ApplicationStatus,
     reviewedBy?: string,
     reviewNote?: string,
   ): Promise<SupportApplication> {
     const existing = this.supportApplications.get(applicationId);
-    if (!existing) throw new Error(`Application ${applicationId} not found`);
+    if (!existing) return Promise.reject(new Error(`Application ${applicationId} not found`));
     const updated: SupportApplication = {
       ...existing,
       status,
@@ -144,12 +144,12 @@ export class FakeCooperationRepository implements CooperationRepositoryPort {
       updatedAt: new Date(),
     };
     this.supportApplications.set(applicationId, updated);
-    return updated;
+    return Promise.resolve(updated);
   }
 
   // ---------- Volunteer Applications ----------
 
-  async createVolunteerApplication(
+  createVolunteerApplication(
     data: Omit<VolunteerApplication, "id" | "status" | "createdAt" | "updatedAt">,
   ): Promise<VolunteerApplication> {
     const now = new Date();
@@ -161,16 +161,16 @@ export class FakeCooperationRepository implements CooperationRepositoryPort {
       updatedAt: now,
     };
     this.volunteerApplications.set(application.id, application);
-    return application;
+    return Promise.resolve(application);
   }
 
-  async findVolunteerApplicationById(
+  findVolunteerApplicationById(
     applicationId: string,
   ): Promise<VolunteerApplication | null> {
-    return this.volunteerApplications.get(applicationId) ?? null;
+    return Promise.resolve(this.volunteerApplications.get(applicationId) ?? null);
   }
 
-  async listVolunteerApplications(
+  listVolunteerApplications(
     options: ListVolunteerApplicationsOptions,
   ): Promise<PaginatedResult<VolunteerApplication>> {
     let items = [...this.volunteerApplications.values()];
@@ -186,20 +186,20 @@ export class FakeCooperationRepository implements CooperationRepositoryPort {
     const slice = items.slice(start, start + limit);
     const hasMore = start + limit < items.length;
 
-    return {
+    return Promise.resolve({
       items: slice,
       nextCursor: hasMore && slice.length > 0 ? slice[slice.length - 1].id : null,
       hasMore,
-    };
+    });
   }
 
-  async updateVolunteerApplicationStatus(
+  updateVolunteerApplicationStatus(
     applicationId: string,
     status: VolunteerAppStatus,
     reviewedBy?: string,
   ): Promise<VolunteerApplication> {
     const existing = this.volunteerApplications.get(applicationId);
-    if (!existing) throw new Error(`Volunteer application ${applicationId} not found`);
+    if (!existing) return Promise.reject(new Error(`Volunteer application ${applicationId} not found`));
     const updated: VolunteerApplication = {
       ...existing,
       status,
@@ -208,7 +208,7 @@ export class FakeCooperationRepository implements CooperationRepositoryPort {
       updatedAt: new Date(),
     };
     this.volunteerApplications.set(applicationId, updated);
-    return updated;
+    return Promise.resolve(updated);
   }
 
   // ---------- Test helpers ----------

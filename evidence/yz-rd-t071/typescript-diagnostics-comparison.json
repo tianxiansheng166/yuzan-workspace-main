@@ -1,0 +1,11 @@
+{
+  "baseline_source": "T066 accepted final Test TypeScript diagnostics at ae3d7cfa43b730d4966649208e80c2a883f78d65",
+  "identity": "file + TypeScript diagnostic code + message; source coordinates excluded",
+  "before": 184,
+  "after": 184,
+  "added_count": 0,
+  "removed_count": 0,
+  "added": [],
+  "removed": [],
+  "tsc_exit_code": 2
+}

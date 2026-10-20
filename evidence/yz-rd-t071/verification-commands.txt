@@ -1,0 +1,28 @@
+Runtime:
+- `node --version` -> `v24.20.0` (required range `>=24 <27`)
+- `corepack pnpm@10.13.1 --version` -> `10.13.1`
+
+Offline dependencies and type generation:
+- `corepack pnpm@10.13.1 install --offline --filter @yuzan/api...`
+- `DATABASE_URL=postgresql://unused:unused@127.0.0.1:1/unused corepack pnpm@10.13.1 --filter @yuzan/database generate`
+- `corepack pnpm@10.13.1 --filter @yuzan/database build`
+- Prisma generation used the local schema and placeholder URL; it did not connect to a database.
+
+Targeted ESLint, run from `backend/api`:
+- Before: `./node_modules/.bin/eslint --format json test/modules/training/fakes/fake-training.repository.ts test/auth/helpers/fake-adapters.ts test/modules/community/fakes/fake-community.repository.ts test/modules/cooperation/fakes/fake-cooperation.repository.ts test/modules/volunteers/fakes/fake-volunteer.repository.ts`
+- After: same command; exit 0, 0 errors, 0 warnings.
+
+Targeted Vitest, run from `backend/api` with `DATABASE_URL` and `QB_RUNTIME_DATABASE_URL` unset:
+- `./node_modules/.bin/vitest run --passWithNoTests --pool=forks --poolOptions.forks.singleFork test/modules/community/community.service.spec.ts test/modules/cooperation/cooperation.service.spec.ts test/modules/training/training.service.spec.ts test/modules/volunteers/volunteers.service.spec.ts test/organizations/organizations.controller.spec.ts test/organizations/organizations.service.spec.ts`
+- Result: 6 files, 262 passed, 0 failed, 0 skipped.
+
+Test TypeScript, run from `backend/api`:
+- `./node_modules/.bin/tsc -p test/tsconfig.json --noEmit`
+- Result: 184 diagnostics, 0 new identities against T066; compiler exits 2 on unchanged pre-existing diagnostics.
+
+Complete API lint, run exactly once from `backend/api` after edits:
+- `./node_modules/.bin/eslint --format json src test`
+- Result: exit 1, 1 src / 272 test / 273 total errors; 0 warnings / parser errors.
+
+Repository checks:
+- `git diff --check` -> PASS
