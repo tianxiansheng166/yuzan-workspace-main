@@ -58,6 +58,10 @@
               <track id="cpTrackZh" kind="subtitles" srclang="zh" label="中文字幕" default>
               <track id="cpTrackBo" kind="subtitles" srclang="bo" label="藏文字幕">
             </video>
+            <div class="cp-resource-status" id="cpVideoResourceStatus" role="alert" hidden>
+              <span id="cpVideoResourceMessage"></span>
+              <button class="cp-btn cp-btn-outline cp-btn-sm" id="cpVideoRetryBtn" type="button">重试资源</button>
+            </div>
 
             <!-- Poster overlay -->
             <div class="cp-video-overlay" id="cpVideoOverlay">
@@ -229,8 +233,12 @@
           <h2 class="cp-section-title">口语跟读练习</h2>
           <div class="cp-oral-section">
             <div class="cp-oral-demo">
-              <h3>示范音频</h3>
+              <h3 id="cpOralAudioLabel">示范音频</h3>
               <audio class="cp-oral-audio" id="cpOralDemo" controls></audio>
+              <div class="cp-resource-status cp-oral-resource-status" id="cpOralResourceStatus" role="alert" hidden>
+                <span id="cpOralResourceMessage"></span>
+                <button class="cp-btn cp-btn-outline cp-btn-sm" id="cpOralRetryBtn" type="button">重试音频</button>
+              </div>
               <p class="cp-oral-text" id="cpOralText">示范文本</p>
             </div>
             <div class="cp-oral-record">
@@ -284,6 +292,10 @@
               <p class="cp-completion-label">待学活动</p>
             </div>
           </div>
+          <div class="cp-course-submit">
+            <p id="cpCourseSubmitMessage" role="status" aria-live="polite">正在读取课程提交状态…</p>
+            <button class="cp-btn cp-btn-primary" id="cpCourseSubmitBtn" type="button" disabled>提交课程</button>
+          </div>
         </section>
 
       </div>
@@ -302,6 +314,7 @@
             <span class="cp-progress-text"><span id="cpDirLearned">0</span> / <span id="cpDirTotal">0</span> 已学</span>
           </div>
           <ul class="cp-directory" id="cpDirectory"></ul>
+          <p class="cp-empty-text" id="cpNoActivities" hidden>当前课程暂无可学习活动。</p>
         </div>
 
         <!-- Recommendations card (master template: in sidebar) -->
@@ -384,14 +397,22 @@
       var titleEl = document.getElementById('cpHeroTitle');
       var chapterEl = document.getElementById('cpHeroChapter');
       var bcCourse = document.getElementById('cpBreadcrumbCourse');
-      var bcChapter = document.getElementById('cpBreadcrumbChapter');
       if (titleEl) titleEl.textContent = course.title || '';
       if (hero && window.YuzanVisualAssets) {
         hero.style.setProperty('--cp-course-cover', 'url("' + window.YuzanVisualAssets.courseCover(course) + '")');
       }
-      if (chapterEl) chapterEl.textContent = '';
       if (bcCourse) bcCourse.textContent = course.title || '';
-      if (bcChapter) bcChapter.textContent = '';
+      renderActivityContext(window.CoursePlayerState.getState().currentActivity);
+    }
+
+    function renderActivityContext(activity) {
+      var chapterEl = document.getElementById('cpHeroChapter');
+      var breadcrumb = document.getElementById('cpBreadcrumbChapter');
+      var unit = activity && activity._unitTitle ? activity._unitTitle : '';
+      var lesson = activity && activity._lessonTitle ? activity._lessonTitle : '';
+      var chapter = [unit, lesson].filter(Boolean).join(' / ');
+      if (chapterEl) chapterEl.textContent = lesson || unit || '课程概览';
+      if (breadcrumb) breadcrumb.textContent = chapter || '课程概览';
     }
 
     function renderInfo(course) {
@@ -474,26 +495,84 @@
       var section = document.getElementById('cpSectionOral');
       var audio = document.getElementById('cpOralDemo');
       var text = document.getElementById('cpOralText');
+      var demo = section && section.querySelector('.cp-oral-demo');
+      var record = section && section.querySelector('.cp-oral-record');
+      var audioLabel = document.getElementById('cpOralAudioLabel');
+      var resourceStatus = document.getElementById('cpOralResourceStatus');
+      var resourceMessage = document.getElementById('cpOralResourceMessage');
+      var recordBtn = document.getElementById('cpRecordBtn');
+      var oralHint = document.getElementById('cpOralHint');
       if (!section || !audio || !text) return;
+      var nextActivityId = activity && activity.activityId ? activity.activityId : '';
+      if (loadedAudioActivityId && loadedAudioActivityId !== nextActivityId && loadedAudioActivityKind === 'AUDIO' && audio.currentTime > 0) {
+        saveAudioProgress(audio.ended, loadedAudioActivityId, loadedAudioActivityKind);
+      }
+      if (loadedAudioActivityId && loadedAudioActivityId !== nextActivityId && !audio.paused) {
+        ignoreNextAudioPauseSave = true;
+      }
       var content = activity && activity.content && typeof activity.content === 'object' ? activity.content : {};
       var resources = (activity && activity.resources || []).map(function (link) { return link.resource || link; });
       var audioResource = resources.find(function (resource) { return resource && (resource.kind === 'AUDIO' || String(resource.mediaType || '').startsWith('audio/')); });
       var audioUrl = content.demoAudioUrl || content.supportAudioUrl || activity?.demoAudioUrl || '';
       var demoText = content.demoText || content.targetText || activity?.demoText || '';
       var hasRealDemo = Boolean(audioUrl || audioResource || demoText);
-      section.hidden = !hasRealDemo;
-      if (!hasRealDemo) return;
+      var isSpeech = activity && activity.activityType === 'SPEECH';
+      var isAudio = activity && activity.activityType === 'AUDIO';
+      var request = ++audioRequest;
+      activeAudioResource = audioResource || null;
+      audioExpiryRetries = 0;
+      lastAudioSavedAt = 0;
+      lastQueuedAudioSave = null;
+      var needsSection = hasRealDemo || isSpeech || isAudio;
+      section.hidden = !needsSection;
+      if (demo) demo.hidden = !hasRealDemo;
+      if (record) record.hidden = !isSpeech;
+      if (audioLabel) audioLabel.textContent = isAudio ? '课程音频' : '示范音频';
+      audio.pause();
+      loadedAudioActivityId = nextActivityId;
+      loadedAudioActivityKind = activity && activity.activityType ? activity.activityType : '';
+      audio.removeAttribute('src');
+      audio.load();
+      if (resourceStatus) resourceStatus.hidden = true;
       text.hidden = !demoText;
       if (demoText) text.textContent = demoText;
       audio.hidden = !audioUrl && !audioResource;
-      if (audioUrl) audio.src = audioUrl;
+      if (audioUrl && !audioResource) audio.src = audioUrl;
       if (audioResource) {
         window.CourseApiAdapter.getResourcePlaybackUrl(audioResource.id).then(function (result) {
+          if (request !== audioRequest) return;
+          if (!result || !result.url) throw new Error('音频资源没有可用的播放地址');
           audio.src = result.url;
           audio.hidden = false;
-        }).catch(function () {
+        }).catch(function (error) {
+          if (request !== audioRequest) return;
           audio.hidden = true;
+          if (resourceStatus) resourceStatus.hidden = false;
+          if (resourceMessage) {
+            resourceMessage.textContent = error && error.status === 403
+              ? '你没有权限访问这项课程音频。'
+              : '课程音频暂时无法打开，请重试。';
+          }
         });
+      } else if (isAudio && !audioUrl) {
+        if (resourceStatus) resourceStatus.hidden = false;
+        if (resourceMessage) resourceMessage.textContent = '本节课程音频资源暂不可用，请联系老师。';
+      }
+      if (recordBtn) {
+        var submitted = window.CoursePlayerState.isSubmitted();
+        var activityCompleted = activity && activity.isCompleted === true;
+        recordBtn.disabled = submitted || activityCompleted;
+        if (submitted) {
+          var label = recordBtn.querySelector('span');
+          if (label) label.textContent = '课程已提交';
+          if (oralHint) oralHint.textContent = '本课程已提交，录音内容只读。';
+        } else if (activityCompleted) {
+          var completedLabel = recordBtn.querySelector('span');
+          if (completedLabel) completedLabel.textContent = '录音已提交';
+          if (oralHint) oralHint.textContent = '服务器已记录本节录音。';
+        } else if (isSpeech && oralHint) {
+          oralHint.textContent = '点击按钮开始录音，再次点击停止';
+        }
       }
     }
 
@@ -509,11 +588,10 @@
       if (desc) desc.textContent = activity.instruction || '进入现有统一练习执行器，完成朗读与能力测评。';
     }
 
-    function activityPlayerHref(assignmentId, submissionId, activityId) {
-      if (!assignmentId || !submissionId || !activityId) return '';
-      return '/student/courses/' + encodeURIComponent(assignmentId)
-        + '/submissions/' + encodeURIComponent(submissionId)
-        + '/activities/' + encodeURIComponent(activityId);
+    function activityPlayerHref(assignmentId, activityId) {
+      if (!assignmentId || !activityId) return '';
+      return '/student/courses/course-detail/?id=' + encodeURIComponent(assignmentId)
+        + '&activityId=' + encodeURIComponent(activityId);
     }
 
     // --- renderDirectory: course activities open in the focused learning player ---
@@ -526,9 +604,11 @@
       if (!dirEl || !course || !course.units) return;
       dirEl.innerHTML = '';
       var courseState = window.CoursePlayerState.getState();
+      var noActivities = document.getElementById('cpNoActivities');
 
-      var total = 0;
-      var completed = 0;
+      var activityCount = 0;
+      var requiredCount = 0;
+      var completedRequired = 0;
       var index = 0;
 
       course.units.forEach(function (unit) {
@@ -539,18 +619,22 @@
 
         (unit.lessons || []).forEach(function (lesson) {
           (lesson.activities || []).forEach(function (act) {
-            total++;
-            if (act.isCompleted) completed++;
+            activityCount++;
+            if (act.required !== false) {
+              requiredCount++;
+              if (act.isCompleted) completedRequired++;
+            }
             index++;
 
             var li = document.createElement('li');
-            var state = act.isCompleted ? 'learned' : (act.activityId === currentActivityId ? 'current' : 'locked');
+            var isCurrent = act.activityId === currentActivityId;
+            var itemState = isCurrent ? 'current' : (act.isCompleted ? 'learned' : 'upcoming');
             var link = document.createElement('a');
-            link.className = 'cp-dir-item cp-dir-' + state;
+            link.className = 'cp-dir-item cp-dir-' + itemState;
             link.setAttribute('data-activity-id', act.activityId);
-            link.href = activityPlayerHref(courseState.assignmentId, courseState.submissionId, act.activityId) || '#';
+            link.href = activityPlayerHref(courseState.assignmentId, act.activityId) || '#';
             link.setAttribute('aria-label', '打开课程活动：' + (act.title || '未命名活动'));
-            if (act.activityId === currentActivityId) link.setAttribute('aria-current', 'step');
+            if (isCurrent) link.setAttribute('aria-current', 'step');
 
             // Numbered badge (.cp-dir-num) — colored by state
             var num = document.createElement('span');
@@ -564,8 +648,8 @@
 
             // Status pill (.cp-dir-status)
             var status = document.createElement('span');
-            status.className = 'cp-dir-status cp-dir-status-' + state;
-            status.textContent = act.isCompleted ? '已学习' : (act.activityId === currentActivityId ? '当前' : '未学习');
+            status.className = 'cp-dir-status cp-dir-status-' + itemState;
+            status.textContent = isCurrent ? '当前' : (act.isCompleted ? '已学习' : (act.required === false ? '选修' : '待学习'));
 
             link.appendChild(num);
             link.appendChild(title);
@@ -577,32 +661,106 @@
         });
       });
 
-      if (progressFill) progressFill.style.width = (total > 0 ? Math.round((completed / total) * 100) : 0) + '%';
-      if (learnedEl) learnedEl.textContent = completed;
-      if (totalEl) totalEl.textContent = total;
+      if (noActivities) noActivities.hidden = activityCount > 0;
+      var progress = course.progress || {};
+      var serverCompleted = Number.isFinite(progress.completedActivities) ? progress.completedActivities : completedRequired;
+      var serverTotal = Number.isFinite(progress.totalActivities) ? progress.totalActivities : requiredCount;
+      var percent = Number.isFinite(progress.percent) ? progress.percent : null;
+      if (progressFill) {
+        progressFill.style.width = percent == null ? '0%' : Math.max(0, Math.min(100, percent)) + '%';
+        progressFill.setAttribute('aria-valuenow', percent == null ? '' : String(percent));
+        progressFill.setAttribute('aria-valuetext', percent == null ? '进度暂不可用' : (percent + '%'));
+      }
+      if (learnedEl) learnedEl.textContent = Number.isFinite(serverCompleted) ? String(serverCompleted) : '—';
+      if (totalEl) totalEl.textContent = Number.isFinite(serverTotal) ? String(serverTotal) : '—';
     }
 
-    function renderCompletion(course) {
+    function renderCompletion(course, playerState) {
       var valEl = document.getElementById('cpCompletionValue');
       var attEl = document.getElementById('cpAttainmentValue');
       var learnedEl = document.getElementById('cpLearnedCount');
       var remainingEl = document.getElementById('cpRemainingCount');
-      var progress = course.progress || {};
-      var pct = progress.percent || 0;
-      var completed = progress.completedActivities || 0;
-      var total = progress.totalActivities || 0;
+      var messageEl = document.getElementById('cpCourseSubmitMessage');
+      var submitBtn = document.getElementById('cpCourseSubmitBtn');
+      var progress = course && course.progress ? course.progress : {};
+      var pct = Number.isFinite(progress.percent) ? progress.percent : null;
+      var completed = Number.isFinite(progress.completedActivities) ? progress.completedActivities : null;
+      var total = Number.isFinite(progress.totalActivities) ? progress.totalActivities : null;
+      var attainmentLabels = {
+        PENDING: '学习中',
+        PASSED: '已达成',
+        NEEDS_REVIEW: '待教师复核',
+        NEEDS_PRACTICE: '需要巩固',
+        PROVIDER_UNAVAILABLE: '服务待恢复'
+      };
+      if (valEl) valEl.textContent = pct == null ? '—' : (pct + '%');
+      if (attEl) attEl.textContent = attainmentLabels[progress.attainmentStatus] || '—';
+      if (learnedEl) learnedEl.textContent = completed == null ? '—' : String(completed);
+      if (remainingEl) remainingEl.textContent = total == null || completed == null ? '—' : String(Math.max(0, total - completed));
 
-      if (valEl) valEl.textContent = pct + '%';
-      if (attEl) attEl.textContent = pct + '%';
-      if (learnedEl) learnedEl.textContent = completed;
-      if (remainingEl) remainingEl.textContent = Math.max(0, total - completed);
+      if (!submitBtn || !messageEl) return;
+      playerState = playerState || window.CoursePlayerState.getState();
+      var submitted = window.CoursePlayerState.isSubmitted();
+      var saving = !!playerState.saving;
+      var submitting = !!playerState.submitting;
+      var canSubmit = pct === 100 && !!playerState.submissionId && !submitted && !saving;
+      submitBtn.disabled = !canSubmit;
+      submitBtn.textContent = submitted ? '课程已提交' : (submitting ? '正在提交…' : '提交课程');
+      if (submitted) {
+        messageEl.textContent = '课程已提交，后续处理状态以服务器记录为准。';
+      } else if (submitting) {
+        messageEl.textContent = '正在提交课程，请稍候。';
+      } else if (saving) {
+        messageEl.textContent = '正在保存学习进度，请稍候再提交。';
+      } else if (pct == null) {
+        messageEl.textContent = '暂时无法确认课程进度，读取到服务端进度后才能提交。';
+      } else if (total === 0) {
+        messageEl.textContent = '当前课程没有必修活动，暂不能提交。';
+      } else if (pct === 100) {
+        messageEl.textContent = '全部必修活动和课程练习已由服务器确认完成，可以提交课程。';
+      } else {
+        messageEl.textContent = '已完成 ' + (completed == null ? '—' : completed) + ' / ' + (total == null ? '—' : total) + ' 项必修活动。完成后可提交课程。';
+      }
+      syncReadOnlyControls(playerState);
+    }
+
+    function syncReadOnlyControls(playerState) {
+      playerState = playerState || window.CoursePlayerState.getState();
+      var submitted = window.CoursePlayerState.isSubmitted();
+      var recordBtn = document.getElementById('cpRecordBtn');
+      var oralHint = document.getElementById('cpOralHint');
+      var currentActivity = playerState.currentActivity;
+      if (recordBtn && currentActivity && currentActivity.activityType === 'SPEECH') {
+        var completed = currentActivity.isCompleted === true;
+        recordBtn.disabled = submitted || completed;
+        var label = recordBtn.querySelector('span');
+        if (label && submitted) label.textContent = '课程已提交';
+        else if (label && completed) label.textContent = '录音已提交';
+        if (oralHint && submitted) oralHint.textContent = '本课程已提交，录音内容只读。';
+        else if (oralHint && completed) oralHint.textContent = '服务器已记录本节录音。';
+      }
+      var practiceBtn = document.getElementById('cpPracticeGoBtn');
+      if (practiceBtn && submitted) {
+        practiceBtn.classList.add('disabled');
+        practiceBtn.setAttribute('aria-disabled', 'true');
+      } else if (practiceBtn) {
+        practiceBtn.classList.remove('disabled');
+        practiceBtn.removeAttribute('aria-disabled');
+      }
     }
 
     // --- renderRecommendations: master template horizontal layout (cover + info) ---
-    function renderRecommendations(recommendations) {
+    function renderRecommendations(recommendations, error) {
       var list = document.getElementById('cpRecGrid');
       if (!list) return;
       list.innerHTML = '';
+      if (error) {
+        var unavailable = document.createElement('p');
+        unavailable.className = 'cp-empty-text';
+        unavailable.textContent = '推荐课程暂时无法加载，请稍后重试。';
+        list.appendChild(unavailable);
+        return;
+      }
       var recs = (recommendations || []).slice(0, 4);
       if (!recs.length) {
         list.innerHTML = '<p class="cp-empty-text">暂无推荐课程</p>';
@@ -641,96 +799,270 @@
     }
 
     // --- renderStatistics: master template (weekly progress bar + streak + 2-col grid) ---
-    function renderStatistics(dashboard) {
+    function renderStatistics(dashboard, error) {
       var container = document.getElementById('cpStatsContainer');
+      var section = document.getElementById('cpSectionStatistics');
       if (!container) return;
       container.innerHTML = '';
-      if (!dashboard) return;
-
-      var weeklyHours = Math.round((dashboard.weeklyMinutes || 0) / 60);
-      var weeklyGoal = dashboard.weeklyGoalHours || 10;
-      var streak = dashboard.consecutiveDays || 0;
-      var badges = dashboard.badgesEarned || 0;
-      var coursesLearned = dashboard.coursesLearned || 0;
-      var totalHours = Math.round((dashboard.totalMinutes || 0) / 60);
-
-      // Block 1: weekly learning hours progress bar
-      var block1 = document.createElement('div');
-      block1.className = 'cp-stat-block';
-      block1.innerHTML =
-        '<p class="cp-stat-block-title">本周学习时长</p>' +
-        '<p class="cp-stat-block-value">' + weeklyHours + ' / ' + weeklyGoal + ' 小时</p>' +
-        '<div class="cp-stat-progress">' +
-          '<div class="cp-stat-progress-fill" style="width:' + Math.min(100, (weeklyGoal > 0 ? (weeklyHours / weeklyGoal) * 100 : 0)) + '%"></div>' +
-        '</div>';
-
-      // Block 2: 7-day streak visualization
-      var block2 = document.createElement('div');
-      block2.className = 'cp-stat-block';
-      var streakBars = '';
-      var dayLabels = ['一', '二', '三', '四', '五', '六', '日'];
-      var history = dashboard.recentDays || [];
-      for (var i = 0; i < 7; i++) {
-        var dayData = history[i] || {};
-        var mins = dayData.minutes || 0;
-        var active = mins > 0;
-        var height = active ? Math.min(100, Math.max(15, (mins / 60) * 100)) : 4;
-        streakBars +=
-          '<div class="cp-stat-streak-bar' + (active ? ' active' : '') + '">' +
-            '<div class="cp-stat-streak-fill" style="height:' + height + '%"></div>' +
-            '<span class="cp-stat-streak-label">' + dayLabels[i] + '</span>' +
-          '</div>';
+      if (error) {
+        if (section) section.hidden = false;
+        var unavailable = document.createElement('p');
+        unavailable.className = 'cp-empty-text';
+        unavailable.textContent = '学习统计暂时无法加载。';
+        container.appendChild(unavailable);
+        return;
       }
-      block2.innerHTML =
-        '<p class="cp-stat-block-title">连续学习 <strong>' + streak + '</strong> 天</p>' +
-        '<div class="cp-stat-streak">' + streakBars + '</div>';
+      if (!dashboard) {
+        if (section) section.hidden = true;
+        return;
+      }
 
-      // Block 3: 2-column grid (courses learned + badges)
-      var block3 = document.createElement('div');
-      block3.className = 'cp-stat-grid-2';
-      block3.innerHTML =
-        '<div class="cp-stat-mini">' +
-          '<p class="cp-stat-mini-value">' + coursesLearned + '</p>' +
-          '<p class="cp-stat-mini-label">已学课程</p>' +
-        '</div>' +
-        '<div class="cp-stat-mini">' +
-          '<p class="cp-stat-mini-value">' + badges + '</p>' +
-          '<p class="cp-stat-mini-label">获得徽章</p>' +
-        '</div>';
+      var blocks = [];
+      var isNumber = function (value) { return typeof value === 'number' && Number.isFinite(value) && value >= 0; };
+      if (isNumber(dashboard.weeklyMinutes) && isNumber(dashboard.weeklyGoalHours) && dashboard.weeklyGoalHours > 0) {
+        var weeklyHours = dashboard.weeklyMinutes / 60;
+        var weeklyGoal = dashboard.weeklyGoalHours;
+        var weekly = document.createElement('div');
+        weekly.className = 'cp-stat-block';
+        weekly.innerHTML =
+          '<p class="cp-stat-block-title">本周学习时长</p>' +
+          '<p class="cp-stat-block-value">' + weeklyHours.toFixed(1) + ' / ' + weeklyGoal + ' 小时</p>' +
+          '<div class="cp-stat-progress"><div class="cp-stat-progress-fill" style="width:' + Math.min(100, (weeklyHours / weeklyGoal) * 100) + '%"></div></div>';
+        blocks.push(weekly);
+      }
 
-      // Block 4: total hours
-      var block4 = document.createElement('div');
-      block4.className = 'cp-stat-block';
-      block4.innerHTML =
-        '<p class="cp-stat-block-title">累计学习时长</p>' +
-        '<p class="cp-stat-block-value">' + totalHours + ' 小时</p>';
+      var history = dashboard.recentDays;
+      var hasSevenDayHistory = Array.isArray(history) && history.length === 7
+        && history.every(function (day) { return day && isNumber(day.minutes); });
+      if (hasSevenDayHistory || isNumber(dashboard.consecutiveDays)) {
+        var streak = document.createElement('div');
+        streak.className = 'cp-stat-block';
+        var heading = document.createElement('p');
+        heading.className = 'cp-stat-block-title';
+        heading.textContent = isNumber(dashboard.consecutiveDays) ? ('连续学习 ' + dashboard.consecutiveDays + ' 天') : '近七日学习';
+        streak.appendChild(heading);
+        if (hasSevenDayHistory) {
+          var streakBars = document.createElement('div');
+          streakBars.className = 'cp-stat-streak';
+          var dayLabels = ['一', '二', '三', '四', '五', '六', '日'];
+          history.forEach(function (day, index) {
+            var active = day.minutes > 0;
+            var height = active ? Math.min(100, Math.max(15, (day.minutes / 60) * 100)) : 4;
+            var bar = document.createElement('div');
+            bar.className = 'cp-stat-streak-bar' + (active ? ' active' : '');
+            bar.innerHTML = '<div class="cp-stat-streak-fill" style="height:' + height + '%"></div><span class="cp-stat-streak-label">' + dayLabels[index] + '</span>';
+            streakBars.appendChild(bar);
+          });
+          streak.appendChild(streakBars);
+        }
+        blocks.push(streak);
+      }
 
-      container.appendChild(block1);
-      container.appendChild(block2);
-      container.appendChild(block3);
-      container.appendChild(block4);
+      var miniStats = [];
+      if (isNumber(dashboard.coursesLearned)) miniStats.push(['已学课程', dashboard.coursesLearned]);
+      if (isNumber(dashboard.badgesEarned)) miniStats.push(['获得徽章', dashboard.badgesEarned]);
+      if (miniStats.length) {
+        var grid = document.createElement('div');
+        grid.className = 'cp-stat-grid-2';
+        miniStats.forEach(function (item) {
+          var mini = document.createElement('div');
+          mini.className = 'cp-stat-mini';
+          mini.innerHTML = '<p class="cp-stat-mini-value">' + item[1] + '</p><p class="cp-stat-mini-label">' + item[0] + '</p>';
+          grid.appendChild(mini);
+        });
+        blocks.push(grid);
+      }
+
+      if (isNumber(dashboard.totalMinutes)) {
+        var total = document.createElement('div');
+        total.className = 'cp-stat-block';
+        total.innerHTML = '<p class="cp-stat-block-title">累计学习时长</p><p class="cp-stat-block-value">' + (dashboard.totalMinutes / 60).toFixed(1) + ' 小时</p>';
+        blocks.push(total);
+      }
+
+      if (section) section.hidden = false;
+      if (!blocks.length) {
+        var empty = document.createElement('p');
+        empty.className = 'cp-empty-text';
+        empty.textContent = '暂无可展示的服务器学习统计。';
+        container.appendChild(empty);
+        return;
+      }
+      blocks.forEach(function (block) { container.appendChild(block); });
     }
 
     var videoRequest = 0;
+    var audioRequest = 0;
     var materialsRequest = 0;
+    var activeVideoResource = null;
+    var activeAudioResource = null;
+    var videoExpiryRetries = 0;
+    var audioExpiryRetries = 0;
+    var lastAudioSavedAt = 0;
+    var pendingAudioSave = null;
+    var audioSaveInFlight = false;
+    var lastQueuedAudioSave = null;
+    var loadedAudioActivityId = '';
+    var loadedAudioActivityKind = '';
+    var ignoreNextAudioPauseSave = false;
+
+    function showVideoResourceError(message) {
+      var status = document.getElementById('cpVideoResourceStatus');
+      var text = document.getElementById('cpVideoResourceMessage');
+      if (text) text.textContent = message;
+      if (status) status.hidden = false;
+    }
+
+    function hideVideoResourceError() {
+      var status = document.getElementById('cpVideoResourceStatus');
+      if (status) status.hidden = true;
+    }
+
+    function loadVideoResource(resource, activity, request) {
+      window.CourseApiAdapter.getResourcePlaybackUrl(resource.id).then(function (result) {
+        if (request !== videoRequest) return;
+        if (!result || typeof result.url !== 'string' || !result.url) throw new Error('视频资源没有可用的播放地址');
+        hideVideoResourceError();
+        window.MediaController.loadSource(result.url, activity.posterUrl, activity.subtitleZhUrl, activity.subtitleBoUrl, activity.activityId);
+      }).catch(function (error) {
+        if (request !== videoRequest) return;
+        showVideoResourceError(error && error.status === 403
+          ? '你没有权限访问这项课程视频。'
+          : '视频资源暂时无法打开，请重试。');
+      });
+    }
+
     function loadVideoForActivity(activity) {
       var request = ++videoRequest;
+      videoExpiryRetries = 0;
       if (!activity || !window.MediaController || !window.MediaController.loadSource) return;
       var videoResource = (activity.resources || []).map(function (link) { return link.resource || link; }).find(function (resource) {
         return resource && resource.kind === 'VIDEO';
       });
+      activeVideoResource = videoResource || null;
       var videoCard = document.querySelector('.cp-card-video');
       if (videoCard) videoCard.hidden = !videoResource && !activity.videoUrl;
-      if (!videoResource) {
-        window.MediaController.loadSource(activity.videoUrl, activity.posterUrl, activity.subtitleZhUrl, activity.subtitleBoUrl);
-        return;
+      hideVideoResourceError();
+      if (videoResource) {
+        window.MediaController.loadSource('', '', '', '', activity.activityId);
+        loadVideoResource(videoResource, activity, request);
+      } else if (activity.videoUrl) {
+        window.MediaController.loadSource(activity.videoUrl, activity.posterUrl, activity.subtitleZhUrl, activity.subtitleBoUrl, activity.activityId);
+      } else {
+        window.MediaController.loadSource('', '', '', '', activity.activityId);
       }
-      window.CourseApiAdapter.getResourcePlaybackUrl(videoResource.id).then(function (result) {
-        if (request !== videoRequest) return;
-        window.MediaController.loadSource(result.url, activity.posterUrl, activity.subtitleZhUrl, activity.subtitleBoUrl);
-      }).catch(function () {
-        if (request === videoRequest) showToast('视频资源暂时无法打开');
+    }
+
+    function flushAudioProgress() {
+      if (audioSaveInFlight || !pendingAudioSave) return;
+      var save = pendingAudioSave;
+      pendingAudioSave = null;
+      audioSaveInFlight = true;
+      window.CoursePlayerState.saveActivityAttempt(save.activityId, 'AUDIO', { videoPosition: save.position }, save.completed)
+        .then(function () {
+          audioSaveInFlight = false;
+          flushAudioProgress();
+        })
+        .catch(function () {
+          audioSaveInFlight = false;
+          lastQueuedAudioSave = null;
+          pendingAudioSave = null;
+        });
+    }
+
+    function saveAudioProgress(completed, activityId, activityType) {
+      var player = window.CoursePlayerState.getState();
+      var audio = document.getElementById('cpOralDemo');
+      var targetActivityId = activityId || player.currentActivityId;
+      var targetActivityType = activityType || (player.currentActivity && player.currentActivity.activityType);
+      if (!audio || targetActivityType !== 'AUDIO' || !targetActivityId) return;
+      var position = audio.duration > 0 ? Math.max(0, Math.min(1, audio.currentTime / audio.duration)) : 0;
+      var nextSave = { activityId: targetActivityId, position: position, completed: completed === true };
+      if (lastQueuedAudioSave
+        && lastQueuedAudioSave.activityId === nextSave.activityId
+        && lastQueuedAudioSave.position === nextSave.position
+        && lastQueuedAudioSave.completed === nextSave.completed) return;
+      lastQueuedAudioSave = nextSave;
+      pendingAudioSave = nextSave;
+      flushAudioProgress();
+    }
+
+    function bindMediaRecovery() {
+      var video = document.getElementById('cpVideo');
+      var videoRetry = document.getElementById('cpVideoRetryBtn');
+      var audio = document.getElementById('cpOralDemo');
+      var audioRetry = document.getElementById('cpOralRetryBtn');
+      if (video) {
+        video.addEventListener('error', function () {
+          if (!video.currentSrc) return;
+          var current = window.CoursePlayerState.getState().currentActivity;
+          if (activeVideoResource && videoExpiryRetries < 1) {
+            videoExpiryRetries++;
+            loadVideoResource(activeVideoResource, current || {}, videoRequest);
+          } else {
+            showVideoResourceError('视频无法播放。检查网络或资源权限后重试。');
+          }
+        });
+      }
+      if (videoRetry) videoRetry.addEventListener('click', function () {
+        loadVideoForActivity(window.CoursePlayerState.getState().currentActivity);
       });
+      if (audio) audio.addEventListener('error', function () {
+        if (!audio.currentSrc) return;
+        var status = document.getElementById('cpOralResourceStatus');
+        var message = document.getElementById('cpOralResourceMessage');
+        if (activeAudioResource && audioExpiryRetries < 1) {
+          audioExpiryRetries++;
+          var request = audioRequest;
+          window.CourseApiAdapter.getResourcePlaybackUrl(activeAudioResource.id).then(function (result) {
+            if (request !== audioRequest) return;
+            if (!result || !result.url) throw new Error('音频资源没有可用的播放地址');
+            if (status) status.hidden = true;
+            audio.src = result.url;
+          }).catch(function (error) {
+            if (request !== audioRequest) return;
+            if (status) status.hidden = false;
+            if (message) message.textContent = error && error.status === 403
+              ? '你没有权限访问这项课程音频。'
+              : '音频链接已失效，重试后仍无法打开。';
+          });
+          return;
+        }
+        if (status) status.hidden = false;
+        if (message) message.textContent = '音频无法播放。检查网络或资源权限后重试。';
+      });
+      if (audioRetry) audioRetry.addEventListener('click', function () {
+        renderOralSection(window.CoursePlayerState.getState().currentActivity);
+      });
+      if (audio) {
+        audio.addEventListener('loadedmetadata', function () {
+          var player = window.CoursePlayerState.getState();
+          var saved = player.activityProgressMap && player.activityProgressMap[player.currentActivityId];
+          var position = saved && Number(saved.position);
+          if (player.currentActivity && player.currentActivity.activityType === 'AUDIO'
+            && audio.duration > 0 && Number.isFinite(position) && position > 0 && position < 1) {
+            audio.currentTime = Math.min(audio.duration, audio.duration * position);
+            lastAudioSavedAt = audio.currentTime;
+          }
+        });
+        audio.addEventListener('timeupdate', function () {
+          if (audio.currentTime - lastAudioSavedAt >= 10) {
+            lastAudioSavedAt = audio.currentTime;
+            saveAudioProgress(false);
+          }
+        });
+        audio.addEventListener('pause', function () {
+          if (ignoreNextAudioPauseSave) {
+            ignoreNextAudioPauseSave = false;
+            return;
+          }
+          if (audio.currentTime > 0) saveAudioProgress(audio.ended);
+        });
+        audio.addEventListener('ended', function () {
+          lastAudioSavedAt = audio.duration || audio.currentTime;
+          saveAudioProgress(true);
+        });
+      }
     }
 
     function loadMaterialsForActivity(activity) {
@@ -828,6 +1160,49 @@
       }
     }
 
+    function renderActivityNavigation() {
+      var prevBtn = document.getElementById('cpPrevBtn');
+      var nextBtn = document.getElementById('cpNextBtn');
+      if (prevBtn) {
+        var previous = window.CoursePlayerState.getPrevActivity();
+        prevBtn.disabled = !previous;
+        prevBtn.setAttribute('aria-disabled', String(!previous));
+      }
+      if (nextBtn) {
+        var next = window.CoursePlayerState.getNextActivity();
+        nextBtn.disabled = !next;
+        nextBtn.setAttribute('aria-disabled', String(!next));
+      }
+    }
+
+    function bindDirectory() {
+      var directory = document.getElementById('cpDirectory');
+      if (!directory) return;
+      directory.addEventListener('click', function (event) {
+        var link = event.target.closest('[data-activity-id]');
+        if (!link) return;
+        event.preventDefault();
+        window.CoursePlayerState.setCurrentActivity(link.getAttribute('data-activity-id'));
+      });
+    }
+
+    function bindCourseSubmit() {
+      var submitBtn = document.getElementById('cpCourseSubmitBtn');
+      var message = document.getElementById('cpCourseSubmitMessage');
+      if (!submitBtn) return;
+      submitBtn.addEventListener('click', function () {
+        submitBtn.disabled = true;
+        if (message) message.textContent = '正在向课程服务提交…';
+        window.CoursePlayerState.submitCourse().then(function () {
+          renderCompletion(window.CoursePlayerState.getState().course, window.CoursePlayerState.getState());
+          showToast('课程提交状态已由服务器确认');
+        }).catch(function (error) {
+          renderCompletion(window.CoursePlayerState.getState().course, window.CoursePlayerState.getState());
+          if (message) message.textContent = error && error.message ? error.message : '课程提交失败，请检查连接后重试。';
+        });
+      });
+    }
+
     function bindOralRecord() {
       var recordBtn = document.getElementById('cpRecordBtn');
       var oralHint = document.getElementById('cpOralHint');
@@ -836,6 +1211,11 @@
 
       recordBtn.addEventListener('click', function () {
         if (recorderState.status === 'idle') {
+          if (window.CoursePlayerState.isSubmitted()) return;
+          if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            showToast('当前浏览器无法访问麦克风');
+            return;
+          }
           navigator.mediaDevices.getUserMedia({ audio: true }).then(function (stream) {
             recorderState.status = 'recording';
             recorderState.chunks = [];
@@ -873,7 +1253,7 @@
         if (oralHint) oralHint.textContent = '上传中…';
 
         var st = window.CoursePlayerState.getState();
-        window.CourseApiAdapter.initRecording(blob)
+        window.CourseApiAdapter.initRecording(blob, { enrollmentId: st.enrollmentId, submissionId: st.submissionId })
           .then(function (initResult) {
             return window.CourseApiAdapter.uploadRecording(initResult.uploadUrl, blob)
               .then(function () { return initResult.recordingId; });
@@ -887,11 +1267,15 @@
               completeResult.recordingId
             );
           })
+          .then(function (result) {
+            return window.CoursePlayerState.applyServerActivityResult(st.currentActivityId, result);
+          })
           .then(function () {
             if (oralHint) oralHint.textContent = '录音完成!';
-            recordBtn.disabled = false;
+            recordBtn.disabled = true;
             recorderState.status = 'idle';
-            window.CoursePlayerState.setActivityCompleted(st.currentActivityId);
+            var successLabel = recordBtn.querySelector('span');
+            if (successLabel) successLabel.textContent = '录音已提交';
             showToast('录音提交成功');
           })
           .catch(function () {
@@ -908,6 +1292,10 @@
       if (!practiceBtn) return;
       practiceBtn.addEventListener('click', function (e) {
         e.preventDefault();
+        if (window.CoursePlayerState.isSubmitted()) {
+          showToast('课程已提交，练习入口为只读状态');
+          return;
+        }
         var state = window.CoursePlayerState.getState();
         var activity = state.currentActivity || {};
         var practiceReference = activity.practiceReference || {};
@@ -942,6 +1330,8 @@
       bindFavorite();
       bindSummaryTabs();
       bindPrevNext();
+      bindDirectory();
+      bindCourseSubmit();
       bindOralRecord();
       bindPracticeLink();
 
@@ -961,9 +1351,14 @@
         renderInfo(course);
         renderSummary(course);
         renderDirectory(course, state.currentActivityId);
-        renderCompletion(course);
-        renderRecommendations(state.recommendations);
-        renderStatistics(state.dashboard);
+        renderCompletion(course, state);
+        renderActivityNavigation();
+        renderRecommendations(state.recommendations, state.recommendationsError);
+        renderStatistics(state.dashboard, state.dashboardError);
+        if (!window.CoursePlayerState.getActivityList().length) {
+          var videoCard = document.querySelector('.cp-card-video');
+          if (videoCard) videoCard.hidden = true;
+        }
 
         if (state.currentActivity) {
           renderObjectives(state.currentActivity);
@@ -972,6 +1367,7 @@
 
         // Initialize sub-controllers
         if (window.MediaController) window.MediaController.init('cpVideo');
+        bindMediaRecovery();
         if (window.NoteController) window.NoteController.init();
         if (window.ExerciseController) window.ExerciseController.init();
         if (state.currentActivity) {
@@ -979,9 +1375,6 @@
           loadMaterialsForActivity(state.currentActivity);
           renderPracticeEntry(state.currentActivity);
         }
-
-        // Restore activityId from URL if present
-        window.CoursePlayerState.restoreFromUrl();
 
       }).catch(function (err) {
         showError((err && err.message) || '加载课程数据失败');
@@ -992,26 +1385,41 @@
         if (!changedKeys) return;
 
         if (changedKeys.indexOf('currentActivity') !== -1 && state.currentActivity) {
+          renderActivityContext(state.currentActivity);
           renderObjectives(state.currentActivity);
           renderOralSection(state.currentActivity);
           loadVideoForActivity(state.currentActivity);
           loadMaterialsForActivity(state.currentActivity);
           renderPracticeEntry(state.currentActivity);
           renderDirectory(state.course, state.currentActivityId);
+          renderCompletion(state.course, state);
+          renderActivityNavigation();
         }
         if (changedKeys.indexOf('notes') !== -1) {
           // NoteController handles its own rendering
         }
         if (changedKeys.indexOf('course') !== -1) {
           renderSummary(state.course);
-          renderCompletion(state.course);
+          renderCompletion(state.course, state);
           renderDirectory(state.course, state.currentActivityId);
+          renderActivityNavigation();
+        }
+        if (changedKeys.indexOf('saving') !== -1
+          || changedKeys.indexOf('submissionStatus') !== -1
+          || changedKeys.indexOf('submissionRevision') !== -1) {
+          renderCompletion(state.course, state);
         }
         if (changedKeys.indexOf('recommendations') !== -1) {
-          renderRecommendations(state.recommendations);
+          renderRecommendations(state.recommendations, state.recommendationsError);
         }
         if (changedKeys.indexOf('dashboard') !== -1) {
-          renderStatistics(state.dashboard);
+          renderStatistics(state.dashboard, state.dashboardError);
+        }
+        if (changedKeys.indexOf('recommendationsError') !== -1) {
+          renderRecommendations(state.recommendations, state.recommendationsError);
+        }
+        if (changedKeys.indexOf('dashboardError') !== -1) {
+          renderStatistics(state.dashboard, state.dashboardError);
         }
       });
     }

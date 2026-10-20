@@ -56,7 +56,12 @@
       var initial = CoursePlayerState.getState();
       if (initial.currentActivity) ExerciseController.renderExercises(initial.currentActivity);
       CoursePlayerState.subscribe(function (state, keys) {
-        if (keys && keys.indexOf('currentActivity') !== -1 && state.currentActivity) {
+        if (keys && state.currentActivity && (
+          keys.indexOf('currentActivity') !== -1
+          || keys.indexOf('activityProgressMap') !== -1
+          || keys.indexOf('course') !== -1
+          || keys.indexOf('submissionStatus') !== -1
+        )) {
           ExerciseController.renderExercises(state.currentActivity);
         }
       });
@@ -67,6 +72,7 @@
       clearExerciseSection();
       var section = getExerciseSection();
       if (!section) return;
+      var card = document.getElementById('cpSectionExercises');
 
       var s = CoursePlayerState.getState();
       if (s.submissionStatus && ['SUBMITTED', 'PROCESSING', 'NEEDS_REVIEW', 'REVIEWED', 'ACCEPTED'].indexOf(s.submissionStatus) !== -1) {
@@ -74,6 +80,7 @@
         readOnly.className = 'cp-exercise-readonly';
         readOnly.textContent = '课程已提交，活动内容不可修改';
         section.appendChild(readOnly);
+        if (card) card.hidden = false;
         return;
       }
 
@@ -81,7 +88,10 @@
       // enum value and linked through CourseActivityPractice. Render the
       // normal course entry instead of treating its placeholder content as a
       // written choice activity.
-      if (activity.practiceReference) return;
+      if (activity.practiceReference) {
+        if (card) card.hidden = true;
+        return;
+      }
 
       switch (activity.activityType) {
         case 'TEXT':
@@ -97,35 +107,24 @@
           ExerciseController.renderFillBlankActivity(activity, section);
           break;
         case 'SPEECH':
-        case 'ORAL_PRACTICE':
-          ExerciseController.renderOralPractice(activity, section);
-          break;
-        case 'PRACTICE':
-          ExerciseController.renderPracticeLink(activity);
-          break;
-        case 'VIDEO_INTERACTIVE':
-          if (activity.questions && activity.questions.length) {
-            activity.questions.forEach(function (q, i) {
-              if (q.type === 'CHOICE') {
-                ExerciseController.renderChoiceQuestion(q, i, section);
-              } else if (q.type === 'FILL_BLANK') {
-                ExerciseController.renderFillBlankQuestion(q, i, section);
-              }
-            });
-          }
+        case 'VIDEO':
+          // Speech recording and video playback live in their existing media
+          // sections. Do not duplicate controls or treat legacy pseudo-types
+          // as formal course activities.
           break;
         default:
-          if (activity.questions && activity.questions.length) {
-            activity.questions.forEach(function (q, i) {
-              if (q.type === 'CHOICE') {
-                ExerciseController.renderChoiceQuestion(q, i, section);
-              } else if (q.type === 'FILL_BLANK') {
-                ExerciseController.renderFillBlankQuestion(q, i, section);
-              }
-            });
-          }
+          ExerciseController.renderUnsupportedActivity(section);
           break;
       }
+      if (card) card.hidden = section.childElementCount === 0;
+    },
+
+    renderUnsupportedActivity: function (container) {
+      var message = document.createElement('p');
+      message.className = 'cp-empty-text';
+      message.textContent = '此活动类型暂不支持网页版互动，完成状态以课程服务端记录为准。';
+      message.setAttribute('role', 'status');
+      container.appendChild(message);
     },
 
     renderTextActivity: function (activity, container) {
@@ -194,30 +193,9 @@
         statusDiv.innerHTML = ICONS.check + ' 已完成收听';
         statusDiv.className = 'cp-exercise-feedback correct';
       } else {
-        statusDiv.textContent = '播放音频以记录学习进度';
+        statusDiv.textContent = '完整播放本节音频后，课程会保存学习进度';
       }
       wrapper.appendChild(statusDiv);
-
-      if (!activity.isCompleted) {
-        var saveProgressBtn = document.createElement('button');
-        saveProgressBtn.className = 'cp-exercise-submit';
-        saveProgressBtn.textContent = '标记完成';
-        saveProgressBtn.addEventListener('click', function () {
-          saveProgressBtn.disabled = true;
-          saveProgressBtn.textContent = '提交中…';
-          CoursePlayerState.saveActivityAttempt(activity.activityId, 'AUDIO', {}, true)
-            .then(function () {
-              saveProgressBtn.textContent = '已完成';
-              saveProgressBtn.className = 'cp-exercise-feedback correct';
-            })
-            .catch(function (err) {
-              showToast(err && err.message ? err.message : '保存失败');
-              saveProgressBtn.disabled = false;
-              saveProgressBtn.textContent = '标记完成';
-            });
-        });
-        wrapper.appendChild(saveProgressBtn);
-      }
 
       container.appendChild(wrapper);
     },
@@ -761,27 +739,7 @@
     },
 
     renderAll: function (activity) {
-      if (!activity) return;
-      clearExerciseSection();
-      var section = getExerciseSection();
-
-      if (activity.questions && activity.questions.length) {
-        activity.questions.forEach(function (q, i) {
-          if (q.type === 'CHOICE') {
-            ExerciseController.renderChoiceQuestion(q, i, section);
-          } else if (q.type === 'FILL_BLANK') {
-            ExerciseController.renderFillBlankQuestion(q, i, section);
-          }
-        });
-      }
-
-      if (activity.activityType === 'ORAL_PRACTICE') {
-        ExerciseController.renderOralPractice(activity);
-      }
-
-      if (activity.activityType === 'PRACTICE') {
-        ExerciseController.renderPracticeLink(activity);
-      }
+      ExerciseController.renderExercises(activity);
     }
   };
 

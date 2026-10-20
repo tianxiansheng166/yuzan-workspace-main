@@ -156,9 +156,11 @@
   function courseMarkup(course) {
     const id = String(course.assignmentId || '');
     const title = course.title || '未命名课程';
-    const progress = Math.max(0, Math.min(100, Number(course.progressPercent) || 0));
+    const rawProgress = course.progressPercent;
+    const hasProgress = typeof rawProgress === 'number' && Number.isFinite(rawProgress) && rawProgress >= 0 && rawProgress <= 100;
+    const progress = hasProgress ? rawProgress : null;
     const circumference = 113.1;
-    const offset = circumference * (1 - progress / 100);
+    const offset = circumference * (1 - (progress == null ? 0 : progress) / 100);
     const isFavorite = course.isFavorite === true;
     const category = categoryLabel(course.capabilityTheme);
     const grade = gradeLabel(course.gradeBand);
@@ -169,12 +171,16 @@
     const nextActivity = course.nextActivity && typeof course.nextActivity.title === 'string'
       ? course.nextActivity.title.trim()
       : '';
+    const nextActivityId = course.nextActivity && typeof course.nextActivity.id === 'string'
+      ? course.nextActivity.id
+      : '';
+    const detailHref = `/student/courses/course-detail/?id=${encodeURIComponent(id)}${nextActivityId ? `&activityId=${encodeURIComponent(nextActivityId)}` : ''}`;
     const taskGroup = Array.isArray(course.taskGroups) ? course.taskGroups.find(Boolean) : '';
     const culturalElement = Array.isArray(course.culturalElements) ? course.culturalElements.find(Boolean) : '';
     const extraTags = [taskGroup, culturalElement].filter(Boolean);
 
     return `<article class="cc-card" data-course-id="${esc(id)}">
-      <a class="cc-card-link" href="/student/courses/course-detail/?id=${encodeURIComponent(id)}" aria-label="${esc(`${actionLabel(course)}：${title}`)}">
+      <a class="cc-card-link" href="${esc(detailHref)}" aria-label="${esc(`${actionLabel(course)}：${title}`)}">
         <div class="cc-card-cover">
           <img src="${esc(coverFor(course))}" alt="" loading="lazy" />
           <span class="cc-cover-wash" aria-hidden="true"></span>
@@ -193,12 +199,12 @@
           ${description ? `<p class="cc-card-description">${esc(description)}</p>` : ''}
           ${extraTags.length ? `<div class="cc-card-tags">${extraTags.slice(0, 2).map((tag) => `<span>${esc(tag)}</span>`).join('')}</div>` : ''}
           ${nextActivity ? `<p class="cc-next-activity"><span>下一项</span><strong>${esc(nextActivity)}</strong></p>` : ''}
-          <div class="cc-learning-progress" role="progressbar" aria-label="${esc(`${title}学习进度`)}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${progress}">
+          <div class="cc-learning-progress" role="progressbar" aria-label="${esc(`${title}学习进度`)}" aria-valuemin="0" aria-valuemax="100" ${hasProgress ? `aria-valuenow="${progress}"` : 'aria-valuetext="进度暂不可用"'}>
             <span class="cc-progress-dial" aria-hidden="true">
               <svg viewBox="0 0 42 42"><circle class="cc-progress-track" cx="21" cy="21" r="18"/><circle class="cc-progress-value" cx="21" cy="21" r="18" stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"/></svg>
-              <span>${progress}%</span>
+              <span>${hasProgress ? `${progress}%` : '—'}</span>
             </span>
-            <span class="cc-progress-copy"><strong>${progress === 100 ? '课程已完成' : `已完成 ${progress}%`}</strong><span>个人学习进度</span></span>
+            <span class="cc-progress-copy"><strong>${hasProgress ? (progress === 100 ? '课程已完成' : `已完成 ${progress}%`) : '进度暂不可用'}</strong><span>个人学习进度</span></span>
             <span class="cc-progress-arrow" aria-hidden="true">${ICONS.arrow}</span>
           </div>
           <span class="cc-card-cta"><span>${esc(actionLabel(course))}</span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3.5 10h12m-4.5-4.5L15.5 10 11 14.5"/></svg></span>

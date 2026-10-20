@@ -28,6 +28,21 @@
     throw normalized;
   }
 
+  function _activityText(value) {
+    if (typeof value === 'string') return value;
+    if (!value || typeof value !== 'object' || Array.isArray(value)) return '';
+    return value.originalText || value.text || value.zh || '';
+  }
+
+  function _numberOrNull(value) {
+    return typeof value === 'number' && Number.isFinite(value) ? value : null;
+  }
+
+  function _progressPercent(value) {
+    var percent = _numberOrNull(value);
+    return percent != null && percent >= 0 && percent <= 100 ? percent : null;
+  }
+
   function _normalizeCourse(raw) {
     if (!raw) {
       return {
@@ -45,7 +60,15 @@
         difficulty: '',
         tags: [],
         units: [],
-        progress: { percent: 0, completedActivities: 0, totalActivities: 0 },
+        progress: {
+          percent: null,
+          completedActivities: null,
+          totalActivities: null,
+          attainmentStatus: null,
+          requiredPracticeCount: null,
+          completedPracticeCount: null,
+          completedActivityIds: null
+        },
         submissionId: null,
         submissionStatus: '',
         submissionRevision: null,
@@ -82,7 +105,7 @@
             description: a.description || activityContent.description || '',
             objectives: a.objectives || activityContent.objectives || [],
             keyPoints: a.keyPoints || activityContent.keyPoints || [],
-            instruction: a.instruction || '',
+            instruction: _activityText(a.instruction),
             content: a.content || null,
             resources: Array.isArray(a.resources) ? a.resources : [],
             progress: a.progress || null,
@@ -95,7 +118,9 @@
             questions: a.questions || activityContent.questions || [],
             name: a.name || (practiceReference && practiceReference.title) || a.title || '',
             demoText: a.demoText || activityContent.demoText || activityContent.targetText || '',
-            isCompleted: a.isCompleted === true || !!(a.progress && a.progress.completed)
+            // Completion comes from the student's persisted ActivityProgress.
+            // A page-local flag must never turn a click into course progress.
+            isCompleted: !!(a.progress && a.progress.completed === true)
           };
         });
         return {
@@ -113,15 +138,16 @@
       };
     });
 
-    var progress = raw.studentProgress || raw.courseCompletion || raw.progress || {};
+    var progress = raw.studentProgress || raw.courseCompletion || raw.progress || null;
+    var hasProgress = !!progress && typeof progress === 'object';
     var normalizedProgress = {
-      percent: progress.progressPercent != null ? progress.progressPercent : (progress.percent != null ? progress.percent : 0),
-      completedActivities: progress.completedRequiredCount != null ? progress.completedRequiredCount : (progress.completedActivities || progress.completed || 0),
-      totalActivities: progress.requiredActivityCount != null ? progress.requiredActivityCount : (progress.totalActivities || progress.total || 0),
-      attainmentStatus: progress.attainmentStatus || 'PENDING',
-      requiredPracticeCount: progress.requiredPracticeCount || 0,
-      completedPracticeCount: progress.completedPracticeCount || 0,
-      completedActivityIds: progress.completedActivityIds || []
+      percent: hasProgress ? _progressPercent(progress.progressPercent != null ? progress.progressPercent : progress.percent) : null,
+      completedActivities: hasProgress ? _numberOrNull(progress.completedRequiredCount != null ? progress.completedRequiredCount : progress.completedActivities) : null,
+      totalActivities: hasProgress ? _numberOrNull(progress.requiredActivityCount != null ? progress.requiredActivityCount : progress.totalActivities) : null,
+      attainmentStatus: hasProgress && typeof progress.attainmentStatus === 'string' ? progress.attainmentStatus : null,
+      requiredPracticeCount: hasProgress ? _numberOrNull(progress.requiredPracticeCount) : null,
+      completedPracticeCount: hasProgress ? _numberOrNull(progress.completedPracticeCount) : null,
+      completedActivityIds: hasProgress && Array.isArray(progress.completedActivityIds) ? progress.completedActivityIds.slice() : null
     };
 
     var cover = courseVersion.coverAsset || course.coverAsset || raw.coverUrl || raw.cover || '';
@@ -353,7 +379,15 @@
     submitCourse: async function (assignmentId, submissionId, revision) {
       try {
         if (revision == null) throw new Error('课程提交缺少当前 revision');
-        return await Api.submitStudentCourse(assignmentId, submissionId, revision);
+        var resp = await Api.submitStudentCourse(assignmentId, submissionId, revision);
+        var submission = resp && resp.submission ? resp.submission : (resp || {});
+        return {
+          id: submission.id || submission.submissionId || submissionId,
+          status: submission.status || '',
+          revision: _numberOrNull(submission.revision),
+          submittedAt: submission.submittedAt || null,
+          courseCompletion: resp && resp.courseCompletion ? resp.courseCompletion : null
+        };
       } catch (err) {
         return _handleError(err);
       }
@@ -413,11 +447,17 @@
     loadDashboard: async function () {
       try {
         var resp = await Api.getStudentCoursesDashboard();
+        function optionalNumber(value) {
+          return typeof value === 'number' && Number.isFinite(value) ? value : null;
+        }
         return {
-          weeklyMinutes: resp.weeklyMinutes || 0,
-          consecutiveDays: resp.consecutiveDays || 0,
-          coursesLearned: resp.coursesLearned || 0,
-          badgesEarned: resp.badgesEarned || 0
+          weeklyMinutes: optionalNumber(resp.weeklyMinutes),
+          weeklyGoalHours: optionalNumber(resp.weeklyGoalHours),
+          consecutiveDays: optionalNumber(resp.consecutiveDays),
+          coursesLearned: optionalNumber(resp.coursesLearned),
+          badgesEarned: optionalNumber(resp.badgesEarned),
+          totalMinutes: optionalNumber(resp.totalMinutes),
+          recentDays: Array.isArray(resp.recentDays) ? resp.recentDays.slice() : null
         };
       } catch (err) {
         return _handleError(err);

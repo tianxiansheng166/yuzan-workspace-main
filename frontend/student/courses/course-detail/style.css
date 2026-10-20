@@ -619,6 +619,9 @@ body.tibetan-language .cp-section-title { line-height: 2; }
   background: var(--cp-gray-light);
   color: var(--cp-gray-medium);
 }
+.cp-ctrl-btn:disabled { opacity: .45; cursor: not-allowed; }
+.cp-dir-item.cp-dir-upcoming { color: var(--cp-dark); }
+.cp-dir-item.cp-dir-upcoming:hover { background: #f0ede8; }
 
 /* ============================================================
    Section — Generic (matches .card look)
@@ -1069,6 +1072,37 @@ button.cp-exercise-feedback { cursor: default; }
   font-size: 24px; font-weight: 700;
   color: var(--cp-primary);
 }
+.cp-course-submit {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 20px;
+  padding: 16px 18px;
+  border: 1px solid var(--cp-gray-light);
+  border-radius: var(--cp-radius-lg);
+  background: #fff;
+}
+.cp-course-submit p { margin: 0; color: var(--cp-gray-medium); font-size: 14px; }
+.cp-course-submit .cp-btn:disabled { opacity: .55; cursor: not-allowed; }
+.cp-resource-status {
+  position: absolute;
+  z-index: 8;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: var(--cp-radius);
+  color: #fff;
+  background: rgba(36, 31, 28, .92);
+}
+.cp-oral-demo { position: relative; }
+.cp-resource-status[hidden] { display: none; }
+.cp-resource-status .cp-btn { color: #fff; border-color: rgba(255,255,255,.55); }
 
 /* ============================================================
    11. Recommended Courses — Sidebar horizontal image+info layout
@@ -1326,6 +1360,7 @@ button.cp-exercise-feedback { cursor: default; }
   .cp-time-display { font-size: 11px; }
   .cp-controls-right .cp-volume-slider { display: none; }
   .cp-directory-card { padding: 16px; }
+  .cp-course-submit { align-items: stretch; flex-direction: column; }
 }
 
 /* ============================================================
