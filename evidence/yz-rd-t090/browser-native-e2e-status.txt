@@ -1,0 +1,4 @@
+VISUAL_FIXTURE_ONLY_OR_NATIVE=NOT_RUN for T090.
+The local desktop browser slot was occupied by existing browser processes, so T090 did not start browser automation or capture screenshots. T084's historical fixture screenshots were carried as history and were not reused as T090 proof.
+TEACHER_PAGE_OPERATION=PASS_DOM_FIXTURE_ONLY using teacher-page-operation-fixture.mjs; its YuzanApi is an in-memory stub and API calls=0. This is not browser E2E or real business E2E.
+API/PG/MINIO_NATIVE_E2E=NOT_RUN. No API, PostgreSQL, MinIO, Docker, or Compose runtime was started or contacted. T089 resources were not used.

@@ -1,0 +1,17 @@
+A	evidence/yz-rd-t084/RESULTS.md
+A	evidence/yz-rd-t084/base-business-js-gate.txt
+A	evidence/yz-rd-t084/business-js-gate.txt
+A	evidence/yz-rd-t084/chrome-1280.txt
+A	evidence/yz-rd-t084/chrome-1440.txt
+A	evidence/yz-rd-t084/fixed-node-check.txt
+A	evidence/yz-rd-t084/frontend-tests.txt
+A	evidence/yz-rd-t084/git-diff-check.txt
+A	evidence/yz-rd-t084/pre-fix-node-check.txt
+A	evidence/yz-rd-t084/runtime-verifier.txt
+A	evidence/yz-rd-t084/teacher-create-1280.png
+A	evidence/yz-rd-t084/teacher-create-1440.png
+A	evidence/yz-rd-t084/visual-fixture-server.txt
+A	evidence/yz-rd-t084/visual-static-server.mjs
+M	frontend/package.json
+A	frontend/scripts/check-business-js-syntax.mjs
+M	frontend/teacher/assessments/create/app.js

@@ -1,0 +1,12 @@
+Node: /home/tian/.nvm/versions/node/v24.20.0/bin/node v24.20.0
+Package manager: Corepack pnpm 10.13.1
+
+Commands executed from the T090 worktree root:
+1. node --check frontend/teacher/assessments/create/app.js
+2. corepack pnpm --dir frontend check:business-js
+3. corepack pnpm --dir frontend test
+4. node frontend/scripts/verify-runtime.mjs
+5. git diff --check 06de3b6381532fa8fdfb7cdeb4d1c38adda23280 HEAD
+6. node evidence/yz-rd-t090/teacher-page-operation-fixture.mjs
+
+All Node/pnpm commands use Node v24.20.0 and pnpm 10.13.1 from the installed local toolchain. Browser automation is not run because the browser slot is occupied; API/PG/MinIO E2E is not run.
