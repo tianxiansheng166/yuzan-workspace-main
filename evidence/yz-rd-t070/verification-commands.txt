@@ -1,0 +1,51 @@
+Task worktree: /home/tian/code/work/yuzan-workspace-t070
+BASE: 5422af364c32c1feffe1e995884f71a4271488d3
+MERGE_SOURCE: ae3d7cfa43b730d4966649208e80c2a883f78d65
+MERGE_COMMIT: 5db8a45f805f8a340ad3af430e65bdafad157c78
+
+Runtime:
+  PATH=/home/tian/.nvm/versions/node/v24.20.0/bin:$PATH node --version
+  PATH=/home/tian/.nvm/versions/node/v24.20.0/bin:$PATH corepack pnpm@10.13.1 --version
+
+Dependency preparation and generated database package:
+  PATH=/home/tian/.nvm/versions/node/v24.20.0/bin:$PATH corepack pnpm@10.13.1 install --offline --frozen-lockfile --filter @yuzan/api... --ignore-scripts
+  PATH=/home/tian/.nvm/versions/node/v24.20.0/bin:$PATH DATABASE_URL=postgresql://unused:unused@127.0.0.1:1/unused corepack pnpm@10.13.1 --filter @yuzan/database generate
+  PATH=/home/tian/.nvm/versions/node/v24.20.0/bin:$PATH corepack pnpm@10.13.1 --filter @yuzan/database build
+
+Full API lint (cwd: backend/api; run after merge commit):
+  ./node_modules/.bin/eslint src test --format json
+
+Test TypeScript (cwd: backend/api; run after merge commit):
+  ./node_modules/.bin/tsc -p test/tsconfig.json --noEmit --pretty false
+  Compared by relative path + TypeScript code + first-line message; source coordinates excluded.
+  Baseline count 230 (accepted T064 result); final count 184.
+
+Safe targeted API tests (cwd: backend/api; DATABASE_URL and QB_RUNTIME_DATABASE_URL unset):
+  ./node_modules/.bin/vitest run --passWithNoTests --pool=forks --poolOptions.forks.singleFork \
+    test/assessment/assessment-review.service.spec.ts \
+    test/assessment/assessment.service.spec.ts \
+    test/assessment/practice.service.spec.ts \
+    test/assessment/remediation.service.spec.ts \
+    test/assessment/student-dashboard.today.service.spec.ts \
+    test/recordings/recordings.service.spec.ts \
+    test/reporting/reporting.service.spec.ts \
+    test/speech-job/speech-job.result-policy.spec.ts \
+    test/speech-job/speech-job.service.spec.ts \
+    test/curriculum \
+    test/integration/identity/prisma-identity.repository.spec.ts \
+    test/ai-lesson-planning/ai-lesson-planning.spec.ts \
+    test/modules/translations/translations.service.spec.ts \
+    test/organizations/organizations.controller.spec.ts \
+    test/modules/learning/learning.service.spec.ts \
+    test/modules/training/training.service.spec.ts \
+    test/modules/admin/admin-stub.controller.spec.ts
+
+Contracts (pnpm shim on PATH pins nested invocations to 10.13.1):
+  pnpm --filter @yuzan/contracts test
+
+Integrity:
+  git diff --check
+  git diff --quiet 5422af364c32c1feffe1e995884f71a4271488d3 HEAD -- \
+    backend/api/src backend/api/eslint.config.mjs packages/contracts frontend infra/database
+
+Raw command output and exit codes are stored alongside this file. The historical mixed question-bank importer and E2E runners were not invoked.

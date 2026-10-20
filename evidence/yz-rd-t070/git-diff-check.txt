@@ -1,0 +1,2 @@
+Code diff check: PASS. `git diff --check BASE HEAD -- backend/api/test/modules/admin/admin-stub.controller.spec.ts` exited 0.
+Full staged evidence check reports only extra terminal blank lines in preserved raw stdout files (`api-targeted-tests.txt`, `database-build.log`, `database-generate.log`). These blank lines are retained as part of the original command output. No source-code whitespace findings were reported.

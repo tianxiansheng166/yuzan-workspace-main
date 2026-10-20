@@ -1,0 +1,51 @@
+Scope: 4 of 7 workspace projects
+✓ Lockfile passes supply-chain policies (verified 18h ago)
+Lockfile is up to date, resolution step is skipped
+Progress: resolved 1, reused 0, downloaded 0, added 0
+.                                        | +770 ++++++++++++++++++++++++++++++++
+Progress: resolved 770, reused 0, downloaded 0, added 0
+Progress: resolved 770, reused 1, downloaded 0, added 0
+Progress: resolved 770, reused 3, downloaded 0, added 0
+Progress: resolved 770, reused 4, downloaded 0, added 0
+Progress: resolved 770, reused 6, downloaded 0, added 0
+Progress: resolved 770, reused 8, downloaded 0, added 0
+Progress: resolved 770, reused 9, downloaded 0, added 0
+Progress: resolved 770, reused 12, downloaded 0, added 0
+Progress: resolved 770, reused 13, downloaded 0, added 0
+Progress: resolved 770, reused 14, downloaded 0, added 0
+Progress: resolved 770, reused 15, downloaded 0, added 0
+Progress: resolved 770, reused 16, downloaded 0, added 0
+Progress: resolved 770, reused 17, downloaded 0, added 0
+Progress: resolved 770, reused 18, downloaded 0, added 0
+Progress: resolved 770, reused 19, downloaded 0, added 0
+Progress: resolved 770, reused 24, downloaded 0, added 0
+Progress: resolved 770, reused 27, downloaded 0, added 0
+Progress: resolved 770, reused 28, downloaded 0, added 0
+Progress: resolved 770, reused 32, downloaded 0, added 0
+Progress: resolved 770, reused 43, downloaded 0, added 0
+Progress: resolved 770, reused 53, downloaded 0, added 0
+Progress: resolved 770, reused 63, downloaded 0, added 0
+Progress: resolved 770, reused 73, downloaded 0, added 0
+Progress: resolved 770, reused 89, downloaded 0, added 0
+Progress: resolved 770, reused 111, downloaded 0, added 0
+Progress: resolved 770, reused 160, downloaded 0, added 0
+Progress: resolved 770, reused 199, downloaded 0, added 0
+Progress: resolved 770, reused 587, downloaded 0, added 0
+Packages are hard linked from the content-addressable store to the virtual store.
+  Content-addressable store is at: /home/tian/.local/share/pnpm/store/v11
+  Virtual store is at:             node_modules/.pnpm
+Progress: resolved 770, reused 770, downloaded 0, added 33
+Progress: resolved 770, reused 770, downloaded 0, added 96
+Progress: resolved 770, reused 770, downloaded 0, added 367
+Progress: resolved 770, reused 770, downloaded 0, added 441
+Progress: resolved 770, reused 770, downloaded 0, added 584
+Progress: resolved 770, reused 770, downloaded 0, added 765
+Progress: resolved 770, reused 770, downloaded 0, added 766
+Progress: resolved 770, reused 770, downloaded 0, added 767
+Progress: resolved 770, reused 770, downloaded 0, added 768
+Progress: resolved 770, reused 770, downloaded 0, added 769
+Progress: resolved 770, reused 770, downloaded 0, added 770
+Progress: resolved 770, reused 770, downloaded 0, added 770, done
+[ERR_PNPM_IGNORED_BUILDS] Ignored build scripts: @prisma/engines@7.8.0, core-js@3.32.1, esbuild@0.28.1, msgpackr-extract@3.0.4, prisma@7.8.0, protobufjs@7.6.5
+
+Run "pnpm approve-builds" to pick which dependencies should be allowed to run scripts.

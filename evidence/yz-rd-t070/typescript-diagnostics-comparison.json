@@ -1,0 +1,62 @@
+{
+  "command": "./node_modules/.bin/tsc -p test/tsconfig.json --noEmit --pretty false",
+  "baseline": "T064 exact BASE 5422af364c32c1feffe1e995884f71a4271488d3; the accepted T064 Results records 230 diagnostics; raw baseline is the inherited T063/T066-before compiler output",
+  "identity": "relative file path + TypeScript diagnostic code + first-line message; source coordinates excluded",
+  "before": 230,
+  "after": 184,
+  "beforeUniqueIdentities": 122,
+  "afterUniqueIdentities": 115,
+  "addedDiagnosticOccurrences": 0,
+  "resolvedDiagnosticOccurrences": 46,
+  "addedIdentities": [],
+  "resolvedIdentities": [
+    {
+      "file": "test/modules/admin/admin-stub.controller.spec.ts",
+      "code": "TS2322",
+      "message": "Type '\"ACTIVE\"' is not assignable to type 'MembershipStatus'.",
+      "count": 39
+    },
+    {
+      "file": "test/modules/admin/admin-stub.controller.spec.ts",
+      "code": "TS2322",
+      "message": "Type '\"SUSPENDED\"' is not assignable to type 'MembershipStatus'.",
+      "count": 1
+    },
+    {
+      "file": "test/modules/admin/admin-stub.controller.spec.ts",
+      "code": "TS2322",
+      "message": "Type '10' is not assignable to type '50'.",
+      "count": 1
+    },
+    {
+      "file": "test/modules/admin/admin-stub.controller.spec.ts",
+      "code": "TS2322",
+      "message": "Type '20' is not assignable to type '50'.",
+      "count": 1
+    },
+    {
+      "file": "test/modules/admin/admin-stub.controller.spec.ts",
+      "code": "TS2339",
+      "message": "Property 'successCount' does not exist on type '{ id: string; status: SchoolImportStatus; rowCount: number; successCount: number; errorCount: number; } | { id: string; status: SchoolImportStatus; fileHash: string; rowCount: number; }'.",
+      "count": 1
+    },
+    {
+      "file": "test/modules/admin/admin-stub.controller.spec.ts",
+      "code": "TS2532",
+      "message": "Object is possibly 'undefined'.",
+      "count": 2
+    },
+    {
+      "file": "test/modules/admin/admin-stub.controller.spec.ts",
+      "code": "TS2551",
+      "message": "Property 'errorCount' does not exist on type '{ id: string; status: SchoolImportStatus; rowCount: number; successCount: number; errorCount: number; } | { id: string; status: SchoolImportStatus; fileHash: string; rowCount: number; }'. Did you mean 'rowCount'?",
+      "count": 1
+    }
+  ],
+  "unmatchedNonemptyLines": {
+    "before": 6,
+    "after": 2
+  },
+  "tscExitCode": 2,
+  "noNewDiagnostics": true
+}
