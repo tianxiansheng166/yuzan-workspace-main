@@ -10,6 +10,30 @@ const schoolId = "11111111-1111-4111-8111-111111111111";
 const otherSchoolId = "99999999-9999-4999-8999-999999999999";
 const studentId = "22222222-2222-4222-8222-222222222222";
 const enrollment = { id: "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee", classId: "dddddddd-dddd-4ddd-8ddd-dddddddddddd" };
+const standalonePracticeAttempt = {
+  id: "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+  schoolId,
+  enrollmentId: enrollment.id,
+  classId: enrollment.classId,
+  initiatorUserId: studentId,
+  type: "READING",
+  purpose: "STANDARD",
+  remediationOrigin: null,
+  remediationFocus: null,
+  status: "IN_PROGRESS",
+  startedAt: new Date("2026-10-20T00:00:00.000Z"),
+  submittedAt: null,
+  completedAt: null,
+  retestOfSessionId: null,
+  practiceDefinitionId: "f1111111-1111-4111-8111-111111111111",
+  practiceVersionId: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+  deliveryId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+  courseActivityId: null,
+  courseSubmissionId: null,
+  revision: 1,
+  createdAt: new Date("2026-10-20T00:00:00.000Z"),
+  updatedAt: new Date("2026-10-20T00:00:00.000Z"),
+} satisfies DatabaseAssessmentSession;
 type PracticeEnrollment = typeof enrollment;
 type PracticeAttempt = Pick<DatabaseAssessmentSession, "id" | "status" | "courseSubmissionId" | "courseActivityId">;
 type PracticeSessionCreateData = Pick<
@@ -101,6 +125,83 @@ function createPracticeService(prisma: ReturnType<typeof fakePrisma>): PracticeS
 }
 
 describe("PracticeService", () => {
+  it("returns standalone Attempt identity and explicit null course scope", async () => {
+    const prisma = fakePrisma();
+    prisma.assessmentSession.findFirst.mockResolvedValue(standalonePracticeAttempt);
+
+    const result = await createPracticeService(prisma).getAttempt(auth, schoolId, standalonePracticeAttempt.id);
+
+    expect(result).toEqual(standalonePracticeAttempt);
+    expect(prisma.assessmentSession.findFirst).toHaveBeenCalledWith({
+      where: {
+        id: standalonePracticeAttempt.id,
+        schoolId,
+        enrollment: { userId: studentId, role: "STUDENT", status: "ACTIVE" },
+      },
+    });
+    expect(result.courseSubmissionId).toBeNull();
+    expect(result.courseActivityId).toBeNull();
+  });
+
+  it("returns both persisted course scope IDs for a course-linked Attempt", async () => {
+    const prisma = fakePrisma();
+    const linkedAttempt: DatabaseAssessmentSession = {
+      ...standalonePracticeAttempt,
+      id: "cccccccc-cccc-4ccc-8ccc-cccccccccccd",
+      courseActivityId: "11111111-2222-4333-8444-555555555555",
+      courseSubmissionId: "66666666-7777-4888-8999-aaaaaaaaaaaa",
+    };
+    prisma.assessmentSession.findFirst.mockResolvedValue(linkedAttempt);
+
+    const result = await createPracticeService(prisma).getAttempt(auth, schoolId, linkedAttempt.id);
+
+    expect(result).toMatchObject({
+      schoolId,
+      enrollmentId: enrollment.id,
+      initiatorUserId: studentId,
+      practiceDefinitionId: standalonePracticeAttempt.practiceDefinitionId,
+      courseActivityId: linkedAttempt.courseActivityId,
+      courseSubmissionId: linkedAttempt.courseSubmissionId,
+    });
+  });
+
+  it("denies a cross-school Attempt lookup before querying", async () => {
+    const prisma = fakePrisma();
+
+    await expect(createPracticeService(prisma).getAttempt(auth, otherSchoolId, standalonePracticeAttempt.id))
+      .rejects.toBeInstanceOf(ForbiddenException);
+
+    expect(prisma.assessmentSession.findFirst).not.toHaveBeenCalled();
+  });
+
+  it("hides another student's Attempt in the same school as not found", async () => {
+    const prisma = fakePrisma();
+    prisma.assessmentSession.findFirst.mockResolvedValue(null);
+
+    await expect(createPracticeService(prisma).getAttempt(auth, schoolId, standalonePracticeAttempt.id))
+      .rejects.toBeInstanceOf(NotFoundException);
+
+    expect(prisma.assessmentSession.findFirst).toHaveBeenCalledWith({
+      where: {
+        id: standalonePracticeAttempt.id,
+        schoolId,
+        enrollment: { userId: studentId, role: "STUDENT", status: "ACTIVE" },
+      },
+    });
+  });
+
+  it("hides a same-student row without a practice definition as not found", async () => {
+    const prisma = fakePrisma();
+    const nonPracticeSession: DatabaseAssessmentSession = {
+      ...standalonePracticeAttempt,
+      practiceDefinitionId: null,
+    };
+    prisma.assessmentSession.findFirst.mockResolvedValue(nonPracticeSession);
+
+    await expect(createPracticeService(prisma).getAttempt(auth, schoolId, standalonePracticeAttempt.id))
+      .rejects.toBeInstanceOf(NotFoundException);
+  });
+
   it("atomically snapshots every published item into a new AssessmentSession", async () => {
     const prisma = fakePrisma();
     const service = createPracticeService(prisma);

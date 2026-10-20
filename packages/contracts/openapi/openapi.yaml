@@ -2955,7 +2955,14 @@ paths:
             schema: { type: string, format: uuid },
           }
       responses:
-        "200": { description: Attempt state }
+        "200":
+          description: Current student's practice Attempt and persisted scope
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PracticeAttemptReadResponse"
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
         "404": { $ref: "#/components/responses/NotFound" }
   /schools/{schoolId}/practices/attempts/{attemptId}/items:
     get:
@@ -6134,6 +6141,76 @@ components:
         createdAt:
           type: string
           format: date-time
+    PracticeAttemptRead:
+      type: object
+      additionalProperties: false
+      required:
+        [
+          id,
+          schoolId,
+          enrollmentId,
+          classId,
+          initiatorUserId,
+          type,
+          purpose,
+          remediationOrigin,
+          remediationFocus,
+          status,
+          startedAt,
+          submittedAt,
+          completedAt,
+          retestOfSessionId,
+          practiceDefinitionId,
+          practiceVersionId,
+          deliveryId,
+          courseActivityId,
+          courseSubmissionId,
+          revision,
+          createdAt,
+          updatedAt,
+        ]
+      properties:
+        id: { type: string, format: uuid }
+        schoolId: { type: string, format: uuid }
+        enrollmentId: { type: string, format: uuid }
+        classId: { type: string, format: uuid }
+        initiatorUserId: { type: string, format: uuid }
+        type: { type: string, enum: [READING, WRITTEN, MIXED] }
+        purpose: { type: string, enum: [STANDARD, REMEDIATION] }
+        remediationOrigin:
+          type: [string, "null"]
+          enum: [SELF_INITIATED, TEACHER_ASSIGNED, null]
+        remediationFocus:
+          type: [object, "null"]
+          additionalProperties: true
+        status:
+          type: string
+          enum:
+            [CREATED, IN_PROGRESS, SUBMITTED, PROCESSING, COMPLETED, CANCELLED]
+        startedAt: { type: [string, "null"], format: date-time }
+        submittedAt: { type: [string, "null"], format: date-time }
+        completedAt: { type: [string, "null"], format: date-time }
+        retestOfSessionId: { type: [string, "null"], format: uuid }
+        practiceDefinitionId: { type: string, format: uuid }
+        practiceVersionId: { type: [string, "null"], format: uuid }
+        deliveryId: { type: [string, "null"], format: uuid }
+        courseActivityId:
+          type: [string, "null"]
+          format: uuid
+          description: Null for standalone practice; populated for a course-linked Attempt.
+        courseSubmissionId:
+          type: [string, "null"]
+          format: uuid
+          description: Null for standalone practice; populated for a course-linked Attempt.
+        revision: { type: integer, minimum: 1 }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+    PracticeAttemptReadResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data: { $ref: "#/components/schemas/PracticeAttemptRead" }
+        meta: { $ref: "#/components/schemas/EnvelopeMeta" }
     AssessmentSessionResponse:
       type: object
       required: [data, meta]

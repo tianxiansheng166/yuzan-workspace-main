@@ -1,0 +1,5 @@
+Node: v24.20.0
+pnpm: 10.13.1 (Corepack-pinned)
+Repository packageManager: pnpm@10.13.1
+DATABASE_URL: unset for targeted API test run; DB-backed startup suite skipped
+Docker/Compose: not used

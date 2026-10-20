@@ -3473,6 +3473,68 @@ export interface components {
       /** Format: date-time */
       createdAt: string;
     };
+    PracticeAttemptRead: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      schoolId: string;
+      /** Format: uuid */
+      enrollmentId: string;
+      /** Format: uuid */
+      classId: string;
+      /** Format: uuid */
+      initiatorUserId: string;
+      /** @enum {string} */
+      type: "READING" | "WRITTEN" | "MIXED";
+      /** @enum {string} */
+      purpose: "STANDARD" | "REMEDIATION";
+      /** @enum {string|null} */
+      remediationOrigin: "SELF_INITIATED" | "TEACHER_ASSIGNED" | null;
+      remediationFocus: {
+        [key: string]: unknown;
+      } | null;
+      /** @enum {string} */
+      status:
+        | "CREATED"
+        | "IN_PROGRESS"
+        | "SUBMITTED"
+        | "PROCESSING"
+        | "COMPLETED"
+        | "CANCELLED";
+      /** Format: date-time */
+      startedAt: string | null;
+      /** Format: date-time */
+      submittedAt: string | null;
+      /** Format: date-time */
+      completedAt: string | null;
+      /** Format: uuid */
+      retestOfSessionId: string | null;
+      /** Format: uuid */
+      practiceDefinitionId: string;
+      /** Format: uuid */
+      practiceVersionId: string | null;
+      /** Format: uuid */
+      deliveryId: string | null;
+      /**
+       * Format: uuid
+       * @description Null for standalone practice; populated for a course-linked Attempt.
+       */
+      courseActivityId: string | null;
+      /**
+       * Format: uuid
+       * @description Null for standalone practice; populated for a course-linked Attempt.
+       */
+      courseSubmissionId: string | null;
+      revision: number;
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: date-time */
+      updatedAt: string;
+    };
+    PracticeAttemptReadResponse: {
+      data: components["schemas"]["PracticeAttemptRead"];
+      meta: components["schemas"]["EnvelopeMeta"];
+    };
     AssessmentSessionResponse: {
       data: components["schemas"]["AssessmentSession"];
       meta: components["schemas"]["EnvelopeMeta"];
@@ -8248,13 +8310,17 @@ export interface operations {
     };
     requestBody?: never;
     responses: {
-      /** @description Attempt state */
+      /** @description Current student's practice Attempt and persisted scope */
       200: {
         headers: {
           [name: string]: unknown;
         };
-        content?: never;
+        content: {
+          "application/json": components["schemas"]["PracticeAttemptReadResponse"];
+        };
       };
+      401: components["responses"]["Unauthorized"];
+      403: components["responses"]["Forbidden"];
       404: components["responses"]["NotFound"];
     };
   };
