@@ -1,0 +1,569 @@
+{
+  "taskId": "YZ-RD-T107",
+  "status": "PASS",
+  "exactBase": "9b0276810e7cc5dd96acf16070ab3a751824daec",
+  "outputBranch": "ops/yz-rd-t107-t106-five-service-resource-bounds",
+  "worktree": "/home/tian/.devspace/worktrees/yuzan-workspace-t107",
+  "git": {
+    "finalSha": null,
+    "remoteShaMatch": null,
+    "worktreeClean": null
+  },
+  "ownerAck": "YES — this task card explicitly authorized owner-manual Codex changes to YZ-RD-T106 only.",
+  "verifiedBoundary": "YES — all five mutated IDs had Compose project yz-rd-t106 plus the expected service label. Every docker update targeted one of these full IDs.",
+  "readyToMerge": "NO",
+  "historicalL4IncidentOpen": true,
+  "compose": {
+    "project": "yz-rd-t106",
+    "path": "/home/tian/.devspace/runtime/yz-rd-t106/compose.yaml",
+    "committedToGit": false,
+    "dockerComposeVersion": "2.40.3+ds1-0ubuntu1~22.04.1",
+    "dockerEngineVersion": "29.1.3",
+    "cgroupVersion": 2,
+    "persistedKeys": [
+      "cpus",
+      "mem_limit",
+      "memswap_limit",
+      "pids_limit"
+    ],
+    "configValidated": true,
+    "preserved": {
+      "network": "t106-isolated (runtime network yz-rd-t106-isolated)",
+      "ports": {
+        "frontend": "127.0.0.1:47175 -> 4175/tcp",
+        "api": "127.0.0.1:47106 -> 47106/tcp",
+        "postgres": "127.0.0.1:47432 -> 5432/tcp",
+        "redis": "127.0.0.1:47380 -> 6379/tcp",
+        "minio": [
+          "127.0.0.1:47900 -> 9000/tcp",
+          "127.0.0.1:47901 -> 9001/tcp"
+        ]
+      },
+      "volumes": {
+        "postgres": "yz-rd-t106-postgres-data",
+        "minio": "yz-rd-t106-minio-data"
+      },
+      "healthchecks": "Existing PostgreSQL/Redis checks retained; no healthcheck added or removed.",
+      "environment": "Compose environment/env_file declarations unchanged; no environment values stored in evidence."
+    }
+  },
+  "resourceBudget": {
+    "services": {
+      "frontend": {
+        "cpus": 0.5,
+        "ramMiB": 384,
+        "memswapTotalMiB": 768,
+        "pids": 128
+      },
+      "api": {
+        "cpus": 1,
+        "ramMiB": 768,
+        "memswapTotalMiB": 1536,
+        "pids": 192
+      },
+      "postgres": {
+        "cpus": 1.5,
+        "ramMiB": 1024,
+        "memswapTotalMiB": 2048,
+        "pids": 256
+      },
+      "redis": {
+        "cpus": 0.5,
+        "ramMiB": 128,
+        "memswapTotalMiB": 256,
+        "pids": 64
+      },
+      "minio": {
+        "cpus": 1,
+        "ramMiB": 768,
+        "memswapTotalMiB": 1536,
+        "pids": 192
+      }
+    },
+    "total": {
+      "cpus": 4.5,
+      "ramGiB": 3,
+      "ramBytes": 3221225472,
+      "pids": 832,
+      "additionalSwapGiB": 3,
+      "memswapTotalGiB": 6
+    },
+    "cpuSamplePercentMax": {
+      "frontend": 0.07,
+      "api": 20.77,
+      "postgres": 1.62,
+      "redis": 0.45,
+      "minio": 0.85
+    },
+    "cpuSample": "Five docker-stats samples, 4 seconds apart during read-only readiness and media checks; no synthetic load or full native E2E was run.",
+    "memoryPeakBytes": {
+      "frontend": 34914304,
+      "api": 185438208,
+      "postgres": 73420800,
+      "redis": 11513856,
+      "minio": 94236672
+    },
+    "memoryCapToObservedPeakMultipleApprox": {
+      "frontend": 11.5,
+      "api": 4.3,
+      "postgres": 14.6,
+      "redis": 11.7,
+      "minio": 8.5
+    },
+    "pidsPeakObserved": {
+      "frontend": 17,
+      "api": 22,
+      "postgres": 20,
+      "redis": 13,
+      "minio": 21
+    },
+    "rationale": "The final limits differ by service and leave multi-fold memory/PID margins above measured high-water marks. After observing two separate non-T106 containers each capped at 4 GiB, aggregate T106 RAM was reduced from 4.25 GiB to 3 GiB. CPU was reduced to 4.5 total after host load rose; a short vmstat sample also showed heavy I/O wait.",
+    "swap": "Docker rejected a memory-only update before changing state and required memory-swap with memory. T106 had about 143 MiB of current swapped pages, so swap was kept finite at one extra RAM-cap amount per service. Effective memory.swap.max equals each service's RAM cap; no limit was lowered below current swap use.",
+    "swapCurrentAtDecisionBytes": 153808896,
+    "swapCurrentAtDecisionMiBApprox": 146.7,
+    "swapCurrentFinalBytes": 149413888,
+    "swapCurrentFinalMiBApprox": 142.5,
+    "swapText": "At the resource decision, T106 had about 147 MiB of current swapped pages; the final sample remained about 142.5 MiB. Docker rejected a memory-only update before changing state and required memory-swap with memory. Swap was therefore kept finite at one extra RAM-cap amount per service. Effective memory.swap.max equals each service RAM cap; no limit was lowered below the observed current swap use."
+  },
+  "hostResources": {
+    "cpuCount": 16,
+    "before": {
+      "memTotalBytes": 33471057920,
+      "memAvailableBytes": 9835556864,
+      "swapFreeBytes": 7550009344,
+      "pidMax": 4194304,
+      "systemSlicePidsCurrent": 580,
+      "systemSlicePidsMax": "max",
+      "loadAverage": [
+        4.08,
+        3.8,
+        3.55
+      ],
+      "otherContainer": {
+        "id": "6e9938eb8a1dbf5574f3aa45da42f7673c92745978e4c0a7e37b193e8376e208",
+        "image": "rm-test-p1sim-pinyvision-workspace:1.3",
+        "name": "unruffled_galois",
+        "hostConfig": {
+          "NanoCpus": 1000000000,
+          "Memory": 4294967296,
+          "PidsLimit": null
+        },
+        "dockerStats": {
+          "cpuPercent": 102.41,
+          "memory": "2.415GiB",
+          "pids": 16
+        }
+      }
+    },
+    "final": {
+      "capturedAtUtc": "2026-10-21T17:03:27Z",
+      "memTotalKib": 32686580,
+      "memAvailableKib": 12146328,
+      "swapFreeKib": 6153936,
+      "pidMax": 4194304,
+      "systemSlicePidsCurrent": 611,
+      "systemSlicePidsMax": "max",
+      "loadAverage": [
+        12.22,
+        20.13,
+        14.66
+      ],
+      "nonT106Containers": [
+        {
+          "id": "36638a1b368e2295cc5cf26f1648a256daad21ab42a667f9ff0cf2f51104b2a4",
+          "name": "aa-qfast-t062-humble-20261022",
+          "image": "rm-improve-aa-qprob-t011:dependencies",
+          "projectLabel": null,
+          "hostConfig": {
+            "NanoCpus": 1500000000,
+            "Memory": 4294967296,
+            "PidsLimit": 256
+          },
+          "cgroup": {
+            "cpuMax": "150000 100000",
+            "memoryMax": 4294967296,
+            "memoryCurrent": 1560444928,
+            "memoryPeak": 3080105984,
+            "pidsMax": 256,
+            "pidsCurrent": 11,
+            "pidsPeak": 46
+          }
+        },
+        {
+          "id": "c48999eab3afb30b2c34961d9a30365efe83e4566213a164ea0441db14f08897",
+          "name": "thirsty_jemison",
+          "image": "rm-test-p1sim-pinyvision-workspace:1.3",
+          "projectLabel": null,
+          "hostConfig": {
+            "NanoCpus": 1000000000,
+            "Memory": 4294967296,
+            "PidsLimit": null
+          },
+          "cgroup": {
+            "cpuMax": "100000 100000",
+            "memoryMax": 4294967296,
+            "memoryCurrent": 1391443968,
+            "memoryPeak": 2675765248,
+            "pidsMax": 38022,
+            "pidsCurrent": 92,
+            "pidsPeak": 117
+          }
+        }
+      ],
+      "approximateRemainingRamGiBAfterT106AndTheseTwoReachCaps": 3.5,
+      "headroomMethod": "MemAvailable minus incremental cgroup memory growth to T106's 3 GiB maximum and to the two non-T106 containers' combined 8 GiB configured maxima."
+    }
+  },
+  "services": [
+    {
+      "service": "frontend",
+      "name": "yz-rd-t106-frontend-1",
+      "id": "a2a31f67ca2dcfca6e949c6cd4d4dfcd1c86c76dc1efdbe05c04c1afc445ea20",
+      "startedAt": "2026-10-21T10:07:02.61203941Z",
+      "limits": {
+        "cpus": 0.5,
+        "memoryBytes": 402653184,
+        "memswapTotalBytes": 805306368,
+        "pids": 128
+      },
+      "before": {
+        "host": {
+          "NanoCpus": 0,
+          "CpuQuota": 0,
+          "CpuPeriod": 0,
+          "Memory": 0,
+          "MemorySwap": 0,
+          "PidsLimit": null
+        },
+        "cgroup": {
+          "cpuMax": "max 100000",
+          "memoryMax": "max",
+          "pidsMax": "38022",
+          "memoryCurrent": 5398528,
+          "memoryPeak": 34914304,
+          "pidsCurrent": 11,
+          "pidsPeak": 17,
+          "cpuUsageUsec": 910834
+        }
+      },
+      "after": {
+        "host": {
+          "NanoCpus": 500000000,
+          "CpuQuota": 0,
+          "CpuPeriod": 0,
+          "Memory": 402653184,
+          "MemorySwap": 805306368,
+          "PidsLimit": 128
+        },
+        "cgroup": {
+          "cpuMax": "50000 100000",
+          "memoryMax": "402653184",
+          "memoryCurrent": 11292672,
+          "memoryPeak": 34914304,
+          "memorySwapMax": "402653184",
+          "memorySwapCurrent": 19099648,
+          "pidsMax": "128",
+          "pidsCurrent": 11,
+          "pidsPeak": 17,
+          "memoryOomEvents": 0
+        },
+        "health": "running; no Docker healthcheck; HTTP 200"
+      }
+    },
+    {
+      "service": "api",
+      "name": "yz-rd-t106-api-1",
+      "id": "69e1519eef2d8145c463fb9b76816bcb2b93e06f93343591b2f0dc8d23f3870a",
+      "startedAt": "2026-10-21T10:07:02.467948586Z",
+      "limits": {
+        "cpus": 1,
+        "memoryBytes": 805306368,
+        "memswapTotalBytes": 1610612736,
+        "pids": 192
+      },
+      "before": {
+        "host": {
+          "NanoCpus": 0,
+          "CpuQuota": 0,
+          "CpuPeriod": 0,
+          "Memory": 0,
+          "MemorySwap": 0,
+          "PidsLimit": null
+        },
+        "cgroup": {
+          "cpuMax": "max 100000",
+          "memoryMax": "max",
+          "pidsMax": "38022",
+          "memoryCurrent": 41308160,
+          "memoryPeak": 185438208,
+          "pidsCurrent": 11,
+          "pidsPeak": 17,
+          "cpuUsageUsec": 3891559
+        }
+      },
+      "after": {
+        "host": {
+          "NanoCpus": 1000000000,
+          "CpuQuota": 0,
+          "CpuPeriod": 0,
+          "Memory": 805306368,
+          "MemorySwap": 1610612736,
+          "PidsLimit": 192
+        },
+        "cgroup": {
+          "cpuMax": "100000 100000",
+          "memoryMax": "805306368",
+          "memoryCurrent": 101515264,
+          "memoryPeak": 185438208,
+          "memorySwapMax": "805306368",
+          "memorySwapCurrent": 84275200,
+          "pidsMax": "192",
+          "pidsCurrent": 11,
+          "pidsPeak": 22,
+          "memoryOomEvents": 0
+        },
+        "health": "running; no Docker healthcheck; /api/v1/health/ready HTTP 200"
+      }
+    },
+    {
+      "service": "postgres",
+      "name": "yz-rd-t106-postgres-1",
+      "id": "9b3182528732f3a9af0049db44223863225883ae8e455761ab0095285c87704e",
+      "startedAt": "2026-10-21T09:56:18.839740808Z",
+      "limits": {
+        "cpus": 1.5,
+        "memoryBytes": 1073741824,
+        "memswapTotalBytes": 2147483648,
+        "pids": 256
+      },
+      "before": {
+        "host": {
+          "NanoCpus": 0,
+          "CpuQuota": 0,
+          "CpuPeriod": 0,
+          "Memory": 0,
+          "MemorySwap": 0,
+          "PidsLimit": null
+        },
+        "cgroup": {
+          "cpuMax": "max 100000",
+          "memoryMax": "max",
+          "pidsMax": "38022",
+          "memoryCurrent": 24395776,
+          "memoryPeak": 73420800,
+          "pidsCurrent": 6,
+          "pidsPeak": 20,
+          "cpuUsageUsec": 92863737
+        }
+      },
+      "after": {
+        "host": {
+          "NanoCpus": 1500000000,
+          "CpuQuota": 0,
+          "CpuPeriod": 0,
+          "Memory": 1073741824,
+          "MemorySwap": 2147483648,
+          "PidsLimit": 256
+        },
+        "cgroup": {
+          "cpuMax": "150000 100000",
+          "memoryMax": "1073741824",
+          "memoryCurrent": 30777344,
+          "memoryPeak": 73420800,
+          "memorySwapMax": "1073741824",
+          "memorySwapCurrent": 20709376,
+          "pidsMax": "256",
+          "pidsCurrent": 6,
+          "pidsPeak": 20,
+          "memoryOomEvents": 0
+        },
+        "health": "running/healthy; pg_isready accepting connections"
+      }
+    },
+    {
+      "service": "redis",
+      "name": "yz-rd-t106-redis-1",
+      "id": "c130375c6aa9868383c2075b7125b95bb17f5c85513c4b97bc5fddc3d66a2605",
+      "startedAt": "2026-10-21T09:56:18.847732619Z",
+      "limits": {
+        "cpus": 0.5,
+        "memoryBytes": 134217728,
+        "memswapTotalBytes": 268435456,
+        "pids": 64
+      },
+      "before": {
+        "host": {
+          "NanoCpus": 0,
+          "CpuQuota": 0,
+          "CpuPeriod": 0,
+          "Memory": 0,
+          "MemorySwap": 0,
+          "PidsLimit": null
+        },
+        "cgroup": {
+          "cpuMax": "max 100000",
+          "memoryMax": "max",
+          "pidsMax": "38022",
+          "memoryCurrent": 5779456,
+          "memoryPeak": 11251712,
+          "pidsCurrent": 6,
+          "pidsPeak": 13,
+          "cpuUsageUsec": 140641754
+        }
+      },
+      "after": {
+        "host": {
+          "NanoCpus": 500000000,
+          "CpuQuota": 0,
+          "CpuPeriod": 0,
+          "Memory": 134217728,
+          "MemorySwap": 268435456,
+          "PidsLimit": 64
+        },
+        "cgroup": {
+          "cpuMax": "50000 100000",
+          "memoryMax": "134217728",
+          "memoryCurrent": 6844416,
+          "memoryPeak": 11513856,
+          "memorySwapMax": "134217728",
+          "memorySwapCurrent": 2084864,
+          "pidsMax": "64",
+          "pidsCurrent": 6,
+          "pidsPeak": 13,
+          "memoryOomEvents": 0
+        },
+        "health": "running/healthy"
+      }
+    },
+    {
+      "service": "minio",
+      "name": "yz-rd-t106-minio-1",
+      "id": "69d3a264bc8b12c22afc06451d8e677d9f505a60143a868b92dbc4aa7ad6bd58",
+      "startedAt": "2026-10-21T09:56:18.851768232Z",
+      "limits": {
+        "cpus": 1,
+        "memoryBytes": 805306368,
+        "memswapTotalBytes": 1610612736,
+        "pids": 192
+      },
+      "before": {
+        "host": {
+          "NanoCpus": 0,
+          "CpuQuota": 0,
+          "CpuPeriod": 0,
+          "Memory": 0,
+          "MemorySwap": 0,
+          "PidsLimit": null
+        },
+        "cgroup": {
+          "cpuMax": "max 100000",
+          "memoryMax": "max",
+          "pidsMax": "38022",
+          "memoryCurrent": 67026944,
+          "memoryPeak": 94236672,
+          "pidsCurrent": 21,
+          "pidsPeak": 21,
+          "cpuUsageUsec": 13354481
+        }
+      },
+      "after": {
+        "host": {
+          "NanoCpus": 1000000000,
+          "CpuQuota": 0,
+          "CpuPeriod": 0,
+          "Memory": 805306368,
+          "MemorySwap": 1610612736,
+          "PidsLimit": 192
+        },
+        "cgroup": {
+          "cpuMax": "100000 100000",
+          "memoryMax": "805306368",
+          "memoryCurrent": 78721024,
+          "memoryPeak": 94236672,
+          "memorySwapMax": "805306368",
+          "memorySwapCurrent": 23244800,
+          "pidsMax": "192",
+          "pidsCurrent": 21,
+          "pidsPeak": 21,
+          "memoryOomEvents": 0
+        },
+        "health": "running; no Docker healthcheck; MinIO ready HTTP 200"
+      }
+    }
+  ],
+  "checks": {
+    "projectAndServiceLabelsVerified": true,
+    "serviceCount": 5,
+    "allCpuMemoryPidCgroupsFinite": true,
+    "inspectMatchesCompose": true,
+    "startedAtUnchangedForAll": true,
+    "restartCountZeroForAll": true,
+    "oomKilledFalseForAll": true,
+    "memoryOomEventsZeroForAll": true,
+    "readinessBefore": {
+      "api": 200,
+      "frontend": 200,
+      "minio": 200,
+      "postgres": "accepting connections",
+      "redis": "healthy"
+    },
+    "readinessAfter": {
+      "api": 200,
+      "frontend": 200,
+      "minio": 200,
+      "postgres": "accepting connections/healthy",
+      "redis": "healthy"
+    },
+    "t106IsolatedNetworkMembers": "Exactly the five listed container IDs.",
+    "establishedHostTcpClientsAtPostcheck": 0,
+    "postgresCountsBeforeAndAfter": {
+      "schools": 1,
+      "courses": 2,
+      "courseVersions": 3,
+      "assignments": 3,
+      "activityProgress": 4,
+      "resources": 1,
+      "activeMemberships": 1
+    },
+    "dataVolumesExistAndMounted": [
+      "yz-rd-t106-postgres-data",
+      "yz-rd-t106-minio-data"
+    ],
+    "minio": {
+      "bucket": "yz-rd-t106-media",
+      "bucketExists": true,
+      "resourceRows": 1,
+      "directIndependentObjectRead": true,
+      "objectBytes": 1128375,
+      "sha256": "0cd83d944a6ca7822b4a8306cecc60a36e859b041f6702c6a1ad9ead78924451",
+      "matchesAcceptedT106NativeE2EHash": true
+    },
+    "nativeT106E2ERerun": false,
+    "consumerAssessment": "No host-established TCP clients were observed on the published T106 ports at the snapshots. The isolated Docker network contained only the five T106 services; PostgreSQL had no other client session in the early read-only snapshot. The API and direct media checks later used internal service connections. The previously accepted T106 native course-playback E2E is evidence of its prior test consumer; no ongoing user traffic is claimed. The stack was retained per the task card."
+  },
+  "runtimeAction": {
+    "method": "docker update by full ID, one service at a time; no compose up/down, recreation, restart, rm, or prune.",
+    "noInterruptionObserved": true,
+    "initialMemoryOnlyAttempt": "Rejected before state change because Docker required memory-swap together with memory; a follow-up inspect confirmed frontend remained running and its original limits.",
+    "finalInPlaceUpdatesSucceeded": true
+  },
+  "unrelatedServiceNoninterference": {
+    "t107DockerTargetsOnlyT106Ids": true,
+    "noDockerUpdateStopRestartOrRemoveForNonT106": true,
+    "externalLifecycleChurnObserved": true,
+    "note": "The baseline non-T106 rm-test ID/name disappeared in a later snapshot. A transient container with the same image was observed and its die/destroy events recorded. The AutoAim T062 container ID also changed during the window. No T107 command targeted those containers; cause of their lifecycle changes is unknown."
+  },
+  "t040OwnerReceipt": "No AutoAim admission was attempted. After this five-service receipt, the AutoAim Owner must independently request fresh T031/T040 admission.",
+  "issue3": {
+    "url": "https://github.com/tianxiansheng166/yuzan-workspace-main/issues/3",
+    "state": "OPEN",
+    "commentUrl": null,
+    "closed": false
+  },
+  "l4": {
+    "sourceRead": "NO",
+    "importApplied": "NO",
+    "runtimeOpened": "NO"
+  },
+  "secretHandling": "No student password, token, or environment value is present. Database checks captured counts only; object read captured byte length and SHA-256 only."
+}

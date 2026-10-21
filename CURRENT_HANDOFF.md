@@ -714,3 +714,11 @@ Do not modify or stage `pnpm-workspace.yaml`, `infra/database/prisma/seed.ts`,
   are in `evidence/yz-rd-t102/RESULTS.md`.
 - `READY_TO_MERGE=NO`. No shared merge or deploy. Await Owner review and an
   authorized isolated course-playback E2E before reconsidering merge readiness.
+
+
+## YZ-RD-T107 — T106 five-service resource bounds (2026-10-22)
+
+- Owner-manual Codex task `YZ-RD-T107` verified the exact `yz-rd-t106` Compose project and bounded frontend, API, PostgreSQL, Redis, and MinIO in place. Their finite budgets total 4.5 CPU, 3 GiB RAM, and 832 PIDs; all five full IDs and before/after Docker/cgroup evidence are in `evidence/yz-rd-t107/`.
+- The durable policy is in the external `/home/tian/.devspace/runtime/yz-rd-t106/compose.yaml`; only the redacted summary is tracked. No service was stopped or recreated. All five remained running with unchanged start times, zero restarts, healthy/readiness responses, and no OOM event.
+- PostgreSQL counts and the named PostgreSQL/MinIO volumes remained intact. A direct read of the MinIO object matched T106's accepted SHA-256. T106's full native E2E was not rerun.
+- **STATUS: PASS; READY_TO_MERGE: NO.** Issue #3 remains open pending the five-service receipt. AutoAim Owner must independently request fresh T031/T040 admission; no AutoAim repo/container was changed. Historical L4 incident remains open; no L4 content was accessed.
