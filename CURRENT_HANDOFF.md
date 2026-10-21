@@ -714,3 +714,23 @@ Do not modify or stage `pnpm-workspace.yaml`, `infra/database/prisma/seed.ts`,
   are in `evidence/yz-rd-t102/RESULTS.md`.
 - `READY_TO_MERGE=NO`. No shared merge or deploy. Await Owner review and an
   authorized isolated course-playback E2E before reconsidering merge readiness.
+
+## YZ-RD-T104 — T102 quality gate audit (2026-10-21)
+
+- Output branch: `feat/yz-rd-t104-quality-gate-baseline-audit`, based on T102
+  `f28a1461930642bf33010beeedd67b3d88f28851`; comparison control is the exact
+  Sep 8 baseline `0a7b931a8dfd005eb7ba97aa0fe68e81169d61e8`.
+- Evidence: `evidence/yz-rd-t104/RESULTS.md`, including all 64 database-gated
+  API skip names and per-case causes.
+- Reproduced frontend 51/51, API 1,072 passed / 64 skipped / 0 failed, API
+  source typecheck, frontend checks/build, changed JavaScript syntax, and the
+  course-detail inline script parse. BASE API was 1,044 passed / 64 skipped.
+- Added the API’s direct locked `@eslint/js@9.39.4` dependency and a test
+  TypeScript project config so ESLint can analyze the `test` tree. ESLint now
+  starts; it remains non-green with 2,649 errors / 1 warning on T102 versus
+  2,675 / 1 on BASE and no new T102 diagnostics. The repository format check
+  still exits 2 with 737 warnings and the same 12 parser errors proven on BASE.
+- Standard API source typecheck passes. A separate test-project probe reports
+  234 existing TypeScript errors on both revisions; one T102-added fake-repo
+  type error was fixed. No production application source changed in T104.
+- `READY_TO_MERGE=NO`. No shared merge or deploy.

@@ -155,7 +155,10 @@ test("course video progress sends a fractional position with the dynamic course 
   assert.equal(call[4].videoPosition, 0.6);
   assert.equal(call[4].expectedProgressRevision, 0);
   assert.equal(f.state.getState().course.progress.percent, 40);
-  assert.equal(f.state.getState().activityProgressMap["activity-requested"].position, 0.6);
+  assert.equal(
+    f.state.getState().activityProgressMap["activity-requested"].position,
+    0.6,
+  );
 });
 
 test("server incomplete progress stays incomplete after the client reports video ended", async () => {

@@ -3,7 +3,10 @@ import fs from "node:fs";
 import test from "node:test";
 import vm from "node:vm";
 
-const source = fs.readFileSync(new URL("./courses.js", import.meta.url), "utf8");
+const source = fs.readFileSync(
+  new URL("./courses.js", import.meta.url),
+  "utf8",
+);
 const tick = () => new Promise((resolve) => setTimeout(resolve, 0));
 
 function mount(course) {
@@ -31,7 +34,9 @@ function mount(course) {
           className: "",
           addEventListener() {},
           setAttribute() {},
-          querySelector() { return null; },
+          querySelector() {
+            return null;
+          },
         });
       }
       return elements.get(selector);
@@ -65,7 +70,10 @@ function mount(course) {
 }
 
 test("Courses card opens the matching dynamic course detail assignment", async () => {
-  const f = mount({ assignmentId: "assignment/dynamic", title: "TEST_FIXTURE_ONLY" });
+  const f = mount({
+    assignmentId: "assignment/dynamic",
+    title: "TEST_FIXTURE_ONLY",
+  });
   await tick();
 
   const click = f.cardListeners.get("click");
