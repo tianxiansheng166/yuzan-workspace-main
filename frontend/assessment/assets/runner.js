@@ -4,7 +4,7 @@
   const app = document.querySelector('#app');
   const parts = location.pathname.split('/').filter(Boolean);
   const attemptId = parts[3] || '';
-  const state = { attempt: null, items: [], currentIndex: 0, save: 'IDLE', error: '', composing: false, timers: new Map(), saves: new Map(), media: null, blob: null, blobUrl: null, recordingIdempotencyKey: null, elapsed: 0, resourceUrls: new Map(), resourceErrors: new Map(), resolvingResources: new Set(), feedbackOpen: false, feedbackMessage: '', feedbackHistory: [] };
+  const state = { attempt: null, items: [], currentIndex: 0, save: 'IDLE', error: '', composing: false, timers: new Map(), saves: new Map(), failedAnswerItems: new Set(), media: null, blob: null, blobUrl: null, recordingIdempotencyKey: null, elapsed: 0, resourceUrls: new Map(), resourceErrors: new Map(), resolvingResources: new Set(), feedbackOpen: false, feedbackMessage: '', feedbackHistory: [], submitConfirm: false, submitting: false };
   const safe = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const isObject = value => value && typeof value === 'object' && !Array.isArray(value);
   const current = () => state.items[state.currentIndex];
@@ -26,7 +26,8 @@
     const prompt = isObject(item.prompt) ? item.prompt : null;
     return prompt?.stimulus && prompt?.response ? prompt : legacy(item);
   }
-  function saved(item) { return Boolean((item.recordingId && item.recordingStatus !== 'FAILED') || item.studentAnswer?.content?.value); }
+  function hasWrittenResponse(item) { const value = answerValue(item); return value != null && String(value).trim().length > 0; }
+  function saved(item) { return Boolean((item.recordingId && item.recordingStatus !== 'FAILED') || hasWrittenResponse(item)); }
   function resolveResourceUrl(resourceId, fallbackUrl) {
     if (fallbackUrl) return fallbackUrl;
     if (!resourceId || typeof resourceId !== 'string') return '';
@@ -86,7 +87,7 @@
     if (response.type === 'SPEECH') return renderSpeech(item);
     return `<p class="runner-error">不支持的作答类型：${safe(response.type)}</p>`;
   }
-  function statusText() { return ({ IDLE: '答案会自动保存', DIRTY: '等待保存…', SAVING: '正在保存…', SAVED: '已保存', ERROR: `保存失败：${state.error}` })[state.save] || ''; }
+  function statusText() { if (state.submitting) return '正在交卷…'; return ({ IDLE: '答案会自动保存', DIRTY: '等待保存…', SAVING: '正在保存…', SAVED: '已保存', ERROR: `保存失败：${state.error}` })[state.save] || ''; }
   function updateSaveStatus() {
     const text = statusText();
     document.querySelectorAll('[data-save-status], [data-save-state]').forEach(element => { element.textContent = text; });
@@ -115,24 +116,110 @@
     const item = current();
     if (!item) { app.innerHTML = '<main class="runner-page"><p class="runner-error">此练习没有可执行题目。</p></main>'; return; }
     const spec = normalize(item); const count = state.items.length;
+    const unansweredItems = state.items.filter(entry => normalize(entry).response?.type !== 'NONE' && !saved(entry));
+    const firstUnanswered = unansweredItems.length ? state.items.indexOf(unansweredItems[0]) : -1;
+    const submitDialog = state.submitConfirm
+      ? `<div class="runner-submit-modal" role="presentation"><section class="runner-submit-card" role="dialog" aria-modal="true" aria-labelledby="runner-submit-title" aria-describedby="runner-submit-copy"><h2 id="runner-submit-title">${unansweredItems.length ? '还有题目未作答' : '确认交卷'}</h2><p id="runner-submit-copy">${unansweredItems.length ? `当前有 ${unansweredItems.length} 道题未作答。未作答题在适用计分时按零分计算。` : `已完成 ${state.items.filter(saved).length} / ${count} 题。提交后将进入服务器处理流程。`}</p><div class="runner-submit-actions"><button type="button" class="btn primary" data-confirm-submit>${unansweredItems.length ? '仍然交卷' : '确认交卷'}</button>${firstUnanswered >= 0 ? `<button type="button" class="btn" data-fix-incomplete>返回第 ${firstUnanswered + 1} 题继续作答</button>` : ''}<button type="button" class="btn" data-cancel-submit>再检查一下</button></div></section></div>`
+      : '';
     const feedbackPanel = state.feedbackOpen ? `<div class="runner-feedback-modal" role="dialog" aria-label="反馈问题"><div class="runner-feedback-card"><button class="runner-feedback-close" data-feedback-close aria-label="关闭">×</button><h2>反馈问题</h2><p>请描述遇到的问题，不要填写手机号等敏感信息。不会提交你的答案、录音或评分细节。</p><label>问题类型<select data-feedback-category><option value="CONTENT">题目内容</option><option value="MEDIA">图片/音频</option><option value="RECORDING">录音</option><option value="SCORING">评分结果</option><option value="USABILITY">使用体验</option><option value="TECHNICAL">系统问题</option><option value="OTHER">其他</option></select></label><textarea data-feedback-message minlength="5" maxlength="1000" placeholder="至少输入 5 个字">${safe(state.feedbackMessage)}</textarea><button class="btn primary" data-feedback-submit>提交反馈</button><div class="runner-feedback-history"><b>我的反馈</b>${state.feedbackHistory.length ? state.feedbackHistory.map(entry => `<p>${safe(entry.category)} · ${safe({OPEN:'待处理',ACKNOWLEDGED:'已知悉',RESOLVED:'已解决'}[entry.status] || entry.status)}${entry.resolutionNote ? `：${safe(entry.resolutionNote)}` : ''}</p>`).join('') : '<p>暂无反馈。</p>'}</div></div></div>` : '';
     app.innerHTML = `<main class="runner-page"><header class="runner-header"><a href="/student/practices/">返回练习中心</a><div><b>统一答题 Runner</b><span>${state.attempt?.status || 'IN_PROGRESS'}</span></div><button class="btn" data-feedback-open>反馈问题</button></header><section class="runner-progress"><span>第 ${state.currentIndex + 1} / ${count} 题</span><div><i style="width:${((state.currentIndex + 1) / count) * 100}%"></i></div></section><nav class="runner-map" aria-label="题目导航">${state.items.map((entry, index) => `<button data-go="${index}" class="${index === state.currentIndex ? 'current' : ''} ${saved(entry) ? 'answered' : ''}">${index + 1}</button>`).join('')}</nav><article class="question-shell"><p class="runner-section">${safe(item.sectionTitle || '练习题')}</p>${renderStimulus(spec.stimulus)}<section class="runner-response">${renderResponse(item, spec)}</section></article><footer class="runner-footer"><button class="btn" data-prev ${state.currentIndex ? '' : 'disabled'}>上一题</button><span data-save-state>${safe(statusText())}</span>${state.currentIndex === count - 1 ? '<button class="btn primary" data-submit>检查并提交</button>' : '<button class="btn primary" data-next>下一题</button>'}</footer></main>${feedbackPanel}`;
+    if (state.submitConfirm) app.innerHTML += submitDialog;
     bind();
+    bindSubmitDialog();
+  }
+  function bindSubmitDialog() {
+    document.querySelector('[data-confirm-submit]')?.addEventListener('click', () => void submit(true));
+    document.querySelector('[data-cancel-submit]')?.addEventListener('click', () => {
+      state.submitConfirm = false;
+      render();
+    });
+    document.querySelector('[data-fix-incomplete]')?.addEventListener('click', () => {
+      const index = state.items.findIndex(entry => normalize(entry).response?.type !== 'NONE' && !saved(entry));
+      if (index >= 0) state.currentIndex = index;
+      state.submitConfirm = false;
+      render();
+    });
   }
   function save(item, value) {
     const active = state.saves.get(item.id);
     if (active) return active.then(() => String(answerValue(item)) === String(value) ? undefined : save(item, value));
-    const pending = (async () => { state.save = 'SAVING'; updateSaveStatus(); try { await Api.saveWrittenAnswer(attemptId, item.id, { content: { responseType: normalize(item).response.type, value }, wordCount: 0, charCount: String(value).length }); item.studentAnswer = { content: { responseType: normalize(item).response.type, value } }; state.save = 'SAVED'; } catch (error) { state.error = error.message || '网络错误'; state.save = 'ERROR'; } finally { state.saves.delete(item.id); updateSaveStatus(); } })();
+    const pending = (async () => {
+      state.save = 'SAVING';
+      updateSaveStatus();
+      try {
+        await Api.saveWrittenAnswer(attemptId, item.id, {
+          content: { responseType: normalize(item).response.type, value },
+          wordCount: 0,
+          charCount: String(value).length,
+        });
+        item.studentAnswer = { content: { responseType: normalize(item).response.type, value } };
+        state.failedAnswerItems.delete(item.id);
+        state.error = '';
+        state.save = 'SAVED';
+      } catch (error) {
+        state.failedAnswerItems.add(item.id);
+        state.error = error.message || '网络错误';
+        state.save = 'ERROR';
+      } finally {
+        state.saves.delete(item.id);
+        updateSaveStatus();
+      }
+    })();
     state.saves.set(item.id, pending);
     return pending;
   }
   function flush() { const item = current(); const textarea = document.querySelector('[data-text]'); const timer = state.timers.get(item?.id); if (timer) { clearTimeout(timer); state.timers.delete(item.id); } if (textarea && String(answerValue(item)) !== textarea.value) return save(item, textarea.value); return state.saves.get(item?.id) || Promise.resolve(); }
   async function beginSpeech() { try { const item = current(); if (!state.recordingIdempotencyKey) state.recordingIdempotencyKey = `runner-${attemptId}-${item.id}-${crypto.randomUUID()}`; const getUserMedia = window.__yuzanRunnerGetUserMedia || navigator.mediaDevices?.getUserMedia?.bind(navigator.mediaDevices); if (!getUserMedia) throw new Error('浏览器不支持麦克风'); const stream = await getUserMedia({ audio: true }); const recorder = new MediaRecorder(stream, MediaRecorder.isTypeSupported('audio/webm') ? { mimeType: 'audio/webm' } : undefined); const chunks = []; recorder.ondataavailable = e => e.data.size && chunks.push(e.data); recorder.onstop = () => { state.blob = new Blob(chunks, { type: recorder.mimeType || 'audio/webm' }); state.blobUrl = URL.createObjectURL(state.blob); state.media = { state: 'REVIEW', stream }; render(); }; state.media = { state: 'COUNTDOWN', stream, recorder }; render(); let n = 3; const timer = setInterval(() => { const el = document.querySelector('[data-countdown]'); if (el) el.textContent = String(--n); if (n <= 0) { clearInterval(timer); recorder.start(); state.media.state = 'RECORDING'; state.elapsed = 0; state.media.clock = setInterval(() => { state.elapsed++; const e = document.querySelector('[data-elapsed]'); if (e) e.textContent = `${state.elapsed}s`; }, 1000); render(); } }, 800); } catch (error) { state.error = '麦克风不可用，请允许浏览器访问麦克风后重试。'; state.save = 'ERROR'; render(); } }
   async function uploadSpeech() { const item = current(); state.media.state = 'UPLOADING'; render(); try { const initialized = await Api.initSimpleRecording({ enrollmentId: state.attempt.enrollmentId, mimeType: state.blob.type || 'audio/webm', idempotencyKey: state.recordingIdempotencyKey }); await Api.uploadBlobToPresignedUrl(initialized.uploadUrl.url, state.blob, { mimeType: state.blob.type || 'audio/webm' }); const stimulus = normalize(item).stimulus || {}; const completion = { durationMs: state.elapsed * 1000, objectKey: initialized.uploadUrl.objectKey, assessmentItemId: item.id }; if (stimulus.type !== 'IMAGE') completion.targetText = stimulus.promptText || ''; await Api.completeSimpleRecording(initialized.id, completion); await Api.attachAssessmentRecording(attemptId, item.id, initialized.id); item.recordingId = initialized.id; item.recordingStatus = 'PROCESSING'; state.media.stream?.getTracks().forEach(track => track.stop()); state.media = null; render(); } catch (error) { state.error = error.message || '录音上传失败'; state.save = 'ERROR'; state.media = { state: 'REVIEW' }; render(); } }
-  async function submit() { await flush(); const incomplete = state.items.filter(item => normalize(item).response?.type !== 'NONE' && !saved(item)); if (incomplete.length) { state.error = `还有 ${incomplete.length} 题未完成`; state.save = 'ERROR'; render(); return; } try { for (const item of state.items) if (normalize(item).response?.type === 'CHOICE' || normalize(item).response?.type === 'TEXT') await Api.finalizeWrittenAnswer(attemptId, item.id); await Api.submitAssessmentSession(attemptId); location.href = `/student/practices/attempts/${encodeURIComponent(attemptId)}/processing/`; } catch (error) { state.error = error.message || '提交失败'; state.save = 'ERROR'; render(); } }
+  async function submit(confirmed = false) {
+    if (state.submitting) return;
+    await flush();
+    await Promise.all(Array.from(state.saves.values()));
+    if (state.failedAnswerItems.size > 0) {
+      state.error = '当前答案尚未保存到服务器，请重试保存后再交卷。';
+      state.save = 'ERROR';
+      state.submitConfirm = false;
+      render();
+      return;
+    }
+    if (state.media || state.items.some(item => item.recordingStatus === 'FAILED')) {
+      state.error = '已有录音尚未确认上传，请返回录音题重试上传后再交卷。';
+      state.save = 'ERROR';
+      state.submitConfirm = false;
+      render();
+      return;
+    }
+    if (!confirmed) {
+      state.submitConfirm = true;
+      state.error = '';
+      render();
+      return;
+    }
+
+    state.submitConfirm = false;
+    state.submitting = true;
+    state.save = 'SAVING';
+    state.error = '';
+    render();
+    try {
+      for (const item of state.items) {
+        const responseType = normalize(item).response?.type;
+        if (['CHOICE', 'TEXT'].includes(responseType) && hasWrittenResponse(item)) {
+          await Api.finalizeWrittenAnswer(attemptId, item.id);
+        }
+      }
+      await Api.submitAssessmentSession(attemptId);
+      location.href = `/student/practices/attempts/${encodeURIComponent(attemptId)}/processing/`;
+    } catch (error) {
+      state.submitting = false;
+      state.error = error.message || '提交失败';
+      state.save = 'ERROR';
+      render();
+    }
+  }
   async function openFeedback() { try { state.feedbackHistory = (await Api.listMyPilotFeedback()).items || []; } catch (error) { state.error = error.message || '反馈记录暂不可用'; } state.feedbackOpen = true; render(); }
   async function submitFeedback() { const message = document.querySelector('[data-feedback-message]')?.value?.trim() || ''; if (message.length < 5) { state.feedbackMessage = message; state.error = '请至少描述 5 个字'; render(); return; } const category = document.querySelector('[data-feedback-category]')?.value || 'OTHER'; try { await Api.createPilotFeedback({ category, message, sessionId: attemptId, assessmentItemId: current()?.id, currentPath: location.pathname }); state.feedbackMessage = ''; state.feedbackHistory = (await Api.listMyPilotFeedback()).items || []; state.save = 'SAVED'; state.feedbackOpen = true; render(); } catch (error) { state.error = error.message || '反馈提交失败'; render(); } }
-  function bind() { document.querySelectorAll('[data-go]').forEach(button => button.onclick = async () => { await flush(); resetTransientMedia(); state.currentIndex = Number(button.dataset.go); render(); }); document.querySelector('[data-prev]')?.addEventListener('click', async () => { await flush(); resetTransientMedia(); state.currentIndex--; render(); }); document.querySelector('[data-next]')?.addEventListener('click', async () => { await flush(); resetTransientMedia(); state.currentIndex++; render(); }); document.querySelectorAll('[data-choice]').forEach(button => button.onclick = () => save(current(), button.dataset.choice)); const textarea = document.querySelector('[data-text]'); const scheduleTextSave = () => { const item = current(); if (!item || state.composing) return; const value = textarea.value; clearTimeout(state.timers.get(item.id)); state.timers.set(item.id, setTimeout(() => { state.timers.delete(item.id); void save(item, value); }, 700)); }; textarea?.addEventListener('compositionstart', () => { state.composing = true; clearTimeout(state.timers.get(current()?.id)); state.save = 'DIRTY'; updateSaveStatus(); }); textarea?.addEventListener('compositionend', () => { state.composing = false; scheduleTextSave(); }); textarea?.addEventListener('input', () => { state.save = 'DIRTY'; updateSaveStatus(); scheduleTextSave(); }); document.querySelector('[data-start-recording]')?.addEventListener('click', beginSpeech); document.querySelector('[data-stop-recording]')?.addEventListener('click', () => { clearInterval(state.media.clock); state.media.recorder.stop(); }); document.querySelector('[data-rerecord]')?.addEventListener('click', () => { resetTransientMedia(); render(); }); document.querySelector('[data-upload-recording]')?.addEventListener('click', uploadSpeech); document.querySelector('[data-submit]')?.addEventListener('click', submit); document.querySelector('[data-feedback-open]')?.addEventListener('click', () => void openFeedback()); document.querySelector('[data-feedback-close]')?.addEventListener('click', () => { state.feedbackOpen = false; render(); }); document.querySelector('[data-feedback-submit]')?.addEventListener('click', () => void submitFeedback()); }
+  function bind() { document.querySelectorAll('[data-go]').forEach(button => button.onclick = async () => { await flush(); resetTransientMedia(); state.currentIndex = Number(button.dataset.go); render(); }); document.querySelector('[data-prev]')?.addEventListener('click', async () => { await flush(); resetTransientMedia(); state.currentIndex--; render(); }); document.querySelector('[data-next]')?.addEventListener('click', async () => { await flush(); resetTransientMedia(); state.currentIndex++; render(); }); document.querySelectorAll('[data-choice]').forEach(button => button.onclick = () => save(current(), button.dataset.choice)); const textarea = document.querySelector('[data-text]'); const scheduleTextSave = () => { const item = current(); if (!item || state.composing) return; const value = textarea.value; clearTimeout(state.timers.get(item.id)); state.timers.set(item.id, setTimeout(() => { state.timers.delete(item.id); void save(item, value); }, 700)); }; textarea?.addEventListener('compositionstart', () => { state.composing = true; clearTimeout(state.timers.get(current()?.id)); state.save = 'DIRTY'; updateSaveStatus(); }); textarea?.addEventListener('compositionend', () => { state.composing = false; scheduleTextSave(); }); textarea?.addEventListener('input', () => { state.save = 'DIRTY'; updateSaveStatus(); scheduleTextSave(); }); document.querySelector('[data-start-recording]')?.addEventListener('click', beginSpeech); document.querySelector('[data-stop-recording]')?.addEventListener('click', () => { clearInterval(state.media.clock); state.media.recorder.stop(); }); document.querySelector('[data-rerecord]')?.addEventListener('click', () => { resetTransientMedia(); render(); }); document.querySelector('[data-upload-recording]')?.addEventListener('click', uploadSpeech); document.querySelector('[data-submit]')?.addEventListener('click', () => void submit(false)); document.querySelector('[data-feedback-open]')?.addEventListener('click', () => void openFeedback()); document.querySelector('[data-feedback-close]')?.addEventListener('click', () => { state.feedbackOpen = false; render(); }); document.querySelector('[data-feedback-submit]')?.addEventListener('click', () => void submitFeedback()); }
   async function boot() { if (!attemptId || !Api?.requireAuth || !Api.requireAuth()) return; try { const [attempt, items] = await Promise.all([Api.getPracticeAttempt(attemptId), Api.getPracticeAttemptItems(attemptId)]); state.attempt = attempt; state.items = Array.isArray(items) ? items : items.items || []; if (attempt.status === 'CREATED') { state.attempt = await Api.startAssessmentSession(attemptId); } render(); } catch (error) { app.innerHTML = `<main class="runner-page"><p class="runner-error">加载练习失败：${safe(error.message || '请稍后重试')}</p></main>`; } }
   boot();
 })();

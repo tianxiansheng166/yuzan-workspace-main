@@ -15,7 +15,7 @@ import type { WrittenAnswerRepositoryPort, SaveWrittenAnswerData } from "./ports
 import { WRITTEN_ANSWER_REPOSITORY } from "./ports/written-answer-repository.port.js";
 import type { AssessmentReportRepositoryPort, CreateAssessmentReportData } from "./ports/assessment-report-repository.port.js";
 import { ASSESSMENT_REPORT_REPOSITORY } from "./ports/assessment-report-repository.port.js";
-import { QuestionBankDeterministicScoringService } from "./question-bank-deterministic-scoring.service.js";
+import { QuestionBankDeterministicScoringService, isBlankWrittenResponse } from "./question-bank-deterministic-scoring.service.js";
 import { buildQuestionBankDiagnosis, isQuestionBankDiagnosis, QuestionBankDiagnosisError, questionBankFamilyLearningDetail, QUESTION_BANK_FAMILY_ORDER, type QuestionBankDiagnosis, type QuestionBankRetryCandidate } from "./question-bank-diagnosis.js";
 import { assertSafeQuestionDeliverySpec } from "./question-bank-delivery.js";
 import { toAssessmentSessionResponse, toAssessmentItemResponse, toReadingItemResponse, toWrittenItemResponse, toWrittenAnswerResponse, toAssessmentReportResponse } from "./dto/assessment-session.response.js";
@@ -335,15 +335,6 @@ export class AssessmentService {
     const items = await this.itemRepo.findBySessionId(sessionId);
     if (items.length === 0) throw new AssessmentConflictException("测评没有可提交的题目");
     const oralItems = items.filter((item) => ["READING", "SPEECH", "LISTEN_REPEAT", "READ_ALOUD"].includes(item.itemType));
-    if (oralItems.some((item) => !item.recordingId)) {
-      throw new AssessmentConflictException("仍有必做录音尚未同步");
-    }
-    const writtenItems = items.filter((item) => ["WRITTEN", "CHOICE", "FILL_BLANK", "SINGLE_CHOICE", "MULTIPLE_CHOICE", "SHORT_ANSWER", "LISTEN_RETELL"].includes(item.itemType));
-    if (writtenItems.length) {
-      const answers = await this.prisma.writtenAnswer.findMany({ where: { itemId: { in: writtenItems.map((item) => item.id) } }, select: { itemId: true, finalSubmittedAt: true } });
-      const finalized = new Set(answers.filter((answer) => answer.finalSubmittedAt).map((answer) => answer.itemId));
-      if (writtenItems.some((item) => !finalized.has(item.id))) throw new AssessmentConflictException("仍有必答书面题尚未保存");
-    }
     const recordingIds = oralItems.flatMap((item) => item.recordingId ? [item.recordingId] : []);
     if (recordingIds.length) {
       const failed = await this.prisma.recording.count({ where: { id: { in: recordingIds }, status: "FAILED" } });
@@ -352,6 +343,21 @@ export class AssessmentService {
 
     if (!canTransition(session.status, "SUBMITTED")) {
       throw new AssessmentConflictException(`无法从 ${session.status} 转换为 SUBMITTED`);
+    }
+
+    // Keep persisted nonblank answers even if a client missed its finalize call.
+    // Blank/missing rows remain unanswered; do not fabricate a row or finalize it.
+    const writtenItemIds = new Set(items
+      .filter((item) => ["WRITTEN", "CHOICE", "FILL_BLANK", "SINGLE_CHOICE", "MULTIPLE_CHOICE", "SHORT_ANSWER", "LISTEN_RETELL"].includes(item.itemType))
+      .map((item) => item.id));
+    if (writtenItemIds.size) {
+      const answers = await this.answerRepo.findBySessionId(sessionId);
+      for (const answer of answers) {
+        if (writtenItemIds.has(answer.itemId) && !answer.finalSubmittedAt && !isBlankWrittenResponse(answer.content)) {
+          await this.answerRepo.finalize(answer.itemId);
+          await this.itemRepo.updateStatus(answer.itemId, "ANSWERED");
+        }
+      }
     }
 
     const updated = await this.sessionRepo.updateStatus(sessionId, "SUBMITTED", { submittedAt: new Date() } as Partial<AssessmentSession>);
@@ -772,12 +778,11 @@ export class AssessmentService {
     if (existingReport) return toAssessmentReportResponse(existingReport, { includeDiagnosis: true });
 
     const oralItems = items.filter((item) => ["READING", "SPEECH", "LISTEN_REPEAT", "READ_ALOUD"].includes(item.itemType));
-    if (!oralItems.length) {
-      if (questionBankItems.length && session.status === "SUBMITTED") await this.sessionRepo.updateStatus(sessionId, "PROCESSING");
-      return null;
-    }
+    if (!oralItems.length && !questionBankItems.length) return null;
 
-    const currentJobs = oralItems.map((item) =>
+    const currentJobs = oralItems.filter((item) =>
+      !item.questionVersionId || (item.recordingId && !(item.reviewedAt && item.scoredScore !== null)),
+    ).map((item) =>
       item.speechJobs.find((job) => job.recordingId === item.recordingId) ?? null,
     );
     const allModelScored = currentJobs.every((job) => job && ["AUTO_RESULT", "FINALIZED", "NEEDS_REVIEW"].includes(job.status));
@@ -817,6 +822,7 @@ export class AssessmentService {
       sortOrder?: number;
       maxScore?: number | null;
       scoredScore: number | null;
+      autoResult?: unknown;
       domain?: string | null;
       family?: string | null;
       level?: string | null;
@@ -851,6 +857,9 @@ export class AssessmentService {
         ? scoredItems.reduce((s, i) => s + (i.scoredScore ?? 0), 0)
         : Math.round((scoredItems.reduce((s, i) => s + (i.scoredScore ?? 0), 0) / scoredItems.length) * 10) / 10
       : null;
+
+    const unansweredItems = items.filter((item) => item.autoResult && typeof item.autoResult === "object"
+      && "reasonCode" in item.autoResult && item.autoResult.reasonCode === "UNANSWERED").length;
 
     const dataCompleteness = items.length > 0 ? (scoredItems.length / items.length) * 100 : 0;
 
@@ -897,7 +906,8 @@ export class AssessmentService {
       ...(generatedByUserId ? { generatedByUserId } : {}),
       summary: {
         totalItems: items.length,
-        answeredItems: scoredItems.length,
+        answeredItems: scoredItems.length - unansweredItems,
+        unansweredItems,
         scoringState: requiresTeacherReview ? "NEEDS_REVIEW" : "AUTO_RESULT",
         requiresTeacherReview,
         ...(isQuestionBank ? {
@@ -922,7 +932,7 @@ export class AssessmentService {
   private async reportItemsForSession(sessionId: string) {
     const items = await this.prisma.assessmentItem.findMany({
       where: { sessionId },
-      select: { id: true, questionVersionId: true, itemType: true, sortOrder: true, maxScore: true, scoredScore: true, questionVersion: { select: { item: { select: { domain: true, questionType: true, level: true } } } } },
+      select: { id: true, questionVersionId: true, itemType: true, sortOrder: true, maxScore: true, scoredScore: true, autoResult: true, questionVersion: { select: { item: { select: { domain: true, questionType: true, level: true } } } } },
       orderBy: { sortOrder: "asc" },
     });
     return items.map((item) => ({ ...item, domain: item.questionVersion?.item.domain ?? null, family: item.questionVersion?.item.questionType ?? null, level: item.questionVersion?.item.level ?? null }));
@@ -1110,6 +1120,7 @@ export class AssessmentService {
         sortOrder: true,
         maxScore: true,
         scoredScore: true,
+        autoResult: true,
         questionVersion: { select: { item: { select: { domain: true, questionType: true, level: true } } } },
       },
       orderBy: { sortOrder: "asc" },

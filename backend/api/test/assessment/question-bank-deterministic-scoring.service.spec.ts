@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   QUESTION_BANK_DETERMINISTIC_SCORER_VERSION,
+  QuestionBankDeterministicScoringService,
   scoreQuestionBankResponse,
 } from "../../src/modules/assessment/question-bank-deterministic-scoring.service.js";
 
@@ -34,6 +35,78 @@ describe("Question Bank deterministic scorer", () => {
     expect(score({ ...exactSpec }, { value: "B. option text" }, 3)).toMatchObject({ state: "AUTO_SCORED", score: 0 });
     expect(score({ ...exactSpec }, { value: "E" }, 3)).toMatchObject({ state: "AUTO_SCORED", score: 0 });
     expect(score({ ...exactSpec }, {}, 3)).toMatchObject({ state: "AUTO_SCORED", score: 0 });
+  });
+
+  it("scores unanswered published items as zero without hiding invalid configurations", () => {
+    expect(score(exactSpec, undefined, 3)).toMatchObject({
+      state: "AUTO_SCORED",
+      score: 0,
+      maxScore: 3,
+      reasonCode: "UNANSWERED",
+    });
+    expect(score(textSpec, { value: "   " })).toMatchObject({
+      state: "AUTO_SCORED",
+      score: 0,
+      reasonCode: "UNANSWERED",
+    });
+    expect(scoreQuestionBankResponse({
+      scoringSpec: { strategy: "SPEECH_READING", maxScore: 4 },
+      deliverySpec: { response: { type: "SPEECH" } },
+      answer: null,
+      hasRecording: false,
+      maxScore: 4,
+    })).toMatchObject({
+      state: "AUTO_SCORED",
+      score: 0,
+      reasonCode: "UNANSWERED",
+    });
+    expect(score(exactSpec, undefined, 3, { response: { type: "CHOICE", options: [] } }))
+      .toMatchObject({ state: "NEEDS_REVIEW", score: null, reasonCode: "SCORING_CONFIG_INVALID" });
+    expect(score({ ...exactSpec, maxScore: 0 }, undefined, 0))
+      .toMatchObject({ state: "NEEDS_REVIEW", score: null, reasonCode: "SCORING_CONFIG_INVALID" });
+  });
+
+  it("scores missing responses and recordings from persisted Question Bank rows only", async () => {
+    const choiceVersion = {
+      status: "PUBLISHED",
+      deliverySpec: exactDelivery,
+      scoringSpec: exactSpec,
+    };
+    const speechVersion = {
+      status: "PUBLISHED",
+      deliverySpec: { response: { type: "SPEECH" } },
+      scoringSpec: { strategy: "SPEECH_READING", maxScore: 4 },
+    };
+    const rows = [
+      { id: "blank-choice", recordingId: null, questionVersionId: "version-1", maxScore: 3, scoredScore: null, autoResult: null, reviewerUserId: null, reviewedAt: null, questionVersion: choiceVersion, writtenAnswer: null },
+      { id: "blank-speech", recordingId: null, questionVersionId: "version-2", maxScore: 4, scoredScore: null, autoResult: null, reviewerUserId: null, reviewedAt: null, questionVersion: speechVersion, writtenAnswer: null },
+      { id: "saved-text", recordingId: null, questionVersionId: "version-3", maxScore: 3, scoredScore: null, autoResult: null, reviewerUserId: null, reviewedAt: null, questionVersion: choiceVersion, writtenAnswer: { content: { value: "A" }, finalSubmittedAt: null } },
+      { id: "recorded-speech", recordingId: "recording-1", questionVersionId: "version-4", maxScore: 4, scoredScore: null, autoResult: null, reviewerUserId: null, reviewedAt: null, questionVersion: speechVersion, writtenAnswer: null },
+    ];
+    const updates: Array<{ id: string; data: Record<string, unknown> }> = [];
+    const prisma = {
+      assessmentItem: {
+        findMany: async () => rows,
+        update: async ({ where, data }: { where: { id: string }; data: Record<string, unknown> }) => {
+          updates.push({ id: where.id, data });
+          return {};
+        },
+      },
+    };
+    const scorer = new QuestionBankDeterministicScoringService(prisma as never);
+
+    const summary = await scorer.scoreSession("session-1");
+
+    expect(summary).toMatchObject({
+      autoScoredItems: 3,
+      needsReviewItems: 0,
+      skippedItems: 1,
+      awardedPoints: 0,
+    });
+    expect(updates.map(update => update.id)).toEqual(["blank-choice", "blank-speech", "saved-text"]);
+    expect(updates[0]?.data).toMatchObject({ scoredScore: 0, autoResult: { reasonCode: "UNANSWERED" } });
+    expect(updates[1]?.data).toMatchObject({ scoredScore: 0, autoResult: { reasonCode: "UNANSWERED" } });
+    expect(updates[2]?.data).toMatchObject({ scoredScore: 0, autoResult: { state: "AUTO_SCORED" } });
   });
 
   it("scores accepted text with only authored alternatives and conservative normalization", () => {

@@ -146,6 +146,7 @@
   }
   function hydrateWrittenAnswers(items) {
     for (const writtenItem of items || []) {
+      if (['LOCAL', 'FAILED'].includes(appState.writtenSyncStatus[writtenItem.id])) continue;
       const answer = writtenItem.answer;
       if (!answer) continue;
       const content = answer.content || {};
@@ -527,6 +528,8 @@
     return shell(content,{pageClass:'written-shell'});
   }
 
+  const hasWrittenResponse = value => value !== undefined && value !== null && String(value).trim().length > 0;
+
   function renderSubmit(){
     if (!SESSION_ID) return renderError('缺少 sessionId');
     if (!apiEnabled && !demoMode) return renderApiDisabled('提交测评需要登录后端服务。');
@@ -538,14 +541,15 @@
     const writtenItems = items.filter(isWrittenItem);
 
     const readingComplete = readingItems.length > 0 ? readingItems.every(i => i.recordingId) : true;
-    const answeredWritten = writtenItems.filter(i => appState.writtenAnswers[i.id] !== undefined).length;
+    const answeredWritten = writtenItems.filter(i => hasWrittenResponse(appState.writtenAnswers[i.id])).length;
     const allWrittenAnswered = writtenItems.length === 0 || answeredWritten === writtenItems.length;
-    const allWrittenSynced = writtenItems.every(i => appState.writtenSyncStatus[i.id] === 'SYNCED' || appState.writtenSyncStatus[i.id] === 'FINALIZED');
+    const unanswered = readingItems.filter(i => !i.recordingId).length + writtenItems.length - answeredWritten;
 
     const blockers = [];
-    if (!readingComplete) blockers.push(`仍有 ${readingItems.filter(i => !i.recordingId).length} 个朗读题未完成录音`);
-    if (!allWrittenAnswered) blockers.push(`仍有 ${writtenItems.length - answeredWritten} 道书面题未作答`);
-    if (!allWrittenSynced && allWrittenAnswered && writtenItems.length > 0) blockers.push('部分书面题尚未同步到平台');
+    if (appState._submitLoadError) blockers.push('提交状态加载失败，请刷新后重试');
+    else if (!items.length) blockers.push('测评没有可提交的题目');
+    if (readingItems.some(i => i.recordingStatus === 'FAILED')) blockers.push('存在录音上传失败，请重试上传');
+    if (writtenItems.some(i => appState.writtenSyncStatus[i.id] === 'FAILED')) blockers.push('部分书面题同步失败，请重试保存');
 
     const canSubmit = blockers.length === 0 && session && (session.status === 'IN_PROGRESS' || session.status === 'CREATED');
     const alreadySubmitted = session && (session.status === 'SUBMITTED' || session.status === 'PROCESSING' || session.status === 'COMPLETED');
@@ -560,7 +564,7 @@
         ? `<a class="btn primary" href="${routes.processing}">${session.status === 'COMPLETED' ? '查看报告' : '查看处理状态'} ${icon('arrow')}</a>`
         : `<button class="btn primary" data-submit-session ${canSubmit?'':'disabled'}>提交整次测评 ${icon('arrow')}</button>`;
 
-    const content=`<main class="page"><div class="hero-landscape" style="height:300px;opacity:.88"></div><section class="submit-head"><div><h1 class="page-title">提交前检查</h1><p class="page-subtitle">请仔细检查本次测评的完成情况，确认无误后提交。</p></div><div class="submit-stepper"><div class="submit-step"><b>01</b><small>朗读测评</small></div><div class="submit-step"><b>02</b><small>书面练习</small></div><div class="submit-step active"><b>03</b><small>提交前检查</small></div><div class="submit-step"><b>04</b><small>提交完成</small></div></div></section><section class="submit-layout"><div><article class="card summary-state"><h2 class="card-title">本次测评总体状态</h2><div class="state-cards" style="margin-top:16px"><div class="state-card"><div class="icon red">${icon('mic')}</div><div><small>朗读题</small><b>${readingItems.filter(i => i.recordingId).length} / ${readingItems.length}</b><div>${statusChip(readingComplete?'已完成':'未完成',readingComplete?'green':'red')}</div></div></div><div class="state-card"><div class="icon green">${icon('book')}</div><div><small>书面题</small><b>${answeredWritten} / ${writtenItems.length}</b><div>${statusChip(allWrittenAnswered?'已完成':'未完成',allWrittenAnswered?'green':'red')}</div></div></div><div class="state-card"><div class="icon blue">${icon('cloud')}</div><div><small>Session 状态</small><b>${session?.status || '—'}</b><div>${statusChip(session?.status || 'UNKNOWN', session?.status === 'IN_PROGRESS' ? 'gold' : 'green')}</div></div></div><div class="state-card"><div class="icon">${icon('alert')}</div><div><small>问题项</small><b>${blockers.length}</b><div>${statusChip(blockers.length?'阻止提交':'无阻塞',blockers.length?'red':'green')}</div></div></div></div></article>${readingItems.length > 0 ? `<article class="card items-panel"><div class="section-title"><h2>朗读题（${readingItems.filter(i => i.recordingId).length} / ${readingItems.length} 已完成）</h2></div><div class="item-grid">${readingItems.map((it,i)=>`<div class="item-card"><h4>朗读题 ${i+1} ${statusChip(it.recordingId?'COMPLETE':'INCOMPLETE',it.recordingId?'green':'red')}</h4><p>Item ID　${it.id}</p><p>Recording ID　${it.recordingId || '未绑定'}</p><p>状态　${it.status || '—'}</p></div>`).join('')}</div></article>`:''}${writtenItems.length > 0 ? `<article class="card items-panel"><div class="section-title"><h2>书面题（${answeredWritten} / ${writtenItems.length} 已完成）</h2></div><div class="item-grid">${writtenItems.map((it,i)=>{const ans=appState.writtenAnswers[it.id];const syn=appState.writtenSyncStatus[it.id];return `<div class="item-card"><h4>书面题 ${i+1} ${statusChip(ans!==undefined?'COMPLETE':'INCOMPLETE',ans!==undefined?'green':'red')}</h4><p>Item ID　${it.id}</p><p>同步状态　${syn || '本机草稿'}</p></div>`}).join('')}</div></article>`:''}</div><aside class="submit-side"><article class="card blocking"><h2 class="card-title">${blockers.length?`发现 ${blockers.length} 个阻止提交的问题`:'已满足提交条件'}</h2><div style="margin-top:14px">${blockers.length?blockers.map(b=>`<div class="notice danger" style="margin-bottom:10px">${icon('alert')} ${b}</div>`).join(''):`<div class="notice">朗读、书面与录音状态均已通过校验。</div>`}</div></article>${courseSyncNotice}<article class="card rules"><h2 class="card-title">提交规则</h2><div class="rule"><div class="icon red">${icon('alert')}</div><div><strong>未完成的题目无法提交</strong><p class="muted small">所有朗读题和书面题必须完成。</p></div></div><div class="rule"><div class="icon">${icon('cloud')}</div><div><strong>录音未上传无法提交</strong><p class="muted small">Recording 必须绑定到 AssessmentItem。</p></div></div><div class="rule"><div class="icon green">${icon('check')}</div><div><strong>提交后不可修改</strong><p class="muted small">AssessmentSession 提交后进入处理状态。</p></div></div></article><div class="submit-actions"><a class="btn ghost" href="${routes.prep}">${icon('left')} 返回检查</a>${submitAction}</div></aside></section></main>`;
+    const content=`<main class="page"><div class="hero-landscape" style="height:300px;opacity:.88"></div><section class="submit-head"><div><h1 class="page-title">提交前检查</h1><p class="page-subtitle">请仔细检查本次测评的完成情况，确认无误后提交。</p></div><div class="submit-stepper"><div class="submit-step"><b>01</b><small>朗读测评</small></div><div class="submit-step"><b>02</b><small>书面练习</small></div><div class="submit-step active"><b>03</b><small>提交前检查</small></div><div class="submit-step"><b>04</b><small>提交完成</small></div></div></section><section class="submit-layout"><div><article class="card summary-state"><h2 class="card-title">本次测评总体状态</h2><div class="state-cards" style="margin-top:16px"><div class="state-card"><div class="icon red">${icon('mic')}</div><div><small>朗读题</small><b>${readingItems.filter(i => i.recordingId).length} / ${readingItems.length}</b><div>${statusChip(readingComplete?'已完成':'未完成',readingComplete?'green':'red')}</div></div></div><div class="state-card"><div class="icon green">${icon('book')}</div><div><small>书面题</small><b>${answeredWritten} / ${writtenItems.length}</b><div>${statusChip(allWrittenAnswered?'已完成':'未完成',allWrittenAnswered?'green':'red')}</div></div></div><div class="state-card"><div class="icon blue">${icon('cloud')}</div><div><small>Session 状态</small><b>${session?.status || '—'}</b><div>${statusChip(session?.status || 'UNKNOWN', session?.status === 'IN_PROGRESS' ? 'gold' : 'green')}</div></div></div><div class="state-card"><div class="icon">${icon('alert')}</div><div><small>问题项</small><b>${blockers.length}</b><div>${statusChip(blockers.length?'阻止提交':'无阻塞',blockers.length?'red':'green')}</div></div></div></div></article>${readingItems.length > 0 ? `<article class="card items-panel"><div class="section-title"><h2>朗读题（${readingItems.filter(i => i.recordingId).length} / ${readingItems.length} 已完成）</h2></div><div class="item-grid">${readingItems.map((it,i)=>`<div class="item-card"><h4>朗读题 ${i+1} ${statusChip(it.recordingId?'COMPLETE':'INCOMPLETE',it.recordingId?'green':'red')}</h4><p>Item ID　${it.id}</p><p>Recording ID　${it.recordingId || '未绑定'}</p><p>状态　${it.status || '—'}</p></div>`).join('')}</div></article>`:''}${writtenItems.length > 0 ? `<article class="card items-panel"><div class="section-title"><h2>书面题（${answeredWritten} / ${writtenItems.length} 已作答）</h2></div><div class="item-grid">${writtenItems.map((it,i)=>{const ans=appState.writtenAnswers[it.id];const syn=appState.writtenSyncStatus[it.id];return `<div class="item-card"><h4>书面题 ${i+1} ${statusChip(hasWrittenResponse(ans)?'已作答':'未作答',hasWrittenResponse(ans)?'green':'red')}</h4><p>Item ID　${it.id}</p><p>同步状态　${syn || '本机草稿'}</p></div>`}).join('')}</div></article>`:''}</div><aside class="submit-side"><article class="card blocking"><h2 class="card-title">${blockers.length?`发现 ${blockers.length} 个阻止提交的问题`:'已满足提交条件'}</h2><div style="margin-top:14px">${blockers.length?blockers.map(b=>`<div class="notice danger" style="margin-bottom:10px">${icon('alert')} ${b}</div>`).join(''):`<div class="notice">当前有 ${unanswered} 道题未作答。可以交卷；未作答题在适用计分时按零分计算。</div>`}</div></article>${courseSyncNotice}<article class="card rules"><h2 class="card-title">提交规则</h2><div class="rule"><div class="icon red">${icon('alert')}</div><div><strong>未作答也可以提交</strong><p class="muted small">未作答题保留为空答，适用计分时按零分计算。</p></div></div><div class="rule"><div class="icon">${icon('cloud')}</div><div><strong>已有录音须上传成功</strong><p class="muted small">上传失败需重试；未录音的题目按未作答处理。</p></div></div><div class="rule"><div class="icon green">${icon('check')}</div><div><strong>提交后不可修改</strong><p class="muted small">AssessmentSession 提交后进入处理状态。</p></div></div></article><div class="submit-actions"><a class="btn ghost" href="${routes.prep}">${icon('left')} 返回检查</a>${submitAction}</div></aside></section></main>`;
     return shell(content.replace(/<p>Item ID[^<]*<\/p>/g, '').replace(/<p>Recording ID[^<]*<\/p>/g, ''));
   }
 
@@ -1261,7 +1265,7 @@
   async function saveCurrentWrittenAnswer(item) {
     if (!apiEnabled) return;
     const answer = appState.writtenAnswers[item.id];
-    if (answer === undefined || (typeof answer === 'string' && !answer.trim())) throw new Error('请先完成本题作答');
+    if (answer === undefined) return;
     // 构造 content payload
     const content = typeof answer === 'number'
       ? { optionIndex: answer, optionLabel: String.fromCharCode(65 + answer) }
@@ -1275,6 +1279,7 @@
 
   async function finalizeCurrentWrittenAnswer(item) {
     await saveCurrentWrittenAnswer(item);
+    if (!hasWrittenResponse(appState.writtenAnswers[item.id])) return;
     await Api.finalizeWrittenAnswer(SESSION_ID, item.id);
     appState.writtenSyncStatus[item.id] = 'FINALIZED';
     saveState();
@@ -1300,14 +1305,13 @@
         const items = appState.apiItems || [];
         const writtenItems = items.filter(isWrittenItem);
         for (const it of writtenItems) {
-          if (appState.writtenAnswers[it.id] !== undefined && appState.writtenSyncStatus[it.id] !== 'FINALIZED') {
-            // 确保已同步
-            if (appState.writtenSyncStatus[it.id] !== 'SYNCED') {
-              await saveCurrentWrittenAnswer(it);
-            }
-            await Api.finalizeWrittenAnswer(SESSION_ID, it.id);
-            appState.writtenSyncStatus[it.id] = 'FINALIZED';
-          }
+          const answer = appState.writtenAnswers[it.id];
+          const syncStatus = appState.writtenSyncStatus[it.id];
+          if (answer === undefined) continue;
+          if (syncStatus !== 'SYNCED' && syncStatus !== 'FINALIZED') await saveCurrentWrittenAnswer(it);
+          if (!hasWrittenResponse(appState.writtenAnswers[it.id]) || appState.writtenSyncStatus[it.id] === 'FINALIZED') continue;
+          await Api.finalizeWrittenAnswer(SESSION_ID, it.id);
+          appState.writtenSyncStatus[it.id] = 'FINALIZED';
         }
         saveState();
         // 调用真实 submitAssessmentSession
@@ -1550,18 +1554,22 @@
   async function loadSubmitData() {
     if (!apiEnabled || !SESSION_ID) return;
     appState._loadingSubmit = true;
+    appState._submitLoadError = false;
+    appState.apiSession = null;
+    appState.apiItems = [];
     renderCurrent();
     try {
       const [session, items, writtenItems] = await Promise.all([
         Api.getAssessmentSession(SESSION_ID),
-        (isPracticeAttempt ? Api.getPracticeAttemptItems(SESSION_ID) : Api.listAssessmentItems(SESSION_ID)).catch(() => appState.apiItems || []),
-        Api.getWrittenItems(SESSION_ID).catch(() => [])
+        isPracticeAttempt ? Api.getPracticeAttemptItems(SESSION_ID) : Api.listAssessmentItems(SESSION_ID),
+        Api.getWrittenItems(SESSION_ID)
       ]);
       appState.apiSession = session;
       appState.apiItems = Array.isArray(items) ? items : (items?.items || []);
       hydrateWrittenAnswers(Array.isArray(writtenItems) ? writtenItems : (writtenItems?.items || []));
     } catch (err) {
       console.error('[assessment] 加载提交数据失败:', err);
+      appState._submitLoadError = true;
     } finally {
       appState._loadingSubmit = false;
       saveState();

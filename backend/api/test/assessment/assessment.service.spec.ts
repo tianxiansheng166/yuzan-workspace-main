@@ -224,6 +224,8 @@ interface BuildOptions {
   prismaOverrides?: Record<string, any>;
   sessionRepo?: ReturnType<typeof createFakeSessionRepo>;
   itemRepo?: ReturnType<typeof createFakeItemRepo>;
+  answerRepo?: ReturnType<typeof createFakeAnswerRepo>;
+  reportRepo?: ReturnType<typeof createFakeReportRepo>;
 }
 
 async function buildService(opts: BuildOptions = {}): Promise<{
@@ -233,8 +235,8 @@ async function buildService(opts: BuildOptions = {}): Promise<{
 }> {
   const sessionRepo = opts.sessionRepo ?? createFakeSessionRepo();
   const itemRepo = opts.itemRepo ?? createFakeItemRepo();
-  const answerRepo = createFakeAnswerRepo();
-  const reportRepo = createFakeReportRepo();
+  const answerRepo = opts.answerRepo ?? createFakeAnswerRepo();
+  const reportRepo = opts.reportRepo ?? createFakeReportRepo();
 
   const fakePrisma = createFakePrismaService({
     enrollment: {
@@ -482,6 +484,62 @@ describe("AssessmentService", () => {
       ).rejects.toThrow("阻塞性的音频上传错误");
     });
 
+    it("allows unanswered items while preserving the nonempty-session and failed-upload gates", async () => {
+      const { service, sessionRepo } = await buildService({
+        itemRepo: createFakeItemRepo([
+          makeItem({ id: "choice-1", itemType: "CHOICE", recordingId: null }),
+          makeItem({ id: "speech-1", itemType: "SPEECH", recordingId: null }),
+        ]),
+      });
+      sessionRepo._setSession(makeSession({ status: "IN_PROGRESS" }));
+
+      await expect(service.submitSession(studentAuthA, SCHOOL_A, SESSION_ID))
+        .resolves.toMatchObject({ status: "SUBMITTED" });
+    });
+
+    it("finalizes persisted nonblank answers but leaves empty answers unanswered", async () => {
+      const finalized: string[] = [];
+      const answerRepo = createFakeAnswerRepo();
+      answerRepo.findBySessionId = async () => [
+        { itemId: "written-1", content: { text: "真实答案" }, finalSubmittedAt: null },
+        { itemId: "written-2", content: { text: "  " }, finalSubmittedAt: null },
+      ] as any;
+      answerRepo.finalize = async (itemId: string) => {
+        finalized.push(itemId);
+        return { itemId, finalSubmittedAt: now } as any;
+      };
+      const { service, sessionRepo } = await buildService({
+        answerRepo,
+        itemRepo: createFakeItemRepo([
+          makeItem({ id: "written-1", itemType: "WRITTEN", recordingId: null }),
+          makeItem({ id: "written-2", itemType: "WRITTEN", recordingId: null }),
+        ]),
+      });
+      sessionRepo._setSession(makeSession({ status: "IN_PROGRESS" }));
+
+      await expect(service.submitSession(studentAuthA, SCHOOL_A, SESSION_ID))
+        .resolves.toMatchObject({ status: "SUBMITTED" });
+      expect(finalized).toEqual(["written-1"]);
+    });
+
+    it("reports unanswered zero-score items separately from answered items", async () => {
+      const { service } = await buildService();
+      const report = await (service as any).createReportFromScoredItems({
+        schoolId: SCHOOL_A,
+        sessionId: SESSION_ID,
+        items: [{
+          id: "blank-written",
+          itemType: "WRITTEN",
+          maxScore: 5,
+          scoredScore: 0,
+          autoResult: { state: "AUTO_SCORED", reasonCode: "UNANSWERED" },
+        }],
+      });
+
+      expect(report.overallScore).toBe(0);
+      expect(report.summary).toMatchObject({ totalItems: 1, answeredItems: 0, unansweredItems: 1 });
+    });
+
     it("rejects transition from CREATED → SUBMITTED (must start first)", async () => {
       const { service, sessionRepo } = await buildService();
       sessionRepo._setSession(makeSession({ status: "CREATED" }));
@@ -628,5 +686,184 @@ describe("AssessmentService", () => {
       const result = await service.listSessions(studentAuthA, SCHOOL_A, { limit: 10 });
       expect(result).toBeDefined();
     });
+  });
+});
+
+function unansweredQuestionBankRows() {
+  const blueprint = [
+    ["LISTEN_IMAGE_CHOICE", "LISTEN", 3, 3], ["DICTATION", "LISTEN", 3, 5],
+    ["READ_ALOUD", "SPEAK", 3, 4], ["PICTURE_SPEAKING", "SPEAK", 1, 14],
+    ["WORD_RECOGNITION", "READ", 3, 4], ["SENTENCE_COMPREHENSION", "READ", 3, 4],
+    ["PICTURE_WORD", "WRITE", 2, 5], ["SENTENCE_COMPLETION", "WRITE", 2, 8],
+  ] as const;
+  let index = 0;
+  return blueprint.flatMap(([family, domain, count, maxScore]) => Array.from({ length: count }, () => {
+    index += 1;
+    const oral = domain === "SPEAK";
+    return {
+      ...makeItem({
+        id: `qb-${index}`,
+        questionVersionId: `version-${index}`,
+        sortOrder: index,
+        itemType: oral ? "SPEECH" : "WRITTEN",
+        maxScore,
+      }),
+      questionVersion: {
+        status: "PUBLISHED",
+        deliverySpec: { response: { type: oral ? "SPEECH" : "TEXT" } },
+        scoringSpec: oral
+          ? { strategy: "SPEECH_READING", maxScore }
+          : { strategy: "ACCEPTED_TEXT", maxScore, acceptedAnswers: ["saved answer"] },
+        item: { domain, questionType: family, level: "水平一级" },
+      },
+      writtenAnswer: null as { content: { text: string }; finalSubmittedAt: Date | null } | null,
+      speechJobs: [] as Array<{ recordingId: string; status: string }>,
+    };
+  }));
+}
+
+async function buildQuestionBankService(rows: ReturnType<typeof unansweredQuestionBankRows>, purpose: "STANDARD" | "REMEDIATION" = "STANDARD") {
+  const reports: any[] = [];
+  const baseReportRepo = createFakeReportRepo();
+  const reportRepo = {
+    ...baseReportRepo,
+    create: async (data: any) => {
+      reports.push(data);
+      return baseReportRepo.create(data);
+    },
+  };
+  let speechWrites = 0;
+  const finalizedAnswers: string[] = [];
+  const baseAnswerRepo = createFakeAnswerRepo();
+  const answerRepo = {
+    ...baseAnswerRepo,
+    findBySessionId: async () => rows.flatMap(row => row.writtenAnswer ? [{
+      id: `answer-${row.id}`,
+      itemId: row.id,
+      content: row.writtenAnswer.content,
+      wordCount: 0,
+      charCount: 0,
+      autoSavedAt: now,
+      finalSubmittedAt: row.writtenAnswer.finalSubmittedAt,
+      revision: 1,
+      createdAt: now,
+      updatedAt: now,
+    }] : []),
+    finalize: async (itemId: string) => {
+      finalizedAnswers.push(itemId);
+      const row = rows.find(item => item.id === itemId);
+      if (!row?.writtenAnswer) throw new Error("must not finalize a missing answer");
+      row.writtenAnswer.finalSubmittedAt = now;
+      return baseAnswerRepo.finalize(itemId);
+    },
+  };
+  const fixture = await buildService({
+    itemRepo: createFakeItemRepo(rows),
+    answerRepo,
+    reportRepo,
+    prismaOverrides: {
+      assessmentItem: {
+        findMany: async () => rows,
+        update: async ({ where, data }: { where: { id: string }; data: Record<string, unknown> }) => {
+          const row = rows.find(item => item.id === where.id);
+          if (!row) throw new Error("unknown fixture item");
+          Object.assign(row, data);
+          return row;
+        },
+      },
+      speechJob: { create: async () => { speechWrites += 1; throw new Error("must not invent speech jobs"); } },
+    },
+  });
+  fixture.sessionRepo._setSession(makeSession({
+    status: "IN_PROGRESS",
+    purpose,
+    retestOfSessionId: purpose === "REMEDIATION" ? "original-session" : null,
+  }));
+  return { ...fixture, reports, finalizedAnswers, speechWrites: () => speechWrites };
+}
+
+describe("unanswered Question Bank report lifecycle", () => {
+  it("completes an all-blank valid formal attempt at zero without fake speech jobs", async () => {
+    const rows = unansweredQuestionBankRows();
+    const fixture = await buildQuestionBankService(rows);
+
+    expect(await fixture.service.submitSession(studentAuthA, SCHOOL_A, SESSION_ID)).toMatchObject({ status: "COMPLETED" });
+    expect(rows.every(item => item.scoredScore === 0)).toBe(true);
+    expect(rows.every(item => (item.autoResult as Record<string, unknown>)?.reasonCode === "UNANSWERED")).toBe(true);
+    expect(fixture.reports).toHaveLength(1);
+    expect(fixture.reports[0]).toMatchObject({
+      overallScore: 0,
+      dataCompleteness: 100,
+      summary: { totalMaxPoints: 100, answeredItems: 0, unansweredItems: 20 },
+    });
+    expect(fixture.speechWrites()).toBe(0);
+  });
+
+  it("completes an all-blank remediation subset without a formal report", async () => {
+    const rows = unansweredQuestionBankRows().slice(5, 8);
+    const fixture = await buildQuestionBankService(rows, "REMEDIATION");
+
+    expect(await fixture.service.submitSession(studentAuthA, SCHOOL_A, SESSION_ID)).toMatchObject({ status: "COMPLETED" });
+    expect(rows.every(item => item.scoredScore === 0)).toBe(true);
+    expect(fixture.reports).toEqual([]);
+    expect(fixture.speechWrites()).toBe(0);
+  });
+
+  it("scores persisted unfinalized text and distinguishes an explicit clear", async () => {
+    const rows = unansweredQuestionBankRows();
+    rows[0]!.writtenAnswer = { content: { text: "saved answer" }, finalSubmittedAt: null };
+    rows[1]!.writtenAnswer = { content: { text: " 　" }, finalSubmittedAt: now };
+    rows[2]!.writtenAnswer = { content: { text: "wrong nonblank" }, finalSubmittedAt: now };
+    const fixture = await buildQuestionBankService(rows);
+
+    await fixture.service.submitSession(studentAuthA, SCHOOL_A, SESSION_ID);
+
+    expect(fixture.finalizedAnswers).toEqual([rows[0]!.id]);
+    expect(rows[0]!.scoredScore).toBe(3);
+    expect(rows[1]!.autoResult).toMatchObject({ score: 0, reasonCode: "UNANSWERED" });
+    expect(rows[2]!.autoResult).toMatchObject({ score: 0, metrics: { matched: false } });
+    expect(rows[2]!.autoResult).not.toHaveProperty("reasonCode");
+  });
+
+  it.each(["PROCESSING", "NEEDS_REVIEW"] as const)("retains %s for a real recording", async (status) => {
+    const rows = unansweredQuestionBankRows();
+    const oral = rows.find(item => item.itemType === "SPEECH")!;
+    oral.recordingId = RECORDING_ID;
+    oral.speechJobs = [{ recordingId: RECORDING_ID, status }];
+    oral.autoResult = { state: status };
+    const fixture = await buildQuestionBankService(rows);
+
+    expect(await fixture.service.submitSession(studentAuthA, SCHOOL_A, SESSION_ID)).toMatchObject({ status: "PROCESSING" });
+    expect(oral.scoredScore).toBeNull();
+    expect(oral.autoResult).toEqual({ state: status });
+    expect(fixture.reports).toHaveLength(0);
+    expect(fixture.speechWrites()).toBe(0);
+  });
+
+  it("preserves an authoritative teacher score on a real recording", async () => {
+    const rows = unansweredQuestionBankRows();
+    const oral = rows.find(item => item.itemType === "SPEECH")!;
+    oral.recordingId = RECORDING_ID;
+    oral.speechJobs = [{ recordingId: RECORDING_ID, status: "NEEDS_REVIEW" }];
+    oral.scoredScore = 3;
+    oral.reviewedAt = now;
+    oral.reviewerUserId = TEACHER_ID;
+    oral.autoResult = { teacherEvidence: true };
+    const fixture = await buildQuestionBankService(rows);
+
+    expect(await fixture.service.submitSession(studentAuthA, SCHOOL_A, SESSION_ID)).toMatchObject({ status: "COMPLETED" });
+    expect(oral.scoredScore).toBe(3);
+    expect(oral.autoResult).toEqual({ teacherEvidence: true });
+    expect(fixture.reports[0]?.overallScore).toBe(3);
+  });
+
+  it("leaves invalid maximums unresolved instead of claiming complete data", async () => {
+    const rows = unansweredQuestionBankRows();
+    rows[0]!.maxScore = null;
+    const fixture = await buildQuestionBankService(rows);
+
+    expect(await fixture.service.submitSession(studentAuthA, SCHOOL_A, SESSION_ID)).toMatchObject({ status: "PROCESSING" });
+    expect(rows[0]!.scoredScore).toBeNull();
+    expect(fixture.reports).toHaveLength(0);
   });
 });
