@@ -1,0 +1,111 @@
+{
+  "taskId": "YZ-RD-T106",
+  "nativeE2e": "PASS",
+  "productCodeSha": "89d6b9273b76be08d0a66344852c7aba2d8d5a42",
+  "environment": {
+    "composeProject": "yz-rd-t106",
+    "database": "yz_rd_t106",
+    "network": "yz-rd-t106-isolated",
+    "databaseCounts": {
+      "schools": 1,
+      "users": 2,
+      "activeStudentMemberships": 1,
+      "activeTeacherMemberships": 0,
+      "activeEnrollments": 1,
+      "courses": 2,
+      "assignments": 3,
+      "resources": 1,
+      "approvedResources": 1,
+      "practiceDefinitions": 1,
+      "assessmentAttempts": 2
+    },
+    "minioBucket": "yz-rd-t106-media",
+    "volumes": [
+      "yz-rd-t106-postgres-data",
+      "yz-rd-t106-minio-data"
+    ],
+    "loopbackPorts": {
+      "api": 47106,
+      "studentWeb": 47175,
+      "postgres": 47432,
+      "redis": 47380,
+      "minioApi": 47900,
+      "minioConsole": 47901
+    },
+    "apiNodeVersion": "v24.22.0",
+    "frontendNodeVersion": "v24.22.0"
+  },
+  "accountScope": {
+    "role": "STUDENT",
+    "schoolIdPrefix": "ce2fc151",
+    "enrollmentIdPrefix": "4330be68",
+    "studentUsers": 1,
+    "activeStudentEnrollments": 1,
+    "activeTeacherMemberships": 0,
+    "passwordOrTokenRecorded": false
+  },
+  "course": {
+    "assignmentIdPrefix": "2cfd8699",
+    "activityIdPrefixes": [
+      "ac311a74",
+      "a7c90154"
+    ],
+    "recommendationAssignmentIdPrefix": "f0dd4eab",
+    "resourceIdPrefix": "bac85173",
+    "dataSource": "Published CourseVersion, Assignment, LearningActivity and ActivityResource rows in the isolated PostgreSQL database; authenticated browser called real student APIs."
+  },
+  "video": {
+    "source": "MDN interactive-examples media/cc0-videos/flower.mp4",
+    "license": "CC0-1.0 Universal",
+    "repository": "https://github.com/mdn/interactive-examples",
+    "assetUrl": "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
+    "sha256": "0cd83d944a6ca7822b4a8306cecc60a36e859b041f6702c6a1ad9ead78924451",
+    "bytes": 1128375,
+    "rightsStatus": "APPROVED",
+    "signedHost": "minio:9000",
+    "currentRunMinioHttpStatuses": {
+      "206": 5
+    },
+    "browserVersion": "153.0.8010.52",
+    "durationSeconds": 5.055,
+    "decodedFrame": {
+      "width": 960,
+      "height": 540
+    },
+    "playedToSeconds": 3.236567
+  },
+  "progress": {
+    "currentRunFirstActivity": {
+      "idPrefix": "ac311a74",
+      "position": 0.686775272007913,
+      "completed": false
+    },
+    "restoredSeconds": 3.471649,
+    "serverStateSecondActivity": {
+      "idPrefix": "a7c90154",
+      "position": 1,
+      "completed": true
+    },
+    "fullJourneyEndedSaveStatus": 200,
+    "coursePercentAfterOneOfTwoCompleted": 50
+  },
+  "protectedJourneys": {
+    "authenticatedBrowser": true,
+    "realCourseDetail": true,
+    "recommendations": true,
+    "practiceEntry": true,
+    "practiceAttemptIdPrefix": "506d32e2"
+  },
+  "currentRunApiStatuses": {
+    "POST 200": 1,
+    "GET 200": 33,
+    "POST 201": 5,
+    "PUT 200": 1
+  },
+  "currentRunApiErrors": 0,
+  "currentRunMediaErrors": 0,
+  "currentRunMediaCancellations": 2,
+  "currentRunConsoleErrors": 0,
+  "screenshot": "real-video-playback.png",
+  "note": "The final-source browser run completed with the isolated student account. The full media journey run separately ended the second activity and received HTTP 200 from the real API. Media cancellations were caused by deliberate source replacement or page navigation. No production course, shared database, shared object store, or Level 4 content was accessed."
+}

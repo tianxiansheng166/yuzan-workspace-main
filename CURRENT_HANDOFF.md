@@ -3,6 +3,28 @@
 Last updated: 2026-10-21
 Repository: `yuzanxinsheng_test`
 
+## YZ-RD-T106 — Course video progress reliability (2026-10-21)
+
+- T106 was created from the exact T105 final source SHA
+  `78de341e4fcebf930173a9b40e93cbc5c6c10526` in its own worktree at
+  `/home/tian/.devspace/worktrees/yuzan-workspace-t106`.
+- Product/source checkpoint: `89d6b9273b76be08d0a66344852c7aba2d8d5a42`.
+  Saved video position now restores from server progress after media metadata;
+  server progress/completion remains authoritative after save and conflict
+  refresh; progress writes serialize by activity, show persistent failures,
+  and require server reconciliation before retry.
+- Focused course tests pass `34/34`; full frontend tests pass `70/70`;
+  runtime verifier, JavaScript syntax gate, and `git diff --check` pass.
+- A dedicated loopback-only T106 runtime used PostgreSQL, Redis, MinIO, API,
+  and the student site with one isolated student account. The authenticated
+  Chrome run played the approved CC0 media, saved and restored progress,
+  switched activities, confirmed server completion, opened a recommendation,
+  and started the linked practice attempt. Sanitized evidence and a real-frame
+  screenshot are in `evidence/yz-rd-t106/`.
+- **READY_TO_MERGE: NO.** No shared merge or deploy. Historical L4 incident
+  remains **OPEN**; no L4 content was accessed. Detailed results are in
+  `evidence/yz-rd-t106/RESULTS.md`.
+
 ## YZ-RD-T105 — Real Course Playback Acceptance (2026-10-21)
 
 - T105's isolated branch was created from the exact T103 final tip
