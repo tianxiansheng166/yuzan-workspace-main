@@ -1,0 +1,25 @@
+before-today-390x844 {"overflow":0,"chart":false,"courses":0}
+before-courses-390x844 {"overflow":0,"hero":230,"chart":false,"courses":12}
+before-growth-390x844 {"overflow":0,"chart":true,"courses":0}
+before-today-768x1024 {"overflow":0,"chart":false,"courses":0}
+before-courses-768x1024 {"overflow":0,"hero":245,"chart":false,"courses":12}
+before-growth-768x1024 {"overflow":0,"chart":true,"courses":0}
+before-today-1280x900 {"overflow":0,"chart":false,"courses":0}
+before-courses-1280x900 {"overflow":0,"hero":274,"chart":false,"courses":12}
+before-growth-1280x900 {"overflow":0,"chart":true,"courses":0}
+before-today-1440x1000 {"overflow":0,"chart":false,"courses":0}
+before-courses-1440x1000 {"overflow":0,"hero":274,"chart":false,"courses":12}
+before-growth-1440x1000 {"overflow":0,"chart":true,"courses":0}
+after-today-390x844 {"overflow":0,"chart":false,"courses":0}
+after-courses-390x844 {"overflow":0,"hero":172,"chart":false,"courses":12}
+after-growth-390x844 {"overflow":0,"chart":true,"courses":0}
+after-today-768x1024 {"overflow":0,"chart":false,"courses":0}
+after-courses-768x1024 {"overflow":0,"hero":164,"chart":false,"courses":12}
+after-growth-768x1024 {"overflow":0,"chart":true,"courses":0}
+after-today-1280x900 {"overflow":0,"chart":false,"courses":0}
+after-courses-1280x900 {"overflow":0,"hero":164,"chart":false,"courses":12}
+after-growth-1280x900 {"overflow":0,"chart":true,"courses":0}
+after-today-1440x1000 {"overflow":0,"chart":false,"courses":0}
+after-courses-1440x1000 {"overflow":0,"hero":164,"chart":false,"courses":12}
+after-growth-1440x1000 {"overflow":0,"chart":true,"courses":0}
+VISUAL_FIXTURE_ONLY capture and checks PASS

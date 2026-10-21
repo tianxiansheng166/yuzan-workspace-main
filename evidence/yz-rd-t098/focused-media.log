@@ -1,0 +1,27 @@
+✔ normalizes the current nested course aggregate without dropping activity facts (2.812379ms)
+✔ does not invent zero progress or promote a page-local completion flag (1.052729ms)
+✔ preserves the wrapped submission id, status, revision and resumed flag (0.610535ms)
+✔ normalizes the formal course submission response instead of guessing from the request (0.588895ms)
+✔ does not fill missing dashboard counters or weekly goals with display defaults (0.62706ms)
+✔ propagates permission and network failures instead of returning success-shaped data (0.801586ms)
+✔ preserves 403 when an authorized media URL cannot be issued (1.448153ms)
+✔ creates a course attempt with all three IDs and stores a safe return context (0.942571ms)
+✔ refuses missing IDs and external return targets before creating an attempt (0.631193ms)
+✔ restores the requested activity and chapter after reload, then finds the next incomplete activity (2.987681ms)
+✔ optional recommendations and statistics failures do not block an authorized course (0.831194ms)
+✔ does not turn a requested completion into progress when the server says it is incomplete (0.940247ms)
+✔ a 409 reloads server state and waits for a deliberate retry (1.376723ms)
+✔ speech completion is confirmed by a fresh course read when the write response omits its progress row (0.846921ms)
+✔ course submission waits for 100% server progress and sends only one request (1.600828ms)
+✔ a submit conflict refreshes status and does not write a second submission (0.764221ms)
+✔ restores the authorized server position and persists full playback as completed (2.781964ms)
+✔ persists partial video position without marking the activity complete (0.68816ms)
+✔ saves the previous activity before switching even after the selected activity changes (0.565149ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 63.008934

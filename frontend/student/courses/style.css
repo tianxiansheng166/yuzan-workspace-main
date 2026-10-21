@@ -1530,3 +1530,103 @@
     transition-duration: .01ms !important;
   }
 }
+
+/* T098 — compact contour masthead and a cover-led editorial catalogue. */
+:root {
+  --cc-ink: #203452; --cc-muted: #5c6b80; --cc-muted-dark: #475d7a;
+  --cc-paper: #fff; --cc-page: #f1f5fb; --cc-border: #d9e3ef;
+  --cc-border-strong: #b8c9e0; --cc-olive: #2d63ac; --cc-olive-dark: #234b8a;
+  --cc-clay: #ac5145; --cc-sand: #e7eef9; --cc-focus: #c05b40;
+  --cc-shadow: 0 14px 35px #233c6614;
+}
+.cc-page { background: radial-gradient(ellipse at 100% 25%, #e2eeed, transparent 45%), #f1f5fb; }
+.cc-hero { min-height: 164px; height: auto; background: linear-gradient(112deg, #24385d, #3b4483 65%, #2b707d); isolation: isolate; }
+.cc-hero-inner { min-height: 164px; padding: 23px 0; align-items: center; position: relative; z-index: 1; }
+.cc-hero-title { font-family: "Noto Serif CJK SC", "Songti SC", serif; font-size: 35px; line-height: 1.25; font-weight: 600; }
+.cc-hero-kicker { font-size: 10px; margin-bottom: 7px; color: #bfd7f6; }
+.cc-hero-sub { margin-top: 9px; color: #e3eaf9; font-size: 13px; }
+.cc-hero-overlay { background: none; overflow: hidden; }
+.cc-hero-overlay::before, .cc-hero-overlay::after { content: ""; position: absolute; width: 720px; height: 440px; right: 4%; top: -170px; border-radius: 50%; background: repeating-radial-gradient(ellipse, transparent 0 17px, #9ed9d32b 18px 19px, transparent 20px 30px); transform: rotate(-18deg); animation: cc-contour-drift 16s ease-in-out infinite alternate; }
+.cc-hero-overlay::after { right: -370px; top: -40px; width: 650px; height: 300px; opacity: .45; animation-direction: alternate-reverse; }
+.cc-hero::after { display: none; }
+.cc-breadcrumb { color: #e0e8f9; font-size: 12px; }
+.cc-catalog-heading { padding: 26px 0 22px; }
+.cc-catalog-heading h2 { font-family: "Noto Serif CJK SC", "Songti SC", serif; font-size: clamp(22px, 2vw, 28px); line-height: 1.5; }
+.cc-layout { grid-template-columns: 202px minmax(0, 1fr); gap: 28px; }
+.cc-sidebar { border: 0; border-top: 3px solid #598baa; border-radius: 0 0 16px 16px; background: #e5edf5; box-shadow: none; }
+.cc-sidebar-mark { background: #548ab0; }
+.cc-sidebar-heading h2 { color: #29496d; }
+.cc-filter-label { color: #4a607a; font-size: 12px; }
+.cc-input, .cc-select { border-radius: 6px; border-color: #c9d6e7; background-color: #f8fbff; color: #324c6b; min-height: 44px; }
+.cc-search-bar { border: 1px solid #c6d6e9; border-radius: 9px; background: #fff; }
+.cc-search-button { background: #2d5daa; border-radius: 6px; min-height: 44px; }
+.cc-search-button:hover { background: #244c8a; }
+.cc-toolbar { margin-top: 13px; }
+.cc-view-control { border-radius: 7px; background: #e4ebf5; }
+.cc-view-button.is-active { color: #fff; background: #345f9f; }
+.cc-grid:not(.cc-grid--list) { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 24px; padding-top: 18px; }
+.cc-card { border: 0; border-radius: 14px 14px 5px 5px; box-shadow: 0 3px 14px #29446b0a; animation: none; }
+.cc-card:hover, .cc-card:focus-within { box-shadow: var(--cc-shadow); }
+.cc-card-cover { aspect-ratio: 1.8 / 1; background: #d6e2ee; }
+.cc-cover-wash { background: linear-gradient(0deg, #14284177, transparent 65%); }
+.cc-card-body { padding: 20px; }
+.cc-card-title { font-family: "Noto Serif CJK SC", "Songti SC", serif; font-size: 21px; line-height: 1.6; color: #233b5c; display: block; overflow: visible; }
+.cc-card-description { font-size: 13px; line-height: 1.8; color: #586b81; display: block; overflow: visible; }
+.cc-card-meta { color: #586b81; font-size: 11px; }
+.cc-card-tags span { background: #eaf1f8; color: #4c6782; }
+.cc-next-activity { border-color: #d9e7ea; background: #f0f7f7; }
+.cc-next-activity strong { color: #34636a; font-size: 12px; white-space: normal; }
+.cc-learning-progress { border-color: #e0e8f2; }
+.cc-progress-value { stroke: #287d78; }
+.cc-progress-copy strong { color: #2f6269; }
+.cc-card-cta { background: #eaf0fa; color: #315c9d; min-height: 44px; border-radius: 6px; }
+.cc-favorite-button { width: 44px; height: 44px; opacity: 1; background: #ffffffed; }
+.cc-grid:not(.cc-grid--list) .cc-card:nth-child(4n + 3) { border-radius: 4px 30px 4px 4px; }
+.cc-grid:not(.cc-grid--list) .cc-card:nth-child(4n + 3) .cc-card-cta { color: #80534b; background: #f9eeea; }
+.cc-grid:not(.cc-grid--list) .cc-card:nth-child(4n + 2) .cc-card-cta { color: #56608b; background: #eeedf9; }
+.cc-grid:not(.cc-grid--list) .cc-card:first-child { grid-column: 1 / -1; border-radius: 6px 28px 6px 6px; border-bottom: 3px solid #639b9a; }
+.cc-grid:not(.cc-grid--list) .cc-card:first-child .cc-card-link { display: grid; grid-template-columns: 47% minmax(0, 1fr); }
+.cc-grid:not(.cc-grid--list) .cc-card:first-child .cc-card-cover { aspect-ratio: auto; min-height: 330px; }
+.cc-grid:not(.cc-grid--list) .cc-card:first-child .cc-card-body { padding: 24px; background: #f9fcff; }
+.cc-grid:not(.cc-grid--list) .cc-card:first-child .cc-card-title { font-size: clamp(23px, 2.2vw, 30px); }
+.cc-grid:not(.cc-grid--list) .cc-card:first-child .cc-favorite-button { left: 14px; right: auto; }
+.cc-grid--list { gap: 15px; }
+.cc-grid--list .cc-card { border-radius: 8px; border-left: 3px solid #99b4d3; }
+.cc-grid--list .cc-card-title { font-size: 21px; }
+.cc-grid--list .cc-card-cover { min-height: 180px; height: 100%; }
+.cc-page :is(button, a, select, input):focus-visible { outline: 3px solid #bd5b40; outline-offset: 3px; }
+.cc-page .cc-card-link:focus-visible { outline-offset: -4px; }
+@keyframes cc-contour-drift { to { transform: translateX(16px) translateY(8px) rotate(-12deg); } }
+@media (max-width: 1180px) { .cc-layout { gap: 20px; grid-template-columns: 190px minmax(0, 1fr); } .cc-card-body { padding: 17px; } }
+@media (max-width: 850px) {
+  .cc-hero, .cc-hero-inner { min-height: 164px; }
+  .cc-layout { grid-template-columns: minmax(0, 1fr); }
+  .cc-sidebar { border-radius: 0 0 12px 12px; }
+  .cc-hero-inner { gap: 16px; }
+  .cc-grid:not(.cc-grid--list) .cc-card:first-child .cc-card-body { padding: 20px; }
+}
+@media (max-width: 600px) {
+  .cc-hero, .cc-hero-inner { min-height: 172px; }
+  .cc-hero-inner { padding: 18px 0; gap: 9px; justify-content: center; }
+  .cc-hero-title { font-size: 29px; }
+  .cc-hero-sub { max-width: none; font-size: 12px; margin-top: 6px; }
+  .cc-hero-kicker { font-size: 9px; margin-bottom: 6px; }
+  .cc-breadcrumb { font-size: 11px; }
+  .cc-hero-overlay::before { right: -450px; opacity: .6; }
+  .cc-catalog-heading { padding-top: 22px; }
+  .cc-catalog-heading h2 { font-size: 23px; }
+  .cc-heading-note { font-size: 12px; }
+  .cc-grid:not(.cc-grid--list) { grid-template-columns: minmax(0,1fr); gap: 23px; }
+  .cc-grid:not(.cc-grid--list) .cc-card:first-child .cc-card-link { display: block; }
+  .cc-grid:not(.cc-grid--list) .cc-card:first-child .cc-card-cover { aspect-ratio: 1.65 / 1; min-height: 0; }
+  .cc-grid:not(.cc-grid--list) .cc-card:first-child .cc-card-title { font-size: 25px; }
+  .cc-card-body { padding: 20px; }
+  .cc-card-title { font-size: 23px; }
+  .cc-grid--list .cc-card-cover { min-height: 130px; }
+  .cc-grid--list .cc-card-title { font-size: 19px; }
+}
+@media (prefers-reduced-motion: reduce) { .cc-page *, .cc-page *::before, .cc-page *::after { animation: none !important; transition: none !important; } }
+/* Use the document scroll flow so the catalogue keeps its complete natural height. */
+html, body { height: auto; min-height: 100%; overflow: auto; }
+.cc-grid--list .cc-favorite-button { width: 44px; height: 44px; }
+.cc-hero-overlay { pointer-events: none; }

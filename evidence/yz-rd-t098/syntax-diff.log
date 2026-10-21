@@ -1,0 +1,18 @@
+node --check frontend/student/today/today.js
+exit=0
+node --check frontend/student/today/today-showcase.js
+exit=0
+node --check frontend/student/courses/courses.js
+exit=0
+node --check frontend/student/growth/assets/growth-live.js
+exit=0
+node --check evidence/yz-rd-t098/capture.mjs
+exit=0
+node --check evidence/yz-rd-t098/visual-fixture.js
+exit=0
+node --check evidence/yz-rd-t098/guard.mjs
+exit=0
+node --check evidence/yz-rd-t098/verify.mjs
+exit=0
+git diff --check
+exit=0
