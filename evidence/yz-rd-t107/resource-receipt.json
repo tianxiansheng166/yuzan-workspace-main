@@ -5,9 +5,10 @@
   "outputBranch": "ops/yz-rd-t107-t106-five-service-resource-bounds",
   "worktree": "/home/tian/.devspace/worktrees/yuzan-workspace-t107",
   "git": {
-    "finalSha": null,
-    "remoteShaMatch": null,
-    "worktreeClean": null
+    "evidenceCommitSha": "cee907521767502c6fcbdfbd82aa8d5e0a4d9d0c",
+    "evidenceCommitRemoteShaMatch": true,
+    "remoteFinalShaMatch": null,
+    "worktreeCleanAfterFinalPush": null
   },
   "ownerAck": "YES — this task card explicitly authorized owner-manual Codex changes to YZ-RD-T106 only.",
   "verifiedBoundary": "YES — all five mutated IDs had Compose project yz-rd-t106 plus the expected service label. Every docker update targeted one of these full IDs.",
@@ -557,8 +558,9 @@
   "issue3": {
     "url": "https://github.com/tianxiansheng166/yuzan-workspace-main/issues/3",
     "state": "OPEN",
-    "commentUrl": null,
-    "closed": false
+    "commentUrl": "https://github.com/tianxiansheng166/yuzan-workspace-main/issues/3#issuecomment-6321908178",
+    "closed": false,
+    "commentId": 6321908178
   },
   "l4": {
     "sourceRead": "NO",
