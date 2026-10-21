@@ -150,3 +150,59 @@ test("course video progress sends a fractional position with the dynamic course 
   assert.equal(f.state.getState().course.progress.percent, 40);
   assert.equal(f.state.getState().activityProgressMap["activity-requested"].position, 0.6);
 });
+
+test("video completion stays incomplete when the server declines completion", async () => {
+  const f = mount("?id=assignment-dynamic&activityId=activity-requested", {
+    saveActivityAttempt: async () => ({
+      attempt: { id: "attempt-live" },
+      progress: { revision: 1, completed: false, position: 1 },
+      courseCompletion: {
+        progressPercent: 40,
+        completedRequiredCount: 1,
+        requiredActivityCount: 2,
+        completedActivityIds: [],
+      },
+    }),
+  });
+  await f.state.init("assignment-dynamic");
+
+  await f.state.saveActivityAttempt(
+    "activity-requested",
+    "VIDEO",
+    { videoPosition: 1 },
+    true,
+  );
+
+  const state = f.state.getState();
+  assert.equal(state.currentActivity.isCompleted, false);
+  assert.equal(state.activityProgressMap["activity-requested"].completed, false);
+  assert.equal(state.course.progress.percent, 40);
+});
+
+test("video completion is reflected when the server confirms progress", async () => {
+  const f = mount("?id=assignment-dynamic&activityId=activity-requested", {
+    saveActivityAttempt: async () => ({
+      attempt: { id: "attempt-live" },
+      progress: { revision: 1, completed: true, position: 1 },
+      courseCompletion: {
+        progressPercent: 50,
+        completedRequiredCount: 1,
+        requiredActivityCount: 2,
+        completedActivityIds: ["activity-requested"],
+      },
+    }),
+  });
+  await f.state.init("assignment-dynamic");
+
+  await f.state.saveActivityAttempt(
+    "activity-requested",
+    "VIDEO",
+    { videoPosition: 1 },
+    true,
+  );
+
+  const state = f.state.getState();
+  assert.equal(state.currentActivity.isCompleted, true);
+  assert.equal(state.activityProgressMap["activity-requested"].completed, true);
+  assert.equal(state.course.progress.percent, 50);
+});

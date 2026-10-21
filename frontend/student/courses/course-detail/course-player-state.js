@@ -374,9 +374,9 @@ window.CoursePlayerState = (function () {
           _syncActivityIsCompletedFromProgress();
         }
 
-        if (completed) {
+        if (result.progress && typeof result.progress.completed === 'boolean') {
           var activity = _findActivity(activityId);
-          if (activity) activity.isCompleted = true;
+          if (activity) activity.isCompleted = result.progress.completed;
         }
 
         _notify(['saving', 'course', 'activityProgressMap', 'activityAttemptMap']);
