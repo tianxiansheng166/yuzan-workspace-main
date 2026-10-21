@@ -73,7 +73,7 @@
         <h2>任务信息</h2>
         <div class="detail-row"><span class="label">任务标题</span><span id="assignmentTitle" class="value">—</span></div>
         <div class="detail-row"><span class="label">任务类型</span><span id="assignmentType" class="value">—</span></div>
-        <div class="detail-row"><span class="label">提交状态</span><span id="submitStatus" class="value">—</span></div>
+        <div class="detail-row"><span class="label">提交状态</span><span id="submitStatus" class="value" aria-live="polite">—</span></div>
       </section>
 
       <!-- 书面答案 -->
@@ -106,19 +106,31 @@
         </div>
       </section>
 
-      <!-- 教师复核 -->
-      <section class="card" id="teacherReviewSection" style="display:none">
-        <h2>教师复核</h2>
-        <div class="detail-row"><span class="label">复核状态</span><span id="reviewStatus" class="value">—</span></div>
+      <!-- Server-backed teacher feedback -->
+      <section class="card" id="teacherReviewSection" aria-labelledby="teacherReviewHeading">
+        <h2 id="teacherReviewHeading">最近一次教师反馈</h2>
+        <p id="feedbackReadStatus" class="feedback-read-status" role="status" aria-live="polite">正在读取反馈记录…</p>
+        <div class="detail-row"><span class="label">反馈结论</span><span id="reviewStatus" class="value">—</span></div>
         <div class="detail-row"><span class="label">评语</span><span id="reviewComment" class="value">—</span></div>
         <div class="detail-row"><span class="label">分数</span><span id="reviewScore" class="value">—</span></div>
+        <div class="detail-row"><span class="label">反馈时间</span><span id="reviewReleasedAt" class="value">—</span></div>
       </section>
 
-      <!-- 操作按钮 -->
-      <section class="card actions-card">
-        <button class="action-btn primary" id="btnGrade">批改</button>
-        <button class="action-btn success" id="btnAccept">通过</button>
-        <button class="action-btn warning" id="btnReturn">退回</button>
+      <section class="card feedback-form-card" aria-labelledby="feedbackFormHeading">
+        <h2 id="feedbackFormHeading">提交教师反馈</h2>
+        <p id="feedbackEligibility" class="feedback-eligibility" role="status" aria-live="polite">正在确认提交状态…</p>
+        <form id="feedbackForm" novalidate>
+          <label class="feedback-label" for="feedbackComment">给学生的评语 <span>必填</span></label>
+          <textarea id="feedbackComment" rows="4" aria-describedby="feedbackCommentHint feedbackActionStatus" required></textarea>
+          <p id="feedbackCommentHint" class="feedback-hint">请填写本次提交对应的实际评语；评语不能为空或仅包含空白字符。</p>
+          <p id="feedbackActionStatus" class="feedback-action-status" role="status" aria-live="polite"></p>
+          <div class="actions-card">
+            <button class="action-btn primary" id="btnGrade" type="button">打开批改详情</button>
+            <button class="action-btn success" id="btnAccept" type="button" disabled>通过</button>
+            <button class="action-btn warning" id="btnReturn" type="button" disabled>退回</button>
+          </div>
+          <button class="refresh-feedback-btn" id="btnRefreshFeedback" type="button" hidden>刷新提交与反馈状态</button>
+        </form>
       </section>
     </div>
   </section>

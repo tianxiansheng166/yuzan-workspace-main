@@ -1,0 +1,35 @@
+✔ loads submission and independent feedback using dynamic IDs, showing the newest server record only (12.391868ms)
+▶ review actions stay disabled unless the current server submission is NEEDS_REVIEW
+  ✔ disables for SUBMITTED (1.439311ms)
+  ✔ disables for PROCESSING (0.719964ms)
+  ✔ disables for ACCEPTED (0.661625ms)
+  ✔ disables for RETURNED (0.657137ms)
+  ✔ disables for undefined (1.947579ms)
+✔ review actions stay disabled unless the current server submission is NEEDS_REVIEW (6.096816ms)
+✔ posts ACCEPT with the teacher's trimmed comment and reads back authoritative state (2.171997ms)
+✔ posts RETURN rather than the unsupported REJECT decision (1.498298ms)
+▶ rejects an empty or whitespace-only comment without writing
+  ✔ "" (1.276377ms)
+  ✔ " \n\t  " (0.953114ms)
+✔ rejects an empty or whitespace-only comment without writing (2.700709ms)
+✔ prevents duplicate clicks while the POST is still pending (1.596306ms)
+▶ surfaces feedback errors and requires a GET refresh after uncertain outcomes
+  ✔ POST 400 (1.357267ms)
+  ✔ POST 401 (1.103766ms)
+  ✔ POST 403 (1.068ms)
+  ✔ POST 404 (4.27939ms)
+  ✔ POST 409 (1.144115ms)
+  ✔ POST 500 (1.01868ms)
+  ✔ POST offline (1.125882ms)
+✔ surfaces feedback errors and requires a GET refresh after uncertain outcomes (12.143926ms)
+✔ reports POST success with failed refresh honestly and refreshes without a second POST (1.688927ms)
+✔ feedback read failures block decisions until both server resources refresh (1.391892ms)
+✔ preserves authorized playback, dynamic grade navigation, and accessible feedback controls (0.876843ms)
+ℹ tests 24
+ℹ suites 0
+ℹ pass 24
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 104.519532

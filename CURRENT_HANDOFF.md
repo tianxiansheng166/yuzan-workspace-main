@@ -1,7 +1,15 @@
 # CURRENT HANDOFF
 
-Last updated: 2026-10-20
+Last updated: 2026-10-21
 Repository: `yuzan-workspace-main`
+
+## YZ-RD-T096 teacher feedback truth and server-state confirmation (2026-10-21)
+
+- Updated the teacher submission detail to read server Submission and Feedback independently, allow ACCEPT/RETURN only for NEEDS_REVIEW, require the teacher's own non-empty comment, and confirm accepted feedback by rereading both server resources. Existing T094 signed audio playback and controls remain intact.
+- Focused feedback tests passed 24/24, T094 playback tests passed 9/9, and the full frontend suite passed 223/223; all had zero failures and zero skips.
+- The JS/MJS gate passed with 100 files checked; the runtime verifier, node --check for app.js and feedback.test.mjs, and final git diff --check passed.
+- Native browser/API/PostgreSQL/MinIO E2E is NOT_RUN. READY_TO_MERGE=NO; the historical L4 incident remains OPEN.
+- Recommended next task: YZ-RD-T097, repair the SubmissionsService test ConfigService fixture so its 13 intended assertions execute.
 
 ## YZ-RD-T082 unified student web integration (2026-10-20)
 

@@ -26,6 +26,21 @@
 .recording-player audio{display:block;width:100%;min-height:44px}
 .recording-player audio[hidden]{display:none}
 .recording-status{margin:8px 0 0;color:var(--muted);font-size:14px;line-height:1.6}.recording-status[data-state="authorization-error"],.recording-status[data-state="media-error"],.recording-status[data-state="load-error"],.recording-status[data-state="error"]{color:#a51d24}
+.feedback-read-status,.feedback-eligibility,.feedback-hint,.feedback-action-status{font-size:14px;line-height:1.6}
+.feedback-read-status{margin:0 0 8px;color:var(--muted)}
+.feedback-read-status[data-state="error"],.feedback-action-status[data-state="error"]{color:#a51d24}
+.feedback-read-status[data-state="ready"],.feedback-action-status[data-state="success"]{color:var(--green)}
+.feedback-eligibility{margin:0 0 16px;padding:10px 12px;border-radius:9px;background:#f7f3ed;color:#4e565b}
+.feedback-label{display:block;margin-bottom:8px;font-size:14px;font-weight:700;color:var(--text)}
+.feedback-label span{margin-left:6px;color:#a51d24;font-size:12px}
+#feedbackComment{display:block;width:100%;min-height:112px;padding:12px;border:1px solid #d9cfc4;border-radius:10px;background:#fff;color:var(--text);line-height:1.6;resize:vertical}
+#feedbackComment:focus{outline:3px solid rgba(43,134,162,.24);border-color:var(--teal)}
+#feedbackComment:disabled{background:#f3f0eb;color:#71797f;cursor:not-allowed}
+.feedback-hint{margin:8px 0;color:var(--muted)}
+.feedback-action-status{min-height:1.6em;margin:10px 0;color:#4e565b}
+.refresh-feedback-btn{min-height:44px;margin-top:12px;padding:0 16px;border:1px solid #c9dfe5;border-radius:9px;background:#f3fafb;color:#245e70;font-weight:700}
+.refresh-feedback-btn:hover{background:#e7f4f6}
+.refresh-feedback-btn[hidden]{display:none}
 .score-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
 .score-item{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px;border:1px solid #f0ebe4;border-radius:10px;background:#fefdfb}
 .score-item .label{font-size:13px;color:var(--muted)}
