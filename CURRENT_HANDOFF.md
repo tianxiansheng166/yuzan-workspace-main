@@ -734,3 +734,11 @@ Do not modify or stage `pnpm-workspace.yaml`, `infra/database/prisma/seed.ts`,
   234 existing TypeScript errors on both revisions; one T102-added fake-repo
   type error was fixed. No production application source changed in T104.
 - `READY_TO_MERGE=NO`. No shared merge or deploy.
+
+## YZ-RD-T108 — Sep 8 recovery + T104 quality integration (2026-10-22)
+
+- T108 starts from exact T106 SHA `9b0276810e7cc5dd96acf16070ab3a751824daec` and integrates exact T104 SHA `adcbd6e0e099a0db280fbb731a995d52e7835d25` with normal non-squash merge commit `6b4c684c44481c121ab6684a59d8cce5af6f43b2`. Its parents are T106 and T104; their common ancestor is T102 `f28a1461930642bf33010beeedd67b3d88f28851`. The Sep 8 product-history baseline remains `0a7b931a8dfd005eb7ba97aa0fe68e81169d61e8`.
+- The merge completed without conflicts. T106 course-player regressions and T104 test formatting/type fixes are retained. T104's two formatting-only edits to `evidence/yz-rd-t093/verification.md` and `evidence/yz-rd-t095/RESULTS.md` were excluded; both remain byte-identical to the T106 BASE. No T098/T101 redesign, API source, schema, contract, teacher UI, or L4 content was brought in.
+- Integrated regression runs: frontend 70/70, focused course 34/34, media/player-state 22/22, T099 partial/all-empty submit 10/10, API 1,072 passed / 64 database-gated skipped / 0 failed; API source typecheck and frontend runtime verification pass. Full API ESLint starts but retains 2,649 baseline errors / 1 warning with 0 new diagnostics. Full format check remains non-green with 745 warnings / 12 unchanged parser errors; comparison to exact T106 BASE found 0 added warnings and 3 removed.
+- T108 native Browser/API/PostgreSQL/MinIO E2E is `NOT_RUN`: no separate authorized, resource-bounded T108 stack or T108 resource receipt was available. T107's worktree had no receipt and the existing T106 five-service stack was left untouched. Detailed commands, exit codes, lint/format comparisons, file ownership, resource status, and rollback are in `evidence/yz-rd-t108/RESULTS.md`.
+- **READY_TO_MERGE: NO until Owner acceptance.** No shared merge or deployment. **HISTORICAL_L4_INCIDENT_OPEN: YES.**
