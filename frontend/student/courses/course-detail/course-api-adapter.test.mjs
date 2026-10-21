@@ -154,6 +154,20 @@ test("maps published media fields from activity.content when top-level aliases a
   assert.equal(activity.timelineMarkers[0].at, 12);
 });
 
+test("keeps unavailable learning statistics empty instead of inventing zeroes", async () => {
+  const { adapter } = loadAdapter({ getStudentCoursesDashboard: async () => ({}) });
+
+  const dashboard = await adapter.loadDashboard();
+
+  assert.equal(dashboard.weeklyMinutes, null);
+  assert.equal(dashboard.weeklyGoalHours, null);
+  assert.equal(dashboard.consecutiveDays, null);
+  assert.equal(dashboard.coursesLearned, null);
+  assert.equal(dashboard.badgesEarned, null);
+  assert.equal(dashboard.totalMinutes, null);
+  assert.equal(dashboard.recentDays, null);
+});
+
 test("preserves the wrapped submission id, status, revision and resumed flag", async () => {
   const { adapter } = loadAdapter({
     createOrResumeCourseSubmission: async () => ({

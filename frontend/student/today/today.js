@@ -35,6 +35,7 @@
   }
 
   function renderError(message) {
+    app.removeAttribute("aria-busy");
     app.innerHTML = `<section class="today-error"><h1>今天的学习暂时打不开</h1><p>${safe(message || "请检查网络后重试。不会显示本地示例任务。")}</p><button class="today-retry" type="button" data-today-retry>重新加载</button></section>`;
     app.querySelector("[data-today-retry]")?.addEventListener("click", init);
   }
@@ -63,12 +64,15 @@
         <p>${safe(description)}</p>
         ${meta.length ? `<div class="today-course-meta">${meta.map((item) => `<span>${safe(item)}</span>`).join('')}</div>` : ''}
         ${hasProgress ? `<div class="today-course-progress"><div><i style="width:${Math.min(100, progress)}%"></i></div><span>${Math.round(progress)}%</span></div>` : ''}
-        <a class="today-course-link" href="/student/courses/course-detail/?id=${encodeURIComponent(assignmentId)}">${progress > 0 ? '继续课程' : '进入课程'}　→</a>
+        ${assignmentId ? `<a class="today-course-link" href="/student/courses/course-detail/?id=${encodeURIComponent(assignmentId)}">${progress > 0 ? '继续课程' : '进入课程'}　→</a>` : '<span class="today-course-link" aria-disabled="true">课程入口暂不可用</span>'}
       </div>
     </article>`;
   }
 
-  function renderCourseSection(courses) {
+  function renderCourseSection(courses, error) {
+    if (error) {
+      return `<section class="today-card today-courses"><div class="today-course-head"><div><p class="today-eyebrow">课程路径</p><h2>继续你的课程学习</h2></div><a href="/student/courses">查看全部课程　→</a></div><div class="today-course-empty" role="status"><div><strong>课程列表暂时无法加载</strong><p>今日安排仍可继续。请重新读取课程列表，或打开课程中心查看。</p></div><button class="today-course-link" type="button" data-course-retry>重新加载课程　→</button></div></section>`;
+    }
     const visibleCourses = (Array.isArray(courses) ? courses : []).slice(0, 2);
     const body = visibleCourses.length
       ? `<div class="today-course-grid">${visibleCourses.map(renderCourseCard).join('')}</div>`
@@ -77,6 +81,7 @@
   }
 
   function render(data) {
+    app.removeAttribute("aria-busy");
     const primary = data?.primaryAction || null;
     const waiting = Array.isArray(data?.waiting) ? data.waiting : [];
     const secondary = Array.isArray(data?.secondaryActions)
@@ -97,11 +102,12 @@
       ? `<section class="today-card today-list"><div class="today-list-head"><h2>课程任务</h2><span>来自老师的课程安排</span></div><div class="today-list-items">${legacy.map((task) => `<article class="today-list-item"><div><strong>${safe(task.title)}</strong><p>${safe(task.courseTitle || "课程任务")} · ${safe(statusText(task.status))} · 已完成 ${Number(task.progressPercent) || 0}%</p></div><a href="/student/learn/spring-2?assignmentId=${encodeURIComponent(task.assignmentId)}">进入课程　→</a></article>`).join("")}</div></section>`
       : "";
 
-    app.innerHTML = `<header class="today-header"><div class="today-header-copy"><p class="today-kicker">学生学习入口</p><h1>今天的学习</h1><p>先完成一个最值得做的动作，再回到课程路径继续学习。</p><nav class="today-breadcrumb" aria-label="面包屑"><a href="/student/courses">课程中心</a><span>/</span><span>今日学习</span></nav></div><time class="today-date">${dateText()}</time></header><section class="today-grid"><article class="today-card today-primary" data-action-kind="${safe(primary?.kind || "WAITING")}">${primaryMarkup}</article><aside class="today-side"><article class="today-card today-summary"><p class="today-eyebrow">学习小结</p><h2>最近一次正式测评</h2>${formal ? `<div class="today-score"><small>${safe(formal.level || "已完成测评")}</small><strong>${scoreText(formal.score)}</strong><p>完成于 ${safe(String(formal.completedAt).slice(0, 10))}</p></div>` : renderEmptyList("还没有可展示的正式测评记录。")}</article><a class="today-card today-summary today-link-card" href="/student/practices/"><p class="today-eyebrow">需要自己选择时</p><h2>进入练习中心　→</h2><p>查看学校开放的真实练习和历史记录。</p></a></aside></section><div class="today-course-wrap">${renderCourseSection(data?.courseCatalog)}</div><section class="today-lists">${waitingMarkup}${secondaryMarkup}${legacyMarkup}</section>`;
+    app.innerHTML = `<header class="today-header"><div class="today-header-copy"><p class="today-kicker">学生学习入口</p><h1>今天的学习</h1><p>先完成一个最值得做的动作，再回到课程路径继续学习。</p><nav class="today-breadcrumb" aria-label="面包屑"><a href="/student/courses">课程中心</a><span>/</span><span>今日学习</span></nav></div><time class="today-date">${dateText()}</time></header><section class="today-grid"><article class="today-card today-primary" data-action-kind="${safe(primary?.kind || "WAITING")}">${primaryMarkup}</article><aside class="today-side"><article class="today-card today-summary"><p class="today-eyebrow">学习小结</p><h2>最近一次正式测评</h2>${formal ? `<div class="today-score"><small>${safe(formal.level || "已完成测评")}</small><strong>${scoreText(formal.score)}</strong><p>完成于 ${safe(String(formal.completedAt).slice(0, 10))}</p></div>` : renderEmptyList("还没有可展示的正式测评记录。")}</article><a class="today-card today-summary today-link-card" href="/student/practices/"><p class="today-eyebrow">需要自己选择时</p><h2>进入练习中心　→</h2><p>查看学校开放的真实练习和历史记录。</p></a></aside></section><div class="today-course-wrap">${renderCourseSection(data?.courseCatalog, data?.courseCatalogError)}</div><section class="today-lists">${waitingMarkup}${secondaryMarkup}${legacyMarkup}</section>`;
 
     app
       .querySelector("[data-primary-action]")
       ?.addEventListener("click", () => runPrimary(primary));
+    app.querySelector("[data-course-retry]")?.addEventListener("click", init);
   }
 
   async function runPrimary(action) {
@@ -149,13 +155,16 @@
         location.href = "/select-school";
         return;
       }
-      const [todayData, courseData] = await Promise.all([
+      const [todayData, courseResult] = await Promise.all([
         YuzanApi.getStudentToday(),
-        YuzanApi.listStudentCourses({ limit: 4 }).catch(() => ({ courses: [] })),
+        YuzanApi.listStudentCourses({ limit: 4 })
+          .then((courseData) => ({ courseData, courseCatalogError: false }))
+          .catch(() => ({ courseData: null, courseCatalogError: true })),
       ]);
       const data = {
         ...todayData,
-        courseCatalog: Array.isArray(courseData?.courses) ? courseData.courses : [],
+        courseCatalog: Array.isArray(courseResult.courseData?.courses) ? courseResult.courseData.courses : [],
+        courseCatalogError: courseResult.courseCatalogError,
       };
       if (!data || data.version !== "student-today-v1")
         throw new Error("今日学习数据版本不可用");

@@ -592,19 +592,28 @@
     }
 
     // --- renderRecommendations: master template horizontal layout (cover + info) ---
-    function renderRecommendations(recommendations) {
+    function renderRecommendations(recommendations, error) {
       var list = document.getElementById('cpRecGrid');
       if (!list) return;
       list.innerHTML = '';
+      if (error) {
+        var unavailable = document.createElement('p');
+        unavailable.className = 'cp-empty-text';
+        unavailable.setAttribute('role', 'status');
+        unavailable.textContent = '推荐课程暂时无法加载。课程内容仍可继续学习。';
+        list.appendChild(unavailable);
+        return;
+      }
       var recs = (recommendations || []).slice(0, 4);
       if (!recs.length) {
         list.innerHTML = '<p class="cp-empty-text">暂无推荐课程</p>';
         return;
       }
       recs.forEach(function (rec) {
+        if (!rec.assignmentId) return;
         var card = document.createElement('a');
         card.className = 'cp-rec-card';
-        card.href = '/student/courses/course-detail/?id=' + (rec.assignmentId || '');
+        card.href = '/student/courses/course-detail/?id=' + encodeURIComponent(rec.assignmentId);
 
         var cover = document.createElement('div');
         cover.className = 'cp-rec-cover';
@@ -634,36 +643,47 @@
     }
 
     // --- renderStatistics: master template (weekly progress bar + streak + 2-col grid) ---
-    function renderStatistics(dashboard) {
+    function renderStatistics(dashboard, error) {
       var container = document.getElementById('cpStatsContainer');
       if (!container) return;
       container.innerHTML = '';
+      if (error) {
+        var unavailable = document.createElement('p');
+        unavailable.className = 'cp-empty-text';
+        unavailable.setAttribute('role', 'status');
+        unavailable.textContent = '学习统计暂时无法加载。课程内容仍可继续学习。';
+        container.appendChild(unavailable);
+        return;
+      }
       if (!dashboard) return;
 
-      var weeklyHours = Math.round((dashboard.weeklyMinutes || 0) / 60);
-      var weeklyGoal = dashboard.weeklyGoalHours || 10;
-      var streak = dashboard.consecutiveDays || 0;
-      var badges = dashboard.badgesEarned || 0;
-      var coursesLearned = dashboard.coursesLearned || 0;
-      var totalHours = Math.round((dashboard.totalMinutes || 0) / 60);
+      var hasWeeklyMinutes = Number.isFinite(dashboard.weeklyMinutes);
+      var hasWeeklyGoal = Number.isFinite(dashboard.weeklyGoalHours) && dashboard.weeklyGoalHours > 0;
+      var weeklyHours = hasWeeklyMinutes ? Math.round(dashboard.weeklyMinutes / 60) : null;
+      var weeklyGoal = hasWeeklyGoal ? dashboard.weeklyGoalHours : null;
+      var streak = Number.isFinite(dashboard.consecutiveDays) ? dashboard.consecutiveDays : null;
+      var badges = Number.isFinite(dashboard.badgesEarned) ? dashboard.badgesEarned : null;
+      var coursesLearned = Number.isFinite(dashboard.coursesLearned) ? dashboard.coursesLearned : null;
+      var totalHours = Number.isFinite(dashboard.totalMinutes) ? Math.round(dashboard.totalMinutes / 60) : null;
 
       // Block 1: weekly learning hours progress bar
       var block1 = document.createElement('div');
       block1.className = 'cp-stat-block';
       block1.innerHTML =
         '<p class="cp-stat-block-title">本周学习时长</p>' +
-        '<p class="cp-stat-block-value">' + weeklyHours + ' / ' + weeklyGoal + ' 小时</p>' +
-        '<div class="cp-stat-progress">' +
+        '<p class="cp-stat-block-value">' + (weeklyHours == null ? '—' : weeklyGoal == null ? weeklyHours + ' 小时 · 目标暂不可用' : weeklyHours + ' / ' + weeklyGoal + ' 小时') + '</p>' +
+        (weeklyHours != null && weeklyGoal != null ? '<div class="cp-stat-progress">' +
           '<div class="cp-stat-progress-fill" style="width:' + Math.min(100, (weeklyGoal > 0 ? (weeklyHours / weeklyGoal) * 100 : 0)) + '%"></div>' +
-        '</div>';
+        '</div>' : '');
 
       // Block 2: 7-day streak visualization
       var block2 = document.createElement('div');
       block2.className = 'cp-stat-block';
       var streakBars = '';
       var dayLabels = ['一', '二', '三', '四', '五', '六', '日'];
-      var history = dashboard.recentDays || [];
-      for (var i = 0; i < 7; i++) {
+      var hasHistory = Array.isArray(dashboard.recentDays);
+      var history = hasHistory ? dashboard.recentDays : [];
+      for (var i = 0; hasHistory && i < 7; i++) {
         var dayData = history[i] || {};
         var mins = dayData.minutes || 0;
         var active = mins > 0;
@@ -675,19 +695,19 @@
           '</div>';
       }
       block2.innerHTML =
-        '<p class="cp-stat-block-title">连续学习 <strong>' + streak + '</strong> 天</p>' +
-        '<div class="cp-stat-streak">' + streakBars + '</div>';
+        '<p class="cp-stat-block-title">连续学习 <strong>' + (streak == null ? '—' : streak) + '</strong> 天</p>' +
+        (hasHistory ? '<div class="cp-stat-streak">' + streakBars + '</div>' : '<p class="cp-empty-text">最近学习记录暂不可用</p>');
 
       // Block 3: 2-column grid (courses learned + badges)
       var block3 = document.createElement('div');
       block3.className = 'cp-stat-grid-2';
       block3.innerHTML =
         '<div class="cp-stat-mini">' +
-          '<p class="cp-stat-mini-value">' + coursesLearned + '</p>' +
+        '<p class="cp-stat-mini-value">' + (coursesLearned == null ? '—' : coursesLearned) + '</p>' +
           '<p class="cp-stat-mini-label">已学课程</p>' +
         '</div>' +
         '<div class="cp-stat-mini">' +
-          '<p class="cp-stat-mini-value">' + badges + '</p>' +
+        '<p class="cp-stat-mini-value">' + (badges == null ? '—' : badges) + '</p>' +
           '<p class="cp-stat-mini-label">获得徽章</p>' +
         '</div>';
 
@@ -696,7 +716,7 @@
       block4.className = 'cp-stat-block';
       block4.innerHTML =
         '<p class="cp-stat-block-title">累计学习时长</p>' +
-        '<p class="cp-stat-block-value">' + totalHours + ' 小时</p>';
+        '<p class="cp-stat-block-value">' + (totalHours == null ? '—' : totalHours + ' 小时') + '</p>';
 
       container.appendChild(block1);
       container.appendChild(block2);
@@ -947,8 +967,8 @@
         renderSummary(course);
         renderDirectory(course, state.currentActivityId);
         renderCompletion(course);
-        renderRecommendations(state.recommendations);
-        renderStatistics(state.dashboard);
+        renderRecommendations(state.recommendations, state.recommendationsError);
+        renderStatistics(state.dashboard, state.dashboardError);
 
         if (state.currentActivity) {
           renderObjectives(state.currentActivity);
@@ -992,11 +1012,11 @@
           renderCompletion(state.course);
           renderDirectory(state.course, state.currentActivityId);
         }
-        if (changedKeys.indexOf('recommendations') !== -1) {
-          renderRecommendations(state.recommendations);
+        if (changedKeys.indexOf('recommendations') !== -1 || changedKeys.indexOf('recommendationsError') !== -1) {
+          renderRecommendations(state.recommendations, state.recommendationsError);
         }
-        if (changedKeys.indexOf('dashboard') !== -1) {
-          renderStatistics(state.dashboard);
+        if (changedKeys.indexOf('dashboard') !== -1 || changedKeys.indexOf('dashboardError') !== -1) {
+          renderStatistics(state.dashboard, state.dashboardError);
         }
       });
     }

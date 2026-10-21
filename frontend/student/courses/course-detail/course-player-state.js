@@ -14,7 +14,9 @@ window.CoursePlayerState = (function () {
     currentActivity: null,
     notes: [],
     recommendations: [],
+    recommendationsError: null,
     dashboard: null,
+    dashboardError: null,
     loading: true,
     error: null,
     videoProgress: 0,
@@ -153,16 +155,30 @@ window.CoursePlayerState = (function () {
         return _loadNotesForCurrentActivity();
       })
       .then(function () {
-        return CourseApiAdapter.loadRecommendations(assignmentId);
+        return Promise.all([
+          CourseApiAdapter.loadRecommendations(assignmentId)
+            .then(function (recommendations) {
+              state.recommendations = recommendations || [];
+              state.recommendationsError = null;
+            })
+            .catch(function (err) {
+              state.recommendations = [];
+              state.recommendationsError = err && err.message ? err.message : '推荐课程暂时无法加载';
+            }),
+          CourseApiAdapter.loadDashboard(assignmentId)
+            .then(function (dashboard) {
+              state.dashboard = dashboard;
+              state.dashboardError = null;
+            })
+            .catch(function (err) {
+              state.dashboard = null;
+              state.dashboardError = err && err.message ? err.message : '学习统计暂时无法加载';
+            })
+        ]);
       })
-      .then(function (recommendations) {
-        state.recommendations = recommendations || [];
-        return CourseApiAdapter.loadDashboard(assignmentId);
-      })
-      .then(function (dashboard) {
-        state.dashboard = dashboard;
+      .then(function () {
         state.loading = false;
-        _notify(['assignmentId', 'course', 'enrollmentId', 'submissionId', 'submissionStatus', 'submissionRevision', 'notes', 'recommendations', 'dashboard', 'currentActivityId', 'currentActivity', 'loading']);
+        _notify(['assignmentId', 'course', 'enrollmentId', 'submissionId', 'submissionStatus', 'submissionRevision', 'notes', 'recommendations', 'recommendationsError', 'dashboard', 'dashboardError', 'currentActivityId', 'currentActivity', 'loading']);
         return _shallowCopy(state);
       })
       .catch(function (err) {
@@ -175,6 +191,13 @@ window.CoursePlayerState = (function () {
 
   function _setInitialActivity() {
     var list = getActivityList();
+    var requestedActivityId = new URLSearchParams(window.location.search || '').get('activityId');
+    var requestedActivity = requestedActivityId ? _findActivity(requestedActivityId) : null;
+    if (requestedActivity) {
+      state.currentActivityId = requestedActivityId;
+      state.currentActivity = requestedActivity;
+      return;
+    }
     var firstIncomplete = null;
     var firstActivity = null;
     for (var i = 0; i < list.length; i++) {

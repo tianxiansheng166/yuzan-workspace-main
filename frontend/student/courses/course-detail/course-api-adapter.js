@@ -418,11 +418,17 @@
     loadDashboard: async function () {
       try {
         var resp = await Api.getStudentCoursesDashboard();
+        function optionalNumber(value) {
+          return typeof value === 'number' && Number.isFinite(value) ? value : null;
+        }
         return {
-          weeklyMinutes: resp.weeklyMinutes || 0,
-          consecutiveDays: resp.consecutiveDays || 0,
-          coursesLearned: resp.coursesLearned || 0,
-          badgesEarned: resp.badgesEarned || 0
+          weeklyMinutes: optionalNumber(resp && resp.weeklyMinutes),
+          weeklyGoalHours: optionalNumber(resp && resp.weeklyGoalHours),
+          consecutiveDays: optionalNumber(resp && resp.consecutiveDays),
+          coursesLearned: optionalNumber(resp && resp.coursesLearned),
+          badgesEarned: optionalNumber(resp && resp.badgesEarned),
+          totalMinutes: optionalNumber(resp && resp.totalMinutes),
+          recentDays: resp && Array.isArray(resp.recentDays) ? resp.recentDays.slice() : null
         };
       } catch (err) {
         return _handleError(err);
