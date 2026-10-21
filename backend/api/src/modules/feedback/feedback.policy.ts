@@ -17,7 +17,14 @@ export class FeedbackPolicy {
   }
 
   canReadFeedback(auth: AuthContext, schoolId: string): boolean {
-    return this.isMemberOfSchool(auth, schoolId);
+    return (
+      this.isMemberOfSchool(auth, schoolId) &&
+      hasAnyRole(auth, [
+        MembershipRole.STUDENT,
+        MembershipRole.TEACHER,
+        MembershipRole.SCHOOL_ADMIN,
+      ])
+    );
   }
 
   canReadOwnFeedback(
@@ -25,13 +32,25 @@ export class FeedbackPolicy {
     schoolId: string,
     enrollmentUserId: string,
   ): boolean {
-    if (!this.isMemberOfSchool(auth, schoolId)) {
-      return false;
-    }
-    if (hasAnyRole(auth, [MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN])) {
-      return true;
-    }
-    return auth.principal.userId === enrollmentUserId;
+    return (
+      this.canReadFeedback(auth, schoolId) &&
+      hasAnyRole(auth, [MembershipRole.STUDENT]) &&
+      auth.principal.userId === enrollmentUserId
+    );
+  }
+
+  canReadAsTeacher(auth: AuthContext, schoolId: string): boolean {
+    return (
+      this.isMemberOfSchool(auth, schoolId) &&
+      hasAnyRole(auth, [MembershipRole.TEACHER])
+    );
+  }
+
+  isSchoolAdmin(auth: AuthContext, schoolId: string): boolean {
+    return (
+      this.isMemberOfSchool(auth, schoolId) &&
+      hasAnyRole(auth, [MembershipRole.SCHOOL_ADMIN])
+    );
   }
 
   canListPendingFeedback(auth: AuthContext, schoolId: string): boolean {
@@ -45,12 +64,6 @@ export class FeedbackPolicy {
   }
 
   private isMemberOfSchool(auth: AuthContext, schoolId: string): boolean {
-    if (!isActive(auth)) {
-      return false;
-    }
-    if (hasAnyRole(auth, [MembershipRole.PLATFORM_ADMIN])) {
-      return true;
-    }
-    return auth.tenant.schoolId === schoolId;
+    return isActive(auth) && auth.tenant.schoolId === schoolId;
   }
 }

@@ -1,4 +1,7 @@
-import type { Feedback, CreateFeedbackInput } from "../domain/feedback.types.js";
+import type {
+  Feedback,
+  CreateFeedbackInput,
+} from "../domain/feedback.types.js";
 
 export const FEEDBACK_REPOSITORY = Symbol("FEEDBACK_REPOSITORY");
 
@@ -11,13 +14,12 @@ export interface PaginatedResult<T> {
 export interface ListPendingFeedbackOptions {
   readonly limit: number;
   readonly cursor?: string;
+  /** Present only for teachers; filters submissions before pagination. */
+  readonly authorizedClassIds?: readonly string[];
 }
 
 export interface FeedbackRepositoryPort {
-  findById(
-    schoolId: string,
-    feedbackId: string,
-  ): Promise<Feedback | null>;
+  findById(schoolId: string, feedbackId: string): Promise<Feedback | null>;
 
   findBySubmissionId(
     schoolId: string,

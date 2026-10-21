@@ -1,4 +1,7 @@
-import type { Feedback, CreateFeedbackInput } from "../../../../src/modules/feedback/domain/feedback.types.js";
+import type {
+  Feedback,
+  CreateFeedbackInput,
+} from "../../../../src/modules/feedback/domain/feedback.types.js";
 import type {
   FeedbackRepositoryPort,
   ListPendingFeedbackOptions,
@@ -8,6 +11,14 @@ import type {
 export class FakeFeedbackRepository implements FeedbackRepositoryPort {
   private readonly feedbacks = new Map<string, Feedback>();
   private idCounter = 0;
+  readonly submissionQueries: Array<{
+    schoolId: string;
+    submissionId: string;
+  }> = [];
+  readonly pendingQueries: Array<{
+    schoolId: string;
+    options: ListPendingFeedbackOptions;
+  }> = [];
 
   add(...items: Feedback[]): void {
     for (const f of items) {
@@ -15,22 +26,28 @@ export class FakeFeedbackRepository implements FeedbackRepositoryPort {
     }
   }
 
-  async findById(schoolId: string, feedbackId: string): Promise<Feedback | null> {
+  findById(schoolId: string, feedbackId: string): Promise<Feedback | null> {
     const item = this.feedbacks.get(feedbackId);
-    if (!item || item.schoolId !== schoolId) return null;
-    return item;
+    return Promise.resolve(!item || item.schoolId !== schoolId ? null : item);
   }
 
-  async findBySubmissionId(schoolId: string, submissionId: string): Promise<readonly Feedback[]> {
-    return Array.from(this.feedbacks.values()).filter(
-      (f) => f.schoolId === schoolId && f.submissionId === submissionId,
+  findBySubmissionId(
+    schoolId: string,
+    submissionId: string,
+  ): Promise<readonly Feedback[]> {
+    this.submissionQueries.push({ schoolId, submissionId });
+    return Promise.resolve(
+      Array.from(this.feedbacks.values()).filter(
+        (f) => f.schoolId === schoolId && f.submissionId === submissionId,
+      ),
     );
   }
 
-  async findPendingBySchool(
+  findPendingBySchool(
     schoolId: string,
     options: ListPendingFeedbackOptions,
   ): Promise<PaginatedResult<Feedback>> {
+    this.pendingQueries.push({ schoolId, options: { ...options } });
     const all = Array.from(this.feedbacks.values()).filter(
       (f) => f.schoolId === schoolId,
     );
@@ -38,10 +55,14 @@ export class FakeFeedbackRepository implements FeedbackRepositoryPort {
     const start = options.cursor ? Number.parseInt(options.cursor, 10) : 0;
     const items = all.slice(start, start + limit);
     const hasMore = all.length > start + limit;
-    return { items, nextCursor: hasMore ? String(start + limit) : null, hasMore };
+    return Promise.resolve({
+      items,
+      nextCursor: hasMore ? String(start + limit) : null,
+      hasMore,
+    });
   }
 
-  async save(input: CreateFeedbackInput): Promise<Feedback> {
+  save(input: CreateFeedbackInput): Promise<Feedback> {
     const id = `feedback-${++this.idCounter}`;
     const item: Feedback = {
       id,
@@ -55,6 +76,6 @@ export class FakeFeedbackRepository implements FeedbackRepositoryPort {
       releasedAt: new Date(),
     };
     this.feedbacks.set(id, item);
-    return item;
+    return Promise.resolve(item);
   }
 }

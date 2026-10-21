@@ -57,6 +57,20 @@ export class PrismaFeedbackRepository implements FeedbackRepositoryPort {
         deletedAt: null,
       };
 
+      if (options.authorizedClassIds !== undefined) {
+        if (options.authorizedClassIds.length === 0) {
+          return { items: [], nextCursor: null, hasMore: false };
+        }
+        where.enrollment = {
+          is: {
+            schoolId,
+            role: "STUDENT",
+            status: "ACTIVE",
+            classId: { in: [...options.authorizedClassIds] },
+          },
+        };
+      }
+
       if (options.cursor) {
         where.id = { gt: options.cursor };
       }
