@@ -1,0 +1,25 @@
+{
+  "taskId": "YZ-RD-T109",
+  "runtimeProject": "yz-rd-t109",
+  "database": "yz_rd_t109",
+  "sourceT108Sha": "8974c2a7d5842bb20dbfcd091b63cac5674dcc32",
+  "migrationCount": 32,
+  "initialBoundedRunnerAttempt": {
+    "runner": "T109 api one-off container based on node:24-alpine",
+    "caps": { "cpu": 1, "ramMiB": 768, "memswapTotalMiB": 768, "pids": 192 },
+    "status": "FAIL_BEFORE_SCHEMA_CHANGE",
+    "reason": "The generated Prisma CLI had only the host glibc schema engine; node:24-alpine required the unavailable linux-musl engine. Prisma exited before applying any migration."
+  },
+  "successfulRunner": {
+    "command": "corepack pnpm --filter @yuzan/database migrate:deploy",
+    "runtime": "Owner-manual Codex host process; niceness 10",
+    "databaseRoute": "T109 private bridge IP on yz-rd-t109-isolated; no published host database port",
+    "credentialsScope": "T109 migration.env contained DATABASE_URL only; no value was logged",
+    "status": "PASS",
+    "migrationsApplied": 32,
+    "seedScriptRun": false,
+    "studentRowsCreated": false,
+    "courseRowsCreated": false,
+    "productionOrT106DatabaseContacted": false
+  }
+}

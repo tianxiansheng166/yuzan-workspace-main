@@ -1,0 +1,124 @@
+{
+  "taskId": "YZ-RD-T109",
+  "capturedAtUtc": "2026-10-21T18:10:26Z",
+  "decision": "NEEDS_OWNER_DECISION",
+  "initialDecision": "PASS_PRESTART_AT_2026-10-21T18:10:26Z",
+  "initialAdmissionInvalidatedByLaterExternalResourceChurn": true,
+  "runtimeProject": "yz-rd-t109",
+  "sourceT108Sha": "8974c2a7d5842bb20dbfcd091b63cac5674dcc32",
+  "host": {
+    "cpuCount": 16,
+    "memTotalKiB": 32686580,
+    "memAvailableKiB": 15659100,
+    "swapTotalKiB": 16777208,
+    "swapFreeKiB": 7000000,
+    "loadAverage": [1.6, 1.98, 3.59],
+    "ioPressurePercent": {
+      "someAvg10": 1.39,
+      "someAvg60": 2.81,
+      "someAvg300": 2,
+      "fullAvg10": 1.34,
+      "fullAvg60": 2.63,
+      "fullAvg300": 1.82
+    },
+    "vmstatIoWaitPercent": {
+      "sampleCount": 4,
+      "samplesAfterFirst": [6, 2, 2, 4],
+      "mostRecent": 4
+    },
+    "workspaceDiskFreeGiB": 77,
+    "workspaceDiskUsedPercent": 93,
+    "pidsMax": 4194304
+  },
+  "activeNonT109Containers": {
+    "t106": {
+      "project": "yz-rd-t106",
+      "serviceCount": 5,
+      "containerIds": [
+        "a2a31f67ca2dcfca6e949c6cd4d4dfcd1c86c76dc1efdbe05c04c1afc445ea20",
+        "69e1519eef2d8145c463fb9b76816bcb2b93e06f93343591b2f0dc8d23f3870a",
+        "9b3182528732f3a9af0049db44223863225883ae8e455761ab0095285c87704e",
+        "c130375c6aa9868383c2075b7125b95bb17f5c85513c4b97bc5fddc3d66a2605",
+        "69d3a264bc8b12c22afc06451d8e677d9f505a60143a868b92dbc4aa7ad6bd58"
+      ],
+      "cpuCap": 4.5,
+      "ramCapGiB": 3,
+      "memorySwapTotalCapGiB": 6,
+      "pidsCap": 832,
+      "dockerInspectAndCgroupMatch": true,
+      "restartCountZero": true,
+      "oomKilledFalse": true,
+      "cgroupOomEventsZero": true,
+      "health": {
+        "frontendHttp": 200,
+        "apiReadinessHttp": 200,
+        "postgres": "healthy",
+        "redis": "healthy",
+        "minioReadinessHttp": 200,
+        "isolatedNetworkMembers": 5
+      },
+      "modified": false
+    },
+    "otherContainersInInitialFinalPs": 0,
+    "transientExternalContainerObservation": {
+      "name": "aa-p1user-t028-ui-842412",
+      "image": "ros:humble-ros-base",
+      "dockerHostConfigObserved": { "cpuCap": 2, "ramCapGiB": 4, "memorySwapTotalCapGiB": 4, "pidsCap": 256 },
+      "cgroupRead": "container disappeared before read-only cgroup inspection",
+      "presentAtFinalSnapshot": false,
+      "modified": false,
+      "contingencyOnly": true
+    },
+    "t062PriorContainerPresent": false
+  },
+  "t109PlannedCaps": {
+    "services": {
+      "frontend": { "cpu": 0.5, "ramMiB": 384, "memswapTotalMiB": 384, "pids": 128 },
+      "api": { "cpu": 1, "ramMiB": 768, "memswapTotalMiB": 768, "pids": 192 },
+      "postgres": { "cpu": 1, "ramMiB": 768, "memswapTotalMiB": 768, "pids": 256 },
+      "redis": { "cpu": 0.25, "ramMiB": 128, "memswapTotalMiB": 128, "pids": 64 },
+      "minio": { "cpu": 0.5, "ramMiB": 384, "memswapTotalMiB": 384, "pids": 128 }
+    },
+    "browser": { "cpu": 0.75, "ramMiB": 1120, "memswapTotalMiB": 1120, "pids": 256 },
+    "total": { "cpu": 4, "ramMiB": 3552, "ramGiB": 3.46875, "additionalSwapGiB": 0, "pids": 1024 }
+  },
+  "conservativeBudgetIncludingTransientT028Cap": {
+    "cpuCapTotal": 10.5,
+    "cpuHeadroomOf16": 5.5,
+    "ramCapTotalGiB": 10.46875,
+    "ramHeadroomAgainstCurrentMemAvailableGiB": 4.465,
+    "memswapTotalCapGiB": 13.46875,
+    "memPlusSwapHeadroomGiB": 8.141,
+    "pidsCapTotal": 2112
+  },
+  "isolation": {
+    "dockerProject": "yz-rd-t109",
+    "network": "yz-rd-t109-isolated",
+    "networkInternal": true,
+    "postgresVolume": "yz-rd-t109-postgres-data",
+    "minioVolume": "yz-rd-t109-minio-data",
+    "minioBucket": "yz-rd-t109-media",
+    "hostPublishedPorts": [],
+    "servicePortsInternalOnly": true,
+    "initialLoopbackMappingsRemovedAfterDockerDidNotActivateThemOnInternalNetwork": true,
+    "composeConfigValidated": true,
+    "portsFreeBeforeInternalOnlyDecision": [47209, 47275, 47433, 47902, 47903],
+    "t109ContainersNetworkVolumesAbsentBeforeStart": true,
+    "secretFilesMode": "0600",
+    "t109ContainersStartedAtInitialCapture": false
+  },
+  "laterRuntimeDecision": {
+    "status": "NEEDS_OWNER_DECISION",
+    "blockerCode": "BLOCKED_RESOURCE_DRIFT",
+    "observedAtUtc": "2026-10-21T18:23:20Z",
+    "nonT109MemoryWorstCaseBounded": false,
+    "details": "A separate aa-int-t107-build:opencv container repeatedly appeared under different random names with no Compose project/service labels, HostConfig.Memory=0 and MemorySwap=0, and cgroup memory.max=max. Its cgroup current memory changed from 2914926592 bytes to 1011871744 bytes across reads. It was not modified or queried beyond resource metadata. T109-owned services were stopped; named volumes and internal network were retained.",
+    "t109ServicesStarted": 4,
+    "t109ServicesEffectiveCpuMemPidsVerified": 4,
+    "frontendStarted": false,
+    "boundedBrowserStarted": false,
+    "t109ServicesStopped": true,
+    "t109VolumesPreserved": true
+  },
+  "reason": "The initial prestart snapshot passed with current T106 caps and a conservative transient T028 reserve. During staged T109 startup a non-T109 container appeared without a memory ceiling and no verified project owner; it disappeared and reappeared with a different Docker ID. Since the active non-T109 worst-case memory cannot be bounded and no cross-owner limit change is authorized, Native E2E was stopped and requires an Owner decision."
+}

@@ -1,0 +1,11 @@
+{
+  "taskId": "YZ-RD-T109",
+  "status": "PASS_EMPTY_BUCKET_ONLY",
+  "bucket": "yz-rd-t109-media",
+  "minioVolume": "yz-rd-t109-minio-data",
+  "createdBy": "T109 API container S3 client",
+  "headBucketVerified": true,
+  "objectCountAtInitialization": 0,
+  "licensedMediaObjectUploaded": false,
+  "T106MinioContacted": false
+}

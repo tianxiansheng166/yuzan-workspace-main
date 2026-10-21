@@ -1,0 +1,97 @@
+{
+  "taskId": "YZ-RD-T109",
+  "status": "NEEDS_OWNER_DECISION",
+  "blockerCode": "BLOCKED_RESOURCE_DRIFT",
+  "sourceT108Sha": "8974c2a7d5842bb20dbfcd091b63cac5674dcc32",
+  "runtimeProject": "yz-rd-t109",
+  "blockingCondition": "A non-T109 container with no HostConfig memory or swap ceiling repeatedly appeared under changing random names. Its Docker image was aa-int-t107-build:opencv, but its Compose project/service labels were absent. Its cgroup memory.max and memory.swap.max were both max. The non-T109 worst-case memory total therefore could not be bounded.",
+  "observations": [
+    {
+      "observedName": "heuristic_raman",
+      "image": "aa-int-t107-build:opencv",
+      "composeProjectLabel": null,
+      "composeServiceLabel": null,
+      "hostConfig": { "cpuCap": 1, "memoryBytes": 0, "memorySwapBytes": 0, "pidsLimit": null },
+      "cgroup": {
+        "cpuMax": "100000 100000",
+        "memoryMax": "max",
+        "memoryCurrentBytes": 2914926592,
+        "memorySwapMax": "max",
+        "pidsMax": "38022",
+        "pidsCurrent": 20
+      },
+      "statusAtInspection": "running",
+      "laterStatus": "disappeared before follow-up container read"
+    },
+    {
+      "observedAtUtc": "2026-10-21T18:23:20Z",
+      "containerId": "83e8f28b9163b822fd47616ff00265d4bf4674f71da19f61786ae7da0e0cd5b7",
+      "observedName": "interesting_mendel",
+      "image": "aa-int-t107-build:opencv",
+      "composeProjectLabel": null,
+      "composeServiceLabel": null,
+      "hostConfig": { "cpuCap": 1, "memoryBytes": 0, "memorySwapBytes": 0, "pidsLimit": null },
+      "cgroup": {
+        "cpuMax": "100000 100000",
+        "memoryMax": "max",
+        "memoryCurrentBytes": 1011871744,
+        "memorySwapMax": "max",
+        "pidsMax": "38022",
+        "pidsCurrent": 12
+      },
+      "statusAtInspection": "running",
+      "sameImageReturnedWithDifferentId": true
+    }
+  ],
+  "additionalTransientContainers": [
+    {
+      "name": "aa-p1user-t028-ui-842412",
+      "image": "ros:humble-ros-base",
+      "hostConfigObserved": { "cpuCap": 2, "memoryGiB": 4, "memorySwapTotalGiB": 4, "pidsLimit": 256 },
+      "cgroupInspection": "container disappeared before read"
+    },
+    {
+      "name": "distracted_cartwright",
+      "image": "rm-improve-aa-qprob-t011:dependencies",
+      "hostConfigObserved": { "cpuCap": 1, "memoryGiB": 3, "memorySwapTotalGiB": 3, "pidsLimit": null },
+      "cgroupInspection": "container disappeared before read"
+    },
+    {
+      "name": "elastic_mestorf",
+      "image": "ros:humble-ros-base",
+      "hostConfigObserved": { "cpuCap": 1, "memoryGiB": 1, "memorySwapTotalGiB": 1, "pidsLimit": 64 },
+      "cgroupInspection": "container disappeared before read"
+    }
+  ],
+  "hostAtBlockerSnapshot": {
+    "capturedAtUtc": "2026-10-21T18:23:20Z",
+    "cpuCount": 16,
+    "memAvailableKiB": 14330132,
+    "swapFreeKiB": 6540760,
+    "loadAverage": [3.44, 3.08, 3.06],
+    "ioPressurePercent": { "someAvg10": 1.91, "someAvg60": 1.23, "someAvg300": 1.01, "fullAvg10": 1.18, "fullAvg60": 0.61, "fullAvg300": 0.7 },
+    "workspaceDiskFreeGiB": 76,
+    "workspaceDiskUsedPercent": 93,
+    "pidMax": 4194304
+  },
+  "actions": {
+    "externalContainersInspectedBeyondResourceMetadata": false,
+    "externalContainersModifiedStoppedRestartedOrRemoved": false,
+    "t106ContainersModified": false,
+    "t109ContainersStopped": [
+      "yz-rd-t109-api-1",
+      "yz-rd-t109-postgres-1",
+      "yz-rd-t109-redis-1",
+      "yz-rd-t109-minio-1"
+    ],
+    "t109FrontendStarted": false,
+    "t109BrowserStarted": false,
+    "t109VolumesDeleted": false,
+    "t109VolumesPreserved": ["yz-rd-t109-postgres-data", "yz-rd-t109-minio-data"],
+    "t109InternalNetworkPreserved": "yz-rd-t109-isolated",
+    "noTestStudentCourseOrMinioObjectCreated": true,
+    "onlyEmptyT109BucketCreated": true,
+    "databaseContainsMigrationsOnly": true
+  },
+  "ownerDecisionNeeded": "Resume Native E2E only after the external unbounded container is absent or its owner provides a fresh, verifiable memory ceiling and stable resource admission. T109 will not change or stop that container."
+}

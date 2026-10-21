@@ -1,0 +1,42 @@
+{
+  "taskId": "YZ-RD-T109",
+  "sourceT108Sha": "8974c2a7d5842bb20dbfcd091b63cac5674dcc32",
+  "imagesPulledOrSelectedWithoutStartingServices": true,
+  "images": [
+    {
+      "service": "api/frontend",
+      "reference": "node:24-alpine",
+      "repoDigest": "node@sha256:44fce696f38ba8c987c4db89954051000bbd05ffd8d8659ba15ed4a8602e937f",
+      "imageId": "sha256:44fce696f38ba8c987c4db89954051000bbd05ffd8d8659ba15ed4a8602e937f",
+      "sizeBytes": 62458830
+    },
+    {
+      "service": "postgres",
+      "reference": "postgres:17-alpine",
+      "repoDigest": "postgres@sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73",
+      "imageId": "sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73",
+      "sizeBytes": 117204007
+    },
+    {
+      "service": "redis",
+      "reference": "redis:7-alpine",
+      "repoDigest": "redis@sha256:ff02b58f971e7d7d156a1267e283fcbbeee91773b6aa36c49dac28ecfe28eadf",
+      "imageId": "sha256:ff02b58f971e7d7d156a1267e283fcbbeee91773b6aa36c49dac28ecfe28eadf",
+      "sizeBytes": 16276863
+    },
+    {
+      "service": "minio",
+      "reference": "minio/minio:latest",
+      "repoDigest": "minio/minio@sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e",
+      "imageId": "sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e",
+      "sizeBytes": 62245347
+    },
+    {
+      "service": "bounded-browser",
+      "reference": "mcr.microsoft.com/playwright/python:v1.55.0-noble",
+      "repoDigest": "mcr.microsoft.com/playwright/python@sha256:640d578aae63cfb632461d1b0aecb01414e4e020864ac3dd45a868dc0eff3078",
+      "imageId": "sha256:640d578aae63cfb632461d1b0aecb01414e4e020864ac3dd45a868dc0eff3078",
+      "sizeBytes": 965578236
+    }
+  ]
+}

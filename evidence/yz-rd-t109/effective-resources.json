@@ -1,0 +1,61 @@
+{
+  "taskId": "YZ-RD-T109",
+  "runtimeProject": "yz-rd-t109",
+  "sourceT108Sha": "8974c2a7d5842bb20dbfcd091b63cac5674dcc32",
+  "composeConfig": "VALID; all five application services specify cpus, mem_limit, memswap_limit, and pids_limit",
+  "hostPublishedPorts": [],
+  "privateNetwork": "yz-rd-t109-isolated",
+  "runtimeServicesStartedAndVerified": 4,
+  "runtimeServicesTotal": 5,
+  "services": [
+    {
+      "service": "postgres",
+      "containerId": "8b70ef96fdcd959eec0a7611e0a37d709345a1dbd4c7aeb0c91a2fa93b6006fa",
+      "dockerHostConfig": { "NanoCpus": 1000000000, "Memory": 805306368, "MemorySwap": 805306368, "PidsLimit": 256, "PortBindings": {} },
+      "cgroup": { "cpu.max": "100000 100000", "memory.max": "805306368", "memory.swap.max": "0", "pids.max": "256", "memory.events.oom": 0 },
+      "health": "healthy",
+      "restartCount": 0,
+      "oomKilled": false
+    },
+    {
+      "service": "redis",
+      "containerId": "d7da7474cfce7cec114a5e47294ecb252bc2db12bc468b16240d82800e20356a",
+      "dockerHostConfig": { "NanoCpus": 250000000, "Memory": 134217728, "MemorySwap": 134217728, "PidsLimit": 64, "PortBindings": {} },
+      "cgroup": { "cpu.max": "25000 100000", "memory.max": "134217728", "memory.swap.max": "0", "pids.max": "64", "memory.events.oom": 0 },
+      "health": "healthy",
+      "restartCount": 0,
+      "oomKilled": false
+    },
+    {
+      "service": "minio",
+      "containerId": "05849b1c8d3c8e8ace8b33148bfd03c20b4c7e013131e15a8d408e383520e097",
+      "dockerHostConfig": { "NanoCpus": 500000000, "Memory": 402653184, "MemorySwap": 402653184, "PidsLimit": 128, "PortBindings": {} },
+      "cgroup": { "cpu.max": "50000 100000", "memory.max": "402653184", "memory.swap.max": "0", "pids.max": "128", "memory.events.oom": 0 },
+      "health": "healthy; HTTP /minio/health/ready 200 inside the T109 network",
+      "restartCount": 0,
+      "oomKilled": false
+    },
+    {
+      "service": "api",
+      "containerId": "11b2702b4a345617f3c5937e10864b05395754c31cb4a4a4b34281f3e50dbede",
+      "dockerHostConfig": { "NanoCpus": 1000000000, "Memory": 805306368, "MemorySwap": 805306368, "PidsLimit": 192, "PortBindings": {} },
+      "cgroup": { "cpu.max": "100000 100000", "memory.max": "805306368", "memory.swap.max": "0", "pids.max": "192", "memory.events.oom": 0 },
+      "health": "healthy; /api/v1/health/ready HTTP 200 after T109 bucket initialization",
+      "restartCount": 0,
+      "oomKilled": false,
+      "stoppedByTask": true,
+      "stopExitCode": 137,
+      "oomKilledAfterStop": false
+    }
+  ],
+  "notStarted": {
+    "frontend": { "cpu": 0.5, "ramMiB": 384, "memswapTotalMiB": 384, "pids": 128, "reason": "Native acceptance stopped at external resource drift before account/browser setup" },
+    "playwrightBrowser": { "cpu": 0.75, "ramMiB": 1120, "memswapTotalMiB": 1120, "pids": 256, "reason": "Container was not created" }
+  },
+  "runtimeAfterStop": {
+    "t109RunningContainers": 0,
+    "postgresVolumePreserved": "yz-rd-t109-postgres-data",
+    "minioVolumePreserved": "yz-rd-t109-minio-data",
+    "privateNetworkPreserved": "yz-rd-t109-isolated"
+  }
+}

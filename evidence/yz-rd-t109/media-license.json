@@ -1,0 +1,16 @@
+{
+  "taskId": "YZ-RD-T109",
+  "rightsStatus": "APPROVED",
+  "sourceRepository": "https://github.com/mdn/interactive-examples",
+  "license": "CC0-1.0",
+  "licenseReference": "https://github.com/mdn/interactive-examples/blob/main/LICENSE",
+  "assetUrl": "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
+  "downloadedAt": "2026-10-22",
+  "bytes": 1128375,
+  "sha256": "0cd83d944a6ca7822b4a8306cecc60a36e859b041f6702c6a1ad9ead78924451",
+  "t109Bucket": "yz-rd-t109-media",
+  "t109ObjectKey": "t109-native-acceptance/flower.mp4",
+  "copiedFromAnotherRuntime": false,
+  "level4SourceRead": false,
+  "note": "A new local copy was downloaded directly from the public CC0 asset URL into T109 runtime storage. It is uploaded only to T109 MinIO; no T106/T107 object or database data is reused."
+}
