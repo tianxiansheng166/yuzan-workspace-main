@@ -1,0 +1,206 @@
+
+ RUN  v3.2.7 /home/tian/.devspace/worktrees/yuzan-workspace-t097/backend/api
+
+ ❯ test/modules/submissions/submissions.service.spec.ts (13 tests | 13 failed) 32ms
+   × SubmissionsService > createSubmission > creates submission as student 9ms
+     → Nest can't resolve dependencies of the Symbol(SPEECH_QUEUE) (?). Please make sure that the argument ConfigService at index [0] is available in the SpeechJobModule module.
+
+Potential solutions:
+- Is SpeechJobModule a valid NestJS module?
+- If ConfigService is a provider, is it part of the current SpeechJobModule?
+- If ConfigService is exported from a separate @Module, is that module imported within SpeechJobModule?
+  @Module({
+    imports: [ /* the Module containing ConfigService */ ]
+  })
+
+For more common dependency resolution issues, see: https://docs.nestjs.com/faq/common-errors
+   × SubmissionsService > createSubmission > returns same submission on duplicate idempotencyKey 2ms
+     → Nest can't resolve dependencies of the Symbol(SPEECH_QUEUE) (?). Please make sure that the argument ConfigService at index [0] is available in the SpeechJobModule module.
+
+Potential solutions:
+- Is SpeechJobModule a valid NestJS module?
+- If ConfigService is a provider, is it part of the current SpeechJobModule?
+- If ConfigService is exported from a separate @Module, is that module imported within SpeechJobModule?
+  @Module({
+    imports: [ /* the Module containing ConfigService */ ]
+  })
+
+For more common dependency resolution issues, see: https://docs.nestjs.com/faq/common-errors
+   × SubmissionsService > createSubmission > rejects teacher creating submission 2ms
+     → Nest can't resolve dependencies of the Symbol(SPEECH_QUEUE) (?). Please make sure that the argument ConfigService at index [0] is available in the SpeechJobModule module.
+
+Potential solutions:
+- Is SpeechJobModule a valid NestJS module?
+- If ConfigService is a provider, is it part of the current SpeechJobModule?
+- If ConfigService is exported from a separate @Module, is that module imported within SpeechJobModule?
+  @Module({
+    imports: [ /* the Module containing ConfigService */ ]
+  })
+
+For more common dependency resolution issues, see: https://docs.nestjs.com/faq/common-errors
+   × SubmissionsService > submitSubmission > transitions IN_PROGRESS -> SUBMITTED 2ms
+     → Nest can't resolve dependencies of the Symbol(SPEECH_QUEUE) (?). Please make sure that the argument ConfigService at index [0] is available in the SpeechJobModule module.
+
+Potential solutions:
+- Is SpeechJobModule a valid NestJS module?
+- If ConfigService is a provider, is it part of the current SpeechJobModule?
+- If ConfigService is exported from a separate @Module, is that module imported within SpeechJobModule?
+  @Module({
+    imports: [ /* the Module containing ConfigService */ ]
+  })
+
+For more common dependency resolution issues, see: https://docs.nestjs.com/faq/common-errors
+   × SubmissionsService > submitSubmission > rejects invalid state transition 2ms
+     → Nest can't resolve dependencies of the Symbol(SPEECH_QUEUE) (?). Please make sure that the argument ConfigService at index [0] is available in the SpeechJobModule module.
+
+Potential solutions:
+- Is SpeechJobModule a valid NestJS module?
+- If ConfigService is a provider, is it part of the current SpeechJobModule?
+- If ConfigService is exported from a separate @Module, is that module imported within SpeechJobModule?
+  @Module({
+    imports: [ /* the Module containing ConfigService */ ]
+  })
+
+For more common dependency resolution issues, see: https://docs.nestjs.com/faq/common-errors
+   × SubmissionsService > listAssignmentSubmissions > lists only submissions for the authorized assignment targets 2ms
+     → Nest can't resolve dependencies of the Symbol(SPEECH_QUEUE) (?). Please make sure that the argument ConfigService at index [0] is available in the SpeechJobModule module.
+
+Potential solutions:
+- Is SpeechJobModule a valid NestJS module?
+- If ConfigService is a provider, is it part of the current SpeechJobModule?
+- If ConfigService is exported from a separate @Module, is that module imported within SpeechJobModule?
+  @Module({
+    imports: [ /* the Module containing ConfigService */ ]
+  })
+
+For more common dependency resolution issues, see: https://docs.nestjs.com/faq/common-errors
+   × SubmissionsService > listAssignmentSubmissions > rejects a teacher who is not assigned to the target class 2ms
+     → Nest can't resolve dependencies of the Symbol(SPEECH_QUEUE) (?). Please make sure that the argument ConfigService at index [0] is available in the SpeechJobModule module.
+
+Potential solutions:
+- Is SpeechJobModule a valid NestJS module?
+- If ConfigService is a provider, is it part of the current SpeechJobModule?
+- If ConfigService is exported from a separate @Module, is that module imported within SpeechJobModule?
+  @Module({
+    imports: [ /* the Module containing ConfigService */ ]
+  })
+
+For more common dependency resolution issues, see: https://docs.nestjs.com/faq/common-errors
+   × SubmissionsService > listAssignmentSubmissions > rejects student listing assignment submissions 2ms
+     → Nest can't resolve dependencies of the Symbol(SPEECH_QUEUE) (?). Please make sure that the argument ConfigService at index [0] is available in the SpeechJobModule module.
+
+Potential solutions:
+- Is SpeechJobModule a valid NestJS module?
+- If ConfigService is a provider, is it part of the current SpeechJobModule?
+- If ConfigService is exported from a separate @Module, is that module imported within SpeechJobModule?
+  @Module({
+    imports: [ /* the Module containing ConfigService */ ]
+  })
+
+For more common dependency resolution issues, see: https://docs.nestjs.com/faq/common-errors
+   × SubmissionsService > getSubmission > returns submission context to its student 2ms
+     → Nest can't resolve dependencies of the Symbol(SPEECH_QUEUE) (?). Please make sure that the argument ConfigService at index [0] is available in the SpeechJobModule module.
+
+Potential solutions:
+- Is SpeechJobModule a valid NestJS module?
+- If ConfigService is a provider, is it part of the current SpeechJobModule?
+- If ConfigService is exported from a separate @Module, is that module imported within SpeechJobModule?
+  @Module({
+    imports: [ /* the Module containing ConfigService */ ]
+  })
+
+For more common dependency resolution issues, see: https://docs.nestjs.com/faq/common-errors
+   × SubmissionsService > getSubmission > allows a teacher to read a submission from their own class 2ms
+     → Nest can't resolve dependencies of the Symbol(SPEECH_QUEUE) (?). Please make sure that the argument ConfigService at index [0] is available in the SpeechJobModule module.
+
+Potential solutions:
+- Is SpeechJobModule a valid NestJS module?
+- If ConfigService is a provider, is it part of the current SpeechJobModule?
+- If ConfigService is exported from a separate @Module, is that module imported within SpeechJobModule?
+  @Module({
+    imports: [ /* the Module containing ConfigService */ ]
+  })
+
+For more common dependency resolution issues, see: https://docs.nestjs.com/faq/common-errors
+   × SubmissionsService > getSubmission > does not expose another class submission to a teacher 2ms
+     → Nest can't resolve dependencies of the Symbol(SPEECH_QUEUE) (?). Please make sure that the argument ConfigService at index [0] is available in the SpeechJobModule module.
+
+Potential solutions:
+- Is SpeechJobModule a valid NestJS module?
+- If ConfigService is a provider, is it part of the current SpeechJobModule?
+- If ConfigService is exported from a separate @Module, is that module imported within SpeechJobModule?
+  @Module({
+    imports: [ /* the Module containing ConfigService */ ]
+  })
+
+For more common dependency resolution issues, see: https://docs.nestjs.com/faq/common-errors
+   × SubmissionsService > getSubmission > does not expose another student's submission 2ms
+     → Nest can't resolve dependencies of the Symbol(SPEECH_QUEUE) (?). Please make sure that the argument ConfigService at index [0] is available in the SpeechJobModule module.
+
+Potential solutions:
+- Is SpeechJobModule a valid NestJS module?
+- If ConfigService is a provider, is it part of the current SpeechJobModule?
+- If ConfigService is exported from a separate @Module, is that module imported within SpeechJobModule?
+  @Module({
+    imports: [ /* the Module containing ConfigService */ ]
+  })
+
+For more common dependency resolution issues, see: https://docs.nestjs.com/faq/common-errors
+   × SubmissionsService > getSubmission > throws for non-existent submission 1ms
+     → Nest can't resolve dependencies of the Symbol(SPEECH_QUEUE) (?). Please make sure that the argument ConfigService at index [0] is available in the SpeechJobModule module.
+
+Potential solutions:
+- Is SpeechJobModule a valid NestJS module?
+- If ConfigService is a provider, is it part of the current SpeechJobModule?
+- If ConfigService is exported from a separate @Module, is that module imported within SpeechJobModule?
+  @Module({
+    imports: [ /* the Module containing ConfigService */ ]
+  })
+
+For more common dependency resolution issues, see: https://docs.nestjs.com/faq/common-errors
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 13 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/modules/submissions/submissions.service.spec.ts > SubmissionsService > createSubmission > creates submission as student
+ FAIL  test/modules/submissions/submissions.service.spec.ts > SubmissionsService > createSubmission > returns same submission on duplicate idempotencyKey
+ FAIL  test/modules/submissions/submissions.service.spec.ts > SubmissionsService > createSubmission > rejects teacher creating submission
+ FAIL  test/modules/submissions/submissions.service.spec.ts > SubmissionsService > submitSubmission > transitions IN_PROGRESS -> SUBMITTED
+ FAIL  test/modules/submissions/submissions.service.spec.ts > SubmissionsService > submitSubmission > rejects invalid state transition
+ FAIL  test/modules/submissions/submissions.service.spec.ts > SubmissionsService > listAssignmentSubmissions > lists only submissions for the authorized assignment targets
+ FAIL  test/modules/submissions/submissions.service.spec.ts > SubmissionsService > listAssignmentSubmissions > rejects a teacher who is not assigned to the target class
+ FAIL  test/modules/submissions/submissions.service.spec.ts > SubmissionsService > listAssignmentSubmissions > rejects student listing assignment submissions
+ FAIL  test/modules/submissions/submissions.service.spec.ts > SubmissionsService > getSubmission > returns submission context to its student
+ FAIL  test/modules/submissions/submissions.service.spec.ts > SubmissionsService > getSubmission > allows a teacher to read a submission from their own class
+ FAIL  test/modules/submissions/submissions.service.spec.ts > SubmissionsService > getSubmission > does not expose another class submission to a teacher
+ FAIL  test/modules/submissions/submissions.service.spec.ts > SubmissionsService > getSubmission > does not expose another student's submission
+ FAIL  test/modules/submissions/submissions.service.spec.ts > SubmissionsService > getSubmission > throws for non-existent submission
+Error: Nest can't resolve dependencies of the Symbol(SPEECH_QUEUE) (?). Please make sure that the argument ConfigService at index [0] is available in the SpeechJobModule module.
+
+Potential solutions:
+- Is SpeechJobModule a valid NestJS module?
+- If ConfigService is a provider, is it part of the current SpeechJobModule?
+- If ConfigService is exported from a separate @Module, is that module imported within SpeechJobModule?
+  @Module({
+    imports: [ /* the Module containing ConfigService */ ]
+  })
+
+For more common dependency resolution issues, see: https://docs.nestjs.com/faq/common-errors
+ ❯ TestingInjector.lookupComponentInParentModules ../../node_modules/.pnpm/@nestjs+core@11.1.28_@nestjs+common@11.1.28_class-transformer@0.5.1_class-validator@0.1_eae2bcb28ab2d8d31226079b12ae0fc7/node_modules/@nestjs/core/injector/injector.js:300:19
+ ❯ TestingInjector.resolveComponentWrapper ../../node_modules/.pnpm/@nestjs+testing@11.1.28_@nestjs+common@11.1.28_class-transformer@0.5.1_class-validator@_58bee870818ed53ff19d97ebcdc4abcc/node_modules/@nestjs/testing/testing-injector.js:19:45
+ ❯ resolveParam ../../node_modules/.pnpm/@nestjs+core@11.1.28_@nestjs+common@11.1.28_class-transformer@0.5.1_class-validator@0.1_eae2bcb28ab2d8d31226079b12ae0fc7/node_modules/@nestjs/core/injector/injector.js:150:38
+ ❯ TestingInjector.resolveConstructorParams ../../node_modules/.pnpm/@nestjs+core@11.1.28_@nestjs+common@11.1.28_class-transformer@0.5.1_class-validator@0.1_eae2bcb28ab2d8d31226079b12ae0fc7/node_modules/@nestjs/core/injector/injector.js:179:27
+ ❯ TestingInjector.loadInstance ../../node_modules/.pnpm/@nestjs+core@11.1.28_@nestjs+common@11.1.28_class-transformer@0.5.1_class-validator@0.1_eae2bcb28ab2d8d31226079b12ae0fc7/node_modules/@nestjs/core/injector/injector.js:77:13
+ ❯ TestingInjector.loadProvider ../../node_modules/.pnpm/@nestjs+core@11.1.28_@nestjs+common@11.1.28_class-transformer@0.5.1_class-validator@0.1_eae2bcb28ab2d8d31226079b12ae0fc7/node_modules/@nestjs/core/injector/injector.js:111:9
+ ❯ ../../node_modules/.pnpm/@nestjs+core@11.1.28_@nestjs+common@11.1.28_class-transformer@0.5.1_class-validator@0.1_eae2bcb28ab2d8d31226079b12ae0fc7/node_modules/@nestjs/core/injector/instance-loader.js:56:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/13]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  13 failed (13)
+   Start at  11:42:54
+   Duration  880ms (transform 286ms, setup 0ms, collect 702ms, tests 32ms, environment 0ms, prepare 48ms)
+
+undefined
+/home/tian/.devspace/worktrees/yuzan-workspace-t097/backend/api:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run --pool=forks --poolOptions.forks.singleFork test/modules/submissions/submissions.service.spec.ts

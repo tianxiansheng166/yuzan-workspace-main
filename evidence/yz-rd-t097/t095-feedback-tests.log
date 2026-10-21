@@ -1,0 +1,10 @@
+
+ RUN  v3.2.7 /home/tian/.devspace/worktrees/yuzan-workspace-t097/backend/api
+
+ ✓ test/modules/feedback/feedback.service.spec.ts (30 tests) 48ms
+ ✓ test/modules/feedback/feedback.policy.spec.ts (6 tests) 1ms
+
+ Test Files  2 passed (2)
+      Tests  36 passed (36)
+   Start at  11:43:26
+   Duration  687ms (transform 245ms, setup 0ms, collect 485ms, tests 49ms, environment 0ms, prepare 42ms)

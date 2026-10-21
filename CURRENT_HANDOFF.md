@@ -1,7 +1,14 @@
 # CURRENT HANDOFF
 
-Last updated: 2026-10-20
+Last updated: 2026-10-21
 Repository: `yuzan-workspace-main`
+
+## YZ-RD-T097 checkpoint (2026-10-21)
+
+- On independent branch `fix/yz-rd-t097-submissions-test-config-fixture` from exact BASE `ef1227121f969c71aed6d3df8c6b8a7b7a6bc7e6`, repaired only the `SubmissionsService` test fixture. The baseline reproduced 13 Nest `ConfigService` setup failures before assertions; a test-only global ConfigModule now sets `SPEECH_PROVIDER=disabled` and ignores environment sources. No production behavior or assertions changed.
+- Final SubmissionsService tests pass 13/13; T095 Feedback service/policy tests pass 36/36. API typecheck, changed-file lint, and `git diff --check` pass.
+- Full API lint was not rerun. T095's inherited, unwaived measurement remains 320 errors / 0 warnings across 50/592 files (0 in T095-owned paths; exit 1). PostgreSQL E2E remains `NOT_RUN`; `READY_TO_MERGE=NO`. Historical L4 incident remains `OPEN`.
+- Evidence and raw logs: [`evidence/yz-rd-t097/RESULTS.md`](evidence/yz-rd-t097/RESULTS.md).
 
 ## YZ-RD-T082 unified student web integration (2026-10-20)
 

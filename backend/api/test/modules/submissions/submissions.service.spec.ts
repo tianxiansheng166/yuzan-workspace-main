@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { Test } from "@nestjs/testing";
+import { ConfigModule } from "@nestjs/config";
 import {
   MembershipRole,
   MembershipStatus,
@@ -50,10 +51,20 @@ describe("SubmissionsService", () => {
     );
 
     const moduleRef = await Test.createTestingModule({
-      imports: [createFakeDatabaseModule(createFakePrismaService({
-        enrollment: { findFirst: enrollmentFindFirst, findMany: enrollmentFindMany },
-        assignment: { findFirst: assignmentFindFirst },
-      })), SubmissionsModule],
+      imports: [
+        ConfigModule.forRoot({
+          isGlobal: true,
+          ignoreEnvFile: true,
+          ignoreEnvVars: true,
+          skipProcessEnv: true,
+          load: [() => ({ SPEECH_PROVIDER: "disabled" })],
+        }),
+        createFakeDatabaseModule(createFakePrismaService({
+          enrollment: { findFirst: enrollmentFindFirst, findMany: enrollmentFindMany },
+          assignment: { findFirst: assignmentFindFirst },
+        })),
+        SubmissionsModule,
+      ],
     })
       .overrideProvider(SUBMISSION_REPOSITORY)
       .useValue(repo)
