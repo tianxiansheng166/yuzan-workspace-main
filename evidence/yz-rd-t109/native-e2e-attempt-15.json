@@ -1,0 +1,186 @@
+{
+  "taskId": "YZ-RD-T109",
+  "sourceT108Sha": "8974c2a7d5842bb20dbfcd091b63cac5674dcc32",
+  "runtimeProject": "yz-rd-t109",
+  "status": "FAIL",
+  "stage": "progress-failure-visible-and-safe-retry",
+  "loginHttpStatus": 200,
+  "errorClass": "TimeoutError",
+  "errorMessage": "Timeout 20000ms exceeded while waiting for event \"response\"",
+  "consoleErrorCount": 1,
+  "pageErrorCount": 0,
+  "requestFailedCount": 3,
+  "failedRequests": [
+    {
+      "host": "minio",
+      "method": "GET",
+      "category": "minio-media",
+      "resourceType": "media",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "host": "minio",
+      "method": "GET",
+      "category": "minio-media",
+      "resourceType": "media",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "host": "minio",
+      "method": "GET",
+      "category": "minio-media",
+      "resourceType": "media",
+      "failure": "net::ERR_ABORTED"
+    }
+  ],
+  "responseSummary": [
+    {
+      "host": "frontend",
+      "method": "GET",
+      "category": "application-api",
+      "status": 200,
+      "count": 74,
+      "mediaHeaders": null
+    },
+    {
+      "host": "frontend",
+      "method": "GET",
+      "category": "application-api",
+      "status": 301,
+      "count": 1,
+      "mediaHeaders": null
+    },
+    {
+      "host": "frontend",
+      "method": "GET",
+      "category": "course-list",
+      "status": 200,
+      "count": 4,
+      "mediaHeaders": null
+    },
+    {
+      "host": "frontend",
+      "method": "GET",
+      "category": "course-recommendations",
+      "status": 200,
+      "count": 1,
+      "mediaHeaders": null
+    },
+    {
+      "host": "frontend",
+      "method": "GET",
+      "category": "growth-api",
+      "status": 200,
+      "count": 8,
+      "mediaHeaders": null
+    },
+    {
+      "host": "frontend",
+      "method": "GET",
+      "category": "signed-playback-url",
+      "status": 200,
+      "count": 2,
+      "mediaHeaders": null
+    },
+    {
+      "host": "frontend",
+      "method": "GET",
+      "category": "today-api",
+      "status": 200,
+      "count": 8,
+      "mediaHeaders": null
+    },
+    {
+      "host": "frontend",
+      "method": "GET",
+      "category": "today-api",
+      "status": 301,
+      "count": 2,
+      "mediaHeaders": null
+    },
+    {
+      "host": "frontend",
+      "method": "POST",
+      "category": "application-api",
+      "status": 201,
+      "count": 1,
+      "mediaHeaders": null
+    },
+    {
+      "host": "frontend",
+      "method": "POST",
+      "category": "auth-login",
+      "status": 200,
+      "count": 1,
+      "mediaHeaders": null
+    },
+    {
+      "host": "frontend",
+      "method": "PUT",
+      "category": "course-activity-progress",
+      "status": 200,
+      "count": 1,
+      "mediaHeaders": null
+    },
+    {
+      "host": "frontend",
+      "method": "PUT",
+      "category": "course-activity-progress",
+      "status": 503,
+      "count": 1,
+      "mediaHeaders": null
+    },
+    {
+      "host": "minio",
+      "method": "GET",
+      "category": "minio-media",
+      "status": 206,
+      "count": 7,
+      "mediaHeaders": {
+        "content-type": "video/webm",
+        "content-length": "488522",
+        "content-range": "bytes 65536-554057/554058",
+        "accept-ranges": "bytes"
+      }
+    }
+  ],
+  "videoResourceDiagnostic": {
+    "activityIdPrefix": "ecddf803",
+    "activityType": "VIDEO",
+    "videoUrlPresentInActivityDto": false,
+    "resourceCount": 1,
+    "resources": [
+      {
+        "idPrefix": "a6f391e2",
+        "kind": "VIDEO",
+        "mediaType": "video/webm",
+        "originalName": "flower.webm"
+      }
+    ],
+    "playerState": {
+      "activityIdPrefix": "2b51f5a6",
+      "activityType": "TEXT",
+      "videoUrlPresent": false,
+      "resourceCount": 0,
+      "resources": []
+    },
+    "playerStateAfterVideoSelection": {
+      "activityIdPrefix": "ecddf803",
+      "activityType": "VIDEO",
+      "videoUrlPresent": false,
+      "resourceCount": 1,
+      "resources": [
+        {
+          "kind": "VIDEO",
+          "mediaType": "video/webm",
+          "originalName": "flower.webm",
+          "idPrefix": "a6f391e2"
+        }
+      ]
+    }
+  },
+  "videoLoadingDiagnostic": null,
+  "runnerLoadingDiagnostic": null,
+  "diagnosticScreenshot": null,
+  "injectedProgress503Count": 1
+}

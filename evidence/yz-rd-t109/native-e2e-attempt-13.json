@@ -1,0 +1,30 @@
+{
+  "taskId": "YZ-RD-T109",
+  "sourceT108Sha": "8974c2a7d5842bb20dbfcd091b63cac5674dcc32",
+  "status": "INCOMPLETE_RUNNER_RENDER",
+  "stage": "practice-center-to-runner",
+  "loginHttpStatus": 200,
+  "preRunnerChecks": {
+    "todayApiHttp200": true,
+    "growthApiHttp200": true,
+    "courseListHttp200": true,
+    "signedWebmPlaybackHttp206": true,
+    "videoDecodeAndProgressAssertions": "PASS",
+    "coursePracticeEntryPrepareRoute": "PASS",
+    "practiceCenterCreateAttemptHttp201": true,
+    "runnerRouteEntered": true
+  },
+  "runnerSubmitControl": "not visible within 15 seconds",
+  "consoleErrorCount": 1,
+  "pageErrorCount": 0,
+  "requestFailedCount": 9,
+  "oomKilled": false,
+  "restartCount": 0,
+  "databaseState": {
+    "runnerSessionStatus": "IN_PROGRESS",
+    "assessmentItemCount": 20,
+    "maxScorePerItem": 5,
+    "recordingRows": 0
+  },
+  "nextAction": "Capture the actual Runner DOM/error and API item response shape before classifying the route."
+}

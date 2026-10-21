@@ -1,0 +1,28 @@
+{
+  "taskId": "YZ-RD-T109",
+  "sourceT108Sha": "8974c2a7d5842bb20dbfcd091b63cac5674dcc32",
+  "runtimeProject": "yz-rd-t109",
+  "status": "FAIL_MEDIA_NOT_READY",
+  "stage": "course-detail-api-and-media-source",
+  "loginHttpStatus": 200,
+  "upstreamResponses": {
+    "todayApiHttp200": true,
+    "growthApiHttp200": true,
+    "courseListHttp200": true,
+    "recommendationHttp200": true,
+    "signedPlaybackUrlHttp200": true,
+    "minioHttp206": true
+  },
+  "video": {
+    "readyStateMetadataTimeoutSeconds": 30,
+    "requestFailedCount": 1,
+    "failedRequest": { "host": "minio", "method": "GET", "resourceType": "media", "failure": "net::ERR_ABORTED" },
+    "decodedFrame": false,
+    "playbackTimeAdvanced": false
+  },
+  "browserContainer": { "oomKilled": false, "restartCount": 0 },
+  "resourceGuard": "PASS throughout; no T109 stop occurred.",
+  "screenshot": "screenshots/course-detail-video-load-failure.png",
+  "visibleProductError": "视频加载失败，请检查网络后重试。",
+  "note": "One MinIO 206 response was observed, but no video metadata or frame decode was confirmed. This is not a video playback pass."
+}

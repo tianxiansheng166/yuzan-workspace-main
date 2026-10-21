@@ -1,7 +1,39 @@
 # CURRENT HANDOFF
 
-Last updated: 2026-10-21
-Repository: `yuzanxinsheng_test`
+Last updated: 2026-10-22
+Repository: `tianxiansheng166/yuzan-workspace-main`
+
+## YZ-RD-T109 — Native student acceptance on T108 (2026-10-22)
+
+- T109 uses the exact remote T108 source tip
+  `8974c2a7d5842bb20dbfcd091b63cac5674dcc32`, with a separate worktree at
+  `/home/tian/.devspace/worktrees/yuzan-workspace-t109` and output branch
+  `test/yz-rd-t109-sep08-integrated-native-uat`.
+- **STATUS: PASS_NATIVE.** Real Chrome login and Today/Courses/Course Detail/
+  Growth/Runner navigation used T109 APIs and independent T109 PostgreSQL,
+  Redis, and MinIO resources. The authorized CC0 WebM actually played and
+  decoded; progress saved, retried after a visible injected failure, restored
+  after refresh, and completed only after server confirmation. A separate
+  Practice Center session submitted 20 valid blank items, completed its report
+  at score 0, and created no recording evidence.
+- The course activity opened its preparation route, but the preparation start
+  control was disabled because this isolated browser had no `getUserMedia`
+  device. No simulated microphone was used. The Practice Center session
+  exercised the no-recording blank-submit contract.
+- Owner screenshots and exact PASS/NOT_RUN observations are listed in
+  [`evidence/yz-rd-t109/RESULTS.md`](evidence/yz-rd-t109/RESULTS.md). Review
+  the 8px Course Detail horizontal overflow at 1280px and the Runner mobile
+  bottom-scroll probe. No product source or UI styling changed.
+- Independent PostgreSQL and MinIO reads matched the completed report,
+  progress, and licensed object. Resource admission and 5/5 service caps are
+  recorded in `evidence/yz-rd-t109/`; no T106 or AutoAim container was
+  modified.
+- The resource watch records one earlier cgroup-read race while a container
+  exited; it stopped only T109 then. The guard was hardened, and the remaining
+  1,274/1,275 samples passed. See
+  `evidence/yz-rd-t109/resource-watch-summary.json`.
+- **READY_TO_MERGE: NO.** No shared merge or deployment. Historical L4
+  incident remains **OPEN**.
 
 ## YZ-RD-T106 — Course video progress reliability (2026-10-21)
 

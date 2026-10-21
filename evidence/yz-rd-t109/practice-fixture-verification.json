@@ -1,0 +1,15 @@
+{
+  "taskId": "YZ-RD-T109",
+  "status": "PASS",
+  "practiceIdPrefix": "10932650",
+  "deliveryIdPrefix": "6f46117a",
+  "activePracticeVersionIdPrefix": "09b9d1b9",
+  "practiceVersion": 2,
+  "practiceStatus": "PUBLISHED",
+  "requiresRecording": false,
+  "publishedSyntheticQuestionCount": 20,
+  "itemTypes": ["SINGLE_CHOICE"],
+  "maxScores": [5],
+  "allQuestionItemsT109Owned": true,
+  "stableKeyPattern": "t109-synthetic-empty-choice-001..020"
+}

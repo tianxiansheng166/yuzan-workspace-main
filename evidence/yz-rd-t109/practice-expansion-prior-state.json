@@ -1,0 +1,31 @@
+{
+  "taskId": "YZ-RD-T109",
+  "database": "yz_rd_t109",
+  "accountAlias": "T109-STUDENT-01",
+  "enrollmentIdPrefix": "357eeec8",
+  "practiceIdPrefix": "10932650",
+  "priorSessions": [
+    {
+      "sessionIdPrefix": "c2dd3d2f",
+      "status": "CREATED",
+      "courseActivityLinked": true,
+      "courseSubmissionLinked": true,
+      "itemCount": 1,
+      "maxScore": 5,
+      "recordingRows": 0
+    },
+    {
+      "sessionIdPrefix": "35622659",
+      "status": "PROCESSING",
+      "courseActivityLinked": false,
+      "courseSubmissionLinked": false,
+      "itemCount": 1,
+      "maxScore": 5,
+      "scoredScore": 0,
+      "unansweredReason": "UNANSWERED",
+      "reportPresent": false,
+      "recordingRows": 0
+    }
+  ],
+  "reasonForFixtureExpansion": "The API report contract intentionally waits for a complete 20-item Question Bank snapshot. A one-item synthetic T109 version therefore stayed PROCESSING after an otherwise valid zero-score unanswered submit. The T109-only fixture was expanded to 20 valid synthetic items; no API or product code changed."
+}

@@ -1,0 +1,351 @@
+{
+  "taskId": "YZ-RD-T109",
+  "decision": "PASS",
+  "sourceT108Sha": "8974c2a7d5842bb20dbfcd091b63cac5674dcc32",
+  "runtimeProject": "yz-rd-t109",
+  "thresholds": {
+    "minimumProjectedMemoryMarginBytes": 2147483648,
+    "minimumProjectedSwapMarginBytes": 2147483648,
+    "minimumCpuHeadroom": 4.0,
+    "maximumProjectedThreadFraction": 0.75
+  },
+  "host": {
+    "capturedAtUtc": "2026-10-21T19:21:01.946467+00:00",
+    "cpuCount": 16,
+    "memTotalBytes": 33471057920,
+    "memAvailableBytes": 14772039680,
+    "swapTotalBytes": 17179860992,
+    "swapFreeBytes": 6995304448,
+    "loadAverage": [
+      0.63,
+      0.59,
+      0.71
+    ],
+    "ioPressure": {
+      "some": {
+        "avg10": 0.0,
+        "avg60": 0.02,
+        "avg300": 0.1,
+        "total": 37487467245.0
+      },
+      "full": {
+        "avg10": 0.0,
+        "avg60": 0.02,
+        "avg300": 0.09,
+        "total": 33419483701.0
+      }
+    },
+    "kernelThreadsMax": 253482,
+    "kernelPidMax": 4194304,
+    "hostTasksCurrent": 3463
+  },
+  "activeNonT109Containers": [
+    {
+      "id": "a2a31f67ca2dcfca6e949c6cd4d4dfcd1c86c76dc1efdbe05c04c1afc445ea20",
+      "name": "yz-rd-t106-frontend-1",
+      "image": "node:24-alpine",
+      "project": "yz-rd-t106",
+      "service": "frontend",
+      "taskLabel": null,
+      "roleLabel": null,
+      "hostConfig": {
+        "nanoCpus": 500000000,
+        "memory": 402653184,
+        "memorySwapTotal": 805306368,
+        "pidsLimit": 128
+      },
+      "restartCount": 0,
+      "oomKilled": false,
+      "health": null,
+      "cgroup": {
+        "cpuMax": "50000 100000",
+        "memoryMax": "402653184",
+        "memoryCurrent": "11468800",
+        "memorySwapMax": "402653184",
+        "memorySwapCurrent": "19480576",
+        "pidsMax": "128",
+        "pidsCurrent": "11",
+        "memoryEvents": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+      }
+    },
+    {
+      "id": "69e1519eef2d8145c463fb9b76816bcb2b93e06f93343591b2f0dc8d23f3870a",
+      "name": "yz-rd-t106-api-1",
+      "image": "node:24-alpine",
+      "project": "yz-rd-t106",
+      "service": "api",
+      "taskLabel": null,
+      "roleLabel": null,
+      "hostConfig": {
+        "nanoCpus": 1000000000,
+        "memory": 805306368,
+        "memorySwapTotal": 1610612736,
+        "pidsLimit": 192
+      },
+      "restartCount": 0,
+      "oomKilled": false,
+      "health": null,
+      "cgroup": {
+        "cpuMax": "100000 100000",
+        "memoryMax": "805306368",
+        "memoryCurrent": "52703232",
+        "memorySwapMax": "805306368",
+        "memorySwapCurrent": "94027776",
+        "pidsMax": "192",
+        "pidsCurrent": "11",
+        "memoryEvents": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+      }
+    },
+    {
+      "id": "9b3182528732f3a9af0049db44223863225883ae8e455761ab0095285c87704e",
+      "name": "yz-rd-t106-postgres-1",
+      "image": "postgres:17-alpine",
+      "project": "yz-rd-t106",
+      "service": "postgres",
+      "taskLabel": null,
+      "roleLabel": null,
+      "hostConfig": {
+        "nanoCpus": 1500000000,
+        "memory": 1073741824,
+        "memorySwapTotal": 2147483648,
+        "pidsLimit": 256
+      },
+      "restartCount": 0,
+      "oomKilled": false,
+      "health": "healthy",
+      "cgroup": {
+        "cpuMax": "150000 100000",
+        "memoryMax": "1073741824",
+        "memoryCurrent": "23425024",
+        "memorySwapMax": "1073741824",
+        "memorySwapCurrent": "24264704",
+        "pidsMax": "256",
+        "pidsCurrent": "6",
+        "memoryEvents": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+      }
+    },
+    {
+      "id": "c130375c6aa9868383c2075b7125b95bb17f5c85513c4b97bc5fddc3d66a2605",
+      "name": "yz-rd-t106-redis-1",
+      "image": "redis:7-alpine",
+      "project": "yz-rd-t106",
+      "service": "redis",
+      "taskLabel": null,
+      "roleLabel": null,
+      "hostConfig": {
+        "nanoCpus": 500000000,
+        "memory": 134217728,
+        "memorySwapTotal": 268435456,
+        "pidsLimit": 64
+      },
+      "restartCount": 0,
+      "oomKilled": false,
+      "health": "healthy",
+      "cgroup": {
+        "cpuMax": "50000 100000",
+        "memoryMax": "134217728",
+        "memoryCurrent": "6234112",
+        "memorySwapMax": "134217728",
+        "memorySwapCurrent": "2097152",
+        "pidsMax": "64",
+        "pidsCurrent": "6",
+        "memoryEvents": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+      }
+    },
+    {
+      "id": "69d3a264bc8b12c22afc06451d8e677d9f505a60143a868b92dbc4aa7ad6bd58",
+      "name": "yz-rd-t106-minio-1",
+      "image": "minio/minio:latest",
+      "project": "yz-rd-t106",
+      "service": "minio",
+      "taskLabel": null,
+      "roleLabel": null,
+      "hostConfig": {
+        "nanoCpus": 1000000000,
+        "memory": 805306368,
+        "memorySwapTotal": 1610612736,
+        "pidsLimit": 192
+      },
+      "restartCount": 0,
+      "oomKilled": false,
+      "health": null,
+      "cgroup": {
+        "cpuMax": "100000 100000",
+        "memoryMax": "805306368",
+        "memoryCurrent": "76845056",
+        "memorySwapMax": "805306368",
+        "memorySwapCurrent": "24309760",
+        "pidsMax": "192",
+        "pidsCurrent": "21",
+        "memoryEvents": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+      }
+    }
+  ],
+  "activeT109Containers": [
+    {
+      "id": "a4985f6794a0eb7c9f349dcd1fb0a40f179f7837ccedf51618dafbdaee1cc2d9",
+      "name": "yz-rd-t109-frontend-1",
+      "image": "node:24-alpine",
+      "project": "yz-rd-t109",
+      "service": "frontend",
+      "taskLabel": "YZ-RD-T109",
+      "roleLabel": null,
+      "hostConfig": {
+        "nanoCpus": 500000000,
+        "memory": 402653184,
+        "memorySwapTotal": 402653184,
+        "pidsLimit": 128
+      },
+      "restartCount": 0,
+      "oomKilled": false,
+      "health": "healthy",
+      "cgroup": {
+        "cpuMax": "50000 100000",
+        "memoryMax": "402653184",
+        "memoryCurrent": "35635200",
+        "memorySwapMax": "0",
+        "memorySwapCurrent": "0",
+        "pidsMax": "128",
+        "pidsCurrent": "11",
+        "memoryEvents": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+      }
+    },
+    {
+      "id": "11b2702b4a345617f3c5937e10864b05395754c31cb4a4a4b34281f3e50dbede",
+      "name": "yz-rd-t109-api-1",
+      "image": "node:24-alpine",
+      "project": "yz-rd-t109",
+      "service": "api",
+      "taskLabel": "YZ-RD-T109",
+      "roleLabel": null,
+      "hostConfig": {
+        "nanoCpus": 1000000000,
+        "memory": 805306368,
+        "memorySwapTotal": 805306368,
+        "pidsLimit": 192
+      },
+      "restartCount": 0,
+      "oomKilled": false,
+      "health": "healthy",
+      "cgroup": {
+        "cpuMax": "100000 100000",
+        "memoryMax": "805306368",
+        "memoryCurrent": "136019968",
+        "memorySwapMax": "0",
+        "memorySwapCurrent": "0",
+        "pidsMax": "192",
+        "pidsCurrent": "11",
+        "memoryEvents": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+      }
+    },
+    {
+      "id": "05849b1c8d3c8e8ace8b33148bfd03c20b4c7e013131e15a8d408e383520e097",
+      "name": "yz-rd-t109-minio-1",
+      "image": "minio/minio:latest",
+      "project": "yz-rd-t109",
+      "service": "minio",
+      "taskLabel": "YZ-RD-T109",
+      "roleLabel": null,
+      "hostConfig": {
+        "nanoCpus": 500000000,
+        "memory": 402653184,
+        "memorySwapTotal": 402653184,
+        "pidsLimit": 128
+      },
+      "restartCount": 0,
+      "oomKilled": false,
+      "health": "healthy",
+      "cgroup": {
+        "cpuMax": "50000 100000",
+        "memoryMax": "402653184",
+        "memoryCurrent": "87429120",
+        "memorySwapMax": "0",
+        "memorySwapCurrent": "0",
+        "pidsMax": "128",
+        "pidsCurrent": "21",
+        "memoryEvents": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+      }
+    },
+    {
+      "id": "8b70ef96fdcd959eec0a7611e0a37d709345a1dbd4c7aeb0c91a2fa93b6006fa",
+      "name": "yz-rd-t109-postgres-1",
+      "image": "postgres:17-alpine",
+      "project": "yz-rd-t109",
+      "service": "postgres",
+      "taskLabel": "YZ-RD-T109",
+      "roleLabel": null,
+      "hostConfig": {
+        "nanoCpus": 1000000000,
+        "memory": 805306368,
+        "memorySwapTotal": 805306368,
+        "pidsLimit": 256
+      },
+      "restartCount": 0,
+      "oomKilled": false,
+      "health": "healthy",
+      "cgroup": {
+        "cpuMax": "100000 100000",
+        "memoryMax": "805306368",
+        "memoryCurrent": "30183424",
+        "memorySwapMax": "0",
+        "memorySwapCurrent": "0",
+        "pidsMax": "256",
+        "pidsCurrent": "7",
+        "memoryEvents": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+      }
+    },
+    {
+      "id": "d7da7474cfce7cec114a5e47294ecb252bc2db12bc468b16240d82800e20356a",
+      "name": "yz-rd-t109-redis-1",
+      "image": "redis:7-alpine",
+      "project": "yz-rd-t109",
+      "service": "redis",
+      "taskLabel": "YZ-RD-T109",
+      "roleLabel": null,
+      "hostConfig": {
+        "nanoCpus": 250000000,
+        "memory": 134217728,
+        "memorySwapTotal": 134217728,
+        "pidsLimit": 64
+      },
+      "restartCount": 0,
+      "oomKilled": false,
+      "health": "healthy",
+      "cgroup": {
+        "cpuMax": "25000 100000",
+        "memoryMax": "134217728",
+        "memoryCurrent": "3645440",
+        "memorySwapMax": "0",
+        "memorySwapCurrent": "0",
+        "pidsMax": "64",
+        "pidsCurrent": "6",
+        "memoryEvents": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+      }
+    }
+  ],
+  "plannedMissingT109Roles": [
+    "browser"
+  ],
+  "budget": {
+    "activeExternalCpuCap": 4.5,
+    "activeOrPlannedT109CpuCap": 4.0,
+    "activePlusPlannedCpuCap": 8.5,
+    "cpuHeadroom": 7.5,
+    "activeExternalMemoryPotentialGrowthBytes": 3050549248,
+    "t109PlannedMemoryBytes": 1174405120,
+    "t109ActiveOrPlannedMemoryPotentialGrowthBytes": 3431628800,
+    "projectedMemAvailableMarginBytes": 8289861632,
+    "activeExternalSwapPotentialGrowthBytes": 3057045504,
+    "t109PlannedAdditionalSwapBytes": 0,
+    "t109ActiveOrPlannedSwapPotentialGrowthBytes": 0,
+    "projectedSwapFreeMarginBytes": 3938258944,
+    "activeExternalPidPotentialGrowth": 777,
+    "t109PlannedPids": 256,
+    "t109ActiveOrPlannedPidPotentialGrowth": 968,
+    "projectedHostTasks": 5208,
+    "kernelThreadsMax": 253482,
+    "threadHeadroom": 248274
+  },
+  "hardFailures": [],
+  "softFailures": []
+}

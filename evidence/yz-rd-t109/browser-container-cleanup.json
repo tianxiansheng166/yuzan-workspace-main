@@ -1,0 +1,267 @@
+{
+  "taskId": "YZ-RD-T109",
+  "removedStoppedBrowserContainers": 20,
+  "containers": [
+    {
+      "name": "yz-rd-t109-browser-e2e-19",
+      "state": "exited",
+      "exitCode": 0,
+      "restartCount": 0,
+      "oomKilled": false,
+      "caps": {
+        "nanoCpus": 750000000,
+        "memory": 1174405120,
+        "memorySwapTotal": 1174405120,
+        "pidsLimit": 256
+      }
+    },
+    {
+      "name": "yz-rd-t109-browser-e2e-18",
+      "state": "exited",
+      "exitCode": 0,
+      "restartCount": 0,
+      "oomKilled": false,
+      "caps": {
+        "nanoCpus": 750000000,
+        "memory": 1174405120,
+        "memorySwapTotal": 1174405120,
+        "pidsLimit": 256
+      }
+    },
+    {
+      "name": "yz-rd-t109-browser-e2e-17",
+      "state": "exited",
+      "exitCode": 0,
+      "restartCount": 0,
+      "oomKilled": false,
+      "caps": {
+        "nanoCpus": 750000000,
+        "memory": 1174405120,
+        "memorySwapTotal": 1174405120,
+        "pidsLimit": 256
+      }
+    },
+    {
+      "name": "yz-rd-t109-browser-e2e-16",
+      "state": "exited",
+      "exitCode": 0,
+      "restartCount": 0,
+      "oomKilled": false,
+      "caps": {
+        "nanoCpus": 750000000,
+        "memory": 1174405120,
+        "memorySwapTotal": 1174405120,
+        "pidsLimit": 256
+      }
+    },
+    {
+      "name": "yz-rd-t109-browser-e2e-15",
+      "state": "exited",
+      "exitCode": 1,
+      "restartCount": 0,
+      "oomKilled": false,
+      "caps": {
+        "nanoCpus": 750000000,
+        "memory": 1174405120,
+        "memorySwapTotal": 1174405120,
+        "pidsLimit": 256
+      }
+    },
+    {
+      "name": "yz-rd-t109-browser-e2e-14",
+      "state": "exited",
+      "exitCode": 1,
+      "restartCount": 0,
+      "oomKilled": false,
+      "caps": {
+        "nanoCpus": 750000000,
+        "memory": 1174405120,
+        "memorySwapTotal": 1174405120,
+        "pidsLimit": 256
+      }
+    },
+    {
+      "name": "yz-rd-t109-browser-e2e-13",
+      "state": "exited",
+      "exitCode": 1,
+      "restartCount": 0,
+      "oomKilled": false,
+      "caps": {
+        "nanoCpus": 750000000,
+        "memory": 1174405120,
+        "memorySwapTotal": 1174405120,
+        "pidsLimit": 256
+      }
+    },
+    {
+      "name": "yz-rd-t109-browser-e2e-12",
+      "state": "exited",
+      "exitCode": 1,
+      "restartCount": 0,
+      "oomKilled": false,
+      "caps": {
+        "nanoCpus": 750000000,
+        "memory": 1174405120,
+        "memorySwapTotal": 1174405120,
+        "pidsLimit": 256
+      }
+    },
+    {
+      "name": "yz-rd-t109-browser-e2e-11",
+      "state": "exited",
+      "exitCode": 1,
+      "restartCount": 0,
+      "oomKilled": false,
+      "caps": {
+        "nanoCpus": 750000000,
+        "memory": 1174405120,
+        "memorySwapTotal": 1174405120,
+        "pidsLimit": 256
+      }
+    },
+    {
+      "name": "yz-rd-t109-browser-e2e-10",
+      "state": "exited",
+      "exitCode": 1,
+      "restartCount": 0,
+      "oomKilled": false,
+      "caps": {
+        "nanoCpus": 750000000,
+        "memory": 1174405120,
+        "memorySwapTotal": 1174405120,
+        "pidsLimit": 256
+      }
+    },
+    {
+      "name": "yz-rd-t109-browser-e2e-09",
+      "state": "exited",
+      "exitCode": 1,
+      "restartCount": 0,
+      "oomKilled": false,
+      "caps": {
+        "nanoCpus": 750000000,
+        "memory": 1174405120,
+        "memorySwapTotal": 1174405120,
+        "pidsLimit": 256
+      }
+    },
+    {
+      "name": "yz-rd-t109-browser-e2e-08",
+      "state": "exited",
+      "exitCode": 1,
+      "restartCount": 0,
+      "oomKilled": false,
+      "caps": {
+        "nanoCpus": 750000000,
+        "memory": 1174405120,
+        "memorySwapTotal": 1174405120,
+        "pidsLimit": 256
+      }
+    },
+    {
+      "name": "yz-rd-t109-browser-e2e-07",
+      "state": "exited",
+      "exitCode": 1,
+      "restartCount": 0,
+      "oomKilled": false,
+      "caps": {
+        "nanoCpus": 750000000,
+        "memory": 1174405120,
+        "memorySwapTotal": 1174405120,
+        "pidsLimit": 256
+      }
+    },
+    {
+      "name": "yz-rd-t109-browser-e2e-06",
+      "state": "exited",
+      "exitCode": 1,
+      "restartCount": 0,
+      "oomKilled": false,
+      "caps": {
+        "nanoCpus": 750000000,
+        "memory": 1174405120,
+        "memorySwapTotal": 1174405120,
+        "pidsLimit": 256
+      }
+    },
+    {
+      "name": "yz-rd-t109-browser-e2e-05",
+      "state": "exited",
+      "exitCode": 1,
+      "restartCount": 0,
+      "oomKilled": false,
+      "caps": {
+        "nanoCpus": 750000000,
+        "memory": 1174405120,
+        "memorySwapTotal": 1174405120,
+        "pidsLimit": 256
+      }
+    },
+    {
+      "name": "yz-rd-t109-browser-e2e-04",
+      "state": "exited",
+      "exitCode": 1,
+      "restartCount": 0,
+      "oomKilled": false,
+      "caps": {
+        "nanoCpus": 750000000,
+        "memory": 1174405120,
+        "memorySwapTotal": 1174405120,
+        "pidsLimit": 256
+      }
+    },
+    {
+      "name": "yz-rd-t109-browser-e2e-03",
+      "state": "exited",
+      "exitCode": 1,
+      "restartCount": 0,
+      "oomKilled": false,
+      "caps": {
+        "nanoCpus": 750000000,
+        "memory": 1174405120,
+        "memorySwapTotal": 1174405120,
+        "pidsLimit": 256
+      }
+    },
+    {
+      "name": "yz-rd-t109-browser-e2e-02",
+      "state": "exited",
+      "exitCode": 1,
+      "restartCount": 0,
+      "oomKilled": false,
+      "caps": {
+        "nanoCpus": 750000000,
+        "memory": 1174405120,
+        "memorySwapTotal": 1174405120,
+        "pidsLimit": 256
+      }
+    },
+    {
+      "name": "yz-rd-t109-browser-e2e",
+      "state": "exited",
+      "exitCode": 1,
+      "restartCount": 0,
+      "oomKilled": false,
+      "caps": {
+        "nanoCpus": 750000000,
+        "memory": 1174405120,
+        "memorySwapTotal": 1174405120,
+        "pidsLimit": 256
+      }
+    },
+    {
+      "name": "yz-rd-t109-browser-register",
+      "state": "exited",
+      "exitCode": 0,
+      "restartCount": 0,
+      "oomKilled": false,
+      "caps": {
+        "nanoCpus": 750000000,
+        "memory": 1174405120,
+        "memorySwapTotal": 1174405120,
+        "pidsLimit": 256
+      }
+    }
+  ],
+  "volumesOrNetworksRemoved": false
+}

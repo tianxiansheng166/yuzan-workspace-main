@@ -1,0 +1,243 @@
+{
+  "taskId": "YZ-RD-T109",
+  "decision": "PASS",
+  "sourceT108Sha": "8974c2a7d5842bb20dbfcd091b63cac5674dcc32",
+  "runtimeProject": "yz-rd-t109",
+  "thresholds": {
+    "minimumProjectedMemoryMarginBytes": 2147483648,
+    "minimumProjectedSwapMarginBytes": 2147483648,
+    "minimumCpuHeadroom": 4.0,
+    "maximumProjectedThreadFraction": 0.75
+  },
+  "host": {
+    "capturedAtUtc": "2026-10-21T18:34:44.295549+00:00",
+    "cpuCount": 16,
+    "memTotalBytes": 33471057920,
+    "memAvailableBytes": 15226552320,
+    "swapTotalBytes": 17179860992,
+    "swapFreeBytes": 6728409088,
+    "loadAverage": [
+      0.89,
+      1.25,
+      2.05
+    ],
+    "ioPressure": {
+      "some": {
+        "avg10": 0.02,
+        "avg60": 0.1,
+        "avg300": 0.39,
+        "total": 37463469329.0
+      },
+      "full": {
+        "avg10": 0.01,
+        "avg60": 0.07,
+        "avg300": 0.32,
+        "total": 33396468039.0
+      }
+    },
+    "kernelThreadsMax": 253482,
+    "kernelPidMax": 4194304,
+    "hostTasksCurrent": 3605
+  },
+  "activeNonT109Containers": [
+    {
+      "id": "4091631df0aec9948de98999fce125015cb255eedeb791eac0312f712d5fae91",
+      "name": "aa-p1user-t028-ui-920744",
+      "image": "ros:humble-ros-base",
+      "project": null,
+      "service": null,
+      "taskLabel": null,
+      "roleLabel": null,
+      "hostConfig": {
+        "nanoCpus": 2000000000,
+        "memory": 4294967296,
+        "memorySwapTotal": 4294967296,
+        "pidsLimit": 256
+      },
+      "restartCount": 0,
+      "oomKilled": false,
+      "health": null,
+      "cgroup": {
+        "cpuMax": "200000 100000",
+        "memoryMax": "4294967296",
+        "memoryCurrent": "186060800",
+        "memorySwapMax": "0",
+        "memorySwapCurrent": "0",
+        "pidsMax": "256",
+        "pidsCurrent": "3",
+        "memoryEvents": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+      }
+    },
+    {
+      "id": "a2a31f67ca2dcfca6e949c6cd4d4dfcd1c86c76dc1efdbe05c04c1afc445ea20",
+      "name": "yz-rd-t106-frontend-1",
+      "image": "node:24-alpine",
+      "project": "yz-rd-t106",
+      "service": "frontend",
+      "taskLabel": null,
+      "roleLabel": null,
+      "hostConfig": {
+        "nanoCpus": 500000000,
+        "memory": 402653184,
+        "memorySwapTotal": 805306368,
+        "pidsLimit": 128
+      },
+      "restartCount": 0,
+      "oomKilled": false,
+      "health": null,
+      "cgroup": {
+        "cpuMax": "50000 100000",
+        "memoryMax": "402653184",
+        "memoryCurrent": "11444224",
+        "memorySwapMax": "402653184",
+        "memorySwapCurrent": "19480576",
+        "pidsMax": "128",
+        "pidsCurrent": "11",
+        "memoryEvents": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+      }
+    },
+    {
+      "id": "69e1519eef2d8145c463fb9b76816bcb2b93e06f93343591b2f0dc8d23f3870a",
+      "name": "yz-rd-t106-api-1",
+      "image": "node:24-alpine",
+      "project": "yz-rd-t106",
+      "service": "api",
+      "taskLabel": null,
+      "roleLabel": null,
+      "hostConfig": {
+        "nanoCpus": 1000000000,
+        "memory": 805306368,
+        "memorySwapTotal": 1610612736,
+        "pidsLimit": 192
+      },
+      "restartCount": 0,
+      "oomKilled": false,
+      "health": null,
+      "cgroup": {
+        "cpuMax": "100000 100000",
+        "memoryMax": "805306368",
+        "memoryCurrent": "52703232",
+        "memorySwapMax": "805306368",
+        "memorySwapCurrent": "94081024",
+        "pidsMax": "192",
+        "pidsCurrent": "11",
+        "memoryEvents": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+      }
+    },
+    {
+      "id": "9b3182528732f3a9af0049db44223863225883ae8e455761ab0095285c87704e",
+      "name": "yz-rd-t106-postgres-1",
+      "image": "postgres:17-alpine",
+      "project": "yz-rd-t106",
+      "service": "postgres",
+      "taskLabel": null,
+      "roleLabel": null,
+      "hostConfig": {
+        "nanoCpus": 1500000000,
+        "memory": 1073741824,
+        "memorySwapTotal": 2147483648,
+        "pidsLimit": 256
+      },
+      "restartCount": 0,
+      "oomKilled": false,
+      "health": "healthy",
+      "cgroup": {
+        "cpuMax": "150000 100000",
+        "memoryMax": "1073741824",
+        "memoryCurrent": "23433216",
+        "memorySwapMax": "1073741824",
+        "memorySwapCurrent": "24264704",
+        "pidsMax": "256",
+        "pidsCurrent": "6",
+        "memoryEvents": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+      }
+    },
+    {
+      "id": "c130375c6aa9868383c2075b7125b95bb17f5c85513c4b97bc5fddc3d66a2605",
+      "name": "yz-rd-t106-redis-1",
+      "image": "redis:7-alpine",
+      "project": "yz-rd-t106",
+      "service": "redis",
+      "taskLabel": null,
+      "roleLabel": null,
+      "hostConfig": {
+        "nanoCpus": 500000000,
+        "memory": 134217728,
+        "memorySwapTotal": 268435456,
+        "pidsLimit": 64
+      },
+      "restartCount": 0,
+      "oomKilled": false,
+      "health": "healthy",
+      "cgroup": {
+        "cpuMax": "50000 100000",
+        "memoryMax": "134217728",
+        "memoryCurrent": "6258688",
+        "memorySwapMax": "134217728",
+        "memorySwapCurrent": "2101248",
+        "pidsMax": "64",
+        "pidsCurrent": "6",
+        "memoryEvents": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+      }
+    },
+    {
+      "id": "69d3a264bc8b12c22afc06451d8e677d9f505a60143a868b92dbc4aa7ad6bd58",
+      "name": "yz-rd-t106-minio-1",
+      "image": "minio/minio:latest",
+      "project": "yz-rd-t106",
+      "service": "minio",
+      "taskLabel": null,
+      "roleLabel": null,
+      "hostConfig": {
+        "nanoCpus": 1000000000,
+        "memory": 805306368,
+        "memorySwapTotal": 1610612736,
+        "pidsLimit": 192
+      },
+      "restartCount": 0,
+      "oomKilled": false,
+      "health": null,
+      "cgroup": {
+        "cpuMax": "100000 100000",
+        "memoryMax": "805306368",
+        "memoryCurrent": "76079104",
+        "memorySwapMax": "805306368",
+        "memorySwapCurrent": "24518656",
+        "pidsMax": "192",
+        "pidsCurrent": "21",
+        "memoryEvents": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+      }
+    }
+  ],
+  "activeT109Containers": [],
+  "plannedMissingT109Roles": [
+    "postgres",
+    "redis",
+    "minio",
+    "api",
+    "frontend",
+    "browser"
+  ],
+  "budget": {
+    "activeExternalCpuCap": 6.5,
+    "activeOrPlannedT109CpuCap": 4.0,
+    "activePlusPlannedCpuCap": 10.5,
+    "cpuHeadroom": 5.5,
+    "activeExternalMemoryPotentialGrowthBytes": 7160213504,
+    "t109PlannedMemoryBytes": 3724541952,
+    "t109ActiveOrPlannedMemoryPotentialGrowthBytes": 3724541952,
+    "projectedMemAvailableMarginBytes": 4341796864,
+    "activeExternalSwapPotentialGrowthBytes": 3056779264,
+    "t109PlannedAdditionalSwapBytes": 0,
+    "t109ActiveOrPlannedSwapPotentialGrowthBytes": 0,
+    "projectedSwapFreeMarginBytes": 3671629824,
+    "activeExternalPidPotentialGrowth": 1030,
+    "t109PlannedPids": 1024,
+    "t109ActiveOrPlannedPidPotentialGrowth": 1024,
+    "projectedHostTasks": 5659,
+    "kernelThreadsMax": 253482,
+    "threadHeadroom": 247823
+  },
+  "hardFailures": [],
+  "softFailures": []
+}

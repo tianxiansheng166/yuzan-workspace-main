@@ -1,0 +1,15 @@
+{
+  "taskId": "YZ-RD-T109",
+  "status": "PASS",
+  "database": "yz_rd_t109",
+  "resourceIdPrefix": "a6f391e2",
+  "mediaType": "video/webm",
+  "activeObjectKey": "t109-native-acceptance/flower.webm",
+  "sourceBytes": 554058,
+  "sourceSha256": "c6f8a348953395598a9a73b9bab1676436410797bce9f398f4be1531d6e76dda",
+  "minioHeadContentType": "video/webm",
+  "independentMinioGetSha256Matched": true,
+  "oldMp4ObjectPreserved": true,
+  "courseActivityReferenceReused": true,
+  "t106OrOtherDatabaseChanged": false
+}

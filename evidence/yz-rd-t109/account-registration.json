@@ -1,0 +1,12 @@
+{
+  "taskId": "YZ-RD-T109",
+  "status": "PASS",
+  "accountAlias": "T109-STUDENT-01",
+  "registrationHttpStatus": 201,
+  "registrationRoute": "/api/v1/auth/register",
+  "role": "STUDENT",
+  "schoolIdPrefix": "ec4b5134",
+  "userIdPrefix": "eba256e4",
+  "tokensPersisted": false,
+  "registeredAtUtc": "2026-10-21T18:39:09.254327+00:00"
+}

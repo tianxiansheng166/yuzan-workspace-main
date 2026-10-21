@@ -1,0 +1,143 @@
+[
+  {
+    "host": "frontend",
+    "method": "GET",
+    "category": "application-api",
+    "status": 200,
+    "count": 183,
+    "mediaHeaders": null
+  },
+  {
+    "host": "frontend",
+    "method": "GET",
+    "category": "application-api",
+    "status": 301,
+    "count": 1,
+    "mediaHeaders": null
+  },
+  {
+    "host": "frontend",
+    "method": "GET",
+    "category": "assessment-report",
+    "status": 200,
+    "count": 1,
+    "mediaHeaders": null
+  },
+  {
+    "host": "frontend",
+    "method": "GET",
+    "category": "course-list",
+    "status": 200,
+    "count": 4,
+    "mediaHeaders": null
+  },
+  {
+    "host": "frontend",
+    "method": "GET",
+    "category": "course-recommendations",
+    "status": 200,
+    "count": 4,
+    "mediaHeaders": null
+  },
+  {
+    "host": "frontend",
+    "method": "GET",
+    "category": "growth-api",
+    "status": 200,
+    "count": 15,
+    "mediaHeaders": null
+  },
+  {
+    "host": "frontend",
+    "method": "GET",
+    "category": "practice-attempt",
+    "status": 200,
+    "count": 12,
+    "mediaHeaders": null
+  },
+  {
+    "host": "frontend",
+    "method": "GET",
+    "category": "signed-playback-url",
+    "status": 200,
+    "count": 11,
+    "mediaHeaders": null
+  },
+  {
+    "host": "frontend",
+    "method": "GET",
+    "category": "today-api",
+    "status": 200,
+    "count": 8,
+    "mediaHeaders": null
+  },
+  {
+    "host": "frontend",
+    "method": "GET",
+    "category": "today-api",
+    "status": 301,
+    "count": 2,
+    "mediaHeaders": null
+  },
+  {
+    "host": "frontend",
+    "method": "POST",
+    "category": "application-api",
+    "status": 201,
+    "count": 7,
+    "mediaHeaders": null
+  },
+  {
+    "host": "frontend",
+    "method": "POST",
+    "category": "auth-login",
+    "status": 200,
+    "count": 1,
+    "mediaHeaders": null
+  },
+  {
+    "host": "frontend",
+    "method": "POST",
+    "category": "practice-attempt",
+    "status": 201,
+    "count": 2,
+    "mediaHeaders": null
+  },
+  {
+    "host": "frontend",
+    "method": "POST",
+    "category": "practice-submit",
+    "status": 201,
+    "count": 1,
+    "mediaHeaders": null
+  },
+  {
+    "host": "frontend",
+    "method": "PUT",
+    "category": "course-activity-progress",
+    "status": 200,
+    "count": 3,
+    "mediaHeaders": null
+  },
+  {
+    "host": "frontend",
+    "method": "PUT",
+    "category": "course-activity-progress",
+    "status": 503,
+    "count": 1,
+    "mediaHeaders": null
+  },
+  {
+    "host": "minio",
+    "method": "GET",
+    "category": "minio-media",
+    "status": 206,
+    "count": 20,
+    "mediaHeaders": {
+      "content-type": "video/webm",
+      "content-length": "95306",
+      "content-range": "bytes 458752-554057/554058",
+      "accept-ranges": "bytes"
+    }
+  }
+]

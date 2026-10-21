@@ -1,9 +1,9 @@
 import { createHash } from "node:crypto";
 import { createReadStream, readFileSync, statSync } from "node:fs";
 import { createRequire } from "node:module";
-import { PrismaClient } from "@yuzan/database";
 
 const requireApi = createRequire(new URL("../../backend/api/package.json", import.meta.url));
+const { PrismaClient } = requireApi("@yuzan/database");
 const { PrismaPg } = requireApi("@prisma/adapter-pg");
 const { Pool } = requireApi("pg");
 const {
@@ -29,8 +29,8 @@ function sha256(buffer) {
 }
 
 const bucket = required("S3_BUCKET");
-const objectKey = "t109-native-acceptance/flower.mp4";
-const mediaPath = "/seed/flower.mp4";
+const objectKey = "t109-native-acceptance/flower.webm";
+const mediaPath = "/seed/flower.webm";
 const mediaStats = statSync(mediaPath);
 const mediaHash = sha256(readFileSync(mediaPath));
 const studentIdentifier = required("T109_STUDENT_IDENTIFIER");
@@ -73,7 +73,7 @@ try {
     Key: objectKey,
     Body: createReadStream(mediaPath),
     ContentLength: mediaStats.size,
-    ContentType: "video/mp4",
+    ContentType: "video/webm",
     Metadata: { license: "CC0-1.0", source: "mdn-interactive-examples" },
   }));
   const head = await s3.send(new HeadObjectCommand({ Bucket: bucket, Key: objectKey }));
@@ -137,9 +137,9 @@ try {
         schoolId: school.id,
         visibility: "SCHOOL",
         title: "T109 情境问候练习",
-        summary: "T109 自建的一道无录音选择题，用于验证空答交卷计分。",
+        summary: "T109 自建的20道无录音选择题，用于验证全部空答交卷计分。",
         difficulty: "入门",
-        estimatedMinutes: 1,
+        estimatedMinutes: 5,
         gradeBand: "七年级",
         abilityCategories: ["句子理解"],
         cultureTags: ["T109-TEST-ONLY"],
@@ -149,69 +149,80 @@ try {
         status: "PUBLISHED",
       },
     });
-    const deliverySpec = {
-      stimulus: { type: "TEXT", promptText: "在新的一天开始时，哪句话是友好的问候？" },
-      response: {
-        type: "CHOICE",
-        options: [
-          { key: "A", text: "再见。" },
-          { key: "B", text: "早上好。" },
-        ],
-      },
-    };
-    const scoringSpec = { strategy: "EXACT_CHOICE", maxScore: 5, referenceAnswer: "B" };
+    const questionSpecs = Array.from({ length: 20 }, (_, index) => {
+      const ordinal = index + 1;
+      return {
+        ordinal,
+        stableKey: `t109-synthetic-empty-choice-${String(ordinal).padStart(3, "0")}`,
+        deliverySpec: {
+          stimulus: { type: "TEXT", promptText: `第 ${ordinal} 题：在新的一天开始时，哪句话是友好的问候？` },
+          response: {
+            type: "CHOICE",
+            options: [
+              { key: "A", text: "再见。" },
+              { key: "B", text: "早上好。" },
+            ],
+          },
+        },
+        scoringSpec: { strategy: "EXACT_CHOICE", maxScore: 5, referenceAnswer: "B" },
+      };
+    });
     const practiceVersion = await tx.practiceVersion.create({
       data: {
         definitionId: practice.id,
         version: 1,
         status: "PUBLISHED",
-        contentHash: sha256(Buffer.from(JSON.stringify({ deliverySpec, scoringSpec }))),
+        contentHash: sha256(Buffer.from(JSON.stringify(questionSpecs))),
         publishedAt: now,
       },
     });
     const section = await tx.practiceSection.create({
       data: {
         versionId: practiceVersion.id,
-        title: "T109 情境判断",
-        description: "测试题由 T109 单独编写，不含录音要求。",
+        title: "T109 情境判断（20道）",
+        description: "20道测试题由 T109 单独编写，不含录音要求。",
         sortOrder: 1,
-        estimatedMinutes: 1,
+        estimatedMinutes: 5,
       },
     });
-    const question = await tx.questionBankItem.create({
-      data: {
-        schoolId: school.id,
-        stableKey: "t109-synthetic-empty-choice-001",
-        domain: "READ",
-        questionType: "SENTENCE_COMPREHENSION",
-        level: "T109-TEST-ONLY",
-        abilityCategory: "句子理解",
-        gradeBand: "七年级",
-        difficulty: "入门",
-        itemType: "SINGLE_CHOICE",
-      },
-    });
-    const questionVersion = await tx.questionBankItemVersion.create({
-      data: {
-        itemId: question.id,
-        version: 1,
-        deliverySpec,
-        scoringSpec,
-        sourceTrace: { taskId: "YZ-RD-T109", origin: "synthetic T109-only test item" },
-        status: "PUBLISHED",
-        publishedAt: now,
-      },
-    });
-    await tx.practiceItemRef.create({
-      data: {
-        sectionId: section.id,
-        questionId: question.id,
-        questionVersionId: questionVersion.id,
-        itemType: "SINGLE_CHOICE",
-        sortOrder: 1,
-        config: deliverySpec,
-      },
-    });
+    const questionVersions = [];
+    for (const spec of questionSpecs) {
+      const question = await tx.questionBankItem.create({
+        data: {
+          schoolId: school.id,
+          stableKey: spec.stableKey,
+          domain: "READ",
+          questionType: "SENTENCE_COMPREHENSION",
+          level: "T109-TEST-ONLY",
+          abilityCategory: "句子理解",
+          gradeBand: "七年级",
+          difficulty: "入门",
+          itemType: "SINGLE_CHOICE",
+        },
+      });
+      const questionVersion = await tx.questionBankItemVersion.create({
+        data: {
+          itemId: question.id,
+          version: 1,
+          deliverySpec: spec.deliverySpec,
+          scoringSpec: spec.scoringSpec,
+          sourceTrace: { taskId: "YZ-RD-T109", origin: "synthetic T109-only test item", ordinal: spec.ordinal },
+          status: "PUBLISHED",
+          publishedAt: now,
+        },
+      });
+      questionVersions.push(questionVersion);
+      await tx.practiceItemRef.create({
+        data: {
+          sectionId: section.id,
+          questionId: question.id,
+          questionVersionId: questionVersion.id,
+          itemType: "SINGLE_CHOICE",
+          sortOrder: spec.ordinal,
+          config: spec.deliverySpec,
+        },
+      });
+    }
     await tx.practiceDelivery.create({
       data: {
         practiceVersionId: practiceVersion.id,
@@ -295,12 +306,12 @@ try {
         schoolId: school.id,
         kind: "VIDEO",
         objectKey,
-        originalName: "flower.mp4",
-        mediaType: "video/mp4",
+        originalName: "flower.webm",
+        mediaType: "video/webm",
         byteSize: BigInt(mediaStats.size),
         checksumSha256: mediaHash,
         rightsStatus: "APPROVED",
-        rightsNote: "MDN interactive-examples flower.mp4; CC0-1.0; source recorded in evidence/yz-rd-t109/media-license.json.",
+        rightsNote: "MDN interactive-examples flower.webm; CC0-1.0; source recorded in evidence/yz-rd-t109/media-license.json.",
       },
     });
     await tx.activityResource.create({
@@ -407,7 +418,8 @@ try {
       videoActivityId: videoActivity.id,
       practiceActivityId: practiceActivity.id,
       practiceDefinitionId: practice.id,
-      questionVersionId: questionVersion.id,
+      questionVersionId: questionVersions[0].id,
+      questionVersionCount: questionVersions.length,
       resourceId: resource.id,
     };
   });
@@ -425,12 +437,12 @@ try {
       openAssignments: 2,
       licensedVideoResources: 1,
       practices: 1,
-      syntheticQuestionVersions: 1,
+      syntheticQuestionVersions: 20,
       recordings: 0,
     },
     ids: Object.fromEntries(Object.entries(seeded).map(([key, value]) => [key, prefix(value)])),
     media: {
-      source: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
+      source: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm",
       license: "CC0-1.0",
       objectKey,
       bytes: Number(head.ContentLength),

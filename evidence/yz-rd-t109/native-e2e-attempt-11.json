@@ -1,0 +1,27 @@
+{
+  "taskId": "YZ-RD-T109",
+  "sourceT108Sha": "8974c2a7d5842bb20dbfcd091b63cac5674dcc32",
+  "status": "INCOMPLETE_STATE_REUSE",
+  "stage": "course-detail-api-and-media-source",
+  "loginHttpStatus": 200,
+  "courseApiVideoActivity": {
+    "type": "VIDEO",
+    "resourceCount": 1,
+    "resourceKind": "VIDEO",
+    "mediaType": "video/webm",
+    "originalName": "flower.webm"
+  },
+  "playerState": {
+    "currentActivityType": "TEXT",
+    "resourceCount": 0
+  },
+  "videoLoadingDiagnostic": {
+    "readyState": 0,
+    "networkState": 0,
+    "mediaErrorCode": null,
+    "visibleError": true,
+    "errorMessage": "本节暂无可播放的视频。"
+  },
+  "databaseState": "PostgreSQL showed the prior run had completed the VIDEO activity (position 1, completed true).",
+  "interpretation": "The active player was on the following TEXT activity, while the live course API still contained the correct T109 WebM VIDEO resource. The next attempt resets only this task's completed test progress and explicitly selects the video row before the decode assertions."
+}

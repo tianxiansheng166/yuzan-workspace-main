@@ -1,0 +1,48 @@
+{
+  "taskId": "YZ-RD-T109",
+  "sourceT108Sha": "8974c2a7d5842bb20dbfcd091b63cac5674dcc32",
+  "runtimeProject": "yz-rd-t109",
+  "status": "FAIL_MP4_UNSUPPORTED_BY_TEST_BROWSER",
+  "stage": "course-detail-api-and-media-source",
+  "loginHttpStatus": 200,
+  "upstreamResponses": {
+    "todayApiHttp200": true,
+    "growthApiHttp200": true,
+    "courseListHttp200": true,
+    "recommendationHttp200": true,
+    "signedPlaybackUrlHttp200": true,
+    "minioHttp206": true,
+    "minioHeaders": {
+      "contentType": "video/mp4",
+      "contentLength": 1128375,
+      "contentRange": "bytes 0-1128374/1128375",
+      "acceptRanges": "bytes"
+    }
+  },
+  "video": {
+    "readyState": 0,
+    "networkState": 3,
+    "mediaErrorCode": 4,
+    "width": 0,
+    "height": 0,
+    "sourceHost": "minio",
+    "sourceScheme": "http:",
+    "visibleError": true,
+    "errorMessage": "视频加载失败，请检查网络后重试。",
+    "decodedFrame": false,
+    "playbackTimeAdvanced": false
+  },
+  "failedRequest": { "host": "minio", "method": "GET", "resourceType": "media", "failure": "net::ERR_ABORTED" },
+  "sourceAsset": {
+    "videoCodec": "h264",
+    "videoProfile": "High",
+    "audioCodec": "aac",
+    "durationSeconds": 5.055,
+    "bytes": 1128375,
+    "sha256": "0cd83d944a6ca7822b4a8306cecc60a36e859b041f6702c6a1ad9ead78924451"
+  },
+  "browserContainer": { "oomKilled": false, "restartCount": 0 },
+  "resourceGuard": "PASS throughout; no T109 stop occurred.",
+  "screenshot": "screenshots/course-detail-video-load-failure.png",
+  "interpretation": "The T109 signed playback route and MinIO HTTP range transport worked. Playwright Chromium rejected this H.264 High/AAC file with MEDIA_ERR_SRC_NOT_SUPPORTED. The failure was shown by the product UI and no success state was asserted. The active T109 course media reference was then changed to the alternate CC0 WebM asset; this diagnostic result remains recorded."
+}

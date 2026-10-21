@@ -1,0 +1,20 @@
+{
+  "taskId": "YZ-RD-T109",
+  "status": "PASS",
+  "database": "yz_rd_t109",
+  "practiceIdPrefix": "10932650",
+  "deliveryIdPrefix": "6f46117a",
+  "oldPracticeVersionIdPrefix": "da2e736c",
+  "activePracticeVersionIdPrefix": "09b9d1b9",
+  "oldVersionSyntheticItemCount": 1,
+  "activeVersionSyntheticItemCount": 20,
+  "questionType": "SINGLE_CHOICE",
+  "eachItemMaxScore": 5,
+  "answerKeyData": "synthetic T109-only choice items; no protected question-bank content",
+  "allItemsRequireRecording": false,
+  "oldOpenT109SessionsDeleted": 2,
+  "deletedSessionStatusSummary": ["CREATED", "PROCESSING"],
+  "deletedSessionPrefixEvidence": "evidence/yz-rd-t109/practice-expansion-prior-state.json; full identifiers omitted.",
+  "recordingRows": 0,
+  "t106OrOtherDatabaseChanged": false
+}

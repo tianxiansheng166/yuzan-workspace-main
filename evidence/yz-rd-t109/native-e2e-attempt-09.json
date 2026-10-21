@@ -1,0 +1,30 @@
+{
+  "taskId": "YZ-RD-T109",
+  "sourceT108Sha": "8974c2a7d5842bb20dbfcd091b63cac5674dcc32",
+  "runtimeProject": "yz-rd-t109",
+  "status": "INCOMPLETE_HARNESS_ROUTE_EXPECTATION",
+  "stage": "course-practice-entry-and-runner",
+  "loginHttpStatus": 200,
+  "preRunnerChecks": {
+    "todayApiHttp200": true,
+    "growthApiHttp200": true,
+    "courseListHttp200": true,
+    "recommendationApiHttp200": true,
+    "signedPlaybackUrlHttp200": true,
+    "minioWebmHttp206Count": 15,
+    "videoDecodedAndAdvanced": true,
+    "partialProgressSaveHttp200": true,
+    "visibleFailureAndSafeRetry": true,
+    "progressRestoredAfterRefresh": true,
+    "endedServerConfirmed": true,
+    "activitySwitchIsolated": true,
+    "recommendationNavigated": true,
+    "practiceAttemptCreateHttp201": true
+  },
+  "actualPracticeEntryRoute": "/student/practices/attempts/[test-id]/prepare/",
+  "harnessExpectedRoute": "/student/practices/attempts/[test-id]/runner/",
+  "interpretation": "The practice entry created a real T109 attempt and followed the application's prepare route. The harness expected an immediate /runner URL and timed out before opening the runner or submitting. The project route contract uses a prepare step; next attempt will capture it and then open the dynamic runner route for the same attempt.",
+  "oomKilled": false,
+  "restartCount": 0,
+  "resourceGuard": "PASS throughout."
+}

@@ -1,0 +1,420 @@
+{
+  "taskId": "YZ-RD-T109",
+  "sourceT108Sha": "8974c2a7d5842bb20dbfcd091b63cac5674dcc32",
+  "runtimeProject": "yz-rd-t109",
+  "status": "SUPPLEMENTAL_PASS_WITH_DURATION_DIAGNOSTIC",
+  "browserVersion": "140.0.7339.16",
+  "loginHttpStatus": 200,
+  "realLogin": {
+    "status": "PASS",
+    "http": 200,
+    "route": "student-login-ui"
+  },
+  "pages": {
+    "today": "PASS",
+    "courses": "PASS",
+    "courseDetail": "PASS",
+    "growth": "PASS",
+    "runner": "PASS"
+  },
+  "course": {
+    "assignmentIdPrefix": "10498761",
+    "videoActivityIdPrefix": "ecddf803",
+    "practiceActivityIdPrefix": "2b51f5a6",
+    "recommendationAssignmentIdPrefix": "e70a1775",
+    "recommendationNavigated": true,
+    "recommendationTitle": "T109 推荐课程"
+  },
+  "video": {
+    "status": "PASS",
+    "playbackHost": "minio",
+    "durationSeconds": null,
+    "decodedFrame": {
+      "width": 960,
+      "height": 540,
+      "totalVideoFrames": 54
+    },
+    "minioHttpStatuses": [
+      206,
+      206,
+      206,
+      206,
+      206,
+      206,
+      206,
+      206,
+      206,
+      206,
+      206,
+      206,
+      206,
+      206
+    ],
+    "partialPlaybackSeconds": 1.638,
+    "partialSaveHttp": 200,
+    "transientFailureInjected503": 1,
+    "persistentFailureMessageVisible": true,
+    "safeRetryHttp": 200,
+    "restoredAfterRefreshSeconds": 2.134,
+    "endedSaveHttp": 200,
+    "endedServerConfirmed": true,
+    "otherRequiredActivityStillIncompleteAfterVideo": true,
+    "resourceFromLiveCourseApi": {
+      "activityIdPrefix": "ecddf803",
+      "activityType": "VIDEO",
+      "videoUrlPresentInActivityDto": false,
+      "resourceCount": 1,
+      "resources": [
+        {
+          "idPrefix": "a6f391e2",
+          "kind": "VIDEO",
+          "mediaType": "video/webm",
+          "originalName": "flower.webm"
+        }
+      ],
+      "playerState": {
+        "activityIdPrefix": "ecddf803",
+        "activityType": "VIDEO",
+        "videoUrlPresent": false,
+        "resourceCount": 1,
+        "resources": [
+          {
+            "kind": "VIDEO",
+            "mediaType": "video/webm",
+            "originalName": "flower.webm",
+            "idPrefix": "a6f391e2"
+          }
+        ]
+      },
+      "playerStateAfterVideoSelection": {
+        "activityIdPrefix": "ecddf803",
+        "activityType": "VIDEO",
+        "videoUrlPresent": false,
+        "resourceCount": 1,
+        "resources": [
+          {
+            "kind": "VIDEO",
+            "mediaType": "video/webm",
+            "originalName": "flower.webm",
+            "idPrefix": "a6f391e2"
+          }
+        ]
+      }
+    },
+    "coursePercentAfterVideoOnly": 50,
+    "practiceProgressAfterVideoOnly": null,
+    "coursePercentAfterPracticeSubmit": 50,
+    "practiceCompletedAfterServerSync": null,
+    "runnerAttemptLinkedToCourseContext": false
+  },
+  "coursePractice": {
+    "status": "PASS",
+    "courseEntryRoute": "/student/practices/attempts/[dynamic]/prepare/",
+    "courseEntryAttemptIdPrefix": "fa84b234",
+    "prepareStartButtonEnabled": false,
+    "practiceCenterStartNavigatedToRunner": true,
+    "practiceDetailTitle": "T109 情境问候练习",
+    "runnerLoadingDiagnostic": {
+      "attempt": {
+        "status": "IN_PROGRESS",
+        "courseActivityLinked": false,
+        "courseSubmissionLinked": false
+      },
+      "itemCount": 20,
+      "itemTypes": [
+        "SINGLE_CHOICE"
+      ],
+      "maxScores": [
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5
+      ],
+      "recordingIdCount": 0,
+      "dom": {
+        "route": "/student/practices/attempts/[test-id]/runner/",
+        "pageTitle": "语赞心声 · 练习",
+        "runnerPagePresent": true,
+        "submitButtonCount": 1,
+        "questionMapButtonCount": 20,
+        "errorVisible": false,
+        "errorText": "",
+        "coursePracticeContextPresent": false,
+        "appHeading": ""
+      },
+      "selectedQuestionNumber": 20,
+      "submitControlVisible": true
+    },
+    "attemptIdPrefix": "f944f5a9",
+    "courseContext": {
+      "assignmentIdPrefix": null,
+      "activityIdPrefix": null
+    },
+    "submitHttp": 201,
+    "sessionStatus": "COMPLETED",
+    "report": {
+      "present": true,
+      "totalItems": 20,
+      "answeredItems": 0,
+      "unansweredItems": 20,
+      "overallScore": 0,
+      "itemMaxScore": [
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5
+      ],
+      "studentAnswerPersisted": false,
+      "recordingEvidence": false
+    }
+  },
+  "activitySwitch": {
+    "practiceActivityWritesBeforePracticeLaunch": 0,
+    "videoProgressCompletedAfterServerAcknowledgement": true,
+    "practiceProgressIncompleteBeforePracticeLaunch": true
+  },
+  "screenshots": {
+    "desktop": {
+      "today1440": {
+        "path": "evidence/yz-rd-t109/screenshots/today-1440x900.png",
+        "width": 1440,
+        "height": 900,
+        "documentWidth": 1440,
+        "documentHeight": 1274,
+        "bodyWidth": 1440,
+        "horizontalOverflow": false,
+        "verticallyScrollable": true
+      },
+      "today1280": {
+        "path": "evidence/yz-rd-t109/screenshots/today-1280x900.png",
+        "width": 1280,
+        "height": 900,
+        "documentWidth": 1280,
+        "documentHeight": 1274,
+        "bodyWidth": 1280,
+        "horizontalOverflow": false,
+        "verticallyScrollable": true
+      },
+      "growth1440": {
+        "path": "evidence/yz-rd-t109/screenshots/growth-1440x900.png",
+        "width": 1440,
+        "height": 900,
+        "documentWidth": 1440,
+        "documentHeight": 1297,
+        "bodyWidth": 1440,
+        "horizontalOverflow": false,
+        "verticallyScrollable": true
+      },
+      "growth1280": {
+        "path": "evidence/yz-rd-t109/screenshots/growth-1280x900.png",
+        "width": 1280,
+        "height": 900,
+        "documentWidth": 1280,
+        "documentHeight": 1284,
+        "bodyWidth": 1280,
+        "horizontalOverflow": false,
+        "verticallyScrollable": true
+      },
+      "courses1440": {
+        "path": "evidence/yz-rd-t109/screenshots/courses-1440x900.png",
+        "width": 1440,
+        "height": 900,
+        "documentWidth": 1440,
+        "documentHeight": 900,
+        "bodyWidth": 1440,
+        "horizontalOverflow": false,
+        "verticallyScrollable": false
+      },
+      "courses1280": {
+        "path": "evidence/yz-rd-t109/screenshots/courses-1280x900.png",
+        "width": 1280,
+        "height": 900,
+        "documentWidth": 1280,
+        "documentHeight": 900,
+        "bodyWidth": 1280,
+        "horizontalOverflow": false,
+        "verticallyScrollable": false
+      },
+      "courseDetail1440": {
+        "path": "evidence/yz-rd-t109/screenshots/course-detail-1440x900.png",
+        "width": 1440,
+        "height": 900,
+        "documentWidth": 1440,
+        "documentHeight": 900,
+        "bodyWidth": 1440,
+        "horizontalOverflow": false,
+        "verticallyScrollable": false
+      },
+      "courseDetail1280": {
+        "path": "evidence/yz-rd-t109/screenshots/course-detail-1280x900.png",
+        "width": 1280,
+        "height": 900,
+        "documentWidth": 1280,
+        "documentHeight": 900,
+        "bodyWidth": 1288,
+        "horizontalOverflow": true,
+        "verticallyScrollable": false
+      },
+      "coursePracticePrepare1440": {
+        "path": "evidence/yz-rd-t109/screenshots/course-practice-prepare-1440x900.png",
+        "width": 1440,
+        "height": 900,
+        "documentWidth": 1440,
+        "documentHeight": 1035,
+        "bodyWidth": 1440,
+        "horizontalOverflow": false,
+        "verticallyScrollable": true
+      },
+      "practiceDetail1440": {
+        "path": "evidence/yz-rd-t109/screenshots/practice-detail-1440x900.png",
+        "width": 1440,
+        "height": 900,
+        "documentWidth": 1440,
+        "documentHeight": 1233,
+        "bodyWidth": 1440,
+        "horizontalOverflow": false,
+        "verticallyScrollable": true
+      },
+      "runner1440": {
+        "path": "evidence/yz-rd-t109/screenshots/runner-1440x900.png",
+        "width": 1440,
+        "height": 900,
+        "documentWidth": 1440,
+        "documentHeight": 990,
+        "bodyWidth": 1440,
+        "horizontalOverflow": false,
+        "verticallyScrollable": true
+      },
+      "runner1280": {
+        "path": "evidence/yz-rd-t109/screenshots/runner-1280x900.png",
+        "width": 1280,
+        "height": 900,
+        "documentWidth": 1280,
+        "documentHeight": 990,
+        "bodyWidth": 1280,
+        "horizontalOverflow": false,
+        "verticallyScrollable": true
+      },
+      "runnerUnansweredConfirm": {
+        "path": "evidence/yz-rd-t109/screenshots/runner-unanswered-confirm-1440x900.png",
+        "width": 1440,
+        "height": 900,
+        "documentWidth": 1440,
+        "documentHeight": 990,
+        "bodyWidth": 1440,
+        "horizontalOverflow": false,
+        "verticallyScrollable": true
+      },
+      "runnerResult1440": {
+        "path": "evidence/yz-rd-t109/screenshots/runner-result-1440x900.png",
+        "width": 1440,
+        "height": 900,
+        "documentWidth": 1440,
+        "documentHeight": 1122,
+        "bodyWidth": 1440,
+        "horizontalOverflow": false,
+        "verticallyScrollable": true
+      }
+    },
+    "mobile": {
+      "today390": {
+        "path": "evidence/yz-rd-t109/screenshots/today-390x844.png",
+        "width": 390,
+        "height": 844,
+        "documentWidth": 390,
+        "documentHeight": 2006,
+        "bodyWidth": 390,
+        "horizontalOverflow": false,
+        "verticallyScrollable": true,
+        "bottomScrollReached": true
+      },
+      "growth390": {
+        "path": "evidence/yz-rd-t109/screenshots/growth-390x844.png",
+        "width": 390,
+        "height": 844,
+        "documentWidth": 390,
+        "documentHeight": 2269,
+        "bodyWidth": 390,
+        "horizontalOverflow": false,
+        "verticallyScrollable": true,
+        "bottomScrollReached": true
+      },
+      "courses390": {
+        "path": "evidence/yz-rd-t109/screenshots/courses-390x844.png",
+        "width": 390,
+        "height": 844,
+        "documentWidth": 390,
+        "documentHeight": 844,
+        "bodyWidth": 390,
+        "horizontalOverflow": false,
+        "verticallyScrollable": false,
+        "bottomScrollReached": true
+      },
+      "courseDetail390": {
+        "path": "evidence/yz-rd-t109/screenshots/course-detail-390x844.png",
+        "width": 390,
+        "height": 844,
+        "documentWidth": 390,
+        "documentHeight": 844,
+        "bodyWidth": 390,
+        "horizontalOverflow": false,
+        "verticallyScrollable": false,
+        "bottomScrollReached": true
+      },
+      "runner390": {
+        "path": "evidence/yz-rd-t109/screenshots/runner-390x844.png",
+        "width": 390,
+        "height": 844,
+        "documentWidth": 390,
+        "documentHeight": 922,
+        "bodyWidth": 390,
+        "horizontalOverflow": false,
+        "verticallyScrollable": true,
+        "bottomScrollReached": false
+      }
+    }
+  },
+  "browserErrors": {
+    "consoleErrorCount": 1,
+    "pageErrorCount": 0,
+    "requestFailedCount": 7
+  },
+  "faultInjection": {
+    "scope": "T109 browser route only; one real progress write was intercepted before API",
+    "httpStatus": 503,
+    "retryReachedApi": true
+  },
+  "evidenceNote": "Complete browser journey reached its success path and supplied 1280px screenshots, but the duration field was non-finite; attempt 16 and the subsequent finite-duration-guarded run carry the acceptance verdict."
+}

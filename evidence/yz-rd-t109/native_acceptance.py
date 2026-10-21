@@ -1,4 +1,5 @@
 import json
+import math
 import os
 import re
 import sys
@@ -22,11 +23,16 @@ RECOMMENDATION_TITLE = "T109 推荐课程"
 
 responses = []
 progress_events = []
+failed_requests = []
 console_error_count = 0
 page_error_count = 0
 request_failed_count = 0
 stage = "initialization"
 fault_control = {"mode": "pass", "injected": 0}
+login_http_status = None
+video_loading_diagnostic = None
+video_resource_diagnostic = None
+runner_loading_diagnostic = None
 
 
 def short_id(value):
@@ -75,11 +81,82 @@ def record_response(response):
         "category": response_category(parsed.path, host),
         "status": response.status,
         "rangeRequested": has_range if is_media else None,
+        "mediaHeaders": ({
+            key: response.headers.get(key)
+            for key in ("content-type", "content-length", "content-range", "accept-ranges")
+            if response.headers.get(key) is not None
+        } if is_media else None),
     })
     if response_category(parsed.path, host) == "course-activity-progress":
         match = re.search(r"/activities/([0-9a-fA-F-]+)/attempt$", parsed.path)
         if match:
             progress_events.append({"activityId": match.group(1), "status": response.status})
+
+
+def record_failed_request(request):
+    global request_failed_count
+    request_failed_count += 1
+    parsed = urlsplit(request.url)
+    host = parsed.hostname or "unknown"
+    if host not in {"frontend", "api", "minio"}:
+        return
+    failure = request.failure or ""
+    failed_requests.append({
+        "host": host,
+        "method": request.method,
+        "category": response_category(parsed.path, host),
+        "resourceType": request.resource_type,
+        "failure": str(failure)[:180],
+    })
+
+
+def inspect_video_loading(page):
+    return page.evaluate("""() => {
+      const video = document.querySelector('#cpVideo');
+      const error = document.querySelector('#cpVideoError');
+      let sourceHost = null;
+      let sourceScheme = null;
+      try {
+        const source = new URL(video?.currentSrc || '');
+        sourceHost = source.hostname;
+        sourceScheme = source.protocol;
+      } catch {}
+      return {
+        videoPresent: Boolean(video),
+        readyState: video?.readyState ?? null,
+        networkState: video?.networkState ?? null,
+        durationSeconds: Number.isFinite(video?.duration) ? video.duration : null,
+        currentTimeSeconds: Number.isFinite(video?.currentTime) ? video.currentTime : null,
+        sourceHost,
+        sourceScheme,
+        mediaErrorCode: video?.error?.code ?? null,
+        videoWidth: video?.videoWidth ?? 0,
+        videoHeight: video?.videoHeight ?? 0,
+        visibleError: Boolean(error && !error.hidden && getComputedStyle(error).display !== 'none'),
+        errorMessage: (error?.innerText || '').trim().slice(0, 180),
+        sourceElementCount: video?.querySelectorAll('source').length ?? 0
+      };
+    }""")
+
+
+def inspect_runner_loading(page, attempt_id):
+    return page.evaluate(r"""({attemptId}) => {
+      const app = document.querySelector('#app');
+      const error = app?.querySelector('.runner-error');
+      const path = location.pathname.replace(/(\/attempts\/)[^/]+/, '$1[test-id]');
+      const context = localStorage.getItem(`yuzan-course-practice-context:${attemptId}`);
+      return {
+        route: path,
+        pageTitle: document.title,
+        runnerPagePresent: Boolean(document.querySelector('.runner-page')),
+        submitButtonCount: app?.querySelectorAll('[data-submit]').length ?? 0,
+        questionMapButtonCount: app?.querySelectorAll('.runner-map [data-go]').length ?? 0,
+        errorVisible: Boolean(error),
+        errorText: (error?.innerText || '').trim().slice(0, 300),
+        coursePracticeContextPresent: Boolean(context),
+        appHeading: (app?.querySelector('h1, h2')?.innerText || '').trim().slice(0, 120)
+      };
+    }""", {"attemptId": attempt_id})
 
 
 def install_progress_fault(route):
@@ -98,8 +175,20 @@ def install_progress_fault(route):
 
 def summarize_responses():
     counts = Counter((entry["host"], entry["method"], entry["category"], entry["status"]) for entry in responses)
+    media_headers = {}
+    for entry in responses:
+        key = (entry["host"], entry["method"], entry["category"], entry["status"])
+        if entry.get("mediaHeaders"):
+            media_headers[key] = entry["mediaHeaders"]
     return [
-        {"host": host, "method": method, "category": category, "status": status, "count": count}
+        {
+            "host": host,
+            "method": method,
+            "category": category,
+            "status": status,
+            "count": count,
+            "mediaHeaders": media_headers.get((host, method, category, status)),
+        }
         for (host, method, category, status), count in sorted(counts.items())
     ]
 
@@ -122,6 +211,25 @@ def activity_rows(course):
         for lesson in unit.get("lessons", []) or []:
             rows.extend(lesson.get("activities", []) or [])
     return rows
+
+
+def course_player_activity_state(page):
+    return page.evaluate("""() => {
+      const activity = window.CoursePlayerState?.getState()?.currentActivity;
+      const resources = (activity?.resources || []).map((entry) => entry?.resource || entry);
+      return {
+        activityIdPrefix: typeof activity?.activityId === 'string' ? activity.activityId.slice(0, 8) : null,
+        activityType: activity?.activityType || activity?.type || null,
+        videoUrlPresent: Boolean(activity?.videoUrl),
+        resourceCount: resources.length,
+        resources: resources.map((resource) => ({
+          kind: resource?.kind || null,
+          mediaType: resource?.mediaType || null,
+          originalName: resource?.originalName || null,
+          idPrefix: typeof resource?.id === 'string' ? resource.id.slice(0, 8) : null
+        }))
+      };
+    }""")
 
 
 def progress_for(activity):
@@ -183,7 +291,7 @@ def is_course_progress(response, activity_id=None):
 
 
 def run():
-    global console_error_count, page_error_count, request_failed_count, stage
+    global console_error_count, page_error_count, request_failed_count, stage, login_http_status, video_loading_diagnostic, video_resource_diagnostic, runner_loading_diagnostic
     OUT.mkdir(parents=True, exist_ok=True)
     SCREENSHOTS.mkdir(parents=True, exist_ok=True)
     desktop = {}
@@ -203,39 +311,52 @@ def run():
         page.on("response", record_response)
         page.on("console", lambda message: globals().__setitem__("console_error_count", console_error_count + 1) if message.type == "error" else None)
         page.on("pageerror", lambda _error: globals().__setitem__("page_error_count", page_error_count + 1))
-        page.on("requestfailed", lambda _request: globals().__setitem__("request_failed_count", request_failed_count + 1))
+        page.on("requestfailed", record_failed_request)
 
         try:
             stage = "real-login"
-            page.goto(f"{WEB_URL}/login", wait_until="domcontentloaded", timeout=30000)
+            page.goto(f"{WEB_URL}/login", wait_until="commit", timeout=30000)
+            page.locator("#loginPanel").wait_for(state="visible", timeout=15000)
             page.locator("#loginAccount").fill(LOGIN)
             page.locator("#loginPassword").fill(PASSWORD)
             with page.expect_response(lambda response: "/auth/login" in response.url and response.request.method == "POST", timeout=30000) as login_response:
                 page.locator('#loginPanel [data-action="login"]').click()
             login_status = login_response.value.status
+            login_http_status = login_status
+            result["loginHttpStatus"] = login_status
             if login_status != 200:
                 raise RuntimeError("real student login did not return HTTP 200")
-            page.wait_for_url("**/student/today*", timeout=30000)
+            page.wait_for_url(re.compile(r".*/student/today/?(?:\?.*)?$"), wait_until="commit", timeout=30000)
             safe_wait_network_idle(page)
             page.wait_for_timeout(400)
             result["realLogin"] = {"status": "PASS", "http": login_status, "route": "student-login-ui"}
 
             stage = "today-page"
-            page.goto(f"{WEB_URL}/student/today", wait_until="domcontentloaded", timeout=30000)
+            page.goto(f"{WEB_URL}/student/today", wait_until="commit", timeout=30000)
+            page.locator("#todayApp").wait_for(state="visible", timeout=15000)
+            page.wait_for_function(
+                "() => Boolean(document.querySelector('#todayApp h1'))",
+                timeout=20000,
+            )
             safe_wait_network_idle(page)
+            today_api = [entry for entry in responses if entry["category"] == "today-api"]
+            if not today_api or not any(entry["status"] == 200 for entry in today_api):
+                raise RuntimeError("Today did not render from a successful live API response")
             desktop["today1440"] = capture(page, "today-1440x900.png", 1440, 900)
             desktop["today1280"] = capture(page, "today-1280x900.png", 1280, 900)
             mobile["today390"] = capture(page, "today-390x844.png", 390, 844)
 
             stage = "growth-page"
-            page.goto(f"{WEB_URL}/student/growth/", wait_until="domcontentloaded", timeout=30000)
+            page.goto(f"{WEB_URL}/student/growth/", wait_until="commit", timeout=30000)
+            page.wait_for_function("() => document.querySelector('#root')?.children.length > 0", timeout=20000)
             safe_wait_network_idle(page)
             page.wait_for_timeout(300)
             desktop["growth1440"] = capture(page, "growth-1440x900.png", 1440, 900)
+            desktop["growth1280"] = capture(page, "growth-1280x900.png", 1280, 900)
             mobile["growth390"] = capture(page, "growth-390x844.png", 390, 844)
 
             stage = "courses-api-and-dynamic-route"
-            page.goto(f"{WEB_URL}/student/courses/", wait_until="domcontentloaded", timeout=30000)
+            page.goto(f"{WEB_URL}/student/courses/", wait_until="commit", timeout=30000)
             page.locator("#catalogContent").wait_for(state="visible", timeout=30000)
             course_card = page.locator("#courseGrid .cc-card").filter(has_text=COURSE_TITLE)
             course_card.wait_for(state="visible", timeout=30000)
@@ -246,20 +367,13 @@ def run():
             desktop["courses1280"] = capture(page, "courses-1280x900.png", 1280, 900)
             mobile["courses390"] = capture(page, "courses-390x844.png", 390, 844)
             page.set_viewport_size({"width": 1440, "height": 900})
-            with page.expect_navigation(url=re.compile(r"/student/courses/course-detail/"), wait_until="domcontentloaded", timeout=30000):
+            with page.expect_navigation(url=re.compile(r"/student/courses/course-detail/"), wait_until="commit", timeout=30000):
                 course_card.click()
             if parse_qs(urlsplit(page.url).query).get("id", [None])[0] != assignment_id:
                 raise RuntimeError("course detail route did not preserve the dynamic assignment ID")
 
             stage = "course-detail-api-and-media-source"
             page.locator("#cpHeroTitle").wait_for(state="visible", timeout=30000)
-            page.wait_for_function(
-                """() => {
-                  const video = document.querySelector('#cpVideo');
-                  return video && video.readyState >= 1 && Number.isFinite(video.duration) && video.duration > 0;
-                }""",
-                timeout=30000,
-            )
             course = api_value(page, "getStudentCourse", assignment_id)
             activities = activity_rows(course)
             video_activity = next((item for item in activities if item.get("activityType", item.get("type")) == "VIDEO"), None)
@@ -271,7 +385,45 @@ def run():
             practice_definition_id = practice_activity.get("practiceReference", {}).get("practiceDefinitionId")
             if not video_activity_id or not practice_activity_id or not practice_definition_id:
                 raise RuntimeError("live course activity is missing a dynamic practice/video ID")
-
+            api_resources = [entry.get("resource", entry) for entry in (video_activity.get("resources") or []) if isinstance(entry, dict)]
+            video_resource_diagnostic = {
+                "activityIdPrefix": short_id(video_activity_id),
+                "activityType": video_activity.get("activityType", video_activity.get("type")),
+                "videoUrlPresentInActivityDto": bool(video_activity.get("videoUrl")),
+                "resourceCount": len(api_resources),
+                "resources": [{
+                    "idPrefix": short_id(resource.get("id")),
+                    "kind": resource.get("kind"),
+                    "mediaType": resource.get("mediaType"),
+                    "originalName": resource.get("originalName"),
+                } for resource in api_resources],
+                "playerState": course_player_activity_state(page),
+            }
+            video_item = page.locator(f'li[data-activity-id="{video_activity_id}"]')
+            video_item.wait_for(state="visible", timeout=10000)
+            video_item.click()
+            page.wait_for_function(
+                "id => window.CoursePlayerState?.getState()?.currentActivityId === id",
+                arg=video_activity_id,
+                timeout=10000,
+            )
+            video_resource_diagnostic["playerStateAfterVideoSelection"] = course_player_activity_state(page)
+            if not any(resource.get("kind") == "VIDEO" for resource in api_resources):
+                video_loading_diagnostic = inspect_video_loading(page)
+                page.screenshot(path=str(SCREENSHOTS / "course-detail-video-load-failure.png"), full_page=False)
+                raise RuntimeError("live course-detail API did not return an attached VIDEO resource")
+            try:
+                page.wait_for_function(
+                    """() => {
+                      const video = document.querySelector('#cpVideo');
+                      return video && video.readyState >= 1 && Number.isFinite(video.duration) && video.duration > 0;
+                    }""",
+                    timeout=30000,
+                )
+            except PlaywrightTimeoutError:
+                video_loading_diagnostic = inspect_video_loading(page)
+                page.screenshot(path=str(SCREENSHOTS / "course-detail-video-load-failure.png"), full_page=False)
+                raise
             video_metadata = page.evaluate("""() => {
               const video = document.querySelector('#cpVideo');
               let sourceHost = null;
@@ -294,6 +446,9 @@ def run():
             with page.expect_response(lambda response: is_course_progress(response, video_activity_id), timeout=20000) as partial_response:
                 page.locator("#cpPlayBig").click()
                 page.wait_for_function("() => document.querySelector('#cpVideo')?.currentTime >= 1.6", timeout=15000)
+                desktop["courseDetailVideoPlaying1440"] = capture(
+                    page, "course-detail-video-playing-1440x900.png", 1440, 900
+                )
                 page.locator("#cpPlayBtn").click()
             partial_status = partial_response.value.status
             if partial_status != 200:
@@ -315,6 +470,10 @@ def run():
               const video = document.querySelector('#cpVideo');
               return { currentTime: video.currentTime, duration: video.duration, paused: video.paused };
             }""")
+            duration_seconds = float(partial_state["duration"])
+            if not math.isfinite(duration_seconds) or duration_seconds <= 0:
+                raise RuntimeError("decoded video did not expose a finite positive duration after playback")
+            video_metadata["durationSeconds"] = duration_seconds
 
             stage = "progress-failure-visible-and-safe-retry"
             fault_control["mode"] = "fail"
@@ -351,9 +510,9 @@ def run():
 
             stage = "progress-restore-after-refresh"
             saved_fraction = after_retry_progress.get("position")
-            if not isinstance(saved_fraction, (int, float)):
+            if not isinstance(saved_fraction, (int, float)) or not math.isfinite(float(saved_fraction)):
                 raise RuntimeError("server did not return a persisted fractional video position")
-            page.reload(wait_until="domcontentloaded", timeout=30000)
+            page.reload(wait_until="commit", timeout=30000)
             page.wait_for_function(
                 """() => {
                   const video = document.querySelector('#cpVideo');
@@ -362,7 +521,7 @@ def run():
                 timeout=30000,
             )
             restored_time = page.evaluate("() => document.querySelector('#cpVideo').currentTime")
-            expected_time = float(saved_fraction) * float(video_metadata["durationSeconds"])
+            expected_time = float(saved_fraction) * duration_seconds
             if abs(float(restored_time) - expected_time) > 0.65:
                 raise RuntimeError("server-saved video position was not restored after refresh")
 
@@ -432,7 +591,7 @@ def run():
             recommendation_title = page.locator("#cpHeroTitle").inner_text()
             if RECOMMENDATION_TITLE not in recommendation_title:
                 raise RuntimeError("recommendation click did not open its returned course detail")
-            page.go_back(wait_until="domcontentloaded", timeout=30000)
+            page.go_back(wait_until="commit", timeout=30000)
             page.wait_for_function(
                 "id => new URL(location.href).searchParams.get('id') === id",
                 arg=assignment_id,
@@ -449,17 +608,73 @@ def run():
             )
             practice_button = page.locator("#cpPracticeGoBtn")
             practice_button.wait_for(state="visible", timeout=10000)
-            with page.expect_navigation(url=re.compile(r"/student/practices/attempts/.*/runner/"), wait_until="domcontentloaded", timeout=30000):
+            with page.expect_navigation(url=re.compile(r"/student/practices/attempts/.*/prepare/"), wait_until="commit", timeout=30000):
                 practice_button.click()
+            prepare_parts = [part for part in urlsplit(page.url).path.split("/") if part]
+            try:
+                course_entry_attempt_id = prepare_parts[prepare_parts.index("attempts") + 1]
+            except (ValueError, IndexError):
+                raise RuntimeError("course practice did not navigate to a dynamic preparation attempt")
+            page.locator("[data-start-session]").wait_for(state="visible", timeout=20000)
+            prepare_start_enabled = page.locator("[data-start-session]").is_enabled()
+            desktop["coursePracticePrepare1440"] = capture(page, "course-practice-prepare-1440x900.png", 1440, 900)
+
+            stage = "practice-center-to-runner"
+            practice_detail_url = f"{WEB_URL}/student/practices/{practice_definition_id}/"
+            page.goto(practice_detail_url, wait_until="commit", timeout=30000)
+            page.locator('[data-start]').wait_for(state="visible", timeout=20000)
+            practice_detail_title = page.locator(".practice-detail-hero h1").inner_text()
+            if "T109 情境问候练习" not in practice_detail_title:
+                raise RuntimeError("practice detail did not show the API-returned T109 practice")
+            desktop["practiceDetail1440"] = capture(page, "practice-detail-1440x900.png", 1440, 900)
+            with page.expect_navigation(url=re.compile(r"/student/practices/attempts/.*/runner/"), wait_until="commit", timeout=30000):
+                page.locator('[data-start]').click()
             runner_parts = [part for part in urlsplit(page.url).path.split("/") if part]
             try:
                 attempt_id = runner_parts[runner_parts.index("attempts") + 1]
             except (ValueError, IndexError):
-                raise RuntimeError("course practice did not navigate to a dynamic runner attempt")
+                raise RuntimeError("practice center did not navigate to a dynamic runner attempt")
             page.locator(".runner-page").wait_for(state="visible", timeout=30000)
-            page.locator('[data-submit]').wait_for(state="visible", timeout=15000)
+            runner_attempt_api = api_value(page, "getPracticeAttempt", attempt_id)
+            runner_items_api = api_value(page, "getPracticeAttemptItems", attempt_id)
+            if isinstance(runner_items_api, dict):
+                runner_items_api = runner_items_api.get("items", [])
+            runner_items_api = runner_items_api if isinstance(runner_items_api, list) else []
+            runner_loading_diagnostic = {
+                "attempt": {
+                    "status": runner_attempt_api.get("status") if isinstance(runner_attempt_api, dict) else None,
+                    "courseActivityLinked": bool(runner_attempt_api.get("courseActivityId")) if isinstance(runner_attempt_api, dict) else False,
+                    "courseSubmissionLinked": bool(runner_attempt_api.get("courseSubmissionId")) if isinstance(runner_attempt_api, dict) else False,
+                },
+                "itemCount": len(runner_items_api),
+                "itemTypes": sorted({item.get("itemType") for item in runner_items_api if isinstance(item, dict)}),
+                "maxScores": [item.get("maxScore") for item in runner_items_api if isinstance(item, dict)],
+                "recordingIdCount": sum(1 for item in runner_items_api if isinstance(item, dict) and item.get("recordingId")),
+                "dom": inspect_runner_loading(page, attempt_id),
+            }
+            try:
+                # The native Runner offers submit only on its final question.
+                # Keep the actual all-blank test intact while navigating there
+                # through the rendered question map instead of treating the
+                # initial question's "Next" button as a missing submit control.
+                question_count = len(runner_items_api)
+                if question_count != 20:
+                    raise RuntimeError(f"T109 all-blank fixture expected 20 live items, received {question_count}")
+                page.locator(f'.runner-map [data-go="{question_count - 1}"]').click()
+                page.locator('[data-submit]').wait_for(state="visible", timeout=15000)
+                runner_loading_diagnostic = {
+                    **runner_loading_diagnostic,
+                    "selectedQuestionNumber": question_count,
+                    "submitControlVisible": True,
+                    "dom": inspect_runner_loading(page, attempt_id),
+                }
+            except PlaywrightTimeoutError:
+                runner_loading_diagnostic = inspect_runner_loading(page, attempt_id)
+                page.screenshot(path=str(SCREENSHOTS / "runner-load-failure.png"), full_page=False)
+                raise
             runner_context = api_value(page, "getCoursePracticeContext", attempt_id)
             desktop["runner1440"] = capture(page, "runner-1440x900.png", 1440, 900)
+            desktop["runner1280"] = capture(page, "runner-1280x900.png", 1280, 900)
             mobile["runner390"] = capture(page, "runner-390x844.png", 390, 844)
             page.set_viewport_size({"width": 1440, "height": 900})
 
@@ -473,9 +688,9 @@ def run():
             with page.expect_response(lambda response: "/assessments/sessions/" in response.url and response.url.endswith("/submit") and response.request.method == "POST", timeout=30000) as submit_response:
                 page.locator("[data-confirm-submit]").click()
             submit_status = submit_response.value.status
-            if submit_status != 200:
-                raise RuntimeError("normal unanswered submit did not return HTTP 200")
-            page.wait_for_url(re.compile(r"/student/practices/attempts/.*/processing/"), timeout=30000)
+            if submit_status not in (200, 201):
+                raise RuntimeError(f"normal unanswered submit returned unexpected HTTP {submit_status}")
+            page.wait_for_url(re.compile(r"/student/practices/attempts/.*/processing/"), wait_until="commit", timeout=30000)
             page.wait_for_timeout(1000)
 
             session = api_value(page, "getAssessmentSession", attempt_id)
@@ -489,18 +704,22 @@ def run():
             if isinstance(items, dict):
                 items = items.get("items", [])
             summary = report.get("summary") if isinstance(report, dict) else None
-            first_item = items[0] if isinstance(items, list) and items else {}
-            max_score = first_item.get("maxScore") if isinstance(first_item, dict) else None
-            student_answer = first_item.get("studentAnswer") if isinstance(first_item, dict) else None
+            max_scores = [item.get("maxScore") for item in items if isinstance(item, dict)] if isinstance(items, list) else []
+            student_answers = [item.get("studentAnswer") for item in items if isinstance(item, dict)] if isinstance(items, list) else []
+            recording_ids = [item.get("recordingId") for item in items if isinstance(item, dict)] if isinstance(items, list) else []
             if not isinstance(report, dict) or not isinstance(summary, dict):
                 raise RuntimeError("submitted practice report was not available through the real API")
             if session.get("status") != "COMPLETED":
                 raise RuntimeError("submitted attempt did not reach the completed report state")
-            if summary.get("unansweredItems") != 1 or max_score != 5 or student_answer is not None:
-                raise RuntimeError("valid blank attempt did not retain the expected unanswered item contract")
-            if report.get("overallScore") != 0 or summary.get("totalItems") != 1:
-                raise RuntimeError("completed report did not reflect the one unanswered test item")
-            if first_item.get("recordingId") is not None or first_item.get("recordingStatus") is not None:
+            if summary.get("unansweredItems") != 20 or summary.get("answeredItems") != 0 or len(items) != 20:
+                raise RuntimeError("valid all-blank 20-item attempt did not retain the expected unanswered item contract")
+            if any(score != 5 for score in max_scores) or any(answer is not None for answer in student_answers):
+                raise RuntimeError("all blank synthetic items did not retain valid maxScore and empty answer values")
+            if report.get("overallScore") != 0 or summary.get("totalItems") != 20:
+                raise RuntimeError("completed report did not reflect the all-unanswered zero-score contract")
+            if any(recording_id is not None for recording_id in recording_ids) or any(
+                item.get("recordingStatus") is not None for item in items if isinstance(item, dict)
+            ):
                 raise RuntimeError("the unanswered practice attempt unexpectedly contains recording evidence")
 
             page.wait_for_timeout(400)
@@ -549,13 +768,27 @@ def run():
                     "endedSaveHttp": ended_status,
                     "endedServerConfirmed": ended_video_progress.get("completed") is True,
                     "otherRequiredActivityStillIncompleteAfterVideo": practice_activity_id not in completed_ids,
+                    "resourceFromLiveCourseApi": video_resource_diagnostic,
                     "coursePercentAfterVideoOnly": end_course_progress.get("progressPercent"),
                     "practiceProgressAfterVideoOnly": switched_practice_progress,
                     "coursePercentAfterPracticeSubmit": final_course_progress.get("progressPercent"),
-                    "practiceCompletedAfterServerSync": (progress_for(final_practice_activity) or {}).get("completed") is True,
+                    "practiceCompletedAfterServerSync": (
+                        (progress_for(final_practice_activity) or {}).get("completed") is True
+                        if isinstance(runner_context, dict) and runner_context.get("assignmentId")
+                        else None
+                    ),
+                    "runnerAttemptLinkedToCourseContext": bool(
+                        isinstance(runner_context, dict) and runner_context.get("assignmentId")
+                    ),
                 },
                 "coursePractice": {
                     "status": "PASS",
+                    "courseEntryRoute": "/student/practices/attempts/[dynamic]/prepare/",
+                    "courseEntryAttemptIdPrefix": short_id(course_entry_attempt_id),
+                    "prepareStartButtonEnabled": prepare_start_enabled,
+                    "practiceCenterStartNavigatedToRunner": True,
+                    "practiceDetailTitle": practice_detail_title,
+                    "runnerLoadingDiagnostic": runner_loading_diagnostic,
                     "attemptIdPrefix": short_id(attempt_id),
                     "courseContext": {
                         "assignmentIdPrefix": short_id((runner_context or {}).get("assignmentId")) if isinstance(runner_context, dict) else None,
@@ -569,8 +802,8 @@ def run():
                         "answeredItems": summary.get("answeredItems"),
                         "unansweredItems": summary.get("unansweredItems"),
                         "overallScore": report.get("overallScore"),
-                        "itemMaxScore": max_score,
-                        "studentAnswerPersisted": student_answer is not None,
+                        "itemMaxScore": max_scores,
+                        "studentAnswerPersisted": any(answer is not None for answer in student_answers),
                         "recordingEvidence": False,
                     },
                 },
@@ -597,16 +830,37 @@ def main():
         print(json.dumps(result, ensure_ascii=False))
         return 0 if result.get("status") == "PASS_NATIVE" else 1
     except Exception as error:
+        safe_message = str(error)
+        for secret in (LOGIN, PASSWORD):
+            if secret:
+                safe_message = safe_message.replace(secret, "[redacted]")
+        safe_message = re.sub(r"(?i)bearer\s+\S+", "Bearer [redacted]", safe_message)
+        safe_message = re.sub(
+            r"(?i)\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b",
+            "[test-id]",
+            safe_message,
+        )
         failure = {
             "taskId": "YZ-RD-T109",
             "sourceT108Sha": SOURCE_SHA,
             "runtimeProject": "yz-rd-t109",
             "status": "FAIL",
             "stage": stage,
+            "loginHttpStatus": login_http_status,
             "errorClass": type(error).__name__,
+            "errorMessage": safe_message[:1000],
             "consoleErrorCount": console_error_count,
             "pageErrorCount": page_error_count,
             "requestFailedCount": request_failed_count,
+            "failedRequests": failed_requests,
+            "responseSummary": summarize_responses(),
+            "videoResourceDiagnostic": video_resource_diagnostic,
+            "videoLoadingDiagnostic": video_loading_diagnostic,
+            "runnerLoadingDiagnostic": runner_loading_diagnostic,
+            "diagnosticScreenshot": (
+                "evidence/yz-rd-t109/screenshots/course-detail-video-load-failure.png"
+                if video_loading_diagnostic else None
+            ),
             "injectedProgress503Count": fault_control["injected"],
         }
         OUT.mkdir(parents=True, exist_ok=True)

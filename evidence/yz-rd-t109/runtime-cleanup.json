@@ -1,0 +1,95 @@
+{
+  "taskId": "YZ-RD-T109",
+  "project": "yz-rd-t109",
+  "activeT109Containers": 0,
+  "serviceContainers": [
+    {
+      "name": "yz-rd-t109-frontend-1",
+      "service": "frontend",
+      "state": "exited",
+      "restartCount": 0,
+      "oomKilled": false,
+      "caps": {
+        "nanoCpus": 500000000,
+        "memory": 402653184,
+        "memorySwapTotal": 402653184,
+        "pidsLimit": 128
+      }
+    },
+    {
+      "name": "yz-rd-t109-api-1",
+      "service": "api",
+      "state": "exited",
+      "restartCount": 0,
+      "oomKilled": false,
+      "caps": {
+        "nanoCpus": 1000000000,
+        "memory": 805306368,
+        "memorySwapTotal": 805306368,
+        "pidsLimit": 192
+      }
+    },
+    {
+      "name": "yz-rd-t109-minio-1",
+      "service": "minio",
+      "state": "exited",
+      "restartCount": 0,
+      "oomKilled": false,
+      "caps": {
+        "nanoCpus": 500000000,
+        "memory": 402653184,
+        "memorySwapTotal": 402653184,
+        "pidsLimit": 128
+      }
+    },
+    {
+      "name": "yz-rd-t109-postgres-1",
+      "service": "postgres",
+      "state": "exited",
+      "restartCount": 0,
+      "oomKilled": false,
+      "caps": {
+        "nanoCpus": 1000000000,
+        "memory": 805306368,
+        "memorySwapTotal": 805306368,
+        "pidsLimit": 256
+      }
+    },
+    {
+      "name": "yz-rd-t109-redis-1",
+      "service": "redis",
+      "state": "exited",
+      "restartCount": 0,
+      "oomKilled": false,
+      "caps": {
+        "nanoCpus": 250000000,
+        "memory": 134217728,
+        "memorySwapTotal": 134217728,
+        "pidsLimit": 64
+      }
+    }
+  ],
+  "browserContainersRemoved": 20,
+  "network": {
+    "name": "yz-rd-t109-isolated",
+    "internal": true,
+    "driver": "bridge",
+    "labelsTask": "YZ-RD-T109"
+  },
+  "volumesPreserved": [
+    {
+      "name": "yz-rd-t109-minio-data",
+      "driver": "local",
+      "labelsTask": "YZ-RD-T109"
+    },
+    {
+      "name": "yz-rd-t109-postgres-data",
+      "driver": "local",
+      "labelsTask": "YZ-RD-T109"
+    }
+  ],
+  "downUsed": false,
+  "downVolumesUsed": false,
+  "pruneUsed": false,
+  "nonT109ResourcesTouched": false
+}

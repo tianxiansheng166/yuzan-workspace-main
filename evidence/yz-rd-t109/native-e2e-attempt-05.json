@@ -1,0 +1,16 @@
+{
+  "taskId": "YZ-RD-T109",
+  "sourceT108Sha": "8974c2a7d5842bb20dbfcd091b63cac5674dcc32",
+  "runtimeProject": "yz-rd-t109",
+  "status": "INCOMPLETE_HARNESS_RUN",
+  "stage": "course-detail-api-and-media-source",
+  "loginHttpStatus": 200,
+  "errorClass": "TimeoutError",
+  "errorMessage": "Course detail title appeared, but the video element did not reach readyState >= 1 within 30 seconds.",
+  "consoleErrorCount": 0,
+  "pageErrorCount": 0,
+  "requestFailedCount": 1,
+  "browserContainer": { "oomKilled": false, "restartCount": 0 },
+  "resourceGuard": "PASS throughout; T109 services remained healthy.",
+  "nextAction": "Capture sanitized API/MinIO response categories, failed-request category, video error state, and a live course-detail screenshot."
+}

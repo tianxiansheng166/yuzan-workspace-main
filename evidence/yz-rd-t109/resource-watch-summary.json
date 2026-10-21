@@ -1,0 +1,25 @@
+{
+  "taskId": "YZ-RD-T109",
+  "watchFile": "resource-watch.jsonl",
+  "sampleCount": 1275,
+  "decisionCounts": {
+    "PASS": 1274,
+    "FAIL": 1
+  },
+  "firstSampleUtc": "2026-10-21T18:35:46.260517+00:00",
+  "lastSampleUtc": "2026-10-21T19:28:12.160561+00:00",
+  "failedSamples": [
+    {
+      "sampleIndex": 151,
+      "previousHostSampleUtc": "2026-10-21T18:41:20.721602+00:00",
+      "nextHostSampleUtc": "2026-10-21T18:43:00.080770+00:00",
+      "hardFailures": [
+        "resource inspection failed: FileNotFoundError"
+      ],
+      "softFailures": []
+    }
+  ],
+  "browserE2e19ActiveSamples": 14,
+  "latestDecision": "PASS",
+  "note": "One earlier cgroup inspection race occurred while a container exited; it caused the guard to stop only the T109 stack then. The guard was hardened for normal exit races; all later samples passed. No T106 service or unrelated container was stopped."
+}

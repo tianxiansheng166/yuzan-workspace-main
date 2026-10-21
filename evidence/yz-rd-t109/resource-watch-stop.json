@@ -1,0 +1,7 @@
+{
+  "taskId": "YZ-RD-T109",
+  "pid": 1159079,
+  "command": "python3 evidence/yz-rd-t109/resource_guard_t109.py --watch",
+  "signal": "SIGTERM",
+  "gracefulExit": true
+}

@@ -1,0 +1,40 @@
+{
+  "taskId": "YZ-RD-T109",
+  "status": "PASS",
+  "database": "yz_rd_t109",
+  "bucket": "yz-rd-t109-media",
+  "recordCounts": {
+    "schools": 1,
+    "students": 1,
+    "disabledContentAuthors": 1,
+    "activeStudentEnrollments": 1,
+    "courses": 2,
+    "openAssignments": 2,
+    "licensedVideoResources": 1,
+    "practices": 1,
+    "syntheticQuestionVersions": 1,
+    "recordings": 0
+  },
+  "sanitizedIds": {
+    "schoolIdPrefix": "ec4b5134",
+    "studentIdPrefix": "eba256e4",
+    "classIdPrefix": "ae5c0a86",
+    "enrollmentIdPrefix": "357eeec8",
+    "assignmentIdPrefix": "10498761",
+    "recommendationAssignmentIdPrefix": "e70a1775",
+    "videoActivityIdPrefix": "ecddf803",
+    "practiceActivityIdPrefix": "2b51f5a6",
+    "practiceDefinitionIdPrefix": "10932650",
+    "questionVersionIdPrefix": "a5fa1472",
+    "resourceIdPrefix": "a6f391e2"
+  },
+  "media": {
+    "source": "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
+    "license": "CC0-1.0",
+    "objectKey": "t109-native-acceptance/flower.mp4",
+    "bytes": 1128375,
+    "sha256": "0cd83d944a6ca7822b4a8306cecc60a36e859b041f6702c6a1ad9ead78924451",
+    "independentMinioRead": true
+  },
+  "recordingsCreated": 0
+}

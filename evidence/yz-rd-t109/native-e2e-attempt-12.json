@@ -1,0 +1,19 @@
+{
+  "taskId": "YZ-RD-T109",
+  "sourceT108Sha": "8974c2a7d5842bb20dbfcd091b63cac5674dcc32",
+  "status": "INCOMPLETE_REPORT_CONTRACT_HARNESS",
+  "stage": "unanswered-submit-and-complete-report",
+  "browserSubmitHttp": 201,
+  "interpretation": "The controller is a POST endpoint and returned HTTP 201; the test incorrectly required 200 and stopped before it polled the processing/report page.",
+  "postgresAfterSubmit": {
+    "sessionStatus": "PROCESSING",
+    "reportPresent": false,
+    "itemCount": 1,
+    "itemMaxScore": 5,
+    "itemScoredScore": 0,
+    "itemAutoResult": { "state": "AUTO_SCORED", "score": 0, "reasonCode": "UNANSWERED" },
+    "recordingRows": 0
+  },
+  "browserContainer": { "oomKilled": false, "restartCount": 0 },
+  "resourceGuard": "PASS throughout."
+}

@@ -1,0 +1,45 @@
+{
+  "taskId": "YZ-RD-T109",
+  "browserImage": "mcr.microsoft.com/playwright/python:v1.55.0-noble",
+  "browserImageDigest": "sha256:640d578aae63cfb632461d1b0aecb01414e4e020864ac3dd45a868dc0eff3078",
+  "imagePythonVersion": "3.12.3",
+  "preflightAttempt": {
+    "container": "yz-rd-t109-browser-register",
+    "exitCode": 1,
+    "oomKilled": false,
+    "restartCount": 0,
+    "reason": "The image contains browser binaries but did not include the Python Playwright package. Import failed before registration code ran.",
+    "studentAccountCreated": false
+  },
+  "resolvedPackages": [
+    {
+      "name": "playwright",
+      "version": "1.55.0",
+      "wheel": "playwright-1.55.0-py3-none-manylinux1_x86_64.whl",
+      "sha256": "c6d4d8f6f8c66c483b0835569c7f0caa03230820af8e500c181c93509c92d831",
+      "officialPyPIJsonDigestMatched": true
+    },
+    {
+      "name": "greenlet",
+      "version": "3.5.6",
+      "wheel": "greenlet-3.5.6-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl",
+      "sha256": "975736b002ed080d124cf81a79cb7e05cb26d6b3f5c7a7b651c0fcce70353aa1",
+      "officialPyPIJsonDigestMatched": true
+    },
+    {
+      "name": "pyee",
+      "version": "13.0.1",
+      "wheel": "pyee-13.0.1-py3-none-any.whl",
+      "sha256": "af2f8fede4171ef667dfded53f96e2ed0d6e6bd7ee3bb46437f77e3b57689228",
+      "officialPyPIJsonDigestMatched": true
+    },
+    {
+      "name": "typing-extensions",
+      "version": "4.16.0",
+      "wheel": "typing_extensions-4.16.0-py3-none-any.whl",
+      "sha256": "481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8",
+      "officialPyPIJsonDigestMatched": true
+    }
+  ],
+  "installationPlan": "Hash-locked, no-index install from the T109 runtime wheelhouse into the disposable bounded browser container. The test network remains the T109 internal network."
+}

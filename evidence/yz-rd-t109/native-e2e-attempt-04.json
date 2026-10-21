@@ -1,0 +1,14 @@
+{
+  "taskId": "YZ-RD-T109",
+  "sourceT108Sha": "8974c2a7d5842bb20dbfcd091b63cac5674dcc32",
+  "runtimeProject": "yz-rd-t109",
+  "status": "INCOMPLETE_HARNESS_RUN",
+  "stage": "real-login-navigation",
+  "loginHttpStatus": 200,
+  "sanitizedErrorMessage": "Playwright URL glob timed out although it navigated to http://frontend:4175/student/today/; the glob did not account for the normalized trailing slash.",
+  "consoleErrorCount": 0,
+  "pageErrorCount": 0,
+  "requestFailedCount": 0,
+  "browserContainer": { "oomKilled": false, "restartCount": 0 },
+  "resourceGuard": "PASS throughout; no T109 container stop occurred."
+}

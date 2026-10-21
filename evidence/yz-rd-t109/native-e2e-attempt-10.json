@@ -1,0 +1,15 @@
+{
+  "taskId": "YZ-RD-T109",
+  "sourceT108Sha": "8974c2a7d5842bb20dbfcd091b63cac5674dcc32",
+  "status": "INCOMPLETE_STATE_REUSE",
+  "stage": "course-detail-api-and-media-source",
+  "loginHttpStatus": 200,
+  "videoLoadingDiagnostic": {
+    "readyState": 0,
+    "networkState": 0,
+    "mediaErrorCode": null,
+    "visibleError": true,
+    "errorMessage": "本节暂无可播放的视频。"
+  },
+  "interpretation": "A prior Browser run had completed the T109 video activity; course detail selected the next TEXT activity. The test harness incorrectly assumed the video activity was initially current. This attempt created no video or progress request and is not a playback result."
+}
