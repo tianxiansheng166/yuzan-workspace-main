@@ -1,0 +1,1249 @@
+{
+  "classification": "VISUAL_FIXTURE_ONLY",
+  "base": "03371f7287433dac7f09c99ff95729fb4c071652",
+  "nativeE2E": "NOT_RUN",
+  "screenshots": [
+    {
+      "phase": "before",
+      "page": "today",
+      "width": 390,
+      "height": 844,
+      "client": 390,
+      "scroll": 390,
+      "title": "小禾，今天好",
+      "ready": "processing",
+      "courses": 0,
+      "chart": false,
+      "links": [
+        "/student/practices/attempts/t098-visual-active/runner/",
+        "/student/growth/",
+        "/student/growth/",
+        "/student/courses/course-detail/?id=t098-visual-course-0",
+        "/student/practices/attempts/t098-visual-active/runner/",
+        "/student/practices/attempts/t098-visual-waiting/processing/",
+        "/student/learn/spring-2?assignmentId=t098-visual-course-0",
+        "/student/practices/",
+        "/student/practices/attempts/t098-visual-active/runner/",
+        "/student/courses",
+        "/student/courses/course-detail/?id=t098-visual-course-0",
+        "/student/courses/course-detail/?id=t098-visual-course-1",
+        "/student/growth/",
+        "/assessment/history/"
+      ],
+      "images": [],
+      "reducedAnimations": 0,
+      "file": "before-today-390x844.png",
+      "full": "before-today-390x844-full.png"
+    },
+    {
+      "phase": "before",
+      "page": "courses",
+      "width": 390,
+      "height": 844,
+      "client": 390,
+      "scroll": 390,
+      "title": "课程中心",
+      "hero": 230,
+      "courses": 12,
+      "chart": false,
+      "links": [
+        "/student/today",
+        "/student/courses/course-detail/?id=t098-visual-course-0&activityId=t098-visual-video-0",
+        "/student/courses/course-detail/?id=t098-visual-course-1&activityId=t098-visual-video-1",
+        "/student/courses/course-detail/?id=t098-visual-course-2&activityId=t098-visual-video-2",
+        "/student/courses/course-detail/?id=t098-visual-course-3&activityId=t098-visual-video-3",
+        "/student/courses/course-detail/?id=t098-visual-course-4&activityId=t098-visual-video-4",
+        "/student/courses/course-detail/?id=t098-visual-course-5&activityId=t098-visual-video-5",
+        "/student/courses/course-detail/?id=t098-visual-course-6&activityId=t098-visual-video-6",
+        "/student/courses/course-detail/?id=t098-visual-course-7&activityId=t098-visual-video-7",
+        "/student/courses/course-detail/?id=t098-visual-course-8&activityId=t098-visual-video-8",
+        "/student/courses/course-detail/?id=t098-visual-course-9&activityId=t098-visual-video-9",
+        "/student/courses/course-detail/?id=t098-visual-course-10&activityId=t098-visual-video-10",
+        "/student/courses/course-detail/?id=t098-visual-course-11&activityId=t098-visual-video-11"
+      ],
+      "images": [
+        {
+          "src": "/assets/generated-covers/course-spring-reading.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-poetry-rhythm.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-listening-retell.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-vowel-rhythm.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-initials-mouth.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-spring-reading.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-listening-retell.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-poetry-rhythm.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-initials-mouth.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-listening-retell.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-vowel-rhythm.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-poetry-rhythm.png",
+          "loaded": true
+        }
+      ],
+      "reducedAnimations": 0,
+      "file": "before-courses-390x844.png",
+      "full": "before-courses-390x844-full.png"
+    },
+    {
+      "phase": "before",
+      "page": "growth",
+      "width": 390,
+      "height": 844,
+      "client": 390,
+      "scroll": 390,
+      "title": "小禾的成长记录",
+      "ready": "ready",
+      "courses": 0,
+      "chart": true,
+      "links": [
+        "/student/today/",
+        "/student/practices/attempts/t098-visual-active/runner/",
+        "/student/practices/attempts/t098-visual-waiting/processing/",
+        "/assessment/history/",
+        "/assessment/sessions/t098-formal-1/report/",
+        "/assessment/sessions/t098-formal-2/report/",
+        "/assessment/sessions/t098-formal-3/report/",
+        "/assessment/sessions/t098-formal-zero/report/",
+        "/assessment/sessions/t098-formal-null/report/",
+        "/student/practices/",
+        "/student/practices/attempts/t098-visual-active/runner/",
+        "/assessment/history/"
+      ],
+      "images": [],
+      "reducedAnimations": 0,
+      "file": "before-growth-390x844.png",
+      "full": "before-growth-390x844-full.png"
+    },
+    {
+      "phase": "before",
+      "page": "today",
+      "width": 768,
+      "height": 1024,
+      "client": 753,
+      "scroll": 753,
+      "title": "小禾，今天好",
+      "ready": "processing",
+      "courses": 0,
+      "chart": false,
+      "links": [
+        "/student/practices/attempts/t098-visual-active/runner/",
+        "/student/growth/",
+        "/student/growth/",
+        "/student/courses/course-detail/?id=t098-visual-course-0",
+        "/student/practices/attempts/t098-visual-active/runner/",
+        "/student/practices/attempts/t098-visual-waiting/processing/",
+        "/student/learn/spring-2?assignmentId=t098-visual-course-0",
+        "/student/practices/",
+        "/student/practices/attempts/t098-visual-active/runner/",
+        "/student/courses",
+        "/student/courses/course-detail/?id=t098-visual-course-0",
+        "/student/courses/course-detail/?id=t098-visual-course-1",
+        "/student/growth/",
+        "/assessment/history/"
+      ],
+      "images": [],
+      "reducedAnimations": 0,
+      "file": "before-today-768x1024.png",
+      "full": "before-today-768x1024-full.png"
+    },
+    {
+      "phase": "before",
+      "page": "courses",
+      "width": 768,
+      "height": 1024,
+      "client": 768,
+      "scroll": 768,
+      "title": "课程中心",
+      "hero": 245,
+      "courses": 12,
+      "chart": false,
+      "links": [
+        "/student/today",
+        "/student/courses/course-detail/?id=t098-visual-course-0&activityId=t098-visual-video-0",
+        "/student/courses/course-detail/?id=t098-visual-course-1&activityId=t098-visual-video-1",
+        "/student/courses/course-detail/?id=t098-visual-course-2&activityId=t098-visual-video-2",
+        "/student/courses/course-detail/?id=t098-visual-course-3&activityId=t098-visual-video-3",
+        "/student/courses/course-detail/?id=t098-visual-course-4&activityId=t098-visual-video-4",
+        "/student/courses/course-detail/?id=t098-visual-course-5&activityId=t098-visual-video-5",
+        "/student/courses/course-detail/?id=t098-visual-course-6&activityId=t098-visual-video-6",
+        "/student/courses/course-detail/?id=t098-visual-course-7&activityId=t098-visual-video-7",
+        "/student/courses/course-detail/?id=t098-visual-course-8&activityId=t098-visual-video-8",
+        "/student/courses/course-detail/?id=t098-visual-course-9&activityId=t098-visual-video-9",
+        "/student/courses/course-detail/?id=t098-visual-course-10&activityId=t098-visual-video-10",
+        "/student/courses/course-detail/?id=t098-visual-course-11&activityId=t098-visual-video-11"
+      ],
+      "images": [
+        {
+          "src": "/assets/generated-covers/course-spring-reading.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-poetry-rhythm.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-listening-retell.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-vowel-rhythm.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-initials-mouth.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-spring-reading.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-listening-retell.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-poetry-rhythm.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-initials-mouth.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-listening-retell.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-vowel-rhythm.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-poetry-rhythm.png",
+          "loaded": true
+        }
+      ],
+      "reducedAnimations": 0,
+      "file": "before-courses-768x1024.png",
+      "full": "before-courses-768x1024-full.png"
+    },
+    {
+      "phase": "before",
+      "page": "growth",
+      "width": 768,
+      "height": 1024,
+      "client": 753,
+      "scroll": 753,
+      "title": "小禾的成长记录",
+      "ready": "ready",
+      "courses": 0,
+      "chart": true,
+      "links": [
+        "/student/today/",
+        "/student/practices/attempts/t098-visual-active/runner/",
+        "/student/practices/attempts/t098-visual-waiting/processing/",
+        "/assessment/history/",
+        "/assessment/sessions/t098-formal-1/report/",
+        "/assessment/sessions/t098-formal-2/report/",
+        "/assessment/sessions/t098-formal-3/report/",
+        "/assessment/sessions/t098-formal-zero/report/",
+        "/assessment/sessions/t098-formal-null/report/",
+        "/student/practices/",
+        "/student/practices/attempts/t098-visual-active/runner/",
+        "/assessment/history/"
+      ],
+      "images": [],
+      "reducedAnimations": 0,
+      "file": "before-growth-768x1024.png",
+      "full": "before-growth-768x1024-full.png"
+    },
+    {
+      "phase": "before",
+      "page": "today",
+      "width": 1280,
+      "height": 900,
+      "client": 1265,
+      "scroll": 1265,
+      "title": "小禾，今天好",
+      "ready": "processing",
+      "courses": 0,
+      "chart": false,
+      "links": [
+        "/student/practices/attempts/t098-visual-active/runner/",
+        "/student/growth/",
+        "/student/growth/",
+        "/student/courses/course-detail/?id=t098-visual-course-0",
+        "/student/practices/attempts/t098-visual-active/runner/",
+        "/student/practices/attempts/t098-visual-waiting/processing/",
+        "/student/learn/spring-2?assignmentId=t098-visual-course-0",
+        "/student/practices/",
+        "/student/practices/attempts/t098-visual-active/runner/",
+        "/student/courses",
+        "/student/courses/course-detail/?id=t098-visual-course-0",
+        "/student/courses/course-detail/?id=t098-visual-course-1",
+        "/student/growth/",
+        "/assessment/history/"
+      ],
+      "images": [],
+      "reducedAnimations": 0,
+      "file": "before-today-1280x900.png",
+      "full": "before-today-1280x900-full.png"
+    },
+    {
+      "phase": "before",
+      "page": "courses",
+      "width": 1280,
+      "height": 900,
+      "client": 1280,
+      "scroll": 1280,
+      "title": "课程中心",
+      "hero": 274,
+      "courses": 12,
+      "chart": false,
+      "links": [
+        "/student/today",
+        "/student/courses/course-detail/?id=t098-visual-course-0&activityId=t098-visual-video-0",
+        "/student/courses/course-detail/?id=t098-visual-course-1&activityId=t098-visual-video-1",
+        "/student/courses/course-detail/?id=t098-visual-course-2&activityId=t098-visual-video-2",
+        "/student/courses/course-detail/?id=t098-visual-course-3&activityId=t098-visual-video-3",
+        "/student/courses/course-detail/?id=t098-visual-course-4&activityId=t098-visual-video-4",
+        "/student/courses/course-detail/?id=t098-visual-course-5&activityId=t098-visual-video-5",
+        "/student/courses/course-detail/?id=t098-visual-course-6&activityId=t098-visual-video-6",
+        "/student/courses/course-detail/?id=t098-visual-course-7&activityId=t098-visual-video-7",
+        "/student/courses/course-detail/?id=t098-visual-course-8&activityId=t098-visual-video-8",
+        "/student/courses/course-detail/?id=t098-visual-course-9&activityId=t098-visual-video-9",
+        "/student/courses/course-detail/?id=t098-visual-course-10&activityId=t098-visual-video-10",
+        "/student/courses/course-detail/?id=t098-visual-course-11&activityId=t098-visual-video-11"
+      ],
+      "images": [
+        {
+          "src": "/assets/generated-covers/course-spring-reading.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-poetry-rhythm.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-listening-retell.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-vowel-rhythm.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-initials-mouth.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-spring-reading.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-listening-retell.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-poetry-rhythm.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-initials-mouth.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-listening-retell.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-vowel-rhythm.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-poetry-rhythm.png",
+          "loaded": true
+        }
+      ],
+      "reducedAnimations": 0,
+      "file": "before-courses-1280x900.png",
+      "full": "before-courses-1280x900-full.png"
+    },
+    {
+      "phase": "before",
+      "page": "growth",
+      "width": 1280,
+      "height": 900,
+      "client": 1265,
+      "scroll": 1265,
+      "title": "小禾的成长记录",
+      "ready": "ready",
+      "courses": 0,
+      "chart": true,
+      "links": [
+        "/student/today/",
+        "/student/practices/attempts/t098-visual-active/runner/",
+        "/student/practices/attempts/t098-visual-waiting/processing/",
+        "/assessment/history/",
+        "/assessment/sessions/t098-formal-1/report/",
+        "/assessment/sessions/t098-formal-2/report/",
+        "/assessment/sessions/t098-formal-3/report/",
+        "/assessment/sessions/t098-formal-zero/report/",
+        "/assessment/sessions/t098-formal-null/report/",
+        "/student/practices/",
+        "/student/practices/attempts/t098-visual-active/runner/",
+        "/assessment/history/"
+      ],
+      "images": [],
+      "reducedAnimations": 0,
+      "file": "before-growth-1280x900.png",
+      "full": "before-growth-1280x900-full.png"
+    },
+    {
+      "phase": "before",
+      "page": "today",
+      "width": 1440,
+      "height": 1000,
+      "client": 1425,
+      "scroll": 1425,
+      "title": "小禾，今天好",
+      "ready": "processing",
+      "courses": 0,
+      "chart": false,
+      "links": [
+        "/student/practices/attempts/t098-visual-active/runner/",
+        "/student/growth/",
+        "/student/growth/",
+        "/student/courses/course-detail/?id=t098-visual-course-0",
+        "/student/practices/attempts/t098-visual-active/runner/",
+        "/student/practices/attempts/t098-visual-waiting/processing/",
+        "/student/learn/spring-2?assignmentId=t098-visual-course-0",
+        "/student/practices/",
+        "/student/practices/attempts/t098-visual-active/runner/",
+        "/student/courses",
+        "/student/courses/course-detail/?id=t098-visual-course-0",
+        "/student/courses/course-detail/?id=t098-visual-course-1",
+        "/student/growth/",
+        "/assessment/history/"
+      ],
+      "images": [],
+      "reducedAnimations": 0,
+      "file": "before-today-1440x1000.png",
+      "full": "before-today-1440x1000-full.png"
+    },
+    {
+      "phase": "before",
+      "page": "courses",
+      "width": 1440,
+      "height": 1000,
+      "client": 1440,
+      "scroll": 1440,
+      "title": "课程中心",
+      "hero": 274,
+      "courses": 12,
+      "chart": false,
+      "links": [
+        "/student/today",
+        "/student/courses/course-detail/?id=t098-visual-course-0&activityId=t098-visual-video-0",
+        "/student/courses/course-detail/?id=t098-visual-course-1&activityId=t098-visual-video-1",
+        "/student/courses/course-detail/?id=t098-visual-course-2&activityId=t098-visual-video-2",
+        "/student/courses/course-detail/?id=t098-visual-course-3&activityId=t098-visual-video-3",
+        "/student/courses/course-detail/?id=t098-visual-course-4&activityId=t098-visual-video-4",
+        "/student/courses/course-detail/?id=t098-visual-course-5&activityId=t098-visual-video-5",
+        "/student/courses/course-detail/?id=t098-visual-course-6&activityId=t098-visual-video-6",
+        "/student/courses/course-detail/?id=t098-visual-course-7&activityId=t098-visual-video-7",
+        "/student/courses/course-detail/?id=t098-visual-course-8&activityId=t098-visual-video-8",
+        "/student/courses/course-detail/?id=t098-visual-course-9&activityId=t098-visual-video-9",
+        "/student/courses/course-detail/?id=t098-visual-course-10&activityId=t098-visual-video-10",
+        "/student/courses/course-detail/?id=t098-visual-course-11&activityId=t098-visual-video-11"
+      ],
+      "images": [
+        {
+          "src": "/assets/generated-covers/course-spring-reading.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-poetry-rhythm.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-listening-retell.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-vowel-rhythm.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-initials-mouth.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-spring-reading.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-listening-retell.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-poetry-rhythm.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-initials-mouth.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-listening-retell.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-vowel-rhythm.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-poetry-rhythm.png",
+          "loaded": true
+        }
+      ],
+      "reducedAnimations": 0,
+      "file": "before-courses-1440x1000.png",
+      "full": "before-courses-1440x1000-full.png"
+    },
+    {
+      "phase": "before",
+      "page": "growth",
+      "width": 1440,
+      "height": 1000,
+      "client": 1425,
+      "scroll": 1425,
+      "title": "小禾的成长记录",
+      "ready": "ready",
+      "courses": 0,
+      "chart": true,
+      "links": [
+        "/student/today/",
+        "/student/practices/attempts/t098-visual-active/runner/",
+        "/student/practices/attempts/t098-visual-waiting/processing/",
+        "/assessment/history/",
+        "/assessment/sessions/t098-formal-1/report/",
+        "/assessment/sessions/t098-formal-2/report/",
+        "/assessment/sessions/t098-formal-3/report/",
+        "/assessment/sessions/t098-formal-zero/report/",
+        "/assessment/sessions/t098-formal-null/report/",
+        "/student/practices/",
+        "/student/practices/attempts/t098-visual-active/runner/",
+        "/assessment/history/"
+      ],
+      "images": [],
+      "reducedAnimations": 0,
+      "file": "before-growth-1440x1000.png",
+      "full": "before-growth-1440x1000-full.png"
+    },
+    {
+      "phase": "after",
+      "page": "today",
+      "width": 390,
+      "height": 844,
+      "client": 390,
+      "scroll": 390,
+      "title": "小禾，今天好",
+      "ready": "processing",
+      "courses": 0,
+      "chart": false,
+      "links": [
+        "/student/practices/attempts/t098-visual-active/runner/",
+        "/student/growth/",
+        "/student/growth/",
+        "/student/courses/course-detail/?id=t098-visual-course-0",
+        "/student/practices/attempts/t098-visual-active/runner/",
+        "/student/practices/attempts/t098-visual-waiting/processing/",
+        "/student/learn/spring-2?assignmentId=t098-visual-course-0",
+        "/student/practices/",
+        "/student/practices/attempts/t098-visual-active/runner/",
+        "/student/courses",
+        "/student/courses/course-detail/?id=t098-visual-course-0",
+        "/student/courses/course-detail/?id=t098-visual-course-1",
+        "/student/growth/",
+        "/assessment/history/"
+      ],
+      "images": [],
+      "reducedAnimations": 0,
+      "file": "after-today-390x844.png",
+      "full": "after-today-390x844-full.png"
+    },
+    {
+      "phase": "after",
+      "page": "courses",
+      "width": 390,
+      "height": 844,
+      "client": 390,
+      "scroll": 390,
+      "title": "课程中心",
+      "hero": 172,
+      "courses": 12,
+      "chart": false,
+      "links": [
+        "/student/today",
+        "/student/courses/course-detail/?id=t098-visual-course-0&activityId=t098-visual-video-0",
+        "/student/courses/course-detail/?id=t098-visual-course-1&activityId=t098-visual-video-1",
+        "/student/courses/course-detail/?id=t098-visual-course-2&activityId=t098-visual-video-2",
+        "/student/courses/course-detail/?id=t098-visual-course-3&activityId=t098-visual-video-3",
+        "/student/courses/course-detail/?id=t098-visual-course-4&activityId=t098-visual-video-4",
+        "/student/courses/course-detail/?id=t098-visual-course-5&activityId=t098-visual-video-5",
+        "/student/courses/course-detail/?id=t098-visual-course-6&activityId=t098-visual-video-6",
+        "/student/courses/course-detail/?id=t098-visual-course-7&activityId=t098-visual-video-7",
+        "/student/courses/course-detail/?id=t098-visual-course-8&activityId=t098-visual-video-8",
+        "/student/courses/course-detail/?id=t098-visual-course-9&activityId=t098-visual-video-9",
+        "/student/courses/course-detail/?id=t098-visual-course-10&activityId=t098-visual-video-10",
+        "/student/courses/course-detail/?id=t098-visual-course-11&activityId=t098-visual-video-11"
+      ],
+      "images": [
+        {
+          "src": "/assets/generated-covers/course-spring-reading.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-poetry-rhythm.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-listening-retell.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-vowel-rhythm.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-initials-mouth.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-spring-reading.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-listening-retell.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-poetry-rhythm.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-initials-mouth.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-listening-retell.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-vowel-rhythm.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-poetry-rhythm.png",
+          "loaded": true
+        }
+      ],
+      "reducedAnimations": 0,
+      "file": "after-courses-390x844.png",
+      "full": "after-courses-390x844-full.png"
+    },
+    {
+      "phase": "after",
+      "page": "growth",
+      "width": 390,
+      "height": 844,
+      "client": 390,
+      "scroll": 390,
+      "title": "小禾的成长记录",
+      "ready": "ready",
+      "courses": 0,
+      "chart": true,
+      "links": [
+        "/student/today/",
+        "/student/practices/attempts/t098-visual-active/runner/",
+        "/student/practices/attempts/t098-visual-waiting/processing/",
+        "/assessment/history/",
+        "/assessment/sessions/t098-formal-1/report/",
+        "/assessment/sessions/t098-formal-2/report/",
+        "/assessment/sessions/t098-formal-3/report/",
+        "/assessment/sessions/t098-formal-zero/report/",
+        "/assessment/sessions/t098-formal-null/report/",
+        "/student/practices/",
+        "/student/practices/attempts/t098-visual-active/runner/",
+        "/assessment/history/"
+      ],
+      "images": [],
+      "reducedAnimations": 0,
+      "file": "after-growth-390x844.png",
+      "full": "after-growth-390x844-full.png"
+    },
+    {
+      "phase": "after",
+      "page": "today",
+      "width": 768,
+      "height": 1024,
+      "client": 753,
+      "scroll": 753,
+      "title": "小禾，今天好",
+      "ready": "processing",
+      "courses": 0,
+      "chart": false,
+      "links": [
+        "/student/practices/attempts/t098-visual-active/runner/",
+        "/student/growth/",
+        "/student/growth/",
+        "/student/courses/course-detail/?id=t098-visual-course-0",
+        "/student/practices/attempts/t098-visual-active/runner/",
+        "/student/practices/attempts/t098-visual-waiting/processing/",
+        "/student/learn/spring-2?assignmentId=t098-visual-course-0",
+        "/student/practices/",
+        "/student/practices/attempts/t098-visual-active/runner/",
+        "/student/courses",
+        "/student/courses/course-detail/?id=t098-visual-course-0",
+        "/student/courses/course-detail/?id=t098-visual-course-1",
+        "/student/growth/",
+        "/assessment/history/"
+      ],
+      "images": [],
+      "reducedAnimations": 0,
+      "file": "after-today-768x1024.png",
+      "full": "after-today-768x1024-full.png"
+    },
+    {
+      "phase": "after",
+      "page": "courses",
+      "width": 768,
+      "height": 1024,
+      "client": 753,
+      "scroll": 753,
+      "title": "课程中心",
+      "hero": 164,
+      "courses": 12,
+      "chart": false,
+      "links": [
+        "/student/today",
+        "/student/courses/course-detail/?id=t098-visual-course-0&activityId=t098-visual-video-0",
+        "/student/courses/course-detail/?id=t098-visual-course-1&activityId=t098-visual-video-1",
+        "/student/courses/course-detail/?id=t098-visual-course-2&activityId=t098-visual-video-2",
+        "/student/courses/course-detail/?id=t098-visual-course-3&activityId=t098-visual-video-3",
+        "/student/courses/course-detail/?id=t098-visual-course-4&activityId=t098-visual-video-4",
+        "/student/courses/course-detail/?id=t098-visual-course-5&activityId=t098-visual-video-5",
+        "/student/courses/course-detail/?id=t098-visual-course-6&activityId=t098-visual-video-6",
+        "/student/courses/course-detail/?id=t098-visual-course-7&activityId=t098-visual-video-7",
+        "/student/courses/course-detail/?id=t098-visual-course-8&activityId=t098-visual-video-8",
+        "/student/courses/course-detail/?id=t098-visual-course-9&activityId=t098-visual-video-9",
+        "/student/courses/course-detail/?id=t098-visual-course-10&activityId=t098-visual-video-10",
+        "/student/courses/course-detail/?id=t098-visual-course-11&activityId=t098-visual-video-11"
+      ],
+      "images": [
+        {
+          "src": "/assets/generated-covers/course-spring-reading.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-poetry-rhythm.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-listening-retell.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-vowel-rhythm.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-initials-mouth.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-spring-reading.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-listening-retell.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-poetry-rhythm.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-initials-mouth.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-listening-retell.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-vowel-rhythm.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-poetry-rhythm.png",
+          "loaded": true
+        }
+      ],
+      "reducedAnimations": 0,
+      "file": "after-courses-768x1024.png",
+      "full": "after-courses-768x1024-full.png"
+    },
+    {
+      "phase": "after",
+      "page": "growth",
+      "width": 768,
+      "height": 1024,
+      "client": 753,
+      "scroll": 753,
+      "title": "小禾的成长记录",
+      "ready": "ready",
+      "courses": 0,
+      "chart": true,
+      "links": [
+        "/student/today/",
+        "/student/practices/attempts/t098-visual-active/runner/",
+        "/student/practices/attempts/t098-visual-waiting/processing/",
+        "/assessment/history/",
+        "/assessment/sessions/t098-formal-1/report/",
+        "/assessment/sessions/t098-formal-2/report/",
+        "/assessment/sessions/t098-formal-3/report/",
+        "/assessment/sessions/t098-formal-zero/report/",
+        "/assessment/sessions/t098-formal-null/report/",
+        "/student/practices/",
+        "/student/practices/attempts/t098-visual-active/runner/",
+        "/assessment/history/"
+      ],
+      "images": [],
+      "reducedAnimations": 0,
+      "file": "after-growth-768x1024.png",
+      "full": "after-growth-768x1024-full.png"
+    },
+    {
+      "phase": "after",
+      "page": "today",
+      "width": 1280,
+      "height": 900,
+      "client": 1265,
+      "scroll": 1265,
+      "title": "小禾，今天好",
+      "ready": "processing",
+      "courses": 0,
+      "chart": false,
+      "links": [
+        "/student/practices/attempts/t098-visual-active/runner/",
+        "/student/growth/",
+        "/student/growth/",
+        "/student/courses/course-detail/?id=t098-visual-course-0",
+        "/student/practices/attempts/t098-visual-active/runner/",
+        "/student/practices/attempts/t098-visual-waiting/processing/",
+        "/student/learn/spring-2?assignmentId=t098-visual-course-0",
+        "/student/practices/",
+        "/student/practices/attempts/t098-visual-active/runner/",
+        "/student/courses",
+        "/student/courses/course-detail/?id=t098-visual-course-0",
+        "/student/courses/course-detail/?id=t098-visual-course-1",
+        "/student/growth/",
+        "/assessment/history/"
+      ],
+      "images": [],
+      "reducedAnimations": 0,
+      "file": "after-today-1280x900.png",
+      "full": "after-today-1280x900-full.png"
+    },
+    {
+      "phase": "after",
+      "page": "courses",
+      "width": 1280,
+      "height": 900,
+      "client": 1265,
+      "scroll": 1265,
+      "title": "课程中心",
+      "hero": 164,
+      "courses": 12,
+      "chart": false,
+      "links": [
+        "/student/today",
+        "/student/courses/course-detail/?id=t098-visual-course-0&activityId=t098-visual-video-0",
+        "/student/courses/course-detail/?id=t098-visual-course-1&activityId=t098-visual-video-1",
+        "/student/courses/course-detail/?id=t098-visual-course-2&activityId=t098-visual-video-2",
+        "/student/courses/course-detail/?id=t098-visual-course-3&activityId=t098-visual-video-3",
+        "/student/courses/course-detail/?id=t098-visual-course-4&activityId=t098-visual-video-4",
+        "/student/courses/course-detail/?id=t098-visual-course-5&activityId=t098-visual-video-5",
+        "/student/courses/course-detail/?id=t098-visual-course-6&activityId=t098-visual-video-6",
+        "/student/courses/course-detail/?id=t098-visual-course-7&activityId=t098-visual-video-7",
+        "/student/courses/course-detail/?id=t098-visual-course-8&activityId=t098-visual-video-8",
+        "/student/courses/course-detail/?id=t098-visual-course-9&activityId=t098-visual-video-9",
+        "/student/courses/course-detail/?id=t098-visual-course-10&activityId=t098-visual-video-10",
+        "/student/courses/course-detail/?id=t098-visual-course-11&activityId=t098-visual-video-11"
+      ],
+      "images": [
+        {
+          "src": "/assets/generated-covers/course-spring-reading.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-poetry-rhythm.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-listening-retell.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-vowel-rhythm.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-initials-mouth.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-spring-reading.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-listening-retell.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-poetry-rhythm.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-initials-mouth.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-listening-retell.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-vowel-rhythm.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-poetry-rhythm.png",
+          "loaded": true
+        }
+      ],
+      "reducedAnimations": 0,
+      "file": "after-courses-1280x900.png",
+      "full": "after-courses-1280x900-full.png"
+    },
+    {
+      "phase": "after",
+      "page": "growth",
+      "width": 1280,
+      "height": 900,
+      "client": 1265,
+      "scroll": 1265,
+      "title": "小禾的成长记录",
+      "ready": "ready",
+      "courses": 0,
+      "chart": true,
+      "links": [
+        "/student/today/",
+        "/student/practices/attempts/t098-visual-active/runner/",
+        "/student/practices/attempts/t098-visual-waiting/processing/",
+        "/assessment/history/",
+        "/assessment/sessions/t098-formal-1/report/",
+        "/assessment/sessions/t098-formal-2/report/",
+        "/assessment/sessions/t098-formal-3/report/",
+        "/assessment/sessions/t098-formal-zero/report/",
+        "/assessment/sessions/t098-formal-null/report/",
+        "/student/practices/",
+        "/student/practices/attempts/t098-visual-active/runner/",
+        "/assessment/history/"
+      ],
+      "images": [],
+      "reducedAnimations": 0,
+      "file": "after-growth-1280x900.png",
+      "full": "after-growth-1280x900-full.png"
+    },
+    {
+      "phase": "after",
+      "page": "today",
+      "width": 1440,
+      "height": 1000,
+      "client": 1425,
+      "scroll": 1425,
+      "title": "小禾，今天好",
+      "ready": "processing",
+      "courses": 0,
+      "chart": false,
+      "links": [
+        "/student/practices/attempts/t098-visual-active/runner/",
+        "/student/growth/",
+        "/student/growth/",
+        "/student/courses/course-detail/?id=t098-visual-course-0",
+        "/student/practices/attempts/t098-visual-active/runner/",
+        "/student/practices/attempts/t098-visual-waiting/processing/",
+        "/student/learn/spring-2?assignmentId=t098-visual-course-0",
+        "/student/practices/",
+        "/student/practices/attempts/t098-visual-active/runner/",
+        "/student/courses",
+        "/student/courses/course-detail/?id=t098-visual-course-0",
+        "/student/courses/course-detail/?id=t098-visual-course-1",
+        "/student/growth/",
+        "/assessment/history/"
+      ],
+      "images": [],
+      "reducedAnimations": 0,
+      "file": "after-today-1440x1000.png",
+      "full": "after-today-1440x1000-full.png"
+    },
+    {
+      "phase": "after",
+      "page": "courses",
+      "width": 1440,
+      "height": 1000,
+      "client": 1425,
+      "scroll": 1425,
+      "title": "课程中心",
+      "hero": 164,
+      "courses": 12,
+      "chart": false,
+      "links": [
+        "/student/today",
+        "/student/courses/course-detail/?id=t098-visual-course-0&activityId=t098-visual-video-0",
+        "/student/courses/course-detail/?id=t098-visual-course-1&activityId=t098-visual-video-1",
+        "/student/courses/course-detail/?id=t098-visual-course-2&activityId=t098-visual-video-2",
+        "/student/courses/course-detail/?id=t098-visual-course-3&activityId=t098-visual-video-3",
+        "/student/courses/course-detail/?id=t098-visual-course-4&activityId=t098-visual-video-4",
+        "/student/courses/course-detail/?id=t098-visual-course-5&activityId=t098-visual-video-5",
+        "/student/courses/course-detail/?id=t098-visual-course-6&activityId=t098-visual-video-6",
+        "/student/courses/course-detail/?id=t098-visual-course-7&activityId=t098-visual-video-7",
+        "/student/courses/course-detail/?id=t098-visual-course-8&activityId=t098-visual-video-8",
+        "/student/courses/course-detail/?id=t098-visual-course-9&activityId=t098-visual-video-9",
+        "/student/courses/course-detail/?id=t098-visual-course-10&activityId=t098-visual-video-10",
+        "/student/courses/course-detail/?id=t098-visual-course-11&activityId=t098-visual-video-11"
+      ],
+      "images": [
+        {
+          "src": "/assets/generated-covers/course-spring-reading.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-poetry-rhythm.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-listening-retell.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-vowel-rhythm.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-initials-mouth.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-spring-reading.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-listening-retell.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-poetry-rhythm.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-initials-mouth.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-listening-retell.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-vowel-rhythm.png",
+          "loaded": true
+        },
+        {
+          "src": "/assets/generated-covers/course-poetry-rhythm.png",
+          "loaded": true
+        }
+      ],
+      "reducedAnimations": 0,
+      "file": "after-courses-1440x1000.png",
+      "full": "after-courses-1440x1000-full.png"
+    },
+    {
+      "phase": "after",
+      "page": "growth",
+      "width": 1440,
+      "height": 1000,
+      "client": 1425,
+      "scroll": 1425,
+      "title": "小禾的成长记录",
+      "ready": "ready",
+      "courses": 0,
+      "chart": true,
+      "links": [
+        "/student/today/",
+        "/student/practices/attempts/t098-visual-active/runner/",
+        "/student/practices/attempts/t098-visual-waiting/processing/",
+        "/assessment/history/",
+        "/assessment/sessions/t098-formal-1/report/",
+        "/assessment/sessions/t098-formal-2/report/",
+        "/assessment/sessions/t098-formal-3/report/",
+        "/assessment/sessions/t098-formal-zero/report/",
+        "/assessment/sessions/t098-formal-null/report/",
+        "/student/practices/",
+        "/student/practices/attempts/t098-visual-active/runner/",
+        "/assessment/history/"
+      ],
+      "images": [],
+      "reducedAnimations": 0,
+      "file": "after-growth-1440x1000.png",
+      "full": "after-growth-1440x1000-full.png"
+    }
+  ],
+  "checks": [
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "catalog": "list/grid,favorite,load more 12→13,search,clear,grade,category,sort PASS"
+    },
+    {
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "catalog": "list/grid,favorite,load more 12→13,search,clear,grade,category,sort PASS"
+    },
+    {
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "catalog": "list/grid,favorite,load more 12→13,search,clear,grade,category,sort PASS"
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "catalog": "list/grid,favorite,load more 12→13,search,clear,grade,category,sort PASS"
+    },
+    {
+      "page": "today",
+      "state": "empty",
+      "overflow": 0
+    },
+    {
+      "page": "today",
+      "state": "error",
+      "overflow": 0
+    },
+    {
+      "page": "courses",
+      "state": "empty",
+      "overflow": 0
+    },
+    {
+      "page": "courses",
+      "state": "error",
+      "overflow": 0
+    },
+    {
+      "page": "growth",
+      "state": "empty",
+      "overflow": 0
+    },
+    {
+      "page": "growth",
+      "state": "error",
+      "overflow": 0
+    },
+    {
+      "page": "today",
+      "keyboard": {
+        "tag": "A",
+        "focus": true,
+        "outline": "solid"
+      }
+    },
+    {
+      "page": "courses",
+      "keyboard": {
+        "tag": "A",
+        "focus": true,
+        "outline": "solid"
+      }
+    },
+    {
+      "page": "growth",
+      "keyboard": {
+        "tag": "A",
+        "focus": true,
+        "outline": "solid"
+      }
+    },
+    {
+      "page": "today",
+      "decorativeMotion": {
+        "animations": 1,
+        "pointerEvents": "none"
+      }
+    },
+    {
+      "page": "courses",
+      "decorativeMotion": {
+        "animations": 2,
+        "pointerEvents": "none"
+      }
+    }
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/153.0.8010.52",
+    "revision": "@78e5e45d4bb41035e17ea4da2cc257f496416ac9",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.0.0 Safari/537.36",
+    "jsVersion": "15.3.76.13"
+  },
+  "exceptions": []
+}
