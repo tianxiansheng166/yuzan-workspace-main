@@ -346,8 +346,10 @@ window.CoursePlayerState = (function () {
       expectedProgressRevision: expectedRevision
     };
 
-    if (kind === 'AUDIO' && state.videoProgress > 0) {
-      payload.videoPosition = state.videoProgress;
+    if ((kind === 'VIDEO' || kind === 'AUDIO') && value &&
+        typeof value.videoPosition === 'number' && Number.isFinite(value.videoPosition) &&
+        value.videoPosition >= 0 && value.videoPosition <= 1) {
+      payload.videoPosition = value.videoPosition;
     }
 
     state.saving = true;

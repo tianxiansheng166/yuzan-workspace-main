@@ -59,6 +59,19 @@ function mount(search, overrides = {}) {
       calls.push(["dashboard"]);
       return {};
     },
+    saveActivityAttempt: async (...args) => {
+      calls.push(["activity-attempt", ...args]);
+      return {
+        attempt: { id: "attempt-live" },
+        progress: { revision: 1, completed: false, position: 0.6 },
+        courseCompletion: {
+          progressPercent: 40,
+          completedRequiredCount: 1,
+          requiredActivityCount: 2,
+          completedActivityIds: [],
+        },
+      };
+    },
     ...overrides,
   };
   const window = { location: { search } };
@@ -113,4 +126,27 @@ test("course detail chooses first incomplete activity when no valid activityId i
 
   assert.equal(state.currentActivityId, "activity-requested");
   assert.equal(state.currentActivity.title, "Requested");
+});
+
+test("course video progress sends a fractional position with the dynamic course and activity IDs", async () => {
+  const f = mount("?id=assignment-dynamic&activityId=activity-requested");
+  await f.state.init("assignment-dynamic");
+  f.state.updateVideoProgress(60, 30, 50);
+
+  await f.state.saveActivityAttempt(
+    "activity-requested",
+    "VIDEO",
+    { videoPosition: 0.6 },
+    false,
+  );
+
+  const call = f.calls.find((entry) => entry[0] === "activity-attempt");
+  assert.ok(call);
+  assert.equal(call[1], "assignment-dynamic");
+  assert.equal(call[2], "submission-live");
+  assert.equal(call[3], "activity-requested");
+  assert.equal(call[4].videoPosition, 0.6);
+  assert.equal(call[4].expectedProgressRevision, 0);
+  assert.equal(f.state.getState().course.progress.percent, 40);
+  assert.equal(f.state.getState().activityProgressMap["activity-requested"].position, 0.6);
 });
