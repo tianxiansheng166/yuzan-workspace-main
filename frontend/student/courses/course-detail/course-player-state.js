@@ -32,6 +32,11 @@ window.CoursePlayerState = (function () {
   };
 
   var listeners = [];
+  var progressSaveSequence = 0;
+  var latestCourseCompletionSequence = 0;
+  var courseRefreshSequence = 0;
+  var latestCourseRefreshSequence = 0;
+  var progressSavesInFlight = 0;
 
   function _notify(keys) {
     for (var i = 0; i < listeners.length; i++) {
@@ -90,15 +95,19 @@ window.CoursePlayerState = (function () {
 
   function _syncActivityIsCompletedFromProgress() {
     if (!state.course || !state.course.units) return;
-    var completedIds = (state.course.progress && state.course.progress.completedActivityIds) || [];
+    var completedIds = state.course.progress && state.course.progress.completedActivityIds;
+    var hasServerCompletionList = Array.isArray(completedIds);
     for (var u = 0; u < state.course.units.length; u++) {
       var unit = state.course.units[u];
       for (var l = 0; l < unit.lessons.length; l++) {
         var lesson = unit.lessons[l];
         for (var a = 0; a < lesson.activities.length; a++) {
           var act = lesson.activities[a];
-          if (completedIds.indexOf(act.activityId) !== -1) {
-            act.isCompleted = true;
+          var progress = state.activityProgressMap[act.activityId];
+          if (hasServerCompletionList && act.required !== false) {
+            act.isCompleted = completedIds.indexOf(act.activityId) !== -1;
+          } else if (progress && typeof progress.completed === 'boolean') {
+            act.isCompleted = progress.completed;
           }
         }
       }
@@ -228,14 +237,33 @@ window.CoursePlayerState = (function () {
   }
 
   function _refreshCourseFromServer() {
+    var refreshSequence = ++courseRefreshSequence;
+    var progressSequenceAtRefreshStart = progressSaveSequence;
     return CourseApiAdapter.loadCourse(state.assignmentId)
       .then(function (course) {
-        if (course && course.assignmentId) {
+        if (course && course.assignmentId && refreshSequence >= latestCourseRefreshSequence) {
+          latestCourseRefreshSequence = refreshSequence;
+          latestCourseCompletionSequence = Math.max(latestCourseCompletionSequence, progressSequenceAtRefreshStart);
           state.course = course;
           _buildActivityProgressMap(course);
           _syncActivityIsCompletedFromProgress();
+          state.currentActivity = state.currentActivityId ? _findActivity(state.currentActivityId) : null;
+          _notify(['course', 'activityProgressMap', 'currentActivity']);
         }
       });
+  }
+
+  function refreshActivityProgress(activityId) {
+    if (!activityId) return Promise.reject(new Error('活动 ID 缺失，无法核对学习进度'));
+    return _refreshCourseFromServer().then(function () {
+      var progress = state.activityProgressMap[activityId];
+      if (!progress) return { revision: 0, position: 0, completed: false };
+      return {
+        revision: progress.revision != null ? progress.revision : 0,
+        position: progress.position != null ? progress.position : 0,
+        completed: !!progress.completed
+      };
+    });
   }
 
   function getState() {
@@ -339,6 +367,7 @@ window.CoursePlayerState = (function () {
     }
 
     var expectedRevision = _getActivityRevision(activityId);
+    var requestSequence = ++progressSaveSequence;
     var payload = {
       kind: kind,
       value: value || {},
@@ -353,48 +382,55 @@ window.CoursePlayerState = (function () {
     }
 
     state.saving = true;
+    progressSavesInFlight += 1;
     _notify(['saving']);
 
     return CourseApiAdapter.saveActivityAttempt(state.assignmentId, state.submissionId, activityId, payload)
       .then(function (result) {
-        state.saving = false;
-
         if (result.attempt) {
           state.activityAttemptMap[activityId] = result.attempt;
         }
         if (result.progress) {
-          state.activityProgressMap[activityId] = {
+          var currentProgress = state.activityProgressMap[activityId];
+          var returnedProgress = {
             revision: result.progress.revision != null ? result.progress.revision : (expectedRevision + 1),
             completed: !!result.progress.completed,
             position: result.progress.position != null ? result.progress.position : 0
           };
+          if (!currentProgress || returnedProgress.revision >= currentProgress.revision) {
+            state.activityProgressMap[activityId] = returnedProgress;
+            var activity = _findActivity(activityId);
+            if (activity) activity.isCompleted = returnedProgress.completed;
+          }
         }
-        if (result.courseCompletion) {
+        if (result.courseCompletion && requestSequence >= latestCourseCompletionSequence) {
+          latestCourseCompletionSequence = requestSequence;
           _updateProgressFromServer(result.courseCompletion);
           _syncActivityIsCompletedFromProgress();
         }
-
-        if (completed) {
-          var activity = _findActivity(activityId);
-          if (activity) activity.isCompleted = true;
-        }
-
-        _notify(['saving', 'course', 'activityProgressMap', 'activityAttemptMap']);
+        _notify(['course', 'activityProgressMap', 'activityAttemptMap']);
         return result;
       })
       .catch(function (err) {
-        state.saving = false;
-        if (err && err.code === 'REVISION_CONFLICT') {
+        if (err && (err.code === 'REVISION_CONFLICT' || err.status === 409)) {
           return _refreshCourseFromServer().then(function () {
-            _notify(['saving', 'course', 'activityProgressMap']);
-            var refreshed = new Error('进度版本冲突，已刷新最新数据，请重试');
+            var refreshed = new Error('进度版本冲突，已刷新最新数据，请核对后重试');
             refreshed.code = 'REVISION_CONFLICT';
             refreshed.status = 409;
             throw refreshed;
+          }, function () {
+            var refreshFailed = new Error('进度版本冲突，暂时无法刷新服务器记录，请重新加载课程');
+            refreshFailed.code = 'REVISION_CONFLICT';
+            refreshFailed.status = 409;
+            throw refreshFailed;
           });
         }
-        _notify(['saving']);
         throw err;
+      })
+      .finally(function () {
+        progressSavesInFlight = Math.max(0, progressSavesInFlight - 1);
+        state.saving = progressSavesInFlight > 0;
+        _notify(['saving']);
       });
   }
 
@@ -506,6 +542,7 @@ window.CoursePlayerState = (function () {
     getNextActivity: getNextActivity,
     getPrevActivity: getPrevActivity,
     restoreFromUrl: restoreFromUrl,
+    refreshActivityProgress: refreshActivityProgress,
     isSubmitted: _isSubmitted
   };
 })();

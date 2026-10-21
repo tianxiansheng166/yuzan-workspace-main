@@ -27,6 +27,9 @@
   var fullscreenBtn = null;
   var volumeBtn = null;
   var videoError = null;
+  var progressSaveError = null;
+  var progressSaveErrorMessage = null;
+  var progressRetryBtn = null;
 
   var controlsTimeout = null;
   var duration = 0;
@@ -34,6 +37,16 @@
   var mediaActivityId = '';
   var mediaActivityType = '';
   var POSITION_SAVE_INTERVAL = 10;
+  var metadataRestoreKey = '';
+  var progressSequence = 0;
+  var latestProgressByActivity = Object.create(null);
+  var queuedProgressByActivity = Object.create(null);
+  var failedProgressByActivity = Object.create(null);
+  var blockedProgressByActivity = Object.create(null);
+  var savedProgressByActivity = Object.create(null);
+  var activeProgressSave = null;
+  var progressRetryInFlight = false;
+  var visibleProgressErrorActivityId = '';
 
   // Bound handler references for cleanup
   var handlers = {};
@@ -103,21 +116,216 @@
   }
 
   function onLoadedMetadata() {
-    duration = video.duration;
+    duration = isFinite(video.duration) && video.duration > 0 ? video.duration : 0;
     if (totalTimeEl) totalTimeEl.textContent = formatTime(duration);
-    if (progressBar) progressBar.max = duration;
+    if (progressBar) progressBar.max = duration || 0;
+
+    if (!duration || typeof CoursePlayerState === 'undefined') return;
+    var s = CoursePlayerState.getState();
+    var activityId = mediaActivityId || s.currentActivityId;
+    if (!activityId || (mediaActivityId && s.currentActivityId && s.currentActivityId !== mediaActivityId)) return;
+    var sourceKey = activityId + '|' + (video.currentSrc || video.src || '');
+    if (sourceKey === metadataRestoreKey) return;
+    metadataRestoreKey = sourceKey;
+
+    var progress = s.activityProgressMap && s.activityProgressMap[activityId];
+    var fraction = progress && typeof progress.position === 'number' && isFinite(progress.position)
+      ? Math.min(1, Math.max(0, progress.position))
+      : 0;
+    var restoredPosition = Math.min(duration, Math.max(0, fraction * duration));
+    try {
+      video.currentTime = restoredPosition;
+    } catch (error) {
+      return;
+    }
+    lastSavedPosition = restoredPosition;
+    if (progressBar) progressBar.value = restoredPosition;
+    if (currentTimeEl) currentTimeEl.textContent = formatTime(restoredPosition);
+    if (CoursePlayerState.updateVideoProgress) {
+      CoursePlayerState.updateVideoProgress(fraction * 100, restoredPosition, duration);
+    }
   }
 
-  function _saveVideoPosition(position, completed) {
+  function _makeProgressSnapshot(position, completed) {
     if (typeof CoursePlayerState === 'undefined') return;
     var s = CoursePlayerState.getState();
     var activityId = mediaActivityId || s.currentActivityId;
-    if (!activityId || !s.submissionId) return;
+    if (!activityId || !s.submissionId) return null;
     if (s.submissionStatus && ['SUBMITTED', 'PROCESSING', 'NEEDS_REVIEW', 'REVIEWED', 'ACCEPTED'].indexOf(s.submissionStatus) !== -1) return;
     var activityKind = mediaActivityType || (s.currentActivity ? s.currentActivity.activityType : 'VIDEO');
     var videoPosition = isFinite(duration) && duration > 0 ? Math.min(1, Math.max(0, position / duration)) : 0;
-    var reachedEnd = isFinite(duration) && duration > 0 && (completed === true || videoPosition >= 1);
-    CoursePlayerState.saveActivityAttempt(activityId, activityKind, { videoPosition: videoPosition }, reachedEnd).catch(function () {});
+    var savedProgress = s.activityProgressMap && s.activityProgressMap[activityId];
+    var completedOnServer = !!(savedProgress && savedProgress.completed);
+    return {
+      activityId: activityId,
+      kind: activityKind,
+      videoPosition: videoPosition,
+      completed: isFinite(duration) && duration > 0 && (completed === true || videoPosition >= 1 || completedOnServer),
+      sequence: ++progressSequence,
+      baseRevision: savedProgress && savedProgress.revision != null ? savedProgress.revision : 0
+    };
+  }
+
+  function _sameProgress(left, right) {
+    return !!left && !!right && left.videoPosition === right.videoPosition && left.completed === right.completed;
+  }
+
+  function _progressSaveFailureMessage(error) {
+    var status = error && Number(error.status);
+    var code = error && error.code;
+    if (status === 403) return '当前账号无权保存此课程的学习进度。';
+    if (status === 409 || code === 'REVISION_CONFLICT') return '进度已在其他页面更新，服务器最新记录已刷新；尚未确认本次进度。';
+    if (status >= 500 || status === 0 || code === 'NETWORK_ERROR' || error instanceof TypeError) {
+      return '网络或服务暂时不可用，学习进度尚未确认保存。';
+    }
+    return '学习进度保存失败，服务器尚未确认本次记录。';
+  }
+
+  function _renderProgressError(activityId, error) {
+    if (!progressSaveError || !progressSaveErrorMessage) return;
+    visibleProgressErrorActivityId = activityId || '';
+    progressSaveErrorMessage.textContent = _progressSaveFailureMessage(error);
+    progressSaveError.hidden = false;
+    if (progressRetryBtn) progressRetryBtn.hidden = !activityId;
+  }
+
+  function _renderNextProgressError() {
+    var ids = Object.keys(failedProgressByActivity);
+    if (!ids.length) {
+      visibleProgressErrorActivityId = '';
+      if (progressSaveError) progressSaveError.hidden = true;
+      if (progressSaveErrorMessage) progressSaveErrorMessage.textContent = '';
+      if (progressRetryBtn) progressRetryBtn.hidden = true;
+      return;
+    }
+    if (ids.indexOf(visibleProgressErrorActivityId) === -1) {
+      visibleProgressErrorActivityId = ids[0];
+      _renderProgressError(visibleProgressErrorActivityId, failedProgressByActivity[visibleProgressErrorActivityId].error);
+    }
+  }
+
+  function _clearProgressFailure(activityId) {
+    delete failedProgressByActivity[activityId];
+    delete blockedProgressByActivity[activityId];
+    if (visibleProgressErrorActivityId === activityId) visibleProgressErrorActivityId = '';
+    _renderNextProgressError();
+  }
+
+  function _handleProgressSaveFailure(snapshot, error) {
+    var activityId = snapshot.activityId;
+    var latest = latestProgressByActivity[activityId];
+    var queued = queuedProgressByActivity[activityId];
+    var pending = snapshot;
+    if (queued && queued.sequence > pending.sequence) pending = queued;
+    if (latest && latest.sequence > pending.sequence) pending = latest;
+    delete queuedProgressByActivity[activityId];
+    failedProgressByActivity[activityId] = { snapshot: pending, error: error };
+    blockedProgressByActivity[activityId] = true;
+    _renderProgressError(activityId, error);
+  }
+
+  function _pumpProgressSaves() {
+    if (activeProgressSave || typeof CoursePlayerState === 'undefined') return;
+    var candidates = Object.keys(queuedProgressByActivity)
+      .filter(function (activityId) { return !blockedProgressByActivity[activityId]; })
+      .sort(function (left, right) {
+        return queuedProgressByActivity[left].sequence - queuedProgressByActivity[right].sequence;
+      });
+    if (!candidates.length) return;
+
+    var activityId = candidates[0];
+    var snapshot = queuedProgressByActivity[activityId];
+    delete queuedProgressByActivity[activityId];
+    activeProgressSave = snapshot;
+
+    var save;
+    try {
+      save = CoursePlayerState.saveActivityAttempt(
+        snapshot.activityId,
+        snapshot.kind,
+        { videoPosition: snapshot.videoPosition },
+        snapshot.completed,
+      );
+    } catch (error) {
+      save = Promise.reject(error);
+    }
+
+    Promise.resolve(save).then(function (result) {
+      var progress = result && result.progress;
+      savedProgressByActivity[snapshot.activityId] = progress ? {
+        videoPosition: progress.position != null ? progress.position : snapshot.videoPosition,
+        completed: progress.completed != null ? !!progress.completed : snapshot.completed
+      } : snapshot;
+      if (failedProgressByActivity[snapshot.activityId]) _clearProgressFailure(snapshot.activityId);
+      else _renderNextProgressError();
+    }, function (error) {
+      _handleProgressSaveFailure(snapshot, error);
+    }).finally(function () {
+      activeProgressSave = null;
+      _pumpProgressSaves();
+    });
+  }
+
+  function _queueProgressSave(snapshot) {
+    if (!snapshot) return;
+    var activityId = snapshot.activityId;
+    if (_sameProgress(savedProgressByActivity[activityId], snapshot)) return;
+    if (activeProgressSave && activeProgressSave.activityId === activityId && _sameProgress(activeProgressSave, snapshot)) return;
+    if (queuedProgressByActivity[activityId] && _sameProgress(queuedProgressByActivity[activityId], snapshot)) return;
+    if (blockedProgressByActivity[activityId]) return;
+    queuedProgressByActivity[activityId] = snapshot;
+    _pumpProgressSaves();
+  }
+
+  function _saveVideoPosition(position, completed) {
+    var snapshot = _makeProgressSnapshot(position, completed);
+    if (!snapshot) return;
+    latestProgressByActivity[snapshot.activityId] = snapshot;
+    _queueProgressSave(snapshot);
+  }
+
+  function retryProgressSave() {
+    if (progressRetryInFlight || !visibleProgressErrorActivityId) return;
+    var activityId = visibleProgressErrorActivityId;
+    var failure = failedProgressByActivity[activityId];
+    if (!failure || typeof CoursePlayerState === 'undefined' || !CoursePlayerState.refreshActivityProgress) return;
+
+    progressRetryInFlight = true;
+    if (progressRetryBtn) progressRetryBtn.disabled = true;
+    if (progressSaveErrorMessage) progressSaveErrorMessage.textContent = '正在核对服务器进度…';
+
+    Promise.resolve(CoursePlayerState.refreshActivityProgress(activityId)).then(function (serverProgress) {
+      var latest = latestProgressByActivity[activityId];
+      var candidate = latest && latest.sequence >= failure.snapshot.sequence ? latest : failure.snapshot;
+      var serverPosition = serverProgress && typeof serverProgress.position === 'number' ? Math.min(1, Math.max(0, serverProgress.position)) : 0;
+      var serverCompleted = !!(serverProgress && serverProgress.completed);
+
+      if (serverCompleted || (serverPosition > candidate.videoPosition && !candidate.completed) ||
+          (serverPosition === candidate.videoPosition && (!candidate.completed || serverCompleted))) {
+        savedProgressByActivity[activityId] = { videoPosition: serverPosition, completed: serverCompleted };
+        _clearProgressFailure(activityId);
+        return;
+      }
+
+      var retrySnapshot = {
+        activityId: candidate.activityId,
+        kind: candidate.kind,
+        videoPosition: candidate.completed ? Math.max(candidate.videoPosition, serverPosition) : candidate.videoPosition,
+        completed: candidate.completed,
+        sequence: ++progressSequence,
+        baseRevision: serverProgress && serverProgress.revision != null ? serverProgress.revision : 0
+      };
+      delete failedProgressByActivity[activityId];
+      delete blockedProgressByActivity[activityId];
+      queuedProgressByActivity[activityId] = retrySnapshot;
+      if (progressSaveErrorMessage) progressSaveErrorMessage.textContent = '正在重试保存学习进度…';
+      _pumpProgressSaves();
+    }, function (error) {
+      _renderProgressError(activityId, error);
+    }).finally(function () {
+      progressRetryInFlight = false;
+      if (progressRetryBtn) progressRetryBtn.disabled = false;
+    });
   }
 
   function onTimeUpdate() {
@@ -129,9 +337,11 @@
       var pct = duration > 0 ? (cur / duration) * 100 : 0;
       CoursePlayerState.updateVideoProgress(pct, cur, duration);
     }
+    var latest = _makeProgressSnapshot(cur, false);
+    if (latest) latestProgressByActivity[latest.activityId] = latest;
     if (cur - lastSavedPosition >= POSITION_SAVE_INTERVAL) {
       lastSavedPosition = cur;
-      _saveVideoPosition(cur);
+      _queueProgressSave(latest);
     }
   }
 
@@ -251,6 +461,9 @@
       fullscreenBtn = document.getElementById('cpFullscreenBtn');
       volumeBtn = document.getElementById('cpVolumeBtn');
       videoError = document.getElementById('cpVideoError');
+      progressSaveError = document.getElementById('cpProgressError');
+      progressSaveErrorMessage = document.getElementById('cpProgressErrorMessage');
+      progressRetryBtn = document.getElementById('cpProgressRetryBtn');
 
       // Bind video events
       video.addEventListener('loadedmetadata', onLoadedMetadata);
@@ -287,6 +500,7 @@
 
       // Bind volume
       if (volumeBtn) volumeBtn.addEventListener('click', onVolumeBtnClick);
+      if (progressRetryBtn) progressRetryBtn.addEventListener('click', retryProgressSave);
 
       // Bind container mouse move for controls auto-hide
       var container = video.parentElement;
@@ -305,6 +519,8 @@
 
       if (!video.paused) video.pause();
       lastSavedPosition = 0;
+      duration = 0;
+      metadataRestoreKey = '';
       video.poster = posterUrl || '';
 
       if (videoUrl) {
@@ -356,6 +572,7 @@
       video.poster = '';
       lastSavedPosition = 0;
       duration = 0;
+      metadataRestoreKey = '';
       mediaActivityId = nextActivityId;
       mediaActivityType = nextActivityType;
       clearVideoError();
@@ -467,6 +684,7 @@
       if (subtitleBo) subtitleBo.removeEventListener('click', onSubtitleBoClick);
       if (fullscreenBtn) fullscreenBtn.removeEventListener('click', onFullscreenBtnClick);
       if (volumeBtn) volumeBtn.removeEventListener('click', onVolumeBtnClick);
+      if (progressRetryBtn) progressRetryBtn.removeEventListener('click', retryProgressSave);
 
       var container = video.parentElement;
       if (container) container.removeEventListener('mousemove', onContainerMouseMove);
@@ -491,9 +709,13 @@
       fullscreenBtn = null;
       volumeBtn = null;
       videoError = null;
+      progressSaveError = null;
+      progressSaveErrorMessage = null;
+      progressRetryBtn = null;
       duration = 0;
       mediaActivityId = '';
       mediaActivityType = '';
+      metadataRestoreKey = '';
     }
   };
 })();

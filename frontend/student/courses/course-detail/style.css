@@ -299,6 +299,21 @@ body.tibetan-language .cp-section-title { line-height: 2; }
   text-align: center;
 }
 .cp-video-error[hidden] { display: none; }
+.cp-progress-save-error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border: 1px solid #d95d52;
+  border-radius: 0 0 8px 8px;
+  background: #fff5f3;
+  color: #842c26;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.cp-progress-save-error[hidden] { display: none; }
+.cp-progress-save-error .cp-btn { flex: 0 0 auto; }
 
 /* Poster overlay */
 .cp-video-overlay {

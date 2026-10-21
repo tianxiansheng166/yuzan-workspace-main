@@ -74,10 +74,17 @@ function mount(search, overrides = {}) {
     },
     ...overrides,
   };
-  const window = { location: { search } };
+  const window = {
+    location: {
+      search,
+      href: "http://localhost/student/courses/course-detail/" + search,
+    },
+    history: { replaceState() {} },
+  };
   vm.runInNewContext(source, {
     window,
     CourseApiAdapter: adapter,
+    URL,
     URLSearchParams,
     Promise,
     Error,
@@ -149,4 +156,329 @@ test("course video progress sends a fractional position with the dynamic course 
   assert.equal(call[4].expectedProgressRevision, 0);
   assert.equal(f.state.getState().course.progress.percent, 40);
   assert.equal(f.state.getState().activityProgressMap["activity-requested"].position, 0.6);
+});
+
+test("server incomplete progress stays incomplete after the client reports video ended", async () => {
+  const f = mount("?id=assignment-dynamic&activityId=activity-requested", {
+    saveActivityAttempt: async () => ({
+      attempt: { id: "attempt-live" },
+      progress: { revision: 1, completed: false, position: 1 },
+      courseCompletion: {
+        progressPercent: 0,
+        completedRequiredCount: 0,
+        requiredActivityCount: 2,
+        completedActivityIds: [],
+      },
+    }),
+  });
+  await f.state.init("assignment-dynamic");
+
+  await f.state.saveActivityAttempt(
+    "activity-requested",
+    "VIDEO",
+    { videoPosition: 1 },
+    true,
+  );
+
+  assert.equal(
+    f.state.getState().activityProgressMap["activity-requested"].completed,
+    false,
+  );
+  assert.equal(f.state.getState().currentActivity.isCompleted, false);
+  assert.deepEqual(
+    Array.from(f.state.getState().course.progress.completedActivityIds),
+    [],
+  );
+});
+
+test("server confirmed completion is reflected in course and activity state", async () => {
+  const f = mount("?id=assignment-dynamic&activityId=activity-requested", {
+    saveActivityAttempt: async () => ({
+      attempt: { id: "attempt-live" },
+      progress: { revision: 1, completed: true, position: 1 },
+      courseCompletion: {
+        progressPercent: 50,
+        completedRequiredCount: 1,
+        requiredActivityCount: 2,
+        completedActivityIds: ["activity-requested"],
+      },
+    }),
+  });
+  await f.state.init("assignment-dynamic");
+
+  await f.state.saveActivityAttempt(
+    "activity-requested",
+    "VIDEO",
+    { videoPosition: 1 },
+    true,
+  );
+
+  assert.equal(
+    f.state.getState().activityProgressMap["activity-requested"].completed,
+    true,
+  );
+  assert.equal(f.state.getState().currentActivity.isCompleted, true);
+  assert.equal(f.state.getState().course.progress.percent, 50);
+});
+
+test("revision conflict refreshes server progress and keeps its incomplete state authoritative", async () => {
+  let courseLoads = 0;
+  const refreshedCourse = {
+    assignmentId: "assignment-dynamic",
+    progress: { percent: 0, completedActivityIds: [] },
+    units: [
+      {
+        title: "Unit",
+        lessons: [
+          {
+            title: "Lesson",
+            activities: [
+              {
+                activityId: "activity-requested",
+                title: "Requested",
+                activityType: "VIDEO",
+                isCompleted: false,
+                progress: { revision: 4, position: 0.45, completed: false },
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  };
+  const f = mount("?id=assignment-dynamic&activityId=activity-requested", {
+    loadCourse: async () => {
+      courseLoads += 1;
+      if (courseLoads === 1) {
+        return {
+          ...refreshedCourse,
+          units: [
+            {
+              title: "Unit",
+              lessons: [
+                {
+                  title: "Lesson",
+                  activities: [
+                    {
+                      activityId: "activity-requested",
+                      title: "Requested",
+                      activityType: "VIDEO",
+                      isCompleted: false,
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        };
+      }
+      return refreshedCourse;
+    },
+    saveActivityAttempt: async () => {
+      const error = new Error("revision conflict");
+      error.status = 409;
+      throw error;
+    },
+  });
+  await f.state.init("assignment-dynamic");
+  const refreshNotifications = [];
+  f.state.subscribe((_state, keys) => refreshNotifications.push(keys));
+
+  await assert.rejects(
+    f.state.saveActivityAttempt(
+      "activity-requested",
+      "VIDEO",
+      { videoPosition: 0.8 },
+      true,
+    ),
+    (error) => error.status === 409,
+  );
+
+  assert.equal(courseLoads, 2);
+  assert.equal(
+    f.state.getState().activityProgressMap["activity-requested"].revision,
+    4,
+  );
+  assert.equal(
+    f.state.getState().activityProgressMap["activity-requested"].position,
+    0.45,
+  );
+  assert.equal(
+    f.state.getState().activityProgressMap["activity-requested"].completed,
+    false,
+  );
+  assert.equal(f.state.getState().currentActivity.isCompleted, false);
+  assert.ok(
+    refreshNotifications.some((keys) =>
+      keys.includes("course") && keys.includes("activityProgressMap"),
+    ),
+    "the page subscriber must receive the refreshed server-authoritative course state",
+  );
+});
+
+test("late completion responses after an activity switch cannot replace newer server course status", async () => {
+  const pending = new Map();
+  const f = mount("?id=assignment-dynamic&activityId=activity-requested", {
+    saveActivityAttempt: (...args) =>
+      new Promise((resolve) => pending.set(args[2], resolve)),
+  });
+  await f.state.init("assignment-dynamic");
+
+  f.state.setCurrentActivity("activity-first");
+  const firstSave = f.state.saveActivityAttempt(
+    "activity-first",
+    "VIDEO",
+    { videoPosition: 0.2 },
+    false,
+  );
+  f.state.setCurrentActivity("activity-requested");
+  const secondSave = f.state.saveActivityAttempt(
+    "activity-requested",
+    "VIDEO",
+    { videoPosition: 1 },
+    true,
+  );
+
+  pending.get("activity-requested")({
+    attempt: { id: "attempt-requested" },
+    progress: { revision: 1, completed: true, position: 1 },
+    courseCompletion: {
+      progressPercent: 50,
+      completedRequiredCount: 1,
+      requiredActivityCount: 2,
+      completedActivityIds: ["activity-requested"],
+    },
+  });
+  await secondSave;
+  pending.get("activity-first")({
+    attempt: { id: "attempt-first" },
+    progress: { revision: 1, completed: false, position: 0.2 },
+    courseCompletion: {
+      progressPercent: 0,
+      completedRequiredCount: 0,
+      requiredActivityCount: 2,
+      completedActivityIds: [],
+    },
+  });
+  await firstSave;
+
+  const state = f.state.getState();
+  assert.equal(state.currentActivityId, "activity-requested");
+  assert.equal(state.currentActivity.isCompleted, true);
+  assert.equal(state.activityProgressMap["activity-first"].completed, false);
+  assert.equal(state.activityProgressMap["activity-requested"].completed, true);
+  assert.equal(state.course.progress.percent, 50);
+  assert.deepEqual(
+    Array.from(state.course.progress.completedActivityIds),
+    ["activity-requested"],
+  );
+});
+
+test("a late save cannot replace the latest server state refreshed after a 409", async () => {
+  let courseLoads = 0;
+  let resolveFirstSave;
+  const refreshedCourse = {
+    assignmentId: "assignment-dynamic",
+    progress: { percent: 50, completedActivityIds: ["activity-requested"] },
+    units: [
+      {
+        title: "Unit",
+        lessons: [
+          {
+            title: "Lesson",
+            activities: [
+              {
+                activityId: "activity-first",
+                title: "First",
+                activityType: "VIDEO",
+                required: true,
+                progress: { revision: 3, position: 0.4, completed: false },
+              },
+              {
+                activityId: "activity-requested",
+                title: "Requested",
+                activityType: "VIDEO",
+                required: true,
+                progress: { revision: 2, position: 1, completed: true },
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  };
+  const initialCourse = {
+    ...refreshedCourse,
+    progress: { percent: 0, completedActivityIds: [] },
+    units: [
+      {
+        title: "Unit",
+        lessons: [
+          {
+            title: "Lesson",
+            activities: [
+              { activityId: "activity-first", title: "First", activityType: "VIDEO", required: true },
+              { activityId: "activity-requested", title: "Requested", activityType: "VIDEO", required: true },
+            ],
+          },
+        ],
+      },
+    ],
+  };
+  const f = mount("?id=assignment-dynamic&activityId=activity-requested", {
+    loadCourse: async () => {
+      courseLoads += 1;
+      return courseLoads === 1 ? initialCourse : refreshedCourse;
+    },
+    saveActivityAttempt: async (...args) => {
+      if (args[2] === "activity-first") {
+        return await new Promise((resolve) => {
+          resolveFirstSave = resolve;
+        });
+      }
+      const conflict = new Error("revision conflict");
+      conflict.status = 409;
+      throw conflict;
+    },
+  });
+  await f.state.init("assignment-dynamic");
+
+  f.state.setCurrentActivity("activity-first");
+  const firstSave = f.state.saveActivityAttempt(
+    "activity-first",
+    "VIDEO",
+    { videoPosition: 0.1 },
+    false,
+  );
+  await assert.rejects(
+    f.state.saveActivityAttempt(
+      "activity-requested",
+      "VIDEO",
+      { videoPosition: 0.9 },
+      true,
+    ),
+    (error) => error.status === 409,
+  );
+
+  resolveFirstSave({
+    attempt: { id: "attempt-first" },
+    progress: { revision: 1, position: 0.1, completed: false },
+    courseCompletion: {
+      progressPercent: 0,
+      completedRequiredCount: 0,
+      requiredActivityCount: 2,
+      completedActivityIds: [],
+    },
+  });
+  await firstSave;
+
+  const state = f.state.getState();
+  assert.equal(courseLoads, 2);
+  assert.equal(state.activityProgressMap["activity-first"].revision, 3);
+  assert.equal(state.activityProgressMap["activity-first"].position, 0.4);
+  assert.equal(state.course.progress.percent, 50);
+  assert.deepEqual(
+    Array.from(state.course.progress.completedActivityIds),
+    ["activity-requested"],
+  );
 });
