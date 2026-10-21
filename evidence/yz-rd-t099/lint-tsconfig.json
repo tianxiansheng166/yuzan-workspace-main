@@ -1,0 +1,26 @@
+{
+  "extends": "../../backend/api/tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "/home/tian/.devspace/worktrees/yuzan-owner-uat-20261021/backend/api",
+    "paths": {
+      "*": [
+        "node_modules/*",
+        "../../node_modules/*"
+      ],
+      "pg": [
+        "node_modules/@types/pg"
+      ]
+    },
+    "typeRoots": [
+      "/home/tian/.devspace/worktrees/yuzan-owner-uat-20261021/backend/api/node_modules/@types"
+    ],
+    "tsBuildInfoFile": "./api.tsbuildinfo",
+    "rootDir": "../../backend/api"
+  },
+  "include": [
+    "../../backend/api/src/**/*.ts",
+    "../../backend/api/test/assessment/assessment.service.spec.ts",
+    "../../backend/api/test/assessment/question-bank-deterministic-scoring.service.spec.ts"
+  ],
+  "exclude": []
+}

@@ -25,6 +25,7 @@ export interface DeterministicScoreInput {
   readonly deliverySpec: unknown;
   readonly answer: unknown;
   readonly maxScore: unknown;
+  readonly hasRecording?: boolean;
 }
 
 interface ScoringSpecRecord {
@@ -51,6 +52,7 @@ interface AlignmentMetrics {
 
 interface AssessmentItemForScoring {
   readonly id: string;
+  readonly recordingId: string | null;
   readonly maxScore: number | null;
   readonly scoredScore: number | null;
   readonly autoResult: unknown;
@@ -169,7 +171,8 @@ function answerValue(answer: unknown): unknown {
   if (!isRecord(answer)) return answer;
   if ("value" in answer) return answer.value;
   if ("text" in answer) return answer.text;
-  return "";
+  if ("optionLabel" in answer) return answer.optionLabel;
+  return answer;
 }
 
 function answerText(answer: unknown): string {
@@ -473,6 +476,12 @@ function scoreDictation(
   });
 }
 
+export function isBlankWrittenResponse(answer: unknown): boolean {
+  const value = answerValue(answer);
+  return value == null || (typeof value === "string" && !value.trim())
+    || (isRecord(value) && Object.keys(value).length === 0);
+}
+
 export function scoreQuestionBankResponse(
   input: DeterministicScoreInput,
 ): DeterministicScoreResult {
@@ -483,6 +492,21 @@ export function scoreQuestionBankResponse(
     : finiteNonNegativeNumber(input.maxScore);
   if (!spec || maxScore === null)
     return needsReview(strategy, maxScore, "SCORING_CONFIG_INVALID");
+
+  const unanswered = SPEECH_STRATEGIES.has(strategy)
+    ? input.hasRecording === false
+    : strategy !== "UNSUPPORTED" && isBlankWrittenResponse(input.answer);
+  if (unanswered) {
+    const validation = strategy === "EXACT_CHOICE"
+      ? scoreExactChoice(spec, input.deliverySpec, input.answer, maxScore)
+      : strategy === "ACCEPTED_TEXT"
+        ? scoreAcceptedText(spec, input.answer, maxScore)
+        : strategy === "DICTATION_ALIGNMENT"
+          ? scoreDictation(spec, input.answer, maxScore)
+          : null;
+    if (validation?.state === "NEEDS_REVIEW") return validation;
+    return safeResult(strategy, maxScore, "AUTO_SCORED", 0, "UNANSWERED");
+  }
 
   switch (strategy) {
     case "EXACT_CHOICE":
@@ -518,6 +542,7 @@ export class QuestionBankDeterministicScoringService {
       where: { sessionId, questionVersionId: { not: null } },
       select: {
         id: true,
+        recordingId: true,
         questionVersionId: true,
         maxScore: true,
         scoredScore: true,
@@ -547,7 +572,7 @@ export class QuestionBankDeterministicScoringService {
 
       // Speech is owned by the existing speech-job pipeline. In particular,
       // never replace its autoResult or score with a deterministic placeholder.
-      if (SPEECH_STRATEGIES.has(strategy)) {
+      if (item.recordingId) {
         skippedItems += 1;
         continue;
       }
@@ -558,17 +583,16 @@ export class QuestionBankDeterministicScoringService {
         scoredMaxPoints += itemMaxScore ?? 0;
         continue;
       }
-      if (!item.writtenAnswer?.finalSubmittedAt) {
-        skippedItems += 1;
-        continue;
-      }
+      // Submission scores the persisted response, including an unfinalized
+      // nonblank answer. Missing rows and explicit clears remain unanswered.
 
       const result =
         item.questionVersion?.status === "PUBLISHED"
         ? this.score({
           scoringSpec: item.questionVersion.scoringSpec,
           deliverySpec: item.questionVersion.deliverySpec,
-          answer: item.writtenAnswer.content,
+          answer: item.writtenAnswer?.content,
+          hasRecording: Boolean(item.recordingId),
           maxScore: item.maxScore,
         })
         : needsReview(strategy, itemMaxScore, "SCORING_CONFIG_INVALID");

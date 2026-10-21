@@ -447,7 +447,7 @@
     if (track) track.setAttribute('aria-valuenow', String(completed));
     const bar = document.querySelector('[data-progress-bar]');
     const submitButton = document.querySelector('[data-submit]');
-    if (submitButton) submitButton.disabled = Boolean(state.courseSyncPending || state.submitting || (state.media && (state.media.state !== 'REVIEW' || !state.media.cached)));
+    if (submitButton) submitButton.disabled = Boolean(state.courseSyncPending || state.submitting || state.submitVerificationPending || (state.media && (state.media.state !== 'REVIEW' || !state.media.cached)));
     if (bar) bar.style.width = `${count ? (completed / count) * 100 : 0}%`;
     document.querySelectorAll('[data-go]').forEach(button => {
       const item = state.items[Number(button.dataset.go)];
@@ -477,7 +477,7 @@
       return `<button type="button" data-go="${index}" class="${index === state.currentIndex ? 'current' : ''} ${saved(entry) ? 'answered' : ''}" aria-current="${index === state.currentIndex ? 'step' : 'false'}" aria-label="第 ${index + 1} 题，${status}" ${currentLocked ? 'disabled' : ''}>${index + 1}</button>`;
     }).join('');
     const firstIncomplete = state.items.findIndex(entry => !complete(entry));
-    const submitDialog = state.submitConfirm ? `<div class="runner-confirm-modal" role="presentation"><section class="runner-confirm-card" role="dialog" aria-modal="true" aria-labelledby="runner-confirm-title" aria-describedby="runner-confirm-copy"><span class="runner-confirm-icon">${icon(incomplete.length ? 'clock' : 'check')}</span><h2 id="runner-confirm-title">${incomplete.length ? '还有题目未完成' : '确认交卷'}</h2><p id="runner-confirm-copy">${incomplete.length ? `当前有 ${incomplete.length} 道题尚未保存答案或录音。` : `已完成 ${completed} / ${count} 题。提交后将进入服务器处理流程。`}</p><p class="runner-confirm-note">交卷不会生成未校准的语音分数；处理结果以服务器为准。</p><div class="runner-confirm-actions">${incomplete.length ? `<button type="button" class="btn primary" data-fix-incomplete>返回第 ${firstIncomplete + 1} 题继续作答</button>` : `<button type="button" class="btn primary" data-confirm-submit>${icon('check')} 确认交卷</button>`}<button type="button" class="btn" data-cancel-submit>${incomplete.length ? '留在本次练习' : '再检查一下'}</button></div></section></div>` : '';
+    const submitDialog = state.submitConfirm ? `<div class="runner-confirm-modal" role="presentation"><section class="runner-confirm-card" role="dialog" aria-modal="true" aria-labelledby="runner-confirm-title" aria-describedby="runner-confirm-copy"><span class="runner-confirm-icon">${icon(incomplete.length ? 'clock' : 'check')}</span><h2 id="runner-confirm-title">${incomplete.length ? '还有题目未完成' : '确认交卷'}</h2><p id="runner-confirm-copy">${incomplete.length ? `当前有 ${incomplete.length} 道题未作答。未作答题在适用计分时按零分计算。` : `已完成 ${completed} / ${count} 题。提交后将进入服务器处理流程。`}</p><p class="runner-confirm-note">交卷不会生成未校准的语音分数；处理结果以服务器为准。</p><div class="runner-confirm-actions"><button type="button" class="btn primary" data-confirm-submit>${icon('check')} ${incomplete.length ? '仍然交卷' : '确认交卷'}</button>${incomplete.length ? `<button type="button" class="btn" data-fix-incomplete>返回第 ${firstIncomplete + 1} 题继续作答</button>` : ''}<button type="button" class="btn" data-cancel-submit>${incomplete.length ? '留在本次练习' : '再检查一下'}</button></div></section></div>` : '';
     app.innerHTML = `<main class="runner-page" ${state.submitConfirm ? 'inert' : ''}><header class="runner-header"><a class="runner-back" href="${safe(courseReturn || '/student/practices/')}">${icon('arrow')} ${courseReturn ? safe(courseReturnLabel()) : '返回练习中心'}</a><div class="runner-title"><b>听说训练台</b><span class="runner-attempt-state">${safe(state.attempt?.status || 'IN_PROGRESS')}</span></div><button type="button" class="btn runner-feedback-open" data-feedback-open>反馈问题</button></header><section class="runner-progress"><span class="runner-current-position">第 <b>${state.currentIndex + 1}</b> / ${count} 题</span><div class="runner-progress-track" role="progressbar" aria-label="已完成题目" aria-valuemin="0" aria-valuemax="${count}" aria-valuenow="${completed}"><i data-progress-bar style="width:${count ? (completed / count) * 100 : 0}%"></i></div><span data-progress-copy>${completed} / ${count} 题已完成</span></section><nav class="runner-map" aria-label="题目导航">${questionMap}</nav><article class="question-shell"><div class="runner-question-heading"><p class="runner-section">${safe(item.sectionTitle || '练习题')}</p><span>第 ${state.currentIndex + 1} 题</span></div>${renderStimulus(spec.stimulus)}<section class="runner-response">${renderResponse(item, spec)}</section><div data-runner-message class="runner-message" role="alert" aria-live="assertive" ${state.error || state.courseSyncPending ? '' : 'hidden'}>${courseSyncMessage}</div></article><footer class="runner-footer"><button type="button" class="btn" data-prev ${state.currentIndex && !currentLocked ? '' : 'disabled'}>${icon('arrow')} 上一题</button><span data-save-state aria-live="polite">${safe(statusText())}</span>${state.currentIndex === count - 1 ? `<button type="button" class="btn primary runner-submit-button" data-submit ${currentLocked ? 'disabled' : ''}>检查并交卷 ${icon('arrow')}</button>` : `<button type="button" class="btn primary runner-next-button" data-next ${currentLocked ? 'disabled' : ''}>下一题 ${icon('arrow')}</button>`}</footer></main>${feedbackPanel}${submitDialog}`;
     bind();
   }
@@ -755,31 +755,27 @@
   }
   async function submit() {
     if (state.submitting) return;
+    if (state.submitVerificationPending || state.courseSyncPending) return;
     state.submitting = true;
     state.submitConfirm = false;
     state.error = '';
     state.save = 'SAVING';
     render();
     const flushed = await flush();
-    if (!flushed) {
+    await Promise.all(state.saves.values());
+    const audioDraft = await draftStore('get').catch(() => null);
+    const unsavedAudio = (state.blob?.size && !saved(current()))
+      || state.items.some(item => item.id === audioDraft?.itemId && audioDraft.blob?.size && !saved(item));
+    if (!flushed || state.pendingAnswers.size || unsavedAudio) {
       state.submitting = false;
-      state.error = '当前答案尚未保存到服务器，请重试保存后再交卷。';
-      state.save = 'ERROR';
-      render();
-      return;
-    }
-    const incomplete = state.items.filter(item => !complete(item));
-    if (incomplete.length) {
-      state.submitting = false;
-      state.currentIndex = state.items.findIndex(item => !complete(item));
-      state.error = `还有 ${incomplete.length} 题未完成，请完成并保存后再交卷。`;
+      state.error = unsavedAudio ? '已有录音尚未确认上传，请返回录音题重试上传后再交卷。' : '当前答案尚未保存到服务器，请重试保存后再交卷。';
       state.save = 'ERROR';
       render();
       return;
     }
     try {
       for (const item of state.items) {
-        if (normalize(item).response?.type === 'CHOICE' || normalize(item).response?.type === 'TEXT') {
+        if (['CHOICE', 'TEXT'].includes(normalize(item).response?.type) && String(storedAnswer(item) ?? '').trim()) {
           await Api.finalizeWrittenAnswer(attemptId, item.id);
         }
       }

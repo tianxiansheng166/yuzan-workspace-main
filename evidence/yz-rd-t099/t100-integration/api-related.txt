@@ -1,0 +1,11 @@
+
+ RUN  v3.2.7 /home/tian/.devspace/worktrees/yuzan-workspace-t100/backend/api
+
+ ✓ test/assessment/remediation.service.spec.ts (6 tests) 9ms
+ ✓ test/assessment/assessment-review.service.spec.ts (2 tests) 4ms
+ ✓ test/assessment/question-bank-assessment-scoring.spec.ts (7 tests) 4ms
+
+ Test Files  3 passed (3)
+      Tests  15 passed (15)
+   Start at  13:17:31
+   Duration  584ms (transform 209ms, setup 0ms, collect 438ms, tests 17ms, environment 0ms, prepare 38ms)
