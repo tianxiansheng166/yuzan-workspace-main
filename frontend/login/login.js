@@ -38,6 +38,68 @@
     el.classList.remove('success');
   };
 
+  [loginError, document.querySelector('#registerError')].forEach((message) => {
+    message.setAttribute('role', 'alert');
+    message.setAttribute('aria-live', 'assertive');
+    message.setAttribute('aria-atomic', 'true');
+  });
+
+  function authFailureMessage(error, action) {
+    if (navigator.onLine === false || error?.code === 'OFFLINE') {
+      return '当前无法连接网络，请恢复连接后重试。';
+    }
+    if (error?.code === 'API_CLIENT_UNAVAILABLE') {
+      return '认证服务暂不可用，请刷新页面或稍后重试。';
+    }
+    if (error?.code === 'AUTH_RESPONSE_INVALID') {
+      return '服务端未返回可确认的身份，请稍后重试。';
+    }
+
+    const status = Number(error?.status);
+    if (status === 401) {
+      return action === 'login'
+        ? '身份验证未通过（账号或密码错误，或会话已失效），请核对后重试。'
+        : '注册验证未通过，请核对信息后重试。';
+    }
+    if (status === 403) return '服务端拒绝了此操作，请确认账号权限后重试。';
+    if (status === 409 && action === 'register') return '该账号已注册，请切换到登录并使用原密码。';
+    if (status === 429) return '请求过于频繁，请稍后再试。';
+    if (status >= 500) return '认证服务暂时不可用，请稍后重试。';
+    if (status >= 400) return `认证请求失败（HTTP ${status}），请核对信息后重试。`;
+    return '无法连接认证服务，请检查网络后重试。';
+  }
+
+  function requireAuthApi(action) {
+    const api = typeof YuzanApi === 'undefined' ? null : YuzanApi;
+    if (!api || typeof api[action] !== 'function' || typeof api.getHomeUrlByRole !== 'function') {
+      const error = new Error();
+      error.code = 'API_CLIENT_UNAVAILABLE';
+      throw error;
+    }
+    return api;
+  }
+
+  function getAuthenticatedHomeUrl(api, data) {
+    if (!data?.user || typeof data.user !== 'object') {
+      const error = new Error();
+      error.code = 'AUTH_RESPONSE_INVALID';
+      throw error;
+    }
+    const homeUrl = api.getHomeUrlByRole(data.user);
+    if (typeof homeUrl !== 'string' || !homeUrl) {
+      const error = new Error();
+      error.code = 'AUTH_RESPONSE_INVALID';
+      throw error;
+    }
+    return homeUrl;
+  }
+
+  function showToast(message, type) {
+    if (typeof YuzanDemo !== 'undefined' && typeof YuzanDemo.toast === 'function') {
+      YuzanDemo.toast(message, type);
+    }
+  }
+
   toggle.addEventListener('click', () => {
     const visible = pass.type === 'text';
     pass.type = visible ? 'password' : 'text';
@@ -68,45 +130,26 @@
     }
 
     loginSubmit.disabled = true;
-    loginSubmit.textContent = navigator.onLine ? '正在验证…' : '正在验证本机凭据…';
+    loginSubmit.textContent = '正在验证…';
 
     if (!navigator.onLine) {
-      localStorage.setItem('yuzan-demo-session', JSON.stringify({ account: identifier, loggedInAt: Date.now(), offline: true }));
-      YuzanDemo.toast('已使用本机凭据登录', 'warning');
-      setTimeout(() => location.href = '/select-school', 260);
+      loginSubmit.disabled = false;
+      loginSubmit.textContent = '登录';
+      setMessage(loginError, authFailureMessage({ code: 'OFFLINE' }, 'login'));
       return;
     }
 
     try {
-      const data = await YuzanApi.login(identifier, password);
-      localStorage.setItem('yuzan-demo-session', JSON.stringify({ account: identifier, loggedInAt: Date.now(), offline: false }));
-      YuzanDemo.toast('登录成功', 'success');
-      const homeUrl = selectedRole === 'STUDENT' ? '/student/profile/' : YuzanApi.getHomeUrlByRole(data.user);
+      const api = requireAuthApi('login');
+      const data = await api.login(identifier, password);
+      const homeUrl = getAuthenticatedHomeUrl(api, data);
+      showToast('登录成功', 'success');
       setTimeout(() => location.href = homeUrl, 260);
     } catch (err) {
-      // 演示环境兜底
-      const demoAccounts = ['student.test', 'teacher.test', 'volunteer.test', 'admin.test', 'researcher.test'];
-      const demoPassword = 'YuzanTest!2026';
-      if (demoAccounts.includes(identifier) && password === demoPassword) {
-        localStorage.setItem('yuzan-access-token', 'demo-token-' + identifier);
-        localStorage.setItem('yuzan-active-school-id', '11111111-1111-4111-8111-111111111111');
-        localStorage.setItem('yuzan-demo-session', JSON.stringify({ account: identifier, loggedInAt: Date.now(), offline: true }));
-        YuzanDemo.toast('演示模式登录成功', 'warning');
-        const roleMap = { 'student.test': 'STUDENT', 'teacher.test': 'TEACHER', 'volunteer.test': 'VOLUNTEER', 'admin.test': 'SCHOOL_ADMIN', 'researcher.test': 'RESEARCHER' };
-        const homeUrl = YuzanApi.getHomeUrlByRole({ memberships: [{ role: roleMap[identifier] || 'STUDENT' }] });
-        setTimeout(() => location.href = homeUrl, 260);
-        return;
-      }
       loginSubmit.disabled = false;
       loginSubmit.textContent = '登录';
       pass.classList.add('invalid');
-      if (err.status === 401) {
-        setMessage(loginError, '账号或密码不正确。已注册账号请使用注册时设置的原密码登录。');
-      } else if (err.status === 400) {
-        setMessage(loginError, '登录信息格式不符合服务端要求。若你曾用 6 位密码注册，请在服务更新后再试。');
-      } else {
-        setMessage(loginError, err.message || '登录失败，请稍后重试');
-      }
+      setMessage(loginError, authFailureMessage(err, 'login'));
     }
   });
 
@@ -178,16 +221,23 @@
     regSubmit.disabled = true;
     regSubmit.textContent = '正在注册…';
 
+    if (!navigator.onLine) {
+      regSubmit.disabled = false;
+      regSubmit.textContent = '注册';
+      setMessage(registerError, authFailureMessage({ code: 'OFFLINE' }, 'register'));
+      return;
+    }
+
     try {
-      const data = await YuzanApi.register(phone, password, selectedRole);
-      localStorage.setItem('yuzan-demo-session', JSON.stringify({ account: phone, loggedInAt: Date.now(), newlyRegistered: true }));
-      YuzanDemo.toast('注册成功，正在进入工作台', 'success');
-      const homeUrl = YuzanApi.getHomeUrlByRole(data.user);
+      const api = requireAuthApi('register');
+      const data = await api.register(phone, password, selectedRole);
+      const homeUrl = getAuthenticatedHomeUrl(api, data);
+      showToast('注册成功，正在进入工作台', 'success');
       setTimeout(() => location.href = homeUrl, 260);
     } catch (err) {
       regSubmit.disabled = false;
       regSubmit.textContent = '注册';
-      if (err.status === 409 || err.message?.includes('已注册')) {
+      if (err.status === 409) {
         regPhone.classList.add('invalid');
         // 自动切换到登录 Tab 并预填手机号；不复制注册密码，避免误导用户把新密码当作旧密码。
         const loginTab = document.querySelector('.auth-tab[data-tab="login"]');
@@ -197,7 +247,7 @@
         setMessage(loginError, '该手机号已注册，请输入注册时设置的原密码登录；忘记密码请使用“忘记密码”。');
         pass.focus();
       } else {
-        setMessage(registerError, err.message || '注册失败，请稍后重试');
+        setMessage(registerError, authFailureMessage(err, 'register'));
       }
     }
   });

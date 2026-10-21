@@ -30,38 +30,26 @@
   }
 
   function clearExerciseSection() {
-    var section = document.getElementById('cpExercisesList');
-    if (section) section.replaceChildren();
+    var section = document.getElementById('exerciseSection');
+    if (section) section.innerHTML = '';
   }
 
   function getExerciseSection() {
-    var section = document.getElementById('cpExercisesList');
+    var section = document.getElementById('exerciseSection');
     if (!section) {
       section = document.createElement('div');
-      section.id = 'cpExercisesList';
-      section.className = 'cp-exercises-list';
-      var card = document.getElementById('cpSectionExercises');
-      if (!card) return null;
-      var title = card.querySelector('.cp-section-title');
-      if (title) title.insertAdjacentElement('afterend', section);
-      else card.appendChild(section);
+      section.id = 'exerciseSection';
+      section.className = 'cp-exercise-section';
+      var player = document.querySelector('.cp-player') || document.body;
+      player.appendChild(section);
     }
     return section;
   }
 
   var ExerciseController = {
     init: function () {
-      // The course has already loaded before this controller is initialized.
-      // Render its first activity as well as later directory selections.
-      var initial = CoursePlayerState.getState();
-      if (initial.currentActivity) ExerciseController.renderExercises(initial.currentActivity);
       CoursePlayerState.subscribe(function (state, keys) {
-        if (keys && state.currentActivity && (
-          keys.indexOf('currentActivity') !== -1
-          || keys.indexOf('activityProgressMap') !== -1
-          || keys.indexOf('course') !== -1
-          || keys.indexOf('submissionStatus') !== -1
-        )) {
+        if (keys && keys.indexOf('currentActivity') !== -1 && state.currentActivity) {
           ExerciseController.renderExercises(state.currentActivity);
         }
       });
@@ -71,8 +59,6 @@
       if (!activity) return;
       clearExerciseSection();
       var section = getExerciseSection();
-      if (!section) return;
-      var card = document.getElementById('cpSectionExercises');
 
       var s = CoursePlayerState.getState();
       if (s.submissionStatus && ['SUBMITTED', 'PROCESSING', 'NEEDS_REVIEW', 'REVIEWED', 'ACCEPTED'].indexOf(s.submissionStatus) !== -1) {
@@ -80,7 +66,6 @@
         readOnly.className = 'cp-exercise-readonly';
         readOnly.textContent = '课程已提交，活动内容不可修改';
         section.appendChild(readOnly);
-        if (card) card.hidden = false;
         return;
       }
 
@@ -88,10 +73,7 @@
       // enum value and linked through CourseActivityPractice. Render the
       // normal course entry instead of treating its placeholder content as a
       // written choice activity.
-      if (activity.practiceReference) {
-        if (card) card.hidden = true;
-        return;
-      }
+      if (activity.practiceReference) return;
 
       switch (activity.activityType) {
         case 'TEXT':
@@ -107,24 +89,35 @@
           ExerciseController.renderFillBlankActivity(activity, section);
           break;
         case 'SPEECH':
-        case 'VIDEO':
-          // Speech recording and video playback live in their existing media
-          // sections. Do not duplicate controls or treat legacy pseudo-types
-          // as formal course activities.
+        case 'ORAL_PRACTICE':
+          ExerciseController.renderOralPractice(activity, section);
+          break;
+        case 'PRACTICE':
+          ExerciseController.renderPracticeLink(activity);
+          break;
+        case 'VIDEO_INTERACTIVE':
+          if (activity.questions && activity.questions.length) {
+            activity.questions.forEach(function (q, i) {
+              if (q.type === 'CHOICE') {
+                ExerciseController.renderChoiceQuestion(q, i, section);
+              } else if (q.type === 'FILL_BLANK') {
+                ExerciseController.renderFillBlankQuestion(q, i, section);
+              }
+            });
+          }
           break;
         default:
-          ExerciseController.renderUnsupportedActivity(section);
+          if (activity.questions && activity.questions.length) {
+            activity.questions.forEach(function (q, i) {
+              if (q.type === 'CHOICE') {
+                ExerciseController.renderChoiceQuestion(q, i, section);
+              } else if (q.type === 'FILL_BLANK') {
+                ExerciseController.renderFillBlankQuestion(q, i, section);
+              }
+            });
+          }
           break;
       }
-      if (card) card.hidden = section.childElementCount === 0;
-    },
-
-    renderUnsupportedActivity: function (container) {
-      var message = document.createElement('p');
-      message.className = 'cp-empty-text';
-      message.textContent = '此活动类型暂不支持网页版互动，完成状态以课程服务端记录为准。';
-      message.setAttribute('role', 'status');
-      container.appendChild(message);
     },
 
     renderTextActivity: function (activity, container) {
@@ -136,15 +129,12 @@
       if (activity.content) {
         if (typeof activity.content === 'string') {
           contentDiv.textContent = activity.content;
-        } else if (typeof activity.content === 'object') {
-          contentDiv.textContent = activity.content.text
-            || activity.content.passage
-            || activity.content.body
-            || activity.content.description
-            || '';
+        } else if (activity.content.text) {
+          contentDiv.textContent = activity.content.text;
+        } else if (activity.content.passage) {
+          contentDiv.textContent = activity.content.passage;
         }
-      }
-      if (!contentDiv.textContent && activity.description) {
+      } else if (activity.description) {
         contentDiv.textContent = activity.description;
       }
       wrapper.appendChild(contentDiv);
@@ -193,9 +183,30 @@
         statusDiv.innerHTML = ICONS.check + ' 已完成收听';
         statusDiv.className = 'cp-exercise-feedback correct';
       } else {
-        statusDiv.textContent = '完整播放本节音频后，课程会保存学习进度';
+        statusDiv.textContent = '播放音频以记录学习进度';
       }
       wrapper.appendChild(statusDiv);
+
+      if (!activity.isCompleted) {
+        var saveProgressBtn = document.createElement('button');
+        saveProgressBtn.className = 'cp-exercise-submit';
+        saveProgressBtn.textContent = '标记完成';
+        saveProgressBtn.addEventListener('click', function () {
+          saveProgressBtn.disabled = true;
+          saveProgressBtn.textContent = '提交中…';
+          CoursePlayerState.saveActivityAttempt(activity.activityId, 'AUDIO', {}, true)
+            .then(function () {
+              saveProgressBtn.textContent = '已完成';
+              saveProgressBtn.className = 'cp-exercise-feedback correct';
+            })
+            .catch(function (err) {
+              showToast(err && err.message ? err.message : '保存失败');
+              saveProgressBtn.disabled = false;
+              saveProgressBtn.textContent = '标记完成';
+            });
+        });
+        wrapper.appendChild(saveProgressBtn);
+      }
 
       container.appendChild(wrapper);
     },
@@ -739,7 +750,27 @@
     },
 
     renderAll: function (activity) {
-      ExerciseController.renderExercises(activity);
+      if (!activity) return;
+      clearExerciseSection();
+      var section = getExerciseSection();
+
+      if (activity.questions && activity.questions.length) {
+        activity.questions.forEach(function (q, i) {
+          if (q.type === 'CHOICE') {
+            ExerciseController.renderChoiceQuestion(q, i, section);
+          } else if (q.type === 'FILL_BLANK') {
+            ExerciseController.renderFillBlankQuestion(q, i, section);
+          }
+        });
+      }
+
+      if (activity.activityType === 'ORAL_PRACTICE') {
+        ExerciseController.renderOralPractice(activity);
+      }
+
+      if (activity.activityType === 'PRACTICE') {
+        ExerciseController.renderPracticeLink(activity);
+      }
     }
   };
 

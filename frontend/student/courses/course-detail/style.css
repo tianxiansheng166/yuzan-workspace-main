@@ -211,12 +211,12 @@ body.tibetan-language .cp-section-title { line-height: 2; }
 }
 
 .cp-player-main {
-  flex: 2 1 0;
+  flex: 0 0 66.6667%;
   min-width: 0;
 }
 
 .cp-player-sidebar {
-  flex: 1 1 0;
+  flex: 0 0 33.3333%;
   min-width: 0;
   position: sticky;
   top: calc(var(--cp-nav-height) + 24px);
@@ -551,10 +551,8 @@ body.tibetan-language .cp-section-title { line-height: 2; }
   transition: background var(--cp-transition);
   color: var(--cp-dark);
   border: 1px solid transparent;
-  text-decoration: none;
 }
 .cp-dir-item:hover { background: #f0ede8; }
-.cp-dir-item:focus-visible { outline: 3px solid rgba(157, 41, 51, .4); outline-offset: 2px; }
 
 /* Numbered badge (master template: w-8 h-8 rounded-full bg-primary text-white) */
 .cp-dir-num {
@@ -619,9 +617,6 @@ body.tibetan-language .cp-section-title { line-height: 2; }
   background: var(--cp-gray-light);
   color: var(--cp-gray-medium);
 }
-.cp-ctrl-btn:disabled { opacity: .45; cursor: not-allowed; }
-.cp-dir-item.cp-dir-upcoming { color: var(--cp-dark); }
-.cp-dir-item.cp-dir-upcoming:hover { background: #f0ede8; }
 
 /* ============================================================
    Section — Generic (matches .card look)
@@ -832,88 +827,12 @@ body.tibetan-language .cp-section-title { line-height: 2; }
    ============================================================ */
 .cp-exercises-list {
   display: flex; flex-direction: column; gap: 24px;
-  min-width: 0;
-}
-.cp-exercise-text {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 14px;
-  min-width: 0;
-}
-.cp-exercise-text-content {
-  width: 100%;
-  min-width: 0;
-  padding: 16px;
-  border: 1px solid var(--cp-gray-light);
-  border-left: 3px solid var(--cp-accent);
-  border-radius: var(--cp-radius);
-  background: #fff;
-  line-height: 1.8;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-}
-.cp-exercise-submit {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 40px;
-  margin-top: 4px;
-  padding: 8px 18px;
-  border: 1px solid var(--cp-primary);
-  border-radius: var(--cp-radius);
-  background: var(--cp-primary);
-  color: #fff;
-  font-weight: 600;
-  line-height: 1.4;
-  transition: background var(--cp-transition), box-shadow var(--cp-transition);
-}
-.cp-exercise-submit:hover:not(:disabled) {
-  background: #84232b;
-  box-shadow: var(--cp-shadow);
-}
-.cp-exercise-submit:focus-visible,
-.cp-exercise-feedback:focus-visible {
-  outline: 3px solid rgba(157, 41, 51, 0.3);
-  outline-offset: 2px;
-}
-.cp-exercise-submit:disabled {
-  cursor: wait;
-  opacity: 0.72;
-}
-.cp-exercise-feedback {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  width: fit-content;
-  max-width: 100%;
-  margin-top: 4px;
-  padding: 8px 14px;
-  border: 1px solid transparent;
-  border-radius: var(--cp-radius);
-  font-weight: 600;
-  line-height: 1.5;
-  overflow-wrap: anywhere;
-}
-.cp-exercise-feedback.correct {
-  border-color: rgba(91, 140, 90, 0.28);
-  background: rgba(91, 140, 90, 0.1);
-  color: #356b35;
-}
-button.cp-exercise-feedback { cursor: default; }
-.cp-exercise-readonly {
-  padding: 12px 14px;
-  border: 1px solid var(--cp-gray-light);
-  border-radius: var(--cp-radius);
-  background: #fff;
-  color: var(--cp-gray-medium);
 }
 .cp-exercise-item {
   background: #fff;
   border: 1px solid var(--cp-gray-light);
   border-radius: var(--cp-radius-lg);
   padding: 20px;
-  min-width: 0;
 }
 .cp-exercise-question {
   font-size: 15px; font-weight: 500;
@@ -1072,37 +991,6 @@ button.cp-exercise-feedback { cursor: default; }
   font-size: 24px; font-weight: 700;
   color: var(--cp-primary);
 }
-.cp-course-submit {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin-top: 20px;
-  padding: 16px 18px;
-  border: 1px solid var(--cp-gray-light);
-  border-radius: var(--cp-radius-lg);
-  background: #fff;
-}
-.cp-course-submit p { margin: 0; color: var(--cp-gray-medium); font-size: 14px; }
-.cp-course-submit .cp-btn:disabled { opacity: .55; cursor: not-allowed; }
-.cp-resource-status {
-  position: absolute;
-  z-index: 8;
-  left: 16px;
-  right: 16px;
-  bottom: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 12px 14px;
-  border-radius: var(--cp-radius);
-  color: #fff;
-  background: rgba(36, 31, 28, .92);
-}
-.cp-oral-demo { position: relative; }
-.cp-resource-status[hidden] { display: none; }
-.cp-resource-status .cp-btn { color: #fff; border-color: rgba(255,255,255,.55); }
 
 /* ============================================================
    11. Recommended Courses — Sidebar horizontal image+info layout
@@ -1309,12 +1197,10 @@ button.cp-exercise-feedback { cursor: default; }
     flex-direction: column;
     gap: 24px;
     padding: 24px 16px;
-    align-items: stretch;
   }
   .cp-player-main,
   .cp-player-sidebar {
-    flex: 0 1 auto;
-    width: 100%;
+    flex: 1 1 100%;
   }
   .cp-player-sidebar {
     position: relative;
@@ -1360,7 +1246,6 @@ button.cp-exercise-feedback { cursor: default; }
   .cp-time-display { font-size: 11px; }
   .cp-controls-right .cp-volume-slider { display: none; }
   .cp-directory-card { padding: 16px; }
-  .cp-course-submit { align-items: stretch; flex-direction: column; }
 }
 
 /* ============================================================

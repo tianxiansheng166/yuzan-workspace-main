@@ -10,6 +10,15 @@ Repository: `yuzan-workspace-main`
 - The development/test seed creates this invitation on a fresh database and reactivates the fixture if it is expired, revoked, or exhausted. No production/default deployment path uses it.
 - Verification: frontend tests 199/199; teacher-invitation service tests 11/11; database build and seed syntax check pass. Chromium registration and repeat-login flow both bound the student to the test class, selected the test school, and loaded Student Courses with HTTP 200. `git diff --check` passes.
 
+## Owner UAT T102 September 8 student experience (2026-10-21)
+
+- Adopted the student-page and selected workflow source from T102 checkpoint `f28a1461930642bf33010beeedd67b3d88f28851`, based on exact September 8 commit `0a7b931a8dfd005eb7ba97aa0fe68e81169d61e8`. The Today/Courses/Growth page hierarchy, course catalog/player and student navigation now use the recovered source; the T098 Today/Courses/Growth visual redesign stylesheet/template is not active. The branch history remains intact.
+- Kept the Owner UAT invitation binding and the existing Today identity/BFCache protections. Carried T099 partial/all-blank submission behavior and the T102 Growth API/feedback-scope changes. No whole-branch merge or history rewrite was used.
+- Frontend suite: 218/218; T102/T099 and page-specific focused frontend tests: 99/99; API typecheck/build and `git diff --check`: PASS. Full API suite: 1,161 passed / 64 skipped / 13 failed; all 13 failures are the known Nest `SpeechJobModule` fixture missing `ConfigService`.
+- Native Owner UAT browser: login 200, default student invitation bind 201, select-school 200. Today/Courses/Growth/course detail load with API 200 and no browser/page errors or horizontal overflow. The student course catalog returned 5 courses; Growth returned its real empty state.
+- The catalog currently contains no `VIDEO` activities or resource records. The first opened activity is `AUDIO`; its detail page has no video source, so real video playback remains `NOT_RUN`. Opening the first course created one isolated UAT Submission (HTTP 201), retained for Owner testing; no fixture data was cleared.
+- Current screenshots: `runtime-local/owner-uat-20261021/evidence/t102-owner-preview/`. T102 remains `READY_TO_MERGE=NO` for release: authenticated video playback and broader native browser/API/database acceptance are not established. The historical full-format and ESLint gaps remain separate.
+
 ## YZ-RD-T082 unified student web integration (2026-10-20)
 
 - Integrated T074 Today → T075 Course → T081 Practice (including T076 by ancestry) → T077 Growth on isolated branch `feat/yz-rd-t082-student-web-core-unified-integration`, from exact BASE `d6fbf670bb6997cae0e841d8f9a397f0da785a42`. Four real No-FF merges have exact dual parents; the fourth merge checkpoint is `48cc7587072e28e9c9e9d6f1edea71132ef21849`. No merge conflicts occurred.

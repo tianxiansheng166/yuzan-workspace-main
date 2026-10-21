@@ -27,6 +27,7 @@ function mount(api = {}) {
       this.listeners[name] = fn;
     },
     setAttribute() {},
+    removeAttribute() {},
     after(node) {
       elements.set("[data-primary-error]", node);
     },

@@ -3,22 +3,20 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta name="theme-color" content="#eef3fa" />
     <title>今天的学习｜语赞心声</title>
     <link rel="stylesheet" href="/assets/common.css" />
     <link rel="stylesheet" href="/shared/student-nav.css" />
     <link rel="stylesheet" href="/student/today/style.css" />
   </head>
   <body class="today-body">
-    <main class="today-page" id="todayApp" aria-live="polite" aria-busy="true">
-      <section class="today-loading" aria-busy="true">
-        <span class="today-loading-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M20 4c-8 0-14 3-14 10a6 6 0 0 0 6 6c7 0 8-8 8-16Z"/><path d="M4 21c2-5 6-8 12-11"/></svg></span>
-        <p>正在读取当前学籍的学习安排…</p>
+    <main class="today-page" id="todayApp" aria-live="polite">
+      <section class="today-state" aria-busy="true">
+        <div class="today-spinner" aria-hidden="true"></div>
+        <p>正在整理你的下一步学习…</p>
       </section>
     </main>
     <script src="/assets/app-core.js"></script>
     <script src="/assets/api-client.js"></script>
-    <script src="/student/today/today-showcase.js"></script>
     <script src="/student/today/today.js"></script>
     <script src="/shared/student-nav.js"></script>
   </body>

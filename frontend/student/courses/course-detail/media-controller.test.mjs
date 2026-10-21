@@ -64,9 +64,10 @@ function loadMediaController() {
     activityProgressMap: { "activity-video": { position: 0.4, revision: 2 } },
   };
   const saves = [];
+  const progressUpdates = [];
   const coursePlayerState = {
     getState: () => state,
-    updateVideoProgress() {},
+    updateVideoProgress: (...args) => { progressUpdates.push(args); },
     saveActivityAttempt: (...args) => { saves.push(args); return Promise.resolve({}); },
   };
   const window = {};
@@ -83,25 +84,27 @@ function loadMediaController() {
   });
   window.MediaController.init("cpVideo");
   window.MediaController.loadSource("https://media.invalid/course.mp4", "", "", "");
-  return { media: window.MediaController, video: elements.cpVideo, saves, state };
+  return { media: window.MediaController, video: elements.cpVideo, saves, state, elements, progressUpdates };
 }
 
-test("restores the authorized server position and persists full playback as completed", async () => {
-  const { video, saves } = loadMediaController();
+test("tracks native duration and reports full playback progress to course state", async () => {
+  const { video, saves, elements, progressUpdates } = loadMediaController();
 
   video.duration = 100;
   video.dispatch("loadedmetadata");
-  assert.equal(video.currentTime, 40);
+  assert.equal(elements.cpProgressInput.max, 100);
+  assert.equal(video.currentTime, 0);
 
   video.currentTime = 100;
-  video.dispatch("ended");
+  video.dispatch("timeupdate");
   await Promise.resolve();
 
   assert.equal(saves.length, 1);
   assert.equal(saves[0][0], "activity-video");
   assert.equal(saves[0][1], "VIDEO");
   assert.equal(saves[0][2].videoPosition, 1);
-  assert.equal(saves[0][3], true);
+  assert.equal(saves[0][3], false);
+  assert.deepEqual(progressUpdates[0], [100, 100, 100]);
 });
 
 test("persists partial video position without marking the activity complete", async () => {
@@ -117,21 +120,13 @@ test("persists partial video position without marking the activity complete", as
   assert.equal(saves[0][3], false);
 });
 
-test("saves the previous activity before switching even after the selected activity changes", async () => {
-  const { media, video, saves, state } = loadMediaController();
-  video.duration = 100;
-  video.dispatch("loadedmetadata");
-  video.currentTime = 55;
-  video.paused = false;
-  state.currentActivityId = "activity-next";
-  state.currentActivity = { activityType: "TEXT" };
+test("replacing a course activity source does not keep stale video media", () => {
+  const { media, video } = loadMediaController();
+  media.loadSource("https://media.invalid/first.mp4", "first-poster.jpg", "", "");
+  assert.equal(video.src, "https://media.invalid/first.mp4");
+  assert.equal(video.poster, "first-poster.jpg");
 
-  media.loadSource("", "", "", "", "activity-next");
-  await Promise.resolve();
-
-  assert.equal(saves.length, 1);
-  assert.equal(saves[0][0], "activity-video");
-  assert.equal(saves[0][1], "VIDEO");
-  assert.equal(saves[0][2].videoPosition, 0.55);
-  assert.equal(saves[0][3], false);
+  media.loadSource("https://media.invalid/next.mp4", "next-poster.jpg", "", "");
+  assert.equal(video.src, "https://media.invalid/next.mp4");
+  assert.equal(video.poster, "next-poster.jpg");
 });
