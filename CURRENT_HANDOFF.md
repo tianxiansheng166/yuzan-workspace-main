@@ -3,6 +3,22 @@
 Last updated: 2026-10-21
 Repository: `yuzanxinsheng_test`
 
+## YZ-RD-T105 — Real Course Playback Acceptance (2026-10-21)
+
+- T105's isolated branch was created from the exact T103 final tip
+  `375cef8cffcb955dc6dc76f6685ff41f96e3fbc8` at
+  `/home/tian/.devspace/worktrees/yuzan-workspace-t105`.
+- **STATUS: BLOCKED_RUNTIME.** No authorized T105 API, frontend, PostgreSQL,
+  Redis, MinIO, student account, or assigned real course was available. No
+  application, database, or storage service was started or contacted.
+- No product source was changed. The read-only audit found missing video
+  position restoration, optimistic local completion when the server reports
+  incomplete progress, and silently discarded progress-write failures. Exact
+  source locations and repro scenarios are in
+  `evidence/yz-rd-t105/RESULTS.md`.
+- `READY_TO_MERGE=NO`; authenticated browser and PostgreSQL/MinIO E2E remain
+  `NOT_RUN`. Historical L4 incident remains **OPEN**.
+
 ## YZ-RD-T103 — Student Course Playback (2026-10-21)
 
 - Isolated branch `feat/yz-rd-t103-course-player-native-acceptance` was created
