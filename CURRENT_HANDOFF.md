@@ -1,7 +1,25 @@
 # CURRENT HANDOFF
 
-Last updated: 2026-09-08
+Last updated: 2026-10-21
 Repository: `yuzanxinsheng_test`
+
+## YZ-RD-T103 — Student Course Playback (2026-10-21)
+
+- Isolated branch `feat/yz-rd-t103-course-player-native-acceptance` was created
+  from T102 source commit `f28a1461930642bf33010beeedd67b3d88f28851`; the
+  product-history baseline remains `0a7b931a8dfd005eb7ba97aa0fe68e81169d61e8`.
+- The player now reports browser media and play failures in an accessible
+  in-player message, sends final video position/completion at end of playback,
+  binds pause progress to the activity that loaded the media, and ignores stale
+  playback-URL responses after an activity switch. Functional commit:
+  `cd3dad299e0e0de28024a0a15bc9c6c4ff4724f3`. Regression coverage is in
+  `frontend/student/courses/course-detail/media-controller.test.mjs`.
+- Focused course tests pass 18/18; the full frontend suite passes 54/54.
+  Authenticated browser/API/PostgreSQL/MinIO playback acceptance is `NOT_RUN`:
+  no authorized isolated runtime was available, and no services were started.
+- `READY_TO_MERGE=NO`, `DEPLOY=FORBIDDEN`, and
+  `SHARED_BRANCH_MERGE=FORBIDDEN` remain in effect. Detailed evidence is in
+  `evidence/yz-rd-t103/RESULTS.md`.
 
 ## COMP-DEMO-05 checkpoint (2026-09-08)
 
