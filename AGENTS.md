@@ -42,6 +42,18 @@ Integration Lead, or a worktree. Use those legacy mechanisms only when the user
 explicitly requests legacy control-plane work. Lack of PowerShell must not block Linux
 development.
 
+## Required execution channel for development tasks
+
+1. Codex must execute project development tasks, including project edits, development
+   commands and tests. ChatGPT must not use plugins, connectors or MCP tools instead
+   of Codex to perform those actions.
+2. Plugins must not be used to carry out project development. A plugin's availability,
+   existing connection or file/command access does not authorize it to edit project
+   files, run development commands or execute tests.
+3. If the required Codex execution channel is unavailable, stop, report the blocker
+   and wait for the Owner's decision. Do not seek an alternate execution channel or
+   claim that the work was performed.
+
 ## Repository safety
 
 - Use pnpm from the repository root; do not run `npm install` in subpackages.
