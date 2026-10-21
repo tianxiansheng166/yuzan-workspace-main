@@ -6,9 +6,11 @@
   "worktree": "/home/tian/.devspace/worktrees/yuzan-workspace-t107",
   "git": {
     "evidenceCommitSha": "cee907521767502c6fcbdfbd82aa8d5e0a4d9d0c",
+    "issueReceiptCommitSha": "16bf08dc5a87b8b04a29c2c00e4c83c71f7eedd0",
     "evidenceCommitRemoteShaMatch": true,
-    "remoteFinalShaMatch": null,
-    "worktreeCleanAfterFinalPush": null
+    "issueReceiptCommitRemoteShaMatch": true,
+    "remoteBranchMatchesFinalLocalHeadAfterFinalPush": true,
+    "worktreeCleanAfterFinalPush": true
   },
   "ownerAck": "YES — this task card explicitly authorized owner-manual Codex changes to YZ-RD-T106 only.",
   "verifiedBoundary": "YES — all five mutated IDs had Compose project yz-rd-t106 plus the expected service label. Every docker update targeted one of these full IDs.",

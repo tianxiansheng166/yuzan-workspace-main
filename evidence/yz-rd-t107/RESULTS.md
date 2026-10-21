@@ -54,3 +54,7 @@
 - **ISSUE_3_COMMENT_URL:** https://github.com/tianxiansheng166/yuzan-workspace-main/issues/3#issuecomment-6321908178。Issue #3 已收到五服务收据，保持 OPEN。
 - 没有发现 published T106 端口上的已建立 host TCP 客户端，T106 网络只有五个服务容器；早期 PostgreSQL 只读快照没有其他 client session。此前接受的 T106 课程播放 E2E 是该服务先前的测试消费者证据；本任务不声称当前有用户流量。按本卡保留在线。
 - `CURRENT_HANDOFF.md` 仅追加本任务事实 checkpoint；无业务源码更改。
+
+## Git receipt
+
+- The evidence branch was pushed normally. After finalization, local and remote branch heads matched and the worktree was clean. The final SHA is returned in the task receipt.
