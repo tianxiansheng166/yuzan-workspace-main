@@ -103,3 +103,8 @@ No shared branch was changed. To roll the T108 branch back without rewriting his
 ## Delivery receipt
 
 The branch push, final remote SHA comparison, final evidence checkpoint SHA, and Draft PR URL or permission blocker are recorded in the appended delivery receipt after the authorized delivery attempt.
+
+- First non-force `git push --set-upstream origin feat/yz-rd-t108-sep08-recovery-quality-integration` exited 0; `git ls-remote` matched pushed tip `6fb00eb14244d7421005c69df9076c24774a0282`.
+- `gh pr list --head feat/yz-rd-t108-sep08-recovery-quality-integration` returned `[]`. The authorized Draft PR attempt used base `fix/yz-rd-t106-course-video-progress-reliability` and exited 1: `GraphQL: Resource not accessible by personal access token (createPullRequest)`. **No PR was created.**
+- `DRAFT_PR_URL_OR_BLOCKER=BLOCKED_BY_GITHUB_PERMISSION`; branch review URL: <https://github.com/tianxiansheng166/yuzan-workspace-main/pull/new/feat/yz-rd-t108-sep08-recovery-quality-integration>.
+- Final delivery receipt commit is pushed non-force and its remote ref is rechecked against local HEAD before return; final `REMOTE_SHA_MATCH` and SHA are in the task return.

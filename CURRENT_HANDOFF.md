@@ -742,3 +742,9 @@ Do not modify or stage `pnpm-workspace.yaml`, `infra/database/prisma/seed.ts`,
 - Integrated regression runs: frontend 70/70, focused course 34/34, media/player-state 22/22, T099 partial/all-empty submit 10/10, API 1,072 passed / 64 database-gated skipped / 0 failed; API source typecheck and frontend runtime verification pass. Full API ESLint starts but retains 2,649 baseline errors / 1 warning with 0 new diagnostics. Full format check remains non-green with 745 warnings / 12 unchanged parser errors; comparison to exact T106 BASE found 0 added warnings and 3 removed.
 - T108 native Browser/API/PostgreSQL/MinIO E2E is `NOT_RUN`: no separate authorized, resource-bounded T108 stack or T108 resource receipt was available. T107's worktree had no receipt and the existing T106 five-service stack was left untouched. Detailed commands, exit codes, lint/format comparisons, file ownership, resource status, and rollback are in `evidence/yz-rd-t108/RESULTS.md`.
 - **READY_TO_MERGE: NO until Owner acceptance.** No shared merge or deployment. **HISTORICAL_L4_INCIDENT_OPEN: YES.**
+
+## YZ-RD-T108 delivery receipt (2026-10-22)
+
+- The independent T108 branch was pushed with a normal non-force push; the first pushed tip `6fb00eb14244d7421005c69df9076c24774a0282` matched `origin`.
+- Draft PR creation was attempted with base `fix/yz-rd-t106-course-video-progress-reliability`; GitHub rejected `createPullRequest` for this personal access token (`Resource not accessible by personal access token`). No PR was created. Branch review URL: https://github.com/tianxiansheng166/yuzan-workspace-main/pull/new/feat/yz-rd-t108-sep08-recovery-quality-integration.
+- The final delivery receipt commit is pushed without force; its exact local/remote SHA match is reported in the T108 task return. No shared merge or deployment occurred; READY_TO_MERGE remains NO until Owner acceptance.
