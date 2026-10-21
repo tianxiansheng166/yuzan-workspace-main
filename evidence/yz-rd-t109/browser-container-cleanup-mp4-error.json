@@ -1,0 +1,15 @@
+{
+  "taskId": "YZ-RD-T109",
+  "name": "yz-rd-t109-browser-mp4-error",
+  "state": "exited",
+  "exitCode": 0,
+  "restartCount": 0,
+  "oomKilled": false,
+  "caps": {
+    "nanoCpus": 750000000,
+    "memory": 1174405120,
+    "memorySwapTotal": 1174405120,
+    "pidsLimit": 256
+  },
+  "removed": true
+}

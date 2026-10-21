@@ -1,0 +1,6 @@
+{
+  "taskId": "YZ-RD-T109",
+  "pid": 1240418,
+  "signal": "SIGTERM",
+  "gracefulExit": true
+}

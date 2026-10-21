@@ -1,0 +1,97 @@
+{
+  "taskId": "YZ-RD-T109",
+  "sourceT108Sha": "8974c2a7d5842bb20dbfcd091b63cac5674dcc32",
+  "runtimeProject": "yz-rd-t109",
+  "status": "PASS",
+  "loginHttpStatus": 200,
+  "assignmentIdPrefix": "10498761",
+  "videoActivityIdPrefix": "ecddf803",
+  "liveApiMediaType": "video/mp4",
+  "firstState": {
+    "videoPresent": true,
+    "readyState": 0,
+    "networkState": 3,
+    "mediaErrorCode": 4,
+    "currentTimeSeconds": 0,
+    "sourceHost": "minio",
+    "visibleError": true,
+    "errorMessage": "视频加载失败，请检查网络后重试。"
+  },
+  "afterThreeSeconds": {
+    "videoPresent": true,
+    "readyState": 0,
+    "networkState": 3,
+    "mediaErrorCode": 4,
+    "currentTimeSeconds": 0,
+    "sourceHost": "minio",
+    "visibleError": true,
+    "errorMessage": "视频加载失败，请检查网络后重试。"
+  },
+  "minio206Count": 1,
+  "networkSummary": [
+    {
+      "host": "frontend",
+      "method": "GET",
+      "category": "application-api",
+      "status": 200,
+      "count": 52,
+      "mediaHeaders": null
+    },
+    {
+      "host": "frontend",
+      "method": "GET",
+      "category": "application-api",
+      "status": 301,
+      "count": 2,
+      "mediaHeaders": null
+    },
+    {
+      "host": "frontend",
+      "method": "GET",
+      "category": "course-list",
+      "status": 200,
+      "count": 2,
+      "mediaHeaders": null
+    },
+    {
+      "host": "frontend",
+      "method": "GET",
+      "category": "signed-playback-url",
+      "status": 200,
+      "count": 1,
+      "mediaHeaders": null
+    },
+    {
+      "host": "frontend",
+      "method": "POST",
+      "category": "application-api",
+      "status": 201,
+      "count": 1,
+      "mediaHeaders": null
+    },
+    {
+      "host": "frontend",
+      "method": "POST",
+      "category": "auth-login",
+      "status": 200,
+      "count": 1,
+      "mediaHeaders": null
+    },
+    {
+      "host": "minio",
+      "method": "GET",
+      "category": "minio-media",
+      "status": 206,
+      "count": 1,
+      "mediaHeaders": {
+        "content-type": "video/mp4",
+        "content-length": "1128375",
+        "content-range": "bytes 0-1128374/1128375",
+        "accept-ranges": "bytes"
+      }
+    }
+  ],
+  "screenshot": "evidence/yz-rd-t109/screenshots/course-detail-video-load-failure.png",
+  "browserVersion": "140.0.7339.16",
+  "noRecordingAttempted": true
+}

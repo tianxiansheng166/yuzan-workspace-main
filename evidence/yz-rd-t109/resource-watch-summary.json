@@ -1,13 +1,13 @@
 {
   "taskId": "YZ-RD-T109",
   "watchFile": "resource-watch.jsonl",
-  "sampleCount": 1275,
+  "sampleCount": 1335,
   "decisionCounts": {
-    "PASS": 1274,
+    "PASS": 1334,
     "FAIL": 1
   },
   "firstSampleUtc": "2026-10-21T18:35:46.260517+00:00",
-  "lastSampleUtc": "2026-10-21T19:28:12.160561+00:00",
+  "lastSampleUtc": "2026-10-21T19:38:04.807863+00:00",
   "failedSamples": [
     {
       "sampleIndex": 151,
@@ -20,6 +20,7 @@
     }
   ],
   "browserE2e19ActiveSamples": 14,
+  "browserMp4ErrorActiveSamples": 5,
   "latestDecision": "PASS",
-  "note": "One earlier cgroup inspection race occurred while a container exited; it caused the guard to stop only the T109 stack then. The guard was hardened for normal exit races; all later samples passed. No T106 service or unrelated container was stopped."
+  "note": "One earlier cgroup inspection race while a container exited caused the guard to stop only T109 services then. It was hardened; all later samples passed, including both final Browser runs. No T106 or unrelated container was stopped."
 }

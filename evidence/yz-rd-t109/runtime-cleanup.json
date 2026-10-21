@@ -7,6 +7,7 @@
       "name": "yz-rd-t109-frontend-1",
       "service": "frontend",
       "state": "exited",
+      "exitCode": 137,
       "restartCount": 0,
       "oomKilled": false,
       "caps": {
@@ -14,12 +15,14 @@
         "memory": 402653184,
         "memorySwapTotal": 402653184,
         "pidsLimit": 128
-      }
+      },
+      "preStopHealth": "healthy"
     },
     {
       "name": "yz-rd-t109-api-1",
       "service": "api",
       "state": "exited",
+      "exitCode": 137,
       "restartCount": 0,
       "oomKilled": false,
       "caps": {
@@ -27,12 +30,14 @@
         "memory": 805306368,
         "memorySwapTotal": 805306368,
         "pidsLimit": 192
-      }
+      },
+      "preStopHealth": "healthy"
     },
     {
       "name": "yz-rd-t109-minio-1",
       "service": "minio",
       "state": "exited",
+      "exitCode": 0,
       "restartCount": 0,
       "oomKilled": false,
       "caps": {
@@ -40,12 +45,14 @@
         "memory": 402653184,
         "memorySwapTotal": 402653184,
         "pidsLimit": 128
-      }
+      },
+      "preStopHealth": "healthy"
     },
     {
       "name": "yz-rd-t109-postgres-1",
       "service": "postgres",
       "state": "exited",
+      "exitCode": 0,
       "restartCount": 0,
       "oomKilled": false,
       "caps": {
@@ -53,12 +60,14 @@
         "memory": 805306368,
         "memorySwapTotal": 805306368,
         "pidsLimit": 256
-      }
+      },
+      "preStopHealth": "healthy"
     },
     {
       "name": "yz-rd-t109-redis-1",
       "service": "redis",
       "state": "exited",
+      "exitCode": 0,
       "restartCount": 0,
       "oomKilled": false,
       "caps": {
@@ -66,30 +75,39 @@
         "memory": 134217728,
         "memorySwapTotal": 134217728,
         "pidsLimit": 64
-      }
+      },
+      "preStopHealth": "healthy"
     }
   ],
-  "browserContainersRemoved": 20,
+  "browserContainersRemoved": 21,
+  "browserCleanupReceipts": [
+    "browser-container-cleanup.json",
+    "browser-container-cleanup-mp4-error.json"
+  ],
+  "composeStopCommandExitCode": 0,
+  "composeStopGraceSeconds": 30,
+  "forcedStopExit137Services": [
+    "frontend",
+    "api"
+  ],
   "network": {
     "name": "yz-rd-t109-isolated",
     "internal": true,
-    "driver": "bridge",
     "labelsTask": "YZ-RD-T109"
   },
   "volumesPreserved": [
     {
       "name": "yz-rd-t109-minio-data",
-      "driver": "local",
       "labelsTask": "YZ-RD-T109"
     },
     {
       "name": "yz-rd-t109-postgres-data",
-      "driver": "local",
       "labelsTask": "YZ-RD-T109"
     }
   ],
   "downUsed": false,
   "downVolumesUsed": false,
   "pruneUsed": false,
-  "nonT109ResourcesTouched": false
+  "nonT109ResourcesTouched": false,
+  "shutdownNote": "Compose stop used a 30-second grace. Frontend and API exited 137 with OOMKilled=false and zero restarts; the other three exited 0. Active resource-watch samples immediately before stop showed no OOM events."
 }

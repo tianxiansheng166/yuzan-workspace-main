@@ -27,7 +27,13 @@
     "t109Bucket": "yz-rd-t109-media",
     "t109ObjectKey": "t109-native-acceptance/flower.mp4",
     "unreferencedAfterCodecProbe": true,
-    "browserResult": "MinIO HTTP 206 but Playwright Chromium returned MEDIA_ERR_SRC_NOT_SUPPORTED; the visible media error is preserved in screenshots/course-detail-video-load-failure.png."
+    "temporarilyAttachedForErrorCapture": true,
+    "restoredToUnreferencedObjectAfterCapture": true,
+    "browserResult": "During an isolated T109-only error-state run, the live course API attached this approved MP4; the signed URL returned HTTP 200, MinIO returned HTTP 206 video/mp4, Chromium returned MEDIA_ERR_SRC_NOT_SUPPORTED (code 4), and the same visible error remained for 3 seconds.",
+    "browserErrorEvidence": "mp4-error-capture.json",
+    "visibleErrorScreenshot": "screenshots/course-detail-video-load-failure.png",
+    "activeCourseResourceRestoredToWebm": true,
+    "restoreReceipt": "media-switch-restore-webm-after-error.json"
   },
   "assetCountInT109Bucket": 2,
   "note": "Both files were downloaded directly into T109 runtime storage from the MDN CC0 media path. The active course resource points to the VP8/Vorbis WebM so the native browser can exercise signed delivery, decode, and playback. The MP4 remains as an unreferenced T109-only diagnostic object; no external runtime or L4 media was used."

@@ -28,10 +28,17 @@ Repository: `tianxiansheng166/yuzan-workspace-main`
   progress, and licensed object. Resource admission and 5/5 service caps are
   recorded in `evidence/yz-rd-t109/`; no T106 or AutoAim container was
   modified.
+- A supplementary isolated MP4 run proved the real decoder failure remains
+  visible (`MEDIA_ERR_SRC_NOT_SUPPORTED`, MinIO HTTP 206) and captured
+  `course-detail-video-load-failure.png`; the approved WebM was restored and
+  reverified before shutdown.
 - The resource watch records one earlier cgroup-read race while a container
   exited; it stopped only T109 then. The guard was hardened, and the remaining
-  1,274/1,275 samples passed. See
+  1,334/1,335 samples passed. See
   `evidence/yz-rd-t109/resource-watch-summary.json`.
+- Final Compose cleanup returned 0 and retained both T109 data volumes. The
+  frontend/API exit codes were 137 after the configured stop grace, with
+  `OOMKilled=false` and zero restarts; the other three services exited 0.
 - **READY_TO_MERGE: NO.** No shared merge or deployment. Historical L4
   incident remains **OPEN**.
 
