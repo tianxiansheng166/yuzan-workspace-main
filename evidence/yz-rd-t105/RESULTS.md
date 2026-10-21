@@ -10,6 +10,7 @@
 - **WORKTREE:** `/home/tian/.devspace/worktrees/yuzan-workspace-t105`
 - **DEPLOY / merge to UAT or main:** not performed
 - **Product source changes:** none
+- **HISTORICAL_L4_INCIDENT_OPEN:** `YES`; no Level 4 content was accessed.
 
 T105 was not found in local task text/branch searches. The requested output
 branch and target worktree path were absent before creation. The isolated
@@ -85,7 +86,12 @@ authorization were supplied.
 | `AUTHENTICATED_BROWSER_E2E` | `NOT_RUN` | No authorized student account or app runtime. |
 | `POSTGRESQL_E2E` | `NOT_RUN` | No authorized isolated database. |
 | `MINIO_E2E` | `NOT_RUN` | No authorized isolated storage endpoint/bucket. |
+| `ISOLATED_DATABASE` | `NO` | No dedicated database or isolation proof was supplied. |
+| `ISOLATED_OBJECT_STORAGE` | `NO` | No dedicated storage endpoint/bucket or isolation proof was supplied. |
+| `REAL_COURSE_FOUND` | `NOT_RUN` | No current API/course assignment could be queried. Historical course records are not current T105 evidence. |
+| `VIDEO_ACTUALLY_PLAYED` | `NOT_RUN` | No browser playback was attempted. |
 | `NATIVE_E2E` | `NOT_RUN` | Blocked by the missing isolated runtime, credentials, assigned course, and browser driver. |
+| `TEST_INVENTORY_AUDIT` | `PASS` | Read-only Git-tree/test-file comparison; no tests executed in T105. |
 
 No API or browser error logs were generated because no request or playback was
 attempted. The T103 fixture tests and the historical September browser record

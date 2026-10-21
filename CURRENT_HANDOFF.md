@@ -17,7 +17,8 @@ Repository: `yuzanxinsheng_test`
   source locations and repro scenarios are in
   `evidence/yz-rd-t105/RESULTS.md`.
 - `READY_TO_MERGE=NO`; authenticated browser and PostgreSQL/MinIO E2E remain
-  `NOT_RUN`. Historical L4 incident remains **OPEN**.
+  `NOT_RUN`; no current authorized course was confirmed or actually played.
+  Historical L4 incident remains **OPEN** and no L4 content was accessed.
 
 ## YZ-RD-T103 — Student Course Playback (2026-10-21)
 
