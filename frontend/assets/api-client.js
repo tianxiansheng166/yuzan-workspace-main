@@ -4,6 +4,11 @@
   const TOKEN_KEY = 'yuzan-access-token';
   const USER_KEY = 'yuzan-current-user';
   const SCHOOL_KEY = 'yuzan-active-school-id';
+  const UAT_DEFAULT_TEACHER_INVITATION_CODE = 'TC-43B17-BAD91';
+
+  function getUatDefaultTeacherInvitationCode() {
+    return UAT_DEFAULT_TEACHER_INVITATION_CODE;
+  }
 
   function getToken() {
     return localStorage.getItem(TOKEN_KEY) || '';
@@ -1482,6 +1487,7 @@
     clearSession,
     getStoredUser,
     getActiveSchoolId,
+    getUatDefaultTeacherInvitationCode,
     setActiveSchoolId,
     requireAuth,
     /* Teacher */

@@ -1,7 +1,14 @@
 # CURRENT HANDOFF
 
-Last updated: 2026-10-20
+Last updated: 2026-10-21
 Repository: `yuzan-workspace-main`
+
+## Owner UAT student invitation (2026-10-21)
+
+- Owner UAT branch `uat/owner-platform-preview-20261021` uses the local fictional school/class fixture only. Teacher invitation `TC-43B17-BAD91` belongs to the seeded teacher and `七年级真实流程班`; it is a UAT-wide student class-binding code, currently provisioned for 1,000,000 uses and one year.
+- Student registration and student login automatically redeem the default invitation and select its school. The profile invitation field is prefilled for retry/manual use. Binding failures are visible but do not block login. The invitation does not change teacher, volunteer, or administrator roles.
+- The development/test seed creates this invitation on a fresh database and reactivates the fixture if it is expired, revoked, or exhausted. No production/default deployment path uses it.
+- Verification: frontend tests 199/199; teacher-invitation service tests 11/11; database build and seed syntax check pass. Chromium registration and repeat-login flow both bound the student to the test class, selected the test school, and loaded Student Courses with HTTP 200. `git diff --check` passes.
 
 ## YZ-RD-T082 unified student web integration (2026-10-20)
 

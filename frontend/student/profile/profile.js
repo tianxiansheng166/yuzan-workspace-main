@@ -397,7 +397,7 @@
 
   async function enterStudentProfile() {
     pendingBinding = null;
-    codeInput.value = '';
+    codeInput.value = Api.getUatDefaultTeacherInvitationCode?.() || '';
     codeInput.readOnly = false;
     clearProfile();
     const version = loadVersion;

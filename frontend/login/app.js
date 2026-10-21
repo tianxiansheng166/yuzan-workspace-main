@@ -199,6 +199,22 @@
     return { user: data.user, redirect: api.getHomeUrlByRole(data.user) };
   }
 
+  async function bindUatDefaultStudentClass(user) {
+    const isStudent = (user?.memberships || []).some(membership => membership.role === 'STUDENT');
+    const api = window.YuzanApi;
+    const code = api?.getUatDefaultTeacherInvitationCode?.();
+    if (!isStudent || !code || typeof api.bindTeacherInvitation !== 'function') return;
+
+    try {
+      const binding = await api.bindTeacherInvitation(code);
+      if (binding?.schoolId && typeof api.selectSchool === 'function') {
+        await api.selectSchool(binding.schoolId);
+      }
+    } catch {
+      if (window.YuzanDemo) window.YuzanDemo.toast('默认测试班级暂未绑定，仍会继续登录。', 'warning');
+    }
+  }
+
   async function submitAuth(form, action) {
     if (!validate(form)) return;
     const data = Object.fromEntries(new FormData(form).entries());
@@ -218,6 +234,7 @@
     try {
       const result = await callEndpoint(action, data);
       if (result?.redirect) {
+        await bindUatDefaultStudentClass(result.user);
         finishRedirect(result.redirect);
         return;
       }

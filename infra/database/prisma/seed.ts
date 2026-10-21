@@ -481,6 +481,38 @@ async function seedStudentCourses() {
   }
 }
 
+async function seedOwnerUatTeacherInvitation() {
+  const code = "TC-43B17-BAD91";
+  const maxUses = 1_000_000;
+  const now = new Date();
+  const expiresAt = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000);
+  const existing = await prisma.teacherInvitation.findUnique({
+    where: { code },
+    select: { id: true, revokedAt: true, expiresAt: true, usedCount: true, maxUses: true },
+  });
+
+  if (!existing) {
+    await prisma.teacherInvitation.create({
+      data: {
+        schoolId: ids.school,
+        classId: ids.class,
+        teacherUserId: ids.teacher,
+        code,
+        maxUses,
+        expiresAt,
+      },
+    });
+    return;
+  }
+
+  if (existing.revokedAt || existing.expiresAt <= now || existing.usedCount >= existing.maxUses) {
+    await prisma.teacherInvitation.update({
+      where: { id: existing.id },
+      data: { maxUses, usedCount: 0, revokedAt: null, expiresAt },
+    });
+  }
+}
+
 async function main() {
   if (!["development", "test"].includes(process.env.NODE_ENV ?? "development")) {
     throw new Error("Seed is restricted to development/test");
@@ -579,6 +611,8 @@ async function main() {
       },
     });
   }
+
+  await seedOwnerUatTeacherInvitation();
 
   // Keep the reusable-practice bootstrap independent from unrelated demo
   // modules. This mode creates only active fictional identities, enrolments,
