@@ -1,0 +1,10 @@
+
+ RUN  v3.2.7 /home/tian/.devspace/worktrees/yuzan-workspace-t099/backend/api
+
+ ✓ test/assessment/assessment.service.spec.ts (30 tests) 47ms
+ ✓ test/assessment/question-bank-deterministic-scoring.service.spec.ts (8 tests) 3ms
+
+ Test Files  2 passed (2)
+      Tests  38 passed (38)
+   Start at  12:46:32
+   Duration  853ms (transform 310ms, setup 0ms, collect 658ms, tests 51ms, environment 0ms, prepare 49ms)
