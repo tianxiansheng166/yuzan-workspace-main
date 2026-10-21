@@ -46,3 +46,8 @@ HISTORICAL_L4_INCIDENT_OPEN=YES. `L4_SOURCE_READ=NO`; `L4_IMPORT_APPLIED=NO`; `L
 NOTION_POLICY_READ=READ_OK: 17, 17A, and the YZ-RD lane. REPO_AGENTS_ACTUALLY_READ includes `/home/tian/code/AGENTS.md`, the exact-BASE `AGENTS.md`, `README-FIRST.md`, `CURRENT_HANDOFF.md`, T099 RESULTS.md, and T099 checks.json. AA-DEV V2.2 marker is not applicable to YZ-RD.
 
 FILE_OWNER_GUARD=PASS. T005 protected diffs were not opened; T098 source and worktree were not inspected; T099 source/worktree were not modified. No Contracts, local_sources, mixed raw DOCX/ZIP, or Level 4 materials were accessed.
+
+
+## Draft PR creation
+
+The T100 branch was pushed normally to `origin` and its remote SHA matched the local merge commit. `gh pr list --head feat/yz-rd-t100-t099-uat-integration` returned no existing PR. Draft creation was attempted twice with the requested UAT base and returned `GraphQL: Resource not accessible by personal access token (createPullRequest)`, exit 1. The connected GitHub CLI credential can push the branch but lacks the permission required to create a pull request. No PR was created; see [`pr-attempt.txt`](pr-attempt.txt). `draft-pr-body.md` contains the prepared review description. This leaves T100 integration committed and pushed, with PR creation as the remaining access blocker.

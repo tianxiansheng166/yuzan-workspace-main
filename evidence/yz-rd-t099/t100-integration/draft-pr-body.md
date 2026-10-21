@@ -1,0 +1,7 @@
+Integrates the exact T099 submission/scoring/report change onto UAT BASE `60ee77d3ab791490015a3e3c3fff7aa413168353` (T098). The merge preserves T099 commit `f2c28565c4c2559c842f5bdc812a37133b3f75b6` as the second parent and retains both append-only handoff checkpoints. T098 Today/Courses/Growth files remain byte-identical to BASE.
+
+T100 reran the required offline gates: frontend 214/214, T099 frontend 15/15, focused AssessmentService/scoring 58/58, adjacent QB/remediation/review 15/15, API source typecheck, targeted ESLint, JS syntax gate, runtime verifier, and diff checks all pass.
+
+Full API discovery reports 1161 passed, the same 13 inherited SubmissionsService ConfigService DI failures before assertions, and 43 skips. One identity integration suite could not load because this isolated worktree has no generated Prisma client; its 21 PostgreSQL-gated cases were not collected. No DB URL was present and no database was contacted. The extra unit tests account for the 20 additional passes relative to the stated baseline. Full details and raw logs are in `evidence/yz-rd-t099/t100-integration/RESULTS.md`.
+
+Native authenticated browser/API/PostgreSQL/MinIO E2E was not run. This PR is Draft and `READY_TO_MERGE=NO`. The inherited API failures, the missing generated client for the full suite, and native E2E remain open. No T097 changes are included. No merge or deployment is authorized by this PR.
