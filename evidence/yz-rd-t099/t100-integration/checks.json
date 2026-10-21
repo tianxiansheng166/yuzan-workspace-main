@@ -1,0 +1,202 @@
+[
+  {
+    "name": "frontend-suite",
+    "command": [
+      "pnpm",
+      "--dir",
+      "frontend",
+      "test"
+    ],
+    "exit": 0,
+    "signal": null,
+    "error": null,
+    "summary": [
+      "ℹ pass 214",
+      "ℹ fail 0",
+      "ℹ skipped 0"
+    ]
+  },
+  {
+    "name": "frontend-focused",
+    "command": [
+      "node",
+      "--test",
+      "frontend/tests/assessment/t099-unanswered-submit.test.mjs"
+    ],
+    "exit": 0,
+    "signal": null,
+    "error": null,
+    "summary": [
+      "ℹ pass 15",
+      "ℹ fail 0",
+      "ℹ skipped 0"
+    ]
+  },
+  {
+    "name": "api-focused",
+    "command": [
+      "pnpm",
+      "--dir",
+      "backend/api",
+      "exec",
+      "vitest",
+      "run",
+      "test/assessment/assessment.service.spec.ts",
+      "test/assessment/question-bank-deterministic-scoring.service.spec.ts",
+      "--config",
+      "../../evidence/yz-rd-t099/vitest.config.mjs",
+      "--pool=forks",
+      "--poolOptions.forks.singleFork"
+    ],
+    "exit": 0,
+    "signal": null,
+    "error": null,
+    "summary": [
+      "Test Files  2 passed (2)",
+      "Tests  58 passed (58)"
+    ]
+  },
+  {
+    "name": "api-related",
+    "command": [
+      "pnpm",
+      "--dir",
+      "backend/api",
+      "exec",
+      "vitest",
+      "run",
+      "test/assessment/question-bank-assessment-scoring.spec.ts",
+      "test/assessment/remediation.service.spec.ts",
+      "test/assessment/assessment-review.service.spec.ts",
+      "--config",
+      "../../evidence/yz-rd-t099/vitest.config.mjs",
+      "--pool=forks",
+      "--poolOptions.forks.singleFork"
+    ],
+    "exit": 0,
+    "signal": null,
+    "error": null,
+    "summary": [
+      "Test Files  3 passed (3)",
+      "Tests  15 passed (15)"
+    ]
+  },
+  {
+    "name": "api-typecheck",
+    "command": [
+      "pnpm",
+      "--dir",
+      "backend/api",
+      "exec",
+      "tsc",
+      "-p",
+      "../../evidence/yz-rd-t099/typecheck.json",
+      "--noEmit"
+    ],
+    "exit": 0,
+    "signal": null,
+    "error": null,
+    "summary": []
+  },
+  {
+    "name": "target-lint",
+    "command": [
+      "pnpm",
+      "--dir",
+      "backend/api",
+      "exec",
+      "eslint",
+      "--config",
+      "../../evidence/yz-rd-t099/eslint.config.mjs",
+      "src/modules/assessment/assessment.service.ts",
+      "src/modules/assessment/question-bank-deterministic-scoring.service.ts",
+      "test/assessment/assessment.service.spec.ts",
+      "test/assessment/question-bank-deterministic-scoring.service.spec.ts"
+    ],
+    "exit": 0,
+    "signal": null,
+    "error": null,
+    "summary": []
+  },
+  {
+    "name": "business-js-gate",
+    "command": [
+      "node",
+      "frontend/scripts/check-business-js-syntax.mjs"
+    ],
+    "exit": 0,
+    "signal": null,
+    "error": null,
+    "summary": []
+  },
+  {
+    "name": "runtime-verifier",
+    "command": [
+      "node",
+      "frontend/scripts/verify-runtime.mjs"
+    ],
+    "exit": 0,
+    "signal": null,
+    "error": null,
+    "summary": []
+  },
+  {
+    "name": "runner-syntax",
+    "command": [
+      "node",
+      "--check",
+      "frontend/assessment/assets/runner.js"
+    ],
+    "exit": 0,
+    "signal": null,
+    "error": null,
+    "summary": []
+  },
+  {
+    "name": "app-syntax",
+    "command": [
+      "node",
+      "--check",
+      "frontend/assessment/assets/app.js"
+    ],
+    "exit": 0,
+    "signal": null,
+    "error": null,
+    "summary": []
+  },
+  {
+    "name": "test-syntax",
+    "command": [
+      "node",
+      "--check",
+      "frontend/tests/assessment/t099-unanswered-submit.test.mjs"
+    ],
+    "exit": 0,
+    "signal": null,
+    "error": null,
+    "summary": []
+  },
+  {
+    "name": "full-api-suite",
+    "command": [
+      "pnpm",
+      "--dir",
+      "backend/api",
+      "exec",
+      "vitest",
+      "run",
+      "--config",
+      "../../evidence/yz-rd-t099/vitest.config.mjs",
+      "--pool=forks",
+      "--poolOptions.forks.singleFork"
+    ],
+    "exit": 1,
+    "signal": null,
+    "error": null,
+    "summary": [
+      "Test Files  2 failed | 74 passed | 9 skipped (85)",
+      "Tests  13 failed | 1161 passed | 43 skipped (1217)",
+      "Tests 13 ⎯⎯⎯⎯⎯⎯⎯"
+    ]
+  }
+]

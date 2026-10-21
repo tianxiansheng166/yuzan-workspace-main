@@ -118,6 +118,45 @@ test("normalizes the current nested course aggregate without dropping activity f
   assert.equal(activity.isCompleted, true);
 });
 
+test("maps published video fields from activity content into the student player contract", async () => {
+  const { adapter } = loadAdapter({
+    getStudentCourse: async () => ({
+      assignment: { id: "assignment-1" },
+      course: { id: "course-1" },
+      courseVersion: { id: "version-1", title: "API-backed video course" },
+      units: [{
+        id: "unit-1",
+        lessons: [{
+          id: "lesson-1",
+          activities: [{
+            id: "video-activity-1",
+            type: "VIDEO",
+            title: "课程视频",
+            content: {
+              videoUrl: "/assets/media/lesson-video.mp4",
+              posterUrl: "/assets/covers/lesson-video.webp",
+              subtitleZhUrl: "/assets/subtitles/lesson-zh.vtt",
+              subtitleBoUrl: "/assets/subtitles/lesson-bo.vtt",
+              timelineMarkers: [{ time: 12, label: "重点" }],
+            },
+            resources: [],
+          }],
+        }],
+      }],
+    }),
+  });
+
+  const course = await adapter.loadCourse("assignment-1");
+  const activity = course.units[0].lessons[0].activities[0];
+
+  assert.equal(activity.activityType, "VIDEO");
+  assert.equal(activity.videoUrl, "/assets/media/lesson-video.mp4");
+  assert.equal(activity.posterUrl, "/assets/covers/lesson-video.webp");
+  assert.equal(activity.subtitleZhUrl, "/assets/subtitles/lesson-zh.vtt");
+  assert.equal(activity.subtitleBoUrl, "/assets/subtitles/lesson-bo.vtt");
+  assert.deepEqual(activity.timelineMarkers, [{ time: 12, label: "重点" }]);
+});
+
 test("does not invent zero progress or promote a page-local completion flag", async () => {
   const { adapter } = loadAdapter({
     getStudentCourse: async () => ({

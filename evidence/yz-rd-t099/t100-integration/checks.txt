@@ -1,0 +1,12 @@
+frontend-suite: PASS — ℹ pass 214; ℹ fail 0; ℹ skipped 0
+frontend-focused: PASS — ℹ pass 15; ℹ fail 0; ℹ skipped 0
+api-focused: PASS — Test Files  2 passed (2); Tests  58 passed (58)
+api-related: PASS — Test Files  3 passed (3); Tests  15 passed (15)
+api-typecheck: PASS (exit 0)
+target-lint: PASS (exit 0)
+business-js-gate: PASS (exit 0)
+runtime-verifier: PASS (exit 0)
+runner-syntax: PASS (exit 0)
+app-syntax: PASS (exit 0)
+test-syntax: PASS (exit 0)
+full-api-suite: FAIL — Test Files  2 failed | 74 passed | 9 skipped (85); Tests  13 failed | 1161 passed | 43 skipped (1217); Tests 13 ⎯⎯⎯⎯⎯⎯⎯

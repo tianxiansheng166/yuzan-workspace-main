@@ -1,0 +1,23 @@
+✔ Runner confirmation permits submit with zero unanswered (23.531477ms)
+✔ Runner confirmation permits submit with some unanswered (20.683298ms)
+✔ Runner confirmation permits submit with all unanswered (21.703022ms)
+✔ Runner persists cleared saved text and skips blank finalize (21.884116ms)
+✔ Runner retains pending save failure as a technical blocker (1.169515ms)
+✔ Runner locks an uncertain submit until the server state is reconciled (0.921623ms)
+✔ all-blank Runner preserves course-sync recovery without duplicate submit (1.356181ms)
+✔ formal all-blank submit is enabled and does not finalize nonexistent answers (12.507441ms)
+✔ formal preserves a local clear across hydration, saves it, and skips finalize (10.520834ms)
+✔ formal synchronizes and finalizes real text before submitting (11.454612ms)
+✔ formal save failures still stop submission (10.483348ms)
+✔ formal invalid session and failed recording remain blocked (1.127861ms)
+✔ formal blank next action persists a clear without finalizing it (0.958461ms)
+✔ formal submit data network failure blocks use of stale session state (1.476657ms)
+✔ Runner retains upload verification for an actual local audio draft (0.782222ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 185.747024

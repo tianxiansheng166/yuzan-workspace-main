@@ -99,3 +99,31 @@ describe("Question Bank deterministic scorer", () => {
     }
   });
 });
+
+describe("T099 unanswered scoring", () => {
+  it.each([undefined, null, {}, { value: "" }, { content: { text: " \n　" } }])("marks empty written input explicitly: %j", (answer) => {
+    expect(score(exactSpec, answer, 3)).toMatchObject({ state: "AUTO_SCORED", score: 0, maxScore: 3, reasonCode: "UNANSWERED" });
+    expect(score(textSpec, answer)).toMatchObject({ score: 0, reasonCode: "UNANSWERED" });
+    expect(score(dictationSpec, answer)).toMatchObject({ score: 0, reasonCode: "UNANSWERED" });
+    expect(score({ strategy: "RUBRIC_TEXT", maxScore: 5 }, answer)).toMatchObject({ score: 0, reasonCode: "UNANSWERED" });
+  });
+
+  it("preserves formal-page option payloads as actual choices", () => {
+    expect(score(exactSpec, { optionIndex: 1, optionLabel: "B" }, 3)).toMatchObject({ score: 3 });
+    expect(score(exactSpec, { optionIndex: 0, optionLabel: "A" }, 3)).toMatchObject({ score: 0, metrics: { matched: false } });
+    expect(score(exactSpec, { optionIndex: 0 }, 3).reasonCode).not.toBe("UNANSWERED");
+  });
+
+  it("keeps incorrect nonblank distinct and invalid configuration unresolved", () => {
+    expect(score(exactSpec, { value: "A" }, 3).reasonCode).toBeUndefined();
+    expect(score({ ...exactSpec, maxScore: 0 }, undefined, 0)).toMatchObject({ score: null, reasonCode: "SCORING_CONFIG_INVALID" });
+    expect(score({ ...exactSpec, referenceAnswer: "Z" }, undefined, 3)).toMatchObject({ score: null, reasonCode: "SCORING_CONFIG_INVALID" });
+  });
+
+  it("only scores speech as unanswered when absence of a recording is explicit", () => {
+    const input = { scoringSpec: { strategy: "SPEECH_READING", maxScore: 4 }, deliverySpec: {}, answer: undefined, maxScore: 4 };
+    expect(scoreQuestionBankResponse({ ...input, hasRecording: false })).toMatchObject({ score: 0, reasonCode: "UNANSWERED" });
+    expect(scoreQuestionBankResponse({ ...input, hasRecording: true })).toMatchObject({ score: null, reasonCode: "SPEECH_SCORING_OUT_OF_SCOPE" });
+    expect(scoreQuestionBankResponse(input).score).toBeNull();
+  });
+});

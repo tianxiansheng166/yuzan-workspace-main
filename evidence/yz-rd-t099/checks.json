@@ -1,0 +1,135 @@
+[
+  {
+    "name": "frontend-suite",
+    "command": [
+      "pnpm",
+      "--dir",
+      "frontend",
+      "test"
+    ],
+    "exit": 0,
+    "error": null
+  },
+  {
+    "name": "frontend-focused",
+    "command": [
+      "node",
+      "--test",
+      "frontend/tests/assessment/t099-unanswered-submit.test.mjs"
+    ],
+    "exit": 0,
+    "error": null
+  },
+  {
+    "name": "api-focused",
+    "command": [
+      "pnpm",
+      "--dir",
+      "backend/api",
+      "exec",
+      "vitest",
+      "run",
+      "test/assessment/assessment.service.spec.ts",
+      "test/assessment/question-bank-deterministic-scoring.service.spec.ts",
+      "--config",
+      "../../evidence/yz-rd-t099/vitest.config.mjs",
+      "--pool=forks",
+      "--poolOptions.forks.singleFork"
+    ],
+    "exit": 0,
+    "error": null
+  },
+  {
+    "name": "api-related",
+    "command": [
+      "pnpm",
+      "--dir",
+      "backend/api",
+      "exec",
+      "vitest",
+      "run",
+      "test/assessment/question-bank-assessment-scoring.spec.ts",
+      "test/assessment/remediation.service.spec.ts",
+      "test/assessment/assessment-review.service.spec.ts",
+      "--config",
+      "../../evidence/yz-rd-t099/vitest.config.mjs",
+      "--pool=forks",
+      "--poolOptions.forks.singleFork"
+    ],
+    "exit": 0,
+    "error": null
+  },
+  {
+    "name": "api-typecheck",
+    "command": [
+      "pnpm",
+      "--dir",
+      "backend/api",
+      "exec",
+      "tsc",
+      "-p",
+      "../../evidence/yz-rd-t099/typecheck.json",
+      "--noEmit"
+    ],
+    "exit": 0,
+    "error": null
+  },
+  {
+    "name": "target-lint",
+    "command": [
+      "pnpm",
+      "--dir",
+      "backend/api",
+      "exec",
+      "eslint",
+      "--config",
+      "../../evidence/yz-rd-t099/eslint.config.mjs",
+      "src/modules/assessment/assessment.service.ts",
+      "src/modules/assessment/question-bank-deterministic-scoring.service.ts",
+      "test/assessment/assessment.service.spec.ts",
+      "test/assessment/question-bank-deterministic-scoring.service.spec.ts"
+    ],
+    "exit": 0,
+    "error": null
+  },
+  {
+    "name": "runner-syntax",
+    "command": [
+      "node",
+      "--check",
+      "frontend/assessment/assets/runner.js"
+    ],
+    "exit": 0,
+    "error": null
+  },
+  {
+    "name": "app-syntax",
+    "command": [
+      "node",
+      "--check",
+      "frontend/assessment/assets/app.js"
+    ],
+    "exit": 0,
+    "error": null
+  },
+  {
+    "name": "test-syntax",
+    "command": [
+      "node",
+      "--check",
+      "frontend/tests/assessment/t099-unanswered-submit.test.mjs"
+    ],
+    "exit": 0,
+    "error": null
+  },
+  {
+    "name": "diff-check",
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit": 0,
+    "error": null
+  }
+]

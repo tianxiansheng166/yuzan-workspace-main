@@ -1,0 +1,2 @@
+{"mode":"VISUAL_FIXTURE_ONLY","width":390,"height":844,"confirmation":"enabled","button":{"x":39,"y":464.328125,"width":312,"height":46}}
+{"mode":"VISUAL_FIXTURE_ONLY","width":1280,"height":900,"confirmation":"enabled","button":{"x":407,"y":523.40625,"width":121.90625,"height":46}}

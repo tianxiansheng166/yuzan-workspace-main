@@ -1,0 +1,3 @@
+pull request create failed: GraphQL: Resource not accessible by personal access token (createPullRequest)
+
+EXIT_CODE=1
