@@ -3,7 +3,7 @@
 - TASK_ID: `YZ-RD-T102`
 - BASE: `0a7b931a8dfd005eb7ba97aa0fe68e81169d61e8`
 - Source task reviewed: T099 `f2c28565e50601e55cd22e1954f743a4031fd0fe`
-- Commit SHA: recorded after this checkpoint is committed.
+- Commit SHA: `aa48b87395dd56112cbb428dc529c13ebc8b537f`.
 - Purpose: allow partial and fully unanswered submissions while preserving authentication, session ownership and state checks, failed-upload blocking, pending-save handling, and idempotency. Blank/missing written answers are left unanswered; nonblank persisted answers can be finalized at submit. Valid QuestionBank written items without answers are recorded as zero with `UNANSWERED`, while real recordings stay on the speech review path.
 
 ## Files

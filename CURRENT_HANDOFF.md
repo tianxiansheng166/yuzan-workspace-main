@@ -634,3 +634,26 @@ Do not modify or stage `pnpm-workspace.yaml`, `infra/database/prisma/seed.ts`,
 `tests/e2e/assessment/question-bank-runner.spec.py`, or
 `frontend/assessment/assets/question-bank/`. Never modify original files under
 `local_sources/`.
+
+## YZ-RD-T102 — Sep 8 student product recovery (2026-10-21)
+
+- Verified product BASE: `0a7b931a8dfd005eb7ba97aa0fe68e81169d61e8`, committed
+  `2026-09-08T12:27:49+08:00`. Evidence and date-window reasoning are in
+  `evidence/yz-rd-t102/BASELINE.md`.
+- Isolated worktree: `/home/tian/code/work/yuzan-workspace-t102` on
+  `feat/yz-rd-t102-recover-2026-09-08-student-baseline`. The T005 shared
+  worktree and T101 worktree were left unchanged.
+- T102 ports: server-backed login (`7ccdfab`), nested course media mapping
+  (`fa8425a`), T099 unanswered submission (`aa48b87`), Today/course API-state
+  fixes (`02b4236`), API-backed Growth (`1b20944`), T095 class-scoped atomic
+  feedback (`7f58dcd`), and course route/video-progress regressions (`b739a27`).
+  Full checkpoint/file/test/rollback detail is in `evidence/yz-rd-t102/RESULTS.md`.
+- Latest code gates: frontend suite and runtime verification PASS; API suite
+  PASS with 1,072 passed / 64 skipped; API typecheck PASS; frontend typecheck and
+  build PASS. Real authenticated course playback and Browser/API/PostgreSQL/
+  MinIO E2E are `NOT_RUN`; no service or production data was accessed.
+- Repository `format:check` remains blocked by unrelated baseline formatting
+  debt and parser errors; API ESLint cannot load missing `@eslint/js`. Details
+  are in `evidence/yz-rd-t102/RESULTS.md`.
+- `READY_TO_MERGE=NO`. No shared merge or deploy. Await Owner review and an
+  authorized isolated course-playback E2E before reconsidering merge readiness.
