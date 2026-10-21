@@ -26,10 +26,13 @@
   var subtitleBo = null;
   var fullscreenBtn = null;
   var volumeBtn = null;
+  var videoError = null;
 
   var controlsTimeout = null;
   var duration = 0;
   var lastSavedPosition = 0;
+  var mediaActivityId = '';
+  var mediaActivityType = '';
   var POSITION_SAVE_INTERVAL = 10;
 
   // Bound handler references for cleanup
@@ -82,19 +85,39 @@
     volumeBtn.innerHTML = video.muted ? SVG.mute : SVG.volume;
   }
 
+  function clearVideoError() {
+    if (!videoError) return;
+    videoError.textContent = '';
+    videoError.hidden = true;
+  }
+
+  function showVideoError(message) {
+    if (!videoError) return;
+    videoError.textContent = message || '视频加载失败，请检查网络后重试。';
+    videoError.hidden = false;
+  }
+
+  function onVideoError() {
+    if (!video || !(video.currentSrc || video.src)) return;
+    showVideoError('视频加载失败，请检查网络后重试。');
+  }
+
   function onLoadedMetadata() {
     duration = video.duration;
     if (totalTimeEl) totalTimeEl.textContent = formatTime(duration);
     if (progressBar) progressBar.max = duration;
   }
 
-  function _saveVideoPosition(position) {
+  function _saveVideoPosition(position, completed) {
     if (typeof CoursePlayerState === 'undefined') return;
     var s = CoursePlayerState.getState();
-    if (!s.currentActivityId || !s.submissionId) return;
+    var activityId = mediaActivityId || s.currentActivityId;
+    if (!activityId || !s.submissionId) return;
     if (s.submissionStatus && ['SUBMITTED', 'PROCESSING', 'NEEDS_REVIEW', 'REVIEWED', 'ACCEPTED'].indexOf(s.submissionStatus) !== -1) return;
-    var activityKind = s.currentActivity ? s.currentActivity.activityType : 'VIDEO';
-    CoursePlayerState.saveActivityAttempt(s.currentActivityId, activityKind, { videoPosition: duration > 0 ? position / duration : 0 }, false).catch(function () {});
+    var activityKind = mediaActivityType || (s.currentActivity ? s.currentActivity.activityType : 'VIDEO');
+    var videoPosition = isFinite(duration) && duration > 0 ? Math.min(1, Math.max(0, position / duration)) : 0;
+    var reachedEnd = isFinite(duration) && duration > 0 && (completed === true || videoPosition >= 1);
+    CoursePlayerState.saveActivityAttempt(activityId, activityKind, { videoPosition: videoPosition }, reachedEnd).catch(function () {});
   }
 
   function onTimeUpdate() {
@@ -113,6 +136,7 @@
   }
 
   function onPlay() {
+    clearVideoError();
     updatePlayPauseUI();
   }
 
@@ -125,8 +149,12 @@
 
   function onEnded() {
     updatePlayPauseUI();
-    if (progressBar) progressBar.value = 0;
-    if (currentTimeEl) currentTimeEl.textContent = formatTime(0);
+    if (progressBar) progressBar.value = duration;
+    if (currentTimeEl) currentTimeEl.textContent = formatTime(duration);
+    if (typeof CoursePlayerState !== 'undefined' && CoursePlayerState.updateVideoProgress) {
+      CoursePlayerState.updateVideoProgress(duration > 0 ? 100 : 0, duration, duration);
+    }
+    _saveVideoPosition(duration, true);
   }
 
   function onProgressInput() {
@@ -184,9 +212,23 @@
   function togglePlay() {
     if (!video) return;
     if (video.paused) {
-      video.play().catch(function () {});
+      playVideo();
     } else {
       video.pause();
+    }
+  }
+
+  function playVideo() {
+    if (!video) return;
+    try {
+      var result = video.play();
+      if (result && typeof result.catch === 'function') {
+        result.catch(function () {
+          showVideoError('视频无法播放，请重新点击播放。');
+        });
+      }
+    } catch (error) {
+      showVideoError('视频无法播放，请重新点击播放。');
     }
   }
 
@@ -208,6 +250,7 @@
       subtitleBo = document.getElementById('cpSubBoBtn');
       fullscreenBtn = document.getElementById('cpFullscreenBtn');
       volumeBtn = document.getElementById('cpVolumeBtn');
+      videoError = document.getElementById('cpVideoError');
 
       // Bind video events
       video.addEventListener('loadedmetadata', onLoadedMetadata);
@@ -215,6 +258,7 @@
       video.addEventListener('play', onPlay);
       video.addEventListener('pause', onPause);
       video.addEventListener('ended', onEnded);
+      video.addEventListener('error', onVideoError);
 
       // Bind progress bar
       if (progressBar) progressBar.addEventListener('input', onProgressInput);
@@ -259,9 +303,18 @@
     loadSource: function (videoUrl, posterUrl, subtitleZhUrl, subtitleBoUrl) {
       if (!video) return;
 
+      if (!video.paused) video.pause();
       lastSavedPosition = 0;
-      video.src = videoUrl || '';
       video.poster = posterUrl || '';
+
+      if (videoUrl) {
+        clearVideoError();
+        video.src = videoUrl;
+      } else {
+        video.removeAttribute('src');
+        if (typeof video.load === 'function') video.load();
+        showVideoError('本节暂无可播放的视频。');
+      }
 
       // Remove existing tracks
       var existingTracks = video.querySelectorAll('track');
@@ -289,8 +342,31 @@
       }
     },
 
+    setActivityContext: function (activityId, activityType) {
+      if (!video) return;
+      var nextActivityId = activityId || '';
+      var nextActivityType = activityType || 'VIDEO';
+      if (mediaActivityId === nextActivityId && mediaActivityType === nextActivityType) return;
+
+      // Pause while the previous activity ID is still bound so its final
+      // position cannot be written against the newly selected activity.
+      if (!video.paused) video.pause();
+      video.removeAttribute('src');
+      if (typeof video.load === 'function') video.load();
+      video.poster = '';
+      lastSavedPosition = 0;
+      duration = 0;
+      mediaActivityId = nextActivityId;
+      mediaActivityType = nextActivityType;
+      clearVideoError();
+    },
+
+    showError: function (message) {
+      showVideoError(message);
+    },
+
     play: function () {
-      if (video) video.play();
+      playVideo();
     },
 
     pause: function () {
@@ -300,7 +376,7 @@
     togglePlay: function () {
       if (!video) return;
       if (video.paused) {
-        video.play();
+        playVideo();
       } else {
         video.pause();
       }
@@ -375,6 +451,7 @@
       video.removeEventListener('play', onPlay);
       video.removeEventListener('pause', onPause);
       video.removeEventListener('ended', onEnded);
+      video.removeEventListener('error', onVideoError);
 
       if (progressBar) progressBar.removeEventListener('input', onProgressInput);
       if (playBtn) playBtn.removeEventListener('click', onPlayBtnClick);
@@ -413,7 +490,10 @@
       subtitleBo = null;
       fullscreenBtn = null;
       volumeBtn = null;
+      videoError = null;
       duration = 0;
+      mediaActivityId = '';
+      mediaActivityType = '';
     }
   };
 })();
