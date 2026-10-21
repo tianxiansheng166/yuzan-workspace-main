@@ -118,6 +118,42 @@ test("normalizes the current nested course aggregate without dropping activity f
   assert.equal(activity.isCompleted, true);
 });
 
+test("maps published media fields from activity.content when top-level aliases are absent", async () => {
+  const { adapter } = loadAdapter({
+    getStudentCourse: async () => ({
+      assignment: { id: "assignment-1" },
+      units: [{
+        id: "unit-1",
+        lessons: [{
+          id: "lesson-1",
+          activities: [{
+            id: "activity-1",
+            type: "VIDEO",
+            content: {
+              videoUrl: "https://media.example.invalid/lesson.mp4",
+              posterUrl: "/covers/lesson-poster.webp",
+              subtitleZhUrl: "/subtitles/lesson.zh.vtt",
+              subtitleBoUrl: "/subtitles/lesson.bo.vtt",
+              timelineMarkers: [{ at: 12, title: "停顿" }],
+            },
+          }],
+        }],
+      }],
+    }),
+  });
+
+  const course = await adapter.loadCourse("assignment-1");
+  const activity = course.units[0].lessons[0].activities[0];
+
+  assert.equal(activity.activityId, "activity-1");
+  assert.equal(activity.videoUrl, "https://media.example.invalid/lesson.mp4");
+  assert.equal(activity.posterUrl, "/covers/lesson-poster.webp");
+  assert.equal(activity.subtitleZhUrl, "/subtitles/lesson.zh.vtt");
+  assert.equal(activity.subtitleBoUrl, "/subtitles/lesson.bo.vtt");
+  assert.equal(activity.timelineMarkers.length, 1);
+  assert.equal(activity.timelineMarkers[0].at, 12);
+});
+
 test("preserves the wrapped submission id, status, revision and resumed flag", async () => {
   const { adapter } = loadAdapter({
     createOrResumeCourseSubmission: async () => ({

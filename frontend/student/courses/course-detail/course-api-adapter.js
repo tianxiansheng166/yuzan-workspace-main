@@ -75,10 +75,15 @@
             activityType: a.activityType || a.type || '',
             sortOrder: a.sortOrder != null ? a.sortOrder : 0,
             duration: a.duration || 0,
-            videoUrl: a.videoUrl || '',
-            posterUrl: a.posterUrl || '',
-            subtitleZhUrl: a.subtitleZhUrl || '',
-            subtitleBoUrl: a.subtitleBoUrl || '',
+            videoUrl: a.videoUrl || activityContent.videoUrl || '',
+            posterUrl: a.posterUrl || activityContent.posterUrl || '',
+            subtitleZhUrl: a.subtitleZhUrl || activityContent.subtitleZhUrl || '',
+            subtitleBoUrl: a.subtitleBoUrl || activityContent.subtitleBoUrl || '',
+            timelineMarkers: Array.isArray(a.timelineMarkers)
+              ? a.timelineMarkers
+              : Array.isArray(activityContent.timelineMarkers)
+                ? activityContent.timelineMarkers
+                : [],
             description: a.description || activityContent.description || '',
             objectives: a.objectives || activityContent.objectives || [],
             keyPoints: a.keyPoints || activityContent.keyPoints || [],
