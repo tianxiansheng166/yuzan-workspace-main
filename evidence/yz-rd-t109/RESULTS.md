@@ -80,7 +80,7 @@ Visual observations: no 390px page had horizontal overflow. Course Detail measur
 
 ## Offline verification on exact T108 BASE
 
-These checks were replayed in the T109 worktree with source at the exact T108 BASE. They describe the baseline and do not claim the existing debt is green.
+These checks were replayed in the T109 worktree with product files unchanged from the exact T108 BASE. [`offline-verification.json`](offline-verification.json) records the commands, exit codes, counts, and captured logs under [`offline-verification/`](offline-verification/). Database URL variables were unset for the API suite. The format check ran against a temporary archive of the exact BASE, excluding T109-only evidence. The results describe the baseline and do not claim the existing debt is green.
 
 | Check | Result |
 | --- | --- |

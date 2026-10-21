@@ -1,0 +1,42 @@
+✔ normalizes the current nested course aggregate without dropping activity facts (2.22972ms)
+✔ maps published media fields from activity.content when top-level aliases are absent (0.604658ms)
+✔ keeps unavailable learning statistics empty instead of inventing zeroes (0.551507ms)
+✔ preserves the wrapped submission id, status, revision and resumed flag (0.570769ms)
+✔ propagates permission and network failures instead of returning success-shaped data (0.773389ms)
+✔ creates a course attempt with all three IDs and stores a safe return context (1.019449ms)
+✔ refuses missing IDs and external return targets before creating an attempt (0.681886ms)
+✔ course detail preserves the requested dynamic activity and survives optional API failures (2.023119ms)
+✔ course detail chooses first incomplete activity when no valid activityId is requested (0.62734ms)
+✔ course video progress sends a fractional position with the dynamic course and activity IDs (0.801148ms)
+✔ server incomplete progress stays incomplete after the client reports video ended (1.004209ms)
+✔ server confirmed completion is reflected in course and activity state (0.626822ms)
+✔ revision conflict refreshes server progress and keeps its incomplete state authoritative (1.667143ms)
+✔ late completion responses after an activity switch cannot replace newer server course status (0.955792ms)
+✔ a late save cannot replace the latest server state refreshed after a 409 (0.82538ms)
+✔ submits the session, completes the course activity and clears recovery context (3.979831ms)
+✔ preserves a pending context after failed course sync and retries only the idempotent write (2.224247ms)
+✔ course shell hidden states override component display rules (0.524829ms)
+✔ shows a persistent player error when a signed playback URL fails in the browser (2.054398ms)
+✔ course detail includes a persistent accessible progress-save error and retry control (0.173301ms)
+✔ saves the final fractional position as completed when the video ends (0.851793ms)
+✔ keeps a paused video's progress write bound to its original activity (0.623625ms)
+✔ restores the server-saved fractional position after media metadata loads (0.529478ms)
+✔ clamps restored position to media duration and allows a zero-position restart (1.146182ms)
+✔ ignores metadata from a media activity that is no longer selected (0.560163ms)
+✔ duplicate ended events create only one completion write (3.077143ms)
+✔ progress save failure stays visible and retries only after server status is checked (3.371664ms)
+✔ permission failure remains visible and retry never writes until server access is rechecked (6.310009ms)
+✔ successful server acknowledgements from HTTP 200 and 201 paths clear progress state (3.680424ms)
+✔ a lost save response is reconciled against server progress without duplicate completion (2.969282ms)
+✔ retry preserves a later server position instead of overwriting it with stale local progress (2.939881ms)
+✔ delayed progress writes stay bound to the activity selected when each save began (3.151302ms)
+✔ Courses card opens the matching dynamic course detail assignment (3.165174ms)
+✔ Courses card with no assignment ID does not navigate to a broken detail route (1.607315ms)
+ℹ tests 34
+ℹ suites 0
+ℹ pass 34
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 90.206976

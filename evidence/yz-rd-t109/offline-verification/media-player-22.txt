@@ -1,0 +1,30 @@
+✔ course detail preserves the requested dynamic activity and survives optional API failures (2.009183ms)
+✔ course detail chooses first incomplete activity when no valid activityId is requested (0.619861ms)
+✔ course video progress sends a fractional position with the dynamic course and activity IDs (0.807319ms)
+✔ server incomplete progress stays incomplete after the client reports video ended (0.975934ms)
+✔ server confirmed completion is reflected in course and activity state (0.62879ms)
+✔ revision conflict refreshes server progress and keeps its incomplete state authoritative (1.594059ms)
+✔ late completion responses after an activity switch cannot replace newer server course status (0.895395ms)
+✔ a late save cannot replace the latest server state refreshed after a 409 (0.947721ms)
+✔ shows a persistent player error when a signed playback URL fails in the browser (1.901516ms)
+✔ course detail includes a persistent accessible progress-save error and retry control (0.15879ms)
+✔ saves the final fractional position as completed when the video ends (0.830309ms)
+✔ keeps a paused video's progress write bound to its original activity (0.598597ms)
+✔ restores the server-saved fractional position after media metadata loads (0.507569ms)
+✔ clamps restored position to media duration and allows a zero-position restart (0.975489ms)
+✔ ignores metadata from a media activity that is no longer selected (0.544946ms)
+✔ duplicate ended events create only one completion write (2.895552ms)
+✔ progress save failure stays visible and retries only after server status is checked (3.50796ms)
+✔ permission failure remains visible and retry never writes until server access is rechecked (3.220037ms)
+✔ successful server acknowledgements from HTTP 200 and 201 paths clear progress state (3.469897ms)
+✔ a lost save response is reconciled against server progress without duplicate completion (1.942094ms)
+✔ retry preserves a later server position instead of overwriting it with stale local progress (1.865584ms)
+✔ delayed progress writes stay bound to the activity selected when each save began (2.960966ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 22
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 82.341894

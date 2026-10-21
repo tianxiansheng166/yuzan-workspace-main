@@ -1,0 +1,18 @@
+✔ Runner offers submit with none unanswered (22.986243ms)
+✔ Runner offers submit with partial unanswered (22.502197ms)
+✔ Runner offers submit with all unanswered (20.424091ms)
+✔ Runner persists cleared text and does not finalize blank answers (21.45137ms)
+✔ Runner blocks answer-save failures and unconfirmed audio drafts (1.418898ms)
+✔ formal submit accepts blank items and finalizes only nonblank saved answers (12.756505ms)
+✔ formal submit saves a local clear and skips finalize for that answer (11.375303ms)
+✔ formal submit synchronizes and finalizes real text before submitting (11.086244ms)
+✔ formal submit data failures block stale session state (1.029016ms)
+✔ formal submit still blocks a failed recording or a cancelled session (0.732236ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 178.89592

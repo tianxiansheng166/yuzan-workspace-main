@@ -1,0 +1,423 @@
+{
+  "taskId": "YZ-RD-T109",
+  "baseSourceSha": "8974c2a7d5842bb20dbfcd091b63cac5674dcc32",
+  "productSourceDiffFromBase": [],
+  "databaseUrlEnvironmentVariablesUnset": [
+    "DATABASE_URL",
+    "DIRECT_URL",
+    "QB_RUNTIME_DATABASE_URL",
+    "TEST_DATABASE_URL",
+    "DATABASE_TEST_URL"
+  ],
+  "databaseUrlVariablesRemovedFromInvoker": [],
+  "allExpectedExitsObserved": true,
+  "steps": [
+    {
+      "id": "frontend-node-tests",
+      "command": "node --test",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "expectedExitCode": [
+        0
+      ],
+      "status": "PASS",
+      "durationSeconds": 0.311,
+      "log": "evidence/yz-rd-t109/offline-verification/frontend-node-tests.txt",
+      "summary": {
+        "tap": {
+          "tests": 70,
+          "pass": 70,
+          "fail": 0,
+          "skipped": 0,
+          "todo": 0
+        },
+        "vitest": null,
+        "eslint": null,
+        "typescriptErrorCount": 0,
+        "prettierWarningLines": 0,
+        "parserErrorLines": 0,
+        "tail": [
+          "ℹ tests 70",
+          "ℹ suites 0",
+          "ℹ pass 70",
+          "ℹ fail 0",
+          "ℹ cancelled 0",
+          "ℹ skipped 0",
+          "ℹ todo 0",
+          "ℹ duration_ms 267.917886"
+        ]
+      }
+    },
+    {
+      "id": "frontend-runtime-verifier",
+      "command": "node scripts/verify-runtime.mjs",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "expectedExitCode": [
+        0
+      ],
+      "status": "PASS",
+      "durationSeconds": 0.036,
+      "log": "evidence/yz-rd-t109/offline-verification/frontend-runtime-verifier.txt",
+      "summary": {
+        "tap": null,
+        "vitest": null,
+        "eslint": null,
+        "typescriptErrorCount": 0,
+        "prettierWarningLines": 0,
+        "parserErrorLines": 0,
+        "tail": [
+          "Frontend runtime verified at /home/tian/.devspace/worktrees/yuzan-workspace-t109/frontend/"
+        ]
+      }
+    },
+    {
+      "id": "course-focused-34",
+      "command": "node --test student/courses/courses.test.mjs student/courses/course-detail/course-api-adapter.test.mjs student/courses/course-detail/course-player-state.test.mjs student/courses/course-detail/course-practice-sync.test.mjs student/courses/course-detail/course-shell-visibility.test.mjs student/courses/course-detail/media-controller.test.mjs",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "expectedExitCode": [
+        0
+      ],
+      "status": "PASS",
+      "durationSeconds": 0.13,
+      "log": "evidence/yz-rd-t109/offline-verification/course-focused-34.txt",
+      "summary": {
+        "tap": {
+          "tests": 34,
+          "pass": 34,
+          "fail": 0,
+          "skipped": 0,
+          "todo": 0
+        },
+        "vitest": null,
+        "eslint": null,
+        "typescriptErrorCount": 0,
+        "prettierWarningLines": 0,
+        "parserErrorLines": 0,
+        "tail": [
+          "ℹ tests 34",
+          "ℹ suites 0",
+          "ℹ pass 34",
+          "ℹ fail 0",
+          "ℹ cancelled 0",
+          "ℹ skipped 0",
+          "ℹ todo 0",
+          "ℹ duration_ms 90.206976"
+        ]
+      }
+    },
+    {
+      "id": "media-player-22",
+      "command": "node --test student/courses/course-detail/media-controller.test.mjs student/courses/course-detail/course-player-state.test.mjs",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "expectedExitCode": [
+        0
+      ],
+      "status": "PASS",
+      "durationSeconds": 0.125,
+      "log": "evidence/yz-rd-t109/offline-verification/media-player-22.txt",
+      "summary": {
+        "tap": {
+          "tests": 22,
+          "pass": 22,
+          "fail": 0,
+          "skipped": 0,
+          "todo": 0
+        },
+        "vitest": null,
+        "eslint": null,
+        "typescriptErrorCount": 0,
+        "prettierWarningLines": 0,
+        "parserErrorLines": 0,
+        "tail": [
+          "ℹ tests 22",
+          "ℹ suites 0",
+          "ℹ pass 22",
+          "ℹ fail 0",
+          "ℹ cancelled 0",
+          "ℹ skipped 0",
+          "ℹ todo 0",
+          "ℹ duration_ms 82.341894"
+        ]
+      }
+    },
+    {
+      "id": "t099-unanswered-10",
+      "command": "node --test tests/assessment/t102-unanswered-submit.test.mjs",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "expectedExitCode": [
+        0
+      ],
+      "status": "PASS",
+      "durationSeconds": 0.222,
+      "log": "evidence/yz-rd-t109/offline-verification/t099-unanswered-10.txt",
+      "summary": {
+        "tap": {
+          "tests": 10,
+          "pass": 10,
+          "fail": 0,
+          "skipped": 0,
+          "todo": 0
+        },
+        "vitest": null,
+        "eslint": null,
+        "typescriptErrorCount": 0,
+        "prettierWarningLines": 0,
+        "parserErrorLines": 0,
+        "tail": [
+          "ℹ tests 10",
+          "ℹ suites 0",
+          "ℹ pass 10",
+          "ℹ fail 0",
+          "ℹ cancelled 0",
+          "ℹ skipped 0",
+          "ℹ todo 0",
+          "ℹ duration_ms 178.89592"
+        ]
+      }
+    },
+    {
+      "id": "api-suite-db-urls-unset",
+      "command": "/home/tian/.devspace/worktrees/yuzan-workspace-t109/backend/api/node_modules/.bin/vitest run --passWithNoTests --pool=forks --poolOptions.forks.singleFork",
+      "cwd": "backend/api",
+      "exitCode": 0,
+      "expectedExitCode": [
+        0
+      ],
+      "status": "PASS",
+      "durationSeconds": 3.791,
+      "log": "evidence/yz-rd-t109/offline-verification/api-suite-db-urls-unset.txt",
+      "summary": {
+        "tap": null,
+        "vitest": {
+          "passed": 1072,
+          "skipped": 64
+        },
+        "eslint": null,
+        "typescriptErrorCount": 0,
+        "prettierWarningLines": 0,
+        "parserErrorLines": 0,
+        "tail": [
+          "↓ test/pilot/pilot.runtime.integration.spec.ts (1 test | 1 skipped)",
+          "↓ test/root/app-composition.spec.ts (6 tests | 6 skipped)",
+          "↓ test/integration/curriculum/prisma-course-version.repository.spec.ts (15 tests | 15 skipped)",
+          "↓ test/integration/identity/prisma-identity.repository.spec.ts (21 tests | 21 skipped)",
+          "Test Files  66 passed | 10 skipped (76)",
+          "Tests  1072 passed | 64 skipped (1136)",
+          "Start at  03:47:26",
+          "Duration  3.55s (transform 1.05s, setup 0ms, collect 2.51s, tests 511ms, environment 0ms, prepare 37ms)"
+        ]
+      }
+    },
+    {
+      "id": "api-source-typecheck",
+      "command": "/home/tian/.devspace/worktrees/yuzan-workspace-t109/backend/api/node_modules/.bin/tsc -p tsconfig.json --noEmit",
+      "cwd": "backend/api",
+      "exitCode": 0,
+      "expectedExitCode": [
+        0
+      ],
+      "status": "PASS",
+      "durationSeconds": 3.474,
+      "log": "evidence/yz-rd-t109/offline-verification/api-source-typecheck.txt",
+      "summary": {
+        "tap": null,
+        "vitest": null,
+        "eslint": null,
+        "typescriptErrorCount": 0,
+        "prettierWarningLines": 0,
+        "parserErrorLines": 0,
+        "tail": []
+      }
+    },
+    {
+      "id": "frontend-package-typecheck",
+      "command": "node --check server.mjs",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "expectedExitCode": [
+        0
+      ],
+      "status": "PASS",
+      "durationSeconds": 0.037,
+      "log": "evidence/yz-rd-t109/offline-verification/frontend-package-typecheck.txt",
+      "summary": {
+        "tap": null,
+        "vitest": null,
+        "eslint": null,
+        "typescriptErrorCount": 0,
+        "prettierWarningLines": 0,
+        "parserErrorLines": 0,
+        "tail": []
+      }
+    },
+    {
+      "id": "frontend-runtime-typecheck",
+      "command": "node --check scripts/verify-runtime.mjs",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "expectedExitCode": [
+        0
+      ],
+      "status": "PASS",
+      "durationSeconds": 0.038,
+      "log": "evidence/yz-rd-t109/offline-verification/frontend-runtime-typecheck.txt",
+      "summary": {
+        "tap": null,
+        "vitest": null,
+        "eslint": null,
+        "typescriptErrorCount": 0,
+        "prettierWarningLines": 0,
+        "parserErrorLines": 0,
+        "tail": []
+      }
+    },
+    {
+      "id": "api-build",
+      "command": "/home/tian/.devspace/worktrees/yuzan-workspace-t109/backend/api/node_modules/.bin/nest build",
+      "cwd": "backend/api",
+      "exitCode": 0,
+      "expectedExitCode": [
+        0
+      ],
+      "status": "PASS",
+      "durationSeconds": 5.193,
+      "log": "evidence/yz-rd-t109/offline-verification/api-build.txt",
+      "summary": {
+        "tap": null,
+        "vitest": null,
+        "eslint": null,
+        "typescriptErrorCount": 0,
+        "prettierWarningLines": 0,
+        "parserErrorLines": 0,
+        "tail": []
+      }
+    },
+    {
+      "id": "api-eslint-baseline",
+      "command": "/home/tian/.devspace/worktrees/yuzan-workspace-t109/backend/api/node_modules/.bin/eslint src test",
+      "cwd": "backend/api",
+      "exitCode": 1,
+      "expectedExitCode": [
+        1
+      ],
+      "status": "BASELINE_DEBT",
+      "durationSeconds": 12.574,
+      "log": "evidence/yz-rd-t109/offline-verification/api-eslint-baseline.txt",
+      "summary": {
+        "tap": null,
+        "vitest": null,
+        "eslint": {
+          "problems": 2650,
+          "errors": 2649,
+          "warnings": 1
+        },
+        "typescriptErrorCount": 0,
+        "prettierWarningLines": 0,
+        "parserErrorLines": 0,
+        "tail": [
+          "72:19  error  Unsafe member access .teacherInvitation on an `any` value                      @typescript-eslint/no-unsafe-member-access",
+          "73:19  error  Unsafe member access .membership on an `any` value                             @typescript-eslint/no-unsafe-member-access",
+          "77:11  error  Unsafe assignment of an `any` value                                            @typescript-eslint/no-unsafe-assignment",
+          "78:17  error  Unexpected any. Specify a different type                                       @typescript-eslint/no-explicit-any",
+          "80:48  error  Unsafe argument of type `any` assigned to a parameter of type `PrismaService`  @typescript-eslint/no-unsafe-argument",
+          "80:63  error  Unsafe argument of type `any` assigned to a parameter of type `AuthContext`    @typescript-eslint/no-unsafe-argument",
+          "✖ 2650 problems (2649 errors, 1 warning)",
+          "117 errors and 1 warning potentially fixable with the `--fix` option."
+        ]
+      }
+    },
+    {
+      "id": "prettier-exact-t108-base",
+      "command": "/home/tian/.devspace/worktrees/yuzan-workspace-t109/node_modules/.bin/prettier --check .",
+      "cwd": "<temporary exact-BASE archive>",
+      "exitCode": 2,
+      "expectedExitCode": [
+        1,
+        2
+      ],
+      "status": "BASELINE_DEBT",
+      "durationSeconds": 15.584,
+      "log": "evidence/yz-rd-t109/offline-verification/prettier-exact-t108-base.txt",
+      "summary": {
+        "tap": null,
+        "vitest": null,
+        "eslint": null,
+        "typescriptErrorCount": 0,
+        "prettierWarningLines": 745,
+        "parserErrorLines": 12,
+        "tail": [
+          "[warn] tests/e2e/course-learning/verify_course_security.mjs",
+          "[warn] tests/security/vitest.config.ts",
+          "[warn] tools/question-bank-importer/index.mjs",
+          "[warn] tools/question-bank-importer/index.test.mjs",
+          "[warn] tools/speech-benchmark/index.ts",
+          "[warn] visual-spec/pages/student-course-learning/asset-map.yaml",
+          "[warn] visual-spec/pages/student-course-learning/page-spec.md",
+          "Error occurred when checking code style in 12 files."
+        ]
+      }
+    },
+    {
+      "id": "api-test-tsconfig-baseline",
+      "command": "/home/tian/.devspace/worktrees/yuzan-workspace-t109/backend/api/node_modules/.bin/tsc -p test/tsconfig.json --noEmit",
+      "cwd": "backend/api",
+      "exitCode": 2,
+      "expectedExitCode": [
+        1,
+        2
+      ],
+      "status": "BASELINE_DEBT",
+      "durationSeconds": 4.444,
+      "log": "evidence/yz-rd-t109/offline-verification/api-test-tsconfig-baseline.txt",
+      "summary": {
+        "tap": null,
+        "vitest": null,
+        "eslint": null,
+        "typescriptErrorCount": 234,
+        "prettierWarningLines": 0,
+        "parserErrorLines": 0,
+        "tail": [
+          "test/reporting/reporting.service.spec.ts(65,9): error TS2416: Property 'create' in type 'FakeReportRepository' is not assignable to the same property in base type 'ReportRepositoryPort'.",
+          "Type '(params: Record<string, unknown>) => Promise<Report>' is not assignable to type '(data: CreateReportData) => Promise<Report>'.",
+          "Types of parameters 'params' and 'data' are incompatible.",
+          "Type 'CreateReportData' is not assignable to type 'Record<string, unknown>'.",
+          "Index signature for type 'string' is missing in type 'CreateReportData'.",
+          "test/root/app-composition.spec.ts(119,63): error TS2345: Argument of type '{}' is not assignable to parameter of type 'ListCourseVersionsOptions'.",
+          "Property 'limit' is missing in type '{}' but required in type 'ListCourseVersionsOptions'.",
+          "test/speech-job/speech-job.service.spec.ts(508,14): error TS18048: 'fakePrisma.speechJob' is possibly 'undefined'."
+        ]
+      }
+    },
+    {
+      "id": "git-diff-check",
+      "command": "git diff --check 8974c2a7d5842bb20dbfcd091b63cac5674dcc32 --",
+      "cwd": ".",
+      "exitCode": 0,
+      "expectedExitCode": [
+        0
+      ],
+      "status": "PASS",
+      "durationSeconds": 0.019,
+      "log": "evidence/yz-rd-t109/offline-verification/git-diff-check.txt",
+      "summary": {
+        "tap": null,
+        "vitest": null,
+        "eslint": null,
+        "typescriptErrorCount": 0,
+        "prettierWarningLines": 0,
+        "parserErrorLines": 0,
+        "tail": []
+      }
+    }
+  ],
+  "baselineDebtSteps": [
+    "api-eslint-baseline",
+    "prettier-exact-t108-base",
+    "api-test-tsconfig-baseline"
+  ],
+  "logNormalization": "Trailing whitespace and terminal blank lines are stripped from captured stdout; test and diagnostic lines are retained."
+}
