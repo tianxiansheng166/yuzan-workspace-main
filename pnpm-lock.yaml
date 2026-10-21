@@ -78,6 +78,9 @@ importers:
         specifier: ^7.8.2
         version: 7.8.2
     devDependencies:
+      '@eslint/js':
+        specifier: 9.39.4
+        version: 9.39.4
       '@nestjs/cli':
         specifier: ^11.0.10
         version: 11.0.23(@types/node@24.13.3)(prettier@3.9.4)

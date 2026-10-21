@@ -18,7 +18,9 @@ import { AssessmentService } from "../../src/modules/assessment/assessment.servi
 import { ASSESSMENT_SESSION_REPOSITORY } from "../../src/modules/assessment/ports/assessment-session-repository.port.js";
 import { ASSESSMENT_ITEM_REPOSITORY } from "../../src/modules/assessment/ports/assessment-item-repository.port.js";
 import { WRITTEN_ANSWER_REPOSITORY } from "../../src/modules/assessment/ports/written-answer-repository.port.js";
+import type { WrittenAnswerRepositoryPort } from "../../src/modules/assessment/ports/written-answer-repository.port.js";
 import { ASSESSMENT_REPORT_REPOSITORY } from "../../src/modules/assessment/ports/assessment-report-repository.port.js";
+import type { AssessmentReportRepositoryPort, CreateAssessmentReportData } from "../../src/modules/assessment/ports/assessment-report-repository.port.js";
 import { AssessmentModule } from "../../src/modules/assessment/assessment.module.js";
 import { AssessmentNotFoundException } from "../../src/modules/assessment/domain/assessment.errors.js";
 import { AssessmentForbiddenException } from "../../src/modules/assessment/domain/assessment.errors.js";
@@ -164,7 +166,7 @@ function createFakeItemRepo(initialItems: AssessmentItem[] | null = null) {
   };
 }
 
-function createFakeAnswerRepo() {
+function createFakeAnswerRepo(): WrittenAnswerRepositoryPort {
   return {
     findByItemId: async () => null,
     findBySessionId: async () => [],
@@ -195,10 +197,10 @@ function createFakeAnswerRepo() {
   };
 }
 
-function createFakeReportRepo() {
+function createFakeReportRepo(): AssessmentReportRepositoryPort {
   return {
     findBySessionId: async () => null,
-    create: async (data: any) => ({
+    create: async (data: CreateAssessmentReportData) => ({
       id: "report-001",
       sessionId: data.sessionId,
       schoolId: data.schoolId,
@@ -500,13 +502,36 @@ describe("AssessmentService", () => {
     it("finalizes persisted nonblank answers but leaves empty answers unanswered", async () => {
       const finalized: string[] = [];
       const answerRepo = createFakeAnswerRepo();
-      answerRepo.findBySessionId = async () => [
-        { itemId: "written-1", content: { text: "真实答案" }, finalSubmittedAt: null },
-        { itemId: "written-2", content: { text: "  " }, finalSubmittedAt: null },
-      ] as any;
-      answerRepo.finalize = async (itemId: string) => {
+      const finalize = answerRepo.finalize.bind(answerRepo);
+      answerRepo.findBySessionId = () => Promise.resolve([
+        {
+          id: "answer-written-1",
+          itemId: "written-1",
+          content: { text: "真实答案" },
+          wordCount: 1,
+          charCount: 4,
+          autoSavedAt: now,
+          finalSubmittedAt: null,
+          revision: 1,
+          createdAt: now,
+          updatedAt: now,
+        },
+        {
+          id: "answer-written-2",
+          itemId: "written-2",
+          content: { text: "  " },
+          wordCount: 0,
+          charCount: 0,
+          autoSavedAt: now,
+          finalSubmittedAt: null,
+          revision: 1,
+          createdAt: now,
+          updatedAt: now,
+        },
+      ]);
+      answerRepo.finalize = (itemId: string) => {
         finalized.push(itemId);
-        return { itemId, finalSubmittedAt: now } as any;
+        return finalize(itemId);
       };
       const { service, sessionRepo } = await buildService({
         answerRepo,
@@ -523,21 +548,17 @@ describe("AssessmentService", () => {
     });
 
     it("reports unanswered zero-score items separately from answered items", async () => {
-      const { service } = await buildService();
-      const report = await (service as any).createReportFromScoredItems({
-        schoolId: SCHOOL_A,
-        sessionId: SESSION_ID,
-        items: [{
-          id: "blank-written",
-          itemType: "WRITTEN",
-          maxScore: 5,
-          scoredScore: 0,
-          autoResult: { state: "AUTO_SCORED", reasonCode: "UNANSWERED" },
-        }],
-      });
+      const fixture = await buildQuestionBankService(unansweredQuestionBankRows());
+      await fixture.service.submitSession(studentAuthA, SCHOOL_A, SESSION_ID);
+      const report = fixture.reports[0];
 
-      expect(report.overallScore).toBe(0);
-      expect(report.summary).toMatchObject({ totalItems: 1, answeredItems: 0, unansweredItems: 1 });
+      expect(report?.overallScore).toBe(0);
+      expect(report?.summary).toMatchObject({
+        totalItems: 20,
+        totalMaxPoints: 100,
+        answeredItems: 0,
+        unansweredItems: 20,
+      });
     });
 
     it("rejects transition from CREATED → SUBMITTED (must start first)", async () => {
@@ -723,11 +744,11 @@ function unansweredQuestionBankRows() {
 }
 
 async function buildQuestionBankService(rows: ReturnType<typeof unansweredQuestionBankRows>, purpose: "STANDARD" | "REMEDIATION" = "STANDARD") {
-  const reports: any[] = [];
   const baseReportRepo = createFakeReportRepo();
+  const reports: CreateAssessmentReportData[] = [];
   const reportRepo = {
     ...baseReportRepo,
-    create: async (data: any) => {
+    create: (data: CreateAssessmentReportData) => {
       reports.push(data);
       return baseReportRepo.create(data);
     },
@@ -737,7 +758,7 @@ async function buildQuestionBankService(rows: ReturnType<typeof unansweredQuesti
   const baseAnswerRepo = createFakeAnswerRepo();
   const answerRepo = {
     ...baseAnswerRepo,
-    findBySessionId: async () => rows.flatMap(row => row.writtenAnswer ? [{
+    findBySessionId: () => Promise.resolve(rows.flatMap(row => row.writtenAnswer ? [{
       id: `answer-${row.id}`,
       itemId: row.id,
       content: row.writtenAnswer.content,
@@ -748,8 +769,8 @@ async function buildQuestionBankService(rows: ReturnType<typeof unansweredQuesti
       revision: 1,
       createdAt: now,
       updatedAt: now,
-    }] : []),
-    finalize: async (itemId: string) => {
+    }] : [])),
+    finalize: (itemId: string) => {
       finalizedAnswers.push(itemId);
       const row = rows.find(item => item.id === itemId);
       if (!row?.writtenAnswer) throw new Error("must not finalize a missing answer");
@@ -763,15 +784,15 @@ async function buildQuestionBankService(rows: ReturnType<typeof unansweredQuesti
     reportRepo,
     prismaOverrides: {
       assessmentItem: {
-        findMany: async () => rows,
-        update: async ({ where, data }: { where: { id: string }; data: Record<string, unknown> }) => {
+        findMany: () => Promise.resolve(rows),
+        update: ({ where, data }: { where: { id: string }; data: Record<string, unknown> }) => {
           const row = rows.find(item => item.id === where.id);
           if (!row) throw new Error("unknown fixture item");
           Object.assign(row, data);
-          return row;
+          return Promise.resolve(row);
         },
       },
-      speechJob: { create: async () => { speechWrites += 1; throw new Error("must not invent speech jobs"); } },
+      speechJob: { create: () => { speechWrites += 1; return Promise.reject(new Error("must not invent speech jobs")); } },
     },
   });
   fixture.sessionRepo._setSession(makeSession({

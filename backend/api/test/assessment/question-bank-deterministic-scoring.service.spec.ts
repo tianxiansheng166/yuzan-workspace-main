@@ -86,10 +86,10 @@ describe("Question Bank deterministic scorer", () => {
     const updates: Array<{ id: string; data: Record<string, unknown> }> = [];
     const prisma = {
       assessmentItem: {
-        findMany: async () => rows,
-        update: async ({ where, data }: { where: { id: string }; data: Record<string, unknown> }) => {
+        findMany: () => Promise.resolve(rows),
+        update: ({ where, data }: { where: { id: string }; data: Record<string, unknown> }) => {
           updates.push({ id: where.id, data });
-          return {};
+          return Promise.resolve({});
         },
       },
     };

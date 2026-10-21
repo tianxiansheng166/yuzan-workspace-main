@@ -19,15 +19,15 @@
 
 ## Validation
 
-| Check | Result |
-| --- | --- |
-| Feedback service and policy suite | **PASS 36 / FAIL 0 / SKIP 0** (30 service cases, 6 policy cases) |
-| Submission read/list neighboring regression suite | **FAIL 13 / 13** during Nest test-module setup: `SpeechJobModule` requires a `ConfigService` provider that the existing `SubmissionsService` fixture does not provide. No assertions ran; those files/modules are outside T095 ownership and were not changed. |
-| API source typecheck | **PASS** |
-| Target lint for all seven T095-owned source/test files | **PASS**, zero findings |
-| Full API lint (`eslint src test`) | **MEASURED, UNWAIVED: 320 errors / 0 warnings across 50 of 592 files; 0 errors / 0 warnings in T095-owned files; exit 1.** Findings are confined to unchanged paths. |
-| `git diff --cached --check` | **PASS** across staged owned source, tests, and evidence |
-| PostgreSQL E2E | **NOT_RUN**; no explicitly authorized isolated runtime was supplied. No Docker/Compose, shared database, or shared MinIO was used. |
+| Check                                                  | Result                                                                                                                                                                                                                                                         |
+| ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Feedback service and policy suite                      | **PASS 36 / FAIL 0 / SKIP 0** (30 service cases, 6 policy cases)                                                                                                                                                                                               |
+| Submission read/list neighboring regression suite      | **FAIL 13 / 13** during Nest test-module setup: `SpeechJobModule` requires a `ConfigService` provider that the existing `SubmissionsService` fixture does not provide. No assertions ran; those files/modules are outside T095 ownership and were not changed. |
+| API source typecheck                                   | **PASS**                                                                                                                                                                                                                                                       |
+| Target lint for all seven T095-owned source/test files | **PASS**, zero findings                                                                                                                                                                                                                                        |
+| Full API lint (`eslint src test`)                      | **MEASURED, UNWAIVED: 320 errors / 0 warnings across 50 of 592 files; 0 errors / 0 warnings in T095-owned files; exit 1.** Findings are confined to unchanged paths.                                                                                           |
+| `git diff --cached --check`                            | **PASS** across staged owned source, tests, and evidence                                                                                                                                                                                                       |
+| PostgreSQL E2E                                         | **NOT_RUN**; no explicitly authorized isolated runtime was supplied. No Docker/Compose, shared database, or shared MinIO was used.                                                                                                                             |
 
 ## Authorization and atomicity coverage
 

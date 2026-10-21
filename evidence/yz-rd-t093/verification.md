@@ -21,18 +21,18 @@
 
 Commands ran from `/home/tian/.devspace/worktrees/yuzan-workspace-t093`.
 
-| Command | Exit | Result |
-| --- | ---: | --- |
-| `node --check frontend/login/app.js` | 0 | PASS |
-| `node --check frontend/login/login.js` | 0 | PASS |
-| `node --check frontend/login/auth-fail-closed.test.mjs` | 0 | PASS |
-| `node --test frontend/login/auth-fail-closed.test.mjs` | 0 | PASS — 12 tests, 0 failures |
-| `node frontend/scripts/check-business-js-syntax.mjs` | 0 | PASS — 100 JS/MJS files checked |
-| `node frontend/scripts/verify-runtime.mjs` | 0 | PASS |
-| `git diff --check` | 0 | PASS |
-| `pnpm --filter @yuzan/frontend test` (first attempt) | 1 | FAIL before tests started: fresh-worktree auto-install hit pnpm `ERR_PNPM_IGNORED_BUILDS`; no package downloads occurred |
-| `pnpm install --frozen-lockfile --offline --ignore-scripts` | 0 | PASS — local cached packages only, no network and no install scripts |
-| `pnpm --filter @yuzan/frontend test` (retry) | 0 | PASS — full frontend suite, 190 tests, 0 failures; includes the business JS syntax gate and runtime verifier |
+| Command                                                     | Exit | Result                                                                                                                   |
+| ----------------------------------------------------------- | ---: | ------------------------------------------------------------------------------------------------------------------------ |
+| `node --check frontend/login/app.js`                        |    0 | PASS                                                                                                                     |
+| `node --check frontend/login/login.js`                      |    0 | PASS                                                                                                                     |
+| `node --check frontend/login/auth-fail-closed.test.mjs`     |    0 | PASS                                                                                                                     |
+| `node --test frontend/login/auth-fail-closed.test.mjs`      |    0 | PASS — 12 tests, 0 failures                                                                                              |
+| `node frontend/scripts/check-business-js-syntax.mjs`        |    0 | PASS — 100 JS/MJS files checked                                                                                          |
+| `node frontend/scripts/verify-runtime.mjs`                  |    0 | PASS                                                                                                                     |
+| `git diff --check`                                          |    0 | PASS                                                                                                                     |
+| `pnpm --filter @yuzan/frontend test` (first attempt)        |    1 | FAIL before tests started: fresh-worktree auto-install hit pnpm `ERR_PNPM_IGNORED_BUILDS`; no package downloads occurred |
+| `pnpm install --frozen-lockfile --offline --ignore-scripts` |    0 | PASS — local cached packages only, no network and no install scripts                                                     |
+| `pnpm --filter @yuzan/frontend test` (retry)                |    0 | PASS — full frontend suite, 190 tests, 0 failures; includes the business JS syntax gate and runtime verifier             |
 
 ## Claim boundary
 
