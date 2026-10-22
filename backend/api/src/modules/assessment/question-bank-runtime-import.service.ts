@@ -20,6 +20,36 @@ const LEGACY_HARDCODED_PRACTICE_TITLES = [
   "声调听辨与跟读",
   "听后复述入门",
 ] as const;
+const ACTIVE_ASSESSMENT_STATUSES = ["CREATED", "IN_PROGRESS", "SUBMITTED", "PROCESSING"] as const;
+
+export function legacyAudioVerificationRetirementWhere(schoolId: string): Prisma.PracticeDeliveryWhereInput {
+  return {
+    schoolId,
+    status: "OPEN",
+    attempts: { none: { status: { in: [...ACTIVE_ASSESSMENT_STATUSES] } } },
+    practiceVersion: {
+      definition: {
+        schoolId,
+        visibility: "SCHOOL",
+        title: LEGACY_AUDIO_VERIFICATION_TITLE,
+      },
+    },
+  };
+}
+
+export function legacyHardcodedPracticeRetirementWhere(schoolId: string): Prisma.PracticeDeliveryWhereInput {
+  return {
+    schoolId,
+    status: "OPEN",
+    attempts: { none: { status: { in: [...ACTIVE_ASSESSMENT_STATUSES] } } },
+    practiceVersion: {
+      definition: {
+        schoolId,
+        title: { in: [...LEGACY_HARDCODED_PRACTICE_TITLES] },
+      },
+    },
+  };
+}
 
 const SECTION_DEFINITIONS = [
   { domain: "LISTEN", title: "听", description: "听音选图、听写句子", estimatedMinutes: 7 },
@@ -500,17 +530,7 @@ export class QuestionBankRuntimeImportService {
     // canonical importer existed. Preserve its historical records, but keep it
     // out of the student catalog now that Level 1 has a real system practice.
     const result = await tx.practiceDelivery.updateMany({
-      where: {
-        schoolId,
-        status: "OPEN",
-        practiceVersion: {
-          definition: {
-            schoolId,
-            visibility: "SCHOOL",
-            title: LEGACY_AUDIO_VERIFICATION_TITLE,
-          },
-        },
-      },
+      where: legacyAudioVerificationRetirementWhere(schoolId),
       data: { status: "CLOSED" },
     });
     return result.count;
@@ -522,19 +542,10 @@ export class QuestionBankRuntimeImportService {
   ): Promise<number> {
     // These six development-only practices were authored directly in the seed
     // file before the canonical Question Bank source was available. Preserve
-    // their historical definitions and attempts, but remove their open
-    // catalog deliveries once the real Level 1–6 practices are applied.
+    // their historical definitions and attempts. Keep any delivery with an
+    // unfinished attempt open so an in-progress student can still continue.
     const result = await tx.practiceDelivery.updateMany({
-      where: {
-        schoolId,
-        status: "OPEN",
-        practiceVersion: {
-          definition: {
-            schoolId,
-            title: { in: [...LEGACY_HARDCODED_PRACTICE_TITLES] },
-          },
-        },
-      },
+      where: legacyHardcodedPracticeRetirementWhere(schoolId),
       data: { status: "CLOSED" },
     });
     return result.count;

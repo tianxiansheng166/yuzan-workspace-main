@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
+  legacyAudioVerificationRetirementWhere,
+  legacyHardcodedPracticeRetirementWhere,
   resolveQuestion,
   type CanonicalQuestion,
 } from "../../src/modules/assessment/question-bank-runtime-import.service.js";
@@ -44,6 +46,35 @@ function listenImageQuestion(): CanonicalQuestion {
 }
 
 describe("Question Bank runtime import delivery conversion", () => {
+  it("keeps legacy practice deliveries with unfinished attempts available", () => {
+    const expectedAttempts = {
+      none: { status: { in: ["CREATED", "IN_PROGRESS", "SUBMITTED", "PROCESSING"] } },
+    };
+
+    expect(legacyHardcodedPracticeRetirementWhere("uat-school")).toMatchObject({
+      schoolId: "uat-school",
+      status: "OPEN",
+      attempts: expectedAttempts,
+      practiceVersion: {
+        definition: {
+          schoolId: "uat-school",
+          title: { in: expect.arrayContaining(["古诗文朗读与理解训练", "听后复述入门"]) },
+        },
+      },
+    });
+    expect(legacyAudioVerificationRetirementWhere("uat-school")).toMatchObject({
+      schoolId: "uat-school",
+      status: "OPEN",
+      attempts: expectedAttempts,
+      practiceVersion: {
+        definition: {
+          schoolId: "uat-school",
+          title: "语赞心声 Question Bank v1 · 听写音频验证",
+        },
+      },
+    });
+  });
+
   it("uses Resource IDs while preserving authored A/B/C/D option order", () => {
     const ids = new Map([
       ["AUDIO:" + "1".repeat(64), "audio-resource"],

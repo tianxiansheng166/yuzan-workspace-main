@@ -3,6 +3,37 @@
 Last updated: 2026-10-21
 Repository: `yuzan-workspace-main`
 
+## Owner UAT Level 1/2 assessment content and iFlytek check (2026-10-22)
+
+- The September 8 assessment recovery baseline is commit
+  `0a7b931a8dfd005eb7ba97aa0fe68e81169d61e8`; canonical Question Bank
+  activation originated in `7b28b19599cb0915629dfa44a0eec5b76ccde524`.
+  The active `/assessment/` and `/student/practices/` routes use the API-backed
+  practice catalog and runner. The prior UAT database had six seeded
+  placeholder practices and no published Level 1/2 Question Bank content.
+- Read-only preflight of the owner-provided `习题课程资源` source passed for
+  Levels 1 and 2: 20 items / 100 points per level, 20/20 answer bindings, six
+  audio and 15 image files per level, zero validation errors or warnings.
+  Both levels were applied only to the isolated Owner UAT PostgreSQL database
+  and MinIO bucket. Runtime verification found 20 published scored questions
+  per level, two published practices with 20 item references each, and 42/42
+  referenced media objects matching stored size and SHA-256; all 12 MP3 files
+  decoded successfully. No source document or archive was modified.
+- The legacy importer now keeps any delivery with an unfinished assessment
+  open. Five unused placeholder deliveries were closed. The remaining old
+  assignment stays open because it has one in-progress attempt; its data was
+  not changed or removed.
+- One direct iFlytek ISE request using a Level 2 source dictation sample and no
+  student recording returned overall 91.97 with valid dimensions. It remains
+  `IFLYTEK_UNCALIBRATED` / `PROVIDER_REQUIRES_REVIEW`; this is not a formal
+  score or calibration result. The running UAT Worker still has
+  `SPEECH_PROVIDER=disabled`, so live student speech jobs are not routed to
+  iFlytek. Credentials and response payloads were not logged or committed.
+- Verification: importer safety test 3/3, Question Bank security 2/2, practice
+  service 25/25, API typecheck, source preflight, local MinIO checks, API ready
+  200, and `/assessment/` plus `/student/practices/` route HTTP 200. An
+  authenticated browser playback session remains for Owner sign-in and review.
+
 ## Owner UAT student invitation (2026-10-21)
 
 - Owner UAT branch `uat/owner-platform-preview-20261021` uses the local fictional school/class fixture only. Teacher invitation `TC-43B17-BAD91` belongs to the seeded teacher and `七年级真实流程班`; it is a UAT-wide student class-binding code, currently provisioned for 1,000,000 uses and one year.
