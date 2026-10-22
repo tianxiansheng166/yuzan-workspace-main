@@ -3,6 +3,9 @@
 
   const root = '/assets/generated-covers/';
   const courseRules = [
+    { terms: ['高原的春', '四季散文'], asset: 'course-spring-reading.png' },
+    { terms: ['冬日民俗', '民俗对碰'], asset: 'course-listening-retell.png' },
+    { terms: ['《背影》', '字音朗读'], asset: 'course-initials-mouth.png' },
     { terms: ['《春》', '生字', '易错音', '发音与朗读'], asset: 'course-spring-reading.png' },
     { terms: ['现代文', '听说', '信息提取', '复述'], asset: 'course-listening-retell.png' },
     { terms: ['古诗', '诗文', '停顿', '情感'], asset: 'course-poetry-rhythm.png' },

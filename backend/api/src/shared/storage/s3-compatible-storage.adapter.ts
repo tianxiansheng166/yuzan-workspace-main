@@ -8,6 +8,7 @@ import {
   DeleteObjectCommand,
   PutObjectCommand,
   GetObjectCommand,
+  ListObjectsV2Command,
   type HeadObjectCommandOutput,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
@@ -116,7 +117,9 @@ export class S3CompatibleStorageAdapter implements StoragePort {
    * configured bucket's existence and the caller's permission to access it.
    */
   async checkBucket(): Promise<void> {
-    await this.client.send(new HeadBucketCommand({ Bucket: this.bucket }));
+    await this.client.send(
+      new ListObjectsV2Command({ Bucket: this.bucket, MaxKeys: 0 }),
+    );
   }
 
   async generateDownloadUrl(objectKey: string): Promise<PresignedUrlResult> {

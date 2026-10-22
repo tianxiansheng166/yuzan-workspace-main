@@ -1,7 +1,7 @@
 import { NestFactory } from "@nestjs/core";
 import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
-import { mkdtemp, readFile, readdir } from "node:fs/promises";
+import { mkdtemp, readFile, readdir, rm } from "node:fs/promises";
 import path from "node:path";
 import os from "node:os";
 import { Prisma } from "@yuzan/database";
@@ -24,6 +24,7 @@ import { CourseImportModule } from "./course-import.module.js";
 const RIGHTS_NOTE = "团队自有课程素材";
 const IMPORT_NAME = "COMP-DEMO-03";
 const SOFFICE = process.env.SOFFICE || "/usr/bin/soffice";
+const FFPROBE = process.env.FFPROBE || "/usr/bin/ffprobe";
 
 type Args = {
   sourceDir: string;
@@ -31,6 +32,8 @@ type Args = {
   classId?: string;
   enrollmentId?: string;
   practiceDefinitionId?: string;
+  assignmentId?: string;
+  coverAsset?: string;
 };
 
 type SourceFile = {
@@ -41,6 +44,7 @@ type SourceFile = {
   mediaType: string;
   kind: "VIDEO" | "DOCUMENT";
   stableKey?: string;
+  durationSeconds?: number;
 };
 
 type ParsedQuestion = { prompt: string; options: string[] };
@@ -67,12 +71,22 @@ function parseArgs(values: readonly string[]): Args {
     else if (value === "--practice-definition-id")
       result.practiceDefinitionId =
         values[++i] ?? fail("--practice-definition-id requires a UUID");
+    else if (value === "--assignment-id")
+      result.assignmentId = values[++i] ?? fail("--assignment-id requires a UUID");
+    else if (value === "--cover-asset")
+      result.coverAsset = values[++i] ?? fail("--cover-asset requires a path");
     else if (value === "--") continue;
     else fail(`unknown argument ${value}`);
   }
   if (!result.sourceDir) fail("pass --source-dir");
   if (result.classId && result.enrollmentId)
     fail("pass only one of --class-id or --enrollment-id");
+  if (result.assignmentId && !result.classId)
+    fail("--assignment-id reuse requires the matching --class-id");
+  if (result.assignmentId && !/^[0-9a-f-]{36}$/i.test(result.assignmentId))
+    fail("--assignment-id must be a UUID");
+  if (result.coverAsset && !result.coverAsset.startsWith("/assets/"))
+    fail("--cover-asset must point to an existing frontend /assets path");
   return result as Args;
 }
 
@@ -162,6 +176,51 @@ function extractTeachingDesign(file: string, fallbackName: string) {
   };
 }
 
+function courseMetadata(title: string) {
+  if (/古诗|诗词/.test(title)) {
+    return {
+      capabilityTheme: "古典诗词朗读",
+      taskGroups: ["文学阅读与创意表达"],
+    };
+  }
+  if (/发音|字音|声母|韵母|声调|朗读/.test(title)) {
+    return {
+      capabilityTheme: "发音与朗读",
+      taskGroups: ["语言文字积累与梳理"],
+    };
+  }
+  if (/民俗|文化/.test(title)) {
+    return {
+      capabilityTheme: "文化理解",
+      taskGroups: ["文化理解与传承"],
+    };
+  }
+  return {
+    capabilityTheme: "阅读与表达",
+    taskGroups: ["实用性阅读与交流"],
+  };
+}
+
+function courseCulturalElements(title: string): string[] {
+  const elements: string[] = [];
+  if (/藏汉/.test(title)) elements.push("藏汉文化");
+  if (/民俗/.test(title)) elements.push("民俗文化");
+  if (/古诗|诗词/.test(title)) elements.push("古典诗词");
+  return elements;
+}
+
+function courseCoverAsset(title: string): string {
+  if (/高原的春|四季散文|《春》/.test(title))
+    return "/assets/generated-covers/course-spring-reading.png";
+  if (/民俗/.test(title))
+    return "/assets/generated-covers/course-listening-retell.png";
+  if (/背影|字音/.test(title))
+    return "/assets/generated-covers/course-initials-mouth.png";
+  if (/古诗|诗词/.test(title))
+    return "/assets/generated-covers/course-poetry-rhythm.png";
+  return "/assets/generated-covers/course-spring-reading.png";
+}
+
 function extractQuestions(file: string): ParsedQuestion[] {
   const text = docxParagraphs(file).join(" ");
   const choiceSection = text.split(/二、/)[0] ?? text;
@@ -193,6 +252,7 @@ function extractQuestions(file: string): ParsedQuestion[] {
 
 async function findSourceFiles(sourceDir: string): Promise<{
   video: SourceFile;
+  videoDurationSeconds: number;
   pptx: string;
   teaching: string;
   exercise: string;
@@ -216,6 +276,28 @@ async function findSourceFiles(sourceDir: string): Promise<{
       "selected source directory must contain one MP4, PPTX, teaching-design DOCX, and exercise DOCX",
     );
   const body = await readFile(video);
+  let videoDurationSeconds: number;
+  try {
+    videoDurationSeconds = Number(
+      execFileSync(
+        FFPROBE,
+        [
+          "-v",
+          "error",
+          "-show_entries",
+          "format=duration",
+          "-of",
+          "default=nw=1:nk=1",
+          video,
+        ],
+        { encoding: "utf8" },
+      ).trim(),
+    );
+  } catch {
+    fail("ffprobe could not inspect the selected MP4");
+  }
+  if (!Number.isFinite(videoDurationSeconds) || videoDurationSeconds <= 0)
+    fail("selected MP4 has no usable duration");
   return {
     video: {
       path: video,
@@ -225,6 +307,7 @@ async function findSourceFiles(sourceDir: string): Promise<{
       mediaType: "video/mp4",
       kind: "VIDEO",
     },
+    videoDurationSeconds,
     pptx,
     teaching,
     exercise,
@@ -459,6 +542,60 @@ async function resolvePractice(
   );
 }
 
+async function validateAssignmentReuse(
+  prisma: PrismaService,
+  schoolId: string,
+  classId: string,
+  assignmentId: string,
+) {
+  const assignment = await prisma.assignment.findFirst({
+    where: { id: assignmentId, schoolId, deletedAt: null },
+    select: { id: true, status: true, courseVersionId: true },
+  });
+  if (!assignment) fail("the assignment to reuse does not belong to this school");
+  if (assignment.status !== "OPEN")
+    fail("only an OPEN UAT assignment can be given the source course content");
+
+  const target = await prisma.assignmentTarget.findFirst({
+    where: {
+      assignmentId,
+      schoolId,
+      targetType: "CLASS",
+      classId,
+    },
+    select: { id: true },
+  });
+  if (!target)
+    fail("the assignment target does not match the selected active class");
+
+  const submittedCount = await prisma.submission.count({
+    where: {
+      assignmentId,
+      schoolId,
+      deletedAt: null,
+      submittedAt: { not: null },
+    },
+  });
+  if (submittedCount > 0)
+    fail("the assignment has a submitted record and cannot be rebound");
+
+  const activityWithStudentState = await prisma.learningActivity.findFirst({
+    where: {
+      lesson: { unit: { courseVersionId: assignment.courseVersionId } },
+      OR: [
+        { attempts: { some: {} } },
+        { progress: { some: {} } },
+        { privateNotes: { some: {} } },
+        { practiceSessions: { some: {} } },
+      ],
+    },
+    select: { id: true },
+  });
+  if (activityWithStudentState)
+    fail("the assignment has saved activity state and cannot be rebound");
+  return assignment;
+}
+
 async function main(): Promise<void> {
   const args = parseArgs(process.argv.slice(2));
   const sources = await findSourceFiles(args.sourceDir);
@@ -467,6 +604,7 @@ async function main(): Promise<void> {
     path.basename(args.sourceDir),
   );
   const questions = extractQuestions(sources.exercise);
+  const courseMetadataValue = courseMetadata(teaching.title);
   const artifactDir = await mkdtemp(path.join(os.tmpdir(), "comp-demo-03-"));
   execFileSync(
     SOFFICE,
@@ -506,6 +644,17 @@ async function main(): Promise<void> {
     await storage.ensureBucket?.();
     const schoolId = await resolveSchool(prisma, args.schoolId);
     const target = await resolveTarget(prisma, schoolId, args);
+    const importKey = `${IMPORT_NAME}:${sources.video.checksumSha256}:${pptxChecksum}`;
+    const courseId = stableUuid(`${importKey}:course`);
+    const versionId = stableUuid(`${importKey}:version`);
+    const existingAssignment = args.assignmentId
+      ? await validateAssignmentReuse(
+          prisma,
+          schoolId,
+          target.classId,
+          args.assignmentId,
+        )
+      : null;
     const authorUserId = await resolveAuthor(prisma, schoolId);
     const practice = await resolvePractice(
       prisma,
@@ -524,9 +673,6 @@ async function main(): Promise<void> {
       [videoResource.id, videoResource],
       [pdfResource.id, pdfResource],
     ]);
-    const importKey = `${IMPORT_NAME}:${sources.video.checksumSha256}:${pptxChecksum}`;
-    const courseId = stableUuid(`${importKey}:course`);
-    const versionId = stableUuid(`${importKey}:version`);
     const unitId = stableUuid(`${importKey}:unit`);
     const lessonId = stableUuid(`${importKey}:lesson`);
     const activityIds = [1, 2, 3, 4, 5].map((index) =>
@@ -544,14 +690,14 @@ async function main(): Promise<void> {
       title: teaching.title,
       description: teaching.description,
       gradeBand: "七年级",
-      capabilityTheme: "发音与朗读",
+      capabilityTheme: courseMetadataValue.capabilityTheme,
       difficulty: "基础",
       locale: "zh-CN",
       objectives: teaching.goals.map(toBilingual),
-      coverAsset: "/assets/course-bg/spring-highland.png",
-      taskGroups: ["阅读与表达"],
-      culturalElements: ["藏汉文化", "春日写景"],
-      estimatedMinutes: 10,
+      coverAsset: args.coverAsset ?? courseCoverAsset(teaching.title),
+      taskGroups: courseMetadataValue.taskGroups,
+      culturalElements: courseCulturalElements(teaching.title),
+      estimatedMinutes: Math.ceil(sources.videoDurationSeconds / 60) + 3,
       deviceRequirements: { audioPlayback: true, microphone: false },
       units: [
         {
@@ -569,15 +715,15 @@ async function main(): Promise<void> {
                   type: "VIDEO",
                   title: teaching.title,
                   instruction: note(
-                    "观看真实课堂录像，留意核心词语的发音示范。",
+                    "观看本课课堂录像，关注教学目标中的关键词和示范。",
                   ),
                   sortOrder: 0,
                   required: true,
                   completionRule: { type: "ACKNOWLEDGED" },
-                  content: { description: "真实示范课录像" },
+                  content: { description: `${teaching.title}课堂录像` },
                   resources: [videoResource],
                   teacherNotes: note("课堂录像来自团队自有示范课素材。"),
-                  studentNotes: note("观看视频并注意朗读示范。"),
+                  studentNotes: note("播放视频并完成本节学习后，确认此活动。"),
                 },
                 {
                   id: activityIds[1]!,
@@ -588,7 +734,7 @@ async function main(): Promise<void> {
                   required: true,
                   completionRule: { type: "ACKNOWLEDGED" },
                   content: {
-                    text: "本课件对应《春》生字认读与易错音纠正课堂。",
+                    text: `${teaching.title}教学课件。请配合课堂录像阅读本课重点。`,
                   },
                   resources: [pdfResource],
                   teacherNotes: note("课件为本节真实教学课件的 PDF 转换产物。"),
@@ -597,7 +743,7 @@ async function main(): Promise<void> {
                 {
                   id: activityIds[2]!,
                   type: "CHOICE",
-                  title: "本节练习：词语读音",
+                  title: `课后练习：${cleanText(questions[0]!.prompt).slice(0, 18)}`,
                   instruction: note("根据真实课后练习选择正确答案。"),
                   sortOrder: 2,
                   required: true,
@@ -605,7 +751,7 @@ async function main(): Promise<void> {
                   content: questions[0],
                   resources: [],
                   teacherNotes: note(
-                    "题目摘自本节课后练习 DOCX，保留原题选项。",
+                    "题目摘自本课程的课后练习 DOCX，保留原题选项。",
                   ),
                   studentNotes: note("选择你认为正确的选项并提交。"),
                 },
@@ -711,57 +857,61 @@ async function main(): Promise<void> {
       },
     });
 
-    const assignmentId = stableUuid(`${importKey}:assignment`);
+    const assignmentId = args.assignmentId ?? stableUuid(`${importKey}:assignment`);
     const targetId = stableUuid(`${importKey}:assignment-target`);
-    const existingAssignment = await prisma.assignment.findUnique({
-      where: { id: assignmentId },
-      select: { courseVersionId: true },
-    });
-    if (
-      existingAssignment &&
-      existingAssignment.courseVersionId !== published.id
-    )
-      fail("stable assignment id belongs to a different course version");
-    const startsAt = new Date();
-    const dueAt = new Date(startsAt.getTime() + 365 * 24 * 60 * 60 * 1000);
-    await prisma.assignment.upsert({
-      where: { id: assignmentId },
-      update: {
-        status: "OPEN",
-        courseVersionId: published.id,
-        title: teaching.title,
-        openedAt: new Date(),
-      },
-      create: {
-        id: assignmentId,
-        schoolId,
-        courseVersionId: published.id,
-        createdByUserId: authorUserId,
-        title: teaching.title,
-        status: "OPEN",
-        startsAt,
-        dueAt,
-        openedAt: startsAt,
-        source: "TEACHER_ASSIGNED",
-        completionRule: { requiredActivities: "ALL", requiredPractices: "ALL" },
-      },
-    });
-    await prisma.assignmentTarget.upsert({
-      where: { id: targetId },
-      update: {
-        targetType: args.enrollmentId ? "STUDENT" : "CLASS",
-        classId: args.enrollmentId ? null : target.classId,
-        enrollmentId: args.enrollmentId ?? null,
-      },
-      create: {
-        id: targetId,
-        schoolId,
-        assignmentId,
-        targetType: args.enrollmentId ? "STUDENT" : "CLASS",
-        classId: args.enrollmentId ? null : target.classId,
-        enrollmentId: args.enrollmentId ?? null,
-      },
-    });
+    if (existingAssignment) {
+      await prisma.assignment.update({
+        where: { id: assignmentId },
+        data: {
+          courseVersionId: published.id,
+          title: teaching.title,
+          completionRule: { requiredActivities: "ALL", requiredPractices: "ALL" },
+          revision: { increment: 1 },
+          updatedAt: new Date(),
+        },
+      });
+    } else {
+      const startsAt = new Date();
+      const dueAt = new Date(startsAt.getTime() + 365 * 24 * 60 * 60 * 1000);
+      await prisma.assignment.upsert({
+        where: { id: assignmentId },
+        update: {
+          status: "OPEN",
+          courseVersionId: published.id,
+          title: teaching.title,
+          openedAt: new Date(),
+        },
+        create: {
+          id: assignmentId,
+          schoolId,
+          courseVersionId: published.id,
+          createdByUserId: authorUserId,
+          title: teaching.title,
+          status: "OPEN",
+          startsAt,
+          dueAt,
+          openedAt: startsAt,
+          source: "TEACHER_ASSIGNED",
+          completionRule: { requiredActivities: "ALL", requiredPractices: "ALL" },
+        },
+      });
+      await prisma.assignmentTarget.upsert({
+        where: { id: targetId },
+        update: {
+          targetType: args.enrollmentId ? "STUDENT" : "CLASS",
+          classId: args.enrollmentId ? null : target.classId,
+          enrollmentId: args.enrollmentId ?? null,
+        },
+        create: {
+          id: targetId,
+          schoolId,
+          assignmentId,
+          targetType: args.enrollmentId ? "STUDENT" : "CLASS",
+          classId: args.enrollmentId ? null : target.classId,
+          enrollmentId: args.enrollmentId ?? null,
+        },
+      });
+    }
     console.log(
       JSON.stringify(
         {
@@ -771,6 +921,7 @@ async function main(): Promise<void> {
           courseVersionId: published.id,
           assignmentId,
           practiceDefinitionId: practice.id,
+          reusedAssignment: Boolean(args.assignmentId),
           resourceCount: resourceMap.size,
           resources: [...resourceMap.values()].map((resource) => ({
             id: resource.id,
@@ -789,7 +940,11 @@ async function main(): Promise<void> {
       ),
     );
   } finally {
-    await app.close();
+    try {
+      await app.close();
+    } finally {
+      await rm(artifactDir, { recursive: true, force: true });
+    }
   }
 }
 
