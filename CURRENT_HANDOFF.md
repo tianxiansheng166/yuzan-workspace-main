@@ -34,6 +34,26 @@ Repository: `yuzan-workspace-main`
   200, and `/assessment/` plus `/student/practices/` route HTTP 200. An
   authenticated browser playback session remains for Owner sign-in and review.
 
+## Owner UAT courses, tasks, and growth pages (2026-10-22)
+
+- Removed the large banner under the student navigation on `/student/courses/`.
+  The catalog now contains five real demonstration courses. The existing
+  spring course, its progress, and its blank submissions were preserved; four
+  other courses were built from the supplied teaching materials and stored in
+  the isolated UAT MinIO bucket. Video object size/hash and byte-range reads
+  were verified.
+- `/student/assignments/` now reads the current student's real course list,
+  exposes status/search filters, and opens the matching course detail. It does
+  not use fixed task cards. Growth reads the same current-school course data
+  and shows assigned course progress when there are no completed assessment
+  records; it does not create completed activities or scores.
+- Recommendations and community pages use a shared centered 1480px maximum
+  content width with the exercise page, with no iframe scale transform.
+- Verification: focused task/growth frontend tests 7/7, changed frontend JS
+  syntax checks, API typecheck/build, and `git diff --check`. Page routes and
+  API readiness return HTTP 200. Authenticated Owner browser review remains
+  outstanding.
+
 ## Owner UAT student invitation (2026-10-21)
 
 - Owner UAT branch `uat/owner-platform-preview-20261021` uses the local fictional school/class fixture only. Teacher invitation `TC-43B17-BAD91` belongs to the seeded teacher and `七年级真实流程班`; it is a UAT-wide student class-binding code, currently provisioned for 1,000,000 uses and one year.

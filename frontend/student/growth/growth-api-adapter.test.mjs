@@ -228,3 +228,36 @@ test("Growth distinguishes empty data from service failure and redirects missing
   assert.equal((await unauthenticated.load()).state, "error");
   assert.equal(unauthenticated.location.href, "/login/");
 });
+
+test("Growth shows actual assigned course progress when there are no completed assessment records", async () => {
+  let requestedFilters;
+  const f = mount({
+    getAssessmentHistory: async () => ({ enrollmentId: "enrollment-dynamic", sessions: [] }),
+    getAssessmentHistoryEvents: async (enrollmentId) => ({ enrollmentId, events: [] }),
+    getStudentProfile: async () => ({ profile: { userId: "student-1", completedActivities: 0 } }),
+    getQuestionBankProgress: async () => ({ version: "qb-progress-v1", remediation: [] }),
+    listPractices: async () => ({ items: [] }),
+    listMyAssessmentRecordings: async () => [],
+    listStudentCourses: async (filters) => {
+      requestedFilters = filters;
+      return { courses: [{
+        assignmentId: "assignment-live",
+        title: "真实课程",
+        status: "IN_PROGRESS",
+        progressPercent: 20,
+        coverAsset: "/assets/cover-spring.png",
+        nextActivity: { title: "阅读课件" },
+      }] };
+    },
+  });
+
+  const data = await f.load();
+  assert.equal(data.state, "normal");
+  assert.equal(data.courseProgress.length, 1);
+  assert.equal(data.courseProgress[0].title, "真实课程");
+  assert.equal(data.courseProgress[0].progressPercent, 20);
+  assert.equal(data.journey[0].status, "current");
+  assert.equal(data.journey[0].progressLabel, "课程安排");
+  assert.match(data.journey[0].evidenceSummary, /服务端确认/);
+  assert.equal(requestedFilters.limit, 100);
+});

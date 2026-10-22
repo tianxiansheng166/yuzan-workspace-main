@@ -122,7 +122,7 @@
     });
   }
 
-  function makeJourney(profile, history, reports, events, progress) {
+  function makeJourney(profile, history, reports, events, progress, courseProgress) {
     var completedActivities = finiteCount(profile.completedActivities);
     var completedAttempts = history.sessions.length;
     var feedbackCount = events.filter(function (event) {
@@ -158,7 +158,7 @@
       ["feedback", "教师反馈", "已有已发布反馈"],
       ["retest", "专项巩固", "已有专项巩固记录"],
     ];
-    return definitions.map(function (definition, index) {
+    var journey = definitions.map(function (definition, index) {
       var count = counts[index];
       var status =
         count > 0
@@ -183,6 +183,20 @@
         evidenceSummary: evidence,
       };
     });
+    if (courseProgress.length > 0 && completedActivities === 0) {
+      journey[0] = {
+        id: "course",
+        title: "课程学习",
+        description: courseProgress.length + " 门课程安排，学习活动进度会在服务端确认后记录",
+        status: "current",
+        progressLabel: "课程安排",
+        progress: courseProgress.length,
+        evidenceTitle: "当前课程情况",
+        evidenceSummary:
+          "当前学籍有 " + courseProgress.length + " 门开放课程；已完成活动只按服务端确认的记录计数。",
+      };
+    }
+    return journey;
   }
 
   function makeTrend(reports) {
@@ -249,6 +263,53 @@
       .map(function (entry) {
         return entry.text;
       });
+  }
+
+  function normalizeCourseProgress(value) {
+    var source = Array.isArray(value)
+      ? value
+      : value && Array.isArray(value.courses)
+        ? value.courses
+        : [];
+    return source
+      .filter(function (course) {
+        return course && typeof course.assignmentId === "string" && course.assignmentId;
+      })
+      .map(function (course) {
+        var percent = Number(course.progressPercent);
+        var status = typeof course.status === "string" ? course.status : "UNKNOWN";
+        var cover = typeof course.coverAsset === "string" && course.coverAsset.startsWith("/") && !course.coverAsset.startsWith("//")
+          ? course.coverAsset
+          : "/assets/cover-spring.png";
+        return {
+          assignmentId: course.assignmentId,
+          title: typeof course.title === "string" && course.title.trim() ? course.title.trim() : "课程学习",
+          description: typeof course.description === "string" ? course.description : "",
+          theme: typeof course.capabilityTheme === "string" ? course.capabilityTheme : "",
+          coverAsset: cover,
+          status: status,
+          statusLabel: {
+            NOT_STARTED: "待开始",
+            IN_PROGRESS: "进行中",
+            RESULT_PENDING: "结果处理中",
+            COMPLETED: "已完成",
+          }[status] || "状态待同步",
+          progressPercent: Number.isFinite(percent) ? Math.max(0, Math.min(100, Math.round(percent))) : 0,
+          nextActivity: course.nextActivity && typeof course.nextActivity.title === "string"
+            ? course.nextActivity.title
+            : "",
+        };
+      });
+  }
+
+  async function loadCourseProgress(api) {
+    if (typeof api.listStudentCourses !== "function") return [];
+    try {
+      return normalizeCourseProgress(unwrap(await api.listStudentCourses({ limit: 100 })));
+    } catch (error) {
+      if (error && (error.status === 401 || error.status === 403)) throw error;
+      return [];
+    }
   }
 
   async function loadAudio(api, history, identity, enrollmentId) {
@@ -344,12 +405,14 @@
       api.listPractices({ sort: "RECOMMENDED" }).catch(function () {
         return { items: [] };
       }),
+      loadCourseProgress(api),
     ]);
     var profileValue = unwrap(values[0]);
     var profile = (profileValue && profileValue.profile) || profileValue;
     var history = unwrap(values[1]);
     var progress = unwrap(values[2]);
     var practiceResult = unwrap(values[3]);
+    var courseProgress = values[4];
     var enrollmentId = history && history.enrollmentId;
 
     if (
@@ -412,7 +475,8 @@
     var hasAnyRecord =
       history.sessions.length > 0 ||
       events.length > 0 ||
-      finiteCount(profile.completedActivities) > 0;
+      finiteCount(profile.completedActivities) > 0 ||
+      courseProgress.length > 0;
     var headline = latestReport
       ? "你已有 " + reports.length + " 份完整正式报告"
       : hasAnyRecord
@@ -425,10 +489,12 @@
           ? "，得分 " + latestReport.report.overallScore + " 分。"
           : "，报告暂未提供总分。")
       : hasAnyRecord
-        ? "页面只展示当前学籍中可以核实的课程活动、测评和已发布反馈。"
+        ? courseProgress.length
+          ? "这里汇总当前学籍的课程安排与已确认学习进度；测评分数只在正式报告生成后显示。"
+          : "页面只展示当前学籍中可以核实的课程活动、测评和已发布反馈。"
         : "完成课程、练习或正式测评后，真实记录会显示在这里。";
 
-    return {
+    var result = {
       state: hasAnyRecord ? "normal" : "empty",
       updatedAt: latestAt ? formatDate(latestAt) : "暂无学习记录",
       headline: headline,
@@ -439,7 +505,8 @@
         : feedback.length
           ? "教师反馈"
           : "课程学习",
-      journey: makeJourney(profile, history, reports, events, progress),
+      journey: makeJourney(profile, history, reports, events, progress, courseProgress),
+      courseProgress: courseProgress,
       trend: makeTrend(reports),
       audio: audioResult.audio,
       audioMessage: audioResult.message,
@@ -455,6 +522,10 @@
           : "/student/practices/",
       },
     };
+    if (global.YuzanGrowthCourseProgress && typeof global.YuzanGrowthCourseProgress.render === "function") {
+      global.YuzanGrowthCourseProgress.render(courseProgress);
+    }
+    return result;
   }
 
   async function load() {
@@ -468,5 +539,5 @@
     }
   }
 
-  global.YuzanGrowthData = { load: load };
+  global.YuzanGrowthData = { load: load, normalizeCourseProgress: normalizeCourseProgress };
 })(window);
