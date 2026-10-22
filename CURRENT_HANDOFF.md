@@ -1,6 +1,6 @@
 # CURRENT HANDOFF
 
-Last updated: 2026-10-21
+Last updated: 2026-10-22
 Repository: `yuzan-workspace-main`
 
 ## Owner UAT Level 1/2 assessment content and iFlytek check (2026-10-22)
@@ -53,6 +53,12 @@ Repository: `yuzan-workspace-main`
   syntax checks, API typecheck/build, and `git diff --check`. Page routes and
   API readiness return HTTP 200. Authenticated Owner browser review remains
   outstanding.
+- Running preview: web `http://127.0.0.1:4285/`, API
+  `http://127.0.0.1:4085/`, readiness
+  `http://127.0.0.1:4085/api/v1/health/ready`. Practice entry is
+  `/assessment/`; course, task, and growth pages are `/student/courses/`,
+  `/student/assignments/`, and `/student/growth/`. Service logs are in
+  `runtime-local/owner-uat-20261021/logs/`.
 
 ## Owner UAT student invitation (2026-10-21)
 
