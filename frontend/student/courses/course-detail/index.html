@@ -54,10 +54,11 @@
         <div class="cp-card cp-card-video">
           <div class="cp-video-container" id="cpVideoContainer">
             <video class="cp-video" id="cpVideo" preload="metadata" playsinline>
-              <source id="cpVideoSrc" src="" type="video/mp4">
               <track id="cpTrackZh" kind="subtitles" srclang="zh" label="中文字幕" default>
               <track id="cpTrackBo" kind="subtitles" srclang="bo" label="藏文字幕">
             </video>
+
+            <div class="cp-video-error" id="cpVideoError" role="alert" aria-live="assertive" hidden></div>
 
             <!-- Poster overlay -->
             <div class="cp-video-overlay" id="cpVideoOverlay">
@@ -127,6 +128,10 @@
                 </div>
               </div>
             </div>
+          </div>
+          <div class="cp-progress-save-error" id="cpProgressError" role="alert" aria-live="assertive" hidden>
+            <span id="cpProgressErrorMessage">学习进度尚未确认保存。</span>
+            <button class="cp-btn cp-btn-outline cp-btn-sm" id="cpProgressRetryBtn" type="button" hidden>核对后重试保存</button>
           </div>
         </div>
 
@@ -724,8 +729,20 @@
       container.appendChild(block4);
     }
 
+    var mediaLoadSequence = 0;
+
     function loadVideoForActivity(activity) {
+      var sequence = ++mediaLoadSequence;
       if (!activity || !window.MediaController || !window.MediaController.loadSource) return;
+      if (window.MediaController.setActivityContext) {
+        window.MediaController.setActivityContext(activity.activityId, activity.activityType);
+      }
+
+      function isCurrentActivity() {
+        var state = window.CoursePlayerState.getState();
+        return sequence === mediaLoadSequence && state.currentActivityId === activity.activityId;
+      }
+
       var videoResource = (activity.resources || []).map(function (link) { return link.resource || link; }).find(function (resource) {
         return resource && resource.kind === 'VIDEO';
       });
@@ -734,8 +751,12 @@
         return;
       }
       window.CourseApiAdapter.getResourcePlaybackUrl(videoResource.id).then(function (result) {
+        if (!isCurrentActivity()) return;
+        if (!result || !result.url) throw new Error('视频资源地址不可用');
         window.MediaController.loadSource(result.url, activity.posterUrl, activity.subtitleZhUrl, activity.subtitleBoUrl);
       }).catch(function () {
+        if (!isCurrentActivity()) return;
+        window.MediaController.showError('视频资源暂时无法打开，请稍后重试。');
         showToast('视频资源暂时无法打开');
       });
     }
