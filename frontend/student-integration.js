@@ -8,7 +8,8 @@
     '/student/recommendations': '/student-pages/yuzan-student-recommendations-pixel/yuzan-student-recommendations-pixel/index.html'
   };
   const frame = document.getElementById('student-integrated-frame');
-  frame.src = routes[location.pathname] || routes['/student/course-center'];
+  const routePath = location.pathname.replace(/\/+$/, '') || '/';
+  frame.src = routes[routePath] || routes['/student/course-center'];
 
   // 整合壳自己提供统一导航栏，iframe 内页面不需要左侧边栏占位
   document.documentElement.style.setProperty('--student-content-left', '0px');
@@ -23,7 +24,7 @@
         style.id = 'yuzan-student-integration-reset';
         style.textContent = `
           :root { --left:0px!important; --right:0px!important; --header:0px!important; }
-          html, body { width:100%!important; min-width:0!important; overflow-x:hidden!important; margin:0!important; padding:0!important; }
+          html, body { width:100%!important; min-width:0!important; overflow-x:hidden!important; margin:0!important; padding:0!important; background:#f8f4ec!important; }
           /* 隐藏原页面自己的导航栏和侧边栏，统一使用外层整合壳导航 */
           .sidebar, .sidebar-decoration, .topbar, header.topbar, .leftbar, .rightbar,
           .left-sidebar, .left-rail, .side-nav, .sidenav, .nav-list,
@@ -45,6 +46,11 @@
             width:100%!important; min-width:0!important; max-width:none!important;
             margin:0!important; padding:12px 16px!important; grid-column:auto!important; box-sizing:border-box!important;
           }
+          .main-content, .main-shell {
+            width:100%!important; max-width:1480px!important; margin:0 auto!important;
+            padding:20px 28px 36px!important; box-sizing:border-box!important;
+          }
+          @media (max-width:860px) { .main-content, .main-shell { padding:18px 16px 28px!important; } }
           .content, .page-content { width:100%!important; min-width:0!important; box-sizing:border-box!important; }
           .hero-panel, .basis-section, .path-area, .course-stack { max-width:100%!important; }
           /* 确保卡片类布局不会溢出 */
@@ -55,23 +61,12 @@
         doc.head.appendChild(style);
       }
 
-      // 如果 iframe 内容宽度超过容器，通过缩放保证完整显示，避免左侧被截断
-      const shell = frame.parentElement;
-      const shellW = shell ? shell.clientWidth : window.innerWidth;
-      const contentW = doc.documentElement.scrollWidth;
-      if (contentW > shellW && shellW > 0) {
-        const scale = shellW / contentW;
-        frame.style.transform = `scale(${scale})`;
-        frame.style.transformOrigin = 'left top';
-        frame.style.width = `${contentW}px`;
-      } else {
-        frame.style.transform = 'none';
-        frame.style.width = '100%';
-      }
+      frame.style.transform = 'none';
+      frame.style.width = '100%';
 
       requestAnimationFrame(() => {
-        const scaledH = Math.max(doc.documentElement.scrollHeight, doc.body.scrollHeight, 760);
-        frame.style.height = (contentW > shellW ? scaledH * (shellW / contentW) : scaledH) + 'px';
+        const contentH = Math.max(doc.documentElement.scrollHeight, doc.body.scrollHeight, 760);
+        frame.style.height = contentH + 'px';
       });
     } catch (_) {}
   }
