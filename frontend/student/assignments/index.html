@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#f8f6f1" />
+  <title>学习任务｜语赞心声</title>
+  <link rel="stylesheet" href="/shared/student-nav.css" />
+  <link rel="stylesheet" href="/student/assignments/style.css" />
+</head>
+<body>
+  <main class="viewport">
+    <div class="assignment-page">
+      <header class="assignment-heading">
+        <div>
+          <p class="assignment-eyebrow">MY LEARNING PATH</p>
+          <h1>学习任务</h1>
+          <p class="assignment-intro">从当前课程开始，按自己的节奏完成学习。</p>
+        </div>
+        <a class="assignment-back" href="/student/courses/">浏览课程中心 <span aria-hidden="true">↗</span></a>
+      </header>
+
+      <section class="assignment-summary" aria-label="任务概览">
+        <div><span class="summary-mark summary-mark-total" aria-hidden="true">课</span><span><strong id="taskTotal">—</strong><small>课程任务</small></span></div>
+        <div><span class="summary-mark summary-mark-active" aria-hidden="true">学</span><span><strong id="taskActive">—</strong><small>正在学习</small></span></div>
+        <div><span class="summary-mark summary-mark-done" aria-hidden="true">✓</span><span><strong id="taskDone">—</strong><small>已完成</small></span></div>
+      </section>
+
+      <section class="assignment-toolbar" aria-label="搜索和筛选任务">
+        <label class="assignment-search"><span aria-hidden="true">⌕</span><input id="taskSearch" type="search" placeholder="搜索课程或学习主题" aria-label="搜索课程任务" /></label>
+        <div class="assignment-filters" role="group" aria-label="任务状态">
+          <button type="button" class="active" data-status-filter="ALL" aria-pressed="true">全部</button>
+          <button type="button" data-status-filter="NOT_STARTED" aria-pressed="false">待开始</button>
+          <button type="button" data-status-filter="IN_PROGRESS" aria-pressed="false">进行中</button>
+          <button type="button" data-status-filter="COMPLETED" aria-pressed="false">已完成</button>
+        </div>
+      </section>
+
+      <div id="taskLoading" class="assignment-state" aria-live="polite"><span class="assignment-spinner" aria-hidden="true"></span><p>正在读取当前课程任务…</p></div>
+      <section id="taskError" class="assignment-state assignment-error" role="alert" hidden>
+        <h2>暂时无法读取任务</h2><p id="taskErrorMessage">请确认网络连接后重试。</p><button type="button" id="taskRetry">重新加载</button>
+      </section>
+      <section id="taskEmpty" class="assignment-state assignment-empty" hidden>
+        <span class="empty-book" aria-hidden="true">◫</span><h2>当前没有课程任务</h2><p>新的课程安排会显示在这里，也可以先去课程中心探索。</p><a href="/student/courses/">前往课程中心 <span aria-hidden="true">→</span></a>
+      </section>
+      <section id="taskResults" class="assignment-results" aria-live="polite" hidden>
+        <div class="assignment-list-heading"><h2>你的课程</h2><span id="taskResultCount"></span></div>
+        <div id="taskGrid" class="assignment-grid"></div>
+        <p id="taskNoMatch" class="assignment-no-match" hidden>没有找到符合条件的课程，试试其他关键词。</p>
+      </section>
+    </div>
+  </main>
+  <script src="/assets/app-core.js"></script>
+  <script src="/assets/api-client.js"></script>
+  <script src="/assets/visual-assets.js"></script>
+  <script src="/student/assignments/assignments-data.js"></script>
+  <script src="/student/assignments/assignments.js"></script>
+  <script src="/shared/student-nav.js"></script>
+</body>
+</html>

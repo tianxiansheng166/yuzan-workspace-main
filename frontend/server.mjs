@@ -119,6 +119,7 @@ function routeToSpa(pathname) {
     return join(root, 'teacher-home', 'index.html');
   }
   if (pathname === '/student' || pathname.startsWith('/student/')) {
+    if (pathname === '/student/assignments' || pathname === '/student/assignments/') return join(root, 'student', 'assignments', 'index.html');
     if (/^\/student\/(assignments|community|course-center|exercises|offline|recommendations)(?:\/|$)/.test(pathname)) return join(root, 'student-integration.html');
     if (/^\/student\/courses\/[^/]+\/submissions\/[^/]+\/activities\/[^/]+\/?$/.test(pathname)) return join(root, 'student', 'learn', 'spring-2', 'index.html');
     if (pathname === '/student/courses' || pathname.startsWith('/student/courses/')) return join(root, 'student', 'courses', 'index.html');
