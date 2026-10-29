@@ -1,5 +1,11 @@
 # CURRENT HANDOFF
 
+## Volunteer task workspace refinement (2026-10-29)
+
+- Refined the existing volunteer task page layout, removed fixed-height clipping, aligned status counts and date/type filters with its three fictional tasks, and refreshed older volunteer dates to 2026. Task confirmation is in-memory; service notes and risk drafts are stored locally only. Risk drafts are not submitted to any reporting service.
+- The volunteer shell now allows its embedded pages to fit narrower screens. The volunteer navigation still maps several labels to unrelated standalone pages (resources, community, messages and help); the rest of the volunteer experience needs a dedicated page-by-page visual and functional pass.
+- Frontend test and JavaScript syntax checks passed. Chromium desktop screenshot inspected; no full interactive or mobile browser verification claimed. Keep the pre-existing local `frontend/server.mjs` binding change uncommitted.
+
 ## Teacher learning analysis and research workspace (2026-10-29)
 
 - Expanded `/teacher/diagnostics/showcase/` with four-week multicolour capability trends, performance distribution, task-by-skill comparison and teaching interventions. The research workspace provides three detailed classroom plans, course links, topic switching and per-topic browser-local reflection notes. The class, outcomes and analysis are fictional presentation content as explicitly requested; they do not query or update the backend.

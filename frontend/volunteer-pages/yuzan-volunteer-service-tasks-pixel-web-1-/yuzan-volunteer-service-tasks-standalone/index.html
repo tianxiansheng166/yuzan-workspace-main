@@ -24,7 +24,8 @@
     <aside class="filters panel">
       <h2>任务状态</h2>
       <div class="status-list" role="tablist">
-        <button class="status-row selected" data-status="pending"><span class="status-icon orange"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg></span><b>待确认</b><em>2</em></button>
+        <button class="status-row selected" data-status="all"><span class="status-icon green">◉</span><b>全部任务</b><em>3</em></button>
+        <button class="status-row" data-status="pending"><span class="status-icon orange"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg></span><b>待确认</b><em>2</em></button>
         <button class="status-row" data-status="active"><span class="status-icon green"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="m10 8 5 4-5 4z"/></svg></span><b>进行中</b><em>1</em></button>
         <button class="status-row" data-status="record"><span class="status-icon blue"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="m10 8 5 4-5 4z"/></svg></span><b>待记录</b><em>0</em></button>
         <button class="status-row" data-status="done"><span class="status-icon green"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg></span><b>已完成</b><em>3</em></button>
@@ -32,35 +33,35 @@
       <label class="field"><span>服务类型</span><select id="typeFilter"><option>全部类型</option><option>阅读陪伴</option><option>专题培训</option><option>亲子共读</option></select></label>
       <label class="field"><span>服务对象</span><select id="targetFilter"><option>全部</option><option>小学生</option><option>教师</option><option>家庭</option></select></label>
       <label class="field"><span>服务区域</span><select id="regionFilter"><option>全部区域</option><option>线上</option><option>教师发展中心</option><option>社区图书馆</option></select></label>
-      <label class="field"><span>服务时间</span><div class="date-field"><span>2024-12-01</span><b>→</b><span>2025-01-31</span><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M7 10h10"/></svg></div></label>
+      <p class="filter-note">选择状态与服务类型，快速找到适合你的任务。</p>
       <button class="reset-btn" id="resetBtn">重置筛选</button>
     </aside>
     <main class="timeline panel">
       <div class="calendar-head">
-        <div class="month-row"><button aria-label="上个月">‹</button><strong>2024年12月</strong><button aria-label="下个月">›</button></div>
+        <div class="month-row"><button aria-label="上个月">‹</button><strong>2026年10月</strong><button aria-label="下个月">›</button></div>
         <div class="week-row"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
-        <div class="date-row"><button><span>25</span></button><button><span>26</span></button><button class="has-dot"><span>27</span></button><button class="selected-date has-dot"><span>28</span></button><button class="has-dot"><span>29</span></button><button><span>30</span></button><button class="has-dot"><span>1</span></button></div>
+        <div class="date-row"><button><span>26</span></button><button><span>27</span></button><button><span>28</span></button><button class="has-dot"><span>29</span></button><button class="has-dot"><span>30</span></button><button class="has-dot"><span>31</span></button><button><span>1</span></button></div>
       </div>
-      <div class="task-stream" id="taskStream">
-        <article class="task-item" data-state="pending" data-type="阅读陪伴" data-target="小学生" data-region="线上">
+      <div class="stream-intro"><div><span>YOUR SERVICE</span><h2>近期服务安排</h2></div><p>每一次陪伴，都在创造改变</p></div><div class="task-stream" id="taskStream">
+        <article class="task-item" data-date="2026-10-29" data-state="pending" data-type="阅读陪伴" data-target="小学生" data-region="线上">
           <div class="time-marker orange-marker"><span>09:00</span><i></i></div>
           <div class="task-card pending-card"><div class="task-head"><div><h3>高原上的春天 · 第 3 次阅读陪伴</h3><div class="tags"><span>小学</span><span>阅读陪伴</span></div></div><div class="task-state orange-text"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg><strong>待确认</strong><small>预计时长 60 分钟</small></div></div><dl class="task-meta"><div><dt>服务对象</dt><dd>3 人　 学龄　 小学三年级　 方式　 线上</dd></div><div><dt>授课教师</dt><dd>次仁老师　189 **** 5678　<span class="message-icon">□</span></dd></div><div><dt>服务目标</dt><dd>通过共读与交流，提升学生阅读理解能力与表达能力。</dd></div><div><dt>准备材料</dt><dd><span class="file-icon">◇</span>课件《高原上的春天》第三讲.pptx　 <span class="file-icon">◇</span>阅读材料包.pdf</dd></div></dl><button class="primary-action confirm-btn">确认参加</button></div>
         </article>
-        <article class="task-item" data-state="active" data-type="专题培训" data-target="教师" data-region="教师发展中心">
+        <article class="task-item" data-date="2026-10-28" data-state="active" data-type="专题培训" data-target="教师" data-region="教师发展中心">
           <div class="time-marker green-marker"><span>15:30</span><i></i></div>
           <div class="task-card active-card"><div class="task-head"><div><h3>未成年人保护与风险识别实务</h3><div class="tags"><span>初中</span><span>专题培训</span></div></div><div class="task-state green-text"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="m10 8 5 4-5 4z"/></svg><strong>进行中</strong><small>预计时长 90 分钟</small></div></div><dl class="task-meta"><div><dt>服务对象</dt><dd>全校教师　方式　线下　地点　教师发展中心201室</dd></div><div><dt>授课教师</dt><dd>次仁老师　189 **** 5678　<span class="message-icon">□</span></dd></div><div><dt>服务目标</dt><dd>帮助教师掌握未成年人保护要点与风险识别方法。</dd></div><div><dt>准备材料</dt><dd><span class="file-icon">◇</span>培训手册.pdf　 <span class="file-icon">◇</span>案例汇编.pdf</dd></div></dl><div class="dual-actions"><button class="outline-action record-btn">服务记录</button><button class="primary-action complete-btn">完成确认</button></div></div>
         </article>
-        <article class="task-item compact" data-state="pending" data-type="亲子共读" data-target="家庭" data-region="社区图书馆">
+        <article class="task-item compact" data-date="2026-10-31" data-state="pending" data-type="亲子共读" data-target="家庭" data-region="社区图书馆">
           <div class="time-marker blue-marker"><span>19:00</span><i></i></div>
           <div class="task-card compact-card"><div class="task-head"><div><h3>阅读点亮梦想 · 亲子共读活动</h3><div class="tags"><span>家庭</span><span>亲子共读</span></div></div><div class="task-state orange-text"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg><strong>待确认</strong><small>预计时长 120 分钟</small></div></div><dl class="task-meta"><div><dt>服务对象</dt><dd>10 个家庭　方式　线下　地点　社区图书馆</dd></div></dl><button class="primary-action confirm-btn">确认参加</button></div>
         </article>
-        <div class="empty-tasks" hidden>当前筛选条件下暂无任务</div>
+        <div class="empty-tasks" hidden>这个日期或筛选条件下暂无任务</div>
       </div>
     </main>
     <aside class="right-rail">
       <section class="rail-card panel rules"><h2>服务规范与要求</h2><ul><li>遵守平台服务守则与行为规范</li><li>尊重服务对象，保护隐私信息</li><li>按时参与，认真完成服务内容</li><li>如实记录，不虚报服务时长</li><li>遇到问题，及时沟通与上报</li></ul><button class="rail-outline">查看完整守则</button></section>
       <section class="rail-card panel risk"><div class="risk-title"><span class="shield-icon"><svg viewBox="0 0 24 24"><path d="M12 3 20 6v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M12 8v5M12 16h.01"/></svg></span><div><h2>风险上报</h2><p>如发现疑似风险或不当行为</p></div></div><button class="danger-action" id="riskBtn">立即上报</button></section>
-      <section class="rail-card panel feedback"><h2>教师反馈</h2><div class="teacher-line"><img src="./assets/teacher-avatar.png" alt=""><div><strong>次仁老师</strong><span>项目教师</span></div><em>可联系</em></div><div class="feedback-copy"><span>近期反馈</span><p>“孩子们参与积极，互动很好，阅读理解有明显提升，感谢！”</p><small>2024-12-20</small></div><div class="feedback-actions"><button>在线沟通</button><i></i><button>发送消息</button></div><button class="rail-outline">查看历史反馈</button></section>
+      <section class="rail-card panel feedback"><h2>教师反馈</h2><div class="teacher-line"><img src="./assets/teacher-avatar.png" alt=""><div><strong>次仁老师</strong><span>项目教师</span></div><em>可联系</em></div><div class="feedback-copy"><span>近期反馈</span><p>“孩子们参与积极，互动很好，阅读理解有明显提升，感谢！”</p><small>2026-10-22</small></div><div class="feedback-actions"><button>在线沟通</button><i></i><button>发送消息</button></div><button class="rail-outline">查看历史反馈</button></section>
     </aside>
   </div>
 </section>

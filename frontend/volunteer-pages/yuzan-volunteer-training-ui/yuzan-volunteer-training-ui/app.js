@@ -5,11 +5,11 @@ const courses=[
   {title:'突发情况处理与应急预案',time:'30 分钟',progress:30,img:'assets/network-valley.png'}
 ];
 const resources=[
-  {title:'语言辅助教学指南（通用版）',meta:'PDF · 2.1MB',date:'2024-11-20'},
-  {title:'跨文化沟通技巧速查手册',meta:'PDF · 1.8MB',date:'2024-11-15'},
-  {title:'未成年人保护知识手册',meta:'PDF · 2.5MB',date:'2024-11-10'},
-  {title:'课堂活动设计模板',meta:'DOCX · 1.2MB',date:'2024-11-08',blue:true},
-  {title:'突发情况应对流程图',meta:'PDF · 1.6MB',date:'2024-11-05'}
+  {title:'语言辅助教学指南（通用版）',meta:'PDF · 2.1MB',date:'2026-10-21'},
+  {title:'跨文化沟通技巧速查手册',meta:'PDF · 1.8MB',date:'2026-10-15'},
+  {title:'未成年人保护知识手册',meta:'PDF · 2.5MB',date:'2026-10-10'},
+  {title:'课堂活动设计模板',meta:'DOCX · 1.2MB',date:'2026-10-08',blue:true},
+  {title:'突发情况应对流程图',meta:'PDF · 1.6MB',date:'2026-10-05'}
 ];
 const $=s=>document.querySelector(s);
 $('#courseList').innerHTML=courses.map((c,i)=>`<article class="course-item"><img class="course-thumb" src="${c.img}" alt=""><div class="course-info"><h3>${c.title}</h3><div class="course-meta">课程 · ${c.time}</div><div class="course-progress"><span class="bar"><i style="width:${c.progress}%"></i></span><span>${c.progress}%</span></div></div><button class="continue-btn" data-course="${i}">继续学习</button></article>`).join('');

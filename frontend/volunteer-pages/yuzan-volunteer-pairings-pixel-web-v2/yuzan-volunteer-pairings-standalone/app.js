@@ -24,7 +24,7 @@
   document.getElementById('editGoalBtn').onclick=()=>openModal('编辑帮扶目标','可以围绕阅读兴趣、学习方法和阶段性习惯重新调整目标。',()=>{document.getElementById('goalText').textContent='提升阅读理解、任务规划与持续学习习惯';});
   document.getElementById('filterBtn').onclick=()=>showToast('已打开状态筛选');
   document.getElementById('contactTeacherBtn').onclick=()=>showToast('正在打开教师沟通通道');
-  document.getElementById('adjustTimeBtn').onclick=()=>openModal('调整预约时间','当前预约为 2024-12-04（周三）16:30。确认后将模拟顺延 30 分钟。',()=>{document.querySelector('.appointment-card>strong').textContent='2024-12-04（周三）17:00';});
+  document.getElementById('adjustTimeBtn').onclick=()=>openModal('调整预约时间','当前预约为 2026-11-04（周三）16:30。确认后将模拟顺延 30 分钟。',()=>{document.querySelector('.appointment-card>strong').textContent='2026-11-04（周三）17:00';});
   document.getElementById('startCallBtn').onclick=()=>showToast('已模拟发起线上沟通');
   document.getElementById('riskBtn').onclick=()=>openModal('标记风险','风险标记将立即进入教师处理通道，并记录操作时间。',()=>{document.querySelector('.risk-title p').innerHTML='已标记：需教师关注<br/>等待教师确认与处理';});
   document.getElementById('endPairingBtn').onclick=()=>openModal('结束帮扶关系','结束后记录将归档，无法继续沟通。该操作应在教师确认后执行。',()=>{document.getElementById('endPairingBtn').textContent='已结束并归档';document.getElementById('endPairingBtn').disabled=true;});
