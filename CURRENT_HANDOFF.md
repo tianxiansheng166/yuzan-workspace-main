@@ -1,5 +1,10 @@
 # CURRENT HANDOFF
 
+## Teacher learning insights composition (2026-10-29)
+
+- Reworked the existing `/teacher/diagnostics/showcase/` page into a narrative learning overview with an original generated paper-landscape asset, interactive capability rings, student filter cards and a learning-activity heatmap. Data remains hard-coded for the owner's presentation; the link to formal diagnostics is preserved.
+- Verified period switching, capability selection, student filtering, browser errors and horizontal overflow at 1280/1440/1920 in Chromium. Motion respects reduced-motion preferences. No API integration, live scoring, or other teacher page redesign is claimed.
+
 ## Teacher presentation visual refinement (2026-10-29)
 
 - Replaced the repetitive hero treatment with a compact analytics dashboard, editorial research feature and quieter AI workflow. Removed visible presentation/example labels at the user's request; analytics and research data remain hard-coded and are not connected to the real class database. Real formal diagnostics remains accessible through the dashboard link.
