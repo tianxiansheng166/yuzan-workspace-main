@@ -1,5 +1,10 @@
 # CURRENT HANDOFF
 
+## Teacher presentation visual refinement (2026-10-29)
+
+- Replaced the repetitive hero treatment with a compact analytics dashboard, editorial research feature and quieter AI workflow. Removed visible presentation/example labels at the user's request; analytics and research data remain hard-coded and are not connected to the real class database. Real formal diagnostics remains accessible through the dashboard link.
+- Checked the analytics time switch, capability and status controls, research topic dialogs, AI entry and desktop widths 1280/1440/1920 in Chromium. No page errors or horizontal overflow in those checks. Existing AI providers remain subject to their actual configuration; no real AI generation was tested.
+
 ## Teacher presentation pages (2026-10-29)
 
 - Added a clearly labeled sample-data learning analytics presentation with interactive time range, skill hints, student-status filters, and a return link to the existing real diagnostics page. The teacher navigation opens the presentation; real diagnostics remains at `/teacher/diagnostics/`.
