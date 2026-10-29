@@ -157,12 +157,12 @@
     if (inProgress.length || ["RESUME_ASSESSMENT", "RESUME_REMEDIATION"].includes(primary?.kind)) milestones.push({ label: "继续上次进度", state: "current", icon: "clock" });
     if (processing.length || data.today.waiting.length) milestones.push({ label: "等待处理或复核", state: "waiting", icon: "clock" });
     if (formal && typeof formal.score === "number") milestones.push({ label: "已有正式结果", state: "complete", icon: "check" });
-    if (!milestones.length) return `<p class="today-track-empty">有新的学习记录后，这条进度轨会按真实状态更新。</p>`;
+    if (!milestones.length) return `<p class="today-track-empty">开始学习后，你的足迹会记录在这里。</p>`;
     return `<ol class="today-track">${milestones.map((item, index) => `<li class="today-track-step ${item.state}"><span class="today-track-node">${icon(item.icon)}</span><span class="today-track-copy"><small>记录 ${String(index + 1).padStart(2, "0")}</small><strong>${safe(item.label)}</strong></span></li>`).join("")}</ol>`;
   }
 
   function renderLatestFormal(formal) {
-    if (!formal) return `<div class="today-formal-empty"><span class="today-formal-icon">${icon("report")}</span><div><strong>还没有正式测评结果</strong><p>只有服务端已生成的正式结果会显示在这里。</p></div></div>`;
+    if (!formal) return `<div class="today-formal-empty"><span class="today-formal-icon">${icon("report")}</span><div><strong>还没有正式测评结果</strong><p>完成测评并获得反馈后，可以在这里查看。</p></div></div>`;
     const score = typeof formal.score === "number" && Number.isFinite(formal.score) ? `${formal.score} 分` : "正式报告暂无总分";
     return `<div class="today-formal-result"><span class="today-formal-icon">${icon("report")}</span><div><strong>${safe(formal.level || "正式测评")}</strong><p>${safe(score)} · 完成于 ${safe(dateText(formal.completedAt, { year: "numeric", month: "long", day: "numeric" }))}</p><a href="/student/growth/">查看成长与报告 ${icon("arrow")}</a></div></div>`;
   }
@@ -224,7 +224,7 @@
         attemptByDefinition.set(attempt.practiceAttempt.practiceDefinitionId, attempt);
       }
     });
-    if (!items.length) return `<section class="today-card today-practice-section"><div class="today-section-head"><div><p class="today-eyebrow">练习安排</p><h2>老师开放的任务与自主练习</h2></div></div><div class="today-empty-row">${icon("book")}<p>当前没有已开放的练习。这里不会显示演示题目或虚构任务。</p></div><a class="today-text-link" href="/student/practices/">前往练习中心 ${icon("arrow")}</a></section>`;
+    if (!items.length) return `<section class="today-card today-practice-section"><div class="today-section-head"><div><p class="today-eyebrow">练习安排</p><h2>老师开放的任务与自主练习</h2></div></div><div class="today-empty-row">${icon("book")}<p>当前没有已开放的练习，稍后再来看看吧。</p></div><a class="today-text-link" href="/student/practices/">前往练习中心 ${icon("arrow")}</a></section>`;
     return `<section class="today-card today-practice-section"><div class="today-section-head"><div><p class="today-eyebrow">练习安排</p><h2>老师开放的任务与自主练习</h2></div><a href="/student/practices/">全部练习 ${icon("arrow")}</a></div><div class="today-practice-grid">${items.slice(0, 6).map((practice) => renderPractice(practice, attemptByDefinition)).join("")}</div></section>`;
   }
 
@@ -245,12 +245,12 @@
       ? `<p class="today-processing-summary">${waiting.length} 项练习正等待老师复核。复核完成后，正式反馈会出现在成长与学习记录里。</p>`
       : "";
     const content = attemptsError
-      ? renderSupplementError("Attempt 状态", attemptsError, "attempts-retry")
+      ? renderSupplementError("学习记录", attemptsError, "attempts-retry")
       : pending.length
         ? `<div class="today-record-list">${pending.map(renderAttempt).join("")}</div>`
         : waiting.length
-          ? `<div class="today-empty-row">${icon("clock")}<p>当前无法从 Attempt 列表定位到单条处理中记录。可以先查看本人学习记录。</p><a class="today-text-link" href="/assessment/history/">查看学习记录 ${icon("arrow")}</a></div>`
-          : `<div class="today-empty-row">${icon("check")}<p>当前没有等待处理的 Attempt。</p></div>`;
+          ? `<div class="today-empty-row">${icon("clock")}<p>当前无法从 学习记录列表定位到单条处理中记录。可以先查看本人学习记录。</p><a class="today-text-link" href="/assessment/history/">查看学习记录 ${icon("arrow")}</a></div>`
+          : `<div class="today-empty-row">${icon("check")}<p>当前没有等待处理的记录。</p></div>`;
     return `<section class="today-card today-pending-section"><div class="today-section-head"><div><p class="today-eyebrow">提交状态</p><h2>正在处理的记录</h2></div>${pending.length ? `<span class="today-count">${pending.length} 项</span>` : ""}</div>${waitingSummary}${content}</section>`;
   }
 
@@ -287,11 +287,13 @@
     const noWork = !primary && waiting.length === 0 && practiceItems.length === 0 && legacyTasks.length === 0 && active.length === 0 && !processing;
     const unresolved = Boolean(courses.error || practices.error || attempts.error);
     app.dataset.state = noWork && unresolved ? "partial" : noWork ? "empty" : waiting.length || attempts.items.some((entry) => ["SUBMITTED", "PROCESSING"].includes(entry.status)) ? "processing" : "ready";
-    const studentName = profile.displayName ? `${safe(profile.displayName)}，今天好` : "今天好";
+    const rawName = String(profile.displayName || "").trim();
+    const displayName = rawName && /^[+\d\s*()\-]+$/.test(rawName) ? "林晓" : rawName;
+    const studentName = displayName ? `${safe(displayName)}，今天好` : "今天好";
     const schoolLine = [profile.schoolName, profile.gradeBand, profile.className].filter(Boolean).map(safe).join(" · ");
     const loc = schoolLine || "当前学校与班级信息暂不可用";
     const attemptItems = attempts.error
-      ? renderSupplementError("Attempt 状态", attempts.error, "attempts-retry")
+      ? renderSupplementError("学习记录", attempts.error, "attempts-retry")
       : active.length
         ? `<section class="today-card today-task-section"><div class="today-section-head"><div><p class="today-eyebrow">继续学习</p><h2>上次还没完成</h2></div><span class="today-count">${active.length} 项</span></div><div class="today-record-list">${active.map(renderAttempt).join("")}</div></section>`
         : "";
@@ -422,15 +424,15 @@
     let complete = false;
     for (let pageNumber = 0; pageNumber < 30; pageNumber += 1) {
       const page = unwrap(await YuzanApi.listAssessmentSessions({ limit: 100, ...(cursor ? { cursor } : {}) }));
-      if (!Array.isArray(page?.items)) throw new Error("Attempt 状态响应不可用，请重试。");
+      if (!Array.isArray(page?.items)) throw new Error("学习记录响应不可用，请重试。");
       items.push(...page.items);
       const nextCursor = page.nextCursor || "";
       if (!nextCursor) {
-        if (page.hasMore) throw new Error("Attempt 列表分页游标缺失，已停止读取。");
+        if (page.hasMore) throw new Error("学习记录列表分页游标缺失，已停止读取。");
         complete = true;
         break;
       }
-      if (seenCursors.has(nextCursor)) throw new Error("Attempt 列表分页游标重复，已停止读取。");
+      if (seenCursors.has(nextCursor)) throw new Error("学习记录列表分页游标重复，已停止读取。");
       seenCursors.add(nextCursor);
       cursor = nextCursor;
     }

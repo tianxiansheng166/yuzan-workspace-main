@@ -6,7 +6,7 @@ import vm from "node:vm";
 const source = fs.readFileSync(new URL("./today.js", import.meta.url), "utf8");
 const tick = () => new Promise((resolve) => setTimeout(resolve, 0));
 
-function mount({ courseResponse, courseError, todayData } = {}) {
+function mount({ courseResponse, courseError, todayData, displayName } = {}) {
   let html = "";
   let ariaBusy = "true";
   const listeners = new Map();
@@ -58,7 +58,7 @@ function mount({ courseResponse, courseError, todayData } = {}) {
       summary: {},
     },
     getStudentProfile: async () => ({
-      profile: { userId: "student-fixture", identityUnavailable: false },
+      profile: { userId: "student-fixture", identityUnavailable: false, displayName },
     }),
     listStudentCourses: async (options) => {
       calls.push(options);
@@ -118,4 +118,14 @@ test("Today preserves the dynamic assignment ID in a course detail link", async 
   await tick();
 
   assert.match(f.app.innerHTML, /course-detail\/\?id=assignment%2Ffixture/);
+});
+
+
+test("Today uses a name instead of an account number and preserves a real profile name", async () => {
+  const numeric = mount({ displayName: "13800000000" });
+  const named = mount({ displayName: "次仁卓玛" });
+  await tick();
+  assert.match(numeric.app.innerHTML, /林晓，今天好/);
+  assert.doesNotMatch(numeric.app.innerHTML, /13800000000/);
+  assert.match(named.app.innerHTML, /次仁卓玛，今天好/);
 });

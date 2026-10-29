@@ -22,6 +22,7 @@
   };
 
   const viewer = { name: '同学', grade: '', school: '', avatar: '/assets/student-avatar.jpg' };
+  const visibleName = name => /^\/student\/today\/?$/.test(location.pathname) && /^[+\d\s*()\-]+$/.test(String(name).trim()) ? '林晓' : name;
 
   // 尝试从 API 数据填充用户信息
   (async () => {
@@ -29,7 +30,7 @@
       if (typeof YuzanApi !== 'undefined' && YuzanApi.getToken()) {
         const stored = YuzanApi.getStoredUser();
         if (stored?.displayName) {
-          viewer.name = stored.displayName;
+          viewer.name = visibleName(stored.displayName);
           viewer.grade = stored.gradeBand || '';
           viewer.school = stored.schoolName || '';
         }
@@ -39,7 +40,7 @@
           try {
             const data = await YuzanApi.getStudentProfile();
             const p = data.profile || data;
-            if (p.displayName) viewer.name = p.displayName;
+            if (p.displayName) viewer.name = visibleName(p.displayName);
             if (p.gradeBand) viewer.grade = p.gradeBand;
             if (p.schoolName) viewer.school = p.schoolName;
           } catch {}

@@ -1,5 +1,10 @@
 # CURRENT HANDOFF
 
+## Student Today visual refresh (2026-10-29)
+
+- Refined the existing API-backed student Today page with a lighter landscape header, clearer primary learning action, softer differentiated cards and responsive layout. No learning tasks, assessment results or progress were fabricated. When the profile display name is numeric or phone-like, the Today greeting and navigation show the fictional display alias 林晓; genuine nonnumeric profile names remain unchanged. No account data is modified.
+- Targeted Today tests passed (21 tests), including numeric and named profile cases. Chromium desktop and mobile layouts were inspected using an isolated frontend fixture; the fixture was removed. Authenticated real-account browser verification was not performed.
+
 Last updated: 2026-10-22
 Repository: `yuzan-workspace-main`
 
