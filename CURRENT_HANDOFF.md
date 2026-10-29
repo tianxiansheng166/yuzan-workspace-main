@@ -1,5 +1,9 @@
 # CURRENT HANDOFF
 
+## Student support success message (2026-10-29)
+
+- Simplified the application success message and removed 本机 wording from the student support interface. The page still states that the application is not sent and that companion information is system-generated. No backend behavior changed. JavaScript syntax and diff checks passed.
+
 ## Student support wording (2026-10-29)
 
 - Removed 模拟/演示 wording from the student support interface at the owner’s request. Application and generated responses still state that they are local and not synchronized. The existing local application and partner selection behavior is unchanged. JavaScript syntax and diff checks passed.
