@@ -1,5 +1,10 @@
 # CURRENT HANDOFF
 
+## Student support simulated application flow (2026-10-29)
+
+- Student support now lets a student submit an account/school-scoped local application, see an application-success notice and two fictional volunteer responses, choose or change a companion and retain the selection on refresh. The interface explicitly identifies these as local simulations; it does not send applications, contact volunteers or update the separate volunteer preview. Existing local drafts are retained. Replaced placeholder glyphs with custom inline icons.
+- Chromium checks passed for application, response, selection, changing choice, identity isolation, dialog dismissal and refresh persistence; desktop screenshot inspected. Student Today regression tests (21), JavaScript syntax and diff checks passed.
+
 ## Student support visual and flow refinement (2026-10-29)
 
 - Reworked the student support page with a dark editorial header, warm coral controls, distinct response and topic sections, a four-step mentoring journey, and a clearer application entry. Account/school-scoped drafts can be created, edited and deleted. The response area explicitly says it cannot yet be checked online; no application submission, teacher notification, or volunteer response is fabricated.
