@@ -1,332 +1,95 @@
 (() => {
   'use strict';
-
-  const modal = document.querySelector('#modal');
-  const form = document.querySelector('#taskForm');
-  const table = document.querySelector('.task-table');
-  const dialogError = form.querySelector('.dialog-error');
-
-  let classes = [];
-  let courseVersions = [];
-  let assignments = [];
-  let schoolId = '';
-
-  const statusMap = {
-    DRAFT: { label: '待开始', cls: 'gold' },
-    SCHEDULED: { label: '待开始', cls: 'gold' },
-    OPEN: { label: '进行中', cls: 'green' },
-    CLOSED: { label: '已结束', cls: 'gray' },
-    CANCELLED: { label: '已取消', cls: 'red' },
-    ARCHIVED: { label: '已归档', cls: 'gray' },
-  };
-
-  function pad2(n) {
-    return String(n).padStart(2, '0');
+  const $ = selector => document.querySelector(selector);
+  const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+  const labels = {DRAFT:'草稿',SCHEDULED:'已排期',OPEN:'进行中',CLOSED:'已结束',CANCELLED:'已取消',ARCHIVED:'已归档'};
+  const form = $('#task-form'), dialog = $('#task-dialog'), results = $('#task-results');
+  let schoolId = '', classes = [], courses = [], assignments = [];
+  const className = item => !item ? '班级不可用' : (item.name.startsWith(item.grade || '') ? item.name : `${item.grade || ''}${item.name}`);
+  const date = value => { const d = new Date(value); return Number.isNaN(d.getTime()) ? '未设置' : d.toLocaleString('zh-CN', {year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}); };
+  function classLabel(task) {
+    const target = task.targets?.find(t => t.targetType === 'CLASS');
+    return target ? className(classes.find(c => c.id === target.classId)) : '学生个人';
   }
-
-  function formatDateTime(iso) {
-    if (!iso) return '—';
-    const d = new Date(iso);
-    if (Number.isNaN(d.getTime())) return iso;
-    return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())} ${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+  function render() {
+    $('#total').textContent = assignments.length;
+    $('#drafts').textContent = assignments.filter(a => a.status === 'DRAFT' || a.status === 'SCHEDULED').length;
+    $('#open').textContent = assignments.filter(a => a.status === 'OPEN').length;
+    const visible = assignments.filter(a => (!$('#status-filter').value || a.status === $('#status-filter').value) && (!$('#class-filter').value || a.targets?.some(t => t.classId === $('#class-filter').value)));
+    results.innerHTML = visible.length ? visible.map(task => `<article class="task-row"><div class="task-mark" aria-hidden="true">课</div><div class="task-info"><div class="task-title"><h3>${esc(task.title)}</h3><span class="status ${task.status === 'OPEN' ? 'active' : ''}">${esc(labels[task.status] || task.status)}</span></div><p>${esc(classLabel(task))} <span>·</span> 截止 ${esc(date(task.dueAt))}</p><small>${task.status === 'DRAFT' ? '草稿尚未发布，学生不可见。' : task.status === 'SCHEDULED' ? '已排期，需手动发布后学生才能看到。' : task.status === 'OPEN' ? '已发布，可在学生端查看。' : '查看当前任务状态。'}</small></div><div class="task-actions">${['DRAFT','SCHEDULED'].includes(task.status) ? `<button class="publish" data-id="${esc(task.id)}">发布任务</button>` : '<span>已保存</span>'}</div></article>`).join('') : '<div class="empty">没有符合条件的任务。可以调整筛选条件，或新建任务。</div>';
   }
-
-  function formatDateTimeFull(iso) {
-    if (!iso) return '—';
-    const d = new Date(iso);
-    if (Number.isNaN(d.getTime())) return iso;
-    return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())} ${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+  async function load() {
+    const [classData, courseData, taskData] = await Promise.all([
+      YuzanApi.request(`/schools/${schoolId}/classes/teachers/me`),
+      YuzanApi.request(`/schools/${schoolId}/course-versions?limit=100`),
+      YuzanApi.request(`/schools/${schoolId}/assignments?limit=100`),
+    ]);
+    classes = Array.isArray(classData) ? classData : classData.items || [];
+    courses = (Array.isArray(courseData) ? courseData : courseData.items || []).filter(c => c.status === 'PUBLISHED');
+    assignments = taskData.items || (Array.isArray(taskData) ? taskData : []);
+    const classFilter = $('#class-filter'), classSelect = form.querySelector('[name=classId]'), courseSelect = form.querySelector('[name=courseVersionId]');
+    const selectedClass = classFilter.value;
+    classFilter.replaceChildren(new Option('全部班级', '')); classSelect.replaceChildren(new Option('请选择任教班级', ''));
+    classes.forEach(c => { classFilter.add(new Option(className(c), c.id)); classSelect.add(new Option(className(c), c.id)); });
+    if (classes.length === 1) classSelect.value = classes[0].id;
+    classFilter.value = selectedClass;
+    courseSelect.replaceChildren(new Option('请选择已发布课程', ''));
+    courses.forEach(c => courseSelect.add(new Option(c.title, c.id)));
+    render();
   }
-
-  function getClassById(classId) {
-    return classes.find((c) => c.id === classId);
-  }
-
-  function className(cls) {
-    const grade = cls.grade || '';
-    const name = cls.name || '';
-    return name.startsWith(grade) ? name : `${grade}${name}`;
-  }
-
-  function classDisplay(assignment) {
-    const classTarget = assignment.targets?.find((t) => t.targetType === 'CLASS');
-    if (classTarget) {
-      const cls = getClassById(classTarget.classId);
-      return cls ? className(cls) : '班级未指定';
+  function showDialog() {
+    $('#form-error').textContent = '';
+    const preferred = new URLSearchParams(location.search).get('courseVersionId');
+    if (courses.some(c => c.id === preferred)) form.querySelector('[name=courseVersionId]').value = preferred;
+    if (!form.querySelector('[name=deadline]').value) {
+      const d = new Date(Date.now() + 7 * 86400000); d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+      form.querySelector('[name=deadline]').value = d.toISOString().slice(0, 16);
     }
-    const studentTarget = assignment.targets?.find((t) => t.targetType === 'STUDENT');
-    if (studentTarget) return '学生个人';
-    return '班级未指定';
+    dialog.showModal();
   }
-
-  function submissionDisplay(assignment) {
-    const classTarget = assignment.targets?.find((t) => t.targetType === 'CLASS');
-    const studentTarget = assignment.targets?.find((t) => t.targetType === 'STUDENT');
-    const total = classTarget
-      ? (getClassById(classTarget.classId)?.studentCount || 0)
-      : (studentTarget ? 1 : 0);
-    return `— / ${total || '—'} 已提交`;
-  }
-
-  function statusDisplay(status) {
-    const s = statusMap[status] || { label: status, cls: '' };
-    return `<em class="${s.cls}">${s.label}</em>`;
-  }
-
-  function ensureAuth() {
-    if (!YuzanApi.getToken()) {
-      YuzanDemo.toast('请先登录', 'warning');
-      location.href = '/login';
-      return false;
-    }
-    schoolId = YuzanApi.getActiveSchoolId();
-    if (!schoolId) {
-      YuzanDemo.toast('请先选择学校', 'warning');
-      location.href = '/select-school';
-      return false;
-    }
-    return true;
-  }
-
-  async function loadClasses() {
-    const data = await YuzanApi.request(`/schools/${schoolId}/classes/teachers/me`, { method: 'GET' });
-    classes = Array.isArray(data) ? data : (data.items || []);
-    populateClassSelect();
-  }
-
-  async function loadCourseVersions() {
-    const data = await YuzanApi.request(`/schools/${schoolId}/course-versions?limit=100`, { method: 'GET' });
-    courseVersions = Array.isArray(data) ? data : (data.items || []);
-    if (courseVersions.length > 0) {
-      form.courseVersionId.value = courseVersions[0].id;
-    }
-  }
-
-  async function loadAssignments() {
-    const data = await YuzanApi.request(`/schools/${schoolId}/assignments?limit=100`, { method: 'GET' });
-    assignments = Array.isArray(data) ? data : (data.items || []);
-    renderTable();
-  }
-
-  function populateClassSelect() {
-    const select = form.querySelector('select[name="classId"]');
-    select.innerHTML = classes.length
-      ? classes.map((c) => `<option value="${c.id}">${className(c)}</option>`).join('')
-      : '<option value="">暂无班级</option>';
-  }
-
-  function renderTable() {
-    const thead = table.querySelector('.thead');
-    const pager = table.querySelector('.pager');
-    table.innerHTML = '';
-    table.appendChild(thead);
-
-    if (assignments.length === 0) {
-      const empty = document.createElement('div');
-      empty.className = 'row empty-row';
-      empty.innerHTML = '<span style="grid-column:1 / -1;text-align:center;color:#888;padding:24px 0;">暂无教学任务，点击右上角「新建任务」创建</span>';
-      table.appendChild(empty);
-    } else {
-      assignments.forEach((a) => {
-        const row = document.createElement('div');
-        row.className = 'row';
-        row.dataset.id = a.id;
-        row.dataset.status = a.status;
-        row.dataset.class = classDisplay(a);
-        row.innerHTML = `<span>›　<b>${a.title}</b></span><span>${classDisplay(a)}</span><span>${formatDateTime(a.dueAt)}</span><span>${submissionDisplay(a)}</span><span>${statusDisplay(a.status)}</span><span><button class="row-menu" aria-label="更多操作">•••</button></span>`;
-        bindRow(row, a);
-        table.appendChild(row);
-      });
-    }
-
-    if (pager) {
-      pager.querySelector('span').textContent = `第 1–${assignments.length} 条，共 ${assignments.length} 条`;
-      table.appendChild(pager);
-    }
-
-    applyFilters();
-  }
-
-  function bindRow(row, assignment) {
-    row.addEventListener('click', (e) => {
-      if (e.target.closest('.row-menu')) {
-        YuzanDemo.toast('任务操作菜单功能暂未开通', 'warning');
-        return;
+  $('#new-task').addEventListener('click', showDialog);
+  $('#close-dialog').addEventListener('click', () => dialog.close());
+  $('#cancel-dialog').addEventListener('click', () => dialog.close());
+  $('#class-filter').addEventListener('change', render); $('#status-filter').addEventListener('change', render);
+  form.addEventListener('submit', async event => {
+    event.preventDefault(); if (!form.reportValidity()) return;
+    const values = new FormData(form), due = new Date(values.get('deadline'));
+    if (!String(values.get('title')).trim()) { $('#form-error').textContent = '请输入任务名称。'; return; }
+    if (due <= new Date()) { $('#form-error').textContent = '截止时间需晚于当前时间。'; return; }
+    const button = form.querySelector('[type=submit]'); button.disabled = true; button.textContent = '保存中…';
+    try {
+      await YuzanApi.request(`/schools/${schoolId}/assignments`, {method:'POST',body:JSON.stringify({title:String(values.get('title')).trim(),courseVersionId:values.get('courseVersionId'),startsAt:new Date().toISOString(),dueAt:due.toISOString(),offlineRequired:false,targets:[{targetType:'CLASS',classId:values.get('classId')}]})});
+      dialog.close(); history.replaceState(null, '', '/teacher/assignments/');
+      try { await load(); }
+      catch { $('#list-message').textContent = '草稿已保存，但列表刷新失败，请刷新页面查看。'; }
+    } catch (error) { $('#form-error').textContent = error.message || '保存失败，请重试。'; }
+    finally { button.disabled = false; button.textContent = '保存草稿'; }
+  });
+  results.addEventListener('click', async event => {
+    const button = event.target.closest('.publish'); if (!button) return;
+    const task = assignments.find(a => a.id === button.dataset.id); if (!task) return;
+    button.disabled = true; button.textContent = '发布中…';
+    try {
+      let revision = task.revision;
+      if (task.status === 'DRAFT') {
+        const scheduled = await YuzanApi.request(`/schools/${schoolId}/assignments/${encodeURIComponent(task.id)}/schedule`, {method:'POST',body:JSON.stringify({expectedRevision:revision})});
+        revision = scheduled.revision;
       }
-      if (e.target.closest('[data-nav]')) {
-        return;
-      }
-
-      const existing = row.nextElementSibling?.classList.contains('dynamic-detail') ? row.nextElementSibling : null;
-      if (existing) {
-        existing.remove();
-        row.classList.remove('expanded');
-        return;
-      }
-
-      [...table.querySelectorAll('.dynamic-detail')].forEach((d) => d.remove());
-      [...table.querySelectorAll('.row.expanded')].forEach((r) => r.classList.remove('expanded'));
-
-      row.classList.add('expanded');
-      const detail = document.createElement('div');
-      detail.className = 'detail dynamic-detail';
-      detail.innerHTML = `
-        <div class="timeline">
-          <div><b>布置时间</b><small>${formatDateTimeFull(assignment.startsAt)}</small></div>
-          <div><b>截止时间</b><small>${formatDateTimeFull(assignment.dueAt)}</small></div>
-          <div><b>任务状态</b><small>${(statusMap[assignment.status] || { label: assignment.status }).label}</small></div>
-        </div>
-        <div class="desc">
-          <h3>任务描述</h3>
-          <p>${assignment.title}</p>
-          <h3>操作</h3>
-          <p>可查看学生提交、发送提醒或进入反馈页面。</p>
-          <button data-nav="/teacher/reviews/submission-1/">查看提交</button>
-        </div>`;
-      row.after(detail);
-    });
-  }
-
-  // LIVE_LOCAL: 时间筛选仅做 UI 切换，未实际按时间范围过滤任务数据
-  function applyFilters() {
-    const statusBtn = document.querySelector('.filter[data-filter="status"]');
-    const classBtn = document.querySelector('.filter[data-filter="class"]');
-    const statusText = statusBtn?.textContent.replace(/　⌄/, '') || '全部状态';
-    const classText = classBtn?.textContent.replace(/　⌄/, '') || '全部班级';
-
-    table.querySelectorAll('.row').forEach((row) => {
-      if (row.classList.contains('empty-row')) return;
-      let visible = true;
-      if (statusText !== '全部状态') {
-        const rowStatus = statusMap[row.dataset.status]?.label || row.dataset.status;
-        if (rowStatus !== statusText) visible = false;
-      }
-      if (visible && classText !== '全部班级' && row.dataset.class !== classText) {
-        visible = false;
-      }
-      row.hidden = !visible;
-    });
-  }
-
+      await YuzanApi.request(`/schools/${schoolId}/assignments/${encodeURIComponent(task.id)}/open`, {method:'POST',body:JSON.stringify({expectedRevision:revision})});
+      $('#list-message').textContent = '';
+      await load();
+    } catch (error) {
+      await load().catch(() => {});
+      $('#list-message').textContent = error.message || '发布失败，请刷新后重试。';
+    }
+  });
   async function init() {
-    if (!ensureAuth()) return;
-    try {
-      await Promise.all([loadClasses(), loadCourseVersions()]);
-      await loadAssignments();
-    } catch (err) {
-      YuzanDemo.toast(err.message || '加载教学任务失败', 'error');
-    }
+    if (!YuzanApi.getToken()) { location.href = '/login/'; return; }
+    schoolId = YuzanApi.getActiveSchoolId();
+    if (!schoolId) { results.textContent = '请先选择已加入的学校。'; return; }
+    try { await load(); if (new URLSearchParams(location.search).has('courseVersionId')) showDialog(); }
+    catch (error) { results.textContent = error.message || '加载失败，请刷新页面重试。'; }
   }
-
-  document.querySelector('.new').addEventListener('click', () => {
-    if (classes.length === 0) {
-      YuzanDemo.toast('当前没有可用班级，无法创建任务', 'warning');
-      return;
-    }
-    if (courseVersions.length === 0) {
-      YuzanDemo.toast('当前没有可用课程版本，无法创建任务', 'warning');
-      return;
-    }
-    const d = new Date(Date.now() + 7 * 864e5);
-    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
-    form.deadline.value = d.toISOString().slice(0, 16);
-    dialogError.textContent = '';
-    modal.showModal();
-    form.title.focus();
-  });
-
-  modal.addEventListener('click', (e) => {
-    const r = modal.getBoundingClientRect();
-    if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) modal.close();
-  });
-
-  form.addEventListener('submit', async (e) => {
-    if (e.submitter?.value === 'cancel') return;
-    e.preventDefault();
-    if (!form.reportValidity()) return;
-
-    const title = form.title.value.trim();
-    const classId = form.classId.value;
-    const courseVersionId = form.courseVersionId.value;
-    const deadline = form.deadline.value;
-
-    if (!classId) {
-      dialogError.textContent = '请选择班级';
-      return;
-    }
-    if (!courseVersionId) {
-      dialogError.textContent = '没有可用的课程版本，无法创建任务';
-      return;
-    }
-
-    const saveBtn = form.querySelector('.save');
-    saveBtn.disabled = true;
-    saveBtn.textContent = '保存中…';
-
-    try {
-      await YuzanApi.request(`/schools/${schoolId}/assignments`, {
-        method: 'POST',
-        body: JSON.stringify({
-          title,
-          courseVersionId,
-          startsAt: new Date().toISOString(),
-          dueAt: new Date(deadline).toISOString(),
-          offlineRequired: false,
-          targets: [{ targetType: 'CLASS', classId }],
-        }),
-      });
-      modal.close();
-      YuzanDemo.toast('教学任务已创建', 'success');
-      await loadAssignments();
-    } catch (err) {
-      dialogError.textContent = err.message || '创建任务失败';
-    } finally {
-      saveBtn.disabled = false;
-      saveBtn.textContent = '保存任务';
-    }
-  });
-
-  const choices = {
-    class: ['全部班级', ...classes.map(className)],
-    status: ['全部状态', '进行中', '待开始', '已结束', '已取消'],
-  };
-
-  // 时间筛选按钮标记为 data-unsupported，由下方统一 UNSUPPORTED 处理拦截点击
-
-  document.querySelectorAll('.filter:not([data-unsupported])').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const key = btn.dataset.filter;
-      const list = key === 'class'
-        ? ['全部班级', ...classes.map(className)]
-        : choices[key];
-      const current = btn.textContent.replace(/　⌄/, '');
-      const next = list[(list.indexOf(current) + 1) % list.length];
-      btn.textContent = `${next}　⌄`;
-      applyFilters();
-      YuzanDemo.toast(`筛选条件已切换为：${next}`);
-    });
-  });
-
-  // 关注卡片摘要按钮（未完成/等待同步/待反馈）- 保留高亮切换 + 弹出 UNSUPPORTED 提示
-  document.querySelectorAll('.attention-card [data-kind]').forEach((el) => {
-    el.addEventListener('click', () => {
-      document.querySelectorAll('.attention-card [data-kind]').forEach((x) => {
-        x.classList.toggle('highlight', x.dataset.kind === el.dataset.kind);
-      });
-    });
-  });
-
-  // ── UNSUPPORTED: 统一拦截所有 data-unsupported 元素的点击 ──
-  document.querySelectorAll('[data-unsupported]').forEach((el) => {
-    el.style.opacity = '.55';
-    el.style.cursor = 'not-allowed';
-    el.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      const msg = el.dataset.unsupported || '该功能暂未开通';
-      YuzanDemo.toast(msg, 'warning');
-    });
-  });
-
+  const message = document.createElement('p'); message.id = 'list-message'; message.className = 'form-error'; message.setAttribute('role','alert'); results.before(message);
   init();
 })();

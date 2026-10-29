@@ -1,5 +1,12 @@
 # CURRENT HANDOFF
 
+## Teacher navigation, course and task pages (2026-10-29)
+
+- Fixed missing API-client loading on teacher class/student/submission pages and dynamic class/student routes. Removed login's fake offline/demo success. The teacher shell displays the stored user and school instead of fixed identity/sync claims.
+- Added a real course-version catalog and rebuilt the task list around actual API data, published course selection, authorized class selection, drafts and the backend's draft → scheduled → open transitions. The sole authorized class is preselected; the existing local `teacher.test` account is already enrolled in the UAT class. Automatic binding for newly registered teachers is not implemented: the current API has no teacher self-binding contract, and this preview uses the separate Owner UAT API at 4085.
+- Actual browser login, class navigation, ten-course catalog and course-to-task selection passed. Task create and two-step publication requests were exercised with intercepted writes; no real assignment was created or published. API restrictions prevent this teacher from editing some listed course versions. Student course/practice views were inspected on 4285.
+- Server routing was changed in this branch; localhost-only `frontend/server.mjs` binding remains an uncommitted preview-specific change.
+
 ## Teacher desktop preview refinement (2026-10-29)
 
 - On `feat/sep08-teacher-volunteer-development`, the September 8 teacher home now reallocates space when either navigation or the advice panel is collapsed. The advice panel has an accessible toggle and no longer overlaps the content. Home styling and spacing were refined; fixed demonstration content is labeled as such.

@@ -100,6 +100,7 @@ function routeToSpa(pathname) {
   }
   if (/^\/student\/practices\/[^/]+\/?$/.test(pathname)) return { file: join(root, 'assessment', 'practice-shell.html'), page: 'detail' };
   if (pathname === '/teacher' || pathname.startsWith('/teacher/')) {
+    if (pathname === '/teacher/courses' || pathname === '/teacher/courses/') return join(root, 'teacher', 'courses', 'index.html');
     if (pathname.startsWith('/teacher/courses/')) return join(root, 'teacher', 'courses', 'spring', 'studio', 'index.html');
     if (pathname.startsWith('/teacher/assignments')) return join(root, 'teacher', 'assignments', 'index.html');
     if (pathname === '/teacher/reviews' || pathname === '/teacher/reviews/') return join(root, 'teacher', 'reviews', 'index.html');
@@ -110,8 +111,10 @@ function routeToSpa(pathname) {
     if (pathname.startsWith('/teacher/assessments/detail')) return join(root, 'teacher', 'assessments', 'detail', 'index.html');
     if (pathname.startsWith('/teacher/assessments/tasks')) return join(root, 'teacher', 'assessments', 'tasks', 'index.html');
     if (pathname.startsWith('/teacher/assessments')) return join(root, 'teacher', 'assessments', 'tasks', 'index.html');
+    if (/^\/teacher\/classes\/[^/]+\/?$/.test(pathname)) return join(root, 'teacher', 'classes', 'detail', 'index.html');
     if (pathname.startsWith('/teacher/classes/detail')) return join(root, 'teacher', 'classes', 'detail', 'index.html');
     if (pathname.startsWith('/teacher/classes')) return join(root, 'teacher', 'classes', 'index.html');
+    if (/^\/teacher\/students\/(?!demo(?:\/|$))[^/]+\/?$/.test(pathname)) return join(root, 'teacher', 'students', 'detail', 'index.html');
     if (pathname.startsWith('/teacher/students/detail')) return join(root, 'teacher', 'students', 'detail', 'index.html');
     if (pathname.startsWith('/teacher/students')) return join(root, 'teacher', 'students', 'demo', 'index.html');
     if (pathname.startsWith('/teacher/ai-tools')) return join(root, 'teacher', 'ai-tools', 'index.html');

@@ -140,9 +140,6 @@
     admin: 'SCHOOL_ADMIN'
   };
 
-  const DEMO_ACCOUNTS = ['student.test', 'teacher.test', 'volunteer.test', 'admin.test', 'researcher.test'];
-  const DEMO_PASSWORD = 'YuzanTest!2026';
-
   function hasApiClient() {
     return typeof window !== 'undefined' && window.YuzanApi && typeof window.YuzanApi.login === 'function';
   }
@@ -165,13 +162,6 @@
     }, 900);
   }
 
-  function installDemoSession(account, role) {
-    localStorage.setItem('yuzan-access-token', 'demo-token-' + account);
-    localStorage.setItem('yuzan-active-school-id', '11111111-1111-4111-8111-111111111111');
-    localStorage.setItem('yuzan-demo-session', JSON.stringify({ account, loggedInAt: Date.now(), offline: true }));
-    return window.YuzanApi ? window.YuzanApi.getHomeUrlByRole({ memberships: [{ role }] }) : '/select-school';
-  }
-
   async function callEndpoint(action, payload) {
     const endpoint = AUTH_ENDPOINTS[action];
     if (endpoint) {
@@ -185,7 +175,7 @@
     }
 
     if (!hasApiClient()) {
-      return { demo: true };
+      throw new Error('认证服务暂不可用，请稍后重试。');
     }
 
     const api = window.YuzanApi;
@@ -208,37 +198,11 @@
     transition.setAttribute('aria-hidden', 'false');
     body.classList.add('is-transitioning');
 
-    if (action === 'login' && !navigator.onLine) {
-      localStorage.setItem('yuzan-demo-session', JSON.stringify({ account: data.account, loggedInAt: Date.now(), offline: true }));
-      if (window.YuzanDemo) window.YuzanDemo.toast('已使用本机凭据登录', 'warning');
-      finishRedirect('/select-school');
-      return;
-    }
-
     try {
       const result = await callEndpoint(action, data);
       if (result?.redirect) {
         finishRedirect(result.redirect);
         return;
-      }
-
-      // Demo fallback: if the API is not configured, allow test accounts to log in.
-      if (action === 'login' && result?.demo !== false) {
-        const account = data.account?.trim();
-        const password = data.password;
-        const roleMap = {
-          'student.test': 'STUDENT',
-          'teacher.test': 'TEACHER',
-          'volunteer.test': 'VOLUNTEER',
-          'admin.test': 'SCHOOL_ADMIN',
-          'researcher.test': 'RESEARCHER'
-        };
-        if (DEMO_ACCOUNTS.includes(account) && password === DEMO_PASSWORD) {
-          const homeUrl = installDemoSession(account, roleMap[account] || 'STUDENT');
-          if (window.YuzanDemo) window.YuzanDemo.toast('演示模式登录成功', 'warning');
-          finishRedirect(homeUrl);
-          return;
-        }
       }
 
       window.setTimeout(() => {
@@ -248,21 +212,6 @@
         dialog.showModal();
       }, 2350);
     } catch (error) {
-      const account = data.account?.trim?.() || data.phone?.trim?.();
-      const password = data.password;
-      if (action === 'login' && DEMO_ACCOUNTS.includes(account) && password === DEMO_PASSWORD) {
-        const roleMap = {
-          'student.test': 'STUDENT',
-          'teacher.test': 'TEACHER',
-          'volunteer.test': 'VOLUNTEER',
-          'admin.test': 'SCHOOL_ADMIN',
-          'researcher.test': 'RESEARCHER'
-        };
-        const homeUrl = installDemoSession(account, roleMap[account] || 'STUDENT');
-        if (window.YuzanDemo) window.YuzanDemo.toast('演示模式登录成功', 'warning');
-        finishRedirect(homeUrl);
-        return;
-      }
       finishError(error.message || '连接失败，请稍后再试。');
     }
   }
