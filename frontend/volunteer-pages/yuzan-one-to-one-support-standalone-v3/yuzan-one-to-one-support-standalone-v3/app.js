@@ -30,12 +30,13 @@
   modal.addEventListener('click',e=>{if(e.target===modal)closeModal();});
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!modal.hidden)closeModal();});
   document.querySelectorAll('.student-card').forEach(card=>card.addEventListener('click',()=>{
-    if(card.dataset.student!=='小满'){showToast('该帮扶记录暂不可查看');return;}
     document.querySelectorAll('.student-card').forEach(x=>x.classList.remove('selected'));
-    card.classList.add('selected');showToast(`已切换到${card.dataset.student}`);
+    card.classList.add('selected');VolunteerPairingData.render({'小满':'A','小云':'B','小宁':'C'}[card.dataset.student],'current');showToast(`已切换到${card.dataset.student}`);
   }));
+  VolunteerPairingData.render('A','current');
   document.querySelectorAll('.workflow-step').forEach(step=>step.addEventListener('click',()=>{
-    document.querySelectorAll('.workflow-step').forEach(x=>x.classList.remove('current'));
+    VolunteerPairingData.render('A','current');
+  document.querySelectorAll('.workflow-step').forEach(x=>x.classList.remove('current'));
     step.classList.add('current');showToast(`已切换到第 ${step.dataset.step} 阶段`);
   }));
   document.querySelectorAll('.nav-item').forEach(item=>item.addEventListener('click',e=>{

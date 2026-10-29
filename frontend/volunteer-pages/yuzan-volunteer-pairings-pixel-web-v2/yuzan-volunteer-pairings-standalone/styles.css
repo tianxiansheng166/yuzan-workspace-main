@@ -84,3 +84,5 @@
   .top-right-art{position:absolute;left:80px;right:0;top:0;width:auto;height:84px;order:initial}
   .top-right-art:before{background:linear-gradient(90deg,#fffdfb 0%,rgba(255,253,251,.64) 46%,rgba(255,253,251,.12) 100%),linear-gradient(180deg,transparent,#fffdfb)}
 }
+
+.student-card .student-avatar{display:grid;place-items:center;background:#eee5dc;color:#aa725d;font-size:19px;font-weight:700;border:0}.student-card .student-avatar.avatar-1,.student-card .student-avatar.b{background:#e5ede2;color:#688a68}.student-card .student-avatar.avatar-2,.student-card .student-avatar.c{background:#e5edf1;color:#68899c}.student-card .student-avatar:before,.student-card .student-avatar:after{display:none}.history-item[hidden],.history-list article[hidden]{display:none!important}button:disabled{cursor:not-allowed}

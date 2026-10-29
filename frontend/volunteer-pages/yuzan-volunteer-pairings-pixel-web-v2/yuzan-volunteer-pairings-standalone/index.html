@@ -45,13 +45,13 @@
         <div class="list-head"><h2>当前帮扶 <span>(3)</span></h2><button id="filterBtn"><svg viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></svg>筛选</button></div>
         <div class="student-list" id="studentList">
           <button class="student-card selected" data-student="A" data-name="小满" data-grade="小学四年级" data-status="帮扶中">
-            <span class="student-avatar a"></span><span class="student-info"><strong>小满</strong><small>小学四年级</small></span><b class="status green">帮扶中</b>
+            <span class="student-avatar a" aria-hidden="true">满</span><span class="student-info"><strong>小满</strong><small>小学四年级</small></span><b class="status green">帮扶中</b>
           </button>
           <button class="student-card" data-student="B" data-name="小云" data-grade="初中一年级" data-status="准备中">
-            <span class="student-avatar b"></span><span class="student-info"><strong>小云</strong><small>初中一年级</small></span><b class="status orange">准备中</b>
+            <span class="student-avatar b" aria-hidden="true">云</span><span class="student-info"><strong>小云</strong><small>初中一年级</small></span><b class="status orange">准备中</b>
           </button>
           <button class="student-card" data-student="C" data-name="小宁" data-grade="小学二年级" data-status="已结束">
-            <span class="student-avatar c"></span><span class="student-info"><strong>小宁</strong><small>小学二年级</small></span><b class="status gray">已结束</b>
+            <span class="student-avatar c" aria-hidden="true">宁</span><span class="student-info"><strong>小宁</strong><small>小学二年级</small></span><b class="status gray">已结束</b>
           </button>
         </div>
         <button class="add-student" id="addStudentBtn">＋ 添加帮扶对象</button>
@@ -105,5 +105,5 @@
   <section class="modal" role="dialog" aria-modal="true"><button class="modal-close" id="modalClose">×</button><div class="modal-content"><h2 id="modalTitle">操作确认</h2><p id="modalText"></p><div class="modal-actions"><button class="secondary" id="modalCancel">取消</button><button class="primary-red" id="modalConfirm">确认</button></div></div></section>
 </div>
 <div class="toast" id="toast"></div>
-<script src="./app.js"></script>
+<script src="/assets/volunteer-pairing-data.js"></script><script src="./app.js"></script>
 </body></html>

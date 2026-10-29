@@ -1,5 +1,10 @@
 # CURRENT HANDOFF
 
+## Volunteer support records per student (2026-10-29)
+
+- Added a shared fictional dataset for 小满、小云 and 小宁 across both volunteer pairing record pages. Switching students updates goals, needs, phases, communication history, duration, teacher confirmation and appointment; completed relationships disable appointment and ending actions. Replaced identical placeholder silhouettes with distinct coloured name avatars.
+- Chromium interaction checks passed for switching between all three students on both pages; screenshot inspected. Frontend tests, JS syntax and diff checks passed. These records are fictional and disconnected from backend student records. The pre-existing local `frontend/server.mjs` binding remains uncommitted.
+
 ## Volunteer student naming and consistency (2026-10-29)
 
 - Replaced A/B/C student labels in both existing support record pages with consistent fictional nicknames 小满、小云、小宁. 我的帮扶 identifies the active relationship as 小满, and the phase status now agrees with the eighth week of the fictional timeline. Unavailable records no longer select another student while continuing to show 小满’s details.
