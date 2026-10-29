@@ -1,5 +1,10 @@
 # CURRENT HANDOFF
 
+## One-to-one support discovery refinement (2026-10-29)
+
+- Refined the support hall with a shorter introduction, more prominent opportunity cards and clear weekly time, duration and period. Added a cohesive 我的帮扶 view showing a fictional active relationship and locally saved interests; the existing pairing record remains reachable from it. The requests and active relationship are fictional; interests remain browser-local and do not notify teachers or create real matches.
+- Chromium desktop and mobile hall screenshots and desktop 我的帮扶 were inspected. Browser interaction checks passed for filters, search, details, local interest, 我的帮扶 and the existing record entry/return. Frontend tests and syntax/diff checks passed. The local `frontend/server.mjs` binding remains uncommitted.
+
 ## Volunteer visual refresh (2026-10-29)
 
 - Reworked the existing workbench hierarchy into a landscape welcome, service-hours feature, journey and task/learning sections. Added an original generated highland illustration reused in the support hall and training path; task and training pages gained distinct surfaces and clearer hierarchy. The task-page teacher portrait was replaced with a monogram because the original crop was broken.
