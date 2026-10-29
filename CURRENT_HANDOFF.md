@@ -1,5 +1,10 @@
 # CURRENT HANDOFF
 
+## Student one-to-one support entry (2026-10-29)
+
+- Added the 一对一帮扶 entry to the shared student navigation and the existing static route `/student/support/`. The student page offers topic selection and an account/school-scoped browser-local request draft, with explicit language that it has not been sent. It does not create a pairing, notify a teacher, or sync with the separate volunteer preview: current API roles do not provide a student request submission/list contract. No fake matching status is shown.
+- Phone-like student navigation names use the same display alias as Today, without modifying account data. Chromium checked desktop 1280/1440 and mobile 390 layouts, navigation visibility, topic selection, local draft save, account isolation and dialog dismissal; 21 Today regression tests and JS syntax/diff checks passed.
+
 ## Student Today visual refresh (2026-10-29)
 
 - Refined the existing API-backed student Today page with a lighter landscape header, clearer primary learning action, softer differentiated cards and responsive layout. No learning tasks, assessment results or progress were fabricated. When the profile display name is numeric or phone-like, the Today greeting and navigation show the fictional display alias 林晓; genuine nonnumeric profile names remain unchanged. No account data is modified.

@@ -22,7 +22,7 @@
   };
 
   const viewer = { name: '同学', grade: '', school: '', avatar: '/assets/student-avatar.jpg' };
-  const visibleName = name => /^\/student\/today\/?$/.test(location.pathname) && /^[+\d\s*()\-]+$/.test(String(name).trim()) ? '林晓' : name;
+  const visibleName = name => /^[+\d\s*()\-]+$/.test(String(name).trim()) ? '林晓' : name;
 
   // 尝试从 API 数据填充用户信息
   (async () => {
@@ -69,7 +69,8 @@
     { label: '推荐', route: '/student/recommendations', icon: 'growth', match: /^\/student\/recommendations/ },
     { label: '成长', route: '/student/growth', icon: 'chart', match: /^\/student\/growth/ },
     { label: '社区', route: '/student/community', icon: 'feedback', match: /^\/student\/community/ },
-    { label: '我的', route: '/student/profile', icon: 'user', match: /^\/student\/profile/ }
+    { label: '我的', route: '/student/profile', icon: 'user', match: /^\/student\/profile/ },
+    { label: '一对一帮扶', route: '/student/support/', icon: 'growth', match: /^\/student\/support(?:\/|$)/, featured: true }
   ];
 
   const topActiveIndex = (() => {
@@ -83,7 +84,7 @@
 
   const topHtml = topNav.map((n, i) => {
     const active = i === topActiveIndex;
-    return `<a href="${n.route}${qs}" class="${active ? 'active' : ''}" data-student-nav>${icons[n.icon]}<span>${n.label}</span></a>`;
+    return `<a href="${n.route}${qs}" class="${active ? 'active' : ''} ${n.featured ? 'sn-support-link' : ''}" data-student-nav>${icons[n.icon]}<span>${n.label}</span></a>`;
   }).join('');
 
   const header = document.createElement('header');
