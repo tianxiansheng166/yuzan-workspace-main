@@ -1,5 +1,9 @@
 # CURRENT HANDOFF
 
+## Student support wording (2026-10-29)
+
+- Removed 模拟/演示 wording from the student support interface at the owner’s request. Application and generated responses still state that they are local and not synchronized. The existing local application and partner selection behavior is unchanged. JavaScript syntax and diff checks passed.
+
 ## Student support simulated application flow (2026-10-29)
 
 - Student support now lets a student submit an account/school-scoped local application, see an application-success notice and two fictional volunteer responses, choose or change a companion and retain the selection on refresh. The interface explicitly identifies these as local simulations; it does not send applications, contact volunteers or update the separate volunteer preview. Existing local drafts are retained. Replaced placeholder glyphs with custom inline icons.
