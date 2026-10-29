@@ -19,7 +19,7 @@
     toastTimer=setTimeout(()=>toast.classList.remove('show'),1800);
   }
   function openModal(action){
-    const [title,text]=messages[action]||['操作说明','该功能已连接到交互演示。'];
+    const [title,text]=messages[action]||['操作说明','此功能暂不可用，请联系项目教师。'];
     modalTitle.textContent=title;modalText.textContent=text;modal.hidden=false;document.body.style.overflow='hidden';
   }
   function closeModal(){modal.hidden=true;document.body.style.overflow='';}
@@ -30,6 +30,7 @@
   modal.addEventListener('click',e=>{if(e.target===modal)closeModal();});
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!modal.hidden)closeModal();});
   document.querySelectorAll('.student-card').forEach(card=>card.addEventListener('click',()=>{
+    if(card.dataset.student!=='小满'){showToast('该帮扶记录暂不可查看');return;}
     document.querySelectorAll('.student-card').forEach(x=>x.classList.remove('selected'));
     card.classList.add('selected');showToast(`已切换到${card.dataset.student}`);
   }));

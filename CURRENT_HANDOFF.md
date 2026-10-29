@@ -1,5 +1,10 @@
 # CURRENT HANDOFF
 
+## Volunteer student naming and consistency (2026-10-29)
+
+- Replaced A/B/C student labels in both existing support record pages with consistent fictional nicknames 小满、小云、小宁. 我的帮扶 identifies the active relationship as 小满, and the phase status now agrees with the eighth week of the fictional timeline. Unavailable records no longer select another student while continuing to show 小满’s details.
+- Replaced exposed volunteer profile state-switcher and several simulated-action messages with ordinary profile information or honest availability wording. Fictional content and local-only storage remain disconnected from real students and matching. Chromium desktop record screenshot, JS syntax, frontend tests and diff checks passed. The pre-existing local `frontend/server.mjs` change remains uncommitted.
+
 ## One-to-one support discovery refinement (2026-10-29)
 
 - Refined the support hall with a shorter introduction, more prominent opportunity cards and clear weekly time, duration and period. Added a cohesive 我的帮扶 view showing a fictional active relationship and locally saved interests; the existing pairing record remains reachable from it. The requests and active relationship are fictional; interests remain browser-local and do not notify teachers or create real matches.

@@ -113,8 +113,8 @@
     document.querySelector('#report-risk')?.addEventListener('click',reportRisk);
     document.querySelector('#switch-role')?.addEventListener('click',showRoleModal);
     document.querySelector('#notifications')?.addEventListener('click',openNotifications);
-    document.querySelector('#language')?.addEventListener('click',()=>toast('当前演示使用简体中文。'));
-    document.querySelector('#profile')?.addEventListener('click',showStateModal);
+    document.querySelector('#language')?.addEventListener('click',()=>toast('当前语言：简体中文。'));
+    document.querySelector('#profile')?.addEventListener('click',()=>openModal('个人信息',`${state.viewer.name} · 志愿者 ${state.viewer.level}`));
     document.querySelector('#retry')?.addEventListener('click',()=>{state.ui.pageState='loading';render();try{location.reload()}catch(_){state.ui.pageState='error';render();toast('刷新失败，请手动按 F5 重载页面。','error')}});
     document.querySelectorAll('[data-sub-action]').forEach(el=>el.addEventListener('click',()=>toast(`${el.dataset.subAction}已打开，等待后端数据接入。`,'success')));
     const integratedFrame=document.querySelector('.integrated-page iframe');
