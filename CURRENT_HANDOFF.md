@@ -1,5 +1,10 @@
 # CURRENT HANDOFF
 
+## Student support visual and flow refinement (2026-10-29)
+
+- Reworked the student support page with a dark editorial header, warm coral controls, distinct response and topic sections, a four-step mentoring journey, and a clearer application entry. Account/school-scoped drafts can be created, edited and deleted. The response area explicitly says it cannot yet be checked online; no application submission, teacher notification, or volunteer response is fabricated.
+- Chromium desktop and mobile screenshots inspected; browser checks passed for navigation, topic selection, local draft save, identity isolation and dialog dismissal. Today regression tests (21), JS syntax and diff checks passed. Student request and response APIs and cross-role integration remain outstanding.
+
 ## Student one-to-one support entry (2026-10-29)
 
 - Added the 一对一帮扶 entry to the shared student navigation and the existing static route `/student/support/`. The student page offers topic selection and an account/school-scoped browser-local request draft, with explicit language that it has not been sent. It does not create a pairing, notify a teacher, or sync with the separate volunteer preview: current API roles do not provide a student request submission/list contract. No fake matching status is shown.
