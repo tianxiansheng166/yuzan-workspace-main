@@ -53,6 +53,7 @@
       </header>
 
       <section class="page">
+        <section class="ai-showcase"><div><p>AI TEACHING STUDIO <span>教学辅助</span></p><h2>把更多时间，留给教学。</h2><div class="ai-showcase-copy">从备课思路到双语表达，让工具支持教师的每一次创造。AI 内容请由教师审核后使用。</div><div class="ai-showcase-actions"><a href="#workflow-map">探索备课流程 ↘</a><a href="/teacher/translation/">打开藏汉翻译 ↗</a></div></div><div class="ai-showcase-art" aria-hidden="true"><span>✳</span><i>IDEA</i><i>CREATE</i><i>TEACH</i></div></section>
         <div class="hero-art"><img src="./assets/top-mountain-panorama.webp" alt="" /></div>
         <div class="page-title-row">
           <div><h1>教师 AI 工具中心</h1><p>智能备课 · 精准教学 · 共育成长</p></div>
@@ -68,7 +69,7 @@
               <div class="job-status-bar" id="jobStatusBar" hidden data-state="idle"><span class="job-status-text" id="jobStatusText"></span><button class="job-cancel-btn" id="jobCancelBtn">取消</button></div>
             </section>
 
-            <section class="workflow-card">
+            <section class="workflow-card" id="workflow-map">
               <header class="workflow-head"><div><h2>备课工作流地图</h2><p>根据目标智能推荐备课步骤与工具，点击节点进入相应工具</p></div><div class="workflow-controls"><button data-action="route-help">? 路径说明</button><div class="route-tabs"><button class="active" data-route="recommend">推荐路径</button><button data-route="custom">自定义路径</button></div></div></header>
               <div class="route-line" aria-hidden="true"><svg viewBox="0 0 1000 120" preserveAspectRatio="none"><path d="M20 72 C95 20 135 112 214 56 S360 104 426 54 S584 106 650 50 S808 98 980 54"/></svg></div>
               <div class="stage-grid" id="stageGrid">
@@ -95,7 +96,7 @@
           </section>
 
           <aside class="right-rail">
-            <section class="rail-card recent-card"><header><h2>最近使用</h2><button>全部 ›</button></header>
+            <section class="rail-card recent-card"><header><h2>最近使用 · 示例</h2><button>全部 ›</button></header>
               <button class="recent-row" data-action="open-recent"><span class="row-icon red-pencil">✎</span><div><b>高原上的春天</b><small>朗读与表达 · 三年级下册　<span>MindMate</span></small></div><time>今天 10:32</time></button>
               <button class="recent-row" data-action="open-recent"><span class="row-icon green-home">⌂</span><div><b>第3章 朗读与表达思路</b><small>教学思路预览　<span>MindGraph</span></small></div><time>昨天 16:45</time></button>
               <button class="recent-row" data-action="open-recent"><span class="row-icon orange-chat">译</span><div><b>春天相关术语翻译</b><small>藏汉对照表　<span class="orange-label">藏汉翻译</span></small></div><time>昨天 11:20</time></button>
@@ -107,9 +108,9 @@
             </section>
 
             <section class="rail-card service-card"><header><h2>外部服务状态</h2><button data-action="manage-services">管理 ›</button></header>
-              <div class="service-row"><span>⌂</span><b>MindMate 服务</b><em class="connected">✓ 已连接</em></div>
-              <div class="service-row"><span class="green-service">●</span><b>MindGraph 服务</b><em class="connected">✓ 已连接</em></div>
-              <div class="service-row"><span class="orange-service">译</span><b>藏汉翻译服务</b><em class="connected">✓ 已连接</em></div>
+              <div class="service-row"><span>⌂</span><b>MindMate 服务</b><em class="disabled">状态待核验</em></div>
+              <div class="service-row"><span class="green-service">●</span><b>MindGraph 服务</b><em class="disabled">状态待核验</em></div>
+              <div class="service-row"><span class="orange-service">译</span><b>藏汉翻译服务</b><em class="disabled">状态待核验</em></div>
               <div class="service-row"><span class="orange-service">▧</span><b>资源库服务</b><em class="warning">需配置　去配置 ›</em></div>
               <div class="service-row" id="aiServiceRow"><span>◈</span><b>AI 能力服务</b><em class="disabled">不可用　查看说明 ›</em></div>
               <p>部分服务由第三方提供，使用前需完成授权配置。</p>

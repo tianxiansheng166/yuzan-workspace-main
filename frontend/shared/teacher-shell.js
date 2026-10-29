@@ -12,9 +12,9 @@
       { id: 'home', label: '首页', route: '/teacher', icon: '<svg viewBox="0 0 24 24"><path d="M3 10 12 3l9 7M5 9v11h14V9M9 20v-6h6v6"/></svg>' },
       { id: 'course', label: '课程', route: '/teacher/courses/', icon: '<svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M8 9h8M8 13h5M7 3v4M17 3v4"/></svg>' },
       { id: 'task', label: '任务', route: '/teacher/assignments', icon: '<svg viewBox="0 0 24 24"><path d="M6 5h12l2 4v10H4V9zM8 5V3h8v2M8 11h8M8 15h5"/></svg>' },
-      { id: 'research', label: '教研', route: '/research', icon: '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4 4"/></svg>' },
+      { id: 'research', label: '教研', route: '/teacher/research/', icon: '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4 4"/></svg>' },
       { id: 'review', label: '复核', route: '/teacher/reviews/', icon: '<svg viewBox="0 0 24 24"><path d="M4 5h16v14H4zM7 15l3-3 2 2 3-4 2 3"/></svg>' },
-      { id: 'diagnostics', label: '学情诊断', route: '/teacher/diagnostics/', icon: '<svg viewBox="0 0 24 24"><path d="M4 19V9m5 10V5m5 14v-7m5 7V3"/><path d="M3 20h18"/></svg>' },
+      { id: 'diagnostics', label: '学情诊断', route: '/teacher/diagnostics/showcase/', icon: '<svg viewBox="0 0 24 24"><path d="M4 19V9m5 10V5m5 14v-7m5 7V3"/><path d="M3 20h18"/></svg>' },
       { id: 'classes', label: '班级', route: '/teacher/classes', icon: '<svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="3"/><path d="M5 21v-3a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v3"/></svg>' },
       { id: 'student', label: '学生', route: '/teacher/students/demo', icon: '<svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="3"/><path d="M5 21v-3a7 7 0 0 1 14 0v3"/></svg>' },
       { id: 'ai-tools', label: 'AI 工具', route: '/teacher/ai-tools', icon: '<svg viewBox="0 0 24 24"><path d="M12 2v3M12 19v3M4.9 4.9 7 7M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1 7 17M17 7l2.1-2.1M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"/></svg>' },
@@ -31,7 +31,7 @@
       if (path.startsWith('/teacher/assignments')) return 'task';
       if (path.startsWith('/teacher/reviews')) return 'review';
       if (path.startsWith('/teacher/diagnostics')) return 'diagnostics';
-      if (path === '/research' || path.startsWith('/research/')) return 'research';
+      if (path === '/research' || path.startsWith('/research/') || path.startsWith('/teacher/research')) return 'research';
       if (path.startsWith('/teacher/classes')) return 'classes';
       if (path.startsWith('/teacher/students')) return 'student';
       if (path.startsWith('/teacher/ai-tools')) return 'ai-tools';

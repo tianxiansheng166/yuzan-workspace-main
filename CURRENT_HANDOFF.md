@@ -1,5 +1,12 @@
 # CURRENT HANDOFF
 
+## Teacher presentation pages (2026-10-29)
+
+- Added a clearly labeled sample-data learning analytics presentation with interactive time range, skill hints, student-status filters, and a return link to the existing real diagnostics page. The teacher navigation opens the presentation; real diagnostics remains at `/teacher/diagnostics/`.
+- Added `/teacher/research/` as a labeled presentation of research themes, with category filters and detail dialogs. Existing `/research` remains available separately.
+- Refined the AI tools page introduction and navigation while retaining its existing workflow and real service logic; static recent entries are labeled examples and unverified service labels no longer assert connectivity.
+- Browser fixture checks passed for analytics toggles and filtering, research filters/dialog, and AI landing links; no page errors. Sample analytics and research content are fictional and not persisted. External AI generation was not tested.
+
 ## Teacher navigation, course and task pages (2026-10-29)
 
 - Fixed missing API-client loading on teacher class/student/submission pages and dynamic class/student routes. Removed login's fake offline/demo success. The teacher shell displays the stored user and school instead of fixed identity/sync claims.

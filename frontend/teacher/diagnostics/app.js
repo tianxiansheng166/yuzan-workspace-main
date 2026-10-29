@@ -49,7 +49,7 @@
     if (!classes.length) return empty("当前账号没有可访问的任课班级。");
     if (!practices.length) return empty("当前学校还没有可用的正式题库测评。");
     root.innerHTML = `<div class="diagnostic-wrap">
-      <header class="diagnostic-header"><div><span class="diagnostic-kicker">QUESTION BANK · CLASS VIEW</span><h1>学情诊断</h1><p>查看一个班级在同一水平正式测评中的学习状态；不进行学生间排名。</p></div><div class="diagnostic-actions"><button class="review-link" id="teacher-pilot-feedback" type="button">反馈问题</button><a class="review-link" href="/teacher/reviews/">进入待复核队列</a></div></header>
+      <header class="diagnostic-header"><div><span class="diagnostic-kicker">QUESTION BANK · CLASS VIEW</span><h1>学情诊断</h1><p>查看一个班级在同一水平正式测评中的学习状态；不进行学生间排名。</p></div><div class="diagnostic-actions"><a class="review-link" href="/teacher/diagnostics/showcase/">查看展示版</a><button class="review-link" id="teacher-pilot-feedback" type="button">反馈问题</button><a class="review-link" href="/teacher/reviews/">进入待复核队列</a></div></header>
       <section class="diagnostic-selectors" aria-label="诊断筛选">
         <label>班级<select id="diagnostic-class">${classes.map((entry) => `<option value="${esc(entry.classId)}">${esc(entry.grade)} · ${esc(entry.className)}（${entry.activeStudentCount} 人）</option>`).join("")}</select></label>
         <label>正式测评水平<select id="diagnostic-practice">${practices.map((entry) => `<option value="${esc(entry.practiceDefinitionId)}">${esc(entry.difficulty)} · ${esc(entry.title)}</option>`).join("")}</select></label>
