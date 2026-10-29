@@ -84,6 +84,8 @@ $('#assistantToggle').addEventListener('click',()=>{
   const collapsed = assistantEl.classList.toggle('assistant-collapsed');
   if(shell) shell.classList.toggle('assistant-collapsed', collapsed);
   $('#assistantToggle').setAttribute('aria-expanded',String(!collapsed));
+  $('#assistantToggle').setAttribute('aria-label', collapsed ? '展开备课建议' : '收起备课建议');
+  $('#assistantToggle').title = collapsed ? '展开备课建议' : '收起备课建议';
 });
 
 const actionSheet=$('#actionSheet');

@@ -28,7 +28,7 @@
     if (!iso) return '—';
     const d = new Date(iso);
     if (Number.isNaN(d.getTime())) return iso;
-    return `${pad2(d.getMonth() + 1)}-${pad2(d.getDate())} ${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+    return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())} ${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
   }
 
   function formatDateTimeFull(iso) {
@@ -42,11 +42,17 @@
     return classes.find((c) => c.id === classId);
   }
 
+  function className(cls) {
+    const grade = cls.grade || '';
+    const name = cls.name || '';
+    return name.startsWith(grade) ? name : `${grade}${name}`;
+  }
+
   function classDisplay(assignment) {
     const classTarget = assignment.targets?.find((t) => t.targetType === 'CLASS');
     if (classTarget) {
       const cls = getClassById(classTarget.classId);
-      return cls ? `${cls.grade}${cls.name}` : '班级未指定';
+      return cls ? className(cls) : '班级未指定';
     }
     const studentTarget = assignment.targets?.find((t) => t.targetType === 'STUDENT');
     if (studentTarget) return '学生个人';
@@ -105,7 +111,7 @@
   function populateClassSelect() {
     const select = form.querySelector('select[name="classId"]');
     select.innerHTML = classes.length
-      ? classes.map((c) => `<option value="${c.id}">${c.grade}${c.name}</option>`).join('')
+      ? classes.map((c) => `<option value="${c.id}">${className(c)}</option>`).join('')
       : '<option value="">暂无班级</option>';
   }
 
@@ -281,7 +287,7 @@
   });
 
   const choices = {
-    class: ['全部班级', ...classes.map((c) => `${c.grade}${c.name}`)],
+    class: ['全部班级', ...classes.map(className)],
     status: ['全部状态', '进行中', '待开始', '已结束', '已取消'],
   };
 
@@ -291,7 +297,7 @@
     btn.addEventListener('click', () => {
       const key = btn.dataset.filter;
       const list = key === 'class'
-        ? ['全部班级', ...classes.map((c) => `${c.grade}${c.name}`)]
+        ? ['全部班级', ...classes.map(className)]
         : choices[key];
       const current = btn.textContent.replace(/　⌄/, '');
       const next = list[(list.indexOf(current) + 1) % list.length];

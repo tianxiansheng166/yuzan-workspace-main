@@ -1,5 +1,12 @@
 # CURRENT HANDOFF
 
+## Teacher desktop preview refinement (2026-10-29)
+
+- On `feat/sep08-teacher-volunteer-development`, the September 8 teacher home now reallocates space when either navigation or the advice panel is collapsed. The advice panel has an accessible toggle and no longer overlaps the content. Home styling and spacing were refined; fixed demonstration content is labeled as such.
+- The assignment page has a first visual pass, clearer demo labeling, full due-date years and deduplicated class names. Its time filter and attention data remain unavailable/demo; this does not claim those functions are implemented.
+- Browser checks passed at 1280, 1440 and 1920 for home panel/navigation toggles and stage switching. A logged-in local fixture check passed for assignment loading and row expansion. Mobile and remaining teacher pages are not part of this pass. The preview uses the existing local UAT API and data.
+- `frontend/server.mjs` contains the separate, uncommitted localhost-only preview binding from the prior setup. Keep it out of this change's commit.
+
 Last updated: 2026-09-08
 Repository: `yuzanxinsheng_test`
 

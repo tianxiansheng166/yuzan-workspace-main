@@ -5,3 +5,20 @@
 .sidebar .logo{object-fit:contain;background:transparent}.row{cursor:pointer;transition:.18s}.row:hover{background:#fbfcfa}.row.new-row{animation:newTask .55s ease both}@keyframes newTask{from{opacity:0;transform:translateY(-8px)}}.row-menu{border:0;background:transparent}.filters .filter:hover{border-color:#9db49f}.filters .new:hover{transform:translateY(-1px);box-shadow:0 9px 18px rgba(179,9,9,.16)}
 .attention{display:none}.attention-card{position:absolute;left:1031px;top:124px;width:367px;height:695px;border:1px solid #ddd7ce;border-radius:10px;overflow:hidden;background:#fff;box-shadow:0 3px 14px rgba(71,45,10,.03)}.attention-card>header{height:76px;padding:23px 29px;color:#fff;background:linear-gradient(135deg,#17613d,#2f7d50);position:relative;overflow:hidden}.attention-card>header:after{content:"";position:absolute;inset:0;background:repeating-radial-gradient(ellipse at 90% 100%,transparent 0 25px,rgba(255,255,255,.08) 26px 27px)}.attention-card h2{position:relative;z-index:1;margin:0;font-size:23px}.attention-summary{height:88px;display:grid;grid-template-columns:repeat(3,1fr);align-items:center;border-bottom:1px solid #e5dfd6}.attention-summary button{border:0;background:#fff;font-size:14px;padding:0 3px}.attention-summary b{font-size:24px;margin-right:4px}.attention-summary button:nth-child(1) b{color:#c91218}.attention-summary button:nth-child(2) b{color:#d99611}.attention-summary button:nth-child(3) b{color:#28704a}.attention-card ol{list-style:none;margin:0;padding:21px 24px 0}.attention-card li{display:grid;grid-template-columns:34px 1fr;gap:13px;min-height:127px;position:relative}.attention-card li:not(:last-child):before{content:"";position:absolute;left:14px;top:31px;bottom:-1px;border-left:1px solid #ded7cc}.attention-card li>i{position:relative;z-index:2;width:29px;height:29px;border-radius:50%;display:grid;place-items:center;background:#c61016;color:#fff;font-style:normal}.attention-card li:nth-child(2)>i{background:#df9811}.attention-card li:nth-child(3)>i{background:#32784f}.attention-card li h3{margin:2px 0 8px;font-size:19px}.attention-card li p{margin:0 0 9px;color:#666;font-size:14px;line-height:1.55}.attention-card li button{border:0;background:transparent;color:#286844;padding:0}.attention-card [data-kind].highlight{background:#fff7e7}.attention-mountain{position:absolute;left:0;right:0;bottom:0;height:150px;background:url('/assets/assign-sidebar-art.jpg') center bottom/cover no-repeat;opacity:.92;mask-image:linear-gradient(transparent,#000 42%)}
 dialog textarea{width:100%;resize:vertical;border:1px solid #ccc;border-radius:4px;padding:8px}dialog .dialog-error{color:#b51616}.dynamic-detail{animation:detailOpen .25s ease both}@keyframes detailOpen{from{opacity:0;transform:translateY(-4px)}}
+/* Keep the list readable and make demonstration guidance distinguishable. */
+.heading h1{font-size:39px;color:#182a28}
+.heading{background:linear-gradient(90deg,#fbf8f1,#fff)}
+.filters button{border-color:#ded7cc;border-radius:7px}
+.filters .new{border-radius:7px;background:#b8201b}
+.task-table{height:auto;min-height:0;background:#fff;box-shadow:0 8px 28px rgba(53,42,29,.05)}
+.thead{background:#f8f6f1;color:#5c6963;font-size:15px}
+.row{min-height:62px;height:auto;padding-top:10px;padding-bottom:10px;line-height:1.45}
+.row:hover{background:#f8faf7}
+.row span{min-width:0;overflow-wrap:anywhere}
+.row em.gray{background:#f0f1ef;color:#68736d}
+.row em.red{background:#fcebe8;color:#a5382d}
+.attention-card{height:695px;background:#fffefa}
+.attention-card>header{background:linear-gradient(135deg,#173f35,#2a6b4b)}
+.attention-card h2{font-size:21px}
+.attention-card li p{color:#6b746d}
+.row-menu:focus-visible,.filters button:focus-visible{outline:3px solid #d89c3d;outline-offset:2px}

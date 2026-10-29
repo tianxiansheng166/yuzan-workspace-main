@@ -12,6 +12,7 @@ button,input,select{font:inherit}button{cursor:pointer}
 svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 
 .ts-app-shell{min-height:100vh;background:#fff;display:grid;grid-template-columns:var(--ts-sidebar) minmax(0,1fr);min-width:900px}
+@media (min-width:761px){.ts-app-shell:has(.ts-sidebar.collapsed){grid-template-columns:var(--ts-sidebar-collapsed) minmax(0,1fr)}}
 
 .ts-sidebar{position:fixed;z-index:30;inset:0 auto 0 0;width:var(--ts-sidebar);border-right:1px solid #e8e0d8;background:#fffdfa;overflow:hidden;transition:width .25s ease}
 .ts-sidebar:before{content:"";position:absolute;inset:0;background-image:url("/assets/paper-noise.png");background-size:cover;opacity:.08;pointer-events:none}
