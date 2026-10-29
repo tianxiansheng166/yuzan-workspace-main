@@ -1,5 +1,11 @@
 # CURRENT HANDOFF
 
+## Volunteer visual refresh (2026-10-29)
+
+- Reworked the existing workbench hierarchy into a landscape welcome, service-hours feature, journey and task/learning sections. Added an original generated highland illustration reused in the support hall and training path; task and training pages gained distinct surfaces and clearer hierarchy. The task-page teacher portrait was replaced with a monogram because the original crop was broken.
+- Chromium desktop screenshots inspected for workbench, training, tasks and support hall; the workbench mobile layout was inspected after correcting the journey layout. The support-hall browser checks passed for filter, search, detail, local interest and navigation. Frontend tests and JS syntax/diff checks passed. Existing disconnected volunteer data and unrelated resource/message/help navigation mappings remain as previously documented.
+- The local `frontend/server.mjs` binding is pre-existing and remains uncommitted.
+
 ## Volunteer support and visual hierarchy (2026-10-29)
 
 - Renamed the community entry to 一对一帮扶 and added a support hall with four fictional student requests, search, direction filters, request details and locally saved expressions of interest. 我的帮扶 retains access to the previous pairing page. The hall has no student application or matching backend; local interest does not notify a teacher.
