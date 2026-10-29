@@ -1,5 +1,11 @@
 # CURRENT HANDOFF
 
+## Teacher learning analysis and research workspace (2026-10-29)
+
+- Expanded `/teacher/diagnostics/showcase/` with four-week multicolour capability trends, performance distribution, task-by-skill comparison and teaching interventions. The research workspace provides three detailed classroom plans, course links, topic switching and per-topic browser-local reflection notes. The class, outcomes and analysis are fictional presentation content as explicitly requested; they do not query or update the backend.
+- The course and task workspaces use shared fictional data, with course-to-task navigation and browser-local draft/publication state. These changes are not connected to student accounts or server data.
+- Chromium DevTools checks passed for analytics controls, diagnosis-to-plan and plan-to-course navigation, topic switching, reflection persistence and desktop overflow at 1280/1440/1920. Course/task create, persistence and publication were previously checked in Chromium. The local-only `frontend/server.mjs` binding remains outside the commit.
+
 ## Teacher learning insights composition (2026-10-29)
 
 - Reworked the existing `/teacher/diagnostics/showcase/` page into a narrative learning overview with an original generated paper-landscape asset, interactive capability rings, student filter cards and a learning-activity heatmap. Data remains hard-coded for the owner's presentation; the link to formal diagnostics is preserved.

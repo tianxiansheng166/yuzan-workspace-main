@@ -1,95 +1,25 @@
 (() => {
-  'use strict';
-  const $ = selector => document.querySelector(selector);
-  const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
-  const labels = {DRAFT:'草稿',SCHEDULED:'已排期',OPEN:'进行中',CLOSED:'已结束',CANCELLED:'已取消',ARCHIVED:'已归档'};
-  const form = $('#task-form'), dialog = $('#task-dialog'), results = $('#task-results');
-  let schoolId = '', classes = [], courses = [], assignments = [];
-  const className = item => !item ? '班级不可用' : (item.name.startsWith(item.grade || '') ? item.name : `${item.grade || ''}${item.name}`);
-  const date = value => { const d = new Date(value); return Number.isNaN(d.getTime()) ? '未设置' : d.toLocaleString('zh-CN', {year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}); };
-  function classLabel(task) {
-    const target = task.targets?.find(t => t.targetType === 'CLASS');
-    return target ? className(classes.find(c => c.id === target.classId)) : '学生个人';
-  }
-  function render() {
-    $('#total').textContent = assignments.length;
-    $('#drafts').textContent = assignments.filter(a => a.status === 'DRAFT' || a.status === 'SCHEDULED').length;
-    $('#open').textContent = assignments.filter(a => a.status === 'OPEN').length;
-    const visible = assignments.filter(a => (!$('#status-filter').value || a.status === $('#status-filter').value) && (!$('#class-filter').value || a.targets?.some(t => t.classId === $('#class-filter').value)));
-    results.innerHTML = visible.length ? visible.map(task => `<article class="task-row"><div class="task-mark" aria-hidden="true">课</div><div class="task-info"><div class="task-title"><h3>${esc(task.title)}</h3><span class="status ${task.status === 'OPEN' ? 'active' : ''}">${esc(labels[task.status] || task.status)}</span></div><p>${esc(classLabel(task))} <span>·</span> 截止 ${esc(date(task.dueAt))}</p><small>${task.status === 'DRAFT' ? '草稿尚未发布，学生不可见。' : task.status === 'SCHEDULED' ? '已排期，需手动发布后学生才能看到。' : task.status === 'OPEN' ? '已发布，可在学生端查看。' : '查看当前任务状态。'}</small></div><div class="task-actions">${['DRAFT','SCHEDULED'].includes(task.status) ? `<button class="publish" data-id="${esc(task.id)}">发布任务</button>` : '<span>已保存</span>'}</div></article>`).join('') : '<div class="empty">没有符合条件的任务。可以调整筛选条件，或新建任务。</div>';
-  }
-  async function load() {
-    const [classData, courseData, taskData] = await Promise.all([
-      YuzanApi.request(`/schools/${schoolId}/classes/teachers/me`),
-      YuzanApi.request(`/schools/${schoolId}/course-versions?limit=100`),
-      YuzanApi.request(`/schools/${schoolId}/assignments?limit=100`),
-    ]);
-    classes = Array.isArray(classData) ? classData : classData.items || [];
-    courses = (Array.isArray(courseData) ? courseData : courseData.items || []).filter(c => c.status === 'PUBLISHED');
-    assignments = taskData.items || (Array.isArray(taskData) ? taskData : []);
-    const classFilter = $('#class-filter'), classSelect = form.querySelector('[name=classId]'), courseSelect = form.querySelector('[name=courseVersionId]');
-    const selectedClass = classFilter.value;
-    classFilter.replaceChildren(new Option('全部班级', '')); classSelect.replaceChildren(new Option('请选择任教班级', ''));
-    classes.forEach(c => { classFilter.add(new Option(className(c), c.id)); classSelect.add(new Option(className(c), c.id)); });
-    if (classes.length === 1) classSelect.value = classes[0].id;
-    classFilter.value = selectedClass;
-    courseSelect.replaceChildren(new Option('请选择已发布课程', ''));
-    courses.forEach(c => courseSelect.add(new Option(c.title, c.id)));
-    render();
-  }
-  function showDialog() {
-    $('#form-error').textContent = '';
-    const preferred = new URLSearchParams(location.search).get('courseVersionId');
-    if (courses.some(c => c.id === preferred)) form.querySelector('[name=courseVersionId]').value = preferred;
-    if (!form.querySelector('[name=deadline]').value) {
-      const d = new Date(Date.now() + 7 * 86400000); d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
-      form.querySelector('[name=deadline]').value = d.toISOString().slice(0, 16);
-    }
-    dialog.showModal();
-  }
-  $('#new-task').addEventListener('click', showDialog);
-  $('#close-dialog').addEventListener('click', () => dialog.close());
-  $('#cancel-dialog').addEventListener('click', () => dialog.close());
-  $('#class-filter').addEventListener('change', render); $('#status-filter').addEventListener('change', render);
-  form.addEventListener('submit', async event => {
-    event.preventDefault(); if (!form.reportValidity()) return;
-    const values = new FormData(form), due = new Date(values.get('deadline'));
-    if (!String(values.get('title')).trim()) { $('#form-error').textContent = '请输入任务名称。'; return; }
-    if (due <= new Date()) { $('#form-error').textContent = '截止时间需晚于当前时间。'; return; }
-    const button = form.querySelector('[type=submit]'); button.disabled = true; button.textContent = '保存中…';
-    try {
-      await YuzanApi.request(`/schools/${schoolId}/assignments`, {method:'POST',body:JSON.stringify({title:String(values.get('title')).trim(),courseVersionId:values.get('courseVersionId'),startsAt:new Date().toISOString(),dueAt:due.toISOString(),offlineRequired:false,targets:[{targetType:'CLASS',classId:values.get('classId')}]})});
-      dialog.close(); history.replaceState(null, '', '/teacher/assignments/');
-      try { await load(); }
-      catch { $('#list-message').textContent = '草稿已保存，但列表刷新失败，请刷新页面查看。'; }
-    } catch (error) { $('#form-error').textContent = error.message || '保存失败，请重试。'; }
-    finally { button.disabled = false; button.textContent = '保存草稿'; }
-  });
-  results.addEventListener('click', async event => {
-    const button = event.target.closest('.publish'); if (!button) return;
-    const task = assignments.find(a => a.id === button.dataset.id); if (!task) return;
-    button.disabled = true; button.textContent = '发布中…';
-    try {
-      let revision = task.revision;
-      if (task.status === 'DRAFT') {
-        const scheduled = await YuzanApi.request(`/schools/${schoolId}/assignments/${encodeURIComponent(task.id)}/schedule`, {method:'POST',body:JSON.stringify({expectedRevision:revision})});
-        revision = scheduled.revision;
-      }
-      await YuzanApi.request(`/schools/${schoolId}/assignments/${encodeURIComponent(task.id)}/open`, {method:'POST',body:JSON.stringify({expectedRevision:revision})});
-      $('#list-message').textContent = '';
-      await load();
-    } catch (error) {
-      await load().catch(() => {});
-      $('#list-message').textContent = error.message || '发布失败，请刷新后重试。';
-    }
-  });
-  async function init() {
-    if (!YuzanApi.getToken()) { location.href = '/login/'; return; }
-    schoolId = YuzanApi.getActiveSchoolId();
-    if (!schoolId) { results.textContent = '请先选择已加入的学校。'; return; }
-    try { await load(); if (new URLSearchParams(location.search).has('courseVersionId')) showDialog(); }
-    catch (error) { results.textContent = error.message || '加载失败，请刷新页面重试。'; }
-  }
-  const message = document.createElement('p'); message.id = 'list-message'; message.className = 'form-error'; message.setAttribute('role','alert'); results.before(message);
-  init();
+ 'use strict';
+ const $=s=>document.querySelector(s), demo=window.YuzanShowcase, form=$('#task-form'), dialog=$('#task-dialog'), results=$('#task-results');
+ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const labels={DRAFT:'待发布',OPEN:'进行中',CLOSED:'已结束'};
+ const cls=id=>demo.classes.find(c=>c.id===id),course=id=>demo.courses.find(c=>c.id===id);
+ const date=v=>{const d=new Date(v);return Number.isNaN(d.getTime())?'未设置':d.toLocaleDateString('zh-CN',{month:'long',day:'numeric'});};
+ let tasks=demo.tasks();
+ function render(){const query=$('#task-search').value.trim().toLocaleLowerCase(),state=$('#status-filter').value,classId=$('#class-filter').value;
+  const shown=tasks.filter(t=>(!query||t.title.toLocaleLowerCase().includes(query))&&(!state||t.status===state)&&(!classId||t.classId===classId));
+  $('#total').textContent=tasks.length;$('#open').textContent=tasks.filter(t=>t.status==='OPEN').length;$('#drafts').textContent=tasks.filter(t=>t.status==='DRAFT').length;$('#task-count').textContent=`${shown.length} 项任务 · 按班级和状态了解进度`;
+  results.innerHTML=shown.length?shown.map(t=>{const c=course(t.courseVersionId),rate=t.total?Math.round(t.submitted/t.total*100):0;return `<article class="task-row"><div class="task-thumb" style="background-image:url('${esc(c?.detail?.coverAsset||'')}')"></div><div class="task-info"><div class="task-title"><h3>${esc(t.title)}</h3><span class="status ${t.status.toLowerCase()}">${esc(labels[t.status]||t.status)}</span></div><p>${esc(cls(t.classId)?.name||'班级')} <span>·</span> ${esc(c?.theme||'课程学习')} <span>·</span> 截止 ${esc(date(t.dueAt))}</p><small>${esc(c?.title||'课程')}</small></div><div class="progress"><div><span>学习进度</span><b>${t.submitted} / ${t.total}</b></div><div class="progress-track"><i style="width:${rate}%"></i></div><small>${t.status==='DRAFT'?'等待发布':`${rate}% 已提交 · ${t.reviewed} 份已反馈`}</small></div><div class="task-actions"><button class="open-detail" data-id="${esc(t.id)}">查看任务 ↗</button>${t.status==='DRAFT'?`<button class="publish" data-id="${esc(t.id)}">发布</button>`:''}</div></article>`;}).join(''):'<div class="empty">没有符合条件的任务。可调整筛选条件，或创建新的教学任务。</div>';
+ }
+ function populate(){const filter=$('#class-filter'),classSelect=form.querySelector('[name=classId]'),courseSelect=form.querySelector('[name=courseVersionId]');demo.classes.forEach(c=>{filter.add(new Option(c.name,c.id));classSelect.add(new Option(c.name,c.id));});classSelect.value=demo.classes[0].id;demo.courses.forEach(c=>courseSelect.add(new Option(c.title,c.id)));}
+ function showDialog(){const preferred=new URLSearchParams(location.search).get('courseVersionId');if(demo.courses.some(c=>c.id===preferred))form.querySelector('[name=courseVersionId]').value=preferred;if(!form.querySelector('[name=deadline]').value){const d=new Date(Date.now()+7*86400000);d.setMinutes(d.getMinutes()-d.getTimezoneOffset());form.querySelector('[name=deadline]').value=d.toISOString().slice(0,16);}$('#form-error').textContent='';dialog.showModal();}
+ function showDetail(task){const c=course(task.courseVersionId),rate=task.total?Math.round(task.submitted/task.total*100):0,waiting=Math.max(0,task.submitted-task.reviewed),missing=Math.max(0,task.total-task.submitted);
+  $('#task-detail').innerHTML=`<span class="detail-kicker">教学任务 / ${esc(labels[task.status])}</span><h2>${esc(task.title)}</h2><p class="detail-lead">${esc(cls(task.classId)?.name||'班级')} · 截止 ${esc(date(task.dueAt))}</p><div class="detail-course"><span>关联课程</span><strong>${esc(c?.title||'课程')}</strong><a href="/teacher/courses/?courseId=${encodeURIComponent(task.courseVersionId)}">查看课程 ↗</a></div><div class="detail-stats"><div><strong>${task.total}</strong><span>班级人数</span></div><div><strong>${task.submitted}</strong><span>已提交</span></div><div><strong>${missing}</strong><span>待完成</span></div><div><strong>${waiting}</strong><span>待反馈</span></div></div><div class="detail-section"><div><h3>学习进度</h3><span>${rate}%</span></div><div class="detail-bar"><i style="width:${rate}%"></i></div><p>已提交 ${task.submitted} 人 · 已反馈 ${task.reviewed} 人</p></div><h3>课程学习内容</h3><div class="detail-activities">${(c?.activities||[]).map((a,i)=>`<div><b>${String(i+1).padStart(2,'0')}</b><span>${esc(a[1])}</span><small>${esc(a[2])}</small></div>`).join('')}</div>`;
+  $('#detail-dialog').showModal();
+ }
+ $('#new-task').addEventListener('click',showDialog);$('#close-dialog').addEventListener('click',()=>dialog.close());$('#cancel-dialog').addEventListener('click',()=>dialog.close());$('#close-detail').addEventListener('click',()=>$('#detail-dialog').close());
+ ['#class-filter','#status-filter'].forEach(s=>$(s).addEventListener('change',render));$('#task-search').addEventListener('input',render);
+ results.addEventListener('click',e=>{const detail=e.target.closest('.open-detail');if(detail){const task=tasks.find(t=>t.id===detail.dataset.id);if(task)showDetail(task);return;}const publish=e.target.closest('.publish');if(publish){const task=tasks.find(t=>t.id===publish.dataset.id);if(task){task.status='OPEN';demo.save(tasks);render();}}});
+ form.addEventListener('submit',e=>{e.preventDefault();if(!form.reportValidity())return;const values=new FormData(form),deadline=new Date(values.get('deadline')),title=String(values.get('title')).trim();if(!title||deadline<=new Date()){ $('#form-error').textContent=!title?'请输入任务名称。':'截止时间需晚于当前时间。';return; }const group=cls(values.get('classId'));tasks.unshift({id:`task-${Date.now()}`,title,courseVersionId:values.get('courseVersionId'),classId:values.get('classId'),status:'DRAFT',startsAt:new Date().toISOString(),dueAt:deadline.toISOString(),total:group?.studentCount||0,submitted:0,reviewed:0});demo.save(tasks);dialog.close();history.replaceState(null,'','/teacher/assignments/');form.reset();form.querySelector('[name=classId]').value=demo.classes[0].id;render();});
+ populate();render();if(new URLSearchParams(location.search).has('courseVersionId'))showDialog();
 })();
