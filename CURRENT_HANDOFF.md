@@ -1,5 +1,11 @@
 # CURRENT HANDOFF
 
+## Volunteer support and visual hierarchy (2026-10-29)
+
+- Renamed the community entry to 一对一帮扶 and added a support hall with four fictional student requests, search, direction filters, request details and locally saved expressions of interest. 我的帮扶 retains access to the previous pairing page. The hall has no student application or matching backend; local interest does not notify a teacher.
+- Replaced the miscropped teacher contact image in the workbench with a monogram, relaxed the workbench grid, and refined existing training, service-record and certificate page surfaces and spacing. Several other navigation mappings remain unrelated to their labels (resources, messages and help) and still need product content.
+- Chromium checked the hall at desktop and mobile widths, workbench desktop, and hall filtering, searching, detail, local interest and return from the existing pairing view. Frontend tests and JS syntax checks passed. The pre-existing `frontend/server.mjs` local binding remains uncommitted.
+
 ## Volunteer task workspace refinement (2026-10-29)
 
 - Refined the existing volunteer task page layout, removed fixed-height clipping, aligned status counts and date/type filters with its three fictional tasks, and refreshed older volunteer dates to 2026. Task confirmation is in-memory; service notes and risk drafts are stored locally only. Risk drafts are not submitted to any reporting service.
